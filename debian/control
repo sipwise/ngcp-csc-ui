@@ -1,0 +1,16 @@
+Source: ngcp-csc-ui
+Section: admin
+Priority: extra
+Maintainer: Sipwise Development Team <support@sipwise.com>
+Build-Depends:
+ debhelper (>= 9),
+Standards-Version: 3.9.7
+Homepage: https://sipwise.com/
+
+Package: ngcp-csc-ui
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: Customer Self-Care Web UI
+ New customer Self-Care Web UI as a replacemdent of deprecated ngcp-csc
