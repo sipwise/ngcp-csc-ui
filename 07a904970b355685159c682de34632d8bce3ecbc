@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "dab895d6_f1f503cc",
+        "filename": "debian/compat",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-04T09:50:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dab895d6_51e94f19",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 1
+      },
+      "revId": "07a904970b355685159c682de34632d8bce3ecbc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab895d6_318dbb7c",
         "filename": "debian/control",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-10-04T07:47:55Z",
       "side": 1,
       "message": "https please",
+      "range": {
+        "startLine": 8,
+        "startChar": 10,
+        "endLine": 8,
+        "endChar": 14
+      },
+      "revId": "07a904970b355685159c682de34632d8bce3ecbc",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_110357b9",
+        "filename": "debian/control",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-04T09:50:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dab895d6_318dbb7c",
       "range": {
         "startLine": 8,
         "startChar": 10,
