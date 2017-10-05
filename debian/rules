@@ -1,6 +1,16 @@
 #!/usr/bin/make -f
+
 # Uncomment this to turn on verbose mode.
 # export DH_VERBOSE=1
 
 %:
-	dh $@
+	dh "$@"
+
+override_dh_auto_build:
+	dh_auto_build
+	npm cache clean
+	cat /etc/sysctl.conf
+	cat /etc/resolv.conf
+	ping npm-registry.sipwise.com
+	npm install -loglevel verbose
+	npm run build
