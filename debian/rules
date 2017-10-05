@@ -1,6 +1,12 @@
 #!/usr/bin/make -f
+
 # Uncomment this to turn on verbose mode.
 # export DH_VERBOSE=1
 
 %:
-	dh $@
+	dh "$@"
+
+override_dh_auto_install:
+	npm install
+	npm run build
+	mv dist csc
