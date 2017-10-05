@@ -4,6 +4,8 @@ Priority: extra
 Maintainer: Sipwise Development Team <support@sipwise.com>
 Build-Depends:
  debhelper (>= 9),
+ nodejs (>= 4.6.2~),
+ wget,
 Standards-Version: 3.9.7
 Homepage: https://sipwise.com/
 
@@ -13,4 +15,4 @@ Depends:
  ${misc:Depends},
  ${shlibs:Depends},
 Description: Customer Self-Care Web UI
- New customer Self-Care Web UI as a replacemdent of deprecated ngcp-csc
+ New customer Self-Care Web UI as a replacement of deprecated ngcp-csc

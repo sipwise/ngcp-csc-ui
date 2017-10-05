@@ -1,0 +1,45 @@
+{
+    "title": "Sipwise Customer Portal",
+    "login_title": "Customer Self Care Portal",
+    "login_button": "Sign In",
+    "login_error": "Wrong username or password",
+    "username": "Username",
+    "username_helper": "Web-Username, SIP-URI",
+    "password": "Password",
+    "password_helper": "Web-Password",
+    "rtcEngineDisconnected": "You can not start a call. Service ist currently unavailable.",
+    "startCall": "Start Call",
+    "sendSms": "Send SMS",
+    "sendFax": "Send Fax",
+    "mainNavigation": {
+        "conversations":{
+            "title": "Conversations",
+            "subTitle": "Calls, SMS, VoiceMails"
+        },
+        "callForward":{
+            "title": "Call Forward",
+            "subTitle": "Control your calls",
+            "always": "Always",
+            "companyHours": "Company Hours",
+            "afterHours": "After Hours"
+        },
+        "callBlocking": {
+            "title": "Call Blocking",
+            "subTitle": "Block numbers",
+            "incoming": "Incoming",
+            "outgoing": "Outgoing",
+            "privacy": "Privacy"
+        },
+        "reminder": {
+            "title": "Reminder"
+        },
+        "pbxConfiguration":{
+            "title": "PBX Configuration",
+            "subTitle": "Groups, Devices",
+            "groups": "Groups",
+            "seats": "Seats",
+            "devices": "Devices"
+        }
+    },
+    "loggedInAs": "Logged in as"
+}
