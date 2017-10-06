@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "dab895d6_87d1e5cf",
+        "filename": "debian/rules",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-06T10:30:05Z",
+      "side": 1,
+      "message": "Fix is here - https://gerrit.mgm.sipwise.com/#/c/16009/",
+      "parentUuid": "dab895d6_072075f6",
+      "revId": "a8c3a946c6e5f7dc8f398505debdd11e940ceff1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab895d6_8799e570",
         "filename": "dev.sh",
         "patchSetId": 4
