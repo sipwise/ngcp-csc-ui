@@ -33,6 +33,24 @@
       "revId": "a8c3a946c6e5f7dc8f398505debdd11e940ceff1",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_07add588",
+        "filename": "dev.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2017-10-06T07:21:01Z",
+      "side": 1,
+      "message": "Ah ok. Yes, I think it\u0027s better to improve it here.",
+      "parentUuid": "dab895d6_8799e570",
+      "revId": "a8c3a946c6e5f7dc8f398505debdd11e940ceff1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
