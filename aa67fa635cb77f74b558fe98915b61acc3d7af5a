@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_47e26ca0",
+        "filename": "t/Dockerfile",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-06T16:31:46Z",
+      "side": 1,
+      "message": "wrong name",
+      "range": {
+        "startLine": 1,
+        "startChar": 14,
+        "endLine": 1,
+        "endChar": 41
+      },
+      "revId": "aa67fa635cb77f74b558fe98915b61acc3d7af5a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_27fc983e",
+        "filename": "t/Dockerfile",
+        "patchSetId": 10
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-06T16:31:46Z",
+      "side": 1,
+      "message": "wrong name",
+      "range": {
+        "startLine": 53,
+        "startChar": 24,
+        "endLine": 53,
+        "endChar": 50
+      },
+      "revId": "aa67fa635cb77f74b558fe98915b61acc3d7af5a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_2793b8fb",
+        "filename": "t/Dockerfile",
+        "patchSetId": 10
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-06T16:31:46Z",
+      "side": 1,
+      "message": "remove \u0027-v /results\u0027 like we have in other repos Dockerfiles",
+      "range": {
+        "startLine": 54,
+        "startChar": 45,
+        "endLine": 54,
+        "endChar": 56
+      },
+      "revId": "aa67fa635cb77f74b558fe98915b61acc3d7af5a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_47f98c4c",
+        "filename": "t/Dockerfile",
+        "patchSetId": 10
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-06T16:31:46Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 54,
+        "startChar": 57,
+        "endLine": 54,
+        "endChar": 84
+      },
+      "revId": "aa67fa635cb77f74b558fe98915b61acc3d7af5a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_6795b0e3",
+        "filename": "t/Dockerfile",
+        "patchSetId": 10
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-06T16:31:46Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 57,
+        "startChar": 39,
+        "endLine": 57,
+        "endChar": 66
+      },
+      "revId": "aa67fa635cb77f74b558fe98915b61acc3d7af5a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_879ac412",
+        "filename": "t/Dockerfile",
+        "patchSetId": 10
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-06T16:31:46Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 59,
+        "startChar": 80,
+        "endLine": 59,
+        "endChar": 107
+      },
+      "revId": "aa67fa635cb77f74b558fe98915b61acc3d7af5a",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
