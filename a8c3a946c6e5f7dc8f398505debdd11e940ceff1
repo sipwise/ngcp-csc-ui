@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "dab895d6_072075f6",
+        "filename": "debian/rules",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-06T09:37:26Z",
+      "side": 1,
+      "message": "There is failure in name resolution while building with cowbuilder. Investigating\n\n11:36:07 wget https://npm-registry.sipwise.com/eventsource-polyfill/-/eventsource-polyfill-0.9.6.tgz\n11:36:07 --2017-10-06 09:36:07--  https://npm-registry.sipwise.com/eventsource-polyfill/-/eventsource-polyfill-0.9.6.tgz\n11:36:07 Resolving npm-registry.sipwise.com (npm-registry.sipwise.com)... failed: Temporary failure in name resolution.\n11:36:07 wget: unable to resolve host address \u0027npm-registry.sipwise.com\u0027",
+      "parentUuid": "dab895d6_a79ee954",
+      "revId": "a8c3a946c6e5f7dc8f398505debdd11e940ceff1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab895d6_8799e570",
         "filename": "dev.sh",
         "patchSetId": 4
