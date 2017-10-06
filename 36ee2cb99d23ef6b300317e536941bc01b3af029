@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_a76d0807",
+        "filename": "t/Dockerfile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-06T16:55:18Z",
+      "side": 1,
+      "message": "\u0027test\u0027 is not needed. According to our current convention it should be reponame-{distribution} (check other repos).\nAnd the same name correction should be for all other places in the file",
+      "range": {
+        "startLine": 1,
+        "startChar": 14,
+        "endLine": 1,
+        "endChar": 38
+      },
+      "revId": "36ee2cb99d23ef6b300317e536941bc01b3af029",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
