@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "dab895d6_27a73951",
+        "filename": "debian/rules",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000020
+      },
+      "writtenOn": "2017-10-06T11:54:01Z",
+      "side": 1,
+      "message": "Fixed. \u0027npm install is ok now\u0027.\nNow -binaries fails on \u0027npm build\u0027",
+      "parentUuid": "dab895d6_87d1e5cf",
+      "revId": "a8c3a946c6e5f7dc8f398505debdd11e940ceff1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab895d6_8799e570",
         "filename": "dev.sh",
         "patchSetId": 4
