@@ -1,5 +1,5 @@
 
-import { Loading, Alert } from 'quasar'
+import { Loading, Alert } from 'quasar-framework'
 
 export function startLoading() {
     Loading.show({ delay: 0 });

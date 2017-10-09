@@ -1,7 +1,8 @@
 
-import { getGroups } from '../../api/pbx-config'
+import { getGroups } from '../api/pbx-config'
 
-export const PbxGroups = {
+export default {
+    namespaced: true,
     state: {
         groups: [],
         page: 1
@@ -10,15 +11,15 @@ export const PbxGroups = {
 
     },
     mutations: {
-        showGroups: function(state, options) {
+        show: function(state, options) {
             state.groups = options.groups;
         }
     },
     actions: {
-        loadGroups: function(context, options) {
+        load: function(context, options) {
             return new Promise((resolve, reject)=>{
                 getGroups().then((groups)=>{
-                    context.commit('showGroups', {
+                    context.commit('show', {
                         groups: groups
                     });
                 }).catch((err)=>{

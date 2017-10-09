@@ -5,7 +5,7 @@
 </template>
 
 <script>
-    import { QTransition } from 'quasar'
+    import { QTransition } from 'quasar-framework'
     export default {
         components: {
             QTransition

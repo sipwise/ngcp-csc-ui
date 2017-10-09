@@ -3,7 +3,9 @@
 import _ from 'lodash'
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import cdk from 'cdk';
+
+import UserModule from './user'
+import PbxGroupsModule from './pbx-groups'
 
 var rtcEngineClient = null;
 var rtcEngineNetwork = null;
@@ -12,7 +14,8 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     modules: {
-        user: require('./user').UserModule
+        user: UserModule,
+        pbxGroups: PbxGroupsModule
     },
     state: {
         rtcEngineConnected: false

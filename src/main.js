@@ -13,11 +13,12 @@ require(`./themes/app.${__THEME}.styl`)
 import _ from 'lodash'
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import Quasar from 'quasar'
+import Quasar from 'quasar-framework'
 import { store } from './store'
 import { i18n, locales } from './i18n'
 import router from './router'
 import { sync } from 'vuex-router-sync'
+import filters from './filters'
 
 Vue.use(VueResource);
 

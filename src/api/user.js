@@ -26,13 +26,11 @@ export function getUserData(id) {
     return new Promise((resolve, reject)=>{
         return Promise.all([
             getSubscriberById(id),
-            getCapabilities(),
-            getNumbers()
+            getCapabilities()
         ]).then((results)=>{
             resolve({
                 subscriber: results[0],
-                capabilities: results[1],
-                numbers: results[2]
+                capabilities: results[1]
             });
         }).catch((err)=>{
             reject(err);

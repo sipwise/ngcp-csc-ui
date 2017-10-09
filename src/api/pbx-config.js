@@ -3,19 +3,21 @@ import Vue from 'vue';
 
 export function getGroups(options) {
     return new Promise((resolve, reject)=>{
-        Promise.props({
-            numbers: Vue.http.get('/api/numbers'),
-            subscribers: Vue.http.get('/api/subscribers', {
-                params: {
-                    is_pbx_group: true
-                }
-            })
+        Vue.http.get('/api/subscribers', {
+            params: {
+                is_pbx_group: true
+            }
         }).then((result)=>{
-
-        }).then(()=>{
-            resolve();
+            var groups = [];
+            var body = JSON.parse(result.body);
+            if(_.isArray(body["_embedded"]["ngcp:subscribers"])) {
+                body['_embedded']['ngcp:subscribers'].forEach((group)=>{
+                    groups.push(group);
+                });
+            }
+            resolve(groups);
         }).catch((err)=>{
-            reject(err)
+            reject(err);
         });
     });
 }

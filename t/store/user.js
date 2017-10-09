@@ -1,6 +1,6 @@
 'use strict';
 
-import { UserModule } from '../../src/store/user';
+import UserModule  from '../../src/store/user';
 import { assert } from 'chai';
 
 describe('UserModule', ()=>{

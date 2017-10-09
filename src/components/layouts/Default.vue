@@ -9,7 +9,8 @@
                 <span slot="subtitle"></span>
             </q-toolbar-title>
             <q-btn flat @click="" icon-right="fa-user-circle">
-                <span id="user-login-as">{{ $t('loggedInAs') }}</span><span id="user-name">{{ getUsername }}</span>
+                <span id="user-login-as" class="gt-sm">{{ $t('loggedInAs') }}</span>
+                <span id="user-name" class="gt-xs">{{ getUsername }}</span>
                 <q-popover ref="popover">
                     <q-list item-separator link>
                         <q-item @click="logout()">
@@ -81,7 +82,7 @@
                 </q-side-link>
             </q-collapsible>
         </q-list>
-        <q-fixed-position corner="top-right" :offset="[20, 20]">
+        <q-fixed-position corner="top-right" :offset="[60, 16]" class="page-action-button">
             <q-fab color="primary" icon="question answer" active-icon="clear" direction="left" flat>
                 <q-fab-action color="primary" @click="" icon="fa-fax" flat>
                     <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 15]">{{ $t('sendFax') }}</q-tooltip>
@@ -126,10 +127,14 @@
         name: 'default',
         mounted: function() {
             this.$refs.layout.showLeft();
-//            this.$store.dispatch('connectRtcEngine');
-        },
-        created: function() {
-            this.$store.dispatch('user/initUser');
+            if(!this.$store.getters['user/hasUser']) {
+                startLoading();
+                this.$store.dispatch('user/initUser').then(()=>{
+                    stopLoading();
+                }).catch(()=>{
+                    this.logout();
+                });
+            }
         },
         components: {
             QLayout,
@@ -172,9 +177,6 @@
                 if(!this.$store.state.rtcEngineConnected) {
                     showGlobalError(this.$t('rtcEngineDisconnected'));
                 }
-            },
-            navigate(path) {
-                this.$router.push({path: path});
             }
         }
     }
@@ -226,5 +228,21 @@
     }
     #user-name {
         font-weight: bold;
+    }
+
+    .q-card {
+        margin: 0;
+    }
+
+    .q-card.page {
+        padding: 15px;
+    }
+
+    .q-card.pbx-group {
+        margin-bottom: 15px;
+    }
+
+    .page-action-button {
+        z-index: 1001;
     }
 </style>

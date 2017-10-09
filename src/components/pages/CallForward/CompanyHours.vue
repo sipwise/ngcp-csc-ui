@@ -1,11 +1,15 @@
 <template>
-    <div>CallForward CompanyHours</div>
+    <page title="Company Hours"></page>
 </template>
 
 <script>
+    import Page  from '../../Page'
     export default {
         data () {
             return {}
+        },
+        components: {
+            Page
         }
     }
 </script>

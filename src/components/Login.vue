@@ -10,10 +10,20 @@
                     </q-card-title>
                     <q-card-main>
                         <q-field icon="fa-user-circle" :helper="$t('username_helper')" :count="128">
-                            <q-input type="text" max-length="128" :float-label="$t('username')" clearable v-model="username"/>
+                            <q-input type="text"
+                                     max-length="128"
+                                     :float-label="$t('username')"
+                                     clearable
+                                     v-model="username"
+                                     @keyup.enter="login()"/>
                         </q-field>
                         <q-field icon="fa-lock" :helper="$t('password_helper')" :count="32">
-                            <q-input type="password" max-length="32" :float-label="$t('password')" clearable v-model="password"/>
+                            <q-input type="password"
+                                     max-length="32"
+                                     :float-label="$t('password')"
+                                     clearable
+                                     v-model="password"
+                                     @keyup.enter="login()"/>
                         </q-field>
                     </q-card-main>
                     <q-card-actions class="pull-right">
@@ -28,19 +38,8 @@
 
 <script>
     import { startLoading, stopLoading, showGlobalError } from '../helpers/ui'
-    import {
-        QLayout,
-        QCard,
-        QCardTitle,
-        QCardSeparator,
-        QCardMain,
-        QField,
-        QInput,
-        QCardActions,
-        QBtn,
-        QIcon,
-        Loading,
-        Alert } from 'quasar'
+    import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
+        QCardActions, QBtn, QIcon, Loading, Alert } from 'quasar-framework'
     export default {
         name: 'login',
         components: {
@@ -57,38 +56,23 @@
         },
         data () {
             return {
-                user: '',
-                pass: ''
+                username: '',
+                password: ''
             }
         },
         methods: {
             login() {
                 startLoading();
-                this.$store.dispatch('user/login').then(()=>{
+                this.$store.dispatch('user/login', {
+                    username: this.username,
+                    password: this.password
+                }).then(()=>{
                     stopLoading();
                     this.$router.push({path : '/'});
                 }).catch((err)=>{
                     stopLoading();
                     showGlobalError(this.$i18n.t('login_error'));
                 });
-            }
-        },
-        computed: {
-            username: {
-                get () {
-                    return this.$store.state.user.username;
-                },
-                set (value) {
-                    this.$store.commit('user/updateUsername', value)
-                }
-            },
-            password: {
-                get () {
-                    return this.$store.state.user.password;
-                },
-                set (value) {
-                    this.$store.commit('user/updatePassword', value)
-                }
             }
         }
     }
