@@ -6,6 +6,7 @@ import Vuex from 'vuex'
 
 import UserModule from './user'
 import PbxGroupsModule from './pbx-groups'
+import CallBlockingModule from './call-blocking'
 
 var rtcEngineClient = null;
 var rtcEngineNetwork = null;
@@ -15,7 +16,8 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     modules: {
         user: UserModule,
-        pbxGroups: PbxGroupsModule
+        pbxGroups: PbxGroupsModule,
+        callBlocking: CallBlockingModule
     },
     state: {
         rtcEngineConnected: false
