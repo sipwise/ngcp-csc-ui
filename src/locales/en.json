@@ -1,6 +1,6 @@
 {
-    "title": "Sipwise Customer Portal",
-    "login_title": "Customer Self Care Portal",
+    "title": "Customer Self-Care Portal",
+    "login_title": "Customer Self-Care Portal",
     "login_button": "Sign In",
     "login_error": "Wrong username or password",
     "username": "Username",

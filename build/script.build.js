@@ -32,6 +32,16 @@ function finalize () {
 }
 
 webpackConfig.watch = (process.env['CSC_WATCH'])? true : false;
+webpackConfig.watchOptions = {
+    ignored: [
+        'build',
+        'config',
+        'debian',
+        'dist',
+        'node_modules',
+        'templates'
+    ]
+}
 
 webpack(webpackConfig, function (err, stats) {
   if (err) throw err

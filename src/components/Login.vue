@@ -78,12 +78,32 @@
     }
 </script>
 
-<style>
+<style lang="stylus">
+    @import '../../src/themes/app.variables.styl';
     #csc-login {
-        padding-top: 15%;
+        padding-top: 12%;
     }
 
-    #csc-login .q-card-container {
+    #csc-login .q-card-title {
+        font-size: 22px;
+        color: $primary;
     }
 
+    #csc-login .q-card-primary {
+        padding:30px;
+        padding-bottom: 0;
+    }
+
+    #csc-login .q-field:first-child {
+        margin-top:0;
+    }
+
+    #csc-login .q-card-main {
+        padding:30px;
+    }
+
+    #csc-login .q-card-actions {
+        padding:15px;
+        padding-top: 0;
+    }
 </style>

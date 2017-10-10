@@ -3,6 +3,7 @@
 import _ from 'lodash';
 import { login, getCapabilities, getUserData} from '../api/user';
 
+
 export default {
     namespaced: true,
     state: {
