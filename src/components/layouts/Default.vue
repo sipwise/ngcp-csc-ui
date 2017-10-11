@@ -231,15 +231,13 @@
     }
 
     .q-card {
-        margin: 0;
+        margin:15px;
+        margin-left: 0px;
     }
 
     .q-card.page {
         padding: 15px;
-    }
-
-    .q-card.pbx-group {
-        margin-bottom: 15px;
+        margin: 0;
     }
 
     .page-action-button {
