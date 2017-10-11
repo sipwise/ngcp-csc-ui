@@ -1,4 +1,5 @@
 
+import _ from 'lodash';
 import Vue from 'vue';
 
 export function getPreferences(id) {
@@ -13,12 +14,36 @@ export function getPreferences(id) {
 
 export function setPreference(id, field, value) {
     return new Promise((resolve, reject)=>{
-        var pref = {};
-        pref[field] = value;
-        Vue.http.put('/api/subscriberpreferences/' + id, pref).then((result)=>{
+        Promise.resolve().then(()=>{
+            return getPreferences(id);
+        }).then((result)=>{
+            var prefs = _.cloneDeep(result);
+            delete prefs._links;
+            prefs[field] = value;
+            return Vue.http.put('/api/subscriberpreferences/' + id, prefs);
+        }).then(()=>{
             resolve();
         }).catch((err)=>{
-            reject(err);
+            reject();
+        });
+    });
+}
+
+export function addItemToArrayPreference(id, field, value) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return getPreferences(id);
+        }).then((result)=>{
+            var prefs = _.cloneDeep(result);
+            delete prefs._links;
+            prefs[field] = _.get(prefs, field, []);
+            // prefs[field].push(value);
+            prefs[field] = [value].concat(prefs[field]);
+            return Vue.http.put('/api/subscriberpreferences/' + id, prefs);
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject();
         });
     });
 }
@@ -33,4 +58,8 @@ export function enableBlockIn(id) {
 
 export function disableBlockIn(id) {
     return setBlockInMode(id, false);
+}
+
+export function addToBlockInList(id, number) {
+    return addItemToArrayPreference(id, 'block_in_list', number);
 }

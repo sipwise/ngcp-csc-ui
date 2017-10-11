@@ -3,7 +3,8 @@
 import _ from 'lodash';
 import { enableIncomingCallBlocking,
     disableIncomingCallBlocking,
-    getIncomingCallBlocking
+    getIncomingCallBlocking,
+    addNumberToIncomingList
 } from '../api/call-blocking';
 
 
@@ -23,6 +24,7 @@ export default {
         },
         loadIncoming(state, options) {
             state.incomingEnabled = options.enabled;
+            state.incomingList = options.list;
         }
     },
     actions: {
@@ -49,6 +51,17 @@ export default {
             return new Promise((resolve, reject)=>{
                 getIncomingCallBlocking(localStorage.getItem('subscriberId')).then((result)=>{
                     context.commit('loadIncoming', result);
+                    resolve();
+                }).catch((err)=>{
+                    reject(err);
+                });
+            });
+        },
+        addNumber(context, number) {
+            return new Promise((resolve, reject)=>{
+                addNumberToIncomingList(localStorage.getItem('subscriberId'), number).then(()=>{
+                    return context.dispatch('loadIncoming');
+                }).then(()=>{
                     resolve();
                 }).catch((err)=>{
                     reject(err);
