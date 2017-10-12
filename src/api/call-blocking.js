@@ -1,7 +1,8 @@
 
 import Vue from 'vue';
-import { enableBlockIn, disableBlockIn,
-    getPreferences, addToBlockInList, removeFromBlockInList } from './subscriber';
+import { enableBlockIn, disableBlockIn, enablePrivacy,
+    disablePrivacy, getPreferences, addToBlockInList,
+    removeFromBlockInList } from './subscriber';
 
 export function enableIncomingCallBlocking(id) {
     return enableBlockIn(id);
@@ -42,6 +43,26 @@ export function removeNumberFromIncomingList(id, index) {
     return new Promise((resolve, reject)=>{
         removeFromBlockInList(id, index).then(()=>{
             resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function enablePrivacyCallBlocking(id) {
+    return enablePrivacy(id);
+}
+
+export function disablePrivacyCallBlocking(id) {
+    return disablePrivacy(id);
+}
+
+export function getPrivacyCallBlocking(id) {
+    return new Promise((resolve, reject)=>{
+        getPreferences(id).then((result)=>{
+            resolve({
+                enabled: result.clir
+            });
         }).catch((err)=>{
             reject(err);
         });

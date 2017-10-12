@@ -5,15 +5,18 @@ import { enableIncomingCallBlocking,
     disableIncomingCallBlocking,
     getIncomingCallBlocking,
     addNumberToIncomingList,
-    removeNumberFromIncomingList
+    removeNumberFromIncomingList,
+    enablePrivacyCallBlocking,
+    disablePrivacyCallBlocking,
+    getPrivacyCallBlocking
 } from '../api/call-blocking';
-
 
 export default {
     namespaced: true,
     state: {
         incomingEnabled: false,
-        incomingList: []
+        incomingList: [],
+        privacyEnabled: false
     },
     getters: {},
     mutations: {
@@ -26,6 +29,15 @@ export default {
         loadIncoming(state, options) {
             state.incomingEnabled = options.enabled;
             state.incomingList = options.list;
+        },
+        enablePrivacy (state) {
+            state.privacyEnabled = true;
+        },
+        disablePrivacy (state) {
+            state.privacyEnabled= false;
+        },
+        loadPrivacy(state, options) {
+            state.privacyEnabled = options.enabled;
         }
     },
     actions: {
@@ -74,6 +86,35 @@ export default {
                 removeNumberFromIncomingList(localStorage.getItem('subscriberId'), index).then(()=>{
                     return context.dispatch('loadIncoming');
                 }).then(()=>{
+                    resolve();
+                }).catch((err)=>{
+                    reject(err);
+                });
+            });
+        },
+        togglePrivacy(context, enabled) {
+            return new Promise((resolve, reject)=>{
+                if(enabled) {
+                    enablePrivacyCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
+                        context.commit('enablePrivacy');
+                        resolve();
+                    }).catch((err)=>{
+                        reject(err);
+                    });
+                } else {
+                    disablePrivacyCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
+                        context.commit('disablePrivacy');
+                        resolve();
+                    }).catch((err)=>{
+                        reject(err);
+                    });
+                }
+            });
+        },
+        loadPrivacy(context) {
+            return new Promise((resolve, reject)=>{
+                getPrivacyCallBlocking(localStorage.getItem('subscriberId')).then((result)=>{
+                    context.commit('loadPrivacy', result);
                     resolve();
                 }).catch((err)=>{
                     reject(err);

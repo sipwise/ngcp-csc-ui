@@ -14,7 +14,8 @@ describe('Subscriber', function(){
         Vue.http.interceptors = [];
         Vue.http.interceptors.unshift((request, next)=>{
             next(request.respondWith(JSON.stringify({
-                block_in_mode: false
+                block_in_mode: false,
+                clir: false
             }), {
                 status: 200
             }));
@@ -22,6 +23,8 @@ describe('Subscriber', function(){
         getPreferences('123').then((result)=>{
             assert.property(result, 'block_in_mode');
             assert.isFalse(result.block_in_mode);
+            assert.property(result, 'clir');
+            assert.isFalse(result.clir);
             done();
         }).catch((err)=>{
             done(err);

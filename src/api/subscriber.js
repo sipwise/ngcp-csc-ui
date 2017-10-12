@@ -106,3 +106,15 @@ export function addToBlockInList(id, number) {
 export function removeFromBlockInList(id, index) {
     return removeItemFromArrayPreference(id, 'block_in_list', index);
 }
+
+export function setPrivacy(id, value) {
+    return setPreference(id, 'clir', value);
+}
+
+export function enablePrivacy(id) {
+    return setPrivacy(id, true);
+}
+
+export function disablePrivacy(id) {
+    return setPrivacy(id, false);
+}
