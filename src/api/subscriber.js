@@ -65,6 +65,26 @@ export function appendItemToArrayPreference(id, field, value) {
     });
 }
 
+export function removeItemFromArrayPreference(id, field, itemIndex) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return getPreferences(id);
+        }).then((result)=>{
+            var prefs = _.cloneDeep(result);
+            delete prefs._links;
+            prefs[field] = _.get(prefs, field, []);
+            _.remove(prefs[field], (value, index)=>{
+                return index === itemIndex;
+            });
+            return Vue.http.put('/api/subscriberpreferences/' + id, prefs);
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject();
+        });
+    });
+}
+
 export function setBlockInMode(id, value) {
     return setPreference(id, 'block_in_mode', value);
 }
@@ -79,4 +99,8 @@ export function disableBlockIn(id) {
 
 export function addToBlockInList(id, number) {
     return prependItemToArrayPreference(id, 'block_in_list', number);
+}
+
+export function removeFromBlockInList(id, index) {
+    return removeItemFromArrayPreference(id, 'block_in_list', index);
 }

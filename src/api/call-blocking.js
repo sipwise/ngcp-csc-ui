@@ -1,7 +1,7 @@
 
 import Vue from 'vue';
 import { enableBlockIn, disableBlockIn,
-    getPreferences, addToBlockInList } from './subscriber';
+    getPreferences, addToBlockInList, removeFromBlockInList } from './subscriber';
 
 export function enableIncomingCallBlocking(id) {
     return enableBlockIn(id);
@@ -35,5 +35,15 @@ export function addNumberToIncomingList(id, number) {
                 reject(err);
             });
         }
+    });
+}
+
+export function removeNumberFromIncomingList(id, index) {
+    return new Promise((resolve, reject)=>{
+        removeFromBlockInList(id, index).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
     });
 }

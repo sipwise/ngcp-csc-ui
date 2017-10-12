@@ -47,11 +47,11 @@
                            :label="$t('mainNavigation.callBlocking.title')"
                            :sublabel="$t('mainNavigation.callBlocking.subTitle')">
                 <q-side-link item to="/user/call-blocking/incoming">
-                    <q-item-side icon="fa-arrow-circle-o-left"/>
+                    <q-item-side icon="call received"/>
                     <q-item-main :label="$t('mainNavigation.callBlocking.incoming')"/>
                 </q-side-link>
                 <q-side-link item to="/user/call-blocking/outgoing">
-                    <q-item-side icon="fa-arrow-circle-o-right"/>
+                    <q-item-side icon="call made"/>
                     <q-item-main :label="$t('mainNavigation.callBlocking.outgoing')"/>
                 </q-side-link>
                 <q-side-link item to="/user/call-blocking/privacy">
@@ -233,6 +233,7 @@
     .q-card {
         margin:15px;
         margin-left: 0px;
+        margin-right: 0px;
     }
 
     .q-card.page {

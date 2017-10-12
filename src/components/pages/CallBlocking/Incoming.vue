@@ -1,8 +1,8 @@
 <template>
-    <page title="Incoming Calls">
+    <page title="Block incoming calls">
         <q-field id="toggle-incoming">
             <q-toggle :label="((!callBlockingEnabled)?'Enable':'Disable') + ' Call Blocking'"
-                      @input="toggleIncoming()" v-model="callBlockingEnabled"/>
+                      @input="toggle()" v-model="callBlockingEnabled"/>
         </q-field>
         <div id="add-number-form">
             <q-field v-if="!addFormEnabled">
@@ -11,25 +11,31 @@
             <div v-if="addFormEnabled">
                 <q-field :error="addFormError" error-label="Input a valid number or subscriber name">
                     <q-input type="text" float-label="Number" v-model="newNumber"
-                             clearable @keyup.enter="saveNewNumber()" />
+                             clearable @keyup.enter="saveNumber()" />
                 </q-field>
                 <q-btn @click="disableAddForm()">Cancel</q-btn>
-                <q-btn color="primary" icon-right="fa-save" @click="saveNewNumber()">Save</q-btn>
+                <q-btn color="primary" icon-right="fa-save" @click="saveNumber()">Save</q-btn>
             </div>
         </div>
-        <q-card v-for="number in numbers">
-            <q-card-main>
-                {{ number }}
-            </q-card-main>
-        </q-card>
+        <div>
+            <q-card v-for="(number, index) in numbers">
+                <q-card-title>
+                    {{ number }}
+                    <q-icon slot="right" name="fa-remove" @click="removeNumber(index)" class="cursor-pointer"></q-icon>
+                </q-card-title>
+            </q-card>
+            <q-inner-loading :visible="listLoading">
+                <q-spinner-gears size="50px" color="primary"></q-spinner-gears>
+            </q-inner-loading>
+        </div>
     </page>
 </template>
 
 <script>
-    import { startLoading, stopLoading, showGlobalError } from '../../../helpers/ui'
+    import { startLoading, stopLoading, showGlobalError, showToast } from '../../../helpers/ui'
     import Page  from '../../Page'
-    import { QInput, QCard, QBtn, QField,
-        QToggle, Toast, QList, QItem, QItemMain, QCardMain } from 'quasar-framework'
+    import { QInput, QCard, QBtn, QField, QIcon, QCardTitle, Dialog, QSpinnerGears,
+        QToggle, Toast, QList, QItem, QItemMain, QCardMain, QInnerLoading } from 'quasar-framework'
     export default {
         data () {
             return {
@@ -41,10 +47,12 @@
             }
         },
         mounted() {
+            this.listLoading = true;
             this.$store.dispatch('callBlocking/loadIncoming').then(()=>{
                 this.callBlockingEnabled = this.$store.state.callBlocking.incomingEnabled;
+                this.listLoading = false;
             }).catch((err)=>{
-                console.log(err);
+                this.listLoading = false;
             });
         },
         components: {
@@ -58,7 +66,12 @@
             QList,
             QItem,
             QItemMain,
-            QCardMain
+            QCardMain,
+            QIcon,
+            QCardTitle,
+            Dialog,
+            QInnerLoading,
+            QSpinnerGears
         },
         computed: {
             numbers: {
@@ -76,15 +89,11 @@
             disableAddForm() {
                 this.addFormEnabled = false;
             },
-            saveNewNumber() {
+            saveNumber() {
                 this.listLoading = true;
-                this.$store.dispatch('callBlocking/addNumber', this.newNumber).then(()=>{
+                this.$store.dispatch('callBlocking/addNumberToIncoming', this.newNumber).then(()=>{
                     this.disableAddForm();
-                    Toast.create({
-                        html: 'Added new number to list',
-                        color: 'white',
-                        bgColor: '#68A44E'
-                    });
+                    showToast('Added new number to list');
                     this.listLoading = false;
                 }).catch((err)=>{
                     this.listLoading = false;
@@ -92,13 +101,32 @@
                 });
 
             },
-            toggleIncoming () {
+            removeNumber(index) {
+                var store = this.$store;
+                var state = this;
+                Dialog.create({
+                    title: 'Remove number',
+                    message: 'You are about to remove the number',
+                    buttons: [
+                        'Cancel',
+                        {
+                            label: 'Remove',
+                            handler () {
+                                state.listLoading = true;
+                                store.dispatch('callBlocking/removeNumberFromIncoming', index).then(()=>{
+                                    state.listLoading = false;
+                                    showToast('Removed number from list');
+                                }).catch((err)=>{
+                                    state.listLoading = false;
+                                });
+                            }
+                        }
+                    ]
+                });
+            },
+            toggle () {
                 this.$store.dispatch('callBlocking/toggleIncoming', this.callBlockingEnabled).then(()=>{
-                    Toast.create({
-                        html: 'Call blocking for incoming calls ' + ((this.callBlockingEnabled)?'enabled':'disabled'),
-                        color: 'white',
-                        bgColor: '#68A44E'
-                    });
+                    showToast('Call blocking for incoming calls ' + ((this.callBlockingEnabled)?'enabled':'disabled'));
                 }).catch((err)=>{
                     console.log(err);
                 });

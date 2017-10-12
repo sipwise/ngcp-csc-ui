@@ -4,7 +4,8 @@ import _ from 'lodash';
 import { enableIncomingCallBlocking,
     disableIncomingCallBlocking,
     getIncomingCallBlocking,
-    addNumberToIncomingList
+    addNumberToIncomingList,
+    removeNumberFromIncomingList
 } from '../api/call-blocking';
 
 
@@ -57,9 +58,20 @@ export default {
                 });
             });
         },
-        addNumber(context, number) {
+        addNumberToIncoming(context, number) {
             return new Promise((resolve, reject)=>{
                 addNumberToIncomingList(localStorage.getItem('subscriberId'), number).then(()=>{
+                    return context.dispatch('loadIncoming');
+                }).then(()=>{
+                    resolve();
+                }).catch((err)=>{
+                    reject(err);
+                });
+            });
+        },
+        removeNumberFromIncoming(context, index) {
+            return new Promise((resolve, reject)=>{
+                removeNumberFromIncomingList(localStorage.getItem('subscriberId'), index).then(()=>{
                     return context.dispatch('loadIncoming');
                 }).then(()=>{
                     resolve();
