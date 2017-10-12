@@ -29,4 +29,12 @@ describe('CallBlockingModule', ()=>{
         assert.equal(state.incomingEnabled, true);
         assert.deepEqual(state.incomingList, list);
     });
+
+    it('should enable/disable privacy call blocking', ()=>{
+        var state = {};
+        CallBlockingModule.mutations.enablePrivacy(state);
+        assert.equal(state.privacyEnabled, true);
+        CallBlockingModule.mutations.disablePrivacy(state);
+        assert.equal(state.privacyEnabled, false);
+    });
 });
