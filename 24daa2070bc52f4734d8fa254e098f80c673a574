@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_a109702e",
+        "filename": "src/api/subscriber.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2017-10-12T10:12:07Z",
+      "side": 1,
+      "message": "Would like to hear from more about _cloneDeep vs _clone, so I can better understand the difference. Just to learn. But we can do that after tomorrow\u0027s daily.",
+      "range": {
+        "startLine": 20,
+        "startChar": 12,
+        "endLine": 20,
+        "endChar": 44
+      },
+      "revId": "24daa2070bc52f4734d8fa254e098f80c673a574",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_81046c16",
+        "filename": "src/api/subscriber.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2017-10-12T10:12:07Z",
+      "side": 1,
+      "message": "Really nice work, will be very helpful going forward. Also excited to use lodash in our codebase.",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 1
+      },
+      "revId": "24daa2070bc52f4734d8fa254e098f80c673a574",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
