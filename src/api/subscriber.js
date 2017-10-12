@@ -1,11 +1,12 @@
 
 import _ from 'lodash';
 import Vue from 'vue';
+import { getJsonBody } from './utils'
 
 export function getPreferences(id) {
     return new Promise((resolve, reject)=>{
         Vue.http.get('/api/subscriberpreferences/' + id).then((result)=>{
-            resolve(JSON.parse(result.body));
+            resolve(getJsonBody(result.body));
         }).catch((err)=>{
             reject(err);
         });
@@ -14,13 +15,14 @@ export function getPreferences(id) {
 
 export function setPreference(id, field, value) {
     return new Promise((resolve, reject)=>{
-        Promise.resolve().then(()=>{
-            return getPreferences(id);
-        }).then((result)=>{
-            var prefs = _.cloneDeep(result);
-            delete prefs._links;
-            prefs[field] = value;
-            return Vue.http.put('/api/subscriberpreferences/' + id, prefs);
+        var headers = {};
+        headers['Content-Type'] = 'application/json-patch+json';
+        Promise.resolve().then((result)=>{
+            return Vue.http.patch('/api/subscriberpreferences/' + id, [{
+                    op: 'replace',
+                    path: '/'+ field,
+                    value: value
+            }], { headers: headers });
         }).then(()=>{
             resolve();
         }).catch((err)=>{
