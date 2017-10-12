@@ -1,11 +1,12 @@
 
 import _ from 'lodash';
 import Vue from 'vue';
+import { getJsonBody } from './utils'
 
 export function getPreferences(id) {
     return new Promise((resolve, reject)=>{
         Vue.http.get('/api/subscriberpreferences/' + id).then((result)=>{
-            resolve(JSON.parse(result.body));
+            resolve(getJsonBody(result.body));
         }).catch((err)=>{
             reject(err);
         });
