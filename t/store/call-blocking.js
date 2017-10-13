@@ -3,31 +3,64 @@
 import CallBlockingModule  from '../../src/store/call-blocking';
 import { assert } from 'chai';
 
-describe('CallBlockingModule', ()=>{
+describe('CallBlocking', function(){
 
-    it('should enable/disable incoming call blocking', ()=>{
-        var state = {};
-        CallBlockingModule.mutations.enableIncoming(state);
-        assert.equal(state.incomingEnabled, true);
-        CallBlockingModule.mutations.disableIncoming(state);
-        assert.equal(state.incomingEnabled, false);
+    describe('Incoming', function(){
+
+        it('should enable list', function(){
+            var state = {};
+            CallBlockingModule.mutations.enableIncoming(state);
+            assert.equal(state.incomingEnabled, true);
+        });
+
+        it('should disable list', function(){
+            var state = {};
+            CallBlockingModule.mutations.disableIncoming(state);
+            assert.equal(state.incomingEnabled, false);
+        });
+
+        it('should load list and flag', function(){
+            var state = {};
+            var list = [
+                '0123456789',
+                '0987654321'
+            ];
+            CallBlockingModule.mutations.loadIncoming(state, {
+                enabled: true,
+                list: list
+            });
+            assert.equal(state.incomingEnabled, true);
+            assert.deepEqual(state.incomingList, list);
+        });
     });
 
-    it('should load incoming call blocking data', ()=>{
-        var state = {};
-        var list = [
-            '+4312345678',
-            '+4387654321'
-        ];
-        CallBlockingModule.mutations.loadIncoming(state, {
-            enabled: true,
-            list: [
-                '+4312345678',
-                '+4387654321'
-            ]
+    describe('Outgoing', function(){
+
+        it('should enable list', function(){
+            var state = {};
+            CallBlockingModule.mutations.enableOutgoing(state);
+            assert.equal(state.outgoingEnabled, true);
         });
-        assert.equal(state.incomingEnabled, true);
-        assert.deepEqual(state.incomingList, list);
+
+        it('should disable list', function(){
+            var state = {};
+            CallBlockingModule.mutations.disableOutgoing(state);
+            assert.equal(state.outgoingEnabled, false);
+        });
+
+        it('should load list and flag', function(){
+            var state = {};
+            var list = [
+                '0123456789',
+                '0987654321'
+            ];
+            CallBlockingModule.mutations.loadOutgoing(state, {
+                enabled: true,
+                list: list
+            });
+            assert.equal(state.outgoingEnabled, true);
+            assert.deepEqual(state.outgoingList, list);
+        });
     });
 
     it('should enable/disable privacy call blocking', ()=>{

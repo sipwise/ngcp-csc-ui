@@ -1,17 +1,16 @@
 {
     "title": "Customer Self-Care Portal",
-    "login_title": "Customer Self-Care Portal",
-    "login_button": "Sign In",
-    "login_error": "Wrong username or password",
-    "username": "Username",
-    "username_helper": "Web-Username, SIP-URI",
-    "password": "Password",
-    "password_helper": "Web-Password",
     "rtcEngineDisconnected": "You can not start a call. Service ist currently unavailable.",
     "startCall": "Start Call",
     "sendSms": "Send SMS",
     "sendFax": "Send Fax",
-    "mainNavigation": {
+    "loggedInAs": "Logged in as",
+    "buttons": {
+        "cancel": "Cancel",
+        "save": "Save",
+        "remove": "Remove"
+    },
+    "navigation": {
         "conversations":{
             "title": "Conversations",
             "subTitle": "Calls, SMS, VoiceMails"
@@ -41,5 +40,41 @@
             "devices": "Devices"
         }
     },
-    "loggedInAs": "Logged in as"
+    "pages": {
+        "login": {
+            "title": "Customer Self-Care Portal",
+            "button": "Sign In",
+            "error": "Wrong username or password",
+            "username": "Username",
+            "username_helper": "Web-Username, SIP-URI",
+            "password": "Password",
+            "password_helper": "Web-Password"
+        },
+        "callBlockingIncoming": {
+            "title": "Block incoming calls",
+            "toggleEnableLabel": "Enable call blocking list",
+            "toggleDisableLabel": "Disable call blocking list",
+            "toggleEnabledToast": "Call blocking of incoming calls enabled",
+            "toggleDisabledToast": "Call blocking of incoming calls disabled",
+            "removeDialogTitle": "Remove number",
+            "removeDialogText": "You are about to remove the number {number}",
+            "removedToast": "Removed number {number}",
+            "addedToast": "Added number {number}",
+            "addInputError": "Input a valid number or subscriber name",
+            "addNumberButton": "Add number"
+        },
+        "callBlockingOutgoing": {
+            "title": "Block outgoing calls",
+            "toggleEnableLabel": "Enable call blocking list",
+            "toggleDisableLabel": "Disable call blocking list",
+            "toggleEnabledToast": "Call blocking of outgoing calls enabled",
+            "toggleDisabledToast": "Call blocking of outgoing calls disabled",
+            "removeDialogTitle": "Remove number",
+            "removeDialogText": "You are about to remove the number {number}",
+            "removedToast": "Removed number {number}",
+            "addedToast": "Added number {number}",
+            "addInputError": "Input a valid number or subscriber name",
+            "addNumberButton": "Add number"
+        }
+    }
 }
