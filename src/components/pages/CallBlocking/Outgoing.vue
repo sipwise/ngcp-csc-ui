@@ -1,15 +1,15 @@
 <template>
-    <page title="Outgoing"></page>
+    <csc-call-blocking page-name="outgoing" />
 </template>
 
 <script>
-    import Page  from '../../Page'
+    import CscCallBlocking from './CscCallBlocking'
     export default {
         data () {
             return {}
         },
         components: {
-            Page
+            CscCallBlocking
         }
     }
 </script>
