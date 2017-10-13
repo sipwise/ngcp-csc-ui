@@ -24,39 +24,39 @@
         <q-list id="main-menu" slot="left" no-border link inset-delimiter>
             <q-side-link item to="/user/conversations">
                 <q-item-side icon="question answer"></q-item-side>
-                <q-item-main :label="$t('mainNavigation.conversations.title')"
-                             :sublabel="$t('mainNavigation.conversations.subTitle')"/>
+                <q-item-main :label="$t('navigation.conversations.title')"
+                             :sublabel="$t('navigation.conversations.subTitle')"/>
             </q-side-link>
             <q-collapsible :opened="isCallForward" intend icon="fa-angle-double-right"
-                           :label="$t('mainNavigation.callForward.title')"
-                           :sublabel="$t('mainNavigation.callForward.subTitle')">
+                           :label="$t('navigation.callForward.title')"
+                           :sublabel="$t('navigation.callForward.subTitle')">
                 <q-side-link item to="/user/call-forward/always">
                     <q-item-side icon="check circle"/>
-                    <q-item-main :label="$t('mainNavigation.callForward.always')"/>
+                    <q-item-main :label="$t('navigation.callForward.always')"/>
                 </q-side-link>
                 <q-side-link item to="/user/call-forward/company-hours">
                     <q-item-side icon="schedule"/>
-                    <q-item-main :label="$t('mainNavigation.callForward.companyHours')"/>
+                    <q-item-main :label="$t('navigation.callForward.companyHours')"/>
                 </q-side-link>
                 <q-side-link item to="/user/call-forward/after-hours">
                     <q-item-side icon="watch later"/>
-                    <q-item-main :label="$t('mainNavigation.callForward.afterHours')"/>
+                    <q-item-main :label="$t('navigation.callForward.afterHours')"/>
                 </q-side-link>
             </q-collapsible>
             <q-collapsible :opened="isCallBlocking" intend icon="fa-ban"
-                           :label="$t('mainNavigation.callBlocking.title')"
-                           :sublabel="$t('mainNavigation.callBlocking.subTitle')">
+                           :label="$t('navigation.callBlocking.title')"
+                           :sublabel="$t('navigation.callBlocking.subTitle')">
                 <q-side-link item to="/user/call-blocking/incoming">
                     <q-item-side icon="call received"/>
-                    <q-item-main :label="$t('mainNavigation.callBlocking.incoming')"/>
+                    <q-item-main :label="$t('navigation.callBlocking.incoming')"/>
                 </q-side-link>
                 <q-side-link item to="/user/call-blocking/outgoing">
                     <q-item-side icon="call made"/>
-                    <q-item-main :label="$t('mainNavigation.callBlocking.outgoing')"/>
+                    <q-item-main :label="$t('navigation.callBlocking.outgoing')"/>
                 </q-side-link>
                 <q-side-link item to="/user/call-blocking/privacy">
                     <q-item-side icon="fa-user-secret"/>
-                    <q-item-main :label="$t('mainNavigation.callBlocking.privacy')"/>
+                    <q-item-main :label="$t('navigation.callBlocking.privacy')"/>
                 </q-side-link>
             </q-collapsible>
             <q-side-link item to="/user/reminder">
@@ -66,19 +66,19 @@
                     sublabel="Set your personal alarm"/>
             </q-side-link>
             <q-collapsible v-if="isPbxAdmin" :opened="isPbxConfiguration" intend icon="fa-gear"
-                           :label="$t('mainNavigation.pbxConfiguration.title')"
-                           :sublabel="$t('mainNavigation.pbxConfiguration.subTitle')">
+                           :label="$t('navigation.pbxConfiguration.title')"
+                           :sublabel="$t('navigation.pbxConfiguration.subTitle')">
                 <q-side-link item to="/user/pbx-configuration/groups">
                     <q-item-side icon="fa-group"/>
-                    <q-item-main :label="$t('mainNavigation.pbxConfiguration.groups')"/>
+                    <q-item-main :label="$t('navigation.pbxConfiguration.groups')"/>
                 </q-side-link>
                 <q-side-link item to="/user/pbx-configuration/seats">
                     <q-item-side icon="fa-home"/>
-                    <q-item-main :label="$t('mainNavigation.pbxConfiguration.seats')"/>
+                    <q-item-main :label="$t('navigation.pbxConfiguration.seats')"/>
                 </q-side-link>
                 <q-side-link item to="/user/pbx-configuration/devices">
                     <q-item-side icon="fa-fax"/>
-                    <q-item-main :label="$t('mainNavigation.pbxConfiguration.devices')"/>
+                    <q-item-main :label="$t('navigation.pbxConfiguration.devices')"/>
                 </q-side-link>
             </q-collapsible>
         </q-list>
