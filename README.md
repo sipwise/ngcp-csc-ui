@@ -93,3 +93,7 @@ You need a pbx subscriber to be able to access the pbx config specific modules i
 Now you can log in to csc with one of the normal subscriber you just created. URL for login is the same as for accessing ngcp-panel admin, except with csc suffix and no port specified:
 
 ```https://<your-ip-address>/csc```
+
+## Contributing
+
+See our [Contributing Guide](./CONTRIBUTING.md) file) for information on how to contribute.
