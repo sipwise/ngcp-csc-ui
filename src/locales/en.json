@@ -11,11 +11,11 @@
         "remove": "Remove"
     },
     "navigation": {
-        "conversations":{
+        "conversations": {
             "title": "Conversations",
             "subTitle": "Calls, SMS, VoiceMails"
         },
-        "callForward":{
+        "callForward": {
             "title": "Call Forward",
             "subTitle": "Control your calls",
             "always": "Always",
@@ -32,7 +32,7 @@
         "reminder": {
             "title": "Reminder"
         },
-        "pbxConfiguration":{
+        "pbxConfiguration": {
             "title": "PBX Configuration",
             "subTitle": "Groups, Devices",
             "groups": "Groups",
@@ -75,6 +75,17 @@
             "addedToast": "Added number {number}",
             "addInputError": "Input a valid number or subscriber name",
             "addNumberButton": "Add number"
+        },
+        "reminder": {
+            "title": "Reminder",
+            "timeLabel": "Time of the day",
+            "recurrence": {
+                "once": "Only once",
+                "weekdays": "On weekdays",
+                "always": "Always"
+            },
+            "timeUpdatedMsg": "Time updated!",
+            "recurrenceUpdatedMsg": "Recurrence updated!"
         }
     }
 }
