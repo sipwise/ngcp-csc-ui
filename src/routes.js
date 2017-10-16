@@ -34,7 +34,7 @@ export default [
             },
             {
                 path: 'reminder',
-                component: require('./components/pages/Reminder').default},
+                component: require('./components/pages/Reminder/Reminder').default},
             {
                 path: 'pbx-configuration/groups',
                 component: require('./components/pages/PbxConfiguration/Groups').default
