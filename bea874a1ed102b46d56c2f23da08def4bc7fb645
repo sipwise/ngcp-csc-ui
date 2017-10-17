@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "dab895d6_09131e5d",
+        "filename": "package.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000032
+      },
+      "writtenOn": "2017-10-17T15:47:33Z",
+      "side": 1,
+      "message": "I removed it, as it\u0027s not used (date from Quasar used instead).",
+      "parentUuid": "dab895d6_86c71d12",
+      "revId": "bea874a1ed102b46d56c2f23da08def4bc7fb645",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab895d6_a6cc2137",
         "filename": "src/components/pages/Reminder.vue",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "dab895d6_2910e24d",
+        "filename": "src/components/pages/Reminder.vue",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000032
+      },
+      "writtenOn": "2017-10-17T15:47:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dab895d6_a6cc2137",
+      "revId": "bea874a1ed102b46d56c2f23da08def4bc7fb645",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dab895d6_c6d115cf",
         "filename": "src/routes.js",
         "patchSetId": 5
@@ -47,6 +83,24 @@
       "writtenOn": "2017-10-17T14:07:29Z",
       "side": 1,
       "message": "Why that extra level?",
+      "revId": "bea874a1ed102b46d56c2f23da08def4bc7fb645",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_491d1666",
+        "filename": "src/routes.js",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000032
+      },
+      "writtenOn": "2017-10-17T15:47:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dab895d6_c6d115cf",
       "revId": "bea874a1ed102b46d56c2f23da08def4bc7fb645",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
