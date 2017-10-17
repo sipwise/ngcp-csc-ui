@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_86c71d12",
+        "filename": "package.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2017-10-17T14:07:29Z",
+      "side": 1,
+      "message": "If you add a new package you need first to recreate the shrinkwrap file and then to force the Docker image to rebuild by changing the modified date in the Docker file.",
+      "revId": "bea874a1ed102b46d56c2f23da08def4bc7fb645",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_a6cc2137",
+        "filename": "src/components/pages/Reminder.vue",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2017-10-17T14:07:29Z",
+      "side": 1,
+      "message": "Why do you move the file in a extra directory?",
+      "revId": "bea874a1ed102b46d56c2f23da08def4bc7fb645",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_c6d115cf",
+        "filename": "src/routes.js",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2017-10-17T14:07:29Z",
+      "side": 1,
+      "message": "Why that extra level?",
+      "revId": "bea874a1ed102b46d56c2f23da08def4bc7fb645",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
