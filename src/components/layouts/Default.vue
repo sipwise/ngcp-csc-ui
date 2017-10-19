@@ -82,26 +82,28 @@
                 </q-side-link>
             </q-collapsible>
         </q-list>
-        <q-fixed-position corner="top-right" :offset="[60, 16]" class="page-action-button">
-            <q-fab color="primary" icon="question answer" active-icon="clear" direction="left" flat>
-                <q-fab-action color="primary" @click="" icon="fa-fax" flat>
-                    <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 15]">{{ $t('sendFax') }}</q-tooltip>
+        <div id="page-action-button">
+            <q-fab v-if="hasCommunicationCapabilities"
+                   color="primary" icon="question answer"
+                   active-icon="clear" direction="down" flat>
+                <q-fab-action v-if="hasFaxCapability" color="primary" @click="" icon="fa-fax">
+                    <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendFax') }}</q-tooltip>
                 </q-fab-action>
-                <q-fab-action color="primary" @click="" icon="fa-send" flat>
-                    <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 15]">{{ $t('sendSms') }}</q-tooltip>
+                <q-fab-action v-if="hasSmsCapability" color="primary" @click="" icon="fa-send">
+                    <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendSms') }}</q-tooltip>
                 </q-fab-action>
-                <q-fab-action v-bind:color="(rtcEngineConnected)?'primary':'light'" @click="startCall" icon="fa-phone" flat>
-                    <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 15]">{{ $t('startCall') }}</q-tooltip>
+                <q-fab-action v-if="isCallAvailable" color="primary" @click="" icon="fa-phone">
+                    <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('startCall') }}</q-tooltip>
                 </q-fab-action>
             </q-fab>
-        </q-fixed-position>
+        </div>
         <router-view />
     </q-layout>
 </template>
 
 <script>
     import _ from 'lodash';
-    import { startLoading, stopLoading, showGlobalError } from '../../helpers/ui'
+    import { startLoading, stopLoading, showGlobalError, showToast } from '../../helpers/ui'
     import { mapState, mapGetters } from 'vuex'
     import {
         QLayout,
@@ -127,13 +129,16 @@
         name: 'default',
         mounted: function() {
             this.$refs.layout.showLeft();
-            if(!this.$store.getters['user/hasUser']) {
+            if(!this.hasUser) {
                 startLoading();
                 this.$store.dispatch('user/initUser').then(()=>{
                     stopLoading();
+                    this.showInitialToasts();
                 }).catch(()=>{
                     this.logout();
                 });
+            } else {
+                this.showInitialToasts();
             }
         },
         components: {
@@ -157,32 +162,63 @@
             QCollapsible
         },
         computed: {
-            ...mapGetters('user', ['getUsername', 'isPbxAdmin']),
+            ...mapGetters('call', [
+                'isCallAvailable',
+                'hasCallInitFailure'
+            ]),
+            ...mapGetters('user', [
+                'hasUser',
+                'getUsername',
+                'isPbxAdmin',
+                'hasSmsCapability',
+                'hasFaxCapability'
+            ]),
             ...mapState({
-                rtcEngineConnected: state => state.rtcEngineConnected,
                 isCallForward: state => _.startsWith(state.route.path, '/user/call-forward'),
                 isCallBlocking: state => _.startsWith(state.route.path, '/user/call-blocking'),
                 isPbxConfiguration: state => _.startsWith(state.route.path, '/user/pbx-configuration')
-            })
+            }),
+            hasCommunicationCapabilities() {
+                return this.isCallAvailable || this.hasSmsCapability || this.hasFaxCapability;
+            }
         },
         methods: {
+            showInitialToasts() {
+                if(this.isCallAvailable) {
+                    showToast('You are now able to start and receive calls');
+                }
+                if(this.hasCallInitFailure) {
+                    showToast('Could not initialize call functionality properly');
+                }
+            },
             logout() {
                 startLoading();
                 this.$store.dispatch('user/logout').then(()=>{
                     stopLoading();
                     this.$router.push({path: '/login'});
                 })
-            },
-            startCall() {
-                if(!this.$store.state.rtcEngineConnected) {
-                    showGlobalError(this.$t('rtcEngineDisconnected'));
-                }
             }
         }
     }
 </script>
 
-<style>
+<style lang="stylus">
+    @import '../../../src/themes/app.variables.styl';
+    @import '../../../src/themes/quasar.variables.styl';
+
+    #page-action-button {
+        z-index: 1001;
+        position: fixed;
+        top: ($toolbar-min-height + 15)px;
+        right: 55px;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+        #page-action-button {
+            right: 25px;
+        }
+    }
+
     #main-menu {
         padding-top:60px;
     }
@@ -239,9 +275,5 @@
     .q-card.page {
         padding: 15px;
         margin: 0;
-    }
-
-    .page-action-button {
-        z-index: 1001;
     }
 </style>

@@ -28,6 +28,7 @@
 
 <style lang="stylus">
     @import '../../src/themes/app.variables.styl';
+    @import '../../src/themes/quasar.variables.styl';
     .page {
         padding: 60px;
         padding-top: 100px;
@@ -44,8 +45,28 @@
         right: 0;
         padding: 30px;
         padding-left: 60px;
+        padding-right: 60px;
         background-color: white;
         z-index: 1000;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+        .page {
+            padding: 30px;
+            padding-top: 100px;
+        }
+        .page h2 {
+            margin: 0px;
+            font-size: 22px;
+            line-height: 22px;
+        }
+
+        .page .page-title {
+            right: 0;
+            padding: 30px;
+            background-color: white;
+            z-index: 1000;
+        }
     }
 
     .page-title-icon {
