@@ -87,5 +87,9 @@
             "timeUpdatedMsg": "Time updated!",
             "recurrenceUpdatedMsg": "Recurrence updated!"
         }
+    },
+    "toasts": {
+        "callIsAvailable:": "You are now able to start and receive calls",
+        "callIsNotAvailable": "Could not initialize call functionality properly"
     }
 }

@@ -69,8 +69,7 @@ export function getCapabilities() {
 export function getNumbers() {
     return new Promise((resolve, reject)=>{
         Vue.http.get('/api/numbers').then((result)=>{
-            // Todo: Check format of numbers
-            resolve();
+            resolve(result);
         }).catch((err)=>{
             reject(err);
         });

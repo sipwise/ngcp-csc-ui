@@ -1,8 +1,7 @@
 'use strict';
 
 import _ from 'lodash';
-import { login, getCapabilities, getUserData} from '../api/user';
-
+import { login, getUserData} from '../api/user';
 
 export default {
     namespaced: true,
@@ -33,14 +32,18 @@ export default {
         },
         isPbxAdmin(state, getters) {
             return getters.isAdmin && state.capabilities !== null && state.capabilities.cloudpbx;
-        }
+        },
+        hasSmsCapability(state, getters) {
+            return state.capabilities !== null && state.capabilities.sms;
+        },
+        hasFaxCapability(state, getters) {
+            return state.capabilities !== null && state.capabilities.faxserver;
+        },
     },
     mutations: {
         login(state, options) {
             state.jwt = options.jwt;
             state.subscriberId = options.subscriberId;
-            state.subscriber = options.subscriber;
-            state.capabilities = options.capabilities;
         },
         setUserData(state, options) {
             state.subscriber = options.subscriber;
@@ -59,15 +62,13 @@ export default {
                 login(options.username, options.password).then((result)=>{
                     localStorage.setItem('jwt', result.jwt);
                     localStorage.setItem('subscriberId', result.subscriberId);
-                }).then(()=>{
-                    return getUserData(localStorage.getItem('subscriberId'));
-                }).then((result)=>{
                     context.commit('login', {
                         jwt: localStorage.getItem('jwt'),
                         subscriberId: localStorage.getItem('subscriberId'),
-                        subscriber: result.subscriber,
-                        capabilities: result.capabilities
                     });
+                }).then(()=>{
+                    return context.dispatch('initUser');
+                }).then(()=>{
                     resolve();
                 }).catch((err)=>{
                     reject(err);
@@ -78,9 +79,6 @@ export default {
             return new Promise((resolve, reject)=>{
                 localStorage.removeItem('jwt');
                 localStorage.removeItem('subscriberId');
-                context.dispatch('disconnectRtcEngine', null, {root: true}).then(()=>{
-                    context.commit('disconnectRtcEngine');
-                });
                 context.commit('logout');
                 resolve();
             });
@@ -92,6 +90,8 @@ export default {
                         subscriber: result.subscriber,
                         capabilities: result.capabilities
                     });
+                    return context.dispatch('call/initialize', null, { root: true });
+                }).then(()=>{
                     resolve();
                 }).catch((err)=>{
                     reject(err);
