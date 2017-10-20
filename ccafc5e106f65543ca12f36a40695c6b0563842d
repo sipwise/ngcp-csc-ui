@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dab895d6_1a5b5e55",
+        "filename": "package.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2017-10-20T10:51:58Z",
+      "side": 1,
+      "message": "We should discuss agreed procedure for versioning in our team. Do we just bump by 0.0.1 number per task for now?",
+      "range": {
+        "startLine": 4,
+        "startChar": 2,
+        "endLine": 4,
+        "endChar": 21
+      },
+      "revId": "ccafc5e106f65543ca12f36a40695c6b0563842d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dab895d6_9504a116",
+        "filename": "src/helpers/cdk-lib.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2017-10-20T10:51:58Z",
+      "side": 1,
+      "message": "Could these be set to const instead, or will they need to change at some point?",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 67
+      },
+      "revId": "ccafc5e106f65543ca12f36a40695c6b0563842d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
