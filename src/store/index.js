@@ -8,6 +8,7 @@ import PbxGroupsModule from './pbx-groups'
 import CallBlockingModule from './call-blocking'
 import ReminderModule from './reminder'
 import CallModule from './call'
+import ConversationsModule from './conversations'
 
 Vue.use(Vuex);
 
@@ -17,6 +18,7 @@ export const store = new Vuex.Store({
         pbxGroups: PbxGroupsModule,
         callBlocking: CallBlockingModule,
         reminder: ReminderModule,
-        call: CallModule
+        call: CallModule,
+        conversations: ConversationsModule
     }
 });
