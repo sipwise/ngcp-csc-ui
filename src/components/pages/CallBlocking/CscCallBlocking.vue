@@ -6,8 +6,8 @@
         <div id="add-number-form">
             <q-field v-if="!addFormEnabled">
                 <q-btn color="primary"
-                       icon="fa-plus"
-                       @click="enableAddForm()">{{ $t('pages.callBlocking' + suffix + '.addNumberButton') }}</q-btn>
+                   icon="fa-plus"
+                   @click="enableAddForm()">{{ $t('pages.callBlocking' + suffix + '.addNumberButton') }}</q-btn>
             </q-field>
             <div v-if="addFormEnabled">
                 <q-field :error="addFormError" :error-label="$t('pages.callBlocking' + suffix + '.addInputError')">
@@ -41,7 +41,7 @@
 <script>
     import _ from 'lodash';
     import { startLoading, stopLoading, showGlobalError, showToast } from '../../../helpers/ui'
-    import Page  from '../../Page'
+    import Page from '../../Page'
     import CscToggle from '../../form/CscToggle'
     import { QInput, QCard, QBtn, QField, QIcon, QCardTitle, Dialog, QSpinnerMat, QToggle,
         Toast, QList, QItem, QItemMain, QCardMain, QInnerLoading } from 'quasar-framework'
@@ -69,9 +69,9 @@
         },
         mounted() {
             this.listLoading = true;
-            this.$store.dispatch('callBlocking/load' + this.suffix).then(()=>{
+            this.$store.dispatch('callBlocking/load' + this.suffix).then(() => {
                 this.listLoading = false;
-            }).catch((err)=>{
+            }).catch((err) => {
                 this.listLoading = false;
             });
         },
@@ -95,10 +95,10 @@
             CscToggle
         },
         computed: {
-            numbers (){
+            numbers() {
                 return this.$store.state.callBlocking[this.pageName + 'List'];
             },
-            enabled () {
+            enabled() {
                 return this.$store.state.callBlocking[this.pageName + 'Enabled'];
             },
             toggleButtonLabel() {
@@ -115,7 +115,7 @@
                     return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleDisabledToast');
                 }
             },
-            suffix () {
+            suffix() {
                 return _.upperFirst(this.pageName);
             }
         },
@@ -192,7 +192,7 @@
                     ]
                 });
             },
-            toggle (enabled) {
+            toggle(enabled) {
                 this.$store.dispatch('callBlocking/toggle' + this.suffix, enabled).then(()=>{
                     showToast(this.toggleToastMessage);
                 }).catch((err)=>{
@@ -205,15 +205,15 @@
 
 <style>
     #toggle-call-blocking {
-        margin-bottom:60px;
+        margin-bottom: 60px;
     }
     #add-number-form {
-        margin-bottom:15px;
+        margin-bottom: 15px;
     }
     .blocked-number .q-card-title-extra .q-icon {
         margin-left: 10px;
     }
     .blocked-number .q-input {
-        margin:0;
+        margin: 0;
     }
 </style>
