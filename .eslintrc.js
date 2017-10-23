@@ -5,11 +5,12 @@ module.exports = {
     sourceType: 'module'
   },
   env: {
-    browser: true
+    browser: true,
+    { "es6": true }
   },
   // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
   extends: [
-    'standard'
+    'eslint:recommended'
   ],
   // required to lint *.vue files
   plugins: [
@@ -34,6 +35,7 @@ module.exports = {
     'import/export': 2,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-    'brace-style': [2, 'stroustrup', { 'allowSingleLine': true }]
+    'brace-style': [2, 'stroustrup', { 'allowSingleLine': true }],
+    "no-console": 0
   }
 }

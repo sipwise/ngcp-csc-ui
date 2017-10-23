@@ -11,6 +11,7 @@ require(`./themes/app.${__THEME}.styl`)
 // require(`quasar/dist/quasar.ie.${__THEME}.css`)
 
 import _ from 'lodash'
+import moment from 'moment'
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import Quasar from 'quasar-framework'
