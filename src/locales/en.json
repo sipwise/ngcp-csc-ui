@@ -76,6 +76,9 @@
             "addInputError": "Input a valid number or subscriber name",
             "addNumberButton": "Add number"
         },
+        "conversations": {
+            "title": "Conversations"
+        },
         "reminder": {
             "title": "Reminder",
             "timeLabel": "Time of the day",
