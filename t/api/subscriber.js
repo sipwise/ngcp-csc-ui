@@ -1,3 +1,4 @@
+
 'use strict';
 
 import Vue from 'vue';
@@ -7,8 +8,9 @@ import { assert } from 'chai';
 
 Vue.use(VueResource);
 
-
 describe('Subscriber', function(){
+
+    const subscriberId = 123;
 
     it('should get all subscriber preferences', function(done) {
         Vue.http.interceptors = [];
@@ -20,7 +22,7 @@ describe('Subscriber', function(){
                 status: 200
             }));
         });
-        getPreferences('123').then((result)=>{
+        getPreferences(subscriberId).then((result)=>{
             assert.property(result, 'block_in_mode');
             assert.isFalse(result.block_in_mode);
             assert.property(result, 'clir');
@@ -40,7 +42,7 @@ describe('Subscriber', function(){
                 status: 403
             }));
         });
-        getPreferences('123').then(()=>{
+        getPreferences(subscriberId).then(()=>{
             done(new Error('Test failed'));
         }).catch((err)=>{
             assert.equal(err.status, 403);
