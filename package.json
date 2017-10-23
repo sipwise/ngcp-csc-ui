@@ -19,6 +19,7 @@
     "core-js": "^2.5.1",
     "html-entities": "^1.2.1",
     "lodash": "^4.17.4",
+    "moment": "^2.19.1",
     "quasar-extras": "0.x",
     "quasar-framework": "0.14.4",
     "strip-ansi": "^4.0.0",
