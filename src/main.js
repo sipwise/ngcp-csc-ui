@@ -19,6 +19,7 @@ import { i18n, locales } from './i18n'
 import router from './router'
 import { sync } from 'vuex-router-sync'
 import { RtcEngineCall } from './plugins/call'
+import filter from './filters'
 
 Vue.use(VueResource);
 
@@ -31,7 +32,6 @@ if (__THEME === 'mat') {
     require('quasar-extras/roboto-font')
 }
 import 'quasar-extras/material-icons'
-// import 'quasar-extras/ionicons'
 import 'quasar-extras/fontawesome'
 import 'quasar-extras/animate'
 
