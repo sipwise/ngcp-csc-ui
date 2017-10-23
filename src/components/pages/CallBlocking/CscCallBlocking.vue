@@ -5,9 +5,9 @@
         </q-field>
         <div id="add-number-form">
             <q-field v-if="!addFormEnabled">
-                <q-btn flat color="primary"
-                       icon="fa-plus"
-                       @click="enableAddForm()">{{ $t('pages.callBlocking' + suffix + '.addNumberButton') }}</q-btn>
+                <q-btn color="primary"
+                   icon="fa-plus"
+                   @click="enableAddForm()">{{ $t('pages.callBlocking' + suffix + '.addNumberButton') }}</q-btn>
             </q-field>
             <div v-if="addFormEnabled">
                 <q-field :error="addFormError" :error-label="$t('pages.callBlocking' + suffix + '.addInputError')">
@@ -71,9 +71,9 @@
         },
         mounted() {
             this.listLoading = true;
-            this.$store.dispatch('callBlocking/load' + this.suffix).then(()=>{
+            this.$store.dispatch('callBlocking/load' + this.suffix).then(() => {
                 this.listLoading = false;
-            }).catch((err)=>{
+            }).catch((err) => {
                 this.listLoading = false;
             });
         },
@@ -98,10 +98,10 @@
             CscPage
         },
         computed: {
-            numbers (){
+            numbers() {
                 return this.$store.state.callBlocking[this.pageName + 'List'];
             },
-            enabled () {
+            enabled() {
                 return this.$store.state.callBlocking[this.pageName + 'Enabled'];
             },
             toggleButtonLabel() {
@@ -118,7 +118,7 @@
                     return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleDisabledToast');
                 }
             },
-            suffix () {
+            suffix() {
                 return _.upperFirst(this.pageName);
             }
         },
@@ -195,7 +195,7 @@
                     ]
                 });
             },
-            toggle (enabled) {
+            toggle(enabled) {
                 this.$store.dispatch('callBlocking/toggle' + this.suffix, enabled).then(()=>{
                     showToast(this.toggleToastMessage);
                 }).catch((err)=>{
@@ -208,12 +208,12 @@
 
 <style>
     #toggle-call-blocking {
-        margin-bottom:60px;
+        margin-bottom: 60px;
     }
     #add-number-form {
-        margin-bottom:15px;
+        margin-bottom: 15px;
     }
     .blocked-number .q-input {
-        margin:0;
+        margin: 0;
     }
 </style>
