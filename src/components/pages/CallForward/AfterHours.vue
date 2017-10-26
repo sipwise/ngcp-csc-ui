@@ -1,15 +1,15 @@
 <template>
-    <page title="After Hours"></page>
+    <csc-page title="After Hours"></csc-page>
 </template>
 
 <script>
-    import Page  from '../../Page'
+    import CscPage  from '../../CscPage'
     export default {
         data () {
             return {}
         },
         components: {
-            Page
+            CscPage
         }
     }
 </script>

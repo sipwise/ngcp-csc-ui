@@ -18,13 +18,14 @@ import { store } from './store'
 import { i18n, locales } from './i18n'
 import router from './router'
 import { sync } from 'vuex-router-sync'
-import filters from './filters'
+import { RtcEngineCall } from './plugins/call'
 
 Vue.use(VueResource);
 
 Vue.config.productionTip = false;
 Vue.use(Quasar); // Install Quasar Framework
 
+Vue.use(RtcEngineCall);
 
 if (__THEME === 'mat') {
     require('quasar-extras/roboto-font')
