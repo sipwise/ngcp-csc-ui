@@ -90,9 +90,11 @@ export default {
                         subscriber: result.subscriber,
                         capabilities: result.capabilities
                     });
-                    return context.dispatch('call/initialize', null, { root: true });
-                }).then(()=>{
-                    resolve();
+                    context.dispatch('call/initialize', null, { root: true }).then(()=>{
+                        resolve();
+                    }).catch((err)=>{
+                        resolve();
+                    });
                 }).catch((err)=>{
                     reject(err);
                 });

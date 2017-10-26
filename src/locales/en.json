@@ -10,6 +10,10 @@
         "save": "Save",
         "remove": "Remove"
     },
+    "toasts": {
+        "callAvailable": "You are now able to start and receive calls",
+        "callNotAvailable": "Could not initialize call functionality properly"
+    },
     "navigation": {
         "conversations": {
             "title": "Conversations",
@@ -87,9 +91,5 @@
             "timeUpdatedMsg": "Time updated!",
             "recurrenceUpdatedMsg": "Recurrence updated!"
         }
-    },
-    "toasts": {
-        "callIsAvailable:": "You are now able to start and receive calls",
-        "callIsNotAvailable": "Could not initialize call functionality properly"
     }
 }

@@ -94,6 +94,35 @@ Now you can log in to csc with one of the normal subscriber you just created. UR
 
 ```https://<your-ip-address>/csc```
 
+### How to add new npm package
+
+1. Ensure that you have a clean node_modules folder
+    
+    ```
+    rm -R node_modules/
+    npm install
+    ```
+
+1. Remove obsolete shrinkwrap file
+    
+    ```rm npm-shrinkwrap.json```    
+    
+1. Install new package(s)    
+    
+    ```npm install packageA packageB --save-dev```
+
+1. Generate new shrinkwrap file including all dependencies
+
+    ```npm shrinkwrap --dev```
+    
+    You should see the following result in console:
+    
+    ```wrote npm-shrinkwrap.json```
+    
+1. Add new shrinkwrap file to git
+
+    ```git add .```
+
 ## Contributing
 
 See our [Contributing Guide](./CONTRIBUTING.md) file) for information on how to contribute.
