@@ -4,6 +4,21 @@ import { loadCdkLib, connectDefaultCdkNetwork } from '../helpers/cdk-lib';
 import { createSessionToken } from '../api/rtcsession';
 
 var cdkNetwork = null;
+var cdkCall = null;
+
+export var CallState = {
+    input: 'input',
+    calling: 'calling',
+    ringing: 'ringing',
+    incoming: 'incoming',
+    established: 'established',
+    ended: 'ended'
+};
+
+export var MediaType = {
+    audio: 'audio',
+    audioVideo: 'audioVideo'
+};
 
 export default {
     namespaced: true,
@@ -12,10 +27,10 @@ export default {
         initFailure: false,
         connected: false,
         disconnectReason: '',
-        incoming: false,
-        incomingNumber: '',
-        outgoing: false,
-        outgoingNumber: ''
+        number: '',
+        mediaType: '',
+        state: CallState.input,
+        remoteStream: '',
     },
     getters: {
         isCallAvailable(state, getters) {
@@ -40,10 +55,25 @@ export default {
             state.disconnectReason = reason;
         },
         incoming(state) {
+            state.callState = CallState.incoming;
+        },
+        call(state) {
+            state.callState = CallState.calling;
+        },
+        callFails(state, reason) {
 
         },
-        outgoing(state) {
+        ring(state) {
+            state.callState = CallState.ringing;
+        },
+        remoteMedia(state) {
 
+        },
+        establish(state) {
+            state.callState = CallState.established;
+        },
+        end(state) {
+            state.callState = CallState.ended;
         }
     },
     actions: {
@@ -74,8 +104,34 @@ export default {
                 }
             });
         },
-        call(context) {
+        call(context, options) {
+            if(cdkNetwork !== null) {
+                cdkCall = cdkNetwork.call(options.number, options);
+                cdkCall
+                    .onAccepted(()=>{
 
+                    })
+                    .onEnded(()=>{
+
+                    })
+                    .onPending(()=>{
+                        context.commit('call');
+                    })
+                    .onRemoteMedia(()=>{
+                        context.commit('')
+                    })
+                    .onRemoteMediaEnded(()=>{
+
+                    })
+                    .onRingingStart(()=>{
+                        context.commit('ring');
+                    })
+                    .onRingingStop(()=>{
+
+                    });
+            } else {
+                context.commit('callFails');
+            }
         },
         connect(context, sessionToken) {
         },

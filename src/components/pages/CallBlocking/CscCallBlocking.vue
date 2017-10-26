@@ -1,5 +1,5 @@
 <template>
-    <page :title="$t('pages.callBlocking' + suffix + '.title')">
+    <csc-page :title="$t('pages.callBlocking' + suffix + '.title')">
         <q-field id="toggle-call-blocking">
             <csc-toggle :label="toggleButtonLabel" @change="toggle" :enabled="enabled"/>
         </q-field>
@@ -35,13 +35,13 @@
                 <q-spinner-mat size="50px" color="primary"></q-spinner-mat>
             </q-inner-loading>
         </div>
-    </page>
+    </csc-page>
 </template>
 
 <script>
     import _ from 'lodash';
     import { startLoading, stopLoading, showGlobalError, showToast } from '../../../helpers/ui'
-    import Page  from '../../Page'
+    import CscPage  from '../../CscPage'
     import CscToggle from '../../form/CscToggle'
     import { QInput, QCard, QBtn, QField, QIcon, QCardTitle, Dialog, QSpinnerMat, QToggle,
         Toast, QList, QItem, QItemMain, QCardMain, QInnerLoading } from 'quasar-framework'
@@ -76,7 +76,6 @@
             });
         },
         components: {
-            Page,
             QToggle,
             Toast,
             QField,
@@ -92,7 +91,8 @@
             Dialog,
             QInnerLoading,
             QSpinnerMat,
-            CscToggle
+            CscToggle,
+            CscPage
         },
         computed: {
             numbers (){

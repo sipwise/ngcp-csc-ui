@@ -39,6 +39,7 @@ webpackConfig.watchOptions = {
         'debian',
         'dist',
         'node_modules',
+        't',
         'templates'
     ]
 }
