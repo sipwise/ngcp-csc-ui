@@ -8,7 +8,12 @@
     "buttons": {
         "cancel": "Cancel",
         "save": "Save",
-        "remove": "Remove"
+        "remove": "Remove",
+        "edit": "Edit"
+    },
+    "toasts": {
+        "callAvailable": "You are now able to start and receive calls",
+        "callNotAvailable": "Could not initialize call functionality properly"
     },
     "navigation": {
         "conversations": {
@@ -88,8 +93,13 @@
             "recurrenceUpdatedMsg": "Recurrence updated!"
         }
     },
-    "toasts": {
-        "callIsAvailable:": "You are now able to start and receive calls",
-        "callIsNotAvailable": "Could not initialize call functionality properly"
+    "call": {
+        "startNew": "Start new call",
+        "initiating": "Call Initiating ...",
+        "ringing": "Call Ringing ...",
+        "ended": "Call ended",
+        "call": "Call",
+        "inputNumber": "Input a phone number",
+        "inputValidNumber": "Input a valid phone number"
     }
 }

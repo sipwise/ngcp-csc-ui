@@ -1,15 +1,15 @@
 <template>
-    <page title="Always"></page>
+    <csc-page title="Always"></csc-page>
 </template>
 
 <script>
-    import Page  from '../../Page'
+    import CscPage  from '../../CscPage'
     export default {
         data () {
             return {}
         },
         components: {
-            Page
+            CscPage
         }
     }
 </script>

@@ -1,19 +1,19 @@
 <template>
-<page :title="$t('pages.reminder.title')">
-    <q-field class="reminder-field">
-        <q-toggle :label="$t('pages.reminder.title') + (active ? ' enabled':' disabled')" @input="toggleReminder()" v-model="active" />
-    </q-field>
-    <q-field class="reminder-field">
-        <q-datetime type="time" :disable="!active" no-clear=true v-model="timeConverted" :placeholder="$t('reminder.timeLabel')" @change="changeTime()" />
-    </q-field>
-    <q-field class="reminder-field">
-        <q-option-group :disable="!active" color="positive" type="radio" v-model="recurrence" @change="changeRecurrence()" :options="[
-      { label: $t('pages.reminder.recurrence.once'), value: 'never' },
-      { label: $t('pages.reminder.recurrence.weekdays'), value: 'weekdays' },
-      { label: $t('pages.reminder.recurrence.always'), value: 'always' }
-    ]" />
-    </q-field>
-</page>
+    <csc-page :title="$t('pages.reminder.title')">
+        <q-field class="reminder-field">
+            <q-toggle :label="$t('pages.reminder.title') + (active ? ' enabled':' disabled')" @input="toggleReminder()" v-model="active" />
+        </q-field>
+        <q-field class="reminder-field">
+            <q-datetime type="time" :disable="!active" no-clear=true v-model="timeConverted" :placeholder="$t('reminder.timeLabel')" @change="changeTime()" />
+        </q-field>
+        <q-field class="reminder-field">
+            <q-option-group :disable="!active" color="positive" type="radio" v-model="recurrence" @change="changeRecurrence()" :options="[
+          { label: $t('pages.reminder.recurrence.once'), value: 'never' },
+          { label: $t('pages.reminder.recurrence.weekdays'), value: 'weekdays' },
+          { label: $t('pages.reminder.recurrence.always'), value: 'always' }
+        ]" />
+        </q-field>
+    </csc-page>
 </template>
 
 <script>
@@ -22,7 +22,7 @@ import {
     stopLoading,
     showGlobalError
 } from '../../helpers/ui'
-import Page from '../Page'
+import CscPage from '../CscPage'
 import {
     QField,
     QToggle,
@@ -49,7 +49,7 @@ export default {
         });
     },
     components: {
-        Page,
+        CscPage,
         QToggle,
         Toast,
         QDatetime,

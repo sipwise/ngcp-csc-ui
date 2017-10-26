@@ -1,15 +1,15 @@
 <template>
-    <page title="Seats"></page>
+    <csc-page title="Seats"></csc-page>
 </template>
 
 <script>
-    import Page  from '../../Page'
+    import CscPage  from '../../CscPage'
     export default {
         data () {
             return {}
         },
         components: {
-            Page
+            CscPage
         }
     }
 </script>
