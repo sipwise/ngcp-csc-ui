@@ -1,13 +1,13 @@
 <template>
-    <page title="Privacy">
+    <csc-page title="Privacy">
         <q-toggle :label="(!callBlockingEnabled ? 'Hide' : 'Show') + ' Own Number'"
                 @input="toggle()" v-model="callBlockingEnabled"/>
-    </page>
+    </csc-page>
 </template>
 
 <script>
     import { showToast } from '../../../helpers/ui'
-    import Page  from '../../Page'
+    import CscPage  from '../../CscPage'
     import { QField, QToggle, Toast } from 'quasar-framework'
     export default {
         data () {
@@ -23,7 +23,7 @@
             });
         },
         components: {
-            Page,
+            CscPage,
             QToggle,
             Toast,
             QField

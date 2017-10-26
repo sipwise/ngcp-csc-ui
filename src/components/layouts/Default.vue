@@ -1,5 +1,5 @@
 <template>
-    <q-layout ref="layout" view="lHr LpR lFr" :right-breakpoint="1100">
+    <q-layout ref="layout" view="lHh LpR lFf" :right-breakpoint="1100">
         <q-toolbar slot="header">
             <q-btn flat @click="$refs.layout.toggleLeft()">
                 <q-icon name="menu"/>
@@ -82,8 +82,9 @@
                 </q-side-link>
             </q-collapsible>
         </q-list>
-        <div id="page-action-button">
-            <q-fab v-if="hasCommunicationCapabilities"
+        <router-view />
+        <q-fixed-position corner="top-right" :offset="[20, 20]" class="page-button transition-generic">
+            <q-fab v-if=""
                    color="primary" icon="question answer"
                    active-icon="clear" direction="down" flat>
                 <q-fab-action v-if="hasFaxCapability" color="primary" @click="" icon="fa-fax">
@@ -92,12 +93,12 @@
                 <q-fab-action v-if="hasSmsCapability" color="primary" @click="" icon="fa-send">
                     <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendSms') }}</q-tooltip>
                 </q-fab-action>
-                <q-fab-action v-if="isCallAvailable" color="primary" @click="" icon="fa-phone">
+                <q-fab-action v-if="isCallAvailable" color="primary" @click="call()" icon="fa-phone">
                     <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('startCall') }}</q-tooltip>
                 </q-fab-action>
             </q-fab>
-        </div>
-        <router-view />
+        </q-fixed-position>
+        <csc-call ref="cscCall" slot="right" @close="$refs.layout.hideRight()" region="DE" />
     </q-layout>
 </template>
 
@@ -105,6 +106,7 @@
     import _ from 'lodash';
     import { startLoading, stopLoading, showGlobalError, showToast } from '../../helpers/ui'
     import { mapState, mapGetters } from 'vuex'
+    import CscCall from '../CscCall'
     import {
         QLayout,
         QToolbar,
@@ -123,12 +125,13 @@
         QTooltip,
         QSideLink,
         QTransition,
-        QCollapsible
-    } from 'quasar'
+        QCollapsible,
+    } from 'quasar-framework'
     export default {
         name: 'default',
         mounted: function() {
             this.$refs.layout.showLeft();
+            this.$refs.layout.hideRight();
             if(!this.hasUser) {
                 startLoading();
                 this.$store.dispatch('user/initUser').then(()=>{
@@ -159,7 +162,8 @@
             QTooltip,
             QSideLink,
             QTransition,
-            QCollapsible
+            QCollapsible,
+            CscCall
         },
         computed: {
             ...mapGetters('call', [
@@ -185,11 +189,16 @@
         methods: {
             showInitialToasts() {
                 if(this.isCallAvailable) {
-                    showToast(this.$i18n.t('toasts.callIsAvailable'));
+                    showToast(this.$i18n.t('toasts.callAvailable'));
+
                 }
                 if(this.hasCallInitFailure) {
-                    showToast(this.$i18n.t('toasts.callIsNotAvailable'));
+                    showToast(this.$i18n.t('toasts.callNotAvailable'));
                 }
+            },
+            call() {
+                this.$refs.layout.showRight();
+                this.$refs.cscCall.init();
             },
             logout() {
                 startLoading();
@@ -205,19 +214,6 @@
 <style lang="stylus">
     @import '../../../src/themes/app.variables.styl';
     @import '../../../src/themes/quasar.variables.styl';
-
-    #page-action-button {
-        z-index: 1001;
-        position: fixed;
-        top: ($toolbar-min-height + 15)px;
-        right: 55px;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-        #page-action-button {
-            right: 25px;
-        }
-    }
 
     #main-menu {
         padding-top:60px;

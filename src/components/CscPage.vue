@@ -10,9 +10,9 @@
 </template>
 
 <script>
-    import { QIcon, QFixedPosition } from 'quasar-framework'
+    import { QIcon, QFixedPosition, QFab, QFabAction, QTooltip } from 'quasar-framework'
     export default {
-        name: 'page',
+        name: 'csc-page',
         props: [
             'title'
         ],
@@ -21,7 +21,10 @@
         },
         components: {
             QIcon,
-            QFixedPosition
+            QFixedPosition,
+            QFab,
+            QFabAction,
+            QTooltip
         }
     }
 </script>
@@ -30,6 +33,7 @@
     @import '../../src/themes/app.variables.styl';
     @import '../../src/themes/quasar.variables.styl';
     .page {
+        position: relative;
         padding: 60px;
         padding-top: 100px;
     }
@@ -42,12 +46,16 @@
     }
 
     .page .page-title {
-        right: 0;
         padding: 30px;
         padding-left: 60px;
         padding-right: 60px;
         background-color: white;
         z-index: 1000;
+    }
+
+    .page .page-button {
+        padding-top: 20px;
+        padding-right: 60px;
     }
 
     @media (max-width: $breakpoint-sm) {
@@ -62,7 +70,6 @@
         }
 
         .page .page-title {
-            right: 0;
             padding: 30px;
             background-color: white;
             z-index: 1000;

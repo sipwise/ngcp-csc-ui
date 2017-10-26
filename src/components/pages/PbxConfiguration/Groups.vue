@@ -1,17 +1,17 @@
 <template>
-    <page title="PBX Groups"></page>
+    <csc-page title="PBX Groups"></csc-page>
 </template>
 
 <script>
 
-    import Page  from '../../Page'
+    import CscPage  from '../../CscPage'
     import { QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
         QIcon, QPopover, QList, QItem, QItemMain } from 'quasar-framework'
     import { mapState } from 'vuex'
 
     export default {
         components: {
-            Page,
+            CscPage,
             QChip,
             QCard,
             QCardSeparator,
