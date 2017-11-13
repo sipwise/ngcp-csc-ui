@@ -7,6 +7,8 @@ import { getConversations } from '../api/conversations';
 export default {
     namespaced: true,
     state: {
+        page: 1,
+        rows: 10,
         conversations: [
         ]
     },
@@ -21,13 +23,14 @@ export default {
                 };
                 list.push(item);
             })
-            state.conversations = list;
+            state.conversations = state.conversations.concat(list);
+            state.page++;
         }
     },
     actions: {
         loadConversations(context) {
             return new Promise((resolve, reject)=>{
-                getConversations(localStorage.getItem('subscriberId'))
+                getConversations(localStorage.getItem('subscriberId'), context.state.page, context.state.rows)
                     .then((result)=>{
                         context.commit('loadConversations', result);
                         resolve();
