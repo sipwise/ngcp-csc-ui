@@ -1,39 +1,35 @@
 <template>
     <csc-page :title="$t('pages.conversations.title')">
-        <q-card v-for="conversation in conversations" :key="conversation.caller"
-            class="conversation-card">
-            <csc-collapsible :icon="getCollapsibleIcons(conversation)"
-                :label="getCollapsibleLabel(conversation)"
-                :sublabel="conversation.start_time | readableDate">
-            </csc-collapsible>
-            <div v-if="hasCallOption(conversation.type)">
-                <q-card-separator />
-                <q-card-actions align="center">
-                    <q-btn flat round small color="primary" icon="call">{{ $t('pages.conversations.buttons.call') }}</q-btn>
-                </q-card-actions>
-            </div>
-        </q-card>
+        <q-infinite-scroll :handler="loadMore" :offset=1 ref="infinite">
+            <q-card v-for="conversation in conversations" :key="conversation.caller"
+                class="conversation-card">
+                <csc-collapsible :icon="getCollapsibleIcons(conversation)"
+                    :label="getCollapsibleLabel(conversation)"
+                    :sublabel="conversation.start_time | readableDate">
+                </csc-collapsible>
+                <div v-if="hasCallOption(conversation.type)">
+                    <q-card-separator />
+                    <q-card-actions align="center">
+                        <q-btn flat round small color="primary" icon="call">{{ $t('pages.conversations.buttons.call') }}</q-btn>
+                    </q-card-actions>
+                </div>
+            </q-card>
+            <q-spinner-dots slot="message" :size="40"></q-spinner-dots>
+        </q-infinite-scroll>
     </csc-page>
 </template>
 
 <script>
+    // TODO: 1. Improve spinner (alignment, styling, etc)
+    // TODO: 2. Check for formatting, cleanup, etc
     import CscPage from '../CscPage'
     import CscCollapsible from '../card/CscCollapsible'
     import { QBtn, QCardActions, QCard,
-        QCardSeparator } from 'quasar-framework'
+        QCardSeparator, QInfiniteScroll, QSpinnerDots } from 'quasar-framework'
     export default {
         data () {
             return {
-                conversations: []
             }
-        },
-        mounted() {
-            this.$store.dispatch('conversations/loadConversations').then(() => {
-                this.conversations = this.$store.state.conversations.
-                    conversations;
-            }).catch((err) => {
-                console.log(err);
-            });
         },
         components: {
             CscPage,
@@ -41,9 +37,24 @@
             QCard,
             QCardActions,
             QCardSeparator,
-            CscCollapsible
+            CscCollapsible,
+            QInfiniteScroll,
+            QSpinnerDots
+        },
+        computed: {
+            conversations() {
+                return this.$store.state.conversations.conversations;
+            }
         },
         methods: {
+            loadMore(index, done) {
+                this.$store.dispatch('conversations/loadConversations').then(() => {
+                    done();
+                }).catch((err) => {
+                    done();
+                    this.$refs.infinite.stop();
+                });
+            },
             hasCallOption(type) {
                 return (['call', 'call forward', 'sms', 'voicemail']
                     .indexOf(type) > -1);
