@@ -39,6 +39,7 @@
     import CscCollapsible from '../card/CscCollapsible'
     import { QBtn, QCardActions, QCard, QCardSeparator, QInfiniteScroll,
         QPopover, QList, QItem, QSpinnerDots } from 'quasar-framework'
+    import numberFormat from '../../filters/number-format'
     export default {
         data () {
             return {
@@ -110,7 +111,7 @@
                 let direction = item.direction == 'in' ?
                     this.$t('pages.conversations.labels.from') :
                     this.$t('pages.conversations.labels.to');
-                return `${prefix} ${item.type} ${direction} ${item.caller}`;
+                return `${prefix} ${item.type} ${direction} ${numberFormat(item.caller)}`;
             }
         }
     }

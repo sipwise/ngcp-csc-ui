@@ -1,4 +1,5 @@
 
+import EventEmitter from 'events';
 import _ from 'lodash';
 import { loadCdkLib, connectDefaultCdkNetwork } from '../helpers/cdk-lib';
 import { createSessionToken } from '../api/rtcsession';
@@ -11,13 +12,28 @@ export const LocalMedia = {
     screenOnly: 'screenOnly'
 };
 
-export class NetworkNotConnected extends Error {
+export class NetworkNotConnected {
 
     constructor(network) {
-        super();
-        this.name = this.constructor.name;
+        this.name = "NetworkNotConnected";
         this.message = 'Network ' + network + ' is not connected';
         this.network = network;
+    }
+}
+
+export class CallNotFound {
+
+    constructor() {
+        this.name = "CallNotFound";
+        this.message = 'Call not found';
+    }
+}
+
+export class CallAlreadyExists {
+
+    constructor() {
+        this.name = "CallAlreadyExists";
+        this.message = 'Call already exists';
     }
 }
 
@@ -28,9 +44,13 @@ export class RtcEngineCall {
         this.networkTag = 'sip';
         this.client = null;
         this.network = null;
-        this.currentCall = null;
         this.loadedLibrary = null;
         this.sessionToken = null;
+        this.localCall = null;
+        this.localMedia = null;
+        this.remoteCall = null;
+        this.remoteMedia = null;
+        this.events = new EventEmitter();
     }
 
     initialize() {
@@ -45,6 +65,19 @@ export class RtcEngineCall {
                 return this.connectNetwork($sessionToken);
             }).then(($network)=>{
                 this.network = $network;
+                this.network.onIncomingCall((remoteCall)=>{
+                    if(this.network !== null && this.remoteCall === null) {
+                        this.remoteCall = remoteCall;
+                        this.remoteCall.onEnded(()=>{
+                            this.events.emit('ended', this.remoteCall.endedReason);
+                        }).onRemoteMedia((remoteMediaStream)=>{
+                            this.events.emit('remoteMedia', remoteMediaStream);
+                        }).onRemoteMediaEnded(()=>{
+                            this.events.emit('remoteMediaEnded');
+                        });
+                    }
+                    this.events.emit('incoming');
+                });
                 resolve();
             }).catch((err)=>{
                 reject(err);
@@ -57,7 +90,7 @@ export class RtcEngineCall {
     }
 
     hasRunningCall() {
-        return this.currentCall !== null;
+        return this.localCall !== null || this.remoteCall !== null;
     }
 
     loadLibrary() {
@@ -93,11 +126,11 @@ export class RtcEngineCall {
                     localMediaStream.setVideo(sources.desktopSharing);
                 }
             });
-
             localMediaStream.build((err)=>{
                 if(_.isObject(err)) {
                     reject(err);
                 } else {
+                    this.localMedia = localMediaStream;
                     resolve(localMediaStream);
                 }
             });
@@ -105,39 +138,111 @@ export class RtcEngineCall {
     }
 
     start(peer, localMediaStream) {
-        peer = peer.replace('+', '');
-        if(this.network !== null) {
-            this.currentCall = this.network.call(peer, { localMediaStream: localMediaStream });
-            return this.currentCall;
+        if(this.network !== null && this.localCall === null) {
+            peer = peer.replace(/(\s|\+)/,'');
+            this.localCall = this.network.call(peer, {
+                localMediaStream: localMediaStream
+            });
+            this.localCall.onEnded(()=>{
+                this.events.emit('ended', this.localCall.endedReason);
+                this.end();
+            }).onPending(()=>{
+                this.events.emit('pending');
+            }).onRemoteMedia((remoteMediaStream)=>{
+                this.events.emit('remoteMedia', remoteMediaStream);
+            }).onRemoteMediaEnded(()=>{
+                this.events.emit('remoteMediaEnded');
+            }).onRingingStart(()=>{
+                this.events.emit('ringingStart');
+            }).onRingingStop(()=>{
+                this.events.emit('ringingStop');
+            });
+        } else if(this.network !== null)  {
+            throw new CallAlreadyExists();
         } else {
             throw new NetworkNotConnected(this.networkTag);
+        }
+    }
+
+    getNumber() {
+        if(this.localCall !== null) {
+            return this.localCall.peer;
+        } else if(this.remoteCall !== null) {
+            return this.remoteCall.peer;
+        } else {
+            return null;
+        }
+    }
+
+    getEndedReason() {
+        if(this.localCall !== null) {
+            return this.localCall.endedReason;
+        } else if(this.remoteCall !== null) {
+            return this.remoteCall.endedReason;
+        } else {
+            return null;
         }
     }
 
     onIncoming(listener) {
-        if(this.network !== null) {
-            this.network.onIncomingCall((call)=>{
-                if(this.currentCall === null) {
-                    this.currentCall = call;
-                    listener(call);
-                }
-            });
-        } else {
-            throw new NetworkNotConnected(this.networkTag);
-        }
+        this.events.on('incoming', listener);
+        return this;
+    }
+
+    onPending(listener) {
+        this.events.on('pending', listener);
+        return this;
+    }
+
+    onRingingStart(listener) {
+        this.events.on('ringingStart', listener);
+        return this;
+    }
+
+    onRingingStop(listener) {
+        this.events.on('ringingStop', listener);
+        return this;
+    }
+
+    onRemoteMedia(listener) {
+        this.events.on('remoteMedia', listener);
+        return this;
+    }
+
+    onRemoteMediaEnded(listener) {
+        this.events.on('remoteMediaEnded', listener);
+        return this;
+    }
+
+    onEnded(listener) {
+        this.events.on('ended', listener);
+        return this;
     }
 
     accept(localMediaStream) {
-        if(this.currentCall !== null) {
-            this.currentCall.accept({
+        if(this.remoteCall !== null) {
+            this.remoteCall.accept({
                 localMediaStream: localMediaStream
             });
         }
     }
 
     hangUp() {
-        if(this.currentCall !== null) {
-            this.currentCall.end();
+        this.end();
+    }
+
+    end() {
+        if(this.localCall !== null) {
+            this.localCall.end();
+            this.localCall = null;
+        }
+        if(this.remoteCall !== null) {
+            this.remoteCall.end();
+            this.remoteCall = null;
+        }
+        if(this.localMedia !== null) {
+            this.localMedia.stop();
+            this.localMedia = null;
         }
     }
 
