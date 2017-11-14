@@ -1,12 +1,12 @@
 Source: ngcp-csc-ui
 Section: admin
-Priority: extra
+Priority: optional
 Maintainer: Sipwise Development Team <support@sipwise.com>
+Homepage: https://www.sipwise.com/
+Standards-Version: 3.9.8
 Build-Depends:
- debhelper (>= 9),
+ debhelper (>= 10),
  nodejs (>= 4.6.2~),
-Standards-Version: 3.9.7
-Homepage: https://sipwise.com/
 
 Package: ngcp-csc-ui
 Architecture: all
