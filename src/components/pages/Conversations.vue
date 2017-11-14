@@ -56,6 +56,7 @@
     import CscCollapsible from '../card/CscCollapsible'
     import { QBtn, QCardActions, QCard, QCardSeparator, QInfiniteScroll,
         QPopover, QList, QItem, QSpinnerDots } from 'quasar-framework'
+    import numberFormat from '../../filters/number-format'
     export default {
         data () {
             return {
@@ -81,8 +82,7 @@
         },
         methods: {
             call(conversation, localMedia) {
-                let number = conversation.direction == 'out' ?
-                    conversation.callee : conversation.caller;
+                let number = conversation.direction == 'out' ? conversation.callee : conversation.caller;
                 this.$store.dispatch('call/start',
                     { number: number, localMedia: localMedia });
             },
@@ -123,7 +123,11 @@
                 let direction = item.direction == 'in' ?
                     this.$t('pages.conversations.labels.from') :
                     this.$t('pages.conversations.labels.to');
-                return `${prefix} ${item.type} ${direction} ${item.caller}`;
+                let number = item.caller;
+                    if(item.direction === 'out') {
+                        number = item.callee;
+                    }
+                return `${prefix} ${item.type} ${direction} ${numberFormat(number)}`;
             },
             isCall(type) {
                 return type == 'call';

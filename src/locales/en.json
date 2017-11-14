@@ -123,6 +123,8 @@
         "call": "Call",
         "inputNumber": "Input a phone number",
         "inputValidNumber": "Input a valid phone number",
-        "number": "Number"
+        "number": "Number",
+        "endCall": "End Call",
+        "endCallDialog": "You are about to end the current call. Are you sure?"
     }
 }
