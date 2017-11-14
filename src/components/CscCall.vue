@@ -12,14 +12,18 @@
                 <span v-else-if="isInitiating" class="text">{{ $t('call.initiating') }}</span>
                 <span v-else-if="isRinging" class="text">{{ $t('call.ringing') }}</span>
                 <span v-else-if="isEnded" class="text">{{ $t('call.ended') }}</span>
+                <span v-else-if="isIncoming" class="text">Incoming call</span>
                 <span v-else class="text">{{ $t('call.call') }}</span>
 
                 <q-btn round small slot="right" class="no-shadow" @click="close()" icon="clear"/>
             </q-card-title>
             <q-card-main>
-                <div v-if="isTrying" class="csc-spinner"><q-spinner-rings color="primary" :size="60" /></div>
-                <div v-if="isCalling" class="phone-number">{{ getNumber }}</div>
-                <csc-media v-if="isCalling && localMediaStream != null" :stream="localMediaStream" />
+                <div v-if="isRinging" class="csc-spinner"><q-spinner-rings color="primary" :size="60" /></div>
+                <div v-if="!isPreparing" class="phone-number">{{ getNumber | numberFormat }}</div>
+
+                <csc-media id="local-media" v-show="isCalling" :stream="localMediaStream" />
+                <csc-media id="remote-media" v-show="isEstablished" :stream="remoteMediaStream" />
+
                 <q-field v-if="isPreparing" :helper="$t('call.inputNumber')" :error="validationEnabled && phoneNumberError"
                          :error-label="$t('call.inputValidNumber')" :count="64" dark>
                     <q-input :float-label="$t('call.number')" v-model="formattedPhoneNumber" dark clearable max="64"
@@ -34,6 +38,9 @@
                 <q-btn v-if="isPreparing" round small color="primary" @click="call('audioVideo')" icon="videocam" />
                 <q-btn v-if="isCalling" round small color="negative" @click="hangUp()" icon="call end" />
                 <q-btn v-if="isEnded" round small color="negative" @click="init()" icon="clear"/>
+                <q-btn v-if="isIncoming" round small color="primary" @click="accept('audioOnly')" icon="mic" />
+                <q-btn v-if="isIncoming" round small color="primary" @click="accept('audioVideo')" icon="videocam" />
+                <q-btn v-if="isIncoming" round small color="negative" @click="decline()" icon="call end" />
             </q-card-actions>
         </q-card>
 
@@ -45,16 +52,14 @@
     import { mapState, mapGetters } from 'vuex'
     import CscMedia from './CscMedia'
     import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
-        QCardActions, QBtn, QIcon, Loading, Alert, QSpinnerRings } from 'quasar-framework'
-    import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber'
-    var phoneUtil = PhoneNumberUtil.getInstance();
+        QCardActions, QBtn, QIcon, Loading, Alert, QSpinnerRings, Dialog } from 'quasar-framework'
+    import { normalizeNumber, rawNumber } from '../filters/number-format'
     export default {
         name: 'csc-call',
         props: ['region'],
         data () {
             return {
                 phoneNumber: '',
-                parsedPhoneNumber: null,
                 phoneNumberError: false,
                 validationEnabled: false
             }
@@ -79,12 +84,12 @@
             QBtn,
             QIcon,
             QSpinnerRings,
-            CscMedia
+            CscMedia,
+            Dialog
         },
         methods: {
             init() {
                 this.phoneNumber = '';
-                this.parsedPhoneNumber = null;
                 this.validationEnabled = false;
                 this.phoneNumberError = false;
                 this.$store.commit('call/inputNumber');
@@ -97,7 +102,7 @@
             },
             call(localMedia) {
                 this.validationEnabled = true;
-                if(this.parsedPhoneNumber !== null) {
+                if(this.phoneNumber !== null) {
                     this.phoneNumberError = false;
                     this.$store.dispatch('call/start', {
                         number: this.phoneNumber,
@@ -107,12 +112,37 @@
                     this.phoneNumberError = true;
                 }
             },
+            accept(localMedia) {
+                this.$store.dispatch('call/accept', localMedia);
+            },
+            decline() {
+                this.hangUp();
+                this.$emit('close');
+            },
             hangUp() {
                 this.$store.dispatch('call/hangUp');
             },
             close() {
-                this.$store.commit('call/inputNumber');
-                this.$emit('close');
+                if(this.isPreparing || this.isEnded) {
+                    this.init();
+                    this.$emit('close');
+                } else {
+                    Dialog.create({
+                        title: this.$t('call.endCall'),
+                        message: this.$t('call.endCallDialog'),
+                        buttons: [
+                            'Cancel',
+                            {
+                                label: this.$t('call.endCall'),
+                                color: 'negative',
+                                handler: ()=>{
+                                    this.hangUp();
+                                    this.$emit('close');
+                                }
+                            }
+                        ]
+                    });
+                }
             },
             playIncomingSound() {
                 this.$refs.incomingRinging.play();
@@ -124,44 +154,26 @@
         computed: {
             formattedPhoneNumber: {
                 get() {
-                    if(this.parsedPhoneNumber !== null) {
-                        return _.trim(phoneUtil.format(this.parsedPhoneNumber, PhoneNumberFormat.INTERNATIONAL));
-                    } else {
-                        return _.trim(this.phoneNumber);
-                    }
+                    return normalizeNumber(this.phoneNumber);
                 },
                 set(value) {
                     this.validationEnabled = true;
-                    this.phoneNumber = _.trim(value);
-                    if(this.phoneNumber.match('^[1-9]')) {
-                        this.phoneNumber = '+' + this.phoneNumber;
-                    } else if(this.phoneNumber === '+') {
-                        this.phoneNumber = '';
-                    }
-                    if(phoneUtil.isPossibleNumberString(this.phoneNumber, this.region)) {
-                        try {
-                            this.parsedPhoneNumber = phoneUtil.parse(this.phoneNumber, this.region);
-                            this.phoneNumber = phoneUtil.format(this.parsedPhoneNumber, PhoneNumberFormat.E164);
-                            this.phoneNumberError = false;
-                        } catch(err) {
-                            this.parsedPhoneNumber = null;
-                            this.phoneNumberError = true;
-                        }
-                    } else {
-                        this.parsedPhoneNumber = null;
-                        this.phoneNumberError = true;
-                    }
+                    this.phoneNumber = rawNumber(value);
                 }
             },
             localMediaStream() {
-                if(this.$store.state.call.localMediaStream != null) {
+                if(this.$store.state.call.localMediaStream !== null) {
                     return this.$store.state.call.localMediaStream.getStream();
                 } else {
                     return null;
                 }
             },
             remoteMediaStream() {
-                console.log(this.$refs.remoteMedia);
+                if(this.$store.state.call.remoteMediaStream !== null) {
+                    return this.$store.state.call.remoteMediaStream.getStream();
+                } else {
+                    return null;
+                }
             },
             ...mapGetters('call', [
                 'isPreparing',
@@ -170,6 +182,8 @@
                 'isRinging',
                 'isCalling',
                 'isEnded',
+                'isIncoming',
+                'isEstablished',
                 'getNumber',
                 'getMediaType',
                 'getLocalMediaType',

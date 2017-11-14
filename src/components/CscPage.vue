@@ -35,9 +35,6 @@
                 if(this.right) {
                     classes.push('page-title-right');
                 }
-
-                console.log(classes);
-
                 return classes;
             },
             ...mapGetters('layout', ['left', 'right'])
