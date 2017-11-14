@@ -58,6 +58,9 @@ export default {
         isInitiating(state, getters) {
             return state.callState === CallState.initiating;
         },
+        isIncoming(state, getters) {
+            return state.callState === CallState.incoming;
+        },
         isTrying(state, getters) {
             return state.callState === CallState.initiating ||
                 state.callState === CallState.ringing;
@@ -69,6 +72,9 @@ export default {
             return state.callState === CallState.initiating ||
                 state.callState === CallState.ringing ||
                 state.callState === CallState.established;
+        },
+        isEstablished(state, getters) {
+            return state.callState === CallState.established;
         },
         isEnded(state, getters) {
             return state.callState === CallState.ended;
@@ -90,21 +96,21 @@ export default {
             state.number = options.number;
             state.mediaType = options.mediaType;
             state.localMediaType = state.mediaType;
-            state.localMediaStream = options.localMediaStream;
             state.callState = CallState.initiating;
         },
-        acceptIncoming(state, options) {
-            state.localMediaStream = options.localMediaStream;
+        localMediaSuccess(state, localMediaStream) {
+            state.localMediaStream = localMediaStream;
         },
         startRinging(state) {
             state.callState = CallState.ringing;
         },
-        establishCall(state, options) {
-            state.remoteMediaStream = options.remoteMediaStream;
+        establishCall(state, remoteMediaStream) {
+            state.remoteMediaStream = remoteMediaStream;
             state.callState = CallState.established;
         },
         incomingCall(state, options) {
             state.callState = CallState.incoming;
+            state.number = options.number;
         },
         hangUpCall(state) {
             state.callState = CallState.input;
@@ -133,20 +139,21 @@ export default {
     actions: {
         initialize(context) {
             return new Promise((resolve, reject)=>{
+                Vue.call.onIncoming(()=>{
+                    context.commit('layout/showRight', null, { root: true });
+                    context.commit('incomingCall', {
+                        number: Vue.call.getNumber()
+                    });
+                }).onRemoteMedia((remoteMediaStream)=>{
+                    context.commit('establishCall', remoteMediaStream);
+                }).onRemoteMediaEnded(()=>{
+                    context.commit("endRemoteMedia");
+                }).onEnded(()=>{
+                    Vue.call.end();
+                    context.commit('endCall', Vue.call.getEndedReason());
+                });
                 Vue.call.initialize().then(()=>{
                     context.commit('initSucceeded');
-                    Vue.call.onIncoming((call)=>{
-                        context.commit('incomingCall');
-                        call.onRemoteMedia((remoteMediaStream)=>{
-                            context.commit('establishCall', {
-                                remoteMediaStream: remoteMediaStream
-                            });
-                        }).onRemoteMediaEnded(()=>{
-                            context.commit("endRemoteMedia");
-                        }).onEnded(()=>{
-                            context.commit('endCall', call.endedReason);
-                        });
-                    });
                     resolve();
                 }).catch((err)=>{
                     context.commit('initFailed', err);
@@ -161,54 +168,36 @@ export default {
          * @param options.number
          */
         start(context, options) {
-            console.log('start()');
-            console.log('options.number is', options.number, 'and options.localMedia is', options.localMedia);
             context.commit('layout/showRight', null, { root: true });
-            Vue.call.createLocalMedia(options.localMedia).then((localMediaStream)=>{
-                console.log('Vue.call.createLocalMediai()');
-                var call = Vue.call.start(options.number, localMediaStream);
-                call.onAccepted(()=>{
-                    }).onEnded(()=>{
-                        context.commit('endCall', call.endedReason);
-
-                    }).onPending(()=>{
-                        context.commit('startCalling', {
-                            number: options.number,
-                            mediaType: options.localMedia,
-                            localMediaStream: localMediaStream
-                        });
-                    }).onRemoteMedia((remoteMediaStream)=>{
-                        context.commit('establishCall', {
-                            remoteMediaStream: remoteMediaStream
-                        });
-                    }).onRemoteMediaEnded(()=>{
-                        context.commit("endRemoteMedia");
-                    }).onRingingStart(()=>{
-                        context.commit('startRinging');
-                    }).onRingingStop(()=>{
-                        context.commit('stopRinging');
-                    });
+            context.commit('startCalling', {
+                number: options.number,
+                mediaType: options.localMedia });
+            Promise.resolve().then(()=>{
+                return Vue.call.createLocalMedia(options.localMedia);
+            }).then((localMediaStream)=>{
+                context.commit('localMediaSuccess', localMediaStream);
+                Vue.call.onRingingStart(()=>{
+                    context.commit('startRinging');
+                }).onRingingStop(()=>{
+                    context.commit('stopRinging');
+                }).start(options.number, localMediaStream);
             }).catch((err)=>{
                 context.commit('endCall', err.name);
+                Vue.call.end();
             });
         },
         accept(context, localMedia) {
             Vue.call.createLocalMedia(localMedia).then((localMediaStream)=>{
                 Vue.call.accept(localMediaStream);
-                context.commit('acceptIncoming', {
-                    localMediaStream: localMediaStream
-                });
+                context.commit('localMediaSuccess', localMediaStream);
             }).catch((err)=>{
+                Vue.call.end();
                 context.commit('endCall', 'localMediaError');
             });
         },
         hangUp(context) {
-            if(Vue.call.hasRunningCall()) {
-                Vue.call.hangUp();
-                context.commit('hangUpCall');
-            } else {
-                context.commit('endCall', 'noRunningCall');
-            }
+            Vue.call.hangUp();
+            context.commit('hangUpCall');
         }
     }
 };
