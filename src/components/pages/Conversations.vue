@@ -47,6 +47,14 @@
             }
         },
         methods: {
+            call(conversation) {
+                // To show call sidebar, but not needed?
+                // this.$parent.showRight();
+                let options;
+                let number = conversation.direction == 'out' ? conversation.callee : conversation.caller;
+                // TODO: Missing a step here, as we do not have localMedia to add to options?
+                this.$store.dispatch('call/start', { number: number, localMedia: localMedia });
+            },
             loadMore(index, done) {
                 this.$store.dispatch('conversations/loadConversations').then(() => {
                     done();
