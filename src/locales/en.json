@@ -90,7 +90,9 @@
                 "to": "to"
             },
             "buttons": {
-                "call": "CALL"
+                "call": "CALL",
+                "audioCall": "Audio Call",
+                "videoCall": "Video Call"
             }
         },
         "reminder": {

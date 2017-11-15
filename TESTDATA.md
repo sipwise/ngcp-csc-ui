@@ -67,10 +67,10 @@ Should be created using an xmpp client authenticating as subscribers, but have n
 
 ## MOCK DATA
 
-You can also use mock data in src/api/conversations.js, replacing the resolve() with this:
+You can also use mock data in src/api/conversations.js, replacing the jsonBody variable with this:
 
 `
-resolve(
+let jsonBody = getJsonBody(
     {
       "_embedded": {
         "ngcp:conversations": [
@@ -157,5 +157,5 @@ resolve(
       },
       "total_count": 4
     }
-);
+)
 `
