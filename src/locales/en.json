@@ -56,11 +56,11 @@
             "password_helper": "Web-Password"
         },
         "callBlockingIncoming": {
-            "title": "Block incoming calls",
-            "toggleEnableLabel": "Enable call blocking list",
-            "toggleDisableLabel": "Disable call blocking list",
-            "toggleEnabledToast": "Call blocking of incoming calls enabled",
-            "toggleDisabledToast": "Call blocking of incoming calls disabled",
+            "title": "Block/Allow incoming calls",
+            "toggleEnableLabel": "Allow all listed numbers",
+            "toggleDisableLabel": "Block all listed number",
+            "toggleEnabledToast": "All listed numbers are allowed",
+            "toggleDisabledToast": "All listed numbers are blocked",
             "removeDialogTitle": "Remove number",
             "removeDialogText": "You are about to remove the number {number}",
             "removedToast": "Removed number {number}",
@@ -69,11 +69,11 @@
             "addNumberButton": "Add number"
         },
         "callBlockingOutgoing": {
-            "title": "Block outgoing calls",
-            "toggleEnableLabel": "Enable call blocking list",
-            "toggleDisableLabel": "Disable call blocking list",
-            "toggleEnabledToast": "Call blocking of outgoing calls enabled",
-            "toggleDisabledToast": "Call blocking of outgoing calls disabled",
+            "title": "Block/Allow outgoing calls",
+            "toggleEnableLabel": "Allow all listed numbers",
+            "toggleDisableLabel": "Block all listed number",
+            "toggleEnabledToast": "All listed numbers are allowed",
+            "toggleDisabledToast": "All listed numbers are blocked",
             "removeDialogTitle": "Remove number",
             "removeDialogText": "You are about to remove the number {number}",
             "removedToast": "Removed number {number}",
