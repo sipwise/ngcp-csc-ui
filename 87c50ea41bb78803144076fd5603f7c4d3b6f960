@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baada198_4cbb7fc4",
+        "filename": "src/components/pages/CallBlocking/CscCallBlocking.vue",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2017-11-15T15:39:14Z",
+      "side": 1,
+      "message": "Needs to be put in locales.",
+      "range": {
+        "startLine": 93,
+        "startChar": 20,
+        "endLine": 94,
+        "endChar": 88
+      },
+      "revId": "87c50ea41bb78803144076fd5603f7c4d3b6f960",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
