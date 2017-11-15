@@ -11,7 +11,7 @@
                     <q-card-main>
                         <q-field icon="fa-user-circle" :helper="$t('pages.login.username_helper')" :count="128">
                             <q-input type="text" max-length="128" :float-label="$t('pages.login.username')"
-                                     clearable v-model="username" @keyup.enter="login()"/>
+                                    clearable v-model="username" @keyup.enter="login()"/>
                         </q-field>
                         <q-field icon="fa-lock" :helper="$t('pages.login.password_helper')" :count="32">
                             <q-input type="password" max-length="32" :float-label="$t('pages.login.password')"
