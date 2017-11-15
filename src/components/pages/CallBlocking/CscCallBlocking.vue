@@ -1,12 +1,31 @@
 <template>
     <csc-page :title="$t('pages.callBlocking' + suffix + '.title')">
-        <q-field id="toggle-call-blocking">
-            <csc-toggle :label="toggleButtonLabel" @change="toggle" :enabled="enabled"/>
-        </q-field>
+        <div class="row">
+            <q-list link no-border class="mode-list col">
+                <q-item tag="label">
+                    <q-item-side>
+                        <q-radio v-model="enabled" val="blacklist" color="negative"
+                                 checked-icon="fa-ban" uncheck-icon="fa-ban"/>
+                    </q-item-side>
+                    <q-item-main>
+                        <q-item-tile label>{{ $t('pages.callBlocking' + suffix + '.toggleDisableLabel') }}</q-item-tile>
+                    </q-item-main>
+                </q-item>
+                <q-item tag="label">
+                    <q-item-side>
+                        <q-radio v-model="enabled" val="whitelist" color="primary"
+                                 checked-icon="check" uncheck-icon="check" />
+                    </q-item-side>
+                    <q-item-main>
+                        <q-item-tile label>{{ $t('pages.callBlocking' + suffix + '.toggleEnableLabel') }}</q-item-tile>
+                    </q-item-main>
+                </q-item>
+            </q-list>
+        </div>
         <div id="add-number-form">
             <q-field v-if="!addFormEnabled">
                 <q-btn color="primary"
-                   icon="fa-plus"
+                   icon="fa-plus" flat
                    @click="enableAddForm()">{{ $t('pages.callBlocking' + suffix + '.addNumberButton') }}</q-btn>
             </q-field>
             <div v-if="addFormEnabled">
@@ -20,18 +39,20 @@
         <div>
             <q-card class="blocked-number" v-for="(number, index) in numbers">
                 <q-card-title>
-                    <q-icon v-if="!(editing && editingIndex == index)" name="fa-ban" color="secondary" size="22px"/>
-                    <span v-if="!(editing && editingIndex == index)" @click="editNumber(index)">{{ number }}</span>
+                    <q-icon v-if="!(editing && editingIndex == index) && enabled == 'blacklist'" name="fa-ban" color="negative" size="22px"/>
+                    <q-icon v-if="!(editing && editingIndex == index) && enabled == 'whitelist'" name="check" color="primary" size="22px"/>
+                    <span class="blocked-number-title" v-if="!(editing && editingIndex == index)"
+                          @click="editNumber(index)">{{ number }}</span>
                     <q-input autofocus v-if="editing && editingIndex == index" type="text" float-label="Number"
                              v-model="editingNumber" @keyup.enter="saveNumber(index)" />
-                    <q-btn color="primary" flat small round v-if="editing && editingIndex == index" slot="right"
-                           icon="fa-save" @click="saveNumber(index)" class="cursor-pointer">{{ $t('buttons.save') }}</q-btn>
-                    <q-btn color="primary" flat small round v-if="editing && editingIndex == index" slot="right"
-                           icon="clear" @click="saveNumber(index)" class="cursor-pointer">{{ $t('buttons.cancel') }}</q-btn>
-                    <q-btn color="primary" flat small round v-if="!(editing && editingIndex == index)" slot="right"
-                           icon="fa-edit" @click="editNumber(index)" class="cursor-pointer">{{ $t('buttons.edit') }}</q-btn>
-                    <q-btn color="primary" flat small round v-if="!(editing && editingIndex == index)" slot="right"
-                           icon="delete" @click="removeNumber(index)" class="cursor-pointer">{{ $t('buttons.remove') }}</q-btn>
+                    <q-btn color="primary" flat v-if="editing && editingIndex == index" slot="right"
+                           icon="fa-save" @click="saveNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.save') }}</span></q-btn>
+                    <q-btn flat v-if="editing && editingIndex == index" slot="right"
+                           icon="clear" @click="saveNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.cancel') }}</span></q-btn>
+                    <q-btn color="primary" flat v-if="!(editing && editingIndex == index)" slot="right"
+                           icon="fa-edit" @click="editNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.edit') }}</span></q-btn>
+                    <q-btn color="negative" flat v-if="!(editing && editingIndex == index)" slot="right"
+                           icon="delete" @click="removeNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.remove') }}</span></q-btn>
                 </q-card-title>
             </q-card>
             <q-inner-loading :visible="listLoading">
@@ -47,7 +68,7 @@
     import CscPage  from '../../CscPage'
     import CscToggle from '../../form/CscToggle'
     import { QInput, QCard, QBtn, QField, QIcon, QCardTitle, QCardActions, Dialog, QSpinnerMat, QToggle,
-        Toast, QList, QItem, QItemMain, QCardMain, QInnerLoading } from 'quasar-framework'
+        Toast, QList, QItem, QItemSide, QItemMain, QCardMain, QInnerLoading, QOptionGroup, QSelect, QRadio } from 'quasar-framework'
     export default {
         name: 'csc-call-blocking',
         props: [
@@ -67,7 +88,12 @@
                 listLoading: false,
                 editing: false,
                 editingIndex: 0,
-                editingNumber: ''
+                editingNumber: '',
+                modeOptions: [
+                    { label: 'Block listed numbers', value: 'blacklist',  icon: 'fa-ban'},
+                    { label: 'Allow listed numbers', value: 'whitelist', icon: 'check' }
+                ],
+                mode: null
             }
         },
         mounted() {
@@ -87,6 +113,7 @@
             QInput,
             QList,
             QItem,
+            QItemSide,
             QItemMain,
             QCardMain,
             QIcon,
@@ -96,14 +123,31 @@
             QInnerLoading,
             QSpinnerMat,
             CscToggle,
-            CscPage
+            CscPage,
+            QOptionGroup,
+            QSelect,
+            QRadio
         },
         computed: {
             numbers() {
                 return this.$store.state.callBlocking[this.pageName + 'List'];
             },
-            enabled() {
-                return this.$store.state.callBlocking[this.pageName + 'Enabled'];
+            enabled: {
+                get() {
+                    var enabled = this.$store.state.callBlocking[this.pageName + 'Enabled'];
+                    if(enabled) {
+                        return 'whitelist';
+                    } else {
+                        return 'blacklist';
+                    }
+                },
+                set(value) {
+                    if(value === 'blacklist') {
+                        this.mode = false;
+                    } else {
+                        this.mode = true;
+                    }
+                }
             },
             toggleButtonLabel() {
                 if(!this.enabled) {
@@ -113,7 +157,7 @@
                 }
             },
             toggleToastMessage() {
-                if(this.enabled) {
+                if(this.mode) {
                     return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleEnabledToast');
                 } else {
                     return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleDisabledToast');
@@ -121,6 +165,11 @@
             },
             suffix() {
                 return _.upperFirst(this.pageName);
+            }
+        },
+        watch: {
+            mode(value) {
+                this.toggle(value);
             }
         },
         methods: {
@@ -216,5 +265,11 @@
     }
     .blocked-number .q-input {
         margin: 0;
+    }
+    .blocked-number-title {
+        padding-left: 8px;
+    }
+    .mode-list {
+        margin-bottom: 30px;
     }
 </style>
