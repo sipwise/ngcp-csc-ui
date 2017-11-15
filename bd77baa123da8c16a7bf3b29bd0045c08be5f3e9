@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baada198_1b18df83",
+        "filename": "src/api/conversations.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2017-11-15T09:11:33Z",
+      "side": 1,
+      "message": "Else-Block is missing. We need to throw an error here in case of the missing json property.",
+      "revId": "bd77baa123da8c16a7bf3b29bd0045c08be5f3e9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
