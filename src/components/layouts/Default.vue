@@ -83,7 +83,7 @@
             </q-collapsible>
         </q-list>
         <router-view />
-        <q-fixed-position corner="top-right" :offset="[20, 20]" class="page-button transition-generic">
+        <q-fixed-position corner="top-right" :offset="[20, 20]" class="page-button transition-generic float-button">
             <q-fab v-if=""
                    color="primary" icon="question answer"
                    active-icon="clear" direction="down" flat>
@@ -212,64 +212,42 @@
 </script>
 
 <style lang="stylus">
-    @import '../../../src/themes/app.variables.styl';
-    @import '../../../src/themes/quasar.variables.styl';
-
-    #main-menu {
-        padding-top:60px;
-    }
-
-    #main-menu .q-item-side {
-        min-width: 30px;
-    }
-
-    #main-menu .q-item {
-        padding: 12px 24px;
-    }
-
-    #main-menu .router-link-active,
-    #main-menu .q-item:hover {
-        background-color: #475360;
-    }
-
-    #main-menu .q-item .q-item-sublabel {
-        color: #5b7086;
-    }
-
-    #main-menu .q-item .q-item-main,
-    #main-menu .q-item .q-item-side {
-        color: #ADB3B8;
-    }
-
-    #main-menu .q-collapsible-sub-item {
-        padding: 0;
-    }
-
-    #main-menu .q-collapsible-sub-item .q-item {
-        padding-left: 60px;
-    }
-
-    #user-login-as {
-        display: inline-block;
-        text-transform: none;
-        color: #c5eab4;
-    }
-    #user-login-as:after {
-        content: " ";
-        white-space: pre;
-    }
-    #user-name {
-        font-weight: bold;
-    }
-
-    .q-card {
-        margin:15px;
-        margin-left: 0px;
-        margin-right: 0px;
-    }
-
-    .q-card.page {
-        padding: 15px;
-        margin: 0;
-    }
+@import '../../../src/themes/app.variables.styl';
+@import '../../../src/themes/quasar.variables.styl';
+#main-menu
+    padding-top60px
+#main-menu .q-item-side
+    min-width 30px
+#main-menu .q-item
+    padding 12px 24px
+#main-menu .router-link-active,
+#main-menu .q-itemhover
+    background-color #475360
+#main-menu .q-item .q-item-sublabel
+    color #5b7086
+#main-menu .q-item .q-item-main,
+#main-menu .q-item .q-item-side
+    color #ADB3B8
+#main-menu .q-collapsible-sub-item
+    padding 0
+#main-menu .q-collapsible-sub-item .q-item
+    padding-left 60px
+#user-login-as
+    display inline-block
+    text-transform none
+    color #c5eab4
+#user-login-asafter
+    content " "
+    white-space pre
+#user-name
+    font-weight bold
+.q-card
+    margin15px
+    margin-left 0px
+    margin-right 0px
+.q-card.page
+    padding 15px
+    margin 0
+.float-button
+    z-index 1010
 </style>
