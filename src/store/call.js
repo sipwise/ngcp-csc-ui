@@ -164,7 +164,10 @@ export default {
          * @param options.number
          */
         start(context, options) {
+            console.log('start()');
+            console.log('options.number is', options.number, 'and options.localMedia is', options.localMedia);
             Vue.call.createLocalMedia(options.localMedia).then((localMediaStream)=>{
+                console.log('Vue.call.createLocalMediai()');
                 var call = Vue.call.start(options.number, localMediaStream);
                 call.onAccepted(()=>{
                     }).onEnded(()=>{
