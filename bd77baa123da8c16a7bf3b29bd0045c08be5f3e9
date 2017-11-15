@@ -16,6 +16,24 @@
       "revId": "bd77baa123da8c16a7bf3b29bd0045c08be5f3e9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baada198_0169508b",
+        "filename": "src/api/conversations.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2017-11-15T09:19:00Z",
+      "side": 1,
+      "message": "Well spotted, thanks. You mean like this?:\nif (_.has(jsonBody, \"_embedded.ngcp:conversations\")) {\n  resolve(jsonBody._embedded[\u0027ngcp:conversations\u0027]);\n} else {\n  reject(\u0027No items returned for this page\u0027);\n};",
+      "parentUuid": "baada198_1b18df83",
+      "revId": "bd77baa123da8c16a7bf3b29bd0045c08be5f3e9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
