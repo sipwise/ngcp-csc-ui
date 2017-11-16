@@ -6,7 +6,8 @@
     import CscPage  from '../../CscPage'
     export default {
         data () {
-            return {}
+            return {
+            }
         },
         components: {
             CscPage
