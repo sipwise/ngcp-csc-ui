@@ -1,5 +1,6 @@
 <template>
     <csc-page title="After Hours"></csc-page>
+    Test me here
 </template>
 
 <script>
