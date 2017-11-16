@@ -1,0 +1,79 @@
+" ============================================================================
+" Netrw Directory Listing                                        (netrw v155)
+"   /home/raxelsen/Sipwise/mr/ngcp-csc-ui/src/store
+"   Sorted by      name
+"   Sort sequence: [\/]$,\<core\%(\.\d\+\)\=\>,\.h$,\.c$,\.cpp$,\~\=\*$,*,\.o$,\.obj$,\.info$,\.swp$,\.bak$,\~$
+"   Quick Help: <F1>:help  -:go up dir  D:delete  R:rename  s:sort-by  x:special
+" ==============================================================================
+../
+ngcp-csc-ui/
+| .git/
+| build/
+| config/
+| | dev.env.js
+| | index.js
+| | prod.env.js
+| debian/
+| dist/
+| node_modules/
+| src/
+| | api/
+| | assets/
+| | components/
+| | | card/
+| | | form/
+| | | layouts/
+| | | pages/
+| | | | CallBlocking/
+| | | | CallForward/
+| | | | | AfterHours.vue
+| | | | | Always.vue
+| | | | | CompanyHours.vue
+| | | | PbxConfiguration/
+| | | | Conversations.vue
+| | | | Reminder.vue
+| | | CscCall.vue
+| | | CscMedia.vue
+| | | CscPage.vue
+| | | Error404.vue
+| | | Login.vue
+| | filters/
+| | helpers/
+| | locales/
+| | plugins/
+| | statics/
+| | store/
+| | | call-blocking.js
+| | | call-forward.js
+| | | call.js
+| | | conversations.js
+| | | index.js
+| | | layout.js
+| | | pbx-groups.js
+| | | reminder.js
+| | | user.js
+| | themes/
+| | App.vue
+| | i18n.js
+| | index.html
+| | main.js
+| | router.js
+| | routes.js
+| t/
+| templates/
+| dev.sh*
+| .babelrc
+| .editorconfig
+| .eslintignore
+| .eslintrc.js
+| .gitignore
+| .gitreview
+| .npmrc
+| .stylintrc
+| CONTRIBUTING.md
+| NetrwTreeListing 1
+| README.md
+| TESTDATA.md
+| karma.js
+| npm-shrinkwrap.json
+| package.json
