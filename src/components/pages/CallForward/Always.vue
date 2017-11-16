@@ -1,5 +1,9 @@
 <template>
-    <csc-page title="Always"></csc-page>
+    <csc-page title="Always">
+    <div>
+        <p>{{ count }}</p>
+    </div>
+    </csc-page>
 </template>
 
 <script>
@@ -10,6 +14,11 @@
         },
         components: {
             CscPage
+        },
+        computed: {
+            count() {
+                return this.$store.state.callForward.count;
+            }
         }
     }
 </script>

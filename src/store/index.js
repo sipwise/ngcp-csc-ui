@@ -9,6 +9,7 @@ import CallBlockingModule from './call-blocking'
 import ReminderModule from './reminder'
 import CallModule from './call'
 import ConversationsModule from './conversations'
+import CallForwardModule from './call-forward'
 
 Vue.use(Vuex);
 
@@ -19,6 +20,7 @@ export const store = new Vuex.Store({
         callBlocking: CallBlockingModule,
         reminder: ReminderModule,
         call: CallModule,
-        conversations: ConversationsModule
+        conversations: ConversationsModule,
+        callForward: CallForwardModule
     }
 });
