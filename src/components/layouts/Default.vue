@@ -1,5 +1,5 @@
 <template>
-    <q-layout ref="layout" view="lHh LpR lFf" :right-breakpoint="1100">
+    <q-layout ref="layout" view="lHh LpR lFf" :right-breakpoint="1100" v-model="layout">
         <q-toolbar slot="header">
             <q-btn flat @click="$refs.layout.toggleLeft()">
                 <q-icon name="menu"/>
@@ -83,10 +83,8 @@
             </q-collapsible>
         </q-list>
         <router-view />
-        <q-fixed-position corner="top-right" :offset="[20, 20]" class="page-button transition-generic">
-            <q-fab v-if=""
-                   color="primary" icon="question answer"
-                   active-icon="clear" direction="down" flat>
+        <q-fixed-position id="global-action-btn" corner="top-right" :offset="[48, 17]" class="page-button transition-generic">
+            <q-fab color="primary" icon="question answer" active-icon="clear" direction="down" flat>
                 <q-fab-action v-if="hasFaxCapability" color="primary" @click="" icon="fa-fax">
                     <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendFax') }}</q-tooltip>
                 </q-fab-action>
@@ -166,6 +164,14 @@
             CscCall
         },
         computed: {
+            layout: {
+                get(){
+                    return this.$store.state.layout.sides;
+                },
+                set(sides) {
+                    this.$store.commit('layout/updateSides', sides);
+                }
+            },
             ...mapGetters('call', [
                 'isCallAvailable',
                 'hasCallInitFailure'
@@ -272,4 +278,9 @@
         padding: 15px;
         margin: 0;
     }
+
+    #global-action-btn {
+        z-index: 1001;
+    }
+
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="page">
-        <q-fixed-position corner="top-left" :offset="[0,0]" class="page-title transition-generic">
+        <q-fixed-position corner="top-left" :offset="[0,0]" :class="pageTitleClasses">
             <h2>{{ title }}</h2>
         </q-fixed-position>
         <div class="page-content">
@@ -10,7 +10,10 @@
 </template>
 
 <script>
+
     import { QIcon, QFixedPosition, QFab, QFabAction, QTooltip } from 'quasar-framework'
+    import { mapState, mapGetters } from 'vuex'
+
     export default {
         name: 'csc-page',
         props: [
@@ -25,6 +28,19 @@
             QFab,
             QFabAction,
             QTooltip
+        },
+        computed: {
+            pageTitleClasses() {
+                var classes = ['page-title', 'transition-generic'];
+                if(this.right) {
+                    classes.push('page-title-right');
+                }
+
+                console.log(classes);
+
+                return classes;
+            },
+            ...mapGetters('layout', ['left', 'right'])
         }
     }
 </script>
@@ -49,8 +65,15 @@
         padding: 30px;
         padding-left: 60px;
         padding-right: 60px;
-        background-color: white;
         z-index: 1000;
+        right: 0;
+        background: -moz-linear-gradient(top, rgba(255,255,255,1) 44%, rgba(255,255,255,0.86) 71%, rgba(255,255,255,0) 100%);
+        background: -webkit-linear-gradient(top, rgba(255,255,255,1) 44%,rgba(255,255,255,0.86) 71%,rgba(255,255,255,0) 100%);
+        background: linear-gradient(to bottom, rgba(255,255,255,1) 44%,rgba(255,255,255,0.86) 71%,rgba(255,255,255,0) 100%);
+    }
+
+    .page .page-title.page-title-right {
+        right: $layout-aside-right-width;
     }
 
     .page .page-button {
@@ -71,8 +94,6 @@
 
         .page .page-title {
             padding: 30px;
-            background-color: white;
-            z-index: 1000;
         }
     }
 
@@ -80,4 +101,6 @@
         margin-right: 10px;
         font-size: 24px !important;
     }
+
+
 </style>
