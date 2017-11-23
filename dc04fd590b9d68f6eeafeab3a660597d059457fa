@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baada198_98b06af6",
+        "filename": "src/components/pages/Conversations.vue",
+        "patchSetId": 6
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2017-11-23T09:44:28Z",
+      "side": 1,
+      "message": "hherzog: please have a look and advice",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 14
+      },
+      "revId": "dc04fd590b9d68f6eeafeab3a660597d059457fa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
