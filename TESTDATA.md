@@ -2,7 +2,27 @@
 
 IMPORTANT: This document is meant for internal use at Sipwise, as it requires a vagrant-ngcp environment to be able to generate the test data.
 
-Here are details on how to create test data for the /api/conversations endpoint that the conversations module is consuming.
+Here are both details on how to, for the /api/conversations endpoint that the conversations module is consuming, both manually and via database dump, create/import test data.
+
+## DATABASE DUMP
+
+1. Spin up a fresh vagrant ngcp-csc environment
+1. Download the test data database, available in this WF task under Documents:
+[https://sipwise.attask-ondemand.com/task/view?ID=59ef06f4006d6e70b643d3599cd20655](https://sipwise.attask-ondemand.com/task/view?ID=59ef06f4006d6e70b643d3599cd20655)
+1. Extract the test data database archive and add to shared vagrant volume, for example:
+`
+cd ~/Downloads
+tar -xzvf conversations_dump.sql.tgz
+cp root/conversations_dump.sql.tgz ~/Sipwise/mr/
+`
+1. SSH in to the vagrant box and become root
+1. Backup the existing database:
+`mysqldump --extended-insert --complete-insert --add-drop-database --databases accounting billing carrier fileshare kamailio ldap prosody provisioning rtcengine > ~/backup_before_conversations_dump.sql`
+1. Import the test data database from your shared vagrant volume folder, for example:
+`
+cd /usr/local/devel
+mysql < ./conversations_dump.sql
+`
 
 ## VOICEMAIL
 
@@ -43,7 +63,7 @@ Another option is to use a soft phone client such as linphone for desktop and mo
 
 ## XMPP CHAT
 
-Should be created using an xmpp client authenticating as subscribers, but have not been able to verify this
+Should be created using an xmpp client authenticating as subscribers, but have not been able to verify this.
 
 ## MOCK DATA
 
