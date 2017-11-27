@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baada198_a9ec02c9",
+        "filename": "src/components/pages/Conversations.vue",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2017-11-27T10:46:23Z",
+      "side": 1,
+      "message": "Translation",
+      "revId": "ec5c12ed57329c4fc3ffc2db18193d1c87ff2465",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baada198_c9d056fa",
+        "filename": "src/components/pages/Conversations.vue",
+        "patchSetId": 8
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2017-11-27T10:46:23Z",
+      "side": 1,
+      "message": "Translation",
+      "revId": "ec5c12ed57329c4fc3ffc2db18193d1c87ff2465",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
