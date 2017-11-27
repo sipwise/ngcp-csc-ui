@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "baada198_896d7e07",
+        "filename": "src/components/pages/Conversations.vue",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2017-11-27T13:10:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baada198_a9ec02c9",
+      "revId": "ec5c12ed57329c4fc3ffc2db18193d1c87ff2465",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baada198_c9d056fa",
         "filename": "src/components/pages/Conversations.vue",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2017-11-27T10:46:23Z",
       "side": 1,
       "message": "Translation",
+      "revId": "ec5c12ed57329c4fc3ffc2db18193d1c87ff2465",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baada198_a97242e3",
+        "filename": "src/components/pages/Conversations.vue",
+        "patchSetId": 8
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2017-11-27T13:10:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baada198_c9d056fa",
       "revId": "ec5c12ed57329c4fc3ffc2db18193d1c87ff2465",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
