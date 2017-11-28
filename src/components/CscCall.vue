@@ -1,6 +1,6 @@
 <template>
     <div class="csc-call">
-
+        <audio ref="incomingSound" loop preload="auto" src="statics/ring.mp3"></audio>
         <q-card flat color="secondary">
             <q-card-title>
                 <q-icon v-if="isCalling && getMediaType == 'audioOnly'" name="mic" color="primary" size="26px"/>
@@ -59,6 +59,14 @@
                 validationEnabled: false
             }
         },
+        updated() {
+            if(this.$store.state.call.callState === 'incoming' ||
+                this.$store.state.call.callState === 'ringing') {
+                this.$refs.incomingSound.play();
+            } else {
+                this.$refs.incomingSound.pause();
+            }
+        },
         components: {
             QLayout,
             QCard,
@@ -105,6 +113,12 @@
             close() {
                 this.$store.commit('call/inputNumber');
                 this.$emit('close');
+            },
+            playIncomingSound() {
+                this.$refs.incomingRinging.play();
+            },
+            stopIncomingSound() {
+                this.$refs.incomingRinging.stop();
             }
         },
         computed: {
