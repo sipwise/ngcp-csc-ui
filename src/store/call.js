@@ -1,8 +1,5 @@
 'use strict';
 
-// import { loadCdkLib, connectDefaultCdkNetwork } from '../helpers/cdk-lib';
-// import { createSessionToken } from '../api/rtcsession';
-
 import Vue from 'vue';
 
 export var CallState = {
