@@ -93,7 +93,15 @@
                 "call": "CALL",
                 "audioCall": "Audio Call",
                 "videoCall": "Video Call"
-            }
+            },
+			"card": {
+                "date": "Date",
+                "duration": "Duration",
+                "folder": "Folder",
+                "pages": "Pages",
+                "cost": "Cost",
+                "message": "Message"
+			}
         },
         "reminder": {
             "title": "Reminder",

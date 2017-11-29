@@ -3,6 +3,7 @@
         <q-collapsible :icon="icon"
             :label="label"
             :sublabel="sublabel">
+            <slot></slot>
         </q-collapsible>
     </div>
 </template>
@@ -34,4 +35,10 @@
             color black
             font-size 18px
             font-weight 400
+        ul
+            list-style none
+            font-size 1rem
+            line-height 2rem
+            strong
+                font-weight 500
 </style>
