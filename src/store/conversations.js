@@ -29,9 +29,9 @@ export default {
     },
     actions: {
         loadConversations(context) {
-            return new Promise((resolve, reject)=>{
+            return new Promise((resolve, reject) => {
                 getConversations(localStorage.getItem('subscriberId'), context.state.page, context.state.rows)
-                    .then((result)=>{
+                    .then(result => {
                         context.commit('loadConversations', result);
                         resolve();
                     })
