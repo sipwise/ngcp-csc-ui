@@ -4,7 +4,8 @@ import _ from 'lodash';
 import { getJsonBody } from './utils'
 
 export function getConversations(id, page, rows) {
-    let params = { subscriber_id: id, page: page, rows: rows };
+    let params = { subscriber_id: id, page: page, rows: rows,
+        order_by: 'timestamp', order_by_direction: 'desc' };
     return new Promise((resolve, reject) => {
         Vue.http.get('/api/conversations/', { params: params })
             .then(result => {
