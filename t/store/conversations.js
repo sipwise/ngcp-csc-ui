@@ -12,33 +12,17 @@ describe('Conversations', function(){
             ]
         };
         let data = [
-            {
-                "_links": {
-                },
-                "call_type": "cfu",
+			{
                 "caller": "43993010",
                 "type": "call"
             },
             {
-                "_links": {
-                },
                 "caller": "43993011",
                 "type": "fax"
             }
         ];
         ConversationsModule.mutations.loadConversations(state, data);
-        assert.deepEqual(state.conversations, [
-            {
-                "call_type": "cfu",
-                "caller": "43993010",
-                "type": "call forward"
-            },
-            {
-                "caller": "43993011",
-                "type": "fax"
-            }
-        ]);
-
+        assert.deepEqual(state.conversations, data);
     });
 
 });

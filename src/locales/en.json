@@ -92,7 +92,8 @@
             "buttons": {
                 "call": "CALL",
                 "audioCall": "Audio Call",
-                "videoCall": "Video Call"
+                "videoCall": "Video Call",
+                "play": "Play"
             },
             "card": {
                 "date": "Date",
