@@ -1,8 +1,8 @@
 
-'use strict';
+'use strict'
 
-import _ from 'lodash';
-import { getConversations } from '../api/conversations';
+import _ from 'lodash'
+import { getConversations, downloadVoiceMail } from '../api/conversations'
 
 export default {
     namespaced: true,
@@ -14,16 +14,7 @@ export default {
     },
     mutations: {
         loadConversations(state, options) {
-            let list = [];
-            _.forEach(options, function(item) {
-                delete item._links;
-                if (item.type == 'call') {
-                    item.type = item.call_type != 'call' ? 'call forward'
-                        : item.type;
-                };
-                list.push(item);
-            })
-            state.conversations = state.conversations.concat(list);
+            state.conversations = state.conversations.concat(options);
             state.page++;
         }
     },
@@ -36,6 +27,15 @@ export default {
                         resolve();
                     })
                 .catch((err)=>{
+                    reject(err);
+                });
+            });
+        },
+        downloadVoiceMail(context, id) {
+            return new Promise((resolve, reject)=>{
+                downloadVoiceMail(id).then(()=>{
+                    resolve();
+                }).catch((err)=>{
                     reject(err);
                 });
             });
