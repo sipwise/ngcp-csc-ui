@@ -9,9 +9,6 @@
                     :sublabel="conversation.start_time | readableDate">
                     <div v-if="isCall(conversation.type) || isVoicemail(conversation.type)">
                         <ul>
-                            <li><strong>
-                                    {{ $t('pages.conversations.card.date') }}:
-                                </strong> {{ conversation.start_time }}</li>
                             <li>
                                 <strong>
                                     {{ $t('pages.conversations.card.duration') }}:

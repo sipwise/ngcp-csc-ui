@@ -29,13 +29,13 @@ describe('Conversations', function(){
         ConversationsModule.mutations.loadConversations(state, data);
         assert.deepEqual(state.conversations, [
             {
+                "caller": "43993011",
+                "type": "fax"
+            },
+            {
                 "call_type": "cfu",
                 "caller": "43993010",
                 "type": "call forward"
-            },
-            {
-                "caller": "43993011",
-                "type": "fax"
             }
         ]);
 
