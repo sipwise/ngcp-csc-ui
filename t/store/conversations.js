@@ -6,7 +6,7 @@ import { assert } from 'chai';
 
 describe('Conversations', function(){
 
-    it('should load conversations', function(){
+    it('should load conversation items into store', function(){
         let state = {
             conversations: [
             ]
@@ -15,6 +15,7 @@ describe('Conversations', function(){
             {
                 "_links": {
                 },
+                "id": 33,
                 "call_type": "cfu",
                 "caller": "43993010",
                 "type": "call"
@@ -22,23 +23,13 @@ describe('Conversations', function(){
             {
                 "_links": {
                 },
+                "id": 4,
                 "caller": "43993011",
                 "type": "fax"
             }
         ];
         ConversationsModule.mutations.loadConversations(state, data);
-        assert.deepEqual(state.conversations, [
-            {
-                "call_type": "cfu",
-                "caller": "43993010",
-                "type": "call forward"
-            },
-            {
-                "caller": "43993011",
-                "type": "fax"
-            }
-        ]);
-
+        assert.equal(state.conversations[0].caller, '43993010');
     });
 
 });
