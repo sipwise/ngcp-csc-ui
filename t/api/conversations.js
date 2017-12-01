@@ -3,6 +3,7 @@
 
 import Vue from 'vue';
 import VueResource from 'vue-resource';
+import crypto from 'crypto-browserify'
 import { getConversations } from '../../src/api/conversations';
 import { assert } from 'chai';
 
@@ -13,47 +14,71 @@ describe('Conversations', function(){
     const subscriberId = 123;
 
     it('should get all data regarding conversations', function(done){
+		let inputString = 'voicemailundefined1';
+		let hashedId = crypto.createHash('sha256').update(inputString).digest('base64');
 
         let innerData = [{
             "_links" : {
-               "collection" : {
-                  "href" : "/api/conversations/"
-               },
-               "curies" : {
-                  "href" : "http://purl.org/sipwise/ngcp-api/#rel-{rel}",
-                  "name" : "ngcp",
-                  "templated" : true
-               },
-               "ngcp:calls" : {
-                  "href" : "/api/calls/5"
-               },
-               "ngcp:conversations" : {
-                  "href" : "/api/conversations/5?type=call"
-               },
-               "profile" : {
-                  "href" : "http://purl.org/sipwise/ngcp-api/"
-               },
-               "self" : {
-                  "href" : "/api/conversations/5?type=call"
-               }
+				"collection": {
+					"href": "/api/conversations/"
+				},
+				"curies": {
+					"href": "http://purl.org/sipwise/ngcp-api/#rel-{rel}",
+					"name": "ngcp",
+					"templated": true
+				},
+				"ngcp:conversations": {
+					"href": "/api/conversations/1?type=voicemail"
+				},
+				"ngcp:voicemailrecordings": {
+					"href": "/api/voicemailrecordings/1"
+				},
+				"ngcp:voicemails": {
+					"href": "/api/voicemails/1"
+				},
+				"profile": {
+					"href": "http://purl.org/sipwise/ngcp-api/"
+				},
+				"self": {
+					"href": "/api/conversations/1?type=voicemail"
+				}
             },
-            "call_id" : "cT1miqD5Nw",
-            "call_type" : "cfu",
-            "callee" : "vmu43993006@voicebox.local",
-            "caller" : "43993006",
-            "direction" : "out",
-            "duration" : "0:00:19.672",
-            "id" : 5,
-            "rating_status" : "ok",
-            "start_time" : "2017-11-10 08:51:10.452",
-            "status" : "ok",
-            "type" : "call"
+			"call_id": "kp55kEGtNp",
+			"callee": "43993006",
+			"caller": "43993006",
+			"context": "voicemailcaller_unavail",
+			"direction": "in",
+			"duration": "15",
+			"filename": "voicemail-0.wav",
+			"folder": "Old",
+			"id": 1,
+			"start_time": "2017-12-07 16:22:04",
+			"type": "voicemail",
+			"voicemail_subscriber_id": 235
         }];
+
         let data = {
             "_embedded": {
                 "ngcp:conversations": innerData
             }
         };
+
+		let innerDataWithoutLinks = [{
+			"call_id": "kp55kEGtNp",
+			"callee": "43993006",
+			"caller": "43993006",
+			"context": "voicemailcaller_unavail",
+			"direction": "in",
+			"duration": "15",
+			"filename": "voicemail-0.wav",
+			"folder": "Old",
+			"id": 1,
+			"start_time": "2017-12-07 16:22:04",
+			"type": "voicemail",
+			"voicemail_subscriber_id": 235,
+			"_id": hashedId,
+			"voicemail": "/api/voicemailrecordings/1"
+		}];
 
         Vue.http.interceptors = [];
         Vue.http.interceptors.unshift((request, next)=>{
@@ -62,7 +87,7 @@ describe('Conversations', function(){
             }));
         });
         getConversations(subscriberId).then((result)=>{
-            assert.deepEqual(result, innerData);
+            assert.deepEqual(result, innerDataWithoutLinks);
             done();
         }).catch((err)=>{
             done(err);
