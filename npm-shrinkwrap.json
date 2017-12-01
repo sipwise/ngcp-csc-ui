@@ -210,6 +210,12 @@
       "resolved": "https://npm-registry.sipwise.com/autoprefixer/-/autoprefixer-6.7.7.tgz",
       "dev": true
     },
+    "axios": {
+      "version": "0.17.1",
+      "from": "axios@latest",
+      "resolved": "https://npm-registry.sipwise.com/axios/-/axios-0.17.1.tgz",
+      "dev": true
+    },
     "babel-code-frame": {
       "version": "6.26.0",
       "from": "babel-code-frame@>=6.26.0 <7.0.0",
@@ -2016,6 +2022,12 @@
       "resolved": "https://npm-registry.sipwise.com/file-loader/-/file-loader-0.11.2.tgz",
       "dev": true
     },
+    "file-saver": {
+      "version": "1.3.3",
+      "from": "file-saver@latest",
+      "resolved": "https://npm-registry.sipwise.com/file-saver/-/file-saver-1.3.3.tgz",
+      "dev": true
+    },
     "filename-regex": {
       "version": "2.0.1",
       "from": "filename-regex@>=2.0.0 <3.0.0",
@@ -2057,6 +2069,20 @@
       "from": "flatten@>=1.0.2 <2.0.0",
       "resolved": "https://npm-registry.sipwise.com/flatten/-/flatten-1.0.2.tgz",
       "dev": true
+    },
+    "follow-redirects": {
+      "version": "1.2.6",
+      "from": "follow-redirects@>=1.2.5 <2.0.0",
+      "resolved": "https://npm-registry.sipwise.com/follow-redirects/-/follow-redirects-1.2.6.tgz",
+      "dev": true,
+      "dependencies": {
+        "debug": {
+          "version": "3.1.0",
+          "from": "debug@>=3.1.0 <4.0.0",
+          "resolved": "https://npm-registry.sipwise.com/debug/-/debug-3.1.0.tgz",
+          "dev": true
+        }
+      }
     },
     "for-in": {
       "version": "1.0.2",
