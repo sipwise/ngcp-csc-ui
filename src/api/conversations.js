@@ -1,6 +1,6 @@
 
-import Vue from 'vue';
-import _ from 'lodash';
+import Vue from 'vue'
+import _ from 'lodash'
 import { getJsonBody } from './utils'
 
 export function getConversations(id, page, rows) {

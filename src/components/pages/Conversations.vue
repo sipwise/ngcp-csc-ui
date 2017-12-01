@@ -1,9 +1,11 @@
 <template>
     <csc-page :title="$t('pages.conversations.title')">
+        <audio ref="voicemailsound" src="statics/voicemail_sample.mp3" @timeupdate="timeupdate($event)"></audio>
         <q-infinite-scroll :handler="loadMore" :offset=1 ref="infinite">
             <q-card v-for="(conversation, index) in conversations"
                 :key="conversation.caller"
-                class="conversation-card">
+                class="conversation-card"
+				:id="conversation._id">
                 <csc-collapsible :icon="getCollapsibleIcons(conversation)"
                     :label="getCollapsibleLabel(conversation)"
                     :sublabel="conversation.start_time | readableDate">
@@ -38,6 +40,29 @@
                                 </q-list>
                               </q-popover>
                         </q-btn>
+                        <div v-if="isVoicemail(conversation.type)">
+                            <q-btn v-if="!voicemailPlaying" flat round small color="primary" icon="play_arrow" @click="playVoicemail()">
+                                {{ $t('pages.conversations.buttons.play') }}
+                            </q-btn>
+                            <div v-if="voicemailPlaying" class="voicemail-outer">
+                                <div class="voicemail-inner">
+                                    <q-progress
+                                        :percentage="progressPercentage"
+                                        stripe animate
+                                        style="height: 46px"
+                                        color="green-2"
+                                    />
+                                </div>
+                                <div class="voicemail-controls voicemail-inner">
+                                    <q-btn flat round small color="primary" icon="pause" @click="pauseVoicemail()">
+                                        {{ $t('pages.conversations.buttons.pause') }}
+                                    </q-btn>
+                                    <q-btn flat round small color="primary" icon="stop" @click="stopVoicemail()">
+                                        {{ $t('pages.conversations.buttons.stop') }}
+                                    </q-btn>
+                                </div>
+                            </div>
+                        </div>
                     </q-card-actions>
                 </div>
             </q-card>
@@ -49,10 +74,13 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex'
+	import crypto from 'crypto-browserify'
     import CscPage from '../CscPage'
     import CscCollapsible from '../card/CscCollapsible'
-    import { QBtn, QCardActions, QCard, QCardSeparator, QInfiniteScroll,
-        QPopover, QList, QItem, QSpinnerDots } from 'quasar-framework'
+    import { QBtn, QCardActions, QCard, QCardSeparator,
+        QInfiniteScroll, QPopover, QList, QItem,
+        QProgress, QSpinnerDots } from 'quasar-framework'
     export default {
         data () {
             return {
@@ -67,13 +95,23 @@
             CscCollapsible,
             QInfiniteScroll,
             QPopover,
+            QProgress,
             QList,
             QItem,
             QSpinnerDots
         },
         computed: {
+            ...mapGetters('conversations', [
+                'getCardId'
+            ]),
+            progressPercentage() {
+                return this.$store.state.conversations.progressPercentage;
+            },
             conversations() {
                 return this.$store.state.conversations.conversations;
+            },
+            voicemailPlaying() {
+                return this.$store.state.conversations.voicemailPlaying;
             }
         },
         methods: {
@@ -99,7 +137,7 @@
                     case 'call':
                         return 'phone ' + directionIcon;
                         break;
-                    case 'call forward':
+                    case 'callforward':
                         return 'call_merge ' + directionIcon;
                         break;
                     case 'voicemail':
@@ -138,7 +176,21 @@
                 return type == 'sms';
             },
             isCallForward(type) {
-                return type == 'call forward';
+                return type == 'callforward';
+            },
+            playVoicemail() {
+                this.$store.dispatch('conversations/setVoicemailPlaying');
+                this.$refs.voicemailsound.play();
+            },
+            pauseVoicemail() {
+                console.log('pauseVoicemail()');
+            },
+            stopVoicemail() {
+                this.$store.dispatch('conversations/setVoicemailStopped');
+            },
+            timeupdate(e) {
+                let newPercentage = Math.floor((e.target.currentTime / e.target.duration) * 100);
+                this.$store.dispatch('conversations/setProgressPercentage', newPercentage);
             }
         }
     }
@@ -152,4 +204,14 @@
         margin-bottom -10px
 .q-infinite-scroll-message
     margin-bottom 50px
+.voicemail-controls
+    height 46px
+    padding 0 7px
+.voicemail-outer
+    width 110px
+    height 50px
+    margin-left 10px
+.voicemail-inner
+    position absolute
+    width 110px
 </style>
