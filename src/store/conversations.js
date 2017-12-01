@@ -10,7 +10,8 @@ export default {
         page: 1,
         rows: 10,
         conversations: [
-        ]
+        ],
+        voicemailPlaying: false
     },
     mutations: {
         loadConversations(state, options) {
@@ -25,6 +26,12 @@ export default {
             })
             state.conversations = state.conversations.concat(list);
             state.page++;
+        },
+        setVoicemailPlaying(state) {
+            state.voicemailPlaying = true;
+        },
+        setVoicemailStopped(state) {
+            state.voicemailPlaying = false;
         }
     },
     actions: {
@@ -39,6 +46,12 @@ export default {
                     reject(err);
                 });
             });
+        },
+        setVoicemailPlaying(context) {
+            context.commit('setVoicemailPlaying');
+        },
+        setVoicemailStopped(context) {
+            context.commit('setVoicemailStopped');
         }
     }
 };
