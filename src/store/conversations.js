@@ -21,7 +21,7 @@ export default {
                     item.type = item.call_type != 'call' ? 'call forward'
                         : item.type;
                 };
-                list.push(item);
+                list.unshift(item);
             })
             state.conversations = state.conversations.concat(list);
             state.page++;
