@@ -169,9 +169,9 @@
       "dev": true
     },
     "asn1.js": {
-      "version": "4.9.1",
+      "version": "4.9.2",
       "from": "asn1.js@>=4.0.0 <5.0.0",
-      "resolved": "https://npm-registry.sipwise.com/asn1.js/-/asn1.js-4.9.1.tgz",
+      "resolved": "https://registry.npmjs.org/asn1.js/-/asn1.js-4.9.2.tgz",
       "dev": true
     },
     "assert": {
@@ -1185,9 +1185,9 @@
       "dev": true
     },
     "crypto-browserify": {
-      "version": "3.11.1",
-      "from": "crypto-browserify@>=3.11.0 <4.0.0",
-      "resolved": "https://npm-registry.sipwise.com/crypto-browserify/-/crypto-browserify-3.11.1.tgz",
+      "version": "3.12.0",
+      "from": "crypto-browserify@latest",
+      "resolved": "https://registry.npmjs.org/crypto-browserify/-/crypto-browserify-3.12.0.tgz",
       "dev": true
     },
     "css": {
@@ -2016,6 +2016,12 @@
       "resolved": "https://npm-registry.sipwise.com/file-loader/-/file-loader-0.11.2.tgz",
       "dev": true
     },
+    "file-saver": {
+      "version": "1.3.3",
+      "from": "file-saver@latest",
+      "resolved": "https://npm-registry.sipwise.com/file-saver/-/file-saver-1.3.3.tgz",
+      "dev": true
+    },
     "filename-regex": {
       "version": "2.0.1",
       "from": "filename-regex@>=2.0.0 <3.0.0",
@@ -2107,9 +2113,9 @@
       "dev": true
     },
     "fsevents": {
-      "version": "1.1.2",
+      "version": "1.1.3",
       "from": "fsevents@>=1.0.0 <2.0.0",
-      "resolved": "https://npm-registry.sipwise.com/fsevents/-/fsevents-1.1.2.tgz",
+      "resolved": "https://npm-registry.sipwise.com/fsevents/-/fsevents-1.1.3.tgz",
       "dev": true,
       "optional": true,
       "dependencies": {
@@ -2267,8 +2273,7 @@
           "version": "2.0.5",
           "from": "cryptiles@2.0.5",
           "resolved": "https://registry.npmjs.org/cryptiles/-/cryptiles-2.0.5.tgz",
-          "dev": true,
-          "optional": true
+          "dev": true
         },
         "dashdash": {
           "version": "1.14.1",
@@ -2310,6 +2315,13 @@
           "version": "1.0.0",
           "from": "delegates@1.0.0",
           "resolved": "https://registry.npmjs.org/delegates/-/delegates-1.0.0.tgz",
+          "dev": true,
+          "optional": true
+        },
+        "detect-libc": {
+          "version": "1.0.2",
+          "from": "detect-libc@^1.0.2",
+          "resolved": "https://registry.npmjs.org/detect-libc/-/detect-libc-1.0.2.tgz",
           "dev": true,
           "optional": true
         },
@@ -2426,8 +2438,7 @@
           "version": "3.1.3",
           "from": "hawk@3.1.3",
           "resolved": "https://registry.npmjs.org/hawk/-/hawk-3.1.3.tgz",
-          "dev": true,
-          "optional": true
+          "dev": true
         },
         "hoek": {
           "version": "2.16.3",
@@ -2583,9 +2594,9 @@
           "optional": true
         },
         "node-pre-gyp": {
-          "version": "0.6.36",
-          "from": "node-pre-gyp@^0.6.36",
-          "resolved": "https://registry.npmjs.org/node-pre-gyp/-/node-pre-gyp-0.6.36.tgz",
+          "version": "0.6.39",
+          "from": "node-pre-gyp@^0.6.39",
+          "resolved": "https://registry.npmjs.org/node-pre-gyp/-/node-pre-gyp-0.6.39.tgz",
           "dev": true,
           "optional": true
         },
@@ -2749,8 +2760,7 @@
           "version": "1.0.9",
           "from": "sntp@1.0.9",
           "resolved": "https://registry.npmjs.org/sntp/-/sntp-1.0.9.tgz",
-          "dev": true,
-          "optional": true
+          "dev": true
         },
         "sshpk": {
           "version": "1.13.0",
@@ -5002,6 +5012,12 @@
       "version": "2.0.5",
       "from": "randombytes@>=2.0.0 <3.0.0",
       "resolved": "https://npm-registry.sipwise.com/randombytes/-/randombytes-2.0.5.tgz",
+      "dev": true
+    },
+    "randomfill": {
+      "version": "1.0.3",
+      "from": "randomfill@>=1.0.3 <2.0.0",
+      "resolved": "https://registry.npmjs.org/randomfill/-/randomfill-1.0.3.tgz",
       "dev": true
     },
     "range-parser": {

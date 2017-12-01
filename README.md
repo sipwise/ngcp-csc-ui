@@ -96,6 +96,10 @@ Now you can log in to csc with one of the normal subscriber you just created. UR
 
 ### How to add new npm package
 
+1. Remove the package if you've already installed it
+
+`npm remove <package> <--save-dev || --save>`
+
 1. Ensure that you have a clean node_modules folder
     
     ```
