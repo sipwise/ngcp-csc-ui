@@ -1,6 +1,6 @@
 
-import Vue from 'vue';
-import _ from 'lodash';
+import Vue from 'vue'
+import _ from 'lodash'
 import { getJsonBody } from './utils'
 
 export function getConversations(id, page, rows) {
@@ -15,6 +15,17 @@ export function getConversations(id, page, rows) {
                 } else {
                     reject(new Error('No items returned for this page.'))
                 };
+            }).catch(err => {
+                reject(err);
+            });
+    });
+}
+
+export function getVoicemailBlob(id) {
+    return new Promise((resolve, reject) => {
+        Vue.http.get('/api/voicemailrecordings/' + id, {responseType: 'blob'})
+            .then(result => {
+                resolve(result.blob());
             }).catch(err => {
                 reject(err);
             });
