@@ -1,3 +1,42 @@
+ngcp-csc-ui (6.1.0.0+0~mr6.1.0.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [99bd237] TT#23018 Setup: Create and prepare project skeleton for new CSC Web UI
+  * [f01543c] TT#23291 Setup: Created page component
+  * [dd0319e] TT#23357 Build: Fix issue with production build watcher
+  * [3b8f5a4] TT#23369 CallBlocking: As a Customer I want to enable/disable the functionality
+  * [24daa20] TT#23175 CallBlocking: As a Customer I want to add a new number
+  * [dd4ea07] TT#23176 CallBlocking: As a Customer I want to remove a number from the list
+  * [077393c] TT#23436 Add first api client test as template
+  * [dca71df] TT#23367 CallBlocking: As a Customer I want to block outgoing numbers
+  * [15729c0] TT#23601 Call: As a Developer I want to have the cdk (RTC:engine) integrated in the project
+  * [6ab38fc] TT#23603 Call: As a Customer I want to input a number and start a call
+  * [153adaf] TT#24900 CallBlocking: Rework and fix wrong meaning of enabling and disabling
+  * [0113f4a] TT#24903 Improve page title styling
+  * [91d14a8] TT#24415 Call: Play ringing sound
+
+  [ raxelsen ]
+  * [5bbe25c] TT#23408 Add dev env install and build steps
+  * [649d147] TT#23169 As a Customer i want to hide my number
+  * [a5d6d1b] TT#23575 Create CONTRIBUTING.md and define done
+  * [256cd94] TT#23813 Implement minimal card component
+  * [93ea881] TT#23958 Implement infinite scroll
+  * [d69fd38] TT#25951 Update TESTDATA.md with db dump import
+  * [c96b53a] TT#24843 Implement call action button
+  * [0081b1e] TT#25001 Call forward api calls and tests
+  * [582ccf6] TT#25261 Show call data in collapsible
+  * [77c5af2] TT#26651 Implement the list in opposite order
+
+  [ Carlo ]
+  * [24d7397] TT#23168 CSC Reminder module
+
+  [ Guillem Jover ]
+  * [ddabf7c] TT#22072 Update packaging
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Dec 2017 00:08:22 +0100
+
 ngcp-csc-ui (6.0.0.0+0~mr6.0.0.0) unstable; urgency=medium
 
   * Initial revision
