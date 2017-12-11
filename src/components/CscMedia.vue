@@ -10,7 +10,7 @@
 <script>
 
     import _ from 'lodash';
-    import { QSpinnerMat } from 'quasar-framework'
+    import { QSpinnerMat, QIcon } from 'quasar-framework'
 
     export default {
         name: 'csc-media',
@@ -23,7 +23,8 @@
         },
         mounted() {},
         components: {
-            QSpinnerMat
+            QSpinnerMat,
+            QIcon
         },
         methods: {
             assignStream(stream) {
@@ -39,7 +40,7 @@
                     this.$refs.media.src = URL.createObjectURL(this.currentStream);
                 }
                 let timer = setInterval(()=>{
-                    if(this.$refs.media.currentTime > 0) {
+                    if(this.currentStream !== null || this.$refs.media.currentTime > 0) {
                         this.loading = false;
                         clearInterval(timer);
                     }
@@ -56,7 +57,7 @@
         },
         computed: {
             hasVideo() {
-                return _.isArray(this.currentStream.getVideoTracks()) &&
+                return this.currentStream !== null && _.isArray(this.currentStream.getVideoTracks()) &&
                     this.currentStream.getVideoTracks().length > 0;
             }
         }
@@ -65,12 +66,10 @@
 
 <style lang="stylus">
     .csc-media {
-        width: 100%
+        position: relative;
     }
     .csc-media video {
-        width: 100%
-    }
-    .csc-media .csc-spinner {
-
+        position: relative;
+        width: 100%;
     }
 </style>

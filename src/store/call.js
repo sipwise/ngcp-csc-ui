@@ -29,7 +29,9 @@ export default {
         mediaType: null,
         localMediaType: null,
         localMediaStream: null,
-        remoteMediaStream: null
+        remoteMediaStream: null,
+        audioEnabled: true,
+        videoEnabled: true
     },
     getters: {
         getNumber(state, getters) {
@@ -85,6 +87,21 @@ export default {
         },
         hasRtcEngineCapabilityEnabled(state, getters, rootState, rootGetters) {
             return rootGetters['user/hasRtcEngineCapabilityEnabled'];
+        },
+        hasRemoteVideo(state, getters) {
+            return state.remoteMediaStream !== null && state.remoteMediaStream.hasVideo();
+        },
+        hasLocalVideo(state, getters) {
+            return state.localMediaStream !== null && state.localMediaStream.hasVideo();
+        },
+        hasVideo(state, getters) {
+            return getters.hasLocalVideo || getters.hasRemoteVideo;
+        },
+        isAudioEnabled(state, getters) {
+            return state.audioEnabled;
+        },
+        isVideoEnabled(state, getters) {
+            return state.videoEnabled;
         }
     },
     mutations: {
@@ -121,6 +138,7 @@ export default {
         incomingCall(state, options) {
             state.callState = CallState.incoming;
             state.number = options.number;
+            state.mediaType = options.mediaType;
         },
         hangUpCall(state) {
             state.callState = CallState.input;
@@ -144,15 +162,35 @@ export default {
                 state.remoteMediaStream.stop();
                 state.remoteMediaStream = null;
             }
+        },
+        disableAudio(state) {
+            state.audioEnabled = false;
+        },
+        enableAudio(state) {
+            state.audioEnabled = true;
+        },
+        disableVideo(state) {
+            state.videoEnabled = false;
+        },
+        enableVideo(state) {
+            state.videoEnabled = true;
         }
     },
     actions: {
         initialize(context) {
             return new Promise((resolve, reject)=>{
                 Vue.call.onIncoming(()=>{
+                    let mediaType;
+                    if(Vue.call.isRemoteSendingAudio()) {
+                        mediaType = MediaType.audio;
+                    }
+                    if(Vue.call.isRemoteSendingVideo()) {
+                        mediaType = MediaType.audioVideo;
+                    }
                     context.commit('layout/showRight', null, { root: true });
                     context.commit('incomingCall', {
-                        number: Vue.call.getNumber()
+                        number: Vue.call.getNumber(),
+                        mediaType: mediaType
                     });
                 }).onRemoteMedia((remoteMediaStream)=>{
                     context.commit('establishCall', remoteMediaStream);
@@ -176,12 +214,6 @@ export default {
                 }
             });
         },
-        /**
-         * @param context
-         * @param options
-         * @param options.localMedia
-         * @param options.number
-         */
         start(context, options) {
             context.commit('layout/showRight', null, { root: true });
             context.commit('startCalling', {
@@ -198,6 +230,7 @@ export default {
                 }).start(options.number, localMediaStream);
             }).catch((err)=>{
                 context.commit('endCall', err.name);
+                console.error(err);
                 Vue.call.end();
             });
         },
@@ -213,6 +246,22 @@ export default {
         hangUp(context) {
             Vue.call.hangUp();
             context.commit('hangUpCall');
+        },
+        disableAudio(context) {
+            Vue.call.disableAudio();
+            context.commit('disableAudio');
+        },
+        enableAudio(context) {
+            Vue.call.enableAudio();
+            context.commit('enableAudio');
+        },
+        disableVideo(context) {
+            Vue.call.disableVideo();
+            context.commit('disableVideo');
+        },
+        enableVideo(context) {
+            Vue.call.enableVideo();
+            context.commit('enableVideo');
         }
     }
 };
