@@ -121,17 +121,19 @@ export class RtcEngineCall {
                     this.localMedia.setAudio(sources.defaultAudio);
                 }
                 if (hasVideo && _.isObject(sources.defaultVideo)) {
+                    sources.defaultVideo.setQuality(cdk.MediaSourceQuality.HD);
                     this.localMedia.setVideo(sources.defaultVideo);
                 } else if (hasScreen && _.isObject(sources.desktopSharing)) {
+                    sources.desktopSharing.setQuality(cdk.MediaSourceQuality.HD);
                     this.localMedia.setVideo(sources.desktopSharing);
                 }
-            });
-            this.localMedia.build((err)=>{
-                if(_.isObject(err)) {
-                    reject(err);
-                } else {
-                    resolve(this.localMedia);
-                }
+                this.localMedia.build((err)=>{
+                    if(_.isObject(err)) {
+                        reject(err);
+                    } else {
+                        resolve(this.localMedia);
+                    }
+                });
             });
         });
     }
@@ -145,6 +147,8 @@ export class RtcEngineCall {
             this.localCall.onEnded(()=>{
                 this.events.emit('ended', this.localCall.endedReason);
                 this.end();
+            }).onAccepted(()=>{
+                this.events.emit('accepted');
             }).onPending(()=>{
                 this.events.emit('pending');
             }).onRemoteMedia((remoteMediaStream)=>{
@@ -192,6 +196,11 @@ export class RtcEngineCall {
         return this;
     }
 
+    onAccepted(listener) {
+        this.events.on('accepted', listener);
+        return this;
+    }
+
     onPending(listener) {
         this.events.on('pending', listener);
         return this;
@@ -227,6 +236,8 @@ export class RtcEngineCall {
             this.remoteCall.accept({
                 localMediaStream: localMediaStream
             });
+        } else {
+            throw new Error('Remote call does not exist');
         }
     }
 
@@ -248,6 +259,56 @@ export class RtcEngineCall {
             this.localMedia.stop();
             this.localMedia = null;
         }
+    }
+
+    disableAudio() {
+        if(this.localCall !== null) {
+            this.localCall.disableAudio();
+        } else if (this.remoteCall !== null) {
+            this.remoteCall.disableAudio();
+        }
+    }
+
+    enableAudio() {
+        if(this.localCall !== null) {
+            this.localCall.enableAudio();
+        } else if (this.remoteCall !== null) {
+            this.remoteCall.enableAudio();
+        }
+    }
+
+    disableVideo() {
+        if(this.localCall !== null) {
+            this.localCall.disableVideo();
+        } else if (this.remoteCall !== null) {
+            this.remoteCall.disableVideo();
+        }
+    }
+
+    enableVideo() {
+        if(this.localCall !== null) {
+            this.localCall.enableVideo();
+        } else if (this.remoteCall !== null) {
+            this.remoteCall.enableVideo();
+        }
+    }
+
+    getCall() {
+        if(this.localCall !== null) {
+            return this.localCall;
+        } else if (this.remoteCall !== null) {
+            return this.remoteCall;
+        } else {
+            return null;
+        }
+    }
+
+    isRemoteSendingAudio() {
+        return this.getCall()._cdkCall.mediaInfo.remoteSdp.isOfferingAudio();
+    }
+
+    isRemoteSendingVideo() {
+        return this.getCall()._cdkCall.mediaInfo.remoteSdp.isOfferingVideo();
     }
 
     static getInstance() {

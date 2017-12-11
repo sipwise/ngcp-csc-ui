@@ -1,5 +1,6 @@
 <template>
-    <q-layout ref="layout" view="lHh LpR lFf" :right-breakpoint="1100" v-model="layout">
+    <q-layout ref="layout" :view="layoutView" :right-breakpoint="1100"
+              @right-breakpoint="rightBreakPoint" :right-class="callClasses">
         <q-toolbar slot="header">
             <q-btn flat @click="$refs.layout.toggleLeft()">
                 <q-icon name="menu"/>
@@ -96,7 +97,8 @@
                 </q-fab-action>
             </q-fab>
         </q-fixed-position>
-        <csc-call ref="cscCall" slot="right" @close="$refs.layout.hideRight()" region="DE" />
+        <csc-call ref="cscCall" slot="right" @close="closeCall()" @fullscreen="toggleFullscreen()"
+                  :fullscreen="isFullscreenEnabled" region="DE" />
     </q-layout>
 </template>
 
@@ -128,8 +130,7 @@
     export default {
         name: 'default',
         mounted: function() {
-            this.$refs.layout.showLeft();
-            this.$refs.layout.hideRight();
+            this.applyLayout();
             if(!this.hasUser) {
                 startLoading();
                 this.$store.dispatch('user/initUser').then(()=>{
@@ -164,16 +165,14 @@
             CscCall
         },
         computed: {
-            layout: {
-                get(){
-                    return this.$store.state.layout.sides;
-                },
-                set(sides) {
-                    this.$store.commit('layout/updateSides', sides);
-                }
-            },
+            ...mapGetters('layout', [
+                'right',
+                'left',
+                'isFullscreenEnabled'
+            ]),
             ...mapGetters('call', [
                 'isCallAvailable',
+                'isCalling',
                 'hasCallInitFailure'
             ]),
             ...mapGetters('user', [
@@ -190,9 +189,29 @@
             }),
             hasCommunicationCapabilities() {
                 return this.isCallAvailable || this.hasSmsCapability || this.hasFaxCapability;
+            },
+            callClasses() {
+                let classes = {};
+                if(this.isFullscreenEnabled) {
+                    classes['csc-call-fullscreen'] = true;
+                }
+                if(this.isCalling) {
+                    classes['csc-call-calling'] = true;
+                }
+                return classes;
+            },
+            layoutView() {
+                if(this.isFullscreenEnabled) {
+                    return 'lHr LpR lFr';
+                } else {
+                    return 'lHh LpR lFf';
+                }
             }
         },
         methods: {
+            toggleFullscreen() {
+                this.$store.commit('layout/toggleFullscreen');
+            },
             showInitialToasts() {
                 if(this.isCallAvailable) {
                     showToast(this.$i18n.t('toasts.callAvailable'));
@@ -203,7 +222,7 @@
                 }
             },
             call() {
-                this.$refs.layout.showRight();
+                this.$store.commit('layout/showRight');
                 this.$refs.cscCall.init();
             },
             logout() {
@@ -212,6 +231,45 @@
                     stopLoading();
                     this.$router.push({path: '/login'});
                 })
+            },
+            rightBreakPoint() {
+                if(this.right) {
+                    this.$store.commit('layout/showRight');
+                    this.$store.commit('layout/hideLeft');
+                } else {
+                    this.$store.commit('layout/hideRight');
+                }
+            },
+            closeCall() {
+                this.$store.commit('layout/hideRight');
+            },
+            applyLayout() {
+                if(this.right) {
+                    this.$refs.layout.showRight();
+                } else {
+                    this.$refs.layout.hideRight();
+                }
+                if(this.left) {
+                    this.$refs.layout.showLeft();
+                } else {
+                    this.$refs.layout.hideLeft();
+                }
+            }
+        },
+        watch: {
+            right(value) {
+                if(value) {
+                    this.$refs.layout.showRight();
+                } else {
+                    this.$refs.layout.hideRight();
+                }
+            },
+            left(value) {
+                if(value) {
+                    this.$refs.layout.showLeft();
+                } else {
+                    this.$refs.layout.hideLeft();
+                }
             }
         }
     }
@@ -281,6 +339,96 @@
 
     #global-action-btn {
         z-index: 1001;
+    }
+
+    .layout-aside.fixed.csc-call-fullscreen {
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: auto;
+        z-index: 5000;
+    }
+
+    .csc-call-fullscreen .csc-call,
+    .csc-call-fullscreen .csc-call .q-card {
+
+    }
+
+    .csc-call-fullscreen .csc-call .q-card .q-card-primary {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 72px;
+        line-height: 72px;
+        z-index: 6001;
+        background: -moz-linear-gradient(top, rgba(51,64,77,1) 0%, rgba(235,236,237,0) 90%, rgba(255,255,255,0) 100%);
+        background: -webkit-linear-gradient(top, rgba(51,64,77,1) 0%,rgba(235,236,237,0) 90%,rgba(255,255,255,0) 100%);
+        background: linear-gradient(to bottom, rgba(51,64,77,1) 0%,rgba(235,236,237,0) 90%,rgba(255,255,255,0) 100%);
+    }
+
+    .csc-call-fullscreen .csc-call .q-card-actions {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        z-index: 6001;
+    }
+
+    .csc-call-fullscreen .csc-call .q-card-main {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 6000;
+        font-size: 0;
+    }
+
+    .csc-call-fullscreen .csc-call-media {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .csc-media-remote {
+        z-index: 9;
+    }
+
+    .csc-call-fullscreen .csc-media-preview {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 20%;
+    }
+
+    .csc-call-fullscreen .csc-media-preview video {
+        position: relative;
+        height: 100%;
+    }
+
+    .csc-call-fullscreen .csc-media-remote {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+    }
+
+    .csc-call-fullscreen .csc-media-remote video {
+        position: absolute;
+        height: 100%;
+        bottom: 0;
+    }
+
+    .csc-call-fullscreen .csc-call-info {
+        position: relative;
+        top: 73px;
+        z-index: 2;
     }
 
     .q-if-control.q-if-control-before.q-icon,
