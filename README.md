@@ -11,11 +11,11 @@ First make sure you have Node.js and npm installed, and then install and build t
 1. Clone the ngcp-csc-ui repo locally
 1. Run npm install
 
-    ```npm install```
+    `npm install`
 
 1. Build the app for dev
 
-    ```npm run dev-build```
+    `npm run dev-build`
 
 ### Vagrant
 
@@ -23,37 +23,37 @@ To run this app you also need to have a [vagrant-ngcp](https://www.sipwise.org/d
 
 1. Go to your local vagrant-ngcp folder, for example
 
-    ```cd ~/Sipwise/mr/vagrant-ngcp```
+    `cd ~/Sipwise/mr/vagrant-ngcp`
 
 1. Spin up a new vagrant box
 
-    ```./v n pro1```
+    `./v n pro1`
 
 1. SSH into vagrant box and become root
 
-    ```
+    `
     ./v s pro1
     sudo -s
-    ```
+    `
 
 1. Edit config.yml
 
-    ```vim /etc/ngcp-config/config.yml```
+    `vim /etc/ngcp-config/config.yml`
 
 1. Enable csc by finding the the "http_csc:" section of the file, and setting "csc_js_enable:" to yes
 
-    ```csc_js_enable: yes```
+    `csc_js_enable: yes`
 
 1. Run ngcpcfg apply
 
-    ```ngcpcfg apply 'Enable http_csc'```
+    `ngcpcfg apply 'Enable http_csc'`
 
 1. Navigate into the vagrant shared local folder (configured via custom_config file in local vagrant-ngcp/users.d/ folder) and execute dev.sh script to set up symlink between local built files and vagrant files served via nginx
 
-    ```
+    `
     cd /usr/local/devel/ngcp-csc-ui/
     ./dev.sh
-    ```
+    `
 
 You can now access ngcp-csc-ui in browser by using the url provided by the vagrant script.
 
@@ -63,22 +63,22 @@ You need a pbx subscriber to be able to access the pbx config specific modules i
 
 1. SSH into the vagrant box and become root
 
-    ```
+    `
     ./v s pro1
     sudo -s
-    ```
+    `
 
 1. Edit config.yml
 
-    ```vim /etc/ngcp-config/config.yml```
+    `vim /etc/ngcp-config/config.yml`
 
 1. Enable csc by finding the "pbx:" section of the file, and setting "enable:" to yes
 
-    ```enable: yes```
+    `enable: yes`
 
 1. Run ngcpcfg apply
 
-    ```ngcpcfg apply 'Enable pbx'```
+    `ngcpcfg apply 'Enable pbx'`
 
 1. Log in to ngcp-panel with administrator credentials
 1. Go to Settings > Customers
@@ -92,40 +92,39 @@ You need a pbx subscriber to be able to access the pbx config specific modules i
 
 Now you can log in to csc with one of the normal subscriber you just created. URL for login is the same as for accessing ngcp-panel admin, except with csc suffix and no port specified:
 
-```https://<your-ip-address>/csc```
+`https://<your-ip-address>/csc`
 
 ### How to add new npm package
 
 1. Remove the package if you've already installed it
 
-`npm remove <package> <--save-dev || --save>`
+    `npm remove <package> <--save-dev || --save>`
 
 1. Ensure that you have a clean node_modules folder
-    
-    ```
+    `
     rm -R node_modules/
     npm install
-    ```
+    `
 
 1. Remove obsolete shrinkwrap file
-    
-    ```rm npm-shrinkwrap.json```    
-    
-1. Install new package(s)    
-    
-    ```npm install packageA packageB --save-dev```
+
+    `rm npm-shrinkwrap.json`
+
+1. Install new package(s)
+
+    `npm install packageA packageB --save-dev`
 
 1. Generate new shrinkwrap file including all dependencies
 
-    ```npm shrinkwrap --dev```
-    
+    `npm shrinkwrap --dev`
+
     You should see the following result in console:
-    
-    ```wrote npm-shrinkwrap.json```
-    
+
+    `wrote npm-shrinkwrap.json`
+
 1. Add new shrinkwrap file to git
 
-    ```git add .```
+    `git add .`
 
 ## Contributing
 
