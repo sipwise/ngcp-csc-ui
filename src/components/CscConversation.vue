@@ -1,22 +1,40 @@
 <template>
-    <q-card class="conversation-card" :id="conversation._id">
-        <csc-collapsible :icon="getCollapsibleIcons()"
-            :label="getCollapsibleLabel()"
-            :sublabel="conversation.start_time | readableDate">
-            <div v-if="isType('call') || isType('voicemail')">
-                <ul>
-                    <li>
-                        <strong>
-                            {{ $t('pages.conversations.card.duration') }}:
-                        </strong> {{ conversation.duration }}</li>
-                    <li v-if="isType('voicemail')">
-                        <strong>
-                            {{ $t('pages.conversations.card.folder') }}:
-                        </strong> {{ conversation.folder }}</li>
-                </ul>
-            </div>
-        </csc-collapsible>
-        <div v-if="!isType('fax')">
+    <csc-card-collapsible :list-item="conversation" :collapsible="hasCollapsibleData"
+        :firstIcon="getFirstIcon()" :secondIcon="getSecondIcon()"
+        :sublabel="conversation.start_time | readableDate" :id="conversation._id">
+        <span slot="title">
+            {{ getTitle() }}
+            <span v-if="isType('fax')" style="padding-left:12px;">
+                <q-chip pointing="left" color="primary" class="csc-number-chip">
+                    <strong>Pages:</strong>
+                    {{ conversation.pages }}
+                </q-chip>
+            </span>
+        </span>
+        <div v-if="isType('call')" slot="main">
+            <ul>
+                <li>
+                    <strong>
+                        {{ $t('pages.conversations.card.duration') }}:
+                    </strong> {{ conversation.duration }}
+                </li>
+            </ul>
+        </div>
+        <div v-else-if="isType('voicemail')" slot="main">
+            <ul>
+                <li>
+                    <strong>
+                        {{ $t('pages.conversations.card.duration') }}:
+                    </strong> {{ conversation.duration }}
+                </li>
+                <li>
+                    <strong>
+                        {{ $t('pages.conversations.card.folder') }}:
+                    </strong> {{ conversation.folder }}
+                </li>
+            </ul>
+        </div>
+        <div v-if="!isType('fax')" slot="footer">
             <q-card-separator />
             <q-card-actions align="center">
                 <q-btn flat round small color="primary" icon="call">
@@ -34,24 +52,20 @@
                         </q-list>
                       </q-popover>
                 </q-btn>
-                <div v-if="isType('voicemail')">
-                    <q-btn flat round small color="primary" icon="play_arrow"
-                           @click="downloadVoiceMail(conversation.id)">
-                        {{ $t('pages.conversations.buttons.play') }}
-                    </q-btn>
-                </div>
+                <q-btn v-if="isType('voicemail')" flat round small color="primary"
+                    icon="play_arrow" @click="downloadVoiceMail(conversation.id)">
+                    {{ $t('pages.conversations.buttons.play') }}
+                </q-btn>
             </q-card-actions>
         </div>
-    </q-card>
+    </csc-collapsible-card>
 </template>
 
 <script>
     import Vue from 'vue'
-    import crypto from 'crypto-browserify'
-    import CscCollapsible from './card/CscCollapsible'
-    import { mapGetters } from 'vuex'
-    import { QBtn, QCardActions, QCard, QCardSeparator,
-        QPopover, QItem, QList } from 'quasar-framework'
+    import CscCardCollapsible from './card/CscCardCollapsible'
+    import { QBtn, QPopover, QItem, QList, QCardActions,
+        QChip, QCardSeparator } from 'quasar-framework'
     import numberFormat from '../filters/number-format'
     export default {
         name: 'csc-conversation',
@@ -60,18 +74,18 @@
         ],
         components: {
             QBtn,
-            QCard,
-            QCardActions,
-            QCardSeparator,
             QPopover,
             QItem,
             QList,
-            CscCollapsible
+            QChip,
+            QCardSeparator,
+            QCardActions,
+            CscCardCollapsible
         },
         computed: {
-            ...mapGetters('conversations', [
-                'getCardId'
-            ])
+            hasCollapsibleData() {
+                return (['call', 'voicemail'].indexOf(this.conversation.type) > -1);
+            }
         },
         methods: {
             downloadVoiceMail(id) {
@@ -84,28 +98,32 @@
                 this.$store.dispatch('call/start',
                     { number: number, localMedia: localMedia });
             },
-            getCollapsibleIcons() {
+            getFirstIcon() {
                 let conversation = this.conversation;
-                let directionIcon = conversation.direction == 'out' ? 'call_made' :
-                    'call_received';
                 switch (conversation.type) {
                     case 'call':
-                        return 'phone ' + directionIcon;
+                        return 'phone';
                         break;
                     case 'callforward':
-                        return 'call_merge ' + directionIcon;
+                        return 'call_merge';
                         break;
                     case 'voicemail':
-                        return 'voicemail ' + directionIcon;
+                        return 'voicemail';
                         break;
                     case 'fax':
-                        return 'insert_drive_file ' + directionIcon;
+                        return 'insert_drive_file';
                         break; case 'sms':
-                        return 'txtsms ' + directionIcon;
+                        return 'txtsms';
                         break;
                 };
             },
-            getCollapsibleLabel() {
+            getSecondIcon() {
+                let conversation = this.conversation;
+                let directionIcon = conversation.direction == 'out' ?
+                    'call_made' : 'call_received';
+                return directionIcon;
+            },
+            getTitle() {
                 let conversation = this.conversation;
                 let prefix;
                 if (!conversation.status || ['ok', 'SUCCESS'].indexOf(conversation.status) > -1) {
@@ -124,28 +142,10 @@
             },
             isType(type) {
                 return this.conversation.type == type;
-            },
-            getVoicemailUrl() {
-                return window.location.origin + this.conversation.voicemail;
             }
         }
     }
 </script>
 
 <style lang="stylus">
-@import '~variables'
-.conversation-card
-    padding 15px
-    .q-btn
-        margin-bottom -10px
-.voicemail-controls
-    height 46px
-    padding 0 7px
-.voicemail-outer
-    width 110px
-    height 50px
-    margin-left 10px
-.voicemail-inner
-    position absolute
-    width 110px
 </style>

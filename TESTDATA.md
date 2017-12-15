@@ -1,3 +1,4 @@
+
 # CONVERSATIONS MODULE
 
 IMPORTANT: This document is meant for internal use at Sipwise, as it requires a vagrant-ngcp environment to be able to generate the test data.
@@ -24,9 +25,18 @@ cd /usr/local/devel
 mysql < ./conversations_dump.sql
 `
 
+## PBX
+
+1. Before doing the individual test data creation steps below, make sure pbx is enabled
+1. First SSH in to the vagrant box, become root and edit /etc/ngcp-config/config.yml
+`vim /etc/ngcp-config/config.yml`
+1. Search for the "pbx:" section, and set "enable:" to yes
+1. Then do `ngcpcfg apply 'commit msg'`
+
 ## VOICEMAIL
 
-1. Go to Settings > Subscribers > Details > Preferences, and under Call Forwards create a call forward destination under "Call Forward Unconditional" to voicemail
+1. Go to Settings > Subscribers > Details > Master Data, and set "Primary Number"/E164 to the desired number (for example 43993007)
+1. Go to Settings > Subscribers > Details > Preferences, and under "Call Forwards" create a call forward destination under "Call Forward Unconditional" to voicemail
 1. Initiate a call from another subscriber to the subscriber you just set call forward for, and leave a voicemail
 
 See [calls section](#calls) for information on how to initiate calls.
@@ -45,15 +55,21 @@ See [calls section](#calls) for information on how to initiate calls.
 For outgoing you need to use the api (also with E 164 number set to sms number from wiki). According to gjungwirth pretty simple with POST request containing the destination number and the content. 
 
 ## FAX
+1. Install exim package, so we can send the fax via mail. SSH in to vagrant box, become root, and then execute:
+`dpkg-reconfigure exim4-config`
+1. Follow the install prompt by first choosing 'mail sent by smarthost; no local mail'
+1. Then press enter for default sp1 selection, until you get asked for "IP address or host name of the outgoing smarthost:". There you enter mail.sipwise.com and press enter
+1. For the rest of the prompts, press enter to choose the defaults
 1. Go to Settings > Subscribers, find subscriber you want to use as caller, and click "Details"
 1. Under "Master Data" click edit, and enter subscribers number also in the E164 field
+1. Then go to "Preferences", and set "Fax2Mail and Sendfax" to active
 1. Repeat the two steps above, this time for the callee
-1. SSH in to the vagrant box, become root, and create a text file to use for sending fax:
-`echo 'test test' > filetosend.txt`
-1. Use the ngcp-fax tool to send a fax:
-`ngcp-fax --caller 43993003 --callee 43993002 --file filetosend.txt`
-1. To troubleshoot you can check log:
+1. For the callee, you also need to add your internal sipwise email address as "Destination" under "Fax2Mail and Sendfax", and also under "Call Forwards" configure a "Call Forward Unconditional" to "Fax2Mail"
+1. SSH in to the vagrant box, become root, and execute the following command to send a fax from one subscriber to another
+`echo "Test Fax!" | ngcp-fax --caller 43993006 --callee 43993007`
+1. To troubleshoot you can check logs:
 `tail -f /var/log/ngcp/faxserver.log`
+`tail -f /var/log/ngcp/kamailio-proxy.log`
 
 ## CALLS
 
