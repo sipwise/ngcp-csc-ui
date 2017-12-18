@@ -2,6 +2,8 @@
 import _ from 'lodash';
 import Vue from 'vue';
 
+var assumedNumbers = 1000;
+
 export function login(username, password) {
     return new Promise((resolve, reject)=>{
         var jwt = null;
@@ -68,8 +70,36 @@ export function getCapabilities() {
 
 export function getNumbers() {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/numbers').then((result)=>{
-            resolve(result);
+        let params = {};
+        let path = '/api/numbers';
+        Promise.resolve().then(()=>{
+            return Vue.http.get(path, {
+                params: _.assign(params, {
+                    page: 1,
+                    rows: assumedNumbers,
+                })
+            });
+        }).then((res)=>{
+            let body = JSON.parse(res.body);
+            if(body.total_count > assumedNumbers) {
+                return Vue.http.get(path, {
+                    params: _.assign(params, {
+                        page: 1,
+                        rows: body.total_count,
+                    })
+                });
+            } else {
+                return Promise.resolve(res);
+            }
+        }).then((res)=>{
+            let body = JSON.parse(res.body);
+            let numbers = [];
+            if(_.isArray(body["_embedded"]["ngcp:numbers"])) {
+                body['_embedded']['ngcp:numbers'].forEach((number)=>{
+                    numbers.push(number);
+                });
+            }
+            resolve(numbers);
         }).catch((err)=>{
             reject(err);
         });
