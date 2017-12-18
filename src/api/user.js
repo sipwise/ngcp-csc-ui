@@ -69,7 +69,14 @@ export function getCapabilities() {
 export function getNumbers() {
     return new Promise((resolve, reject)=>{
         Vue.http.get('/api/numbers').then((result)=>{
-            resolve(result);
+            let body = JSON.parse(result.body);
+            let numbers = [];
+            if(_.isArray(body["_embedded"]["ngcp:numbers"])) {
+                body['_embedded']['ngcp:numbers'].forEach((number)=>{
+                    numbers.push(number);
+                });
+            }
+            resolve(numbers);
         }).catch((err)=>{
             reject(err);
         });
