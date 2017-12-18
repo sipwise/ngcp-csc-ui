@@ -127,5 +127,18 @@
         "number": "Number",
         "endCall": "End Call",
         "endCallDialog": "You are about to end the current call. Are you sure?"
+    },
+    "pbxConfig": {
+        "extension": "Extension",
+        "groupName": "Name",
+        "huntPolicy": "Hunt Policy",
+        "huntTimeout": "Hunt Timeout",
+        "primaryNumber": "Primary Number",
+        "aliasNumbers": "Alias Numbers",
+        "seats": "Seats",
+        "serialRinging": "Serial Ringing",
+        "parallelRinging": "Parallel Ringing",
+        "randomRinging": "Random Ringing",
+        "circularRinging": "Circular Ringing"
     }
 }
