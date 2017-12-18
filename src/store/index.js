@@ -8,7 +8,7 @@ import CallForwardModule from './call-forward'
 import CallModule from './call'
 import ConversationsModule from './conversations'
 import LayoutModule from './layout'
-import PbxGroupsModule from './pbx-groups'
+import PbxConfigModule from './pbx-config'
 import ReminderModule from './reminder'
 import UserModule from './user'
 
@@ -21,7 +21,7 @@ export const store = new Vuex.Store({
         call: CallModule,
         conversations: ConversationsModule,
         layout: LayoutModule,
-        pbxGroups: PbxGroupsModule,
+        pbxConfig: PbxConfigModule,
         reminder: ReminderModule,
         user: UserModule
     }
