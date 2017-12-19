@@ -36,7 +36,7 @@ describe('PBX Configuration Store', () => {
                 }
             ]
         };
-        PbxConfig.mutations.listAll(state, data);
+        PbxConfig.mutations.listAllSucceeded(state, data);
         assert.equal(state.seats[2], data.seats[0]);
         assert.equal(state.seats[3], data.seats[1]);
         assert.equal(state.groups[4], data.groups[0]);
