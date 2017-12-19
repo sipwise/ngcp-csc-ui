@@ -1,6 +1,21 @@
 
 import _ from 'lodash';
-import { getPbxConfiguration } from '../api/pbx-config'
+import { getPbxConfiguration, addGroup } from '../api/pbx-config'
+
+const ListState = {
+    initiated: 'initiated',
+    requesting: 'requesting',
+    succeeded: 'succeeded',
+    failed: 'failed'
+};
+
+const AddGroupState = {
+    button: 'button',
+    input: 'input',
+    requesting: 'requesting',
+    succeeded: 'succeeded',
+    failed: 'failed'
+};
 
 export default {
     namespaced: true,
@@ -10,7 +25,12 @@ export default {
         groupsOrdered: [],
         seats: {},
         seatsOrdered: [],
-        numbers: []
+        numbers: [],
+        numbersMap : {},
+        listAllState: ListState.initiated,
+        listAllError: null,
+        addGroupState: AddGroupState.button,
+        addGroupError: null
     },
     getters: {
         groups(state, getters) {
@@ -20,17 +40,40 @@ export default {
             return state.seatsOrdered;
         },
         numbers(state, getters) {
-            return state.numbers;
+            return _.get(state, 'numbers', []);
+        },
+        primaryNumbers(state, getters) {
+            let numbers = getters.numbers;
+            let primaryNumbers = [];
+            if(_.isArray(numbers)) {
+                numbers.forEach((number)=>{
+                    if(number.is_primary) {
+                        primaryNumbers.push(number);
+                    }
+                });
+            }
+            return primaryNumbers;
         },
         aliasNumbers(state, getters) {
-
+            let numbers = getters.numbers;
+            let aliasNumbers = [];
+            if(_.isArray(numbers) && numbers.length) {
+                numbers.forEach((number)=>{
+                    if(!number.is_primary) {
+                        aliasNumbers.push(number);
+                    }
+                });
+            }
+            return aliasNumbers;
         }
     },
     mutations: {
-        show: function(state, options) {
-            state.groups = options.groups;
+        listAllRequesting(state) {
+            state.listAllState = ListState.requesting;
         },
-        listAll(state, all) {
+        listAllSucceeded(state, all) {
+            state.listAllState = ListState.succeeded;
+            state.listAllError = null;
             state.pilot = all.pilot;
             state.groups = {};
             state.groupsOrdered = [];
@@ -64,28 +107,51 @@ export default {
                     } else {
                         number.subscriber = null;
                     }
+                    state.numbersMap[number.id] = number;
                 });
                 state.numbers = all.numbers;
             }
+            _.reverse(state.groupsOrdered);
+            _.reverse(state.seatsOrdered);
+        },
+        listAllFailed(state, error) {
+            state.listAllState = ListState.failed;
+            state.listAllError = error;
+        },
+        addGroupRequesting(state){
+            state.addGroupState = AddGroupState.requesting;
+            state.addGroupError = null;
+        },
+        addGroupSucceeded(state){
+            state.addGroupState = AddGroupState.succeeded;
+            state.addGroupError = null;
+        },
+        addGroupFailed(state, error) {
+            state.addGroupState = AddGroupState.failed;
+            state.addGroupError = error;
         }
     },
     actions: {
-        listSeats(context, options) {
-            return new Promise((resolve, reject)=>{
-                getPbxConfiguration().then((config)=>{
-                   context.commit('listAll', config);
-               }).catch((err)=>{
-                   console.log(err);
-               });
+        listSeats(context) {
+            return context.dispatch('listGroups');
+        },
+        listGroups(context) {
+            context.commit('listAllRequesting');
+            getPbxConfiguration().then((config)=>{
+                context.commit('listAllSucceeded', config);
+            }).catch((err)=>{
+                context.commit('listAllFailed', err.message);
             });
         },
-        listGroups(context, options) {
-            return new Promise((resolve, reject)=>{
-                getPbxConfiguration().then((config)=>{
-                    context.commit('listAll', config);
-                }).catch((err)=>{
-                    console.log(err);
-                });
+        addGroup(context, group) {
+            context.commit('addGroupRequesting');
+            group.customerId = context.state.pilot.customer_id;
+            group.domainId = context.state.pilot.domain_id;
+            addGroup(group).then(()=>{
+                context.commit('addGroupSucceeded');
+                context.dispatch('listGroups');
+            }).catch((err)=>{
+                context.commit('addGroupFailed', err.message);
             });
         }
     }
