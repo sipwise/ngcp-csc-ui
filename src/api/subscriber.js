@@ -179,3 +179,17 @@ export function enablePrivacy(id) {
 export function disablePrivacy(id) {
     return setPrivacy(id, false);
 }
+
+export function createSubscriber(subscriber) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.post('/api/subscribers/', subscriber, {
+            params: {
+                customer_id: subscriber.customer_id
+            }
+        }).then((res)=>{
+            resolve(getJsonBody(res.body));
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}

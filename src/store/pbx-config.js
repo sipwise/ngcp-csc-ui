@@ -1,6 +1,6 @@
 
 import _ from 'lodash';
-import { getPbxConfiguration } from '../api/pbx-config'
+import { getPbxConfiguration, addGroup } from '../api/pbx-config'
 
 export default {
     namespaced: true,
@@ -20,10 +20,31 @@ export default {
             return state.seatsOrdered;
         },
         numbers(state, getters) {
-            return state.numbers;
+            return _.get(state, 'numbers', []);
+        },
+        primaryNumbers(state, getters) {
+            let numbers = getters.numbers;
+            let primaryNumbers = [];
+            if(_.isArray(numbers)) {
+                numbers.forEach((number)=>{
+                    if(number.is_primary) {
+                        primaryNumbers.push(number);
+                    }
+                });
+            }
+            return primaryNumbers;
         },
         aliasNumbers(state, getters) {
-
+            let numbers = getters.numbers;
+            let aliasNumbers = [];
+            if(_.isArray(numbers) && numbers.length) {
+                numbers.forEach((number)=>{
+                    if(!number.is_primary) {
+                        aliasNumbers.push(number);
+                    }
+                });
+            }
+            return aliasNumbers;
         }
     },
     mutations: {
@@ -70,7 +91,7 @@ export default {
         }
     },
     actions: {
-        listSeats(context, options) {
+        listSeats(context) {
             return new Promise((resolve, reject)=>{
                 getPbxConfiguration().then((config)=>{
                    context.commit('listAll', config);
@@ -79,13 +100,28 @@ export default {
                });
             });
         },
-        listGroups(context, options) {
+        listGroups(context) {
             return new Promise((resolve, reject)=>{
                 getPbxConfiguration().then((config)=>{
                     context.commit('listAll', config);
                 }).catch((err)=>{
                     console.log(err);
                 });
+            });
+        },
+        addGroup(context, group) {
+            return new Promise((resolve, reject)=>{
+               Promise.resolve().then(()=>{
+                   group.customerId = context.state.pilot.customer_id;
+                   group.domain = context.state.pilot.domain;
+                   return addGroup(group);
+               }).then(()=>{
+                   return context.dispatch('listGroups');
+               }).then(()=>{
+                   resolve();
+               }).catch((err)=>{
+                   console.log(err);
+               });
             });
         }
     }
