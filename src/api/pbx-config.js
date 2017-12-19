@@ -2,8 +2,30 @@
 import Vue from 'vue';
 import { getJsonBody } from './utils';
 import { getNumbers } from './user';
+import { createSubscriber } from './subscriber';
 
 var assumedRows = 1000;
+
+export function getGroups(options) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.get('/api/subscribers', {
+            params: {
+                is_pbx_group: true
+            }
+        }).then((result)=>{
+            var groups = [];
+            var body = JSON.parse(result.body);
+            if(_.isArray(body["_embedded"]["ngcp:subscribers"])) {
+                body['_embedded']['ngcp:subscribers'].forEach((group)=>{
+                    groups.push(group);
+                });
+            }
+            resolve(groups);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
 
 export function getAllPbxSubscribers() {
     return new Promise((resolve, reject)=>{
@@ -64,6 +86,30 @@ export function getPbxConfiguration() {
                 groups: result[0].groups,
                 numbers: result[1]
             });
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function addGroup(group) {
+    return new Promise((resolve, reject)=>{
+        let randomToken = ()=>{
+            return 'd' + Date.now() + "r" + (Math.round(Math.random() * 1000000) + 1000000);
+        };
+        createSubscriber({
+            customer_id: group.customerId,
+            username: randomToken(),
+            password: randomToken(),
+            display_name: group.name,
+            is_pbx_group: true,
+            pbx_extension: group.extension,
+            pbx_hunt_policy: group.huntPolicy,
+            pbx_hunt_timeout: group.huntTimeout,
+            pbx_groupmember_ids: group.seats,
+            alias_numbers: group.aliasNumbers
+        }).then(()=>{
+            resolve();
         }).catch((err)=>{
             reject(err);
         });
