@@ -68,6 +68,44 @@ export function getCapabilities() {
     });
 }
 
+export function assignNumber(numberId, subscriberId) {
+    return new Promise((resolve, reject)=>{
+        var headers = {};
+        headers['Content-Type'] = 'application/json-patch+json';
+        Promise.resolve().then((result)=>{
+            return Vue.http.patch('/api/numbers/' + numberId, [{
+                op: 'replace',
+                path: '/subscriber_id',
+                value: subscriberId
+            }], {
+                headers: headers
+            });
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function assignNumbers(numberIds, subscriberId) {
+    return new Promise((resolve, reject)=>{
+        if(_.isArray(numberIds) && numberIds.length > 0) {
+            let assignNumberRequests = [];
+            numberIds.forEach((numberId)=>{
+                assignNumberRequests.push(assignNumber(numberId, subscriberId));
+            });
+            Promise.all(assignNumberRequests).then(()=>{
+                resolve();
+            }).catch((err)=>{
+                reject(err);
+            });
+        } else {
+            reject(new Error('No numberIds given'));
+        }
+    });
+}
+
 export function getNumbers() {
     return new Promise((resolve, reject)=>{
         let params = {};
