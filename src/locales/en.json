@@ -143,6 +143,7 @@
         "randomRinging": "Random Ringing",
         "circularRinging": "Circular Ringing",
         "allocatedByNobody": "Free",
-        "allocatedBy": "Allocated by {type} {name}"
+        "allocatedBy": "Allocated by {type} {name}",
+        "addGroup": "Add Group"
     }
 }
