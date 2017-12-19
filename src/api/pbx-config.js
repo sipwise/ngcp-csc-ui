@@ -2,6 +2,7 @@
 import Vue from 'vue';
 import { getJsonBody } from './utils';
 import { getNumbers } from './user';
+import { createSubscriber } from './subscriber';
 
 var assumedRows = 1000;
 
@@ -12,7 +13,7 @@ export function getAllPbxSubscribers() {
             return Vue.http.get('/api/subscribers', {
                 params: _.assign(params, {
                     page: 1,
-                    rows: assumedRows,
+                    rows: assumedRows
                 })
             });
         }).then((res)=>{
@@ -33,11 +34,11 @@ export function getAllPbxSubscribers() {
             let seats = [];
             let groups = [];
             subscribers.forEach((subscriber)=>{
-                if(subscriber.is_pbx_group) {
-                    groups.push(subscriber);
-                } else if(subscriber.is_pbx_pilot) {
+                if(_.has(subscriber, 'is_pbx_pilot') && subscriber.is_pbx_pilot === true) {
                     pilot = subscriber;
-                } else {
+                } else if(_.has(subscriber, 'is_pbx_group') && subscriber.is_pbx_group === true) {
+                    groups.push(subscriber);
+                } else if (_.has(subscriber, 'pbx_extension') && subscriber.pbx_extension !== null) {
                     seats.push(subscriber);
                 }
             });
@@ -64,6 +65,31 @@ export function getPbxConfiguration() {
                 groups: result[0].groups,
                 numbers: result[1]
             });
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function addGroup(group) {
+    return new Promise((resolve, reject)=>{
+        let randomToken = ()=>{
+            return 'd' + Date.now() + "r" + (Math.round(Math.random() * 1000000) + 1000000);
+        };
+        createSubscriber({
+            customer_id: group.customerId,
+            domain_id: group.domainId,
+            username: randomToken(),
+            password: randomToken(),
+            display_name: group.name,
+            is_pbx_group: true,
+            pbx_extension: group.extension,
+            pbx_hunt_policy: group.huntPolicy,
+            pbx_hunt_timeout: group.huntTimeout,
+            pbx_groupmember_ids: group.seats,
+            alias_numbers: group.aliasNumbers
+        }).then(()=>{
+            resolve();
         }).catch((err)=>{
             reject(err);
         });
