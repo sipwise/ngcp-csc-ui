@@ -3,7 +3,9 @@
 
 import _ from 'lodash';
 import { getSourcesets, getDestinationsets, getTimesets,
-    getMappings } from '../api/call-forward';
+    getMappings, loadAlwaysEverybodyDestinations,
+    deleteDestinationFromDestinationset,
+    deleteDestinationsetById } from '../api/call-forward';
 
 export default {
     namespaced: true,
@@ -11,7 +13,16 @@ export default {
         mappings: null,
         sourcesets: null,
         timesets: null,
-        destinationsets: null
+        destinationsets: null,
+        alwaysEverybodyDestinations: {
+            online: [],
+            busy: [],
+            offline: []
+        }
+    },
+    getters: {
+        getDestinationsetId(state) {
+        }
     },
     mutations: {
         loadMappings(state, result) {
@@ -25,6 +36,10 @@ export default {
         },
         loadDestinationsets(state, result) {
             state.destinationsets = result;
+        },
+        loadAlwaysEverybodyDestinations(state, result) {
+            console.log(result);
+            state.alwaysEverybodyDestinations = result;
         }
     },
     actions: {
@@ -53,7 +68,7 @@ export default {
                 getTimesets(localStorage.getItem('subscriberId'))
                     .then(result => {
                         context.commit('loadTimesets', result);
-                    }).catch(err => {
+                    }).catch((err) => {
                         reject(err);
                     });
             });
@@ -64,6 +79,33 @@ export default {
                     .then(result => {
                         context.commit('loadDestinationsets', result);
                     }).catch(err => {
+                        reject(err);
+                    });
+            });
+        },
+        loadAlwaysEverybodyDestinations(context) {
+            return new Promise((resolve, reject)=>{
+                loadAlwaysEverybodyDestinations(localStorage.getItem('subscriberId')).then((result)=>{
+                    context.commit('loadAlwaysEverybodyDestinations', result);
+                })
+            });
+        },
+        deleteDestinationFromDestinationset(context, options) {
+            return new Promise((resolve, reject) => {
+                deleteDestinationFromDestinationset(options)
+                    .then((result) => {
+                        resolve(result);
+                    }).catch((err) => {
+                        reject(err);
+                    });
+            });
+        },
+        deleteDestinationsetById(context, id) {
+            return new Promise((resolve, reject) => {
+                deleteDestinationsetById(id)
+                    .then((result) => {
+                        resolve(result);
+                    }).catch((err) => {
                         reject(err);
                     });
             });
