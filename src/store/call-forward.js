@@ -3,17 +3,55 @@
 
 import _ from 'lodash';
 import { getSourcesets, getDestinationsets, getTimesets,
-    getMappings } from '../api/call-forward';
+    getMappings, loadAlwaysDestinations } from '../api/call-forward';
 
 export default {
     namespaced: true,
     state: {
+        sourceSets: [
+            {
+                id: 1,
+                name: 'SourceSet1',
+                online: [
+                    {
+                        id: 2,
+                        name: 'dest2',
+                        destinations: []
+                    },
+                    {
+                        id: 1,
+                        name: 'dest1',
+                        destinations: []
+                    }
+                ],
+                offline: [
+                    {
+                        id: 3,
+                        name: 'dest3',
+                        destinations: []
+                    }
+                ],
+                busy: [
+                    {
+                        id: 1,
+                        name: 'dest1',
+                        destinations: []
+                    }
+                ],
+            }
+        ],
         mappings: null,
         sourcesets: null,
         timesets: null,
         destinationsets: null
     },
     mutations: {
+        load(state, options) {
+            state.sourceSets = options.sourceSets;
+        },
+        addDestination(state, options) {
+
+        },
         loadMappings(state, result) {
             state.mappings = result;
         },
@@ -66,6 +104,13 @@ export default {
                     }).catch(err => {
                         reject(err);
                     });
+            });
+        },
+        loadAlwaysDestinations() {
+            return new Promise((resolve, reject)=>{
+                loadAlwaysDestinations(localStorage.getItem('subscriberId')).then((result)=>{
+                    console.log(result);
+                })
             });
         }
     }
