@@ -4,7 +4,8 @@
 import Vue from 'vue';
 import VueResource from 'vue-resource';
 import { getMappings, getSourcesets, getTimesets,
-    getDestinationsets } from '../../src/api/call-forward';
+    getDestinationsets, getDestinationsetById,
+    deleteDestinationFromDestinationset } from '../../src/api/call-forward';
 import { assert } from 'chai';
 
 Vue.use(VueResource);
@@ -223,6 +224,135 @@ describe('CallForward', function(){
         });
         getDestinationsets(subscriberId).then((result)=>{
             assert.deepEqual(result, innerData);
+            done();
+        }).catch((err)=>{
+            done(err);
+        });
+    });
+
+    it('should get all call forward destinationset by id', function(done){
+
+        let data = {
+            "_links": {
+                "collection": {
+                    "href": "/api/cfdestinationsets/"
+                },
+                "curies": {
+                    "href": "http://purl.org/sipwise/ngcp-api/#rel-{rel}",
+                    "name": "ngcp",
+                    "templated": true
+                },
+                "ngcp:subscribers": {
+                    "href": "/api/subscribers/309"
+                },
+                "profile": {
+                    "href": "http://purl.org/sipwise/ngcp-api/"
+                },
+                "self": {
+                    "href": "/api/cfdestinationsets/3"
+                }
+            },
+            "destinations": [
+                {
+                "announcement_id": null,
+                "destination": "sip:3333@192.168.178.23",
+                "priority": 1,
+                "simple_destination": "3333",
+                "timeout": 60
+                },
+                {
+                "announcement_id": null,
+                "destination": "sip:3333@192.168.178.23",
+                "priority": 1,
+                "simple_destination": "3333",
+                "timeout": 90
+                },
+                {
+                "announcement_id": null,
+                "destination": "sip:vmu04ee2ae6-aa11-4cee-82fe-5ac57c11174e@voicebox.local",
+                "priority": 1,
+                "timeout": 300
+                },
+                {
+                "announcement_id": null,
+                "destination": "sip:04ee2ae6-aa11-4cee-82fe-5ac57c11174e@fax2mail.local",
+                "priority": 1,
+                "timeout": 300
+                }
+            ],
+            "id": 3,
+            "name": "t2"
+        };
+
+        let responseData = {
+            "destinations": [
+                {
+                "announcement_id": null,
+                "destination": "sip:3333@192.168.178.23",
+                "priority": 1,
+                "simple_destination": "3333",
+                "timeout": 60
+                },
+                {
+                "announcement_id": null,
+                "destination": "sip:3333@192.168.178.23",
+                "priority": 1,
+                "simple_destination": "3333",
+                "timeout": 90
+                },
+                {
+                "announcement_id": null,
+                "destination": "sip:vmu04ee2ae6-aa11-4cee-82fe-5ac57c11174e@voicebox.local",
+                "priority": 1,
+                "timeout": 300
+                },
+                {
+                "announcement_id": null,
+                "destination": "sip:04ee2ae6-aa11-4cee-82fe-5ac57c11174e@fax2mail.local",
+                "priority": 1,
+                "timeout": 300
+                }
+            ],
+            "id": 3,
+            "name": "t2"
+        };
+
+        Vue.http.interceptors = [];
+        Vue.http.interceptors.unshift((request, next)=>{
+            next(request.respondWith(JSON.stringify(data), {
+                status: 200
+            }));
+        });
+        getDestinationsetById('3').then((result)=>{
+            assert.deepEqual(result, responseData);
+            done();
+        }).catch((err)=>{
+            done(err);
+        });
+    });
+
+    it('should delete destination from call forward destinationset', function(done){
+
+        let options = {
+            id: 3,
+            data: {
+                "announcement_id": null,
+                "destination": "sip:3333@192.168.178.23",
+                "priority": 1,
+                "simple_destination": "3333",
+                "timeout": 60
+            },
+            deleteDestinationset: false
+        };
+
+        Vue.http.interceptors = [];
+        Vue.http.interceptors.unshift((request, next)=>{
+            next(request.respondWith(JSON.stringify({}), {
+                status: 204
+            }));
+        });
+        deleteDestinationFromDestinationset(options).then((result)=>{
+            assert.isOk(result);
             done();
         }).catch((err)=>{
             done(err);

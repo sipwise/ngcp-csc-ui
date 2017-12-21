@@ -114,6 +114,26 @@
             },
             "timeUpdatedMsg": "Time updated!",
             "recurrenceUpdatedMsg": "Recurrence updated!"
+        },
+        "callForward": {
+            "titles": {
+                "always": "Always",
+                "companyHours": "Company Hours",
+                "afterHours": "After Hours"
+            },
+            "whenOnline": "When I am online ...",
+            "whenBusy": "When I am busy ...",
+            "whenOffline": "When I am offline ...",
+            "forwardTo": "forward to",
+            "firstRing": "first ring",
+            "thenRing": "then ring",
+            "for": "for",
+            "secs": "secs",
+            "forwardToNowhere": "forward to nowhere",
+            "removeDialogTitle": "Remove call forward destination",
+            "removeDialogText": "You are about to remove the destination {destination}",
+            "removeSuccessMessage": "Removed destination {destination}",
+            "removeErrorMessage": "An error occured while trying to delete the destination. Please try again."
         }
     },
     "call": {
