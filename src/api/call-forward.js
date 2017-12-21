@@ -82,3 +82,69 @@ export function getDestinationsets(id) {
         });
     });
 }
+
+export function loadAlwaysEverybodyDestinations(subscriberId) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return getMappings(subscriberId);
+        }).then((mappings)=>{
+            let cfuPromises = [];
+            let cfnaPromises = [];
+            let cfbPromises = [];
+            if(_.has(mappings, 'cfu') && _.isArray(mappings.cfu) && mappings.cfu.length > 0) {
+                mappings.cfu.forEach((cfuMapping)=>{
+                    if (cfuMapping.timeset_id === null && cfuMapping.sourceset_id === null) {
+                        cfuPromises.push(getDestinationSetById(cfuMapping.destinationset_id));
+                    }
+                });
+            }
+            if(_.has(mappings, 'cfna') && _.isArray(mappings.cfna) && mappings.cfna.length > 0) {
+                mappings.cfna.forEach((cfnaMapping)=>{
+                    if (cfnaMapping.timeset_id === null && cfnaMapping.sourceset_id === null) {
+                        cfnaPromises.push(getDestinationSetById(cfnaMapping.destinationset_id));
+                    }
+                });
+            }
+            if(_.has(mappings, 'cfb') && _.isArray(mappings.cfb) && mappings.cfb.length > 0) {
+                mappings.cfb.forEach((cfbMapping)=>{
+                    if (cfbMapping.timeset_id === null && cfbMapping.sourceset_id === null) {
+                        cfbPromises.push(getDestinationSetById(cfbMapping.destinationset_id));
+                    }
+                });
+            }
+            return Promise.all([
+                Promise.all(cfuPromises),
+                Promise.all(cfnaPromises),
+                Promise.all(cfbPromises)
+            ]);
+        }).then((res)=>{
+            resolve({
+                online: res[0],
+                offline: res[1],
+                busy: res[2]
+            });
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getDestinationSetById(id) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.get('/api/cfdestinationsets/' + id).then((res)=>{
+            let destinationSet = getJsonBody(res.body);
+            delete destinationSet['_links'];
+            resolve(destinationSet);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+
+export function deleteDestinationFromDestinationset(id, data) {
+    return new Promise((resolve, reject) => {
+        // TODO: Create a patch(url, [body], [options]) vue-resources
+        // request to update /api/destinationset/id with new data
+    });
+}

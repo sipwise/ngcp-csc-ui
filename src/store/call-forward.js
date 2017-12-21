@@ -3,7 +3,7 @@
 
 import _ from 'lodash';
 import { getSourcesets, getDestinationsets, getTimesets,
-    getMappings } from '../api/call-forward';
+    getMappings, loadAlwaysEverybodyDestinations } from '../api/call-forward';
 
 export default {
     namespaced: true,
@@ -11,7 +11,12 @@ export default {
         mappings: null,
         sourcesets: null,
         timesets: null,
-        destinationsets: null
+        destinationsets: null,
+        alwaysEverybodyDestinations: {}
+    },
+    getters: {
+        getDestinationsetId(state) {
+        }
     },
     mutations: {
         loadMappings(state, result) {
@@ -25,6 +30,9 @@ export default {
         },
         loadDestinationsets(state, result) {
             state.destinationsets = result;
+        },
+        loadAlwaysEverybodyDestinations(state, result) {
+            state.alwaysEverybodyDestinations = result;
         }
     },
     actions: {
@@ -66,6 +74,13 @@ export default {
                     }).catch(err => {
                         reject(err);
                     });
+            });
+        },
+        loadAlwaysEverybodyDestinations(context) {
+            return new Promise((resolve, reject)=>{
+                loadAlwaysEverybodyDestinations(localStorage.getItem('subscriberId')).then((result)=>{
+                    context.commit('loadAlwaysEverybodyDestinations', result);
+                })
             });
         }
     }
