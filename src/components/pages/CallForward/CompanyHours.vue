@@ -1,5 +1,6 @@
 <template>
-    <csc-page title="Company Hours"></csc-page>
+    <csc-page :title="$t('pages.callForward.titles.companyHours')">
+    </csc-page>
 </template>
 
 <script>
