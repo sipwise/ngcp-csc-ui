@@ -3,7 +3,8 @@
 
 import _ from 'lodash';
 import { getSourcesets, getDestinationsets, getTimesets,
-    getMappings } from '../api/call-forward';
+    getMappings, loadAlwaysEverybodyDestinations,
+    deleteDestinationFromDestinationset } from '../api/call-forward';
 
 export default {
     namespaced: true,
@@ -11,7 +12,12 @@ export default {
         mappings: null,
         sourcesets: null,
         timesets: null,
-        destinationsets: null
+        destinationsets: null,
+        alwaysEverybodyDestinations: {}
+    },
+    getters: {
+        getDestinationsetId(state) {
+        }
     },
     mutations: {
         loadMappings(state, result) {
@@ -25,6 +31,9 @@ export default {
         },
         loadDestinationsets(state, result) {
             state.destinationsets = result;
+        },
+        loadAlwaysEverybodyDestinations(state, result) {
+            state.alwaysEverybodyDestinations = result;
         }
     },
     actions: {
@@ -53,7 +62,7 @@ export default {
                 getTimesets(localStorage.getItem('subscriberId'))
                     .then(result => {
                         context.commit('loadTimesets', result);
-                    }).catch(err => {
+                    }).catch((err) => {
                         reject(err);
                     });
             });
@@ -64,6 +73,23 @@ export default {
                     .then(result => {
                         context.commit('loadDestinationsets', result);
                     }).catch(err => {
+                        reject(err);
+                    });
+            });
+        },
+        loadAlwaysEverybodyDestinations(context) {
+            return new Promise((resolve, reject)=>{
+                loadAlwaysEverybodyDestinations(localStorage.getItem('subscriberId')).then((result)=>{
+                    context.commit('loadAlwaysEverybodyDestinations', result);
+                })
+            });
+        },
+        deleteDestinationFromDestinationset(context, options) {
+            return new Promise((resolve, reject)=>{
+                deleteDestinationFromDestinationset(options.id, options.data)
+                    .then((result) => {
+                        resolve(result);
+                    }).catch((err) => {
                         reject(err);
                     });
             });
