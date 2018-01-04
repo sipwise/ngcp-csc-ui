@@ -175,3 +175,21 @@ export function deleteDestinationsetById(id) {
         });
     });
 }
+
+export function addDestinationToDestinationset(options) {
+    let headers = {
+        'Content-Type': 'application/json-patch+json'
+    };
+    return new Promise((resolve, reject) => {
+        Vue.http.patch('/api/cfdestinationsets/' + options.id, [{
+            // TODO: Look into refining this. Test with curl first
+            op: 'replace',
+            path: '/destinations',
+            value: options.data
+        }], { headers: headers }).then(result => {
+                resolve(result);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
