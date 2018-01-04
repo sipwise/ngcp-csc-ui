@@ -1,32 +1,40 @@
 
+import _ from 'lodash';
 import url from 'url';
 import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
 import { format } from 'quasar-framework'
-const { capitalize } = format
+const { capitalize } = format;
 var phoneUtil = PhoneNumberUtil.getInstance();
 
-export default function(number) {
+export default function numberFormat(number) {
     try {
-        let phoneNumber = url.parse(number, true).auth.split(':')[0];
-        if (isNaN(phoneNumber)) {
-            phoneNumber = normalizeDestination(url.parse(number, true));
+        let destination = url.parse(number, true);
+        let extractedNumber = destination.auth.split(':')[0];
+        let normalizedNumber = normalizeNumber(extractedNumber);
+        if(normalizedNumber !== extractedNumber) {
+            return normalizedNumber;
+        } else {
+            return number;
         }
-        return normalizeNumber(phoneNumber);
-    } catch(err1) {
+    } catch(err) {
         return normalizeNumber(number);
     }
 }
 
 export function normalizeNumber(number) {
-    if(_.isString(number) && number.match(/^\+?[0-9]+$/)) {
+    if(_.isString(number)) {
         let normalizedNumber = number.replace(/\s*/g, '');
-        if(normalizedNumber.match(/^\+/) === null) {
-            normalizedNumber = '+' + normalizedNumber;
-        }
-        try {
-            return phoneUtil.format(phoneUtil.parse(normalizedNumber, 'DE'), PhoneNumberFormat.INTERNATIONAL);
-        } catch(err) {
-            return normalizedNumber;
+        if(normalizedNumber.match(/^\+?[0-9]+$/)) {
+            if(normalizedNumber.match(/^\+/) === null) {
+                normalizedNumber = '+' + normalizedNumber;
+            }
+            try {
+                return phoneUtil.format(phoneUtil.parse(normalizedNumber, 'DE'), PhoneNumberFormat.INTERNATIONAL);
+            } catch(err) {
+                return normalizedNumber;
+            }
+        } else {
+            return number;
         }
     } else {
         return number;
@@ -41,13 +49,38 @@ export function rawNumber(number) {
 }
 
 export function normalizeDestination(destination) {
-    let normalizedDestination;
-    if (destination.host == 'app.local') {
-        normalizedDestination = destination.auth;
-    } else if (destination.host == 'voicebox.local') {
-        normalizedDestination = 'Voicemail';
-    } else {
-        normalizedDestination = capitalize(destination.host.split('.')[0]);
+    try {
+        let parsedDestination = url.parse(destination, true);
+        let authParts = parsedDestination.auth.split(':');
+        let host = parsedDestination.host;
+        let normalizedNumber = normalizeNumber(authParts[0]);
+        let isNumber = normalizedNumber !== authParts[0];
+        if (host === 'voicebox.local') {
+            return 'Voicemail';
+        } else if (host === 'fax2mail.local') {
+            return 'Fax2Mail';
+        } else if (host === 'managersecretary.local') {
+            return 'Manager Secretary';
+        } else if (authParts[0] === 'custom-hours') {
+            return 'Custom Announcement';
+        } else if (host === 'app.local') {
+            return _.capitalize(authParts[0]);
+        } else if (!isNumber) {
+            return _.capitalize(host.split('.')[0]);
+        } else {
+            return normalizedNumber;
+        }
+    } catch(err) {
+        return normalizeNumber(destination);
     }
-    return normalizedDestination;
+}
+
+export function normalizeTerminationInput(destination) {
+    if (destination === 'Voicemail') {
+        return 'voicebox';
+    } else if (destination = 'Fax2Mail') {
+        return 'fax2mail';
+    } else {
+        return destination;
+    }
 }
