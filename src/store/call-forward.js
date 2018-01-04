@@ -2,10 +2,16 @@
 'use strict';
 
 import _ from 'lodash';
-import { getSourcesets, getDestinationsets, getTimesets,
-    getMappings, loadAlwaysEverybodyDestinations,
+import { getSourcesets,
+    getDestinationsets,
+    getTimesets,
+    getMappings,
+    loadAlwaysEverybodyDestinations,
     deleteDestinationFromDestinationset,
-    deleteDestinationsetById } from '../api/call-forward';
+    deleteDestinationsetById,
+    addDestinationToDestinationset,
+    addNewDestinationset,
+    addDestinationsetToEmptyGroup } from '../api/call-forward';
 
 export default {
     namespaced: true,
@@ -15,9 +21,15 @@ export default {
         timesets: null,
         destinationsets: null,
         alwaysEverybodyDestinations: {
-            online: [],
-            busy: [],
-            offline: []
+            online: [{}],
+            busy: [{}],
+            offline: [{}]
+        },
+		hasFaxEnabled: false
+    },
+    getters: {
+        hasFaxCapability(state, getters, rootState, rootGetters) {
+            return rootGetters['user/hasFaxCapability'];
         }
     },
     mutations: {
@@ -35,7 +47,10 @@ export default {
         },
         loadAlwaysEverybodyDestinations(state, result) {
             state.alwaysEverybodyDestinations = result;
-        }
+        },
+		setFaxCapability(state, capability) {
+			state.hasFaxEnabled = capability;
+		}
     },
     actions: {
         loadMappings(context) {
@@ -104,6 +119,40 @@ export default {
                         reject(err);
                     });
             });
-        }
+        },
+        addDestinationToDestinationset(context, options) {
+            return new Promise((resolve, reject) => {
+                addDestinationToDestinationset(options)
+                    .then((result) => {
+                        resolve(result);
+                    }).catch((err) => {
+                        reject(err);
+                    });
+            });
+        },
+        addNewDestinationset(context) {
+            return new Promise((resolve, reject) => {
+                addNewDestinationset().then((result) => {
+                    resolve(result);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        },
+        addDestinationsetToEmptyGroup(context, options) {
+            return new Promise((resolve, reject) => {
+                addDestinationsetToEmptyGroup(options).then((result) => {
+                    resolve(result);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        },
+		setFaxCapability(context) {
+            context.commit('setFaxCapability', context.getters.hasFaxCapability);
+			//if (context.getters.hasFaxCapability) {
+                //context.commit('setFaxCapability');
+			//};
+		}
     }
 };

@@ -9,7 +9,8 @@
         "cancel": "Cancel",
         "save": "Save",
         "remove": "Remove",
-        "edit": "Edit"
+        "edit": "Edit",
+        "add": "Add"
     },
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",
@@ -121,6 +122,11 @@
                 "companyHours": "Company Hours",
                 "afterHours": "After Hours"
             },
+            "buttons": {
+                "addNumber": "Add Number",
+                "addVoicemail": "Add Voicemail",
+                "addFax2Mail": "Add Fax2Mail"
+            },
             "whenOnline": "When I am online ...",
             "whenBusy": "When I am busy ...",
             "whenOffline": "When I am offline ...",
@@ -133,7 +139,12 @@
             "removeDialogTitle": "Remove call forward destination",
             "removeDialogText": "You are about to remove the destination {destination}",
             "removeSuccessMessage": "Removed destination {destination}",
-            "removeErrorMessage": "An error occured while trying to delete the destination. Please try again."
+            "removeErrorMessage": "An error occured while trying to delete the destination. Please try again.",
+            "addDestinationButton": "Add destination",
+            "addErrorMessage": "An error occured while trying to add the destination. Please try again.",
+            "addInputError": "Input a valid number or subscriber name",
+            "timeout": "Timeout",
+            "number": "Number"
         }
     },
     "call": {
