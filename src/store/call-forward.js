@@ -5,7 +5,8 @@ import _ from 'lodash';
 import { getSourcesets, getDestinationsets, getTimesets,
     getMappings, loadAlwaysEverybodyDestinations,
     deleteDestinationFromDestinationset,
-    deleteDestinationsetById } from '../api/call-forward';
+    deleteDestinationsetById,
+    addDestinationToDestinationset } from '../api/call-forward';
 
 export default {
     namespaced: true,
@@ -104,6 +105,16 @@ export default {
                         reject(err);
                     });
             });
-        }
+        },
+        addDestinationToDestinationset(context, options) {
+            return new Promise((resolve, reject) => {
+                addDestinationToDestinationset(options)
+                    .then((result) => {
+                        resolve(result);
+                    }).catch((err) => {
+                        reject(err);
+                    });
+            });
+        },
     }
 };

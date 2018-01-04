@@ -4,10 +4,11 @@
 </template>
 
 <script>
-    import CscPage  from '../../CscPage'
+    import CscPage from '../../CscPage'
     export default {
         data () {
-            return {}
+            return {
+            }
         },
         components: {
             CscPage
