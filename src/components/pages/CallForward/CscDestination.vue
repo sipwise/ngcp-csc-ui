@@ -1,20 +1,35 @@
 <template>
     <div>
-        <q-item highlight v-for="(destination, index) in destinations">
+        <q-item v-for="(destination, index) in destinations">
             <q-item-main>
                 <div class="dest-row">
-                    <span v-if="index == 0"> {{ $t('pages.callForward.firstRing') }} </span>
-                    <span v-else-if="index > 0"> {{ $t('pages.callForward.thenRing') }} </span>
-                    <span class="dest-values"> {{ destination.destination | numberFormat }} </span>
+                    <span v-if="index == 0">
+                        {{ $t('pages.callForward.firstRing') }}
+                    </span>
+                    <span v-else-if="index > 0">
+                        {{ $t('pages.callForward.thenRing') }}
+                    </span>
+                    <span class="dest-values">
+                        {{ destination.destination | destinationFormat }}
+                    </span>
                     <span v-if="isNumber(destination.destination)">
-                        <span> {{ $t('pages.callForward.for') }} </span>
-                        <span class="dest-values">{{ destination.timeout }}</span>
-                        <span> {{ $t('pages.callForward.secs') }} </span>
+                        <span>
+                            {{ $t('pages.callForward.for') }}
+                        </span>
+                        <span class="dest-values">
+                            {{ destination.timeout }}
+                        </span>
+                        <span>
+                            {{ $t('pages.callForward.secs') }}
+                        </span>
                     </span>
                 </div>
             </q-item-main>
             <q-item-side right>
-                <q-btn color="negative" flat icon="delete" @click="deleteDestination(index)">{{ $t('buttons.remove') }}</q-btn>
+                <q-btn color="negative" flat icon="delete"
+                    @click="deleteDestination(index)">
+                        {{ $t('buttons.remove') }}
+                </q-btn>
             </q-item-side>
         </q-item>
     </div>
@@ -24,12 +39,13 @@
     import numberFormat from '../../../filters/number-format'
     import _ from 'lodash'
     import { showToast } from '../../../helpers/ui'
-    import { QItem, QItemSide, Dialog, Toast, QBtn, QItemMain } from 'quasar-framework'
+    import { QItem, QItemMain, QItemSide, Toast,
+        Dialog, QBtn } from 'quasar-framework'
     export default {
         name: 'csc-destination',
         props: [
             'destinations',
-            'destinationsetId'
+            'id'
         ],
         components: {
             QItem,
@@ -44,7 +60,11 @@
         methods: {
             isNumber(destination) {
                 let dest = destination.split(/:|@/);
-                return !isNaN(dest[1]);
+                if (dest[2] === 'fax2mail.local') {
+                    return false;
+                } else {
+                    return !isNaN(dest[1]);
+                };
             },
             deleteDestination(index) {
                 let clonedDestinations = _.cloneDeep(this.destinations);
@@ -66,7 +86,7 @@
                             color: 'negative',
                             handler () {
                                 store.dispatch('callForward/deleteDestinationFromDestinationset', {
-                                    id: self.destinationsetId,
+                                    id: self.id,
                                     data: clonedDestinations,
                                     deleteDestinationset: isLastDestination }).then((result) => {
                                         store.dispatch('callForward/loadAlwaysEverybodyDestinations');
@@ -88,8 +108,6 @@
 <style lang="stylus">
 @import '~variables'
 .dest-row
-    display inline-block
-    width 90%
     .dest-values
         font-weight 500
 </style>
