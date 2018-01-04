@@ -5,7 +5,8 @@ import Vue from 'vue';
 import VueResource from 'vue-resource';
 import { getMappings, getSourcesets, getTimesets,
     getDestinationsets, getDestinationsetById,
-    deleteDestinationFromDestinationset } from '../../src/api/call-forward';
+    deleteDestinationFromDestinationset,
+    addDestinationToDestinationset } from '../../src/api/call-forward';
 import { assert } from 'chai';
 
 Vue.use(VueResource);
@@ -352,6 +353,32 @@ describe('CallForward', function(){
             }));
         });
         deleteDestinationFromDestinationset(options).then((result)=>{
+            assert.isOk(result);
+            done();
+        }).catch((err)=>{
+            done(err);
+        });
+    });
+
+    it('should add destination to call forward destinationset', function(done){
+
+        let options = {
+            id: 3,
+            data: {
+                "announcement_id": null,
+                "destination": "112233",
+                "priority": 1,
+                "timeout": 60
+            }
+        };
+
+        Vue.http.interceptors = [];
+        Vue.http.interceptors.unshift((request, next)=>{
+            next(request.respondWith(JSON.stringify({}), {
+                status: 204
+            }));
+        });
+        addDestinationToDestinationset(options).then((result)=>{
             assert.isOk(result);
             done();
         }).catch((err)=>{
