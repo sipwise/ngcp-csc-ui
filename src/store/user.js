@@ -44,6 +44,9 @@ export default {
         },
         hasRtcEngineCapabilityEnabled(state, getters) {
             return getters.hasRtcEngineCapability && state.capabilities.rtcengine === true;
+        },
+        getSubscriberId(state, getters) {
+            return state.subscriberId;
         }
     },
     mutations: {
