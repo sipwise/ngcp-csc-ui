@@ -121,6 +121,12 @@
                 "companyHours": "Company Hours",
                 "afterHours": "After Hours"
             },
+            "buttons": {
+                "addNumber": "Add Number",
+                "addVoicemail": "Add Voicemail",
+                "addFax2Mail": "Add Fax2Mail",
+                "addConference": "Add Conference"
+            },
             "whenOnline": "When I am online ...",
             "whenBusy": "When I am busy ...",
             "whenOffline": "When I am offline ...",
@@ -133,7 +139,11 @@
             "removeDialogTitle": "Remove call forward destination",
             "removeDialogText": "You are about to remove the destination {destination}",
             "removeSuccessMessage": "Removed destination {destination}",
-            "removeErrorMessage": "An error occured while trying to delete the destination. Please try again."
+            "removeErrorMessage": "An error occured while trying to delete the destination. Please try again.",
+            "addDestinationButton": "Add destination",
+            "addInputError": "Input a valid number or subscriber name",
+            "timeout": "Timeout",
+            "number": "Number"
         }
     },
     "call": {
