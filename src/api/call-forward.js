@@ -87,7 +87,7 @@ export function loadAlwaysEverybodyDestinations(subscriberId) {
     return new Promise((resolve, reject)=>{
         Promise.resolve().then(()=>{
             return getMappings(subscriberId);
-        }).then((mappings)=>{
+        }).then((mappings) => {
             let cfuPromises = [];
             let cfnaPromises = [];
             let cfbPromises = [];
@@ -169,6 +169,76 @@ export function deleteDestinationFromDestinationset(options) {
 export function deleteDestinationsetById(id) {
     return new Promise((resolve, reject) => {
         Vue.http.delete('/api/cfdestinationsets/' + id).then(result => {
+            resolve(result);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function addDestinationToDestinationset(options) {
+    let headers = {
+        'Content-Type': 'application/json-patch+json'
+    };
+    return new Promise((resolve, reject) => {
+        Vue.http.patch('/api/cfdestinationsets/' + options.id, [{
+            op: 'replace',
+            path: '/destinations',
+            value: options.data
+        }], { headers: headers }).then(result => {
+                resolve(result);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function addNewDestinationset() {
+    let destinationsetName = `csc-${Date.now()}`;
+    return new Promise((resolve, reject) => {
+        Vue.http.post('/api/cfdestinationsets/', { name: destinationsetName  }).then(response => {
+            let newDestinationsetId = response.headers.get('Location').split('/')[3];
+            resolve(newDestinationsetId);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function addDestinationsetToEmptyGroup(options) {
+    let subscriberId = localStorage.getItem('subscriberId');
+    return new Promise((resolve, reject)=> {
+        let destinationsetId;
+        Promise.resolve().then(() => {
+            return addNewDestinationset();
+        }).then((id) => {
+            destinationsetId = id;
+            return addDestinationToDestinationset({ id: id, data: options.data });
+        }).then(() => {
+            return getMappings(subscriberId);
+        }).then((mappings) => {
+            return addNewMapping(mappings, destinationsetId, options.groupName);
+        }).then((res) => {
+            resolve(res);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function addNewMapping(mappings, destinationsetId, groupName) {
+    let subscriberId = localStorage.getItem('subscriberId');
+    let headers = {
+        'Content-Type': 'application/json-patch+json'
+    };
+    return new Promise((resolve, reject) => {
+        let mappingsToSend = [{ destinationset_id: destinationsetId,
+            sourceset_id: null, timeset_id: null }];
+        Vue.http.patch('/api/cfmappings/' + subscriberId, [{
+            op: 'replace',
+            path: '/' + groupName,
+            value: mappingsToSend
+        }], { headers: headers }).then(result => {
             resolve(result);
         }).catch(err => {
             reject(err);
