@@ -283,4 +283,9 @@
         z-index: 1001;
     }
 
+    .q-if-control.q-if-control-before.q-icon,
+    .q-if-control.q-if-control-before.q-icon:before {
+        font-size:24px;
+    }
+
 </style>
