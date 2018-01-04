@@ -16,16 +16,19 @@
                 <div v-else v-for="destinationset in group">
                     <csc-destination :destinations="destinationset.destinations" :destinationset-id="destinationset.id">
                     </csc-destination>
-            </div>
+                </div>
             </q-list>
+            <csc-add-destination-form :destinations="lastDestinationset" :destinationset-id="lastDestinationsetId">
+            </csc-add-destination-form>
         </q-card-main>
     </div>
 </template>
 
 <script>
     import CscDestination from './CscDestination'
-    import { QCardTitle, QCardMain, QList,
-        QItem, QIcon } from 'quasar-framework'
+    import CscAddDestinationForm from './CscAddDestinationForm'
+    import { showToast } from '../../../helpers/ui'
+    import { QCardTitle, QCardMain, QItem, QList } from 'quasar-framework'
     export default {
         name: 'csc-destinations',
         props: [
@@ -38,8 +41,22 @@
             QCardMain,
             QList,
             QItem,
-            QIcon,
-            CscDestination
+            CscDestination,
+            CscAddDestinationForm
+        },
+        computed: {
+            lastDestinationset() {
+                if (this.group[this.group.length-1]) {
+                    return this.group[this.group.length-1].destinations;
+                }
+            },
+            lastDestinationsetId() {
+                if (this.group[this.group.length-1]) {
+                    return this.group[this.group.length-1].id;
+                }
+            }
+        },
+        methods: {
         }
     }
 </script>

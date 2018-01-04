@@ -359,4 +359,30 @@ describe('CallForward', function(){
         });
     });
 
+    it('should add destination to call forward destinationset', function(done){
+
+        let options = {
+            id: 3,
+            data: {
+                "announcement_id": null,
+                "destination": "112233",
+                "priority": 1,
+                "timeout": 60
+            }
+        };
+
+        Vue.http.interceptors = [];
+        Vue.http.interceptors.unshift((request, next)=>{
+            next(request.respondWith(JSON.stringify({}), {
+                status: 204
+            }));
+        });
+        deleteDestinationFromDestinationset(options).then((result)=>{
+            assert.isOk(result);
+            done();
+        }).catch((err)=>{
+            done(err);
+        });
+    });
+
 });
