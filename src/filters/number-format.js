@@ -7,13 +7,10 @@ var phoneUtil = PhoneNumberUtil.getInstance();
 
 export default function(number) {
     try {
-        let phoneNumber = url.parse(number, true).auth.split(':')[0];
-        if (isNaN(phoneNumber)) {
-            phoneNumber = normalizeDestination(url.parse(number, true));
-        }
-        return normalizeNumber(phoneNumber);
+        let destination = url.parse(number, true);
+        return normalizeDestination(destination);
     } catch(err1) {
-        return normalizeNumber(number);
+        return normalizeDestination(destination);
     }
 }
 
@@ -42,7 +39,15 @@ export function rawNumber(number) {
 
 export function normalizeDestination(destination) {
     let normalizedDestination;
-    if (destination.host == 'app.local') {
+    if (destination.host == 'fax2mail.local') {
+        normalizedDestination = 'Fax2Mail';
+    } else if (destination.host == 'managersecretary.local') {
+        normalizedDestination = 'Manager Secretary';
+    } else if (!isNaN(destination.auth.split(':')[0])) {
+        normalizedDestination = normalizeNumber(destination.auth.split(':')[0]);
+    } else if (destination.auth.split(':')[0] == 'custom-hours') {
+        normalizedDestination = 'Custom Announcement';
+    } else if (destination.host == 'app.local') {
         normalizedDestination = destination.auth;
     } else if (destination.host == 'voicebox.local') {
         normalizedDestination = 'Voicemail';
@@ -50,4 +55,14 @@ export function normalizeDestination(destination) {
         normalizedDestination = capitalize(destination.host.split('.')[0]);
     }
     return normalizedDestination;
+}
+
+export function normalizeTerminationInput(destination) {
+    if (destination === 'Voicemail') {
+        return 'voicebox';
+    } else if (destination = 'Fax2Mail') {
+        return 'fax2mail';
+    } else {
+        return destination;
+    }
 }
