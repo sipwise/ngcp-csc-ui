@@ -14,32 +14,51 @@
                     </q-item>
                 </div>
                 <div v-else v-for="destinationset in group">
-                    <csc-destination :destinations="destinationset.destinations" :destinationset-id="destinationset.id">
+                    <csc-destination v-bind="destinationset">
                     </csc-destination>
-            </div>
+                </div>
             </q-list>
+            <csc-add-destination-form v-bind="lastDestinationset">
+            </csc-add-destination-form>
+        <q-card-separator v-if="isNotOffline" style="margin-top:30px;" />
         </q-card-main>
     </div>
 </template>
 
 <script>
+    import _ from 'lodash'
     import CscDestination from './CscDestination'
-    import { QCardTitle, QCardMain, QList,
-        QItem, QIcon } from 'quasar-framework'
+    import CscAddDestinationForm from './CscAddDestinationForm'
+    import { showToast } from '../../../helpers/ui'
+    import { QCardTitle, QCardMain, QCardSeparator,
+        QItem, QList } from 'quasar-framework'
     export default {
         name: 'csc-destinations',
         props: [
             'title',
             'icon',
-            'group'
+            'group',
+            'groupName'
         ],
         components: {
             QCardTitle,
             QCardMain,
             QList,
             QItem,
-            QIcon,
-            CscDestination
+            QCardSeparator,
+            CscDestination,
+            CscAddDestinationForm
+        },
+        computed: {
+            lastDestinationset() {
+                let destinationset = _.findLast(this.group) || {};
+                destinationset.groupName = this.groupName;
+                destinationset.priority = destinationset.lowestPriority || 1;
+                return destinationset;
+            },
+            isNotOffline() {
+                return this.groupName !== 'cfna';
+            }
         }
     }
 </script>
