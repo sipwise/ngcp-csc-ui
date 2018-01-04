@@ -37,4 +37,19 @@ describe('CallForward', function(){
         assert.deepEqual(state.alwaysEverybodyDestinations, data);
     });
 
+    it(' should reset destination form', function() {
+        let state = {
+            conversations: [
+            ]
+        };
+        let data = {
+            announcement_id: null,
+            destination: '',
+            priority: 1,
+            timeout: ''
+        };
+        CallForwardModule.mutations.resetFormState(state);
+        assert.deepEqual(state.form, data);
+    });
+
 });
