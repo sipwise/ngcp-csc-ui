@@ -34,11 +34,17 @@ export default {
             return getters.isAdmin && state.capabilities !== null && state.capabilities.cloudpbx;
         },
         hasSmsCapability(state, getters) {
-            return state.capabilities !== null && state.capabilities.sms;
+            return state.capabilities !== null && state.capabilities.sms  === true;
         },
         hasFaxCapability(state, getters) {
-            return state.capabilities !== null && state.capabilities.faxserver;
+            return state.capabilities !== null && state.capabilities.faxserver  === true;
         },
+        hasRtcEngineCapability(state, getters) {
+            return state.capabilities !== null && _.has(state.capabilities, 'rtcengine');
+        },
+        hasRtcEngineCapabilityEnabled(state, getters) {
+            return getters.hasRtcEngineCapability && state.capabilities.rtcengine === true;
+        }
     },
     mutations: {
         login(state, options) {

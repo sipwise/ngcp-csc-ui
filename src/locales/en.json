@@ -51,9 +51,9 @@
             "button": "Sign In",
             "error": "Wrong username or password",
             "username": "Username",
-            "username_helper": "Web-Username, SIP-URI",
+            "username_helper": "Input username or username@domain",
             "password": "Password",
-            "password_helper": "Web-Password"
+            "password_helper": ""
         },
         "callBlockingIncoming": {
             "title": "Block/Allow incoming calls",
