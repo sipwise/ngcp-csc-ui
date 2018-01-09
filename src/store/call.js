@@ -22,6 +22,7 @@ export default {
     state: {
         initialized: false,
         initError: null,
+        disabled: false,
         endedReason: null,
         callState: CallState.input,
         number: null,
@@ -50,7 +51,7 @@ export default {
             return getters.isNetworkConnected;
         },
         hasCallInitFailure(state, getters) {
-            return state.initError !== null;
+            return state.initError !== null && state.disabled === false;
         },
         isPreparing(state, getters) {
             return state.callState === CallState.input;
@@ -78,6 +79,12 @@ export default {
         },
         isEnded(state, getters) {
             return state.callState === CallState.ended;
+        },
+        hasRtcEngineCapability(state, getters, rootState, rootGetters) {
+            return rootGetters['user/hasRtcEngineCapability'];
+        },
+        hasRtcEngineCapabilityEnabled(state, getters, rootState, rootGetters) {
+            return rootGetters['user/hasRtcEngineCapabilityEnabled'];
         }
     },
     mutations: {
@@ -88,6 +95,9 @@ export default {
         initFailed(state, err) {
             state.initialized = false;
             state.initError = err;
+        },
+        disable(state) {
+            state.disabled = true;
         },
         inputNumber(state) {
             state.callState = CallState.input;
@@ -152,13 +162,18 @@ export default {
                     Vue.call.end();
                     context.commit('endCall', Vue.call.getEndedReason());
                 });
-                Vue.call.initialize().then(()=>{
-                    context.commit('initSucceeded');
+                if(context.getters.hasRtcEngineCapabilityEnabled) {
+                    Vue.call.initialize().then(()=>{
+                        context.commit('initSucceeded');
+                        resolve();
+                    }).catch((err)=>{
+                        context.commit('initFailed', err);
+                        reject(err);
+                    });
+                } else {
+                    context.commit('disable');
                     resolve();
-                }).catch((err)=>{
-                    context.commit('initFailed', err);
-                    reject(err);
-                });
+                }
             });
         },
         /**
