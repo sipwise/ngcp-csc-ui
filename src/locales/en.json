@@ -164,6 +164,9 @@
         "circularRinging": "Circular Ringing",
         "allocatedByNobody": "Free",
         "allocatedBy": "Allocated by {type} {name}",
-        "addGroup": "Add Group"
+        "addGroup": "Add Group",
+        "removeGroup": "Remove",
+        "removeGroupTitle": "Remove group",
+        "removeGroupText": "You are about to remove group \"{group}\""
     }
 }

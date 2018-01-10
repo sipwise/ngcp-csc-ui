@@ -50,7 +50,8 @@
         <csc-pbx-group v-for="group in groups" :group="group" :all-seats="seats"
                        :all-alias-numbers="aliasNumbers" :all-primary-numbers="primaryNumbers"
                         :alias-number-options="aliasNumberOptions" :seat-options="seatOptions"
-                        :hunt-policy-options="huntPolicyOptions"/>
+                        :hunt-policy-options="huntPolicyOptions" @remove="removeGroup"
+                       :loading="removeGroupIsRequesting && group.id == removeGroupId" />
     </csc-page>
 </template>
 
@@ -77,7 +78,8 @@
         QSelect,
         QInnerLoading,
         QSpinnerGears,
-        QSpinnerDots
+        QSpinnerDots,
+        Dialog
     } from 'quasar-framework'
     import { mapState } from 'vuex'
     import numberFilter from '../../../filters/number'
@@ -103,7 +105,8 @@
             QSelect,
             QInnerLoading,
             QSpinnerGears,
-            QSpinnerDots
+            QSpinnerDots,
+            Dialog
         },
         mounted() {
             this.$store.dispatch('pbxConfig/listGroups');
@@ -203,6 +206,16 @@
             },
             addGroupError() {
                 return this.$store.state.pbxConfig.addGroupError;
+            },
+            removeGroupState() {
+                return this.$store.state.pbxConfig.removeGroupState;
+            },
+            removeGroupIsRequesting() {
+                return this.removeGroupState === 'requesting' ||
+                    this.removeGroupState === 'succeeded';
+            },
+            removeGroupId() {
+                return this.$store.state.pbxConfig.removeGroupItem.id;
             }
         },
         watch: {
@@ -212,6 +225,11 @@
                 }
                 if(state === 'succeeded') {
                     this.disableGroupForm();
+                }
+            },
+            removeGroupState(state) {
+                if(state === 'failed') {
+                    showGlobalError(this.removeGroupError);
                 }
             }
         },
@@ -236,6 +254,25 @@
             },
             addGroup() {
                 this.$store.dispatch('pbxConfig/addGroup', this.groupForm);
+            },
+            removeGroup(group) {
+                var store = this.$store;
+                var state = this;
+                var i18n = this.$i18n;
+                Dialog.create({
+                    title: i18n.t('pbxConfig.removeGroupTitle'),
+                    message: i18n.t('pbxConfig.removeGroupText', { group: group.name }),
+                    buttons: [
+                        'Cancel',
+                        {
+                            label: i18n.t('pbxConfig.removeGroup'),
+                            color: 'negative',
+                            handler () {
+                                store.dispatch('pbxConfig/removeGroup', group);
+                            }
+                        }
+                    ]
+                });
             }
         }
     }
