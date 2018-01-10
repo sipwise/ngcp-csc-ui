@@ -30,7 +30,9 @@
                 <q-select v-model="seats" :options="seatOptions" multiple chips readonly clearable />
             </q-field>
         </q-card-main>
-        <q-card-actions>
+        <q-card-actions align="center">
+            <q-btn :loader="isLoading" v-model="isLoading" flat round
+                   color="negative" icon="delete" @click="remove()">Delete</q-btn>
         </q-card-actions>
     </q-card>
 </template>
@@ -47,7 +49,8 @@
         QInput,
         QIcon,
         QSelect,
-        QChip
+        QChip,
+        QBtn
     } from 'quasar-framework'
     export default {
         name: 'csc-pbx-group',
@@ -55,6 +58,7 @@
             'huntPolicyOptions',
             'aliasNumberOptions',
             'seatOptions',
+            'loading'
         ],
         data () {
             return {}
@@ -68,9 +72,13 @@
             QInput,
             QIcon,
             QSelect,
-            QChip
+            QChip,
+            QBtn
         },
         computed: {
+            id() {
+                return this.group.id;
+            },
             name() {
                 return this.group.display_name;
             },
@@ -103,6 +111,26 @@
                     });
                 }
                 return seats;
+            },
+            groupModel() {
+                return {
+                    id: this.id,
+                    name: this.name,
+                    extension: this.extension,
+                    huntPolicy: this.huntPolicy,
+                    huntTimeout: this.huntTimeout,
+                    primaryNumber: this.primaryNumber,
+                    aliasNumbers: this.aliasNumbers,
+                    seats: this.seats
+                }
+            },
+            isLoading() {
+                return this.loading;
+            }
+        },
+        methods: {
+            remove() {
+                this.$emit('remove', this.groupModel);
             }
         }
     }

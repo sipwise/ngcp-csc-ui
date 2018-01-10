@@ -101,7 +101,7 @@ export function assignNumbers(numberIds, subscriberId) {
                 reject(err);
             });
         } else {
-            reject(new Error('No numberIds given'));
+            resolve();
         }
     });
 }

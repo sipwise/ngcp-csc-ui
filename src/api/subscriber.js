@@ -198,17 +198,16 @@ export function createSubscriber(subscriber) {
     });
 }
 
-// export function deleteSubscriber(id) {
-//     return new Promise((resolve, reject)=>{
-//         Vue.http.delete('/api/subscribers/', null, {
-//         }).then((res)=>{
-//             resolve(_.last(_.split(res.headers.get('Location'), '/')));
-//         }).catch((err)=>{
-//             if(err.status === 422) {
-//                 reject(new Error(err.body.message));
-//             } else {
-//                 reject(err);
-//             }
-//         });
-//     });
-// }
+export function deleteSubscriber(id) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.delete('/api/subscribers/' + id).then((res)=>{
+            resolve();
+        }).catch((err)=>{
+            if(err.status === 422) {
+                reject(new Error(err.body.message));
+            } else {
+                reject(err);
+            }
+        });
+    });
+}
