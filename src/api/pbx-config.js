@@ -2,7 +2,7 @@
 import Vue from 'vue';
 import { getJsonBody } from './utils';
 import { getNumbers, assignNumber, assignNumbers } from './user';
-import { createSubscriber } from './subscriber';
+import { createSubscriber, deleteSubscriber } from './subscriber';
 
 var assumedRows = 1000;
 
@@ -88,7 +88,7 @@ export function addGroup(group) {
                 pbx_groupmember_ids: group.seats
             });
         }).then((subscriberId)=>{
-            return assignNumbers(group.aliasNumbers, subscriberId);
+            assignNumbers(group.aliasNumbers, subscriberId);
         }).then(()=>{
             resolve();
         }).catch((err)=>{
@@ -97,8 +97,6 @@ export function addGroup(group) {
     });
 }
 
-export function deleteGroup(id) {
-    return new Promise((resolve, reject)=>{
-
-    });
+export function removeGroup(id) {
+    return deleteSubscriber(id);
 }

@@ -1,6 +1,6 @@
 
 import _ from 'lodash';
-import { getPbxConfiguration, addGroup } from '../api/pbx-config'
+import { getPbxConfiguration, addGroup, removeGroup } from '../api/pbx-config'
 
 const ListState = {
     initiated: 'initiated',
@@ -12,6 +12,13 @@ const ListState = {
 const AddGroupState = {
     button: 'button',
     input: 'input',
+    requesting: 'requesting',
+    succeeded: 'succeeded',
+    failed: 'failed'
+};
+
+const RemoveGroupState = {
+    initiated: 'initiated',
     requesting: 'requesting',
     succeeded: 'succeeded',
     failed: 'failed'
@@ -30,7 +37,9 @@ export default {
         listAllState: ListState.initiated,
         listAllError: null,
         addGroupState: AddGroupState.button,
-        addGroupError: null
+        addGroupError: null,
+        removeGroupState: RemoveGroupState.initiated,
+        removeGroupError: null
     },
     getters: {
         groups(state, getters) {
@@ -72,6 +81,7 @@ export default {
             state.listAllState = ListState.requesting;
         },
         listAllSucceeded(state, all) {
+            state.removeGroupState = RemoveGroupState.initiated;
             state.listAllState = ListState.succeeded;
             state.listAllError = null;
             state.pilot = all.pilot;
@@ -130,6 +140,18 @@ export default {
         addGroupFailed(state, error) {
             state.addGroupState = AddGroupState.failed;
             state.addGroupError = error;
+        },
+        removeGroupRequesting(state) {
+            state.removeGroupState = RemoveGroupState.requesting;
+            state.removeGroupError = null;
+        },
+        removeGroupSucceeded(state) {
+            state.removeGroupState = RemoveGroupState.succeeded;
+            state.removeGroupError = null;
+        },
+        removeGroupFailed(state, message) {
+            state.removeGroupState = RemoveGroupState.failed;
+            state.removeGroupError = message;
         }
     },
     actions: {
@@ -153,6 +175,15 @@ export default {
                 context.dispatch('listGroups');
             }).catch((err)=>{
                 context.commit('addGroupFailed', err.message);
+            });
+        },
+        removeGroup(context, group) {
+            context.commit('removeGroupRequesting');
+            removeGroup(group).then(()=>{
+                context.commit('removeGroupSucceeded');
+                context.dispatch('listGroups');
+            }).catch((err)=>{
+                context.commit('removeGroupFailed', err.message);
             });
         }
     }
