@@ -54,6 +54,7 @@
 
 <script>
 
+    import _ from 'lodash'
     import { startLoading, stopLoading,
         showGlobalError, showToast } from '../../../helpers/ui'
     import { normalizeTerminationInput } from '../../../filters/number-format'
@@ -128,12 +129,13 @@
         },
         methods: {
             enableForm(type) {
+                let lastDestination = _.findLast(this.destinations) || {};
                 this.formEnabled = true;
                 this.$store.dispatch('callForward/setFormType', type);
                 this.$store.dispatch('callForward/setActiveForm', this.groupName);
                 this.$store.dispatch('callForward/setDestinationsetId', this.id);
                 this.$store.dispatch('callForward/setGroupName', this.groupName);
-                this.$store.dispatch('callForward/setPriority', this.priority);
+                this.$store.dispatch('callForward/setPriority', lastDestination.priority || 1);
                 if (type === 'voicebox') {
                     this.destinationForm.destination = 'Voicemail';
                 } else if (type === 'fax2mail') {
