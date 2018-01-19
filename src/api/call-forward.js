@@ -119,9 +119,9 @@ export function loadAlwaysEverybodyDestinations(subscriberId) {
                 Promise.all(cfbPromises)
             ]);
         }).then((res)=>{
-            computeLowestPriorityAndAddGroupName(res[0], 'cfu');
-            computeLowestPriorityAndAddGroupName(res[1], 'cfna');
-            computeLowestPriorityAndAddGroupName(res[2], 'cfb');
+            addGroupNames(res[0], 'cfu');
+            addGroupNames(res[1], 'cfna');
+            addGroupNames(res[2], 'cfb');
             resolve({
                 online: res[0],
                 offline: res[1],
@@ -133,10 +133,8 @@ export function loadAlwaysEverybodyDestinations(subscriberId) {
     });
 }
 
-export function computeLowestPriorityAndAddGroupName(group, groupName) {
+export function addGroupNames(group, groupName) {
     group.forEach(destinationset => {
-        let lowest = _.maxBy(destinationset.destinations, 'priority') || { priority: 1 };
-        destinationset.lowestPriority = lowest.priority;
         destinationset.groupName = groupName;
     });
     return group;
@@ -147,6 +145,9 @@ export function getDestinationsetById(id) {
         Vue.http.get('/api/cfdestinationsets/' + id).then((res)=>{
             let destinationset = getJsonBody(res.body);
             delete destinationset['_links'];
+            destinationset.destinations.sort((a, b) => {
+                return parseFloat(a.priority) - parseFloat(b.priority);
+            });
             resolve(destinationset);
         }).catch((err)=>{
             reject(err);
@@ -274,8 +275,11 @@ export function addNewMapping(options) {
         'Content-Type': 'application/json-patch+json'
     };
     return new Promise((resolve, reject) => {
-        let mappingsToSend = [{ destinationset_id: options.destinationsetId,
-            sourceset_id: null, timeset_id: null }];
+        let mappingsToSend = [{
+            destinationset_id: options.destinationsetId,
+            sourceset_id: null,
+            timeset_id: null
+        }];
         Vue.http.patch('/api/cfmappings/' + options.subscriberId, [{
             op: 'replace',
             path: '/' + options.group,
@@ -283,6 +287,91 @@ export function addNewMapping(options) {
         }], { headers: headers }).then(result => {
             resolve(result);
         }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function changePositionOfDestination(options) {
+    let headers = {
+        'Content-Type': 'application/json-patch+json'
+    };
+    return new Promise((resolve, reject) => {
+        Vue.http.patch('/api/cfdestinationsets/' + options.id, [{
+            op: 'replace',
+            path: '/destinations',
+            value: options.destinations
+        }], { headers: headers }).then(result => {
+            resolve(result);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function moveDestinationUp(options) {
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            let getPromises = [];
+            getPromises.push(getDestinationsetById(options.prevId));
+            getPromises.push(getDestinationsetById(options.id));
+            return Promise.all(getPromises);
+        }).then((destinationsets) => {
+            let updatePromises = [];
+            let lastDestinationPrevId = _.findLast(destinationsets[0].destinations) || {};
+            let lowestPriorityPrevId = lastDestinationPrevId.priority || 1;
+            let prevDestinations = destinationsets[0].destinations;
+            let currentDestinations = destinationsets[1].destinations;
+            let prevDestinationsMoveToIndex = prevDestinations.length < 2 ?
+                1 : prevDestinations.length-2;
+            options.destination.priority = lowestPriorityPrevId;
+            prevDestinations.splice(prevDestinationsMoveToIndex, 0, options.destination);
+            currentDestinations.shift();
+            updatePromises.push(addDestinationToDestinationset({
+                id: options.prevId,
+                data: prevDestinations
+            }));
+            updatePromises.push(deleteDestinationFromDestinationset({
+                id: options.id,
+                data: currentDestinations
+            }));
+            return Promise.all(updatePromises);
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function moveDestinationDown(options) {
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            let getPromises = [];
+            getPromises.push(getDestinationsetById(options.nextId));
+            getPromises.push(getDestinationsetById(options.id));
+            return Promise.all(getPromises);
+        }).then((destinationsets) => {
+            let updatePromises = [];
+            let firstDestinationNextId = _.head(destinationsets[0].destinations) || {};
+            let highestPriorityNextId = firstDestinationNextId.priority || 1;
+            let nextDestinations = destinationsets[0].destinations;
+            let currentDestinations = destinationsets[1].destinations;
+            options.destination.priority = highestPriorityNextId;
+            nextDestinations.splice(1, 0, options.destination);
+            currentDestinations.pop();
+            updatePromises.push(addDestinationToDestinationset({
+                id: options.nextId,
+                data: nextDestinations
+            }));
+            updatePromises.push(deleteDestinationFromDestinationset({
+                id: options.id,
+                data: currentDestinations
+            }));
+            return Promise.all(updatePromises);
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
             reject(err);
         });
     });

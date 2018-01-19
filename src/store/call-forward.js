@@ -1,18 +1,25 @@
 
 'use strict';
-
-import _ from 'lodash';
-import { getSourcesets,
-    getDestinationsets,
+import _ from 'lodash'; import { getSourcesets, getDestinationsets,
     getTimesets,
     getMappings,
     loadAlwaysEverybodyDestinations,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
     addDestinationToEmptyGroup,
-    addDestinationToExistingGroup } from '../api/call-forward';
+    addDestinationToExistingGroup,
+    changePositionOfDestination,
+    moveDestinationUp,
+    moveDestinationDown } from '../api/call-forward';
 
 const AddDestinationState = {
+    button: 'button',
+    requesting: 'requesting',
+    succeeded: 'succeeded',
+    failed: 'failed'
+};
+
+const ChangeDestinationState = {
     button: 'button',
     requesting: 'requesting',
     succeeded: 'succeeded',
@@ -33,6 +40,8 @@ export default {
         },
         addDestinationState: AddDestinationState.button,
         addDestinationError: null,
+        changeDestinationState: ChangeDestinationState.button,
+        changeDestinationError: null,
         activeForm: '',
         formType: '',
         destinationsetId: '',
@@ -125,6 +134,18 @@ export default {
         addDestinationFailed(state, error) {
             state.addDestinationState = AddDestinationState.failed;
             state.addDestinationError = error;
+        },
+        changeDestinationRequesting(state) {
+            state.changeDestinationState = ChangeDestinationState.requesting;
+            state.changeDestinationError = null;
+        },
+        changeDestinationSucceeded(state) {
+            state.changeDestinationState = ChangeDestinationState.succeeded;
+            state.changeDestinationError = null;
+        },
+        changeDestinationFailed(state, error) {
+            state.changeDestinationState = ChangeDestinationState.failed;
+            state.changeDestinationError = error;
         }
     },
     actions: {
@@ -230,6 +251,64 @@ export default {
                         context.dispatch('loadAlwaysEverybodyDestinations');
                     }).catch((err) => {
                         context.commit('addDestinationFailed', err.message);
+                    });
+                });
+            }
+        },
+        changePositionOfDestination(context, options) {
+            let clonedDestinations = _.cloneDeep(options.destinations);
+            let clonedDestination = _.clone(options.destinations[options.index]);
+            let lastIndex = clonedDestinations.length < 1 ?
+                0 : clonedDestinations.length - 1;
+            context.commit('changeDestinationRequesting');
+            if (options.direction === 'up' && options.prevId && options.index === 0) {
+                return new Promise((resolve, reject) => {
+                    moveDestinationUp({
+                        prevId: options.prevId,
+                        id: options.id,
+                        destination: clonedDestination
+                    }).then(() => {
+                        context.commit('changeDestinationSucceeded');
+                        context.dispatch('loadAlwaysEverybodyDestinations');
+                    }).catch((err) => {
+                        context.commit('changeDestinationFailed', err.message);
+                    });
+                });
+            } else if (options.direction === 'down' && options.nextId && options.index === lastIndex) {
+                return new Promise((resolve, reject) => {
+                    moveDestinationDown({
+                        nextId: options.nextId,
+                        id: options.id,
+                        destination: clonedDestination
+                    }).then(() => {
+                        context.commit('changeDestinationSucceeded');
+                        context.dispatch('loadAlwaysEverybodyDestinations');
+                    }).catch((err) => {
+                        context.commit('changeDestinationFailed', err.message);
+                    });
+                });
+            } else {
+                let adjacentDestination = options.direction === 'up' ?
+                    options.destinations[options.index-1] :
+                    options.destinations[options.index+1];
+                let adjacentPriority = adjacentDestination ?
+                    adjacentDestination.priority : 1;
+                let adjacentIndex = options.direction === 'up' ?
+                options.index - 1 :
+                options.index + 1;
+                clonedDestinations.splice(options.index, 1);
+                clonedDestinations.splice(adjacentIndex, 0, clonedDestination);
+                clonedDestinations[adjacentIndex].priority = adjacentPriority;
+                return new Promise((resolve, reject) => {
+                    changePositionOfDestination({
+                        destinations: clonedDestinations,
+                        id: options.id,
+                        subscriberId: context.getters.getSubscriberId
+                    }).then(() => {
+                        context.commit('changeDestinationSucceeded');
+                        context.dispatch('loadAlwaysEverybodyDestinations');
+                    }).catch((err) => {
+                        context.commit('changeDestinationFailed', err.message);
                     });
                 });
             }
