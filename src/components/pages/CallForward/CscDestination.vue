@@ -22,11 +22,37 @@
                         <span>
                             {{ $t('pages.callForward.secs') }}
                         </span>
+                        <!--TODO: Temporary dev helper, remember to remove-->
+                        <span>
+                            | priority: <strong>{{ destination.priority }}</strong>
+                        </span>
+                        <span>
+                            | nextId: <strong>{{ nextDestId }}</strong>
+                        </span>
+                        <span>
+                            | prevId: <strong>{{ prevDestId }}</strong>
+                        </span>
                     </span>
                 </div>
             </q-item-main>
-            <q-item-side right>
-                <q-btn color="negative" flat icon="delete"
+            <q-item-side class="dest-btns" right>
+                <span v-if="destinations.length > 1">
+                    <q-btn flat
+                        :class="{btnhidden: hasNoDownOption(index)}"
+                        color="secondary"
+                        icon="keyboard_arrow_down"
+                        @click="moveDestination('down', index)">
+                    </q-btn>
+                    <q-btn flat
+                        :class="{btnhidden: hasNoUpOption(index)}"
+                        color="secondary"
+                        icon="keyboard_arrow_up"
+                        @click="moveDestination('up', index)">
+                    </q-btn>
+                </span>
+                <q-btn flat
+                    color="negative"
+                    icon="delete"
                     @click="deleteDestination(index)">
                         {{ $t('buttons.remove') }}
                 </q-btn>
@@ -36,16 +62,20 @@
 </template>
 
 <script>
+    import { mapState } from 'vuex'
     import numberFormat from '../../../filters/number-format'
     import _ from 'lodash'
-    import { showToast } from '../../../helpers/ui'
+    import { startLoading, stopLoading,
+        showGlobalError, showToast } from '../../../helpers/ui'
     import { QItem, QItemMain, QItemSide, Toast,
         Dialog, QBtn } from 'quasar-framework'
     export default {
         name: 'csc-destination',
         props: [
             'destinations',
-            'id'
+            'id',
+            'prevDestId',
+            'nextDestId'
         ],
         components: {
             QItem,
@@ -56,8 +86,39 @@
             QBtn
         },
         computed: {
+            ...mapState('callForward', [
+                'changeDestinationState',
+                'changeDestinationError'
+            ])
+        },
+        watch: {
+            changeDestinationState(state) {
+                if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.changeDestinationError);
+                } else if (state === 'succeeded') {
+                    stopLoading();
+                }
+            }
         },
         methods: {
+            hasNoDownOption(index) {
+                return index === this.destinations.length-1 && !this.nextDestId;
+            },
+            hasNoUpOption(index) {
+                return index === 0 && !this.prevDestId;
+            },
+            moveDestination(direction, index) {
+                startLoading();
+                this.$store.dispatch('callForward/changePositionOfDestination', {
+                    destinations: this.destinations,
+                    id: this.id,
+                    index: index,
+                    direction: direction,
+                    nextId: this.nextDestId,
+                    prevId: this.prevDestId
+                });
+            },
             isNumber(destination) {
                 let dest = destination.split(/:|@/);
                 if (dest[2] === 'fax2mail.local') {
@@ -110,4 +171,10 @@
 .dest-row
     .dest-values
         font-weight 500
+.dest-btns
+    display inline-block
+.btnhidden
+    opacity 0
+.btnvisible
+    opacity 1
 </style>
