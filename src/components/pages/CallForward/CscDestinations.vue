@@ -51,8 +51,9 @@
         computed: {
             lastDestinationset() {
                 let destinationset = _.findLast(this.group) || {};
+                //let lastDestination = _.findLast(destinationset.destinations) || {};
+                //destinationset.priority = lastDestination.priority || 1;
                 destinationset.groupName = this.groupName;
-                destinationset.priority = destinationset.lowestPriority || 1;
                 return destinationset;
             }
         }

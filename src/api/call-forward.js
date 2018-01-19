@@ -119,9 +119,12 @@ export function loadAlwaysEverybodyDestinations(subscriberId) {
                 Promise.all(cfbPromises)
             ]);
         }).then((res)=>{
-            computeLowestPriorityAndAddGroupName(res[0], 'cfu');
-            computeLowestPriorityAndAddGroupName(res[1], 'cfna');
-            computeLowestPriorityAndAddGroupName(res[2], 'cfb');
+			sortDestinationsByPriority(res[0], 'cfu');
+			addGroupNames(res[0], 'cfu');
+			sortDestinationsByPriority(res[1], 'cfna');
+			addGroupNames(res[1], 'cfna');
+			sortDestinationsByPriority(res[2], 'cfb');
+			addGroupNames(res[2], 'cfb');
             resolve({
                 online: res[0],
                 offline: res[1],
@@ -133,10 +136,17 @@ export function loadAlwaysEverybodyDestinations(subscriberId) {
     });
 }
 
-export function computeLowestPriorityAndAddGroupName(group, groupName) {
+export function sortDestinationsByPriority(group) {
     group.forEach(destinationset => {
-        let lowest = _.maxBy(destinationset.destinations, 'priority') || { priority: 1 };
-        destinationset.lowestPriority = lowest.priority;
+		destinationset.destinations.sort((a, b) => {
+			return parseFloat(a.priority) - parseFloat(b.priority);
+		});
+    });
+    return group;
+}
+
+export function addGroupNames(group, groupName) {
+    group.forEach(destinationset => {
         destinationset.groupName = groupName;
     });
     return group;

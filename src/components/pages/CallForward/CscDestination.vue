@@ -22,10 +22,20 @@
                         <span>
                             {{ $t('pages.callForward.secs') }}
                         </span>
+						<!--TODO: Temporary dev helper, remember to remove-->
+                        <span>
+                            | Priority: {{ destination.priority }}
+                        </span>
                     </span>
                 </div>
             </q-item-main>
-            <q-item-side right>
+            <q-item-side class="dest-btns" right>
+                <q-btn color="secondary" flat icon="keyboard_arrow_down"
+                    @click="moveDestinationDown(index)">
+                </q-btn>
+                <q-btn color="secondary" flat icon="keyboard_arrow_up"
+                    @click="moveDestinationUp(index)">
+                </q-btn>
                 <q-btn color="negative" flat icon="delete"
                     @click="deleteDestination(index)">
                         {{ $t('buttons.remove') }}
@@ -36,6 +46,16 @@
 </template>
 
 <script>
+// TODO
+// TT#28062, CallForwarding: As a Customer, I want to change the order of Destinations
+//AC:
+//- I must be able to change the order of a single Destination by clicking buttons "up" and "down"
+//
+//Effort:
+//- Priority is inferred by the upper/downer sibling
+//- If we have Inter-DestinationSet movement of Destinations, we need to update priority and both DestinationSets
+// NOTE: Considering to go for "store is truth" approach on this story, and basically just reorder without first doing a GET request. Problem with GET request first is that the index might have changed (we have no unique id for destinations, and no destination specific endpoint). I think a good approach is to first implement this feature with the straight forward approach of not checking the backend, and then improve in the future if needed. Maybe a "oops, the destinations have changed since your last refresh - do you want to reload first" error message/handling.
+
     import numberFormat from '../../../filters/number-format'
     import _ from 'lodash'
     import { showToast } from '../../../helpers/ui'
@@ -58,6 +78,12 @@
         computed: {
         },
         methods: {
+			moveDestinationUp(index) {
+				console.log('moveDestinationUp()');
+			},
+			moveDestinationDown(index) {
+				console.log('moveDestinationDown()');
+			},
             isNumber(destination) {
                 let dest = destination.split(/:|@/);
                 if (dest[2] === 'fax2mail.local') {
@@ -110,4 +136,6 @@
 .dest-row
     .dest-values
         font-weight 500
+.dest-btns
+	display inline-block
 </style>
