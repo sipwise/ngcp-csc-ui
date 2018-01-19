@@ -52,7 +52,6 @@
             lastDestinationset() {
                 let destinationset = _.findLast(this.group) || {};
                 destinationset.groupName = this.groupName;
-                destinationset.priority = destinationset.lowestPriority || 1;
                 return destinationset;
             }
         }
