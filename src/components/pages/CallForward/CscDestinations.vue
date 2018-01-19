@@ -13,7 +13,8 @@
                         </div>
                     </q-item>
                 </div>
-                <div v-else v-for="destinationset in group">
+                <div v-else v-for="(destinationset, index) in group">
+                    <!--TODO: Also pass previous and next destinationset id to csc-destination-->
                     <csc-destination v-bind="destinationset">
                     </csc-destination>
                 </div>
@@ -52,7 +53,6 @@
             lastDestinationset() {
                 let destinationset = _.findLast(this.group) || {};
                 destinationset.groupName = this.groupName;
-                destinationset.priority = destinationset.lowestPriority || 1;
                 return destinationset;
             }
         }

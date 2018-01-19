@@ -10,9 +10,17 @@ import { getSourcesets,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
     addDestinationToEmptyGroup,
-    addDestinationToExistingGroup } from '../api/call-forward';
+    addDestinationToExistingGroup,
+    changePositionOfDestination } from '../api/call-forward';
 
 const AddDestinationState = {
+    button: 'button',
+    requesting: 'requesting',
+    succeeded: 'succeeded',
+    failed: 'failed'
+};
+
+const ChangeDestinationState = {
     button: 'button',
     requesting: 'requesting',
     succeeded: 'succeeded',
@@ -33,6 +41,8 @@ export default {
         },
         addDestinationState: AddDestinationState.button,
         addDestinationError: null,
+        changeDestinationState: ChangeDestinationState.button,
+        changeDestinationError: null,
         activeForm: '',
         formType: '',
         destinationsetId: '',
@@ -125,6 +135,18 @@ export default {
         addDestinationFailed(state, error) {
             state.addDestinationState = AddDestinationState.failed;
             state.addDestinationError = error;
+        },
+        changeDestinationRequesting(state) {
+            state.changeDestinationState = ChangeDestinationState.requesting;
+            state.changeDestinationError = null;
+        },
+        changeDestinationSucceeded(state) {
+            state.changeDestinationState = ChangeDestinationState.succeeded;
+            state.changeDestinationError = null;
+        },
+        changeDestinationFailed(state, error) {
+            state.changeDestinationState = ChangeDestinationState.failed;
+            state.changeDestinationError = error;
         }
     },
     actions: {
@@ -172,6 +194,7 @@ export default {
             return new Promise((resolve, reject)=>{
                 loadAlwaysEverybodyDestinations(localStorage.getItem('subscriberId')).then((result)=>{
                     context.commit('loadAlwaysEverybodyDestinations', result);
+                    console.log('destinations store', result);
                 })
             });
         },
@@ -233,6 +256,41 @@ export default {
                     });
                 });
             }
+        },
+        changePositionOfDestination(context, options) {
+            let clonedDestinations = _.cloneDeep(options.destinations);
+            let clonedDestination = _.clone(options.destinations[options.index]);
+            let adjacentDestination = options.direction === 'up' ?
+                options.destinations[options.index-1] :
+                options.destinations[options.index+1];
+            let adjacentPriority = adjacentDestination.priority || 1;
+            let adjacentIndex = options.direction === 'up' ?
+                options.index - 1 :
+                options.index + 1;
+            // TODO: If we have Inter-DestinationSet movement of Destinations,
+            // we need to update priority and both DestinationSets
+            clonedDestinations.splice(options.index, 1);
+            clonedDestinations.splice(adjacentIndex, 0, clonedDestination);
+            clonedDestinations[adjacentIndex].priority = adjacentPriority;
+            context.commit('changeDestinationRequesting');
+            return new Promise((resolve, reject) => {
+                changePositionOfDestination({
+                    destinations: clonedDestinations,
+                    id: options.id,
+                    subscriberId: context.getters.getSubscriberId
+                }).then(() => {
+                    context.commit('changeDestinationSucceeded');
+                    context.dispatch('loadAlwaysEverybodyDestinations');
+                }).catch((err) => {
+                    context.commit('changeDestinationFailed', err.message);
+                });
+            });
+        },
+        moveDestination(destinations, fromIndex, toIndex) {
+            let destination = destinations[fromIndex];
+            destinations.splice(fromIndex, 1);
+            destinations.splice(toIndex, 0, destination);
+            return destinations;
         },
         setActiveForm(context, value) {
             context.commit('setActiveForm', value);
