@@ -10,11 +10,19 @@ import { getSourcesets,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
     addDestinationToEmptyGroup,
-    addDestinationToExistingGroup } from '../api/call-forward';
+    addDestinationToExistingGroup,
+    changePositionOfDestination } from '../api/call-forward';
 
 const AddDestinationState = {
     button: 'button',
     input: 'input',
+    requesting: 'requesting',
+    succeeded: 'succeeded',
+    failed: 'failed'
+};
+
+const ChangeDestinationState = {
+    button: 'button',
     requesting: 'requesting',
     succeeded: 'succeeded',
     failed: 'failed'
@@ -124,6 +132,18 @@ export default {
         addDestinationFailed(state, error) {
             state.addDestinationState = AddDestinationState.failed;
             state.addDestinationError = error;
+        },
+        changeDestinationRequesting(state) {
+            state.changeDestinationState = ChangeDestinationState.requesting;
+            state.changeDestinationError = null;
+        },
+        changeDestinationSucceeded(state) {
+            state.changeDestinationState = ChangeDestinationState.succeeded;
+            state.changeDestinationError = null;
+        },
+        changeDestinationFailed(state, error) {
+            state.changeDestinationState = ChangeDestinationState.failed;
+            state.changeDestinationError = error;
         }
     },
     actions: {
@@ -231,6 +251,27 @@ export default {
                     });
                 });
             }
+        },
+        changePositionOfDestination(context, options) {
+            let adjacentDestination = options.direction === 'up' ?
+                options.destinations[options.index-1] :
+                options.destinations[options.index+1];
+            let adjacentPriority = adjacentDestination.priority || 1;
+            let reorderedDestinations; // TODO: Update priority of moved destination, and then insert it at right index in destinations array
+            context.commit('changeDestinationRequesting');
+            return new Promise((resolve, reject) => {
+                changePositionOfDestination({
+                    destinations: reorderedDestinations,
+                    id: options.id,
+                    group: options.group,
+                    subscriberId: context.getters.getSubscriberId
+                }).then(() => {
+                    context.commit('changeDestinationSucceeded');
+                    context.dispatch('loadAlwaysEverybodyDestinations');
+                }).catch((err) => {
+                    context.commit('addDestinationFailed', err.message);
+                });
+            });
         },
         setActiveForm(context, value) {
             context.commit('setActiveForm', value);
