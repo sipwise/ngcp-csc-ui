@@ -133,7 +133,13 @@
             "removeDialogTitle": "Remove call forward destination",
             "removeDialogText": "You are about to remove the destination {destination}",
             "removeSuccessMessage": "Removed destination {destination}",
-            "removeErrorMessage": "An error occured while trying to delete the destination. Please try again."
+            "removeErrorMessage": "An error occured while trying to delete the destination. Please try again.",
+            "forCallingParties": "For calling parties ...",
+            "addSourceButton": "Add new source",
+            "changeTitleButton": "Change title",
+            "removeSourceDialogTitle": "Remove source",
+            "removeSourceDialogText": "You are about to remove the source {source}",
+            "addSourceInputError": "Input a valid number or subscriber name"
         }
     },
     "call": {
