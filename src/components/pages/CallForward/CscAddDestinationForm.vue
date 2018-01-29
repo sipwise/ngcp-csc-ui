@@ -53,7 +53,8 @@
             'destinations',
             'id',
             'groupName',
-            'priority'
+            'priority',
+            'timeset'
         ],
         data () {
             return {
@@ -153,7 +154,8 @@
                 startLoading();
                 this.$store.dispatch('callForward/addDestination', {
                     form: this.destinationForm,
-                    destinations: this.destinations
+                    destinations: this.destinations,
+                    timeset: this.timeset
                 });
             }
         }

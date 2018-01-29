@@ -84,31 +84,31 @@ export function getDestinationsets(id) {
     });
 }
 
-export function loadAlwaysEverybodyDestinations(subscriberId) {
+export function loadAlwaysDestinations(options) {
     return new Promise((resolve, reject)=>{
         Promise.resolve().then(()=>{
-            return getMappings(subscriberId);
-        }).then((mappings) => {
+            return getMappings(options.subscriberId);
+        }).then((mappings)=>{
             let cfuPromises = [];
             let cfnaPromises = [];
             let cfbPromises = [];
             if(_.has(mappings, 'cfu') && _.isArray(mappings.cfu) && mappings.cfu.length > 0) {
                 mappings.cfu.forEach((cfuMapping)=>{
-                    if (cfuMapping.timeset_id === null && cfuMapping.sourceset_id === null) {
+                    if (cfuMapping.timeset === options.timeset && cfuMapping.sourceset_id === null) {
                         cfuPromises.push(getDestinationsetById(cfuMapping.destinationset_id));
                     }
                 });
             }
             if(_.has(mappings, 'cfna') && _.isArray(mappings.cfna) && mappings.cfna.length > 0) {
                 mappings.cfna.forEach((cfnaMapping)=>{
-                    if (cfnaMapping.timeset_id === null && cfnaMapping.sourceset_id === null) {
+                    if (cfnaMapping.timeset === options.timeset && cfnaMapping.sourceset_id === null) {
                         cfnaPromises.push(getDestinationsetById(cfnaMapping.destinationset_id));
                     }
                 });
             }
             if(_.has(mappings, 'cfb') && _.isArray(mappings.cfb) && mappings.cfb.length > 0) {
                 mappings.cfb.forEach((cfbMapping)=>{
-                    if (cfbMapping.timeset_id === null && cfbMapping.sourceset_id === null) {
+                    if (cfbMapping.timeset === options.timeset && cfbMapping.sourceset_id === null) {
                         cfbPromises.push(getDestinationsetById(cfbMapping.destinationset_id));
                     }
                 });
@@ -256,10 +256,21 @@ export function addDestinationToEmptyGroup(options) {
         //        mappings: mappings
         //    });
         }).then(() => {
+            return getTimesets(options.subscriberId);
+        }).then((timesets) => {
+            let timeset = null;
+            timesets.forEach((timeset) => {
+                // TODO: Not working. Fix
+                if (timeset.name === options.timeset) {
+                    timeset = timeset.id;
+                    return;
+                }
+            });
             return addNewMapping({
                 destinationsetId: destinationsetId,
                 group: options.groupName,
-                subscriberId: options.subscriberId
+                subscriberId: options.subscriberId,
+                timeset: timeset
             });
         }).then(() => {
             resolve();
@@ -270,12 +281,13 @@ export function addDestinationToEmptyGroup(options) {
 }
 
 export function addNewMapping(options) {
+    console.log('options.timeset', options.timeset)
     let headers = {
         'Content-Type': 'application/json-patch+json'
     };
     return new Promise((resolve, reject) => {
         let mappingsToSend = [{ destinationset_id: options.destinationsetId,
-            sourceset_id: null, timeset_id: null }];
+            sourceset_id: null, timeset_id: options.timeset }];
         Vue.http.patch('/api/cfmappings/' + options.subscriberId, [{
             op: 'replace',
             path: '/' + options.group,
