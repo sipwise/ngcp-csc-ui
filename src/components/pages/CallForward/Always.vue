@@ -22,7 +22,7 @@
     import CscDestinations from './CscDestinations'
     import { QCard } from 'quasar-framework'
     export default {
-        mounted() {
+        created() {
             this.$store.dispatch('callForward/loadAlwaysEverybodyDestinations');
         },
         data () {

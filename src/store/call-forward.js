@@ -3,7 +3,7 @@
 
 import _ from 'lodash';
 import { getSourcesets, getDestinationsets, getTimesets,
-    getMappings, loadAlwaysEverybodyDestinations,
+    getMappings, loadAlwaysDestinations,
     deleteDestinationFromDestinationset,
     deleteDestinationsetById } from '../api/call-forward';
 
@@ -15,6 +15,11 @@ export default {
         timesets: null,
         destinationsets: null,
         alwaysEverybodyDestinations: {
+            online: [],
+            busy: [],
+            offline: []
+        },
+        alwaysCompanyHoursDestinations: {
             online: [],
             busy: [],
             offline: []
@@ -35,6 +40,9 @@ export default {
         },
         loadAlwaysEverybodyDestinations(state, result) {
             state.alwaysEverybodyDestinations = result;
+        },
+        loadAlwaysCompanyHoursDestinations(state, result) {
+            state.alwaysCompanyHoursDestinations = result;
         }
     },
     actions: {
@@ -80,8 +88,21 @@ export default {
         },
         loadAlwaysEverybodyDestinations(context) {
             return new Promise((resolve, reject)=>{
-                loadAlwaysEverybodyDestinations(localStorage.getItem('subscriberId')).then((result)=>{
+                loadAlwaysDestinations({
+                    subscriberId: localStorage.getItem('subscriberId'),
+                    timeset: null
+                        }).then((result)=>{
                     context.commit('loadAlwaysEverybodyDestinations', result);
+                })
+            });
+        },
+        loadAlwaysCompanyHoursDestinations(context) {
+            return new Promise((resolve, reject)=>{
+                loadAlwaysDestinations({
+                    subscriberId: localStorage.getItem('subscriberId'),
+                    timeset: 'Company Hours'
+                        }).then((result)=>{
+                    context.commit('loadAlwaysCompanyHoursDestinations', result);
                 })
             });
         },
