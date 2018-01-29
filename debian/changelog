@@ -1,3 +1,20 @@
+ngcp-csc-ui (6.2.0.0+0~mr6.2.0.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [3db9b92] TT#23572 Call: As a Customer, I want to be able to receive an audio/video call
+  * [54c98fc] TT#20509 PBXConfig: As a Customer, I want to see a list of all PBXGroups
+  * [4ff24c0] TT#29910 Call: Show the toast regarding call initialisation only if RTC:engine is enabled
+  * [d2301fd] TT#28106 PBXConfig: As a Customer, I want to add new PBX Groups
+
+  [ raxelsen ]
+  * [54c0aa0] TT#20530 Implement playable voicemail
+  * [3eb81fa] TT#27768 Implement fax infos and collapsible
+  * [80c14dc] TT#28600 Implement Destinations Store
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 29 Jan 2018 21:54:27 +0100
+
 ngcp-csc-ui (6.1.0.0+0~mr6.1.0.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
