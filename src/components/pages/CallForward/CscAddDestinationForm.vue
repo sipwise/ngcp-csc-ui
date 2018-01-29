@@ -54,7 +54,9 @@
             'destinations',
             'id',
             'groupName',
-            'priority'
+            'priority',
+            'timeset',
+            'timesetId'
         ],
         data () {
             return {
@@ -112,6 +114,8 @@
             }
         },
         watch: {
+            // TODO: Move to Always/Company/After module parent page, and
+            // refactor reload to take place withing watcher instead of store
             addDestinationState(state) {
                 if (state === 'failed') {
                     stopLoading();
@@ -152,10 +156,13 @@
                 this.$store.dispatch('callForward/resetDestinationState');
             },
             addDestination() {
+                console.log('timesetId in form', this.timesetId);
                 startLoading();
                 this.$store.dispatch('callForward/addDestination', {
                     form: this.destinationForm,
-                    destinations: this.destinations
+                    destinations: this.destinations,
+                    timeset: this.timeset,
+                    timesetId: this.timesetId
                 });
             }
         }

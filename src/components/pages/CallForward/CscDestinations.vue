@@ -39,7 +39,8 @@
             'title',
             'icon',
             'group',
-            'groupName'
+            'groupName',
+            'timeset'
         ],
         components: {
             QCardTitle,
@@ -54,6 +55,8 @@
             lastDestinationset() {
                 let destinationset = _.findLast(this.group) || {};
                 destinationset.groupName = this.groupName;
+                destinationset.priority = destinationset.lowestPriority || 1;
+                destinationset.timeset = this.timeset;
                 return destinationset;
             }
         },
