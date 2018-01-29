@@ -83,31 +83,32 @@ export function getDestinationsets(id) {
     });
 }
 
-export function loadAlwaysEverybodyDestinations(subscriberId) {
+export function loadAlwaysDestinations(options) {
+    // TODO: Refactor to take timeset as param
     return new Promise((resolve, reject)=>{
         Promise.resolve().then(()=>{
-            return getMappings(subscriberId);
+            return getMappings(options.subscriberId);
         }).then((mappings)=>{
             let cfuPromises = [];
             let cfnaPromises = [];
             let cfbPromises = [];
             if(_.has(mappings, 'cfu') && _.isArray(mappings.cfu) && mappings.cfu.length > 0) {
                 mappings.cfu.forEach((cfuMapping)=>{
-                    if (cfuMapping.timeset_id === null && cfuMapping.sourceset_id === null) {
+                    if (cfuMapping.timeset === options.timeset && cfuMapping.sourceset_id === null) {
                         cfuPromises.push(getDestinationsetById(cfuMapping.destinationset_id));
                     }
                 });
             }
             if(_.has(mappings, 'cfna') && _.isArray(mappings.cfna) && mappings.cfna.length > 0) {
                 mappings.cfna.forEach((cfnaMapping)=>{
-                    if (cfnaMapping.timeset_id === null && cfnaMapping.sourceset_id === null) {
+                    if (cfnaMapping.timeset === options.timeset && cfnaMapping.sourceset_id === null) {
                         cfnaPromises.push(getDestinationsetById(cfnaMapping.destinationset_id));
                     }
                 });
             }
             if(_.has(mappings, 'cfb') && _.isArray(mappings.cfb) && mappings.cfb.length > 0) {
                 mappings.cfb.forEach((cfbMapping)=>{
-                    if (cfbMapping.timeset_id === null && cfbMapping.sourceset_id === null) {
+                    if (cfbMapping.timeset === options.timeset && cfbMapping.sourceset_id === null) {
                         cfbPromises.push(getDestinationsetById(cfbMapping.destinationset_id));
                     }
                 });
