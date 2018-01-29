@@ -50,6 +50,36 @@ describe('CallForward', function(){
         };
         CallForwardModule.mutations.resetFormState(state);
         assert.deepEqual(state.form, data);
+
+    it('should load always company hours destinations', function(){
+        let state = {
+            alwaysCompanyHoursDestinations: [
+            ]
+        };
+        let data = {
+            busy: [],
+            offline: [{
+                destinations: [{
+                    "announcement_id": null,
+                    "destination": "sip:3333@192.168.178.23",
+                    "priority": 1,
+                    "simple_destination": "3333",
+                    "timeout": 60
+                },
+                {
+                    "announcement_id": null,
+                    "destination": "sip:2222@192.168.178.23",
+                    "priority": 1,
+                    "simple_destination": "2222",
+                    "timeout": 300
+                }],
+                id: 3,
+                name: "csc_destinationset_1"
+            }],
+            online: []
+        };
+        CallForwardModule.mutations.loadAlwaysCompanyHoursDestinations(state, data);
+        assert.deepEqual(state.alwaysCompanyHoursDestinations, data);
     });
 
 });
