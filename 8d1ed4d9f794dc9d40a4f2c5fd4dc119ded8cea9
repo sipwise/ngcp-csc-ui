@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a930d6b_8edc9b76",
+        "filename": "src/filters/number-format.js",
+        "patchSetId": 18
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2018-01-29T16:35:57Z",
+      "side": 1,
+      "message": "We should write a test for this filter and normalisation algorithm. In case of a none URI string we get the raw string back instead of a normalised number as before.",
+      "revId": "8d1ed4d9f794dc9d40a4f2c5fd4dc119ded8cea9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
