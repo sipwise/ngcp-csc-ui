@@ -48,9 +48,10 @@
             },
             deleteDestination(index) {
                 let clonedDestinations = _.cloneDeep(this.destinations);
+                let clonedDestination = clonedDestinations[index].destination;
                 let indexInt = parseInt(index);
                 let store = this.$store;
-                let removeDestination = numberFormat(this.destinations[index].destination);
+                let removeDestination = numberFormat(clonedDestination);
                 let self = this;
                 let isLastDestination = this.destinations.length === 1;
                 clonedDestinations.splice(indexInt, 1);
@@ -68,14 +69,9 @@
                                 store.dispatch('callForward/deleteDestinationFromDestinationset', {
                                     id: self.destinationsetId,
                                     data: clonedDestinations,
-                                    deleteDestinationset: isLastDestination }).then((result) => {
-                                        store.dispatch('callForward/loadAlwaysEverybodyDestinations');
-                                        showToast(self.$t('pages.callForward.removeSuccessMessage', {
-                                            destination: removeDestination
-                                        }));
-                                    }).catch((err) => {
-                                        showToast(self.$t('pages.callForward.removeErrorMessage'));
-                                    });
+                                    deleteDestinationset: isLastDestination,
+                                    removeDestination: removeDestination
+                                })
                             }
                         }
                     ]

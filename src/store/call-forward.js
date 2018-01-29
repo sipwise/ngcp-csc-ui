@@ -3,9 +3,16 @@
 
 import _ from 'lodash';
 import { getSourcesets, getDestinationsets, getTimesets,
-    getMappings, loadAlwaysEverybodyDestinations,
+    getMappings, loadAlwaysDestinations,
     deleteDestinationFromDestinationset,
     deleteDestinationsetById } from '../api/call-forward';
+
+const RemoveDestinationState = {
+    button: 'button',
+    requesting: 'requesting',
+    succeeded: 'succeeded',
+    failed: 'failed'
+};
 
 export default {
     namespaced: true,
@@ -18,7 +25,15 @@ export default {
             online: [],
             busy: [],
             offline: []
-        }
+        },
+        alwaysCompanyHoursDestinations: {
+            online: [],
+            busy: [],
+            offline: []
+        },
+        removeDestinationState: RemoveDestinationState.button,
+        removeDestinationError: null,
+        lastRemovedDestination: null
     },
     mutations: {
         loadMappings(state, result) {
@@ -35,6 +50,24 @@ export default {
         },
         loadAlwaysEverybodyDestinations(state, result) {
             state.alwaysEverybodyDestinations = result;
+        },
+        loadAlwaysCompanyHoursDestinations(state, result) {
+            state.alwaysCompanyHoursDestinations = result;
+        },
+        removeDestinationRequesting(state) {
+            state.removeDestinationState = RemoveDestinationState.requesting;
+            state.removeDestinationError = null;
+        },
+        removeDestinationSucceeded(state) {
+            state.removeDestinationState = RemoveDestinationState.succeeded;
+            state.removeDestinationError = null;
+        },
+        removeDestinationFailed(state, error) {
+            state.removeDestinationState = RemoveDestinationState.failed;
+            state.removeDestinationError = error;
+        },
+        setLastRemovedDestination(state, value) {
+            state.lastRemovedDestination = value;
         }
     },
     actions: {
@@ -80,18 +113,34 @@ export default {
         },
         loadAlwaysEverybodyDestinations(context) {
             return new Promise((resolve, reject)=>{
-                loadAlwaysEverybodyDestinations(localStorage.getItem('subscriberId')).then((result)=>{
+                loadAlwaysDestinations({
+                    subscriberId: localStorage.getItem('subscriberId'),
+                    timeset: null
+                        }).then((result)=>{
                     context.commit('loadAlwaysEverybodyDestinations', result);
                 })
             });
         },
+        loadAlwaysCompanyHoursDestinations(context) {
+            return new Promise((resolve, reject)=>{
+                loadAlwaysDestinations({
+                    subscriberId: localStorage.getItem('subscriberId'),
+                    timeset: 'Company Hours'
+                        }).then((result)=>{
+                    context.commit('loadAlwaysCompanyHoursDestinations', result);
+                })
+            });
+        },
         deleteDestinationFromDestinationset(context, options) {
+            let removedDestination = options.removeDestination;
+            context.commit('removeDestinationRequesting');
             return new Promise((resolve, reject) => {
                 deleteDestinationFromDestinationset(options)
-                    .then((result) => {
-                        resolve(result);
+                    .then(() => {
+                        context.commit('setLastRemovedDestination', removedDestination);
+                        context.commit('removeDestinationSucceeded');
                     }).catch((err) => {
-                        reject(err);
+                        context.commit('removeDestinationFailed', err.message);
                     });
             });
         },

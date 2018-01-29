@@ -18,11 +18,15 @@
 </template>
 
 <script>
+    import numberFormat from '../../../filters/number-format'
+    import { mapState } from 'vuex'
+    import { startLoading, stopLoading,
+        showGlobalError, showToast } from '../../../helpers/ui'
     import CscPage from '../../CscPage'
     import CscDestinations from './CscDestinations'
     import { QCard } from 'quasar-framework'
     export default {
-        mounted() {
+        created() {
             this.$store.dispatch('callForward/loadAlwaysEverybodyDestinations');
         },
         data () {
@@ -34,11 +38,27 @@
             CscPage,
             CscDestinations
         },
-        methods: {
-        },
         computed: {
-            destinations() {
-                return this.$store.state.callForward.alwaysEverybodyDestinations;
+            ...mapState('callForward', {
+                removeDestinationState: 'removeDestinationState',
+                destinations: 'alwaysEverybodyDestinations',
+                lastRemovedDestination: 'lastRemovedDestination'
+            })
+        },
+        watch: {
+            removeDestinationState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                } else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.removeDestinationError);
+                } else if (state === 'succeeded') {
+                    stopLoading();
+                    showToast(this.$t('pages.callForward.removeSuccessMessage', {
+                        destination: this.lastRemovedDestination
+                    }));
+                    this.$store.dispatch('callForward/loadAlwaysEverybodyDestinations');
+                }
             }
         }
     }
