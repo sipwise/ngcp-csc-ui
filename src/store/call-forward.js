@@ -3,7 +3,7 @@
 import _ from 'lodash'; import { getSourcesets, getDestinationsets,
     getTimesets,
     getMappings,
-    loadAlwaysEverybodyDestinations,
+    loadAlwaysDestinations,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
     addDestinationToEmptyGroup,
@@ -12,14 +12,7 @@ import _ from 'lodash'; import { getSourcesets, getDestinationsets,
     moveDestinationUp,
     moveDestinationDown } from '../api/call-forward';
 
-const AddDestinationState = {
-    button: 'button',
-    requesting: 'requesting',
-    succeeded: 'succeeded',
-    failed: 'failed'
-};
-
-const ChangeDestinationState = {
+const DestinationState = {
     button: 'button',
     requesting: 'requesting',
     succeeded: 'succeeded',
@@ -34,13 +27,22 @@ export default {
         timesets: null,
         destinationsets: null,
         alwaysEverybodyDestinations: {
-            online: [{}],
-            busy: [{}],
-            offline: [{}]
+            online: [],
+            busy: [],
+            offline: []
         },
-        addDestinationState: AddDestinationState.button,
+        companyHoursEverybodyDestinations: {
+            online: [],
+            busy: [],
+            offline: []
+        },
+        removeDestinationState: DestinationState.button,
+        removeDestinationError: null,
+        lastRemovedDestination: null,
+        addDestinationState: DestinationState.button,
         addDestinationError: null,
-        changeDestinationState: ChangeDestinationState.button,
+        lastAddedDestination: null,
+        changeDestinationState: DestinationState.button,
         changeDestinationError: null,
         activeForm: '',
         formType: '',
@@ -51,8 +53,7 @@ export default {
             destination: '',
             priority: 1,
             timeout: ''
-        },
-        lastAddedDestination: null
+        }
     },
     getters: {
         hasFaxCapability(state, getters, rootState, rootGetters) {
@@ -72,6 +73,17 @@ export default {
         },
         getDestinationsetId(state) {
             return state.destinationsetId;
+        },
+        getCompanyHoursId(state) {
+            let timeset;
+            for (let group in state.companyHoursEverybodyDestinations) {
+                if (!timeset) {
+                    timeset = _.find(state.companyHoursEverybodyDestinations[group], (o) => {
+                        return o.timesetId > 0;
+                    });
+                };
+            };
+            return timeset ? timeset.timesetId : null;
         }
     },
     mutations: {
@@ -89,6 +101,9 @@ export default {
         },
         loadAlwaysEverybodyDestinations(state, result) {
             state.alwaysEverybodyDestinations = result;
+        },
+        loadCompanyHoursEverybodyDestinations(state, result) {
+            state.companyHoursEverybodyDestinations = result;
         },
         setActiveForm(state, value) {
             state.activeForm = value;
@@ -121,31 +136,48 @@ export default {
             state.formType = '';
             state.destinationsetId = '';
             state.groupName = '';
-            state.addDestinationState = AddDestinationState.button;
+            state.addDestinationState = DestinationState.button;
+            state.changeDestinationState = DestinationState.button;
+            state.removeDestinationState = DestinationState.button;
         },
         addDestinationRequesting(state) {
-            state.addDestinationState = AddDestinationState.requesting;
+            state.addDestinationState = DestinationState.requesting;
             state.addDestinationError = null;
         },
         addDestinationSucceeded(state) {
-            state.addDestinationState = AddDestinationState.succeeded;
+            state.addDestinationState = DestinationState.succeeded;
             state.addDestinationError = null;
         },
         addDestinationFailed(state, error) {
-            state.addDestinationState = AddDestinationState.failed;
+            state.addDestinationState = DestinationState.failed;
             state.addDestinationError = error;
         },
         changeDestinationRequesting(state) {
-            state.changeDestinationState = ChangeDestinationState.requesting;
+            state.changeDestinationState = DestinationState.requesting;
             state.changeDestinationError = null;
         },
         changeDestinationSucceeded(state) {
-            state.changeDestinationState = ChangeDestinationState.succeeded;
+            state.changeDestinationState = DestinationState.succeeded;
             state.changeDestinationError = null;
         },
         changeDestinationFailed(state, error) {
-            state.changeDestinationState = ChangeDestinationState.failed;
+            state.changeDestinationState = DestinationState.failed;
             state.changeDestinationError = error;
+        },
+        removeDestinationRequesting(state) {
+            state.removeDestinationState = DestinationState.requesting;
+            state.removeDestinationError = null;
+        },
+        removeDestinationSucceeded(state) {
+            state.removeDestinationState = DestinationState.succeeded;
+            state.removeDestinationError = null;
+        },
+        removeDestinationFailed(state, error) {
+            state.removeDestinationState = DestinationState.failed;
+            state.removeDestinationError = error;
+        },
+        setLastRemovedDestination(state, value) {
+            state.lastRemovedDestination = value;
         }
     },
     actions: {
@@ -191,18 +223,34 @@ export default {
         },
         loadAlwaysEverybodyDestinations(context) {
             return new Promise((resolve, reject)=>{
-                loadAlwaysEverybodyDestinations(localStorage.getItem('subscriberId')).then((result)=>{
+                loadAlwaysDestinations({
+                    subscriberId: localStorage.getItem('subscriberId'),
+                    timeset: null
+                        }).then((result)=>{
                     context.commit('loadAlwaysEverybodyDestinations', result);
                 })
             });
         },
+        loadCompanyHoursEverybodyDestinations(context) {
+            return new Promise((resolve, reject)=>{
+                loadAlwaysDestinations({
+                    subscriberId: localStorage.getItem('subscriberId'),
+                    timeset: 'Company Hours'
+                        }).then((result)=>{
+                    context.commit('loadCompanyHoursEverybodyDestinations', result);
+                })
+            });
+        },
         deleteDestinationFromDestinationset(context, options) {
+            let removedDestination = options.removeDestination;
+            context.commit('removeDestinationRequesting');
             return new Promise((resolve, reject) => {
                 deleteDestinationFromDestinationset(options)
-                    .then((result) => {
-                        resolve(result);
+                    .then(() => {
+                        context.commit('setLastRemovedDestination', removedDestination);
+                        context.commit('removeDestinationSucceeded');
                     }).catch((err) => {
-                        reject(err);
+                        context.commit('removeDestinationFailed', err.message);
                     });
             });
         },
@@ -220,6 +268,12 @@ export default {
             let form = _.clone(context.getters.getForm);
             let updatedOptions;
             let type = context.getters.getFormType;
+            let timeset = null;
+            if (options.timeset === 'Company Hours') {
+                timeset = context.getters.getCompanyHoursId;
+            } else if (options.timeset === 'After Hours') {
+                timeset = context.getters.getAfterHoursId;
+            };
             context.commit('addDestinationRequesting');
             if (type !== 'number') {
                 delete form.timeout;
@@ -232,14 +286,14 @@ export default {
                 subscriberId: context.getters.getSubscriberId,
                 data: form,
                 groupName: context.getters.getGroupName,
-                id: context.getters.getDestinationsetId
+                id: context.getters.getDestinationsetId,
+                timesetId: timeset
             };
             if (options.destinations) {
                 return new Promise((resolve, reject) => {
                     addDestinationToExistingGroup(updatedOptions).then(() => {
                         context.commit('setLastAddedDestination', options.form.destination);
                         context.commit('addDestinationSucceeded');
-                        context.dispatch('loadAlwaysEverybodyDestinations');
                     }).catch((err) => {
                         context.commit('addDestinationFailed', err.message);
                     });
@@ -247,8 +301,8 @@ export default {
             } else {
                 return new Promise((resolve, reject) => {
                     addDestinationToEmptyGroup(updatedOptions).then((result) => {
+                        context.commit('setLastAddedDestination', options.form.destination);
                         context.commit('addDestinationSucceeded');
-                        context.dispatch('loadAlwaysEverybodyDestinations');
                     }).catch((err) => {
                         context.commit('addDestinationFailed', err.message);
                     });
@@ -269,7 +323,6 @@ export default {
                         destination: clonedDestination
                     }).then(() => {
                         context.commit('changeDestinationSucceeded');
-                        context.dispatch('loadAlwaysEverybodyDestinations');
                     }).catch((err) => {
                         context.commit('changeDestinationFailed', err.message);
                     });
@@ -282,7 +335,6 @@ export default {
                         destination: clonedDestination
                     }).then(() => {
                         context.commit('changeDestinationSucceeded');
-                        context.dispatch('loadAlwaysEverybodyDestinations');
                     }).catch((err) => {
                         context.commit('changeDestinationFailed', err.message);
                     });
@@ -306,7 +358,6 @@ export default {
                         subscriberId: context.getters.getSubscriberId
                     }).then(() => {
                         context.commit('changeDestinationSucceeded');
-                        context.dispatch('loadAlwaysEverybodyDestinations');
                     }).catch((err) => {
                         context.commit('changeDestinationFailed', err.message);
                     });

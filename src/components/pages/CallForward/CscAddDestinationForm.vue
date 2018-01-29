@@ -54,7 +54,9 @@
             'destinations',
             'id',
             'groupName',
-            'priority'
+            'priority',
+            'timeset',
+            'timesetId'
         ],
         data () {
             return {
@@ -81,9 +83,7 @@
             ...mapState('callForward', [
                 'activeForm',
                 'formType',
-                'addDestinationState',
-                'addDestinationError',
-                'lastAddedDestination'
+                'addDestinationState'
             ]),
             ...mapGetters('callForward', [
                 'hasFaxCapability'
@@ -96,9 +96,6 @@
             },
             addDestinationIsRequesting() {
                 return this.addDestinationState === 'requesting';
-            },
-            addDestinationError() {
-                return this.$store.state.callForward.addDestinationError || this.$t('pages.callForward.addErrorMessage');
             },
             beforeIconTimeout() {
                 return [{
@@ -113,17 +110,8 @@
         },
         watch: {
             addDestinationState(state) {
-                if (state === 'failed') {
-                    stopLoading();
-                    showGlobalError(this.addDestinationError);
-                } else if (state === 'succeeded') {
-                    stopLoading();
-                    showToast(this.$t('pages.callForward.addDestinationSuccessMessage', {
-                        destination: this.lastAddedDestination
-                    }));
+                if (state === 'succeeded') {
                     this.disableForm();
-                } else if (state === 'button') {
-                    stopLoading();
                 }
             }
         },
@@ -155,7 +143,9 @@
                 startLoading();
                 this.$store.dispatch('callForward/addDestination', {
                     form: this.destinationForm,
-                    destinations: this.destinations
+                    destinations: this.destinations,
+                    timeset: this.timeset,
+                    timesetId: this.timesetId
                 });
             }
         }
