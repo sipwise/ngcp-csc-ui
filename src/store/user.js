@@ -39,13 +39,17 @@ export default {
         },
         hasSmsCapability(state, getters) {
             return state.capabilities !== null &&
-                state.capabilities.sms  === true &&
-                state.features.sendSms === true;
+                state.capabilities.sms  === true;
+        },
+        hasSendSmsFeature(state) {
+            return state.features.sendSms;
+        },
+        hasSendFaxFeature(state) {
+            return state.features.sendFax;
         },
         hasFaxCapability(state, getters) {
             return state.capabilities !== null &&
-                state.capabilities.faxserver  === true &&
-                state.features.sendFax === true;
+                state.capabilities.faxserver  === true;
         },
         hasRtcEngineCapability(state, getters) {
             return state.capabilities !== null && _.has(state.capabilities, 'rtcengine');
