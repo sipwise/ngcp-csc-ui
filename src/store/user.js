@@ -9,7 +9,11 @@ export default {
         jwt: localStorage.getItem('jwt') || null,
         subscriberId: localStorage.getItem('subscriberId') || null,
         subscriber: null,
-        capabilities: null
+        capabilities: null,
+        features: {
+            sendFax: false,
+            sendSms: false
+        }
     },
     getters: {
         isLogged(state, getters) {
@@ -34,10 +38,14 @@ export default {
             return getters.isAdmin && state.capabilities !== null && state.capabilities.cloudpbx;
         },
         hasSmsCapability(state, getters) {
-            return state.capabilities !== null && state.capabilities.sms  === true;
+            return state.capabilities !== null &&
+                state.capabilities.sms  === true &&
+                state.features.sendSms === true;
         },
         hasFaxCapability(state, getters) {
-            return state.capabilities !== null && state.capabilities.faxserver  === true;
+            return state.capabilities !== null &&
+                state.capabilities.faxserver  === true &&
+                state.features.sendFax === true;
         },
         hasRtcEngineCapability(state, getters) {
             return state.capabilities !== null && _.has(state.capabilities, 'rtcengine');
