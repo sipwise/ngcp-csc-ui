@@ -134,6 +134,7 @@
         mounted: function() {
             if(Platform.is.mobile) {
                 this.$store.commit('layout/hideLeft');
+                this.$store.commit('layout/enableFullscreen');
             } else {
                 this.$store.commit('layout/showLeft');
             }
