@@ -1,9 +1,9 @@
 <template>
     <q-layout>
-        <div id="csc-login" class="row">
+        <div id="csc-login" :class="loginClasses">
             <div class="column col-lg-4 col-xl-4 col-md-3 gt-sm"></div>
             <div class="column col-12 col-md-6 col-lg-4 col-xl-4">
-                <q-card>
+                <q-card :flat="isFlat">
                     <q-card-title>
                         <q-icon name="" />{{ $t('pages.login.title') }}
                         <span slot="subtitle"></span>
@@ -34,7 +34,7 @@
 <script>
     import { startLoading, stopLoading, showGlobalError } from '../helpers/ui'
     import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
-        QCardActions, QBtn, QIcon, Loading, Alert } from 'quasar-framework'
+        QCardActions, QBtn, QIcon, Loading, Alert, Platform } from 'quasar-framework'
     export default {
         name: 'login',
         components: {
@@ -53,6 +53,18 @@
             return {
                 username: '',
                 password: ''
+            }
+        },
+        computed: {
+            isFlat() {
+                return Platform.is.mobile;
+            },
+            loginClasses() {
+                let classes = ['row'];
+                if(Platform.is.mobile) {
+                    classes.push('mobile');
+                }
+                return classes;
             }
         },
         methods: {
@@ -77,6 +89,10 @@
     @import '../../src/themes/app.variables.styl';
     #csc-login {
         padding-top: 12%;
+    }
+
+    #csc-login.mobile {
+        padding-top: 0;
     }
 
     #csc-login .q-card-title {

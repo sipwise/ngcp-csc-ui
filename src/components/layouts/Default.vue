@@ -84,7 +84,7 @@
             </q-collapsible>
         </q-list>
         <router-view />
-        <q-fixed-position id="global-action-btn" corner="top-right" :offset="[48, 17]" class="page-button transition-generic">
+        <q-fixed-position id="global-action-btn" corner="top-right" :offset="fabOffset" class="page-button transition-generic">
             <q-fab color="primary" icon="question answer" active-icon="clear" direction="down" flat>
                 <q-fab-action v-if="hasFaxCapability" color="primary" @click="" icon="fa-fax">
                     <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendFax') }}</q-tooltip>
@@ -99,6 +99,7 @@
         </q-fixed-position>
         <csc-call ref="cscCall" slot="right" @close="closeCall()" @fullscreen="toggleFullscreen()"
                   :fullscreen="isFullscreenEnabled" region="DE" />
+        <q-window-resize-observable @resize="onWindowResize" />
     </q-layout>
 </template>
 
@@ -126,10 +127,16 @@
         QSideLink,
         QTransition,
         QCollapsible,
+        Platform
     } from 'quasar-framework'
     export default {
         name: 'default',
         mounted: function() {
+            if(Platform.is.mobile) {
+                this.$store.commit('layout/hideLeft');
+            } else {
+                this.$store.commit('layout/showLeft');
+            }
             this.applyLayout();
             if(!this.hasUser) {
                 startLoading();
@@ -206,9 +213,19 @@
                 } else {
                     return 'lHh LpR lFf';
                 }
+            },
+            fabOffset() {
+                if(Platform.is.mobile) {
+                    return [16, 17];
+                } else {
+                    return [48, 17];
+                }
             }
         },
         methods: {
+            onWindowResize() {
+                this.applyLayout();
+            },
             toggleFullscreen() {
                 this.$store.commit('layout/toggleFullscreen');
             },

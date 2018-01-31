@@ -2,7 +2,7 @@
 import loadScript from 'load-script'
 
 var scriptId = 'cdk';
-var scriptPath = '/rtc/files/dist/cdk-prod.js';
+var scriptPath = 'https://192.168.178.20:8091/dist/cdk-prod.js'; //'/rtc/files/dist/cdk-prod.js';
 var webSocketPath = '/rtc/api';
 var webSocketUrl = 'wss://' + window.location.host + webSocketPath;
 
