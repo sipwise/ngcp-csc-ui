@@ -85,7 +85,7 @@
         </q-list>
         <router-view />
         <q-fixed-position id="global-action-btn" corner="top-right" :offset="fabOffset" class="page-button transition-generic">
-            <q-fab color="primary" icon="question answer" active-icon="clear" direction="down" flat>
+            <q-fab v-if="hasCommunicationCapabilities" color="primary" icon="question answer" active-icon="clear" direction="down" flat>
                 <q-fab-action v-if="hasFaxCapability" color="primary" @click="" icon="fa-fax">
                     <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendFax') }}</q-tooltip>
                 </q-fab-action>
