@@ -84,7 +84,7 @@ export function getDestinationsets(id) {
     });
 }
 
-export function loadAlwaysDestinations(options) {
+export function loadEverybodyDestinations(options) {
     return new Promise((resolve, reject)=>{
         let cfuTimeset = null;
         let cfnaTimeset = null;

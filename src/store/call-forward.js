@@ -3,7 +3,7 @@
 import _ from 'lodash'; import { getSourcesets, getDestinationsets,
     getTimesets,
     getMappings,
-    loadAlwaysDestinations,
+    loadEverybodyDestinations,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
     addDestinationToEmptyGroup,
@@ -32,6 +32,11 @@ export default {
             offline: []
         },
         companyHoursEverybodyDestinations: {
+            online: [],
+            busy: [],
+            offline: []
+        },
+        afterHoursEverybodyDestinations: {
             online: [],
             busy: [],
             offline: []
@@ -84,6 +89,16 @@ export default {
                 };
             };
             return timeset ? timeset.timesetId : null;
+        },
+        getAfterHoursId(state) {
+            let timeset;
+            for (let group in state.afterHoursEverybodyDestinations) { if (!timeset) {
+                    timeset = _.find(state.afterHoursEverybodyDestinations[group], (o) => {
+                        return o.timesetId > 0;
+                    });
+                };
+            };
+            return timeset ? timeset.timesetId : null;
         }
     },
     mutations: {
@@ -105,6 +120,9 @@ export default {
         loadCompanyHoursEverybodyDestinations(state, result) {
             state.companyHoursEverybodyDestinations = result;
         },
+        loadAfterHoursEverybodyDestinations(state, result) {
+            state.afterHoursEverybodyDestinations = result;
+        },
         setActiveForm(state, value) {
             state.activeForm = value;
         },
@@ -122,6 +140,9 @@ export default {
         },
         setLastAddedDestination(state, value) {
             state.lastAddedDestination = value;
+        },
+        setLastRemovedDestination(state, value) {
+            state.lastRemovedDestination = value;
         },
         resetFormState(state) {
             state.form = {
@@ -175,9 +196,6 @@ export default {
         removeDestinationFailed(state, error) {
             state.removeDestinationState = DestinationState.failed;
             state.removeDestinationError = error;
-        },
-        setLastRemovedDestination(state, value) {
-            state.lastRemovedDestination = value;
         }
     },
     actions: {
@@ -223,7 +241,7 @@ export default {
         },
         loadAlwaysEverybodyDestinations(context) {
             return new Promise((resolve, reject)=>{
-                loadAlwaysDestinations({
+                loadEverybodyDestinations({
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeset: null
                         }).then((result)=>{
@@ -233,11 +251,21 @@ export default {
         },
         loadCompanyHoursEverybodyDestinations(context) {
             return new Promise((resolve, reject)=>{
-                loadAlwaysDestinations({
+                loadEverybodyDestinations({
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeset: 'Company Hours'
                         }).then((result)=>{
                     context.commit('loadCompanyHoursEverybodyDestinations', result);
+                })
+            });
+        },
+        loadAfterHoursEverybodyDestinations(context) {
+            return new Promise((resolve, reject)=>{
+                loadEverybodyDestinations({
+                    subscriberId: localStorage.getItem('subscriberId'),
+                    timeset: 'After Hours'
+                        }).then((result)=>{
+                    context.commit('loadAfterHoursEverybodyDestinations', result);
                 })
             });
         },
