@@ -6,7 +6,10 @@ import VueResource from 'vue-resource';
 import { getMappings, getSourcesets, getTimesets,
     getDestinationsets, getDestinationsetById,
     deleteDestinationFromDestinationset,
-    addDestinationToDestinationset } from '../../src/api/call-forward';
+    addDestinationToDestinationset,
+    convertTimesetToWeekdays,
+    getHoursFromRange,
+    getDaysFromRange } from '../../src/api/call-forward';
 import { assert } from 'chai';
 
 Vue.use(VueResource);
@@ -384,6 +387,272 @@ describe('CallForward', function(){
         }).catch((err)=>{
             done(err);
         });
+    });
+
+    it('should convert timeset with days and hours, and no minutes, to weekdays', function(){
+
+        let options = {
+            timesetName: "Company Hours",
+            timesets: [{
+                id: 1,
+                name: "Company Hours",
+                subscriber_id: 309,
+                times: [{
+                    hour: "6-8",
+                    mday: null,
+                    minute: null,
+                    month: null,
+                    wday: "1-2",
+                    year: null
+                }]
+            }]
+        };
+        let convertedData = {
+            times: [
+                {
+                    from: "6:00",
+                    hour: "6-8",
+                    minute: null,
+                    to: "9:00",
+                    wday: "1-2",
+                    weekday: "Sunday"
+                },
+                {
+                    from: "6:00",
+                    hour: "6-8",
+                    minute: null,
+                    to: "9:00",
+                    wday: "1-2",
+                    weekday: "Monday"
+                }
+            ],
+            timesetExists: true,
+            timesetHasDuplicate: false,
+            timesetHasReverse: false,
+            timesetIsCompatible: true
+        };
+
+        assert.deepEqual(convertTimesetToWeekdays(options), convertedData);
+
+    });
+
+    it('should convert timeset with days, hours and minutes to weekdays', function(){
+
+        let options = {
+            timesetName: "Company Hours",
+            timesets: [{
+                id: 1,
+                name: "Company Hours",
+                subscriber_id: 309,
+                times: [{
+                    hour: "6-8",
+                    mday: null,
+                    minute: "0-30",
+                    month: null,
+                    wday: "1-2",
+                    year: null
+                }]
+            }]
+        };
+        let convertedData = {
+            times: [
+                {
+                    from: "6:0",
+                    hour: "6-8",
+                    minute: "0-30",
+                    to: "6:31",
+                    wday: "1-2",
+                    weekday: "Sunday"
+                },
+                {
+                    from: "7:0",
+                    hour: "6-8",
+                    minute: "0-30",
+                    to: "7:31",
+                    wday: "1-2",
+                    weekday: "Sunday"
+                },
+                {
+                    from: "8:0",
+                    hour: "6-8",
+                    minute: "0-30",
+                    to: "8:31",
+                    wday: "1-2",
+                    weekday: "Sunday"
+                },
+                {
+                    from: "6:0",
+                    hour: "6-8",
+                    minute: "0-30",
+                    to: "6:31",
+                    wday: "1-2",
+                    weekday: "Monday"
+                },
+                {
+                    from: "7:0",
+                    hour: "6-8",
+                    minute: "0-30",
+                    to: "7:31",
+                    wday: "1-2",
+                    weekday: "Monday"
+                },
+                {
+                    from: "8:0",
+                    hour: "6-8",
+                    minute: "0-30",
+                    to: "8:31",
+                    wday: "1-2",
+                    weekday: "Monday"
+                }
+            ],
+            timesetExists: true,
+            timesetHasDuplicate: false,
+            timesetHasReverse: false,
+            timesetIsCompatible: true
+        };
+
+        assert.deepEqual(convertTimesetToWeekdays(options), convertedData);
+
+    });
+
+    it('should correctly convert timeset with single day, hour and minute', function(){
+
+        let options = {
+            timesetName: "Company Hours",
+            timesets: [{
+                id: 1,
+                name: "Company Hours",
+                subscriber_id: 309,
+                times: [{
+                    hour: "6",
+                    mday: null,
+                    minute: "0",
+                    month: null,
+                    wday: "1",
+                    year: null
+                }]
+            }]
+        };
+        let convertedData = {
+            times: [
+                {
+                    from: "6:0",
+                    hour: "6",
+                    minute: "0",
+                    to: "6:1",
+                    wday: "1",
+                    weekday: "Sunday"
+                }
+            ],
+            timesetExists: true,
+            timesetHasDuplicate: false,
+            timesetHasReverse: false,
+            timesetIsCompatible: true
+        };
+
+        assert.deepEqual(convertTimesetToWeekdays(options), convertedData);
+
+    });
+
+    it('should attempt to convert timeset with year, returning compatibility error', function(){
+
+        let options = {
+            timesetName: "Company Hours",
+            timesets: [{
+                id: 1,
+                name: "Company Hours",
+                subscriber_id: 309,
+                times: [{
+                    hour: "6-8",
+                    mday: null,
+                    minute: null,
+                    month: null,
+                    wday: "1-2",
+                    year: "2018"
+                }]
+            }]
+        };
+        let timesetIsCompatible = false;
+
+        assert.equal(convertTimesetToWeekdays(options).timesetIsCompatible, timesetIsCompatible);
+
+    });
+
+    it('should attempt to convert timeset with reverse range, returning compatibility error', function(){
+
+        let options = {
+            timesetName: "Company Hours",
+            timesets: [
+                {
+                    id: 1,
+                    name: "Company Hours",
+                    subscriber_id: 309,
+                    times: [{
+                        hour: "8-6",
+                        mday: null,
+                        minute: null,
+                        month: null,
+                        wday: "1-2",
+                        year: null
+                    }]
+                }
+            ]
+        };
+        let timesetHasReverse = true;
+
+        assert.equal(convertTimesetToWeekdays(options).timesetHasReverse, timesetHasReverse);
+
+    });
+
+    it('should attempt to convert duplicate timesets, returning compatibility error', function(){
+
+        let options = {
+            timesetName: "Company Hours",
+            timesets: [
+                {
+                    id: 1,
+                    name: "Company Hours",
+                    subscriber_id: 309,
+                    times: [{
+                        hour: "8-6",
+                        mday: null,
+                        minute: null,
+                        month: null,
+                        wday: "1-2",
+                        year: null
+                    }]
+                },
+                {
+                    id: 3,
+                    name: "Company Hours",
+                    subscriber_id: 309,
+                    times: [{
+                        hour: "8-14",
+                        mday: null,
+                        minute: null,
+                        month: null,
+                        wday: "1-4",
+                        year: null
+                    }]
+                }
+            ]
+        };
+        let timesetHasDuplicate = true;
+
+        assert.equal(convertTimesetToWeekdays(options).timesetHasDuplicate, timesetHasDuplicate);
+
+    });
+
+    it('should attempt to convert empty timesets, returning error declaring that timeset is undefined', function(){
+
+        let options = {
+            timesetName: "Company Hours",
+            timesets: []
+        };
+        let timesetExists = false;
+
+        assert.equal(convertTimesetToWeekdays(options).timesetExists, timesetExists);
+
     });
 
 });
