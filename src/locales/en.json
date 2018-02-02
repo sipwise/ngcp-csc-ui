@@ -149,7 +149,25 @@
             "addErrorMessage": "An error occured while trying to add the destination. Please try again.",
             "addInputError": "Input a valid number or subscriber name",
             "timeout": "Timeout",
-            "destination": "Destination"
+            "destination": "Destination",
+            "times": {
+                "noTimeSet": "no time set",
+                "addTimeButton": "Add Time",
+                "companyHoursIncompatible":  "The Company Hours timeset contains incompatible values.",
+                "companyHoursNotDefined":  "The Company Hours timeset is not defined.",
+                "companyHoursDuplicate":  "More than one Company Hours timeset exists.",
+                "companyHoursReverse":  "The Company Hours timeset contain reverse order of values.",
+                "weekday": "Weekday",
+                "from": "From",
+                "to": "To",
+                "monday": "Monday",
+                "tuesday": "Tuesday",
+                "wednesday": "Wednesday",
+                "thursday": "Thursday",
+                "friday": "Friday",
+                "saturday": "Saturday",
+                "sunday": "Sunday"
+            }
         },
         "home": {
             "title": "Home",

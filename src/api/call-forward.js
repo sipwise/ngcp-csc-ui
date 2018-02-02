@@ -1,6 +1,7 @@
 
 import _ from 'lodash';
 import Vue from 'vue';
+import { i18n } from '../i18n';
 import { getJsonBody } from './utils';
 
 let rowCountAssumption = 1000;
@@ -54,8 +55,10 @@ export function getTimesets(id) {
             } else {
                 return Promise.resolve(result);
             }
-        }).then(result => {
-            resolve(getJsonBody(result.body)._embedded['ngcp:cftimesets']);
+        }).then((result) => {
+            let response = getJsonBody(result.body)._embedded || [];
+            let timesets = response['ngcp:cftimesets'] || [];
+            resolve(timesets);
         }).catch(err => {
             reject(err);
         });
@@ -370,6 +373,126 @@ export function moveDestinationDown(options) {
             return Promise.all(updatePromises);
         }).then(() => {
             resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function getDaysFromRange(options) {
+    let fromDay = options.from;
+    let toDay = options.to;
+    let wdayMap = {
+        1: i18n.t('pages.callForward.times.sunday'),
+        2: i18n.t('pages.callForward.times.monday'),
+        3: i18n.t('pages.callForward.times.tuesday'),
+        4: i18n.t('pages.callForward.times.wednesday'),
+        5: i18n.t('pages.callForward.times.thursday'),
+        6: i18n.t('pages.callForward.times.friday'),
+        7: i18n.t('pages.callForward.times.saturday')
+    };
+    let days = [];
+    while (fromDay < toDay) {
+        days.push({ name: wdayMap[fromDay], number: fromDay });
+        fromDay++;
+    };
+    return days;
+}
+
+export function getHoursFromRange(options) {
+    let fromMinute = options.hasMinute ? options.fromMinute : '00';
+    let toMinute = options.hasMinute ? options.toMinute + 1 : '00';
+    toMinute = !toMinute ? fromMinute + 1 : toMinute;
+    let hours = [];
+    if (options.hasMinute) {
+        while (options.fromHour < options.toHour) {
+            hours.push({
+                from: `${options.fromHour}:${fromMinute}`,
+                to: `${options.fromHour}:${toMinute}`
+            });
+            options.fromHour++;
+        };
+    } else {
+        hours.push({
+            from: `${options.fromHour}:${fromMinute}`,
+            to: `${options.toHour}:${toMinute}`
+        });
+    }
+    return hours;
+}
+
+export function convertTimesetToWeekdays(options) {
+    let times = [];
+    let counter = 0;
+    let timesetIsCompatible = false;
+    let timesetHasDuplicate = false;
+    let timesetExists = false;
+    let timesetHasReverse = false;
+    options.timesets.forEach((timeset) => {
+        let timesetNameMatches = timeset.name === options.timesetName;
+        if (counter === 0 && timesetNameMatches) {
+            timeset.times.forEach((time) => {
+                let days = [];
+                let hours = [];
+                let fromDay = parseInt(time.wday.split('-')[0]);
+                let toDay = time.wday.split('-')[1] ? parseInt(time.wday.split('-')[1]) + 1 : fromDay + 1;
+                let fromHour = parseInt(time.hour.split('-')[0]);
+                let toHour = time.hour.split('-')[1] ? parseInt(time.hour.split('-')[1]) + 1 : fromHour + 1;
+                let fromMinute = time.minute ? parseInt(time.minute.split('-')[0]) : undefined;
+                let toMinute = (time.minute && time.minute.split('-')[1]) ? parseInt(time.minute.split('-')[1]) : undefined;
+                let isCompatible = time.mday || time.month || time.year || !time.wday || !time.hour;
+                let isReverse = fromDay > toDay || fromHour > toHour || fromMinute > toMinute;
+                if (isCompatible) {
+                    timesetIsCompatible = false;
+                    return;
+                } else if (isReverse) {
+                    timesetHasReverse = true;
+                    return;
+                } else {
+                    hours = getHoursFromRange({ hasMinute: !!time.minute,
+                        fromHour: fromHour, toHour: toHour,
+                        fromMinute: fromMinute, toMinute: toMinute });
+                    days = getDaysFromRange({ from: fromDay, to: toDay });
+                    days.forEach(day => {
+                        hours.forEach(hour => {
+                            times.push({
+                                weekday: day.name,
+                                from: hour.from,
+                                to: hour.to,
+                                wday: time.wday,
+                                hour: time.hour,
+                                minute: time.minute
+                            });
+                        });
+                    });
+                    timesetIsCompatible = true;
+                }
+            });
+            timesetExists = true;
+            counter++;
+        } else if (timesetNameMatches) {
+            timesetHasDuplicate = true;
+            return;
+        }
+    });
+    return {
+        times: times,
+        timesetIsCompatible: timesetIsCompatible,
+        timesetExists: timesetExists,
+        timesetHasReverse: timesetHasReverse,
+        timesetHasDuplicate: timesetHasDuplicate
+    };
+}
+
+export function loadTimesetTimes(options) {
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return getTimesets(options.subscriberId);
+        }).then((timesets) => {
+            let times = convertTimesetToWeekdays({ timesets: timesets, timesetName: options.timeset});
+            return times;
+        }).then((times) => {
+            resolve(times);
         }).catch((err) => {
             reject(err);
         });
