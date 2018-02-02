@@ -55,6 +55,7 @@ export function getTimesets(id) {
                 return Promise.resolve(result);
             }
         }).then(result => {
+            // TODO: Handle if empty response
             resolve(getJsonBody(result.body)._embedded['ngcp:cftimesets']);
         }).catch(err => {
             reject(err);
@@ -370,6 +371,57 @@ export function moveDestinationDown(options) {
             return Promise.all(updatePromises);
         }).then(() => {
             resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function loadTimesetTimes(options) {
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return getTimesets(options.subscriberId);
+        }).then((timesets) => {
+            let times = [];
+            let timesByWdays = [];
+            let counter = 0;
+            let wdayMap = {
+                1: 'Sunday',
+                2: 'Monday',
+                3: 'Tuesday',
+                4: 'Wednesday',
+                5: 'Thursday',
+                6: 'Friday',
+                7: 'Saturday'
+            };
+            timesets.forEach((timeset) => {
+                if (counter === 0 && timeset.name === options.timeset) {
+                    timeset.times.forEach((time) => {
+                        let wdays;
+                        let days;
+                        if (time.wday) {
+                            wdays = time.wday.split('-');
+                            let fromDay = parseInt(wdays[0]);
+                            let toDay = parseInt(wdays[1]);
+                            while (fromDay < toDay) {
+                                let newDay = fromDay.toString();
+                                wdays.push(newDay);
+                                fromDay++;
+                            };
+                            _.sortBy(_.uniq(wdays)).forEach(day => {
+                                times.push({
+                                    weekday: wdayMap[parseInt(day)],
+                                    from: time.hour.split('-')[0],
+                                    to: time.hour.split('-')[1]
+                                });
+                            });
+                        };
+                    });
+                };
+            });
+            return times;
+        }).then((times) => {
+            resolve(times);
         }).catch((err) => {
             reject(err);
         });
