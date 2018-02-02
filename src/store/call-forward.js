@@ -1,8 +1,6 @@
 
 'use strict';
-import _ from 'lodash'; import { getSourcesets, getDestinationsets,
-    getTimesets,
-    getMappings,
+import _ from 'lodash'; import { getSourcesets, getDestinationsets, getTimesets, getMappings,
     loadEverybodyDestinations,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
@@ -10,7 +8,8 @@ import _ from 'lodash'; import { getSourcesets, getDestinationsets,
     addDestinationToExistingGroup,
     changePositionOfDestination,
     moveDestinationUp,
-    moveDestinationDown } from '../api/call-forward';
+    moveDestinationDown,
+    loadTimesetTimes } from '../api/call-forward';
 
 const DestinationState = {
     button: 'button',
@@ -26,17 +25,7 @@ export default {
         sourcesets: null,
         timesets: null,
         destinationsets: null,
-        alwaysEverybodyDestinations: {
-            online: [],
-            busy: [],
-            offline: []
-        },
-        companyHoursEverybodyDestinations: {
-            online: [],
-            busy: [],
-            offline: []
-        },
-        afterHoursEverybodyDestinations: {
+        destinations: {
             online: [],
             busy: [],
             offline: []
@@ -58,7 +47,10 @@ export default {
             destination: '',
             priority: 1,
             timeout: ''
-        }
+        },
+        timesetTimes: [],
+        timesetCompatible: false,
+        hasTimeset: false
     },
     getters: {
         hasFaxCapability(state, getters, rootState, rootGetters) {
@@ -79,11 +71,12 @@ export default {
         getDestinationsetId(state) {
             return state.destinationsetId;
         },
+        // TODO: Refactor these two into one
         getCompanyHoursId(state) {
             let timeset;
-            for (let group in state.companyHoursEverybodyDestinations) {
+            for (let group in state.destinations) {
                 if (!timeset) {
-                    timeset = _.find(state.companyHoursEverybodyDestinations[group], (o) => {
+                    timeset = _.find(state.destinations[group], (o) => {
                         return o.timesetId > 0;
                     });
                 };
@@ -92,8 +85,8 @@ export default {
         },
         getAfterHoursId(state) {
             let timeset;
-            for (let group in state.afterHoursEverybodyDestinations) { if (!timeset) {
-                    timeset = _.find(state.afterHoursEverybodyDestinations[group], (o) => {
+            for (let group in state.destinations) { if (!timeset) {
+                    timeset = _.find(state.destinations[group], (o) => {
                         return o.timesetId > 0;
                     });
                 };
@@ -111,17 +104,8 @@ export default {
         loadTimesets(state, result) {
             state.timesets = result;
         },
-        loadDestinationsets(state, result) {
-            state.destinationsets = result;
-        },
-        loadAlwaysEverybodyDestinations(state, result) {
-            state.alwaysEverybodyDestinations = result;
-        },
-        loadCompanyHoursEverybodyDestinations(state, result) {
-            state.companyHoursEverybodyDestinations = result;
-        },
-        loadAfterHoursEverybodyDestinations(state, result) {
-            state.afterHoursEverybodyDestinations = result;
+        loadDestinations(state, result) {
+            state.destinations = result;
         },
         setActiveForm(state, value) {
             state.activeForm = value;
@@ -196,6 +180,15 @@ export default {
         removeDestinationFailed(state, error) {
             state.removeDestinationState = DestinationState.failed;
             state.removeDestinationError = error;
+        },
+        loadTimesetTimes(state, result) {
+            state.timesetTimes = result;
+        },
+        setTimesetCompatible(state, value) {
+            state.timesetCompatible = value;
+        },
+        setHasTimeset(state, value) {
+            state.hasTimeset = value;
         }
     },
     actions: {
@@ -244,9 +237,9 @@ export default {
                 loadEverybodyDestinations({
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeset: null
-                        }).then((result)=>{
-                    context.commit('loadAlwaysEverybodyDestinations', result);
-                })
+                    }).then((result)=>{
+                        context.commit('loadDestinations', result);
+                    });
             });
         },
         loadCompanyHoursEverybodyDestinations(context) {
@@ -254,9 +247,9 @@ export default {
                 loadEverybodyDestinations({
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeset: 'Company Hours'
-                        }).then((result)=>{
-                    context.commit('loadCompanyHoursEverybodyDestinations', result);
-                })
+                    }).then((result)=>{
+                        context.commit('loadDestinations', result);
+                    });
             });
         },
         loadAfterHoursEverybodyDestinations(context) {
@@ -264,9 +257,9 @@ export default {
                 loadEverybodyDestinations({
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeset: 'After Hours'
-                        }).then((result)=>{
-                    context.commit('loadAfterHoursEverybodyDestinations', result);
-                })
+                    }).then((result)=>{
+                        context.commit('loadDestinations', result);
+                    });
             });
         },
         deleteDestinationFromDestinationset(context, options) {
@@ -412,6 +405,16 @@ export default {
         },
         resetDestinationState(context) {
             context.commit('resetDestinationState');
+        },
+        loadTimesetTimes(context, options) {
+            loadTimesetTimes({
+                timeset: options.timeset,
+                subscriberId: context.getters.getSubscriberId
+            }).then((result) => {
+                context.commit('loadTimesetTimes', result.times);
+                context.commit('setTimesetCompatible', result.isCompatible);
+                context.commit('setHasTimeset', result.hasTimeset);
+            });
         }
     }
 };

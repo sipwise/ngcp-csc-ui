@@ -145,7 +145,13 @@
             "addErrorMessage": "An error occured while trying to add the destination. Please try again.",
             "addInputError": "Input a valid number or subscriber name",
             "timeout": "Timeout",
-            "destination": "Destination"
+            "destination": "Destination",
+            "times": {
+                "noTimeSet": "no time set",
+                "addTimeButton": "Add Time",
+                "companyHoursIncompatible":  "The Company Hours timeset is not compatible, or more than one exists.",
+                "companyHoursNotDefined":  "The Company Hours timeset is not defined."
+            }
         }
     },
     "call": {
