@@ -29,7 +29,7 @@
     import CscDestinations from './CscDestinations'
     import { QCard } from 'quasar-framework'
     export default {
-        name: 'csc-call-forward',
+        name: 'csc-call-forward-destinations',
         props: [
             'timeset',
             'destinations'

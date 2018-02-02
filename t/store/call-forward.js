@@ -6,12 +6,16 @@ import { assert } from 'chai';
 
 describe('CallForward', function(){
 
-    it('should load always everybody destinations', function(){
+    it('should load always type destinations', function(){
         let state = {
-            alwaysEverybodyDestinations: [
-            ]
+            destinations: {
+                online: [],
+                busy: [],
+                offline: []
+            }
         };
         let data = {
+            online: [],
             busy: [],
             offline: [{
                 destinations: [{
@@ -30,87 +34,23 @@ describe('CallForward', function(){
                 }],
                 id: 3,
                 name: "csc_destinationset_1"
-            }],
-            online: []
+            }]
         };
-        CallForwardModule.mutations.loadAlwaysEverybodyDestinations(state, data);
-        assert.deepEqual(state.alwaysEverybodyDestinations, data);
+        CallForwardModule.mutations.loadDestinations(state, data);
+        assert.deepEqual(state.destinations, data);
     });
 
-    it(' should reset destination form', function() {
+    it('should load timeset times', function(){
         let state = {
-            conversations: [
-            ]
+            timesetTimes: []
         };
-        let data = {
-            announcement_id: null,
-            destination: '',
-            priority: 1,
-            timeout: ''
-        };
-        CallForwardModule.mutations.resetFormState(state);
-        assert.deepEqual(state.form, data);
-
-    it('should load company hours everybody destinations', function(){
-        let state = {
-            companyHoursEverybodyDestinations: [
-            ]
-        };
-        let data = {
-            busy: [],
-            offline: [{
-                destinations: [{
-                    "announcement_id": null,
-                    "destination": "sip:3333@192.168.178.23",
-                    "priority": 1,
-                    "simple_destination": "3333",
-                    "timeout": 60
-                },
-                {
-                    "announcement_id": null,
-                    "destination": "sip:2222@192.168.178.23",
-                    "priority": 1,
-                    "simple_destination": "2222",
-                    "timeout": 300
-                }],
-                id: 3,
-                name: "csc_destinationset_1"
-            }],
-            online: []
-        };
-        CallForwardModule.mutations.loadCompanyHoursEverybodyDestinations(state, data);
-        assert.deepEqual(state.companyHoursEverybodyDestinations, data);
-    });
-
-    it('should load after hours everybody destinations', function(){
-        let state = {
-            afterHoursEverybodyDestinations: [
-            ]
-        };
-        let data = {
-            busy: [],
-            offline: [{
-                destinations: [{
-                    "announcement_id": null,
-                    "destination": "sip:3333@192.168.178.23",
-                    "priority": 1,
-                    "simple_destination": "3333",
-                    "timeout": 60
-                },
-                {
-                    "announcement_id": null,
-                    "destination": "sip:2222@192.168.178.23",
-                    "priority": 1,
-                    "simple_destination": "2222",
-                    "timeout": 300
-                }],
-                id: 3,
-                name: "csc_destinationset_1"
-            }],
-            online: []
-        };
-        CallForwardModule.mutations.loadAfterHoursEverybodyDestinations(state, data);
-        assert.deepEqual(state.afterHoursEverybodyDestinations, data);
+        let data = [
+            { weekday: "Monday", from: "8", to: "16" },
+            { weekday: "Tuesday", from: "8", to: "16" },
+            { weekday: "Wednesday", from: "8", to: "16" }
+        ]
+        CallForwardModule.mutations.loadTimesetTimes(state, data);
+        assert.equal(state.timesetTimes, data);
     });
 
 });
