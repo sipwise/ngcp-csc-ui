@@ -54,8 +54,10 @@ export function getTimesets(id) {
             } else {
                 return Promise.resolve(result);
             }
-        }).then(result => {
-            resolve(getJsonBody(result.body)._embedded['ngcp:cftimesets']);
+        }).then((result) => {
+            let response = getJsonBody(result.body)._embedded || [];
+            let timesets = response['ngcp:cftimesets'] || [];
+            resolve(timesets);
         }).catch(err => {
             reject(err);
         });
@@ -370,6 +372,76 @@ export function moveDestinationDown(options) {
             return Promise.all(updatePromises);
         }).then(() => {
             resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function loadTimesetTimes(options) {
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return getTimesets(options.subscriberId);
+        }).then((timesets) => {
+            let times = [];
+            let timesByWdays = [];
+            let counter = 0;
+            let isCompatible = false;
+            let hasTimeset = false;
+            let wdayMap = {
+                1: 'Sunday',
+                2: 'Monday',
+                3: 'Tuesday',
+                4: 'Wednesday',
+                5: 'Thursday',
+                6: 'Friday',
+                7: 'Saturday'
+            };
+            timesets.forEach((timeset) => {
+                if (counter === 0 && timeset.name === options.timeset) {
+                    timeset.times.forEach((time) => {
+                        let wdays;
+                        let days;
+                        if (time.mday || time.minute ||
+                            time.month || time.year ||
+                            !time.wday || !time.hour) {
+                                isCompatible = false;
+                                return;
+                        } else {
+                            if (time.wday) {
+                                wdays = time.wday.split('-');
+                                let fromDay = parseInt(wdays[0]);
+                                let toDay = parseInt(wdays[1]);
+                                while (fromDay < toDay) {
+                                    let newDay = fromDay.toString();
+                                    wdays.push(newDay);
+                                    fromDay++;
+                                };
+                                _.sortBy(_.uniq(wdays)).forEach(day => {
+                                    times.push({
+                                        weekday: wdayMap[parseInt(day)],
+                                        from: time.hour.split('-')[0],
+                                        to: time.hour.split('-')[1] || time.hour.split('-')[0]
+                                    });
+                                });
+                            };
+                            isCompatible = true;
+                        }
+                    });
+                    hasTimeset = true;
+                    counter++;
+                } else if (timeset.name === options.timeset) {
+                    isCompatible = false;
+                    return;
+                }
+            });
+            return {
+                times: times,
+                isCompatible: isCompatible,
+                hasTimeset: hasTimeset
+            };
+        }).then((times) => {
+            resolve(times);
         }).catch((err) => {
             reject(err);
         });
