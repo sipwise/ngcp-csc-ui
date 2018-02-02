@@ -145,7 +145,11 @@
             "addErrorMessage": "An error occured while trying to add the destination. Please try again.",
             "addInputError": "Input a valid number or subscriber name",
             "timeout": "Timeout",
-            "destination": "Destination"
+            "destination": "Destination",
+            "times": {
+                "noTimeSet": "no time set",
+                "addTimeButton": "Add Time"
+            }
         }
     },
     "call": {

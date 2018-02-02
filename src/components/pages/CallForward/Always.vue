@@ -1,21 +1,21 @@
 <template>
     <csc-page :title="$t('pages.callForward.titles.always')">
-        <csc-call-forward timeset="null" :destinations="destinations">
-        </csc-call-forward>
+        <csc-call-forward-destinations timeset="null" :destinations="destinations">
+        </csc-call-forward-destinations>
     </csc-page>
 </template>
 
 <script>
     import { mapState } from 'vuex'
     import CscPage from '../../CscPage'
-    import CscCallForward from './CscCallForward'
+    import CscCallForwardDestinations from './CscCallForwardDestinations'
     export default {
         data () {
             return {}
         },
         components: {
             CscPage,
-            CscCallForward
+            CscCallForwardDestinations
         },
         created() {
             this.$store.dispatch('callForward/loadAlwaysEverybodyDestinations');

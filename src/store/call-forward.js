@@ -10,7 +10,8 @@ import _ from 'lodash'; import { getSourcesets, getDestinationsets,
     addDestinationToExistingGroup,
     changePositionOfDestination,
     moveDestinationUp,
-    moveDestinationDown } from '../api/call-forward';
+    moveDestinationDown,
+    loadTimesetTimes } from '../api/call-forward';
 
 const DestinationState = {
     button: 'button',
@@ -412,6 +413,13 @@ export default {
         },
         resetDestinationState(context) {
             context.commit('resetDestinationState');
+        },
+        loadTimesetTimes(context, options) {
+            loadTimesetTimes({
+                timeset: options.timeset,
+                subscriberId: context.getters.getSubscriberId
+            });
+            //context.commit('loadTimesetTimes', result);
         }
     }
 };

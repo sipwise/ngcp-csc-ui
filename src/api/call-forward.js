@@ -55,6 +55,7 @@ export function getTimesets(id) {
                 return Promise.resolve(result);
             }
         }).then(result => {
+            // TODO: Handle if empty response
             resolve(getJsonBody(result.body)._embedded['ngcp:cftimesets']);
         }).catch(err => {
             reject(err);
@@ -368,6 +369,34 @@ export function moveDestinationDown(options) {
                 data: currentDestinations
             }));
             return Promise.all(updatePromises);
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function loadTimesetTimes(options) {
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return getTimesets(options.subscriberId);
+        }).then((timesets) => {
+            let times = [];
+            let counter = 0;
+            timesets.forEach((timeset) => {
+                if (counter === 0 && timeset.name === options.timeset) {
+                    timeset.times.forEach((time) => {
+                        times.push(time);
+                    });
+                };
+            });
+            console.log('times', times);
+            //return addDestinationToDestinationset({
+                //id: options.id, data: data
+            //});
+        //}).then((sources) => {
+        //    resolve(sources);
         }).then(() => {
             resolve();
         }).catch((err) => {
