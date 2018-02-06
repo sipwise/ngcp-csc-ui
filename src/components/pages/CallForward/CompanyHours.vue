@@ -1,7 +1,7 @@
 <template>
     <csc-page :title="$t('pages.callForward.titles.companyHours')">
         <div v-if="timesetCompatible && hasTimeset">
-            <csc-call-forward-times :times="timesetTimes"></csc-call-forward-times>
+            <csc-call-forward-times timeset="Company Hours" :times="timesetTimes"></csc-call-forward-times>
             <csc-call-forward-destinations timeset="Company Hours" :destinations="destinations">
             </csc-call-forward-destinations>
         </div>

@@ -1,29 +1,40 @@
 <template>
     <q-field class="time-field">
         <div class="row no-wrap">
-            <q-input class="col-8"
+            <q-input class="col-5"
                 v-model="weekday"
                 readonly />
-            <q-select class="col-2"
+            <q-select class="col-3"
                 v-model="from"
                 align="right"
+                prefix="from:"
                 :options="hourOptions"
                 readonly />
-            <q-select class="col-2"
+            <q-select class="col-3"
                 v-model="to"
                 align="right"
+                prefix="to:"
                 :options="hourOptions"
                 readonly />
+            <q-btn flat
+                class="col-auto"
+                color="negative"
+                icon="delete"
+                @click="deleteTime(index)">
+            </q-btn>
         </div>
     </q-field>
 </template>
 
 <script>
-    import { QField, QInput, QSelect } from 'quasar-framework'
+    import { QField, QInput, QSelect,
+        Dialog, QBtn } from 'quasar-framework'
+    import { mapGetters } from 'vuex'
     export default {
         name: 'csc-call-forward-time',
         props: [
-            'time'
+            'time',
+            'index'
         ],
         data () {
             return {
@@ -58,9 +69,14 @@
         components: {
             QField,
             QInput,
-            QSelect
+            QSelect,
+            Dialog,
+            QBtn
         },
         computed: {
+            ...mapGetters('callForward', {
+                timesLength: 'getTimesetTimesLength'
+            }),
             weekday() {
                 return this.time.weekday;
             },
@@ -70,9 +86,56 @@
             to() {
                 return this.time.to;
             }
+        },
+        methods: {
+            deleteTime(index) {
+                let self = this;
+                let store = this.$store;
+                if (this.timesLength <= 1) {
+                    Dialog.create({
+                        title: self.$t('pages.callForward.times.removeLastDialogTitle'),
+                        message: self.$t('pages.callForward.times.removeLastDialogText'),
+                        buttons: [
+                            self.$t('buttons.cancel'),
+                            {
+                                label: self.$t('buttons.remove'),
+                                color: 'negative',
+                                handler () {
+                                    store.dispatch('callForward/deleteTimesetById')
+                                }
+                            }
+                        ]
+                    });
+                } else {
+                    Dialog.create({
+                        title: self.$t('pages.callForward.times.removeDialogTitle'),
+                        message: self.$t('pages.callForward.times.removeDialogText', {
+                            day: self.weekday
+                        }),
+                        buttons: [
+                            self.$t('buttons.cancel'),
+                            {
+                                label: self.$t('buttons.remove'),
+                                color: 'negative',
+                                handler () {
+                                    store.dispatch('callForward/deleteTimeFromTimeset', {
+                                        index: index,
+                                        removedDay: self.weekday
+                                    })
+                                }
+                            }
+                        ]
+                    });
+                }
+            }
         }
     }
 </script>
 
 <style lang="stylus">
+@import '~variables'
+    .row .col-5
+        margin-right: 10px
+    .row .col-3
+        margin-right: 10px
 </style>

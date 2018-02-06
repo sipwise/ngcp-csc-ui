@@ -4,12 +4,13 @@
             Times
         </q-card-title>
         <q-card-main>
-            <div class="row no-wrap">
-                <p class="col-8 ">{{ $t('pages.callForward.times.weekday') }}</p>
-                <p class="col-2 hour-label">{{ $t('pages.callForward.times.from') }}</p>
-                <p class="col-2 hour-label">{{ $t('pages.callForward.times.to') }}</p</p>
-            </div>
-            <csc-call-forward-time v-if="times.length > 0" v-for="(time, index) in times" :time="time">
+            <!--<div class="row no-wrap">-->
+                <!--<p class="col-7 ">{{ $t('pages.callForward.times.weekday') }}</p>-->
+                <!--<p class="col-2 hour-label">{{ $t('pages.callForward.times.from') }}</p>-->
+                <!--<p class="col-2 hour-label">{{ $t('pages.callForward.times.to') }}</p>-->
+                <!--<p class="col-auto hour-label">{{ $t('buttons.remove') }}</p>-->
+            <!--</div>-->
+            <csc-call-forward-time v-if="times.length > 0" v-for="(time, index) in times" :time="time" :index="index">
             </csc-call-forward-time>
         </q-card-main>
         <q-card-actions>
@@ -26,13 +27,16 @@
 <script>
     import numberFormat from '../../../filters/number-format'
     import CscCallForwardTime from './CscCallForwardTime'
-    import { mapState } from 'vuex'
+    import { mapState, mapGetters } from 'vuex'
+    import { startLoading, stopLoading,
+        showGlobalError, showToast } from '../../../helpers/ui'
     import { QCard, QCardTitle, QCardMain, QCardActions,
         QField, QBtn } from 'quasar-framework'
     export default {
         name: 'csc-call-forward-times',
         props: [
-            'times'
+            'times',
+            'timeset'
         ],
         data () {
             return {
@@ -48,9 +52,47 @@
             QField,
             QBtn
         },
+        computed: {
+            ...mapState('callForward', {
+                removeTimeState: 'removeTimeState',
+                lastRemovedDay: 'lastRemovedDay',
+                removeTimeError(state) {
+                    return state.removeTimeError ||
+                        this.$t('pages.callForward.times.removeErrorMessage');
+                }
+            }),
+            ...mapGetters('callForward', {
+                timesLength: 'getTimesetTimesLength'
+            })
+        },
         methods: {
             enableAddForm() {
                 console.log('enableAddForm()');
+            },
+            reload(timeset) {
+                this.$store.dispatch('callForward/loadTimesetTimes', {
+                    timeset: timeset
+                });
+            }
+        },
+        watch: {
+            removeTimeState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                } else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.removeTimeError);
+                } else if (state === 'succeeded') {
+                    stopLoading();
+                    if (this.timesLength <= 1) {
+                        showToast(this.$t('pages.callForward.times.removeTimesetSuccessMessage'));
+                    } else {
+                        showToast(this.$t('pages.callForward.times.removeSuccessMessage', {
+                            day: this.lastRemovedDay
+                        }));
+                    }
+                    this.reload(this.timeset);
+                }
             }
         }
     }
@@ -63,7 +105,7 @@
     padding-left 5px
     padding-bottom 8px
 .times-card
-    padding 0 15px
+    padding 0 35px 0 15px
     .q-field
         margin 5px 0
     .q-card-actions
@@ -79,5 +121,5 @@
             color $secondary
             margin-bottom 0
         .hour-label
-            text-align right
+            text-align center
 </style>
