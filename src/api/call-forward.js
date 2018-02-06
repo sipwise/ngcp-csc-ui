@@ -388,6 +388,7 @@ export function loadTimesetTimes(options) {
             let counter = 0;
             let isCompatible = false;
             let hasTimeset = false;
+            let timesetId;
             let wdayMap = {
                 1: 'Sunday',
                 2: 'Monday',
@@ -420,11 +421,14 @@ export function loadTimesetTimes(options) {
                                 _.sortBy(_.uniq(wdays)).forEach(day => {
                                     times.push({
                                         weekday: wdayMap[parseInt(day)],
+                                        wday: day,
+                                        hour: time.hour,
                                         from: time.hour.split('-')[0],
                                         to: time.hour.split('-')[1] || time.hour.split('-')[0]
                                     });
                                 });
                             };
+                            timesetId = timeset.id;
                             isCompatible = true;
                         }
                     });
@@ -438,11 +442,39 @@ export function loadTimesetTimes(options) {
             return {
                 times: times,
                 isCompatible: isCompatible,
-                hasTimeset: hasTimeset
+                hasTimeset: hasTimeset,
+                timesetId: timesetId
             };
         }).then((times) => {
             resolve(times);
         }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function deleteTimeFromTimeset(options) {
+    let headers = {
+        'Content-Type': 'application/json-patch+json'
+    };
+    return new Promise((resolve, reject) => {
+        Vue.http.patch('/api/cftimesets/' + options.timesetId, [{
+            op: 'replace',
+            path: '/times',
+            value: options.times
+        }], { headers: headers }).then(() => {
+            resolve();
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function deleteTimesetById(id) {
+    return new Promise((resolve, reject) => {
+        Vue.http.delete('/api/cftimesets/' + id).then(() => {
+            resolve();
+        }).catch(err => {
             reject(err);
         });
     });

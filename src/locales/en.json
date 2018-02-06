@@ -147,6 +147,13 @@
             "timeout": "Timeout",
             "destination": "Destination",
             "times": {
+                "removeDialogTitle": "Remove call forward time",
+                "removeDialogText": "You are about to remove the time entry for {day}",
+                "removeLastDialogTitle": "Remove last call forward time",
+                "removeLastDialogText": "WARNING: Removing the last time entry will also delete this timeset and all corresponding destinations. Are you sure you want to do this?",
+                "removeSuccessMessage": "Removed time entry for {day}",
+                "removeErrorMessage": "An error occured while trying to delete the time entry. Please try again.",
+                "removeTimesetSuccessMessage": "Removed timeset",
                 "noTimeSet": "no time set",
                 "addTimeButton": "Add Time",
                 "companyHoursIncompatible":  "The Company Hours timeset is not compatible, or more than one exists.",
