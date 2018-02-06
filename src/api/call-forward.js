@@ -380,8 +380,8 @@ export function moveDestinationDown(options) {
 }
 
 export function getDaysFromRange(options) {
-    let fromDay = options.from;
-    let toDay = options.to;
+    let fromDay = options.fromDay;
+    let toDay = options.toDay + 1;
     let wdayMap = {
         1: i18n.t('pages.callForward.times.sunday'),
         2: i18n.t('pages.callForward.times.monday'),
@@ -393,29 +393,31 @@ export function getDaysFromRange(options) {
     };
     let days = [];
     while (fromDay < toDay) {
-        days.push({ name: wdayMap[fromDay], number: fromDay });
+        days.push({ name: wdayMap[fromDay], number: fromDay.toString() });
         fromDay++;
     };
     return days;
 }
 
 export function getHoursFromRange(options) {
+    let toHour = options.toHour + 1;
     let fromMinute = options.hasMinute ? options.fromMinute : '00';
     let toMinute = options.hasMinute ? options.toMinute + 1 : '00';
     toMinute = !toMinute ? fromMinute + 1 : toMinute;
     let hours = [];
     if (options.hasMinute) {
-        while (options.fromHour < options.toHour) {
+        while (options.fromHour < toHour) {
             hours.push({
                 from: `${options.fromHour}:${fromMinute}`,
-                to: `${options.fromHour}:${toMinute}`
+                to: `${options.fromHour}:${toMinute}`,
+                hour: options.fromHour.toString()
             });
             options.fromHour++;
         };
     } else {
         hours.push({
             from: `${options.fromHour}:${fromMinute}`,
-            to: `${options.toHour}:${toMinute}`
+            to: `${toHour}:${toMinute}`
         });
     }
     return hours;
@@ -424,48 +426,54 @@ export function getHoursFromRange(options) {
 export function convertTimesetToWeekdays(options) {
     let times = [];
     let counter = 0;
-    let timesetIsCompatible = false;
+    let timesetIsCompatible = true;
     let timesetHasDuplicate = false;
     let timesetExists = false;
     let timesetHasReverse = false;
+    let timesetId = null;
     options.timesets.forEach((timeset) => {
         let timesetNameMatches = timeset.name === options.timesetName;
         if (counter === 0 && timesetNameMatches) {
             timeset.times.forEach((time) => {
-                let days = [];
-                let hours = [];
-                let fromDay = parseInt(time.wday.split('-')[0]);
-                let toDay = time.wday.split('-')[1] ? parseInt(time.wday.split('-')[1]) + 1 : fromDay + 1;
-                let fromHour = parseInt(time.hour.split('-')[0]);
-                let toHour = time.hour.split('-')[1] ? parseInt(time.hour.split('-')[1]) + 1 : fromHour + 1;
-                let fromMinute = time.minute ? parseInt(time.minute.split('-')[0]) : undefined;
-                let toMinute = (time.minute && time.minute.split('-')[1]) ? parseInt(time.minute.split('-')[1]) : undefined;
-                let isCompatible = time.mday || time.month || time.year || !time.wday || !time.hour;
-                let isReverse = fromDay > toDay || fromHour > toHour || fromMinute > toMinute;
-                if (isCompatible) {
+                let isIncompatible = time.mday || time.month || time.year || !time.wday || !time.hour;
+                if (isIncompatible) {
                     timesetIsCompatible = false;
                     return;
-                } else if (isReverse) {
-                    timesetHasReverse = true;
-                    return;
-                } else {
-                    hours = getHoursFromRange({ hasMinute: !!time.minute,
-                        fromHour: fromHour, toHour: toHour,
-                        fromMinute: fromMinute, toMinute: toMinute });
-                    days = getDaysFromRange({ from: fromDay, to: toDay });
-                    days.forEach(day => {
-                        hours.forEach(hour => {
-                            times.push({
-                                weekday: day.name,
-                                from: hour.from,
-                                to: hour.to,
-                                wday: time.wday,
-                                hour: time.hour,
-                                minute: time.minute
+                } else  {
+                    let days = [];
+                    let hours = [];
+                    let fromDay = parseInt(time.wday.split('-')[0]);
+                    let toDay = time.wday.split('-')[1] ? parseInt(time.wday.split('-')[1]) : fromDay;
+                    let fromHour = parseInt(time.hour.split('-')[0]);
+                    let toHour = time.hour.split('-')[1] ? parseInt(time.hour.split('-')[1]) : fromHour;
+                    let fromMinute = time.minute ? parseInt(time.minute.split('-')[0]) : undefined;
+                    let toMinute = (time.minute && time.minute.split('-')[1]) ? parseInt(time.minute.split('-')[1]) : undefined;
+                    let isReverse = fromDay > toDay || fromHour > toHour || fromMinute > toMinute;
+                    let timesHour;
+                    if (isReverse) {
+                        timesetHasReverse = true;
+                        return;
+                    } else {
+                        hours = getHoursFromRange({ hasMinute: !!time.minute,
+                            fromHour: fromHour, toHour: toHour,
+                            fromMinute: fromMinute, toMinute: toMinute });
+                        days = getDaysFromRange({ fromDay: fromDay, toDay: toDay });
+                        days.forEach(day => {
+                            hours.forEach(hour => {
+                                timesHour = time.minute ? hour.hour : time.hour;
+                                times.push({
+                                    weekday: day.name,
+                                    from: hour.from,
+                                    to: hour.to,
+                                    wday: day.number,
+                                    hour: timesHour,
+                                    minute: time.minute
+                                });
                             });
                         });
-                    });
-                    timesetIsCompatible = true;
+                        timesetId = timeset.id;
+                        timesetIsCompatible = true;
+                    }
                 }
             });
             timesetExists = true;
@@ -480,7 +488,8 @@ export function convertTimesetToWeekdays(options) {
         timesetIsCompatible: timesetIsCompatible,
         timesetExists: timesetExists,
         timesetHasReverse: timesetHasReverse,
-        timesetHasDuplicate: timesetHasDuplicate
+        timesetHasDuplicate: timesetHasDuplicate,
+        timesetId: timesetId
     };
 }
 
@@ -494,6 +503,33 @@ export function loadTimesetTimes(options) {
         }).then((times) => {
             resolve(times);
         }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function deleteTimeFromTimeset(options) {
+    let headers = {
+        'Content-Type': 'application/json-patch+json'
+    };
+    return new Promise((resolve, reject) => {
+        Vue.http.patch('/api/cftimesets/' + options.timesetId, [{
+            op: 'replace',
+            path: '/times',
+            value: options.times
+        }], { headers: headers }).then((result) => {
+            resolve(result);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function deleteTimesetById(id) {
+    return new Promise((resolve, reject) => {
+        Vue.http.delete('/api/cftimesets/' + id).then(() => {
+            resolve();
+        }).catch(err => {
             reject(err);
         });
     });
