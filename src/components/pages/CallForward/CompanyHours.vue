@@ -5,15 +5,6 @@
             <csc-call-forward-destinations timeset="Company Hours" :destinations="destinations">
             </csc-call-forward-destinations>
         </div>
-        <div v-else-if="timesetHasReverse && timesetExists">
-            <q-alert color="red"
-                icon="date_range"
-                enter="bounceInLeft"
-                leave="bounceOutRight"
-                appear>
-                    {{ $t('pages.callForward.times.companyHoursReverse') }}
-            </q-alert>
-        </div>
         <div v-else-if="timesetHasDuplicate && timesetExists">
             <q-alert color="red"
                 icon="date_range"
@@ -30,6 +21,15 @@
                 leave="bounceOutRight"
                 appear>
                     {{ $t('pages.callForward.times.companyHoursIncompatible') }}
+            </q-alert>
+        </div>
+        <div v-else-if="timesetHasReverse && timesetExists">
+            <q-alert color="red"
+                icon="date_range"
+                enter="bounceInLeft"
+                leave="bounceOutRight"
+                appear>
+                    {{ $t('pages.callForward.times.companyHoursReverse') }}
             </q-alert>
         </div>
         <div v-else>

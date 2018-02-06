@@ -23,7 +23,7 @@
 
 <script>
     import numberFormat from '../../../filters/number-format'
-    import { mapState } from 'vuex'
+    import { mapState, mapGetters } from 'vuex'
     import { startLoading, stopLoading,
         showGlobalError, showToast } from '../../../helpers/ui'
     import CscDestinations from './CscDestinations'
@@ -52,18 +52,32 @@
                 addDestinationError(state) {
                     return state.addDestinationError ||
                         this.$t('pages.callForward.addErrorMessage');
+                },
+                removeTimeState: 'removeTimeState',
+                lastRemovedDay: 'lastRemovedDay',
+                removeTimeError(state) {
+                    return state.removeTimeError ||
+                        this.$t('pages.callForward.times.removeErrorMessage');
                 }
+            }),
+            ...mapGetters('callForward', {
+                timesLength: 'getTimesetTimesLength'
             })
         },
         methods: {
-            reload(timeset) {
-                if (!timeset) {
+            reloadDestinations(timeset) {
+                if (timeset === null) {
                     this.$store.dispatch('callForward/loadAlwaysEverybodyDestinations');
                 } else if (timeset === 'Company Hours') {
                     this.$store.dispatch('callForward/loadCompanyHoursEverybodyDestinations');
                 } else if (timeset === 'After Hours') {
                     this.$store.dispatch('callForward/loadAfterHoursEverybodyDestinations');
                 };
+            },
+            reloadTimes(timeset) {
+                this.$store.dispatch('callForward/loadTimesetTimes', {
+                    timeset: this.timeset
+                });
             }
         },
         watch: {
@@ -78,7 +92,7 @@
                     showToast(this.$t('pages.callForward.removeSuccessMessage', {
                         destination: this.lastRemovedDestination
                     }));
-                    this.reload(this.timeset);
+                    this.reloadDestinations(this.timeset);
                 }
             },
             addDestinationState(state) {
@@ -92,7 +106,7 @@
                     showToast(this.$t('pages.callForward.addDestinationSuccessMessage', {
                         destination: this.lastAddedDestination
                     }));
-                    this.reload(this.timeset);
+                    this.reloadDestinations(this.timeset);
                 }
             },
             changeDestinationState(state) {
@@ -103,7 +117,25 @@
                     showGlobalError(this.changeDestinationError);
                 } else if (state === 'succeeded') {
                     stopLoading();
-                    this.reload(this.timeset);
+                    this.reloadDestinations(this.timeset);
+                }
+            },
+            removeTimeState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                } else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.removeTimeError);
+                } else if (state === 'succeeded') {
+                    stopLoading();
+                    if (this.timesLength <= 1) {
+                        showToast(this.$t('pages.callForward.times.removeTimesetSuccessMessage'));
+                    } else {
+                        showToast(this.$t('pages.callForward.times.removeSuccessMessage', {
+                            day: this.lastRemovedDay
+                        }));
+                    }
+                    this.reloadTimes(this.timeset);
                 }
             }
         }
