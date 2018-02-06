@@ -5,11 +5,12 @@
         </q-card-title>
         <q-card-main>
             <div class="row no-wrap">
-                <p class="col-8 ">{{ $t('pages.callForward.times.weekday') }}</p>
+                <p class="col-6 ">{{ $t('pages.callForward.times.weekday') }}</p>
                 <p class="col-2 hour-label">{{ $t('pages.callForward.times.from') }}</p>
-                <p class="col-2 hour-label">{{ $t('pages.callForward.times.to') }}</p</p>
+                <p class="col-2 hour-label">{{ $t('pages.callForward.times.to') }}</p>
+                <p class="col-2"></p>
             </div>
-            <csc-call-forward-time v-if="times.length > 0" v-for="(time, index) in times" :time="time">
+            <csc-call-forward-time v-if="times.length > 0" v-for="(time, index) in times" :time="time" :index="index">
             </csc-call-forward-time>
         </q-card-main>
         <q-card-actions>

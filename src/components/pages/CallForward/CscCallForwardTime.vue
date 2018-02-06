@@ -1,7 +1,7 @@
 <template>
     <q-field class="time-field">
         <div class="row no-wrap">
-            <q-input class="col-8"
+            <q-input class="col-6"
                 v-model="weekday"
                 readonly />
             <q-select class="col-2"
@@ -14,16 +14,25 @@
                 align="right"
                 :options="hourOptions"
                 readonly />
+            <q-btn flat
+                class="col-2"
+                color="negative"
+                icon="delete"
+                @click="deleteTime(index)">
+                    {{ $t('buttons.remove') }}
+            </q-btn>
         </div>
     </q-field>
 </template>
 
 <script>
-    import { QField, QInput, QSelect } from 'quasar-framework'
+    import { QField, QInput, QSelect,
+        Dialog, QBtn } from 'quasar-framework'
     export default {
         name: 'csc-call-forward-time',
         props: [
-            'time'
+            'time',
+            'index'
         ],
         data () {
             return {
@@ -58,7 +67,9 @@
         components: {
             QField,
             QInput,
-            QSelect
+            QSelect,
+            Dialog,
+            QBtn
         },
         computed: {
             weekday() {
@@ -69,6 +80,31 @@
             },
             to() {
                 return this.time.to;
+            }
+        },
+        methods: {
+            deleteTime(index) {
+                console.log('deleteTime(), index', index);
+                let self = this;
+                let store = this.$store;
+                Dialog.create({
+                    title: self.$t('pages.callForward.times.removeDialogTitle'),
+                    message: self.$t('pages.callForward.times.removeDialogText', {
+                        day: this.weekday
+                    }),
+                    buttons: [
+                        self.$t('buttons.cancel'),
+                        {
+                            label: self.$t('buttons.remove'),
+                            color: 'negative',
+                            handler () {
+                                store.dispatch('callForward/deleteTimeFromTimeset', {
+                                    index: index
+                                })
+                            }
+                        }
+                    ]
+                });
             }
         }
     }

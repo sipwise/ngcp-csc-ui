@@ -14,7 +14,8 @@ import { getSourcesets,
     changePositionOfDestination,
     moveDestinationUp,
     moveDestinationDown,
-    loadTimesetTimes } from '../api/call-forward';
+    loadTimesetTimes,
+    deleteTimeFromTimeset } from '../api/call-forward';
 
 const DestinationState = {
     button: 'button',
@@ -43,6 +44,9 @@ export default {
         lastAddedDestination: null,
         changeDestinationState: DestinationState.button,
         changeDestinationError: null,
+        removeTimeState: DestinationState.button,
+        removeTimeError: null,
+        lastRemovedDay: null,
         activeForm: '',
         formType: '',
         destinationsetId: '',
@@ -86,6 +90,9 @@ export default {
                 };
             };
             return timeset ? timeset.timesetId : null;
+        },
+        getTimesetTimes(state) {
+            return state.timesetTimes;
         }
     },
     mutations: {
@@ -174,6 +181,21 @@ export default {
         removeDestinationFailed(state, error) {
             state.removeDestinationState = DestinationState.failed;
             state.removeDestinationError = error;
+        },
+        removeTimeRequesting(state) {
+            state.removeTimeState = DestinationState.requesting;
+            state.removeTimeError = null;
+        },
+        removeTimeSucceeded(state) {
+            state.removeTimeState = DestinationState.succeeded;
+            state.removeTimeError = null;
+        },
+        removeTimeFailed(state, error) {
+            state.removeTimeState = DestinationState.failed;
+            state.removeTimeError = error;
+        },
+        setLastRemovedDay(state, value) {
+            state.lastRemovedDay = value;
         },
         loadTimesetTimes(state, result) {
             state.timesetTimes = result;
@@ -407,6 +429,27 @@ export default {
                 context.commit('loadTimesetTimes', result.times);
                 context.commit('setTimesetCompatible', result.isCompatible);
                 context.commit('setHasTimeset', result.hasTimeset);
+            });
+        },
+        deleteTimeFromTimeset(context, options) {
+            console.log('deleteTimeFromTimeset(), index', options.index);
+            context.commit('removeTimeRequesting');
+            let times = context.getters.getTimesetTimes;
+            let indexInt = parseInt(options.index);
+            // TODO: Handle last time separately?
+            //let isLastDestination = times.length === 1;
+            times.splice(indexInt, 1);
+            return new Promise((resolve, reject) => {
+                deleteTimeFromTimeset({
+                    subscriberId: context.getters.getSubscriberId,
+                    timesetId: context.getters.getTimesetId,
+                    times: times
+                    }).then(() => {
+                        context.commit('setLastRemovedDay', removedDay);
+                        context.commit('removeTimeSucceeded');
+                    }).catch((err) => {
+                        context.commit('removeTimeFailed', err.message);
+                    });
             });
         }
     }

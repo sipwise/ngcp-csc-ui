@@ -11,11 +11,11 @@ import { assert } from 'chai';
 
 Vue.use(VueResource);
 
-describe('CallForward', function(){
+describe('CallForward', function() {
 
     const subscriberId = 123;
 
-    it('should get all call forward mappings', function(done){
+    it('should get all call forward mappings', function(done) {
 
         let data = {
             "cfb": [{
@@ -49,20 +49,20 @@ describe('CallForward', function(){
         };
 
         Vue.http.interceptors = [];
-        Vue.http.interceptors.unshift((request, next)=>{
+        Vue.http.interceptors.unshift((request, next) => {
             next(request.respondWith(JSON.stringify(data), {
                 status: 200
             }));
         });
-        getMappings(subscriberId).then((result)=>{
+        getMappings(subscriberId).then((result) => {
             assert.deepEqual(result, data);
             done();
-        }).catch((err)=>{
+        }).catch((err) => {
             done(err);
         });
     });
 
-    it('should get all call forward sourcesets', function(done){
+    it('should get all call forward sourcesets', function(done) {
 
         let innerData = [{
             "_links": {
@@ -100,20 +100,20 @@ describe('CallForward', function(){
         };
 
         Vue.http.interceptors = [];
-        Vue.http.interceptors.unshift((request, next)=>{
+        Vue.http.interceptors.unshift((request, next) => {
             next(request.respondWith(JSON.stringify(data), {
                 status: 200
             }));
         });
-        getSourcesets(subscriberId).then((result)=>{
+        getSourcesets(subscriberId).then((result) => {
             assert.deepEqual(result, innerData);
             done();
-        }).catch((err)=>{
+        }).catch((err) => {
             done(err);
         });
     });
 
-    it('should get all call forward timesets', function(done){
+    it('should get all call forward timesets', function(done) {
 
         let innerData = [{
             "_links": {
@@ -161,20 +161,20 @@ describe('CallForward', function(){
         };
 
         Vue.http.interceptors = [];
-        Vue.http.interceptors.unshift((request, next)=>{
+        Vue.http.interceptors.unshift((request, next) => {
             next(request.respondWith(JSON.stringify(data), {
                 status: 200
             }));
         });
-        getTimesets(subscriberId).then((result)=>{
+        getTimesets(subscriberId).then((result) => {
             assert.deepEqual(result, innerData);
             done();
-        }).catch((err)=>{
+        }).catch((err) => {
             done(err);
         });
     });
 
-    it('should get all call forward destinationsets', function(done){
+    it('should get all call forward destinationsets', function(done) {
 
         let innerData = [{
             "_links": {
@@ -218,20 +218,20 @@ describe('CallForward', function(){
         };
 
         Vue.http.interceptors = [];
-        Vue.http.interceptors.unshift((request, next)=>{
+        Vue.http.interceptors.unshift((request, next) => {
             next(request.respondWith(JSON.stringify(data), {
                 status: 200
             }));
         });
-        getDestinationsets(subscriberId).then((result)=>{
+        getDestinationsets(subscriberId).then((result) => {
             assert.deepEqual(result, innerData);
             done();
-        }).catch((err)=>{
+        }).catch((err) => {
             done(err);
         });
     });
 
-    it('should get all call forward destinationset by id', function(done){
+    it('should get all call forward destinationset by id', function(done) {
 
         let data = {
             "_links": {
@@ -319,20 +319,20 @@ describe('CallForward', function(){
         };
 
         Vue.http.interceptors = [];
-        Vue.http.interceptors.unshift((request, next)=>{
+        Vue.http.interceptors.unshift((request, next) => {
             next(request.respondWith(JSON.stringify(data), {
                 status: 200
             }));
         });
-        getDestinationsetById('3').then((result)=>{
+        getDestinationsetById('3').then((result) => {
             assert.deepEqual(result, responseData);
             done();
-        }).catch((err)=>{
+        }).catch((err) => {
             done(err);
         });
     });
 
-    it('should delete destination from call forward destinationset', function(done){
+    it('should delete destination from call forward destinationset', function(done) {
 
         let options = {
             id: 3,
@@ -352,15 +352,15 @@ describe('CallForward', function(){
                 status: 204
             }));
         });
-        deleteDestinationFromDestinationset(options).then((result)=>{
+        deleteDestinationFromDestinationset(options).then((result) => {
             assert.isOk(result);
             done();
-        }).catch((err)=>{
+        }).catch((err) => {
             done(err);
         });
     });
 
-    it('should add destination to call forward destinationset', function(done){
+    it('should add destination to call forward destinationset', function(done) {
 
         let options = {
             id: 3,
@@ -373,15 +373,15 @@ describe('CallForward', function(){
         };
 
         Vue.http.interceptors = [];
-        Vue.http.interceptors.unshift((request, next)=>{
+        Vue.http.interceptors.unshift((request, next) => {
             next(request.respondWith(JSON.stringify({}), {
                 status: 204
             }));
         });
-        addDestinationToDestinationset(options).then((result)=>{
+        addDestinationToDestinationset(options).then((result) => {
             assert.isOk(result);
             done();
-        }).catch((err)=>{
+        }).catch((err) => {
             done(err);
         });
     });

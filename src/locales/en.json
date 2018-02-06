@@ -147,6 +147,8 @@
             "timeout": "Timeout",
             "destination": "Destination",
             "times": {
+                "removeDialogTitle": "Remove call forward time",
+                "removeDialogText": "You are about to remove the time entry for {day}",
                 "noTimeSet": "no time set",
                 "addTimeButton": "Add Time",
                 "companyHoursIncompatible":  "The Company Hours timeset is not compatible, or more than one exists.",

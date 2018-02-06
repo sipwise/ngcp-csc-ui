@@ -447,3 +447,20 @@ export function loadTimesetTimes(options) {
         });
     });
 }
+
+export function deleteTimeFromTimeset(options) {
+    let headers = {
+        'Content-Type': 'application/json-patch+json'
+    };
+    return new Promise((resolve, reject) => {
+        Vue.http.patch('/api/cftimesets/' + options.timesetId, [{
+            op: 'replace',
+            path: '/times',
+            value: options.times
+        }], { headers: headers }).then(() => {
+            resolve();
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
