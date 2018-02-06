@@ -14,7 +14,9 @@ import { getSourcesets,
     changePositionOfDestination,
     moveDestinationUp,
     moveDestinationDown,
-    loadTimesetTimes } from '../api/call-forward';
+    loadTimesetTimes,
+    deleteTimeFromTimeset,
+    deleteTimesetById } from '../api/call-forward';
 
 const DestinationState = {
     button: 'button',
@@ -43,6 +45,9 @@ export default {
         lastAddedDestination: null,
         changeDestinationState: DestinationState.button,
         changeDestinationError: null,
+        removeTimeState: DestinationState.button,
+        removeTimeError: null,
+        lastRemovedDay: null,
         activeForm: '',
         formType: '',
         destinationsetId: '',
@@ -54,10 +59,11 @@ export default {
             timeout: ''
         },
         timesetTimes: [],
-        timesetIsCompatible: false,
+        timesetIsCompatible: true,
         timesetExists: true,
         timesetHasReverse: false,
-        timesetHasDuplicate: false
+        timesetHasDuplicate: false,
+        timesetId: null
     },
     getters: {
         hasFaxCapability(state, getters, rootState, rootGetters) {
@@ -79,15 +85,13 @@ export default {
             return state.destinationsetId;
         },
         getTimesetId(state) {
-            let timeset;
-            for (let group in state.destinations) {
-                if (!timeset) {
-                    timeset = _.find(state.destinations[group], (o) => {
-                        return o.timesetId > 0;
-                    });
-                };
-            };
-            return timeset ? timeset.timesetId : null;
+            return state.timesetId;
+        },
+        getTimesetTimes(state) {
+            return state.timesetTimes;
+        },
+        getTimesetTimesLength(state) {
+            return state.timesetTimes.length;
         }
     },
     mutations: {
@@ -177,20 +181,28 @@ export default {
             state.removeDestinationState = DestinationState.failed;
             state.removeDestinationError = error;
         },
-        loadTimesetTimes(state, result) {
-            state.timesetTimes = result;
+        removeTimeRequesting(state) {
+            state.removeTimeState = DestinationState.requesting;
+            state.removeTimeError = null;
         },
-        setTimesetIsCompatible(state, value) {
-            state.timesetIsCompatible = value;
+        removeTimeSucceeded(state) {
+            state.removeTimeState = DestinationState.succeeded;
+            state.removeTimeError = null;
         },
-        setTimesetExists(state, value) {
-            state.timesetExists = value;
+        removeTimeFailed(state, error) {
+            state.removeTimeState = DestinationState.failed;
+            state.removeTimeError = error;
         },
-        setTimesetHasReverse(state, value) {
-            state.timesetHasReverse = value;
+        setLastRemovedDay(state, value) {
+            state.lastRemovedDay = value;
         },
-        setTimesetHasDuplicate(state, value) {
-            state.timesetHasDuplicate = value;
+        loadTimesSucceeded(state, result) {
+            state.timesetTimes = result.times;
+            state.timesetIsCompatible = result.timesetIsCompatible;
+            state.timesetExists = result.timesetExists;
+            state.timesetHasReverse = result.timesetHasReverse;
+            state.timesetHasDuplicate = result.timesetHasDuplicate;
+            state.timesetId = result.timesetId;
         }
     },
     actions: {
@@ -412,11 +424,40 @@ export default {
                 timeset: options.timeset,
                 subscriberId: context.getters.getSubscriberId
             }).then((result) => {
-                context.commit('loadTimesetTimes', result.times);
-                context.commit('setTimesetIsCompatible', result.timesetIsCompatible);
-                context.commit('setTimesetExists', result.timesetExists);
-                context.commit('setTimesetHasReverse', result.timesetHasReverse);
-                context.commit('setTimesetHasDuplicate', result.timesetHasDuplicate);
+                context.commit('loadTimesSucceeded', result);
+            });
+        },
+        deleteTimeFromTimeset(context, options) {
+            context.commit('removeTimeRequesting');
+            let clonedTimes = _.cloneDeep(context.getters.getTimesetTimes);
+            let indexInt = parseInt(options.index);
+            clonedTimes.splice(indexInt, 1);
+            clonedTimes.forEach((time) => {
+                delete time.weekday;
+                delete time.from;
+                delete time.to;
+            });
+            return new Promise((resolve, reject) => {
+                deleteTimeFromTimeset({
+                    subscriberId: context.getters.getSubscriberId,
+                    timesetId: context.getters.getTimesetId,
+                    times: clonedTimes
+                    }).then(() => {
+                        context.commit('setLastRemovedDay', options.removedDay);
+                        context.commit('removeTimeSucceeded');
+                    }).catch((err) => {
+                        context.commit('removeTimeFailed', err.message);
+                    });
+            });
+        },
+        deleteTimesetById(context, options) {
+            context.commit('removeTimeRequesting');
+            return new Promise((resolve, reject) => {
+                deleteTimesetById(context.getters.getTimesetId).then(() => {
+                        context.commit('removeTimeSucceeded');
+                    }).catch((err) => {
+                        context.commit('removeTimeFailed', err.message);
+                    });
             });
         }
     }
