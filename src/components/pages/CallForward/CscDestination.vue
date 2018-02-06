@@ -56,8 +56,8 @@
     import numberFormat from '../../../filters/number-format'
     import _ from 'lodash'
     import { startLoading, stopLoading,
-        showGlobalError, showToast } from '../../../helpers/ui'
-    import { QItem, QItemMain, QItemSide, Toast,
+        showGlobalError } from '../../../helpers/ui'
+    import { QItem, QItemMain, QItemSide,
         Dialog, QBtn } from 'quasar-framework'
     export default {
         name: 'csc-destination',
@@ -72,7 +72,6 @@
             QItemMain,
             QItemSide,
             Dialog,
-            Toast,
             QBtn
         },
         computed: {

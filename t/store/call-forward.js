@@ -44,13 +44,20 @@ describe('CallForward', function(){
         let state = {
             timesetTimes: []
         };
-        let data = [
-            { weekday: "Monday", from: "8", to: "16" },
-            { weekday: "Tuesday", from: "8", to: "16" },
-            { weekday: "Wednesday", from: "8", to: "16" }
-        ]
-        CallForwardModule.mutations.loadTimesetTimes(state, data);
-        assert.equal(state.timesetTimes, data);
+        let result = {
+            times: [
+                { weekday: "Monday", from: "8", to: "16" },
+                { weekday: "Tuesday", from: "8", to: "16" },
+                { weekday: "Wednesday", from: "8", to: "16" }
+            ],
+            timesetIsCompatible: null,
+            timesetExists: null,
+            timesetHasReverse: null,
+            timesetHasDuplicate: null,
+            timesetId: null
+        }
+        CallForwardModule.mutations.loadTimesSucceeded(state, result);
+        assert.equal(state.timesetTimes, result.times);
     });
 
 });
