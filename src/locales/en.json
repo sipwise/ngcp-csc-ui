@@ -165,8 +165,9 @@
         "seat": "Seat",
         "seats": "Seats",
         "group": "Group",
+        "groups": "Groups",
         "extension": "Extension",
-        "groupName": "Name",
+        "groupName": "Group Name",
         "huntPolicy": "Hunt Policy",
         "huntTimeout": "Hunt Timeout",
         "primaryNumber": "Primary Number",
@@ -178,8 +179,13 @@
         "allocatedByNobody": "Free",
         "allocatedBy": "Allocated by {type} {name}",
         "addGroup": "Add Group",
-        "removeGroup": "Remove",
+        "removeGroup": "Remove group",
         "removeGroupTitle": "Remove group",
-        "removeGroupText": "You are about to remove group \"{group}\""
+        "removeGroupText": "You are about to remove group \"{group}\"",
+        "seatName": "Seat Name",
+        "addSeat": "Add Seat",
+        "removeSeat": "Remove seat",
+        "removeSeatTitle": "Remove seat",
+        "removeSeatText": "You are about to remove seat \"{seat}\""
     }
 }

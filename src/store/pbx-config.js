@@ -1,6 +1,6 @@
 
 import _ from 'lodash';
-import { getPbxConfiguration, addGroup, removeGroup } from '../api/pbx-config'
+import { getPbxConfiguration, addGroup, removeGroup, addSeat, removeSeat } from '../api/pbx-config'
 
 const ListState = {
     initiated: 'initiated',
@@ -9,7 +9,7 @@ const ListState = {
     failed: 'failed'
 };
 
-const AddGroupState = {
+const AddState = {
     button: 'button',
     input: 'input',
     requesting: 'requesting',
@@ -17,7 +17,7 @@ const AddGroupState = {
     failed: 'failed'
 };
 
-const RemoveGroupState = {
+const RemoveState = {
     initiated: 'initiated',
     requesting: 'requesting',
     succeeded: 'succeeded',
@@ -36,11 +36,16 @@ export default {
         numbersMap : {},
         listAllState: ListState.initiated,
         listAllError: null,
-        addGroupState: AddGroupState.button,
+        addGroupState: AddState.button,
         addGroupError: null,
-        removeGroupState: RemoveGroupState.initiated,
+        removeGroupState: RemoveState.initiated,
         removeGroupError: null,
-        removeGroupItem: null
+        removeGroupItem: null,
+        addSeatState: AddState.button,
+        addSeatError: null,
+        removeSeatState: RemoveState.initiated,
+        removeSeatError: null,
+        removeSeatItem: null
     },
     getters: {
         groups(state, getters) {
@@ -82,7 +87,7 @@ export default {
             state.listAllState = ListState.requesting;
         },
         listAllSucceeded(state, all) {
-            state.removeGroupState = RemoveGroupState.initiated;
+            state.RemoveState = RemoveState.initiated;
             state.listAllState = ListState.succeeded;
             state.listAllError = null;
             state.pilot = all.pilot;
@@ -131,30 +136,56 @@ export default {
             state.listAllError = error;
         },
         addGroupRequesting(state){
-            state.addGroupState = AddGroupState.requesting;
+            state.addGroupState = AddState.requesting;
             state.addGroupError = null;
         },
         addGroupSucceeded(state){
-            state.addGroupState = AddGroupState.succeeded;
+            state.addGroupState = AddState.succeeded;
             state.addGroupError = null;
         },
         addGroupFailed(state, error) {
-            state.addGroupState = AddGroupState.failed;
+            state.addGroupState = AddState.failed;
             state.addGroupError = error;
         },
         removeGroupRequesting(state, group) {
-            state.removeGroupState = RemoveGroupState.requesting;
+            state.removeGroupState = RemoveState.requesting;
             state.removeGroupError = null;
             state.removeGroupItem = group;
         },
         removeGroupSucceeded(state) {
-            state.removeGroupState = RemoveGroupState.succeeded;
+            state.removeGroupState = RemoveState.succeeded;
             state.removeGroupError = null;
         },
         removeGroupFailed(state, message) {
-            state.removeGroupState = RemoveGroupState.failed;
+            state.removeGroupState = RemoveState.failed;
             state.removeGroupError = message;
-        }
+        },
+        addSeatRequesting(state){
+            state.addSeatState = AddState.requesting;
+            state.addSeatError = null;
+        },
+        addSeatSucceeded(state){
+            state.addSeatState = AddState.succeeded;
+            state.addSeatError = null;
+        },
+        addSeatFailed(state, error) {
+            state.addSeatState = AddState.failed;
+            state.addSeatError = error;
+        },
+        removeSeatRequesting(state, seat) {
+            state.removeSeatState = RemoveState.requesting;
+            state.removeSeatError = null;
+            state.removeSeatItem = seat;
+        },
+        removeSeatSucceeded(state) {
+            state.removeSeatState = RemoveState.succeeded;
+            state.removeSeatError = null;
+        },
+        removeSeatFailed(state, message) {
+            state.removeSeatState = RemoveState.failed;
+            state.removeSeatError = message;
+            state.removeSeatItem = null;
+        },
     },
     actions: {
         listSeats(context) {
@@ -186,6 +217,26 @@ export default {
                 context.dispatch('listGroups');
             }).catch((err)=>{
                 context.commit('removeGroupFailed', err.message);
+            });
+        },
+        addSeat(context, seat) {
+            seat.customerId = context.state.pilot.customer_id;
+            seat.domainId = context.state.pilot.domain_id;
+            context.commit('addSeatRequesting', seat);
+            addSeat(seat).then(()=>{
+                context.commit('addSeatSucceeded', seat);
+                context.dispatch('listGroups');
+            }).catch((err)=>{
+                context.commit('addSeatFailed', err.message);
+            });
+        },
+        removeSeat(context, seat) {
+            context.commit('removeSeatRequesting', seat);
+            removeSeat(seat.id).then(()=>{
+                context.commit('removeSeatSucceeded');
+                context.dispatch('listGroups');
+            }).catch((err)=>{
+                context.commit('removeSeatFailed', err.message);
             });
         }
     }

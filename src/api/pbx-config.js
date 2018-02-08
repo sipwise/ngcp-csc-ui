@@ -3,7 +3,9 @@ import Vue from 'vue';
 import { getJsonBody } from './utils';
 import { getNumbers, assignNumber, assignNumbers } from './user';
 import { createSubscriber, deleteSubscriber } from './subscriber';
+import uuid from 'uuid';
 
+var createId = uuid.v4;
 var assumedRows = 1000;
 
 export function getAllPbxSubscribers() {
@@ -73,13 +75,12 @@ export function getPbxConfiguration() {
 
 export function addGroup(group) {
     return new Promise((resolve, reject)=>{
-        let randomToken = ()=>{ return 'd' + Date.now() + "r" + (Math.round(Math.random() * 1000000) + 1000000); };
         Promise.resolve().then(()=>{
             return createSubscriber({
                 customer_id: group.customerId,
                 domain_id: group.domainId,
-                username: randomToken(),
-                password: randomToken(),
+                username: createId(),
+                password: createId(),
                 display_name: group.name,
                 is_pbx_group: true,
                 pbx_extension: group.extension,
@@ -98,5 +99,32 @@ export function addGroup(group) {
 }
 
 export function removeGroup(id) {
+    return deleteSubscriber(id);
+}
+
+export function addSeat(seat) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return createSubscriber({
+                customer_id: seat.customerId,
+                domain_id: seat.domainId,
+                username: createId(),
+                password: createId(),
+                display_name: seat.name,
+                is_pbx_group: false,
+                pbx_extension: seat.extension,
+                pbx_group_ids: seat.groups
+            });
+        }).then((subscriberId)=>{
+            assignNumbers(seat.aliasNumbers, subscriberId);
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function removeSeat(id) {
     return deleteSubscriber(id);
 }

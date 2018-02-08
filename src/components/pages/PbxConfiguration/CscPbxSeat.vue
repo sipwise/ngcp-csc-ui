@@ -1,25 +1,19 @@
 <template>
-    <q-card class="csc-pbx-group">
+    <q-card class="csc-pbx-seat">
         <q-card-title class="cursor-pointer" @click="toggleMain()">
-            <q-icon name="group" color="primary" size="24px"/>
-            <span v-if="!expanded" class="csc-pbx-group-title">{{ group.display_name }}</span>
+            <q-icon name="person" color="primary" size="24px"/>
+            <span v-if="!expanded" class="csc-pbx-seat-title">{{ name }}</span>
             <q-chip v-if="!expanded" pointing="left" color="primary">
-                {{ $t('pbxConfig.extension') }}: <span class="csc-important">{{ group.pbx_extension }}</span>
+                {{ $t('pbxConfig.extension') }}: <span class="csc-important">{{ extension }}</span>
             </q-chip>
             <q-icon :name="titleIcon" color="primary" size="22px" slot="right"/>
         </q-card-title>
-        <q-card-main v-if="expanded" class="transition-generic">
-            <q-field :label="$t('pbxConfig.groupName')">
+        <q-card-main v-if="expanded">
+            <q-field :label="$t('pbxConfig.seatName')">
                 <q-input v-model="name" readonly />
             </q-field>
             <q-field :label="$t('pbxConfig.extension')">
                 <q-input v-model="extension" readonly />
-            </q-field>
-            <q-field :label="$t('pbxConfig.huntPolicy')">
-                <q-select v-model="huntPolicy" :options="huntPolicyOptions" readonly radio />
-            </q-field>
-            <q-field :label="$t('pbxConfig.huntTimeout')">
-                <q-input v-model="huntTimeout" readonly suffix="seconds" readonly min="0" />
             </q-field>
             <q-field :label="$t('pbxConfig.primaryNumber')">
                 <q-input v-model="primaryNumber" readonly disabled />
@@ -27,13 +21,13 @@
             <q-field :label="$t('pbxConfig.aliasNumbers')">
                 <q-select v-model="aliasNumbers" :options="aliasNumberOptions" multiple chips readonly clearable />
             </q-field>
-            <q-field :label="$t('pbxConfig.seats')">
-                <q-select v-model="seats" :options="seatOptions" multiple chips readonly clearable />
+            <q-field :label="$t('pbxConfig.groups')">
+                <q-select v-model="groups" :options="groupOptions" multiple chips readonly clearable />
             </q-field>
         </q-card-main>
         <q-card-actions align="center">
-            <q-btn :loader="isLoading" v-model="isLoading" flat :small="isMobile" :round="isMobile"
-                   color="negative" icon="delete" @click="remove()">Delete</q-btn>
+            <q-btn flat :small="isMobile" :round="isMobile" color="negative"
+                   icon="delete" @click="remove()">Delete</q-btn>
         </q-card-actions>
         <q-inner-loading :visible="isLoading">
             <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
@@ -58,16 +52,16 @@
         QInnerLoading,
         QSpinnerMat,
         QTransition,
-        Platform
+        Platform,
+        Dialog
     } from 'quasar-framework'
     export default {
-        name: 'csc-pbx-group',
+        name: 'csc-pbx-seat',
         props: [
-            'group',
-            'huntPolicyOptions',
+            'seat',
             'aliasNumberOptions',
-            'seatOptions',
-            'loading'
+            'groupOptions',
+            'deleting'
         ],
         data () {
             return {
@@ -91,58 +85,50 @@
         },
         computed: {
             id() {
-                return this.group.id;
+                return this.seat.id;
             },
             name() {
-                return this.group.display_name;
+                return this.seat.display_name;
             },
             extension() {
-                return this.group.pbx_extension;
-            },
-            huntPolicy() {
-                return this.group.pbx_hunt_policy;
-            },
-            huntTimeout() {
-                return this.group.pbx_hunt_timeout;
+                return this.seat.pbx_extension;
             },
             primaryNumber() {
-                return numberFilter(this.group.primary_number);
+                return numberFilter(this.seat.primary_number);
             },
             aliasNumbers() {
                 let numbers = [];
-                if(_.isArray(this.group.alias_numbers)) {
-                    this.group.alias_numbers.forEach((number)=>{
+                if(_.isArray(this.seat.alias_numbers)) {
+                    this.seat.alias_numbers.forEach((number)=>{
                         numbers.push(number.number_id);
                     });
                 }
                 return numbers;
             },
-            seats() {
-                let seats = [];
-                if(_.isArray(this.group.seats)) {
-                    this.group.seats.forEach((seat)=>{
-                        seats.push(seat.id);
+            groups() {
+                let groups = [];
+                if(_.isArray(this.seat.groups)) {
+                    this.seat.groups.forEach((group)=>{
+                        groups.push(group.id);
                     });
                 }
-                return seats;
+                return groups;
             },
-            groupModel() {
+            seatModel() {
                 return {
                     id: this.id,
                     name: this.name,
                     extension: this.extension,
-                    huntPolicy: this.huntPolicy,
-                    huntTimeout: this.huntTimeout,
                     primaryNumber: this.primaryNumber,
                     aliasNumbers: this.aliasNumbers,
-                    seats: this.seats
+                    groups: this.groups
                 }
             },
             isLoading() {
-                return this.loading;
+                return this.deleting;
             },
             cardClasses() {
-                var cardClasses = ['csc-pbx-group'];
+                var cardClasses = ['csc-pbx-seat'];
                 if(this.isLoading) {
                     cardClasses.push('light-dimmed');
                 }
@@ -161,24 +147,37 @@
         },
         methods: {
             toggleMain() {
-                if(this.expanded) {
-                    this.expanded = false;
-                } else {
-                    this.expanded = true;
-                }
+                this.expanded = !this.expanded
             },
             remove() {
-                this.$emit('remove', this.groupModel);
+                var store = this.$store;
+                var state = this;
+                var i18n = this.$i18n;
+                Dialog.create({
+                    title: i18n.t('pbxConfig.removeSeatTitle'),
+                    message: i18n.t('pbxConfig.removeSeatText', { seat: this.name }),
+                    buttons: [
+                        'Cancel',
+                        {
+                            label: i18n.t('pbxConfig.removeSeat'),
+                            color: 'negative',
+                            handler () {
+                                state.loading = true;
+                                state.$emit('remove', state.seatModel);
+                            }
+                        }
+                    ]
+                });
             }
         }
     }
 </script>
 
 <style>
-    .csc-pbx-group {
+    .csc-pbx-seat {
         position: relative;
     }
-    .csc-pbx-group .csc-pbx-group-title {
+    .csc-pbx-seat .csc-pbx-seat-title {
         padding-left: 8px;
     }
     .csc-important {

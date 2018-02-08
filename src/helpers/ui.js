@@ -26,3 +26,7 @@ export function showToast(message) {
         bgColor: '#68A44E'
     });
 }
+
+export function removeDialog(options) {
+
+}
