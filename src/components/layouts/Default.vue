@@ -127,7 +127,8 @@
         QSideLink,
         QTransition,
         QCollapsible,
-        Platform
+        Platform,
+        QWindowResizeObservable
     } from 'quasar-framework'
     export default {
         name: 'default',
@@ -170,7 +171,8 @@
             QSideLink,
             QTransition,
             QCollapsible,
-            CscCall
+            CscCall,
+            QWindowResizeObservable
         },
         computed: {
             ...mapGetters('layout', [
@@ -229,7 +231,6 @@
         },
         methods: {
             onWindowResize() {
-                this.applyLayout();
             },
             toggleFullscreen() {
                 this.$store.commit('layout/toggleFullscreen');

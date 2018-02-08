@@ -189,7 +189,7 @@ export function createSubscriber(subscriber) {
         }).then((res)=>{
             resolve(_.last(_.split(res.headers.get('Location'), '/')));
         }).catch((err)=>{
-            if(err.status === 422) {
+            if(err.status >= 400) {
                 reject(new Error(err.body.message));
             } else {
                 reject(err);
@@ -203,7 +203,7 @@ export function deleteSubscriber(id) {
         Vue.http.delete('/api/subscribers/' + id).then((res)=>{
             resolve();
         }).catch((err)=>{
-            if(err.status === 422) {
+            if(err.status >= 400) {
                 reject(new Error(err.body.message));
             } else {
                 reject(err);
