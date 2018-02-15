@@ -19,7 +19,11 @@ export function login(username, password) {
                 subscriberId: subscriberId,
             });
         }).catch((err)=>{
-            reject(err);
+            if(err.status && err.status >= 400) {
+                reject(new Error(err.body.message));
+            } else {
+                reject(err);
+            }
         });
     });
 }

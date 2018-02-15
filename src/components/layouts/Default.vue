@@ -87,13 +87,13 @@
         <q-fixed-position id="global-action-btn" corner="top-right" :offset="fabOffset" class="page-button transition-generic">
             <q-fab v-if="hasCommunicationCapabilities" color="primary" icon="question answer" active-icon="clear" direction="down" flat>
                 <q-fab-action v-if="hasFaxCapability && hasSendFaxFeature" color="primary" @click="" icon="fa-fax">
-                    <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendFax') }}</q-tooltip>
+                    <q-tooltip v-if="isDesktop" anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendFax') }}</q-tooltip>
                 </q-fab-action>
                 <q-fab-action v-if="hasSmsCapability && hasSendSmsFeature" color="primary" @click="" icon="fa-send">
-                    <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendSms') }}</q-tooltip>
+                    <q-tooltip v-if="isDesktop" anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendSms') }}</q-tooltip>
                 </q-fab-action>
                 <q-fab-action v-if="isCallAvailable" color="primary" @click="call()" icon="fa-phone">
-                    <q-tooltip anchor="center right" self="center left" :offset="[15, 0]">{{ $t('startCall') }}</q-tooltip>
+                    <q-tooltip v-if="isDesktop" anchor="center right" self="center left" :offset="[15, 0]">{{ $t('startCall') }}</q-tooltip>
                 </q-fab-action>
             </q-fab>
         </q-fixed-position>
@@ -105,7 +105,8 @@
 
 <script>
     import _ from 'lodash';
-    import { startLoading, stopLoading, showGlobalError, showToast } from '../../helpers/ui'
+    import { startLoading, stopLoading, showGlobalError,
+        showToast, showGlobalWarning, enableIncomingCallNotifications} from '../../helpers/ui'
     import { mapState, mapGetters } from 'vuex'
     import CscCall from '../CscCall'
     import {
@@ -140,17 +141,7 @@
                 this.$store.commit('layout/showLeft');
             }
             this.applyLayout();
-            if(!this.hasUser) {
-                startLoading();
-                this.$store.dispatch('user/initUser').then(()=>{
-                    stopLoading();
-                    this.showInitialToasts();
-                }).catch(()=>{
-                    this.logout();
-                });
-            } else {
-                this.showInitialToasts();
-            }
+            this.$store.dispatch('user/initUser');
         },
         components: {
             QLayout,
@@ -186,13 +177,16 @@
                 'hasCallInitFailure'
             ]),
             ...mapGetters('user', [
+                'isLogged',
                 'hasUser',
                 'getUsername',
                 'isPbxAdmin',
                 'hasSmsCapability',
                 'hasFaxCapability',
                 'hasSendSmsFeature',
-                'hasSendFaxFeature'
+                'hasSendFaxFeature',
+                'userDataRequesting',
+                'userDataSucceeded'
             ]),
             ...mapState({
                 isCallForward: state => _.startsWith(state.route.path, '/user/call-forward'),
@@ -227,6 +221,9 @@
                 } else {
                     return [48, 17];
                 }
+            },
+            isDesktop() {
+                return Platform.is.desktop;
             }
         },
         methods: {
@@ -234,15 +231,6 @@
             },
             toggleFullscreen() {
                 this.$store.commit('layout/toggleFullscreen');
-            },
-            showInitialToasts() {
-                if(this.isCallAvailable) {
-                    showToast(this.$i18n.t('toasts.callAvailable'));
-
-                }
-                if(this.hasCallInitFailure) {
-                    showToast(this.$i18n.t('toasts.callNotAvailable'));
-                }
             },
             call() {
                 this.$store.commit('layout/showRight');
@@ -292,6 +280,27 @@
                     this.$refs.layout.showLeft();
                 } else {
                     this.$refs.layout.hideLeft();
+                }
+            },
+            userDataRequesting(value) {
+                if(value) {
+                    startLoading();
+                }
+            },
+            userDataSucceeded(value) {
+                if(value) {
+                    stopLoading();
+                    enableIncomingCallNotifications();
+                }
+            },
+            isCallAvailable(value) {
+                if(value) {
+                    showToast(this.$i18n.t('toasts.callAvailable'));
+                }
+            },
+            hasCallInitFailure(value) {
+                if(value) {
+                    showToast(this.$i18n.t('toasts.callNotAvailable'));
                 }
             }
         }

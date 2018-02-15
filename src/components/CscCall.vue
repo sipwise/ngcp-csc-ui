@@ -15,9 +15,9 @@
                 <span v-else-if="isIncoming" class="text">{{ $t('call.incoming') }}</span>
                 <span v-else class="text">{{ $t('call.call') }}</span>
 
-                <q-btn v-if="isFullscreenEnabled" round :small="!isFullscreenEnabled" slot="right"
+                <q-btn v-if="isFullscreenEnabled && !isMobile" round :small="!isFullscreenEnabled" slot="right"
                        class="no-shadow" @click="toggleFullscreen()" icon="fullscreen exit"/>
-                <q-btn v-else round :small="!isFullscreenEnabled" slot="right"
+                <q-btn v-else-if="!isMobile" round :small="!isFullscreenEnabled" slot="right"
                        class="no-shadow" @click="toggleFullscreen()" icon="fullscreen"/>
                 <q-btn round :small="!isFullscreenEnabled" slot="right"
                        class="no-shadow" @click="close()" icon="clear"/>
@@ -70,8 +70,11 @@
     import { mapState, mapGetters } from 'vuex'
     import CscMedia from './CscMedia'
     import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
-        QCardActions, QBtn, QIcon, Loading, Alert, QSpinnerRings, Dialog } from 'quasar-framework'
+        QCardActions, QBtn, QIcon, Loading, Alert, QSpinnerRings, Dialog, Platform } from 'quasar-framework'
     import { normalizeNumber, rawNumber } from '../filters/number-format'
+    import numberFormat from '../filters/number-format'
+    import { showCallNotification } from '../helpers/ui'
+
     export default {
         name: 'csc-call',
         props: ['region', 'fullscreen'],
@@ -270,6 +273,16 @@
             ]),
             hasLocalVideo() {
                 return this.getLocalMediaType !== null && this.getLocalMediaType.match(/(v|V)ideo/) !== null;
+            },
+            isMobile() {
+                return Platform.is.mobile;
+            }
+        },
+        watch: {
+            isIncoming(value) {
+                if(value) {
+                    showCallNotification(numberFormat(this.getNumber));
+                }
             }
         }
     }

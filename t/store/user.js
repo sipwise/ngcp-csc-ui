@@ -7,7 +7,7 @@ describe('UserModule', ()=>{
 
     it('should login', ()=>{
         var state = {};
-        UserModule.mutations.login(state, {
+        UserModule.mutations.loginSucceeded(state, {
             jwt: 'abc123',
             subscriberId: 123
         });
