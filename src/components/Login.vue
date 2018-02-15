@@ -32,9 +32,12 @@
 </template>
 
 <script>
+
+    import { mapGetters } from 'vuex'
     import { startLoading, stopLoading, showGlobalError } from '../helpers/ui'
     import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
         QCardActions, QBtn, QIcon, Loading, Alert, Platform } from 'quasar-framework'
+
     export default {
         name: 'login',
         components: {
@@ -65,21 +68,37 @@
                     classes.push('mobile');
                 }
                 return classes;
-            }
+            },
+            ...mapGetters('user', [
+                'loginRequesting',
+                'loginSucceeded',
+                'loginError'
+            ]),
         },
         methods: {
             login() {
-                startLoading();
                 this.$store.dispatch('user/login', {
                     username: this.username,
                     password: this.password
-                }).then(()=>{
-                    stopLoading();
+                });
+            }
+        },
+        watch: {
+            loginRequesting(logging) {
+                if(logging) {
+                    startLoading();
+                }
+            },
+            loginSucceeded(loggedIn) {
+                if(loggedIn) {
                     this.$router.push({path : '/'});
-                }).catch((err)=>{
+                }
+            },
+            loginError(error) {
+                if(error) {
                     stopLoading();
                     showGlobalError(this.$i18n.t('pages.login.error'));
-                });
+                }
             }
         }
     }
