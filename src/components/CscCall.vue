@@ -72,6 +72,8 @@
     import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
         QCardActions, QBtn, QIcon, Loading, Alert, QSpinnerRings, Dialog } from 'quasar-framework'
     import { normalizeNumber, rawNumber } from '../filters/number-format'
+    import numberFormat from '../filters/number-format'
+
     export default {
         name: 'csc-call',
         props: ['region', 'fullscreen'],
@@ -270,6 +272,21 @@
             ]),
             hasLocalVideo() {
                 return this.getLocalMediaType !== null && this.getLocalMediaType.match(/(v|V)ideo/) !== null;
+            }
+        },
+        watch: {
+            isIncoming(value) {
+                if(value && _.isObject(Notification)) {
+                    let notification = new Notification(this.$i18n.t('call.notificationTitle', {
+                        number: numberFormat(this.getNumber)
+                    }), {
+                        requireInteraction: true
+                    });
+                    notification.onclick = ()=>{
+                        window.focus();
+                        notification.close();
+                    };
+                }
             }
         }
     }

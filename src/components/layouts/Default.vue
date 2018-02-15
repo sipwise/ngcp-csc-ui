@@ -105,7 +105,8 @@
 
 <script>
     import _ from 'lodash';
-    import { startLoading, stopLoading, showGlobalError, showToast } from '../../helpers/ui'
+    import { startLoading, stopLoading, showGlobalError,
+        showToast, showGlobalWarning, showPermanentGlobalWarning } from '../../helpers/ui'
     import { mapState, mapGetters } from 'vuex'
     import CscCall from '../CscCall'
     import {
@@ -143,6 +144,15 @@
             if(!this.hasUser) {
                 startLoading();
                 this.$store.dispatch('user/initUser').then(()=>{
+                    if(_.isObject(Notification)) {
+                        Notification.requestPermission().then((perms)=>{
+                            if(perms === 'denied' || perms === 'default') {
+                                showPermanentGlobalWarning(this.$i18n.t('call.notificationBlocked'));
+                            }
+                        }).catch(()=>{
+                            showPermanentGlobalWarning(this.$i18n.t('call.notificationBlocked'));
+                        });
+                    }
                     stopLoading();
                     this.showInitialToasts();
                 }).catch(()=>{
