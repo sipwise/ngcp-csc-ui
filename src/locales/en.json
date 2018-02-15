@@ -159,7 +159,11 @@
         "inputValidNumber": "Input a valid phone number",
         "number": "Number",
         "endCall": "End Call",
-        "endCallDialog": "You are about to end the current call. Are you sure?"
+        "endCallDialog": "You are about to end the current call. Are you sure?",
+        "notificationTitle": "Incoming call from {number}",
+        "notificationBlocked": "You have blocked incoming call notifications.",
+        "notificationFailed": "Could not enable incoming call notifications.",
+        "notificationNotSupported": "Incoming call notifications are not supported."
     },
     "pbxConfig": {
         "seat": "Seat",

@@ -13,7 +13,13 @@ export default {
         features: {
             sendFax: false,
             sendSms: false
-        }
+        },
+        loginRequesting: false,
+        loginSucceeded: false,
+        loginError: null,
+        userDataRequesting: false,
+        userDataSucceeded: false,
+        userDataError: null
     },
     getters: {
         isLogged(state, getters) {
@@ -59,66 +65,101 @@ export default {
         },
         getSubscriberId(state, getters) {
             return state.subscriberId;
-        }
+        },
+        loginRequesting(state, getters) {
+            return state.loginRequesting;
+        },
+        loginSucceeded(state) {
+            return state.loginSucceeded;
+        },
+        loginError(state) {
+            return state.loginError;
+        },
+        userDataRequesting(state, getters) {
+            return state.userDataRequesting;
+        },
+        userDataSucceeded(state) {
+            return state.userDataSucceeded;
+        },
     },
     mutations: {
-        login(state, options) {
+        loginRequesting(state) {
+            state.loginRequesting = true;
+            state.loginSucceeded = false;
+            state.loginError = null;
+        },
+        loginSucceeded(state, options) {
             state.jwt = options.jwt;
             state.subscriberId = options.subscriberId;
+            state.loginRequesting = false;
+            state.loginSucceeded = true;
+            state.loginError = null;
         },
-        setUserData(state, options) {
+        loginFailed(state, error) {
+            state.loginRequesting = false;
+            state.loginSucceeded = false;
+            state.loginError = error;
+        },
+        userDataRequesting(state) {
+            state.userDataRequesting = true;
+            state.userDataSucceeded = false;
+            state.userDataError = null;
+        },
+        userDataSucceeded(state, options) {
             state.subscriber = options.subscriber;
             state.capabilities = options.capabilities;
+            state.userDataSucceeded = true;
+            state.userDataRequesting = false;
+            state.userDataError = null;
+        },
+        userDataFailed(state, error) {
+            state.userDataError = error;
+            state.userDataSucceeded = false;
+            state.userDataRequesting = false;
         },
         logout(state) {
             state.jwt = null;
             state.subscriberId = null;
             state.subscriber = null;
             state.capabilities = null;
+            state.loginRequesting = false;
+            state.loginSucceeded = false;
+            state.loginError = null;
+            state.userDataRequesting = false;
+            state.userDataSucceeded = false;
+            state.userDataError = null;
         }
     },
     actions: {
         login(context, options) {
-            return new Promise((resolve, reject)=>{
-                login(options.username, options.password).then((result)=>{
-                    localStorage.setItem('jwt', result.jwt);
-                    localStorage.setItem('subscriberId', result.subscriberId);
-                    context.commit('login', {
-                        jwt: localStorage.getItem('jwt'),
-                        subscriberId: localStorage.getItem('subscriberId'),
-                    });
-                }).then(()=>{
-                    return context.dispatch('initUser');
-                }).then(()=>{
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
+            context.commit('loginRequesting');
+            login(options.username, options.password).then((result)=>{
+                localStorage.setItem('jwt', result.jwt);
+                localStorage.setItem('subscriberId', result.subscriberId);
+                context.commit('loginSucceeded', {
+                    jwt: localStorage.getItem('jwt'),
+                    subscriberId: localStorage.getItem('subscriberId')
                 });
+            }).catch((err)=>{
+                context.commit('loginFailed', err.message);
             });
         },
         logout(context) {
-            return new Promise((resolve, reject)=>{
-                localStorage.removeItem('jwt');
-                localStorage.removeItem('subscriberId');
-                context.commit('logout');
-                resolve();
-            });
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('subscriberId');
+            document.location.href = '/csc';
         },
         initUser(context) {
-            return new Promise((resolve, reject)=>{
-                getUserData(localStorage.getItem('subscriberId')).then((result)=>{
-                    context.commit('setUserData', {
-                        subscriber: result.subscriber,
-                        capabilities: result.capabilities
-                    });
-                    context.dispatch('call/initialize', null, { root: true }).then(()=>{
-                        resolve();
-                    }).catch((err)=>{
-                        resolve();
-                    });
-                }).catch((err)=>{
-                    reject(err);
+            context.commit('userDataRequesting');
+            getUserData(localStorage.getItem('subscriberId')).then((result)=>{
+                context.commit('userDataSucceeded', {
+                    subscriber: result.subscriber,
+                    capabilities: result.capabilities
                 });
+                context.dispatch('call/initialize', null, { root: true });
+            }).catch((err)=>{
+                context.commit('userDataFailed', err.message);
+                context.dispatch('logout');
             });
         }
     }
