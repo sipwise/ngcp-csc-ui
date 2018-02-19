@@ -23,6 +23,11 @@
             </q-btn>
         </q-toolbar>
         <q-list id="main-menu" slot="left" no-border link inset-delimiter>
+            <q-side-link item to="/user/home">
+                <q-item-side icon="home"></q-item-side>
+                <q-item-main :label="$t('navigation.home.title')"
+                             :sublabel="$t('navigation.home.subTitle')"/>
+            </q-side-link>
             <q-side-link item to="/user/conversations">
                 <q-item-side icon="question answer"></q-item-side>
                 <q-item-main :label="$t('navigation.conversations.title')"
