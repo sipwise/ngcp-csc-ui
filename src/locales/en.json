@@ -17,6 +17,10 @@
         "callNotAvailable": "Could not initialize call functionality properly"
     },
     "navigation": {
+        "home": {
+            "title": "Home",
+            "subTitle": "Access to main features"
+        },
         "conversations": {
             "title": "Conversations",
             "subTitle": "Calls, SMS, VoiceMails"
@@ -146,6 +150,19 @@
             "addInputError": "Input a valid number or subscriber name",
             "timeout": "Timeout",
             "destination": "Destination"
+        },
+        "home": {
+            "title": "Home",
+            "cards": {
+                "voiceCall": "Voice Call",
+                "videoCall": "Video Call",
+                "screenShare": "Screen Share",
+                "callForward": "Call Forward",
+                "callBlocking": "Call Blocking",
+                "reminder": "Reminder",
+                "buddyList": "Buddy List",
+                "welcome": "Welcome"
+            }
         }
     },
     "call": {

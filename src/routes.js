@@ -5,6 +5,10 @@ export default [
         component: require('./components/layouts/Default').default,
         children: [
             {
+                path: 'home',
+                component: require('./components/pages/Home').default,
+            },
+            {
                 path: 'conversations',
                 component: require('./components/pages/Conversations').default,
             },
@@ -55,7 +59,7 @@ export default [
     },
     {
         path: '/',
-        redirect: {path:'/user/conversations'}
+        redirect: {path:'/user/home'}
     },
     {
         path: '*',
