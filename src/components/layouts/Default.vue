@@ -33,7 +33,7 @@
                 <q-item-main :label="$t('navigation.conversations.title')"
                              :sublabel="$t('navigation.conversations.subTitle')"/>
             </q-side-link>
-            <q-collapsible :opened="isCallForward" intend icon="fa-angle-double-right"
+            <q-collapsible :opened="isCallForward" intend icon="phone forwarded"
                            :label="$t('navigation.callForward.title')"
                            :sublabel="$t('navigation.callForward.subTitle')">
                 <q-side-link item to="/user/call-forward/always">

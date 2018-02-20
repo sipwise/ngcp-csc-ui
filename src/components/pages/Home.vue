@@ -74,7 +74,7 @@
                 <router-link to="/user/reminder">
                     <q-card class="home-card-active no-margin" flat>
                         <q-card-main align="center">
-                            <q-icon name="alarm" class="home-icons" />
+                            <q-icon name="fa-bell" class="home-icons" />
                         </q-card-main>
                         <q-card-actions align="center">
                             {{ $t('pages.home.cards.reminder') }}
@@ -141,11 +141,14 @@
     .q-card-actions
         font-size 22px
         padding 0 10px 35px 10px
+    .q-card-main
+        font-size 22px
+        padding-top 35px
     .home-card-active
         cursor pointer
         border solid 2px $primary
         .home-icons
-            font-size 6rem
+            font-size 5.5rem
             color $primary
         .q-card-actions
             color $primary
@@ -153,7 +156,7 @@
         cursor not-allowed
         border solid 2px $grey
         .home-icons
-            font-size 6rem
+            font-size 5.5rem
             color $grey
         .q-card-actions
             color $grey
@@ -161,6 +164,9 @@
         .q-card-actions
             font-size 16px
             padding 0 10px 25px 10px
+        .q-card-main
+            font-size 22px
+            padding-top 25px
         .home-card-active
             .home-icons
                 font-size 3rem
