@@ -82,13 +82,21 @@ export default {
             return state.userDataSucceeded;
         },
         jwtTTL(state) {
-            var expirationBuffer = 0.05;
-            var jwtParts = state.jwt.split('\.');
-            var jwtPayload = JSON.parse(atob(jwtParts[1]));
-            var timeDiff = Math.floor((Date.now() / 1000) - jwtPayload.exp);
-            var timeLeft = Math.abs(timeDiff);
-            var timeLeftBuffer = Math.round(timeLeft * expirationBuffer);
-            return timeLeft - timeLeftBuffer
+            let expirationBuffer = 0.05;
+            try {
+                let jwtParts = state.jwt.split('\.');
+                let jwtPayload = JSON.parse(atob(jwtParts[1]));
+                if(_.isNumber(jwtPayload.exp)) {
+                    let timeDiff = Math.floor((Date.now() / 1000) - jwtPayload.exp);
+                    let timeLeft = Math.abs(timeDiff);
+                    let timeLeftBuffer = Math.round(timeLeft * expirationBuffer);
+                    return timeLeft - timeLeftBuffer;
+                } else {
+                    return null;
+                }
+            } catch(err) {
+                return null;
+            }
         }
     },
     mutations: {
@@ -165,9 +173,11 @@ export default {
                     subscriber: result.subscriber,
                     capabilities: result.capabilities
                 });
-                setTimeout(()=>{
-                    context.dispatch('logout');
-                }, context.getters.jwtTTL * 1000);
+                if(_.isNumber(context.getters.jwtTTL)) {
+                    setTimeout(()=>{
+                        context.dispatch('logout');
+                    }, context.getters.jwtTTL * 1000);
+                }
                 context.dispatch('call/initialize', null, { root: true });
             }).catch((err)=>{
                 context.commit('userDataFailed', err.message);
