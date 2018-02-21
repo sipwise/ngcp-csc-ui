@@ -12,7 +12,7 @@ export var CallState = {
 };
 
 export var MediaType = {
-    audio: 'audio',
+    audioOnly: 'audioOnly',
     audioVideo: 'audioVideo',
     audioScreen: 'audioScreen'
 };
@@ -26,23 +26,35 @@ export default {
         endedReason: null,
         callState: CallState.input,
         number: null,
-        mediaType: null,
-        localMediaType: null,
         localMediaStream: null,
         remoteMediaStream: null,
         audioEnabled: true,
         videoEnabled: true,
-        muted: false
+        muted: false,
+        caller: false,
+        callee: false
     },
     getters: {
         getNumber(state, getters) {
             return state.number;
         },
-        getMediaType(state, getters) {
-            return state.mediaType;
+        localMediaType(state) {
+            if(state.localMediaStream !== null && state.localMediaStream.hasAudio() && state.localMediaStream.hasVideo()) {
+                return MediaType.audioVideo;
+            } else if (state.localMediaStream !== null && state.localMediaStream.hasAudio()) {
+                return MediaType.audioOnly;
+            } else {
+                return null;
+            }
         },
-        getLocalMediaType(state, getters) {
-            return state.localMediaType
+        remoteMediaType(state) {
+            if(state.remoteMediaStream !== null && state.remoteMediaStream.hasAudio() && state.remoteMediaStream.hasVideo()) {
+                return MediaType.audioVideo;
+            } else if (state.remoteMediaStream !== null && state.remoteMediaStream.hasAudio()) {
+                return MediaType.audioOnly;
+            } else {
+                return null;
+            }
         },
         getEndedReason(state, getters) {
             return state.endedReason;
@@ -106,6 +118,12 @@ export default {
         },
         isMuted(state, getters) {
             return state.muted;
+        },
+        isCaller(state) {
+            return state.caller;
+        },
+        isCallee(state) {
+            return state.callee;
         }
     },
     mutations: {
@@ -125,9 +143,9 @@ export default {
         },
         startCalling(state, options) {
             state.number = options.number;
-            state.mediaType = options.mediaType;
-            state.localMediaType = state.mediaType;
             state.callState = CallState.initiating;
+            state.caller = true;
+            state.callee = false;
         },
         localMediaSuccess(state, localMediaStream) {
             state.localMediaStream = localMediaStream;
@@ -138,11 +156,15 @@ export default {
         establishCall(state, remoteMediaStream) {
             state.remoteMediaStream = remoteMediaStream;
             state.callState = CallState.established;
+            state.audioEnabled = true;
+            state.videoEnabled = true;
+            state.muted = false;
         },
         incomingCall(state, options) {
             state.callState = CallState.incoming;
             state.number = options.number;
-            state.mediaType = options.mediaType;
+            state.callee = true;
+            state.caller = false;
         },
         hangUpCall(state) {
             state.callState = CallState.input;
@@ -190,17 +212,9 @@ export default {
         initialize(context) {
             return new Promise((resolve, reject)=>{
                 Vue.call.onIncoming(()=>{
-                    let mediaType;
-                    if(Vue.call.isRemoteSendingAudio()) {
-                        mediaType = MediaType.audio;
-                    }
-                    if(Vue.call.isRemoteSendingVideo()) {
-                        mediaType = MediaType.audioVideo;
-                    }
                     context.commit('layout/showRight', null, { root: true });
                     context.commit('incomingCall', {
-                        number: Vue.call.getNumber(),
-                        mediaType: mediaType
+                        number: Vue.call.getNumber()
                     });
                 }).onRemoteMedia((remoteMediaStream)=>{
                     context.commit('establishCall', remoteMediaStream);
@@ -226,9 +240,7 @@ export default {
         },
         start(context, options) {
             context.commit('layout/showRight', null, { root: true });
-            context.commit('startCalling', {
-                number: options.number,
-                mediaType: options.localMedia });
+            context.commit('startCalling', { number: options.number });
             Promise.resolve().then(()=>{
                 return Vue.call.createLocalMedia(options.localMedia);
             }).then((localMediaStream)=>{
