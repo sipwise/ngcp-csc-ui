@@ -81,6 +81,16 @@ export default {
         userDataSucceeded(state) {
             return state.userDataSucceeded;
         },
+        jwtTTL(state) {
+            var jwtParts = state.jwt.split('\.');
+            var jwtPayload = JSON.parse(atob(jwtParts[1]));
+            var timeDiff = Math.floor((Date.now() / 1000) - jwtPayload.exp);
+            if(timeDiff < 0) {
+                return Math.abs(timeDiff);
+            } else {
+                return 0;
+            }
+        }
     },
     mutations: {
         loginRequesting(state) {
@@ -156,6 +166,9 @@ export default {
                     subscriber: result.subscriber,
                     capabilities: result.capabilities
                 });
+                setTimeout(()=>{
+                    context.dispatch('logout');
+                }, context.getters.jwtTTL * 1000);
                 context.dispatch('call/initialize', null, { root: true });
             }).catch((err)=>{
                 context.commit('userDataFailed', err.message);
