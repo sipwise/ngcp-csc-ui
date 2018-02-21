@@ -3,9 +3,14 @@
         <audio ref="incomingSound" loop preload="auto" src="statics/ring.mp3"></audio>
         <q-card flat color="secondary">
             <q-card-title>
+
                 <span v-if="isRinging || isInitiating || isIncoming">
                     <q-spinner-rings color="primary" :size="50" />
                 </span>
+
+                <q-icon v-if="isPreparing" name="call" color="primary" size="26px"/>
+                <q-icon v-if="isEstablished && isCaller" name="call made" color="primary" size="26px"/>
+                <q-icon v-if="isEstablished && isCallee" name="call received" color="primary" size="26px"/>
                 <q-icon v-if="isEnded" name="error" color="primary" size="26px"/>
 
                 <span v-if="isPreparing" class="text">{{ $t('call.startNew') }}</span>
@@ -31,8 +36,10 @@
                                  dark clearable max="64" @blur="phoneNumberBlur()" @focus="phoneNumberFocus()"/>
                     </q-field>
                     <div v-if="!isPreparing" class="phone-number">
-                        <q-icon v-if="isCalling && getMediaType == 'audioOnly'" name="mic" color="primary" size="26px"/>
-                        <q-icon v-else-if="isCalling && getMediaType == 'audioVideo'" name="videocam" color="primary" size="26px"/>
+                        <q-icon v-if="isCalling && (localMediaType == 'audioVideo' || remoteMediaType == 'audioVideo')"
+                                name="videocam" color="primary" size="26px"/>
+                        <q-icon v-else-if="isCalling && (localMediaType == 'audioOnly' || remoteMediaType == 'audioVideo')"
+                                name="mic" color="primary" size="26px"/>
                         {{ getNumber | numberFormat }}
                     </div>
                     <div v-if="isEnded" class="ended-reason">{{ getEndedReason }}</div>
@@ -48,7 +55,7 @@
             </q-card-main>
             <q-card-actions align="center">
                 <q-btn v-if="isEstablished" round :small="!isFullscreenEnabled" color="primary" @click="toggleAudio()" :icon="toggleAudioIcon" />
-                <q-btn v-if="isEstablished" round :small="!isFullscreenEnabled" color="primary" @click="toggleVideo()" :icon="toggleVideoIcon" />
+                <q-btn v-if="isEstablished && localMediaType == 'audioVideo'" round :small="!isFullscreenEnabled" color="primary" @click="toggleVideo()" :icon="toggleVideoIcon" />
                 <q-btn v-if="isEstablished" round :small="!isFullscreenEnabled" color="primary" @click="toggleMute()" :icon="toggleMuteIcon" />
                 <q-btn v-if="isPreparing" round :small="!isFullscreenEnabled" color="primary" @click="call('audioOnly')" icon="mic" />
                 <q-btn v-if="isPreparing" round :small="!isFullscreenEnabled" color="primary" @click="call('audioVideo')" icon="videocam" />
@@ -262,18 +269,17 @@
                 'isIncoming',
                 'isEstablished',
                 'getNumber',
-                'getMediaType',
-                'getLocalMediaType',
                 'getEndedReason',
                 'hasRemoteVideo',
                 'hasVideo',
                 'isAudioEnabled',
                 'isVideoEnabled',
-                'isMuted'
+                'isMuted',
+                'localMediaType',
+                'remoteMediaType',
+                'isCaller',
+                'isCallee'
             ]),
-            hasLocalVideo() {
-                return this.getLocalMediaType !== null && this.getLocalMediaType.match(/(v|V)ideo/) !== null;
-            },
             isMobile() {
                 return Platform.is.mobile;
             }
