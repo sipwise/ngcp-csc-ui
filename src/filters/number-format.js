@@ -14,7 +14,7 @@ export default function numberFormat(number) {
         if(normalizedNumber !== extractedNumber) {
             return normalizedNumber;
         } else {
-            return number;
+            return extractedNumber;
         }
     } catch(err) {
         return normalizeNumber(number);

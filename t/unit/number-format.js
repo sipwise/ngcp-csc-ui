@@ -53,7 +53,7 @@ describe('NumberFormatFilter', function() {
 
     it('should format a number or sip uri', function(){
         assert.equal(numberFormat(sipUris.valid1), numbers.valid1);
-        assert.equal(numberFormat(sipUris.invalid1), sipUris.invalid1);
+        assert.equal(numberFormat(sipUris.invalid1), numbers.invalid3);
     });
 
     it('should format a call forward destination', function(){
