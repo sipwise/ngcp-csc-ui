@@ -158,12 +158,16 @@
                 "removeSuccessMessage": "Removed time entry for {day}",
                 "removeErrorMessage": "An error occured while trying to delete the time entry. Please try again.",
                 "removeTimesetSuccessMessage": "Removed timeset",
+                "resetErrorMessage": "An error occured while trying to reset the timesets. Please try again.",
+                "resetSuccessMessage": "Reset of timesets completed",
+                "addTimesetSuccessMessage": "Created new timeset",
+                "addTimesetErrorMessage": "An error occured while trying to create the timeset. Please try again.",
                 "noTimeSet": "no time set",
                 "addTimeButton": "Add Time",
-                "companyHoursIncompatible":  "The Company Hours timeset contains incompatible values.",
-                "companyHoursNotDefined":  "The Company Hours timeset is not defined.",
-                "companyHoursDuplicate":  "More than one Company Hours timeset exists.",
-                "companyHoursReverse":  "The Company Hours timeset contain reverse order of values.",
+                "companyHoursIncompatible":  "The Company Hours timeset contains incompatible values. You can resolve this by resetting the company hours timeset.",
+                "companyHoursNotDefined":  "The Company Hours timeset is not defined. You need to create one to be able to define call forward destinations.",
+                "companyHoursDuplicate":  "More than one Company Hours timeset exists. You can resolve this by resetting the company hours timesets.",
+                "companyHoursReverse":  "The Company Hours timeset contain reverse order of values. You can resolve this by resetting the company hours timeset.",
                 "weekday": "Weekday",
                 "from": "From",
                 "to": "To",
@@ -173,7 +177,10 @@
                 "thursday": "Thursday",
                 "friday": "Friday",
                 "saturday": "Saturday",
-                "sunday": "Sunday"
+                "sunday": "Sunday",
+                "addCompanyHours": "Add Company Hours",
+                "resetCompanyHours": "Reset Company Hours",
+                "selectValidTime": "Select valid time"
             }
         },
         "home": {
