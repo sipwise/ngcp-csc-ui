@@ -50,11 +50,20 @@
                                 {{ $t('pages.conversations.buttons.videoCall') }}
                             </q-item>
                         </q-list>
-                      </q-popover>
+                    </q-popover>
                 </q-btn>
                 <q-btn v-if="isType('voicemail')" flat round small color="primary"
                     icon="play_arrow" @click="downloadVoiceMail(conversation.id)">
                     {{ $t('pages.conversations.buttons.play') }}
+                </q-btn>
+            </q-card-actions>
+        </div>
+        <div v-else-if="isType('fax')" slot="footer">
+            <q-card-separator />
+            <q-card-actions align="center">
+                <q-btn flat round small color="primary"
+                    icon="file_download" @click="downloadFax(conversation.id)">
+                    {{ $t('pages.conversations.buttons.download') }}
                 </q-btn>
             </q-card-actions>
         </div>
@@ -89,6 +98,9 @@
         methods: {
             downloadVoiceMail(id) {
                 this.$store.dispatch('conversations/downloadVoiceMail', id);
+            },
+            downloadFax(id) {
+                this.$store.dispatch('conversations/downloadFax', id);
             },
             call(localMedia) {
                 let conversation = this.conversation;
