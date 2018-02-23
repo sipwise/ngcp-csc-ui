@@ -76,8 +76,7 @@ describe('Conversations', function(){
             "start_time": "2017-12-07 16:22:04",
             "type": "voicemail",
             "voicemail_subscriber_id": 235,
-            "_id": hashedId,
-            "voicemail": "/api/voicemailrecordings/1"
+            "_id": hashedId
         }];
 
         Vue.http.interceptors = [];
