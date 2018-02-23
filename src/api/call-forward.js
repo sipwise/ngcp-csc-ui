@@ -534,3 +534,73 @@ export function deleteTimesetById(id) {
         });
     });
 }
+
+export function resetTimesetByName(options) {
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return getTimesets(options.id);
+        }).then((timesets) => {
+            let deleteTimesetPromises = [];
+            _.filter(timesets, { 'name': options.name }).forEach((timeset) => {
+                deleteTimesetPromises.push(deleteTimesetById(timeset.id));
+            });
+            return Promise.all(deleteTimesetPromises);
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function addTimeToTimeset(options) {
+    let headers = {
+        'Content-Type': 'application/json-patch+json'
+    };
+    return new Promise((resolve, reject) => {
+        Vue.http.patch('/api/cftimesets/' + options.id, [{
+            op: 'replace',
+            path: '/times',
+            value: options.time
+        }], { headers: headers }).then(() => {
+            resolve();
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function addNewTimeset(timesetName) {
+    return new Promise((resolve, reject) => {
+        Vue.http.post('/api/cftimesets/', { name: timesetName  })
+            .then(response => {
+                resolve(_.last(_.split(response.headers.get('Location'), '/')));
+            }).catch(err => {
+                reject(err);
+            });
+    });
+}
+
+export function createTimesetWithTime(options) {
+    let convertedTime;
+    if (options.time.from.split('-')[1] === '00' && options.time.to.split('-')[1] === '00') {
+        // TODO
+    } else if (options.time.from.split('-')[1] !== '00' && options.time.to.split('-')[1] !== '00') {
+        // TODO
+    } else if (options.time.from.split('-')[1] !== '00') {
+        // TODO
+    } else if (options.time.to.split('-')[1] !== '00') {
+        // TODO
+    };
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return addNewTimeset(options.name);
+        }).then((timesetId) => {
+            return addTimeToTimeset({ id: timesetId, time: convertedTime });
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
