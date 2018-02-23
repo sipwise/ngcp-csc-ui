@@ -534,3 +534,86 @@ export function deleteTimesetById(id) {
         });
     });
 }
+
+export function resetTimesetByName(options) {
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return getTimesets(options.id);
+        }).then((timesets) => {
+            let deleteTimesetPromises = [];
+            _.filter(timesets, { 'name': options.name }).forEach((timeset) => {
+                deleteTimesetPromises.push(deleteTimesetById(timeset.id));
+            });
+            return Promise.all(deleteTimesetPromises);
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function addTimeToTimeset(options) {
+    let headers = {
+        'Content-Type': 'application/json-patch+json'
+    };
+    return new Promise((resolve, reject) => {
+        Vue.http.patch('/api/cftimesets/' + options.id, [{
+            op: 'replace',
+            path: '/times',
+            value: options.time
+        }], { headers: headers }).then(() => {
+            resolve();
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function addNewTimeset(timesetName) {
+    return new Promise((resolve, reject) => {
+        Vue.http.post('/api/cftimesets/', { name: timesetName  })
+            .then(response => {
+                resolve(_.last(_.split(response.headers.get('Location'), '/')));
+            }).catch(err => {
+                reject(err);
+            });
+    });
+}
+
+export function createTimesetWithTime(options) {
+    let time = options.time[0];
+    let convertedTime = [];
+    if (time.from.split(':')[1] === '00' && time.to.split(':')[1] === '00') {
+        // TODO: Simply take left parseInt() on hour for form and to, subtract
+        // 1 from to, and push a time object to convertedTime with weekday
+        // and no minutes
+        convertedTime.push({
+            wday: options.weekday,
+            hour: `${parseInt(time.from.split(':')[0])}-${parseInt(time.to.split(':')[0]) - 1}`,
+            minute: null
+        });
+    } else if (time.from.split(':')[1] !== '00' && time.to.split(':')[1] !== '00') {
+        // TODO: Converts to three periods, one with hour being from [0] split
+        // for hours and from [1] split to 59 for minutes - then one being
+        // from [0] + 1 until to [0] - 1 for hours and no minutes - then one
+        // being to [0] for hours and 00 until to [1] -1 for minutes
+    } else if (time.from.split(':')[1] !== '00') {
+        // TODO: Two periods, as above but excluding the last period
+    } else if (time.to.split(':')[1] !== '00') {
+        // TODO: Two periods, but as two above minus the first period
+    };
+    // TODO: Also need to account for periods within same hour (and similar?)
+    // such as 10:00 - 10:30
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return addNewTimeset(options.name);
+        }).then((timesetId) => {
+            return addTimeToTimeset({ id: timesetId, time: convertedTime });
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
