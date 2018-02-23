@@ -2,6 +2,7 @@
 'use strict';
 
 import _ from 'lodash';
+import { i18n } from '../i18n';
 import { getSourcesets,
     getDestinationsets,
     getTimesets,
@@ -16,9 +17,12 @@ import { getSourcesets,
     moveDestinationDown,
     loadTimesetTimes,
     deleteTimeFromTimeset,
-    deleteTimesetById } from '../api/call-forward';
+    deleteTimesetById,
+    resetTimesetByName,
+    createTimesetWithTime,
+    appendTimeToTimeset } from '../api/call-forward';
 
-const DestinationState = {
+const RequestState = {
     button: 'button',
     requesting: 'requesting',
     succeeded: 'succeeded',
@@ -37,16 +41,20 @@ export default {
             busy: [],
             offline: []
         },
-        removeDestinationState: DestinationState.button,
+        removeDestinationState: RequestState.button,
         removeDestinationError: null,
         lastRemovedDestination: null,
-        addDestinationState: DestinationState.button,
+        addDestinationState: RequestState.button,
         addDestinationError: null,
         lastAddedDestination: null,
-        changeDestinationState: DestinationState.button,
+        changeDestinationState: RequestState.button,
         changeDestinationError: null,
-        removeTimeState: DestinationState.button,
+        removeTimeState: RequestState.button,
         removeTimeError: null,
+        resetTimeState: RequestState.button,
+        resetTimeError: null,
+        addTimeState: RequestState.button,
+        addTimeError: null,
         lastRemovedDay: null,
         activeForm: '',
         formType: '',
@@ -63,7 +71,9 @@ export default {
         timesetExists: true,
         timesetHasReverse: false,
         timesetHasDuplicate: false,
-        timesetId: null
+        timesetId: null,
+        activeTimeForm: false,
+        resetAlerts: false
     },
     getters: {
         hasFaxCapability(state, getters, rootState, rootGetters) {
@@ -92,6 +102,14 @@ export default {
         },
         getTimesetTimesLength(state) {
             return state.timesetTimes.length;
+        },
+        addTimeError(state) {
+            return state.addTimeError ||
+                i18n.t('pages.callForward.times.addTimeErrorMessage');
+        },
+        resetTimeError(state) {
+            return state.resetTimeError ||
+                i18n.t('pages.callForward.times.resetErrorMessage');
         }
     },
     mutations: {
@@ -141,56 +159,56 @@ export default {
             state.formType = '';
             state.destinationsetId = '';
             state.groupName = '';
-            state.addDestinationState = DestinationState.button;
-            state.changeDestinationState = DestinationState.button;
-            state.removeDestinationState = DestinationState.button;
+            state.addDestinationState = RequestState.button;
+            state.changeDestinationState = RequestState.button;
+            state.removeDestinationState = RequestState.button;
         },
         addDestinationRequesting(state) {
-            state.addDestinationState = DestinationState.requesting;
+            state.addDestinationState = RequestState.requesting;
             state.addDestinationError = null;
         },
         addDestinationSucceeded(state) {
-            state.addDestinationState = DestinationState.succeeded;
+            state.addDestinationState = RequestState.succeeded;
             state.addDestinationError = null;
         },
         addDestinationFailed(state, error) {
-            state.addDestinationState = DestinationState.failed;
+            state.addDestinationState = RequestState.failed;
             state.addDestinationError = error;
         },
         changeDestinationRequesting(state) {
-            state.changeDestinationState = DestinationState.requesting;
+            state.changeDestinationState = RequestState.requesting;
             state.changeDestinationError = null;
         },
         changeDestinationSucceeded(state) {
-            state.changeDestinationState = DestinationState.succeeded;
+            state.changeDestinationState = RequestState.succeeded;
             state.changeDestinationError = null;
         },
         changeDestinationFailed(state, error) {
-            state.changeDestinationState = DestinationState.failed;
+            state.changeDestinationState = RequestState.failed;
             state.changeDestinationError = error;
         },
         removeDestinationRequesting(state) {
-            state.removeDestinationState = DestinationState.requesting;
+            state.removeDestinationState = RequestState.requesting;
             state.removeDestinationError = null;
         },
         removeDestinationSucceeded(state) {
-            state.removeDestinationState = DestinationState.succeeded;
+            state.removeDestinationState = RequestState.succeeded;
             state.removeDestinationError = null;
         },
         removeDestinationFailed(state, error) {
-            state.removeDestinationState = DestinationState.failed;
+            state.removeDestinationState = RequestState.failed;
             state.removeDestinationError = error;
         },
         removeTimeRequesting(state) {
-            state.removeTimeState = DestinationState.requesting;
+            state.removeTimeState = RequestState.requesting;
             state.removeTimeError = null;
         },
         removeTimeSucceeded(state) {
-            state.removeTimeState = DestinationState.succeeded;
+            state.removeTimeState = RequestState.succeeded;
             state.removeTimeError = null;
         },
         removeTimeFailed(state, error) {
-            state.removeTimeState = DestinationState.failed;
+            state.removeTimeState = RequestState.failed;
             state.removeTimeError = error;
         },
         setLastRemovedDay(state, value) {
@@ -203,6 +221,36 @@ export default {
             state.timesetHasReverse = result.timesetHasReverse;
             state.timesetHasDuplicate = result.timesetHasDuplicate;
             state.timesetId = result.timesetId;
+        },
+        resetTimeRequesting(state) {
+            state.resetTimeState = RequestState.requesting;
+            state.resetTimeError = null;
+        },
+        resetTimeSucceeded(state) {
+            state.resetTimeState = RequestState.succeeded;
+            state.resetTimeError = null;
+        },
+        resetTimeFailed(state, error) {
+            state.resetTimeState = RequestState.failed;
+            state.resetTimeError = error;
+        },
+        addTimeRequesting(state) {
+            state.addTimeState = RequestState.requesting;
+            state.addTimeError = null;
+        },
+        addTimeSucceeded(state) {
+            state.addTimeState = RequestState.succeeded;
+            state.addTimeError = null;
+        },
+        addTimeFailed(state, error) {
+            state.addTimeState = RequestState.failed;
+            state.addTimeError = error;
+        },
+        setActiveTimeForm(state, value) {
+            state.activeTimeForm = value;
+        },
+        resetAlerts(state) {
+            state.resetAlerts = !state.resetAlerts;
         }
     },
     actions: {
@@ -402,27 +450,6 @@ export default {
                 });
             }
         },
-        setActiveForm(context, value) {
-            context.commit('setActiveForm', value);
-        },
-        setFormType(context, value) {
-            context.commit('setFormType', value);
-        },
-        setDestinationsetId(context, value) {
-            context.commit('setDestinationsetId', value);
-        },
-        setGroupName(context, value) {
-            context.commit('setGroupName', value);
-        },
-        setPriority(context, value) {
-            context.commit('setPriority', value);
-        },
-        resetFormState(context) {
-            context.commit('resetFormState');
-        },
-        resetDestinationState(context) {
-            context.commit('resetDestinationState');
-        },
         loadTimesetTimes(context, options) {
             loadTimesetTimes({
                 timeset: options.timeset,
@@ -441,28 +468,60 @@ export default {
                 delete time.from;
                 delete time.to;
             });
-            return new Promise(() => {
-                deleteTimeFromTimeset({
-                    subscriberId: context.getters.getSubscriberId,
-                    timesetId: context.getters.getTimesetId,
-                    times: clonedTimes
-                    }).then(() => {
-                        context.commit('setLastRemovedDay', options.removedDay);
-                        context.commit('removeTimeSucceeded');
-                    }).catch((err) => {
-                        context.commit('removeTimeFailed', err.message);
-                    });
-            });
+            deleteTimeFromTimeset({
+                subscriberId: context.getters.getSubscriberId,
+                timesetId: context.getters.getTimesetId,
+                times: clonedTimes
+                }).then(() => {
+                    context.commit('setLastRemovedDay', options.removedDay);
+                    context.commit('removeTimeSucceeded');
+                }).catch((err) => {
+                    context.commit('removeTimeFailed', err.message);
+                });
         },
         deleteTimesetById(context) {
             context.commit('removeTimeRequesting');
-            return new Promise(() => {
-                deleteTimesetById(context.getters.getTimesetId).then(() => {
-                        context.commit('removeTimeSucceeded');
-                    }).catch((err) => {
-                        context.commit('removeTimeFailed', err.message);
-                    });
-            });
+            deleteTimesetById(context.getters.getTimesetId).then(() => {
+                    context.commit('removeTimeSucceeded');
+                }).catch((err) => {
+                    context.commit('removeTimeFailed', err.message);
+                });
+        },
+        resetTimesetByName(context, name) {
+            resetTimesetByName({
+                id: context.getters.getSubscriberId,
+                name: name
+                }).then(() => {
+                    context.commit('resetTimeSucceeded');
+                }).catch((err) => {
+                    context.commit('resetTimeFailed', err.message);
+                });
+        },
+        createTimesetWithTime(context, options) {
+            context.commit('addTimeRequesting');
+            createTimesetWithTime({
+                    time: options.time,
+                    weekday: options.weekday,
+                    name: options.name,
+                    subscriberId: context.getters.getSubscriberId
+                }).then(() => {
+                    context.commit('addTimeSucceeded');
+                }).catch((err) => {
+                    context.commit('addTimeFailed', err.message);
+                });
+        },
+        appendTimeToTimeset(context, options) {
+            context.commit('addTimeRequesting');
+            appendTimeToTimeset({
+                    time: options.time,
+                    weekday: options.weekday,
+                    id: context.getters.getTimesetId,
+                    subscriberId: context.getters.getSubscriberId
+                }).then(() => {
+                    context.commit('addTimeSucceeded');
+                }).catch((err) => {
+                    context.commit('addTimeFailed', err.message);
+                });
         }
     }
 };

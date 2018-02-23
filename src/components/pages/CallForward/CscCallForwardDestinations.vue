@@ -4,20 +4,17 @@
             :group="destinations.online"
             group-name="cfu"
             :timeset="timeset"
-            icon="signal_wifi_4_bar">
-        </csc-destinations>
+            icon="signal_wifi_4_bar" />
         <csc-destinations :title="$t('pages.callForward.whenBusy')"
             :group="destinations.busy"
             group-name="cfb"
             :timeset="timeset"
-            icon="record_voice_over">
-        </csc-destinations>
+            icon="record_voice_over" />
         <csc-destinations :title="$t('pages.callForward.whenOffline')"
             :group="destinations.offline"
             group-name="cfna"
             :timeset="timeset"
-            icon="signal_wifi_off">
-        </csc-destinations>
+            icon="signal_wifi_off" />
     </q-card>
 </template>
 
