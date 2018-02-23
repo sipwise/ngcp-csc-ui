@@ -1,14 +1,14 @@
 <template>
-    <q-card class="times-card">
+    <q-card class="times-card" flat>
         <q-card-title class="times-title">
             Times
         </q-card-title>
         <q-card-main>
-            <csc-call-forward-time v-if="times.length > 0" v-for="(time, index) in times" :time="time" :index="index">
-            </csc-call-forward-time>
+            <csc-call-forward-time v-if="times.length > 0" v-for="(time, index) in times" :time="time" :index="index" />
+            <csc-add-time-form type="existing" :title="$t('pages.callForward.times.addCompanyHours')" timeset="Company Hours" />
         </q-card-main>
-        <q-card-actions>
-            <q-field v-if="!addFormEnabled">
+        <q-card-actions v-if="!activeTimeForm">
+            <q-field>
                 <q-btn color="primary"
                     class="add-time"
                     icon="fa-plus" flat
@@ -19,14 +19,15 @@
 </template>
 
 <script>
+    import { mapState } from 'vuex'
     import CscCallForwardTime from './CscCallForwardTime'
+    import CscAddTimeForm from './CscAddTimeForm'
     import { QCard, QCardTitle, QCardMain, QCardActions,
         QField, QBtn } from 'quasar-framework'
     export default {
         name: 'csc-call-forward-times',
         props: [
-            'times',
-            'timeset'
+            'times'
         ],
         data () {
             return {
@@ -35,6 +36,7 @@
         },
         components: {
             CscCallForwardTime,
+            CscAddTimeForm,
             QCard,
             QCardTitle,
             QCardMain,
@@ -42,9 +44,14 @@
             QField,
             QBtn
         },
+        computed: {
+            ...mapState('callForward', {
+                activeTimeForm: 'activeTimeForm'
+            })
+        },
         methods: {
             enableAddForm() {
-                console.log('enableAddForm()');
+                this.$store.commit('callForward/setActiveTimeForm', true);
             }
         }
     }
@@ -52,28 +59,13 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl'
-
     .times-title
         color $primary
         padding-left 5px
-        padding-bottom 8px
 
     .times-card
-         padding 0 15px
-        .q-field
-            margin 5px 0
         .q-card-actions
-            padding-top 0
-            padding-left 10px
-        .q-card-main
-            padding-bottom 8px
-        .add-time
-            margin-left 14px
-        .row
-            p
-                font-size 0.9 rem
-                color $secondary
-                margin-bottom 0
-            .hour-label
-                text-align center
+            padding 0 23px
+            .q-field
+                margin 5px 0 15px 0
 </style>
