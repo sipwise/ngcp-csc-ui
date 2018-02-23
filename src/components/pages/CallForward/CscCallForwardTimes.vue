@@ -7,8 +7,10 @@
             <csc-call-forward-time v-if="times.length > 0" v-for="(time, index) in times" :time="time" :index="index">
             </csc-call-forward-time>
         </q-card-main>
-        <q-card-actions>
-            <q-field v-if="!addFormEnabled">
+        <csc-add-time-form type="existing" :title="$t('pages.callForward.times.addCompanyHours')" timeset="Company Hours">
+        </csc-add-time-form>
+        <q-card-actions v-if="!activeTimeForm">
+            <q-field>
                 <q-btn color="primary"
                     class="add-time"
                     icon="fa-plus" flat
@@ -19,8 +21,10 @@
 </template>
 
 <script>
+    import { mapState } from 'vuex'
     import numberFormat from '../../../filters/number-format'
     import CscCallForwardTime from './CscCallForwardTime'
+    import CscAddTimeForm from './CscAddTimeForm'
     import { QCard, QCardTitle, QCardMain, QCardActions,
         QField, QBtn } from 'quasar-framework'
     export default {
@@ -36,6 +40,7 @@
         },
         components: {
             CscCallForwardTime,
+            CscAddTimeForm,
             QCard,
             QCardTitle,
             QCardMain,
@@ -43,9 +48,14 @@
             QField,
             QBtn
         },
+        computed: {
+            ...mapState('callForward', {
+                activeTimeForm: 'activeTimeForm'
+            })
+        },
         methods: {
             enableAddForm() {
-                console.log('enableAddForm()');
+                this.$store.commit('callForward/setActiveTimeForm', true);
             }
         }
     }
@@ -53,26 +63,8 @@
 
 <style lang="stylus">
 @import '~variables'
-.times-title
-    color $primary
-    padding-left 5px
-    padding-bottom 8px
-.times-card
-     padding 0 15px
-    .q-field
-        margin 5px 0
-    .q-card-actions
-        padding-top 0
-        padding-left 10px
-    .q-card-main
+    .times-title
+        color $primary
+        padding-left 5px
         padding-bottom 8px
-    .add-time
-        margin-left 14px
-    .row
-        p
-            font-size 0.9 rem
-            color $secondary
-            margin-bottom 0
-        .hour-label
-            text-align center
 </style>
