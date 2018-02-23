@@ -8,9 +8,8 @@ import { getMappings, getSourcesets, getTimesets,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
     convertTimesetToWeekdays,
-    getHoursFromRange,
-    getDaysFromRange,
-    deleteTimeFromTimeset } from '../../src/api/call-forward';
+    deleteTimeFromTimeset,
+    convertAddTime } from '../../src/api/call-forward';
 import { assert } from 'chai';
 
 Vue.use(VueResource);
@@ -683,6 +682,168 @@ describe('CallForward', function() {
         let timesetExists = false;
 
         assert.equal(convertTimesetToWeekdays(options).timesetExists, timesetExists);
+
+    });
+
+    it('should attempt to convert added time, where both to and from are full hours', function(){
+
+        let options = {
+            time: {
+                from: "02:00",
+                to: "04:00"
+            },
+            weekday: 1
+        };
+        let data = [{
+            hour: "2-3",
+            wday: 1
+        }];
+
+        assert.deepEqual(convertAddTime(options), data);
+
+    });
+
+    it('should attempt to convert added time, where both to and from has same hour', function(){
+
+        let options = {
+            time: {
+                from: "06:00",
+                to: "06:16"
+            },
+            weekday: 1
+        };
+        let data = [{
+            hour: "6",
+            minute: "0-15",
+            wday: 1
+        }];
+
+        assert.deepEqual(convertAddTime(options), data);
+
+    });
+
+    it('should attempt to convert added time, where to is not zero and from is next full hour', function(){
+
+        let options = {
+            time: {
+                from: "04:15",
+                to: "05:00"
+            },
+            weekday: 1
+        };
+        let data = [{
+            hour: "4",
+            minute: "15-59",
+            wday: 1
+        }];
+
+        assert.deepEqual(convertAddTime(options), data);
+
+    });
+
+    it('should attempt to convert added time, where both to and from is not zero and to hour is one larger than from hour', function(){
+
+        let options = {
+            time: {
+                from: "04:15",
+                to: "05:20"
+            },
+            weekday: 1
+        };
+        let data = [
+            {
+                hour: "4",
+                minute: "15-59",
+                wday: 1
+            },
+            {
+                hour: "5",
+                minute: "0-19",
+                wday: 1
+            }
+        ];
+
+        assert.deepEqual(convertAddTime(options), data);
+
+    });
+
+    it('should attempt to convert added time, where both to and from is not zero', function(){
+
+        let options = {
+            time: {
+                from: "04:20",
+                to: "06:40"
+            },
+            weekday: 1
+        };
+        let data = [
+            {
+                hour: "4",
+                minute: "20-59",
+                wday: 1
+            },
+            {
+                hour: "5-5",
+                wday: 1
+            },
+            {
+                hour: "6",
+                minute: "0-39",
+                wday: 1
+            }
+        ];
+
+        assert.deepEqual(convertAddTime(options), data);
+
+    });
+
+    it('should attempt to convert added time, where from minute not zero and to minute zero', function(){
+
+        let options = {
+            time: {
+                from: "04:15",
+                to: "06:00"
+            },
+            weekday: 1
+        };
+        let data = [
+            {
+                hour: "4",
+                minute: "15-59",
+                wday: 1
+            },
+            {
+                hour: "5-5",
+                wday: 1
+            }
+        ];
+
+        assert.deepEqual(convertAddTime(options), data);
+
+    });
+
+    it('should attempt to convert added time, where from minute zero and to minute not zero', function(){
+
+        let options = {
+            time: {
+                from: "04:00",
+                to: "06:20"
+            },
+            weekday: 1
+        };
+        let data = [
+            {
+                hour: "5-5",
+                wday: 1
+            },
+            {
+                hour: "6",
+                minute: "0-19",
+                wday: 1
+            }
+        ];
+
+        assert.deepEqual(convertAddTime(options), data);
 
     });
 
