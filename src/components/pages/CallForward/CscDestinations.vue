@@ -16,12 +16,11 @@
                 <div v-else v-for="(destinationset, index) in group">
                     <csc-destination v-bind="destinationset"
                         :prev-dest-id="previousDestinationsetId(index)"
-                        :next-dest-id="nextDestinationsetId(index)">
-                    </csc-destination>
+                        :next-dest-id="nextDestinationsetId(index)"
+                    />
                 </div>
             </q-list>
-            <csc-add-destination-form v-bind="lastDestinationset">
-            </csc-add-destination-form>
+            <csc-add-destination-form v-bind="lastDestinationset" />
         </q-card-main>
     </div>
 </template>
@@ -31,7 +30,7 @@
     import CscDestination from './CscDestination'
     import CscAddDestinationForm from './CscAddDestinationForm'
     import { QCardTitle, QCardMain, QCardSeparator,
-        QItem, QList } from 'quasar-framework'
+        QItem, QList, QIcon } from 'quasar-framework'
     export default {
         name: 'csc-destinations',
         props: [
@@ -47,6 +46,7 @@
             QList,
             QItem,
             QCardSeparator,
+            QIcon,
             CscDestination,
             CscAddDestinationForm
         },
