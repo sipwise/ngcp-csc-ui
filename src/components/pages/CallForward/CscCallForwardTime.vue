@@ -1,5 +1,5 @@
 <template>
-    <q-field class="time-field">
+    <q-field>
         <div class="row no-wrap">
             <q-input class="col-7"
                 v-model="weekday"

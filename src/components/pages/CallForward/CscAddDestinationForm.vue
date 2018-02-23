@@ -117,11 +117,11 @@
             enableForm(type) {
                 let lastDestination = _.findLast(this.destinations) || {};
                 this.formEnabled = true;
-                this.$store.dispatch('callForward/setFormType', type);
-                this.$store.dispatch('callForward/setActiveForm', this.groupName);
-                this.$store.dispatch('callForward/setDestinationsetId', this.id);
-                this.$store.dispatch('callForward/setGroupName', this.groupName);
-                this.$store.dispatch('callForward/setPriority', lastDestination.priority || 1);
+                this.$store.commit('callForward/setFormType', type);
+                this.$store.commit('callForward/setActiveForm', this.groupName);
+                this.$store.commit('callForward/setDestinationsetId', this.id);
+                this.$store.commit('callForward/setGroupName', this.groupName);
+                this.$store.commit('callForward/setPriority', lastDestination.priority || 1);
                 if (type === 'voicebox') {
                     this.destinationForm.destination = 'Voicemail';
                 }
@@ -136,8 +136,8 @@
                 this.destinationForm.timeout = 300;
                 this.destinationForm.destination = '';
                 this.formEnabled = false;
-                this.$store.dispatch('callForward/resetFormState');
-                this.$store.dispatch('callForward/resetDestinationState');
+                this.$store.commit('callForward/resetFormState');
+                this.$store.commit('callForward/resetDestinationState');
             },
             addDestination() {
                 startLoading();
