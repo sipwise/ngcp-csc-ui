@@ -534,3 +534,119 @@ export function deleteTimesetById(id) {
         });
     });
 }
+
+export function resetTimesetByName(options) {
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return getTimesets(options.id);
+        }).then((timesets) => {
+            let deleteTimesetPromises = [];
+            _.filter(timesets, { 'name': options.name }).forEach((timeset) => {
+                deleteTimesetPromises.push(deleteTimesetById(timeset.id));
+            });
+            return Promise.all(deleteTimesetPromises);
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function addTimeToTimeset(options) {
+    let headers = {
+        'Content-Type': 'application/json-patch+json'
+    };
+    return new Promise((resolve, reject) => {
+        Vue.http.patch('/api/cftimesets/' + options.id, [{
+            op: 'replace',
+            path: '/times',
+            value: options.time
+        }], { headers: headers }).then(() => {
+            resolve();
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function addNewTimeset(timesetName) {
+    return new Promise((resolve, reject) => {
+        Vue.http.post('/api/cftimesets/', { name: timesetName  })
+            .then(response => {
+                resolve(_.last(_.split(response.headers.get('Location'), '/')));
+            }).catch(err => {
+                reject(err);
+            });
+    });
+}
+
+export function convertAddTime(options) {
+    let time = options.time;
+    let weekday = options.weekday;
+    let convertedTime = [];
+    let fromHour = time.from.split(':')[0];
+    let toHour = time.to.split(':')[0];
+    let fromMinute = time.from.split(':')[1];
+    let toMinute = time.to.split(':')[1];
+    let bothHasFullHour = fromMinute  === '00' && toMinute  === '00';
+    let bothHasSameHour = fromHour  === toHour;
+    let fromMinuteNotZero = time.from.split(':')[1] !== '00';
+    let toMinuteNotZero = time.to.split(':')[1] !== '00';
+    let bothMinutesNotZero = time.from.split(':')[1] !== '00' &&
+        time.to.split(':')[1] !== '00';
+    let startNotZeroAndEndNextFullHour =
+        (parseInt(fromHour) === (parseInt(toHour) - 1) && toMinute === '00');
+    if (bothHasFullHour) {
+        convertedTime.push({ wday: weekday, hour: `${parseInt(fromHour)}-${parseInt(toHour)-1}` });
+    } else if (bothHasSameHour) {
+        convertedTime.push({ wday: weekday, hour: fromHour, minute: `${fromMinute}-${parseInt(toMinute)-1}`});
+    } else if (startNotZeroAndEndNextFullHour) {
+        convertedTime.push({ wday: weekday, hour: fromHour, minute: `${fromMinute}-59` });
+    } else if (bothMinutesNotZero) {
+        convertedTime.push(
+            { wday: weekday, hour: fromHour, minute: `${fromMinute}-59` },
+            { wday: weekday, hour: `${parseInt(fromHour)+1}-${parseInt(toHour)-1}` },
+            { wday: weekday, hour: toHour, minute: `0-${parseInt(toMinute)-1}` }
+        );
+    } else if (fromMinuteNotZero) {
+        convertedTime.push(
+            { wday: weekday, hour: fromHour, minute: `${parseInt(fromMinute)}-59` },
+            { wday: weekday, hour: `${parseInt(fromHour)+1}-${parseInt(toHour)-1}` }
+        );
+    } else if (toMinuteNotZero) {
+        convertedTime.push(
+            { wday: weekday, hour: `${parseInt(fromHour)+1}-${parseInt(toHour)-1}` },
+            { wday: weekday, hour: toHour, minute: `0-${parseInt(toMinute)-1}` }
+        );
+    };
+    return convertedTime;
+};
+
+export function createTimesetWithTime(options) {
+    let convertedTime = convertAddTime({ time: options.time[0], weekday: options.weekday });
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return addNewTimeset(options.name);
+        }).then((timesetId) => {
+            return addTimeToTimeset({ id: timesetId, time: convertedTime });
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function appendTimeToTimeset(options) {
+    let convertedTime = convertAddTime({ time: options.time[0], weekday: options.weekday });
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return addTimeToTimeset({ id: options.id, time: convertedTime });
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
