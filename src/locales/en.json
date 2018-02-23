@@ -98,7 +98,8 @@
                 "call": "CALL",
                 "audioCall": "Audio Call",
                 "videoCall": "Video Call",
-                "play": "Play"
+                "play": "Play",
+                "download": "Download"
             },
             "card": {
                 "date": "Date",
@@ -107,7 +108,11 @@
                 "pages": "Pages",
                 "cost": "Cost",
                 "message": "Message"
-            }
+            },
+            "downloadVoiceMailSuccessMessage": "Voicemail download successful",
+            "downloadVoiceMailErrorMessage": "Voicemail download failed",
+            "downloadFaxSuccessMessage": "Fax download successful",
+            "downloadFaxErrorMessage": "Fax download failed"
         },
         "reminder": {
             "title": "Reminder",

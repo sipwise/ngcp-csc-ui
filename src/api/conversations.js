@@ -18,9 +18,6 @@ export function getConversations(id, page, rows) {
                         let inputString = `${item.type}${item.call_type}${item.id}`;
                         let id = crypto.createHash('sha256').update(inputString).digest('base64');
                         item._id = id;
-                        if (item._links['ngcp:voicemailrecordings']) {
-                            item.voicemail = item._links['ngcp:voicemailrecordings'].href;
-                        }
                         delete item._links;
                         if (item.type == 'call') {
                             item.type = item.call_type != 'call' ? 'callforward'
@@ -39,7 +36,6 @@ export function getConversations(id, page, rows) {
     });
 }
 
-
 export function downloadVoiceMail(id) {
     return new Promise((resolve, reject)=>{
         Vue.http.get('/api/voicemailrecordings/' + id, { responseType: 'blob' })
@@ -47,6 +43,20 @@ export function downloadVoiceMail(id) {
                 return res.blob();
             }).then(voicemail => {
                 saveAs(voicemail, "voicemail-" + id + '.wav');
+                resolve();
+            }).catch((err)=>{
+                reject(err);
+            });
+    });
+}
+
+export function downloadFax(id) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.get('/api/faxrecordings/' + id, { responseType: 'blob' })
+            .then(res => {
+                return res.blob();
+            }).then(fax => {
+                saveAs(fax, "fax-" + id + '.tif');
                 resolve();
             }).catch((err)=>{
                 reject(err);
