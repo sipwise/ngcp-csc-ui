@@ -59,12 +59,12 @@
                 <q-btn v-if="isEstablished" round :small="!isFullscreenEnabled" color="primary" @click="toggleMute()" :icon="toggleMuteIcon" />
                 <q-btn v-if="isPreparing" round :small="!isFullscreenEnabled" color="primary" @click="call('audioOnly')" icon="mic" />
                 <q-btn v-if="isPreparing" round :small="!isFullscreenEnabled" color="primary" @click="call('audioVideo')" icon="videocam" />
-                <q-btn v-if="isPreparing" round :small="!isFullscreenEnabled" color="primary" @click="call('audioScreen')" icon="computer" />
+                <q-btn v-if="isPreparing && !isMobile" round :small="!isFullscreenEnabled" color="primary" @click="call('audioScreen')" icon="computer" />
                 <q-btn v-if="isCalling" round :small="!isFullscreenEnabled" color="negative" @click="hangUp()" icon="call end" />
                 <q-btn v-if="isEnded" round :small="!isFullscreenEnabled" color="negative" @click="init()" icon="clear"/>
                 <q-btn v-if="isIncoming" round :small="!isFullscreenEnabled" color="primary" @click="accept('audioOnly')" icon="mic" />
                 <q-btn v-if="isIncoming" round :small="!isFullscreenEnabled" color="primary" @click="accept('audioVideo')" icon="videocam" />
-                <q-btn v-if="isIncoming" round :small="!isFullscreenEnabled" color="primary" @click="accept('audioScreen')" icon="computer" />
+                <q-btn v-if="isIncoming && !isMobile" round :small="!isFullscreenEnabled" color="primary" @click="accept('audioScreen')" icon="computer" />
                 <q-btn v-if="isIncoming" round :small="!isFullscreenEnabled" color="negative" @click="decline()" icon="call end" />
             </q-card-actions>
         </q-card>

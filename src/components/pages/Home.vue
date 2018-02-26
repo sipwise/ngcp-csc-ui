@@ -32,9 +32,9 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
-                <div @click="call()">
-                    <q-card :class="{ 'home-card-inactive': !isCallAvailable,
-                        'home-card-active': isCallAvailable }"
+                <div @click="screenShare()">
+                    <q-card :class="{ 'home-card-inactive': !isCallAvailable || isMobile,
+                        'home-card-active': isCallAvailable && !isMobile }"
                         class="no-margin"
                         flat>
                         <q-card-main align="center">
@@ -100,7 +100,7 @@
     import CscPage from '../CscPage'
     import CscCall from '../CscCall'
     import { mapGetters } from 'vuex'
-    import { QCard, QCardMain, QCardActions, QIcon } from 'quasar-framework'
+    import { QCard, QCardMain, QCardActions, QIcon, Platform } from 'quasar-framework'
     import { showGlobalWarning } from '../../helpers/ui'
 
     export default {
@@ -119,11 +119,21 @@
         computed: {
             ...mapGetters('call', [
                 'isCallAvailable'
-            ])
+            ]),
+            isMobile() {
+                return Platform.is.mobile;
+            }
         },
         methods: {
             call() {
                 if(this.isCallAvailable) {
+                    this.$store.commit('layout/showRight');
+                } else {
+                    showGlobalWarning(this.$i18n.t('pages.home.featureNotAvailable'));
+                }
+            },
+            screenShare() {
+                if(this.isCallAvailable && !this.isMobile) {
                     this.$store.commit('layout/showRight');
                 } else {
                     showGlobalWarning(this.$i18n.t('pages.home.featureNotAvailable'));
