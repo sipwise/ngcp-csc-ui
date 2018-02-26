@@ -30,10 +30,10 @@
             <q-card-main>
 
                 <div class="csc-call-info">
-                    <q-field v-if="isPreparing" :helper="$t('call.inputNumber')" :count="64" dark
+                    <q-field v-show="isPreparing" :helper="$t('call.inputNumber')" :count="64" dark
                              :error="validationEnabled && phoneNumberError" :error-label="$t('call.inputValidNumber')">
                         <q-input :float-label="$t('call.number')" v-model.trim="formattedPhoneNumber"
-                                 dark clearable max="64" @blur="phoneNumberBlur()" @focus="phoneNumberFocus()"/>
+                                 ref="numberInput" dark clearable max="64" @blur="phoneNumberBlur()" @focus="phoneNumberFocus()"/>
                     </q-field>
                     <div v-if="!isPreparing" class="phone-number">
                         <q-icon v-if="isCalling && (localMediaType == 'audioVideo' || remoteMediaType == 'audioVideo')"
@@ -73,6 +73,7 @@
 </template>
 
 <script>
+    import Vue from 'vue';
     import _ from 'lodash';
     import { mapState, mapGetters } from 'vuex'
     import CscMedia from './CscMedia'
@@ -92,14 +93,6 @@
                 validationEnabled: false
             }
         },
-        updated() {
-            if(this.$store.state.call.callState === 'incoming' ||
-                this.$store.state.call.callState === 'ringing') {
-                this.$refs.incomingSound.play();
-            } else {
-                this.$refs.incomingSound.pause();
-            }
-        },
         components: {
             QLayout,
             QCard,
@@ -116,6 +109,14 @@
             Dialog
         },
         methods: {
+            focusNumberInput() {
+                Vue.nextTick(() => {
+                    this.$refs.numberInput.focus();
+                });
+            },
+            blurNumberInput() {
+                this.$refs.numberInput.blur();
+            },
             init() {
                 this.phoneNumber = '';
                 this.validationEnabled = false;
@@ -278,16 +279,24 @@
                 'localMediaType',
                 'remoteMediaType',
                 'isCaller',
-                'isCallee'
+                'isCallee',
+                'callState'
             ]),
             isMobile() {
                 return Platform.is.mobile;
             }
         },
         watch: {
-            isIncoming(value) {
-                if(value) {
+            callState(state) {
+                if(state === 'incoming') {
                     showCallNotification(numberFormat(this.getNumber));
+                    this.$refs.incomingSound.play();
+                } else if (state === 'input') {
+                    this.focusNumberInput();
+                } else if (state === 'ringing') {
+                    this.$refs.incomingSound.play();
+                } else {
+                    this.$refs.incomingSound.pause();
                 }
             }
         }

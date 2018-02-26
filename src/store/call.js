@@ -124,6 +124,9 @@ export default {
         },
         isCallee(state) {
             return state.callee;
+        },
+        callState(state) {
+            return state.callState;
         }
     },
     mutations: {
@@ -284,6 +287,12 @@ export default {
         enableVideo(context) {
             Vue.call.enableVideo();
             context.commit('enableVideo');
+        },
+        showCall(context) {
+            context.commit('layout/showRight', null, { root: true });
+        },
+        hideCall() {
+            context.commit('layout/hideRight', null, { root: true });
         }
     }
 };
