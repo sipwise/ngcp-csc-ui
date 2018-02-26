@@ -124,7 +124,7 @@
         methods: {
             call() {
                 if(this.isCallAvailable) {
-                    this.$store.commit('layout/showRight');
+                    this.$store.dispatch('call/showCall');
                 } else {
                     showGlobalWarning(this.$i18n.t('pages.home.featureNotAvailable'));
                 }

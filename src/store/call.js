@@ -284,6 +284,12 @@ export default {
         enableVideo(context) {
             Vue.call.enableVideo();
             context.commit('enableVideo');
+        },
+        showCall(context) {
+            context.commit('layout/showRight', null, { root: true });
+        },
+        hideCall() {
+            context.commit('layout/hideRight', null, { root: true });
         }
     }
 };

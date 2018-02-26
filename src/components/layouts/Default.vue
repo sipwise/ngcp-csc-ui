@@ -238,8 +238,7 @@
                 this.$store.commit('layout/toggleFullscreen');
             },
             call() {
-                this.$store.commit('layout/showRight');
-                this.$refs.cscCall.init();
+                this.$store.dispatch('call/showCall');
             },
             logout() {
                 startLoading();
@@ -262,8 +261,10 @@
             applyLayout() {
                 if(this.right) {
                     this.$refs.layout.showRight();
+                    this.$refs.cscCall.focusNumberInput();
                 } else {
                     this.$refs.layout.hideRight();
+                    this.$refs.cscCall.blurNumberInput();
                 }
                 if(this.left) {
                     this.$refs.layout.showLeft();
@@ -276,8 +277,10 @@
             right(value) {
                 if(value) {
                     this.$refs.layout.showRight();
+                    this.$refs.cscCall.focusNumberInput();
                 } else {
                     this.$refs.layout.hideRight();
+                    this.$refs.cscCall.blurNumberInput();
                 }
             },
             left(value) {

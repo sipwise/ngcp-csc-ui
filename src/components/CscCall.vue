@@ -32,7 +32,7 @@
                 <div class="csc-call-info">
                     <q-field v-if="isPreparing" :helper="$t('call.inputNumber')" :count="64" dark
                              :error="validationEnabled && phoneNumberError" :error-label="$t('call.inputValidNumber')">
-                        <q-input :float-label="$t('call.number')" v-model.trim="formattedPhoneNumber"
+                        <q-input :float-label="$t('call.number')" v-model.trim="formattedPhoneNumber" ref="numberInput"
                                  dark clearable max="64" @blur="phoneNumberBlur()" @focus="phoneNumberFocus()"/>
                     </q-field>
                     <div v-if="!isPreparing" class="phone-number">
@@ -116,11 +116,22 @@
             Dialog
         },
         methods: {
+            focusNumberInput() {
+                if(this.isPreparing) {
+                    this.$refs.numberInput.focus();
+                }
+            },
+            blurNumberInput() {
+                if(this.isPreparing) {
+                    this.$refs.numberInput.blur();
+                }
+            },
             init() {
                 this.phoneNumber = '';
                 this.validationEnabled = false;
                 this.phoneNumberError = false;
                 this.$store.commit('call/inputNumber');
+                this.$refs.numberInput.focus();
             },
             phoneNumberFocus() {
                 this.validationEnabled = true;
