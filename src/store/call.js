@@ -32,7 +32,8 @@ export default {
         videoEnabled: true,
         muted: false,
         caller: false,
-        callee: false
+        callee: false,
+        desktopSharingInstall: false
     },
     getters: {
         getNumber(state, getters) {
@@ -127,6 +128,9 @@ export default {
         },
         callState(state) {
             return state.callState;
+        },
+        desktopSharingInstall(state) {
+            return state.desktopSharingInstall;
         }
     },
     mutations: {
@@ -209,6 +213,12 @@ export default {
         },
         unmute(state) {
             state.muted = false;
+        },
+        desktopSharingInstallReset(state)  {
+            state.desktopSharingInstall = false;
+        },
+        desktopSharingInstall(state)  {
+            state.desktopSharingInstall = true;
         }
     },
     actions: {
@@ -242,6 +252,7 @@ export default {
             });
         },
         start(context, options) {
+            context.commit('desktopSharingInstallReset');
             context.commit('layout/showRight', null, { root: true });
             context.commit('startCalling', { number: options.number });
             Promise.resolve().then(()=>{
@@ -254,18 +265,28 @@ export default {
                     context.commit('stopRinging');
                 }).start(options.number, localMediaStream);
             }).catch((err)=>{
-                context.commit('endCall', err.name);
-                console.error(err);
                 Vue.call.end();
+                if(err.message === 'plugin not detected') {
+                    context.commit('desktopSharingInstall');
+                    context.commit('endCall', 'missingDesktopSharingExtension');
+                } else {
+                    context.commit('endCall', err.name);
+                }
             });
         },
         accept(context, localMedia) {
+            context.commit('desktopSharingInstallReset');
             Vue.call.createLocalMedia(localMedia).then((localMediaStream)=>{
                 Vue.call.accept(localMediaStream);
                 context.commit('localMediaSuccess', localMediaStream);
             }).catch((err)=>{
                 Vue.call.end();
-                context.commit('endCall', 'localMediaError');
+                if(err.message === 'plugin not detected') {
+                    context.commit('desktopSharingInstall');
+                    context.commit('endCall', 'missingDesktopSharingExtension');
+                } else {
+                    context.commit('endCall', err.name);
+                }
             });
         },
         hangUp(context) {

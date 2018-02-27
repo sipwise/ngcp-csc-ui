@@ -206,7 +206,8 @@
         "notificationTitle": "Incoming call from {number}",
         "notificationBlocked": "You have blocked incoming call notifications.",
         "notificationFailed": "Could not enable incoming call notifications.",
-        "notificationNotSupported": "Incoming call notifications are not supported."
+        "notificationNotSupported": "Incoming call notifications are not supported.",
+        "desktopSharingNotInstalled": "Desktop sharing extension for chrome is not installed."
     },
     "pbxConfig": {
         "seat": "Seat",

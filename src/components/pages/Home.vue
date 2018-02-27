@@ -146,7 +146,7 @@
     }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 @import '~variables'
     .q-card-actions
         font-size 22px

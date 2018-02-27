@@ -29,6 +29,11 @@
             </q-card-title>
             <q-card-main>
 
+                <q-alert v-if="desktopSharingInstall" v-model="desktopSharingInstall"
+                         color="warning" :actions="desktopSharingAlertActions">
+                    {{ $t('call.desktopSharingNotInstalled') }}
+                </q-alert>
+
                 <div class="csc-call-info">
                     <q-field v-show="isPreparing" :helper="$t('call.inputNumber')" :count="64" dark
                              :error="validationEnabled && phoneNumberError" :error-label="$t('call.inputValidNumber')">
@@ -78,7 +83,7 @@
     import { mapState, mapGetters } from 'vuex'
     import CscMedia from './CscMedia'
     import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
-        QCardActions, QBtn, QIcon, Loading, Alert, QSpinnerRings, Dialog, Platform } from 'quasar-framework'
+        QCardActions, QBtn, QIcon, Loading, Alert, QSpinnerRings, Dialog, Platform, QAlert } from 'quasar-framework'
     import { normalizeNumber, rawNumber } from '../filters/number-format'
     import numberFormat from '../filters/number-format'
     import { showCallNotification } from '../helpers/ui'
@@ -106,7 +111,8 @@
             QIcon,
             QSpinnerRings,
             CscMedia,
-            Dialog
+            Dialog,
+            QAlert
         },
         methods: {
             focusNumberInput() {
@@ -280,10 +286,29 @@
                 'remoteMediaType',
                 'isCaller',
                 'isCallee',
-                'callState'
+                'callState',
+                'desktopSharingInstall'
             ]),
             isMobile() {
                 return Platform.is.mobile;
+            },
+            desktopSharingAlertActions() {
+                var self = this;
+                return [
+                    {
+                        label: 'Install',
+                        handler () {
+                            self.$store.commit('call/desktopSharingInstallReset');
+                            window.open('https://chrome.google.com/webstore/detail/sipwise-desktop-sharing/pijbeibohoabifpookfeljlmkpedpcne');
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        handler () {
+                            self.$store.commit('call/desktopSharingInstallReset');
+                        }
+                    }
+                ]
             }
         },
         watch: {
@@ -368,6 +393,10 @@
         left: 0;
         width: 25%;
         z-index: 10;
+    }
+
+    .csc-call .q-alert-container {
+        margin-bottom: 16px;
     }
 
 </style>
