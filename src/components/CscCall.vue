@@ -318,6 +318,7 @@
                     this.$refs.incomingSound.play();
                 } else if (state === 'input') {
                     this.focusNumberInput();
+                    this.$refs.incomingSound.pause();
                 } else if (state === 'ringing') {
                     this.$refs.incomingSound.play();
                 } else {
