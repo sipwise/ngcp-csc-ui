@@ -22,28 +22,30 @@ export default {
         userDataError: null
     },
     getters: {
-        isLogged(state, getters) {
+        isLogged(state) {
             return !_.isEmpty(state.jwt) && !_.isEmpty(state.subscriberId);
         },
-        hasUser(state, getters) {
+        hasUser(state) {
             return state.subscriber !== null;
         },
-        getUsername(state, getters) {
+        getUsername(state) {
             if(state.subscriber !== null && !_.isEmpty(state.subscriber.display_name)) {
                 return state.subscriber.display_name;
-            } else if (state.subscriber !== null) {
+            }
+            else if (state.subscriber !== null) {
                 return state.subscriber.username + "@" + state.subscriber.domain;
-            } else {
+            }
+            else {
                 return "";
             }
         },
-        isAdmin(state, getters) {
+        isAdmin(state) {
             return state.subscriber !== null && state.subscriber.administrative;
         },
         isPbxAdmin(state, getters) {
             return getters.isAdmin && state.capabilities !== null && state.capabilities.cloudpbx;
         },
-        hasSmsCapability(state, getters) {
+        hasSmsCapability(state) {
             return state.capabilities !== null &&
                 state.capabilities.sms  === true;
         },
@@ -53,20 +55,20 @@ export default {
         hasSendFaxFeature(state) {
             return state.features.sendFax;
         },
-        hasFaxCapability(state, getters) {
+        hasFaxCapability(state) {
             return state.capabilities !== null &&
                 state.capabilities.faxserver  === true;
         },
-        hasRtcEngineCapability(state, getters) {
+        hasRtcEngineCapability(state) {
             return state.capabilities !== null && _.has(state.capabilities, 'rtcengine');
         },
         hasRtcEngineCapabilityEnabled(state, getters) {
             return getters.hasRtcEngineCapability && state.capabilities.rtcengine === true;
         },
-        getSubscriberId(state, getters) {
+        getSubscriberId(state) {
             return state.subscriberId;
         },
-        loginRequesting(state, getters) {
+        loginRequesting(state) {
             return state.loginRequesting;
         },
         loginSucceeded(state) {
@@ -75,7 +77,7 @@ export default {
         loginError(state) {
             return state.loginError;
         },
-        userDataRequesting(state, getters) {
+        userDataRequesting(state) {
             return state.userDataRequesting;
         },
         userDataSucceeded(state) {
@@ -84,17 +86,19 @@ export default {
         jwtTTL(state) {
             let expirationBuffer = 0.05;
             try {
-                let jwtParts = state.jwt.split('\.');
+                let jwtParts = state.jwt.split('.');
                 let jwtPayload = JSON.parse(atob(jwtParts[1]));
                 if(_.isNumber(jwtPayload.exp)) {
                     let timeDiff = Math.floor((Date.now() / 1000) - jwtPayload.exp);
                     let timeLeft = Math.abs(timeDiff);
                     let timeLeftBuffer = Math.round(timeLeft * expirationBuffer);
                     return timeLeft - timeLeftBuffer;
-                } else {
+                }
+                else {
                     return null;
                 }
-            } catch(err) {
+            }
+            catch(err) {
                 return null;
             }
         }
@@ -161,7 +165,7 @@ export default {
                 context.commit('loginFailed', err.message);
             });
         },
-        logout(context) {
+        logout() {
             localStorage.removeItem('jwt');
             localStorage.removeItem('subscriberId');
             document.location.href = '/csc';

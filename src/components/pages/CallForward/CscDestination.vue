@@ -85,7 +85,8 @@
                 if (state === 'failed') {
                     stopLoading();
                     showGlobalError(this.changeDestinationError);
-                } else if (state === 'succeeded') {
+                }
+                else if (state === 'succeeded') {
                     stopLoading();
                 }
             }
@@ -112,9 +113,10 @@
                 let dest = destination.split(/:|@/);
                 if (dest[2] === 'fax2mail.local') {
                     return false;
-                } else {
+                }
+                else {
                     return !isNaN(dest[1]);
-                };
+                }
             },
             deleteDestination(index) {
                 let clonedDestinations = _.cloneDeep(this.destinations);
@@ -151,15 +153,19 @@
     }
 </script>
 
-<style lang="stylus">
-@import '~variables'
-.dest-row
-    .dest-values
-        font-weight 500
-.dest-btns
-    display inline-block
-.btnhidden
-    opacity 0
-.btnvisible
-    opacity 1
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables.styl'
+
+    .dest-row
+        .dest-values
+            font-weight 500
+
+    .dest-btns
+        display inline-block
+
+    .btnhidden
+        opacity 0
+
+    .btnvisible
+        opacity 1
 </style>

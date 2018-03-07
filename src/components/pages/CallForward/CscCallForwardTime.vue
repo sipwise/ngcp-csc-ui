@@ -96,7 +96,8 @@
                             }
                         ]
                     });
-                } else {
+                }
+                else {
                     Dialog.create({
                         title: self.$t('pages.callForward.times.removeDialogTitle'),
                         message: self.$t('pages.callForward.times.removeDialogText', {
@@ -122,5 +123,5 @@
     }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" rel="stylesheet/stylus">
 </style>

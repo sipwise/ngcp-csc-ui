@@ -20,18 +20,19 @@ export function getConversations(id, page, rows) {
                         item._id = id;
                         if (item._links['ngcp:voicemailrecordings']) {
                             item.voicemail = item._links['ngcp:voicemailrecordings'].href;
-                        };
+                        }
                         delete item._links;
                         if (item.type == 'call') {
                             item.type = item.call_type != 'call' ? 'callforward'
                                 : item.type;
-                        };
+                        }
                         list.push(item);
                     });
                     resolve(list);
-                } else {
+                }
+                else {
                     reject(new Error('No items returned for this page.'))
-                };
+                }
             }).catch(err => {
                 reject(err);
             });

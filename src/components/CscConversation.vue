@@ -58,11 +58,10 @@
                 </q-btn>
             </q-card-actions>
         </div>
-    </csc-collapsible-card>
+    </csc-card-collapsible>
 </template>
 
 <script>
-    import Vue from 'vue'
     import CscCardCollapsible from './card/CscCardCollapsible'
     import { QBtn, QPopover, QItem, QList, QCardActions,
         QChip, QCardSeparator } from 'quasar-framework'
@@ -103,32 +102,27 @@
                 switch (conversation.type) {
                     case 'call':
                         return 'phone';
-                        break;
                     case 'callforward':
                         return 'call_merge';
-                        break;
                     case 'voicemail':
                         return 'voicemail';
-                        break;
                     case 'fax':
                         return 'insert_drive_file';
-                        break; case 'sms':
+                    case 'sms':
                         return 'txtsms';
-                        break;
-                };
+                }
             },
             getSecondIcon() {
                 let conversation = this.conversation;
-                let directionIcon = conversation.direction == 'out' ?
-                    'call_made' : 'call_received';
-                return directionIcon;
+                return conversation.direction == 'out' ? 'call_made' : 'call_received';
             },
             getTitle() {
                 let conversation = this.conversation;
                 let prefix;
                 if (!conversation.status || ['ok', 'SUCCESS'].indexOf(conversation.status) > -1) {
                     prefix = this.$t('pages.conversations.labels.successful');
-                } else {
+                }
+                else {
                     prefix = this.$t('pages.conversations.labels.unsuccessful');
                 }
                 let direction = conversation.direction == 'in' ?
@@ -147,5 +141,5 @@
     }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" rel="stylesheet/stylus">
 </style>

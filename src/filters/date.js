@@ -1,5 +1,6 @@
-import { date } from 'quasar'
-const { formatDate } = date
+
+import { date } from 'quasar-framework'
+const { formatDate } = date;
 
 export default function(value) {
     var timeStamp = new Date(value);

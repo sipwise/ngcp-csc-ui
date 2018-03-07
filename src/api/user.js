@@ -21,7 +21,8 @@ export function login(username, password) {
         }).catch((err)=>{
             if(err.status && err.status >= 400) {
                 reject(new Error(err.body.message));
-            } else {
+            }
+            else {
                 reject(err);
             }
         });
@@ -76,7 +77,7 @@ export function assignNumber(numberId, subscriberId) {
     return new Promise((resolve, reject)=>{
         var headers = {};
         headers['Content-Type'] = 'application/json-patch+json';
-        Promise.resolve().then((result)=>{
+        Promise.resolve().then(() => {
             return Vue.http.patch('/api/numbers/' + numberId, [{
                 op: 'replace',
                 path: '/subscriber_id',
@@ -104,7 +105,8 @@ export function assignNumbers(numberIds, subscriberId) {
             }).catch((err)=>{
                 reject(err);
             });
-        } else {
+        }
+        else {
             resolve();
         }
     });
@@ -130,7 +132,8 @@ export function getNumbers() {
                         rows: body.total_count,
                     })
                 });
-            } else {
+            }
+            else {
                 return Promise.resolve(res);
             }
         }).then((res)=>{

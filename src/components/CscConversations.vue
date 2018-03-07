@@ -27,7 +27,7 @@
                 this.$store.dispatch('conversations/loadConversations')
                     .then(() => {
                         done();
-                    }).catch((err) => {
+                    }).catch(() => {
                         done();
                         this.$refs.infinite.stop();
                     });
@@ -36,5 +36,5 @@
     }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" rel="stylesheet/stylus">
 </style>

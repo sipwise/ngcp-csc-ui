@@ -1,5 +1,6 @@
 
-import Vue from 'vue';
+import _ from 'lodash';
+
 import { enableBlockIn, disableBlockIn,
     getPreferences, addToBlockInList,
     editBlockInList, removeFromBlockInList,
@@ -34,7 +35,8 @@ export function addNumberToIncomingList(id, number) {
     return new Promise((resolve, reject)=>{
         if(_.isEmpty(number)) {
             reject(new Error('Number may not be empty'));
-        } else {
+        }
+        else {
             addToBlockInList(id, number).then(()=>{
                 resolve();
             }).catch((err)=>{
@@ -89,7 +91,8 @@ export function addNumberToOutgoingList(id, number) {
     return new Promise((resolve, reject)=>{
         if(_.isEmpty(number)) {
             reject(new Error('Number may not be empty'));
-        } else {
+        }
+        else {
             addToBlockOutList(id, number).then(()=>{
                 resolve();
             }).catch((err)=>{

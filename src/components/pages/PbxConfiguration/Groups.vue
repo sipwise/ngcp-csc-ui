@@ -58,7 +58,7 @@
 
 <script>
 
-    import { startLoading, stopLoading, showGlobalError, showToast } from '../../../helpers/ui'
+    import { showGlobalError } from '../../../helpers/ui'
     import CscPage  from '../../CscPage'
     import CscPbxGroup  from './CscPbxGroup'
     import {
@@ -82,7 +82,6 @@
         QSpinnerMat,
         Dialog
     } from 'quasar-framework'
-    import { mapState } from 'vuex'
     import numberFilter from '../../../filters/number'
 
     export default {
@@ -165,7 +164,8 @@
                             type: this.$t('pbxConfig.group'),
                             name:  number.subscriber.display_name
                         });
-                    } else if (number.subscriber !== null && number.subscriber.display_name !== null) {
+                    }
+                    else if (number.subscriber !== null && number.subscriber.display_name !== null) {
                         owner = this.$t('pbxConfig.allocatedBy', {
                             type: this.$t('pbxConfig.seat'),
                             name:  number.subscriber.display_name
@@ -258,7 +258,6 @@
             },
             removeGroup(group) {
                 var store = this.$store;
-                var state = this;
                 var i18n = this.$i18n;
                 Dialog.create({
                     title: i18n.t('pbxConfig.removeGroupTitle'),
@@ -280,7 +279,7 @@
 </script>
 
 <style lang="stylus">
-    @import '../../../../src/themes/app.variables.styl';
+    @import '../../../themes/quasar.variables.styl';
     .add-form {
         position: relative;
     }

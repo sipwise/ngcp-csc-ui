@@ -1,7 +1,8 @@
 
+import _ from 'lodash';
 import Vue from 'vue';
 import { getJsonBody } from './utils';
-import { getNumbers, assignNumber, assignNumbers } from './user';
+import { getNumbers, assignNumbers } from './user';
 import { createSubscriber, deleteSubscriber } from './subscriber';
 import uuid from 'uuid';
 
@@ -27,7 +28,8 @@ export function getAllPbxSubscribers() {
                         rows: body.total_count,
                     })
                 });
-            } else {
+            }
+            else {
                 return Promise.resolve(body);
             }
         }).then(($subscribers)=>{
@@ -38,9 +40,11 @@ export function getAllPbxSubscribers() {
             subscribers.forEach((subscriber)=>{
                 if(_.has(subscriber, 'is_pbx_pilot') && subscriber.is_pbx_pilot === true) {
                     pilot = subscriber;
-                } else if(_.has(subscriber, 'is_pbx_group') && subscriber.is_pbx_group === true) {
+                }
+                else if(_.has(subscriber, 'is_pbx_group') && subscriber.is_pbx_group === true) {
                     groups.push(subscriber);
-                } else if (_.has(subscriber, 'pbx_extension') && subscriber.pbx_extension !== null) {
+                }
+                else if (_.has(subscriber, 'pbx_extension') && subscriber.pbx_extension !== null) {
                     seats.push(subscriber);
                 }
             });

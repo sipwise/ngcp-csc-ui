@@ -59,7 +59,7 @@ function patchReminder(id, field, value) {
                 'Content-Type': 'application/json-patch+json'
             }
         };
-        Vue.http.patch('/api/reminders/' + id, data, patchHeaders).then((result) => {
+        Vue.http.patch('/api/reminders/' + id, data, patchHeaders).then(() => {
             resolve();
         }).catch((err) => {
             reject(err);

@@ -137,7 +137,8 @@
             titleIcon() {
                 if(this.expanded) {
                     return 'keyboard arrow down';
-                } else {
+                }
+                else {
                     return 'keyboard arrow up';
                 }
             },
@@ -150,7 +151,6 @@
                 this.expanded = !this.expanded
             },
             remove() {
-                var store = this.$store;
                 var state = this;
                 var i18n = this.$i18n;
                 Dialog.create({
@@ -173,7 +173,7 @@
     }
 </script>
 
-<style>
+<style lang="stylus" rel="stylesheet/stylus">
     .csc-pbx-seat {
         position: relative;
     }

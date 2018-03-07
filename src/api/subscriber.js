@@ -17,7 +17,7 @@ export function setPreference(id, field, value) {
     return new Promise((resolve, reject)=>{
         var headers = {};
         headers['Content-Type'] = 'application/json-patch+json';
-        Promise.resolve().then((result)=>{
+        Promise.resolve().then(()=>{
             return Vue.http.patch('/api/subscriberpreferences/' + id, [{
                     op: 'replace',
                     path: '/'+ field,
@@ -36,7 +36,8 @@ export function setPreference(id, field, value) {
                 }).catch((err)=>{
                     reject(err);
                 });
-            } else {
+            }
+            else {
                 reject(err);
             }
         });
@@ -74,7 +75,7 @@ export function appendItemToArrayPreference(id, field, value) {
         }).then(()=>{
             resolve();
         }).catch((err)=>{
-            reject();
+            reject(err);
         });
     });
 }
@@ -89,7 +90,8 @@ export function editItemInArrayPreference(id, field, itemIndex, value) {
             if(_.isArray(prefs[field]) && itemIndex < prefs[field].length) {
                 prefs[field][itemIndex] = value;
                 return Vue.http.put('/api/subscriberpreferences/' + id, prefs);
-            } else {
+            }
+            else {
                 return Promise.reject(new Error('Array index does not exists'));
             }
         }).then(()=>{
@@ -115,7 +117,7 @@ export function removeItemFromArrayPreference(id, field, itemIndex) {
         }).then(()=>{
             resolve();
         }).catch((err)=>{
-            reject();
+            reject(err);
         });
     });
 }
@@ -191,7 +193,8 @@ export function createSubscriber(subscriber) {
         }).catch((err)=>{
             if(err.status >= 400) {
                 reject(new Error(err.body.message));
-            } else {
+            }
+            else {
                 reject(err);
             }
         });
@@ -200,12 +203,13 @@ export function createSubscriber(subscriber) {
 
 export function deleteSubscriber(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.delete('/api/subscribers/' + id).then((res)=>{
+        Vue.http.delete('/api/subscribers/' + id).then(()=>{
             resolve();
         }).catch((err)=>{
             if(err.status >= 400) {
                 reject(new Error(err.body.message));
-            } else {
+            }
+            else {
                 reject(err);
             }
         });

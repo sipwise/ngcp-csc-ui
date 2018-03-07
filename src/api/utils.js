@@ -6,7 +6,8 @@ export function getJsonBody(body) {
     if(_.isString(body)) {
         try {
             return JSON.parse(body);
-        } catch(err) {
+        }
+        catch(err) {
             return body;
         }
     }

@@ -19,7 +19,6 @@
 </template>
 
 <script>
-    import numberFormat from '../../../filters/number-format'
     import CscCallForwardTime from './CscCallForwardTime'
     import { QCard, QCardTitle, QCardMain, QCardActions,
         QField, QBtn } from 'quasar-framework'
@@ -51,28 +50,30 @@
     }
 </script>
 
-<style lang="stylus">
-@import '~variables'
-.times-title
-    color $primary
-    padding-left 5px
-    padding-bottom 8px
-.times-card
-     padding 0 15px
-    .q-field
-        margin 5px 0
-    .q-card-actions
-        padding-top 0
-        padding-left 10px
-    .q-card-main
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables.styl'
+
+    .times-title
+        color $primary
+        padding-left 5px
         padding-bottom 8px
-    .add-time
-        margin-left 14px
-    .row
-        p
-            font-size 0.9 rem
-            color $secondary
-            margin-bottom 0
-        .hour-label
-            text-align center
+
+    .times-card
+         padding 0 15px
+        .q-field
+            margin 5px 0
+        .q-card-actions
+            padding-top 0
+            padding-left 10px
+        .q-card-main
+            padding-bottom 8px
+        .add-time
+            margin-left 14px
+        .row
+            p
+                font-size 0.9 rem
+                color $secondary
+                margin-bottom 0
+            .hour-label
+                text-align center
 </style>

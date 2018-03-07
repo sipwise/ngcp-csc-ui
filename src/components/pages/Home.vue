@@ -128,14 +128,16 @@
             call() {
                 if(this.isCallAvailable) {
                     this.$store.dispatch('call/showCall');
-                } else {
+                }
+                else {
                     showGlobalWarning(this.$i18n.t('pages.home.featureNotAvailable'));
                 }
             },
             screenShare() {
                 if(this.isCallAvailable && !this.isMobile) {
                     this.$store.dispatch('call/showCall');
-                } else {
+                }
+                else {
                     showGlobalWarning(this.$i18n.t('pages.home.featureNotAvailable'));
                 }
             },
@@ -146,14 +148,17 @@
     }
 </script>
 
-<style lang="stylus" scoped>
-@import '~variables'
+<style lang="stylus" scoped rel="stylesheet/stylus">
+    @import '../../themes/quasar.variables.styl'
+
     .q-card-actions
         font-size 22px
         padding 0 10px 35px 10px
+
     .q-card-main
         font-size 22px
         padding-top 35px
+
     .home-card-active
         cursor pointer
         border solid 2px $primary
@@ -162,6 +167,7 @@
             color $primary
         .q-card-actions
             color $primary
+
     .home-card-inactive
         cursor not-allowed
         border solid 2px $grey
@@ -170,6 +176,7 @@
             color $grey
         .q-card-actions
             color $grey
+
     @media (max-width: $breakpoint-sm)
         .q-card-actions
             font-size 16px

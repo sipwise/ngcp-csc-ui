@@ -111,7 +111,7 @@
             aliasNumbers() {
                 let numbers = [];
                 if(_.isArray(this.group.alias_numbers)) {
-                    this.group.alias_numbers.forEach((number)=>{
+                    this.group.alias_numbers.forEach((number) => {
                         numbers.push(number.number_id);
                     });
                 }
@@ -120,7 +120,7 @@
             seats() {
                 let seats = [];
                 if(_.isArray(this.group.seats)) {
-                    this.group.seats.forEach((seat)=>{
+                    this.group.seats.forEach((seat) => {
                         seats.push(seat.id);
                     });
                 }
@@ -151,7 +151,8 @@
             titleIcon() {
                 if(this.expanded) {
                     return 'keyboard arrow down';
-                } else {
+                }
+                else {
                     return 'keyboard arrow up';
                 }
             },
@@ -163,7 +164,8 @@
             toggleMain() {
                 if(this.expanded) {
                     this.expanded = false;
-                } else {
+                }
+                else {
                     this.expanded = true;
                 }
             },
@@ -174,7 +176,7 @@
     }
 </script>
 
-<style>
+<style lang="stylus" rel="stylesheet/stylus">
     .csc-pbx-group {
         position: relative;
     }

@@ -2,7 +2,6 @@
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-
 import CallBlockingModule from './call-blocking'
 import CallForwardModule from './call-forward'
 import CallModule from './call'

@@ -37,11 +37,7 @@ export default {
             state.sides.left = false;
         },
         toggleFullscreen(state) {
-            if(state.fullscreenEnabled) {
-                state.fullscreenEnabled = false;
-            } else {
-                state.fullscreenEnabled = true;
-            }
+            state.fullscreenEnabled = !state.fullscreenEnabled;
         },
         enableFullscreen(state) {
             state.fullscreenEnabled = true;

@@ -13,7 +13,6 @@
     }
 </script>
 
-
 <style>
     .q-field-icon,
     .q-item-icon {

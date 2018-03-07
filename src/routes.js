@@ -1,61 +1,78 @@
 
+import DefaultLayout from './components/layouts/Default'
+import Home from './components/pages/Home'
+import Conversations from './components/pages/Conversations'
+import CallForwardAlways from './components/pages/CallForward/Always'
+import CallForwardCompanyHours from './components/pages/CallForward/CompanyHours'
+import CallForwardAfterHours from './components/pages/CallForward/AfterHours'
+import CallBlockingIncoming from './components/pages/CallBlocking/Incoming'
+import CallBlockingOutgoing from './components/pages/CallBlocking/Outgoing'
+import CallBlockingPrivacy from './components/pages/CallBlocking/Privacy'
+import Reminder from './components/pages/Reminder';
+import PbxConfigurationGroups from './components/pages/PbxConfiguration/Groups'
+import PbxConfigurationSeats from './components/pages/PbxConfiguration/Seats'
+import PbxConfigurationDevices from './components/pages/PbxConfiguration/Devices'
+import Login from './components/Login'
+import Error404 from './components/Error404'
+
 export default [
     {
         path: '/user',
-        component: require('./components/layouts/Default').default,
+        component: DefaultLayout,
         children: [
             {
                 path: 'home',
-                component: require('./components/pages/Home').default,
+                component: Home,
             },
             {
                 path: 'conversations',
-                component: require('./components/pages/Conversations').default,
+                component: Conversations,
             },
             {
                 path: 'call-forward/always',
-                component: require('./components/pages/CallForward/Always').default,
+                component: CallForwardAlways,
             },
             {
                 path: 'call-forward/company-hours',
-                component: require('./components/pages/CallForward/CompanyHours').default
+                component: CallForwardCompanyHours
             },
             {
                 path: 'call-forward/after-hours',
-                component: require('./components/pages/CallForward/AfterHours').default
+                component: CallForwardAfterHours
             },
             {
                 path: 'call-blocking/incoming',
-                component: require('./components/pages/CallBlocking/Incoming').default
+                component: CallBlockingIncoming
             },
             {
                 path: 'call-blocking/outgoing',
-                component: require('./components/pages/CallBlocking/Outgoing').default
+                component: CallBlockingOutgoing
             },
             {
                 path: 'call-blocking/privacy',
-                component: require('./components/pages/CallBlocking/Privacy').default
+                component: CallBlockingPrivacy
             },
             {
                 path: 'reminder',
-                component: require('./components/pages/Reminder').default},
+                component: Reminder
+            },
             {
                 path: 'pbx-configuration/groups',
-                component: require('./components/pages/PbxConfiguration/Groups').default
+                component: PbxConfigurationGroups
             },
             {
                 path: 'pbx-configuration/seats',
-                component: require('./components/pages/PbxConfiguration/Seats').default
+                component: PbxConfigurationSeats
             },
             {
                 path: 'pbx-configuration/devices',
-                component: require('./components/pages/PbxConfiguration/Devices').default
+                component: PbxConfigurationDevices
             }
         ]
     },
     {
         path: '/login',
-        component: require('./components/Login').default
+        component: Login
     },
     {
         path: '/',
@@ -63,6 +80,6 @@ export default [
     },
     {
         path: '*',
-        component: require('./components/Error404').default
+        component: Error404
     }
 ]

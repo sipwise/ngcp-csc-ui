@@ -1,5 +1,6 @@
 'use strict';
 
+import _ from 'lodash';
 import Vue from 'vue';
 
 export var CallState = {
@@ -36,64 +37,68 @@ export default {
         desktopSharingInstall: false
     },
     getters: {
-        getNumber(state, getters) {
+        getNumber(state) {
             return state.number;
         },
         localMediaType(state) {
             if(state.localMediaStream !== null && state.localMediaStream.hasAudio() && state.localMediaStream.hasVideo()) {
                 return MediaType.audioVideo;
-            } else if (state.localMediaStream !== null && state.localMediaStream.hasAudio()) {
+            }
+            else if (state.localMediaStream !== null && state.localMediaStream.hasAudio()) {
                 return MediaType.audioOnly;
-            } else {
+            }
+            else {
                 return null;
             }
         },
         remoteMediaType(state) {
             if(state.remoteMediaStream !== null && state.remoteMediaStream.hasAudio() && state.remoteMediaStream.hasVideo()) {
                 return MediaType.audioVideo;
-            } else if (state.remoteMediaStream !== null && state.remoteMediaStream.hasAudio()) {
+            }
+            else if (state.remoteMediaStream !== null && state.remoteMediaStream.hasAudio()) {
                 return MediaType.audioOnly;
-            } else {
+            }
+            else {
                 return null;
             }
         },
-        getEndedReason(state, getters) {
+        getEndedReason(state) {
             return state.endedReason;
         },
-        isNetworkConnected(state, getters) {
+        isNetworkConnected(state) {
             return state.initialized;
         },
         isCallAvailable(state, getters) {
             return getters.isNetworkConnected;
         },
-        hasCallInitFailure(state, getters) {
+        hasCallInitFailure(state) {
             return state.initError !== null && state.disabled === false;
         },
-        isPreparing(state, getters) {
+        isPreparing(state) {
             return state.callState === CallState.input;
         },
-        isInitiating(state, getters) {
+        isInitiating(state) {
             return state.callState === CallState.initiating;
         },
-        isIncoming(state, getters) {
+        isIncoming(state) {
             return state.callState === CallState.incoming;
         },
-        isTrying(state, getters) {
+        isTrying(state) {
             return state.callState === CallState.initiating ||
                 state.callState === CallState.ringing;
         },
-        isRinging(state, getters) {
+        isRinging(state) {
             return state.callState === CallState.ringing;
         },
-        isCalling(state, getters) {
+        isCalling(state) {
             return state.callState === CallState.initiating ||
                 state.callState === CallState.ringing ||
                 state.callState === CallState.established;
         },
-        isEstablished(state, getters) {
+        isEstablished(state) {
             return state.callState === CallState.established;
         },
-        isEnded(state, getters) {
+        isEnded(state) {
             return state.callState === CallState.ended;
         },
         hasRtcEngineCapability(state, getters, rootState, rootGetters) {
@@ -102,22 +107,22 @@ export default {
         hasRtcEngineCapabilityEnabled(state, getters, rootState, rootGetters) {
             return rootGetters['user/hasRtcEngineCapabilityEnabled'];
         },
-        hasRemoteVideo(state, getters) {
+        hasRemoteVideo(state) {
             return state.remoteMediaStream !== null && state.remoteMediaStream.hasVideo();
         },
-        hasLocalVideo(state, getters) {
+        hasLocalVideo(state) {
             return state.localMediaStream !== null && state.localMediaStream.hasVideo();
         },
         hasVideo(state, getters) {
             return getters.hasLocalVideo || getters.hasRemoteVideo;
         },
-        isAudioEnabled(state, getters) {
+        isAudioEnabled(state) {
             return state.audioEnabled;
         },
-        isVideoEnabled(state, getters) {
+        isVideoEnabled(state) {
             return state.videoEnabled;
         },
-        isMuted(state, getters) {
+        isMuted(state) {
             return state.muted;
         },
         isCaller(state) {
@@ -245,7 +250,8 @@ export default {
                         context.commit('initFailed', err);
                         reject(err);
                     });
-                } else {
+                }
+                else {
                     context.commit('disable');
                     resolve();
                 }
@@ -269,7 +275,8 @@ export default {
                 if(err.message === 'plugin not detected') {
                     context.commit('desktopSharingInstall');
                     context.commit('endCall', 'missingDesktopSharingExtension');
-                } else {
+                }
+                else {
                     context.commit('endCall', err.name);
                 }
             });
@@ -284,7 +291,8 @@ export default {
                 if(err.message === 'plugin not detected') {
                     context.commit('desktopSharingInstall');
                     context.commit('endCall', 'missingDesktopSharingExtension');
-                } else {
+                }
+                else {
                     context.commit('endCall', err.name);
                 }
             });
@@ -312,7 +320,7 @@ export default {
         showCall(context) {
             context.commit('layout/showRight', null, { root: true });
         },
-        hideCall() {
+        hideCall(context) {
             context.commit('layout/hideRight', null, { root: true });
         }
     }

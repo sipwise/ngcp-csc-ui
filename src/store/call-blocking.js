@@ -69,7 +69,8 @@ export default {
                     }).catch((err)=>{
                         reject(err);
                     });
-                } else {
+                }
+                else {
                     disableIncomingCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
                         context.commit('disableIncoming');
                         resolve();
@@ -131,7 +132,8 @@ export default {
                     }).catch((err)=>{
                         reject(err);
                     });
-                } else {
+                }
+                else {
                     disableOutgoingCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
                         context.commit('disableOutgoing');
                         resolve();
@@ -193,7 +195,8 @@ export default {
                     }).catch((err)=>{
                         reject(err);
                     });
-                } else {
+                }
+                else {
                     disablePrivacyCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
                         context.commit('disablePrivacy');
                         resolve();

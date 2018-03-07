@@ -110,8 +110,7 @@
 
 <script>
     import _ from 'lodash';
-    import { startLoading, stopLoading, showGlobalError,
-        showToast, showGlobalWarning, enableIncomingCallNotifications} from '../../helpers/ui'
+    import { startLoading, stopLoading, showToast, enableIncomingCallNotifications} from '../../helpers/ui'
     import { mapState, mapGetters } from 'vuex'
     import CscCall from '../CscCall'
     import {
@@ -142,7 +141,8 @@
             if(Platform.is.mobile) {
                 this.$store.commit('layout/hideLeft');
                 this.$store.commit('layout/enableFullscreen');
-            } else {
+            }
+            else {
                 this.$store.commit('layout/showLeft');
             }
             this.applyLayout();
@@ -216,14 +216,16 @@
             layoutView() {
                 if(this.isFullscreenEnabled) {
                     return 'lHr LpR lFr';
-                } else {
+                }
+                else {
                     return 'lHh LpR lFf';
                 }
             },
             fabOffset() {
                 if(Platform.is.mobile) {
                     return [16, 17];
-                } else {
+                }
+                else {
                     return [48, 17];
                 }
             },
@@ -251,7 +253,8 @@
                 if(this.right) {
                     this.$store.commit('layout/showRight');
                     this.$store.commit('layout/hideLeft');
-                } else {
+                }
+                else {
                     this.$store.commit('layout/hideRight');
                 }
             },
@@ -262,13 +265,15 @@
                 if(this.right) {
                     this.$refs.layout.showRight();
                     this.$refs.cscCall.focusNumberInput();
-                } else {
+                }
+                else {
                     this.$refs.layout.hideRight();
                     this.$refs.cscCall.blurNumberInput();
                 }
                 if(this.left) {
                     this.$refs.layout.showLeft();
-                } else {
+                }
+                else {
                     this.$refs.layout.hideLeft();
                 }
             }
@@ -278,7 +283,8 @@
                 if(value) {
                     this.$refs.layout.showRight();
                     this.$refs.cscCall.focusNumberInput();
-                } else {
+                }
+                else {
                     this.$refs.layout.hideRight();
                     this.$refs.cscCall.blurNumberInput();
                 }
@@ -286,7 +292,8 @@
             left(value) {
                 if(value) {
                     this.$refs.layout.showLeft();
-                } else {
+                }
+                else {
                     this.$refs.layout.hideLeft();
                 }
             },
@@ -315,9 +322,8 @@
     }
 </script>
 
-<style lang="stylus">
-    @import '../../../src/themes/app.variables.styl';
-    @import '../../../src/themes/quasar.variables.styl';
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../themes/quasar.variables.styl';
 
     #main-menu {
         padding-top:60px;
