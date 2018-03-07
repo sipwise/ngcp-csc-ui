@@ -8,12 +8,14 @@ export default function(number, extension) {
     let finalNumber;
     if(_.isString(normalizedNumber)) {
         finalNumber = normalizedNumber;
-    } else {
+    }
+    else {
         finalNumber = constructedNumber;
     }
     if(extension) {
         return finalNumber.replace(new RegExp(extension + '$'), '');
-    } else {
+    }
+    else {
         return finalNumber;
     }
 

@@ -42,9 +42,7 @@
 <script>
 
     import _ from 'lodash'
-    import { startLoading, stopLoading,
-        showGlobalError, showToast } from '../../../helpers/ui'
-    import { normalizeTerminationInput } from '../../../filters/number-format'
+    import { startLoading } from '../../../helpers/ui'
     import { mapGetters, mapState } from 'vuex'
     import { QItem, Toast, QBtn, QSelect, QPopover, QList,
         QField, QInput, QSlider } from 'quasar-framework'
@@ -126,9 +124,11 @@
                 this.$store.dispatch('callForward/setPriority', lastDestination.priority || 1);
                 if (type === 'voicebox') {
                     this.destinationForm.destination = 'Voicemail';
-                } else if (type === 'fax2mail') {
+                }
+                else if (type === 'fax2mail') {
                     this.destinationForm.destination = 'Fax2Mail';
-                } else {
+                }
+                else {
                     this.destinationForm.destination = '';
                 }
             },
@@ -152,11 +152,12 @@
     }
 </script>
 
-<style lang="stylus">
-@import '~variables'
-.add-destination-form
-    margin 0 15px
-    .q-slider.label-always
-        padding 15px 0 5px
-        height 50px
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables.styl'
+
+    .add-destination-form
+        margin 0 15px
+        .q-slider.label-always
+            padding 15px 0 5px
+            height 50px
 </style>

@@ -1,6 +1,6 @@
 <template>
     <csc-page :title="$t('pages.conversations.title')">
-        <csc-conversations :conversations="conversations"></csc-conversation>
+        <csc-conversations :conversations="conversations" />
     </csc-page>
 </template>
 
@@ -24,8 +24,7 @@
     }
 </script>
 
-<style lang="stylus">
-@import '~variables'
-.q-infinite-scroll-message
-    margin-bottom 50px
+<style lang="stylus" rel="stylesheet/stylus">
+    .q-infinite-scroll-message
+        margin-bottom 50px
 </style>

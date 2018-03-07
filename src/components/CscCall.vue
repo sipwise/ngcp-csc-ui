@@ -80,10 +80,10 @@
 <script>
     import Vue from 'vue';
     import _ from 'lodash';
-    import { mapState, mapGetters } from 'vuex'
+    import { mapGetters } from 'vuex'
     import CscMedia from './CscMedia'
     import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
-        QCardActions, QBtn, QIcon, Loading, Alert, QSpinnerRings, Dialog, Platform, QAlert } from 'quasar-framework'
+        QCardActions, QBtn, QIcon, QSpinnerRings, Dialog, Platform, QAlert } from 'quasar-framework'
     import { normalizeNumber, rawNumber } from '../filters/number-format'
     import numberFormat from '../filters/number-format'
     import { showCallNotification } from '../helpers/ui'
@@ -143,7 +143,8 @@
                         number: this.phoneNumber,
                         localMedia: localMedia
                     });
-                } else {
+                }
+                else {
                     this.phoneNumberError = true;
                 }
             },
@@ -161,7 +162,8 @@
                 if(this.isPreparing || this.isEnded) {
                     this.init();
                     this.$emit('close');
-                } else {
+                }
+                else {
                     Dialog.create({
                         title: this.$t('call.endCall'),
                         message: this.$t('call.endCallDialog'),
@@ -188,21 +190,24 @@
             toggleAudio() {
                 if(this.isAudioEnabled) {
                     this.$store.dispatch('call/disableAudio');
-                } else {
+                }
+                else {
                     this.$store.dispatch('call/enableAudio');
                 }
             },
             toggleVideo() {
                 if(this.isVideoEnabled) {
                     this.$store.dispatch('call/disableVideo');
-                } else {
+                }
+                else {
                     this.$store.dispatch('call/enableVideo');
                 }
             },
             toggleMute() {
                 if(this.isMuted) {
                     this.$store.commit('call/unmute');
-                } else {
+                }
+                else {
                     this.$store.commit('call/mute');
                 }
             },
@@ -217,21 +222,24 @@
             toggleAudioIcon() {
                 if(this.isAudioEnabled) {
                     return 'mic'
-                } else {
+                }
+                else {
                     return 'mic off';
                 }
             },
             toggleVideoIcon() {
                 if(this.isVideoEnabled) {
                     return 'videocam'
-                } else {
+                }
+                else {
                     return 'videocam off';
                 }
             },
             toggleMuteIcon() {
                 if(this.isMuted) {
                     return 'volume off'
-                } else {
+                }
+                else {
                     return 'volume up';
                 }
             },
@@ -255,14 +263,16 @@
             localMediaStream() {
                 if(this.$store.state.call.localMediaStream !== null) {
                     return this.$store.state.call.localMediaStream.getStream();
-                } else {
+                }
+                else {
                     return null;
                 }
             },
             remoteMediaStream() {
                 if(this.$store.state.call.remoteMediaStream !== null) {
                     return this.$store.state.call.remoteMediaStream.getStream();
-                } else {
+                }
+                else {
                     return null;
                 }
             },
@@ -316,12 +326,15 @@
                 if(state === 'incoming') {
                     showCallNotification(numberFormat(this.getNumber));
                     this.$refs.incomingSound.play();
-                } else if (state === 'input') {
+                }
+                else if (state === 'input') {
                     this.focusNumberInput();
                     this.$refs.incomingSound.pause();
-                } else if (state === 'ringing') {
+                }
+                else if (state === 'ringing') {
                     this.$refs.incomingSound.play();
-                } else {
+                }
+                else {
                     this.$refs.incomingSound.pause();
                 }
             }
@@ -330,8 +343,7 @@
 </script>
 
 <style lang="stylus">
-    @import '../../src/themes/app.variables.styl';
-    @import '../../src/themes/quasar.variables.styl';
+    @import '../themes/quasar.variables.styl';
 
     .csc-call {
         width: inherit;

@@ -12,5 +12,5 @@
     export default {}
 </script>
 
-<style>
+<style rel="stylesheet/stylus">
 </style>

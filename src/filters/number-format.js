@@ -2,8 +2,7 @@
 import _ from 'lodash';
 import url from 'url';
 import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
-import { format } from 'quasar-framework'
-const { capitalize } = format;
+
 var phoneUtil = PhoneNumberUtil.getInstance();
 
 export default function numberFormat(number) {
@@ -13,10 +12,12 @@ export default function numberFormat(number) {
         let normalizedNumber = normalizeNumber(extractedNumber);
         if(normalizedNumber !== extractedNumber) {
             return normalizedNumber;
-        } else {
+        }
+        else {
             return extractedNumber;
         }
-    } catch(err) {
+    }
+    catch(err) {
         return normalizeNumber(number);
     }
 }
@@ -30,13 +31,16 @@ export function normalizeNumber(number) {
             }
             try {
                 return phoneUtil.format(phoneUtil.parse(normalizedNumber, 'DE'), PhoneNumberFormat.INTERNATIONAL);
-            } catch(err) {
+            }
+            catch(err) {
                 return normalizedNumber;
             }
-        } else {
+        }
+        else {
             return number;
         }
-    } else {
+    }
+    else {
         return number;
     }
 }
@@ -57,20 +61,27 @@ export function normalizeDestination(destination) {
         let isNumber = normalizedNumber !== authParts[0];
         if (host === 'voicebox.local') {
             return 'Voicemail';
-        } else if (host === 'fax2mail.local') {
+        }
+        else if (host === 'fax2mail.local') {
             return 'Fax2Mail';
-        } else if (host === 'managersecretary.local') {
+        }
+        else if (host === 'managersecretary.local') {
             return 'Manager Secretary';
-        } else if (authParts[0] === 'custom-hours') {
+        }
+        else if (authParts[0] === 'custom-hours') {
             return 'Custom Announcement';
-        } else if (host === 'app.local') {
+        }
+        else if (host === 'app.local') {
             return _.capitalize(authParts[0]);
-        } else if (!isNumber) {
+        }
+        else if (!isNumber) {
             return _.capitalize(host.split('.')[0]);
-        } else {
+        }
+        else {
             return normalizedNumber;
         }
-    } catch(err) {
+    }
+    catch(err) {
         return normalizeNumber(destination);
     }
 }
@@ -78,9 +89,11 @@ export function normalizeDestination(destination) {
 export function normalizeTerminationInput(destination) {
     if (destination === 'Voicemail') {
         return 'voicebox';
-    } else if (destination = 'Fax2Mail') {
+    }
+    else if (destination === 'Fax2Mail') {
         return 'fax2mail';
-    } else {
+    }
+    else {
         return destination;
     }
 }

@@ -1,6 +1,7 @@
 
 import _ from 'lodash';
-import { getPbxConfiguration, addGroup, removeGroup, addSeat, removeSeat } from '../api/pbx-config'
+import { getPbxConfiguration, addGroup,
+    removeGroup, addSeat, removeSeat } from '../api/pbx-config'
 
 const ListState = {
     initiated: 'initiated',
@@ -48,13 +49,13 @@ export default {
         removeSeatItem: null
     },
     getters: {
-        groups(state, getters) {
+        groups(state) {
             return state.groupsOrdered;
         },
-        seats(state, getters) {
+        seats(state) {
             return state.seatsOrdered;
         },
-        numbers(state, getters) {
+        numbers(state) {
             return _.get(state, 'numbers', []);
         },
         primaryNumbers(state, getters) {
@@ -117,11 +118,14 @@ export default {
                 all.numbers.forEach((number)=>{
                     if(_.has(state.groups, number.subscriber_id)) {
                         number.subscriber = state.groups[number.subscriber_id];
-                    } else if (_.has(state.seats, number.subscriber_id)) {
+                    }
+                    else if (_.has(state.seats, number.subscriber_id)) {
                         number.subscriber = state.seats[number.subscriber_id];
-                    } else if (state.pilot.id === number.subscriber_id) {
+                    }
+                    else if (state.pilot.id === number.subscriber_id) {
                         number.subscriber = state.pilot;
-                    } else {
+                    }
+                    else {
                         number.subscriber = null;
                     }
                     state.numbersMap[number.id] = number;

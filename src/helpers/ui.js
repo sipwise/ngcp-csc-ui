@@ -1,4 +1,5 @@
 
+import _ from 'lodash'
 import { Loading, Alert, Toast } from 'quasar-framework'
 import { i18n } from '../i18n';
 
@@ -33,7 +34,7 @@ export function showGlobalWarning(message) {
 }
 
 export function showPermanentGlobalWarning(message) {
-    const alert = Alert.create({
+    Alert.create({
         html: message,
         position: 'top-center',
         enter: 'bounceIn',
@@ -62,7 +63,8 @@ export function askForNotificationPermission() {
             }).catch((err)=>{
                 reject(err);
             });
-        } else {
+        }
+        else {
             showPermanentGlobalWarning(i18n.t('call.notificationNotSupported'));
             resolve();
         }
@@ -71,11 +73,12 @@ export function askForNotificationPermission() {
 
 var serviceWorkerPath = '/csc/statics/service-worker.js';
 export function enableIncomingCallNotifications() {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve)=>{
         Promise.resolve().then(()=>{
             if(navigator.serviceWorker) {
                 return navigator.serviceWorker.register(serviceWorkerPath);
-            } else {
+            }
+            else {
                 showPermanentGlobalWarning(i18n.t('call.notificationNotSupported'));
                 resolve();
             }

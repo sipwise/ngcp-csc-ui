@@ -120,8 +120,8 @@
     }
 </script>
 
-<style lang="stylus">
-    @import '../../../../src/themes/app.variables.styl';
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables.styl';
     .add-form {
         position: relative;
     }

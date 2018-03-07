@@ -32,10 +32,12 @@
                 if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
                     !_.isUndefined(this.$refs.media.srcObject)) {
                     this.$refs.media.srcObject = this.currentStream;
-                } else if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
+                }
+                else if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
                     !_.isUndefined(this.$refs.media.mozSrcObject)) {
                     this.$refs.media.mozSrcObject = this.currentStream;
-                } else if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
+                }
+                else if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
                     _.isObject(URL) && _.isFunction(URL.createObjectURL)) {
                     this.$refs.media.src = URL.createObjectURL(this.currentStream);
                 }
@@ -67,7 +69,7 @@
     }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" rel="stylesheet/stylus">
     .csc-media {
         position: relative;
     }

@@ -40,7 +40,7 @@ export class CallAlreadyExists {
 var rtcEngineCallInstance = null;
 export class RtcEngineCall {
 
-    constructor(options) {
+    constructor() {
         this.networkTag = 'sip';
         this.network = null;
         this.loadedLibrary = null;
@@ -123,14 +123,16 @@ export class RtcEngineCall {
                 if (hasVideo && _.isObject(sources.defaultVideo)) {
                     sources.defaultVideo.setQuality(cdk.MediaSourceQuality.HD);
                     this.localMedia.setVideo(sources.defaultVideo);
-                } else if (hasScreen && _.isObject(sources.desktopSharing)) {
+                }
+                else if (hasScreen && _.isObject(sources.desktopSharing)) {
                     sources.desktopSharing.setQuality(cdk.MediaSourceQuality.HD);
                     this.localMedia.setVideo(sources.desktopSharing);
                 }
                 this.localMedia.build((err)=>{
                     if(_.isObject(err)) {
                         reject(err);
-                    } else {
+                    }
+                    else {
                         resolve(this.localMedia);
                     }
                 });
@@ -160,9 +162,11 @@ export class RtcEngineCall {
             }).onRingingStop(()=>{
                 this.events.emit('ringingStop');
             });
-        } else if(this.network !== null)  {
+        }
+        else if(this.network !== null)  {
             throw new CallAlreadyExists();
-        } else {
+        }
+        else {
             throw new NetworkNotConnected(this.networkTag);
         }
     }
@@ -170,9 +174,11 @@ export class RtcEngineCall {
     getNumber() {
         if(this.localCall !== null) {
             return this.localCall.peer;
-        } else if(this.remoteCall !== null) {
+        }
+        else if(this.remoteCall !== null) {
             return this.remoteCall.peer;
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -184,9 +190,11 @@ export class RtcEngineCall {
     fetchEndedReason() {
         if(this.localCall !== null) {
             return this.localCall.endedReason;
-        } else if(this.remoteCall !== null) {
+        }
+        else if(this.remoteCall !== null) {
             return this.remoteCall.endedReason;
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -236,7 +244,8 @@ export class RtcEngineCall {
             this.remoteCall.accept({
                 localMediaStream: localMediaStream
             });
-        } else {
+        }
+        else {
             throw new Error('Remote call does not exist');
         }
     }
@@ -264,7 +273,8 @@ export class RtcEngineCall {
     disableAudio() {
         if(this.localCall !== null) {
             this.localCall.disableAudio();
-        } else if (this.remoteCall !== null) {
+        }
+        else if (this.remoteCall !== null) {
             this.remoteCall.disableAudio();
         }
     }
@@ -272,7 +282,8 @@ export class RtcEngineCall {
     enableAudio() {
         if(this.localCall !== null) {
             this.localCall.enableAudio();
-        } else if (this.remoteCall !== null) {
+        }
+        else if (this.remoteCall !== null) {
             this.remoteCall.enableAudio();
         }
     }
@@ -280,7 +291,8 @@ export class RtcEngineCall {
     disableVideo() {
         if(this.localCall !== null) {
             this.localCall.disableVideo();
-        } else if (this.remoteCall !== null) {
+        }
+        else if (this.remoteCall !== null) {
             this.remoteCall.disableVideo();
         }
     }
@@ -288,7 +300,8 @@ export class RtcEngineCall {
     enableVideo() {
         if(this.localCall !== null) {
             this.localCall.enableVideo();
-        } else if (this.remoteCall !== null) {
+        }
+        else if (this.remoteCall !== null) {
             this.remoteCall.enableVideo();
         }
     }
@@ -296,9 +309,11 @@ export class RtcEngineCall {
     getCall() {
         if(this.localCall !== null) {
             return this.localCall;
-        } else if (this.remoteCall !== null) {
+        }
+        else if (this.remoteCall !== null) {
             return this.remoteCall;
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -318,7 +333,7 @@ export class RtcEngineCall {
         return rtcEngineCallInstance;
     }
 
-    static install(Vue, options) {
+    static install(Vue) {
         Vue.call = RtcEngineCall.getInstance();
     }
 }

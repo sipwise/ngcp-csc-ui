@@ -1,6 +1,5 @@
 'use strict';
 
-import _ from 'lodash';
 import {
     getReminder,
     createReminder,
@@ -42,7 +41,8 @@ export default {
                 getReminder(localStorage.getItem('subscriberId')).then((result) => {
                     if (result.total_count > 0) {
                         context.commit('reminderLoaded', result._embedded['ngcp:reminders'][0]); // open to suggestions on how to extract data here
-                    } else {
+                    }
+                    else {
                         // If no default reminder is set, then we need to create it.
                         createReminder(localStorage.getItem('subscriberId')).then((result) => {
                             context.commit('reminderCreated', result);
@@ -60,14 +60,15 @@ export default {
         toggleReminder(context, enabled) {
             return new Promise((resolve, reject) => {
                 if (enabled === true) {
-                    enableReminder(context.state.reminderID).then((result) => {
+                    enableReminder(context.state.reminderID).then(() => {
                         context.commit('enableReminder');
                         resolve();
                     }).catch((err) => {
                         reject(err);
                     });
-                } else {
-                    disableReminder(context.state.reminderID).then((result) => {
+                }
+                else {
+                    disableReminder(context.state.reminderID).then(() => {
                         context.commit('disableReminder');
                         resolve();
                     }).catch((err) => {
@@ -78,7 +79,7 @@ export default {
         },
         changeTime(context, time) {
             return new Promise((resolve, reject) => {
-                setTime(context.state.reminderID, time).then((result) => {
+                setTime(context.state.reminderID, time).then(() => {
                     context.commit('setTime', time);
                     resolve();
                 }).catch((err) => {
@@ -88,7 +89,7 @@ export default {
         },
         changeRecurrence(context, recurrence) {
             return new Promise((resolve, reject) => {
-                setRecurrence(context.state.reminderID, recurrence).then((result) => {
+                setRecurrence(context.state.reminderID, recurrence).then(() => {
                     context.commit('setRecurrence', recurrence);
                     resolve();
                 }).catch((err) => {

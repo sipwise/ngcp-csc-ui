@@ -36,7 +36,7 @@
     import { mapGetters } from 'vuex'
     import { startLoading, stopLoading, showGlobalError } from '../helpers/ui'
     import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
-        QCardActions, QBtn, QIcon, Loading, Alert, Platform } from 'quasar-framework'
+        QCardActions, QBtn, QIcon, Platform } from 'quasar-framework'
 
     export default {
         name: 'login',
@@ -104,8 +104,9 @@
     }
 </script>
 
-<style lang="stylus">
-    @import '../../src/themes/app.variables.styl';
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../themes/app.variables.styl';
+
     #csc-login {
         padding-top: 12%;
     }

@@ -12,7 +12,7 @@
 <script>
 
     import { QIcon, QFixedPosition, QFab, QFabAction, QTooltip } from 'quasar-framework'
-    import { mapState, mapGetters } from 'vuex'
+    import { mapGetters } from 'vuex'
 
     export default {
         name: 'csc-page',
@@ -42,9 +42,9 @@
     }
 </script>
 
-<style lang="stylus">
-    @import '../../src/themes/app.variables.styl';
-    @import '../../src/themes/quasar.variables.styl';
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../themes/quasar.variables.styl';
+
     .page {
         position: relative;
         padding: 60px;

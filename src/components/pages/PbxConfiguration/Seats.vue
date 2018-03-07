@@ -14,7 +14,7 @@
     import { QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
         QIcon, QPopover, QList, QItem, QItemMain } from 'quasar-framework'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
-    import { startLoading, stopLoading, showGlobalError, showToast } from '../../../helpers/ui'
+    import { showGlobalError } from '../../../helpers/ui'
 
     export default {
         mixins: [aliasNumberOptions],

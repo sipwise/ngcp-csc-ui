@@ -17,7 +17,8 @@ export default {
                         type: this.$t('pbxConfig.group'),
                         name:  number.subscriber.display_name
                     });
-                } else if (number.subscriber !== null && number.subscriber.display_name !== null) {
+                }
+                else if (number.subscriber !== null && number.subscriber.display_name !== null) {
                     owner = this.$t('pbxConfig.allocatedBy', {
                         type: this.$t('pbxConfig.seat'),
                         name:  number.subscriber.display_name

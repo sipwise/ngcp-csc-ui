@@ -17,11 +17,6 @@
 </template>
 
 <script>
-import {
-    startLoading,
-    stopLoading,
-    showGlobalError
-} from '../../helpers/ui'
 import CscPage from '../CscPage'
 import {
     QField,
@@ -66,7 +61,8 @@ export default {
                         minutes: this.time.split(':')[1],
                         seconds: '00'
                     });
-                } else {
+                }
+                else {
                     computedTime = date.buildDate({
                         hours: '00',
                         minutes: '00',
@@ -118,8 +114,8 @@ export default {
 }
 </script>
 
-<style>
-.reminder-field {
-    margin-bottom: 40px;
-}
+<style lang="stylus" rel="stylesheet/stylus">
+    .reminder-field {
+        margin-bottom: 40px;
+    }
 </style>

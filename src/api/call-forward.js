@@ -30,7 +30,8 @@ export function getSourcesets(id) {
                 return Vue.http.get('/api/cfsourcesets/',
                     { params: { subscriber_id: id, page: 1,
                         rows: totalCount } })
-            } else {
+            }
+            else {
                 return Promise.resolve(result);
             }
         }).then(result => {
@@ -52,7 +53,8 @@ export function getTimesets(id) {
                 return Vue.http.get('/api/cftimesets/',
                     { params: { subscriber_id: id, page: 1,
                         rows: totalCount } })
-            } else {
+            }
+            else {
                 return Promise.resolve(result);
             }
         }).then((result) => {
@@ -76,7 +78,8 @@ export function getDestinationsets(id) {
                 return Vue.http.get('/api/cfdestinationsets/',
                     { params: { subscriber_id: id, page: 1,
                         rows: totalCount } })
-            } else {
+            }
+            else {
                 return Promise.resolve(result);
             }
         }).then(result => {
@@ -181,9 +184,10 @@ export function deleteDestinationFromDestinationset(options) {
                 }).catch((err) => {
                     console.log(err);
                 });
-            } else {
+            }
+            else {
                 resolve(result);
-            };
+            }
         }).catch(err => {
             reject(err);
         });
@@ -395,7 +399,7 @@ export function getDaysFromRange(options) {
     while (fromDay < toDay) {
         days.push({ name: wdayMap[fromDay], number: fromDay.toString() });
         fromDay++;
-    };
+    }
     return days;
 }
 
@@ -413,8 +417,9 @@ export function getHoursFromRange(options) {
                 hour: options.fromHour.toString()
             });
             options.fromHour++;
-        };
-    } else {
+        }
+    }
+    else {
         hours.push({
             from: `${options.fromHour}:${fromMinute}`,
             to: `${toHour}:${toMinute}`
@@ -439,7 +444,8 @@ export function convertTimesetToWeekdays(options) {
                 if (isIncompatible) {
                     timesetIsCompatible = false;
                     return;
-                } else  {
+                }
+                else  {
                     let days = [];
                     let hours = [];
                     let fromDay = parseInt(time.wday.split('-')[0]);
@@ -453,7 +459,8 @@ export function convertTimesetToWeekdays(options) {
                     if (isReverse) {
                         timesetHasReverse = true;
                         return;
-                    } else {
+                    }
+                    else {
                         hours = getHoursFromRange({ hasMinute: !!time.minute,
                             fromHour: fromHour, toHour: toHour,
                             fromMinute: fromMinute, toMinute: toMinute });
@@ -478,7 +485,8 @@ export function convertTimesetToWeekdays(options) {
             });
             timesetExists = true;
             counter++;
-        } else if (timesetNameMatches) {
+        }
+        else if (timesetNameMatches) {
             timesetHasDuplicate = true;
             return;
         }

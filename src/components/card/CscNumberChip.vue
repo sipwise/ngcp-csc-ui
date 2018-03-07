@@ -19,7 +19,7 @@
     }
 </script>
 
-<style>
+<style lang="stylus" rel="stylesheet/stylus">
     .csc-number-chip .number-ext {
         font-weight: bold;
     }

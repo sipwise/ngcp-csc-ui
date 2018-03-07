@@ -16,11 +16,13 @@ export function loadCdkLib() {
             }, function(err, script){
                 if(err) {
                     reject(err);
-                } else {
+                }
+                else {
                     resolve(script);
                 }
             });
-        } else {
+        }
+        else {
             resolve();
         }
     });

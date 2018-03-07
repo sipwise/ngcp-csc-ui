@@ -30,7 +30,6 @@
     import _ from 'lodash'
     import CscDestination from './CscDestination'
     import CscAddDestinationForm from './CscAddDestinationForm'
-    import { showToast } from '../../../helpers/ui'
     import { QCardTitle, QCardMain, QCardSeparator,
         QItem, QList } from 'quasar-framework'
     export default {
@@ -73,21 +72,25 @@
     }
 </script>
 
-<style lang="stylus">
-@import '~variables'
-.dest-section
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables.styl'
+
+    .dest-section
+        .dest-title
+            padding 0 15px
+        .dest-title:first-child
+            padding 20px 15px 0 15px
+        .q-item
+            padding 0 15px
+        .q-list
+            margin-bottom 0
+
+    .dest-row
+        inline-block
+
     .dest-title
-        padding 0 15px
-    .dest-title:first-child
-        padding 20px 15px 0 15px
-    .q-item
-        padding 0 15px
-    .q-list
-        margin-bottom 0
-.dest-row
-    inline-block
-.dest-title
-    color $primary
-.dest-icon
-    margin-right 5px
+        color $primary
+
+    .dest-icon
+        margin-right 5px
 </style>

@@ -22,7 +22,6 @@
 </template>
 
 <script>
-    import numberFormat from '../../../filters/number-format'
     import { mapState, mapGetters } from 'vuex'
     import { startLoading, stopLoading,
         showGlobalError, showToast } from '../../../helpers/ui'
@@ -68,13 +67,15 @@
             reloadDestinations(timeset) {
                 if (timeset === null) {
                     this.$store.dispatch('callForward/loadAlwaysEverybodyDestinations');
-                } else if (timeset === 'Company Hours') {
+                }
+                else if (timeset === 'Company Hours') {
                     this.$store.dispatch('callForward/loadCompanyHoursEverybodyDestinations');
-                } else if (timeset === 'After Hours') {
+                }
+                else if (timeset === 'After Hours') {
                     this.$store.dispatch('callForward/loadAfterHoursEverybodyDestinations');
-                };
+                }
             },
-            reloadTimes(timeset) {
+            reloadTimes() {
                 this.$store.dispatch('callForward/loadTimesetTimes', {
                     timeset: this.timeset
                 });
@@ -84,10 +85,12 @@
             removeDestinationState(state) {
                 if (state === 'requesting') {
                     startLoading();
-                } else if (state === 'failed') {
+                }
+                else if (state === 'failed') {
                     stopLoading();
                     showGlobalError(this.removeDestinationError);
-                } else if (state === 'succeeded') {
+                }
+                else if (state === 'succeeded') {
                     stopLoading();
                     showToast(this.$t('pages.callForward.removeSuccessMessage', {
                         destination: this.lastRemovedDestination
@@ -98,10 +101,12 @@
             addDestinationState(state) {
                 if (state === 'requesting') {
                     startLoading();
-                } else if (state === 'failed') {
+                }
+                else if (state === 'failed') {
                     stopLoading();
                     showGlobalError(this.addDestinationError);
-                } else if (state === 'succeeded') {
+                }
+                else if (state === 'succeeded') {
                     stopLoading();
                     showToast(this.$t('pages.callForward.addDestinationSuccessMessage', {
                         destination: this.lastAddedDestination
@@ -112,10 +117,12 @@
             changeDestinationState(state) {
                 if (state === 'requesting') {
                     startLoading();
-                } else if (state === 'failed') {
+                }
+                else if (state === 'failed') {
                     stopLoading();
                     showGlobalError(this.changeDestinationError);
-                } else if (state === 'succeeded') {
+                }
+                else if (state === 'succeeded') {
                     stopLoading();
                     this.reloadDestinations(this.timeset);
                 }
@@ -123,14 +130,17 @@
             removeTimeState(state) {
                 if (state === 'requesting') {
                     startLoading();
-                } else if (state === 'failed') {
+                }
+                else if (state === 'failed') {
                     stopLoading();
                     showGlobalError(this.removeTimeError);
-                } else if (state === 'succeeded') {
+                }
+                else if (state === 'succeeded') {
                     stopLoading();
                     if (this.timesLength <= 1) {
                         showToast(this.$t('pages.callForward.times.removeTimesetSuccessMessage'));
-                    } else {
+                    }
+                    else {
                         showToast(this.$t('pages.callForward.times.removeSuccessMessage', {
                             day: this.lastRemovedDay
                         }));
@@ -142,5 +152,5 @@
     }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" rel="stylesheet/stylus">
 </style>

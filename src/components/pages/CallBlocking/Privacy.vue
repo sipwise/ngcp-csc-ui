@@ -41,5 +41,5 @@
     }
 </script>
 
-<style>
+<style lang="stylus" rel="stylesheet/stylus">
 </style>

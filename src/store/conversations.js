@@ -1,7 +1,5 @@
+'use strict';
 
-'use strict'
-
-import _ from 'lodash'
 import { getConversations, downloadVoiceMail } from '../api/conversations'
 
 export default {

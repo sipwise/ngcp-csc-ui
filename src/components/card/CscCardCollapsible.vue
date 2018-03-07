@@ -8,7 +8,7 @@
                 </q-item-side>
                 <q-item-main>
                     <q-item-tile label>
-                        <slot name="title">
+                        <slot name="title" />
                     </q-item-tile>
                     <q-item-tile sublabel>
                         {{ sublabel }}
@@ -72,29 +72,32 @@
     }
 </script>
 
-<style lang="stylus">
-@import '~variables'
-.csc-card-collapsible
-    .q-btn
-        margin-bottom 5px
-    ul
-        list-style none
-        font-size 1rem
-        line-height 2rem
-        strong
-            font-weight 500
-    .q-item-icon
-        font-size 22px
-        padding-right 12px
-        line-height 2rem
-    div.q-item-label > span
-        font-size 18px
-        color #0c0c0c
-        font-weight 400
-    div.q-item-sublabel
-        margin-top 5px
-.csc-card-left-icons
-    margin-left 15px
-.csc-card-title
-    padding 16px
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../themes/quasar.variables.styl'
+
+    .csc-card-collapsible
+        .q-btn
+            margin-bottom 5px
+        ul
+            list-style none
+            font-size 1rem
+            line-height 2rem
+            strong
+                font-weight 500
+        .q-item-icon
+            font-size 22px
+            padding-right 12px
+            line-height 2rem
+        div.q-item-label > span
+            font-size 18px
+            color #0c0c0c
+            font-weight 400
+        div.q-item-sublabel
+            margin-top 5px
+
+    .csc-card-left-icons
+        margin-left 15px
+
+    .csc-card-title
+        padding 16px
 </style>

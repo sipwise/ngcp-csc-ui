@@ -247,7 +247,7 @@ export default {
             });
         },
         loadAlwaysEverybodyDestinations(context) {
-            return new Promise((resolve, reject)=>{
+            return new Promise(()=>{
                 loadEverybodyDestinations({
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeset: null
@@ -257,7 +257,7 @@ export default {
             });
         },
         loadCompanyHoursEverybodyDestinations(context) {
-            return new Promise((resolve, reject)=>{
+            return new Promise(()=>{
                 loadEverybodyDestinations({
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeset: 'Company Hours'
@@ -267,7 +267,7 @@ export default {
             });
         },
         loadAfterHoursEverybodyDestinations(context) {
-            return new Promise((resolve, reject)=>{
+            return new Promise(()=>{
                 loadEverybodyDestinations({
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeset: 'After Hours'
@@ -279,7 +279,7 @@ export default {
         deleteDestinationFromDestinationset(context, options) {
             let removedDestination = options.removeDestination;
             context.commit('removeDestinationRequesting');
-            return new Promise((resolve, reject) => {
+            return new Promise(() => {
                 deleteDestinationFromDestinationset(options)
                     .then(() => {
                         context.commit('setLastRemovedDestination', removedDestination);
@@ -307,15 +307,16 @@ export default {
             if (options.timeset === 'Company Hours' ||
                 options.timeset === 'After Hours') {
                 timeset = context.getters.getTimesetId;
-            };
+            }
             context.commit('addDestinationRequesting');
             if (type !== 'number') {
                 delete form.timeout;
                 form.destination = type;
-            } else {
+            }
+            else {
                 form.timeout = options.form.timeout;
                 form.destination = options.form.destination;
-            };
+            }
             updatedOptions = {
                 subscriberId: context.getters.getSubscriberId,
                 data: form,
@@ -324,7 +325,7 @@ export default {
                 timesetId: timeset
             };
             if (options.destinations) {
-                return new Promise((resolve, reject) => {
+                return new Promise(() => {
                     addDestinationToExistingGroup(updatedOptions).then(() => {
                         context.commit('setLastAddedDestination', options.form.destination);
                         context.commit('addDestinationSucceeded');
@@ -332,9 +333,10 @@ export default {
                         context.commit('addDestinationFailed', err.message);
                     });
                 });
-            } else {
-                return new Promise((resolve, reject) => {
-                    addDestinationToEmptyGroup(updatedOptions).then((result) => {
+            }
+            else {
+                return new Promise(() => {
+                    addDestinationToEmptyGroup(updatedOptions).then(() => {
                         context.commit('setLastAddedDestination', options.form.destination);
                         context.commit('addDestinationSucceeded');
                     }).catch((err) => {
@@ -350,7 +352,7 @@ export default {
                 0 : clonedDestinations.length - 1;
             context.commit('changeDestinationRequesting');
             if (options.direction === 'up' && options.prevId && options.index === 0) {
-                return new Promise((resolve, reject) => {
+                return new Promise(() => {
                     moveDestinationUp({
                         prevId: options.prevId,
                         id: options.id,
@@ -361,8 +363,9 @@ export default {
                         context.commit('changeDestinationFailed', err.message);
                     });
                 });
-            } else if (options.direction === 'down' && options.nextId && options.index === lastIndex) {
-                return new Promise((resolve, reject) => {
+            }
+            else if (options.direction === 'down' && options.nextId && options.index === lastIndex) {
+                return new Promise(() => {
                     moveDestinationDown({
                         nextId: options.nextId,
                         id: options.id,
@@ -373,7 +376,8 @@ export default {
                         context.commit('changeDestinationFailed', err.message);
                     });
                 });
-            } else {
+            }
+            else {
                 let adjacentDestination = options.direction === 'up' ?
                     options.destinations[options.index-1] :
                     options.destinations[options.index+1];
@@ -385,7 +389,7 @@ export default {
                 clonedDestinations.splice(options.index, 1);
                 clonedDestinations.splice(adjacentIndex, 0, clonedDestination);
                 clonedDestinations[adjacentIndex].priority = adjacentPriority;
-                return new Promise((resolve, reject) => {
+                return new Promise(() => {
                     changePositionOfDestination({
                         destinations: clonedDestinations,
                         id: options.id,
@@ -437,7 +441,7 @@ export default {
                 delete time.from;
                 delete time.to;
             });
-            return new Promise((resolve, reject) => {
+            return new Promise(() => {
                 deleteTimeFromTimeset({
                     subscriberId: context.getters.getSubscriberId,
                     timesetId: context.getters.getTimesetId,
@@ -450,9 +454,9 @@ export default {
                     });
             });
         },
-        deleteTimesetById(context, options) {
+        deleteTimesetById(context) {
             context.commit('removeTimeRequesting');
-            return new Promise((resolve, reject) => {
+            return new Promise(() => {
                 deleteTimesetById(context.getters.getTimesetId).then(() => {
                         context.commit('removeTimeSucceeded');
                     }).catch((err) => {

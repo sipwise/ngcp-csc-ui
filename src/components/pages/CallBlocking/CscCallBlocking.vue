@@ -64,7 +64,7 @@
 
 <script>
     import _ from 'lodash';
-    import { startLoading, stopLoading, showGlobalError, showToast } from '../../../helpers/ui'
+    import { showToast } from '../../../helpers/ui'
     import CscPage  from '../../CscPage'
     import CscToggle from '../../form/CscToggle'
     import { QInput, QCard, QBtn, QField, QIcon, QCardTitle, QCardActions, Dialog, QSpinnerMat, QToggle,
@@ -96,7 +96,7 @@
             this.listLoading = true;
             this.$store.dispatch('callBlocking/load' + this.suffix).then(() => {
                 this.listLoading = false;
-            }).catch((err) => {
+            }).catch(() => {
                 this.listLoading = false;
             });
         },
@@ -133,14 +133,16 @@
                     var enabled = this.$store.state.callBlocking[this.pageName + 'Enabled'];
                     if(enabled) {
                         return 'whitelist';
-                    } else {
+                    }
+                    else {
                         return 'blacklist';
                     }
                 },
                 set(value) {
                     if(value === 'blacklist') {
                         this.mode = false;
-                    } else {
+                    }
+                    else {
                         this.mode = true;
                     }
                 }
@@ -148,14 +150,16 @@
             toggleButtonLabel() {
                 if(!this.enabled) {
                     return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleEnableLabel');
-                } else {
+                }
+                else {
                     return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleDisableLabel');
                 }
             },
             toggleToastMessage() {
                 if(this.mode) {
                     return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleEnabledToast');
-                } else {
+                }
+                else {
                     return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleDisabledToast');
                 }
             },
@@ -185,7 +189,7 @@
                         number:this.newNumber
                     }));
                     this.listLoading = false;
-                }).catch((err)=>{
+                }).catch(()=>{
                     this.listLoading = false;
                     this.addFormError = true;
                 });
@@ -205,10 +209,11 @@
                         number: this.editingNumber
                     }).then(()=>{
                         this.listLoading = false;
-                    }).catch((err)=>{
+                    }).catch(()=>{
                         this.listLoading = false;
                     });
-                } else {
+                }
+                else {
                     this.listLoading = false;
                 }
             },
@@ -233,7 +238,7 @@
                                     showToast(i18n.t('pages.callBlocking' + state.suffix + '.removedToast', {
                                         number: state.numbers[index]
                                     }));
-                                }).catch((err)=>{
+                                }).catch(()=>{
                                     state.listLoading = false;
                                 });
                             }
@@ -252,7 +257,7 @@
     }
 </script>
 
-<style>
+<style lang="stylus" rel="stylesheet/stylus">
     #toggle-call-blocking {
         margin-bottom: 60px;
     }
