@@ -68,3 +68,7 @@ export function connectCdkNetwork(session, networkTag) {
 export function connectDefaultCdkNetwork(session) {
     return connectCdkNetwork(session, 'sip');
 }
+
+export function getChromeExtensionUrl() {
+    return cdk.getChromeExtensionURL();
+}

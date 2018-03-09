@@ -87,6 +87,7 @@
     import { normalizeNumber, rawNumber } from '../filters/number-format'
     import numberFormat from '../filters/number-format'
     import { showCallNotification } from '../helpers/ui'
+    import { getChromeExtensionUrl } from '../helpers/cdk-lib'
 
     export default {
         name: 'csc-call',
@@ -309,7 +310,7 @@
                         label: 'Install',
                         handler () {
                             self.$store.commit('call/desktopSharingInstallReset');
-                            window.open('https://chrome.google.com/webstore/detail/sipwise-desktop-sharing/pijbeibohoabifpookfeljlmkpedpcne');
+                            window.open(getChromeExtensionUrl());
                         }
                     },
                     {
