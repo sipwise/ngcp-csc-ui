@@ -131,7 +131,8 @@
             "titles": {
                 "always": "Always",
                 "companyHours": "Company Hours",
-                "afterHours": "After Hours"
+                "afterHours": "After Hours",
+                "sources": "Sources"
             },
             "buttons": {
                 "addNumber": "Add Number",
@@ -170,6 +171,7 @@
                 "resetSuccessMessage": "Reset of timesets completed",
                 "addTimeSuccessMessage": "Created new timeset",
                 "addTimeErrorMessage": "An error occured while trying to create the timeset. Please try again.",
+                "loadDestinationErrorMessage": "An error occured while trying to load the destinations. Please try again.",
                 "noTimeSet": "no time set",
                 "addTimeButton": "Add Time",
                 "timesetIncompatible":  "The {timeset} timeset contains incompatible values. You can resolve this by resetting the {timeset} timeset.",
