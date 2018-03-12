@@ -8,10 +8,6 @@
     import CscPage from '../../CscPage'
     import CscCallForwardTimeset from './CscCallForwardTimeset'
     export default {
-        data () {
-            return {
-            }
-        },
         components: {
             CscPage,
             CscCallForwardTimeset
@@ -20,6 +16,4 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/quasar.variables.styl'
-
 </style>
