@@ -2,7 +2,8 @@
     <div>
         <div v-if="showTimesAndDestinations">
             <csc-call-forward-times :times="timesetTimes" :timesetName="timesetName" ref="times"></csc-call-forward-times>
-            <csc-call-forward-destinations :timeset="timesetName" :destinations="destinations" />
+            <!--<csc-call-forward-destinations :timeset="timesetName" :destinations="destinations" />-->
+            <csc-sourcesets v-if="destinationsLoaded" :sourcesets="sourcesets" :destinations="destinations" :timesetName="timesetName" />
         </div>
         <q-card flat>
             <div v-if="timesetHasDuplicate">
@@ -57,6 +58,7 @@
     import CscCallForwardDestinations from './CscCallForwardDestinations'
     import CscCallForwardTimes from './CscCallForwardTimes'
     import CscAddTimeForm from './CscAddTimeForm'
+    import CscSourcesets from './CscSourcesets'
     export default {
         name: 'csc-call-forward-timeset',
         props: [
@@ -74,6 +76,7 @@
             CscCallForwardDestinations,
             CscCallForwardTimes,
             CscAddTimeForm,
+            CscSourcesets,
             QAlert,
             QCard
         },
@@ -87,13 +90,17 @@
                 'timesetIsCompatible',
                 'timesetHasReverse',
                 'timesetExists',
-                'activeTimeForm'
+                'activeTimeForm',
+                'sourcesets'
             ]),
             ...mapGetters('callForward', [
                 'resetTimeError',
                 'addTimeError',
                 'showDefinedAlert'
             ]),
+            destinationsLoaded() {
+                return this.destinations.length > 0;
+            },
             labelReset() {
                 return this.$t('pages.callForward.times.resetTimeset', {
                     timeset: this.timesetName
@@ -118,8 +125,11 @@
             addTimeset() {
                 this.$store.commit('callForward/setActiveTimeForm', true);
             },
+            loadSourcesets() {
+                this.$store.dispatch('callForward/loadSourcesets');
+            },
             loadDestinations() {
-                this.$store.dispatch('callForward/loadEverybodyDestinations', {
+                this.$store.dispatch('callForward/loadDestinations', {
                     timeset: this.timesetName
                 });
             },
@@ -133,6 +143,7 @@
                 this.$store.commit('callForward/resetTimesetState');
                 this.loadTimes();
                 this.loadDestinations();
+                this.loadSourcesets();
             },
             resetAlerts() {
                 this.showAlertDuplicate = true;

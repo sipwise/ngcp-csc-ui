@@ -131,7 +131,8 @@
             "titles": {
                 "always": "Always",
                 "companyHours": "Company Hours",
-                "afterHours": "After Hours"
+                "afterHours": "After Hours",
+                "sources": "Sources"
             },
             "buttons": {
                 "addNumber": "Add Number",

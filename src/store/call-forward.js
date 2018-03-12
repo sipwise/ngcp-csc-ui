@@ -3,11 +3,11 @@
 
 import _ from 'lodash';
 import { i18n } from '../i18n';
-import { getSourcesets,
+import {
+    getSourcesets,
     getDestinationsets,
     getTimesets,
     getMappings,
-    loadEverybodyDestinations,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
     addDestinationToEmptyGroup,
@@ -20,7 +20,10 @@ import { getSourcesets,
     deleteTimesetById,
     resetTimesetByName,
     createTimesetWithTime,
-    appendTimeToTimeset } from '../api/call-forward';
+    appendTimeToTimeset,
+    loadDestinations,
+    getSourcesetById
+} from '../api/call-forward';
 
 const RequestState = {
     button: 'button',
@@ -33,14 +36,11 @@ export default {
     namespaced: true,
     state: {
         mappings: null,
-        sourcesets: null,
+        sourcesets: [],
+        sourceset: [],
         timesets: null,
         destinationsets: null,
-        destinations: {
-            online: [],
-            busy: [],
-            offline: []
-        },
+        destinations: [],
         removeDestinationState: RequestState.button,
         removeDestinationError: null,
         lastRemovedDestination: null,
@@ -260,6 +260,9 @@ export default {
             state.timesetHasReverse = false;
             state.timesetHasDuplicate = false;
             state.addTimeState = RequestState.button;
+        },
+        setSourceset(state, result) {
+            state.sourceset = result;
         }
     },
     actions: {
@@ -302,14 +305,6 @@ export default {
                         reject(err);
                     });
             });
-        },
-        loadEverybodyDestinations(context, options) {
-            loadEverybodyDestinations({
-                    subscriberId: localStorage.getItem('subscriberId'),
-                    timeset: options.timeset
-                }).then((result)=>{
-                    context.commit('loadDestinations', result);
-                });
         },
         deleteDestinationFromDestinationset(context, options) {
             let removedDestination = options.removeDestination;
@@ -357,9 +352,11 @@ export default {
                 data: form,
                 groupName: context.getters.getGroupName,
                 id: context.getters.getDestinationsetId,
-                timesetId: timeset
+                timesetId: timeset,
+                sourcesetId: options.sourcesetId
             };
             if (options.destinations) {
+                console.log('options.destinations evaluates to true');
                 return new Promise(() => {
                     addDestinationToExistingGroup(updatedOptions).then(() => {
                         context.commit('setLastAddedDestination', options.form.destination);
@@ -370,6 +367,7 @@ export default {
                 });
             }
             else {
+                console.log('options.destinations evaluates to false');
                 return new Promise(() => {
                     addDestinationToEmptyGroup(updatedOptions).then(() => {
                         context.commit('setLastAddedDestination', options.form.destination);
@@ -513,6 +511,19 @@ export default {
                 }).catch((err) => {
                     context.commit('addTimeFailed', err.message);
                 });
+        },
+        loadDestinations(context, options) {
+            loadDestinations({
+                timeset: options.timeset,
+                subscriberId: context.getters.getSubscriberId
+            }).then((result) => {
+                context.commit('loadDestinations', result);
+            });
+        },
+        getSourcesetById(context, id) {
+            getSourcesetById(id).then((result) => {
+                context.commit('setSourceset', result);
+            });
         }
     }
 };
