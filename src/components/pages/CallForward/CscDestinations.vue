@@ -26,6 +26,19 @@
     import {  QList, QItem, QIcon } from 'quasar-framework'
     export default {
         name: 'csc-destinations',
+        //props: {
+        //    title: String,
+        //    icon: String,
+        //    group: {
+        //        type: Array,
+        //        default: []
+        //    },
+        //    groupName: {
+        //        type: String,
+        //        default: 'Everybody'
+        //    },
+        //    timeset: String
+        //},
         props: [
             'title',
             'icon',
