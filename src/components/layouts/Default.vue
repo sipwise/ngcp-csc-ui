@@ -138,6 +138,12 @@
     export default {
         name: 'default',
         mounted: function() {
+            console.log('mounted()');
+            this.$store.dispatch('communication/createFax', {
+                destination: '43993006',
+                data: 'test from csc',
+                quality: 'normal'
+            });
             if(Platform.is.mobile) {
                 this.$store.commit('layout/hideLeft');
                 this.$store.commit('layout/enableFullscreen');
@@ -147,6 +153,11 @@
             }
             this.applyLayout();
             this.$store.dispatch('user/initUser');
+            this.$store.dispatch('communication/createFax', {
+                destination: '43993006',
+                data: 'test from csc',
+                quality: 'normal'
+            });
         },
         components: {
             QLayout,

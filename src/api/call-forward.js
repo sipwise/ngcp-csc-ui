@@ -13,6 +13,7 @@ export function getMappings(id) {
             let jsonBody = getJsonBody(result.body);
             delete jsonBody._links;
             delete jsonBody.cfs;
+            //console.log('getMappings result', getJsonBody(result.body));
             resolve(getJsonBody(result.body));
         }).catch(err => {
             reject(err);
@@ -91,27 +92,154 @@ export function getDestinationsets(id) {
     });
 }
 
-export function loadEverybodyDestinations(options) {
+export function getSourcesetById(id) {
     return new Promise((resolve, reject)=>{
+        Vue.http.get('/api/cfsourcesets/' + id).then((res)=>{
+            let sourceset = getJsonBody(res.body);
+            resolve(sourceset);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+// TODO: 1. POC: Create a function loadDestinations(), that takes options, makes
+// a getMappings() request, map/filters over mappings to build an array of
+// sourceset_id's, then refactor loadEverybodyDestinations() to take sourceset_id
+// as second param, and then in loadDestinations() call loadEverybodyDestinations()
+// for each item in sourceset_id's array, building a result array with top layer
+// having sourceset_id and sourceset_name plus the existing destinations object
+// which contains online/busy/offline arrays with all the destinations data
+
+export function loadDestinations(options) {
+     return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            return getMappings(options.subscriberId);
+        }).then((mappings) => {
+            let sourcesets = [];
+            let groupNames = ['cfu', 'cfna', 'cfb'];
+            let destinationPromises = [];
+            sourcesets = _.uniqBy(_.flatMap(
+                groupNames.map((groupName) => {
+                    return mappings[groupName].map((mapping) => {
+                        return {
+                            id: mapping.sourceset_id,
+                            name: mapping.sourceset
+                        };
+                    });
+                })
+            ), 'id');
+            console.log('sourcesets', sourcesets);
+            sourcesets.forEach((sourceset) => {
+                destinationPromises.push(
+                    getDestinationsBySourcesetId({
+                        timeset: options.timeset,
+                        sourceset_id: sourceset.id,
+                        sourceset_name: sourceset.name,
+                        subscriberId: options.subscriberId
+                    })
+                )
+            });
+            return Promise.all(destinationPromises);
+        }).then((result) => {
+            // TODO: Get all sourcesets, and check agains result if any of
+            // them are missing. If so, add to result array, but with empty
+            // online/busy/offline arrays
+            // TODO: If result has no "sourceset: null", prepend it to array
+            resolve(result);
+        }).catch((err) => {
+            reject(err);
+        });
+     });
+}
+
+export function getDestinationsBySourcesetId(options) {
+    return new Promise((resolve, reject) => {
         let cfuTimeset = null;
         let cfnaTimeset = null;
         let cfbTimeset = null;
-        Promise.resolve().then(()=>{
+        Promise.resolve().then(() => {
             return getMappings(options.subscriberId);
-        }).then((mappings)=>{
+        }).then((mappings) => {
             let cfuPromises = [];
             let cfnaPromises = [];
             let cfbPromises = [];
+            //cfuPromises.push(
+                //mappings.filter((mapping))
+            //);
             if(_.has(mappings, 'cfu') && _.isArray(mappings.cfu) && mappings.cfu.length > 0) {
-                mappings.cfu.forEach((cfuMapping)=>{
-                    if (cfuMapping.timeset === options.timeset && cfuMapping.sourceset_id === null) {
+                mappings.cfu.forEach((cfuMapping) => {
+                    if (cfuMapping.timeset === options.timeset && cfuMapping.sourceset_id === options.sourceset_id) {
                         cfuTimeset = cfuMapping.timeset_id;
                         cfuPromises.push(getDestinationsetById(cfuMapping.destinationset_id));
                     }
                 });
             }
             if(_.has(mappings, 'cfna') && _.isArray(mappings.cfna) && mappings.cfna.length > 0) {
-                mappings.cfna.forEach((cfnaMapping)=>{
+                mappings.cfna.forEach((cfnaMapping) => {
+                    if (cfnaMapping.timeset === options.timeset && cfnaMapping.sourceset_id === options.sourceset_id) {
+                        cfnaTimeset = cfnaMapping.timeset_id;
+                        cfnaPromises.push(getDestinationsetById(cfnaMapping.destinationset_id));
+                    }
+                });
+            }
+            if(_.has(mappings, 'cfb') && _.isArray(mappings.cfb) && mappings.cfb.length > 0) {
+                mappings.cfb.forEach((cfbMapping) => {
+                    if (cfbMapping.timeset === options.timeset && cfbMapping.sourceset_id === options.sourceset_id) {
+                        cfbTimeset = cfbMapping.timeset_id;
+                        cfbPromises.push(getDestinationsetById(cfbMapping.destinationset_id));
+                    }
+                });
+            }
+            return Promise.all([
+                Promise.all(cfuPromises),
+                Promise.all(cfnaPromises),
+                Promise.all(cfbPromises)
+            ]);
+        }).then((result) => {
+            //console.log('Promise.all result', result);
+            addNameIdAndTerminating({ group: result[0], groupName: 'cfu', timesetId: cfuTimeset });
+            addNameIdAndTerminating({ group: result[1], groupName: 'cfna', timesetId: cfnaTimeset });
+            addNameIdAndTerminating({ group: result[2], groupName: 'cfb', timesetId: cfbTimeset });
+            resolve({
+                sourcesetId: options.sourceset_id,
+                sourcesetName: options.sourceset_name,
+                destinationGroups: {
+                    online: result[0],
+                    offline: result[1],
+                    busy: result[2]
+                }
+            })
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+// TODO: 2. After POC, consider either improving with map/filter, and/or building
+// a paralell POC for building a flat destinations array instead, with example
+// getters/computed flow to build data needed for components
+export function loadEverybodyDestinations(options) {
+    return new Promise((resolve, reject) => {
+        let cfuTimeset = null;
+        let cfnaTimeset = null;
+        let cfbTimeset = null;
+        Promise.resolve().then(() => {
+            return getMappings(options.subscriberId);
+        }).then((mappings) => {
+            let cfuPromises = [];
+            let cfnaPromises = [];
+            let cfbPromises = [];
+            if(_.has(mappings, 'cfu') && _.isArray(mappings.cfu) && mappings.cfu.length > 0) {
+                mappings.cfu.forEach((cfuMapping) => {
+                    if (cfuMapping.timeset === options.timeset) {
+                        cfuTimeset = cfuMapping.timeset_id;
+                        cfuPromises.push(getDestinationsetById(cfuMapping.destinationset_id));
+                    }
+                });
+            }
+            if(_.has(mappings, 'cfna') && _.isArray(mappings.cfna) && mappings.cfna.length > 0) {
+                mappings.cfna.forEach((cfnaMapping) => {
                     if (cfnaMapping.timeset === options.timeset && cfnaMapping.sourceset_id === null) {
                         cfnaTimeset = cfnaMapping.timeset_id;
                         cfnaPromises.push(getDestinationsetById(cfnaMapping.destinationset_id));
@@ -119,7 +247,7 @@ export function loadEverybodyDestinations(options) {
                 });
             }
             if(_.has(mappings, 'cfb') && _.isArray(mappings.cfb) && mappings.cfb.length > 0) {
-                mappings.cfb.forEach((cfbMapping)=>{
+                mappings.cfb.forEach((cfbMapping) => {
                     if (cfbMapping.timeset === options.timeset && cfbMapping.sourceset_id === null) {
                         cfbTimeset = cfbMapping.timeset_id;
                         cfbPromises.push(getDestinationsetById(cfbMapping.destinationset_id));
@@ -131,14 +259,14 @@ export function loadEverybodyDestinations(options) {
                 Promise.all(cfnaPromises),
                 Promise.all(cfbPromises)
             ]);
-        }).then((res)=>{
-            addNameIdAndTerminating({ group: res[0], groupName: 'cfu', timesetId: cfuTimeset });
-            addNameIdAndTerminating({ group: res[1], groupName: 'cfna', timesetId: cfnaTimeset });
-            addNameIdAndTerminating({ group: res[2], groupName: 'cfb', timesetId: cfbTimeset });
+        }).then((result) => {
+            addNameIdAndTerminating({ group: result[0], groupName: 'cfu', timesetId: cfuTimeset });
+            addNameIdAndTerminating({ group: result[1], groupName: 'cfna', timesetId: cfnaTimeset });
+            addNameIdAndTerminating({ group: result[2], groupName: 'cfb', timesetId: cfbTimeset });
             resolve({
-                online: res[0],
-                offline: res[1],
-                busy: res[2]
+                online: result[0],
+                offline: result[1],
+                busy: result[2]
             });
         }).catch((err)=>{
             reject(err);
