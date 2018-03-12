@@ -1,33 +1,61 @@
 <template>
     <csc-page :title="$t('pages.callForward.titles.always')">
-        <csc-call-forward-destinations :timeset="alwaysTimeset" :destinations="destinations">
-        </csc-call-forward-destinations>
+        <csc-sourcesets v-if="destinationsLoaded" :sourcesets="sourcesets"
+            :destinations="destinations" :timesetName="timesetName" />
     </csc-page>
 </template>
 
 <script>
-    import { mapState } from 'vuex'
+    import { mapState, mapGetters } from 'vuex'
+    import {
+        startLoading,
+        stopLoading,
+        showGlobalError
+    } from '../../../helpers/ui'
     import CscPage from '../../CscPage'
-    import CscCallForwardDestinations from './CscCallForwardDestinations'
+    import CscSourcesets from './CscSourcesets'
     export default {
         data () {
-            return {}
+            return {
+                timesetName: null // In API layer the actual value used is null
+            }
         },
         components: {
             CscPage,
-            CscCallForwardDestinations
+            CscSourcesets
         },
         created() {
-            this.$store.dispatch('callForward/loadEverybodyDestinations', {
+            this.$store.dispatch('callForward/loadDestinations', {
                 timeset: null
             });
+            this.$store.dispatch('callForward/loadSourcesets');
         },
         computed: {
             ...mapState('callForward', [
-                'destinations'
+                'destinations',
+                'sourcesets',
+                'loadDestinationState',
+                'loadDestinationError'
             ]),
-            alwaysTimeset() {
-                return null;
+            ...mapGetters('callForward', [
+                'destinationsLoaded'
+            ]),
+            destinationsLoaded() {
+                return this.destinations.length > 0;
+            }
+        },
+        watch: {
+            loadDestinationState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                }
+                else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.loadDestinationError);
+                }
+                else if (state === 'succeeded') {
+                    stopLoading();
+                }
             }
         }
     }

@@ -3,11 +3,11 @@
 
 import _ from 'lodash';
 import { i18n } from '../i18n';
-import { getSourcesets,
+import {
+    getSourcesets,
     getDestinationsets,
     getTimesets,
     getMappings,
-    loadEverybodyDestinations,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
     addDestinationToEmptyGroup,
@@ -20,7 +20,9 @@ import { getSourcesets,
     deleteTimesetById,
     resetTimesetByName,
     createTimesetWithTime,
-    appendTimeToTimeset } from '../api/call-forward';
+    appendTimeToTimeset,
+    loadDestinations
+} from '../api/call-forward';
 
 const RequestState = {
     button: 'button',
@@ -33,14 +35,13 @@ export default {
     namespaced: true,
     state: {
         mappings: null,
-        sourcesets: null,
+        sourcesets: [],
+        sourceset: [],
         timesets: null,
         destinationsets: null,
-        destinations: {
-            online: [],
-            busy: [],
-            offline: []
-        },
+        destinations: [],
+        loadDestinationState: RequestState.button,
+        loadDestinationError: null,
         removeDestinationState: RequestState.button,
         removeDestinationError: null,
         lastRemovedDestination: null,
@@ -112,7 +113,21 @@ export default {
         },
         showDefinedAlert(state) {
             return !state.timesetExists && !state.activeTimeForm && state.addTimeState !== 'succeeded';
+        },
+        destinationsLoaded(state) {
+            return state.destinations.length > 0;
+        },
+        showTimesAndDestinations(state) {
+            return state.timesetIsCompatible &&
+                !state.timesetHasReverse &&
+                !state.timesetHasDuplicate &&
+                state.timesetExists;
+        },
+        loadDestinationError(state) {
+            return state.loadDestinationError ||
+                i18n.t('pages.callForward.times.loadDestinationErrorMessage');
         }
+
     },
     mutations: {
         loadMappings(state, result) {
@@ -261,6 +276,21 @@ export default {
             state.timesetHasDuplicate = false;
             state.activeTimeForm = false;
             state.addTimeState = RequestState.button;
+        },
+        setSourceset(state, result) {
+            state.sourceset = result;
+        },
+        loadDestinationRequesting(state) {
+            state.loadDestinationState = RequestState.requesting;
+            state.loadDestinationError = null;
+        },
+        loadDestinationSucceeded(state) {
+            state.loadDestinationState = RequestState.succeeded;
+            state.loadDestinationError = null;
+        },
+        loadDestinationFailed(state, error) {
+            state.loadDestinationState = RequestState.failed;
+            state.loadDestinationError = error;
         }
     },
     actions: {
@@ -303,14 +333,6 @@ export default {
                         reject(err);
                     });
             });
-        },
-        loadEverybodyDestinations(context, options) {
-            loadEverybodyDestinations({
-                    subscriberId: localStorage.getItem('subscriberId'),
-                    timeset: options.timeset
-                }).then((result)=>{
-                    context.commit('loadDestinations', result);
-                });
         },
         deleteDestinationFromDestinationset(context, options) {
             let removedDestination = options.removeDestination;
@@ -358,7 +380,8 @@ export default {
                 data: form,
                 groupName: context.getters.getGroupName,
                 id: context.getters.getDestinationsetId,
-                timesetId: timeset
+                timesetId: timeset,
+                sourcesetId: options.sourcesetId
             };
             if (options.destinations) {
                 return new Promise(() => {
@@ -514,6 +537,18 @@ export default {
                 }).catch((err) => {
                     context.commit('addTimeFailed', err.message);
                 });
+        },
+        loadDestinations(context, options) {
+            context.commit('loadDestinationRequesting');
+            loadDestinations({
+                timeset: options.timeset,
+                subscriberId: context.getters.getSubscriberId
+            }).then((result) => {
+                context.commit('loadDestinations', result);
+                context.commit('loadDestinationSucceeded');
+            }).catch((err) => {
+                context.commit('loadDestinationFailed', err.message);
+            });
         }
     }
 };

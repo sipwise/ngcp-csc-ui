@@ -1,8 +1,10 @@
 <template>
     <div>
         <div v-if="showTimesAndDestinations">
-            <csc-call-forward-times :times="timesetTimes" :timesetName="timesetName" ref="times"></csc-call-forward-times>
-            <csc-call-forward-destinations :timeset="timesetName" :destinations="destinations" />
+            <csc-call-forward-times :times="timesetTimes"
+                :timesetName="timesetName" ref="times"></csc-call-forward-times>
+            <csc-sourcesets v-if="destinationsLoaded" :sourcesets="sourcesets"
+                :destinations="destinations" :timesetName="timesetName" />
         </div>
         <q-card flat>
             <div v-if="timesetHasDuplicate">
@@ -41,22 +43,25 @@
                         {{ $t('pages.callForward.times.timesetNotDefined', { timeset: timesetName }) }}
                 </q-alert>
             </div>
-            <csc-add-time-form v-if="activeTimeForm && !timesetExists"
-                type="new" :title="getAddLabel"
-                :timeset="timesetName"
-                ref="addTimeNew" />
+            <csc-add-time-form v-if="activeTimeForm && !timesetExists" type="new"
+                :title="getAddLabel" :timeset="timesetName" ref="addTimeNew" />
         </q-card>
     </div>
 </template>
 
 <script>
     import { mapState, mapGetters } from 'vuex'
-    import { startLoading, stopLoading,
-        showGlobalError, showToast } from '../../../helpers/ui'
     import { QAlert, QCard } from 'quasar-framework'
+    import {
+        startLoading,
+        stopLoading,
+        showGlobalError,
+        showToast
+    } from '../../../helpers/ui'
     import CscCallForwardDestinations from './CscCallForwardDestinations'
     import CscCallForwardTimes from './CscCallForwardTimes'
     import CscAddTimeForm from './CscAddTimeForm'
+    import CscSourcesets from './CscSourcesets'
     export default {
         name: 'csc-call-forward-timeset',
         props: [
@@ -74,6 +79,7 @@
             CscCallForwardDestinations,
             CscCallForwardTimes,
             CscAddTimeForm,
+            CscSourcesets,
             QAlert,
             QCard
         },
@@ -87,12 +93,17 @@
                 'timesetIsCompatible',
                 'timesetHasReverse',
                 'timesetExists',
-                'activeTimeForm'
+                'activeTimeForm',
+                'sourcesets',
+                'loadDestinationState'
             ]),
             ...mapGetters('callForward', [
                 'resetTimeError',
                 'addTimeError',
-                'showDefinedAlert'
+                'showDefinedAlert',
+                'destinationsLoaded',
+                'showTimesAndDestinations',
+                'loadDestinationError'
             ]),
             labelReset() {
                 return this.$t('pages.callForward.times.resetTimeset', {
@@ -103,12 +114,6 @@
                 return this.$t('pages.callForward.times.addTimeset', {
                     timeset: this.timesetName
                 });
-            },
-            showTimesAndDestinations() {
-                return this.timesetIsCompatible &&
-                    !this.timesetHasReverse &&
-                    !this.timesetHasDuplicate &&
-                    this.timesetExists;
             }
         },
         methods: {
@@ -118,8 +123,11 @@
             addTimeset() {
                 this.$store.commit('callForward/setActiveTimeForm', true);
             },
+            loadSourcesets() {
+                this.$store.dispatch('callForward/loadSourcesets');
+            },
             loadDestinations() {
-                this.$store.dispatch('callForward/loadEverybodyDestinations', {
+                this.$store.dispatch('callForward/loadDestinations', {
                     timeset: this.timesetName
                 });
             },
@@ -133,6 +141,7 @@
                 this.$store.commit('callForward/resetTimesetState');
                 this.loadTimes();
                 this.loadDestinations();
+                this.loadSourcesets();
             },
             resetAlerts() {
                 this.showAlertDuplicate = true;
@@ -186,6 +195,18 @@
             activeTimeForm(state) {
                 if (!state) {
                     this.resetAlerts();
+                }
+            },
+            loadDestinationState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                }
+                else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.loadDestinationError);
+                }
+                else if (state === 'succeeded') {
+                    stopLoading();
                 }
             }
         }

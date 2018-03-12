@@ -49,7 +49,8 @@
             'groupName',
             'priority',
             'timeset',
-            'timesetId'
+            'timesetId',
+            'sourcesetId'
         ],
         data () {
             return {
@@ -140,7 +141,8 @@
                     form: this.destinationForm,
                     destinations: this.destinations,
                     timeset: this.timeset,
-                    timesetId: this.timesetId
+                    timesetId: this.timesetId,
+                    sourcesetId: this.sourcesetId
                 });
             }
         }
