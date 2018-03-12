@@ -5,18 +5,21 @@
             :group="destinations.online"
             group-name="cfu"
             :timeset="timeset"
+            :sourceset="sourceset"
             icon="smartphone" />
         <csc-destinations :title="$t('pages.callForward.whenBusy')"
             class="csc-destinations"
             :group="destinations.busy"
             group-name="cfb"
             :timeset="timeset"
+            :sourceset="sourceset"
             icon="phonelink_ring" />
         <csc-destinations :title="$t('pages.callForward.whenOffline')"
             class="csc-destinations"
             :group="destinations.offline"
             group-name="cfna"
             :timeset="timeset"
+            :sourceset="sourceset"
             icon="phonelink_erase" />
     </div>
 </template>
@@ -30,6 +33,7 @@
         name: 'csc-call-forward-destinations',
         props: [
             'timeset',
+            'sourceset',
             'destinations'
         ],
         data () {
@@ -63,7 +67,7 @@
         },
         methods: {
             reloadDestinations(timeset) {
-                this.$store.dispatch('callForward/loadEverybodyDestinations', {
+                this.$store.dispatch('callForward/loadDestinations', {
                     timeset: timeset
                 });
             },

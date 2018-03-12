@@ -15,7 +15,7 @@
                 />
             </div>
         </q-list>
-        <csc-add-destination-form v-bind="lastDestinationset" />
+        <csc-add-destination-form v-bind="lastDestinationset" :sourcesetId="sourceset" />
     </div>
 </template>
 
@@ -31,7 +31,8 @@
             'icon',
             'group',
             'groupName',
-            'timeset'
+            'timeset',
+            'sourceset'
         ],
         components: {
             QList,
