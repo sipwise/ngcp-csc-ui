@@ -18,7 +18,9 @@
             CscCallForwardDestinations
         },
         created() {
-            this.$store.dispatch('callForward/loadAlwaysEverybodyDestinations');
+            this.$store.dispatch('callForward/loadEverybodyDestinations', {
+                timeset: null
+            });
         },
         computed: {
             ...mapState('callForward', [

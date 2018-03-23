@@ -1,32 +1,25 @@
 <template>
     <csc-page :title="$t('pages.callForward.titles.afterHours')">
-        <csc-call-forward-destinations timeset="After Hours" :destinations="destinations">
-        </csc-call-forward-destinations>
+        <csc-call-forward-timeset timesetName="After Hours" />
     </csc-page>
 </template>
 
 <script>
-    import { mapState } from 'vuex'
     import CscPage from '../../CscPage'
-    import CscCallForwardDestinations from './CscCallForwardDestinations'
+    import CscCallForwardTimeset from './CscCallForwardTimeset'
     export default {
         data () {
-            return {}
+            return {
+            }
         },
         components: {
             CscPage,
-            CscCallForwardDestinations
-        },
-        created() {
-            this.$store.dispatch('callForward/loadAfterHoursEverybodyDestinations');
-        },
-        computed: {
-            ...mapState('callForward', [
-                'destinations'
-            ])
+            CscCallForwardTimeset
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables.styl'
+
 </style>
