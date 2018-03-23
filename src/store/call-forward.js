@@ -72,13 +72,7 @@ export default {
         timesetHasReverse: false,
         timesetHasDuplicate: false,
         timesetId: null,
-        activeTimeForm: false,
-        showAlerts: {
-            duplicate: true,
-            compatible: true,
-            reverse: true,
-            defined: true
-        }
+        activeTimeForm: false
     },
     getters: {
         hasFaxCapability(state, getters, rootState, rootGetters) {
@@ -257,25 +251,14 @@ export default {
         setActiveTimeForm(state, value) {
             state.activeTimeForm = value;
         },
-        resetAlerts(state) {
-            state.showAlerts.duplicate = true;
-            state.showAlerts.compatible = true;
-            state.showAlerts.reverse = true;
-            state.showAlerts.defined = true;
-        },
-        setShowAlertDuplicate(state, value) {
-            state.showAlerts.duplicate = value;
-        },
-        setShowAlertCompatible(state, value) {
-            state.showAlerts.compatible = value;
-        },
-        setShowAlertReverse(state, value) {
-            state.showAlerts.reverse = value;
-        },
-        setShowAlertDefined(state, value) {
-            state.showAlerts.defined = value;
-        },
         resetAddTimeState(state) {
+            state.addTimeState = RequestState.button;
+        },
+        resetTimesetState(state) {
+            state.timesetIsCompatible = true;
+            state.timesetExists = true;
+            state.timesetHasReverse = false;
+            state.timesetHasDuplicate = false;
             state.addTimeState = RequestState.button;
         }
     },
@@ -321,34 +304,20 @@ export default {
             });
         },
         loadAlwaysEverybodyDestinations(context) {
-            return new Promise(()=>{
-                loadEverybodyDestinations({
+            loadEverybodyDestinations({
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeset: null
-                    }).then((result)=>{
-                        context.commit('loadDestinations', result);
-                    });
-            });
+                }).then((result)=>{
+                    context.commit('loadDestinations', result);
+                });
         },
-        loadCompanyHoursEverybodyDestinations(context) {
-            return new Promise(()=>{
-                loadEverybodyDestinations({
+        loadTimesetEverybodyDestinations(context, options) {
+            loadEverybodyDestinations({
                     subscriberId: localStorage.getItem('subscriberId'),
-                    timeset: 'Company Hours'
-                    }).then((result)=>{
-                        context.commit('loadDestinations', result);
-                    });
-            });
-        },
-        loadAfterHoursEverybodyDestinations(context) {
-            return new Promise(()=>{
-                loadEverybodyDestinations({
-                    subscriberId: localStorage.getItem('subscriberId'),
-                    timeset: 'After Hours'
-                    }).then((result)=>{
-                        context.commit('loadDestinations', result);
-                    });
-            });
+                    timeset: options.timeset
+                }).then((result)=>{
+                    context.commit('loadDestinations', result);
+                });
         },
         deleteDestinationFromDestinationset(context, options) {
             let removedDestination = options.removeDestination;
@@ -521,7 +490,7 @@ export default {
                 id: context.getters.getSubscriberId,
                 name: name
                 }).then(() => {
-                    context.commit('resetAddTimeState');
+                    context.commit('resetTimesetState');
                     context.commit('resetTimeSucceeded');
                 }).catch((err) => {
                     context.commit('resetTimeFailed', err.message);
