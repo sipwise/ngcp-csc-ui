@@ -1,60 +1,25 @@
 <template>
     <csc-page :title="$t('pages.callForward.titles.companyHours')">
-        <div v-if="timesetIsCompatible && !timesetHasReverse && !timesetHasDuplicate && timesetExists">
-            <csc-call-forward-times :times="timesetTimes" ref="times"></csc-call-forward-times>
-            <csc-call-forward-destinations timeset="Company Hours" :destinations="destinations" />
-        </div>
-        <q-card flat>
-            <div v-if="timesetHasDuplicate">
-                <q-alert color="red"
-                    v-model="showAlertDuplicate"
-                    icon="date_range"
-                    :actions="[{ label: $t('pages.callForward.times.resetCompanyHours'), handler: resetCompanyHours }]"
-                    appear>
-                        {{ $t('pages.callForward.times.companyHoursDuplicate') }}
-                </q-alert>
-            </div>
-            <div v-else-if="!timesetIsCompatible">
-                <q-alert color="red"
-                    v-model="showAlertCompatible"
-                    icon="date_range"
-                    :actions="[{ label: $t('pages.callForward.times.resetCompanyHours'), handler: resetCompanyHours }]"
-                    appear>
-                        {{ $t('pages.callForward.times.companyHoursIncompatible') }}
-                </q-alert>
-            </div>
-            <div v-else-if="timesetHasReverse">
-                <q-alert color="red"
-                    v-model="showAlertReverse"
-                    icon="date_range"
-                    :actions="[{ label: $t('pages.callForward.times.resetCompanyHours'), handler: resetCompanyHours }]"
-                    appear>
-                        {{ $t('pages.callForward.times.companyHoursReverse') }}
-                </q-alert>
-            </div>
-            <div v-show="showDefinedAlert">
-                <q-alert color="warning"
-                    v-model="showAlertDefined"
-                    icon="date_range"
-                    :actions="[{ label: $t('pages.callForward.times.addCompanyHours'), handler: addCompanyHours }]"
-                    appear>
-                        {{ $t('pages.callForward.times.companyHoursNotDefined') }}
-                </q-alert>
-            </div>
-            <csc-add-time-form type="new" :title="$t('pages.callForward.times.addCompanyHours')" timeset="Company Hours" ref="addTimeNew"></csc-add-time-form>
-        </q-card>
+        <csc-timeset-submodule
+            :timesetTimes="timesetTimes"
+            :destinations="destinations"
+            :timesetHasDuplicate="timesetHasDuplicate"
+            :timesetIsCompatible="timesetIsCompatible"
+            :timesetHasReverse="timesetHasReverse"
+            :timesetExists="timesetExists"
+            :showDefinedAlert="showDefinedAlert"
+            timesetName="Company Hours"
+            ref="timesetSubmodule"
+        />
     </csc-page>
 </template>
 
 <script>
     import { mapState, mapGetters } from 'vuex'
-    import { QAlert, QCard } from 'quasar-framework'
-    import CscPage from '../../CscPage'
     import { startLoading, stopLoading,
         showGlobalError, showToast } from '../../../helpers/ui'
-    import CscCallForwardDestinations from './CscCallForwardDestinations'
-    import CscCallForwardTimes from './CscCallForwardTimes'
-    import CscAddTimeForm from './CscAddTimeForm'
+    import CscPage from '../../CscPage'
+    import CscTimesetSubmodule from './CscTimesetSubmodule'
     export default {
         data () {
             return {
@@ -62,11 +27,7 @@
         },
         components: {
             CscPage,
-            CscCallForwardDestinations,
-            CscCallForwardTimes,
-            CscAddTimeForm,
-            QAlert,
-            QCard
+            CscTimesetSubmodule
         },
         created() {
             this.$store.dispatch('callForward/loadCompanyHoursEverybodyDestinations');
@@ -80,9 +41,9 @@
                 'timesetTimes',
                 'resetTimeState',
                 'addTimeState',
+                'timesetHasDuplicate',
                 'timesetIsCompatible',
                 'timesetHasReverse',
-                'timesetHasDuplicate',
                 'timesetExists'
             ]),
             ...mapGetters('callForward', [
@@ -90,47 +51,8 @@
                 'addTimeError',
                 'showDefinedAlert'
             ]),
-
-            showAlertDuplicate: {
-                get() {
-                    return this.$store.state.callForward.showAlerts.duplicate;
-                },
-                set(value) {
-                    return this.$store.commit('callForward/setShowAlertDuplicate', value);
-                }
-            },
-            showAlertCompatible: {
-                get() {
-                    return this.$store.state.callForward.showAlerts.compatible;
-                },
-                set(value) {
-                    return this.$store.commit('callForward/setShowAlertCompatible', value);
-                }
-            },
-            showAlertReverse: {
-                get() {
-                    return this.$store.state.callForward.showAlerts.reverse;
-                },
-                set(value) {
-                    return this.$store.commit('callForward/setShowAlertReverse', value);
-                }
-            },
-            showAlertDefined: {
-                get() {
-                    return this.$store.state.callForward.showAlerts.defined;
-                },
-                set(value) {
-                    return this.$store.commit('callForward/setShowAlertDefined', value);
-                }
-            }
         },
         methods: {
-            resetCompanyHours() {
-                this.$store.dispatch('callForward/resetTimesetByName', 'Company Hours');
-            },
-            addCompanyHours() {
-                this.$store.commit('callForward/setActiveTimeForm', true);
-            },
             loadTimes() {
                 this.$store.dispatch('callForward/loadTimesetTimes', {
                     timeset: 'Company Hours'
@@ -166,12 +88,15 @@
                     this.$store.commit('callForward/setActiveTimeForm', false);
                     stopLoading();
                     if (this.$refs.times) {
-                        this.$refs.times.resetTimes();
+                        this.$refs.timesetSubmodule.resetExistingTimes();
+                        //this.$refs.times.resetTimes();
                     }
                     else {
-                        this.$refs.addTimeNew.resetTimes();
+                        this.$refs.timesetSubmodule.resetNewTimes();
+                        //this.$refs.addTimeNew.resetTimes();
                     }
                     this.loadTimes();
+                    this.$store.dispatch('callForward/loadCompanyHoursEverybodyDestinations');
                     showToast(this.$t('pages.callForward.times.addTimeSuccessMessage'));
                 }
             }
@@ -181,7 +106,5 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl'
-    .times-card
-        .q-alert-container
-            padding 15px 0
+
 </style>

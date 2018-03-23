@@ -277,6 +277,12 @@ export default {
         },
         resetAddTimeState(state) {
             state.addTimeState = RequestState.button;
+        },
+        resetTimesetState(state) {
+            state.timesetIsCompatible = true;
+            state.timesetExists = true;
+            state.timesetHasReverse = false;
+            state.timesetHasDuplicate = false;
         }
     },
     actions: {
@@ -522,6 +528,7 @@ export default {
                 name: name
                 }).then(() => {
                     context.commit('resetAddTimeState');
+                    context.commit('resetTimesetState');
                     context.commit('resetTimeSucceeded');
                 }).catch((err) => {
                     context.commit('resetTimeFailed', err.message);

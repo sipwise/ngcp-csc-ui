@@ -6,7 +6,7 @@
         <q-card-main>
             <csc-call-forward-time v-if="times.length > 0" v-for="(time, index) in times"
                 :time="time" :index="index" />
-            <csc-add-time-form type="existing" :title="$t('pages.callForward.times.addCompanyHours')" timeset="Company Hours" ref="addFormExisting" />
+            <csc-add-time-form v-if="activeTimeForm" type="existing" :title="$t('pages.callForward.times.addCompanyHours')" timeset="Company Hours" ref="addFormExisting" />
         </q-card-main>
         <q-card-actions v-if="!activeTimeForm">
             <q-field>
@@ -48,9 +48,9 @@
             QBtn
         },
         computed: {
-            ...mapState('callForward', {
-                activeTimeForm: 'activeTimeForm'
-            })
+            ...mapState('callForward', [
+                'activeTimeForm'
+            ])
         },
         methods: {
             resetTimes() {

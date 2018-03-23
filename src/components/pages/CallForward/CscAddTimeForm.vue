@@ -1,5 +1,5 @@
 <template>
-    <div v-if="activeTimeForm" class="add-times">
+    <div class="add-times">
         <div class="title" v-if="typeIsNew">
             {{ title }}
         </div>
@@ -73,10 +73,9 @@
             date
         },
         computed: {
-            ...mapState('callForward', {
-                activeTimeForm: 'activeTimeForm',
-                addTimeState: 'addTimeState'
-            }),
+            ...mapState('callForward', [
+                'addTimeState'
+            ]),
             typeIsNew() {
                 return this.type === 'new';
             },
@@ -151,6 +150,7 @@
 
     .add-times
         margin-right 30px
+
         .title
             color $primary
             line-height $csc-subtitle-line-height
