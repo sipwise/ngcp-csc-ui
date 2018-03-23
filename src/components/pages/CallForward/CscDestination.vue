@@ -76,7 +76,7 @@
             QItemSide,
             Dialog,
             QBtn,
-            QTooltip 
+            QTooltip
         },
         computed: {
             ...mapState('callForward', [
