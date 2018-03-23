@@ -62,15 +62,9 @@
         },
         methods: {
             reloadDestinations(timeset) {
-                if (timeset === null) {
-                    this.$store.dispatch('callForward/loadAlwaysEverybodyDestinations');
-                }
-                else if (timeset === 'Company Hours') {
-                    this.$store.dispatch('callForward/loadCompanyHoursEverybodyDestinations');
-                }
-                else if (timeset === 'After Hours') {
-                    this.$store.dispatch('callForward/loadAfterHoursEverybodyDestinations');
-                }
+                this.$store.dispatch('callForward/loadEverybodyDestinations', {
+                    timeset: timeset
+                });
             },
             reloadTimes() {
                 this.$store.dispatch('callForward/loadTimesetTimes', {
