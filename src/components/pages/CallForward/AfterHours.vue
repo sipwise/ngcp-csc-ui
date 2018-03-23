@@ -1,5 +1,6 @@
 <template>
     <csc-page :title="$t('pages.callForward.titles.afterHours')">
+        <!--TODO: Implement custom component as wrapper for timeset specific destinations and times-->
         <csc-call-forward-destinations timeset="After Hours" :destinations="destinations">
         </csc-call-forward-destinations>
     </csc-page>

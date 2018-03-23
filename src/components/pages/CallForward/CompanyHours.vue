@@ -41,7 +41,7 @@
                         {{ $t('pages.callForward.times.companyHoursNotDefined') }}
                 </q-alert>
             </div>
-            <csc-add-time-form type="new" :title="$t('pages.callForward.times.addCompanyHours')" timeset="Company Hours" ref="addTimeNew"></csc-add-time-form>
+            <csc-add-time-form v-if="activeTimeForm" type="new" :title="$t('pages.callForward.times.addCompanyHours')" timeset="Company Hours" ref="addTimeNew"></csc-add-time-form>
         </q-card>
     </csc-page>
 </template>
@@ -83,7 +83,8 @@
                 'timesetIsCompatible',
                 'timesetHasReverse',
                 'timesetHasDuplicate',
-                'timesetExists'
+                'timesetExists',
+                'activeTimeForm'
             ]),
             ...mapGetters('callForward', [
                 'resetTimeError',
@@ -172,6 +173,7 @@
                         this.$refs.addTimeNew.resetTimes();
                     }
                     this.loadTimes();
+                    this.$store.dispatch('callForward/loadCompanyHoursEverybodyDestinations');
                     showToast(this.$t('pages.callForward.times.addTimeSuccessMessage'));
                 }
             }
@@ -181,6 +183,7 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl'
+
     .times-card
         .q-alert-container
             padding 15px 0
