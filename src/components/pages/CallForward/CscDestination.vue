@@ -2,7 +2,7 @@
     <div>
         <q-item v-for="(destination, index) in destinations">
             <q-item-main>
-                <div class="dest-row">
+                <div class="dest-row" :class="{ terminated: destination.terminated}">
                     <span v-if="index == 0">
                         {{ $t('pages.callForward.firstRing') }}
                     </span>
@@ -159,6 +159,9 @@
     .dest-row
         .dest-values
             font-weight 500
+
+    .dest-row.terminated
+        color $grey
 
     .dest-btns
         display inline-block

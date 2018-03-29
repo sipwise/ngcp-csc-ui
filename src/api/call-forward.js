@@ -3,6 +3,7 @@ import _ from 'lodash';
 import Vue from 'vue';
 import { i18n } from '../i18n';
 import { getJsonBody } from './utils';
+import { normalizeDestination } from '../filters/number-format'
 
 let rowCountAssumption = 1000;
 
@@ -131,9 +132,9 @@ export function loadEverybodyDestinations(options) {
                 Promise.all(cfbPromises)
             ]);
         }).then((res)=>{
-            addGroupNamesAndTimeset({ group: res[0], groupName: 'cfu', timesetId: cfuTimeset });
-            addGroupNamesAndTimeset({ group: res[1], groupName: 'cfna', timesetId: cfnaTimeset });
-            addGroupNamesAndTimeset({ group: res[2], groupName: 'cfb', timesetId: cfbTimeset });
+            addNameIdAndTerminating({ group: res[0], groupName: 'cfu', timesetId: cfuTimeset });
+            addNameIdAndTerminating({ group: res[1], groupName: 'cfna', timesetId: cfnaTimeset });
+            addNameIdAndTerminating({ group: res[2], groupName: 'cfb', timesetId: cfbTimeset });
             resolve({
                 online: res[0],
                 offline: res[1],
@@ -145,10 +146,25 @@ export function loadEverybodyDestinations(options) {
     });
 }
 
-export function addGroupNamesAndTimeset(options) {
+export function addNameIdAndTerminating(options) {
+    let terminatingFlag = false;
     options.group.forEach(destinationset => {
         destinationset.groupName = options.groupName;
         destinationset.timesetId = options.timesetId;
+        destinationset.destinations.forEach(destination => {
+            let normalized = normalizeDestination(destination.destination);
+            if (!terminatingFlag && _.includes(['Voicemail', 'Fax2Mail', 'Manager Secretary',
+                'Custom Announcement', 'Conference'], normalized)) {
+                    terminatingFlag = true;
+                    destination.terminated = false;
+                }
+                else if (terminatingFlag) {
+                    destination.terminated = true;
+                }
+                else {
+                    destination.terminated = false;
+                }
+        });
     });
     return options.group;
 }
