@@ -9,7 +9,8 @@ import { getMappings, getSourcesets, getTimesets,
     addDestinationToDestinationset,
     convertTimesetToWeekdays,
     deleteTimeFromTimeset,
-    convertAddTime } from '../../src/api/call-forward';
+    convertAddTime,
+    addNameIdAndTerminating } from '../../src/api/call-forward';
 import { assert } from 'chai';
 
 Vue.use(VueResource);
@@ -844,6 +845,119 @@ describe('CallForward', function() {
         ];
 
         assert.deepEqual(convertAddTime(options), data);
+
+    });
+
+    it('should attempt to add group name, timeset id and terminated state to destinations', function(){
+
+        let options = {
+            group: [
+                {
+                    destinations: [
+                        {
+                            announcement_id: null,
+                            destination: "sip:1111@10.15.17.240",
+                            priority: 1,
+                            simple_destination: "1111",
+                            timeout: 300
+                        },
+                        {
+                            announcement_id: null,
+                            destination: "sip:vmued4b92f4-59f0-414d-ba70-31c40da69e3b@voicebox.local",
+                            priority: 1,
+                            timeout: 300
+                        },
+                        {
+                            announcement_id: null,
+                            destination: "sip:2222@10.15.17.240",
+                            priority: 1,
+                            simple_destination: "2222",
+                            timeout: 300
+                        },
+                    ],
+                    id: 3,
+                    name: "t1",
+                    priority: 1,
+                    subscriber_id: 311,
+                    timeset: null
+                },
+                {
+                    destinations: [
+                        {
+                            announcement_id: null,
+                            destination: "sip:3333@10.15.17.240",
+                            priority: 1,
+                            simple_destination: "3333",
+                            timeout: 300
+                        },
+                    ],
+                    id: 5,
+                    name: "t2",
+                    priority: 1,
+                    subscriber_id: 311,
+                    timeset: null
+                }
+            ],
+            groupName: "cfu",
+            timesetId: null
+        };
+        let data = [
+            {
+                destinations: [
+                    {
+                        announcement_id: null,
+                        destination: "sip:1111@10.15.17.240",
+                        priority: 1,
+                        simple_destination: "1111",
+                        terminated: false,
+                        timeout: 300
+                    },
+                    {
+                        announcement_id: null,
+                        destination: "sip:vmued4b92f4-59f0-414d-ba70-31c40da69e3b@voicebox.local",
+                        priority: 1,
+                        terminated: false,
+                        timeout: 300
+                    },
+                    {
+                        announcement_id: null,
+                        destination: "sip:2222@10.15.17.240",
+                        priority: 1,
+                        simple_destination: "2222",
+                        terminated: true,
+                        timeout: 300
+                    },
+                ],
+                groupName: "cfu",
+                id: 3,
+                name: "t1",
+                priority: 1,
+                subscriber_id: 311,
+                timeset: null,
+                timesetId: null
+            },
+            {
+                destinations: [
+                    {
+                        announcement_id: null,
+                        destination: "sip:3333@10.15.17.240",
+                        priority: 1,
+                        simple_destination: "3333",
+                        terminated: true,
+                        timeout: 300
+                    }
+                ],
+                groupName: "cfu",
+                id: 5,
+                name: "t2",
+                priority: 1,
+                subscriber_id: 311,
+                timeset: null,
+                timesetId: null
+            }
+        ];
+
+        assert.deepEqual(addNameIdAndTerminating(options), data);
 
     });
 

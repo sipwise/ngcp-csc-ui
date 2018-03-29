@@ -4,34 +4,29 @@
             {{ $t('pages.callForward.addDestinationButton') }}
             <q-popover ref="popover">
                 <q-list separator link>
-                    <q-item @click="enableForm('number'),
-                        $refs.popover.close()">
-                            {{ $t('pages.callForward.buttons.addNumber') }}
+                    <q-item @click="enableForm('number'), $refs.popover.close()">
+                        {{ $t('pages.callForward.buttons.addNumber') }}
                     </q-item>
-                    <q-item @click="enableForm('voicebox'),
-                        $refs.popover.close()">
-                            {{ $t('pages.callForward.buttons.addVoicemail') }}
+                    <q-item @click="enableForm('voicebox'), $refs.popover.close()">
+                        {{ $t('pages.callForward.buttons.addVoicemail') }}
                     </q-item>
-                    <q-item @click="enableForm('fax2mail'),
-                        $refs.popover.close()"
-                        v-if="hasFaxCapability">
-                            {{ $t('pages.callForward.buttons.addFax2Mail') }}
+                    <q-item @click="enableForm('fax2mail'), $refs.popover.close()" v-if="hasFaxCapability">
+                        {{ $t('pages.callForward.buttons.addFax2Mail') }}
                     </q-item>
                 </q-list>
             </q-popover>
         </q-btn>
         <div v-if="isFormEnabled">
             <q-field :error="addFormError" :error-label="$t('pages.callForward.addInputError')">
-                    <q-input :before="beforeIconDestination" :float-label="$t('pages.callForward.destination')" type="text"
-                        v-model="destinationForm.destination" @keyup.enter="addDestination()"
-                        :clearable="isFormTypeNumber" :autofocus="isFormTypeNumber"
-                        :disable="!isFormTypeNumber || addDestinationIsRequesting" />
+                <q-input :before="beforeIconDestination" :float-label="$t('pages.callForward.destination')" type="text"
+                    v-model="destinationForm.destination" @keyup.enter="addDestination()"
+                    :clearable="isFormTypeNumber" :autofocus="isFormTypeNumber"
+                    :disable="!isFormTypeNumber || addDestinationIsRequesting" />
             </q-field>
-            <q-field :error="addFormError"
-                     :error-label="$t('pages.callForward.addInputError')">
+            <q-field :error="addFormError" :error-label="$t('pages.callForward.addInputError')">
                 <q-input :before="beforeIconTimeout" :float-label="$t('pages.callForward.timeout')"
-                         type="number" v-if="isFormTypeNumber" v-model="destinationForm.timeout"
-                         :min="0" :max="600" suffix="seconds" />
+                    type="number" v-if="isFormTypeNumber" v-model="destinationForm.timeout"
+                    :min="0" :max="600" suffix="seconds" />
             </q-field>
             <q-btn flat dark @click="disableForm()">{{ $t('buttons.cancel') }}</q-btn>
             <q-btn flat color="primary" icon-right="fa-save" @click="addDestination()">{{ $t('buttons.save') }}</q-btn>

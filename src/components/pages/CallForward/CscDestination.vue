@@ -2,7 +2,7 @@
     <div>
         <q-item v-for="(destination, index) in destinations">
             <q-item-main>
-                <div class="dest-row">
+                <div class="dest-row" :class="{ terminated: destination.terminated}">
                     <span v-if="index == 0">
                         {{ $t('pages.callForward.firstRing') }}
                     </span>
@@ -23,6 +23,9 @@
                             {{ $t('pages.callForward.secs') }}
                         </span>
                     </span>
+                    <q-tooltip v-if="destination.terminated">
+                        {{ $t('pages.callForward.terminatedTooltip') }}
+                    </q-tooltip>
                 </div>
             </q-item-main>
             <q-item-side class="dest-btns" right>
@@ -58,7 +61,7 @@
     import { startLoading, stopLoading,
         showGlobalError } from '../../../helpers/ui'
     import { QItem, QItemMain, QItemSide,
-        Dialog, QBtn } from 'quasar-framework'
+        Dialog, QBtn, QTooltip } from 'quasar-framework'
     export default {
         name: 'csc-destination',
         props: [
@@ -72,7 +75,8 @@
             QItemMain,
             QItemSide,
             Dialog,
-            QBtn
+            QBtn,
+            QTooltip 
         },
         computed: {
             ...mapState('callForward', [
@@ -159,6 +163,9 @@
     .dest-row
         .dest-values
             font-weight 500
+
+    .dest-row.terminated
+        color $grey
 
     .dest-btns
         display inline-block
