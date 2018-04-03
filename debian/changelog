@@ -1,3 +1,41 @@
+ngcp-csc-ui (6.2.1.0+0~mr6.2.1.0) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [9567594] TT#28058 Add New Call Forward Destination
+  * [8666f25] TT#28062 Change order of destination
+  * [cefb66b] TT#28056 List all company hours destinations
+  * [fcbd7f6] TT#28057 List all after hours destinations
+  * [31695ab] TT#32750 Implement startpage with feature overview
+  * [f345683] TT#31801 List Company Hours Times
+  * [3a2f7bd] TT#31803 Remove time from timeset
+  * [5e47053] TT#32961 Call number input field auto focused
+  * [f0a2fa1] TT#28060 Add time to company hours
+  * [2fa2070] TT#34011 Indication of active destinations
+  * [dcdab20] TT#20532 As a Customer, I want to download a single Fax
+
+  [ Hans-Peter Herzog ]
+  * [02c8221] TT#23608 Call: As a Customer, I want be able to see an established call
+  * [38d68c1] TT#31457 General: Improve layout for mobile devices
+  * [74a0bc0] TT#31651 Call: Enable fullscreen on mobile devices by default
+  * [e2b927e] TT#31652 General: Show communication button if at least one capability is enabled
+  * [508e870] TT#31652 General: Fix communication button
+  * [3463789] TT#20511 PBXConfig: As a Customer, I want to remove PBX Groups
+  * [3475daa] TT#20513 PBXConfig: As a Customer, I want to see a list of all PBX Seats
+  * [b81d974] TT#32987 Call: As a Customer I want to get notified about an incoming call
+  * [29c060e] TT#32750 Startpage: Font size and margin adjustments
+  * [9e4c5cb] TT#32204 Session: As a Customer I want to get logged out properly if session is expired
+  * [8db9bbd] TT#32204 Session: Ignore logout timeout if session expiration is not set in jwt
+  * [57a26ca] TT#33129 Call: Changed icons in call dialog
+  * [66ed5ff] TT#33307 Call: As a Customer I want to see the desktop sharing button only if device has the capability
+  * [6f131ea] TT#33412 Call: As a Customer, I want to get a installation hint if chrome extension in not installed
+  * [bb61dc5] TT#33389 Call: Ringing sound does not stop playing
+  * [831e322] TT#33814 CodeQuality: Introduce ESLint for syntax and semantic checks
+  * [ca114f0] TT#34101 Get the chrome extension url dynamically from RTCEngine
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 03 Apr 2018 22:29:01 +0200
+
 ngcp-csc-ui (6.2.0.0+0~mr6.2.0.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
