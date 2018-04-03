@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_20bb8a10",
+        "filename": "src/components/CscConversation.vue",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-03T08:54:37Z",
+      "side": 1,
+      "message": "I would suggest to make this more explicit, but using this conditional statement instead:\n\u003cdiv v-else-if\u003d\"isType(\u0027fax\u0027)\" slot\u003d\"footer\"\u003e",
+      "range": {
+        "startLine": 61,
+        "startChar": 8,
+        "endLine": 61,
+        "endChar": 34
+      },
+      "revId": "d518c6e0c9bb73e259d739f5c0a01c74e4647c29",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_804b762b",
+        "filename": "src/locales/en.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-03T08:54:37Z",
+      "side": 1,
+      "message": "I would propose a slightly different wording, using clearer past tense:\n\"downloadVoiceMailSuccessMessage\": \"Voicemail downloaded successfully\",\n            \"downloadVoiceMailErrorMessage\": \"Downloading of voicemail failed\",\n            \"downloadFaxSuccessMessage\": \"Fax downloaded successfully\",\n            \"downloadFaxErrorMessage\": \"Downloading of fax failed\"",
+      "range": {
+        "startLine": 112,
+        "startChar": 12,
+        "endLine": 115,
+        "endChar": 60
+      },
+      "revId": "d518c6e0c9bb73e259d739f5c0a01c74e4647c29",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_40556ec4",
+        "filename": "src/store/conversations.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-03T08:54:37Z",
+      "side": 1,
+      "message": "Looks great, but we can get rid of the wrapped promise, as we just discussed.",
+      "range": {
+        "startLine": 82,
+        "startChar": 1,
+        "endLine": 91,
+        "endChar": 15
+      },
+      "revId": "d518c6e0c9bb73e259d739f5c0a01c74e4647c29",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_20526ade",
+        "filename": "t/api/conversations.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-03T08:54:37Z",
+      "side": 1,
+      "message": "Re-enabled this.",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 1
+      },
+      "revId": "d518c6e0c9bb73e259d739f5c0a01c74e4647c29",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
