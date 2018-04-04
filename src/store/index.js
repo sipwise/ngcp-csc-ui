@@ -10,6 +10,7 @@ import LayoutModule from './layout'
 import PbxConfigModule from './pbx-config/index'
 import ReminderModule from './reminder'
 import UserModule from './user'
+import CommunicationModule from './communication'
 
 Vue.use(Vuex);
 
@@ -22,6 +23,7 @@ export const store = new Vuex.Store({
         layout: LayoutModule,
         pbxConfig: PbxConfigModule,
         reminder: ReminderModule,
-        user: UserModule
+        user: UserModule,
+        communication: CommunicationModule
     }
 });
