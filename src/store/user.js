@@ -11,7 +11,7 @@ export default {
         subscriber: null,
         capabilities: null,
         features: {
-            sendFax: false,
+            sendFax: true,
             sendSms: false
         },
         loginRequesting: false,

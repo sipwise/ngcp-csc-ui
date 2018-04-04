@@ -104,6 +104,15 @@ Now you can log in to csc with one of the normal subscriber you just created. UR
 
 `https://<your-ip-address>/csc`
 
+### Send Fax
+
+You need to first enable faxserver and activate it for the subscriber, to be able to send a fax via the "action button menu".
+
+1. By default, vagrant-ngcp has faxserver enabled by default in the config, so currently we do not need to make any changes here. Otherwise, it would be enabled via /etc/ngcp-config/config.yml by setting "faxserver: enable:" to "yes" and applying the changes with ngcpcfg apply 'enable faxserver'""
+1. Log in to ngcp-panel with administrator credentials
+1. Go to Settings > Subscribers > Details > Preferences > Fax Features > Fax2Mail and SendFax, and set Active to "yes"
+1. Additionally, the visibility of the fax option in "action button menu" is reliant on store state "sendFax: true" in src/store/user.js. This means it can be toggled off in the code as well if neeeded
+
 ### How to add new npm package
 
 1. Remove the package if you've already installed it
