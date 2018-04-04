@@ -259,5 +259,23 @@
         "noDevices": "No devices created yet",
         "noGroups": "No groups created yet",
         "noSeats": "No seats created yet"
+    },
+    "communication": {
+        "sendFax": "Send Fax",
+        "quality": {
+            "normal": "Normal",
+            "fine": "Fine",
+            "super": "Super"
+        },
+        "label": {
+            "destination": "Destination Number",
+            "quality": "Quality",
+            "pageHeader": "Page Header",
+            "content": "Content"
+        },
+        "send": "Send",
+        "cancel": "Cancel",
+        "createFaxErrorMessage": "An error occured while trying to send the fax. Please try again.",
+        "createFaxSuccessMessage": "Sending fax completed successfully."
     }
 }
