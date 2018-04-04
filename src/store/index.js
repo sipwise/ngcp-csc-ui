@@ -7,7 +7,7 @@ import CallForwardModule from './call-forward'
 import CallModule from './call'
 import ConversationsModule from './conversations'
 import LayoutModule from './layout'
-import PbxConfigModule from './pbx-config'
+import PbxConfigModule from './pbx-config/index'
 import ReminderModule from './reminder'
 import UserModule from './user'
 

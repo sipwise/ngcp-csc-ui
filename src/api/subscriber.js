@@ -215,3 +215,48 @@ export function deleteSubscriber(id) {
         });
     });
 }
+
+export function setField(id, field, value) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.patch('/api/subscribers/' + id, [{
+            op: 'replace',
+            path: '/'+ field,
+            value: value
+        }], {
+            headers: {
+                'Content-Type': 'application/json-patch+json',
+                'Prefer': 'return=minimal'
+            }
+        }).then((result)=>{
+            resolve(result);
+        }).catch((err)=>{
+            if(err.status >= 400) {
+                reject(new Error(err.body.message));
+            }
+            else {
+                reject(err);
+            }
+        });
+    });
+}
+
+export function setDisplayName(id, displayName) {
+    return setField(id, 'display_name', displayName);
+}
+
+export function setPbxExtension(id, pbxExtension) {
+    return setField(id, 'pbx_extension', pbxExtension);
+}
+
+export function setPbxHuntPolicy(id, pbxHuntPolicy) {
+    return setField(id, 'pbx_hunt_policy', pbxHuntPolicy);
+}
+
+export function setPbxHuntTimeout(id, pbxHuntTimeout) {
+    return setField(id, 'pbx_hunt_timeout', pbxHuntTimeout);
+}
+
+export function setPbxGroupMemberIds(id, ids) {
+    return setField(id, 'pbx_groupmember_ids', ids);
+}
+

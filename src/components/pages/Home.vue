@@ -1,5 +1,5 @@
 <template>
-    <csc-page :title="$t('pages.home.title')">
+    <csc-page :title="$t('pages.home.title')" id="csc-page-home">
         <div class="row md-gutter">
             <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
                 <div @click="call()">
@@ -148,25 +148,26 @@
     }
 </script>
 
-<style lang="stylus" scoped rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus">
     @import '../../themes/quasar.variables.styl'
 
-    .q-card-actions
-        font-size 22px
-        padding 0 10px 35px 10px
-
-    .q-card-main
-        font-size 22px
-        padding-top 35px
-
-    .home-card-active
-        cursor pointer
-        border solid 2px $primary
-        .home-icons
-            font-size 5.5rem
-            color $primary
+    #csc-page-home
         .q-card-actions
-            color $primary
+            font-size 22px
+            padding 0 10px 35px 10px
+
+        .q-card-main
+            font-size 22px
+            padding-top 35px
+
+        .home-card-active
+            cursor pointer
+            border solid 2px $primary
+            .home-icons
+                font-size 5.5rem
+                color $primary
+            .q-card-actions
+                color $primary
 
     .home-card-inactive
         cursor not-allowed
@@ -178,16 +179,17 @@
             color $grey
 
     @media (max-width: $breakpoint-sm)
-        .q-card-actions
-            font-size 16px
-            padding 0 10px 25px 10px
-        .q-card-main
-            font-size 22px
-            padding-top 25px
-        .home-card-active
-            .home-icons
-                font-size 3rem
-        .home-card-inactive
-            .home-icons
-                font-size 3rem
+        #csc-page-home
+            .q-card-actions
+                font-size 16px
+                padding 0 10px 25px 10px
+            .q-card-main
+                font-size 22px
+                padding-top 25px
+            .home-card-active
+                .home-icons
+                    font-size 3rem
+            .home-card-inactive
+                .home-icons
+                    font-size 3rem
 </style>

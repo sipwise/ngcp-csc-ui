@@ -45,19 +45,21 @@
                 <q-btn color="primary" icon="add" flat @click="enableGroupForm">{{ $t('pbxConfig.addGroup') }}</q-btn>
             </q-card-actions>
         </q-card>
-        <q-card v-if="listIsRequesting && !removeGroupIsRequesting && !addGroupIsRequesting" flat>
+        <q-card v-if="listIsRequesting && !listLoadingSilently" flat>
             <q-card-actions align="center">
                 <q-spinner-dots  color="primary" :size="40"/>
             </q-card-actions>
         </q-card>
-        <csc-pbx-group v-for="group in groups" :group="group" :alias-number-options="aliasNumberOptions"
+        <csc-pbx-group v-for="group in groups" :key="group.id" :group="group" :alias-number-options="aliasNumberOptions"
                        :seat-options="seatOptions" :hunt-policy-options="huntPolicyOptions" @remove="removeGroup"
-                       :loading="removeGroupIsRequesting && group.id == removeGroupId" />
+                       :loading="isGroupUpdating(group.id)" @save-name="setGroupName" @save-extension="setGroupExtension"
+                        @save-hunt-policy="setGroupHuntPolicy" @save-hunt-timeout="setGroupHuntTimeout"
+                        @save-alias-numbers="updateAliasNumbers" @save-seats="updateSeats" />
     </csc-page>
 </template>
 
 <script>
-
+    import { mapGetters } from 'vuex'
     import { showGlobalError } from '../../../helpers/ui'
     import CscPage  from '../../CscPage'
     import CscPbxGroup  from './CscPbxGroup'
@@ -217,7 +219,13 @@
             },
             removeGroupId() {
                 return this.$store.state.pbxConfig.removeGroupItem.id;
-            }
+            },
+            ...mapGetters('pbxConfig', [
+                'listItemUpdating',
+                'listItemUpdateState',
+                'listItemUpdateError',
+                'listLoadingSilently'
+            ])
         },
         watch: {
             addGroupState(state) {
@@ -232,9 +240,19 @@
                 if(state === 'failed') {
                     showGlobalError(this.removeGroupError);
                 }
+            },
+            listItemUpdateState(state) {
+                if(state === 'failed') {
+                    showGlobalError(this.listItemUpdateError);
+                }
             }
         },
         methods: {
+            isGroupUpdating(groupId) {
+                return this.listItemUpdateState === 'requesting' &&
+                    this.listItemUpdating !== null &&
+                    this.listItemUpdating.id === groupId;
+            },
             resetGroupForm() {
                 this.groupForm = {
                     name: '',
@@ -273,6 +291,24 @@
                         }
                     ]
                 });
+            },
+            setGroupName(group) {
+                this.$store.dispatch('pbxConfig/setGroupName', group);
+            },
+            setGroupExtension(group) {
+                this.$store.dispatch('pbxConfig/setGroupExtension', group);
+            },
+            setGroupHuntPolicy(group) {
+                this.$store.dispatch('pbxConfig/setGroupHuntPolicy', group);
+            },
+            setGroupHuntTimeout(group) {
+                this.$store.dispatch('pbxConfig/setGroupHuntTimeout', group);
+            },
+            updateAliasNumbers(data) {
+                this.$store.dispatch('pbxConfig/updateAliasNumbers', data);
+            },
+            updateSeats(data) {
+                this.$store.dispatch('pbxConfig/updateSeats', data);
             }
         }
     }

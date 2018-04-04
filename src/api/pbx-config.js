@@ -3,7 +3,9 @@ import _ from 'lodash';
 import Vue from 'vue';
 import { getJsonBody } from './utils';
 import { getNumbers, assignNumbers } from './user';
-import { createSubscriber, deleteSubscriber } from './subscriber';
+import { createSubscriber, deleteSubscriber, setDisplayName,
+    setPbxExtension, setPbxHuntPolicy, setPbxHuntTimeout,
+    setPbxGroupMemberIds } from './subscriber';
 import uuid from 'uuid';
 
 var createId = uuid.v4;
@@ -131,4 +133,24 @@ export function addSeat(seat) {
 
 export function removeSeat(id) {
     return deleteSubscriber(id);
+}
+
+export function setGroupName(id, groupName) {
+    return setDisplayName(id, groupName);
+}
+
+export function setGroupExtension(id, groupExtension) {
+    return setPbxExtension(id, groupExtension);
+}
+
+export function setGroupHuntPolicy(id, huntPolicy) {
+    return setPbxHuntPolicy(id, huntPolicy);
+}
+
+export function setGroupHuntTimeout(id, huntTimeout) {
+    return setPbxHuntTimeout(id, huntTimeout);
+}
+
+export function updateGroupSeats(id, seatIds) {
+    return setPbxGroupMemberIds(id, seatIds);
 }
