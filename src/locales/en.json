@@ -248,5 +248,21 @@
         "removeSeat": "Remove seat",
         "removeSeatTitle": "Remove seat",
         "removeSeatText": "You are about to remove seat \"{seat}\""
+    },
+    "communication": {
+        "sendFax": "Send Fax",
+        "quality": {
+            "normal": "Normal",
+            "fine": "Fine",
+            "super": "Super"
+        },
+        "label": {
+            "destination": "Destination Number",
+            "quality": "Quality",
+            "pageHeader": "Page Header",
+            "content": "Content"
+        },
+        "send": "Send",
+        "close": "Close"
     }
 }
