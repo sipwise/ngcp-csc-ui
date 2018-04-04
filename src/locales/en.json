@@ -248,5 +248,23 @@
         "removeSeat": "Remove seat",
         "removeSeatTitle": "Remove seat",
         "removeSeatText": "You are about to remove seat \"{seat}\""
+    },
+    "communication": {
+        "sendFax": "Send Fax",
+        "quality": {
+            "normal": "Normal",
+            "fine": "Fine",
+            "super": "Super"
+        },
+        "label": {
+            "destination": "Destination Number",
+            "quality": "Quality",
+            "pageHeader": "Page Header",
+            "content": "Content"
+        },
+        "send": "Send",
+        "cancel": "Cancel",
+        "createFaxErrorMessage": "An error occured while trying to send the fax. Please try again.",
+        "createFaxSuccessMessage": "Sending fax completed successfully."
     }
 }
