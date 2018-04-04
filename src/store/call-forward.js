@@ -1,6 +1,7 @@
 
 'use strict';
 
+// TODO: Rename to communication.js
 import _ from 'lodash';
 import { i18n } from '../i18n';
 import { getSourcesets,

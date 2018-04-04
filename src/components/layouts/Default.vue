@@ -91,7 +91,7 @@
         <router-view />
         <q-fixed-position id="global-action-btn" corner="top-right" :offset="fabOffset" class="page-button transition-generic">
             <q-fab v-if="hasCommunicationCapabilities" color="primary" icon="question answer" active-icon="clear" direction="down" flat>
-                <q-fab-action v-if="hasFaxCapability && hasSendFaxFeature" color="primary" @click="" icon="fa-fax">
+                <q-fab-action v-if="hasFaxCapability && hasSendFaxFeature" color="primary" @click="sendFax()" icon="fa-fax">
                     <q-tooltip v-if="isDesktop" anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendFax') }}</q-tooltip>
                 </q-fab-action>
                 <q-fab-action v-if="hasSmsCapability && hasSendSmsFeature" color="primary" @click="" icon="fa-send">
@@ -101,10 +101,16 @@
                     <q-tooltip v-if="isDesktop" anchor="center right" self="center left" :offset="[15, 0]">{{ $t('startCall') }}</q-tooltip>
                 </q-fab-action>
             </q-fab>
+            <q-fab v-else-if="hasFaxCapability && hasSendFaxFeature" color="primary" icon="question answer" active-icon="clear" direction="down" flat>
+                <q-fab-action color="primary" @click="sendFax()" icon="fa-fax">
+                    <q-tooltip v-if="isDesktop" anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendFax') }}</q-tooltip>
+                </q-fab-action>
+            </q-fab>
         </q-fixed-position>
         <csc-call ref="cscCall" slot="right" @close="closeCall()" @fullscreen="toggleFullscreen()"
                   :fullscreen="isFullscreenEnabled" region="DE" />
         <q-window-resize-observable @resize="onWindowResize" />
+        <csc-send-fax ref="sendFax" />
     </q-layout>
 </template>
 
@@ -113,6 +119,7 @@
     import { startLoading, stopLoading, showToast, enableIncomingCallNotifications} from '../../helpers/ui'
     import { mapState, mapGetters } from 'vuex'
     import CscCall from '../CscCall'
+    import CscSendFax from '../CscSendFax'
     import {
         QLayout,
         QToolbar,
@@ -168,7 +175,8 @@
             QTransition,
             QCollapsible,
             CscCall,
-            QWindowResizeObservable
+            QWindowResizeObservable,
+            CscSendFax
         },
         computed: {
             ...mapGetters('layout', [
@@ -234,6 +242,9 @@
             }
         },
         methods: {
+            sendFax() {
+                this.$refs.sendFax.showModal();
+            },
             onWindowResize() {
             },
             toggleFullscreen() {
