@@ -53,10 +53,15 @@ export default {
     },
     actions: {
         loadConversations(context) {
-            getConversations(localStorage.getItem('subscriberId'), context.state.page, context.state.rows)
-                .then(result => {
-                    context.commit('loadConversations', result);
-                })
+            return new Promise((resolve, reject) => {
+                getConversations(localStorage.getItem('subscriberId'), context.state.page, context.state.rows)
+                    .then((result) => {
+                        context.commit('loadConversations', result);
+                        resolve();
+                    }).catch((err)=>{
+                        reject(err);
+                    });
+            });
         },
         downloadVoiceMail(context, id) {
             context.commit('downloadVoiceMailRequesting');
