@@ -1,44 +1,41 @@
 <template>
-    <div class="add-times">
-        <div class="title" v-if="typeIsNew">
-            {{ title }}
-        </div>
-        <div class="row no-wrap">
-            <q-field class="col-8">
-                <q-select v-model="selectedWeekday"
+    <q-item class="csc-add-time-form">
+        <q-item-main>
+            <q-item-tile class="row no-wrap">
+                <q-select
+                    class="col" 
+                    v-model="selectedWeekday"
                     :options="selectOptions" />
-            </q-field>
-            <q-field class="col-2">
-                    <q-datetime
-                        color="primary"
-                        v-model="timeFromConverted"
-                        align="right"
-                        type="time"
-                        format24h />
-            </q-field>
-            <q-field class="col-2"
-                :error="timeHasError"
-                :error-label="$t('pages.callForward.times.selectValidTime')">
-                    <q-datetime
-                        color="primary"
-                        v-model="timeToConverted"
-                        align="right"
-                        type="time"
-                        format24h />
-            </q-field>
-        </div>
-        <q-btn flat dark @click="disableForm()">
-            {{ $t('buttons.cancel') }}
-        </q-btn>
-        <q-btn flat color="primary" icon-right="fa-save" @click="addTime()">
-            {{ $t('buttons.save') }}
-        </q-btn>
-    </div>
+                <q-datetime
+                    class="col"
+                    color="primary"
+                    v-model="timeFromConverted"
+                    align="right"
+                    type="time"
+                    format24h />
+                <q-datetime
+                    class="col"
+                    color="primary"
+                    v-model="timeToConverted"
+                    align="right"
+                    type="time"
+                    format24h />
+            </q-item-tile>
+            <q-item-tile>
+                <q-btn flat dark @click="disableForm()">
+                    {{ $t('buttons.cancel') }}
+                </q-btn>
+                <q-btn flat color="primary" icon-right="fa-save" @click="addTime()">
+                    {{ $t('buttons.save') }}
+                </q-btn>
+            </q-item-tile>
+        </q-item-main>
+    </q-item>
 </template>
 
 <script>
     import { mapState } from 'vuex'
-    import { QField, QSelect, QDatetime, QCardTitle,
+    import { QField, QSelect, QDatetime, QList, QItem, QItemMain, QItemTile,
         QBtn, date } from 'quasar-framework'
     import { showGlobalError } from '../../../helpers/ui'
     export default {
@@ -68,7 +65,10 @@
             QField,
             QSelect,
             QDatetime,
-            QCardTitle,
+            QList, 
+            QItem, 
+            QItemMain, 
+            QItemTile,
             QBtn,
             date
         },
@@ -147,12 +147,35 @@
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl'
 
+    .csc-add-time-form
+        padding 0
+        width calc(100% - 56px)
+
+    @media only screen and (min-width: 320px) {
+        .csc-add-time-form {
+            width calc(100% - 43px)
+        }
+    }
+
+    @media only screen and (min-width: 360px) {
+        .csc-add-time-form {
+            width calc(100% - 50.09px)
+        }
+    }
+
+    @media only screen and (min-width: 411px) {
+        .csc-add-time-form {
+            width calc(100% - 56px)
+        }
+    }
+
     .add-times
-        margin-right 30px
+        width 100%
 
         .title
             color $primary
             line-height $csc-subtitle-line-height
             font-size $csc-subtitle-font-size
             font-weight $csc-subtitle-font-weight
+  
 </style>

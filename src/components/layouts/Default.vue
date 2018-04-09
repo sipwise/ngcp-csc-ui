@@ -373,13 +373,13 @@
     }
 
     .q-card {
-        margin:15px;
+        margin: 15px;
         margin-left: 0px;
         margin-right: 0px;
     }
 
     .q-card.page {
-        padding: 15px;
+        padding: 0px;
         margin: 0;
     }
 

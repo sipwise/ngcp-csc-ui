@@ -1,6 +1,6 @@
 <template>
     <div class="add-destination-form">
-        <q-btn v-if="!isFormEnabled" flat color="primary" icon="fa-plus">
+        <q-btn v-if="!isFormEnabled" flat color="primary" icon="fa-plus" class="add-destination-button">
             {{ $t('pages.callForward.addDestinationButton') }}
             <q-popover ref="popover">
                 <q-list separator link>
@@ -151,8 +151,12 @@
     @import '../../../themes/quasar.variables.styl'
 
     .add-destination-form
-        margin 0 15px
+        margin 0
         .q-slider.label-always
             padding 15px 0 5px
             height 50px
+
+    .add-destination-button
+        padding-left 0px
+        padding-right 0px
 </style>
