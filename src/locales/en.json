@@ -10,7 +10,9 @@
         "save": "Save",
         "remove": "Remove",
         "edit": "Edit",
-        "add": "Add"
+        "add": "Add",
+        "moveUp": "Move up",
+        "moveDown": "Move down"
     },
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",

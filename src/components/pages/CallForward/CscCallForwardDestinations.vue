@@ -1,21 +1,21 @@
 <template>
-    <q-card class="dest-card">
+    <div class="dest-card">
         <csc-destinations :title="$t('pages.callForward.whenOnline')"
             :group="destinations.online"
             group-name="cfu"
             :timeset="timeset"
-            icon="signal_wifi_4_bar" />
+            icon="smartphone" />
         <csc-destinations :title="$t('pages.callForward.whenBusy')"
             :group="destinations.busy"
             group-name="cfb"
             :timeset="timeset"
-            icon="record_voice_over" />
+            icon="phonelink_ring" />
         <csc-destinations :title="$t('pages.callForward.whenOffline')"
             :group="destinations.offline"
             group-name="cfna"
             :timeset="timeset"
-            icon="signal_wifi_off" />
-    </q-card>
+            icon="phonelink_erase" />
+    </div>
 </template>
 
 <script>
@@ -144,4 +144,8 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+
+    .dest-card
+        max-width 100%
+        margin auto
 </style>
