@@ -1,8 +1,8 @@
 <template>
     <div>
-        <q-item v-for="(destination, index) in destinations">
+        <q-item class="csc-destination" :key="index" v-for="(destination, index) in destinations">
             <q-item-main>
-                <div class="dest-row" :class="{ terminated: destination.terminated}">
+                <div class="dest-row" :class="{ terminated: destination.terminated }">
                     <span v-if="index == 0">
                         {{ $t('pages.callForward.firstRing') }}
                     </span>
@@ -28,27 +28,23 @@
                     </q-tooltip>
                 </div>
             </q-item-main>
-            <q-item-side class="dest-btns" right>
-                <span v-if="destinations.length > 1">
-                    <q-btn flat
-                        :class="{btnhidden: hasNoDownOption(index)}"
-                        color="secondary"
-                        icon="keyboard_arrow_down"
-                        @click="moveDestination('down', index)">
-                    </q-btn>
-                    <q-btn flat
-                        :class="{btnhidden: hasNoUpOption(index)}"
-                        color="secondary"
-                        icon="keyboard_arrow_up"
-                        @click="moveDestination('up', index)">
-                    </q-btn>
-                </span>
-                <q-btn flat
-                    color="negative"
-                    icon="delete"
-                    @click="deleteDestination(index)">
-                        {{ $t('buttons.remove') }}
-                </q-btn>
+            <q-item-side class="dest-btns" icon="more_vert" right>
+                <q-popover ref="popover">
+                    <q-list separator link>
+                        <q-item v-if="destinations.length > 1 && !hasNoUpOption(index)" @click="moveDestination('up', index), $refs.popover[index].close()">
+                            <q-item-main label="Move up" />
+                            <q-item-side icon="keyboard_arrow_up" color="secondary"></q-item-side>
+                        </q-item>
+                        <q-item v-if="destinations.length > 1 && !hasNoDownOption(index)" @click="moveDestination('down', index), $refs.popover[index].close()">
+                            <q-item-main label="Move down" />
+                            <q-item-side icon="keyboard_arrow_down" color="secondary"></q-item-side>
+                        </q-item>
+                        <q-item @click="deleteDestination(index), $refs.popover[index].close()">
+                            <q-item-main label="Delete" />
+                            <q-item-side icon="delete" color="negative"></q-item-side>
+                        </q-item>
+                    </q-list>
+                </q-popover>
             </q-item-side>
         </q-item>
     </div>
@@ -61,7 +57,7 @@
     import { startLoading, stopLoading,
         showGlobalError } from '../../../helpers/ui'
     import { QItem, QItemMain, QItemSide,
-        Dialog, QBtn, QTooltip } from 'quasar-framework'
+        Dialog, QBtn, QTooltip, QPopover, QList } from 'quasar-framework'
     export default {
         name: 'csc-destination',
         props: [
@@ -76,7 +72,9 @@
             QItemSide,
             Dialog,
             QBtn,
-            QTooltip
+            QTooltip,
+            QPopover,
+            QList
         },
         computed: {
             ...mapState('callForward', [
@@ -160,7 +158,14 @@
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl'
 
+
+    .q-item.csc-destination
+        padding 0px
+
     .dest-row
+        white-space nowrap;
+        overflow hidden;
+        font-size 14px
         .dest-values
             font-weight 500
 
@@ -169,6 +174,8 @@
 
     .dest-btns
         display inline-block
+        position absolute 
+        right 0px
 
     .btnhidden
         opacity 0

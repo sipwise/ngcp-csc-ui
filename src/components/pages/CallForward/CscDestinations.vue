@@ -1,19 +1,15 @@
 <template>
     <div class="dest-section">
-        <q-card-title class="dest-title">
+        <div class="dest-title">
             <q-icon :name="icon" class="dest-icon" />
             {{ title }}
-        </q-card-title>
-        <q-card-main>
+        </div>
+        <div>
             <q-list no-border>
-                <div v-if="group.length === 0">
-                    <q-item>
-                        <div class="dest-row">
-                            <span> {{ $t('pages.callForward.forwardToNowhere') }} </span>
-                        </div>
-                    </q-item>
-                </div>
-                <div v-else v-for="(destinationset, index) in group">
+                <q-item v-if="group.length === 0" class="dest-row csc-no-destination">
+                    <span> {{ $t('pages.callForward.forwardToNowhere') }} </span>
+                </q-item>
+                <div v-else :key="index" v-for="(destinationset, index) in group">
                     <csc-destination v-bind="destinationset"
                         :prev-dest-id="previousDestinationsetId(index)"
                         :next-dest-id="nextDestinationsetId(index)"
@@ -21,7 +17,7 @@
                 </div>
             </q-list>
             <csc-add-destination-form v-bind="lastDestinationset" />
-        </q-card-main>
+        </div>
     </div>
 </template>
 
@@ -29,8 +25,7 @@
     import _ from 'lodash'
     import CscDestination from './CscDestination'
     import CscAddDestinationForm from './CscAddDestinationForm'
-    import { QCardTitle, QCardMain, QCardSeparator,
-        QItem, QList, QIcon } from 'quasar-framework'
+    import {  QList, QItem, QIcon } from 'quasar-framework'
     export default {
         name: 'csc-destinations',
         props: [
@@ -41,11 +36,8 @@
             'timeset'
         ],
         components: {
-            QCardTitle,
-            QCardMain,
             QList,
             QItem,
-            QCardSeparator,
             QIcon,
             CscDestination,
             CscAddDestinationForm
@@ -76,21 +68,16 @@
     @import '../../../themes/quasar.variables.styl'
 
     .dest-section
-        .dest-title
-            padding 0 15px
-        .dest-title:first-child
-            padding 20px 15px 0 15px
-        .q-item
-            padding 0 15px
-        .q-list
-            margin-bottom 0
-
-    .dest-row
-        inline-block
+        padding-top 30px
+        padding-bottom 30px
 
     .dest-title
         color $primary
 
     .dest-icon
         margin-right 5px
+
+    .q-item.csc-no-destination
+        margin-left 0px
+        padding 0
 </style>

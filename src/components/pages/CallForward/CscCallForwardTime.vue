@@ -1,38 +1,42 @@
 <template>
-    <q-field>
-        <div class="row no-wrap">
-            <q-input class="col-7"
-                v-model="weekday"
-                readonly />
-            <q-datetime
-                class="col-2"
-                color="primary"
-                v-model="from"
-                align="right"
-                type="time"
-                format24h
-                readonly />
-            <q-datetime
-                class="col-2"
-                color="primary"
-                v-model="to"
-                align="right"
-                type="time"
-                format24h
-                readonly />
+    <q-item>
+        <q-item-main>
+            <q-item-tile class="row no-wrap">
+                <q-input 
+                    class="col"
+                    v-model="weekday"
+                    readonly />
+                <q-datetime
+                    class="col"
+                    color="primary"
+                    v-model="from"
+                    align="right"
+                    type="time"
+                    format24h
+                    readonly />
+                <q-datetime
+                    class="col"
+                    color="primary"
+                    v-model="to"
+                    align="right"
+                    type="time"
+                    format24h
+                    readonly />
+            </q-item-tile>
+        </q-item-main>
+        <q-item-side>
             <q-btn flat
-                class="col-1"
                 color="negative"
                 icon="delete"
                 @click="deleteTime(index)">
             </q-btn>
-        </div>
-    </q-field>
+        </q-item-side>
+    </q-item>
 </template>
 
 <script>
     import { QField, QInput, QDatetime, Dialog,
-        QBtn, Alert, date } from 'quasar-framework'
+        QBtn, QItem, QItemMain, QItemTile, QItemSide, Alert, date } from 'quasar-framework'
     import { mapGetters } from 'vuex'
     import 'quasar-extras/animate/bounceInRight.css'
     import 'quasar-extras/animate/bounceOutRight.css'
@@ -51,7 +55,11 @@
             QInput,
             QDatetime,
             Dialog,
-            QBtn
+            QBtn,
+            QItem,
+            QItemMain, 
+            QItemTile, 
+            QItemSide
         },
         computed: {
             ...mapGetters('callForward', {
@@ -124,4 +132,10 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+
+    div.q-item-side.q-item-side-left.q-item-section
+        margin-left 0
+
+    i.q-icon.material-icons.on-left
+        margin-right 0
 </style>

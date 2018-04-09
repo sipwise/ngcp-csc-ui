@@ -351,7 +351,7 @@
     }
 
     .csc-call .q-card {
-        margin:0;
+        margin: 0;
     }
 
     .csc-call .q-card-main {
