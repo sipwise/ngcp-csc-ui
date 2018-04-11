@@ -5,7 +5,7 @@ import { getJsonBody } from './utils';
 import { getNumbers, assignNumbers } from './user';
 import { createSubscriber, deleteSubscriber, setDisplayName,
     setPbxExtension, setPbxHuntPolicy, setPbxHuntTimeout,
-    setPbxGroupMemberIds } from './subscriber';
+    setPbxGroupMemberIds, setPbxGroupIds } from './subscriber';
 import uuid from 'uuid';
 
 var createId = uuid.v4;
@@ -153,4 +153,16 @@ export function setGroupHuntTimeout(id, huntTimeout) {
 
 export function updateGroupSeats(id, seatIds) {
     return setPbxGroupMemberIds(id, seatIds);
+}
+
+export function setSeatName(id, seatName) {
+    return setDisplayName(id, seatName);
+}
+
+export function setSeatExtension(id, seatExtension) {
+    return setPbxExtension(id, seatExtension);
+}
+
+export function updateSeatGroups(id, seatIds) {
+    return setPbxGroupIds(id, seatIds);
 }
