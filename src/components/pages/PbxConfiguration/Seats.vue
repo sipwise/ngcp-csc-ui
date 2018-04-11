@@ -1,60 +1,72 @@
 <template>
     <csc-page title="Seats">
-        <csc-pbx-seat-add-form ref="addForm" :alias-number-options="aliasNumberOptions"
-                               :group-options="groupOptions" @save="save" />
-        <csc-pbx-seat-list :alias-number-options="aliasNumberOptions" :group-options="groupOptions"
-                           :seats="seats" :loading="isListLoading" @remove="remove" :deleting-seat="deletingSeat" />
+        <csc-pbx-seat-add-form v-show="addFormEnabled" ref="addForm" :alias-number-options="aliasNumberOptions"
+                               :group-options="groupOptions" :loading="isAdding" @save="addSeat"
+                               @cancel="disableAddForm" />
+        <q-card v-show="!addFormEnabled" flat>
+            <q-card-actions align="center">
+                <q-btn color="primary" icon="add" flat @click="enableAddForm">
+                    {{ $t('pbxConfig.addSeat') }}
+                </q-btn>
+            </q-card-actions>
+        </q-card>
+        <q-card v-if="isListRequesting && !listLoadingSilently" flat>
+            <q-card-actions align="center">
+                <q-spinner-dots  color="primary" :size="40"/>
+            </q-card-actions>
+        </q-card>
+        <csc-pbx-seat v-for="seat in seats" :key="seat.id" :seat="seat" :alias-number-options="aliasNumberOptions"
+                      :group-options="groupOptions" @remove="removeSeat" :loading="isItemLoading(seat.id)"
+                      @save-name="setSeatName" @save-extension="setSeatExtension"
+                      @save-alias-numbers="updateAliasNumbers" @save-groups="updateGroups" />
     </csc-page>
 </template>
 
 <script>
     import CscPage  from '../../CscPage'
     import CscPbxSeatAddForm  from './CscPbxSeatAddForm'
-    import CscPbxSeatList  from './CscPbxSeatList'
+    import CscPbxSeat  from './CscPbxSeat'
     import { QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
-        QIcon, QPopover, QList, QItem, QItemMain } from 'quasar-framework'
+        QCardActions, QIcon, QPopover, QList, QItem, QItemMain,
+        QField, QInput, QBtn, QSelect, QInnerLoading, QSpinnerDots,
+        QSpinnerMat, Dialog } from 'quasar-framework'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
-    import { showGlobalError } from '../../../helpers/ui'
+    import itemError from '../../../mixins/item-error'
+//    import { showGlobalError } from '../../../helpers/ui'
+    import { mapGetters } from 'vuex'
 
     export default {
-        mixins: [aliasNumberOptions],
+        mixins: [aliasNumberOptions, itemError],
         mounted() {
             this.$store.dispatch('pbxConfig/listSeats');
         },
         data () {
-            return {}
+            return {
+                addFormEnabled: false
+            }
         },
         components: {
-            CscPage,
-            QChip,
-            QCard,
-            QCardSeparator,
-            QCardTitle,
-            QCardMain,
-            QIcon,
-            QPopover,
-            QList,
-            QItem,
-            QItemMain,
-            CscPbxSeatAddForm,
-            CscPbxSeatList
+            CscPage, CscPbxSeat, CscPbxSeatAddForm,
+            QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
+            QCardActions, QIcon, QPopover, QList, QItem, QItemMain,
+            QField, QInput, QBtn, QSelect, QInnerLoading, QSpinnerDots,
+            QSpinnerMat, Dialog
         },
         computed: {
-            addFormSucceeded() {
-                return this.$store.state.pbxConfig.addSeatState === 'succeeded';
-            },
-            addFormFailed() {
-                return this.$store.state.pbxConfig.addSeatState === 'failed';
-            },
-            addFormError() {
-                return this.$store.state.pbxConfig.addSeatError;
-            },
-            isListLoading() {
-                return this.$store.state.pbxConfig.listAllState === 'requesting';
-            },
-            removeError() {
-                return this.$store.state.pbxConfig.removeSeatError;
-            },
+            ...mapGetters('pbxConfig', [
+                'seats',
+                'groups',
+                'addState',
+                'isAdding',
+                'isUpdating',
+                'updateItemId',
+                'isRemoving',
+                'removeItemId',
+                'isListRequesting',
+                'listState',
+                'listError',
+                'listLoadingSilently'
+            ]),
             groupOptions() {
                 let groups = [];
                 this.groups.forEach((group)=>{
@@ -65,39 +77,63 @@
                     });
                 });
                 return groups;
-            },
-            seats() {
-                return this.$store.getters['pbxConfig/seats'];
-            },
-            groups() {
-                return this.$store.getters['pbxConfig/groups'];
-            },
-            deletingSeat() {
-                return this.$store.state.pbxConfig.removeSeatItem;
-            }
-        },
-        methods: {
-            save(seat) {
-                this.$store.dispatch('pbxConfig/addSeat', seat);
-            },
-            remove(seat) {
-                this.$store.dispatch('pbxConfig/removeSeat', seat);
             }
         },
         watch: {
-            addFormSucceeded() {
-                this.$refs.addForm.succeeded();
-            },
-            addFormFailed() {
-                if(this.addFormError !== null) {
-                    this.$refs.addForm.failed();
-                    showGlobalError(this.addFormError);
+            addState(state) {
+                if(state === 'succeeded') {
+                    this.disableAddForm();
                 }
+            }
+        },
+        methods: {
+            isItemLoading(seatId) {
+                return (this.isUpdating && this.updateItemId + "" === seatId + "") ||
+                    (this.isRemoving && this.removeItemId + "" === seatId + "");
             },
-            removeError() {
-                if(this.removeError !== null) {
-                    showGlobalError(this.removeError);
-                }
+            resetAddForm() {
+                this.$refs.addForm.reset();
+            },
+            enableAddForm() {
+                this.resetAddForm();
+                this.addFormEnabled = true;
+            },
+            disableAddForm() {
+                this.resetAddForm();
+                this.addFormEnabled = false;
+            },
+            addSeat(seat) {
+                this.$store.dispatch('pbxConfig/addSeat', seat);
+            },
+            removeSeat(seat) {
+                var store = this.$store;
+                var i18n = this.$i18n;
+                Dialog.create({
+                    title: i18n.t('pbxConfig.removeSeatTitle'),
+                    message: i18n.t('pbxConfig.removeSeatText', { seat: seat.name }),
+                    buttons: [
+                        'Cancel',
+                        {
+                            label: i18n.t('pbxConfig.removeSeat'),
+                            color: 'negative',
+                            handler () {
+                                store.dispatch('pbxConfig/removeSeat', seat);
+                            }
+                        }
+                    ]
+                });
+            },
+            setSeatName(seat) {
+                this.$store.dispatch('pbxConfig/setSeatName', seat);
+            },
+            setSeatExtension(seat) {
+                this.$store.dispatch('pbxConfig/setSeatExtension', seat);
+            },
+            updateAliasNumbers(data) {
+                this.$store.dispatch('pbxConfig/updateAliasNumbers', data);
+            },
+            updateGroups(data) {
+                this.$store.dispatch('pbxConfig/updateGroups', data);
             }
         }
     }
