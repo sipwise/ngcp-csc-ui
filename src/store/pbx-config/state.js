@@ -1,6 +1,6 @@
 'use strict';
 
-import { ListState, AddState, RemoveState } from '../common'
+import { RequestState } from '../common'
 
 export default {
     pilot: null,
@@ -10,17 +10,16 @@ export default {
     seatsOrdered: [],
     numbers: [],
     numbersMap : {},
-    listAllState: ListState.initiated,
-    listAllError: null,
+    listState: RequestState.initiated,
+    listError: null,
     listLoadingSilently: false,
-    addGroupState: AddState.button,
-    addGroupError: null,
-    addSeatState: AddState.button,
-    addSeatError: null,
-    removeSeatState: RemoveState.initiated,
-    removeSeatError: null,
-    removeSeatItem: null,
-    listItemUpdating: null,
-    listItemUpdateState: null,
-    listItemUpdateError: null
+    addState: RequestState.initiated,
+    addError: null,
+    addItem: null,
+    updateState: RequestState.initiated,
+    updateError: null,
+    updateItem: null,
+    removeState: RequestState.initiated,
+    removeError: null,
+    removeItem: null
 }

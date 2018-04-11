@@ -80,7 +80,7 @@
 
     @media (max-width: $breakpoint-sm) {
         .page {
-            padding: 30px;
+            padding: 15px;
             padding-top: 100px;
         }
         .page h2 {

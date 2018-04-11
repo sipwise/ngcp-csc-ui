@@ -1,16 +1,17 @@
 'use strict';
 
 import _ from 'lodash'
-import { ListState, AddState, RemoveState } from '../common'
+import { RequestState } from '../common'
 
 export default {
-    listAllRequesting(state, silent) {
-        state.listAllState = ListState.requesting;
+    listRequesting(state, silent) {
+        state.listState = RequestState.requesting;
+        state.listError = null;
         state.listLoadingSilently = silent;
     },
-    listAllSucceeded(state, all) {
-        state.listAllState = ListState.succeeded;
-        state.listAllError = null;
+    listSucceeded(state, all) {
+        state.listState = RequestState.succeeded;
+        state.listError = null;
         state.pilot = all.pilot;
         state.groups = {};
         state.groupsOrdered = [];
@@ -55,21 +56,48 @@ export default {
         _.reverse(state.groupsOrdered);
         _.reverse(state.seatsOrdered);
     },
-    listAllFailed(state, error) {
-        state.listAllState = ListState.failed;
-        state.listAllError = error;
+    listFailed(state, error) {
+        state.listState = RequestState.failed;
+        state.listError = error;
     },
-    addGroupRequesting(state){
-        state.addGroupState = AddState.requesting;
-        state.addGroupError = null;
+    addItemRequesting(state, item) {
+        state.addState = RequestState.requesting;
+        state.addError = null;
+        state.addItem = item;
     },
-    addGroupSucceeded(state){
-        state.addGroupState = AddState.succeeded;
-        state.addGroupError = null;
+    addItemSucceeded(state) {
+        state.addState = RequestState.succeeded;
+        state.addError = null;
     },
-    addGroupFailed(state, error) {
-        state.addGroupState = AddState.failed;
-        state.addGroupError = error;
+    addItemFailed(state, error) {
+        state.addState = RequestState.failed;
+        state.addError = error;
+    },
+    updateItemRequesting(state, item) {
+        state.updateState = RequestState.requesting;
+        state.updateError = null;
+        state.updateItem = item;
+    },
+    updateItemSucceeded(state) {
+        state.updateState = RequestState.succeeded;
+        state.updateError = null;
+    },
+    updateItemFailed(state, error) {
+        state.updateState = RequestState.failed;
+        state.updateError = error;
+    },
+    removeItemRequesting(state, item) {
+        state.removeState = RequestState.requesting;
+        state.removeError = null;
+        state.removeItem = item;
+    },
+    removeItemSucceeded(state) {
+        state.removeState = RequestState.succeeded;
+        state.removeError = null;
+    },
+    removeItemFailed(state, error) {
+        state.removeState = RequestState.failed;
+        state.removeError = error;
     },
     removeGroup(state, group) {
         delete state.groups[group.id];
@@ -78,44 +106,5 @@ export default {
                 delete state.groupsOrdered[index];
             }
         });
-    },
-    addSeatRequesting(state){
-        state.addSeatState = AddState.requesting;
-        state.addSeatError = null;
-    },
-    addSeatSucceeded(state){
-        state.addSeatState = AddState.succeeded;
-        state.addSeatError = null;
-    },
-    addSeatFailed(state, error) {
-        state.addSeatState = AddState.failed;
-        state.addSeatError = error;
-    },
-    removeSeatRequesting(state, seat) {
-        state.removeSeatState = RemoveState.requesting;
-        state.removeSeatError = null;
-        state.removeSeatItem = seat;
-    },
-    removeSeatSucceeded(state) {
-        state.removeSeatState = RemoveState.succeeded;
-        state.removeSeatError = null;
-    },
-    removeSeatFailed(state, message) {
-        state.removeSeatState = RemoveState.failed;
-        state.removeSeatError = message;
-        state.removeSeatItem = null;
-    },
-    updateListItemStarted(state, item) {
-        state.listItemUpdateState = 'requesting';
-        state.listItemUpdating = item;
-    },
-    updateListItemSucceeded(state) {
-        state.listItemUpdateState = 'succeeded';
-        state.listItemUpdating = null;
-    },
-    updateListItemFailed(state, error) {
-        state.listItemUpdateState = 'failed';
-        state.listItemUpdating = null;
-        state.listItemUpdateError = error;
     }
 }

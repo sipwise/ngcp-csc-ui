@@ -1,58 +1,23 @@
 <template>
     <csc-page id="csc-page-pbx-groups" title="Groups">
-        <q-card v-if="groupFormEnabled" class="add-form">
-            <q-card-title>
-                <q-icon name="add" color="primary" size="22px"/>
-                <span>Add Group</span>
-            </q-card-title>
-            <q-card-main>
-                <q-field>
-                    <q-input :disabled="addGroupIsRequesting" ref="groupName" v-model="groupForm.name" autofocus
-                             :float-label="$t('pbxConfig.groupName')"  clearable />
-                </q-field>
-                <q-field>
-                    <q-input :disabled="addGroupIsRequesting" type="number" v-model="groupForm.extension" clearable min="1" max="1000000"
-                             :float-label="$t('pbxConfig.extension')"  />
-                </q-field>
-                <q-field>
-                    <q-select :disabled="addGroupIsRequesting" v-model="groupForm.huntPolicy" :float-label="$t('pbxConfig.huntPolicy')"
-                              :options="huntPolicyOptions" radio />
-                </q-field>
-                <q-field >
-                    <q-input :disabled="addGroupIsRequesting" type="number" v-model="groupForm.huntTimeout" :float-label="$t('pbxConfig.huntTimeout')"
-                             suffix="seconds" min="1" max="3600" clearable />
-                </q-field>
-                <q-field>
-                    <q-select :disabled="addGroupIsRequesting" v-model="groupForm.aliasNumbers" :float-label="$t('pbxConfig.aliasNumbers')"
-                              :options="aliasNumberOptions" multiple chips readonly clearable />
-                </q-field>
-                <q-field>
-                    <q-select :disabled="addGroupIsRequesting" v-model="groupForm.seats" :float-label="$t('pbxConfig.seats')"
-                              :options="seatOptions" multiple chips readonly clearable />
-                </q-field>
-            </q-card-main>
-            <q-card-separator/>
+        <csc-pbx-group-add-form v-show="addFormEnabled" ref="addForm" @save="addGroup" @cancel="disableAddForm"
+                                :loading="isAdding" :alias-number-options="aliasNumberOptions"
+                                :seat-options="seatOptions" :hunt-policy-options="huntPolicyOptions"/>
+        <q-card v-show="!addFormEnabled" flat>
             <q-card-actions align="center">
-                <q-btn v-if="!addGroupIsRequesting" flat color="secondary" icon="clear" @click="disableGroupForm()">{{ $t('buttons.cancel') }}</q-btn>
-                <q-btn loader v-model="addGroupIsRequesting" flat color="primary" icon="done" @click="addGroup()">{{ $t('buttons.save') }}</q-btn>
-            </q-card-actions>
-            <q-inner-loading :visible="addGroupIsRequesting">
-                <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
-            </q-inner-loading>
-        </q-card>
-        <q-card v-else flat>
-            <q-card-actions align="center">
-                <q-btn color="primary" icon="add" flat @click="enableGroupForm">{{ $t('pbxConfig.addGroup') }}</q-btn>
+                <q-btn color="primary" icon="add" flat @click="enableAddForm">
+                    {{ $t('pbxConfig.addGroup') }}
+                </q-btn>
             </q-card-actions>
         </q-card>
-        <q-card v-if="listIsRequesting && !listLoadingSilently" flat>
+        <q-card v-if="isListRequesting && !listLoadingSilently" flat>
             <q-card-actions align="center">
                 <q-spinner-dots  color="primary" :size="40"/>
             </q-card-actions>
         </q-card>
         <csc-pbx-group v-for="group in groups" :key="group.id" :group="group" :alias-number-options="aliasNumberOptions"
                        :seat-options="seatOptions" :hunt-policy-options="huntPolicyOptions" @remove="removeGroup"
-                       :loading="isGroupUpdating(group.id)" @save-name="setGroupName" @save-extension="setGroupExtension"
+                       :loading="isItemLoading(group.id)" @save-name="setGroupName" @save-extension="setGroupExtension"
                         @save-hunt-policy="setGroupHuntPolicy" @save-hunt-timeout="setGroupHuntTimeout"
                         @save-alias-numbers="updateAliasNumbers" @save-seats="updateSeats" />
     </csc-page>
@@ -60,82 +25,35 @@
 
 <script>
     import { mapGetters } from 'vuex'
-    import { showGlobalError } from '../../../helpers/ui'
     import CscPage  from '../../CscPage'
     import CscPbxGroup  from './CscPbxGroup'
-    import {
-        QChip,
-        QCard,
-        QCardSeparator,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
-        QIcon,
-        QPopover,
-        QList,
-        QItem,
-        QItemMain,
-        QField,
-        QInput,
-        QBtn,
-        QSelect,
-        QInnerLoading,
-        QSpinnerDots,
-        QSpinnerMat,
-        Dialog
+    import CscPbxGroupAddForm  from './CscPbxGroupAddForm'
+    import { QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
+        QCardActions, QIcon, QPopover, QList, QItem, QItemMain,
+        QField, QInput, QBtn, QSelect, QInnerLoading, QSpinnerDots,
+        QSpinnerMat, Dialog
     } from 'quasar-framework'
-    import numberFilter from '../../../filters/number'
+    import aliasNumberOptions from '../../../mixins/alias-number-options'
+    import itemError from '../../../mixins/item-error'
 
     export default {
+        mixins: [aliasNumberOptions, itemError],
         components: {
-            CscPage,
-            QChip,
-            QCard,
-            QCardSeparator,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
-            QIcon,
-            QPopover,
-            QList,
-            QItem,
-            QItemMain,
-            QField,
-            QInput,
-            CscPbxGroup,
-            QBtn,
-            QSelect,
-            QInnerLoading,
-            QSpinnerDots,
-            QSpinnerMat,
-            Dialog
+            CscPage, CscPbxGroup, CscPbxGroupAddForm,
+            QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
+            QCardActions, QIcon, QPopover, QList, QItem, QItemMain,
+            QField, QInput, QBtn, QSelect, QInnerLoading, QSpinnerDots,
+            QSpinnerMat, Dialog
         },
         mounted() {
             this.$store.dispatch('pbxConfig/listGroups');
         },
         data () {
             return {
-                groupForm: {
-                    name: '',
-                    extension: '',
-                    huntPolicy: 'serial',
-                    huntTimeout: 10,
-                    aliasNumbers: [],
-                    seats: []
-                },
-                groupFormEnabled: false,
+                addFormEnabled: false
             }
         },
         computed: {
-            groups() {
-                return this.$store.getters['pbxConfig/groups'];
-            },
-            seats() {
-                return this.$store.getters['pbxConfig/seats'];
-            },
-            aliasNumbers() {
-                return this.$store.getters['pbxConfig/aliasNumbers'];
-            },
             huntPolicyOptions() {
                 return [
                     {
@@ -156,31 +74,6 @@
                     }
                 ];
             },
-            aliasNumberOptions() {
-                let aliasNumber = [];
-                this.aliasNumbers.forEach((number)=>{
-                    let owner = this.$t('pbxConfig.allocatedByNobody');
-                    if(number.subscriber !== null && number.subscriber.display_name !== null &&
-                        number.subscriber.is_pbx_group) {
-                        owner = this.$t('pbxConfig.allocatedBy', {
-                            type: this.$t('pbxConfig.group'),
-                            name:  number.subscriber.display_name
-                        });
-                    }
-                    else if (number.subscriber !== null && number.subscriber.display_name !== null) {
-                        owner = this.$t('pbxConfig.allocatedBy', {
-                            type: this.$t('pbxConfig.seat'),
-                            name:  number.subscriber.display_name
-                        });
-                    }
-                    aliasNumber.push({
-                        label: numberFilter(number),
-                        sublabel: owner,
-                        value: number.id
-                    });
-                });
-                return aliasNumber;
-            },
             seatOptions() {
                 let seats = [];
                 this.seats.forEach((seat)=>{
@@ -192,87 +85,47 @@
                 });
                 return seats;
             },
-            listIsRequesting() {
-                return this.listState === 'requesting';
-            },
-            listState() {
-                return this.$store.state.pbxConfig.listAllState;
-            },
-            listError() {
-                return this.$store.state.pbxConfig.listAllError;
-            },
-            addGroupIsRequesting() {
-                return this.addGroupState === 'requesting';
-            },
-            addGroupState() {
-                return this.$store.state.pbxConfig.addGroupState;
-            },
-            addGroupError() {
-                return this.$store.state.pbxConfig.addGroupError;
-            },
-            removeGroupState() {
-                return this.$store.state.pbxConfig.removeGroupState;
-            },
-            removeGroupIsRequesting() {
-                return this.removeGroupState === 'requesting' ||
-                    this.removeGroupState === 'succeeded';
-            },
-            removeGroupId() {
-                return this.$store.state.pbxConfig.removeGroupItem.id;
-            },
             ...mapGetters('pbxConfig', [
-                'listItemUpdating',
-                'listItemUpdateState',
-                'listItemUpdateError',
+                'groups',
+                'seats',
+                'aliasNumbers',
+                'addState',
+                'isAdding',
+                'isUpdating',
+                'updateItemId',
+                'isRemoving',
+                'removeItemId',
+                'isListRequesting',
+                'listState',
+                'listError',
                 'listLoadingSilently'
             ])
         },
         watch: {
-            addGroupState(state) {
-                if(state === 'failed') {
-                    showGlobalError(this.addGroupError);
-                }
+            addState(state) {
                 if(state === 'succeeded') {
-                    this.disableGroupForm();
-                }
-            },
-            removeGroupState(state) {
-                if(state === 'failed') {
-                    showGlobalError(this.removeGroupError);
-                }
-            },
-            listItemUpdateState(state) {
-                if(state === 'failed') {
-                    showGlobalError(this.listItemUpdateError);
+                    this.disableAddForm();
                 }
             }
         },
         methods: {
-            isGroupUpdating(groupId) {
-                return this.listItemUpdateState === 'requesting' &&
-                    this.listItemUpdating !== null &&
-                    this.listItemUpdating.id === groupId;
+            isItemLoading(groupId) {
+                return (this.isUpdating && this.updateItemId + "" === groupId + "") ||
+                    (this.isRemoving && this.removeItemId + "" === groupId + "");
             },
-            resetGroupForm() {
-                this.groupForm = {
-                    name: '',
-                    extension: '',
-                    huntPolicy: 'serial',
-                    huntTimeout: 10,
-                    aliasNumbers: [],
-                    seats: []
-                }
+            resetAddForm() {
+                this.$refs.addForm.reset();
             },
-            enableGroupForm() {
-                this.resetGroupForm();
-                this.groupFormEnabled = true;
+            enableAddForm() {
+                this.resetAddForm();
+                this.addFormEnabled = true;
             },
-            disableGroupForm() {
-                this.resetGroupForm();
-                this.groupFormEnabled = false;
+            disableAddForm() {
+                this.resetAddForm();
+                this.addFormEnabled = false;
             },
-            addGroup() {
-                this.$store.dispatch('pbxConfig/addGroup', this.groupForm);
+            addGroup(group) {
+                this.$store.dispatch('pbxConfig/addGroup', group);
             },
             removeGroup(group) {
                 var store = this.$store;

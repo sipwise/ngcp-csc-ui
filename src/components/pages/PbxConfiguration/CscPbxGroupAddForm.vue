@@ -2,40 +2,42 @@
     <q-card class="csc-pbx-group-add-form">
         <q-card-title>
             <q-icon name="add" color="primary" size="22px"/>
-            <span>Add Group</span>
+            <span>{{ $t('pbxConfig.addGroup') }}</span>
         </q-card-title>
         <q-card-main>
             <q-field>
-                <q-input :disabled="addGroupIsRequesting" ref="groupName" v-model="groupForm.name" autofocus
+                <q-input :disabled="loading" :readonly="loading" v-model="data.name" autofocus
                          :float-label="$t('pbxConfig.groupName')"  clearable />
             </q-field>
             <q-field>
-                <q-input :disabled="addGroupIsRequesting" type="number" v-model="groupForm.extension" clearable min="1" max="1000000"
-                         :float-label="$t('pbxConfig.extension')"  />
+                <q-input :disabled="loading" :readonly="loading" type="number" v-model="data.extension"
+                         clearable min="1" max="1000000" :float-label="$t('pbxConfig.extension')"  />
             </q-field>
             <q-field>
-                <q-select :disabled="addGroupIsRequesting" v-model="groupForm.huntPolicy" :float-label="$t('pbxConfig.huntPolicy')"
-                          :options="huntPolicyOptions" radio />
-            </q-field>
-            <q-field >
-                <q-input :disabled="addGroupIsRequesting" type="number" v-model="groupForm.huntTimeout" :float-label="$t('pbxConfig.huntTimeout')"
-                         suffix="seconds" min="1" max="3600" clearable />
+                <q-select :disabled="loading" :readonly="loading" v-model="data.huntPolicy"
+                          :float-label="$t('pbxConfig.huntPolicy')" :options="huntPolicyOptions" radio />
             </q-field>
             <q-field>
-                <q-select :disabled="addGroupIsRequesting" v-model="groupForm.aliasNumbers" :float-label="$t('pbxConfig.aliasNumbers')"
-                          :options="aliasNumberOptions" multiple chips readonly clearable />
+                <q-input :disabled="loading" :readonly="loading" type="number" v-model="data.huntTimeout" clearable
+                         :float-label="$t('pbxConfig.huntTimeout')" suffix="seconds" min="1" max="3600" />
             </q-field>
             <q-field>
-                <q-select :disabled="addGroupIsRequesting" v-model="groupForm.seats" :float-label="$t('pbxConfig.seats')"
-                          :options="seatOptions" multiple chips readonly clearable />
+                <q-select :disabled="loading" :readonly="loading" v-model="data.aliasNumbers" multiple chips clearable
+                          :float-label="$t('pbxConfig.aliasNumbers')" :options="aliasNumberOptions" />
+            </q-field>
+            <q-field>
+                <q-select :disabled="loading" :readonly="loading" v-model="data.seats" multiple chips clearable
+                          :float-label="$t('pbxConfig.seats')" :options="seatOptions" />
             </q-field>
         </q-card-main>
         <q-card-separator/>
         <q-card-actions align="center">
-            <q-btn v-if="!addGroupIsRequesting" flat color="secondary" icon="clear" @click="disableGroupForm()">{{ $t('buttons.cancel') }}</q-btn>
-            <q-btn loader v-model="addGroupIsRequesting" flat color="primary" icon="done" @click="addGroup()">{{ $t('buttons.save') }}</q-btn>
+            <q-btn v-if="!loading" flat color="secondary" icon="clear"
+                   @click="cancel()">{{ $t('buttons.cancel') }}</q-btn>
+            <q-btn v-if="!loading" flat color="primary" icon="done"
+                   @click="save()">{{ $t('buttons.save') }}</q-btn>
         </q-card-actions>
-        <q-inner-loading :visible="addGroupIsRequesting">
+        <q-inner-loading :visible="loading">
             <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
         </q-inner-loading>
     </q-card>
@@ -43,78 +45,45 @@
 
 <script>
 
-    import { startLoading, stopLoading, showGlobalError, showToast } from '../../../helpers/ui'
-    import CscPage  from '../../CscPage'
-    import CscPbxGroup  from './CscPbxGroup'
-    import {
-        QChip,
-        QCard,
-        QCardSeparator,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
-        QIcon,
-        QPopover,
-        QList,
-        QItem,
-        QItemMain,
-        QField,
-        QInput,
-        QBtn,
-        QSelect,
-        QInnerLoading,
-        QSpinnerDots,
-        QSpinnerMat,
-        Dialog
-    } from 'quasar-framework'
-    import { mapState } from 'vuex'
-    import numberFilter from '../../../filters/number'
+    import { QCard, QCardTitle, QCardMain, QCardActions, QCardSeparator, QBtn,
+        QInnerLoading, QSpinnerMat, QField, QInput, QSelect, QIcon } from 'quasar-framework'
 
     export default {
+        name: 'csc-pbx-group-add-form',
+        props: [
+            'huntPolicyOptions',
+            'aliasNumberOptions',
+            'seatOptions',
+            'loading',
+        ],
         components: {
-            CscPage,
-            QChip,
-            QCard,
-            QCardSeparator,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
-            QIcon,
-            QPopover,
-            QList,
-            QItem,
-            QItemMain,
-            QField,
-            QInput,
-            CscPbxGroup,
-            QBtn,
-            QSelect,
-            QInnerLoading,
-            QSpinnerDots,
-            QSpinnerMat,
-            Dialog
+            QCard, QCardTitle, QCardMain, QCardActions, QCardSeparator, QBtn,
+            QInnerLoading, QSpinnerMat, QField, QInput, QSelect, QIcon
         },
         data () {
             return {
-                group: {
+                data: this.getDefaults()
+            }
+        },
+        methods: {
+            getDefaults() {
+                return {
                     name: '',
                     extension: '',
                     huntPolicy: 'serial',
                     huntTimeout: 10,
                     aliasNumbers: [],
                     seats: []
-                },
-            }
-        },
-        computed: {
-
-        },
-        methods: {
-            save() {
-
+                }
             },
             cancel() {
-
+                this.$emit('cancel');
+            },
+            save() {
+                this.$emit('save', this.data);
+            },
+            reset() {
+                this.data = this.getDefaults();
             }
         }
     }
@@ -122,10 +91,9 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl';
-    .add-form {
-        position: relative;
-    }
-    .add-form .q-field:last-child {
-        margin-bottom: 36px;
-    }
+    .csc-pbx-group-add-form
+        position: relative
+    .csc-pbx-group-add-form
+        .q-field:last-child
+            margin-bottom: 36px
 </style>
