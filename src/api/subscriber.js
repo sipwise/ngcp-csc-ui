@@ -260,3 +260,6 @@ export function setPbxGroupMemberIds(id, ids) {
     return setField(id, 'pbx_groupmember_ids', ids);
 }
 
+export function setPbxGroupIds(id, ids) {
+    return setField(id, 'pbx_group_ids', ids);
+}

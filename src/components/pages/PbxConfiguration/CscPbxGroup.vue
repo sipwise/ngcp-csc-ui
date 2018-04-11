@@ -126,13 +126,6 @@
             isLoading() {
                 return this.loading;
             },
-            cardClasses() {
-                var cardClasses = ['csc-pbx-group'];
-                if(this.isLoading) {
-                    cardClasses.push('light-dimmed');
-                }
-                return cardClasses;
-            },
             titleIcon() {
                 if(this.expanded) {
                     return 'keyboard arrow down';
@@ -277,7 +270,7 @@
             },
             seatChanges() {
                 return !_.isEqual(this.changes.seats.sort(),
-                    this.numbersToIds(this.group.seats).sort());
+                    this.seatsToIds(this.group.seats).sort());
             },
             seatButtons() {
                 let buttons = [];
@@ -359,7 +352,7 @@
                 var numbersToAdd = _.difference(this.changes.aliasNumbers, oldNumbers);
                 var numbersToRemove = _.difference(oldNumbers, this.changes.aliasNumbers);
                 this.$emit('save-alias-numbers', {
-                    group: this.groupModel,
+                    item: this.groupModel,
                     add: numbersToAdd,
                     remove: numbersToRemove
                 });

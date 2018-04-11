@@ -1,111 +1,63 @@
 <template>
-    <div class="csc-add-form csc-pbx-seat-add-form">
-        <q-card v-if="enabled">
-            <q-card-title>
-                <q-icon name="add" color="primary" size="24px"/>
-                <span>{{ $t('pbxConfig.addSeat') }}</span>
-            </q-card-title>
-            <q-card-main>
-                <q-field>
-                    <q-input :disabled="isRequesting" ref="name" v-model="form.name" autofocus
-                             :float-label="$t('pbxConfig.seatName')" clearable />
-                </q-field>
-                <q-field>
-                    <q-input :disabled="isRequesting" type="number" v-model="form.extension" clearable
-                             min="1" max="1000000" :float-label="$t('pbxConfig.extension')"  />
-                </q-field>
-                <q-field>
-                    <q-select :disabled="isRequesting" v-model="form.aliasNumbers" multiple chips readonly clearable
-                              :float-label="$t('pbxConfig.aliasNumbers')" :options="aliasNumberOptions" />
-                </q-field>
-                <q-field>
-                    <q-select :disabled="isRequesting" v-model="form.groups" multiple chips readonly clearable
-                              :float-label="$t('pbxConfig.groups')" :options="groupOptions" />
-                </q-field>
-            </q-card-main>
-            <q-card-separator/>
-            <q-card-actions align="center">
-                <q-btn v-if="!isRequesting" flat color="secondary" icon="clear"
-                       @click="cancel()">{{ $t('buttons.cancel') }}</q-btn>
-                <q-btn loader v-model="isRequesting" flat color="primary" icon="done"
-                       @click="save()">{{ $t('buttons.save') }}</q-btn>
-            </q-card-actions>
-            <q-inner-loading :visible="isRequesting">
-                <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
-            </q-inner-loading>
-        </q-card>
-        <q-card v-else flat>
-            <q-card-actions align="center">
-                <q-btn color="primary" icon="add" flat @click="add()">{{ $t('pbxConfig.addSeat') }}</q-btn>
-            </q-card-actions>
-        </q-card>
-    </div>
+    <q-card class="csc-pbx-seat-add-form">
+        <q-card-title>
+            <q-icon name="add" color="primary" size="22px"/>
+            <span>{{ $t('pbxConfig.addSeat') }}</span>
+        </q-card-title>
+        <q-card-main>
+            <q-field>
+                <q-input :disabled="loading" :readonly="loading" v-model="data.name" autofocus
+                         :float-label="$t('pbxConfig.seatName')"  clearable />
+            </q-field>
+            <q-field>
+                <q-input :disabled="loading" :readonly="loading" type="number" v-model="data.extension"
+                         clearable min="1" max="1000000" :float-label="$t('pbxConfig.extension')"  />
+            </q-field>
+            <q-field>
+                <q-select :disabled="loading" :readonly="loading" v-model="data.aliasNumbers" multiple chips clearable
+                          :float-label="$t('pbxConfig.aliasNumbers')" :options="aliasNumberOptions" />
+            </q-field>
+            <q-field>
+                <q-select :disabled="loading" :readonly="loading" v-model="data.groups" multiple chips clearable
+                          :float-label="$t('pbxConfig.groups')" :options="groupOptions" />
+            </q-field>
+        </q-card-main>
+        <q-card-separator/>
+        <q-card-actions align="center">
+            <q-btn v-if="!loading" flat color="secondary" icon="clear"
+                   @click="cancel()">{{ $t('buttons.cancel') }}</q-btn>
+            <q-btn v-if="!loading" flat color="primary" icon="done"
+                   @click="save()">{{ $t('buttons.save') }}</q-btn>
+        </q-card-actions>
+        <q-inner-loading :visible="loading">
+            <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
+        </q-inner-loading>
+    </q-card>
 </template>
 
 <script>
-    import {
-        QChip,
-        QCard,
-        QCardSeparator,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
-        QIcon,
-        QPopover,
-        QList,
-        QItem,
-        QItemMain,
-        QField,
-        QInput,
-        QBtn,
-        QSelect,
-        QInnerLoading,
-        QSpinnerDots,
-        QSpinnerMat,
-        Dialog
-    } from 'quasar-framework'
+
+    import { QCard, QCardTitle, QCardMain, QCardActions, QCardSeparator, QBtn,
+        QInnerLoading, QSpinnerMat, QField, QInput, QSelect, QIcon } from 'quasar-framework'
 
     export default {
         name: 'csc-pbx-seat-add-form',
         props: [
             'aliasNumberOptions',
-            'groupOptions'
+            'groupOptions',
+            'loading'
         ],
         components: {
-            QChip,
-            QCard,
-            QCardSeparator,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
-            QIcon,
-            QPopover,
-            QList,
-            QItem,
-            QItemMain,
-            QField,
-            QInput,
-            QBtn,
-            QSelect,
-            QInnerLoading,
-            QSpinnerDots,
-            QSpinnerMat,
-            Dialog
+            QCard, QCardTitle, QCardMain, QCardActions, QCardSeparator, QBtn,
+            QInnerLoading, QSpinnerMat, QField, QInput, QSelect, QIcon
         },
         data () {
             return {
-                form: this.getDefaultData(),
-                enabled: false,
-                loading: false
-            }
-        },
-        computed: {
-            isRequesting() {
-                return this.loading;
+                data: this.getDefaults()
             }
         },
         methods: {
-            getDefaultData() {
+            getDefaults() {
                 return {
                     name: '',
                     extension: '',
@@ -114,28 +66,13 @@
                 }
             },
             cancel() {
-                this.enabled = false;
-            },
-            add() {
-                this.enabled = true;
-                this.form =  this.getDefaultData();
+                this.$emit('cancel');
             },
             save() {
-                this.loading = true;
-                this.$emit('save', {
-                    name: this.form.name,
-                    extension: this.form.extension,
-                    aliasNumbers: this.form.aliasNumbers,
-                    groups: this.form.groups
-                });
+                this.$emit('save', this.data);
             },
-            succeeded() {
-                this.loading = false;
-                this.enabled = false;
-            },
-            failed() {
-                this.loading = false;
-                this.enabled = true;
+            reset() {
+                this.data = this.getDefaults();
             }
         }
     }
@@ -143,11 +80,9 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl';
-
-    .csc-pbx-seat-add-form .q-card {
-        position: relative;
-    }
-    .csc-pbx-seat-add-form .q-card .q-field:last-child {
-        margin-bottom: 36px;
-    }
+    .csc-pbx-seat-add-form
+        position: relative
+    .csc-pbx-seat-add-form
+        .q-field:last-child
+            margin-bottom: 36px
 </style>
