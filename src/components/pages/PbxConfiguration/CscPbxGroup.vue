@@ -10,16 +10,19 @@
         </q-card-title>
         <q-card-main v-if="expanded" class="transition-generic">
             <q-field :label="$t('pbxConfig.groupName')">
-                <q-input v-model="changes.name" :after="nameButtons" />
+                <q-input v-model="changes.name" :after="nameButtons" @keyup.enter="saveName" />
             </q-field>
             <q-field :label="$t('pbxConfig.extension')">
-                <q-input v-model="changes.extension" type="number" :after="extensionButtons" />
+                <q-input v-model="changes.extension" type="number" :after="extensionButtons"
+                         @keyup.enter="saveExtension" />
             </q-field>
             <q-field :label="$t('pbxConfig.huntPolicy')">
-                <q-select v-model="changes.huntPolicy" :options="huntPolicyOptions" radio @change="huntPolicyChanged"/>
+                <q-select v-model="changes.huntPolicy" :options="huntPolicyOptions"
+                          radio @change="huntPolicyChanged"/>
             </q-field>
             <q-field :label="$t('pbxConfig.huntTimeout')">
-                <q-input v-model="changes.huntTimeout" type="number" suffix="seconds" :after="huntTimeoutButtons" min="0" />
+                <q-input v-model="changes.huntTimeout" type="number" suffix="seconds"
+                         :after="huntTimeoutButtons" min="0" @keyup.enter="saveHuntTimeout" />
             </q-field>
             <q-field :label="$t('pbxConfig.primaryNumber')">
                 <q-input v-model="primaryNumber" readonly disabled />
@@ -125,13 +128,6 @@
             },
             isLoading() {
                 return this.loading;
-            },
-            cardClasses() {
-                var cardClasses = ['csc-pbx-group'];
-                if(this.isLoading) {
-                    cardClasses.push('light-dimmed');
-                }
-                return cardClasses;
             },
             titleIcon() {
                 if(this.expanded) {
@@ -277,7 +273,7 @@
             },
             seatChanges() {
                 return !_.isEqual(this.changes.seats.sort(),
-                    this.numbersToIds(this.group.seats).sort());
+                    this.seatsToIds(this.group.seats).sort());
             },
             seatButtons() {
                 let buttons = [];
@@ -359,7 +355,7 @@
                 var numbersToAdd = _.difference(this.changes.aliasNumbers, oldNumbers);
                 var numbersToRemove = _.difference(oldNumbers, this.changes.aliasNumbers);
                 this.$emit('save-alias-numbers', {
-                    group: this.groupModel,
+                    item: this.groupModel,
                     add: numbersToAdd,
                     remove: numbersToRemove
                 });
