@@ -76,6 +76,16 @@ You need a pbx subscriber to be able to access the pbx config specific modules i
 
     `enable: yes`
 
+1. Enable write access for subscriberadmins by adding "write" to subscriber privileges as in the following example
+
+    ```
+        www_admin
+          privileges:
+            subscriberadmin:
+              subscribers:
+              - write
+    ```
+
 1. Run ngcpcfg apply
 
     `ngcpcfg apply 'Enable pbx'`
