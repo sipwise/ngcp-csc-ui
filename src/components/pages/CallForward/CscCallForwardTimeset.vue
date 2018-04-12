@@ -41,7 +41,10 @@
                         {{ $t('pages.callForward.times.timesetNotDefined', { timeset: timesetName }) }}
                 </q-alert>
             </div>
-            <csc-add-time-form v-if="activeTimeForm" type="new" :title="getAddLabel" :timeset="timesetName" ref="addTimeNew"></csc-add-time-form>
+            <csc-add-time-form v-if="activeTimeForm && !timesetExists"
+                type="new" :title="getAddLabel"
+                :timeset="timesetName"
+                ref="addTimeNew" />
         </q-card>
     </div>
 </template>
