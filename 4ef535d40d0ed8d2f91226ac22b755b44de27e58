@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_4caa3c72",
+        "filename": "README.md",
+        "patchSetId": 6
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-13T13:52:38Z",
+      "side": 1,
+      "message": "Can add a single line to inform the user that this is also where alias numbers can be defined, and what the range means. For example:\n1. To set \"Alias Numbers\", you can define a range starting with country code, area code and subscriber number (same as for regular E.164 Number, but also adding a range defined ad number of additional digits. E.g. 43 99 51234 and range 2, would result in 43995123400 - 43995123499.",
+      "range": {
+        "startLine": 98,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 65
+      },
+      "revId": "4ef535d40d0ed8d2f91226ac22b755b44de27e58",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_4cd8fc1d",
+        "filename": "src/components/pages/PbxConfiguration/CscPbxSeat.vue",
+        "patchSetId": 6
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-13T13:52:38Z",
+      "side": 1,
+      "message": "Can this be approved by using a computed property for changes instead? Was confused by use of a method reference from state, and computed seems to solve this more elegantly without having to rely on changes stored in state.",
+      "range": {
+        "startLine": 71,
+        "startChar": 16,
+        "endLine": 71,
+        "endChar": 39
+      },
+      "revId": "4ef535d40d0ed8d2f91226ac22b755b44de27e58",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_ac3f8824",
+        "filename": "src/components/pages/PbxConfiguration/CscPbxSeatAddForm.vue",
+        "patchSetId": 6
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-13T13:52:38Z",
+      "side": 1,
+      "message": "While this is creative - and I applaud that - it\u0027s confusing to read from someone used to regular Vue.js usage of methods/computed/state. I would prefer a more verbose way where the state is declared with initial values. In this small SFC I could more easily get the gist and discover the reason you\u0027re using a method in state, but in CscPbxSeat.vue with 300+ lines of code it makes it much harder to read.\n\nMy vote is for more verbose and easily maintainable code in line with using computed properties for computed state, at the expense of some more code to write on the initial implementatio. But I am open to discuss this approach as well.\n\nQuoting Sarah Edo from the core team:\n\"Personally, I love that, as a maintainer, I can look at a codebase I\u0027ve never seen before and know immediately what the author has intended by the distinction made from methods, computed, and watchers.\"\nSource: https://css-tricks.com/methods-computed-and-watchers-in-vue-js/",
+      "range": {
+        "startLine": 56,
+        "startChar": 22,
+        "endLine": 56,
+        "endChar": 40
+      },
+      "revId": "4ef535d40d0ed8d2f91226ac22b755b44de27e58",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_4c46bcc0",
+        "filename": "src/components/pages/PbxConfiguration/CscPbxSeatAddForm.vue",
+        "patchSetId": 6
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-13T13:52:38Z",
+      "side": 1,
+      "message": "Can this be turned into a variable, assuming it\u0027s also used in other PbxConfig components?",
+      "range": {
+        "startLine": 87,
+        "startChar": 27,
+        "endLine": 87,
+        "endChar": 31
+      },
+      "revId": "4ef535d40d0ed8d2f91226ac22b755b44de27e58",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_cc108cab",
+        "filename": "src/components/pages/PbxConfiguration/Seats.vue",
+        "patchSetId": 6
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-13T13:52:38Z",
+      "side": 1,
+      "message": "Can this be removed?",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 59
+      },
+      "revId": "4ef535d40d0ed8d2f91226ac22b755b44de27e58",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_cc876cd6",
+        "filename": "src/store/pbx-config/getters.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-13T13:52:38Z",
+      "side": 1,
+      "message": "I consider these type of one-to-one references to state as redundant, as the can referenced in components with direct reference to state instead. Feel free to leave as is though.\n\nI also see readability/maintainability advantage of using getters for all state variables, which - if we are consistent in the codebase - will make it easier when onboarding new team members by stating \"we use getters for everything\". But when we have it mixed it is more effort to maintain/read.",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 66,
+        "endChar": 6
+      },
+      "revId": "4ef535d40d0ed8d2f91226ac22b755b44de27e58",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
