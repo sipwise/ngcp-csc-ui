@@ -40,6 +40,12 @@ export default {
     isListRequesting(state) {
         return state.listState === RequestState.requesting;
     },
+    isListLoadingSilently(state) {
+        return (state.listLoadingSilently === true);
+    },
+    isListLoadingVisible(state, getters) {
+        return getters.isListRequesting && !getters.isListLoadingSilently;
+    },
     listState(state) {
         return state.listState;
     },
@@ -99,5 +105,18 @@ export default {
     },
     removeError(state) {
         return state.removeError;
+    },
+    devices(state) {
+        return state.devicesOrdered;
+    },
+    modelOptions(state) {
+        let modelOptions = [];
+        state.modelsOrdered.forEach((model)=>{
+            modelOptions.push({
+                label: model.vendor + " " + model.model,
+                value: model.id
+            });
+        });
+        return modelOptions;
     }
 }

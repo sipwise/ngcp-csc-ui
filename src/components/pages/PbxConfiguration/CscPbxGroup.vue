@@ -1,12 +1,13 @@
 <template>
-    <q-card class="csc-pbx-group">
-        <q-card-title class="cursor-pointer" @click="toggleMain()">
-            <q-icon name="group" color="primary" size="24px"/>
-            <span v-if="!expanded" class="csc-pbx-group-title">{{ group.display_name }}</span>
-            <q-chip v-if="!expanded" pointing="left" color="primary" class="gt-md">
+    <q-card class="csc-entity csc-pbx-group shadow-1">
+        <q-card-title class="csc-entity-title">
+            <q-icon name="group" color="secondary" size="24px"/>
+            <span class="csc-entity-title-text">{{ group.display_name }}</span>
+            <q-chip v-if="!expanded" pointing="left" color="primary" class="gt-md cursor-pointer">
                 {{ $t('pbxConfig.extension') }}: <span class="csc-important">{{ group.pbx_extension }}</span>
             </q-chip>
-            <q-icon :name="titleIcon" color="primary" size="22px" slot="right"/>
+            <q-btn :icon="titleIcon" :small="isMobile" color="primary" slot="right" flat @click="toggleMain()" />
+            <q-btn icon="delete" :small="isMobile"  color="negative" slot="right" flat @click="remove()" />
         </q-card-title>
         <q-card-main v-if="expanded" class="transition-generic">
             <q-field :label="$t('pbxConfig.groupName')">
@@ -36,10 +37,6 @@
                           :after="seatButtons" @change="seatChange" />
             </q-field>
         </q-card-main>
-        <q-card-actions align="center">
-            <q-btn flat :small="isMobile" :round="isMobile"
-                   color="negative" icon="delete" @click="remove()">Delete</q-btn>
-        </q-card-actions>
         <q-inner-loading :visible="isLoading">
             <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
         </q-inner-loading>
@@ -130,7 +127,7 @@
                 return this.loading;
             },
             titleIcon() {
-                if(this.expanded) {
+                if(!this.expanded) {
                     return 'keyboard arrow down';
                 }
                 else {
@@ -301,12 +298,7 @@
         },
         methods: {
             toggleMain() {
-                if(this.expanded) {
-                    this.expanded = false;
-                }
-                else {
-                    this.expanded = true;
-                }
+                this.expanded = !this.expanded;
             },
             remove() {
                 this.$emit('remove', this.groupModel);
@@ -395,13 +387,5 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    .csc-pbx-group {
-        position: relative;
-    }
-    .csc-pbx-group .csc-pbx-group-title {
-        padding-left: 8px;
-    }
-    .csc-important {
-        font-weight: bold;
-    }
+    @import '../../../themes/app.common'
 </style>

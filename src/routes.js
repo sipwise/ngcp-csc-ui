@@ -9,9 +9,9 @@ import CallBlockingIncoming from './components/pages/CallBlocking/Incoming'
 import CallBlockingOutgoing from './components/pages/CallBlocking/Outgoing'
 import CallBlockingPrivacy from './components/pages/CallBlocking/Privacy'
 import Reminder from './components/pages/Reminder';
-import PbxConfigurationGroups from './components/pages/PbxConfiguration/Groups'
-import PbxConfigurationSeats from './components/pages/PbxConfiguration/Seats'
-import PbxConfigurationDevices from './components/pages/PbxConfiguration/Devices'
+import PbxConfigurationGroups from './components/pages/PbxConfiguration/CscPbxGroups'
+import PbxConfigurationSeats from './components/pages/PbxConfiguration/CscPbxSeats'
+import PbxConfigurationDevices from './components/pages/PbxConfiguration/CscPbxDevices'
 import Login from './components/Login'
 import Error404 from './components/Error404'
 
