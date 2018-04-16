@@ -47,7 +47,7 @@
 
     .page {
         position: relative;
-        padding: 30px;
+        padding: 60px;
         padding-top: 100px;
         margin: 0px;
     }
@@ -61,6 +61,7 @@
 
     .page .page-title {
         padding: 30px;
+        padding-left: 60px;
         z-index: 1000;
         right: 0;
         background: -moz-linear-gradient(top, rgba(255,255,255,1) 44%, rgba(255,255,255,0.86) 71%, rgba(255,255,255,0) 100%);
