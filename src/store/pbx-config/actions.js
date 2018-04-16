@@ -5,6 +5,7 @@ import { getPbxConfiguration, addGroup,
     removeGroup, addSeat, removeSeat, setGroupName,
     setGroupExtension, setGroupHuntPolicy, setGroupHuntTimeout,
     updateGroupSeats, setSeatName, setSeatExtension, updateSeatGroups } from '../../api/pbx-config'
+import { getDeviceList } from '../../api/pbx-devices'
 
 export default {
     listGroups(context, silent) {
@@ -158,6 +159,18 @@ export default {
             context.commit('removeItemSucceeded');
         }).catch((err)=>{
             context.commit('removeItemFailed', err.message);
+        });
+    },
+    listDevices(context) {
+        return new Promise((resolve, reject)=>{
+            context.commit('deviceListRequesting');
+            getDeviceList().then((result)=>{
+                context.commit('deviceListSucceeded', result);
+                resolve();
+            }).catch((err)=>{
+                context.commit('deviceListFailed', err.message);
+                reject(err);
+            });
         });
     }
 }

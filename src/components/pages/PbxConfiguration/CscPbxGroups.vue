@@ -1,25 +1,22 @@
 <template>
-    <csc-page id="csc-page-pbx-groups" title="Groups">
+    <csc-page :title="$t('pbxConfig.groupsTitle')">
         <csc-pbx-group-add-form v-show="addFormEnabled" ref="addForm" @save="addGroup" @cancel="disableAddForm"
                                 :loading="isAdding" :alias-number-options="aliasNumberOptions"
                                 :seat-options="seatOptions" :hunt-policy-options="huntPolicyOptions"/>
-        <q-card v-show="!addFormEnabled" flat>
-            <q-card-actions align="center">
-                <q-btn color="primary" icon="add" flat @click="enableAddForm">
-                    {{ $t('pbxConfig.addGroup') }}
-                </q-btn>
-            </q-card-actions>
-        </q-card>
-        <q-card v-if="isListRequesting && !listLoadingSilently" flat>
-            <q-card-actions align="center">
-                <q-spinner-dots  color="primary" :size="40"/>
-            </q-card-actions>
-        </q-card>
+        <div v-show="!addFormEnabled" class="row justify-center ">
+            <q-btn color="primary" icon="add" flat @click="enableAddForm">{{ $t('pbxConfig.addGroup') }}</q-btn>
+        </div>
+        <div v-if="isListLoadingVisible" class="row justify-center">
+            <q-spinner-dots color="primary" :size="40" />
+        </div>
         <csc-pbx-group v-for="group in groups" :key="group.id" :group="group" :alias-number-options="aliasNumberOptions"
                        :seat-options="seatOptions" :hunt-policy-options="huntPolicyOptions" @remove="removeGroup"
                        :loading="isItemLoading(group.id)" @save-name="setGroupName" @save-extension="setGroupExtension"
                         @save-hunt-policy="setGroupHuntPolicy" @save-hunt-timeout="setGroupHuntTimeout"
                         @save-alias-numbers="updateAliasNumbers" @save-seats="updateSeats" />
+        <div v-if="groups.length === 0 && !isListRequesting" class="row justify-center csc-no-entities">
+            {{ $t('pbxConfig.noGroups') }}
+        </div>
     </csc-page>
 </template>
 
@@ -95,10 +92,10 @@
                 'updateItemId',
                 'isRemoving',
                 'removeItemId',
-                'isListRequesting',
                 'listState',
                 'listError',
-                'listLoadingSilently'
+                'isListRequesting',
+                'isListLoadingVisible'
             ])
         },
         watch: {

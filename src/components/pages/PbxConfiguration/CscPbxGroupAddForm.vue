@@ -1,5 +1,5 @@
 <template>
-    <q-card class="csc-pbx-group-add-form">
+    <q-card class="csc-pbx-group-add-form shadow-1">
         <q-card-title>
             <q-icon name="add" color="primary" size="22px"/>
             <span>{{ $t('pbxConfig.addGroup') }}</span>

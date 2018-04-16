@@ -1,12 +1,13 @@
 <template>
-    <q-card class="csc-pbx-seat">
-        <q-card-title class="cursor-pointer" @click="toggleMain()">
-            <q-icon name="person" color="primary" size="24px"/>
-            <span v-if="!expanded" class="csc-pbx-seat-title">{{ seat.display_name }}</span>
+    <q-card class="csc-entity csc-pbx-seat shadow-1">
+        <q-card-title class="csc-entity-title">
+            <q-icon name="person" color="secondary" size="24px"/>
+            <span class="csc-entity-title-text">{{ seat.display_name }}</span>
             <q-chip v-if="!expanded" pointing="left" color="primary" class="gt-md">
                 {{ $t('pbxConfig.extension') }}: <span class="csc-important">{{ seat.pbx_extension }}</span>
             </q-chip>
-            <q-icon :name="titleIcon" color="primary" size="22px" slot="right"/>
+            <q-btn :icon="titleIcon" :small="isMobile" color="primary" slot="right" flat @click="toggleMain()" />
+            <q-btn icon="delete" :small="isMobile"  color="negative" slot="right" flat @click="remove()" />
         </q-card-title>
         <q-card-main v-if="expanded" class="transition-generic">
             <q-field :label="$t('pbxConfig.seatName')">
@@ -28,10 +29,6 @@
                           :after="groupButtons" @change="groupChange" />
             </q-field>
         </q-card-main>
-        <q-card-actions align="center">
-            <q-btn flat :small="isMobile" :round="isMobile"
-                   color="negative" icon="delete" @click="remove()">Delete</q-btn>
-        </q-card-actions>
         <q-inner-loading :visible="isLoading">
             <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
         </q-inner-loading>
@@ -113,7 +110,7 @@
                 return this.loading;
             },
             titleIcon() {
-                if(this.expanded) {
+                if(!this.expanded) {
                     return 'keyboard arrow down';
                 }
                 else {
@@ -232,12 +229,7 @@
         },
         methods: {
             toggleMain() {
-                if(this.expanded) {
-                    this.expanded = false;
-                }
-                else {
-                    this.expanded = true;
-                }
+                this.expanded = !this.expanded;
             },
             remove() {
                 this.$emit('remove', this.seatModel);
@@ -309,13 +301,5 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    .csc-pbx-seat {
-        position: relative;
-    }
-    .csc-pbx-seat .csc-pbx-seat-title {
-        padding-left: 8px;
-    }
-    .csc-important {
-        font-weight: bold;
-    }
+    @import '../../../themes/app.common'
 </style>

@@ -106,5 +106,35 @@ export default {
                 delete state.groupsOrdered[index];
             }
         });
+    },
+    deviceListRequesting(state, silent) {
+        state.listState = RequestState.requesting;
+        state.listError = null;
+        state.listLoadingSilently = silent;
+    },
+    deviceListSucceeded(state, data) {
+        state.listState = RequestState.succeeded;
+        state.listError = null;
+        state.devicesOrdered = data.devices.items;
+        state.profilesOrdered = data.profiles;
+        state.modelsOrdered = data.models;
+        state.devicesOrdered.forEach((device)=>{
+            state.profilesOrdered.forEach((profile)=>{
+                if(device.profile_id === profile.id) {
+                    device.profile = profile;
+                }
+            });
+        });
+        state.devicesOrdered.forEach((device)=>{
+            state.modelsOrdered.forEach((model)=>{
+                if(device.profile.device_id === model.id) {
+                    device.model = model;
+                }
+            });
+        });
+    },
+    deviceListFailed(state, error) {
+        state.listState = RequestState.failed;
+        state.listError = error;
     }
 }

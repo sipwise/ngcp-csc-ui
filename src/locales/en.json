@@ -249,6 +249,15 @@
         "addSeat": "Add Seat",
         "removeSeat": "Remove seat",
         "removeSeatTitle": "Remove seat",
-        "removeSeatText": "You are about to remove seat \"{seat}\""
+        "removeSeatText": "You are about to remove seat \"{seat}\"",
+        "devicesTitle": "Devices",
+        "deviceStationName": "Station name",
+        "deviceIdentifier": "MAC address",
+        "deviceModel": "Model",
+        "groupsTitle": "Groups",
+        "seatsTitle": "Seats",
+        "noDevices": "No devices created yet",
+        "noGroups": "No groups created yet",
+        "noSeats": "No seats created yet"
     }
 }

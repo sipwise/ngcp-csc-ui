@@ -1,24 +1,21 @@
 <template>
-    <csc-page title="Seats">
+    <csc-page :title="$t('pbxConfig.seatsTitle')">
         <csc-pbx-seat-add-form v-show="addFormEnabled" ref="addForm" :alias-number-options="aliasNumberOptions"
                                :group-options="groupOptions" :loading="isAdding" @save="addSeat"
                                @cancel="disableAddForm" />
-        <q-card v-show="!addFormEnabled" flat>
-            <q-card-actions align="center">
-                <q-btn color="primary" icon="add" flat @click="enableAddForm">
-                    {{ $t('pbxConfig.addSeat') }}
-                </q-btn>
-            </q-card-actions>
-        </q-card>
-        <q-card v-if="isListRequesting && !listLoadingSilently" flat>
-            <q-card-actions align="center">
-                <q-spinner-dots  color="primary" :size="40"/>
-            </q-card-actions>
-        </q-card>
+        <div v-show="!addFormEnabled" class="row justify-center">
+            <q-btn color="primary" icon="add" flat @click="enableAddForm">{{ $t('pbxConfig.addSeat') }}</q-btn>
+        </div>
+        <div v-if="isListLoadingVisible" class="row justify-center">
+            <q-spinner-dots color="primary" :size="40" />
+        </div>
         <csc-pbx-seat v-for="seat in seats" :key="seat.id" :seat="seat" :alias-number-options="aliasNumberOptions"
                       :group-options="groupOptions" @remove="removeSeat" :loading="isItemLoading(seat.id)"
                       @save-name="setSeatName" @save-extension="setSeatExtension"
                       @save-alias-numbers="updateAliasNumbers" @save-groups="updateGroups" />
+        <div v-if="seats.length === 0 && !isListRequesting" class="row justify-center csc-no-entities">
+            {{ $t('pbxConfig.noSeats') }}
+        </div>
     </csc-page>
 </template>
 
@@ -62,10 +59,10 @@
                 'updateItemId',
                 'isRemoving',
                 'removeItemId',
-                'isListRequesting',
                 'listState',
                 'listError',
-                'listLoadingSilently'
+                'isListRequesting',
+                'isListLoadingVisible'
             ]),
             groupOptions() {
                 let groups = [];
