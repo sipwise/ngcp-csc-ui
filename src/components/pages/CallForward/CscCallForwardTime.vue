@@ -24,8 +24,9 @@
                     readonly />
             </q-item-tile>
         </q-item-main>
-        <q-item-side>
+        <q-item-side class="csc-call-forward-time-btn-container">
             <q-btn flat
+                class="csc-call-forward-time-btn"
                 color="negative"
                 icon="delete"
                 @click="deleteTime(index)">
@@ -133,9 +134,9 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
 
-    div.q-item-side.q-item-side-left.q-item-section
+    .q-item-side.csc-call-forward-time-btn-container
         margin-left 0
-
-    i.q-icon.material-icons.on-left
-        margin-right 0
+        .q-btn.csc-call-forward-time-btn
+            .q-icon
+                margin-right 0
 </style>

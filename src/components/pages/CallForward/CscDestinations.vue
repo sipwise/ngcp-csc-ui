@@ -4,20 +4,18 @@
             <q-icon :name="icon" class="dest-icon" />
             {{ title }}
         </div>
-        <div>
-            <q-list no-border>
-                <q-item v-if="group.length === 0" class="dest-row csc-no-destination">
-                    <span> {{ $t('pages.callForward.forwardToNowhere') }} </span>
-                </q-item>
-                <div v-else :key="index" v-for="(destinationset, index) in group">
-                    <csc-destination v-bind="destinationset"
-                        :prev-dest-id="previousDestinationsetId(index)"
-                        :next-dest-id="nextDestinationsetId(index)"
-                    />
-                </div>
-            </q-list>
-            <csc-add-destination-form v-bind="lastDestinationset" />
-        </div>
+        <q-list no-border>
+            <q-item v-if="group.length === 0" class="dest-row csc-no-destination">
+                <span> {{ $t('pages.callForward.forwardToNowhere') }} </span>
+            </q-item>
+            <div v-else :key="index" v-for="(destinationset, index) in group">
+                <csc-destination v-bind="destinationset"
+                    :prev-dest-id="previousDestinationsetId(index)"
+                    :next-dest-id="nextDestinationsetId(index)"
+                />
+            </div>
+        </q-list>
+        <csc-add-destination-form v-bind="lastDestinationset" />
     </div>
 </template>
 

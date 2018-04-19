@@ -1,8 +1,8 @@
 <template>
     <div>
-        <q-item class="csc-destination" :key="index" v-for="(destination, index) in destinations">
+        <q-item highlight separator class="csc-destination" :key="index" v-for="(destination, index) in destinations">
             <q-item-main>
-                <div class="dest-row" :class="{ terminated: destination.terminated }">
+                <div v-if="$q.platform.is.desktop" class="dest-row" :class="{ terminated: destination.terminated }">
                     <span v-if="index == 0">
                         {{ $t('pages.callForward.firstRing') }}
                     </span>
@@ -23,6 +23,41 @@
                             {{ $t('pages.callForward.secs') }}
                         </span>
                     </span>
+                    <q-tooltip v-if="destination.terminated">
+                        {{ $t('pages.callForward.terminatedTooltip') }}
+                    </q-tooltip>
+                </div>
+                <div v-if="$q.platform.is.mobile" class="dest-row" :class="{ terminated: destination.terminated, mobile: mobileClasses }">
+                    <q-item-tile class="dest-values" label>
+                        <span v-if="!isNumber(destination.destination)">
+                            <span v-if="index == 0">
+                                {{ $t('pages.callForward.firstRing') }}
+                            </span>
+                            <span v-else-if="index > 0">
+                                {{ $t('pages.callForward.thenRing') }}
+                            </span>
+                        </span>
+                        {{ destination.destination | destinationFormat }}
+                    </q-item-tile>
+                    <q-item-tile class="dest-sublabel" sublabel>
+                        <span v-if="index == 0 && isNumber(destination.destination)">
+                            {{ $t('pages.callForward.firstRing') }}
+                        </span>
+                        <span v-else-if="index > 0 && isNumber(destination.destination)">
+                            {{ $t('pages.callForward.thenRing') }}
+                        </span>
+                        <span v-if="isNumber(destination.destination)">
+                            <span>
+                                {{ $t('pages.callForward.for') }}
+                            </span>
+                            <span class="dest-values">
+                                {{ destination.timeout }}
+                            </span>
+                            <span>
+                                {{ $t('pages.callForward.secs') }}
+                            </span>
+                        </span>
+                    </q-item-tile>
                     <q-tooltip v-if="destination.terminated">
                         {{ $t('pages.callForward.terminatedTooltip') }}
                     </q-tooltip>
@@ -56,8 +91,8 @@
     import _ from 'lodash'
     import { startLoading, stopLoading,
         showGlobalError } from '../../../helpers/ui'
-    import { QItem, QItemMain, QItemSide,
-        Dialog, QBtn, QTooltip, QPopover, QList } from 'quasar-framework'
+    import { QItem, QItemMain, QItemSide, QItemTile,
+        Dialog, QBtn, QTooltip, QPopover, QList, Platform } from 'quasar-framework'
     export default {
         name: 'csc-destination',
         props: [
@@ -70,6 +105,7 @@
             QItem,
             QItemMain,
             QItemSide,
+            QItemTile,
             Dialog,
             QBtn,
             QTooltip,
@@ -80,7 +116,14 @@
             ...mapState('callForward', [
                 'changeDestinationState',
                 'changeDestinationError'
-            ])
+            ]),
+            mobileClasses() {
+                let classes = ['dest-row'];
+                if(Platform.is.mobile) {
+                    classes.push('mobile');
+                }
+                return classes;
+            }
         },
         watch: {
             changeDestinationState(state) {
@@ -158,6 +201,17 @@
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl'
 
+    .dest-row.mobile
+        padding 16px
+        padding-left 0
+        .dest-values > span
+            font-weight 300
+
+    .dest-row.mobile .dest-sublabel span
+        font-weight 300
+
+    .dest-row.terminated.mobile
+        color $grey
 
     .q-item.csc-destination
         padding 0px

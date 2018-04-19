@@ -1,5 +1,5 @@
 <template>
-    <div class="times-card" flat>
+    <div class="times-card">
         <q-list no-border>
             <csc-call-forward-time class="csc-call-forward-times" v-if="times.length > 0" v-for="(time, index) in times"
                 :key="index" :time="time" :index="index" />
@@ -67,6 +67,4 @@
 
     .add-time
         margin-top 0
-        padding-left 0
-        padding-right 0
 </style>

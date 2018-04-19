@@ -155,8 +155,4 @@
         .q-slider.label-always
             padding 15px 0 5px
             height 50px
-
-    .add-destination-button
-        padding-left 0px
-        padding-right 0px
 </style>

@@ -1,16 +1,19 @@
 <template>
     <div class="dest-card">
         <csc-destinations :title="$t('pages.callForward.whenOnline')"
+            class="csc-destinations"
             :group="destinations.online"
             group-name="cfu"
             :timeset="timeset"
             icon="smartphone" />
         <csc-destinations :title="$t('pages.callForward.whenBusy')"
+            class="csc-destinations"
             :group="destinations.busy"
             group-name="cfb"
             :timeset="timeset"
             icon="phonelink_ring" />
         <csc-destinations :title="$t('pages.callForward.whenOffline')"
+            class="csc-destinations"
             :group="destinations.offline"
             group-name="cfna"
             :timeset="timeset"
@@ -23,7 +26,6 @@
     import { startLoading, stopLoading,
         showGlobalError, showToast } from '../../../helpers/ui'
     import CscDestinations from './CscDestinations'
-    import { QCard } from 'quasar-framework'
     export default {
         name: 'csc-call-forward-destinations',
         props: [
@@ -35,7 +37,6 @@
             }
         },
         components: {
-            QCard,
             CscDestinations
         },
         computed: {
@@ -148,4 +149,9 @@
     .dest-card
         max-width 100%
         margin auto
+        .csc-destinations
+            .dest-icon
+                font-size 18px
+                margin-bottom 5px 
+
 </style>
