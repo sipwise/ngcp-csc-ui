@@ -203,7 +203,7 @@
 
     .dest-row.mobile
         padding 16px
-        padding-left 0
+        padding-left 0px
         .dest-values > span
             font-weight 300
 
@@ -214,7 +214,10 @@
         color $grey
 
     .q-item.csc-destination
-        padding 0px
+        padding 0
+
+    .q-item-highlight.csc-destination:hover
+        background-color lighten($primary, 70%)
 
     .dest-row
         color $secondary
