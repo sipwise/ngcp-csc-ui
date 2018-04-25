@@ -1,23 +1,24 @@
 'use strict';
 
+import _ from 'lodash';
 import { assignNumbers } from '../../api/user';
-import { getPbxConfiguration, addGroup,
-    removeGroup, addSeat, removeSeat, setGroupName,
+import { addGroup, removeGroup, addSeat, removeSeat, setGroupName,
     setGroupExtension, setGroupHuntPolicy, setGroupHuntTimeout,
-    updateGroupSeats, setSeatName, setSeatExtension, updateSeatGroups } from '../../api/pbx-config'
-import { getDeviceList } from '../../api/pbx-devices'
+    updateGroupSeats, setSeatName, setSeatExtension,
+    updateSeatGroups, getGroupList, getSeatList, getDeviceList } from '../../api/pbx-config'
 
 export default {
-    listGroups(context, silent) {
-        return new Promise((resolve, reject)=>{
-            context.commit('listRequesting', silent);
-            getPbxConfiguration().then((config)=>{
-                context.commit('listSucceeded', config);
-                resolve();
-            }).catch((err)=>{
-                context.commit('listFailed', err.message);
-                reject(err);
-            });
+    listGroups(context, options) {
+        let silent = _.get(options, 'silent', false);
+        let page = _.get(options, 'page', 1);
+        context.commit('listRequesting', {
+            silent: silent,
+            page: page
+        });
+        getGroupList(page).then((groups)=>{
+            context.commit('listSucceeded', groups);
+        }).catch((err)=>{
+            context.commit('listFailed', err.message);
         });
     },
     addGroup(context, group) {
@@ -106,15 +107,25 @@ export default {
             context.commit('removeItemFailed', err.message);
         });
     },
-    listSeats(context, silent) {
-        return context.dispatch('listGroups', silent);
+    listSeats(context, options) {
+        let silent = _.get(options, 'silent', false);
+        let page = _.get(options, 'page', 1);
+        context.commit('listRequesting', {
+            silent: silent,
+            page: page
+        });
+        getSeatList(page).then((seats)=>{
+            context.commit('listSucceeded', seats);
+        }).catch((err)=>{
+            context.commit('listFailed', err.message);
+        });
     },
     addSeat(context, seat) {
         seat.customerId = context.state.pilot.customer_id;
         seat.domainId = context.state.pilot.domain_id;
         context.commit('addItemRequesting', seat);
         addSeat(seat).then(()=>{
-            return context.dispatch('listGroups', true);
+            return context.dispatch('listSeats', true);
         }).then(()=>{
             context.commit('addItemSucceeded');
         }).catch((err)=>{
@@ -124,7 +135,7 @@ export default {
     setSeatName(context, seat) {
         context.commit('updateItemRequesting', seat);
         setSeatName(seat.id, seat.name).then(() => {
-            return context.dispatch('listGroups', true);
+            return context.dispatch('listSeats', true);
         }).then(()=>{
             context.commit('updateItemSucceeded');
         }).catch((err) => {
@@ -134,7 +145,7 @@ export default {
     setSeatExtension(context, seat) {
         context.commit('updateItemRequesting', seat);
         setSeatExtension(seat.id, seat.extension).then(()=>{
-            return context.dispatch('listGroups', true);
+            return context.dispatch('listSeats', true);
         }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
@@ -144,7 +155,7 @@ export default {
     updateGroups(context, seat) {
         context.commit('updateItemRequesting', seat);
         updateSeatGroups(seat.id, seat.groups).then(()=>{
-            return context.dispatch('listGroups', true);
+            return context.dispatch('listSeats', true);
         }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
@@ -154,18 +165,23 @@ export default {
     removeSeat(context, seat) {
         context.commit('removeItemRequesting', seat);
         removeSeat(seat.id).then(()=>{
-            return context.dispatch('listGroups', true);
+            return context.dispatch('listSeats', true);
         }).then(()=>{
             context.commit('removeItemSucceeded');
         }).catch((err)=>{
             context.commit('removeItemFailed', err.message);
         });
     },
-    listDevices(context) {
+    listDevices(context, options) {
         return new Promise((resolve, reject)=>{
-            context.commit('deviceListRequesting');
-            getDeviceList().then((result)=>{
-                context.commit('deviceListSucceeded', result);
+            let silent = _.get(options, 'silent', false);
+            let page = _.get(options, 'page', 1);
+            context.commit('deviceListRequesting', {
+                silent: silent,
+                page: page
+            });
+            getDeviceList(page).then((devices)=>{
+                context.commit('deviceListSucceeded', devices);
                 resolve();
             }).catch((err)=>{
                 context.commit('deviceListFailed', err.message);

@@ -19,6 +19,8 @@ export default {
     listState: RequestState.initiated,
     listError: null,
     listLoadingSilently: false,
+    listCurrentPage: 1,
+    listLastPage: null,
     addState: RequestState.initiated,
     addError: null,
     addItem: null,
