@@ -9,6 +9,9 @@
         <div v-if="isListLoadingVisible" class="row justify-center">
             <q-spinner-dots color="primary" :size="40" />
         </div>
+        <div v-if="seats.length > 0 && !isListRequesting && listLastPage > 1" class="row justify-center">
+            <q-pagination :value="listCurrentPage" :max="listLastPage" @change="changePage" />
+        </div>
         <csc-pbx-seat v-for="seat in seats" :key="seat.id" :seat="seat" :alias-number-options="aliasNumberOptions"
                       :group-options="groupOptions" @remove="removeSeat" :loading="isItemLoading(seat.id)"
                       @save-name="setSeatName" @save-extension="setSeatExtension"
@@ -26,16 +29,17 @@
     import { QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
         QCardActions, QIcon, QPopover, QList, QItem, QItemMain,
         QField, QInput, QBtn, QSelect, QInnerLoading, QSpinnerDots,
-        QSpinnerMat, Dialog } from 'quasar-framework'
+        QSpinnerMat, Dialog, QPagination } from 'quasar-framework'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
-//    import { showGlobalError } from '../../../helpers/ui'
     import { mapGetters } from 'vuex'
 
     export default {
         mixins: [aliasNumberOptions, itemError],
         mounted() {
-            this.$store.dispatch('pbxConfig/listSeats');
+            this.$store.dispatch('pbxConfig/listSeats', {
+                page: 1
+            });
         },
         data () {
             return {
@@ -47,7 +51,7 @@
             QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
             QCardActions, QIcon, QPopover, QList, QItem, QItemMain,
             QField, QInput, QBtn, QSelect, QInnerLoading, QSpinnerDots,
-            QSpinnerMat, Dialog
+            QSpinnerMat, Dialog, QPagination
         },
         computed: {
             ...mapGetters('pbxConfig', [
@@ -62,7 +66,9 @@
                 'listState',
                 'listError',
                 'isListRequesting',
-                'isListLoadingVisible'
+                'isListLoadingVisible',
+                'listCurrentPage',
+                'listLastPage'
             ]),
             groupOptions() {
                 let groups = [];
@@ -131,6 +137,11 @@
             },
             updateGroups(data) {
                 this.$store.dispatch('pbxConfig/updateGroups', data);
+            },
+            changePage(page) {
+                this.$store.dispatch('pbxConfig/listSeats', {
+                    page: page
+                });
             }
         }
     }

@@ -1,6 +1,9 @@
 'use strict';
 
+var _ = require('lodash');
 var webpackCsc = require('./build/webpack.base.conf');
+
+webpackCsc.module.rules.shift();
 
 module.exports = function(config) {
     config.set({
