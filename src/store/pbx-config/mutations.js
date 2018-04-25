@@ -4,25 +4,34 @@ import _ from 'lodash'
 import { RequestState } from '../common'
 
 export default {
-    listRequesting(state, silent) {
+    listRequesting(state, options) {
+        options = options || {};
+        state.listCurrentPage = _.get(options, 'page', 1);
+        state.listLastPage = null;
+        state.listLoadingSilently = _.get(options, 'silent', false);
         state.listState = RequestState.requesting;
         state.listError = null;
-        state.listLoadingSilently = silent;
+        state.groups = {};
+        state.groupsOrdered = [];
+        state.seats = {};
+        state.seatsOrdered = [];
+        state.numbersMap = {};
     },
     listSucceeded(state, all) {
         state.listState = RequestState.succeeded;
         state.listError = null;
+        state.listLastPage = all.lastPage;
         state.pilot = all.pilot;
         state.groups = {};
         state.groupsOrdered = [];
         state.seats = {};
         state.seatsOrdered = [];
         state.numbersMap = {};
-        all.groups.forEach((group)=>{
+        all.groups.items.forEach((group)=>{
             state.groups[group.id] = group;
             state.groupsOrdered.push(group);
         });
-        all.seats.forEach((seat)=>{
+        all.seats.items.forEach((seat)=>{
             seat.pbx_group_ids.forEach((groupId)=>{
                 let group = state.groups[groupId];
                 let seats = _.get(group, 'seats', []);
@@ -53,8 +62,6 @@ export default {
             });
             state.numbers = all.numbers;
         }
-        _.reverse(state.groupsOrdered);
-        _.reverse(state.seatsOrdered);
     },
     listFailed(state, error) {
         state.listState = RequestState.failed;
@@ -107,17 +114,21 @@ export default {
             }
         });
     },
-    deviceListRequesting(state, silent) {
+    deviceListRequesting(state, options) {
+        options = options || {};
+        state.listCurrentPage = _.get(options, 'page', 1);
+        state.listLastPage = null;
+        state.listLoadingSilently = _.get(options, 'silent', false);
         state.listState = RequestState.requesting;
         state.listError = null;
-        state.listLoadingSilently = silent;
     },
     deviceListSucceeded(state, data) {
         state.listState = RequestState.succeeded;
         state.listError = null;
+        state.listLastPage = data.lastPage;
         state.devicesOrdered = data.devices.items;
-        state.profilesOrdered = data.profiles;
-        state.modelsOrdered = data.models;
+        state.profilesOrdered = data.profiles.items;
+        state.modelsOrdered = data.models.items;
         state.devicesOrdered.forEach((device)=>{
             state.profilesOrdered.forEach((profile)=>{
                 if(device.profile_id === profile.id) {

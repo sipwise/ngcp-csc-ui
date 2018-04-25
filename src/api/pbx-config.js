@@ -1,59 +1,139 @@
 
 import _ from 'lodash';
-import Vue from 'vue';
-import { getJsonBody } from './utils';
 import { getNumbers, assignNumbers } from './user';
 import { createSubscriber, deleteSubscriber, setDisplayName,
     setPbxExtension, setPbxHuntPolicy, setPbxHuntTimeout,
-    setPbxGroupMemberIds, setPbxGroupIds } from './subscriber';
+    setPbxGroupMemberIds, setPbxGroupIds, getSubscribers } from './subscriber';
 import uuid from 'uuid';
+import { getList } from './common'
 
 var createId = uuid.v4;
-var assumedRows = 1000;
 
-export function getAllPbxSubscribers() {
+export const PBX_CONFIG_ORDER_BY = 'created_timestamp';
+export const PBX_CONFIG_ORDER_DIRECTION = 'desc';
+
+export function getGroups(options) {
     return new Promise((resolve, reject)=>{
-        var params = {};
-        Promise.resolve().then(()=>{
-            return Vue.http.get('/api/subscribers', {
-                params: _.assign(params, {
-                    page: 1,
-                    rows: assumedRows
-                })
-            });
-        }).then((res)=>{
-            let body = getJsonBody(res.body);
-            if(body.total_count > assumedRows) {
-                return Vue.http.get('/api/subscribers', {
-                    params: _.assign(params, {
-                        page: 1,
-                        rows: body.total_count,
-                    })
-                });
+        options = options || {};
+        options = _.merge(options, {
+            params: {
+                is_pbx_group: 1
+            }
+        });
+        getSubscribers(options).then((res)=>{
+            resolve(res);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSeats(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            params: {
+                is_pbx_group: 0,
+                is_pbx_pilot: 0
+            }
+        });
+        getSubscribers(options).then((res)=>{
+            resolve(res);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getPilot(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            params: {
+                is_pbx_group: 0,
+                is_pbx_pilot: 1
+            }
+        });
+        getSubscribers(options).then((subscribers)=>{
+            if(subscribers.items.length === 1) {
+                resolve(subscribers.items[0]);
             }
             else {
-                return Promise.resolve(body);
+                resolve(null);
             }
-        }).then(($subscribers)=>{
-            let subscribers = _.get($subscribers, '_embedded.ngcp:subscribers', []);
-            let pilot = null;
-            let seats = [];
-            let groups = [];
-            subscribers.forEach((subscriber)=>{
-                if(_.has(subscriber, 'is_pbx_pilot') && subscriber.is_pbx_pilot === true) {
-                    pilot = subscriber;
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getDevices(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: '/api/pbxdevices/',
+            root: '_embedded.ngcp:pbxdevices'
+        });
+        getList(options).then((list)=>{
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getProfiles(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: '/api/pbxdeviceprofiles/',
+            root: '_embedded.ngcp:pbxdeviceprofiles'
+        });
+        getList(options).then((list)=>{
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getModels(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: '/api/pbxdevicemodels/',
+            root: '_embedded.ngcp:pbxdevicemodels'
+        });
+        getList(options).then((list)=>{
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getGroupList(page) {
+    return new Promise((resolve, reject)=>{
+        Promise.all([
+            getGroups({
+                params: {
+                    page: page,
+                    order_by: PBX_CONFIG_ORDER_BY,
+                    order_by_direction: PBX_CONFIG_ORDER_DIRECTION
                 }
-                else if(_.has(subscriber, 'is_pbx_group') && subscriber.is_pbx_group === true) {
-                    groups.push(subscriber);
-                }
-                else if (_.has(subscriber, 'pbx_extension') && subscriber.pbx_extension !== null) {
-                    seats.push(subscriber);
-                }
-            });
+            }),
+            getSeats({
+                all: true
+            }),
+            getPilot(),
+            getNumbers()
+        ]).then((result)=>{
             resolve({
-                pilot: pilot,
-                groups: groups,
-                seats: seats
+                groups: result[0],
+                seats: result[1],
+                pilot: result[2],
+                numbers: result[3],
+                lastPage: result[0].lastPage
             });
         }).catch((err)=>{
             reject(err);
@@ -61,17 +141,57 @@ export function getAllPbxSubscribers() {
     });
 }
 
-export function getPbxConfiguration() {
+export function getSeatList(page) {
     return new Promise((resolve, reject)=>{
         Promise.all([
-            getAllPbxSubscribers(),
+            getSeats({
+                params: {
+                    page: page,
+                    order_by: PBX_CONFIG_ORDER_BY,
+                    order_by_direction: PBX_CONFIG_ORDER_DIRECTION
+                }
+            }),
+            getGroups({
+                all: true
+            }),
+            getPilot(),
             getNumbers()
         ]).then((result)=>{
             resolve({
-                pilot: result[0].pilot,
-                seats: result[0].seats,
-                groups: result[0].groups,
-                numbers: result[1]
+                seats: result[0],
+                groups: result[1],
+                pilot: result[2],
+                numbers: result[3],
+                lastPage: result[0].lastPage
+            });
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getDeviceList(page) {
+    return new Promise((resolve, reject)=>{
+        Promise.all([
+            getDevices({
+                params: {
+                    page: page,
+                    order_by: PBX_CONFIG_ORDER_BY,
+                    order_by_direction: PBX_CONFIG_ORDER_DIRECTION
+                }
+            }),
+            getProfiles({
+                all: true
+            }),
+            getModels({
+                all: true
+            })
+        ]).then((result)=>{
+            resolve({
+                devices: result[0],
+                profiles: result[1],
+                models: result[2],
+                lastPage: result[0].lastPage
             });
         }).catch((err)=>{
             reject(err);

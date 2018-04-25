@@ -118,5 +118,11 @@ export default {
             });
         });
         return modelOptions;
+    },
+    listCurrentPage(state) {
+        return state.listCurrentPage;
+    },
+    listLastPage(state) {
+        return state.listLastPage;
     }
 }

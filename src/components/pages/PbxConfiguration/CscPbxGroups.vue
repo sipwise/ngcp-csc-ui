@@ -9,6 +9,9 @@
         <div v-if="isListLoadingVisible" class="row justify-center">
             <q-spinner-dots color="primary" :size="40" />
         </div>
+        <div v-if="groups.length > 0 && !isListRequesting && listLastPage > 1" class="row justify-center">
+            <q-pagination :value="listCurrentPage" :max="listLastPage" @change="changePage" />
+        </div>
         <csc-pbx-group v-for="group in groups" :key="group.id" :group="group" :alias-number-options="aliasNumberOptions"
                        :seat-options="seatOptions" :hunt-policy-options="huntPolicyOptions" @remove="removeGroup"
                        :loading="isItemLoading(group.id)" @save-name="setGroupName" @save-extension="setGroupExtension"
@@ -28,7 +31,7 @@
     import { QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
         QCardActions, QIcon, QPopover, QList, QItem, QItemMain,
         QField, QInput, QBtn, QSelect, QInnerLoading, QSpinnerDots,
-        QSpinnerMat, Dialog
+        QSpinnerMat, Dialog, QPagination
     } from 'quasar-framework'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
@@ -40,14 +43,17 @@
             QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
             QCardActions, QIcon, QPopover, QList, QItem, QItemMain,
             QField, QInput, QBtn, QSelect, QInnerLoading, QSpinnerDots,
-            QSpinnerMat, Dialog
+            QSpinnerMat, Dialog, QPagination
         },
         mounted() {
-            this.$store.dispatch('pbxConfig/listGroups');
+            this.$store.dispatch('pbxConfig/listGroups', {
+                page: 1
+            });
         },
         data () {
             return {
-                addFormEnabled: false
+                addFormEnabled: false,
+                page: 1
             }
         },
         computed: {
@@ -95,7 +101,9 @@
                 'listState',
                 'listError',
                 'isListRequesting',
-                'isListLoadingVisible'
+                'isListLoadingVisible',
+                'listCurrentPage',
+                'listLastPage'
             ])
         },
         watch: {
@@ -159,6 +167,11 @@
             },
             updateSeats(data) {
                 this.$store.dispatch('pbxConfig/updateSeats', data);
+            },
+            changePage(page) {
+                this.$store.dispatch('pbxConfig/listGroups', {
+                    page: page
+                });
             }
         }
     }

@@ -3,9 +3,8 @@ import _ from 'lodash';
 import Vue from 'vue';
 import { i18n } from '../i18n';
 import { getJsonBody } from './utils';
-import { normalizeDestination } from '../filters/number-format'
-
-let rowCountAssumption = 1000;
+import { normalizeDestination } from '../filters/number-format';
+import { LIST_ALL_ROWS } from './common';
 
 export function getMappings(id) {
     return new Promise((resolve, reject) => {
@@ -24,10 +23,10 @@ export function getSourcesets(id) {
     return new Promise((resolve, reject) => {
         Promise.resolve().then(() => {
             return Vue.http.get('/api/cfsourcesets/',
-                { params: { subscriber_id: id, page: 1, rows: rowCountAssumption } })
+                { params: { subscriber_id: id, page: 1, rows: LIST_ALL_ROWS } })
         }).then(result => {
             let totalCount = getJsonBody(result.body).total_count;
-            if (totalCount > rowCountAssumption) {
+            if (totalCount > LIST_ALL_ROWS) {
                 return Vue.http.get('/api/cfsourcesets/',
                     { params: { subscriber_id: id, page: 1,
                         rows: totalCount } })
@@ -47,10 +46,10 @@ export function getTimesets(id) {
     return new Promise((resolve, reject) => {
         Promise.resolve().then(() => {
             return Vue.http.get('/api/cftimesets/',
-                { params: { subscriber_id: id, page: 1, rows: rowCountAssumption } })
+                { params: { subscriber_id: id, page: 1, rows: LIST_ALL_ROWS } })
         }).then(result => {
             let totalCount = getJsonBody(result.body).total_count;
-            if (totalCount > rowCountAssumption) {
+            if (totalCount > LIST_ALL_ROWS) {
                 return Vue.http.get('/api/cftimesets/',
                     { params: { subscriber_id: id, page: 1,
                         rows: totalCount } })
@@ -72,10 +71,10 @@ export function getDestinationsets(id) {
     return new Promise((resolve, reject) => {
         Promise.resolve().then(() => {
             return Vue.http.get('/api/cfdestinationsets/',
-                { params: { subscriber_id: id, page: 1, rows: rowCountAssumption } })
+                { params: { subscriber_id: id, page: 1, rows: LIST_ALL_ROWS } })
         }).then(result => {
             let totalCount = getJsonBody(result.body).total_count;
-            if (totalCount > rowCountAssumption) {
+            if (totalCount > LIST_ALL_ROWS) {
                 return Vue.http.get('/api/cfdestinationsets/',
                     { params: { subscriber_id: id, page: 1,
                         rows: totalCount } })

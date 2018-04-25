@@ -1,8 +1,7 @@
 
 import _ from 'lodash';
 import Vue from 'vue';
-
-var assumedNumbers = 1000;
+import { LIST_ALL_ROWS } from './common'
 
 export function login(username, password) {
     return new Promise((resolve, reject)=>{
@@ -120,12 +119,12 @@ export function getNumbers() {
             return Vue.http.get(path, {
                 params: _.assign(params, {
                     page: 1,
-                    rows: assumedNumbers,
+                    rows: LIST_ALL_ROWS,
                 })
             });
         }).then((res)=>{
             let body = JSON.parse(res.body);
-            if(body.total_count > assumedNumbers) {
+            if(body.total_count > LIST_ALL_ROWS) {
                 return Vue.http.get(path, {
                     params: _.assign(params, {
                         page: 1,
