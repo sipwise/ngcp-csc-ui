@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import Vue from 'vue';
 import { getJsonBody } from './utils'
+import { getList } from './common'
 
 export function getPreferences(id) {
     return new Promise((resolve, reject)=>{
@@ -262,4 +263,19 @@ export function setPbxGroupMemberIds(id, ids) {
 
 export function setPbxGroupIds(id, ids) {
     return setField(id, 'pbx_group_ids', ids);
+}
+
+export function getSubscribers(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: '/api/subscribers/',
+            root: '_embedded.ngcp:subscribers'
+        });
+        getList(options).then((list)=>{
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
 }
