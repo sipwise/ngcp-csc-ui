@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7aaa499b_479fc45f",
+        "filename": "src/api/communication.js",
+        "patchSetId": 8
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-26T07:41:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7aaa499b_a4456618",
+      "revId": "83be4d17528b20094cc3a080c06e1957aa2166ce",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7aaa499b_e43b6e9b",
         "filename": "src/api/communication.js",
         "patchSetId": 8
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "7aaa499b_279cb868",
+        "filename": "src/api/communication.js",
+        "patchSetId": 8
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-26T07:41:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7aaa499b_e43b6e9b",
+      "revId": "83be4d17528b20094cc3a080c06e1957aa2166ce",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7aaa499b_c440720a",
         "filename": "src/api/communication.js",
         "patchSetId": 8
@@ -47,6 +83,24 @@
       "writtenOn": "2018-04-25T14:15:06Z",
       "side": 1,
       "message": "same",
+      "revId": "83be4d17528b20094cc3a080c06e1957aa2166ce",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7aaa499b_07889c21",
+        "filename": "src/api/communication.js",
+        "patchSetId": 8
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-04-26T07:41:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7aaa499b_c440720a",
       "revId": "83be4d17528b20094cc3a080c06e1957aa2166ce",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
