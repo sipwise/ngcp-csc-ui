@@ -57,7 +57,7 @@ export function getSubscriberById(id) {
 
 export function getCapabilities() {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/capabilities').then((result)=>{
+        Vue.http.get('/api/capabilities/').then((result)=>{
             var capabilities = {};
             var body = JSON.parse(result.body);
             if(_.isArray(body["_embedded"]["ngcp:capabilities"])) {
