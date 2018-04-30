@@ -258,19 +258,19 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    #toggle-call-blocking {
-        margin-bottom: 60px;
-    }
-    #add-number-form {
-        margin-bottom: 15px;
-    }
-    .blocked-number .q-input {
-        margin: 0;
-    }
-    .blocked-number-title {
-        padding-left: 8px;
-    }
-    .mode-list {
-        margin-bottom: 30px;
-    }
+
+    #toggle-call-blocking
+        margin-bottom 60px
+
+    #add-number-form
+        margin-bottom 15px
+
+    .blocked-number .q-input
+        margin 0
+
+    .blocked-number-title
+        padding-left 8px
+
+    .mode-list
+        margin-bottom 30px
 </style>

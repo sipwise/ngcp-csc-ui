@@ -1,7 +1,7 @@
 <template>
     <csc-page :title="$t('pages.callForward.titles.always')">
         <csc-sourcesets v-if="destinationsLoaded" :sourcesets="sourcesets"
-            :destinations="destinations" :timesetName="timesetName" />
+            :destinations="destinations" :timesetName="timesetName" ref="sourcesets" />
     </csc-page>
 </template>
 
@@ -10,6 +10,7 @@
     import {
         startLoading,
         stopLoading,
+        showToast,
         showGlobalError
     } from '../../../helpers/ui'
     import CscPage from '../../CscPage'
@@ -35,9 +36,12 @@
                 'destinations',
                 'sourcesets',
                 'loadDestinationState',
-                'loadDestinationError'
+                'loadDestinationError',
+                'addSourcesetState',
+                'lastAddedSourceset'
             ]),
             ...mapGetters('callForward', [
+                'addSourcesetError',
                 'destinationsLoaded'
             ]),
             destinationsLoaded() {
@@ -55,6 +59,26 @@
                 }
                 else if (state === 'succeeded') {
                     stopLoading();
+                }
+            },
+            addSourcesetState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                }
+                else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.addSourcesetError);
+                }
+                else if (state === 'succeeded') {
+                    stopLoading();
+                    this.$refs.sourcesets.resetForm();
+                    showToast(this.$t('pages.callForward.sources.addSuccessMessage', {
+                        sourceset: this.lastAddedSourceset
+                    }));
+                    this.$store.dispatch('callForward/loadDestinations', {
+                        timeset: null
+                    });
+                    this.$store.dispatch('callForward/loadSourcesets');
                 }
             }
         }

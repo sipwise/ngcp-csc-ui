@@ -3,14 +3,20 @@
 
 import Vue from 'vue';
 import VueResource from 'vue-resource';
-import { getMappings, getSourcesets, getTimesets,
-    getDestinationsets, getDestinationsetById,
+import {
+    getMappings,
+    getSourcesets,
+    getTimesets,
+    getDestinationsets,
+    getDestinationsetById,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
     convertTimesetToWeekdays,
     deleteTimeFromTimeset,
     convertAddTime,
-    addNameIdAndTerminating } from '../../src/api/call-forward';
+    addNameIdAndTerminating,
+    createSourcesetWithSource
+} from '../../src/api/call-forward';
 import { assert } from 'chai';
 
 Vue.use(VueResource);

@@ -107,7 +107,8 @@ export function loadDestinations(options) {
             sourcesets.map((sourceset) => {
                 sourcesetsCollection.push({
                     id: sourceset.id,
-                    name: sourceset.name
+                    name: sourceset.name,
+                    mode: sourceset.mode
                 })
             });
             sourcesetsCollection.forEach((sourceset) => {
@@ -116,7 +117,8 @@ export function loadDestinations(options) {
                         timeset: options.timeset,
                         sourceset_id: sourceset.id,
                         sourceset_name: sourceset.name,
-                        subscriberId: options.subscriberId
+                        subscriberId: options.subscriberId,
+                        sourceset_mode: sourceset.mode
                     })
                 )
             });
@@ -174,6 +176,7 @@ export function getDestinationsBySourcesetId(options) {
             resolve({
                 sourcesetId: options.sourceset_id,
                 sourcesetName: options.sourceset_name,
+                sourcesetMode: options.sourceset_mode,
                 destinationGroups: {
                     online: result[0],
                     offline: result[1],
@@ -741,5 +744,22 @@ export function appendTimeToTimeset(options) {
         }).catch((err) => {
             reject(err);
         });
+    });
+}
+
+export function createSourcesetWithSource(options) {
+    return new Promise((resolve, reject) => {
+        Vue.http.post('/api/cfsourcesets/', {
+                name: options.sourcesetName,
+                subscriber_id: options.subscriberId,
+                mode: options.mode,
+                sources: [{
+                    source: options.source
+                }]
+            }).then(() => {
+                resolve();
+            }).catch(err => {
+                reject(err);
+            });
     });
 }
