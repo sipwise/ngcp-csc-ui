@@ -191,7 +191,15 @@
                 "resetTimeset": "Reset {timeset}",
                 "addTimeset": "Add {timeset}",
                 "selectValidTime": "Select valid time"
+            },
+            "sources": {
+                "sourcesTitleMode": "{mode} of sources",
+                "addSuccessMessage": "Created sourceset {sourceset}",
+                "sourcesetName": "Sourceset name",
+                "source": "Source",
+                "fieldMissing": "Both sourceset name and source is required. Please provide both and try again."
             }
+
         },
         "home": {
             "title": "Home",
