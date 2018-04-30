@@ -3,7 +3,7 @@
         <q-item-main>
             <q-item-tile class="row no-wrap">
                 <q-select
-                    class="col" 
+                    class="col"
                     v-model="selectedWeekday"
                     :options="selectOptions" />
                 <q-datetime
@@ -64,9 +64,9 @@
             QField,
             QSelect,
             QDatetime,
-            QList, 
-            QItem, 
-            QItemMain, 
+            QList,
+            QItem,
+            QItemMain,
             QItemTile,
             QBtn,
             date

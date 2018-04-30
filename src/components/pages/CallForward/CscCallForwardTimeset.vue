@@ -4,7 +4,7 @@
             <csc-call-forward-times :times="timesetTimes"
                 :timesetName="timesetName" ref="times"></csc-call-forward-times>
             <csc-sourcesets v-if="destinationsLoaded" :sourcesets="sourcesets"
-                :destinations="destinations" :timesetName="timesetName" />
+                :destinations="destinations" :timesetName="timesetName" ref="sourcesets" />
         </div>
         <q-card flat>
             <div v-if="timesetHasDuplicate">
@@ -95,7 +95,9 @@
                 'timesetExists',
                 'activeTimeForm',
                 'sourcesets',
-                'loadDestinationState'
+                'loadDestinationState',
+                'addSourcesetState',
+                'addSourcesetError'
             ]),
             ...mapGetters('callForward', [
                 'resetTimeError',
@@ -207,6 +209,24 @@
                 }
                 else if (state === 'succeeded') {
                     stopLoading();
+                }
+            },
+            addSourcesetState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                }
+                else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.addSourcesetError);
+                }
+                else if (state === 'succeeded') {
+                    stopLoading();
+                    this.$refs.sourcesets.resetForm();
+                    showToast(this.$t('pages.callForward.sources.addSuccessMessage', {
+                        sourceset: this.lastAddedSourceset
+                    }));
+                    this.loadDestinations();
+                    this.loadSourcesets();
                 }
             }
         }

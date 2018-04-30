@@ -1,23 +1,24 @@
 <template>
-    <q-tabs no-pane-border inverted>
+    <q-tabs v-model="tab" no-pane-border inverted class="sourceset-tabs">
         <q-tab v-for="(sourceset, index) in destinations" :default="index === 0"
             :count="destinationsCount(sourceset.destinationGroups)"
             :key="sourceset.sourcesetId || 0" slot="title"
             :name="sourceset.sourcesetName || 'Everybody'" icon="people"
             :label="sourceset.sourcesetName || 'Everybody'" />
+        <q-tab slot="title" label="Add new" name="addnew" icon="fa-plus" />
         <q-tab-pane v-for="sourceset in destinations"
             :key="sourceset.sourcesetId || 0"
-            :name="sourceset.sourcesetName || 'Everybody'">
+            :name="sourceset.sourcesetName || 'Everybody'" class="sourceset-pane">
                 <div class="sources-section" v-if="sourceset.sourcesetId">
                     <div class="sources-title">
                         <q-icon name="contact_phone" class="sources-icon" />
-                        {{ $t('pages.callForward.titles.sources') }}
+                            {{ $t('pages.callForward.sources.sourcesTitleMode', { mode: capitalizedMode(sourceset.sourcesetMode) }) }}
                     </div>
                     <q-list no-border>
                         <q-item highlight separator
                             v-for="source in sourcesetSources(sourceset.sourcesetId)"
                             class="source-item">
-                                {{ source.source }}
+                            {{ source.source }}
                         </q-item>
                     </q-list>
                 </div>
@@ -26,11 +27,30 @@
                     :timeset="timesetName"
                     :destinations="sourceset.destinationGroups" />
         </q-tab-pane>
+        <q-tab-pane name="addnew">
+            <q-list no-border>
+                <q-item>
+                    <q-item-main>
+                        <q-item-tile class="row no-wrap">
+                            <q-input v-model="sourcesetName" :float-label="$t('pages.callForward.sources.sourceset')" color="primary" class="col" autofocus @keyup.enter="addSourceset()" />
+                            <q-input v-model="source" :float-label="$t('pages.callForward.sources.source')" color="primary" class="col" @keyup.enter="addSourceset()" />
+                            <q-select v-model="mode" :options="modes" color="primary" class="col" align="right" />
+                        </q-item-tile>
+                        <q-item-tile>
+                            <q-btn flat color="primary" icon-right="fa-save" @click="addSourceset()" :disable="!isValid" class="sourceset-add-button">
+                                {{ $t('buttons.save') }}
+                            </q-btn>
+                        </q-item-tile>
+                    </q-item-main>
+                </q-item>
+            </q-list>
+        </q-tab-pane>
     </q-tabs>
 </template>
 
 <script>
     import CscCallForwardDestinations from './CscCallForwardDestinations'
+    import { showGlobalError } from '../../../helpers/ui'
     import {
         QTabs,
         QTab,
@@ -38,7 +58,11 @@
         QBtn,
         QList,
         QItem,
-        QIcon
+        QItemMain,
+        QItemTile,
+        QInput,
+        QIcon,
+        QSelect
     } from 'quasar-framework'
     export default {
         name: 'csc-sourcesets',
@@ -47,6 +71,24 @@
             'sourcesets',
             'timesetName'
         ],
+        data() {
+            return {
+                sourcesetName: '',
+                source: '',
+                mode: 'whitelist',
+                modes: [
+                    {
+                        label: 'Whitelist',
+                        value: 'whitelist'
+                    },
+                    {
+                        label: 'Blacklist',
+                        value: 'blacklist'
+                    }
+                ],
+                tab: 'Everybody'
+            }
+        },
         components: {
             CscCallForwardDestinations,
             QTabs,
@@ -55,9 +97,27 @@
             QBtn,
             QList,
             QItem,
-            QIcon
+            QItemMain,
+            QItemTile,
+            QInput,
+            QIcon,
+            QSelect
+        },
+        computed: {
+            isValid() {
+                return this.source.length > 0 && this.sourcesetName.length > 0;
+            }
         },
         methods: {
+            capitalizedMode(mode) {
+                return `${mode.charAt(0).toUpperCase()}${mode.slice(1)}`;
+            },
+            resetForm() {
+                this.source = '';
+                this.sourcesetName = '';
+                this.mode = 'whitelist';
+                this.tab = 'Everybody';
+            },
             sourcesetSources(id) {
                 return this.sourcesets.filter((sourceset) => {
                     return sourceset.id === id;
@@ -85,6 +145,18 @@
             },
             tabName(name) {
                 return name === null ? 'Everybody' : name;
+            },
+            addSourceset() {
+                if (this.isValid) {
+                    this.$store.dispatch('callForward/createSourcesetWithSource', {
+                        sourcesetName: this.sourcesetName,
+                        source: this.source,
+                        mode: this.mode
+                    });
+                }
+                else {
+                    showGlobalError(this.$t('pages.callForward.sources.fieldMissing'));
+                }
             }
         }
     }
@@ -99,6 +171,17 @@
     .q-item.source-item
         padding 0
 
+    .sourceset-tabs
+
+        .q-tab-pane
+            padding 12px 0 0 0
+
+            .q-item
+                padding 8px 0 0 0
+
+    .sourceset-add-button
+        margin-top 8px
+
     .sources-section
         padding 30px 0 20px 0
 
@@ -106,6 +189,4 @@
         color $secondary
         font-size 16px
 
-    .sources-icon
-        margin-right 5px
 </style>
