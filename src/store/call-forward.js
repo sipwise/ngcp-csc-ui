@@ -21,7 +21,8 @@ import {
     resetTimesetByName,
     createTimesetWithTime,
     appendTimeToTimeset,
-    loadDestinations
+    loadDestinations,
+    createSourcesetWithSource
 } from '../api/call-forward';
 
 const RequestState = {
@@ -56,6 +57,9 @@ export default {
         resetTimeError: null,
         addTimeState: RequestState.button,
         addTimeError: null,
+        addSourcesetState: RequestState.button,
+        addSourcesetError: null,
+        lastAddedSourceset: null,
         lastRemovedDay: null,
         activeForm: '',
         formType: '',
@@ -126,8 +130,11 @@ export default {
         loadDestinationError(state) {
             return state.loadDestinationError ||
                 i18n.t('pages.callForward.times.loadDestinationErrorMessage');
+        },
+        addSourcesetError(state) {
+            return state.addSourcesetError ||
+                i18n.t('pages.callForward.sources.addSourcesetErrorMessage');
         }
-
     },
     mutations: {
         loadMappings(state, result) {
@@ -291,6 +298,21 @@ export default {
         loadDestinationFailed(state, error) {
             state.loadDestinationState = RequestState.failed;
             state.loadDestinationError = error;
+        },
+        addSourcesetRequesting(state) {
+            state.addSourcesetState = RequestState.requesting;
+            state.addSourcesetError = null;
+        },
+        addSourcesetSucceeded(state) {
+            state.addSourcesetState = RequestState.succeeded;
+            state.addSourcesetError = null;
+        },
+        addSourcesetFailed(state, error) {
+            state.addSourcesetState = RequestState.failed;
+            state.addSourcesetError = error;
+        },
+        setLastAddedSourceset(state, value) {
+            state.lastAddedSourceset = value;
         }
     },
     actions: {
@@ -548,6 +570,20 @@ export default {
                 context.commit('loadDestinationSucceeded');
             }).catch((err) => {
                 context.commit('loadDestinationFailed', err.message);
+            });
+        },
+        createSourcesetWithSource(context, options) {
+            context.commit('addSourcesetRequesting');
+            createSourcesetWithSource({
+                sourcesetName: options.sourcesetName,
+                source: options.source,
+                subscriberId: context.getters.getSubscriberId,
+                mode: options.mode
+            }).then(() => {
+                context.commit('setLastAddedSourceset', options.sourcesetName);
+                context.commit('addSourcesetSucceeded');
+            }).catch((err) => {
+                context.commit('addSourcesetFailed', err.message);
             });
         }
     }
