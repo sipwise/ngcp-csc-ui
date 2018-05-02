@@ -259,6 +259,7 @@ export default {
             state.timesetExists = true;
             state.timesetHasReverse = false;
             state.timesetHasDuplicate = false;
+            state.activeTimeForm = false;
             state.addTimeState = RequestState.button;
         }
     },

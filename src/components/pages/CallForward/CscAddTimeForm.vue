@@ -42,7 +42,6 @@
         name: 'csc-add-time-form',
         props: [
             'type',
-            'title',
             'timeset'
         ],
         data () {
@@ -171,11 +170,5 @@
 
     .add-times
         width 100%
-
-        .title
-            color $primary
-            line-height $csc-subtitle-line-height
-            font-size $csc-subtitle-font-size
-            font-weight $csc-subtitle-font-weight
   
 </style>

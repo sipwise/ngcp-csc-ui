@@ -4,7 +4,7 @@
             <csc-call-forward-time class="csc-call-forward-times" v-if="times.length > 0" v-for="(time, index) in times"
                 :key="index" :time="time" :index="index" />
         </q-list>
-        <csc-add-time-form v-if="activeTimeForm" type="existing" :title="$t('pages.callForward.times.addCompanyHours')" timeset="Company Hours" ref="addFormExisting" />
+        <csc-add-time-form v-if="activeTimeForm" type="existing" :timeset="timesetName" ref="addFormExisting" />
         <q-btn v-else
             color="primary"
             class="add-time"
