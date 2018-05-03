@@ -236,7 +236,7 @@
             },
             fabOffset() {
                 if(Platform.is.mobile) {
-                    return [16, 17];
+                    return [6, 6];
                 }
                 else {
                     return [48, 17];
