@@ -22,18 +22,24 @@ export default function numberFormat(number) {
     }
 }
 
-export function normalizeNumber(number) {
+export function normalizeNumber(number, excludeLibPhoneNumber) {
     if(_.isString(number)) {
         let normalizedNumber = number.replace(/\s*/g, '');
         if(normalizedNumber.match(/^\+?[0-9]+$/)) {
             if(normalizedNumber.match(/^\+/) === null) {
                 normalizedNumber = '+' + normalizedNumber;
             }
-            try {
-                return phoneUtil.format(phoneUtil.parse(normalizedNumber, 'DE'), PhoneNumberFormat.INTERNATIONAL);
-            }
-            catch(err) {
+            if(excludeLibPhoneNumber === true) {
                 return normalizedNumber;
+            }
+            else {
+                try {
+                    return phoneUtil.format(phoneUtil.parse(normalizedNumber, 'DE'),
+                        PhoneNumberFormat.INTERNATIONAL);
+                }
+                catch(err) {
+                    return normalizedNumber;
+                }
             }
         }
         else {
@@ -46,10 +52,7 @@ export function normalizeNumber(number) {
 }
 
 export function rawNumber(number) {
-    if(_.isString(number)) {
-        return number.replace(/\s*/g, '').replace(/^\+/, '');
-    }
-    return '';
+    return "" + number.replace(/\s*/g, '').replace(/^\+/, '');
 }
 
 export function normalizeDestination(destination) {
