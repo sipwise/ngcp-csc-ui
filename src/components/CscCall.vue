@@ -37,8 +37,9 @@
                 <div class="csc-call-info">
                     <q-field v-show="isPreparing" :helper="$t('call.inputNumber')" :count="64" dark
                              :error="validationEnabled && phoneNumberError" :error-label="$t('call.inputValidNumber')">
-                        <q-input :float-label="$t('call.number')" v-model.trim="formattedPhoneNumber"
-                                 ref="numberInput" dark clearable max="64" @blur="phoneNumberBlur()" @focus="phoneNumberFocus()"/>
+                        <q-input type="text" :float-label="$t('call.number')" :value="phoneNumber" @input="inputPhoneNumber"
+                                 ref="numberInput" dark clearable max="64" @blur="phoneNumberBlur" @focus="phoneNumberFocus"
+                                 @keypress.space.prevent @keydown.space.prevent />
                     </q-field>
                     <div v-if="!isPreparing" class="phone-number">
                         <q-icon v-if="isCalling && (localMediaType == 'audioVideo' || remoteMediaType == 'audioVideo')"
@@ -116,6 +117,9 @@
             QAlert
         },
         methods: {
+            inputPhoneNumber(value) {
+                this.phoneNumber = normalizeNumber(value, Platform.is.mobile);
+            },
             focusNumberInput() {
                 Vue.nextTick(() => {
                     this.$refs.numberInput.focus();
@@ -141,7 +145,7 @@
                 if(!_.isEmpty(this.phoneNumber)) {
                     this.phoneNumberError = false;
                     this.$store.dispatch('call/start', {
-                        number: this.phoneNumber,
+                        number: rawNumber(this.phoneNumber),
                         localMedia: localMedia
                     });
                 }
@@ -251,16 +255,16 @@
                 }
                 return classes;
             },
-            formattedPhoneNumber: {
-                get() {
-                    return normalizeNumber(this.phoneNumber);
-                },
-                set(value) {
-                    this.validationEnabled = true;
-                    this.phoneNumberError = false;
-                    this.phoneNumber = rawNumber(value);
-                }
-            },
+//            formattedPhoneNumber: {
+//                get() {
+//                    return normalizeNumber(this.phoneNumber);
+//                },
+//                set(value) {
+//                    this.validationEnabled = true;
+//                    this.phoneNumberError = false;
+//                    this.phoneNumber = rawNumber(value);
+//                }
+//            },
             localMediaStream() {
                 if(this.$store.state.call.localMediaStream !== null) {
                     return this.$store.state.call.localMediaStream.getStream();
