@@ -109,8 +109,17 @@ Now you can log in to csc with one of the normal subscriber you just created. UR
 You need to first enable faxserver and activate it for the subscriber, to be able to send a fax via the "action button menu".
 
 1. By default, vagrant-ngcp has faxserver enabled by default in the config, so currently we do not need to make any changes here. Otherwise, it would be enabled via /etc/ngcp-config/config.yml by setting "faxserver: enable:" to "yes" and applying the changes with ngcpcfg apply 'enable faxserver'""
+1. SSH in to vagrant box, become root, and then execute:
+`dpkg-reconfigure exim4-config`
+1. Follow the install prompt by first choosing 'mail sent by smarthost; no local mail'
+1. Then press enter for default sp1 selection, until you get asked for "IP address or host name of the outgoing smarthost:". There you enter mail.sipwise.com and press enter
+1. For the rest of the prompts, press enter to choose the defaults
 1. Log in to ngcp-panel with administrator credentials
-1. Go to Settings > Subscribers > Details > Preferences > Fax Features > Fax2Mail and SendFax, and set Active to "yes"
+1. Go to "Settings > Subscribers", find subscriber you want to use as caller, and click "Details"
+1. Under "Master Data" click edit, and enter subscribers number also in the E164 field
+1. Then go to "Preferences", and set "Fax2Mail and Sendfax" to active
+1. Repeat the two steps above, this time for the callee
+1. For the callee, you also need to add your internal sipwise email address as "Destination" under "Fax2Mail and Sendfax", and also under "Call Forwards" configure a "Call Forward Unconditional" to "Fax2Mail"
 1. Additionally, the visibility of the fax option in "action button menu" is reliant on store state "sendFax: true" in src/store/user.js. This means it can be toggled off in the code as well if neeeded
 
 ### How to add new npm package
