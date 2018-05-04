@@ -1,11 +1,12 @@
 
 import _ from 'lodash';
+import Vue from 'vue';
 import { getNumbers, assignNumbers } from './user';
 import { createSubscriber, deleteSubscriber, setDisplayName,
     setPbxExtension, setPbxHuntPolicy, setPbxHuntTimeout,
     setPbxGroupMemberIds, setPbxGroupIds, getSubscribers } from './subscriber';
 import uuid from 'uuid';
-import { getList } from './common'
+import { getList, get } from './common'
 
 var createId = uuid.v4;
 
@@ -171,31 +172,12 @@ export function getSeatList(page) {
 }
 
 export function getDeviceList(page) {
-    return new Promise((resolve, reject)=>{
-        Promise.all([
-            getDevices({
-                params: {
-                    page: page,
-                    order_by: PBX_CONFIG_ORDER_BY,
-                    order_by_direction: PBX_CONFIG_ORDER_DIRECTION
-                }
-            }),
-            getProfiles({
-                all: true
-            }),
-            getModels({
-                all: true
-            })
-        ]).then((result)=>{
-            resolve({
-                devices: result[0],
-                profiles: result[1],
-                models: result[2],
-                lastPage: result[0].lastPage
-            });
-        }).catch((err)=>{
-            reject(err);
-        });
+    return getDevices({
+        params: {
+            page: page,
+            order_by: PBX_CONFIG_ORDER_BY,
+            order_by_direction: PBX_CONFIG_ORDER_DIRECTION
+        }
     });
 }
 
@@ -285,4 +267,90 @@ export function setSeatExtension(id, seatExtension) {
 
 export function updateSeatGroups(id, seatIds) {
     return setPbxGroupIds(id, seatIds);
+}
+
+export function getDeviceFull(id) {
+    return getDevice(id, true);
+}
+
+export function getDevice(id, join) {
+    return new Promise((resolve, reject)=>{
+        let device;
+        Promise.resolve().then(()=>{
+            return get({
+                path: '/api/pbxdevices/' + id
+            });
+        }).then(($device)=> {
+            device = $device;
+            if(join === true) {
+                return getProfile(device.profile_id, join);
+            }
+            else {
+                resolve(device);
+            }
+        }).then((profile)=>{
+            device.profile = profile;
+            resolve(device);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getProfile(id, join) {
+    return new Promise((resolve, reject)=>{
+        let profile;
+        Promise.resolve().then(()=>{
+            return get({
+                path: '/api/pbxdeviceprofiles/' + id
+            });
+        }).then(($profile)=> {
+            profile = $profile;
+            if(join === true) {
+                return Promise.all([
+                    // getModel(profile.device_id),
+                    getModelFrontImage(profile.device_id)
+                ]);
+            }
+            else {
+                resolve(profile);
+            }
+        }).then((res)=>{
+            // profile.model = res[0];
+            profile.modelFrontImage = res[0];
+            profile.modelFrontImageUrl = URL.createObjectURL(profile.modelFrontImage);
+            resolve(profile);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getModel(id) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return get({
+                path: '/api/pbxdevicemodels/' + id
+            });
+        }).then((model)=> {
+            resolve(model);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getModelFrontImage(id) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.get('/api/pbxdevicemodelimages/' + id, {
+            responseType: 'blob',
+            params: {
+                type: 'front'
+            }
+        }).then((res)=>{
+            resolve(res.body);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
 }

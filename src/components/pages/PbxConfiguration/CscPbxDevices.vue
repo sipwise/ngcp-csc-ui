@@ -6,8 +6,8 @@
         <div v-if="devices.length > 0 && !isListRequesting && listLastPage > 1" class="row justify-center">
             <q-pagination :value="listCurrentPage" :max="listLastPage" @change="changePage" />
         </div>
-        <csc-pbx-device v-for="device in devices" :key="device.id"
-                        :device="device" :modelOptions="modelOptions" />
+        <csc-pbx-device v-for="device in devices" :key="device.id" :device="device"
+                        :modelOptions="modelOptions" :loading="isDeviceLoading(device.id)" />
         <div v-if="devices.length === 0 && !isListRequesting" class="row justify-center csc-no-entities">
             {{ $t('pbxConfig.noDevices') }}
         </div>
@@ -42,7 +42,8 @@
                 'isListRequesting',
                 'isListLoadingVisible',
                 'listCurrentPage',
-                'listLastPage'
+                'listLastPage',
+                'isDeviceLoading'
             ])
         },
         methods: {
@@ -50,10 +51,14 @@
                 this.$store.dispatch('pbxConfig/listDevices', {
                     page: page
                 });
+            },
+            loadDevice(id) {
+                this.$store.dispatch('pbxConfig/loadDevice', id);
             }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/app.common'
 </style>

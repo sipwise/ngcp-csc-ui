@@ -29,5 +29,7 @@ export default {
     updateItem: null,
     removeState: RequestState.initiated,
     removeError: null,
-    removeItem: null
+    removeItem: null,
+    deviceLoadingStates: {},
+    deviceLoadingErrors: {}
 }

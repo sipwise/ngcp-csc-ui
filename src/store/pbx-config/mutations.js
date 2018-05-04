@@ -126,26 +126,33 @@ export default {
         state.listState = RequestState.succeeded;
         state.listError = null;
         state.listLastPage = data.lastPage;
-        state.devicesOrdered = data.devices.items;
-        state.profilesOrdered = data.profiles.items;
-        state.modelsOrdered = data.models.items;
+        state.devices = {};
+        state.devicesOrdered = data.items;
         state.devicesOrdered.forEach((device)=>{
-            state.profilesOrdered.forEach((profile)=>{
-                if(device.profile_id === profile.id) {
-                    device.profile = profile;
-                }
-            });
-        });
-        state.devicesOrdered.forEach((device)=>{
-            state.modelsOrdered.forEach((model)=>{
-                if(device.profile.device_id === model.id) {
-                    device.model = model;
-                }
-            });
+            state.devices[device.id + ""] = device;
         });
     },
     deviceListFailed(state, error) {
         state.listState = RequestState.failed;
         state.listError = error;
+    },
+    deviceRequesting(state, deviceId) {
+        let deviceLoadingStates = _.clone(state.deviceLoadingStates);
+        deviceLoadingStates[deviceId + ""] = true;
+        state.deviceLoadingStates = deviceLoadingStates;
+    },
+    deviceSucceeded(state, device) {
+        let deviceLoadingStates = _.clone(state.deviceLoadingStates);
+        deviceLoadingStates[device.id + ""] = false;
+        state.deviceLoadingStates = deviceLoadingStates;
+        state.devices[device.id + ""].profile = device.profile;
+    },
+    deviceFailed(state, deviceId, errorMessage) {
+        let deviceLoadingStates = _.clone(state.deviceLoadingStates);
+        deviceLoadingStates[deviceId + ""] = false;
+        state.deviceLoadingStates = deviceLoadingStates;
+        let deviceLoadingErrors = _.clone(state.deviceLoadingErrors);
+        deviceLoadingErrors[deviceId + ""] = errorMessage;
+        state.deviceLoadingErrors = deviceLoadingErrors;
     }
 }
