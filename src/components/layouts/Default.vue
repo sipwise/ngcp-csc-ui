@@ -420,6 +420,20 @@
         z-index: 1001;
     }
 
+    @media only screen and (min-width: 425px) and (orientation: portrait) {
+        #global-action-btn {
+            margin: 15px 60px !important;
+            top: 60px;
+        }
+    }
+
+    @media only screen and (min-width: 768px) and (orientation: landscape) {
+        #global-action-btn {
+            margin: 17px 48px !important;
+            top: 60px;
+        }
+    }
+
     .layout-aside.fixed.csc-call-fullscreen {
         left: 0;
         right: 0;
