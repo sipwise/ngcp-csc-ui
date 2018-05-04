@@ -13,35 +13,34 @@
                 <q-input v-model="device.identifier" readonly />
             </q-field>
             <q-field :label="$t('pbxConfig.deviceModel')">
-                <q-select v-model="device.model.id" :options="modelOptions" clearable disable />
+                <!--<q-select v-model="device.model.id" :options="modelOptions" clearable disable />-->
+                <p>{{ name }}</p>
+                <div class="csc-pbx-device-image">
+                    <img v-show="hasFrontImage" ref="modelImage" :src="frontImageUrl" />
+                </div>
             </q-field>
         </q-card-main>
+        <q-inner-loading :visible="loading">
+            <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
+        </q-inner-loading>
     </q-card>
 </template>
 
 <script>
 
+    import _ from 'lodash'
     import { QCard, QCardTitle, QCardMain, QCollapsible,
-        QIcon, QField, QInput, QSelect, QBtn } from 'quasar-framework'
+        QIcon, QField, QInput, QSelect, QBtn, QInnerLoading, QSpinnerMat } from 'quasar-framework'
     export default {
         name: 'csc-pbx-device',
-        props: {
-            device: {
-                type: Object,
-                required: true
-            },
-            modelOptions: {
-                type: Object,
-                required: true
-            },
-            loading: {
-                type: Boolean,
-                default: false
-            }
-        },
+        props: [
+            'device',
+            'loading',
+            'modelOptions'
+        ],
         components: {
             QCard, QCardTitle, QCardMain, QCollapsible,
-            QIcon, QField, QInput, QSelect, QBtn
+            QIcon, QField, QInput, QSelect, QBtn, QInnerLoading, QSpinnerMat
         },
         data () {
             return {
@@ -56,7 +55,19 @@
                 else {
                     return 'keyboard arrow up';
                 }
+            },
+            frontImageUrl() {
+                return _.get(this.device, 'profile.modelFrontImageUrl');
+            },
+            hasFrontImage() {
+                return _.isString(this.frontImageUrl);
+            },
+            name() {
+                return _.get(this.device, 'profile.name', '...');
             }
+        },
+        mounted() {
+            this.$emit('loaded');
         },
         methods: {
             toggleMain() {
@@ -68,4 +79,9 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/app.common'
+
+    .csc-pbx-device-image
+        width 100%
+        img
+            width 100%
 </style>

@@ -51,3 +51,18 @@ export function getList(options) {
         });
     });
 }
+
+export function get(options) {
+    return new Promise((resolve, reject)=>{
+        return Vue.http.get(options.path).then((result)=>{
+            resolve(getJsonBody(result.body));
+        }).catch((err)=>{
+            if(err.status && err.status >= 400) {
+                reject(new Error(err.body.message));
+            }
+            else {
+                reject(err);
+            }
+        });
+    });
+}
