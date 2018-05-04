@@ -5,7 +5,7 @@ import { assignNumbers } from '../../api/user';
 import { addGroup, removeGroup, addSeat, removeSeat, setGroupName,
     setGroupExtension, setGroupHuntPolicy, setGroupHuntTimeout,
     updateGroupSeats, setSeatName, setSeatExtension,
-    updateSeatGroups, getGroupList, getSeatList, getDeviceList } from '../../api/pbx-config'
+    updateSeatGroups, getGroupList, getSeatList, getDeviceList, getDeviceFull } from '../../api/pbx-config'
 
 export default {
     listGroups(context, options) {
@@ -182,11 +182,22 @@ export default {
             });
             getDeviceList(page).then((devices)=>{
                 context.commit('deviceListSucceeded', devices);
+                devices.items.forEach((device)=>{
+                    context.dispatch('loadDevice', device.id);
+                });
                 resolve();
             }).catch((err)=>{
                 context.commit('deviceListFailed', err.message);
                 reject(err);
             });
+        });
+    },
+    loadDevice(context, deviceId) {
+        context.commit('deviceRequesting', deviceId);
+        getDeviceFull(deviceId).then((device)=>{
+            context.commit('deviceSucceeded', device);
+        }).catch((err)=>{
+            context.commit('deviceFailed', deviceId, err.message);
         });
     }
 }

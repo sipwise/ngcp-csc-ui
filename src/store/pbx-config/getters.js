@@ -124,5 +124,10 @@ export default {
     },
     listLastPage(state) {
         return state.listLastPage;
+    },
+    isDeviceLoading(state) {
+        return (id)=>{
+            return state.deviceLoadingStates[id + ""] === true;
+        }
     }
 }
