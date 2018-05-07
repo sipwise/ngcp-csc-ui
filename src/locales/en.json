@@ -198,9 +198,11 @@
                 "sourceset": "Sourceset",
                 "source": "Source",
                 "fieldMissing": "Both sourceset name and source is required. Please provide both and try again.",
-                "addSourcesetErrorMessage": "An error occured while trying to create the sourceset. Please try again."
+                "addSourcesetErrorMessage": "An error occured while trying to create the sourceset. Please try again.",
+                "addSourceButton": "Add source",
+                "addSourceSuccessMessage": "Added new source {source}",
+                "addSourceErrorMessage": "An error occured while trying to add the source. Please try again."
             }
-
         },
         "home": {
             "title": "Home",
