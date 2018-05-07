@@ -1,61 +1,99 @@
 <template>
     <q-tabs no-pane-border inverted>
-        <q-tab v-for="(sourceset, index) in destinations" :default="index === 0"
+        <q-tab
+            v-for="(sourceset, index) in destinations"
+            :default="index === 0"
             :count="destinationsCount(sourceset.destinationGroups)"
-            :key="sourceset.sourcesetId || 0" slot="title"
-            :name="sourceset.sourcesetName || 'Everybody'" icon="people"
-            :label="sourceset.sourcesetName || 'Everybody'" />
-        <q-tab-pane v-for="sourceset in destinations"
             :key="sourceset.sourcesetId || 0"
-            :name="sourceset.sourcesetName || 'Everybody'">
-                <div class="sources-section" v-if="sourceset.sourcesetId">
-                    <div class="sources-title">
-                        <q-icon name="contact_phone" class="sources-icon" />
+            :name="sourceset.sourcesetName || 'Everybody'"
+            :label="sourceset.sourcesetName || 'Everybody'"
+            icon="people"
+            slot="title"
+        />
+        <q-tab-pane
+            v-for="sourceset in destinations"
+            :key="sourceset.sourcesetId || 0"
+            :name="sourceset.sourcesetName || 'Everybody'"
+        >
+            <div
+                class="sources-section"
+                v-if="sourceset.sourcesetId"
+            >
+                <div class="sources-title">
+                    <q-icon
+                        name="contact_phone"
+                        class="sources-icon"
+                    />
                         {{ $t('pages.callForward.titles.sources') }}
-                    </div>
-                    <q-list no-border>
-                        <q-item highlight separator
-                            v-for="source in sourcesetSources(sourceset.sourcesetId)"
-                            class="source-item">
-                                {{ source.source }}
-                        </q-item>
-                    </q-list>
                 </div>
-                <csc-call-forward-destinations
-                    :sourceset="sourceset.sourcesetId"
-                    :timeset="timesetName"
-                    :destinations="sourceset.destinationGroups" />
+                <q-list no-border>
+                    <q-item
+                        v-for="source in sourcesetSources(sourceset.sourcesetId)"
+                        class="source-item"
+                        highlight
+                        separator
+                    >
+                        {{ source.source }}
+                    </q-item>
+                </q-list>
+                <csc-sourcesets-form
+                    :sourceset-id="sourceset.sourcesetId"
+                    :form-enabled="addSourceFormEnabled"
+                    @source-form-open="openForm"
+                    @source-form-close="closeForm"
+                />
+            </div>
+            <csc-call-forward-destinations
+                :sourceset="sourceset.sourcesetId"
+                :timeset="timesetName"
+                :destinations="sourceset.destinationGroups"
+            />
         </q-tab-pane>
     </q-tabs>
 </template>
 
 <script>
     import CscCallForwardDestinations from './CscCallForwardDestinations'
+    import CscSourcesetsForm from './CscSourcesetsForm'
+    import { mapGetters } from 'vuex'
+    import {
+        startLoading,
+        stopLoading,
+        showGlobalError,
+        showToast
+    } from '../../../helpers/ui'
     import {
         QTabs,
         QTab,
         QTabPane,
-        QBtn,
         QList,
         QItem,
         QIcon
     } from 'quasar-framework'
     export default {
         name: 'csc-sourcesets',
-        props: [
-            'destinations',
-            'sourcesets',
-            'timesetName'
-        ],
+        props: {
+            destinations: Object,
+            sourcesets: Object,
+            timesetName: [String, Object]
+        },
         components: {
             CscCallForwardDestinations,
+            CscSourcesetsForm,
             QTabs,
             QTab,
             QTabPane,
-            QBtn,
             QList,
             QItem,
             QIcon
+        },
+        computed: {
+            ...mapGetters('callForward', [
+                'addSourceState',
+                'addSourceError',
+                'lastAddedSource',
+                'addSourceFormEnabled'
+            ])
         },
         methods: {
             sourcesetSources(id) {
@@ -85,6 +123,34 @@
             },
             tabName(name) {
                 return name === null ? 'Everybody' : name;
+            },
+            openForm() {
+                this.$store.commit('callForward/setAddSourceFormEnabled', true);
+            },
+            closeForm() {
+                this.$store.commit('callForward/setAddSourceFormEnabled', false);
+            }
+        },
+        watch: {
+            addSourceState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                }
+                else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.addSourceError);
+                }
+                else if (state === 'succeeded') {
+                    stopLoading();
+                    showToast(this.$t('pages.callForward.sources.addSourceSuccessMessage', {
+                        source: this.lastAddedSource
+                    }));
+                    this.$store.dispatch('callForward/loadSourcesets');
+                    this.$store.dispatch('callForward/loadDestinations', {
+                        timeset: this.timesetName
+                    });
+                    this.closeForm();
+                }
             }
         }
     }
@@ -108,4 +174,8 @@
 
     .sources-icon
         margin-right 5px
+
+    .source-field
+        width 100%
+
 </style>

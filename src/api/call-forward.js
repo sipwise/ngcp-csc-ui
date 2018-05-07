@@ -618,14 +618,14 @@ export function resetTimesetByName(options) {
 }
 
 export function addTimeToTimeset(options) {
-    let headers = {
-        'Content-Type': 'application/json-patch+json'
-    };
     return new Promise((resolve, reject) => {
+        let headers = {
+            'Content-Type': 'application/json-patch+json'
+        };
         Vue.http.patch('/api/cftimesets/' + options.id, [{
             op: 'replace',
             path: '/times',
-            value: options.time
+            value: options.times
         }], { headers: headers }).then(() => {
             resolve();
         }).catch(err => {
@@ -702,12 +702,12 @@ export function convertAddTime(options) {
 }
 
 export function createTimesetWithTime(options) {
-    let convertedTime = convertAddTime({ time: options.time[0], weekday: options.weekday });
     return new Promise((resolve, reject)=> {
+        let convertedTime = convertAddTime({ time: options.time[0], weekday: options.weekday });
         Promise.resolve().then(() => {
             return addNewTimeset(options.name);
         }).then((timesetId) => {
-            return addTimeToTimeset({ id: timesetId, time: convertedTime });
+            return addTimeToTimeset({ id: timesetId, times: convertedTime });
         }).then(() => {
             resolve();
         }).catch((err) => {
@@ -729,13 +729,56 @@ export function getTimesByTimesetId(id) {
 }
 
 export function appendTimeToTimeset(options) {
-    let convertedTime = convertAddTime({ time: options.time[0], weekday: options.weekday });
     return new Promise((resolve, reject)=> {
+        let convertedTime = convertAddTime({ time: options.time[0], weekday: options.weekday });
         Promise.resolve().then(() => {
             return getTimesByTimesetId(options.id);
         }).then((times) => {
             let concatTimes = times.concat(convertedTime);
-            return addTimeToTimeset({ id: options.id, time: concatTimes });
+            return addTimeToTimeset({ id: options.id, times: concatTimes });
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function getSourcesBySourcesetId(id) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.get('/api/cfsourcesets/' + id).then((res)=>{
+            let sourceset = getJsonBody(res.body);
+            resolve(sourceset.sources);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function addSourceToSourceset(options) {
+    return new Promise((resolve, reject) => {
+        let headers = {
+            'Content-Type': 'application/json-patch+json'
+        };
+        Vue.http.patch('/api/cfsourcesets/' + options.id, [{
+            op: 'replace',
+            path: '/sources',
+            value: options.sources
+        }], { headers: headers }).then(() => {
+            resolve();
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+export function appendSourceToSourceset(options) {
+    return new Promise((resolve, reject)=> {
+        Promise.resolve().then(() => {
+            return getSourcesBySourcesetId(options.id);
+        }).then((sources) => {
+            let concatSources = sources.concat(options.source);
+            return addSourceToSourceset({ id: options.id, sources: concatSources });
         }).then(() => {
             resolve();
         }).catch((err) => {

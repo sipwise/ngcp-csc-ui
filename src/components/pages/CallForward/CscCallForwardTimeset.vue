@@ -1,50 +1,70 @@
 <template>
     <div>
         <div v-if="showTimesAndDestinations">
-            <csc-call-forward-times :times="timesetTimes"
-                :timesetName="timesetName" ref="times"></csc-call-forward-times>
-            <csc-sourcesets v-if="destinationsLoaded" :sourcesets="sourcesets"
-                :destinations="destinations" :timesetName="timesetName" />
+            <csc-call-forward-times
+                :times="timesetTimes"
+                :timesetName="timesetName"
+                ref="times"
+            />
+            <csc-sourcesets
+                v-if="destinationsLoaded"
+                :sourcesets="sourcesets"
+                :destinations="destinations"
+                :timesetName="timesetName"
+            />
         </div>
         <q-card flat>
             <div v-if="timesetHasDuplicate">
-                <q-alert color="red"
+                <q-alert
+                    color="red"
                     v-model="showAlertDuplicate"
                     icon="date_range"
                     :actions="[{ label: labelReset, handler: resetTimeset }]"
-                    appear>
-                        {{ $t('pages.callForward.times.timesetDuplicate', { timeset: timesetName }) }}
+                    appear
+                >
+                    {{ $t('pages.callForward.times.timesetDuplicate', { timeset: timesetName }) }}
                 </q-alert>
             </div>
             <div v-else-if="!timesetIsCompatible">
-                <q-alert color="red"
+                <q-alert
+                    color="red"
                     v-model="showAlertCompatible"
                     icon="date_range"
                     :actions="[{ label: labelReset, handler: resetTimeset }]"
-                    appear>
-                        {{ $t('pages.callForward.times.timesetIncompatible', { timeset: timesetName }) }}
+                    appear
+                >
+                    {{ $t('pages.callForward.times.timesetIncompatible', { timeset: timesetName }) }}
                 </q-alert>
             </div>
             <div v-else-if="timesetHasReverse">
-                <q-alert color="red"
+                <q-alert
+                    color="red"
                     v-model="showAlertReverse"
                     icon="date_range"
                     :actions="[{ label: labelReset, handler: resetTimeset }]"
-                    appear>
-                        {{ $t('pages.callForward.times.timesetReverse', { timeset: timesetName }) }}
+                    appear
+                >
+                    {{ $t('pages.callForward.times.timesetReverse', { timeset: timesetName }) }}
                 </q-alert>
             </div>
             <div v-show="showDefinedAlert">
-                <q-alert color="warning"
+                <q-alert
+                    color="warning"
                     v-model="showAlertDefined"
                     icon="date_range"
                     :actions="[{ label: labelAdd, handler: addTimeset }]"
-                    appear>
-                        {{ $t('pages.callForward.times.timesetNotDefined', { timeset: timesetName }) }}
+                    appear
+                >
+                    {{ $t('pages.callForward.times.timesetNotDefined', { timeset: timesetName }) }}
                 </q-alert>
             </div>
-            <csc-add-time-form v-if="activeTimeForm && !timesetExists" type="new"
-                :title="getAddLabel" :timeset="timesetName" ref="addTimeNew" />
+            <csc-add-time-form
+                v-if="activeTimeForm && !timesetExists"
+                type="new"
+                :title="getAddLabel"
+                :timeset="timesetName"
+                ref="addTimeNew"
+            />
         </q-card>
     </div>
 </template>

@@ -191,6 +191,12 @@
                 "resetTimeset": "Reset {timeset}",
                 "addTimeset": "Add {timeset}",
                 "selectValidTime": "Select valid time"
+            },
+            "sources": {
+                "source": "Source",
+                "addSourceButton": "Add source",
+                "addSourceSuccessMessage": "Added new source {source}",
+                "addSourceErrorMessage": "An error occured while trying to add the source. Please try again."
             }
         },
         "home": {

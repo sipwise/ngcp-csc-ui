@@ -3,7 +3,7 @@
         <q-item-main>
             <q-item-tile class="row no-wrap">
                 <q-select
-                    class="col" 
+                    class="col"
                     v-model="selectedWeekday"
                     :options="selectOptions" />
                 <q-datetime
@@ -168,7 +168,4 @@
         }
     }
 
-    .add-times
-        width 100%
-  
 </style>
