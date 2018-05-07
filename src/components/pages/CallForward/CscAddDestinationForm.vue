@@ -1,6 +1,6 @@
 <template>
     <div class="add-destination-form">
-        <q-btn v-if="!isFormEnabled" flat color="primary" icon="fa-plus" class="add-destination-button">
+        <q-btn v-if="!isFormEnabled" flat color="primary" icon="fa-plus">
             {{ $t('pages.callForward.addDestinationButton') }}
             <q-popover ref="popover">
                 <q-list separator link>

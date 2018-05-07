@@ -1,32 +1,77 @@
 <template>
-    <q-tabs v-model="tab" no-pane-border inverted class="sourceset-tabs">
-        <q-tab v-for="(sourceset, index) in destinations" :default="index === 0"
+    <q-tabs
+        v-model="tab"
+        no-pane-border
+        inverted
+        class="sourceset-tabs"
+    >
+        <q-tab
+            v-for="(sourceset, index) in destinations"
+            :default="index === 0"
             :count="destinationsCount(sourceset.destinationGroups)"
-            :key="sourceset.sourcesetId || 0" slot="title"
-            :name="sourceset.sourcesetName || 'Everybody'" icon="people"
-            :label="sourceset.sourcesetName || 'Everybody'" />
-        <q-tab slot="title" label="Add new" name="addnew" icon="fa-plus" />
-        <q-tab-pane v-for="sourceset in destinations"
             :key="sourceset.sourcesetId || 0"
-            :name="sourceset.sourcesetName || 'Everybody'" class="sourceset-pane">
-                <div class="sources-section" v-if="sourceset.sourcesetId">
-                    <div class="sources-title">
-                        <q-icon name="contact_phone" class="sources-icon" />
-                            {{ $t('pages.callForward.sources.sourcesTitleMode',
-                                { mode: capitalizedMode(sourceset.sourcesetMode) }) }}
-                    </div>
-                    <q-list no-border>
-                        <q-item highlight separator
-                            v-for="source in sourcesetSources(sourceset.sourcesetId)"
-                            class="source-item">
-                            {{ source.source }}
-                        </q-item>
-                    </q-list>
+            :name="sourceset.sourcesetName || 'Everybody'"
+            :label="sourceset.sourcesetName || 'Everybody'"
+            icon="people"
+            slot="title"
+        />
+        <q-tab
+            slot="title"
+            label="Add new"
+            name="addnew"
+            icon="fa-plus"
+        />
+        <q-tab-pane
+            v-for="sourceset in destinations"
+            :key="sourceset.sourcesetId || 0"
+            :name="sourceset.sourcesetName || 'Everybody'"
+            class="sourceset-pane"
+        >
+            <div
+                class="sources-section"
+                v-if="sourceset.sourcesetId"
+            >
+                <div class="sources-title">
+                    <q-icon
+                        name="contact_phone"
+                        class="sources-icon"
+                    />
+                        {{ $t('pages.callForward.sources.sourcesTitleMode',
+                            { mode: capitalizedMode(sourceset.sourcesetMode) }) }}
                 </div>
-                <csc-call-forward-destinations
-                    :sourceset="sourceset.sourcesetId"
-                    :timeset="timesetName"
-                    :destinations="sourceset.destinationGroups" />
+                <q-list no-border>
+                    <q-item
+                        v-for="source in sourcesetSources(sourceset.sourcesetId)"
+                        class="source-item"
+                        highlight
+                        separator
+                    >
+                        {{ source.source }}
+                    </q-item>
+                </q-list>
+                <q-btn
+                    v-if="!sourcesetsFormEnabled"
+                    flat
+                    color="primary"
+                    icon="fa-plus"
+                    @click="openForm()"
+                >
+                    {{ $t('pages.callForward.sources.addSourceButton') }}
+                </q-btn>
+                <csc-sourcesets-form
+                    v-if="sourcesetsFormEnabled"
+                    :sourceset-id="sourceset.sourcesetId"
+                    :form-enabled="addSourceFormEnabled"
+                    @add-source="addSource"
+                    @source-form-close="closeForm"
+                    ref="sourcesetsForm"
+                />
+            </div>
+            <csc-call-forward-destinations
+                :sourceset="sourceset.sourcesetId"
+                :timeset="timesetName"
+                :destinations="sourceset.destinationGroups"
+            />
         </q-tab-pane>
         <q-tab-pane name="addnew">
             <q-list no-border>
@@ -73,27 +118,34 @@
 
 <script>
     import CscCallForwardDestinations from './CscCallForwardDestinations'
-    import { showGlobalError } from '../../../helpers/ui'
+    import CscSourcesetsForm from './CscSourcesetsForm'
+    import { mapGetters } from 'vuex'
+    import {
+        startLoading,
+        stopLoading,
+        showGlobalError,
+        showToast
+    } from '../../../helpers/ui'
     import {
         QTabs,
         QTab,
         QTabPane,
-        QBtn,
         QList,
         QItem,
         QItemMain,
         QItemTile,
         QInput,
         QIcon,
-        QSelect
+        QSelect,
+        QBtn
     } from 'quasar-framework'
     export default {
         name: 'csc-sourcesets',
-        props: [
-            'destinations',
-            'sourcesets',
-            'timesetName'
-        ],
+        props: {
+            destinations: Object,
+            sourcesets: Object,
+            timesetName: [String, Object]
+        },
         data() {
             return {
                 sourcesetName: '',
@@ -109,24 +161,32 @@
                         value: 'blacklist'
                     }
                 ],
-                tab: 'Everybody'
+                tab: 'Everybody',
+                sourcesetsFormEnabled: false
             }
         },
         components: {
             CscCallForwardDestinations,
+            CscSourcesetsForm,
             QTabs,
             QTab,
             QTabPane,
-            QBtn,
             QList,
             QItem,
             QItemMain,
             QItemTile,
             QInput,
             QIcon,
-            QSelect
+            QSelect,
+            QBtn
         },
         computed: {
+            ...mapGetters('callForward', [
+                'addSourceState',
+                'addSourceError',
+                'lastAddedSource',
+                'addSourceFormEnabled'
+            ]),
             isValid() {
                 return this.source.length > 0 && this.sourcesetName.length > 0;
             }
@@ -180,6 +240,38 @@
                 else {
                     showGlobalError(this.$t('pages.callForward.sources.fieldMissing'));
                 }
+            },
+            openForm() {
+                this.sourcesetsFormEnabled = true;
+            },
+            closeForm() {
+                this.$refs.sourcesetsForm[0].resetForm();
+                this.sourcesetsFormEnabled = false;
+            },
+            addSource(options) {
+                this.$store.dispatch('callForward/appendSourceToSourceset', options);
+            }
+        },
+        watch: {
+            addSourceState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                }
+                else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.addSourceError);
+                }
+                else if (state === 'succeeded') {
+                    stopLoading();
+                    showToast(this.$t('pages.callForward.sources.addSourceSuccessMessage', {
+                        source: this.lastAddedSource
+                    }));
+                    this.$store.dispatch('callForward/loadSourcesets');
+                    this.$store.dispatch('callForward/loadDestinations', {
+                        timeset: this.timesetName
+                    });
+                    this.closeForm();
+                }
             }
         }
     }
@@ -211,5 +303,8 @@
     .sources-title
         color $secondary
         font-size 16px
+
+    .sources-icon
+        margin-right 5px
 
 </style>

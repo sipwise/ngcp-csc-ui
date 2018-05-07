@@ -168,7 +168,4 @@
         }
     }
 
-    .add-times
-        width 100%
-  
 </style>
