@@ -1,7 +1,12 @@
 <template>
     <csc-page :title="$t('pages.callForward.titles.always')">
-        <csc-sourcesets v-if="destinationsLoaded" :sourcesets="sourcesets"
-            :destinations="destinations" :timesetName="timesetName" ref="sourcesets" />
+        <csc-sourcesets
+            v-if="destinationsLoaded"
+            :sourcesets="sourcesets"
+            :destinations="destinations"
+            :timesetName="timesetName"
+            ref="sourcesets"
+        />
     </csc-page>
 </template>
 

@@ -22,7 +22,8 @@ import {
     createTimesetWithTime,
     appendTimeToTimeset,
     loadDestinations,
-    createSourcesetWithSource
+    createSourcesetWithSource,
+    appendSourceToSourceset
 } from '../api/call-forward';
 
 const RequestState = {
@@ -53,6 +54,7 @@ export default {
         changeDestinationError: null,
         removeTimeState: RequestState.button,
         removeTimeError: null,
+        lastRemovedDay: null,
         resetTimeState: RequestState.button,
         resetTimeError: null,
         addTimeState: RequestState.button,
@@ -60,7 +62,9 @@ export default {
         addSourcesetState: RequestState.button,
         addSourcesetError: null,
         lastAddedSourceset: null,
-        lastRemovedDay: null,
+        addSourceState: RequestState.button,
+        addSourceError: null,
+        lastAddedSource: null,
         activeForm: '',
         formType: '',
         destinationsetId: '',
@@ -77,7 +81,8 @@ export default {
         timesetHasReverse: false,
         timesetHasDuplicate: false,
         timesetId: null,
-        activeTimeForm: false
+        activeTimeForm: false,
+        addSourceFormEnabled: false
     },
     getters: {
         hasFaxCapability(state, getters, rootState, rootGetters) {
@@ -134,6 +139,19 @@ export default {
         addSourcesetError(state) {
             return state.addSourcesetError ||
                 i18n.t('pages.callForward.sources.addSourcesetErrorMessage');
+        },
+        addSourceError(state) {
+            return state.addSourceError ||
+                i18n.t('pages.callForward.sources.addSourceErrorMessage');
+        },
+        addSourceState(state) {
+            return state.addSourceState;
+        },
+        lastAddedSource(state) {
+            return state.lastAddedSource;
+        },
+        addSourceFormEnabled(state) {
+            return state.addSourceFormEnabled;
         }
     },
     mutations: {
@@ -313,6 +331,24 @@ export default {
         },
         setLastAddedSourceset(state, value) {
             state.lastAddedSourceset = value;
+        },
+        addSourceRequesting(state) {
+            state.addSourceState = RequestState.requesting;
+            state.addSourceError = null;
+        },
+        addSourceSucceeded(state) {
+            state.addSourceState = RequestState.succeeded;
+            state.addSourceError = null;
+        },
+        addSourceFailed(state, error) {
+            state.addSourceState = RequestState.failed;
+            state.addSourceError = error;
+        },
+        setLastAddedSource(state, value) {
+            state.lastAddedSource = value;
+        },
+        setAddSourceFormEnabled(state, value) {
+            state.addSourceFormEnabled = value;
         }
     },
     actions: {
@@ -552,8 +588,7 @@ export default {
             appendTimeToTimeset({
                     time: options.time,
                     weekday: options.weekday,
-                    id: context.getters.getTimesetId,
-                    subscriberId: context.getters.getSubscriberId
+                    id: context.getters.getTimesetId
                 }).then(() => {
                     context.commit('addTimeSucceeded');
                 }).catch((err) => {
@@ -584,6 +619,15 @@ export default {
                 context.commit('addSourcesetSucceeded');
             }).catch((err) => {
                 context.commit('addSourcesetFailed', err.message);
+            });
+        },
+        appendSourceToSourceset(context, options) {
+            context.commit('addSourceRequesting');
+            appendSourceToSourceset(options).then(() => {
+                context.commit('setLastAddedSource', options.source[0].source);
+                context.commit('addSourceSucceeded');
+            }).catch((err) => {
+                context.commit('addSourceFailed', err.message);
             });
         }
     }
