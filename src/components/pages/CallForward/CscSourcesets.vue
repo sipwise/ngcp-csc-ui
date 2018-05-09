@@ -10,6 +10,16 @@
             :key="sourceset.sourcesetId || 0"
             :name="sourceset.sourcesetName || 'Everybody'" class="sourceset-pane">
                 <div class="sources-section" v-if="sourceset.sourcesetId">
+                    <q-btn
+                        flat
+                        align="right"
+                        color="negative"
+                        icon="fa-plus"
+                        class="add-destination-button"
+                        @click="removeSourceset(sourceset)"
+                    >
+                        {{ $t('pages.callForward.sources.removeSourcesetButton') }}
+                    </q-btn>
                     <div class="sources-title">
                         <q-icon name="contact_phone" class="sources-icon" />
                             {{ $t('pages.callForward.sources.sourcesTitleMode',
@@ -73,7 +83,13 @@
 
 <script>
     import CscCallForwardDestinations from './CscCallForwardDestinations'
-    import { showGlobalError } from '../../../helpers/ui'
+    import { mapGetters } from 'vuex'
+    import {
+        startLoading,
+        stopLoading,
+        showToast,
+        showGlobalError
+    } from '../../../helpers/ui'
     import {
         QTabs,
         QTab,
@@ -85,7 +101,8 @@
         QItemTile,
         QInput,
         QIcon,
-        QSelect
+        QSelect,
+        Dialog
     } from 'quasar-framework'
     export default {
         name: 'csc-sourcesets',
@@ -124,9 +141,14 @@
             QItemTile,
             QInput,
             QIcon,
-            QSelect
+            QSelect,
+            Dialog
         },
         computed: {
+            ...mapGetters('callForward', [
+                'removeSourcesetError',
+                'removeSourcesetState'
+            ]),
             isValid() {
                 return this.source.length > 0 && this.sourcesetName.length > 0;
             }
@@ -142,9 +164,14 @@
                 this.tab = 'Everybody';
             },
             sourcesetSources(id) {
-                return this.sourcesets.filter((sourceset) => {
-                    return sourceset.id === id;
-                })[0].sources;
+                if (this.sourcesets[0]) {
+                    return this.sourcesets.filter((sourceset) => {
+                        return sourceset.id === id;
+                    })[0].sources;
+                }
+                else {
+                    return [];
+                }
             },
             destinationsCount(groups) {
                 let groupCollection = [
@@ -179,6 +206,45 @@
                 }
                 else {
                     showGlobalError(this.$t('pages.callForward.sources.fieldMissing'));
+                }
+            },
+            removeSourceset(sourceset) {
+                let self = this;
+                Dialog.create({
+                    title: self.$t('pages.callForward.sources.removeSourcesetDialogTitle'),
+                    message: self.$t('pages.callForward.sources.removeSourcesetDialogText', {
+                        sourceset: sourceset.sourcesetName
+                    }),
+                    buttons: [
+                        self.$t('buttons.cancel'),
+                        {
+                            label: self.$t('buttons.remove'),
+                            color: 'negative',
+                            handler () {
+                                self.$store.dispatch('callForward/deleteSourcesetById', sourceset);
+                            }
+                        }
+                    ]
+                });
+            }
+        },
+        watch: {
+            removeSourcesetState(state) {
+                if (state === 'requesting') {
+                    startLoading;
+                }
+                else if (state === 'failed') {
+                    stopLoading;
+                    showGlobalError('failed');
+                }
+                else if (state === 'succeeded') {
+                    stopLoading;
+                    showToast('succeeded');
+                    this.$store.dispatch('callForward/loadDestinations', {
+                        timeset: null
+                    });
+                    this.$store.dispatch('callForward/loadSourcesets');
+                    this.resetForm();
                 }
             }
         }
