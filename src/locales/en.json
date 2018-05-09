@@ -198,9 +198,13 @@
                 "sourceset": "Sourceset",
                 "source": "Source",
                 "fieldMissing": "Both sourceset name and source is required. Please provide both and try again.",
-                "addSourcesetErrorMessage": "An error occured while trying to create the sourceset. Please try again."
+                "addSourcesetErrorMessage": "An error occured while trying to create the sourceset. Please try again.",
+                "removeSourcesetButton": "Delete sourceset",
+                "removeSourcesetErrorMessage": "An error occured while trying to delete the sourceset. Please try again.",
+                "removeSourcesetSuccessMessage": "Removed sourceset {sourceset}",
+                "removeSourcesetDialogTitle": "Remove call forward sourceset",
+                "removeSourcesetDialogText": "You are about to remove the sourceset {sourceset}"
             }
-
         },
         "home": {
             "title": "Home",
