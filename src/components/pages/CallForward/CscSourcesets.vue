@@ -10,6 +10,16 @@
             :key="sourceset.sourcesetId || 0"
             :name="sourceset.sourcesetName || 'Everybody'" class="sourceset-pane">
                 <div class="sources-section" v-if="sourceset.sourcesetId">
+                    <q-btn
+                        flat
+                        align="right"
+                        color="primary"
+                        icon="fa-plus"
+                        class="add-destination-button"
+                        @click="removeSourceset(sourceset)"
+                    >
+                        {{ $t('pages.callForward.sources.removeSourcesetButton') }}
+                    </q-btn>
                     <div class="sources-title">
                         <q-icon name="contact_phone" class="sources-icon" />
                             {{ $t('pages.callForward.sources.sourcesTitleMode',
@@ -142,9 +152,14 @@
                 this.tab = 'Everybody';
             },
             sourcesetSources(id) {
-                return this.sourcesets.filter((sourceset) => {
-                    return sourceset.id === id;
-                })[0].sources;
+                if (this.sourcesets[0]) {
+                    return this.sourcesets.filter((sourceset) => {
+                        return sourceset.id === id;
+                    })[0].sources;
+                }
+                else {
+                    return [];
+                }
             },
             destinationsCount(groups) {
                 let groupCollection = [
@@ -180,6 +195,10 @@
                 else {
                     showGlobalError(this.$t('pages.callForward.sources.fieldMissing'));
                 }
+            },
+            removeSourceset(sourceset) {
+                // TODO: confirm delete dialog
+                this.$store.dispatch('callForward/deleteSourcesetById', sourceset);
             }
         }
     }
