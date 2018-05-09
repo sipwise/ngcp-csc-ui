@@ -31,6 +31,19 @@
                 class="sources-section"
                 v-if="sourceset.sourcesetId"
             >
+                <div class="sourceset-delete row justify-end">
+                    <q-btn
+                        flat
+                        align="right"
+                        color="negative"
+                        icon="delete"
+                        class="add-destination-button sourceset-delete"
+                        :class="{ 'no-padding': $q.platform.is.mobile, 'mobile-button': $q.platform.is.mobile }"
+                        @click="removeSourceset(sourceset)"
+                    >
+                        {{ deleteSourcesetLabel }}
+                    </q-btn>
+                </div>
                 <div class="sources-title">
                     <q-icon
                         name="contact_phone"
@@ -137,7 +150,8 @@
         QInput,
         QIcon,
         QSelect,
-        QBtn
+        QBtn,
+        Dialog
     } from 'quasar-framework'
     export default {
         name: 'csc-sourcesets',
@@ -178,17 +192,25 @@
             QInput,
             QIcon,
             QSelect,
-            QBtn
+            QBtn,
+            Dialog
         },
         computed: {
             ...mapGetters('callForward', [
                 'addSourceState',
                 'addSourceError',
                 'lastAddedSource',
-                'addSourceFormEnabled'
+                'addSourceFormEnabled',
+                'removeSourcesetError',
+                'removeSourcesetState',
+                'lastRemovedSourceset'
             ]),
             isValid() {
                 return this.source.length > 0 && this.sourcesetName.length > 0;
+            },
+            deleteSourcesetLabel() {
+                return this.$q.platform.is.mobile ? '' :
+                    this.$t('pages.callForward.sources.removeSourcesetButton');
             }
         },
         methods: {
@@ -202,9 +224,14 @@
                 this.tab = 'Everybody';
             },
             sourcesetSources(id) {
-                return this.sourcesets.filter((sourceset) => {
-                    return sourceset.id === id;
-                })[0].sources;
+                if (this.sourcesets[0]) {
+                    return this.sourcesets.filter((sourceset) => {
+                        return sourceset.id === id;
+                    })[0].sources;
+                }
+                else {
+                    return [];
+                }
             },
             destinationsCount(groups) {
                 let groupCollection = [
@@ -250,6 +277,31 @@
             },
             addSource(options) {
                 this.$store.dispatch('callForward/appendSourceToSourceset', options);
+            },
+            removeSourceset(sourceset) {
+                let self = this;
+                Dialog.create({
+                    title: self.$t('pages.callForward.sources.removeSourcesetDialogTitle'),
+                    message: self.$t('pages.callForward.sources.removeSourcesetDialogText', {
+                        sourceset: sourceset.sourcesetName
+                    }),
+                    buttons: [
+                        self.$t('buttons.cancel'),
+                        {
+                            label: self.$t('buttons.remove'),
+                            color: 'negative',
+                            handler () {
+                                self.$store.dispatch('callForward/deleteSourcesetById', sourceset);
+                            }
+                        }
+                    ]
+                });
+            },
+            loadAll() {
+                this.$store.dispatch('callForward/loadDestinations', {
+                    timeset: this.timesetName
+                });
+                this.$store.dispatch('callForward/loadSourcesets');
             }
         },
         watch: {
@@ -271,6 +323,24 @@
                         timeset: this.timesetName
                     });
                     this.closeForm();
+                }
+
+            },
+            removeSourcesetState(state) {
+                if (state === 'requesting') {
+                    startLoading;
+                }
+                else if (state === 'failed') {
+                    stopLoading;
+                    showGlobalError(this.removeSourcesetError);
+                }
+                else if (state === 'succeeded') {
+                    stopLoading;
+                    showToast(this.$t('pages.callForward.sources.removeSourcesetSuccessMessage', {
+                        sourceset: this.lastRemovedSourceset
+                    }));
+                    this.loadAll();
+                    this.resetForm();
                 }
             }
         }
@@ -298,7 +368,10 @@
         margin-top 8px
 
     .sources-section
-        padding 30px 0 20px 0
+        padding 0 0 20px 0
+
+        .mobile-button > span > i
+            margin 0
 
     .sources-title
         color $secondary

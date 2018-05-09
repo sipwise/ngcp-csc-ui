@@ -201,7 +201,12 @@
                 "addSourcesetErrorMessage": "An error occured while trying to create the sourceset. Please try again.",
                 "addSourceButton": "Add source",
                 "addSourceSuccessMessage": "Added new source {source}",
-                "addSourceErrorMessage": "An error occured while trying to add the source. Please try again."
+                "addSourceErrorMessage": "An error occured while trying to add the source. Please try again.",
+                "removeSourcesetButton": "Delete sourceset",
+                "removeSourcesetErrorMessage": "An error occured while trying to delete the sourceset. Please try again.",
+                "removeSourcesetSuccessMessage": "Removed sourceset {sourceset}",
+                "removeSourcesetDialogTitle": "Remove call forward sourceset",
+                "removeSourcesetDialogText": "You are about to remove the sourceset {sourceset}"
             }
         },
         "home": {
