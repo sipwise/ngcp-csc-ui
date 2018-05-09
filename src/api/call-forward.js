@@ -763,3 +763,13 @@ export function createSourcesetWithSource(options) {
             });
     });
 }
+
+export function deleteSourcesetById(id) {
+    return new Promise((resolve, reject) => {
+        Vue.http.delete('/api/cfsourcesets/' + id).then(() => {
+            resolve();
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
