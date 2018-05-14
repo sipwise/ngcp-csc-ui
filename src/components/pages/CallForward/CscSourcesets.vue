@@ -16,10 +16,21 @@
                                 { mode: capitalizedMode(sourceset.sourcesetMode) }) }}
                     </div>
                     <q-list no-border>
-                        <q-item highlight separator
-                            v-for="source in sourcesetSources(sourceset.sourcesetId)"
-                            class="source-item">
+                        <q-item
+                            highlight
+                            separator
+                            v-for="(source, index) in sourcesetSources(sourceset.sourcesetId)"
+                            class="source-item"
+                        >
+                            <q-item-main>
                             {{ source.source }}
+                            </q-item-main>
+                            <q-item-side
+                                right
+                                icon="delete"
+                                color="negative"
+                                @click="removeSource(sourceset, source.source, index)"
+                            />
                         </q-item>
                     </q-list>
                 </div>
@@ -73,7 +84,13 @@
 
 <script>
     import CscCallForwardDestinations from './CscCallForwardDestinations'
-    import { showGlobalError } from '../../../helpers/ui'
+    import { mapGetters } from 'vuex'
+    import {
+        startLoading,
+        stopLoading,
+        showGlobalError,
+        showToast
+    } from '../../../helpers/ui'
     import {
         QTabs,
         QTab,
@@ -83,10 +100,15 @@
         QItem,
         QItemMain,
         QItemTile,
+        QItemSide,
         QInput,
         QIcon,
-        QSelect
+        QSelect,
+        Dialog,
+        Alert
     } from 'quasar-framework'
+    import 'quasar-extras/animate/bounceInRight.css'
+    import 'quasar-extras/animate/bounceOutRight.css'
     export default {
         name: 'csc-sourcesets',
         props: [
@@ -122,16 +144,61 @@
             QItem,
             QItemMain,
             QItemTile,
+            QItemSide,
             QInput,
             QIcon,
-            QSelect
+            QSelect,
+            Dialog,
+            Alert
         },
         computed: {
+            ...mapGetters('callForward', [
+                'removeSourceState',
+                'removeSourceError',
+                'lastRemovedSource'
+            ]),
             isValid() {
                 return this.source.length > 0 && this.sourcesetName.length > 0;
             }
         },
         methods: {
+            removeSource(sourceset, source, index) {
+                let self = this;
+                let sources = this.sourcesetSources(sourceset.sourcesetId);
+                let isLastSource = sources.length === 1;
+                if (isLastSource) {
+                    Alert.create({
+                        enter: 'bounceInRight',
+                        leave: 'bounceOutRight',
+                        position: 'top-center',
+                        html: self.$t('pages.callForward.sources.removeLastSourceDialogText'),
+                        icon: 'warning',
+                        dismissible: true
+                    });
+                }
+                else {
+                    Dialog.create({
+                        title: self.$t('pages.callForward.sources.removeSourceDialogTitle'),
+                        message: self.$t('pages.callForward.sources.removeSourceDialogText', {
+                            source: source
+                        }),
+                        buttons: [
+                            self.$t('buttons.cancel'),
+                            {
+                                label: self.$t('buttons.remove'),
+                                color: 'negative',
+                                handler () {
+                                    self.$store.dispatch('callForward/deleteSourceFromSourcesetByIndex', {
+                                        sourceset: sourceset,
+                                        sources: sources,
+                                        sourceIndex: index
+                                    });
+                                }
+                            }
+                        ]
+                    });
+                }
+            },
             capitalizedMode(mode) {
                 return `${mode.charAt(0).toUpperCase()}${mode.slice(1)}`;
             },
@@ -179,6 +246,27 @@
                 }
                 else {
                     showGlobalError(this.$t('pages.callForward.sources.fieldMissing'));
+                }
+            }
+        },
+        watch: {
+            removeSourceState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                }
+                else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.removeSourceError);
+                }
+                else if (state === 'succeeded') {
+                    stopLoading();
+                    showToast(this.$t('pages.callForward.sources.removeSourceSuccessMessage', {
+                        source: this.lastRemovedSource
+                    }));
+                    this.$store.dispatch('callForward/loadSourcesets');
+                    this.$store.dispatch('callForward/loadDestinations', {
+                        timeset: this.timesetName
+                    });
                 }
             }
         }
