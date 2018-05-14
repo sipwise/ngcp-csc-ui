@@ -816,3 +816,22 @@ export function deleteSourcesetById(id) {
         });
     });
 }
+
+export function deleteSourceFromSourcesetByIndex(options) {
+    return new Promise((resolve, reject) => {
+        let sources = _.cloneDeep(options.sources);
+        sources.splice(options.sourceIndex, 1);
+        let headers = {
+            'Content-Type': 'application/json-patch+json'
+        };
+        Vue.http.patch('/api/cfsourcesets/' + options.sourceset.sourcesetId, [{
+            op: 'replace',
+            path: '/sources',
+            value: sources
+        }], { headers: headers }).then(() => {
+            resolve();
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
