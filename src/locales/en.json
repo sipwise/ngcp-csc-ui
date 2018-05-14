@@ -12,7 +12,8 @@
         "edit": "Edit",
         "add": "Add",
         "moveUp": "Move up",
-        "moveDown": "Move down"
+        "moveDown": "Move down",
+        "dismiss": "Dismiss"
     },
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",
@@ -206,7 +207,12 @@
                 "removeSourcesetErrorMessage": "An error occured while trying to delete the sourceset. Please try again.",
                 "removeSourcesetSuccessMessage": "Removed sourceset {sourceset}",
                 "removeSourcesetDialogTitle": "Remove call forward sourceset",
-                "removeSourcesetDialogText": "You are about to remove the sourceset {sourceset}"
+                "removeSourcesetDialogText": "You are about to remove the sourceset {sourceset}",
+                "removeSourceSuccessMessage": "Removed source {source}",
+                "removeSourceErrorMessage": "An error occured while trying to remove the source. Please try again.",
+                "removeSourceDialogTitle": "Remove call forward source",
+                "removeSourceDialogText": "You are about to remove the source entry for {source}",
+                "removeLastSourceDialogText": "Removing the last source entry is not allowed."
             }
         },
         "home": {

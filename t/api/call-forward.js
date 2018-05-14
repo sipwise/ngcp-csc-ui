@@ -15,7 +15,8 @@ import {
     deleteTimeFromTimeset,
     convertAddTime,
     addNameIdAndTerminating,
-    createSourcesetWithSource
+    createSourcesetWithSource,
+    deleteItemFromArrayByIndex
 } from '../../src/api/call-forward';
 import { assert } from 'chai';
 
@@ -964,6 +965,27 @@ describe('CallForward', function() {
         ];
 
         assert.deepEqual(addNameIdAndTerminating(options), data);
+
+    });
+
+    it('should attempt to remove source from sources array', function(){
+
+        let options = {
+            array: [
+                { source: 1111 },
+                { source: 2222 },
+                { source: 3333 },
+                { source: 4444 }
+            ],
+            index: 1
+        };
+        let result = [
+            { source: 1111 },
+            { source: 3333 },
+            { source: 4444 }
+        ];
+
+        assert.deepEqual(deleteItemFromArrayByIndex(options), result);
 
     });
 
