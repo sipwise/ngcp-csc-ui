@@ -24,7 +24,8 @@ import {
     loadDestinations,
     createSourcesetWithSource,
     appendSourceToSourceset,
-    deleteSourcesetById
+    deleteSourcesetById,
+    deleteSourceFromSourcesetByIndex
 } from '../api/call-forward';
 
 const RequestState = {
@@ -69,6 +70,9 @@ export default {
         addSourceState: RequestState.button,
         addSourceError: null,
         lastAddedSource: null,
+        removeSourceState: RequestState.button,
+        removeSourceError: null,
+        lastRemovedSource: null,
         activeForm: '',
         formType: '',
         destinationsetId: '',
@@ -166,6 +170,16 @@ export default {
         },
         lastRemovedSourceset(state) {
             return state.lastRemovedSourceset;
+        },
+        removeSourceState(state) {
+            return state.removeSourceState;
+        },
+        removeSourceError(state) {
+            return state.removeSourceError ||
+                i18n.t('pages.callForward.times.removeSourceErrorMessage');
+        },
+        lastRemovedSource(state) {
+            return state.lastRemovedSource;
         }
     },
     mutations: {
@@ -378,6 +392,21 @@ export default {
         },
         setLastRemovedSourceset(state, value) {
             state.lastRemovedSourceset = value;
+        },
+        removeSourceRequesting(state) {
+            state.removeSourceState = RequestState.requesting;
+            state.removeSourceError = null;
+        },
+        removeSourceSucceeded(state) {
+            state.removeSourceState = RequestState.succeeded;
+            state.removeSourceError = null;
+        },
+        removeSourceFailed(state, error) {
+            state.removeSourceState = RequestState.failed;
+            state.removeSourceError = error;
+        },
+        setLastRemovedSource(state, value) {
+            state.lastRemovedSource = value;
         }
     },
     actions: {
@@ -666,6 +695,15 @@ export default {
                 context.commit('removeSourcesetSucceeded');
             }).catch((err) => {
                 context.commit('removeSourcesetFailed', err.message);
+            });
+        },
+        deleteSourceFromSourcesetByIndex(context, options) {
+            context.commit('removeSourceRequesting');
+            deleteSourceFromSourcesetByIndex(options).then(() => {
+                context.commit('setLastRemovedSource', options.sources[options.sourceIndex].source);
+                context.commit('removeSourceSucceeded');
+            }).catch((err) => {
+                context.commit('removeSourceFailed', err.message);
             });
         }
     }
