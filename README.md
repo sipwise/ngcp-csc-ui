@@ -57,6 +57,55 @@ To run this app you also need to have a [vagrant-ngcp](https://www.sipwise.org/d
 
 You can now access ngcp-csc-ui in browser by using the url provided by the vagrant script.
 
+### Enable Call Feature
+
+To enable use of the call feature, you must first both enable it in ngcp-config and change some options in ngcp-panel.
+
+1. Edit config.yml
+
+    `vim /etc/ngcp-config/config.yml`
+
+1. Enable rtcengine by finding the "rtcengine:" section of the file, and setting "enable:" to yes
+
+    `
+    rtcengine:
+        enable: yes
+    `
+
+1. Run ngcpcfg apply
+
+    `ngcpcfg apply 'Enable rtcengine'`
+
+1. Log in to ngcp-panel with administrator credentials
+1. Go to "Settings > Resellers""
+1. Look for reseller row with "default" written in "Name" column, and click "Edit" for that row
+1. Check "Enable rtc" checkbox and save
+1. Go to "Settings > Domains"
+1. Look domain row with domain linked to bound to kamailio in the "Domain" column (usually the bottom-most one for vagrant-ngcp environments), and click "Preferences" for that row
+1. Go to "NAT and Media Flow Control" section
+1. Set "use_rtpproxy" to "Always with rtpproxy as additional ICE candidate" and "transport_protocol" to "UDP/TLS/RTP/SAVPF (encrypted SRTP using DTLS-SRTP with RTCP feedback)"
+
+Before making calls, also make sure that you give the caller and callee E164 Number values:
+1. Go to "Settings > Subscriber", find the subscriber and click "Details"
+1. Go to "Master Data" section and click "Edit"
+1. Input E164 number (for example 43 12 3456) and click save
+
+Troubleshooting tips for when the call feature does not want to enable:
+1. Log out and in again of CSC
+1. Check that rtcengine is active in your vagrant box, by executing as root:
+
+    `ngcp-service summary`
+
+1. If inactive, restart it:
+
+    `ngcp-service rtcengine restart`
+
+1. If still not working, try restarting the proxy
+
+    `ngcp-service proxy restart`
+
+For the call feature to properly work, make sure you're logged out of ngcp-panel before logging in to CSC.
+
 ### PBX Customer
 
 You need a pbx subscriber to be able to access the pbx config specific modules in ngcp-csc-ui as a user. To create a pbx subscriber we first need to enable pbx in vagrant.
