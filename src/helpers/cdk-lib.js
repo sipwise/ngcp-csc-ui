@@ -1,15 +1,15 @@
 
+import config from '../config'
 import loadScript from 'load-script'
 
 var scriptId = 'cdk';
-var scriptPath = '/rtc/files/dist/cdk-prod.js';
-var webSocketPath = '/rtc/api';
-var webSocketUrl = 'wss://' + window.location.host + webSocketPath;
+var scriptUrl = config.baseHttpUrl + '/rtc/files/dist/cdk-prod.js';
+var webSocketUrl = config.baseWsUrl + '/rtc/api';
 
 export function loadCdkLib() {
     return new Promise((resolve, reject)=>{
         if(!document.getElementById(scriptId)) {
-            loadScript(scriptPath, {
+            loadScript(scriptUrl, {
                 attrs: {
                     id: scriptId
                 }

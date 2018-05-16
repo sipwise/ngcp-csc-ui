@@ -4958,9 +4958,9 @@
       "resolved": "https://npm-registry.sipwise.com/quasar-extras/-/quasar-extras-0.0.8.tgz"
     },
     "quasar-framework": {
-      "version": "0.14.6",
-      "from": "quasar-framework@>=0.14.4 <0.15.0",
-      "resolved": "https://npm-registry.sipwise.com/quasar-framework/-/quasar-framework-0.14.6.tgz"
+      "version": "0.14.9",
+      "from": "quasar-framework@0.14.9",
+      "resolved": "https://registry.npmjs.org/quasar-framework/-/quasar-framework-0.14.9.tgz"
     },
     "query-string": {
       "version": "4.3.4",

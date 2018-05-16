@@ -17,6 +17,8 @@ import { RtcEngineCall } from './plugins/call'
 import App from './App.vue'
 import './filters'
 
+import config from './config'
+
 Vue.config.productionTip = false;
 Vue.use(Quasar);
 Vue.use(VueResource);
@@ -24,6 +26,7 @@ Vue.use(RtcEngineCall);
 
 sync(store, router);
 
+Vue.http.options.root = config.baseHttpUrl;
 Vue.http.interceptors.push(function(request, next) {
     var jwt = localStorage.getItem('jwt');
     if(!_.isEmpty(jwt)) {

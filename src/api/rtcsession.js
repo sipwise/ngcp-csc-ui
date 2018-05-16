@@ -1,10 +1,11 @@
 
+import config from '../config'
 import Vue from 'vue';
 import { getJsonBody } from './utils';
 
 export function create() {
     return new Promise((resolve, reject)=>{
-        Vue.http.post('/api/rtcsessions/').then((res)=>{
+        Vue.http.post('api/rtcsessions/').then((res)=>{
             resolve(res);
         }).catch((err)=>{
             reject(err);
@@ -27,7 +28,7 @@ export function createSession() {
         Promise.resolve().then(()=>{
             return create();
         }).then((res)=>{
-            return getByUrl(res.headers.get('Location'));
+            return getByUrl(config.baseHttpUrl + res.headers.get('Location'));
         }).then((res)=>{
             resolve(res);
         }).catch((err)=>{
