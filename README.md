@@ -57,6 +57,34 @@ To run this app you also need to have a [vagrant-ngcp](https://www.sipwise.org/d
 
 You can now access ngcp-csc-ui in browser by using the url provided by the vagrant script.
 
+### Enable Call Feature
+
+To be able to enable use of the call feature, you must first both enable it in ngcp-config and change some options in ngcp-panel.
+
+1. Edit config.yml
+
+    `vim /etc/ngcp-config/config.yml`
+
+1. Enable rtcengine by finding the "rtcengine:" section of the file, and setting "enable:" to yes
+
+    `
+	rtcengine:
+		enable: yes
+	`
+
+1. Run ngcpcfg apply
+
+    `ngcpcfg apply 'Enable pbx'`
+
+1. Log in to ngcp-panel with administrator credentials
+1. Go to Settings > Resellers
+1. Look for reseller row with "default" written in "Name" column, and click "Edit" for that row
+1. Click rtcengine active checkbox and save
+1. Go to Settings > Domains
+1. Look domain row with domain linked to bound to kamailio in the "Domain" column (usually the bottom-most one for vagrant-ngcp environments), and click "Preferences" for that row
+1. Go to "NAT and Media Flow Control" section
+1. Set "use_rtpproxy" to "Always with trpproxy as additional ICE candidate" and "transport_protocol" to "UDP/TLS/RTP/SAVPF (encrypted SRTP using DTLS-SRTP with RTCP feedback)"
+
 ### PBX Customer
 
 You need a pbx subscriber to be able to access the pbx config specific modules in ngcp-csc-ui as a user. To create a pbx subscriber we first need to enable pbx in vagrant.
