@@ -2,11 +2,11 @@
 import _ from 'lodash';
 import Vue from 'vue';
 import { getJsonBody } from './utils'
-import { getList } from './common'
+import { getList, get } from './common'
 
 export function getPreferences(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/subscriberpreferences/' + id).then((result)=>{
+        Vue.http.get('api/subscriberpreferences/' + id).then((result)=>{
             resolve(getJsonBody(result.body));
         }).catch((err)=>{
             reject(err);
@@ -19,7 +19,7 @@ export function setPreference(id, field, value) {
         var headers = {};
         headers['Content-Type'] = 'application/json-patch+json';
         Promise.resolve().then(()=>{
-            return Vue.http.patch('/api/subscriberpreferences/' + id, [{
+            return Vue.http.patch('api/subscriberpreferences/' + id, [{
                     op: 'replace',
                     path: '/'+ field,
                     value: value
@@ -28,7 +28,7 @@ export function setPreference(id, field, value) {
             resolve();
         }).catch((err)=>{
             if(err.status === 422) {
-                Vue.http.patch('/api/subscriberpreferences/' + id, [{
+                Vue.http.patch('api/subscriberpreferences/' + id, [{
                     op: 'add',
                     path: '/'+ field,
                     value: value
@@ -54,7 +54,7 @@ export function prependItemToArrayPreference(id, field, value) {
             delete prefs._links;
             prefs[field] = _.get(prefs, field, []);
             prefs[field] = [value].concat(prefs[field]);
-            return Vue.http.put('/api/subscriberpreferences/' + id, prefs);
+            return Vue.http.put('api/subscriberpreferences/' + id, prefs);
         }).then(()=>{
             resolve();
         }).catch((err)=>{
@@ -72,7 +72,7 @@ export function appendItemToArrayPreference(id, field, value) {
             delete prefs._links;
             prefs[field] = _.get(prefs, field, []);
             prefs[field].push(value);
-            return Vue.http.put('/api/subscriberpreferences/' + id, prefs);
+            return Vue.http.put('api/subscriberpreferences/' + id, prefs);
         }).then(()=>{
             resolve();
         }).catch((err)=>{
@@ -90,7 +90,7 @@ export function editItemInArrayPreference(id, field, itemIndex, value) {
             delete prefs._links;
             if(_.isArray(prefs[field]) && itemIndex < prefs[field].length) {
                 prefs[field][itemIndex] = value;
-                return Vue.http.put('/api/subscriberpreferences/' + id, prefs);
+                return Vue.http.put('api/subscriberpreferences/' + id, prefs);
             }
             else {
                 return Promise.reject(new Error('Array index does not exists'));
@@ -114,7 +114,7 @@ export function removeItemFromArrayPreference(id, field, itemIndex) {
             _.remove(prefs[field], (value, index)=>{
                 return index === itemIndex;
             });
-            return Vue.http.put('/api/subscriberpreferences/' + id, prefs);
+            return Vue.http.put('api/subscriberpreferences/' + id, prefs);
         }).then(()=>{
             resolve();
         }).catch((err)=>{
@@ -185,7 +185,7 @@ export function disablePrivacy(id) {
 
 export function createSubscriber(subscriber) {
     return new Promise((resolve, reject)=>{
-        Vue.http.post('/api/subscribers/', subscriber, {
+        Vue.http.post('api/subscribers/', subscriber, {
             params: {
                 customer_id: subscriber.customer_id
             }
@@ -204,7 +204,7 @@ export function createSubscriber(subscriber) {
 
 export function deleteSubscriber(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.delete('/api/subscribers/' + id).then(()=>{
+        Vue.http.delete('api/subscribers/' + id).then(()=>{
             resolve();
         }).catch((err)=>{
             if(err.status >= 400) {
@@ -219,7 +219,7 @@ export function deleteSubscriber(id) {
 
 export function setField(id, field, value) {
     return new Promise((resolve, reject)=>{
-        Vue.http.patch('/api/subscribers/' + id, [{
+        Vue.http.patch('api/subscribers/' + id, [{
             op: 'replace',
             path: '/'+ field,
             value: value
@@ -269,11 +269,23 @@ export function getSubscribers(options) {
     return new Promise((resolve, reject)=>{
         options = options || {};
         options = _.merge(options, {
-            path: '/api/subscribers/',
+            path: 'api/subscribers/',
             root: '_embedded.ngcp:subscribers'
         });
         getList(options).then((list)=>{
             resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSubscriber(id) {
+    return new Promise((resolve, reject)=>{
+        get({
+            path: 'api/subscribers/' + id
+        }).then((subscriber)=>{
+            resolve(subscriber);
         }).catch((err)=>{
             reject(err);
         });

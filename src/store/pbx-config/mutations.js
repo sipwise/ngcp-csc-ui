@@ -121,12 +121,13 @@ export default {
         state.listLoadingSilently = _.get(options, 'silent', false);
         state.listState = RequestState.requesting;
         state.listError = null;
+        state.devices = {};
+        state.devicesOrdered = [];
     },
     deviceListSucceeded(state, data) {
         state.listState = RequestState.succeeded;
         state.listError = null;
         state.listLastPage = data.lastPage;
-        state.devices = {};
         state.devicesOrdered = data.items;
         state.devicesOrdered.forEach((device)=>{
             state.devices[device.id + ""] = device;
@@ -145,7 +146,14 @@ export default {
         let deviceLoadingStates = _.clone(state.deviceLoadingStates);
         deviceLoadingStates[device.id + ""] = false;
         state.deviceLoadingStates = deviceLoadingStates;
-        state.devices[device.id + ""].profile = device.profile;
+        for(let i = 0; i <= state.devicesOrdered.length; i++) {
+            if(state.devicesOrdered[i].id === device.id) {
+                state.devicesOrdered[i] = device;
+            }
+        }
+        delete state.devices[device.id + ""];
+        state.devices[device.id + ""] = device;
+
     },
     deviceFailed(state, deviceId, errorMessage) {
         let deviceLoadingStates = _.clone(state.deviceLoadingStates);

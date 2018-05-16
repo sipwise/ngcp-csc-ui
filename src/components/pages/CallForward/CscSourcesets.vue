@@ -57,8 +57,7 @@
                         highlight
                         separator
                         v-for="(source, index) in sourcesetSources(sourceset.sourcesetId)"
-                        class="source-item"
-                    >
+                        class="source-item" :key="index">
                         <q-item-main>
                         {{ source.source }}
                         </q-item-main>

@@ -8,7 +8,7 @@ import { LIST_ALL_ROWS } from './common';
 
 export function getMappings(id) {
     return new Promise((resolve, reject) => {
-        Vue.http.get('/api/cfmappings/' + id).then(result => {
+        Vue.http.get('api/cfmappings/' + id).then(result => {
             let jsonBody = getJsonBody(result.body);
             delete jsonBody._links;
             delete jsonBody.cfs;
@@ -22,12 +22,12 @@ export function getMappings(id) {
 export function getSourcesets(id) {
     return new Promise((resolve, reject) => {
         Promise.resolve().then(() => {
-            return Vue.http.get('/api/cfsourcesets/',
+            return Vue.http.get('api/cfsourcesets/',
                 { params: { subscriber_id: id, page: 1, rows: LIST_ALL_ROWS } })
         }).then(result => {
             let totalCount = getJsonBody(result.body).total_count;
             if (totalCount > LIST_ALL_ROWS) {
-                return Vue.http.get('/api/cfsourcesets/',
+                return Vue.http.get('api/cfsourcesets/',
                     { params: { subscriber_id: id, page: 1,
                         rows: totalCount } })
             }
@@ -49,12 +49,12 @@ export function getSourcesets(id) {
 export function getTimesets(id) {
     return new Promise((resolve, reject) => {
         Promise.resolve().then(() => {
-            return Vue.http.get('/api/cftimesets/',
+            return Vue.http.get('api/cftimesets/',
                 { params: { subscriber_id: id, page: 1, rows: LIST_ALL_ROWS } })
         }).then(result => {
             let totalCount = getJsonBody(result.body).total_count;
             if (totalCount > LIST_ALL_ROWS) {
-                return Vue.http.get('/api/cftimesets/',
+                return Vue.http.get('api/cftimesets/',
                     { params: { subscriber_id: id, page: 1,
                         rows: totalCount } })
             }
@@ -74,12 +74,12 @@ export function getTimesets(id) {
 export function getDestinationsets(id) {
     return new Promise((resolve, reject) => {
         Promise.resolve().then(() => {
-            return Vue.http.get('/api/cfdestinationsets/',
+            return Vue.http.get('api/cfdestinationsets/',
                 { params: { subscriber_id: id, page: 1, rows: LIST_ALL_ROWS } })
         }).then(result => {
             let totalCount = getJsonBody(result.body).total_count;
             if (totalCount > LIST_ALL_ROWS) {
-                return Vue.http.get('/api/cfdestinationsets/',
+                return Vue.http.get('api/cfdestinationsets/',
                     { params: { subscriber_id: id, page: 1,
                         rows: totalCount } })
             }
@@ -214,7 +214,7 @@ export function addNameIdAndTerminating(options) {
 
 export function getDestinationsetById(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/cfdestinationsets/' + id).then((res)=>{
+        Vue.http.get('api/cfdestinationsets/' + id).then((res)=>{
             let destinationset = getJsonBody(res.body);
             delete destinationset['_links'];
             destinationset.destinations.sort((a, b) => {
@@ -232,7 +232,7 @@ export function deleteDestinationFromDestinationset(options) {
         'Content-Type': 'application/json-patch+json'
     };
     return new Promise((resolve, reject) => {
-        Vue.http.patch('/api/cfdestinationsets/' + options.id, [{
+        Vue.http.patch('api/cfdestinationsets/' + options.id, [{
             op: 'replace',
             path: '/destinations',
             value: options.data
@@ -255,7 +255,7 @@ export function deleteDestinationFromDestinationset(options) {
 
 export function deleteDestinationsetById(id) {
     return new Promise((resolve, reject) => {
-        Vue.http.delete('/api/cfdestinationsets/' + id).then(result => {
+        Vue.http.delete('api/cfdestinationsets/' + id).then(result => {
             resolve(result);
         }).catch(err => {
             reject(err);
@@ -268,7 +268,7 @@ export function addDestinationToDestinationset(options) {
         'Content-Type': 'application/json-patch+json'
     };
     return new Promise((resolve, reject) => {
-        Vue.http.patch('/api/cfdestinationsets/' + options.id, [{
+        Vue.http.patch('api/cfdestinationsets/' + options.id, [{
             op: 'replace',
             path: '/destinations',
             value: options.data
@@ -283,7 +283,7 @@ export function addDestinationToDestinationset(options) {
 export function addNewDestinationset() {
     let destinationsetName = `csc-${Date.now()}`;
     return new Promise((resolve, reject) => {
-        Vue.http.post('/api/cfdestinationsets/', { name: destinationsetName  })
+        Vue.http.post('api/cfdestinationsets/', { name: destinationsetName  })
             .then(response => {
                 resolve(_.last(_.split(response.headers.get('Location'), '/')));
             }).catch(err => {
@@ -345,7 +345,7 @@ export function addDestinationToEmptyGroup(options) {
 export function addNewMapping(options) {
     let headers = { 'Content-Type': 'application/json-patch+json' };
     return new Promise((resolve, reject) => {
-        Vue.http.patch('/api/cfmappings/' + options.subscriberId, [{
+        Vue.http.patch('api/cfmappings/' + options.subscriberId, [{
             op: 'replace',
             path: '/' + options.group,
             value: options.mappings
@@ -362,7 +362,7 @@ export function changePositionOfDestination(options) {
         'Content-Type': 'application/json-patch+json'
     };
     return new Promise((resolve, reject) => {
-        Vue.http.patch('/api/cfdestinationsets/' + options.id, [{
+        Vue.http.patch('api/cfdestinationsets/' + options.id, [{
             op: 'replace',
             path: '/destinations',
             value: options.destinations
@@ -580,7 +580,7 @@ export function deleteTimeFromTimeset(options) {
         'Content-Type': 'application/json-patch+json'
     };
     return new Promise((resolve, reject) => {
-        Vue.http.patch('/api/cftimesets/' + options.timesetId, [{
+        Vue.http.patch('api/cftimesets/' + options.timesetId, [{
             op: 'replace',
             path: '/times',
             value: options.times
@@ -594,7 +594,7 @@ export function deleteTimeFromTimeset(options) {
 
 export function deleteTimesetById(id) {
     return new Promise((resolve, reject) => {
-        Vue.http.delete('/api/cftimesets/' + id).then(() => {
+        Vue.http.delete('api/cftimesets/' + id).then(() => {
             resolve();
         }).catch(err => {
             reject(err);
@@ -625,7 +625,7 @@ export function addTimeToTimeset(options) {
         let headers = {
             'Content-Type': 'application/json-patch+json'
         };
-        Vue.http.patch('/api/cftimesets/' + options.id, [{
+        Vue.http.patch('api/cftimesets/' + options.id, [{
             op: 'replace',
             path: '/times',
             value: options.times
@@ -639,7 +639,7 @@ export function addTimeToTimeset(options) {
 
 export function addNewTimeset(timesetName) {
     return new Promise((resolve, reject) => {
-        Vue.http.post('/api/cftimesets/', { name: timesetName  })
+        Vue.http.post('api/cftimesets/', { name: timesetName  })
             .then(response => {
                 resolve(_.last(_.split(response.headers.get('Location'), '/')));
             }).catch(err => {
@@ -721,7 +721,7 @@ export function createTimesetWithTime(options) {
 
 export function getTimesByTimesetId(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/cftimesets/' + id).then((res)=>{
+        Vue.http.get('api/cftimesets/' + id).then((res)=>{
             let timeset = getJsonBody(res.body);
             delete timeset['_links'];
             resolve(timeset.times);
@@ -749,7 +749,7 @@ export function appendTimeToTimeset(options) {
 
 export function getSourcesBySourcesetId(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/cfsourcesets/' + id).then((res)=>{
+        Vue.http.get('api/cfsourcesets/' + id).then((res)=>{
             let sourceset = getJsonBody(res.body);
             resolve(sourceset.sources);
         }).catch((err)=>{
@@ -763,7 +763,7 @@ export function addSourceToSourceset(options) {
         let headers = {
             'Content-Type': 'application/json-patch+json'
         };
-        Vue.http.patch('/api/cfsourcesets/' + options.id, [{
+        Vue.http.patch('api/cfsourcesets/' + options.id, [{
             op: 'replace',
             path: '/sources',
             value: options.sources
@@ -792,7 +792,7 @@ export function appendSourceToSourceset(options) {
 
 export function createSourcesetWithSource(options) {
     return new Promise((resolve, reject) => {
-        Vue.http.post('/api/cfsourcesets/', {
+        Vue.http.post('api/cfsourcesets/', {
                 name: options.sourcesetName,
                 subscriber_id: options.subscriberId,
                 mode: options.mode,
@@ -809,7 +809,7 @@ export function createSourcesetWithSource(options) {
 
 export function deleteSourcesetById(id) {
     return new Promise((resolve, reject) => {
-        Vue.http.delete('/api/cfsourcesets/' + id).then(() => {
+        Vue.http.delete('api/cfsourcesets/' + id).then(() => {
             resolve();
         }).catch(err => {
             reject(err);
@@ -832,7 +832,7 @@ export function deleteSourceFromSourcesetByIndex(options) {
         let headers = {
             'Content-Type': 'application/json-patch+json'
         };
-        Vue.http.patch('/api/cfsourcesets/' + options.sourceset.sourcesetId, [{
+        Vue.http.patch('api/cfsourcesets/' + options.sourceset.sourcesetId, [{
             op: 'replace',
             path: '/sources',
             value: sources

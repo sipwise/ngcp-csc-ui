@@ -28,7 +28,7 @@ describe('Reminder', function() {
 
     it('should return 201 when creating a new reminder', function(done) {
         Vue.http.interceptors.unshift((request, next) => {
-            assert.equal(request.url, '/api/reminders/');
+            assert.equal(request.url, 'api/reminders/');
             assert.equal(request.body.subscriber_id, subscriberId);
             assert.equal(request.body.time, '00:00');
             assert.equal(request.body.recur, 'never');
@@ -37,7 +37,7 @@ describe('Reminder', function() {
                 request.respondWith('', {
                     status: 201,
                     headers: {
-                        location: '/api/reminders/' + reminderID
+                        location: 'api/reminders/' + reminderID
                     }
                 })
             )
@@ -51,7 +51,7 @@ describe('Reminder', function() {
 
     it('should get the existing reminder', function(done) {
         Vue.http.interceptors.unshift((request, next) => {
-            assert.equal(request.url, '/api/reminders/');
+            assert.equal(request.url, 'api/reminders/');
             assert.equal(request.params.supplier_id, subscriberId);
             next(request.respondWith(JSON.stringify({
                 "_embedded": {
@@ -88,7 +88,7 @@ describe('Reminder', function() {
 
     it('should activate a reminder', function(done) {
         Vue.http.interceptors.unshift((request, next) => {
-            assert.equal(request.url, '/api/reminders/' + reminderID);
+            assert.equal(request.url, 'api/reminders/' + reminderID);
             assert.equal(request.body[0].op, 'replace');
             assert.equal(request.body[0].path, '/active');
             assert.equal(request.body[0].value, true);
@@ -105,7 +105,7 @@ describe('Reminder', function() {
 
     it('should deactivate a reminder', function(done) {
         Vue.http.interceptors.unshift((request, next) => {
-            assert.equal(request.url, '/api/reminders/' + reminderID);
+            assert.equal(request.url, 'api/reminders/' + reminderID);
             assert.equal(request.body[0].op, 'replace');
             assert.equal(request.body[0].path, '/active');
             assert.equal(request.body[0].value, false);
@@ -122,7 +122,7 @@ describe('Reminder', function() {
 
     it('should set reminder time', function(done) {
         Vue.http.interceptors.unshift((request, next) => {
-            assert.equal(request.url, '/api/reminders/' + reminderID);
+            assert.equal(request.url, 'api/reminders/' + reminderID);
             assert.equal(request.body[0].op, 'replace');
             assert.equal(request.body[0].path, '/time');
             assert.equal(request.body[0].value, '22:22:00');
@@ -139,7 +139,7 @@ describe('Reminder', function() {
 
     it('should set reminder recurrence', function(done) {
         Vue.http.interceptors.unshift((request, next) => {
-            assert.equal(request.url, '/api/reminders/' + reminderID);
+            assert.equal(request.url, 'api/reminders/' + reminderID);
             assert.equal(request.body[0].op, 'replace');
             assert.equal(request.body[0].path, '/recur');
             assert.equal(request.body[0].value, 'always');
@@ -153,5 +153,5 @@ describe('Reminder', function() {
             done(err);
         });
     });
-    
+
 });

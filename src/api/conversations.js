@@ -9,7 +9,7 @@ export function getConversations(id, page, rows) {
     let params = { subscriber_id: id, page: page, rows: rows,
         order_by: 'timestamp', order_by_direction: 'desc' };
     return new Promise((resolve, reject) => {
-        Vue.http.get('/api/conversations/', { params: params })
+        Vue.http.get('api/conversations/', { params: params })
             .then(result => {
                 let jsonBody = getJsonBody(result.body);
                 if (_.has(jsonBody, "_embedded.ngcp:conversations")) {
@@ -38,7 +38,7 @@ export function getConversations(id, page, rows) {
 
 export function downloadVoiceMail(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/voicemailrecordings/' + id, { responseType: 'blob' })
+        Vue.http.get('api/voicemailrecordings/' + id, { responseType: 'blob' })
             .then(res => {
                 return res.blob();
             }).then(voicemail => {
@@ -52,7 +52,7 @@ export function downloadVoiceMail(id) {
 
 export function downloadFax(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/faxrecordings/' + id, { responseType: 'blob' })
+        Vue.http.get('api/faxrecordings/' + id, { responseType: 'blob' })
             .then(res => {
                 return res.blob();
             }).then(fax => {
