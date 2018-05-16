@@ -4,7 +4,7 @@ import Vue from 'vue';
 import { getNumbers, assignNumbers } from './user';
 import { createSubscriber, deleteSubscriber, setDisplayName,
     setPbxExtension, setPbxHuntPolicy, setPbxHuntTimeout,
-    setPbxGroupMemberIds, setPbxGroupIds, getSubscribers } from './subscriber';
+    setPbxGroupMemberIds, setPbxGroupIds, getSubscribers, getSubscriber } from './subscriber';
 import uuid from 'uuid';
 import { getList, get } from './common'
 
@@ -72,7 +72,7 @@ export function getDevices(options) {
     return new Promise((resolve, reject)=>{
         options = options || {};
         options = _.merge(options, {
-            path: '/api/pbxdevices/',
+            path: 'api/pbxdevices/',
             root: '_embedded.ngcp:pbxdevices'
         });
         getList(options).then((list)=>{
@@ -87,7 +87,7 @@ export function getProfiles(options) {
     return new Promise((resolve, reject)=>{
         options = options || {};
         options = _.merge(options, {
-            path: '/api/pbxdeviceprofiles/',
+            path: 'api/pbxdeviceprofiles/',
             root: '_embedded.ngcp:pbxdeviceprofiles'
         });
         getList(options).then((list)=>{
@@ -102,7 +102,7 @@ export function getModels(options) {
     return new Promise((resolve, reject)=>{
         options = options || {};
         options = _.merge(options, {
-            path: '/api/pbxdevicemodels/',
+            path: 'api/pbxdevicemodels/',
             root: '_embedded.ngcp:pbxdevicemodels'
         });
         getList(options).then((list)=>{
@@ -278,18 +278,31 @@ export function getDevice(id, join) {
         let device;
         Promise.resolve().then(()=>{
             return get({
-                path: '/api/pbxdevices/' + id
+                path: 'api/pbxdevices/' + id
             });
         }).then(($device)=> {
             device = $device;
             if(join === true) {
-                return getProfile(device.profile_id, join);
+                let requests = [
+                    getProfile(device.profile_id, join)
+                ];
+                if(_.isArray(device.lines) && device.lines.length > 0) {
+                    device.lines.forEach((line)=>{
+                        requests.push(getSubscriber(line.subscriber_id));
+                    });
+                }
+                return Promise.all(requests);
             }
             else {
                 resolve(device);
             }
-        }).then((profile)=>{
-            device.profile = profile;
+        }).then((results)=>{
+            device.profile = results[0];
+            if(results.length > 1) {
+                for(let i = 1; i < results.length; i++) {
+                    device.lines[i - 1].subscriber = results[i];
+                }
+            }
             resolve(device);
         }).catch((err)=>{
             reject(err);
@@ -302,13 +315,13 @@ export function getProfile(id, join) {
         let profile;
         Promise.resolve().then(()=>{
             return get({
-                path: '/api/pbxdeviceprofiles/' + id
+                path: 'api/pbxdeviceprofiles/' + id
             });
         }).then(($profile)=> {
             profile = $profile;
             if(join === true) {
                 return Promise.all([
-                    // getModel(profile.device_id),
+                    getModel(profile.device_id),
                     getModelFrontImage(profile.device_id)
                 ]);
             }
@@ -316,8 +329,8 @@ export function getProfile(id, join) {
                 resolve(profile);
             }
         }).then((res)=>{
-            // profile.model = res[0];
-            profile.modelFrontImage = res[0];
+            profile.model = res[0];
+            profile.modelFrontImage = res[1];
             profile.modelFrontImageUrl = URL.createObjectURL(profile.modelFrontImage);
             resolve(profile);
         }).catch((err)=>{
@@ -330,7 +343,7 @@ export function getModel(id) {
     return new Promise((resolve, reject)=>{
         Promise.resolve().then(()=>{
             return get({
-                path: '/api/pbxdevicemodels/' + id
+                path: 'api/pbxdevicemodels/' + id
             });
         }).then((model)=> {
             resolve(model);
@@ -342,7 +355,7 @@ export function getModel(id) {
 
 export function getModelFrontImage(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/pbxdevicemodelimages/' + id, {
+        Vue.http.get('api/pbxdevicemodelimages/' + id, {
             responseType: 'blob',
             params: {
                 type: 'front'

@@ -8,7 +8,7 @@ export function createFax(options, subscriberId) {
         };
         let mergedParams = Object.assign(options, subscriberId);
         let payload = JSON.stringify(mergedParams);
-        Vue.http.post('/api/faxes/', payload, { headers: headers }).then(() => {
+        Vue.http.post('api/faxes/', payload, { headers: headers }).then(() => {
             resolve();
         }).catch((err)=>{
             reject(err);
