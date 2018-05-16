@@ -8,5 +8,6 @@
 
 override_dh_auto_install:
 	npm install
+	cp src/config.template.js src/config.js
 	npm run build
 	mv dist csc

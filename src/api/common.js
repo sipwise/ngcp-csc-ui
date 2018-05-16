@@ -15,6 +15,9 @@ export function getList(options) {
             params: {
                 page: LIST_DEFAULT_PAGE,
                 rows: LIST_DEFAULT_ROWS
+            },
+            headers: {
+                'Accept': 'application/json'
             }
         }, options);
         Promise.resolve().then(()=>{
@@ -22,7 +25,8 @@ export function getList(options) {
                 options.params.rows = LIST_ALL_ROWS;
             }
             return Vue.http.get(options.path, {
-                params: options.params
+                params: options.params,
+                headers: options.headers
             });
         }).then((res)=>{
             let body = getJsonBody(res.body);
@@ -30,7 +34,8 @@ export function getList(options) {
                 return Vue.http.get(options.path, {
                     params: _.merge(options.params, {
                         rows: body.total_count
-                    })
+                    }),
+                    headers: options.headers
                 });
             }
             else {
@@ -54,7 +59,11 @@ export function getList(options) {
 
 export function get(options) {
     return new Promise((resolve, reject)=>{
-        return Vue.http.get(options.path).then((result)=>{
+        return Vue.http.get(options.path, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        }).then((result)=>{
             resolve(getJsonBody(result.body));
         }).catch((err)=>{
             if(err.status && err.status >= 400) {

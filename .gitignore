@@ -15,3 +15,5 @@ t/TESTS*
 *.iml
 
 csc/
+
+src/config.js

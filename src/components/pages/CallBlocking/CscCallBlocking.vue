@@ -37,7 +37,7 @@
             </div>
         </div>
         <div>
-            <q-card class="blocked-number" v-for="(number, index) in numbers">
+            <q-card class="blocked-number" v-for="(number, index) in numbers" :key="index">
                 <q-card-title>
                     <q-icon v-if="!(editing && editingIndex == index) && enabled == 'blacklist'" name="fa-ban" color="negative" size="22px"/>
                     <q-icon v-if="!(editing && editingIndex == index) && enabled == 'whitelist'" name="check" color="primary" size="22px"/>

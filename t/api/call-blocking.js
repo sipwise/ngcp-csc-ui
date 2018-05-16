@@ -31,7 +31,7 @@ describe('CallBlocking', function(){
     describe('Incoming', function(){
         it('should enable call blocking for incoming calls', function(done) {
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 assert.equal(request.body[0].op, 'replace');
                 assert.equal(request.body[0].path, '/block_in_mode');
                 assert.equal(request.body[0].value, true);
@@ -48,7 +48,7 @@ describe('CallBlocking', function(){
 
         it('should disable call blocking for incoming calls', function(done) {
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 assert.equal(request.body[0].op, 'replace');
                 assert.equal(request.body[0].path, '/block_in_mode');
                 assert.equal(request.body[0].value, false);
@@ -69,7 +69,7 @@ describe('CallBlocking', function(){
                 "0987654321"
             ];
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 next(request.respondWith(JSON.stringify({
                     "block_in_list" : list,
                     "block_in_mode" : true
@@ -92,7 +92,7 @@ describe('CallBlocking', function(){
                 "0123456789"
             ];
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 if(request.method === 'GET') {
                     next(request.respondWith(JSON.stringify({
                         "block_in_list" : list
@@ -119,7 +119,7 @@ describe('CallBlocking', function(){
                 "0123456789"
             ];
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 if(request.method === 'GET') {
                     next(request.respondWith(JSON.stringify({
                         "block_in_list" : list
@@ -146,7 +146,7 @@ describe('CallBlocking', function(){
                 "0123456789"
             ];
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 if(request.method === 'GET') {
                     next(request.respondWith(JSON.stringify({
                         "block_in_list" : [].concat([number]).concat(list)
@@ -171,7 +171,7 @@ describe('CallBlocking', function(){
     describe('Outgoing', function(){
         it('should enable call blocking for outgoing calls', function(done) {
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 assert.equal(request.body[0].op, 'replace');
                 assert.equal(request.body[0].path, '/block_out_mode');
                 assert.equal(request.body[0].value, true);
@@ -188,7 +188,7 @@ describe('CallBlocking', function(){
 
         it('should disable call blocking for outgoing calls', function(done) {
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 assert.equal(request.body[0].op, 'replace');
                 assert.equal(request.body[0].path, '/block_out_mode');
                 assert.equal(request.body[0].value, false);
@@ -209,7 +209,7 @@ describe('CallBlocking', function(){
                 "0987654321"
             ];
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 next(request.respondWith(JSON.stringify({
                     "block_out_list" : list,
                     "block_out_mode" : true
@@ -232,7 +232,7 @@ describe('CallBlocking', function(){
                 "0123456789"
             ];
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 if(request.method === 'GET') {
                     next(request.respondWith(JSON.stringify({
                         "block_out_list" : list
@@ -259,7 +259,7 @@ describe('CallBlocking', function(){
                 "0123456789"
             ];
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 if(request.method === 'GET') {
                     next(request.respondWith(JSON.stringify({
                         "block_out_list" : list
@@ -286,7 +286,7 @@ describe('CallBlocking', function(){
                 "0123456789"
             ];
             Vue.http.interceptors.unshift((request, next)=>{
-                assert.equal(request.url, '/api/subscriberpreferences/' + subscriberId);
+                assert.equal(request.url, 'api/subscriberpreferences/' + subscriberId);
                 if(request.method === 'GET') {
                     next(request.respondWith(JSON.stringify({
                         "block_out_list" : [].concat([number]).concat(list)
