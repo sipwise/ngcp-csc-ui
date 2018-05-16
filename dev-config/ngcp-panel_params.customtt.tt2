@@ -1,0 +1,21 @@
+include /etc/nginx/fastcgi_params;
+# Catalyst requires setting PATH_INFO (instead of SCRIPT_NAME) to $fastcgi_script_name
+fastcgi_param  SCRIPT_NAME '';
+fastcgi_param  PATH_INFO $fastcgi_script_name;
+fastcgi_pass   unix:/var/run/fastcgi/ngcp-panel.sock;
+
+add_header 'Access-Control-Allow-Origin' '*' always;
+add_header 'Access-Control-Allow-Headers' 'Authorization,DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type' always;
+add_header 'Access-Control-Allow-Methods' 'POST, GET, PUT, DELETE, PATCH, OPTIONS' always;
+add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range,Location';
+
+if ($request_method = 'OPTIONS') {
+	add_header 'Access-Control-Allow-Origin' '*' always;
+	add_header 'Access-Control-Allow-Headers' 'Authorization,DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type' always;
+	add_header 'Access-Control-Allow-Methods' 'POST, GET, PUT, DELETE, PATCH, OPTIONS' always;
+	add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range,Location';
+	add_header 'Access-Control-Max-Age' '1728000' always;
+    add_header 'Content-Type' 'text/plain charset=UTF-8' always;
+    add_header 'Content-Length' '0' always;
+    return 204;
+}

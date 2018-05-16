@@ -8,7 +8,7 @@ export function createReminder(id) {
             recur: 'never',
             active: false
         };
-        Vue.http.post('/api/reminders/', data).then((result) => {
+        Vue.http.post('api/reminders/', data).then((result) => {
             var reminderID = result.headers.get('Location').split('/')[3];
             resolve(reminderID);
         }).catch((err) => {
@@ -19,7 +19,7 @@ export function createReminder(id) {
 
 export function getReminder(id) {
     return new Promise((resolve, reject) => {
-        Vue.http.get('/api/reminders/', {
+        Vue.http.get('api/reminders/', {
             params: {
                 supplier_id: id
             }
@@ -59,7 +59,7 @@ function patchReminder(id, field, value) {
                 'Content-Type': 'application/json-patch+json'
             }
         };
-        Vue.http.patch('/api/reminders/' + id, data, patchHeaders).then(() => {
+        Vue.http.patch('api/reminders/' + id, data, patchHeaders).then(() => {
             resolve();
         }).catch((err) => {
             reject(err);

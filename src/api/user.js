@@ -7,7 +7,7 @@ export function login(username, password) {
     return new Promise((resolve, reject)=>{
         var jwt = null;
         var subscriberId = null;
-        Vue.http.post('/login_jwt', {
+        Vue.http.post('login_jwt', {
             username: username,
             password: password
         }).then((result)=>{
@@ -46,7 +46,7 @@ export function getUserData(id) {
 
 export function getSubscriberById(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/subscribers/' + id).then((result)=>{
+        Vue.http.get('api/subscribers/' + id).then((result)=>{
             var body = JSON.parse(result.body);
             resolve(body);
         }).catch((err)=>{
@@ -57,7 +57,7 @@ export function getSubscriberById(id) {
 
 export function getCapabilities() {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('/api/capabilities/').then((result)=>{
+        Vue.http.get('api/capabilities/').then((result)=>{
             var capabilities = {};
             var body = JSON.parse(result.body);
             if(_.isArray(body["_embedded"]["ngcp:capabilities"])) {
@@ -77,7 +77,7 @@ export function assignNumber(numberId, subscriberId) {
         var headers = {};
         headers['Content-Type'] = 'application/json-patch+json';
         Promise.resolve().then(() => {
-            return Vue.http.patch('/api/numbers/' + numberId, [{
+            return Vue.http.patch('api/numbers/' + numberId, [{
                 op: 'replace',
                 path: '/subscriber_id',
                 value: subscriberId
@@ -114,7 +114,7 @@ export function assignNumbers(numberIds, subscriberId) {
 export function getNumbers() {
     return new Promise((resolve, reject)=>{
         let params = {};
-        let path = '/api/numbers';
+        let path = 'api/numbers';
         Promise.resolve().then(()=>{
             return Vue.http.get(path, {
                 params: _.assign(params, {
