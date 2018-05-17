@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_03bc146b",
+        "filename": "README.md",
+        "patchSetId": 5
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-05-17T09:35:30Z",
+      "side": 1,
+      "message": "Sometimes we need to do \u0027monit restart proxy\u0027 afterwards. Maybe useful to put it in here as well.",
+      "revId": "8b623cb40572d01c94aa62f592e71f8e4f8b932f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
