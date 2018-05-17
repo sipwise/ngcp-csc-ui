@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_03c77413",
+        "filename": "README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-05-17T09:21:17Z",
+      "side": 1,
+      "message": "It would be a little less misleading in this case if this is changed to \u0027Enable call\u0027 for example.",
+      "range": {
+        "startLine": 77,
+        "startChar": 20,
+        "endLine": 77,
+        "endChar": 30
+      },
+      "revId": "5c63e22d72a3d4334c97a1c6f0915b8a9e108631",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_4377ac02",
+        "filename": "README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-05-17T09:21:17Z",
+      "side": 1,
+      "message": "Spelling error",
+      "range": {
+        "startLine": 86,
+        "startChar": 38,
+        "endLine": 86,
+        "endChar": 46
+      },
+      "revId": "5c63e22d72a3d4334c97a1c6f0915b8a9e108631",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
