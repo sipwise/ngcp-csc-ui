@@ -17,7 +17,6 @@ import { enableIncomingCallBlocking,
     getPrivacyCallBlocking
 } from '../api/call-blocking';
 
-
 export default {
     namespaced: true,
     state: {
