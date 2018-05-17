@@ -1,7 +1,7 @@
 
 import DefaultLayout from './components/layouts/Default'
 import Home from './components/pages/Home'
-import Conversations from './components/pages/Conversations'
+import Conversations from './components/pages/Conversations/Conversations'
 import CallForwardAlways from './components/pages/CallForward/Always'
 import CallForwardCompanyHours from './components/pages/CallForward/CompanyHours'
 import CallForwardAfterHours from './components/pages/CallForward/AfterHours'
