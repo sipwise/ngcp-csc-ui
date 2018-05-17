@@ -63,9 +63,3 @@ export function downloadFax(id) {
             });
     });
 }
-
-
-
-
-
-
