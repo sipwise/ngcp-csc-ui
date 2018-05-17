@@ -22,6 +22,30 @@
       "revId": "5ea01fb3349131ea6d74141e1c6c1e6d25c18169",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_0982f552",
+        "filename": "src/store/call-forward.js",
+        "patchSetId": 5
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-05-17T19:14:01Z",
+      "side": 1,
+      "message": "Well spotted! Fixed.",
+      "parentUuid": "fabf19d9_6ee4d70c",
+      "range": {
+        "startLine": 179,
+        "startChar": 42,
+        "endLine": 179,
+        "endChar": 47
+      },
+      "revId": "5ea01fb3349131ea6d74141e1c6c1e6d25c18169",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
