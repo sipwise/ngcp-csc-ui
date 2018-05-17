@@ -71,10 +71,10 @@
 </template>
 
 <script>
-    import CscCardCollapsible from './card/CscCardCollapsible'
+    import CscCardCollapsible from '../../card/CscCardCollapsible'
     import { QBtn, QPopover, QItem, QList, QCardActions,
         QChip, QCardSeparator } from 'quasar-framework'
-    import numberFormat from '../filters/number-format'
+    import numberFormat from '../../../filters/number-format'
     export default {
         name: 'csc-conversation',
         props: [
