@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_6e1df70e",
+        "filename": "src/store/call-forward.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-05-17T12:54:15Z",
+      "side": 1,
+      "message": "Noticed this, is it there accidentally or purposely?",
+      "range": {
+        "startLine": 179,
+        "startChar": 42,
+        "endLine": 179,
+        "endChar": 67
+      },
+      "revId": "6b979c6d3f0d5c3e12b640e382e524ab086532ba",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
