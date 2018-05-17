@@ -1,0 +1,5 @@
+
+export default {
+    baseHttpUrl: 'https://10.15.17.240',
+    baseWsUrl: 'wss://10.15.17.240'
+}
