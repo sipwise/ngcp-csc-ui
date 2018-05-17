@@ -1,6 +1,10 @@
 'use strict';
 
-import { getConversations, downloadVoiceMail, downloadFax } from '../api/conversations'
+import {
+    getConversations,
+    downloadVoiceMail,
+    downloadFax
+} from '../api/conversations'
 
 const RequestState = {
     button: 'button',
@@ -49,9 +53,17 @@ export default {
         downloadFaxFailed(state, error) {
             state.downloadFaxState = RequestState.failed;
             state.downloadFaxError = error;
+        },
+        resetConversations(state) {
+            state.conversations = [];
+            state.page = 1;
         }
     },
     actions: {
+        reloadConversations(context) {
+            context.commit('resetConversations');
+            context.dispatch('loadConversations');
+        },
         loadConversations(context) {
             return new Promise((resolve, reject) => {
                 getConversations(localStorage.getItem('subscriberId'), context.state.page, context.state.rows)
