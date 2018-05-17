@@ -6,10 +6,10 @@
 
 <script>
     import { mapState } from 'vuex'
-    import CscPage from '../CscPage'
-    import CscConversations from '../CscConversations'
+    import CscPage from '../../CscPage'
+    import CscConversations from './CscConversations'
     import { startLoading, stopLoading,
-        showGlobalError, showToast } from '../../helpers/ui'
+        showGlobalError, showToast } from '../../../helpers/ui'
     export default {
         data () {
             return {
