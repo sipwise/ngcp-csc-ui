@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_6ee4d70c",
+        "filename": "src/store/call-forward.js",
+        "patchSetId": 5
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-05-17T13:03:46Z",
+      "side": 1,
+      "message": "Maybe \u0027sources\u0027 instead? :)",
+      "range": {
+        "startLine": 179,
+        "startChar": 42,
+        "endLine": 179,
+        "endChar": 47
+      },
+      "revId": "5ea01fb3349131ea6d74141e1c6c1e6d25c18169",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
