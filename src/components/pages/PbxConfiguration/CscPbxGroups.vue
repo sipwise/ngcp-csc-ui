@@ -35,6 +35,7 @@
     } from 'quasar-framework'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
+    import { showToast } from '../../../helpers/ui'
 
     export default {
         mixins: [aliasNumberOptions, itemError],
@@ -93,9 +94,15 @@
                 'seats',
                 'aliasNumbers',
                 'addState',
+                'removeState',
                 'isAdding',
                 'isUpdating',
                 'updateItemId',
+                'isUpdatingAliasNumbers',
+                'updateAliasNumbersItemId',
+                'isUpdatingGroupsAndSeats',
+                'updateGroupsAndSeatsItemId',
+                'updateState',
                 'isRemoving',
                 'removeItemId',
                 'listState',
@@ -103,20 +110,48 @@
                 'isListRequesting',
                 'isListLoadingVisible',
                 'listCurrentPage',
-                'listLastPage'
+                'listLastPage',
+                'lastAddedGroup',
+                'lastRemovedGroup',
+                'lastUpdatedField',
+                'updateAliasNumbersState',
+                'updateGroupsAndSeatsState'
             ])
         },
         watch: {
             addState(state) {
                 if(state === 'succeeded') {
                     this.disableAddForm();
+                    showToast(this.$t('pbxConfig.toasts.addedGroupToast', { group: this.lastAddedGroup }));
+                }
+            },
+            removeState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.removedGroupToast', { group: this.lastRemovedGroup }));
+                }
+            },
+            updateState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.changedFieldToast', this.lastUpdatedField));
+                }
+            },
+            updateAliasNumbersState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.updatedAliasNumbersToast'));
+                }
+            },
+            updateGroupsAndSeatsState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.updatedSeatsInGroupToast', {group: this.seat}));
                 }
             }
         },
         methods: {
             isItemLoading(groupId) {
                 return (this.isUpdating && this.updateItemId + "" === groupId + "") ||
-                    (this.isRemoving && this.removeItemId + "" === groupId + "");
+                    (this.isRemoving && this.removeItemId + "" === groupId + "") ||
+                    (this.isUpdatingAliasNumbers && this.updateAliasNumbersItemId + "" === groupId + "") ||
+                    (this.isUpdatingGroupsAndSeats && this.updateGroupsAndSeatsItemId + "" === groupId + "");
             },
             resetAddForm() {
                 this.$refs.addForm.reset();

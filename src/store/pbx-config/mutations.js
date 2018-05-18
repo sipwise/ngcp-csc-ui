@@ -93,6 +93,32 @@ export default {
         state.updateState = RequestState.failed;
         state.updateError = error;
     },
+    updateAliasNumbersRequesting(state, item) {
+        state.updateAliasNumbersState = RequestState.requesting;
+        state.updateAliasNumbersError = null;
+        state.updateAliasNumbersItem = item;
+    },
+    updateAliasNumbersSucceeded(state) {
+        state.updateAliasNumbersState = RequestState.succeeded;
+        state.updateAliasNumbersError = null;
+    },
+    updateAliasNumbersFailed(state, error) {
+        state.updateAliasNumbersState = RequestState.failed;
+        state.updateAliasNumbersError = error;
+    },
+    updateGroupsAndSeatsRequesting(state, item) {
+        state.updateGroupsAndSeatsState = RequestState.requesting;
+        state.updateGroupsAndSeatsError = null;
+        state.updateGroupsAndSeatsItem = item;
+    },
+    updateGroupsAndSeatsSucceeded(state) {
+        state.updateGroupsAndSeatsState = RequestState.succeeded;
+        state.updateGroupsAndSeatsError = null;
+    },
+    updateGroupsAndSeatsFailed(state, error) {
+        state.updateGroupsAndSeatsState = RequestState.failed;
+        state.updateGroupsAndSeatsError = error;
+    },
     removeItemRequesting(state, item) {
         state.removeState = RequestState.requesting;
         state.removeError = null;
@@ -154,5 +180,20 @@ export default {
         let deviceLoadingErrors = _.clone(state.deviceLoadingErrors);
         deviceLoadingErrors[deviceId + ""] = errorMessage;
         state.deviceLoadingErrors = deviceLoadingErrors;
+    },   
+    lastAddedGroup(state, group) {
+        state.lastAddedGroup = group;
+    },
+    lastRemovedGroup(state, group) {
+        state.lastRemovedGroup = group;
+    },
+    lastAddedSeat(state, seat) {
+        state.lastAddedSeat = seat;
+    },
+    lastRemovedSeat(state, seat) {
+        state.lastRemovedSeat = seat;
+    },
+    lastUpdatedField(state, group) {
+        state.lastUpdatedField = group;
     }
 }

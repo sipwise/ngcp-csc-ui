@@ -73,15 +73,39 @@ export default {
     isUpdating(state) {
         return state.updateState === RequestState.requesting;
     },
+    isUpdatingAliasNumbers(state) {
+        return state.updateAliasNumbersState === RequestState.requesting;
+    },
+    isUpdatingGroupsAndSeats(state) {
+        return state.updateGroupsAndSeatsState === RequestState.requesting;
+    },
     updateState(state) {
         return state.updateState;
     },
     updateItem(state) {
         return state.updateItem;
     },
+    updateGroupsAndSeatsItem(state) {
+        return state.updateGroupsAndSeatsItem;
+    },
+    updateAliasNumbersItem(state) {
+        return state.updateAliasNumbersItem;
+    },
     updateItemId(state, getters) {
         if(_.isObject(getters.updateItem)) {
             return getters.updateItem.id;
+        }
+        return null;
+    },
+    updateGroupsAndSeatsItemId(state, getters) {
+        if(_.isObject(getters.updateGroupsAndSeatsItem)) {
+            return getters.updateGroupsAndSeatsItem.id;
+        }
+        return null;
+    },
+    updateAliasNumbersItemId(state, getters) {
+        if(_.isObject(getters.updateAliasNumbersItem)) {
+            return getters.updateAliasNumbersItem.id;
         }
         return null;
     },
@@ -129,5 +153,26 @@ export default {
         return (id)=>{
             return state.deviceLoadingStates[id + ""] === true;
         }
+    },
+    lastAddedGroup(state) {
+        return state.lastAddedGroup;
+    },
+    lastRemovedGroup(state) {
+        return state.lastRemovedGroup;
+    },
+    lastUpdatedField(state) {
+        return state.lastUpdatedField;
+    },
+    updateAliasNumbersState(state) {
+        return state.updateAliasNumbersState;
+    },
+    updateGroupsAndSeatsState(state) {
+        return state.updateGroupsAndSeatsState;
+    },
+    lastAddedSeat(state) {
+        return state.lastAddedSeat;
+    },
+    lastRemovedSeat(state) {
+        return state.lastRemovedSeat;
     }
 }

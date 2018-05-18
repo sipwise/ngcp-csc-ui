@@ -31,5 +31,14 @@ export default {
     removeError: null,
     removeItem: null,
     deviceLoadingStates: {},
-    deviceLoadingErrors: {}
+    deviceLoadingErrors: {},
+    lastAddedGroup: null,
+    lastRemovedGroup: null,
+    lastAddedSeat: null,
+    lastRemovedSeat: null,
+    lastUpdatedField: null,
+    updateAliasNumbersState: RequestState.initiated,
+    updateAliasNumbersItem: null,
+    updateGroupsAndSeatsState: RequestState.initiated,
+    updateGroupsAndSeatsItem: null
 }
