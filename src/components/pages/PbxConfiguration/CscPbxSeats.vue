@@ -32,7 +32,8 @@
         QSpinnerMat, Dialog, QPagination } from 'quasar-framework'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
-    import { mapGetters } from 'vuex'
+    import { mapGetters, mapState } from 'vuex'
+    import { showToast } from '../../../helpers/ui'
 
     export default {
         mixins: [aliasNumberOptions, itemError],
@@ -54,10 +55,18 @@
             QSpinnerMat, Dialog, QPagination
         },
         computed: {
+            ...mapState('pbxConfig', [
+                'lastAddedSeat',
+                'lastRemovedSeat',
+                'lastUpdatedField',
+                'updateAliasNumbersState',
+                'updateGroupsAndSeatsState'
+            ]),
             ...mapGetters('pbxConfig', [
                 'seats',
                 'groups',
                 'addState',
+                'removeState',
                 'isAdding',
                 'isUpdating',
                 'updateItemId',
@@ -86,6 +95,27 @@
             addState(state) {
                 if(state === 'succeeded') {
                     this.disableAddForm();
+                    showToast(this.$t('pbxConfig.toasts.addedSeatToast', { seat: this.lastAddedSeat }));
+                }
+            },
+            removeState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.removedSeatToast', { seat: this.lastRemovedSeat }));
+                }
+            },
+            updateState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.changedFieldToast', this.lastUpdatedField));
+                }
+            },
+            updateAliasNumbersState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.updatedAliasNumbersToast'));
+                }
+            },
+            updateGroupsAndSeatsState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.updatedGroupsInSeatToast', {seat: this.group}));
                 }
             }
         },

@@ -268,12 +268,12 @@
         "addGroup": "Add Group",
         "removeGroup": "Remove group",
         "removeGroupTitle": "Remove group",
-        "removeGroupText": "You are about to remove group \"{group}\"",
+        "removeGroupText": "You are about to remove group {group}",
         "seatName": "Seat Name",
         "addSeat": "Add Seat",
         "removeSeat": "Remove seat",
         "removeSeatTitle": "Remove seat",
-        "removeSeatText": "You are about to remove seat \"{seat}\"",
+        "removeSeatText": "You are about to remove seat {seat}",
         "devicesTitle": "Devices",
         "deviceStationName": "Station name",
         "deviceIdentifier": "MAC address",
@@ -282,7 +282,17 @@
         "seatsTitle": "Seats",
         "noDevices": "No devices created yet",
         "noGroups": "No groups created yet",
-        "noSeats": "No seats created yet"
+        "noSeats": "No seats created yet",
+        "toasts": {
+            "changedFieldToast": "Changed {type} to {name}",
+            "updatedAliasNumbersToast": "Alias numbers field updated!",
+            "updatedSeatsInGroupToast": "Group seat field updated!",
+            "updatedGroupsInSeatToast": "Seat group field updated!",
+            "addedGroupToast": "Added group {group}",
+            "removedGroupToast": "Removed group {group}",
+            "addedSeatToast": "Added seat {seat}",
+            "removedSeatToast": "Removed seat {seat}"
+        }
     },
     "communication": {
         "sendFax": "Send Fax",
