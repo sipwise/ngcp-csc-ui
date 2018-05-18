@@ -276,7 +276,21 @@
         "seatsTitle": "Seats",
         "noDevices": "No devices created yet",
         "noGroups": "No groups created yet",
-        "noSeats": "No seats created yet"
+        "noSeats": "No seats created yet",
+        "toasts": {
+            "changedExtensionToast": "Extension changed",
+            "changedFieldToast": "Changed {type} to {name}",
+            "changedHuntPolicyToast": "Hunt policy changed",
+            "changedHuntTimeoutToast": "Hunt timeout changed",
+            "addedAliasNumbersToast": "Alias number(s) with id(s) added: {numbers}",
+            "removedAliasNumbersToast": "Alias number(s) with id(s) removed: {numbers}",
+            "updatedSeatsInGroupToast": "Seat(s) updated!",
+            "updatedGroupsInSeatToast": "Group(s) updated!",
+            "addedGroupToast": "Added group \"{group}\"",
+            "removedGroupToast": "Removed group \"{group}\"",
+            "addedSeatToast": "Added seat \"{seat}\"",
+            "removedSeatToast": "Removed seat \"{seat}\""
+        }
     },
     "communication": {
         "sendFax": "Send Fax",

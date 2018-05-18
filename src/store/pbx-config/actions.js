@@ -25,6 +25,7 @@ export default {
         group.customerId = context.state.pilot.customer_id;
         group.domainId = context.state.pilot.domain_id;
         context.commit('addItemRequesting', group);
+        context.commit('lastAddedGroup', group.name);
         addGroup(group).then(()=>{
             return context.dispatch('listGroups', true);
         }).then(()=>{
@@ -35,6 +36,7 @@ export default {
     },
     setGroupName(context, group) {
         context.commit('updateItemRequesting', group);
+        context.commit('lastUpdatedField', {name: group.name, type: 'group name'});
         setGroupName(group.id, group.name).then(() => {
             return context.dispatch('listGroups', true);
         }).then(()=>{
@@ -45,6 +47,7 @@ export default {
     },
     setGroupExtension(context, group) {
         context.commit('updateItemRequesting', group);
+        context.commit('lastUpdatedField', {name: group.extension, type: 'group extension'});
         setGroupExtension(group.id, group.extension).then(()=>{
             return context.dispatch('listGroups', true);
         }).then(() => {
@@ -55,6 +58,7 @@ export default {
     },
     setGroupHuntPolicy(context, group) {
         context.commit('updateItemRequesting', group);
+        context.commit('lastUpdatedField', {name: group.huntPolicy + " ringing", type: 'group hunt policy'});
         setGroupHuntPolicy(group.id, group.huntPolicy).then(() => {
             return context.dispatch('listGroups', true);
         }).then(()=>{
@@ -65,6 +69,7 @@ export default {
     },
     setGroupHuntTimeout(context, group) {
         context.commit('updateItemRequesting', group);
+        context.commit('lastUpdatedField', {name: group.huntTimeout + " seconds", type: 'group hunt timeout'});
         setGroupHuntTimeout(group.id, group.huntTimeout).then(()=>{
             return context.dispatch('listGroups', true);
         }).then(() => {
@@ -74,30 +79,36 @@ export default {
         });
     },
     updateAliasNumbers(context, data) {
-        context.commit('updateItemRequesting', data.item);
+        let addedNumbers = data.add.length > 0 ? data.add : null;
+        let removedNumbers = data.remove.length > 0 ? data.remove : null;
+        context.commit('updateAliasNumbersRequesting', data.item);
         Promise.all([
             assignNumbers(data.add, data.item.id),
             assignNumbers(data.remove, context.getters.pilotId)
         ]).then(()=>{
             return context.dispatch('listGroups', true);
         }).then(()=>{
-            context.commit('updateItemSucceeded');
+            context.commit('addedAliasNumbersField', addedNumbers);
+            context.commit('removedAliasNumbersField', removedNumbers);
+            context.commit('updateAliasNumbersSucceeded');
         }).catch((err)=>{
-            context.commit('updateItemFailed', err.message);
+            context.commit('updateAliasNumbersFailed', err.message);
         });
     },
     updateSeats(context, group) {
-        context.commit('updateItemRequesting', group);
+        context.commit('updateGroupsAndSeatsRequesting', group);
+        context.commit('updatedGroupsInSeatToast', group.seats);
         updateGroupSeats(group.id, group.seats).then(()=>{
             return context.dispatch('listGroups', true);
         }).then(() => {
-            context.commit('updateItemSucceeded');
+            context.commit('updateGroupsAndSeatsSucceeded');
         }).catch((err) => {
-            context.commit('updateItemFailed', err.message);
+            context.commit('updateGroupsAndSeatsFailed', err.message);
         });
     },
     removeGroup(context, group) {
         context.commit('removeItemRequesting', group);
+        context.commit('lastRemovedGroup', group.name);
         removeGroup(group.id).then(()=>{
             return context.dispatch('listGroups', true);
         }).then(()=>{
@@ -124,6 +135,7 @@ export default {
         seat.customerId = context.state.pilot.customer_id;
         seat.domainId = context.state.pilot.domain_id;
         context.commit('addItemRequesting', seat);
+        context.commit('lastAddedSeat', seat.name);
         addSeat(seat).then(()=>{
             return context.dispatch('listSeats', true);
         }).then(()=>{
@@ -134,6 +146,7 @@ export default {
     },
     setSeatName(context, seat) {
         context.commit('updateItemRequesting', seat);
+        context.commit('lastUpdatedField', {name: seat.name, type: 'seat name'});
         setSeatName(seat.id, seat.name).then(() => {
             return context.dispatch('listSeats', true);
         }).then(()=>{
@@ -144,6 +157,7 @@ export default {
     },
     setSeatExtension(context, seat) {
         context.commit('updateItemRequesting', seat);
+        context.commit('lastUpdatedField', {name: seat.extension, type: 'seat extension'});
         setSeatExtension(seat.id, seat.extension).then(()=>{
             return context.dispatch('listSeats', true);
         }).then(() => {
@@ -153,17 +167,19 @@ export default {
         });
     },
     updateGroups(context, seat) {
-        context.commit('updateItemRequesting', seat);
+        context.commit('updateGroupsAndSeatsRequesting', seat);
+        context.commit('updatedSeatsInGroupToast', seat.groups);
         updateSeatGroups(seat.id, seat.groups).then(()=>{
             return context.dispatch('listSeats', true);
         }).then(() => {
-            context.commit('updateItemSucceeded');
+            context.commit('updateGroupsAndSeatsSucceeded');
         }).catch((err) => {
-            context.commit('updateItemFailed', err.message);
+            context.commit('updateGroupsAndSeatsFailed', err.message);
         });
     },
     removeSeat(context, seat) {
         context.commit('removeItemRequesting', seat);
+        context.commit('lastRemovedSeat', seat.name);
         removeSeat(seat.id).then(()=>{
             return context.dispatch('listSeats', true);
         }).then(()=>{

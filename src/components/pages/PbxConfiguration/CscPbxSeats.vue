@@ -32,7 +32,8 @@
         QSpinnerMat, Dialog, QPagination } from 'quasar-framework'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
-    import { mapGetters } from 'vuex'
+    import { mapGetters, mapState } from 'vuex'
+    import { showToast } from '../../../helpers/ui'
 
     export default {
         mixins: [aliasNumberOptions, itemError],
@@ -54,10 +55,20 @@
             QSpinnerMat, Dialog, QPagination
         },
         computed: {
+            ...mapState('pbxConfig', [
+                'lastAddedSeat',
+                'lastRemovedSeat',
+                'lastUpdatedField',
+                'updateAliasNumbersState',
+                'addedAliasNumbersField',
+                'removedAliasNumbersField',
+                'updateGroupsAndSeatsState'
+            ]),
             ...mapGetters('pbxConfig', [
                 'seats',
                 'groups',
                 'addState',
+                'removeState',
                 'isAdding',
                 'isUpdating',
                 'updateItemId',
@@ -86,6 +97,34 @@
             addState(state) {
                 if(state === 'succeeded') {
                     this.disableAddForm();
+                    showToast(this.$t('pbxConfig.toasts.addedSeatToast', { seat: this.lastAddedSeat }));
+                }
+            },
+            removeState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.removedSeatToast', { seat: this.lastRemovedSeat }));
+                }
+            },
+            updateState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.changedFieldToast', this.lastUpdatedField));
+                }
+            },
+            updateAliasNumbersState(state) {
+                if(state === 'succeeded' && this.addedAliasNumbersField) {
+                    showToast(this.$t('pbxConfig.toasts.addedAliasNumbersToast', {numbers: this.addedAliasNumbersField}));
+                    this.$store.commit('pbxConfig/resetAddedAliasNumbersField');
+                    this.$store.commit('pbxConfig/resetRemovedAliasNumbersField');
+                }
+                else if(state === 'succeeded' && this.removedAliasNumbersField) {
+                    showToast(this.$t('pbxConfig.toasts.removedAliasNumbersToast', {numbers: this.removedAliasNumbersField}));
+                    this.$store.commit('pbxConfig/resetAddedAliasNumbersField');
+                    this.$store.commit('pbxConfig/resetRemovedAliasNumbersField');  
+                }
+            },
+            updateGroupsAndSeatsState(state) {
+                if(state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.updatedGroupsInSeatToast', {seat: this.group}));
                 }
             }
         },

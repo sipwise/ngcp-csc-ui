@@ -93,6 +93,36 @@ export default {
         state.updateState = RequestState.failed;
         state.updateError = error;
     },
+    updateAliasNumbersRequesting(state) {
+        state.updateAliasNumbersState = RequestState.requesting;
+        state.updateAliasNumbersError = null;
+    },
+    updateAliasNumbersSucceeded(state) {
+        state.updateAliasNumbersState = RequestState.succeeded;
+        state.updateAliasNumbersError = null;
+    },
+    updateAliasNumbersFailed(state, error) {
+        state.updateAliasNumbersState = RequestState.failed;
+        state.updateAliasNumbersError = error;
+    },
+    resetAddedAliasNumbersField(state) {
+        state.addedAliasNumbersField = null;
+    },
+    resetRemovedAliasNumbersField(state) {
+        state.removedAliasNumbersField = null;
+    },
+    updateGroupsAndSeatsRequesting(state) {
+        state.updateGroupsAndSeatsState = RequestState.requesting;
+        state.updateGroupsAndSeatsError = null;
+    },
+    updateGroupsAndSeatsSucceeded(state) {
+        state.updateGroupsAndSeatsState = RequestState.succeeded;
+        state.updateGroupsAndSeatsError = null;
+    },
+    updateGroupsAndSeatsFailed(state, error) {
+        state.updateGroupsAndSeatsState = RequestState.failed;
+        state.updateGroupsAndSeatsError = error;
+    },
     removeItemRequesting(state, item) {
         state.removeState = RequestState.requesting;
         state.removeError = null;
@@ -154,5 +184,26 @@ export default {
         let deviceLoadingErrors = _.clone(state.deviceLoadingErrors);
         deviceLoadingErrors[deviceId + ""] = errorMessage;
         state.deviceLoadingErrors = deviceLoadingErrors;
+    },   
+    lastAddedGroup(state, group) {
+        state.lastAddedGroup = group;
+    },
+    lastRemovedGroup(state, group) {
+        state.lastRemovedGroup = group;
+    },
+    lastAddedSeat(state, seat) {
+        state.lastAddedSeat = seat;
+    },
+    lastRemovedSeat(state, seat) {
+        state.lastRemovedSeat = seat;
+    },
+    lastUpdatedField(state, group) {
+        state.lastUpdatedField = group;
+    },
+    addedAliasNumbersField(state, data) {
+        state.addedAliasNumbersField = data;
+    },
+    removedAliasNumbersField(state, data) {
+        state.removedAliasNumbersField = data;
     }
 }
