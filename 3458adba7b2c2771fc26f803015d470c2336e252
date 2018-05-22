@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_14268cba",
+        "filename": "src/locales/en.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-05-22T09:25:16Z",
+      "side": 1,
+      "message": "For consistency, would be helpful to surround {name} with quotes:\n\\\"{name}\\\"",
+      "range": {
+        "startLine": 287,
+        "startChar": 12,
+        "endLine": 287,
+        "endChar": 60
+      },
+      "revId": "3458adba7b2c2771fc26f803015d470c2336e252",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_f42af87d",
+        "filename": "src/locales/en.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-05-22T09:25:16Z",
+      "side": 1,
+      "message": "These are missing context of seats/groups module. E.g.:\n\"Alias number(s) with id(s) added\" should be something like \"Added seats alias number(s) with id(s)\".",
+      "range": {
+        "startLine": 288,
+        "startChar": 12,
+        "endLine": 295,
+        "endChar": 57
+      },
+      "revId": "3458adba7b2c2771fc26f803015d470c2336e252",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
