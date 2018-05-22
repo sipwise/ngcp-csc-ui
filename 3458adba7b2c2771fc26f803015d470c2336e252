@@ -45,6 +45,29 @@
       "revId": "3458adba7b2c2771fc26f803015d470c2336e252",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fabf19d9_b42480af",
+        "filename": "src/store/pbx-config/actions.js",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-05-22T09:51:09Z",
+      "side": 1,
+      "message": "Is missing in mutations.js",
+      "range": {
+        "startLine": 100,
+        "startChar": 24,
+        "endLine": 100,
+        "endChar": 48
+      },
+      "revId": "3458adba7b2c2771fc26f803015d470c2336e252",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
