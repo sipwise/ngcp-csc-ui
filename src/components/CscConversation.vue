@@ -53,9 +53,16 @@
                     </q-popover>
                 </q-btn>
                 <q-btn v-if="isType('voicemail')" flat round small color="primary"
-                    icon="play_arrow" @click="downloadVoiceMail(conversation.id)">
+                    icon="file_download" @click="downloadVoiceMail(conversation.id)">
+                    {{ $t('pages.conversations.buttons.download') }}
+                </q-btn>
+                <!--DEV HELPER ELEMENTS START-->
+                <q-btn v-if="isType('voicemail')" flat round small color="primary"
+                    icon="play_arrow" @click="playVoicemail(conversation.id)">
                     {{ $t('pages.conversations.buttons.play') }}
                 </q-btn>
+                <audio v-if="isType('voicemail')" :src="voicemail" ref="voicemailsound" />
+                <!--DEV HELPER ELEMENTS END-->
             </q-card-actions>
         </div>
         <div v-else-if="isType('fax')" slot="footer">
@@ -80,6 +87,12 @@
         props: [
             'conversation'
         ],
+        data() {
+            return {
+                platform: this.$q.platform.is,
+                voicemail: null
+            }
+        },
         components: {
             QBtn,
             QPopover,
@@ -96,6 +109,20 @@
             }
         },
         methods: {
+            playVoicemail(id) {
+                let format = this.platform.mozilla ? 'ogg' : 'mp3';
+                this.$store.dispatch('conversations/playVoiceMail', {
+                    id: id,
+                    format: format
+                }).then((url) => {
+                    this.voicemail = url;
+                });
+                // NOTE: Does currently only work if rtcengine is disabled in
+                // ngcp-panel "Settings > Resellers", due to conflict with
+                // ringing audio in call component - cdk-prod.js throws
+                // "interrupted by a new load request error: https://goo.gl/LdLk22
+                this.$refs.voicemailsound.play();
+            },
             downloadVoiceMail(id) {
                 this.$store.dispatch('conversations/downloadVoiceMail', id);
             },
