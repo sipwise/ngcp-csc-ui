@@ -35,8 +35,8 @@
             </ul>
         </div>
         <div v-if="!isType('fax')" slot="footer">
-<!--        <q-card-separator />
-            <csc-voicemail-player id="csc-voicemail-player" v-if="isType('voicemail')" :id="conversation.id" /> -->
+            <!--<q-card-separator />-->
+            <!--<csc-voicemail-player id="csc-voicemail-player" v-if="isType('voicemail')" :id="conversation.id" />-->
             <q-card-separator />
             <q-card-actions align="center">
                 <q-btn flat round small color="primary" icon="call">
