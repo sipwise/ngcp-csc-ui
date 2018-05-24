@@ -53,9 +53,14 @@
                     </q-popover>
                 </q-btn>
                 <q-btn v-if="isType('voicemail')" flat round small color="primary"
-                    icon="play_arrow" @click="downloadVoiceMail(conversation.id)">
+                    icon="file_download" @click="downloadVoiceMail(conversation.id)">
+                    {{ $t('pages.conversations.buttons.download') }}
+                </q-btn>
+                <q-btn flat round small color="primary"
+                    icon="play_arrow" @click="$refs.voicemailsound.play()">
                     {{ $t('pages.conversations.buttons.play') }}
                 </q-btn>
+                <audio v-if="isType('voicemail')" :src="voicemailSource" ref="voicemailsound" />
             </q-card-actions>
         </div>
         <div v-else-if="isType('fax')" slot="footer">
@@ -71,6 +76,7 @@
 </template>
 
 <script>
+    import config from '../config'
     import CscCardCollapsible from './card/CscCardCollapsible'
     import { QBtn, QPopover, QItem, QList, QCardActions,
         QChip, QCardSeparator } from 'quasar-framework'
@@ -80,6 +86,11 @@
         props: [
             'conversation'
         ],
+        data() {
+            return {
+                platform: this.$q.platform.is
+            }
+        },
         components: {
             QBtn,
             QPopover,
@@ -93,6 +104,12 @@
         computed: {
             hasCollapsibleData() {
                 return (['call', 'voicemail'].indexOf(this.conversation.type) > -1);
+            },
+            voicemailSource() {
+                let id = this.conversation.id;
+                let format = this.platform.mozilla ? 'ogg' : 'mp3';
+                let source = `${config.baseHttpUrl}/api/voicemailrecordings/${id}?format=${format}`;
+                return source;
             }
         },
         methods: {

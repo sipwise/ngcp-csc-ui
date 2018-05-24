@@ -1,6 +1,10 @@
 'use strict';
 
-import { getConversations, downloadVoiceMail, downloadFax } from '../api/conversations'
+import {
+    getConversations,
+    downloadFax,
+    downloadVoiceMail
+} from '../api/conversations'
 
 const RequestState = {
     button: 'button',
