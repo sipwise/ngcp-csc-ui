@@ -1,6 +1,11 @@
 'use strict';
 
-import { getConversations, downloadVoiceMail, downloadFax } from '../api/conversations'
+import {
+    getConversations,
+    downloadFax,
+    downloadVoiceMail,
+    playVoiceMail
+} from '../api/conversations'
 
 const RequestState = {
     button: 'button',
@@ -77,6 +82,15 @@ export default {
                 context.commit('downloadFaxSucceeded');
             }).catch((err)=>{
                 context.commit('downloadFaxFailed', err.body.message);
+            });
+        },
+        playVoiceMail(context, id) {
+            return new Promise((resolve, reject) => {
+                playVoiceMail(id).then((url)=>{
+                    resolve(url)
+                }).catch((err)=>{
+                    reject(err)
+                });
             });
         }
     }

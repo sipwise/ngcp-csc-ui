@@ -53,9 +53,27 @@
                     </q-popover>
                 </q-btn>
                 <q-btn v-if="isType('voicemail')" flat round small color="primary"
-                    icon="play_arrow" @click="downloadVoiceMail(conversation.id)">
+                    icon="file_download" @click="downloadVoiceMail(conversation.id)">
+                    {{ $t('pages.conversations.buttons.download') }}
+                </q-btn>
+
+                <!--  //////// VERSION ONE WITH DIRECT URL REFERENCE \\\\\\\\ -->
+                <!--  /// WORKS, BUT BACKEND HAS NO TOKEN AS PARAM OPTION \\\ -->
+                <q-btn flat round small color="primary"
+                    icon="play_arrow" @click="$refs.voicemailsound.play()">
                     {{ $t('pages.conversations.buttons.play') }}
                 </q-btn>
+                <audio v-if="isType('voicemail')" :src="voicemailSource" ref="voicemailsound" />
+
+                <!--  /////// VERSION TWO WITH REQUEST AND OBJECT URL \\\\\\\ -->
+                <!--  /// FAILS, THROWS ERROR:   \\\ -->
+                <!--Uncaught (in promise) DOMException: Failed to load because no supported source was found.-->
+                <!--<q-btn flat round small color="primary"-->
+                    <!--icon="play_arrow" @click="playVoicemail(conversation.id)">-->
+                    <!--{{ $t('pages.conversations.buttons.play') }}-->
+                <!--</q-btn>-->
+                <!--<audio v-if="isType('voicemail')" :src="voicemail" ref="voicemailsound" />-->
+
             </q-card-actions>
         </div>
         <div v-else-if="isType('fax')" slot="footer">
@@ -71,6 +89,7 @@
 </template>
 
 <script>
+    import config from '../config'
     import CscCardCollapsible from './card/CscCardCollapsible'
     import { QBtn, QPopover, QItem, QList, QCardActions,
         QChip, QCardSeparator } from 'quasar-framework'
@@ -80,6 +99,12 @@
         props: [
             'conversation'
         ],
+        data() {
+            return {
+                platform: this.$q.platform.is,
+                voicemail: null
+            }
+        },
         components: {
             QBtn,
             QPopover,
@@ -93,9 +118,26 @@
         computed: {
             hasCollapsibleData() {
                 return (['call', 'voicemail'].indexOf(this.conversation.type) > -1);
+            },
+            voicemailSource() {
+                let id = this.conversation.id;
+                let format = this.platform.mozilla ? 'ogg' : 'mp3';
+                let source = `${config.baseHttpUrl}/api/voicemailrecordings/${id}?format=${format}`;
+                return source;
             }
         },
         methods: {
+            playVoicemail(id) {
+                this.$store.dispatch('conversations/playVoiceMail', id).then((url) => {
+                    console.log('audio element', this.$refs.voicemailsound);
+                    console.log('url', url);
+                    this.voicemail = url;
+                    //console.log('url is', url);
+                    //let audio = new Audio(url);
+                    //audio.play();
+                });
+                this.$refs.voicemailsound.play();
+            },
             downloadVoiceMail(id) {
                 this.$store.dispatch('conversations/downloadVoiceMail', id);
             },
