@@ -1,13 +1,29 @@
 <template>
     <div class="voicemail-player">
+        <audio :src="voicemail" ref="voicemailsound" preload="none" />
         <div class="control-btns">
-            <q-btn class="play-pause-btn" round flat small color="primary" :icon="playPauseIcon"></q-btn>
-            <q-btn class="stop-btn" round flat small color="primary" icon="stop"></q-btn>
+            <q-btn
+                class="play-pause-btn"
+                round
+                flat
+                small
+                color="primary"
+                :icon="playPauseIcon"
+                @click="toggleVoicemailPlay()"
+            />
+            <q-btn
+                class="stop-btn"
+                round
+                flat
+                small
+                color="primary"
+                icon="stop"
+            />
         </div>
         <q-progress
             class="progress-bar"
             :percentage="progress"
-            stripe 
+            stripe
             animate
             color="primary"
         />
@@ -15,6 +31,7 @@
 </template>
 
 <script>
+    import _ from 'lodash'
     import { QProgress, QBtn } from 'quasar-framework'
     export default {
         name: 'csc-voicemail-player',
@@ -28,12 +45,45 @@
         data () {
             return {
                 progress: 77,
-                isPlaying: false
+                platform: this.$q.platform.is,
+                voicemail: null
             }
         },
         computed: {
             playPauseIcon() {
-                return this.isPlaying ? 'pause': 'play_arrow';
+                return this.isPlaying() ? 'pause': 'play_arrow';
+            },
+        },
+        methods: {
+            isPlaying() {
+                let video = this.$refs.voicemailsound;
+                return _.isObject(video) && video.currentTime > 0 &&
+                    !video.paused && !video.ended && video.readyState > 2;
+            },
+            playVoicemail() {
+                let format = this.platform.mozilla ? 'ogg' : 'mp3';
+
+                this.$refs.voicemailsound.addEventListener('canplay', ()=>{
+                    this.$refs.voicemailsound.play();
+                });
+
+                this.$store.dispatch('conversations/playVoiceMail', {
+                    id: this.id,
+                    format: format
+                }).then((url) => {
+                    this.voicemail = url;
+                });
+            },
+            pauseVoicemail() {
+                this.$refs.voicemailsound.pause();
+            },
+            toggleVoicemailPlay() {
+                if (this.isPlaying()) {
+                    this.pauseVoicemail();
+                }
+                else {
+                    this.playVoicemail();
+                }
             }
         }
     }
@@ -56,7 +106,7 @@
             display flex
             justify-content space-between
         .progress-bar
-            margin-left 16px 
+            margin-left 16px
             margin-right 16px
 
 </style>

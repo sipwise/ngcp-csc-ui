@@ -5,7 +5,8 @@ import { i18n } from '../i18n';
 import {
     getConversations,
     downloadVoiceMail,
-    downloadFax
+    downloadFax,
+    playVoiceMail
 } from '../api/conversations'
 
 const RequestState = {
@@ -147,6 +148,15 @@ export default {
                 context.commit('downloadFaxSucceeded');
             }).catch((err)=>{
                 context.commit('downloadFaxFailed', err.body.message);
+            });
+        },
+        playVoiceMail(context, options) {
+            return new Promise((resolve, reject) => {
+                playVoiceMail(options).then((url)=>{
+                    resolve(url)
+                }).catch((err)=>{
+                    reject(err)
+                });
             });
         }
     }
