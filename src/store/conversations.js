@@ -1,11 +1,13 @@
 'use strict';
 
+import Vue from 'vue'
 import _ from 'lodash';
 import { i18n } from '../i18n';
 import {
     getConversations,
     downloadVoiceMail,
-    downloadFax
+    downloadFax,
+    playVoiceMail
 } from '../api/conversations'
 
 const RequestState = {
@@ -32,7 +34,10 @@ export default {
         downloadFaxState: RequestState.button,
         downloadFaxError: null,
         reloadConversationsState: RequestState.button,
-        reloadConversationsError: null
+        reloadConversationsError: null,
+        playVoiceMailUrls: {},
+        playVoiceMailStates: {},
+        playVoiceMailErrors: {}
     },
     getters: {
         getSubscriberId(state, getters, rootState, rootGetters) {
@@ -44,6 +49,16 @@ export default {
         reloadConversationsError(state) {
             return state.reloadConversationsError ||
                 i18n.t('pages.conversations.reloadConversationsErrorMessage');
+        },
+        playVoiceMailState(state) {
+            return (id) => {
+                return state.playVoiceMailStates[id];
+            }
+        },
+        playVoiceMailUrl(state) {
+            return (id) => {
+                return state.playVoiceMailUrls[id];
+            }
         }
     },
     mutations: {
@@ -93,6 +108,20 @@ export default {
         reloadConversations(state, result) {
             state.conversations = result;
             state.page++;
+        },
+        playVoiceMailRequesting(state, id) {
+            Vue.set(state.playVoiceMailStates, id, RequestState.requesting);
+            Vue.set(state.playVoiceMailErrors, id, null);
+        },
+        playVoiceMailSucceeded(state, options) {
+            Vue.set(state.playVoiceMailUrls, options.id, options.url);
+            Vue.set(state.playVoiceMailStates, options.id, RequestState.succeeded);
+            Vue.set(state.playVoiceMailErrors, options.id, null);
+        },
+        playVoiceMailFailed(state, id, err) {
+            Vue.set(state.playVoiceMailUrls, id, null);
+            Vue.set(state.playVoiceMailStates, id, RequestState.failed);
+            Vue.set(state.playVoiceMailErrors, id, err);
         }
     },
     actions: {
@@ -147,6 +176,17 @@ export default {
                 context.commit('downloadFaxSucceeded');
             }).catch((err)=>{
                 context.commit('downloadFaxFailed', err.body.message);
+            });
+        },
+        playVoiceMail(context, options) {
+            context.commit('playVoiceMailRequesting', options.id);
+            playVoiceMail(options).then((url)=>{
+                context.commit('playVoiceMailSucceeded', {
+                    id: options.id,
+                    url: url
+                });
+            }).catch((err)=>{
+                context.commit('playVoiceMailFailed', options.id, err.mesage);
             });
         }
     }
