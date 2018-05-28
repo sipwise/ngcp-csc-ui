@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_357987fd",
+        "filename": "src/components/pages/VoicemailPlayer.vue",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-05-28T12:49:14Z",
+      "side": 1,
+      "message": "As a naming convention, we try to preface names with Csc where applicable. Could you please change file name to CscVoicemailPlayer.vue, and name to \u0027csc-voicemail-player\u0027?",
+      "range": {
+        "startLine": 6,
+        "startChar": 15,
+        "endLine": 6,
+        "endChar": 31
+      },
+      "revId": "ac2cdcaa57ff97915118ed77c757dcdd7e9c1318",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
