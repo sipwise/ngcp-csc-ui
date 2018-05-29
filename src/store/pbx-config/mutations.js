@@ -1,5 +1,6 @@
 'use strict';
 
+import Vue from 'vue'
 import _ from 'lodash'
 import { RequestState } from '../common'
 
@@ -164,31 +165,25 @@ export default {
         state.listError = error;
     },
     deviceRequesting(state, deviceId) {
-        let deviceLoadingStates = _.clone(state.deviceLoadingStates);
-        deviceLoadingStates[deviceId + ""] = true;
-        state.deviceLoadingStates = deviceLoadingStates;
+        Vue.set(state.deviceLoadingStates, deviceId + "", RequestState.requesting);
     },
     deviceSucceeded(state, device) {
-        let deviceLoadingStates = _.clone(state.deviceLoadingStates);
-        deviceLoadingStates[device.id + ""] = false;
-        state.deviceLoadingStates = deviceLoadingStates;
+        Vue.set(state.deviceLoadingStates, device.id + "", RequestState.succeeded);
+        Vue.set(state.deviceLoadingErrors, device.id + "", null);
+        Vue.set(state.devices, device.id + "", device);
         for(let i = 0; i <= state.devicesOrdered.length; i++) {
             if(state.devicesOrdered[i].id === device.id) {
                 state.devicesOrdered[i] = device;
             }
         }
-        delete state.devices[device.id + ""];
-        state.devices[device.id + ""] = device;
-
     },
-    deviceFailed(state, deviceId, errorMessage) {
-        let deviceLoadingStates = _.clone(state.deviceLoadingStates);
-        deviceLoadingStates[deviceId + ""] = false;
-        state.deviceLoadingStates = deviceLoadingStates;
-        let deviceLoadingErrors = _.clone(state.deviceLoadingErrors);
-        deviceLoadingErrors[deviceId + ""] = errorMessage;
-        state.deviceLoadingErrors = deviceLoadingErrors;
-    },   
+    deviceFailed(state, deviceId, error) {
+        Vue.set(state.deviceLoadingStates, deviceId + "", RequestState.failed);
+        Vue.set(state.deviceLoadingErrors, deviceId + "", error);
+    },
+    deviceRemovalSucceeded(state, deviceId) {
+        Vue.set(state.deviceLoadingErrors, deviceId + "", null);
+    },
     lastAddedGroup(state, group) {
         state.lastAddedGroup = group;
     },

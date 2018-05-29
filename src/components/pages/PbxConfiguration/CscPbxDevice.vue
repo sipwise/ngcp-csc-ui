@@ -25,6 +25,7 @@
         <q-item-side right>
             <q-item-tile>
                 <q-btn :icon="titleIcon" :big="isMobile" color="primary" slot="right" flat @click="toggleMain()" />
+                <q-btn icon="delete" :big="isMobile" color="negative" slot="right" flat @click="remove()" />
             </q-item-tile>
         </q-item-side>
         <q-inner-loading :visible="loading">
@@ -87,6 +88,9 @@
         methods: {
             toggleMain() {
                 this.expanded = !this.expanded;
+            },
+            remove() {
+                this.$emit('remove', this.device);
             }
         }
     }
