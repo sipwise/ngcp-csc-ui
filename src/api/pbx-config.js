@@ -188,23 +188,25 @@ export function getSeatList(page) {
     });
 }
 
-export function getDeviceList(page) {
-    return getDevices({
-        params: {
-            page: page,
+export function getDeviceList(options) {
+    return new Promise((resolve, reject)=>{
+        let params = {
+            page: options.page,
+            profile_id: options.profile_id,
             order_by: PBX_CONFIG_ORDER_BY,
             order_by_direction: PBX_CONFIG_ORDER_DIRECTION
+        };
+        if(params.profile_id === null) {
+            delete params['profile_id'];
         }
+        return getDevices({
+            params: params
+        }).then((devices)=>{
+            resolve(devices);
+        }).catch((err)=>{
+            reject(err);
+        });
     });
-}
-
-export function filterDeviceList(params) {
-    let defaultParams = {
-        order_by: PBX_CONFIG_ORDER_BY,
-        order_by_direction: PBX_CONFIG_ORDER_DIRECTION
-    };
-    let mergedParams = _.merge(defaultParams, params);
-    return getDevices({ params: mergedParams });
 }
 
 export function addGroup(group) {
@@ -352,18 +354,15 @@ export function getProfile(id, join) {
         }).then(($profile)=> {
             profile = $profile;
             if(join === true) {
-                return Promise.all([
-                    getModel(profile.device_id),
-                    getModelFrontImage(profile.device_id)
-                ]);
+                return getModelFull(profile.device_id);
             }
             else {
                 resolve(profile);
             }
-        }).then((res)=>{
-            profile.model = res[0];
-            profile.modelFrontImage = res[1];
-            profile.modelFrontImageUrl = URL.createObjectURL(profile.modelFrontImage);
+        }).then((model)=>{
+            profile.model = model;
+            profile.modelFrontImage = model.frontImageBlob;
+            profile.modelFrontImageUrl = model.frontImageUrl;
             resolve(profile);
         }).catch((err)=>{
             reject(err);
@@ -393,9 +392,44 @@ export function getModelFrontImage(id) {
                 type: 'front'
             }
         }).then((res)=>{
-            resolve(res.body);
+            resolve({
+                id: id,
+                url: URL.createObjectURL(res.body),
+                blob: res.body
+            });
         }).catch((err)=>{
             reject(err);
+        });
+    });
+}
+
+export function getModelFull(id) {
+    return new Promise((resolve, reject)=>{
+        Promise.all([
+            getModel(id),
+            getModelFrontImage(id)
+        ]).then((res)=>{
+            let model = res[0];
+            model.frontImageBlob = res[1].blob;
+            model.frontImageUrl = res[1].url;
+            resolve(model);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function createDevice(device) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.post('api/pbxdevices/', device).then((res)=>{
+            resolve(res);
+        }).catch((err)=>{
+            if(err.status >= 400) {
+                reject(new Error(err.body.message));
+            }
+            else {
+                reject(err);
+            }
         });
     });
 }

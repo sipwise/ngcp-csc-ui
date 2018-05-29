@@ -3,51 +3,60 @@
         :title="$t('pbxConfig.devicesTitle')"
         class="csc-list-page"
     >
-        <q-select
-            v-model="profile"
-            :float-label="$t('pbxConfig.filterPhoneModel')"
-            :options="profileOptions"
-            @change="filterByProfile"
-            :after="modelButtons"
-            :class="{ 'filter-model-select': this.platform.mobile }"
-        />
-        <div
-            v-if="isListLoadingVisible"
-            class="row justify-center"
-        >
-            <q-spinner-dots
-                color="primary"
-                :size="40"
-            />
-        </div>
-        <div
-            v-if="devices.length > 0 && !isListRequesting && listLastPage > 1"
-            class="row justify-center"
-        >
-            <q-pagination
-                :value="listCurrentPage"
-                :max="listLastPage"
-                @change="changePage"
-            />
-        </div>
         <q-list
             no-border
             separator
             sparse
             multiline
         >
-            <q-item> </q-item>
-            <csc-pbx-device
-                v-for="device in devices"
-                :key="device.id"
-                :device="device"
-                @remove="removeDevice"
-                :modelOptions="modelOptions"
-                :loading="isDeviceLoading(device.id)"
-                :groupsAndSeatsOptions="groupsAndSeatsOptions"
-                :subscribers="getGroupOrSeatById"
-                @loadGroupsAndSeats="loadGroupsAndSeats()"
-                @deviceKeysChanged="deviceKeysChanged"
+            <q-item>
+                <q-item-main>
+                    <csc-pbx-device-add-form
+                        ref="deviceAddForm"
+                        :profiles="profiles"
+                        :modelImages="modelImages"
+                        :loading="createDeviceRequesting"
+                        @remove="removeDevice"
+                        @modelSelectOpened="modelSelectOpened()"
+                        @save="saveDevice"
+                    />
+                    <csc-pbx-model-select
+                        :erasable="true"
+                        :profiles="profiles"
+                        :modelImages="modelImages"
+                        :label="$t('pbxConfig.filterPhoneModel')"
+                        @opened="modelSelectOpened()"
+                        @select="filterByProfile"
+                        @reseted="resetFilter" />
+                    <div
+                        v-if="devices.length > 0 && !isListRequesting && listLastPage > 1"
+                        class="row justify-center"
+                    >
+                        <q-pagination
+                            :value="listCurrentPage"
+                            :max="listLastPage"
+                            @change="changePage"
+                        />
+                    </div>
+                    <div v-if="isListLoadingVisible"
+                         class="row justify-center"
+                    >
+                        <q-spinner-dots
+                            color="primary"
+                            :size="40"
+                        />
+                    </div>
+                </q-item-main>
+            </q-item>
+            <csc-pbx-device v-for="device in devices"
+                            :key="device.id"
+                            :device="device"
+                            :loading="isDeviceLoading(device.id)"
+                            :groupsAndSeatsOptions="groupsAndSeatsOptions"
+                            :subscribers="getGroupOrSeatById"
+                            @remove="removeDevice"
+                            @loadGroupsAndSeats="loadGroupsAndSeats()"
+                            @deviceKeysChanged="deviceKeysChanged"
             />
         </q-list>
         <div
@@ -63,19 +72,10 @@
     import { mapGetters } from 'vuex'
     import CscPage  from '../../CscPage'
     import CscPbxDevice from './CscPbxDevice'
-    import {
-        showGlobalError,
-        showToast
-    } from '../../../helpers/ui'
-    import {
-        QSpinnerDots,
-        QPagination,
-        QList,
-        Dialog,
-        QItem,
-        QBtn,
-        QSelect
-    } from 'quasar-framework'
+    import CscPbxDeviceAddForm from './CscPbxDeviceAddForm'
+    import CscPbxModelSelect from './CscPbxModelSelect'
+    import { QSpinnerDots, QPagination, QList, Dialog, QItem, QItemMain, QBtn, QSelect } from 'quasar-framework'
+    import { showToast, showGlobalError } from '../../../helpers/ui'
 
     export default {
         data () {
@@ -86,23 +86,26 @@
         },
         mounted() {
             this.listDevices();
-            this.$store.dispatch('pbxConfig/listProfiles');
+            this.$store.dispatch('pbxConfig/loadProfiles');
         },
         components: {
             CscPage,
             CscPbxDevice,
+            CscPbxDeviceAddForm,
+            CscPbxModelSelect,
             QSpinnerDots,
             QPagination,
             QList,
             Dialog,
             QItem,
             QBtn,
-            QSelect
+            QSelect,
+            QItemMain
         },
         computed: {
             ...mapGetters('pbxConfig', [
                 'devices',
-                'modelOptions',
+                'profiles',
                 'isListRequesting',
                 'isListLoadingVisible',
                 'listCurrentPage',
@@ -113,9 +116,15 @@
                 'groupsAndSeats',
                 'getGroupOrSeatById',
                 'updatedDeviceKey',
+                'createDeviceRequesting',
+                'createDeviceSucceeded',
+                'createDeviceFailed',
+                'createDeviceError',
+                'createDeviceItem',
                 'profileOptions',
                 'listProfilesState',
-                'listProfilesError'
+                'listProfilesError',
+                'modelImages'
             ]),
             noDeviceMessage() {
                 if (this.profile) {
@@ -124,40 +133,41 @@
                 else {
                     return this.$t('pbxConfig.noDevices');
                 }
-            },
-            modelButtons() {
-                let self = this;
-                let buttons = [];
-                if (this.profile) {
-                    buttons = [{
-                        icon: 'clear',
-                        error: false,
-                        handler (event) {
-                            event.stopPropagation();
-                            self.resetFilter();
-                        }
-                    }];
-                }
-                return buttons;
             }
         },
         methods: {
+            filterByProfile(profile) {
+                this.profile = profile;
+                this.$store.dispatch('pbxConfig/listDevices', {
+                    page: this.listCurrentPage,
+                    profile_id: profile.id
+                });
+            },
             resetFilter() {
                 this.profile = null;
-                this.listDevices();
-            },
-            filterByProfile(profile) {
-                this.$store.dispatch('pbxConfig/filterDevices', {
-                    profile_id: profile
+                this.$store.dispatch('pbxConfig/listDevices', {
+                    page: 1,
+                    profile_id: null
                 });
             },
             changePage(page) {
+                let profileId = null;
+                if(this.profile !== null) {
+                    profileId = this.profile.id;
+                }
                 this.$store.dispatch('pbxConfig/listDevices', {
-                    page: page
+                    page: page,
+                    profile_id: profileId
                 });
             },
             loadDevice(id) {
                 this.$store.dispatch('pbxConfig/loadDevice', id);
+            },
+            modelSelectOpened() {
+                this.$store.dispatch('pbxConfig/loadProfiles');
+            },
+            saveDevice(device) {
+                this.$store.dispatch('pbxConfig/createDevice', device);
             },
             removeDevice(device) {
                 var store = this.$store;
@@ -202,6 +212,19 @@
                     showToast(this.$t('pbxConfig.toasts.updatedDeviceKeys',{
                         name: data.device.station_name
                     }));
+                }
+            },
+            createDeviceSucceeded(succeeded) {
+                if(succeeded) {
+                    this.$refs.deviceAddForm.disableForm();
+                    showToast(this.$t('pbxConfig.toasts.createdDevice',{
+                        name: this.createDeviceItem.station_name
+                    }));
+                }
+            },
+            createDeviceFailed(failed) {
+                if(failed) {
+                    showGlobalError(this.createDeviceError);
                 }
             },
             listProfilesState(state) {
