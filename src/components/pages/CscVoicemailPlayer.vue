@@ -4,9 +4,16 @@
 <script>
     export default {
         name: 'csc-voicemail-player',
-        props: [
-        ],
+        props: {
+        },
         components: {
+        },
+        methods: {
+            playVoicemail() {
+                let voicemailAudio = this.$refs.voicemail;
+                voicemailAudio.currentTime = 0;
+                voicemailAudio.play();
+            }
         }
     }
 </script>
