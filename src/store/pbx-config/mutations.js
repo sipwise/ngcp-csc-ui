@@ -1,5 +1,6 @@
 'use strict';
 
+import Vue from 'vue'
 import _ from 'lodash'
 import { RequestState } from '../common'
 
@@ -154,6 +155,7 @@ export default {
         state.listState = RequestState.succeeded;
         state.listError = null;
         state.listLastPage = data.lastPage;
+        state.deviceRemoved = null;
         state.devicesOrdered = data.items;
         state.devicesOrdered.forEach((device)=>{
             state.devices[device.id + ""] = device;
@@ -164,31 +166,27 @@ export default {
         state.listError = error;
     },
     deviceRequesting(state, deviceId) {
-        let deviceLoadingStates = _.clone(state.deviceLoadingStates);
-        deviceLoadingStates[deviceId + ""] = true;
-        state.deviceLoadingStates = deviceLoadingStates;
+        Vue.set(state.deviceStates, deviceId + "", RequestState.requesting);
     },
     deviceSucceeded(state, device) {
-        let deviceLoadingStates = _.clone(state.deviceLoadingStates);
-        deviceLoadingStates[device.id + ""] = false;
-        state.deviceLoadingStates = deviceLoadingStates;
+        Vue.set(state.deviceStates, device.id + "", RequestState.succeeded);
+        Vue.set(state.deviceErrors, device.id + "", null);
+        Vue.set(state.devices, device.id + "", device);
         for(let i = 0; i <= state.devicesOrdered.length; i++) {
             if(state.devicesOrdered[i].id === device.id) {
                 state.devicesOrdered[i] = device;
             }
         }
-        delete state.devices[device.id + ""];
-        state.devices[device.id + ""] = device;
-
     },
-    deviceFailed(state, deviceId, errorMessage) {
-        let deviceLoadingStates = _.clone(state.deviceLoadingStates);
-        deviceLoadingStates[deviceId + ""] = false;
-        state.deviceLoadingStates = deviceLoadingStates;
-        let deviceLoadingErrors = _.clone(state.deviceLoadingErrors);
-        deviceLoadingErrors[deviceId + ""] = errorMessage;
-        state.deviceLoadingErrors = deviceLoadingErrors;
-    },   
+    deviceFailed(state, deviceId, error) {
+        Vue.set(state.deviceStates, deviceId + "", RequestState.failed);
+        Vue.set(state.deviceErrors, deviceId + "", error);
+    },
+    deviceRemoved(state, device) {
+        Vue.set(state.deviceStates, device.id + "", 'deleted');
+        Vue.set(state.deviceErrors, device.id + "", null);
+        state.deviceRemoved = device;
+    },
     lastAddedGroup(state, group) {
         state.lastAddedGroup = group;
     },

@@ -22,9 +22,10 @@
                 <csc-pbx-device-config :device="device" />
             </q-item-tile>
         </q-item-main>
-        <q-item-side right>
+        <q-item-side right class="csc-item-buttons">
             <q-item-tile>
                 <q-btn :icon="titleIcon" :big="isMobile" color="primary" slot="right" flat @click="toggleMain()" />
+                <q-btn icon="delete" :big="isMobile" color="negative" slot="right" flat @click="remove()" />
             </q-item-tile>
         </q-item-side>
         <q-inner-loading :visible="loading">
@@ -87,6 +88,9 @@
         methods: {
             toggleMain() {
                 this.expanded = !this.expanded;
+            },
+            remove() {
+                this.$emit('remove', this.device);
             }
         }
     }
@@ -113,4 +117,9 @@
             font-weight 400
             letter-spacing normal
             line-height 1.8rem
+
+    .csc-item-buttons
+        .q-btn
+            padding-left 8px;
+            padding-right 8px;
 </style>
