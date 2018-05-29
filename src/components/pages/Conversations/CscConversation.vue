@@ -35,6 +35,8 @@
             </ul>
         </div>
         <div v-if="!isType('fax')" slot="footer">
+<!--        <q-card-separator />
+            <csc-voicemail-player id="csc-voicemail-player" v-if="isType('voicemail')" :id="conversation.id" /> -->
             <q-card-separator />
             <q-card-actions align="center">
                 <q-btn flat round small color="primary" icon="call">
@@ -53,8 +55,8 @@
                     </q-popover>
                 </q-btn>
                 <q-btn v-if="isType('voicemail')" flat round small color="primary"
-                    icon="play_arrow" @click="downloadVoiceMail(conversation.id)">
-                    {{ $t('pages.conversations.buttons.play') }}
+                    icon="get_app" @click="downloadVoiceMail(conversation.id)">
+                    {{ $t('pages.conversations.buttons.download') }}
                 </q-btn>
             </q-card-actions>
         </div>
@@ -72,6 +74,7 @@
 
 <script>
     import CscCardCollapsible from '../../card/CscCardCollapsible'
+    import CscVoicemailPlayer from './CscVoicemailPlayer'
     import { QBtn, QPopover, QItem, QList, QCardActions,
         QChip, QCardSeparator } from 'quasar-framework'
     import numberFormat from '../../../filters/number-format'
@@ -88,7 +91,8 @@
             QChip,
             QCardSeparator,
             QCardActions,
-            CscCardCollapsible
+            CscCardCollapsible,
+            CscVoicemailPlayer
         },
         computed: {
             hasCollapsibleData() {
