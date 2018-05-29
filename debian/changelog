@@ -1,3 +1,42 @@
+ngcp-csc-ui (6.4.0.0+0~mr6.4.0.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [d04cbe3] TT#20512 PBXConfig: As a Customer, I want to edit PBX Groups
+  * [46aad5d] TT#20517 PBXConfig: As a Customer, I want to edit PBX Seats
+  * [d5e7a0b] TT#20518 PBXConfig: As a Customer, I want to see a list of all PBX Devices
+  * [c3a1e3d] TT#36018 PPBXConfig: As a Customer, I want to navigate through the list of pbx groups by using a pagination mechanism
+  * [7ac0d79] TT#33904 [Issue] Call: Inputting number on mobile is behaving strangely
+  * [bcc3fa4] TT#36009 PBXConfig: As a Customer, I want to see the model image for a pbx device item
+  * [6071b43] TT#35501 PBXConfig: As a Customer, I want see all buttons and assigned seats of a device item
+
+  [ raxelsen ]
+  * [5503be2] TT#31802 Customer wants to see AfterHours
+  * [a8aff87] TT#35253 Conversations: Uncaught promise error bug
+  * [9042140] TT#35650 Duplicate CF times form bug
+  * [d3211cb] TT#20311 Customer wants to send a fax
+  * [77b84d6] TT#28063 Destinations grouped by SourceSets
+  * [6c260ae] TT#20311 Add missing send fax feature doc details
+  * [c38110a] TT#28064 Add new source and sourceset
+  * [afbe0a0] TT#28066 Add a new Source to a SourceSet
+  * [acd8f5b] TT#28065 User wants to remove sourcesets
+  * [6384688] TT#36666 Call: Add doc section enable call feature
+  * [88499ca] TT#28067 Remove source from sourceset
+
+  [ Tijana Maksimovic ]
+  * [7842fa2] TT#34859 CallForwarding: Polish timeset and destination list for mobile devices
+  * [f128aec] TT#35360 Optimise destination list for mobile devices
+  * [6c012fe] TT#36014 General: Set list hover highlight color to a light version of the primary color
+  * [c32aa05] TT#33811 Login: Could not login via Safari
+  * [56a8760] TT#36025 [Issue] CallForwarding: Timeset creation form gets enabled in both  sections at the same time
+  * [6a2d0e7] TT#35922 Global: Adjust position of the FAB on mobile devices
+  * [6809615] TT#36175 [Fix] Global: Adjust position of the FAB on mobile devices
+  * [803128e] TT#36010 PBXConfig: As a Customer, I want to see a toast after each successful action
+  * [cbd74a9] TT#37301 Create custom audio player component
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 29 May 2018 10:05:25 +0200
+
 ngcp-csc-ui (6.3.0.0+0~mr6.3.0.0) unstable; urgency=medium
 
   [ raxelsen ]
