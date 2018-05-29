@@ -151,7 +151,7 @@ export default {
     },
     isDeviceLoading(state) {
         return (id)=>{
-            return state.deviceLoadingStates[id + ""] === true;
+            return state.deviceStates[id + ""] === RequestState.requesting;
         }
     },
     lastAddedGroup(state) {
@@ -174,5 +174,8 @@ export default {
     },
     lastRemovedSeat(state) {
         return state.lastRemovedSeat;
+    },
+    deviceRemoved(state) {
+        return state.deviceRemoved;
     }
 }

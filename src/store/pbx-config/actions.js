@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { assignNumbers } from '../../api/user';
 import { addGroup, removeGroup, addSeat, removeSeat, setGroupName,
     setGroupExtension, setGroupHuntPolicy, setGroupHuntTimeout,
-    updateGroupSeats, setSeatName, setSeatExtension,
+    updateGroupSeats, setSeatName, setSeatExtension, removeDevice,
     updateSeatGroups, getGroupList, getSeatList, getDeviceList, getDeviceFull } from '../../api/pbx-config'
 
 export default {
@@ -208,6 +208,15 @@ export default {
             context.commit('deviceSucceeded', device);
         }).catch((err)=>{
             context.commit('deviceFailed', deviceId, err.message);
+        });
+    },
+    removeDevice(context, device) {
+        context.commit('deviceRequesting', device.id);
+        removeDevice(device.id).then(()=>{
+            context.commit('deviceRemoved', device);
+            context.dispatch('listDevices');
+        }).catch((err)=>{
+            context.commit('deviceFailed', device.id, err.message);
         });
     }
 }

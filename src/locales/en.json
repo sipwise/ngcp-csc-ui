@@ -291,8 +291,12 @@
             "addedGroupToast": "Added group {group}",
             "removedGroupToast": "Removed group {group}",
             "addedSeatToast": "Added seat {seat}",
-            "removedSeatToast": "Removed seat {seat}"
-        }
+            "removedSeatToast": "Removed seat {seat}",
+            "removedDeviceToast": "Removed device {name}"
+        },
+        "removeDevice": "Remove device",
+        "removeDeviceTitle": "Remove device",
+        "removeDeviceText": "You are about to remove device {device}"
     },
     "communication": {
         "sendFax": "Send Fax",
