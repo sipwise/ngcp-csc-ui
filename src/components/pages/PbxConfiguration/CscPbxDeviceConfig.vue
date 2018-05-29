@@ -71,7 +71,10 @@
             selectedKeyIcon() {
                 if(this.selectedLine !== null) {
                     let subscriber = this.subscribers(this.selectedLine.subscriber_id);
-                    if(subscriber !== null && subscriber.is_pbx_group === true) {
+                    if(subscriber !== null && subscriber.is_pbx_pilot === true) {
+                        return 'person_outlined';
+                    }
+                    else if(subscriber !== null && subscriber.is_pbx_group === true) {
                         return 'group';
                     }
                     else if (subscriber !== null){
@@ -86,7 +89,10 @@
             selectedKeyLabel() {
                 if(this.selectedLine !== null) {
                     let subscriber = this.subscribers(this.selectedLine.subscriber_id);
-                    if(subscriber !== null && subscriber.is_pbx_group === true) {
+                    if(subscriber !== null && subscriber.is_pbx_pilot === true) {
+                        return this.$t('pbxConfig.keyPilotLabel');
+                    }
+                    else if(subscriber !== null && subscriber.is_pbx_group === true) {
                         return this.$t('pbxConfig.keyGroupLabel');
                     }
                     else if (subscriber !== null){
@@ -328,7 +334,7 @@
                         type: line.type
                     });
                 });
-                if(changed === true && newLines.length > 0) {
+                if(changed === true) {
                     this.$emit('keysChanged', newLines);
                 }
             },

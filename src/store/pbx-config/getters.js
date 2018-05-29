@@ -134,16 +134,6 @@ export default {
     devices(state) {
         return state.devicesOrdered;
     },
-    modelOptions(state) {
-        let modelOptions = [];
-        state.modelsOrdered.forEach((model)=>{
-            modelOptions.push({
-                label: model.vendor + " " + model.model,
-                value: model.id
-            });
-        });
-        return modelOptions;
-    },
     listCurrentPage(state) {
         return state.listCurrentPage;
     },
@@ -176,6 +166,15 @@ export default {
     lastRemovedSeat(state) {
         return state.lastRemovedSeat;
     },
+    profiles(state) {
+        return state.profilesOrdered;
+    },
+    models(state) {
+        return state.models;
+    },
+    hasProfiles(state) {
+        return state.profilesOrdered.length > 0;
+    },
     deviceRemoved(state) {
         return state.deviceRemoved;
     },
@@ -191,8 +190,15 @@ export default {
             }
         ];
         state.groupsAndSeats.forEach((item)=>{
+            let icon = 'person';
+            if(item.is_pbx_pilot) {
+                icon = 'person_outlined';
+            }
+            else if (item.is_pbx_group){
+                icon = 'group';
+            }
             options.push({
-                icon: (item.is_pbx_group === true)? 'group' : 'person',
+                icon: icon,
                 label: item.display_name,
                 value: item.id
             });
@@ -213,6 +219,21 @@ export default {
     updatedDeviceKey(state) {
         return state.updatedDeviceKey;
     },
+    createDeviceRequesting(state) {
+        return state.createDeviceState === RequestState.requesting;
+    },
+    createDeviceSucceeded(state) {
+        return state.createDeviceState === RequestState.succeeded;
+    },
+    createDeviceFailed(state) {
+        return state.createDeviceState === RequestState.failed;
+    },
+    createDeviceError(state) {
+        return state.createDeviceError;
+    },
+    createDeviceItem(state) {
+        return state.createDeviceItem;
+    },
     profileOptions(state) {
         let profileOptions = [];
         state.profilesOrdered.forEach((profile) => {
@@ -228,5 +249,8 @@ export default {
     },
     listProfilesError(state) {
         return state.listError;
+    },
+    modelImages(state) {
+        return state.modelImages;
     }
 }
