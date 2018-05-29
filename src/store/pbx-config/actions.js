@@ -3,10 +3,25 @@
 import _ from 'lodash';
 import { assignNumbers } from '../../api/user';
 import { addGroup, removeGroup, addSeat, removeSeat, setGroupName,
-    setGroupExtension, setGroupHuntPolicy, setGroupHuntTimeout, updateDeviceKeys,
-    updateGroupSeats, setSeatName, setSeatExtension, removeDevice, getAllGroupsAndSeats,
-    updateSeatGroups, getGroupList, getSeatList, getDeviceList, filterDeviceList,
-    getProfiles, getDevice } from '../../api/pbx-config'
+
+    setGroupExtension,
+    setGroupHuntPolicy,
+    setGroupHuntTimeout,
+    createDevice,
+    removeDevice,
+    updateGroupSeats,
+    setSeatName,
+    setSeatExtension,
+    getProfiles,
+    getModelFrontImage,
+    updateDeviceKeys,
+    updateSeatGroups,
+    getGroupList,
+    getSeatList,
+    getDeviceList,
+    getDevice,
+    getAllGroupsAndSeats
+} from '../../api/pbx-config'
 
 export default {
     listGroups(context, options) {
@@ -187,11 +202,15 @@ export default {
         return new Promise((resolve, reject)=>{
             let silent = _.get(options, 'silent', false);
             let page = _.get(options, 'page', 1);
+            let profile_id = _.get(options, 'profile_id', null);
             context.commit('deviceListRequesting', {
                 silent: silent,
                 page: page
             });
-            getDeviceList(page).then((devices)=>{
+            getDeviceList({
+                page: page,
+                profile_id: profile_id
+            }).then((devices)=>{
                 context.commit('deviceListSucceeded', devices);
                 devices.items.forEach((device)=>{
                     context.dispatch('loadDevice', device.id);
@@ -212,6 +231,35 @@ export default {
             context.commit('deviceSucceeded', device);
         }).catch((err)=>{
             context.commit('deviceFailed', deviceId, err.message);
+        });
+    },
+    loadProfiles(context) {
+        if(!context.getters.hasProfiles) {
+            getProfiles({ all: true }).then((profiles)=>{
+                context.commit('profilesSucceeded', profiles);
+                profiles.items.forEach((profile)=>{
+                    context.dispatch('loadModelImage', profile.device_id);
+                });
+            }).catch((err)=>{
+                context.commit('profilesFailed', err.message);
+            });
+        }
+    },
+    loadModelImage(context, modelId) {
+        context.commit('modelImageRequesting', modelId);
+        getModelFrontImage(modelId).then((modelImage)=>{
+            context.commit('modelImageSucceeded', modelImage);
+        }).catch((err)=>{
+            context.commit('modelImageFailed', modelId, err.message);
+        });
+    },
+    createDevice(context, device) {
+        context.commit('createDeviceRequesting', device);
+        createDevice(device).then(()=>{
+            context.commit('createDeviceSucceeded');
+            context.dispatch('listDevices');
+        }).catch((err)=>{
+            context.commit('createDeviceFailed', err.message);
         });
     },
     removeDevice(context, device) {
@@ -239,26 +287,18 @@ export default {
         }).catch((err)=>{
             context.commit('updateDeviceKeyFailed', data.device.id, err);
         });
-    },
-    filterDevices(context, params) {
-        context.commit('deviceListRequesting', {
-            silent: false
-        });
-        filterDeviceList(params).then((devices)=>{
-            context.commit('deviceListSucceeded', devices);
-            devices.items.forEach((device)=>{
-                context.dispatch('loadDevice', device.id);
-            });
-        }).catch((err)=>{
-            context.commit('deviceListFailed', err.message);
-        });
-    },
-    listProfiles(context) {
-        context.commit('listProfilesRequesting');
-        getProfiles({ all: true }).then((profiles)=>{
-            context.commit('listProfilesSucceeded', profiles);
-        }).catch((err)=>{
-            context.commit('listProfilesFailed', err.message);
-        });
     }
+    // filterDevices(context, params) {
+    //     context.commit('deviceListRequesting', {
+    //         silent: false
+    //     });
+    //     filterDeviceList(params).then((devices)=>{
+    //         context.commit('deviceListSucceeded', devices);
+    //         devices.items.forEach((device)=>{
+    //             context.dispatch('loadDevice', device.id);
+    //         });
+    //     }).catch((err)=>{
+    //         context.commit('deviceListFailed', err.message);
+    //     });
+    // }
 }

@@ -14,8 +14,8 @@ export default {
     devices: {},
     profilesOrdered: [],
     profiles: {},
-    modelsOrdered: [],
     models: {},
+    modelsOrdered: [],
     listState: RequestState.initiated,
     listError: null,
     listLoadingSilently: false,
@@ -46,6 +46,12 @@ export default {
     groupsAndSeatsState: RequestState.initiated,
     groupsAndSeatsError: null,
     updatedDeviceKey: null,
+    createDeviceState: RequestState.initiated,
+    createDeviceItem: null,
+    createDeviceError: null,
     listProfilesState: RequestState.initiated,
-    listProfilesError: null
+    listProfilesError: null,
+    modelImageStates: {},
+    modelImageErrors: {},
+    modelImages: {},
 }

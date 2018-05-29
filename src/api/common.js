@@ -4,7 +4,7 @@ import Vue from 'vue';
 import { getJsonBody } from './utils';
 
 export const LIST_DEFAULT_PAGE = 1;
-export const LIST_DEFAULT_ROWS = 25;
+export const LIST_DEFAULT_ROWS = 1;
 export const LIST_ALL_ROWS = 1000;
 
 export function getList(options) {
