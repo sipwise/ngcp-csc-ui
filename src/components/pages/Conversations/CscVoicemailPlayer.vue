@@ -58,7 +58,6 @@
             },
             isLoading() {
                 let getter = this.playVoiceMailState;
-                //console.log(getter(this.id));
                 return getter(this.id) === 'requesting';
             },
             ...mapGetters('conversations', [

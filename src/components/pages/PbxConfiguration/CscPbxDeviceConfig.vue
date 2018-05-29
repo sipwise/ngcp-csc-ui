@@ -328,7 +328,7 @@
                         type: line.type
                     });
                 });
-                if(changed === true && newLines.length > 0) {
+                if(changed === true) {
                     this.$emit('keysChanged', newLines);
                 }
             },
