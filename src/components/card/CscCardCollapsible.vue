@@ -76,8 +76,6 @@
     @import '../../themes/quasar.variables.styl'
 
     .csc-card-collapsible
-        .q-btn
-            margin-bottom 5px
         ul
             list-style none
             font-size 1rem
