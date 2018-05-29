@@ -367,3 +367,18 @@ export function getModelFrontImage(id) {
         });
     });
 }
+
+export function removeDevice(id) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.delete('api/pbxdevices/' + id).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            if(err.status >= 400) {
+                reject(new Error(err.body.message));
+            }
+            else {
+                reject(err);
+            }
+        });
+    });
+}
