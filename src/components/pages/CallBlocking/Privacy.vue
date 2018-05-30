@@ -1,5 +1,5 @@
 <template>
-    <csc-page title="Privacy">
+    <csc-page title="Privacy" class="csc-simple-page">
         <q-toggle :label="(!callBlockingEnabled ? 'Hide' : 'Show') + ' Own Number'"
                 @input="toggle()" v-model="callBlockingEnabled"/>
     </csc-page>

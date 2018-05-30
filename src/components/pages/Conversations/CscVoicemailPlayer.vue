@@ -7,7 +7,7 @@
         <q-progress
             class="progress-bar"
             :percentage="progress"
-            stripe 
+            stripe
             animate
             color="primary"
         />
@@ -40,7 +40,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/app.common'
+    @import '../../../themes/quasar.variables';
 
     .voicemail-player
         width 100%
@@ -56,7 +56,7 @@
             display flex
             justify-content space-between
         .progress-bar
-            margin-left 16px 
+            margin-left 16px
             margin-right 16px
 
 </style>

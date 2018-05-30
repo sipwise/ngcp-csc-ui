@@ -1,5 +1,6 @@
 'use strict';
 
+import _ from 'lodash'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import CallBlockingModule from './call-blocking'
@@ -25,5 +26,13 @@ export const store = new Vuex.Store({
         reminder: ReminderModule,
         user: UserModule,
         communication: CommunicationModule
+    },
+    getters: {
+        pageTitle(state) {
+            return _.get(state, 'route.meta.title', 'Not defined');
+        },
+        pageSubtitle(state) {
+            return _.get(state, 'route.meta.subtitle', '');
+        }
     }
 });
