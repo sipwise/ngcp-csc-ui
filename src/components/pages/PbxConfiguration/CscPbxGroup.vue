@@ -23,7 +23,7 @@
             </q-field>
             <q-field :label="$t('pbxConfig.huntTimeout')">
                 <q-input v-model="changes.huntTimeout" type="number" suffix="seconds"
-                         :after="huntTimeoutButtons" min="0" @keyup.enter="saveHuntTimeout" />
+                         :after="huntTimeoutButtons" :min="0" @keyup.enter="saveHuntTimeout" />
             </q-field>
             <q-field :label="$t('pbxConfig.primaryNumber')">
                 <q-input v-model="primaryNumber" readonly disabled />

@@ -22,11 +22,11 @@
             </q-field>
             <q-field :label="$t('pbxConfig.aliasNumbers')">
                 <q-select ref="aliasNumbers" v-model="changes.aliasNumbers" :options="aliasNumberOptions"
-                          multiple chips clearable :after="aliasNumberButtons" @change="aliasNumberChange"/>
+                          multiple chips clearable :after="aliasNumberButtons" />
             </q-field>
             <q-field :label="$t('pbxConfig.groups')">
                 <q-select v-model="changes.groups" :options="groupOptions" multiple chips clearable
-                          :after="groupButtons" @change="groupChange" />
+                          :after="groupButtons" />
             </q-field>
         </q-card-main>
         <q-inner-loading :visible="isLoading">
