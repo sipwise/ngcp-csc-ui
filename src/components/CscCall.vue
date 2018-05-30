@@ -38,7 +38,7 @@
                     <q-field v-show="isPreparing" :helper="$t('call.inputNumber')" :count="64" dark
                              :error="validationEnabled && phoneNumberError" :error-label="$t('call.inputValidNumber')">
                         <q-input type="text" :float-label="$t('call.number')" :value="phoneNumber" @input="inputPhoneNumber"
-                                 ref="numberInput" dark clearable max="64" @blur="phoneNumberBlur" @focus="phoneNumberFocus"
+                                 ref="numberInput" dark clearable :max="64" @blur="phoneNumberBlur" @focus="phoneNumberFocus"
                                  @keypress.space.prevent @keydown.space.prevent />
                     </q-field>
                     <div v-if="!isPreparing" class="phone-number">

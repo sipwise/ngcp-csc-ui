@@ -1,6 +1,6 @@
 <template>
     <csc-page :title="$t('pages.home.title')" id="csc-page-home">
-        <div class="row md-gutter">
+        <div :class="gridClasses">
             <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
                 <div @click="call()">
                     <q-card :class="{ 'home-card-inactive': !isCallAvailable,
@@ -122,6 +122,16 @@
             ]),
             isMobile() {
                 return Platform.is.mobile;
+            },
+            gridClasses() {
+                let classes = ['row'];
+                if(this.isMobile) {
+                    classes.push('sm-gutter');
+                }
+                else {
+                    classes.push('md-gutter');
+                }
+                return classes;
             }
         },
         methods: {
@@ -149,11 +159,11 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../themes/quasar.variables.styl'
+    @import '../../themes/quasar.variables'
 
     #csc-page-home
         .q-card-actions
-            font-size 22px
+            font-size 18px
             padding 0 10px 35px 10px
 
         .q-card-main
@@ -162,7 +172,7 @@
 
         .home-card-active
             cursor pointer
-            border solid 2px $primary
+            border solid 2px #c5e0ba
             .home-icons
                 font-size 5.5rem
                 color $primary
@@ -171,7 +181,7 @@
 
     .home-card-inactive
         cursor not-allowed
-        border solid 2px $grey
+        border solid 2px #eeeeee
         .home-icons
             font-size 5.5rem
             color $grey
@@ -180,6 +190,7 @@
 
     @media (max-width: $breakpoint-sm)
         #csc-page-home
+            padding 16px
             .q-card-actions
                 font-size 16px
                 padding 0 10px 25px 10px
