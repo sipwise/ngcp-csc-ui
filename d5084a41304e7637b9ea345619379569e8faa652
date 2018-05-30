@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_8648272f",
+        "filename": "src/components/CscConversation.vue",
+        "patchSetId": 5
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-05-30T13:09:58Z",
+      "side": 1,
+      "message": "Already fixed. I used \"get_app\" material icon.",
+      "range": {
+        "startLine": 56,
+        "startChar": 20,
+        "endLine": 57,
+        "endChar": 68
+      },
+      "revId": "d5084a41304e7637b9ea345619379569e8faa652",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
