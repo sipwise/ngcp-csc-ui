@@ -11,7 +11,7 @@
             </q-field>
             <q-field>
                 <q-input :disabled="loading" :readonly="loading" type="number" v-model="data.extension"
-                         clearable min="1" max="1000000" :float-label="$t('pbxConfig.extension')"  />
+                         clearable :min="1" :max="1000000" :float-label="$t('pbxConfig.extension')"  />
             </q-field>
             <q-field>
                 <q-select :disabled="loading" :readonly="loading" v-model="data.aliasNumbers" multiple chips clearable

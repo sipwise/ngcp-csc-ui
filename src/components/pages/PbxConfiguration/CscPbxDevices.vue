@@ -1,5 +1,5 @@
 <template>
-    <csc-page :title="$t('pbxConfig.devicesTitle')">
+    <csc-page :title="$t('pbxConfig.devicesTitle')" class="csc-list-page">
         <div v-if="isListLoadingVisible" class="row justify-center">
             <q-spinner-dots color="primary" :size="40" />
         </div>
@@ -94,5 +94,5 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/app.common'
+    @import '../../../themes/app.common';
 </style>

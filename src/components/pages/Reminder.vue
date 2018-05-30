@@ -1,5 +1,5 @@
 <template>
-    <csc-page :title="$t('pages.reminder.title')">
+    <csc-page :title="$t('pages.reminder.title')" class="csc-simple-page">
         <q-field class="reminder-field">
             <q-toggle :label="$t('pages.reminder.title') + (active ? ' enabled':' disabled')" @input="toggleReminder()" v-model="active" />
         </q-field>

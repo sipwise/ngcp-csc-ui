@@ -6,17 +6,37 @@
                 <q-icon name="menu"/>
             </q-btn>
             <q-toolbar-title>
-                {{ $t('title') }}
-                <span slot="subtitle"></span>
+                {{ pageTitle }}
+                <span slot="subtitle">{{ pageSubtitle }}</span>
             </q-toolbar-title>
-            <q-btn flat @click="" icon-right="fa-user-circle">
+            <q-btn flat class="csc-toolbar-btn">
+                <q-icon name="question answer" />
+                <q-popover ref="communicationPopover">
+                    <q-list item-separator link class="csc-toolbar-btn-popover">
+                        <q-item @click="call();$refs.communicationPopover.close()" v-if="isCallAvailable">
+                            <q-item-side icon="fa-phone" color="primary" />
+                            <q-item-main :label="$t('startCall')" />
+                        </q-item>
+                        <q-item @click="showSendFax();$refs.communicationPopover.close()" v-if="hasFaxCapability && hasSendFaxFeature">
+                            <q-item-side icon="fa-fax" color="primary"/>
+                            <q-item-main :label="$t('sendFax')" />
+                        </q-item>
+                        <q-item @click="$refs.communicationPopover.close()" v-if="hasSmsCapability && hasSendSmsFeature">
+                            <q-item-side icon="fa-send" color="primary"/>
+                            <q-item-main :label="$t('sendSms')" />
+                        </q-item>
+                    </q-list>
+                </q-popover>
+            </q-btn>
+            <q-btn flat class="csc-toolbar-btn csc-toolbar-btn-right">
+                <q-icon name="fa-user-circle" class="csc-toolbar-btn-icon" />
                 <span id="user-login-as" class="gt-sm">{{ $t('loggedInAs') }}</span>
                 <span id="user-name" class="gt-xs">{{ getUsername }}</span>
                 <q-popover ref="popover">
-                    <q-list item-separator link>
+                    <q-list item-separator link class="csc-toolbar-btn-popover">
                         <q-item @click="logout()">
+                            <q-item-side icon="exit to app" color="primary"/>
                             <q-item-main label="Logout" />
-                            <q-item-side icon="exit to app"/>
                         </q-item>
                     </q-list>
                 </q-popover>
@@ -89,19 +109,6 @@
             </q-collapsible>
         </q-list>
         <router-view />
-        <q-fixed-position id="global-action-btn" corner="top-right" :offset="fabOffset" class="page-button transition-generic">
-            <q-fab v-if="hasCommunicationCapabilities" color="primary" icon="question answer" active-icon="clear" direction="down" flat>
-                <q-fab-action v-if="hasFaxCapability && hasSendFaxFeature" color="primary" @click="showSendFax()" icon="fa-fax">
-                    <q-tooltip v-if="isDesktop" anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendFax') }}</q-tooltip>
-                </q-fab-action>
-                <q-fab-action v-if="hasSmsCapability && hasSendSmsFeature" color="primary" @click="" icon="fa-send">
-                    <q-tooltip v-if="isDesktop" anchor="center right" self="center left" :offset="[15, 0]">{{ $t('sendSms') }}</q-tooltip>
-                </q-fab-action>
-                <q-fab-action v-if="isCallAvailable" color="primary" @click="call()" icon="fa-phone">
-                    <q-tooltip v-if="isDesktop" anchor="center right" self="center left" :offset="[15, 0]">{{ $t('startCall') }}</q-tooltip>
-                </q-fab-action>
-            </q-fab>
-        </q-fixed-position>
         <csc-call ref="cscCall" slot="right" @close="closeCall()" @fullscreen="toggleFullscreen()"
                   :fullscreen="isFullscreenEnabled" region="DE" />
         <q-window-resize-observable @resize="onWindowResize" />
@@ -236,14 +243,20 @@
             },
             fabOffset() {
                 if(Platform.is.mobile) {
-                    return [1, 2];
+                    return [16, 16];
                 }
                 else {
-                    return [48, 17];
+                    return [32, 32];
                 }
             },
             isDesktop() {
                 return Platform.is.desktop;
+            },
+            pageTitle() {
+                return this.$store.getters['pageTitle'];
+            },
+            pageSubtitle() {
+                return this.$store.getters['pageSubtitle'];
             }
         },
         methods: {
@@ -356,7 +369,8 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../themes/quasar.variables.styl';
+    @import '../../themes/quasar.variables';
+    @import '../../themes/app.common';
 
     #main-menu {
         padding-top:60px;
@@ -414,24 +428,6 @@
     .q-card.page {
         padding: 0px;
         margin: 0;
-    }
-
-    #global-action-btn {
-        z-index: 1001;
-    }
-
-    @media only screen and (min-width: 425px) and (orientation: portrait) {
-        #global-action-btn {
-            margin: 15px 60px !important;
-            top: 60px;
-        }
-    }
-
-    @media only screen and (min-width: 768px) and (orientation: landscape) {
-        #global-action-btn {
-            margin: 17px 48px !important;
-            top: 60px;
-        }
     }
 
     .layout-aside.fixed.csc-call-fullscreen {
@@ -528,5 +524,19 @@
     .q-if-control.q-if-control-before.q-icon:before {
         font-size:24px;
     }
+
+    .csc-toolbar-btn-popover
+        .q-item-main.q-item-section
+            margin-left 0
+
+    .q-toolbar
+
+        .csc-toolbar-btn.q-btn
+            padding-left 8px
+            padding-right 8px
+
+        .csc-toolbar-btn-right
+            .csc-toolbar-btn-icon
+                margin-right 8px
 
 </style>
