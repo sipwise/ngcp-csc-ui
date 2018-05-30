@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fabf19d9_86238705",
+        "filename": "src/components/pages/Conversations/CscVoicemailPlayer.vue",
+        "patchSetId": 7
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-05-30T13:09:58Z",
+      "side": 1,
+      "message": "I\u0027m not comfortable to +2 this myself, maybe Hans Peter can look into it. From my side it\u0027s a +1 :)",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 82
+      },
+      "revId": "d72390f448adaa903c1bff050414015ad1153fb3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
