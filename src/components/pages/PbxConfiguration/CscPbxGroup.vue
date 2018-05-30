@@ -387,5 +387,5 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/app.common'
+    @import '../../../themes/quasar.variables';
 </style>

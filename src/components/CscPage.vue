@@ -1,8 +1,5 @@
 <template>
     <div class="page">
-        <q-fixed-position corner="top-left" :offset="[0,0]" :class="pageTitleClasses">
-            <h2>{{ title }}</h2>
-        </q-fixed-position>
         <div class="page-content">
             <slot></slot>
         </div>
@@ -47,8 +44,7 @@
 
     .page {
         position: relative;
-        padding: 60px;
-        padding-top: 100px;
+        padding: 48px;
         margin: 0px;
     }
 
@@ -82,7 +78,7 @@
     @media (max-width: $breakpoint-sm) {
         .page {
             padding: 16px;
-            padding-top: 70px;
+            padding-top: 32px;
             margin: 0px;
         }
         .page .page-content {

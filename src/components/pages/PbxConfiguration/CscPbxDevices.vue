@@ -1,5 +1,5 @@
 <template>
-    <csc-page :title="$t('pbxConfig.devicesTitle')">
+    <csc-page :title="$t('pbxConfig.devicesTitle')" class="csc-list-page">
         <div v-if="isListLoadingVisible" class="row justify-center">
             <q-spinner-dots color="primary" :size="40" />
         </div>
@@ -7,6 +7,7 @@
             <q-pagination :value="listCurrentPage" :max="listLastPage" @change="changePage" />
         </div>
         <q-list no-border separator sparse multiline>
+            <q-item> </q-item>
             <csc-pbx-device v-for="device in devices" :key="device.id" :device="device" @remove="removeDevice"
                             :modelOptions="modelOptions" :loading="isDeviceLoading(device.id)" />
         </q-list>
@@ -20,7 +21,7 @@
     import { mapGetters } from 'vuex'
     import CscPage  from '../../CscPage'
     import CscPbxDevice from './CscPbxDevice'
-    import { QSpinnerDots, QPagination, QList, Dialog } from 'quasar-framework'
+    import { QSpinnerDots, QPagination, QList, Dialog, QItem } from 'quasar-framework'
     import { showToast } from '../../../helpers/ui'
 
     export default {
@@ -39,7 +40,8 @@
             QSpinnerDots,
             QPagination,
             QList,
-            Dialog
+            Dialog,
+            QItem
         },
         computed: {
             ...mapGetters('pbxConfig', [
@@ -94,5 +96,5 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/app.common'
+    @import '../../../themes/app.common';
 </style>

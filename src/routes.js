@@ -1,4 +1,5 @@
 
+import { i18n } from './i18n'
 import DefaultLayout from './components/layouts/Default'
 import Home from './components/pages/Home'
 import Conversations from './components/pages/Conversations/Conversations'
@@ -23,50 +24,97 @@ export default [
             {
                 path: 'home',
                 component: Home,
+                meta: {
+                    title: i18n.t('navigation.home.title'),
+                    subtitle: i18n.t('navigation.home.subTitle')
+                }
             },
             {
                 path: 'conversations',
                 component: Conversations,
+                meta: {
+                    title: i18n.t('navigation.conversations.title'),
+                    subtitle: i18n.t('navigation.conversations.subTitle')
+                }
             },
             {
                 path: 'call-forward/always',
                 component: CallForwardAlways,
+                meta: {
+                    title: i18n.t('navigation.callForward.title'),
+                    subtitle: i18n.t('navigation.callForward.always')
+                }
             },
             {
                 path: 'call-forward/company-hours',
-                component: CallForwardCompanyHours
+                component: CallForwardCompanyHours,
+                meta: {
+                    title: i18n.t('navigation.callForward.title'),
+                    subtitle: i18n.t('navigation.callForward.companyHours')
+                }
             },
             {
                 path: 'call-forward/after-hours',
-                component: CallForwardAfterHours
+                component: CallForwardAfterHours,
+                meta: {
+                    title: i18n.t('navigation.callForward.title'),
+                    subtitle: i18n.t('navigation.callForward.afterHours')
+                }
             },
             {
                 path: 'call-blocking/incoming',
-                component: CallBlockingIncoming
+                component: CallBlockingIncoming,
+                meta: {
+                    title: i18n.t('navigation.callBlocking.title'),
+                    subtitle: i18n.t('navigation.callBlocking.incoming')
+                }
             },
             {
                 path: 'call-blocking/outgoing',
-                component: CallBlockingOutgoing
+                component: CallBlockingOutgoing,
+                meta: {
+                    title: i18n.t('navigation.callBlocking.title'),
+                    subtitle: i18n.t('navigation.callBlocking.outgoing')
+                }
             },
             {
                 path: 'call-blocking/privacy',
-                component: CallBlockingPrivacy
+                component: CallBlockingPrivacy,
+                meta: {
+                    title: i18n.t('navigation.callBlocking.title'),
+                    subtitle: i18n.t('navigation.callBlocking.privacy')
+                }
             },
             {
                 path: 'reminder',
-                component: Reminder
+                component: Reminder,
+                meta: {
+                    title: i18n.t('navigation.reminder.title')
+                }
             },
             {
                 path: 'pbx-configuration/groups',
-                component: PbxConfigurationGroups
+                component: PbxConfigurationGroups,
+                meta: {
+                    title: i18n.t('navigation.pbxConfiguration.title'),
+                    subtitle: i18n.t('navigation.pbxConfiguration.groups')
+                }
             },
             {
                 path: 'pbx-configuration/seats',
-                component: PbxConfigurationSeats
+                component: PbxConfigurationSeats,
+                meta: {
+                    title: i18n.t('navigation.pbxConfiguration.title'),
+                    subtitle: i18n.t('navigation.pbxConfiguration.seats')
+                }
             },
             {
                 path: 'pbx-configuration/devices',
-                component: PbxConfigurationDevices
+                component: PbxConfigurationDevices,
+                meta: {
+                    title: i18n.t('navigation.pbxConfiguration.title'),
+                    subtitle: i18n.t('navigation.pbxConfiguration.devices')
+                }
             }
         ]
     },

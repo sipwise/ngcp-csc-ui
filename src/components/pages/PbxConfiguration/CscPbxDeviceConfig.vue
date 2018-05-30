@@ -216,8 +216,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/app.common'
-
+    @import '../../../themes/quasar.variables';
     $spotSize = 25px
 
     .csc-pbx-device-key-details

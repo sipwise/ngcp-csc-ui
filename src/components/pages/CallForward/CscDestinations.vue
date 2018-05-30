@@ -1,7 +1,7 @@
 <template>
     <div class="dest-section">
         <div class="dest-title">
-            <q-icon :name="icon" class="dest-icon" />
+            <q-icon :name="icon" class="dest-icon" size="24px" />
             {{ title }}
         </div>
         <q-list no-border>
