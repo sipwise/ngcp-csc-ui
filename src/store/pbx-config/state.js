@@ -47,5 +47,6 @@ export default {
     groupsAndSeatsError: null,
     updatedDeviceKey: null,
     listProfilesState: RequestState.initiated,
-    listProfilesError: null
+    listProfilesError: null,
+    updatedStationName: null
 }

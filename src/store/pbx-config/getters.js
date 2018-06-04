@@ -151,7 +151,7 @@ export default {
         return state.listLastPage;
     },
     isDeviceLoading(state) {
-        return (id)=>{
+        return (id) => {
             return state.deviceStates[id + ""] === RequestState.requesting;
         }
     },
@@ -228,5 +228,8 @@ export default {
     },
     listProfilesError(state) {
         return state.listError;
+    },
+    updatedStationName(state) {
+        return state.updatedStationName;
     }
 }

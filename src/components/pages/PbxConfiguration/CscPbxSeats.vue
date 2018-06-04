@@ -79,7 +79,8 @@
                 'lastRemovedSeat',
                 'lastUpdatedField',
                 'updateAliasNumbersState',
-                'updateGroupsAndSeatsState'
+                'updateGroupsAndSeatsState',
+                'updateState'
             ]),
             groupOptions() {
                 let groups = [];

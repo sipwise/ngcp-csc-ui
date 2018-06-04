@@ -48,6 +48,7 @@
                 :subscribers="getGroupOrSeatById"
                 @loadGroupsAndSeats="loadGroupsAndSeats()"
                 @deviceKeysChanged="deviceKeysChanged"
+                @save-station-name="setStationName"
             />
         </q-list>
         <div
@@ -73,11 +74,12 @@
         QList,
         Dialog,
         QItem,
-        QBtn,
         QSelect
     } from 'quasar-framework'
+    import itemError from '../../../mixins/item-error'
 
     export default {
+        mixins: [itemError],
         data () {
             return {
                 profile: null,
@@ -96,7 +98,6 @@
             QList,
             Dialog,
             QItem,
-            QBtn,
             QSelect
         },
         computed: {
@@ -115,7 +116,8 @@
                 'updatedDeviceKey',
                 'profileOptions',
                 'listProfilesState',
-                'listProfilesError'
+                'listProfilesError',
+                'updatedStationName'
             ]),
             noDeviceMessage() {
                 if (this.profile) {
@@ -187,6 +189,9 @@
                 this.$store.dispatch('pbxConfig/listDevices', {
                     page: 1
                 });
+            },
+            setStationName(device) {
+                this.$store.dispatch('pbxConfig/setStationName', device);
             }
         },
         watch: {
@@ -199,7 +204,7 @@
             },
             updatedDeviceKey(data) {
                 if(data !== null) {
-                    showToast(this.$t('pbxConfig.toasts.updatedDeviceKeys',{
+                    showToast(this.$t('pbxConfig.toasts.updatedDeviceKeys', {
                         name: data.device.station_name
                     }));
                 }
@@ -207,6 +212,14 @@
             listProfilesState(state) {
                 if (state === 'failed') {
                     showGlobalError(this.listProfilesError);
+                }
+            },
+            updatedStationName(data) {
+                console.log('updatedStationName', data);
+                if(data !== null) {
+                    showToast(this.$t('pbxConfig.toasts.updatedStationName', {
+                        name: data.station_name
+                    }));
                 }
             }
         }

@@ -243,5 +243,18 @@ export default {
     listProfilesFailed(state, error) {
         state.listProfilesState = RequestState.failed;
         state.listProfilesError = error;
+    },
+    updateStationNameRequesting(state, deviceId) {
+        Vue.set(state.deviceStates, deviceId + "", RequestState.requesting);
+        state.updatedStationName = null;
+    },
+    updateStationNameSucceeded(state, data) {
+        Vue.set(state.deviceStates, data.id + "", RequestState.succeeded);
+        state.updatedStationName = data;
+    },
+    updateStationNameFailed(state, deviceId, error) {
+        Vue.set(state.deviceStates, deviceId + "", RequestState.failed);
+        Vue.set(state.deviceErrors, deviceId + "", error);
+        state.updatedStationName = null;
     }
 }
