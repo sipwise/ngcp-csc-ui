@@ -1,11 +1,11 @@
-'use strict';
 
 import _ from 'lodash';
 import { assignNumbers } from '../../api/user';
 import { addGroup, removeGroup, addSeat, removeSeat, setGroupName,
     setGroupExtension, setGroupHuntPolicy, setGroupHuntTimeout,
     updateGroupSeats, setSeatName, setSeatExtension, removeDevice,
-    updateSeatGroups, getGroupList, getSeatList, getDeviceList, getDeviceFull } from '../../api/pbx-config'
+    updateSeatGroups, getGroupList, getSeatList, getDeviceList,
+    getDeviceFull, setStationName } from '../../api/pbx-config'
 
 export default {
     listGroups(context, options) {
@@ -217,6 +217,17 @@ export default {
             context.dispatch('listDevices');
         }).catch((err)=>{
             context.commit('deviceFailed', device.id, err.message);
+        });
+    },
+    setStationName(context, device) {
+        setStationName(device).then(() => {
+            //return context.dispatch('listDevices', true);
+        }).then(()=>{
+           console.log('setStationName succeeded');
+            //context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            console.log('setStationName failed', err.message);
+            //context.commit('updateItemFailed', err.message);
         });
     }
 }

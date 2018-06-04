@@ -382,3 +382,29 @@ export function removeDevice(id) {
         });
     });
 }
+
+export function setStationName(options) {
+    console.log('setStationName()', options.id, options.station_name);
+    return new Promise((resolve, reject) => {
+        let headers = {
+            'Content-Type': 'application/json-patch+json',
+            'Prefer': 'return=minimal'
+        };
+        Vue.http.patch('api/pbxdevices/' + options.id, [
+            {
+                op: 'replace',
+                path: '/station_name',
+                value: options.station_name
+            }
+        ], { headers: headers }).then(() => {
+            resolve();
+        }).catch((err) => {
+            if(err.status >= 400) {
+                reject(new Error(err.body.message));
+            }
+            else {
+                reject(err);
+            }
+        });
+    });
+}
