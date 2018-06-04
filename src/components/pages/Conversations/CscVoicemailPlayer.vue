@@ -1,19 +1,20 @@
 <template>
     <div class="voicemail-player">
-        <audio :src="soundFileUrl" ref="voiceMailSound" preload="none" />
+        <audio :src="soundFileUrl" ref="voiceMailSound" preload="none" @timeupdate="timeupdate($event)"/>
         <div class="control-btns">
             <q-btn class="play-pause-btn" round flat small color="primary"
                    :icon="playPauseIcon" @click="toggle()" />
 
-            <q-btn class="stop-btn" round flat small color="primary" icon="stop" />
+            <q-btn class="stop-btn" round flat small color="primary" icon="stop" @click="stop()"/>
         </div>
-        <q-progress class="progress-bar" :indeterminate="isLoading" stripe animate color="primary"/>
+        <q-progress class="progress-bar" :percentage="progressPercentage" stripe animate color="primary"/>
     </div>
 </template>
 
 <script>
     import { mapGetters } from 'vuex'
     import { QProgress, QBtn } from 'quasar-framework'
+
     export default {
         name: 'csc-voicemail-player',
         props: {
@@ -28,9 +29,12 @@
             });
             this.$refs.voiceMailSound.addEventListener('ended', ()=>{
                 this.playing = false;
+                this.stop();
             });
             this.$refs.voiceMailSound.addEventListener('canplay', ()=>{
-                this.$refs.voiceMailSound.play();
+                if(!this.paused) {
+                    this.$refs.voiceMailSound.play();
+                }
             });
         },
         components: {
@@ -39,10 +43,10 @@
         },
         data () {
             return {
-                progress: 77,
                 platform: this.$q.platform.is,
-                voicemail: null,
-                playing: false
+                playing: false,
+                paused: false,
+                progressPercentage: 0
             }
         },
         computed: {
@@ -58,7 +62,6 @@
             },
             isLoading() {
                 let getter = this.playVoiceMailState;
-                //console.log(getter(this.id));
                 return getter(this.id) === 'requesting';
             },
             ...mapGetters('conversations', [
@@ -70,10 +73,16 @@
             play() {
                 this.$refs.voiceMailSound.play();
                 this.playing = true;
+                this.paused = false;
             },
             pause() {
                 this.$refs.voiceMailSound.pause();
                 this.playing = false;
+                this.paused = true;
+            },
+            stop() {
+                this.$refs.voiceMailSound.currentTime = 0;                
+                this.pause();
             },
             load() {
                 this.$store.dispatch('conversations/playVoiceMail', {
@@ -91,6 +100,10 @@
                 else {
                     this.pause();
                 }
+            },
+            timeupdate(e) {
+                let newPercentage = Math.floor((e.target.currentTime / e.target.duration) * 100);
+                this.progressPercentage = newPercentage;
             }
         }
     }
