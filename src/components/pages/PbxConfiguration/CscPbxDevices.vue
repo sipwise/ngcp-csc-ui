@@ -1,6 +1,5 @@
 <template>
     <csc-page
-        :title="$t('pbxConfig.devicesTitle')"
         class="csc-list-page"
     >
         <q-list
@@ -38,8 +37,9 @@
                             @change="changePage"
                         />
                     </div>
-                    <div v-if="isListLoadingVisible"
-                         class="row justify-center"
+                    <div
+                        v-if="isListLoadingVisible"
+                        class="row justify-center"
                     >
                         <q-spinner-dots
                             color="primary"
@@ -48,15 +48,17 @@
                     </div>
                 </q-item-main>
             </q-item>
-            <csc-pbx-device v-for="device in devices"
-                            :key="device.id"
-                            :device="device"
-                            :loading="isDeviceLoading(device.id)"
-                            :groupsAndSeatsOptions="groupsAndSeatsOptions"
-                            :subscribers="getGroupOrSeatById"
-                            @remove="removeDevice"
-                            @loadGroupsAndSeats="loadGroupsAndSeats()"
-                            @deviceKeysChanged="deviceKeysChanged"
+            <csc-pbx-device
+                v-for="device in devices"
+                :key="device.id"
+                :device="device"
+                :loading="isDeviceLoading(device.id)"
+                :groupsAndSeatsOptions="groupsAndSeatsOptions"
+                :subscribers="getGroupOrSeatById"
+                @remove="removeDevice"
+                @loadGroupsAndSeats="loadGroupsAndSeats()"
+                @deviceKeysChanged="deviceKeysChanged"
+                @save-station-name="setStationName"
             />
         </q-list>
         <div
@@ -124,7 +126,10 @@
                 'profileOptions',
                 'listProfilesState',
                 'listProfilesError',
-                'modelImages'
+                'modelImages',
+                'updatedDevice',
+                'updatedDeviceSucceeded',
+                'updatedDeviceError'
             ]),
             noDeviceMessage() {
                 if (this.profile) {
@@ -197,6 +202,9 @@
                 this.$store.dispatch('pbxConfig/listDevices', {
                     page: 1
                 });
+            },
+            setStationName(device) {
+                this.$store.dispatch('pbxConfig/setStationName', device);
             }
         },
         watch: {
@@ -209,7 +217,7 @@
             },
             updatedDeviceKey(data) {
                 if(data !== null) {
-                    showToast(this.$t('pbxConfig.toasts.updatedDeviceKeys',{
+                    showToast(this.$t('pbxConfig.toasts.updatedDeviceKeys', {
                         name: data.device.station_name
                     }));
                 }
@@ -231,14 +239,24 @@
                 if (state === 'failed') {
                     showGlobalError(this.listProfilesError);
                 }
+            },
+            updatedDeviceSucceeded(succeeded) {
+                if(succeeded === true) {
+                    showToast(this.$t('pbxConfig.toasts.updatedStationName', {
+                        name: this.updatedDevice.station_name
+                    }));
+                }
+            },
+            updatedDeviceError(err) {
+                if (err !== null) {
+                    showGlobalError(err);
+                }
             }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-
     .filter-model-select
         margin 16px 16px 8px 16px
-
 </style>

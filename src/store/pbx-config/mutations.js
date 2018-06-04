@@ -285,5 +285,18 @@ export default {
     listProfilesFailed(state, error) {
         state.listProfilesState = RequestState.failed;
         state.listProfilesError = error;
+    },
+    updateStationNameRequesting(state, deviceId) {
+        state.updatedDevice = deviceId;
+        state.updatedDeviceState = RequestState.requesting;
+        state.updatedDeviceError = null;
+    },
+    updateStationNameSucceeded(state) {
+        state.updatedDeviceState = RequestState.succeeded;
+        state.updatedDeviceError = null;
+    },
+    updateStationNameFailed(state, error) {
+        state.updatedDeviceState = RequestState.failed;
+        state.updatedDeviceError = error;
     }
 }

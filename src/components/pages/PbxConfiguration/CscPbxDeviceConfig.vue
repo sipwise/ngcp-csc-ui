@@ -363,8 +363,9 @@
         },
         watch: {
             device() {
-                this.openKeyOverlay(this.selectedKey, this.selectedKeyIndex);
-                this.$forceUpdate();
+                if(this.keyOverlayActive) {
+                    this.selectedLine = this.getLineByKey(this.selectedKeyIndex);
+                }
             }
         }
     }
