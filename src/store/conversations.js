@@ -52,13 +52,16 @@ export default {
         },
         playVoiceMailState(state) {
             return (id) => {
-                return state.playVoiceMailStates[id];
+                return state.playVoiceMailStates[id + ""];
             }
         },
         playVoiceMailUrl(state) {
             return (id) => {
-                return state.playVoiceMailUrls[id];
+                return state.playVoiceMailUrls[id + ""];
             }
+        },
+        playVoiceMailStates(state) {
+            return state.playVoiceMailStates;
         }
     },
     mutations: {
@@ -110,18 +113,22 @@ export default {
             state.page++;
         },
         playVoiceMailRequesting(state, id) {
-            Vue.set(state.playVoiceMailStates, id, RequestState.requesting);
-            Vue.set(state.playVoiceMailErrors, id, null);
+            Vue.set(state.playVoiceMailUrls, id + "", null);
+            Vue.set(state.playVoiceMailStates, id + "", RequestState.requesting);
+            Vue.set(state.playVoiceMailErrors, id + "", null);
         },
         playVoiceMailSucceeded(state, options) {
-            Vue.set(state.playVoiceMailUrls, options.id, options.url);
-            Vue.set(state.playVoiceMailStates, options.id, RequestState.succeeded);
-            Vue.set(state.playVoiceMailErrors, options.id, null);
+            Vue.delete(state.playVoiceMailUrls, options.id + "");
+            Vue.set(state.playVoiceMailUrls, options.id + "",  options.url);
+            Vue.delete(state.playVoiceMailStates, options.id + "");
+            Vue.set(state.playVoiceMailStates, options.id + "", RequestState.succeeded);
+            Vue.delete(state.playVoiceMailErrors, options.id + "");
+            Vue.set(state.playVoiceMailErrors, options.id + "", null);
         },
         playVoiceMailFailed(state, id, err) {
-            Vue.set(state.playVoiceMailUrls, id, null);
-            Vue.set(state.playVoiceMailStates, id, RequestState.failed);
-            Vue.set(state.playVoiceMailErrors, id, err);
+            Vue.set(state.playVoiceMailUrls, id + "", null);
+            Vue.set(state.playVoiceMailStates, id + "", RequestState.failed);
+            Vue.set(state.playVoiceMailErrors, id + "", err);
         }
     },
     actions: {
