@@ -11,7 +11,8 @@
             <csc-pbx-device v-for="device in devices" :key="device.id" :device="device" @remove="removeDevice"
                             :modelOptions="modelOptions" :loading="isDeviceLoading(device.id)"
                             :groupsAndSeatsOptions="groupsAndSeatsOptions" :subscribers="getGroupOrSeatById"
-                            @loadGroupsAndSeats="loadGroupsAndSeats()"  @deviceKeysChanged="deviceKeysChanged" />
+                            @loadGroupsAndSeats="loadGroupsAndSeats()"  @deviceKeysChanged="deviceKeysChanged"
+                            @save-station-name="setStationName" />
         </q-list>
         <div v-if="devices.length === 0 && !isListRequesting" class="row justify-center csc-no-entities">
             {{ $t('pbxConfig.noDevices') }}
@@ -93,6 +94,9 @@
             },
             deviceKeysChanged(data) {
                 this.$store.dispatch('pbxConfig/updateDeviceKeys', data);
+            },
+            setStationName(device) {
+                this.$store.dispatch('pbxConfig/setStationName', device);
             }
         },
         watch: {
