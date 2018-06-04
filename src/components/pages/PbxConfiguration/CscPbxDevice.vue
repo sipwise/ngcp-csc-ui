@@ -11,7 +11,7 @@
             <q-item-tile v-if="!expanded" sublabel><span class="gt-sm">MAC address: </span>{{ device.identifier }}</q-item-tile>
             <q-item-tile v-if="expanded" class="csc-pbx-device-content">
                 <q-field :label="$t('pbxConfig.deviceStationName')">
-                    <q-input v-model="device.station_name" readonly />
+                    <q-input v-model="changes.stationName" :after="stationNameButtons" @keyup.enter="saveStationName" />
                 </q-field>
                 <q-field :label="$t('pbxConfig.deviceIdentifier')">
                     <q-input v-model="device.identifier" readonly />
@@ -57,7 +57,8 @@
         data () {
             return {
                 expanded: false,
-                modalOpened: false
+                modalOpened: false,
+                changes: this.getDevice()
             }
         },
         computed: {
@@ -80,6 +81,41 @@
             },
             name() {
                 return _.get(this.device, 'profile.name', '...');
+            },
+            stationNameButtons() {
+                let buttons = [];
+                let self = this;
+                if(this.stationNameHasChanges) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveStationName();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetStationName();
+                            }
+                        }
+                    );
+                }
+                return buttons;
+            },
+            stationName() {
+                return this.device.station_name;
+            },
+            deviceModel() {
+                return {
+                    id: this.changes.id,
+                    station_name: this.changes.stationName
+                }
+            },
+            stationNameHasChanges() {
+                return this.stationName !== this.changes.stationName;
             }
         },
         mounted() {
@@ -91,6 +127,23 @@
             },
             remove() {
                 this.$emit('remove', this.device);
+            },
+            getDevice() {
+                return {
+                    id: this.device.id,
+                    stationName: this.device.station_name
+                }
+            },
+            resetStationName() {
+                this.changes.stationName = this.device.station_name;
+            },
+            saveStationName() {
+                this.$emit('save-station-name', this.deviceModel);
+            }
+        },
+        watch: {
+            device() {
+                this.changes = this.getDevice()
             }
         }
     }

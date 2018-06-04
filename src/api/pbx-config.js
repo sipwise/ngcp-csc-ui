@@ -382,3 +382,8 @@ export function removeDevice(id) {
         });
     });
 }
+
+export function setStationName(id, stationName) {
+    console.log('setStationName()', id, stationName);
+    // TODO: PATCH update station name
+}

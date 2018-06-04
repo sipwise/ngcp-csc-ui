@@ -9,7 +9,7 @@
         <q-list no-border separator sparse multiline>
             <q-item> </q-item>
             <csc-pbx-device v-for="device in devices" :key="device.id" :device="device" @remove="removeDevice"
-                            :modelOptions="modelOptions" :loading="isDeviceLoading(device.id)" />
+                @save-station-name="setStationName" :loading="isDeviceLoading(device.id)" />
         </q-list>
         <div v-if="devices.length === 0 && !isListRequesting" class="row justify-center csc-no-entities">
             {{ $t('pbxConfig.noDevices') }}
@@ -81,6 +81,9 @@
                         }
                     ]
                 });
+            },
+            setStationName(device) {
+                this.$store.dispatch('pbxConfig/setStationName', device);
             }
         },
         watch: {
