@@ -2,29 +2,69 @@
     <div class="row justify-center">
         <div v-if="formEnabled" class="col col-md-6 col-sm-12">
             <q-field>
-                <q-input v-model="data.station_name" :disabled="loading" :readonly="loading" autofocus
-                         :float-label="$t('pbxConfig.deviceStationName')"  clearable />
+                <q-input
+                    v-model="data.station_name"
+                    :disabled="loading"
+                    :readonly="loading"
+                    autofocus
+                    :float-label="$t('pbxConfig.deviceStationName')"
+                    clearable
+                />
             </q-field>
             <q-field>
-                <q-input v-model="data.identifier" :disabled="loading" :readonly="loading"
-                         :float-label="$t('pbxConfig.deviceIdentifier')"  clearable />
+                <q-input
+                    v-model="data.identifier"
+                    :disabled="loading"
+                    :readonly="loading"
+                    :float-label="$t('pbxConfig.deviceIdentifier')"
+                    clearable
+                />
             </q-field>
             <q-field>
-                <csc-pbx-model-select :profiles="profiles" :modelImages="modelImages"
-                                      @opened="modelSelectOpened()" @select="selectProfile" />
+                <csc-pbx-model-select
+                    :profiles="profiles"
+                    :modelImages="modelImages"
+                    :label="$t('pbxConfig.deviceModel')"
+                    @opened="modelSelectOpened()"
+                    @select="selectProfile"
+                />
             </q-field>
-            <div class="row justify-center form-actions">
-                <q-btn v-if="!loading" flat color="secondary"
-                       icon="clear" @click="cancel()">{{ $t('buttons.cancel') }}</q-btn>
-                <q-btn v-if="!loading" flat color="primary"
-                       icon="done" @click="save()">{{ $t('buttons.save') }}</q-btn>
+            <div
+                class="row justify-center form-actions"
+            >
+                <q-btn
+                    v-if="!loading"
+                    flat color="secondary"
+                    icon="clear"
+                    @click="cancel()"
+                >{{ $t('buttons.cancel') }}</q-btn>
+                <q-btn
+                    v-if="!loading"
+                    flat color="primary"
+                    icon="done"
+                    @click="save()"
+                >{{ $t('buttons.save') }}</q-btn>
             </div>
         </div>
-        <div v-else class="row justify-center">
-            <q-btn color="primary" icon="add" flat @click="enableForm()">Add device</q-btn>
+        <div
+            v-else
+            class="row justify-center"
+        >
+            <q-btn
+                color="primary"
+                icon="add"
+                flat
+                @click="enableForm()"
+            >Add device</q-btn>
         </div>
-        <q-inner-loading v-show="loading" :visible="loading">
-            <q-spinner-mat size="60px" color="primary" />
+        <q-inner-loading
+            v-show="loading"
+            :visible="loading"
+        >
+            <q-spinner-mat
+                size="60px"
+                color="primary"
+            />
         </q-inner-loading>
     </div>
 </template>

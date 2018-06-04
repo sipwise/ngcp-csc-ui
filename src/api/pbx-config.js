@@ -456,3 +456,10 @@ export function updateDeviceKeys(deviceId, keys) {
     });
 }
 
+export function setStationName(options) {
+    return patchReplace({
+        path: 'api/pbxdevices/' + options.id,
+        fieldPath: 'station_name',
+        value: options.station_name
+    });
+}

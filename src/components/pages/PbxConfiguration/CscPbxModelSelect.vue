@@ -25,7 +25,7 @@
             </q-popover>
         </div>
         <div v-if="selectedProfile.device_id != null" class="csc-pbx-model-image">
-            <img :src="frontImageUrl(selectedProfile.device_id)" />
+            <img :src="frontImageUrl(selectedProfile.device_id)" class="csc-pbx-model-select-preview" />
         </div>
     </div>
 </template>
@@ -96,7 +96,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-
+    @import '../../../themes/quasar.variables';
     .csc-pbx-model-list
         .q-item-avatar
             img
@@ -105,7 +105,12 @@
     .csc-pbx-model-image
         margin-top 16px
         text-align center
+
         img
-            width: 50%
+            width: 25%
+
+        @media (max-width: $breakpoint-sm)
+            img
+                width 40%
 
 </style>
