@@ -6,32 +6,95 @@
             </q-item-tile>
         </q-item-side>
         <q-item-main :style="{zIndex: 10}">
-            <q-item-tile v-if="!expanded" label>{{ device.station_name }}</q-item-tile>
-            <q-item-tile v-if="!expanded" sublabel><span class="gt-sm">Model: </span>{{ name }}</q-item-tile>
-            <q-item-tile v-if="!expanded" sublabel><span class="gt-sm">MAC address: </span>{{ device.identifier }}</q-item-tile>
-            <q-item-tile v-if="expanded" class="csc-pbx-device-content">
+            <q-item-tile
+                v-if="!expanded"
+                label
+            >
+                {{ device.station_name }}
+            </q-item-tile>
+            <q-item-tile
+                v-if="!expanded"
+                sublabel
+            >
+                <span class="gt-sm">
+                    Model:
+                </span>
+                {{ name }}
+            </q-item-tile>
+            <q-item-tile
+                v-if="!expanded"
+                sublabel
+            >
+                <span class="gt-sm">
+                    MAC address:
+                </span>
+                {{ device.identifier }}
+            </q-item-tile>
+            <q-item-tile
+                v-if="expanded"
+                class="csc-pbx-device-content"
+                >
                 <q-field :label="$t('pbxConfig.deviceStationName')">
-                    <q-input v-model="device.station_name" readonly />
+                    <q-input
+                        v-model="changes.stationName"
+                        :after="stationNameButtons"
+                        @keyup.enter="saveStationName"
+                    />
                 </q-field>
-                <q-field :label="$t('pbxConfig.deviceIdentifier')">
-                    <q-input v-model="device.identifier" readonly />
+                <q-field
+                    :label="$t('pbxConfig.deviceIdentifier')"
+                >
+                    <q-input
+                        v-model="device.identifier"
+                        readonly
+                    />
                 </q-field>
                 <q-field :label="$t('pbxConfig.deviceModel')">
                     <p>{{ name }}</p>
                 </q-field>
-                <csc-pbx-device-config :device="device" :groupsAndSeatsOptions="groupsAndSeatsOptions" :loading="loading"
-                                       @loadGroupsAndSeats="loadGroupsAndSeats()" @keysChanged="keysChanged"
-                                       :subscribers="subscribers" />
+                <csc-pbx-device-config
+                    :device="device"
+                    :groupsAndSeatsOptions="groupsAndSeatsOptions"
+                    :loading="loading"
+                    @loadGroupsAndSeats="loadGroupsAndSeats()"
+                    @keysChanged="keysChanged"
+                    :subscribers="subscribers"
+                />
             </q-item-tile>
         </q-item-main>
-        <q-item-side right class="csc-item-buttons" :style="{zIndex: 11}">
+        <q-item-side
+            right
+            class="csc-item-buttons"
+            :style="{zIndex: 11}"
+        >
             <q-item-tile>
-                <q-btn :icon="titleIcon" :big="isMobile" color="primary" slot="right" flat @click="toggleMain()" />
-                <q-btn icon="delete" :big="isMobile" color="negative" slot="right" flat @click="remove()" />
+                <q-btn
+                    :icon="titleIcon"
+                    :big="isMobile"
+                    color="primary"
+                    slot="right"
+                    flat
+                    @click="toggleMain()"
+                />
+                <q-btn
+                    icon="delete"
+                    :big="isMobile"
+                    color="negative"
+                    slot="right"
+                    flat
+                    @click="remove()"
+                />
             </q-item-tile>
         </q-item-side>
-        <q-inner-loading v-if="loading" :visible="loading" :style="{zIndex: 12}">
-            <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
+        <q-inner-loading
+            v-if="loading"
+            :visible="loading"
+            :style="{zIndex: 12}"
+        >
+            <q-spinner-mat
+                size="60px"
+                color="primary"
+            />
         </q-inner-loading>
     </q-item>
 </template>
@@ -61,7 +124,8 @@
         data () {
             return {
                 expanded: false,
-                modalOpened: false
+                modalOpened: false,
+                changes: this.getDevice()
             }
         },
         computed: {
@@ -84,6 +148,41 @@
             },
             name() {
                 return _.get(this.device, 'profile.name', '...');
+            },
+            stationNameButtons() {
+                let buttons = [];
+                let self = this;
+                if(this.stationNameHasChanges) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveStationName();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetStationName();
+                            }
+                        }
+                    );
+                }
+                return buttons;
+            },
+            stationName() {
+                return this.device.station_name;
+            },
+            deviceModel() {
+                return {
+                    id: this.changes.id,
+                    station_name: this.changes.stationName
+                }
+            },
+            stationNameHasChanges() {
+                return this.stationName !== this.changes.stationName;
             }
         },
         mounted() {
@@ -104,6 +203,23 @@
                     device: this.device,
                     keys: keys
                 });
+            },
+            getDevice() {
+                return {
+                    id: this.device.id,
+                    stationName: this.device.station_name
+                }
+            },
+            resetStationName() {
+                this.changes.stationName = this.device.station_name;
+            },
+            saveStationName() {
+                this.$emit('save-station-name', this.deviceModel);
+            }
+        },
+        watch: {
+            device() {
+                this.changes = this.getDevice();
             }
         }
     }
