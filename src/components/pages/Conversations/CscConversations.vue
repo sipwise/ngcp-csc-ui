@@ -45,13 +45,16 @@
                 this.$refs.infinite.resume();
             },
             loadMore(index, done) {
-                this.$store.dispatch('conversations/loadConversations')
-                    .then(() => {
-                        done();
-                    }).catch(() => {
-                        done();
-                        this.$refs.infinite.stop();
-                    });
+                //NOTE: Temporarily fixed to avoid infinite scrolling
+                if(index === 1) {
+                    this.$store.dispatch('conversations/loadConversations')
+                        .then(() => {
+                            done();
+                        }).catch(() => {
+                            done();
+                            this.$refs.infinite.stop();
+                        }); 
+                }
             }
         },
         watch: {

@@ -35,9 +35,10 @@ mysql < ./conversations_dump.sql
 
 ## VOICEMAIL
 
-1. Go to Settings > Subscribers > Details > Master Data, and set "Primary Number"/E164 to the desired number (for example 43993007)
-1. Go to Settings > Subscribers > Details > Preferences, and under "Call Forwards" create a call forward destination under "Call Forward Unconditional" to voicemail
-1. Initiate a call from another subscriber to the subscriber you just set call forward for, and leave a voicemail
+1. Go to Settings > Subscribers, choose a subscriber (for example 43993007) who will be a caller. Go to Details > Master Data > Edit, and set "Primary Number"/E164 to the desired number (in this case 43993007)
+1. Go back to Settings > Subscribers, choose another subscriber (for example 43993006) who will act as a callee. Go to Details > Master Data > Edit, and set "Primary Number"/E164 to the desired number (in this case 43993006)
+1. While in the second subscriber's details, go to Preferences, and under "Call Forwards" create a call forward destination under "Call Forward Unconditional" to voicemail
+1. Initiate a call from the first subscriber to the subscriber you just set call forward for, and leave a voicemail
 
 See [calls section](#calls) for information on how to initiate calls.
 
