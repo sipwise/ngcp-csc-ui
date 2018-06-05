@@ -9,7 +9,9 @@
         <q-list no-border separator sparse multiline>
             <q-item> </q-item>
             <csc-pbx-device v-for="device in devices" :key="device.id" :device="device" @remove="removeDevice"
-                            :modelOptions="modelOptions" :loading="isDeviceLoading(device.id)" />
+                            :modelOptions="modelOptions" :loading="isDeviceLoading(device.id)"
+                            :groupsAndSeatsOptions="groupsAndSeatsOptions" :subscribers="getGroupOrSeatById"
+                            @loadGroupsAndSeats="loadGroupsAndSeats()"  @deviceKeysChanged="deviceKeysChanged" />
         </q-list>
         <div v-if="devices.length === 0 && !isListRequesting" class="row justify-center csc-no-entities">
             {{ $t('pbxConfig.noDevices') }}
@@ -52,7 +54,11 @@
                 'listCurrentPage',
                 'listLastPage',
                 'isDeviceLoading',
-                'deviceRemoved'
+                'deviceRemoved',
+                'groupsAndSeatsOptions',
+                'groupsAndSeats',
+                'getGroupOrSeatById',
+                'updatedDeviceKey'
             ])
         },
         methods: {
@@ -81,6 +87,12 @@
                         }
                     ]
                 });
+            },
+            loadGroupsAndSeats() {
+                this.$store.dispatch('pbxConfig/getAllGroupsAndSeats');
+            },
+            deviceKeysChanged(data) {
+                this.$store.dispatch('pbxConfig/updateDeviceKeys', data);
             }
         },
         watch: {
@@ -88,6 +100,14 @@
                 if(device !== null) {
                     showToast(this.$t('pbxConfig.toasts.removedDeviceToast', {
                         name: device.station_name
+                    }));
+                }
+            },
+            updatedDeviceKey(data) {
+                if(data !== null) {
+                    console.log(data);
+                    showToast(this.$t('pbxConfig.toasts.updatedDeviceKeys',{
+                        name: data.device.station_name
                     }));
                 }
             }

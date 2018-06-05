@@ -41,5 +41,9 @@ export default {
     updateAliasNumbersState: RequestState.initiated,
     updateAliasNumbersItem: null,
     updateGroupsAndSeatsState: RequestState.initiated,
-    updateGroupsAndSeatsItem: null
+    updateGroupsAndSeatsItem: null,
+    groupsAndSeats: [],
+    groupsAndSeatsState: RequestState.initiated,
+    groupsAndSeatsError: null,
+    updatedDeviceKey: null
 }

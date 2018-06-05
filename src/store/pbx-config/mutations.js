@@ -201,5 +201,30 @@ export default {
     },
     lastUpdatedField(state, group) {
         state.lastUpdatedField = group;
+    },
+    groupsAndSeatsRequesting(state) {
+        state.groupsAndSeatsState = RequestState.requesting;
+        state.groupsAndSeats = [];
+    },
+    groupsAndSeatsSucceeded(state, list) {
+        state.groupsAndSeatsState = RequestState.succeeded;
+        state.groupsAndSeats = list.items;
+    },
+    groupsAndSeatsError(state, error) {
+        state.groupsAndSeatsState = RequestState.failed;
+        state.groupsAndSeatsError = error;
+    },
+    updateDeviceKeyRequesting(state, deviceId) {
+        Vue.set(state.deviceStates, deviceId + "", RequestState.requesting);
+        state.updatedDeviceKey = null;
+    },
+    updateDeviceKeySucceeded(state, data) {
+        Vue.set(state.deviceStates, data.device.id + "", RequestState.succeeded);
+        state.updatedDeviceKey = data;
+    },
+    updateDeviceKeyFailed(state, deviceId, error) {
+        Vue.set(state.deviceStates, deviceId + "", RequestState.failed);
+        Vue.set(state.deviceErrors, deviceId + "", error);
+        state.updatedDeviceKey = null;
     }
 }

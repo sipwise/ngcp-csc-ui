@@ -3,9 +3,9 @@
 import _ from 'lodash';
 import { assignNumbers } from '../../api/user';
 import { addGroup, removeGroup, addSeat, removeSeat, setGroupName,
-    setGroupExtension, setGroupHuntPolicy, setGroupHuntTimeout,
-    updateGroupSeats, setSeatName, setSeatExtension, removeDevice,
-    updateSeatGroups, getGroupList, getSeatList, getDeviceList, getDeviceFull } from '../../api/pbx-config'
+    setGroupExtension, setGroupHuntPolicy, setGroupHuntTimeout, updateDeviceKeys,
+    updateGroupSeats, setSeatName, setSeatExtension, removeDevice, getAllGroupsAndSeats,
+    updateSeatGroups, getGroupList, getSeatList, getDeviceList, getDevice } from '../../api/pbx-config'
 
 export default {
     listGroups(context, options) {
@@ -204,7 +204,10 @@ export default {
     },
     loadDevice(context, deviceId) {
         context.commit('deviceRequesting', deviceId);
-        getDeviceFull(deviceId).then((device)=>{
+        getDevice(deviceId, {
+            join: true,
+            joinLines: false,
+        }).then((device)=>{
             context.commit('deviceSucceeded', device);
         }).catch((err)=>{
             context.commit('deviceFailed', deviceId, err.message);
@@ -217,6 +220,23 @@ export default {
             context.dispatch('listDevices');
         }).catch((err)=>{
             context.commit('deviceFailed', device.id, err.message);
+        });
+    },
+    getAllGroupsAndSeats(context) {
+        context.commit('groupsAndSeatsRequesting');
+        getAllGroupsAndSeats().then((list)=>{
+            context.commit('groupsAndSeatsSucceeded', list);
+        }).catch((err)=>{
+            context.commit('groupsAndSeatsError', err.message);
+        });
+    },
+    updateDeviceKeys(context, data) {
+        context.commit('updateDeviceKeyRequesting', data.device.id);
+        updateDeviceKeys(data.device.id, data.keys).then(()=>{
+            context.commit('updateDeviceKeySucceeded', data);
+            context.dispatch('loadDevice', data.device.id);
+        }).catch((err)=>{
+            context.commit('updateDeviceKeyFailed', data.device.id, err);
         });
     }
 }

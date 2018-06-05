@@ -292,11 +292,19 @@
             "removedGroupToast": "Removed group {group}",
             "addedSeatToast": "Added seat {seat}",
             "removedSeatToast": "Removed seat {seat}",
-            "removedDeviceToast": "Removed device {name}"
+            "removedDeviceToast": "Removed device {name}",
+            "updatedDeviceKeys": "Updated keys of device {name}"
         },
         "removeDevice": "Remove device",
         "removeDeviceTitle": "Remove device",
-        "removeDeviceText": "You are about to remove device {device}"
+        "removeDeviceText": "You are about to remove device {device}",
+        "keyEmptyLabel": "Unassigned",
+        "keyGroupLabel": "Group",
+        "keySeatLabel": "Seat",
+        "keyBothLabel": "Group/Seat",
+        "keyTypeShared": "Shared",
+        "keyTypeBLF": "Busy Lamp Field",
+        "keyTypePrivate": "Private"
     },
     "communication": {
         "sendFax": "Send Fax",

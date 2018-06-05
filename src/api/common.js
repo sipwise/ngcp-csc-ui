@@ -75,3 +75,27 @@ export function get(options) {
         });
     });
 }
+
+export function patchReplace(options) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.patch(options.path, [{
+            op: 'replace',
+            path: '/'+ options.fieldPath,
+            value: options.value
+        }], {
+            headers: {
+                'Content-Type': 'application/json-patch+json',
+                'Prefer': 'return=minimal'
+            }
+        }).then((result)=>{
+            resolve(result);
+        }).catch((err)=>{
+            if(err.status >= 400) {
+                reject(new Error(err.body.message));
+            }
+            else {
+                reject(err);
+            }
+        });
+    });
+}
