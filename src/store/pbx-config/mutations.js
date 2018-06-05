@@ -201,5 +201,22 @@ export default {
     },
     lastUpdatedField(state, group) {
         state.lastUpdatedField = group;
+    },
+    listProfilesRequesting(state) {
+        state.listProfilesState = RequestState.requesting;
+        state.listProfilesError = null;
+    },
+    listProfilesSucceeded(state, profiles) {
+        state.listProfilesState = RequestState.succeeded;
+        state.listProfilesError = null;
+        state.profiles = profiles;
+        profiles.items.forEach((profile)=>{
+            state.profiles[profile.id] = profile;
+            state.profilesOrdered.push(profile);
+        });
+    },
+    listProfilesFailed(state, error) {
+        state.listProfilesState = RequestState.failed;
+        state.listProfilesError = error;
     }
 }

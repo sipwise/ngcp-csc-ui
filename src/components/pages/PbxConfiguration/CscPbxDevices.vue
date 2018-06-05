@@ -1,17 +1,54 @@
 <template>
-    <csc-page :title="$t('pbxConfig.devicesTitle')" class="csc-list-page">
-        <div v-if="isListLoadingVisible" class="row justify-center">
-            <q-spinner-dots color="primary" :size="40" />
+    <csc-page
+        :title="$t('pbxConfig.devicesTitle')"
+        class="csc-list-page"
+    >
+        <q-select
+            v-model="profile"
+            :float-label="$t('pbxConfig.filterPhoneModel')"
+            :options="profileOptions"
+            @change="filterByProfile"
+            :after="modelButtons"
+        />
+        <div
+            v-if="isListLoadingVisible"
+            class="row justify-center"
+        >
+            <q-spinner-dots
+                color="primary"
+                :size="40"
+            />
         </div>
-        <div v-if="devices.length > 0 && !isListRequesting && listLastPage > 1" class="row justify-center">
-            <q-pagination :value="listCurrentPage" :max="listLastPage" @change="changePage" />
+        <div
+            v-if="devices.length > 0 && !isListRequesting && listLastPage > 1"
+            class="row justify-center"
+        >
+            <q-pagination
+                :value="listCurrentPage"
+                :max="listLastPage"
+                @change="changePage"
+            />
         </div>
-        <q-list no-border separator sparse multiline>
+        <q-list
+            no-border
+            separator
+            sparse
+            multiline
+        >
             <q-item> </q-item>
-            <csc-pbx-device v-for="device in devices" :key="device.id" :device="device" @remove="removeDevice"
-                            :modelOptions="modelOptions" :loading="isDeviceLoading(device.id)" />
+            <csc-pbx-device
+                v-for="device in devices"
+                :key="device.id"
+                :device="device"
+                @remove="removeDevice"
+                :modelOptions="modelOptions"
+                :loading="isDeviceLoading(device.id)"
+            />
         </q-list>
-        <div v-if="devices.length === 0 && !isListRequesting" class="row justify-center csc-no-entities">
+        <div
+            v-if="devices.length === 0 && !isListRequesting"
+            class="row justify-center csc-no-entities"
+        >
             {{ $t('pbxConfig.noDevices') }}
         </div>
     </csc-page>
@@ -21,18 +58,29 @@
     import { mapGetters } from 'vuex'
     import CscPage  from '../../CscPage'
     import CscPbxDevice from './CscPbxDevice'
-    import { QSpinnerDots, QPagination, QList, Dialog, QItem } from 'quasar-framework'
-    import { showToast } from '../../../helpers/ui'
+    import {
+        showGlobalError,
+        showToast
+    } from '../../../helpers/ui'
+    import {
+        QSpinnerDots,
+        QPagination,
+        QList,
+        Dialog,
+        QItem,
+        QBtn,
+        QSelect
+    } from 'quasar-framework'
 
     export default {
         data () {
             return {
+                profile: null
             }
         },
         mounted() {
-            this.$store.dispatch('pbxConfig/listDevices', {
-                page: 1
-            });
+            this.listDevices();
+            this.$store.dispatch('pbxConfig/listProfiles');
         },
         components: {
             CscPage,
@@ -41,7 +89,9 @@
             QPagination,
             QList,
             Dialog,
-            QItem
+            QItem,
+            QBtn,
+            QSelect
         },
         computed: {
             ...mapGetters('pbxConfig', [
@@ -52,10 +102,37 @@
                 'listCurrentPage',
                 'listLastPage',
                 'isDeviceLoading',
-                'deviceRemoved'
-            ])
+                'deviceRemoved',
+                'profileOptions',
+                'listProfilesState',
+                'listProfilesError'
+            ]),
+            modelButtons() {
+                let self = this;
+                let buttons = [];
+                if (this.profile) {
+                    buttons = [{
+                        icon: 'clear',
+                        error: false,
+                        handler (event) {
+                            event.stopPropagation();
+                            self.resetFilter();
+                        }
+                    }];
+                }
+                return buttons;
+            }
         },
         methods: {
+            resetFilter() {
+                this.profile = null;
+                this.listDevices();
+            },
+            filterByProfile(profile) {
+                this.$store.dispatch('pbxConfig/filterDevices', {
+                    profile_id: profile
+                });
+            },
             changePage(page) {
                 this.$store.dispatch('pbxConfig/listDevices', {
                     page: page
@@ -81,6 +158,11 @@
                         }
                     ]
                 });
+            },
+            listDevices() {
+                this.$store.dispatch('pbxConfig/listDevices', {
+                    page: 1
+                });
             }
         },
         watch: {
@@ -89,6 +171,11 @@
                     showToast(this.$t('pbxConfig.toasts.removedDeviceToast', {
                         name: device.station_name
                     }));
+                }
+            },
+            listProfilesState(state) {
+                if (state === 'failed') {
+                    showGlobalError(this.listProfilesError);
                 }
             }
         }

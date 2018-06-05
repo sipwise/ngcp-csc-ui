@@ -41,5 +41,7 @@ export default {
     updateAliasNumbersState: RequestState.initiated,
     updateAliasNumbersItem: null,
     updateGroupsAndSeatsState: RequestState.initiated,
-    updateGroupsAndSeatsItem: null
+    updateGroupsAndSeatsItem: null,
+    listProfilesState: RequestState.initiated,
+    listProfilesError: null
 }

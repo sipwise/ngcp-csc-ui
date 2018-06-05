@@ -296,7 +296,8 @@
         },
         "removeDevice": "Remove device",
         "removeDeviceTitle": "Remove device",
-        "removeDeviceText": "You are about to remove device {device}"
+        "removeDeviceText": "You are about to remove device {device}",
+        "filterPhoneModel": "Filter by phone model"
     },
     "communication": {
         "sendFax": "Send Fax",

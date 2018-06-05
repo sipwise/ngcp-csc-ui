@@ -181,6 +181,15 @@ export function getDeviceList(page) {
     });
 }
 
+export function filterDeviceList(params) {
+    let defaultParams = {
+        order_by: PBX_CONFIG_ORDER_BY,
+        order_by_direction: PBX_CONFIG_ORDER_DIRECTION
+    };
+    let mergedParams = _.merge(defaultParams, params);
+    return getDevices({ params: mergedParams });
+}
+
 export function addGroup(group) {
     return new Promise((resolve, reject)=>{
         Promise.resolve().then(()=>{
