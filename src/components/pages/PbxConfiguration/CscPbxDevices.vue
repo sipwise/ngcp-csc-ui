@@ -1,5 +1,14 @@
 <template>
     <csc-page :title="$t('pbxConfig.devicesTitle')" class="csc-list-page">
+        <q-select
+            v-model="profile"
+            float-label="Filter by phone model"
+            :options="profileOptions"
+            @change="filterByProfile"
+            :after="modelButtons"
+        />
+        <q-btn @click="filterFifteen()">FILTER 15</q-btn>
+        <q-btn @click="filterEleven()">FILTER 11</q-btn>
         <div v-if="isListLoadingVisible" class="row justify-center">
             <q-spinner-dots color="primary" :size="40" />
         </div>
@@ -8,8 +17,14 @@
         </div>
         <q-list no-border separator sparse multiline>
             <q-item> </q-item>
-            <csc-pbx-device v-for="device in devices" :key="device.id" :device="device" @remove="removeDevice"
-                            :modelOptions="modelOptions" :loading="isDeviceLoading(device.id)" />
+            <csc-pbx-device
+                v-for="device in devices"
+                :key="device.id"
+                :device="device"
+                @remove="removeDevice"
+                :modelOptions="modelOptions"
+                :loading="isDeviceLoading(device.id)"
+            />
         </q-list>
         <div v-if="devices.length === 0 && !isListRequesting" class="row justify-center csc-no-entities">
             {{ $t('pbxConfig.noDevices') }}
@@ -21,18 +36,26 @@
     import { mapGetters } from 'vuex'
     import CscPage  from '../../CscPage'
     import CscPbxDevice from './CscPbxDevice'
-    import { QSpinnerDots, QPagination, QList, Dialog, QItem } from 'quasar-framework'
+    import {
+        QSpinnerDots,
+        QPagination,
+        QList,
+        Dialog,
+        QItem,
+        QBtn,
+        QSelect
+    } from 'quasar-framework'
     import { showToast } from '../../../helpers/ui'
 
     export default {
         data () {
             return {
+                profile: null
             }
         },
         mounted() {
-            this.$store.dispatch('pbxConfig/listDevices', {
-                page: 1
-            });
+            this.listDevices();
+            this.$store.dispatch('pbxConfig/listProfiles');
         },
         components: {
             CscPage,
@@ -41,7 +64,9 @@
             QPagination,
             QList,
             Dialog,
-            QItem
+            QItem,
+            QBtn,
+            QSelect
         },
         computed: {
             ...mapGetters('pbxConfig', [
@@ -52,10 +77,44 @@
                 'listCurrentPage',
                 'listLastPage',
                 'isDeviceLoading',
-                'deviceRemoved'
-            ])
+                'deviceRemoved',
+                'profileOptions'
+            ]),
+            modelButtons() {
+                let self = this;
+                return [{
+                    icon: 'clear',
+                    error: false,
+                    handler (event) {
+                        event.stopPropagation();
+                        self.resetFilter();
+                    }
+                }];
+            }
         },
         methods: {
+            resetFilter() {
+                this.profile = null;
+                this.listDevices();
+            },
+            filterByProfile(profile) {
+                console.log('profile to filter by', profile);
+                this.$store.dispatch('pbxConfig/filterDevices', {
+                    profile_id: profile
+                });
+            },
+            filterFifteen() {
+                console.log('15');
+                this.$store.dispatch('pbxConfig/filterDevices', {
+                    profile_id: 15
+                });
+            },
+            filterEleven() {
+                console.log('11');
+                this.$store.dispatch('pbxConfig/filterDevices', {
+                    profile_id: 11
+                });
+            },
             changePage(page) {
                 this.$store.dispatch('pbxConfig/listDevices', {
                     page: page
@@ -80,6 +139,11 @@
                             }
                         }
                     ]
+                });
+            },
+            listDevices() {
+                this.$store.dispatch('pbxConfig/listDevices', {
+                    page: 1
                 });
             }
         },

@@ -201,5 +201,12 @@ export default {
     },
     lastUpdatedField(state, group) {
         state.lastUpdatedField = group;
+    },
+    listProfilesSucceeded(state, profiles) {
+        state.profiles = profiles;
+        profiles.items.forEach((profile)=>{
+            state.profiles[profile.id] = profile;
+            state.profilesOrdered.push(profile);
+        });
     }
 }

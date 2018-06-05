@@ -5,7 +5,8 @@ import { assignNumbers } from '../../api/user';
 import { addGroup, removeGroup, addSeat, removeSeat, setGroupName,
     setGroupExtension, setGroupHuntPolicy, setGroupHuntTimeout,
     updateGroupSeats, setSeatName, setSeatExtension, removeDevice,
-    updateSeatGroups, getGroupList, getSeatList, getDeviceList, getDeviceFull } from '../../api/pbx-config'
+    updateSeatGroups, getGroupList, getSeatList, getDeviceList,
+    filterDeviceList, getProfiles, getDeviceFull } from '../../api/pbx-config'
 
 export default {
     listGroups(context, options) {
@@ -182,6 +183,25 @@ export default {
             context.commit('removeItemFailed', err.message);
         });
     },
+    filterDevices(context, params) {
+        console.log('filterDevices() params', params);
+        return new Promise((resolve, reject)=>{
+            context.commit('deviceListRequesting', {
+                silent: false,
+                page: 1
+            });
+            filterDeviceList(params).then((devices)=>{
+                context.commit('deviceListSucceeded', devices);
+                devices.items.forEach((device)=>{
+                    context.dispatch('loadDevice', device.id);
+                });
+                resolve();
+            }).catch((err)=>{
+                context.commit('deviceListFailed', err.message);
+                reject(err);
+            });
+        });
+    },
     listDevices(context, options) {
         return new Promise((resolve, reject)=>{
             let silent = _.get(options, 'silent', false);
@@ -217,6 +237,15 @@ export default {
             context.dispatch('listDevices');
         }).catch((err)=>{
             context.commit('deviceFailed', device.id, err.message);
+        });
+    },
+    listProfiles(context) {
+        getProfiles().then((profiles)=>{
+            //models.map((model) => {});
+            context.commit('listProfilesSucceeded', profiles);
+        }).catch((err)=>{
+            console.log(err.message);
+            //context.commit('listFailed', err.message);
         });
     }
 }
