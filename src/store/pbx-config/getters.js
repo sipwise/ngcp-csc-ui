@@ -57,7 +57,7 @@ export default {
         return (state.listLoadingSilently === true);
     },
     pilotId(state) {
-        return state.pilot.id;
+        return state.pilot ? state.pilot.id : null;
     },
     isAdding(state) {
         return state.addState === RequestState.requesting;
@@ -212,5 +212,21 @@ export default {
     },
     updatedDeviceKey(state) {
         return state.updatedDeviceKey;
+    },
+    profileOptions(state) {
+        let profileOptions = [];
+        state.profilesOrdered.forEach((profile) => {
+            profileOptions.push({
+                label: profile.name,
+                value: profile.id
+            });
+        });
+        return profileOptions;
+    },
+    listProfilesState(state) {
+        return state.listState;
+    },
+    listProfilesError(state) {
+        return state.listError;
     }
 }

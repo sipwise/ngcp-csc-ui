@@ -5,7 +5,8 @@ import { assignNumbers } from '../../api/user';
 import { addGroup, removeGroup, addSeat, removeSeat, setGroupName,
     setGroupExtension, setGroupHuntPolicy, setGroupHuntTimeout, updateDeviceKeys,
     updateGroupSeats, setSeatName, setSeatExtension, removeDevice, getAllGroupsAndSeats,
-    updateSeatGroups, getGroupList, getSeatList, getDeviceList, getDevice } from '../../api/pbx-config'
+    updateSeatGroups, getGroupList, getSeatList, getDeviceList, filterDeviceList,
+    getProfiles, getDevice } from '../../api/pbx-config'
 
 export default {
     listGroups(context, options) {
@@ -237,6 +238,27 @@ export default {
             context.dispatch('loadDevice', data.device.id);
         }).catch((err)=>{
             context.commit('updateDeviceKeyFailed', data.device.id, err);
+        });
+    },
+    filterDevices(context, params) {
+        context.commit('deviceListRequesting', {
+            silent: false
+        });
+        filterDeviceList(params).then((devices)=>{
+            context.commit('deviceListSucceeded', devices);
+            devices.items.forEach((device)=>{
+                context.dispatch('loadDevice', device.id);
+            });
+        }).catch((err)=>{
+            context.commit('deviceListFailed', err.message);
+        });
+    },
+    listProfiles(context) {
+        context.commit('listProfilesRequesting');
+        getProfiles({ all: true }).then((profiles)=>{
+            context.commit('listProfilesSucceeded', profiles);
+        }).catch((err)=>{
+            context.commit('listProfilesFailed', err.message);
         });
     }
 }

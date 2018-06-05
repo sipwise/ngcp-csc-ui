@@ -281,6 +281,7 @@
         "groupsTitle": "Groups",
         "seatsTitle": "Seats",
         "noDevices": "No devices created yet",
+        "noModel": "Could not find any device with model matching the filter criteria",
         "noGroups": "No groups created yet",
         "noSeats": "No seats created yet",
         "toasts": {
@@ -304,7 +305,8 @@
         "keyBothLabel": "Group/Seat",
         "keyTypeShared": "Shared",
         "keyTypeBLF": "Busy Lamp Field",
-        "keyTypePrivate": "Private"
+        "keyTypePrivate": "Private",
+        "filterPhoneModel": "Filter by phone model"
     },
     "communication": {
         "sendFax": "Send Fax",

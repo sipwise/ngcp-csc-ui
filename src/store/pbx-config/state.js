@@ -45,5 +45,7 @@ export default {
     groupsAndSeats: [],
     groupsAndSeatsState: RequestState.initiated,
     groupsAndSeatsError: null,
-    updatedDeviceKey: null
+    updatedDeviceKey: null,
+    listProfilesState: RequestState.initiated,
+    listProfilesError: null
 }
