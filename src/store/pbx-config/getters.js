@@ -2,6 +2,7 @@
 
 import _ from 'lodash'
 import { RequestState } from '../common'
+import { i18n } from '../../i18n';
 
 export default {
     groups(state) {
@@ -177,5 +178,39 @@ export default {
     },
     deviceRemoved(state) {
         return state.deviceRemoved;
+    },
+    groupsAndSeats(state) {
+        return state.groupsAndSeats;
+    },
+    groupsAndSeatsOptions(state) {
+        let options = [
+            {
+                icon: 'clear',
+                label: i18n.t('pbxConfig.keyEmptyLabel'),
+                value: null
+            }
+        ];
+        state.groupsAndSeats.forEach((item)=>{
+            options.push({
+                icon: (item.is_pbx_group === true)? 'group' : 'person',
+                label: item.display_name,
+                value: item.id
+            });
+        });
+        return options;
+    },
+    getGroupOrSeatById(state) {
+        return (id)=>{
+            let groupOrSeat = null;
+            state.groupsAndSeats.forEach(($groupOrSeat)=>{
+                if(id === $groupOrSeat.id) {
+                    groupOrSeat = $groupOrSeat;
+                }
+            });
+            return groupOrSeat;
+        };
+    },
+    updatedDeviceKey(state) {
+        return state.updatedDeviceKey;
     }
 }

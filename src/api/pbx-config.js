@@ -6,7 +6,7 @@ import { createSubscriber, deleteSubscriber, setDisplayName,
     setPbxExtension, setPbxHuntPolicy, setPbxHuntTimeout,
     setPbxGroupMemberIds, setPbxGroupIds, getSubscribers, getSubscriber } from './subscriber';
 import uuid from 'uuid';
-import { getList, get } from './common'
+import { getList, get, patchReplace } from './common'
 
 var createId = uuid.v4;
 
@@ -35,6 +35,23 @@ export function getSeats(options) {
         options = _.merge(options, {
             params: {
                 is_pbx_group: 0,
+                is_pbx_pilot: 0
+            }
+        });
+        getSubscribers(options).then((res)=>{
+            resolve(res);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getAllGroupsAndSeats(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            params: {
+                all: true,
                 is_pbx_pilot: 0
             }
         });
@@ -269,13 +286,19 @@ export function updateSeatGroups(id, seatIds) {
     return setPbxGroupIds(id, seatIds);
 }
 
-export function getDeviceFull(id) {
-    return getDevice(id, true);
+export function getDeviceFull(id, options) {
+    options = options || {};
+    options.join = true;
+    options.joinLines = true;
+    return getDevice(id, options);
 }
 
-export function getDevice(id, join) {
+export function getDevice(id, options) {
     return new Promise((resolve, reject)=>{
-        let device;
+        options = options || {};
+        let device = null;
+        let join = _.get(options, 'join', false);
+        let joinLines = _.get(options, 'joinLines', false);
         Promise.resolve().then(()=>{
             return get({
                 path: 'api/pbxdevices/' + id
@@ -286,7 +309,7 @@ export function getDevice(id, join) {
                 let requests = [
                     getProfile(device.profile_id, join)
                 ];
-                if(_.isArray(device.lines) && device.lines.length > 0) {
+                if(joinLines === true && _.isArray(device.lines) && device.lines.length > 0) {
                     device.lines.forEach((line)=>{
                         requests.push(getSubscriber(line.subscriber_id));
                     });
@@ -382,3 +405,12 @@ export function removeDevice(id) {
         });
     });
 }
+
+export function updateDeviceKeys(deviceId, keys) {
+    return patchReplace({
+        path: 'api/pbxdevices/' + deviceId,
+        fieldPath: 'lines',
+        value: keys
+    });
+}
+
