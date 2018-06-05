@@ -1,5 +1,7 @@
 <template>
     <csc-page :title="$t('pbxConfig.devicesTitle')" class="csc-list-page">
+        <q-btn @click="filterFifteen()">FILTER 15</q-btn>
+        <q-btn @click="filterEleven()">FILTER 11</q-btn>
         <div v-if="isListLoadingVisible" class="row justify-center">
             <q-spinner-dots color="primary" :size="40" />
         </div>
@@ -21,7 +23,14 @@
     import { mapGetters } from 'vuex'
     import CscPage  from '../../CscPage'
     import CscPbxDevice from './CscPbxDevice'
-    import { QSpinnerDots, QPagination, QList, Dialog, QItem } from 'quasar-framework'
+    import {
+        QSpinnerDots,
+        QPagination,
+        QList,
+        Dialog,
+        QItem,
+        QBtn
+    } from 'quasar-framework'
     import { showToast } from '../../../helpers/ui'
 
     export default {
@@ -41,7 +50,8 @@
             QPagination,
             QList,
             Dialog,
-            QItem
+            QItem,
+            QBtn
         },
         computed: {
             ...mapGetters('pbxConfig', [
@@ -56,6 +66,18 @@
             ])
         },
         methods: {
+            filterFifteen() {
+                console.log('15');
+                this.$store.dispatch('pbxConfig/filterDevices', {
+                    profile_id: 15
+                });
+            },
+            filterEleven() {
+                console.log('11');
+                this.$store.dispatch('pbxConfig/filterDevices', {
+                    profile_id: 11
+                });
+            },
             changePage(page) {
                 this.$store.dispatch('pbxConfig/listDevices', {
                     page: page
