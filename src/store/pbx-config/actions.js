@@ -26,7 +26,8 @@ import {
     getDeviceList,
     getDevice,
     getAllGroupsAndSeats,
-    setStationName
+    setStationName,
+    setIdentifier
 } from '../../api/pbx-config'
 
 export default {
@@ -309,6 +310,15 @@ export default {
             context.dispatch('loadDevice', device.id);
         }).catch((err) => {
             context.commit('updateStationNameFailed', err.message);
+        });
+    },
+    setIdentifier(context, device) {
+        context.commit('updateIdentifierRequesting', device);
+        setIdentifier(device.id, device.identifier).then(() => {
+            context.commit('updateIdentifierSucceeded');
+            context.dispatch('loadDevice', device.id);
+        }).catch((err) => {
+            context.commit('updateIdentifierFailed', err.message);
         });
     }
 }

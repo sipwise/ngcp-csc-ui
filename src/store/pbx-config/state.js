@@ -52,6 +52,7 @@ export default {
     listProfilesState: RequestState.initiated,
     listProfilesError: null,
     updatedDevice: null,
+    updatedDeviceProperty: null,
     updatedDeviceState: RequestState.initiated,
     updatedDeviceError: null,
     modelImageStates: {},

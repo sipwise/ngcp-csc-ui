@@ -296,6 +296,7 @@
             "removedDeviceToast": "Removed device {name}",
             "updatedDeviceKeys": "Updated keys of device {name}",
             "updatedStationName": "Updated station name to {name}",
+            "updatedIdentifier": "Updated identifier to {identifier}",
             "createdDevice": "Created device {name} successfully"
         },
         "removeDevice": "Remove device",

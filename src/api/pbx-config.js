@@ -463,3 +463,11 @@ export function setStationName(options) {
         value: options.station_name
     });
 }
+
+export function setIdentifier(deviceId, identifier) {
+    return patchReplace({
+        path: 'api/pbxdevices/' + deviceId,
+        fieldPath: 'identifier',
+        value: identifier
+    });
+}

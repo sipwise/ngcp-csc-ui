@@ -26,7 +26,8 @@
                         :label="$t('pbxConfig.filterPhoneModel')"
                         @opened="modelSelectOpened()"
                         @select="filterByProfile"
-                        @reseted="resetFilter" />
+                        @reseted="resetFilter"
+                    />
                     <div
                         v-if="devices.length > 0 && !isListRequesting && listLastPage > 1"
                         class="row justify-center"
@@ -59,6 +60,7 @@
                 @loadGroupsAndSeats="loadGroupsAndSeats()"
                 @deviceKeysChanged="deviceKeysChanged"
                 @save-station-name="setStationName"
+                @save-identifier="setIdentifier"
             />
         </q-list>
         <div
@@ -129,7 +131,8 @@
                 'modelImages',
                 'updatedDevice',
                 'updatedDeviceSucceeded',
-                'updatedDeviceError'
+                'updatedDeviceError',
+                'updatedDeviceProperty'
             ]),
             noDeviceMessage() {
                 if (this.profile) {
@@ -205,6 +208,9 @@
             },
             setStationName(device) {
                 this.$store.dispatch('pbxConfig/setStationName', device);
+            },
+            setIdentifier(device) {
+                this.$store.dispatch('pbxConfig/setIdentifier', device);
             }
         },
         watch: {
@@ -242,9 +248,18 @@
             },
             updatedDeviceSucceeded(succeeded) {
                 if(succeeded === true) {
-                    showToast(this.$t('pbxConfig.toasts.updatedStationName', {
-                        name: this.updatedDevice.station_name
-                    }));
+                    switch (this.updatedDeviceProperty) {
+                        case 'staion_name':
+                            showToast(this.$t('pbxConfig.toasts.updatedStationName', {
+                                name: this.updatedDevice.station_name
+                            }));
+                            break;
+                        case 'identifier':
+                            showToast(this.$t('pbxConfig.toasts.updatedIdentifier', {
+                                identifier: this.updatedDevice.identifier
+                            }));
+                            break;
+                    }
                 }
             },
             updatedDeviceError(err) {

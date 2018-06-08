@@ -46,7 +46,8 @@
                 >
                     <q-input
                         v-model="device.identifier"
-                        readonly
+                        :after="identifierButtons"
+                        @keyup.enter="saveIdentifier"
                     />
                 </q-field>
                 <q-field :label="$t('pbxConfig.deviceModel')">
@@ -178,12 +179,39 @@
             deviceModel() {
                 return {
                     id: this.changes.id,
-                    station_name: this.changes.stationName
+                    station_name: this.changes.stationName,
+                    identifier: this.device.identifier
                 }
             },
             stationNameHasChanges() {
                 return this.stationName !== this.changes.stationName;
-            }
+            },
+            identifierHasChanges() {
+                return this.device.identifier !== this.changes.identifier;
+            },
+            identifierButtons() {
+                let buttons = [];
+                let self = this;
+                if(this.identifierHasChanges) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveIdentifier();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetIdentifier();
+                            }
+                        }
+                    );
+                }
+                return buttons;
+            },
         },
         mounted() {
             this.$emit('loaded');
@@ -207,7 +235,8 @@
             getDevice() {
                 return {
                     id: this.device.id,
-                    stationName: this.device.station_name
+                    stationName: this.device.station_name,
+                    identifier: this.device.identifier
                 }
             },
             resetStationName() {
@@ -215,6 +244,12 @@
             },
             saveStationName() {
                 this.$emit('save-station-name', this.deviceModel);
+            },
+            resetIdentifier() {
+                this.changes.identifier = this.device.identifier;
+            },
+            saveIdentifier() {
+                this.$emit('save-identifier', this.deviceModel);
             }
         },
         watch: {

@@ -5,6 +5,23 @@ import _ from 'lodash'
 import { RequestState } from '../common'
 import { reactiveSet } from '../../helpers/store-helper'
 
+function updateDevicePropertyRequesting(state, deviceId, property) {
+    state.updatedDevice = deviceId;
+    state.updatedDeviceState = RequestState.requesting;
+    state.updatedDeviceError = null;
+    state.updatedDeviceProperty = property;
+}
+
+function updateDevicePropertySucceeded(state) {
+    state.updatedDeviceState = RequestState.succeeded;
+    state.updatedDeviceError = null;
+}
+
+function updateDevicePropertyFailed(state, error) {
+    state.updatedDeviceState = RequestState.failed;
+    state.updatedDeviceError = error;
+}
+
 export default {
     listRequesting(state, options) {
         options = options || {};
@@ -287,16 +304,21 @@ export default {
         state.listProfilesError = error;
     },
     updateStationNameRequesting(state, deviceId) {
-        state.updatedDevice = deviceId;
-        state.updatedDeviceState = RequestState.requesting;
-        state.updatedDeviceError = null;
+        updateDevicePropertyRequesting(state, deviceId, 'station_name');
     },
     updateStationNameSucceeded(state) {
-        state.updatedDeviceState = RequestState.succeeded;
-        state.updatedDeviceError = null;
+        updateDevicePropertySucceeded(state);
     },
     updateStationNameFailed(state, error) {
-        state.updatedDeviceState = RequestState.failed;
-        state.updatedDeviceError = error;
+        updateDevicePropertyFailed(state, error);
+    },
+    updateIdentifierRequesting(state, deviceId) {
+        updateDevicePropertyRequesting(state, deviceId, 'identifier');
+    },
+    updateIdentifierSucceeded(state) {
+        updateDevicePropertySucceeded(state);
+    },
+    updateIdentifierFailed(state, error) {
+        updateDevicePropertyFailed(state, error);
     }
 }

@@ -264,5 +264,8 @@ export default {
     },
     updatedDeviceError(state) {
         return state.updatedDeviceError;
+    },
+    updatedDeviceProperty(state) {
+        return state.updatedDeviceProperty;
     }
 }
