@@ -46,7 +46,7 @@
                                 name="videocam" color="primary" size="26px"/>
                         <q-icon v-else-if="isCalling && (localMediaType == 'audioOnly' || remoteMediaType == 'audioVideo')"
                                 name="mic" color="primary" size="26px"/>
-                        {{ getNumber | numberFormat }}
+                        {{ getNumber | destinationFormat }}
                     </div>
                     <div v-if="isEnded" class="ended-reason">{{ getEndedReason }}</div>
                 </div>
