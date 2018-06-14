@@ -141,6 +141,7 @@ export default {
         resetList(state) {
             state.items = [];
             state.currentPage = 0;
+            state.lastPage = null;
         },
         nextPageRequesting(state) {
             state.nextPageState = RequestState.requesting;
@@ -176,6 +177,7 @@ export default {
         }
     },
     actions: {
+
         downloadVoiceMail(context, id) {
             context.commit('downloadVoiceMailRequesting');
             downloadVoiceMail(id).then(()=>{
