@@ -1,21 +1,22 @@
 <template>
     <div class="voicemail-player">
-        <audio :src="soundFileUrl" ref="voiceMailSound" preload="none" />
+        <audio :src="soundFileUrl" ref="voiceMailSound" preload="auto" @timeupdate="timeupdate($event)"/>
         <div class="control-btns">
             <q-btn class="play-pause-btn" round flat small color="primary"
                    :icon="playPauseIcon" @click="toggle()" />
 
-            <q-btn class="stop-btn" round flat small color="primary" icon="stop" />
+            <q-btn class="stop-btn" round flat small color="primary" icon="stop" @click="stop()"/>
         </div>
-        <q-progress class="progress-bar" :indeterminate="isLoading" stripe animate color="primary"/>
+        <q-progress class="progress-bar" :percentage="progressPercentage" stripe animate color="primary"/>
     </div>
 </template>
 
 <script>
     import { mapGetters } from 'vuex'
     import { QProgress, QBtn } from 'quasar-framework'
+
     export default {
-        name: 'csc-voicemail-player',
+        name: 'csc-voice-mail-player',
         props: {
             id: Number
         },
@@ -28,9 +29,12 @@
             });
             this.$refs.voiceMailSound.addEventListener('ended', ()=>{
                 this.playing = false;
+                this.stop();
             });
             this.$refs.voiceMailSound.addEventListener('canplay', ()=>{
-                this.$refs.voiceMailSound.play();
+                if(!this.paused && this.playing) {
+                    this.$refs.voiceMailSound.play();
+                }
             });
         },
         components: {
@@ -39,10 +43,10 @@
         },
         data () {
             return {
-                progress: 77,
                 platform: this.$q.platform.is,
-                voicemail: null,
-                playing: false
+                playing: false,
+                paused: false,
+                progressPercentage: 0
             }
         },
         computed: {
@@ -56,29 +60,33 @@
                 let getter = this.playVoiceMailUrl;
                 return getter(this.id);
             },
-            isLoading() {
-                let getter = this.playVoiceMailState;
-                return getter(this.id) === 'requesting';
-            },
             ...mapGetters('conversations', [
                 'playVoiceMailState',
                 'playVoiceMailUrl'
-            ]),
+            ])
         },
         methods: {
             play() {
                 this.$refs.voiceMailSound.play();
                 this.playing = true;
+                this.paused = false;
             },
             pause() {
                 this.$refs.voiceMailSound.pause();
                 this.playing = false;
+                this.paused = true;
+            },
+            stop() {
+                this.$refs.voiceMailSound.currentTime = 0;
+                this.pause();
             },
             load() {
-                this.$store.dispatch('conversations/playVoiceMail', {
+                this.$emit('play-voice-mail', {
                     id: this.id,
                     format: this.soundFileFormat
                 });
+                this.playing = true;
+                this.paused = false;
             },
             toggle() {
                 if(this.playVoiceMailState(this.id) !== 'succeeded') {
@@ -90,6 +98,10 @@
                 else {
                     this.pause();
                 }
+            },
+            timeupdate(e) {
+                let newPercentage = Math.floor((e.target.currentTime / e.target.duration) * 100);
+                this.progressPercentage = newPercentage;
             }
         }
     }
@@ -104,8 +116,6 @@
         display flex
         justify-content space-around
         align-items center
-        padding-left 16px
-        padding-right 16px
         border-radius 4px
         background-color #fff
         .control-btns

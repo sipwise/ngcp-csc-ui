@@ -57,7 +57,7 @@ describe('NumberFormatFilter', function() {
     });
 
     it('should format a call forward destination', function(){
-        assert.equal(normalizeDestination(destinations.voiceMail), 'Voicemail');
+        assert.equal(normalizeDestination(destinations.voiceMail), 'Voicebox');
         assert.equal(normalizeDestination(destinations.fax2Mail), 'Fax2Mail');
         assert.equal(normalizeDestination(destinations.managerSecretary), 'Manager Secretary');
         assert.equal(normalizeDestination(destinations.app), 'App');

@@ -1,9 +1,19 @@
 
 import _ from 'lodash';
 import url from 'url';
-import { PhoneNumberUtil, PhoneNumberFormat } from 'google-libphonenumber';
+import {
+    PhoneNumberUtil,
+    PhoneNumberFormat
+} from 'google-libphonenumber';
 
 var phoneUtil = PhoneNumberUtil.getInstance();
+
+const DestinationHosts = {
+    VoiceBox: 'voicebox.local',
+    Fax2Mail: 'fax2mail.local',
+    ManagerSecretary: 'managersecretary.local',
+    App: 'app.local'
+};
 
 export default function numberFormat(number) {
     try {
@@ -57,24 +67,32 @@ export function rawNumber(number) {
 
 export function normalizeDestination(destination) {
     try {
+
+        destination = destination.replace(/\s*/g, '');
+        if(destination.match(/^sip:/g) === null && destination.match(/^sips:/g) === null &&
+            destination.match(/^\+?[0-9]+$/) === null) {
+            destination = 'sip:' + destination;
+        }
+
         let parsedDestination = url.parse(destination, true);
         let authParts = parsedDestination.auth.split(':');
         let host = parsedDestination.host;
         let normalizedNumber = normalizeNumber(authParts[0]);
         let isNumber = normalizedNumber !== authParts[0];
-        if (host === 'voicebox.local') {
-            return 'Voicemail';
+
+        if (host === DestinationHosts.VoiceBox) {
+            return 'Voicebox';
         }
-        else if (host === 'fax2mail.local') {
+        else if (host === DestinationHosts.Fax2Mail) {
             return 'Fax2Mail';
         }
-        else if (host === 'managersecretary.local') {
+        else if (host === DestinationHosts.ManagerSecretary) {
             return 'Manager Secretary';
         }
         else if (authParts[0] === 'custom-hours') {
             return 'Custom Announcement';
         }
-        else if (host === 'app.local') {
+        else if (host === DestinationHosts.App) {
             return _.capitalize(authParts[0]);
         }
         else if (!isNumber) {

@@ -9,7 +9,8 @@
     "dev": "node build/script.dev.js",
     "build": "node build/script.build.js mat",
     "dev-build": "CSC_SOURCE_MAP=1 CSC_WATCH=1 node build/script.build.js mat",
-    "test": "karma start ./karma.js --single-run"
+    "test": "karma start ./karma.js --single-run",
+    "dev-test": "karma start ./karma.js"
   },
   "dependencies": {
     "babel-runtime": "^6.25.0",

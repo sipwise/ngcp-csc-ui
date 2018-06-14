@@ -196,7 +196,7 @@ export function addNameIdAndTerminating(options) {
         destinationset.timesetId = options.timesetId;
         destinationset.destinations.forEach(destination => {
             let normalized = normalizeDestination(destination.destination);
-            if (!terminatingFlag && _.includes(['Voicemail', 'Fax2Mail', 'Manager Secretary',
+            if (!terminatingFlag && _.includes(['Voicebox', 'Fax2Mail', 'Manager Secretary',
                 'Custom Announcement', 'Conference'], normalized)) {
                     terminatingFlag = true;
                     destination.terminated = false;

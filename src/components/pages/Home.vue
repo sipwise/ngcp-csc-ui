@@ -100,7 +100,7 @@
     import CscPage from '../CscPage'
     import CscCall from '../CscCall'
     import { mapGetters } from 'vuex'
-    import { QCard, QCardMain, QCardActions, QIcon, Platform } from 'quasar-framework'
+    import { QCard, QCardMain, QCardActions, QIcon, Platform, scroll } from 'quasar-framework'
     import { showGlobalWarning } from '../../helpers/ui'
 
     export default {
@@ -115,6 +115,9 @@
             QCardMain,
             QCardActions,
             QIcon
+        },
+        mounted() {
+            scroll.setScrollPosition(this.$el, 0, 100);
         },
         computed: {
             ...mapGetters('call', [
