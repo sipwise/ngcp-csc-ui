@@ -4037,6 +4037,12 @@
         }
       }
     },
+    "moment": {
+      "version": "2.22.2",
+      "from": "moment@latest",
+      "resolved": "https://npm-registry.sipwise.com/moment/-/moment-2.22.2.tgz",
+      "dev": true
+    },
     "ms": {
       "version": "2.0.0",
       "from": "ms@2.0.0",

@@ -1,7 +1,10 @@
 {
     "title": "Customer Self-Care Portal",
     "rtcEngineDisconnected": "You can not start a call. Service ist currently unavailable.",
-    "startCall": "Start Call",
+    "startCall": "Call",
+    "startAudioCall": "Audio Only",
+    "startVideoCall": "Audio + Video",
+    "startScreenSharing": "Audio + Screen",
     "sendSms": "Send SMS",
     "sendFax": "Send Fax",
     "loggedInAs": "Logged in as",

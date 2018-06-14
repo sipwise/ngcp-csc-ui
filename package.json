@@ -1,7 +1,7 @@
 {
   "name": "ngcp-csc-ui",
   "productName": "Customer Self-Care Web UI",
-  "version": "0.2.1",
+  "version": "0.3.1",
   "description": "Customer Self-Care Web UI",
   "author": "Hans-Peter Herzog <hherzog@sipwise.com>",
   "scripts": {
@@ -9,7 +9,8 @@
     "dev": "node build/script.dev.js",
     "build": "node build/script.build.js mat",
     "dev-build": "CSC_SOURCE_MAP=1 CSC_WATCH=1 node build/script.build.js mat",
-    "test": "karma start ./karma.js --single-run"
+    "test": "karma start ./karma.js --single-run",
+    "dev-test": "karma start ./karma.js"
   },
   "dependencies": {
     "babel-runtime": "^6.25.0",
@@ -66,6 +67,7 @@
     "load-script": "1.0.0",
     "lodash": "4.17.4",
     "mocha": "^4.0.0",
+    "moment": "2.22.2",
     "opn": "^5.0.0",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
     "postcss-loader": "^1.0.0",

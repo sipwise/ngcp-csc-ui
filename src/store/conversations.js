@@ -1,7 +1,6 @@
 'use strict';
 
 import Vue from 'vue'
-import _ from 'lodash';
 import { i18n } from '../i18n';
 import {
     getConversations,
@@ -10,6 +9,8 @@ import {
     playVoiceMail
 } from '../api/conversations'
 
+const ROWS_PER_PAGE = 15;
+
 const RequestState = {
     button: 'button',
     requesting: 'requesting',
@@ -17,18 +18,12 @@ const RequestState = {
     failed: 'failed'
 };
 
-const ReloadConfig = {
-    retryLimit: 5,
-    retryDelay: 5000
-};
-
 export default {
     namespaced: true,
     state: {
         page: 1,
         rows: 10,
-        conversations: [
-        ],
+        conversations: [],
         downloadVoiceMailState: RequestState.button,
         downloadVoiceMailError: null,
         downloadFaxState: RequestState.button,
@@ -37,7 +32,12 @@ export default {
         reloadConversationsError: null,
         playVoiceMailUrls: {},
         playVoiceMailStates: {},
-        playVoiceMailErrors: {}
+        playVoiceMailErrors: {},
+        currentPage: 0,
+        lastPage: null,
+        nextPageState: RequestState.initiated,
+        nextPageError: null,
+        items: []
     },
     getters: {
         getSubscriberId(state, getters, rootState, rootGetters) {
@@ -59,6 +59,21 @@ export default {
             return (id) => {
                 return state.playVoiceMailUrls[id];
             }
+        },
+        currentPage(state) {
+            return state.currentPage;
+        },
+        lastPage(state) {
+            return state.lastPage;
+        },
+        rowsAlreadyLoaded(state) {
+            return state.items.length;
+        },
+        items(state) {
+            return state.items;
+        },
+        isNextPageRequesting(state) {
+            return state.nextPageState === RequestState.requesting;
         }
     },
     mutations: {
@@ -122,46 +137,45 @@ export default {
             Vue.set(state.playVoiceMailUrls, id, null);
             Vue.set(state.playVoiceMailStates, id, RequestState.failed);
             Vue.set(state.playVoiceMailErrors, id, err);
+        },
+        resetList(state) {
+            state.items = [];
+            state.currentPage = 0;
+        },
+        nextPageRequesting(state) {
+            state.nextPageState = RequestState.requesting;
+            state.nextPageError = null;
+        },
+        nextPageSucceeded(state, items) {
+            state.nextPageState = RequestState.succeeded;
+            state.nextPageError = null;
+            state.items = state.items.concat(items.items);
+            state.lastPage = items.lastPage;
+            state.currentPage = state.currentPage + 1;
+
+            let callId = null;
+            let callIndex = null;
+            state.items.forEach((item, index)=>{
+                if(item.type === 'call' && item.call_type === 'call') {
+                    callId = item.call_id;
+                    callIndex = index;
+                }
+                else if (item.type === 'call' && item.call_id === callId) {
+                    let temp = state.items[callIndex];
+                    item.relatedCall = temp;
+                    state.items[callIndex] = item;
+                    state.items[index] = temp;
+                    callIndex = index;
+
+                }
+            });
+        },
+        nextPageFailed(state, error) {
+            state.nextPageState = RequestState.failed;
+            state.nextPageError = error;
         }
     },
     actions: {
-        reloadConversations(context, retryCount) {
-            context.commit('resetConversations');
-            let firstItem = context.state.conversations[0];
-            if (retryCount < ReloadConfig.retryLimit) {
-                getConversations({
-                    id: context.getters.getSubscriberId,
-                    page: context.state.page,
-                    rows: context.state.rows
-                }).then((result) => {
-                    if (_.isEqual(firstItem, result[0])) {
-                        setTimeout(() => {
-                            context.dispatch('reloadConversations', ++retryCount);
-                        }, ReloadConfig.retryDelay);
-                    }
-                    else {
-                        context.commit('reloadConversations', result);
-                        context.commit('reloadConversationsSucceeded');
-                    }
-                }).catch(() => {
-                    context.commit('reloadConversationsFailed');
-                });
-            }
-        },
-        loadConversations(context) {
-            return new Promise((resolve, reject) => {
-                getConversations({
-                    id: context.getters.getSubscriberId,
-                    page: context.state.page,
-                    rows: context.state.rows
-                }).then((result) => {
-                    context.commit('loadConversations', result);
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
-                });
-            });
-        },
         downloadVoiceMail(context, id) {
             context.commit('downloadVoiceMailRequesting');
             downloadVoiceMail(id).then(()=>{
@@ -188,6 +202,21 @@ export default {
             }).catch((err)=>{
                 context.commit('playVoiceMailFailed', options.id, err.mesage);
             });
+        },
+        nextPage(context) {
+            let page = context.getters.currentPage + 1;
+            if(context.getters.lastPage === null || page <= context.getters.lastPage) {
+                context.commit('nextPageRequesting');
+                getConversations(
+                    context.getters.getSubscriberId,
+                    page,
+                    ROWS_PER_PAGE
+                ).then((result) => {
+                    context.commit('nextPageSucceeded', result);
+                }).catch((err)=>{
+                    context.commit('nextPageFailed', err.message);
+                });
+            }
         }
     }
 };

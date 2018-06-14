@@ -14,8 +14,6 @@ describe('Conversations', function(){
     const subscriberId = 123;
 
     it('should get all data regarding conversations', function(done){
-        let inputString = 'voicemailundefined1';
-        let hashedId = crypto.createHash('sha256').update(inputString).digest('base64');
 
         let innerData = [{
             "_links" : {
@@ -60,24 +58,52 @@ describe('Conversations', function(){
         let data = {
             "_embedded": {
                 "ngcp:conversations": innerData
-            }
+            },
+            total_count: 1
         };
 
-        let innerDataWithoutLinks = [{
-            "call_id": "kp55kEGtNp",
-            "callee": "43993006",
-            "caller": "43993006",
-            "context": "voicemailcaller_unavail",
-            "direction": "in",
-            "duration": "15",
-            "filename": "voicemail-0.wav",
-            "folder": "Old",
-            "id": 1,
-            "start_time": "2017-12-07 16:22:04",
-            "type": "voicemail",
-            "voicemail_subscriber_id": 235,
-            "_id": hashedId
-        }];
+        let innerDataTransformed = {
+            items: [{
+                "_links" : {
+                    "collection": {
+                        "href": "/api/conversations/"
+                    },
+                    "curies": {
+                        "href": "http://purl.org/sipwise/ngcp-api/#rel-{rel}",
+                        "name": "ngcp",
+                        "templated": true
+                    },
+                    "ngcp:conversations": {
+                        "href": "/api/conversations/1?type=voicemail"
+                    },
+                    "ngcp:voicemailrecordings": {
+                        "href": "/api/voicemailrecordings/1"
+                    },
+                    "ngcp:voicemails": {
+                        "href": "/api/voicemails/1"
+                    },
+                    "profile": {
+                        "href": "http://purl.org/sipwise/ngcp-api/"
+                    },
+                    "self": {
+                        "href": "/api/conversations/1?type=voicemail"
+                    }
+                },
+                "call_id": "kp55kEGtNp",
+                "callee": "43993006",
+                "caller": "43993006",
+                "context": "voicemailcaller_unavail",
+                "direction": "in",
+                "duration": "15",
+                "filename": "voicemail-0.wav",
+                "folder": "Old",
+                "id": 1,
+                "start_time": "2017-12-07 16:22:04",
+                "type": "voicemail",
+                "voicemail_subscriber_id": 235
+            }],
+            lastPage: 1
+        };
 
         Vue.http.interceptors = [];
         Vue.http.interceptors.unshift((request, next)=>{
@@ -86,7 +112,7 @@ describe('Conversations', function(){
             }));
         });
         getConversations(subscriberId).then((result)=>{
-            assert.deepEqual(result, innerDataWithoutLinks);
+            assert.deepEqual(result, innerDataTransformed);
             done();
         }).catch((err)=>{
             done(err);
