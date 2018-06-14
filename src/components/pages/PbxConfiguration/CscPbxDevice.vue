@@ -50,8 +50,19 @@
                         @keyup.enter="saveIdentifier"
                     />
                 </q-field>
-                <q-field :label="$t('pbxConfig.deviceModel')">
-                    <p>{{ name }}</p>
+                <q-field
+                    :label="$t('pbxConfig.deviceModel')"
+                >
+                    <csc-pbx-model-select
+                        :selected-id="profileId"
+                        :preview="false"
+                        :erasable="false"
+                        :readonly="true"
+                        :profiles="profiles"
+                        :modelImages="modelImages"
+                        @opened="modelSelectOpened()"
+                        @select="selectProfile"
+                    />
                 </q-field>
                 <csc-pbx-device-config
                     :device="device"
@@ -104,10 +115,28 @@
 <script>
 
     import _ from 'lodash'
-    import { QCard, QCardTitle, QCardMain, QCollapsible,
-        QIcon, QField, QInput, QSelect, QBtn, QInnerLoading, QSpinnerMat, QCardMedia,
-        QItem, QItemMain, QItemSide, QItemTile, Platform } from 'quasar-framework'
+    import {
+        QCard,
+        QCardTitle,
+        QCardMain,
+        QCollapsible,
+        QIcon,
+        QField,
+        QInput,
+        QSelect,
+        QBtn,
+        QInnerLoading,
+        QSpinnerMat,
+        QCardMedia,
+        QItem,
+        QItemMain,
+        QItemSide,
+        QItemTile,
+        Platform
+    } from 'quasar-framework'
     import CscPbxDeviceConfig from './CscPbxDeviceConfig'
+    import CscPbxModelSelect from './CscPbxModelSelect'
+
     export default {
         name: 'csc-pbx-device',
         props: [
@@ -115,12 +144,30 @@
             'loading',
             'modelOptions',
             'groupsAndSeatsOptions',
-            'subscribers'
+            'subscribers',
+            'profiles',
+            'modelImages'
         ],
         components: {
-            CscPbxDeviceConfig, QCard, QCardTitle, QCardMain, QCollapsible,
-            QIcon, QField, QInput, QSelect, QBtn, QInnerLoading, QSpinnerMat, QCardMedia,
-            QItem, QItemMain, QItemSide, QItemTile, Platform
+            CscPbxDeviceConfig,
+            CscPbxModelSelect,
+            QCard,
+            QCardTitle,
+            QCardMain,
+            QCollapsible,
+            QIcon,
+            QField,
+            QInput,
+            QSelect,
+            QBtn,
+            QInnerLoading,
+            QSpinnerMat,
+            QCardMedia,
+            QItem,
+            QItemMain,
+            QItemSide,
+            QItemTile,
+            Platform
         },
         data () {
             return {
@@ -212,6 +259,9 @@
                 }
                 return buttons;
             },
+            profileId() {
+                return _.get(this.device, 'profile.device_id', null);
+            }
         },
         mounted() {
             this.$emit('loaded');
@@ -250,7 +300,14 @@
             },
             saveIdentifier() {
                 this.$emit('save-identifier', this.deviceModel);
-            }
+            },
+            selectProfile(profile) {
+                this.$emit('update-profile', {
+                    profile: profile,
+                    device: this.device
+                });
+            },
+            modelSelectOpened() {}
         },
         watch: {
             device() {

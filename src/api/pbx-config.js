@@ -471,3 +471,25 @@ export function setIdentifier(deviceId, identifier) {
         value: identifier
     });
 }
+
+export function setProfile(deviceId, profileId) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return patchReplace({
+                path: 'api/pbxdevices/' + deviceId,
+                fieldPath: 'lines',
+                value: []
+            });
+        }).then(()=>{
+            return patchReplace({
+                path: 'api/pbxdevices/' + deviceId,
+                fieldPath: 'profile_id',
+                value: profileId
+            });
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}

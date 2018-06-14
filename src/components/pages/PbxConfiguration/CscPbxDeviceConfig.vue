@@ -21,11 +21,11 @@
             </q-field>
             <div class="row justify-center actions">
                 <div class="column">
-                    <q-btn icon="clear" :small="!isMobile" @click="closeKeyOverlay()" flat color="negative">Close</q-btn>
+                    <q-btn icon="clear" :big="isMobile" @click="closeKeyOverlay()" flat color="negative">Close</q-btn>
                 </div>
             </div>
-            <q-btn icon="clear" :small="!isMobile" class="absolute-top-right"
-                   @click="closeKeyOverlay()" flat round color="primary" />
+            <q-btn icon="clear" :big="isMobile" class="absolute-top-right"
+                   @click="closeKeyOverlay()" flat color="primary" />
         </div>
         <q-window-resize-observable @resize="windowResize" />
     </div>

@@ -71,8 +71,21 @@
 
 <script>
 
-    import { QCard, QCardTitle, QCardMain, QCardActions, QCardSeparator, QBtn,
-        QInnerLoading, QSpinnerMat, QField, QInput, QSelect, QIcon, QItem, QItemMain } from 'quasar-framework'
+    import {
+        QCard,
+        QCardTitle,
+        QCardMain,
+        QCardActions,
+        QCardSeparator,
+        QBtn,
+        QInnerLoading,
+        QSpinnerMat,
+        QField,
+        QInput,
+        QSelect,
+        QIcon,
+        QItem,
+        QItemMain } from 'quasar-framework'
     import CscPbxModelSelect from './CscPbxModelSelect'
 
     export default {

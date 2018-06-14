@@ -320,5 +320,14 @@ export default {
     },
     updateIdentifierFailed(state, error) {
         updateDevicePropertyFailed(state, error);
+    },
+    updateProfileRequesting(state, deviceId) {
+        updateDevicePropertyRequesting(state, deviceId, 'profile_id');
+    },
+    updateProfileSucceeded(state) {
+        updateDevicePropertySucceeded(state);
+    },
+    updateProfileFailed(state, error) {
+        updateDevicePropertyFailed(state, error);
     }
 }

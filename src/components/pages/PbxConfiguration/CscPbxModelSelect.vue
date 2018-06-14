@@ -24,7 +24,7 @@
                 </q-list>
             </q-popover>
         </div>
-        <div v-if="selectedProfile.device_id != null" class="csc-pbx-model-image">
+        <div v-if="selectedProfile.device_id != null && preview" class="csc-pbx-model-image">
             <img :src="frontImageUrl(selectedProfile.device_id)" class="csc-pbx-model-select-preview" />
         </div>
     </div>
@@ -37,13 +37,41 @@
 
     export default {
         name: 'csc-pbx-model-select',
-        props: [
-            'profiles',
-            'modelImages',
-            'loading',
-            'label',
-            'erasable'
-        ],
+        props: {
+            profiles: {
+                type: Array,
+                default(){
+                    return [];
+                }
+            },
+            modelImages: {
+                type: Object,
+                default(){
+                    return {};
+                }
+            },
+            loading: {
+                type: Boolean,
+                default: false
+            },
+            label: String,
+            erasable: {
+                type: Boolean,
+                default: true
+            },
+            readonly: {
+                type: Boolean,
+                default: false
+            },
+            selectedId: {
+                type: Number,
+                default: null
+            },
+            preview: {
+                type: Boolean,
+                default: true
+            }
+        },
         components: {
             QInput, QPopover, QList, QItem, QItemMain, QItemTile, QItemSide
         },
@@ -74,7 +102,9 @@
                 this.$emit('opened');
             },
             selectProfile(profile) {
-                this.selectedProfile = profile;
+                if(this.readonly === false) {
+                    this.selectedProfile = profile;
+                }
                 this.$refs.popover.close();
                 this.$emit("select", profile);
             },
@@ -90,6 +120,21 @@
                     name: '',
                     device_id: null
                 }
+            },
+            selectById(id) {
+                this.profiles.forEach(($profile)=>{
+                    if(id === $profile.id) {
+                        this.selectedProfile = $profile;
+                    }
+                });
+            }
+        },
+        mounted(){
+            this.selectById(this.selectedId);
+        },
+        watch: {
+            selectedId(id) {
+                this.selectedId(id);
             }
         }
     }

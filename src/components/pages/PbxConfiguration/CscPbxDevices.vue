@@ -19,15 +19,20 @@
                         @modelSelectOpened="modelSelectOpened()"
                         @save="saveDevice"
                     />
-                    <csc-pbx-model-select
-                        :erasable="true"
-                        :profiles="profiles"
-                        :modelImages="modelImages"
-                        :label="$t('pbxConfig.filterPhoneModel')"
-                        @opened="modelSelectOpened()"
-                        @select="filterByProfile"
-                        @reseted="resetFilter"
-                    />
+                    <div
+                        class="row justify-center"
+                    >
+                        <csc-pbx-model-select
+                            class="col col-md-6 col-sm-12"
+                            :erasable="true"
+                            :profiles="profiles"
+                            :modelImages="modelImages"
+                            :label="$t('pbxConfig.filterPhoneModel')"
+                            @opened="modelSelectOpened()"
+                            @select="filterByProfile"
+                            @reseted="resetFilter"
+                        />
+                    </div>
                     <div
                         v-if="devices.length > 0 && !isListRequesting && listLastPage > 1"
                         class="row justify-center"
@@ -56,11 +61,14 @@
                 :loading="isDeviceLoading(device.id)"
                 :groupsAndSeatsOptions="groupsAndSeatsOptions"
                 :subscribers="getGroupOrSeatById"
+                :profiles="profiles"
+                :modelImages="modelImages"
                 @remove="removeDevice"
                 @loadGroupsAndSeats="loadGroupsAndSeats()"
                 @deviceKeysChanged="deviceKeysChanged"
                 @save-station-name="setStationName"
                 @save-identifier="setIdentifier"
+                @update-profile="updateProfile"
             />
         </q-list>
         <div
@@ -211,7 +219,10 @@
             },
             setIdentifier(device) {
                 this.$store.dispatch('pbxConfig/setIdentifier', device);
-            }
+            },
+            updateProfile(data) {
+                this.$store.dispatch('pbxConfig/setProfile', data);
+            },
         },
         watch: {
             deviceRemoved(device) {
@@ -249,7 +260,12 @@
             updatedDeviceSucceeded(succeeded) {
                 if(succeeded === true) {
                     switch (this.updatedDeviceProperty) {
-                        case 'staion_name':
+                        case 'profile_id':
+                            showToast(this.$t('pbxConfig.toasts.updatedProfile', {
+                                name: this.updatedDevice.station_name
+                            }));
+                            break;
+                        case 'station_name':
                             showToast(this.$t('pbxConfig.toasts.updatedStationName', {
                                 name: this.updatedDevice.station_name
                             }));

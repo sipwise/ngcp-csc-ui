@@ -27,7 +27,8 @@ import {
     getDevice,
     getAllGroupsAndSeats,
     setStationName,
-    setIdentifier
+    setIdentifier,
+    setProfile
 } from '../../api/pbx-config'
 
 export default {
@@ -319,6 +320,15 @@ export default {
             context.dispatch('loadDevice', device.id);
         }).catch((err) => {
             context.commit('updateIdentifierFailed', err.message);
+        });
+    },
+    setProfile(context, data) {
+        context.commit('updateProfileRequesting', data.device);
+        setProfile(data.device.id, data.profile.id).then(() => {
+            context.commit('updateProfileSucceeded');
+            context.dispatch('loadDevice', data.device.id);
+        }).catch((err) => {
+            context.commit('updateProfileFailed', err.message);
         });
     }
 }
