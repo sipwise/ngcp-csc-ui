@@ -62,7 +62,6 @@
             <csc-add-time-form
                 v-if="activeTimeForm && !timesetExists"
                 type="new"
-                :title="getAddLabel"
                 :timeset="timesetName"
                 ref="addTimeNew"
             />
