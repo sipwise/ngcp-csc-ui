@@ -167,8 +167,8 @@
     export default {
         name: 'csc-sourcesets',
         props: {
-            destinations: Object,
-            sourcesets: Object,
+            destinations: Array,
+            sourcesets: Array,
             timesetName: [String, Object]
         },
         data() {

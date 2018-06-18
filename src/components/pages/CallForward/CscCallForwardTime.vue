@@ -2,7 +2,7 @@
     <q-item>
         <q-item-main>
             <q-item-tile class="row no-wrap">
-                <q-input 
+                <q-input
                     class="col"
                     v-model="weekday"
                     readonly />
@@ -58,8 +58,8 @@
             Dialog,
             QBtn,
             QItem,
-            QItemMain, 
-            QItemTile, 
+            QItemMain,
+            QItemTile,
             QItemSide
         },
         computed: {
