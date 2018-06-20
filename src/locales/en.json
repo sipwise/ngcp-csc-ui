@@ -118,7 +118,8 @@
             "downloadVoiceMailSuccessMessage": "Voicemail downloaded successfully",
             "downloadVoiceMailErrorMessage": "Downloading of voicemail failed",
             "downloadFaxSuccessMessage": "Fax downloaded successfully",
-            "downloadFaxErrorMessage": "Downloading of fax failed"
+            "downloadFaxErrorMessage": "Downloading of fax failed",
+            "reloadItemsErrorMessage": "Reloading conversation items failed"
         },
         "reminder": {
             "title": "Reminder",

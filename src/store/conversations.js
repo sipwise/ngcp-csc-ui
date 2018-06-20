@@ -1,6 +1,7 @@
 'use strict';
 
-import Vue from 'vue'
+import Vue from 'vue';
+import _ from 'lodash';
 import { i18n } from '../i18n';
 import {
     getConversations,
@@ -18,6 +19,29 @@ const RequestState = {
     failed: 'failed'
 };
 
+const ReloadConfig = {
+    retryLimit: 5,
+    retryDelay: 5000
+};
+
+function linkCallsWithSameId(state) {
+    let callId = null;
+    let callIndex = null;
+    state.items.forEach((item, index)=>{
+        if(item.type === 'call' && item.call_type === 'call') {
+            callId = item.call_id;
+            callIndex = index;
+        }
+        else if (item.type === 'call' && item.call_id === callId) {
+            let temp = state.items[callIndex];
+            item.relatedCall = temp;
+            state.items[callIndex] = item;
+            state.items[index] = temp;
+            callIndex = index;
+        }
+    });
+}
+
 export default {
     namespaced: true,
     state: {
@@ -28,8 +52,8 @@ export default {
         downloadVoiceMailError: null,
         downloadFaxState: RequestState.button,
         downloadFaxError: null,
-        reloadConversationsState: RequestState.button,
-        reloadConversationsError: null,
+        reloadItemsState: RequestState.button,
+        reloadItemsError: null,
         playVoiceMailUrls: {},
         playVoiceMailStates: {},
         playVoiceMailErrors: {},
@@ -37,18 +61,19 @@ export default {
         lastPage: null,
         nextPageState: RequestState.initiated,
         nextPageError: null,
-        items: []
+        items: [],
+        itemsReloaded: false
     },
     getters: {
         getSubscriberId(state, getters, rootState, rootGetters) {
             return rootGetters['user/getSubscriberId'];
         },
-        reloadConversationsState(state) {
-            return state.reloadConversationsState;
+        reloadItemsState(state) {
+            return state.reloadItemsState;
         },
-        reloadConversationsError(state) {
-            return state.reloadConversationsError ||
-                i18n.t('pages.conversations.reloadConversationsErrorMessage');
+        reloadItemsError(state) {
+            return state.reloadItemsError ||
+                i18n.t('pages.conversations.reloadItemsErrorMessage');
         },
         playVoiceMailState(state) {
             return (id) => {
@@ -74,13 +99,24 @@ export default {
         },
         isNextPageRequesting(state) {
             return state.nextPageState === RequestState.requesting;
+        },
+        downloadFaxState(state) {
+            return state.downloadFaxState;
+        },
+        downloadVoiceMailState(state) {
+            return state.downloadVoiceMailState;
+        },
+        downloadFaxError(state) {
+            return state.downloadFaxError;
+        },
+        downloadVoiceMailError(state) {
+            return state.downloadVoiceMailError;
+        },
+        itemsReloaded(state) {
+            return state.itemsReloaded;
         }
     },
     mutations: {
-        loadConversations(state, options) {
-            state.conversations = state.conversations.concat(options);
-            state.page++;
-        },
         downloadVoiceMailRequesting(state) {
             state.downloadVoiceMailState = RequestState.requesting;
             state.downloadVoiceMailError = null;
@@ -105,24 +141,21 @@ export default {
             state.downloadFaxState = RequestState.failed;
             state.downloadFaxError = error;
         },
-        reloadConversationsRequesting(state) {
-            state.reloadConversationsState = RequestState.requesting;
-            state.reloadConversationsError = null;
+        reloadItemsRequesting(state) {
+            state.reloadItemsState = RequestState.requesting;
+            state.reloadItemsError = null;
+            state.itemsReloaded = false;
         },
-        reloadConversationsSucceeded(state) {
-            state.reloadConversationsState = RequestState.succeeded;
-            state.reloadConversationsError = null;
+        reloadItemsSucceeded(state, items) {
+            state.reloadItemsState = RequestState.succeeded;
+            state.reloadItemsError = null;
+            state.items = items.items;
+            linkCallsWithSameId(state);
+            state.itemsReloaded = true;
         },
-        reloadConversationsFailed(state, error) {
-            state.reloadConversationsState = RequestState.failed;
-            state.reloadConversationsError = error;
-        },
-        resetConversations(state) {
-            state.page = 1;
-        },
-        reloadConversations(state, result) {
-            state.conversations = result;
-            state.page++;
+        reloadItemsFailed(state, error) {
+            state.reloadItemsState = RequestState.failed;
+            state.reloadItemsError = error;
         },
         playVoiceMailRequesting(state, id) {
             Vue.set(state.playVoiceMailStates, id, RequestState.requesting);
@@ -153,23 +186,7 @@ export default {
             state.items = state.items.concat(items.items);
             state.lastPage = items.lastPage;
             state.currentPage = state.currentPage + 1;
-
-            let callId = null;
-            let callIndex = null;
-            state.items.forEach((item, index)=>{
-                if(item.type === 'call' && item.call_type === 'call') {
-                    callId = item.call_id;
-                    callIndex = index;
-                }
-                else if (item.type === 'call' && item.call_id === callId) {
-                    let temp = state.items[callIndex];
-                    item.relatedCall = temp;
-                    state.items[callIndex] = item;
-                    state.items[index] = temp;
-                    callIndex = index;
-
-                }
-            });
+            linkCallsWithSameId(state);
         },
         nextPageFailed(state, error) {
             state.nextPageState = RequestState.failed;
@@ -177,7 +194,32 @@ export default {
         }
     },
     actions: {
-
+        reloadItems(context, retryCount) {
+            context.commit('reloadItemsRequesting');
+            let rows = context.state.currentPage * ROWS_PER_PAGE;
+            let firstStateItemTimestamp = context.state.items[0] ?
+                context.state.items[0].start_time : null;
+            if (retryCount < ReloadConfig.retryLimit) {
+                getConversations(
+                    context.getters.getSubscriberId,
+                    1,
+                    rows
+                ).then((result) => {
+                    let firstResultItemTimestamp = result.items[0] ?
+                        result.items[0].start_time : null;
+                    if (_.isEqual(firstStateItemTimestamp, firstResultItemTimestamp)) {
+                        setTimeout(() => {
+                            context.dispatch('reloadItems', ++retryCount);
+                        }, ReloadConfig.retryDelay);
+                    }
+                    else {
+                        context.commit('reloadItemsSucceeded', result);
+                    }
+                }).catch((err) => {
+                    context.commit('reloadItemsFailed', err.message);
+                });
+            }
+        },
         downloadVoiceMail(context, id) {
             context.commit('downloadVoiceMailRequesting');
             downloadVoiceMail(id).then(()=>{
