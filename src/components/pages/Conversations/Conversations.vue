@@ -36,7 +36,6 @@
 
 <script>
     import {
-        mapState,
         mapGetters
     } from 'vuex'
     import CscPage from '../../CscPage'
@@ -70,15 +69,18 @@
             this.$store.commit('conversations/resetList');
         },
         computed: {
-            ...mapState('conversations', [
+            ...mapGetters('conversations', [
+                'items',
+                'isNextPageRequesting',
                 'downloadFaxState',
                 'downloadVoiceMailState',
                 'downloadFaxError',
-                'downloadVoiceMailError'
+                'downloadVoiceMailError',
+                'itemsReloaded',
+                'reloadItemsError'
             ]),
-            ...mapGetters('conversations', [
-                'items',
-                'isNextPageRequesting'
+            ...mapGetters('call', [
+                'callState'
             ])
         },
         methods: {
@@ -112,6 +114,9 @@
                     id: voiceMail.id,
                     format: voiceMail.format
                 });
+            },
+            reloadItems() {
+                this.$store.dispatch('conversations/reloadItems', 1);
             }
         },
         watch: {
@@ -139,6 +144,25 @@
                 else if (state === 'succeeded') {
                     stopLoading();
                     showToast(this.$t('pages.conversations.downloadFaxSuccessMessage'));
+                }
+            },
+            reloadItemsState(state) {
+                if (state === 'failed') {
+                    showGlobalError(this.reloadItemsError);
+                }
+            },
+            callState(newState, oldState) {
+                let endedA = newState === 'ended';
+                let endedB = oldState === 'established' && newState === 'input';
+                let endedC = oldState === 'ringing' && newState === 'input';
+                let endedD = oldState === 'incoming' && newState === 'input';
+                if (endedA || endedB || endedC || endedD) {
+                    this.reloadItems();
+                }
+            },
+            itemsReloaded(state) {
+                if (state) {
+                    window.scrollTo(0, 0);
                 }
             }
         }
