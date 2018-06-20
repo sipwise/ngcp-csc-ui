@@ -236,8 +236,6 @@ export default {
                     });
                 }).onRemoteMedia((remoteMediaStream)=>{
                     context.commit('establishCall', remoteMediaStream);
-                }).onRemoteMediaEnded(()=>{
-                    context.commit("endRemoteMedia");
                 }).onEnded(()=>{
                     Vue.call.end();
                     context.commit('endCall', Vue.call.getEndedReason());
