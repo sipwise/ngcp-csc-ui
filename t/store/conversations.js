@@ -5,7 +5,8 @@ import ConversationsModule  from '../../src/store/conversations';
 import { assert } from 'chai';
 
 describe('Conversations', function(){
-
+    // TODO: Remove this test and loadConversatins() in store
+    // TODO: Write tests for reloadItemsSucceeded as a minimum
     it('should load conversations', function(){
         let state = {
             conversations: [
