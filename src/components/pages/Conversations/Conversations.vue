@@ -3,40 +3,40 @@
         ref="page"
         class="csc-list-page"
     >
-        <q-list
-            no-border
-            inset-separator
-            sparse
-            multiline
-        >
-            <csc-conversation-item
-                v-for="(item, index) in items"
-                :key="item._id"
-                :item="item"
-                @init-call="initCall"
-                @download-fax="downloadFax"
-                @download-voice-mail="downloadVoiceMail"
-                @play-voice-mail="playVoiceMail"
-            />
-        </q-list>
-        <div
-            v-if="isNextPageRequesting"
-            class="row justify-center"
-        >
-            <q-spinner-dots
-                color="primary"
-                :size="40"
-            />
-        </div>
-        <div
-            v-if="!isNextPageRequesting && items.length === 0"
-            class="row justify-center"
-        >
-           {{ $t('pages.conversations.emptyListMessage') }}
-        </div>
-        <q-scroll-observable
-            @scroll="scroll"
-        />
+        <q-tabs inverted color="primary" align="justify" v-model="selectedTab" class="conversations-tabs">
+            <q-tab default name="all" slot="title" icon="mail" label="All" @click="filterByType('all')" :items="items"/>
+            <q-tab name="call" slot="title" icon="call" label="Calls" @click="filterByType('call')" :items="items"/>
+            <q-tab name="fax" slot="title" icon="fa-fax" label="Faxes" @click="filterByType('fax')" :items="items"/>
+            <q-tab name="voicemail" slot="title" icon="voicemail" label="Voicemails" @click="filterByType('voicemail')" :items="items"/>
+            <q-list
+                no-border
+                inset-separator
+                sparse
+                multiline
+            >
+                <csc-conversation-item
+                    v-for="(item, index) in items"
+                    :key="item._id"
+                    :item="item"
+                    @init-call="initCall"
+                    @download-fax="downloadFax"
+                    @download-voice-mail="downloadVoiceMail"
+                    @play-voice-mail="playVoiceMail"
+                />
+            </q-list>
+            <div
+                v-if="isNextPageRequesting"
+                class="row justify-center"
+            >
+                <q-spinner-dots
+                    color="primary"
+                    :size="40"
+                />
+            </div>
+            <q-scroll-observable
+                @scroll="scroll"
+            />           
+        </q-tabs>
     </csc-page>
 </template>
 
@@ -57,13 +57,23 @@
         scroll,
         QList,
         QSpinnerDots,
-        dom
+        dom,
+        QTabs,
+        QTab,
+        QTabPane
     } from 'quasar-framework'
     const { offset } = dom
     export default {
         data () {
             return {
-                scrollEventEmitted: false
+                scrollEventEmitted: false,
+                selectedTab: 'all',
+                tabs: [
+                    { label: 'All', value: 'all' },
+                    { label: 'Calls', value: 'call'},
+                    { label: 'Faxes', value: 'fax'},
+                    { label: 'Voicemail', value: 'voicemail'}
+                ]
             }
         },
         components: {
@@ -71,7 +81,10 @@
             CscConversationItem,
             QScrollObservable,
             QList,
-            QSpinnerDots
+            QSpinnerDots,
+            QTabs,
+            QTab,
+            QTabPane
         },
         mounted() {
             this.$store.commit('conversations/resetList');
@@ -96,14 +109,14 @@
                 if(!this.isNextPageRequesting && !this.scrollEventEmitted && data.direction === 'down' &&
                     data.position > scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight + 30) {
                     this.scrollEventEmitted = true;
-                    this.nextPage();
+                    this.nextPage(this.selectedTab);
                 }
                 else if(data.position <= scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight + 30) {
                     this.scrollEventEmitted = false;
                 }
             },
-            nextPage() {
-                this.$store.dispatch('conversations/nextPage');
+            nextPage(type) {
+                this.$store.dispatch('conversations/nextPage', type);
             },
             initCall(call) {
                 this.$store.dispatch('call/start', {
@@ -124,8 +137,15 @@
                 });
             },
             reloadItems() {
-                this.$store.dispatch('conversations/reloadItems', 1);
-            }
+                this.$store.dispatch('conversations/reloadItems', {
+                    retryCount: 1,
+                    type: this.selectedTab
+                });
+            },
+            filterByType(type) {
+                this.$store.commit('conversations/resetList');
+                this.$store.dispatch('conversations/nextPage', type);
+            } 
         },
         watch: {
             downloadVoiceMailState(state) {
@@ -164,7 +184,8 @@
                 let endedB = oldState === 'established' && newState === 'input';
                 let endedC = oldState === 'ringing' && newState === 'input';
                 let endedD = oldState === 'incoming' && newState === 'input';
-                if (endedA || endedB || endedC || endedD) {
+                if (endedA || endedB || endedC || endedD ) {
+                    this.filterByType(this.selectedTab);
                     this.reloadItems();
                 }
             },

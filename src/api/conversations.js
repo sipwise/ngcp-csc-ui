@@ -3,17 +3,30 @@ import { saveAs } from 'file-saver'
 import Vue from 'vue'
 import { getList } from './common'
 
-export function getConversations(id, page, rows) {
-    return getList({
-        path: 'api/conversations/',
-        root: '_embedded.ngcp:conversations',
-        params: {
+
+export function getConversations(id, page, rows, type) {
+    let params = {};
+    if (type === 'all') {
+        params = {
             subscriber_id: id,
             page: page,
             rows: rows,
             order_by: 'timestamp',
             order_by_direction: 'desc'
         }
+    } 
+    else {
+        params = {
+            subscriber_id: id,
+            page: page,
+            rows: rows,
+            type: type
+        }
+    }
+    return getList({
+        path: 'api/conversations/',
+        root: '_embedded.ngcp:conversations',
+        params: params
     });
 }
 

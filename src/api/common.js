@@ -9,6 +9,7 @@ export const LIST_ALL_ROWS = 1000;
 
 export function getList(options) {
     return new Promise((resolve, reject)=>{
+        console.log(options);
         options = options || {};
         options = _.merge({
             all: false,
@@ -20,6 +21,7 @@ export function getList(options) {
                 'Accept': 'application/json'
             }
         }, options);
+        console.log(options);
         Promise.resolve().then(()=>{
             if(options.all === true) {
                 options.params.rows = LIST_ALL_ROWS;
