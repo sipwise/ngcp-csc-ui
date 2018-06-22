@@ -265,8 +265,8 @@ export default {
                 context.commit('localMediaSuccess', localMediaStream);
                 Vue.call.onRingingStart(()=>{
                     context.commit('startRinging');
-                }).onRingingStop(()=>{
-                    context.commit('stopRinging');
+                //}).onRingingStop(()=>{
+                //    context.commit('stopRinging');
                 }).start(options.number, localMediaStream);
             }).catch((err)=>{
                 Vue.call.end();
