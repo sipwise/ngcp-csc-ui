@@ -71,7 +71,7 @@ export function askForNotificationPermission() {
     });
 }
 
-var serviceWorkerPath = '/csc/statics/service-worker.js';
+var serviceWorkerPath = document.location.pathname + '/statics/service-worker.js';
 export function enableIncomingCallNotifications() {
     return new Promise((resolve)=>{
         Promise.resolve().then(()=>{

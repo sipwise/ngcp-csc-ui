@@ -168,7 +168,7 @@ export default {
         logout() {
             localStorage.removeItem('jwt');
             localStorage.removeItem('subscriberId');
-            document.location.href = '/csc';
+            document.location.href = document.location.pathname;
         },
         initUser(context) {
             context.commit('userDataRequesting');
