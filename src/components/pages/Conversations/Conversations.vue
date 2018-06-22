@@ -3,40 +3,77 @@
         ref="page"
         class="csc-list-page"
     >
-        <q-list
-            no-border
-            inset-separator
-            sparse
-            multiline
+        <q-tabs
+            inverted
+            color="primary"
+            align="justify"
+            v-model="selectedTab"
+            class="conversations-tabs"
         >
-            <csc-conversation-item
-                v-for="(item, index) in items"
-                :key="item._id"
-                :item="item"
-                @init-call="initCall"
-                @download-fax="downloadFax"
-                @download-voice-mail="downloadVoiceMail"
-                @play-voice-mail="playVoiceMail"
+            <q-tab
+                default
+                name="call-fax-voicemail"
+                slot="title"
+                icon="inbox"
+                label="All"
+                @click="filterByType('call-fax-voicemail')"
             />
-        </q-list>
-        <div
-            v-if="isNextPageRequesting"
-            class="row justify-center"
-        >
-            <q-spinner-dots
-                color="primary"
-                :size="40"
+            <q-tab
+                name="call"
+                slot="title"
+                icon="call"
+                label="Calls"
+                @click="filterByType('call')"
             />
-        </div>
-        <div
-            v-if="!isNextPageRequesting && items.length === 0"
-            class="row justify-center"
-        >
-           {{ $t('pages.conversations.emptyListMessage') }}
-        </div>
-        <q-scroll-observable
-            @scroll="scroll"
-        />
+            <q-tab
+                name="fax"
+                slot="title"
+                icon="description"
+                label="Faxes"
+                @click="filterByType('fax')"
+            />
+            <q-tab
+                name="voicemail"
+                slot="title"
+                icon="voicemail"
+                label="Voicemails"
+                @click="filterByType('voicemail')"
+            />
+            <q-list
+                no-border
+                inset-separator
+                sparse
+                multiline
+            >
+                <csc-conversation-item
+                    v-for="(item, index) in items"
+                    :key="item._id"
+                    :item="item"
+                    @init-call="initCall"
+                    @download-fax="downloadFax"
+                    @download-voice-mail="downloadVoiceMail"
+                    @play-voice-mail="playVoiceMail"
+                />
+            </q-list>
+            <div
+                v-if="isNextPageRequesting"
+                class="row justify-center"
+            >
+                <q-spinner-dots
+                    color="primary"
+                    :size="40"
+                />
+            </div>
+            <div
+                v-if="!isNextPageRequesting && items.length === 0"
+                class="row justify-center"
+            >
+                {{ noResultsMessage }}
+            </div>
+            <q-scroll-observable
+                @scroll="scroll"
+            />
+        </q-tabs>
     </csc-page>
 </template>
 
@@ -57,13 +94,23 @@
         scroll,
         QList,
         QSpinnerDots,
-        dom
+        dom,
+        QTabs,
+        QTab,
+        QTabPane
     } from 'quasar-framework'
     const { offset } = dom
     export default {
         data () {
             return {
-                scrollEventEmitted: false
+                scrollEventEmitted: false,
+                selectedTab: 'call-fax-voicemail',
+                tabs: [
+                    { label: this.$t('pages.conversations.tabLabelAll'), value: 'call-fax-voicemail' },
+                    { label: this.$t('pages.conversations.tabLabelCalls'), value: 'call'},
+                    { label: this.$t('pages.conversations.tabLabelFaxes'), value: 'fax'},
+                    { label: this.$t('pages.conversations.tabLabelVoicemails'), value: 'voicemail'}
+                ]
             }
         },
         components: {
@@ -71,7 +118,10 @@
             CscConversationItem,
             QScrollObservable,
             QList,
-            QSpinnerDots
+            QSpinnerDots,
+            QTabs,
+            QTab,
+            QTabPane
         },
         mounted() {
             this.$store.commit('conversations/resetList');
@@ -90,21 +140,35 @@
             ]),
             ...mapGetters('call', [
                 'callState'
-            ])
+            ]),
+            noResultsMessage() {
+                if(this.selectedTab === 'call-fax-voicemail') {
+                    return this.$t('pages.conversations.emptyListMessage');
+                }
+                else if(this.selectedTab === 'call') {
+                    return this.$t('pages.conversations.noCallsMessage');
+                }
+                else if(this.selectedTab === 'fax') {
+                    return this.$t('pages.conversations.noFaxesMessage');
+                }
+                else if(this.selectedTab === 'voicemail') {
+                    return this.$t('pages.conversations.noVoicemailsMessage');
+                }
+            }
         },
         methods: {
             scroll(data) {
                 if(!this.isNextPageRequesting && !this.scrollEventEmitted && data.direction === 'down' &&
                     data.position > scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight + 30) {
                     this.scrollEventEmitted = true;
-                    this.nextPage();
+                    this.nextPage(this.selectedTab);
                 }
                 else if(data.position <= scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight + 30) {
                     this.scrollEventEmitted = false;
                 }
             },
-            nextPage() {
-                this.$store.dispatch('conversations/nextPage');
+            nextPage(type) {
+                this.$store.dispatch('conversations/nextPage', type);
             },
             initCall(call) {
                 this.layout.showRight();
@@ -126,7 +190,14 @@
                 });
             },
             reloadItems() {
-                this.$store.dispatch('conversations/reloadItems', 1);
+                this.$store.dispatch('conversations/reloadItems', {
+                    retryCount: 1,
+                    type: this.selectedTab
+                });
+            },
+            filterByType(type) {
+                this.$store.commit('conversations/resetList');
+                this.$store.dispatch('conversations/nextPage', type);
             }
         },
         watch: {
@@ -166,7 +237,10 @@
                 let endedB = oldState === 'established' && newState === 'input';
                 let endedC = oldState === 'ringing' && newState === 'input';
                 let endedD = oldState === 'incoming' && newState === 'input';
-                if (endedA || endedB || endedC || endedD) {
+                if (endedA && ((this.selectedTab === 'call') || (this.selectedTab === 'call-fax-voicemail'))
+                    || endedB && ((this.selectedTab === 'call') || (this.selectedTab === 'call-fax-voicemail'))
+                    || endedC && ((this.selectedTab === 'call') || (this.selectedTab === 'call-fax-voicemail'))
+                    || endedD && ((this.selectedTab === 'call') || (this.selectedTab === 'call-fax-voicemail'))) {
                     this.reloadItems();
                 }
             },
