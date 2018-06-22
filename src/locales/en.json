@@ -120,6 +120,9 @@
             "downloadFaxSuccessMessage": "Fax downloaded successfully",
             "downloadFaxErrorMessage": "Downloading of fax failed",
             "emptyListMessage": "No Calls, Voicemails or Faxes found",
+            "noFaxesMessage": "No Faxes found",
+            "noVoicemailsMessage": "No Voicemails found",
+            "noCallsMessage": "No Calls found",
             "reloadItemsErrorMessage": "Reloading conversation items failed"
         },
         "reminder": {
