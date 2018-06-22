@@ -3,18 +3,35 @@ import { saveAs } from 'file-saver'
 import Vue from 'vue'
 import { getList } from './common'
 
-export function getConversations(id, page, rows) {
-    return getList({
-        path: 'api/conversations/',
-        root: '_embedded.ngcp:conversations',
-        params: {
-            subscriber_id: id,
-            page: page,
-            rows: rows,
-            order_by: 'timestamp',
-            order_by_direction: 'desc'
-        }
-    });
+
+export function getConversations(id, page, rows, type) {
+    if(type === null || type === undefined || type === "") {
+        return getList({
+            path: 'api/conversations/',
+            root: '_embedded.ngcp:conversations',
+            params: {
+                subscriber_id: id,
+                page: page,
+                rows: rows,
+                order_by: 'timestamp',
+                order_by_direction: 'desc'
+            }
+        });
+    }
+    else {
+        return getList({
+            path: 'api/conversations/',
+            root: '_embedded.ngcp:conversations',
+            params: {
+                subscriber_id: id,
+                page: page,
+                rows: rows,
+                type: type,
+                order_by: 'timestamp',
+                order_by_direction: 'desc'
+            }
+        });
+    }
 }
 
 export function downloadVoiceMail(id) {
