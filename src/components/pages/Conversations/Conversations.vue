@@ -28,6 +28,12 @@
                 :size="40"
             />
         </div>
+        <div
+            v-if="!isNextPageRequesting && items.length === 0"
+            class="row justify-center"
+        >
+           {{ $t('pages.conversations.emptyListMessage') }}
+        </div>
         <q-scroll-observable
             @scroll="scroll"
         />
