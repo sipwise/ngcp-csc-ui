@@ -119,6 +119,7 @@
             "downloadVoiceMailErrorMessage": "Downloading of voicemail failed",
             "downloadFaxSuccessMessage": "Fax downloaded successfully",
             "downloadFaxErrorMessage": "Downloading of fax failed",
+            "emptyListMessage": "No Calls, Voicemails or Faxes found",
             "reloadItemsErrorMessage": "Reloading conversation items failed"
         },
         "reminder": {
