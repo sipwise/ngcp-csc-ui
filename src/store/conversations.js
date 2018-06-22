@@ -22,7 +22,7 @@ const RequestState = {
 const ReloadConfig = {
     retryLimit: 5,
     retryDelay: 5000
-};
+}; 
 
 function linkCallsWithSameId(state) {
     let callId = null;
@@ -62,7 +62,9 @@ export default {
         nextPageState: RequestState.initiated,
         nextPageError: null,
         items: [],
-        itemsReloaded: false
+        itemsReloaded: false,
+        filterConversationsState: RequestState.initiated,
+        filterConversationsError: null
     },
     getters: {
         getSubscriberId(state, getters, rootState, rootGetters) {
@@ -194,22 +196,26 @@ export default {
         }
     },
     actions: {
-        reloadItems(context, retryCount) {
+        reloadItems(context, options) {
             context.commit('reloadItemsRequesting');
             let rows = context.state.currentPage * ROWS_PER_PAGE;
             let firstStateItemTimestamp = context.state.items[0] ?
                 context.state.items[0].start_time : null;
-            if (retryCount < ReloadConfig.retryLimit) {
+            if (options.retryCount < ReloadConfig.retryLimit) {
                 getConversations(
                     context.getters.getSubscriberId,
                     1,
-                    rows
+                    rows,
+                    options.type
                 ).then((result) => {
                     let firstResultItemTimestamp = result.items[0] ?
                         result.items[0].start_time : null;
                     if (_.isEqual(firstStateItemTimestamp, firstResultItemTimestamp)) {
                         setTimeout(() => {
-                            context.dispatch('reloadItems', ++retryCount);
+                            context.dispatch('reloadItems', { 
+                                retryCount: ++options.retryCount, 
+                                type: options.type 
+                            });
                         }, ReloadConfig.retryDelay);
                     }
                     else {
@@ -217,7 +223,7 @@ export default {
                     }
                 }).catch((err) => {
                     context.commit('reloadItemsFailed', err.message);
-                });
+                });                              
             }
         },
         downloadVoiceMail(context, id) {
@@ -247,14 +253,15 @@ export default {
                 context.commit('playVoiceMailFailed', options.id, err.mesage);
             });
         },
-        nextPage(context) {
+        nextPage(context, type) {
             let page = context.getters.currentPage + 1;
             if(context.getters.lastPage === null || page <= context.getters.lastPage) {
                 context.commit('nextPageRequesting');
                 getConversations(
                     context.getters.getSubscriberId,
                     page,
-                    ROWS_PER_PAGE
+                    ROWS_PER_PAGE,
+                    type
                 ).then((result) => {
                     context.commit('nextPageSucceeded', result);
                 }).catch((err)=>{
