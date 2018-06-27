@@ -134,7 +134,7 @@
         },
         watch: {
             selectedId(id) {
-                this.selectedId(id);
+                this.selectById(id);
             }
         }
     }
@@ -144,8 +144,11 @@
     @import '../../../themes/quasar.variables';
     .csc-pbx-model-list
         .q-item-avatar
+            overflow hidden
+            border-radius 0
             img
                 border-radius 0
+                height auto
 
     .csc-pbx-model-image
         margin-top 16px

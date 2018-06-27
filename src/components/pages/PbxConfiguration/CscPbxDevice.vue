@@ -64,6 +64,7 @@
                         @select="selectProfile"
                     />
                 </q-field>
+
                 <csc-pbx-device-config
                     :device="device"
                     :groupsAndSeatsOptions="groupsAndSeatsOptions"
@@ -72,6 +73,7 @@
                     @keysChanged="keysChanged"
                     :subscribers="subscribers"
                 />
+
             </q-item-tile>
         </q-item-main>
         <q-item-side
@@ -136,6 +138,7 @@
     } from 'quasar-framework'
     import CscPbxDeviceConfig from './CscPbxDeviceConfig'
     import CscPbxModelSelect from './CscPbxModelSelect'
+    import CscPbxDeviceKeys from './CscPbxDeviceKeys'
 
     export default {
         name: 'csc-pbx-device',
@@ -151,6 +154,7 @@
         components: {
             CscPbxDeviceConfig,
             CscPbxModelSelect,
+            CscPbxDeviceKeys,
             QCard,
             QCardTitle,
             QCardMain,
@@ -260,7 +264,7 @@
                 return buttons;
             },
             profileId() {
-                return _.get(this.device, 'profile.device_id', null);
+                return _.get(this.device, 'profile.id', null);
             }
         },
         mounted() {
@@ -329,8 +333,11 @@
             right 10px
 
         .q-item-avatar
+            overflow hidden
+            border-radius 0
             img
                 border-radius 0
+                height auto
 
         .q-item-label
             font-size 18px
@@ -342,4 +349,7 @@
         .q-btn
             padding-left 8px
             padding-right 8px
+
+    .csc-pbx-device-buttons
+        margin-top 32px
 </style>
