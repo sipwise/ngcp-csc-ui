@@ -1,33 +1,97 @@
 <template>
-    <div ref="config" class="csc-pbx-device-config justify-center row">
-        <div class="csc-pbx-device-canvas" :style="canvasStyles">
-            <div ref="imageWrapper" class="csc-pbx-device-image" :style="imageWrapperStyles">
-                <img ref="image" :src="imageUrl" @load="imageLoaded" :style="imageStyles" />
+    <div
+        ref="config"
+        class="csc-pbx-device-config justify-center row"
+    >
+        <div
+            class="csc-pbx-device-canvas"
+            :style="canvasStyles"
+        >
+            <div
+                ref="imageWrapper"
+                class="csc-pbx-device-image"
+                :style="imageWrapperStyles"
+            >
+                <img
+                    ref="image"
+                    :src="imageUrl"
+                    :style="imageStyles"
+                    @load="imageLoaded"s
+                />
             </div>
-            <div :class="spotClasses(index)" v-for="(key, index) in keys" :key="index"
-                 :style="spotPosition(key)" @click="openKeyOverlay(key, index)">{{ index + 1 }}</div>
+            <div
+                v-for="(key, index) in keys"
+                :key="index"
+                :class="spotClasses(key)"
+                :style="spotPosition(key)"
+                @click="openKeyOverlay(key)"
+            >
+                {{ key.index + 1 }}
+            </div>
         </div>
-        <div v-show="keyOverlayActive" class="csc-pbx-device-config-key-overlay animate-fade">
-            <div class="title">
-                <q-icon name="touch_app" size="32px"/>Key {{ selectedKeyIndex + 1 }}
+        <div
+            v-show="keyOverlayActive"
+            class="csc-pbx-device-config-key-overlay animate-fade"
+        >
+            <div
+                class="title"
+            >
+                <q-icon
+                    name="touch_app"
+                    size="32px"
+                />
+                {{ selectedKeySetName }} > Key {{ selectedKeyNumber }}
             </div>
-            <q-field :label="selectedKeyLabel" :icon="selectedKeyIcon">
-                <q-select ref="selectSubscriber" :value="selectedKeySubscriber" :options="groupsAndSeatsOptions"
-                          @change="keySubscriberChanged" />
+            <q-field
+                :label="selectedKeyLabel"
+                :icon="selectedKeyIcon"
+            >
+                <q-select
+                    ref="selectSubscriber"
+                    :value="selectedKeySubscriber"
+                    :options="groupsAndSeatsOptions"
+                    @change="keySubscriberChanged"
+                />
             </q-field>
-            <q-field label="Type">
-                <q-select ref="selectType" v-model="selectedKeyType" :options="typeOptions"
-                    @change="keyTypeChanged" />
+            <q-field
+                label="Type"
+            >
+                <q-select
+                    ref="selectType"
+                    v-model="selectedKeyType"
+                    :options="typeOptions"
+                    @change="keyTypeChanged"
+                />
             </q-field>
-            <div class="row justify-center actions">
-                <div class="column">
-                    <q-btn icon="clear" :big="isMobile" @click="closeKeyOverlay()" flat color="negative">Close</q-btn>
+            <div
+                class="row justify-center actions"
+            >
+                <div
+                    class="column"
+                >
+                    <q-btn
+                        icon="clear"
+                        :big="isMobile"
+                        @click="closeKeyOverlay()"
+                        flat
+                        color="negative"
+                    >
+                        Close
+                    </q-btn>
                 </div>
             </div>
-            <q-btn icon="clear" :big="isMobile" class="absolute-top-right"
-                   @click="closeKeyOverlay()" flat color="primary" />
+            <q-btn
+                icon="clear"
+                :big="isMobile"
+                class="absolute-top-right"
+                @click="closeKeyOverlay()"
+                flat
+                color="primary"
+            />
         </div>
-        <q-window-resize-observable @resize="windowResize" />
+        <q-window-resize-observable
+            @resize="windowResize"
+        />
     </div>
 </template>
 
@@ -58,9 +122,7 @@
                 imageWidth: 0,
                 boundingBox: null,
                 scaledBoundingBox: null,
-                modalOpened: false,
                 selectedKey: null,
-                selectedKeyIndex: null,
                 selectedLine: null,
                 keyOverlayActive: false,
                 selectedKeyTypeData: null,
@@ -115,27 +177,45 @@
                     if(this.selectedLine !== null) {
                         return this.selectedLine.type;
                     }
-                    return 'private';
+                    return _.get(this.typeOptions, '0.value', '');
                 },
                 set(type) {
                     this.selectedKeyTypeData = type;
                 }
             },
+            selectedKeySetName() {
+                if(this.selectedKey !== null) {
+                    return this.selectedKey.keySet.name;
+                }
+                return '';
+            },
+            selectedKeyNumber() {
+                if(this.selectedKey !== null) {
+                    return (this.selectedKey.index + 1);
+                }
+                return '';
+            },
             typeOptions() {
-                return [
-                    {
-                        label: this.$t('pbxConfig.keyTypeShared'),
-                        value: 'shared'
-                    },
-                    {
+                let options = [];
+                if(this.selectedKey !== null && this.selectedKey.keySet.can_blf) {
+                    options.push({
                         label: this.$t('pbxConfig.keyTypeBLF'),
                         value: 'blf'
-                    },
-                    {
+                    });
+                }
+                if (this.selectedKey !== null && this.selectedKey.keySet.can_private) {
+                    options.push({
                         label: this.$t('pbxConfig.keyTypePrivate'),
                         value: 'private'
-                    }
-                ];
+                    });
+                }
+                if (this.selectedKey !== null && this.selectedKey.keySet.can_shared) {
+                    options.push({
+                        label: this.$t('pbxConfig.keyTypeShared'),
+                        value: 'shared'
+                    });
+                }
+                return options;
             },
             isMobile() {
                 return Platform.is.mobile;
@@ -143,8 +223,24 @@
             imageUrl() {
                 return _.get(this.device, 'profile.modelFrontImageUrl');
             },
+            keySets() {
+                return _.get(this.device, 'profile.model.linerange', []);
+            },
             keys() {
-                return _.get(this.device, 'profile.model.linerange[0].keys', []);
+                let keys = [];
+                this.keySets.forEach(($keySet)=>{
+                    let $keys = _.get($keySet, 'keys', []);
+                    $keys.forEach(($key, $index)=>{
+                        let key = _.clone($key);
+                        key.keySet = $keySet;
+                        key.index = $index;
+                        keys.push(key);
+                    });
+                });
+                return keys;
+            },
+            lines() {
+                return _.get(this.device, 'lines', []);
             },
             canvasStyles() {
                 return {
@@ -169,24 +265,12 @@
             this.loadGroupsAndSeats();
         },
         methods: {
-            getLineIndexByKey(keyIndex) {
-                let lineIndex = null;
-                let lines = _.get(this.device, 'lines', []);
-                if(lines.length > 0) {
-                    lines.forEach(($line, index)=>{
-                        if($line.key_num === keyIndex) {
-                            lineIndex = index;
-                        }
-                    });
-                }
-                return lineIndex;
-            },
             getLineByKey(key) {
                 let line = null;
-                this.device.lines.forEach(($line)=>{
-                    if($line.key_num === key) {
-                        line = $line;
-
+                this.lines.forEach(($line, $lineIndex)=>{
+                    if($line.key_num === key.index && $line.linerange === key.keySet.name) {
+                        line = _.clone($line);
+                        line.index = $lineIndex;
                     }
                 });
                 return line;
@@ -282,19 +366,11 @@
                 }
                 return classes;
             },
-            subscriberChanged(subscriberId) {
-                let clonedKey = _.clone(this.selectedKey);
-                clonedKey.subscriber_id = subscriberId;
-                this.$emit('keyChanged', {
-                    key: clonedKey,
-                    keyIndex: this.selectedKeyIndex
-                });
-            },
-            openKeyOverlay(key, index) {
+            openKeyOverlay(key) {
                 this.selectedKey = key;
-                this.selectedKeyIndex = index;
-                this.selectedLine = this.getLineByKey(index);
+                this.selectedLine = this.getLineByKey(key);
                 this.keyOverlayActive = true;
+                this.$scrollTo(this.$parent.$el);
             },
             closeKeyOverlay() {
                 this.keyOverlayActive = false;
@@ -304,23 +380,24 @@
             },
             keySubscriberChanged(subscriberId) {
                 let newLines = [];
-                let lines = _.clone(_.get(this.device, 'lines', []));
-                let lineIndex = this.getLineIndexByKey(this.selectedKeyIndex);
+                let lines = _.clone(this.lines);
+                let line = this.getLineByKey(this.selectedKey);
+
                 let changed = false;
-                if(_.isNumber(lineIndex) && lineIndex < lines.length && subscriberId === null) {
-                    delete lines[lineIndex];
+                if(line !== null && subscriberId === null) {
+                    delete lines[line.index];
                     changed = true;
                 }
-                else if(_.isNumber(lineIndex) && lineIndex < lines.length) {
-                    _.set(lines, lineIndex + '.subscriber_id', subscriberId);
+                else if(line !== null) {
+                    _.set(lines, line.index + '.subscriber_id', subscriberId);
                     changed = true;
                 }
                 else if(subscriberId !== null) {
                     newLines.push({
                         extension_unit: 0,
-                        key_num: this.selectedKeyIndex,
+                        key_num: this.selectedKey.index,
                         subscriber_id: subscriberId,
-                        linerange: _.get(this.device, 'profile.model.linerange.0.name'),
+                        linerange: this.selectedKey.keySet.name,
                         type: this.$refs.selectType.value
                     });
                     changed = true;
@@ -340,14 +417,10 @@
             },
             keyTypeChanged(type) {
                 let newLines = [];
-                let lines = _.clone(_.get(this.device, 'lines', []));
-                let lineIndex = this.getLineIndexByKey(this.selectedKeyIndex);
-                let changed = false;
-                if(_.isNumber(lineIndex) && _.isObject(lines[lineIndex])) {
-                    _.set(lines, lineIndex + '.type', type);
-                    changed = true;
-                }
-                if(changed === true) {
+                let lines = _.clone(this.lines);
+                let line = this.getLineByKey(this.selectedKey);
+                if(line != null) {
+                    _.set(lines, line.index + '.type', type);
                     lines.forEach((line)=>{
                         newLines.push({
                             extension_unit: line.extension_unit,
@@ -364,7 +437,7 @@
         watch: {
             device() {
                 if(this.keyOverlayActive) {
-                    this.selectedLine = this.getLineByKey(this.selectedKeyIndex);
+                    this.selectedLine = this.getLineByKey(this.selectedKey);
                 }
             }
         }

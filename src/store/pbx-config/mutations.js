@@ -161,7 +161,7 @@ export default {
     },
     deviceListRequesting(state, options) {
         options = options || {};
-        state.listCurrentPage = _.get(options, 'page', 1);
+        // state.listCurrentPage = _.get(options, 'page', 1);
         state.listLastPage = null;
         state.listLoadingSilently = _.get(options, 'silent', false);
         state.listState = RequestState.requesting;
@@ -329,5 +329,15 @@ export default {
     },
     updateProfileFailed(state, error) {
         updateDevicePropertyFailed(state, error);
+    },
+    filterByProfile(state, profile) {
+        state.listProfileFilter = profile.id;
+        state.listCurrentPage = 1;
+    },
+    resetProfileFilter(state) {
+        state.listProfileFilter = null;
+    },
+    goToPage(state, page) {
+        state.listCurrentPage = page;
     }
 }

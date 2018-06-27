@@ -65,10 +65,26 @@ export class BoundingBox2D {
     }
 
     addMargin(margin) {
-        this.topLeftX = this.topLeftX - margin;
-        this.topLeftY = this.topLeftY - margin;
-        this.bottomRightX = this.bottomRightX + margin;
-        this.bottomRightY = this.bottomRightY + margin;
+        this.addMarginTop(margin);
+        this.addMarginBottom(margin);
+        this.addMarginRight(margin);
+        this.addMarginLeft(margin);
+    }
+
+    addMarginTop(margin) {
+        this.topLeftY = this.topLeftY - Math.abs(margin);
+    }
+
+    addMarginBottom(margin) {
+        this.bottomRightY = this.bottomRightY + Math.abs(margin);
+    }
+
+    addMarginRight(margin) {
+        this.bottomRightX = this.bottomRightX + Math.abs(margin);
+    }
+
+    addMarginLeft(margin) {
+        this.topLeftX = this.topLeftX - Math.abs(margin);
     }
 
     scale(factor) {
@@ -78,6 +94,16 @@ export class BoundingBox2D {
         this.bottomRightY = this.bottomRightY * factor;
     }
 
+    translateX(x) {
+        this.topLeftX = this.topLeftX + x;
+        this.bottomRightX = this.bottomRightX + x;
+    }
+
+    translateY(y) {
+        this.topLeftY = this.topLeftY + y;
+        this.bottomRightY = this.bottomRightY + y;
+    }
+
     clone() {
         let boundingBox = new BoundingBox2D();
         boundingBox.topLeftX = this.getTopLeftX();
@@ -85,6 +111,18 @@ export class BoundingBox2D {
         boundingBox.bottomRightX = this.getBottomRightX();
         boundingBox.bottomRightY = this.getBottomRightY();
         return boundingBox;
+    }
+
+    normalizeX() {
+        this.bottomRightX = this.bottomRightX - this.getWidth();
+        this.topLeftX = 0;
+    }
+
+    normalize() {
+        this.bottomRightX = this.bottomRightX - this.topLeftX;
+        this.bottomRightY = this.bottomRightY - this.topLeftY;
+        this.topLeftX = 0;
+        this.topLeftY = 0;
     }
 
     static createFromPoints(points) {

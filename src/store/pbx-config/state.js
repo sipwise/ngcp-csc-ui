@@ -21,6 +21,7 @@ export default {
     listLoadingSilently: false,
     listCurrentPage: 1,
     listLastPage: null,
+    listProfileFilter: null,
     addState: RequestState.initiated,
     addError: null,
     addItem: null,

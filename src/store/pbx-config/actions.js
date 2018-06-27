@@ -209,15 +209,10 @@ export default {
     listDevices(context, options) {
         return new Promise((resolve, reject)=>{
             let silent = _.get(options, 'silent', false);
-            let page = _.get(options, 'page', 1);
-            let profile_id = _.get(options, 'profile_id', null);
-            context.commit('deviceListRequesting', {
-                silent: silent,
-                page: page
-            });
+            context.commit('deviceListRequesting', silent);
             getDeviceList({
-                page: page,
-                profile_id: profile_id
+                page: _.get(context, 'getters.listCurrentPage', 1),
+                profile_id: _.get(context, 'getters.listProfileFilter', null)
             }).then((devices)=>{
                 context.commit('deviceListSucceeded', devices);
                 devices.items.forEach((device)=>{
@@ -265,7 +260,10 @@ export default {
         context.commit('createDeviceRequesting', device);
         createDevice(device).then(()=>{
             context.commit('createDeviceSucceeded');
-            context.dispatch('listDevices');
+            context.dispatch('listDevices', {
+                page: context.getters.listCurrentPage,
+                silent: true
+            });
         }).catch((err)=>{
             context.commit('createDeviceFailed', err.message);
         });
@@ -274,7 +272,10 @@ export default {
         context.commit('deviceRequesting', device.id);
         removeDevice(device.id).then(()=>{
             context.commit('deviceRemoved', device);
-            context.dispatch('listDevices');
+            context.dispatch('listDevices', {
+                page: context.getters.listCurrentPage,
+                silent: true
+            });
         }).catch((err)=>{
             context.commit('deviceFailed', device.id, err.message);
         });
@@ -330,5 +331,17 @@ export default {
         }).catch((err) => {
             context.commit('updateProfileFailed', err.message);
         });
+    },
+    filterByProfile(context, profileId) {
+        context.commit('filterByProfile', profileId);
+        context.dispatch('listDevices');
+    },
+    resetProfileFilter(context) {
+        context.commit('resetProfileFilter');
+        context.dispatch('listDevices');
+    },
+    goToPage(context, page) {
+        context.commit('goToPage', page);
+        context.dispatch('listDevices');
     }
 }

@@ -30,7 +30,7 @@
                             :label="$t('pbxConfig.filterPhoneModel')"
                             @opened="modelSelectOpened()"
                             @select="filterByProfile"
-                            @reseted="resetFilter"
+                            @reseted="resetProfileFilter"
                         />
                     </div>
                     <div
@@ -153,28 +153,13 @@
         },
         methods: {
             filterByProfile(profile) {
-                this.profile = profile;
-                this.$store.dispatch('pbxConfig/listDevices', {
-                    page: this.listCurrentPage,
-                    profile_id: profile.id
-                });
+                this.$store.dispatch('pbxConfig/filterByProfile', profile);
             },
-            resetFilter() {
-                this.profile = null;
-                this.$store.dispatch('pbxConfig/listDevices', {
-                    page: 1,
-                    profile_id: null
-                });
+            resetProfileFilter() {
+                this.$store.dispatch('pbxConfig/resetProfileFilter');
             },
             changePage(page) {
-                let profileId = null;
-                if(this.profile !== null) {
-                    profileId = this.profile.id;
-                }
-                this.$store.dispatch('pbxConfig/listDevices', {
-                    page: page,
-                    profile_id: profileId
-                });
+                this.$store.dispatch('pbxConfig/goToPage', page);
             },
             loadDevice(id) {
                 this.$store.dispatch('pbxConfig/loadDevice', id);

@@ -267,5 +267,8 @@ export default {
     },
     updatedDeviceProperty(state) {
         return state.updatedDeviceProperty;
+    },
+    listProfileFilter(state) {
+        return state.listProfileFilter;
     }
 }
