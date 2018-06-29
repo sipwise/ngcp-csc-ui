@@ -3,14 +3,15 @@
         class="csc-entity csc-voice-mail-item"
     >
         <q-item-side
-            color="primary"
+            :color="color"
             icon="voicemail"
         />
         <q-item-main>
             <q-item-tile
                 label
             >
-                <span class="gt-sm csc-entity-title">Voicemail from </span>
+                <span class="gt-sm csc-entity-title">Voicemail </span>
+                <span class="gt-sm csc-entity-title">{{ direction }}</span>
                 <span class="csc-entity-title">{{ voiceMail.caller | numberFormat }}</span>
             </q-item-tile>
             <q-item-tile
@@ -88,6 +89,19 @@
         },
         data () {
             return {}
+        },
+        computed: {
+            color() {
+                return this.fax.status === 'FAILED' ? 'negative' : 'primary';
+            },
+            direction() {
+                if(this.fax.direction === 'out') {
+                    return 'to';
+                }
+                else {
+                    return 'from';
+                }
+            }
         },
         methods: {
             initCall(media) {
