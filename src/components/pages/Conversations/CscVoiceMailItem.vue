@@ -10,16 +10,19 @@
             <q-item-tile
                 label
             >
-                <span class="gt-sm csc-entity-title">Voicemail from </span>
+                <span class="gt-sm csc-entity-title">Voicemail </span>
+                <span class="gt-sm csc-entity-title">{{ direction }}</span>
                 <span class="csc-entity-title">{{ voiceMail.caller | numberFormat }}</span>
             </q-item-tile>
             <q-item-tile
                 sublabel
-            >{{ voiceMail.start_time | smartTime }}
+            >
+                {{ voiceMail.start_time | smartTime }}
             </q-item-tile>
             <q-item-tile
                 sublabel
-            >Duration: {{ voiceMail.duration }} seconds
+            >
+                Duration: {{ voiceMail.duration }} seconds
             </q-item-tile>
             <q-item-tile>
                 <csc-voice-mail-player
@@ -88,6 +91,16 @@
         },
         data () {
             return {}
+        },
+        computed: {
+            direction() {
+                if(this.voiceMail.direction === 'out') {
+                    return 'to';
+                }
+                else {
+                    return 'from';
+                }
+            }
         },
         methods: {
             initCall(media) {
