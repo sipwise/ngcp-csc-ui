@@ -2,13 +2,14 @@
     <q-item class="csc-entity csc-fax-item">
         <q-item-side
             icon="description"
-            color="primary"
+            :color="color"
         />
         <q-item-main>
             <q-item-tile
                 label
             >
-                <span class="gt-sm csc-entity-title">Fax from </span>
+                <span class="gt-sm csc-entity-title">Fax </span>
+                <span class="gt-sm csc-entity-title">{{ direction }}</span>
                 <span class="csc-entity-title">{{ fax.caller | numberFormat }}</span>
             </q-item-tile>
             <q-item-tile
@@ -87,6 +88,19 @@
         },
         data () {
             return {}
+        },
+        computed: {
+            color() {
+                return this.fax.status === 'FAILED' ? 'negative' : 'primary';
+            },
+            direction() {
+                if(this.fax.direction === 'out') {
+                    return 'to';
+                }
+                else {
+                    return 'from';
+                }
+            }
         },
         methods: {
             initCall(media) {
