@@ -120,7 +120,10 @@ export default [
     },
     {
         path: '/login',
-        component: Login
+        component: Login,
+        meta: {
+            title: i18n.t('pages.login.title')
+        }
     },
     {
         path: '/',

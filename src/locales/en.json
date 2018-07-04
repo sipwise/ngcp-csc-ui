@@ -1,5 +1,5 @@
 {
-    "title": "Customer Self-Care Portal",
+    "title": "CSC",
     "rtcEngineDisconnected": "You can not start a call. Service ist currently unavailable.",
     "startCall": "Call",
     "startAudioCall": "Audio Only",
@@ -58,7 +58,7 @@
     },
     "pages": {
         "login": {
-            "title": "Customer Self-Care Portal",
+            "title": "Subscriber Sign In",
             "button": "Sign In",
             "error": "Wrong username or password",
             "username": "Username",
