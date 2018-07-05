@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_fbebecae",
+        "filename": "src/components/pages/Conversations/Conversations.vue",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2018-07-05T19:00:18Z",
+      "side": 1,
+      "message": "Mail icon is not the best solution here, take the \"all_inbox\" instead.",
+      "revId": "c1d5747e795d7c69fddcf40870b3b63d1567b043",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_dbd150fd",
+        "filename": "src/components/pages/Conversations/Conversations.vue",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2018-07-05T19:00:18Z",
+      "side": 1,
+      "message": "For consistency reasons we should use the same icon as the single item icon \"description\".",
+      "revId": "c1d5747e795d7c69fddcf40870b3b63d1567b043",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
