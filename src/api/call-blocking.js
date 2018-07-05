@@ -1,13 +1,20 @@
 
 import _ from 'lodash';
 
-import { enableBlockIn, disableBlockIn,
-    getPreferences, addToBlockInList,
-    editBlockInList, removeFromBlockInList,
-    enableBlockOut, disableBlockOut,
-    addToBlockOutList, editBlockOutList,
+import {
+    enableBlockIn,
+    disableBlockIn,
+    getPreferences,
+    addToBlockInList,
+    editBlockInList,
+    removeFromBlockInList,
+    enableBlockOut,
+    disableBlockOut,
+    addToBlockOutList,
+    editBlockOutList,
     removeFromBlockOutList,
-    enablePrivacy, disablePrivacy
+    enablePrivacy,
+    disablePrivacy
 } from './subscriber';
 
 export function enableIncomingCallBlocking(id) {
@@ -133,9 +140,7 @@ export function disablePrivacyCallBlocking(id) {
 export function getPrivacyCallBlocking(id) {
     return new Promise((resolve, reject)=>{
         getPreferences(id).then((result)=>{
-            resolve({
-                enabled: result.clir
-            });
+            resolve(result.clir);
         }).catch((err)=>{
             reject(err);
         });
