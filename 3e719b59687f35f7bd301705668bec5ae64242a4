@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5ad0253b_7b48fc5b",
+        "filename": "src/components/pages/Conversations/Conversations.vue",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-07-05T14:10:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ad0253b_c0227db9",
+      "revId": "3e719b59687f35f7bd301705668bec5ae64242a4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ad0253b_a02f81a0",
         "filename": "src/components/pages/Conversations/Conversations.vue",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2018-07-05T13:45:40Z",
       "side": 1,
       "message": "Translation for label needs to be done",
+      "revId": "3e719b59687f35f7bd301705668bec5ae64242a4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_5b74209b",
+        "filename": "src/components/pages/Conversations/Conversations.vue",
+        "patchSetId": 4
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-07-05T14:10:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ad0253b_a02f81a0",
       "revId": "3e719b59687f35f7bd301705668bec5ae64242a4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "5ad0253b_3b796494",
+        "filename": "src/components/pages/Conversations/Conversations.vue",
+        "patchSetId": 4
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-07-05T14:10:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ad0253b_802c85ac",
+      "revId": "3e719b59687f35f7bd301705668bec5ae64242a4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ad0253b_60184985",
         "filename": "src/components/pages/Conversations/Conversations.vue",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2018-07-05T13:45:40Z",
       "side": 1,
       "message": "Translation for label needs to be done",
+      "revId": "3e719b59687f35f7bd301705668bec5ae64242a4",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_1b6ea8c9",
+        "filename": "src/components/pages/Conversations/Conversations.vue",
+        "patchSetId": 4
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-07-05T14:10:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ad0253b_60184985",
       "revId": "3e719b59687f35f7bd301705668bec5ae64242a4",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
