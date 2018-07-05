@@ -1,6 +1,8 @@
 'use strict';
 
-import { enableIncomingCallBlocking,
+import { RequestState } from './common'
+import {
+    enableIncomingCallBlocking,
     disableIncomingCallBlocking,
     getIncomingCallBlocking,
     addNumberToIncomingList,
@@ -12,10 +14,11 @@ import { enableIncomingCallBlocking,
     addNumberToOutgoingList,
     editNumberFromOutgoingList,
     removeNumberFromOutgoingList,
-    enablePrivacyCallBlocking,
-    disablePrivacyCallBlocking,
     getPrivacyCallBlocking
 } from '../api/call-blocking';
+import {
+    setPrivacy
+} from '../api/subscriber';
 
 export default {
     namespaced: true,
@@ -24,9 +27,28 @@ export default {
         incomingList: [],
         outgoingEnabled: false,
         outgoingList: [],
-        privacyEnabled: false
+        privacy: false,
+        privacyLoadingState: RequestState.initiated,
+        privacyUpdated: false,
+        privacyError: null
     },
-    getters: {},
+    getters: {
+        privacy(state) {
+            return state.privacy;
+        },
+        privacyError(state) {
+            return state.privacyError;
+        },
+        privacyUpdated(state) {
+            return state.privacyUpdated;
+        },
+        privacyLoadingState(state) {
+            return state.privacyUpdated;
+        },
+        privacyLoading(state) {
+            return state.privacyLoadingState === RequestState.requesting;
+        }
+    },
     mutations: {
         enableIncoming (state) {
             state.incomingEnabled = true;
@@ -56,6 +78,31 @@ export default {
         loadOutgoing(state, options) {
             state.outgoingEnabled = options.enabled;
             state.outgoingList = options.list;
+        },
+        privacyLoading(state) {
+            state.privacyLoadingState = RequestState.requesting;
+            state.privacyError = null;
+            state.privacyUpdated = false;
+        },
+        privacyLoaded(state, privacy) {
+            state.privacy = privacy;
+            state.privacyLoadingState = RequestState.succeeded;
+            state.privacyError = null;
+        },
+        privacyLoadingFailed(state, error) {
+            state.privacyLoadingState = RequestState.failed;
+            state.privacyError = error;
+        },
+        privacyUpdated(state, privacy) {
+            state.privacy = privacy;
+            state.privacyLoadingState = RequestState.succeeded;
+            state.privacyError = null;
+            state.privacyUpdated = true;
+        },
+        privacyUpdatingFailed(state, error) {
+            state.privacyLoadingState = RequestState.failed;
+            state.privacyError = error;
+            state.privacyUpdated = true;
         }
     },
     actions: {
@@ -185,34 +232,20 @@ export default {
                 });
             });
         },
-        togglePrivacy(context, enabled) {
-            return new Promise((resolve, reject)=>{
-                if(enabled) {
-                    enablePrivacyCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
-                        context.commit('enablePrivacy');
-                        resolve();
-                    }).catch((err)=>{
-                        reject(err);
-                    });
-                }
-                else {
-                    disablePrivacyCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
-                        context.commit('disablePrivacy');
-                        resolve();
-                    }).catch((err)=>{
-                        reject(err);
-                    });
-                }
+        updatePrivacy(context, privacy) {
+            context.commit('privacyLoading');
+            setPrivacy(localStorage.getItem('subscriberId'), privacy).then(()=>{
+                context.commit('privacyUpdated', privacy);
+            }).catch((err)=>{
+                context.commit('privacyUpdatingFailed', err.message);
             });
         },
         loadPrivacy(context) {
-            return new Promise((resolve, reject)=>{
-                getPrivacyCallBlocking(localStorage.getItem('subscriberId')).then((result)=>{
-                    context.commit('loadPrivacy', result);
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
-                });
+            context.commit('privacyLoading');
+            getPrivacyCallBlocking(localStorage.getItem('subscriberId')).then((privacy)=>{
+                context.commit('privacyLoaded', privacy);
+            }).catch((err)=>{
+                context.commit('privacyLoadingFailed', err.message);
             });
         }
     }
