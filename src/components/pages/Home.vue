@@ -116,6 +116,7 @@
             QCardActions,
             QIcon
         },
+        inject: ['layout'],
         mounted() {
             scroll.setScrollPosition(this.$el, 0, 100);
         },
@@ -140,6 +141,7 @@
         methods: {
             call() {
                 if(this.isCallAvailable) {
+                    this.layout.showRight();
                     this.$store.dispatch('call/showCall');
                 }
                 else {
@@ -148,6 +150,7 @@
             },
             screenShare() {
                 if(this.isCallAvailable && !this.isMobile) {
+                    this.layout.showRight();
                     this.$store.dispatch('call/showCall');
                 }
                 else {

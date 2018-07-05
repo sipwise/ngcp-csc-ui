@@ -76,6 +76,7 @@
         mounted() {
             this.$store.commit('conversations/resetList');
         },
+        inject: ['layout'],
         computed: {
             ...mapGetters('conversations', [
                 'items',
@@ -106,6 +107,7 @@
                 this.$store.dispatch('conversations/nextPage');
             },
             initCall(call) {
+                this.layout.showRight();
                 this.$store.dispatch('call/start', {
                     number: call.number,
                     localMedia: call.media

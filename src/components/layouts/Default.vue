@@ -272,6 +272,7 @@
                 this.$store.commit('layout/toggleFullscreen');
             },
             call() {
+                this.$refs.layout.showRight();
                 this.$store.dispatch('call/showCall');
             },
             logout() {
@@ -291,6 +292,7 @@
                 }
             },
             closeCall() {
+                this.$refs.layout.hideRight();
                 this.$store.commit('layout/hideRight');
             },
             applyLayout() {
