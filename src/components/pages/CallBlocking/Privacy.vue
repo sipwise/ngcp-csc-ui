@@ -1,45 +1,106 @@
 <template>
-    <csc-page title="Privacy" class="csc-simple-page">
-        <q-toggle :label="(!callBlockingEnabled ? 'Hide' : 'Show') + ' Own Number'"
-                @input="toggle()" v-model="callBlockingEnabled"/>
+    <csc-page
+        class="csc-simple-page"
+    >
+        <q-field
+            class="csc-privacy"
+        >
+            <q-toggle
+                :label="privacyLabel"
+                :value="privacy"
+                @input="toggle()"
+                checked-icon="visibility_off"
+                unchecked-icon="visibility"
+            />
+            <q-inner-loading
+                v-if="privacyLoading"
+                :visible="privacyLoading"
+            >
+                <q-spinner-mat
+                    size="30px"
+                    color="primary"
+                />
+            </q-inner-loading>
+        </q-field>
     </csc-page>
 </template>
 
 <script>
-    import { showToast } from '../../../helpers/ui'
+
+    import {
+        mapGetters
+    } from 'vuex'
+    import {
+        showToast
+    } from '../../../helpers/ui'
     import CscPage  from '../../CscPage'
-    import { QField, QToggle, Toast } from 'quasar-framework'
+    import {
+        QField,
+        QToggle,
+        Toast,
+        QInnerLoading,
+        QSpinnerMat
+    } from 'quasar-framework'
+
     export default {
         data () {
-            return {
-                callBlockingEnabled: false
-            }
-        },
-        mounted() {
-            this.$store.dispatch('callBlocking/loadPrivacy').then(()=>{
-                this.callBlockingEnabled = this.$store.state.callBlocking.privacyEnabled;
-            }).catch((err)=>{
-                console.log(err);
-            });
+            return {}
         },
         components: {
             CscPage,
             QToggle,
             Toast,
-            QField
+            QField,
+            QInnerLoading,
+            QSpinnerMat
+        },
+        mounted() {
+            this.$store.dispatch('callBlocking/loadPrivacy');
+        },
+        computed: {
+            privacyLabel() {
+                if(this.privacy) {
+                    return this.$t('callBlocking.privacyEnabledLabel');
+                }
+                else {
+                    return this.$t('callBlocking.privacyDisabledLabel');
+                }
+            },
+            fieldIcon() {
+                if(!this.privacy) {
+                    return 'visibility';
+                }
+                else {
+                    return 'visibility_off';
+                }
+            },
+            ...mapGetters('callBlocking', [
+                'privacy',
+                'privacyError',
+                'privacyUpdated',
+                'privacyLoadingState',
+                'privacyLoading'
+            ])
         },
         methods: {
             toggle () {
-                this.$store.dispatch('callBlocking/togglePrivacy', this.callBlockingEnabled).then(()=>{
-                    showToast('Own number will now be ' + (this.callBlockingEnabled ? 'hidden' : 'shown') +
-                    ' on outbound calls');
-                }).catch((err)=>{
-                    console.log(err);
-                });
+                this.$store.dispatch('callBlocking/updatePrivacy', !this.privacy);
+            }
+        },
+        watch: {
+            privacyUpdated(updated) {
+                if(updated && this.privacy) {
+                    showToast(this.$t('callBlocking.privacyEnabledToast'));
+                }
+                else if (updated && !this.privacy) {
+                    showToast(this.$t('callBlocking.privacyDisabledToast'));
+                }
             }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+    .csc-privacy
+        position relative
 </style>
