@@ -48,7 +48,7 @@
                     <q-btn color="primary" flat v-if="editing && editingIndex == index" slot="right"
                            icon="fa-save" @click="saveNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.save') }}</span></q-btn>
                     <q-btn flat v-if="editing && editingIndex == index" slot="right"
-                           icon="clear" @click="saveNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.cancel') }}</span></q-btn>
+                           icon="clear" @click="cancelEdit()" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.cancel') }}</span></q-btn>
                     <q-btn color="primary" flat v-if="!(editing && editingIndex == index)" slot="right"
                            icon="fa-edit" @click="editNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.edit') }}</span></q-btn>
                     <q-btn color="negative" flat v-if="!(editing && editingIndex == index)" slot="right"
@@ -199,6 +199,9 @@
                 this.editing = true;
                 this.editingIndex = index;
                 this.editingNumber = this.numbers[index];
+            },
+            cancelEdit() {
+                this.editing = false;
             },
             saveNumber(index) {
                 this.editing = false;
