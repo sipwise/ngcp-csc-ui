@@ -1,117 +1,166 @@
 <template>
-    <csc-page :title="$t('pages.reminder.title')" class="csc-simple-page">
-        <q-field class="reminder-field">
-            <q-toggle :label="$t('pages.reminder.title') + (active ? ' enabled':' disabled')" @input="toggleReminder()" v-model="active" />
+    <csc-page
+        class="csc-simple-page"
+    >
+        <q-field
+            class="reminder-field"
+        >
+            <q-toggle
+                :disable="isReminderLoading"
+                :label="toggleLabel"
+                :value="isReminderActive"
+                @input="toggleReminder()"
+                checked-icon="notifications_active"
+                unchecked-icon="notifications_off"
+            />
         </q-field>
-        <q-field class="reminder-field">
-            <q-datetime type="time" :disable="!active" no-clear=true v-model="timeConverted" :placeholder="$t('reminder.timeLabel')" @change="changeTime()" />
+        <q-field
+            class="reminder-field"
+        >
+            <q-datetime
+                format24h
+                type="time"
+                :no-clear="true"
+                :disable="isReminderLoading"
+                :float-label="$t('pages.reminder.timeLabel')"
+                :value="normalizedTime"
+                @input="updateTime"
+            />
         </q-field>
-        <q-field class="reminder-field">
-            <q-option-group :disable="!active" color="positive" type="radio" v-model="recurrence" @change="changeRecurrence()" :options="[
-          { label: $t('pages.reminder.recurrence.once'), value: 'never' },
-          { label: $t('pages.reminder.recurrence.weekdays'), value: 'weekdays' },
-          { label: $t('pages.reminder.recurrence.always'), value: 'always' }
-        ]" />
+        <q-field
+            class="reminder-field"
+        >
+            <q-option-group
+                color="positive"
+                type="radio"
+                :disable="isReminderLoading"
+                :options="recurrenceOptions"
+                :value="reminderRecurrence"
+                @input="updateRecurrence"
+            />
         </q-field>
     </csc-page>
 </template>
 
 <script>
-import CscPage from '../CscPage'
-import {
-    QField,
-    QToggle,
-    QDatetime,
-    QOptionGroup,
-    date,
-    Toast
-} from 'quasar-framework'
-export default {
-    data() {
-        return {
-            active: false,
-            time: undefined,
-            recurrence: 'never'
-        }
-    },
-    mounted() {
-        this.$store.dispatch('reminder/loadReminder').then(() => {
-            this.active = this.$store.state.reminder.active;
-            this.time = this.$store.state.reminder.time;
-            this.recurrence = this.$store.state.reminder.recurrence;
-        }).catch((err) => {
-            console.log(err);
-        });
-    },
-    components: {
-        CscPage,
+
+    import _ from 'lodash'
+    import {
+        mapGetters
+    } from 'vuex'
+    import CscPage from '../CscPage'
+    import {
+        QField,
         QToggle,
-        Toast,
         QDatetime,
         QOptionGroup,
-        QField
-    },
-    computed: {
-        timeConverted: {
-            get: function() {
-                var computedTime;
-                if (this.time) {
-                    computedTime = date.buildDate({
-                        hours: this.time.split(':')[0],
-                        minutes: this.time.split(':')[1],
-                        seconds: '00'
-                    });
+        Toast
+    } from 'quasar-framework'
+    import {
+        showToast
+    } from '../../helpers/ui'
+
+    export default {
+        data() {
+            return {}
+        },
+        mounted() {
+            this.$store.dispatch('reminder/loadReminder');
+        },
+        components: {
+            CscPage,
+            QToggle,
+            Toast,
+            QDatetime,
+            QOptionGroup,
+            QField
+        },
+        computed: {
+            ...mapGetters('reminder', [
+                'isReminderActive',
+                'reminderTime',
+                'reminderRecurrence',
+                'reminderLoadingState',
+                'reminderUpdating',
+                'reminderError',
+                'isReminderLoading',
+                'reminderUpdated'
+            ]),
+            recurrenceOptions() {
+                return [
+                    {
+                        label: this.$t('pages.reminder.recurrence.once'),
+                        value: 'never'
+                    },
+                    {
+                        label: this.$t('pages.reminder.recurrence.weekdays'),
+                        value: 'weekdays'
+                    },
+                    {
+                        label: this.$t('pages.reminder.recurrence.always'),
+                        value: 'always'
+                    }
+                ]
+            },
+            toggleLabel() {
+                if(this.isReminderActive) {
+                    return this.$t('pages.reminder.toggleEnabled');
                 }
                 else {
-                    computedTime = date.buildDate({
-                        hours: '00',
-                        minutes: '00',
-                        seconds: '00'
-                    });
+                    return this.$t('pages.reminder.toggleDisabled');
                 }
-                return computedTime;
             },
-            set: function(newValue) {
-                this.time = date.formatDate(newValue, 'HH:mm:ss');
+            normalizedTime() {
+                let timeParts = this.reminderTime.split(':');
+                let newDate = new Date();
+                newDate.setHours(parseInt(_.get(timeParts, '0', 0)));
+                newDate.setMinutes(parseInt(_.get(timeParts, '1', 0)));
+                newDate.setSeconds(parseInt(_.get(timeParts, '2', 0)));
+                return newDate;
+            }
+        },
+        methods: {
+            mapRecurrence(recurrence) {
+                switch(recurrence) {
+                    case 'never':
+                        return this.$t('pages.reminder.recurrence.once');
+                    case 'weekdays':
+                        return this.$t('pages.reminder.recurrence.weekdays');
+                    case 'always':
+                        return this.$t('pages.reminder.recurrence.always');
+                }
+            },
+            toggleReminder() {
+                this.$store.dispatch('reminder/toggleReminder');
+            },
+            updateTime(time) {
+                this.$store.dispatch('reminder/updateTime', time);
+            },
+            updateRecurrence(recurrence) {
+                this.$store.dispatch('reminder/updateRecurrence', recurrence);
+            }
+        },
+        watch: {
+            reminderUpdated(updated) {
+                if(updated && this.reminderUpdating === 'active' && this.isReminderActive) {
+                    showToast(this.$t('pages.reminder.enabledToast'));
+                }
+                else if(updated && this.reminderUpdating === 'active') {
+                    showToast(this.$t('pages.reminder.disabledToast'));
+                }
+                else if(updated && this.reminderUpdating === 'time') {
+                    showToast(this.$t('pages.reminder.timeChangedToast', {
+                        time: this.reminderTime
+                    }));
+                }
+                else if(updated && this.reminderUpdating === 'recurrence') {
+                    showToast(this.$t('pages.reminder.recurrenceChangedToast', {
+                        recurrence: this.mapRecurrence(this.reminderRecurrence)
+                    }));
+                }
             }
         }
-    },
-    methods: {
-        toggleReminder() {
-            this.$store.dispatch('reminder/toggleReminder', this.active).then(() => {
-                Toast.create({
-                    html: this.$t('pages.reminder.title') + (this.active ? ' enabled' : ' disabled'),
-                    color: 'white',
-                    bgColor: '#68A44E'
-                });
-            }).catch((err) => {
-                console.log(err);
-            });
-        },
-        changeTime() {
-            this.$store.dispatch('reminder/changeTime', this.time).then(() => {
-                Toast.create({
-                    html: this.$t('pages.reminder.timeUpdatedMsg') ,
-                    color: 'white',
-                    bgColor: '#68A44E'
-                });
-            }).catch((err) => {
-                console.log(err);
-            });
-        },
-        changeRecurrence() {
-            this.$store.dispatch('reminder/changeRecurrence', this.recurrence).then(() => {
-                Toast.create({
-                    html: this.$t('pages.reminder.recurrenceUpdatedMsg'),
-                    color: 'white',
-                    bgColor: '#68A44E'
-                });
-            }).catch((err) => {
-                console.log(err);
-            });
-        }
     }
-}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

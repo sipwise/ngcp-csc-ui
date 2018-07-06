@@ -123,15 +123,18 @@
             "reloadItemsErrorMessage": "Reloading conversation items failed"
         },
         "reminder": {
-            "title": "Reminder",
+            "toggleEnabled": "Reminder is enabled",
+            "toggleDisabled": "Reminder is disabled",
             "timeLabel": "Time of the day",
             "recurrence": {
                 "once": "Only once",
                 "weekdays": "On weekdays",
                 "always": "Always"
             },
-            "timeUpdatedMsg": "Time updated!",
-            "recurrenceUpdatedMsg": "Recurrence updated!"
+            "enabledToast": "Reminder: Enabled successfully",
+            "disabledToast": "Reminder: Disabled successfully",
+            "timeChangedToast": "Reminder: Time changed to {time}",
+            "recurrenceChangedToast": "Reminder: Recurrence changed to \"{recurrence}\""
         },
         "callForward": {
             "titles": {
