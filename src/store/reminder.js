@@ -1,101 +1,129 @@
 'use strict';
 
+import moment from 'moment'
+import _ from 'lodash'
+import { RequestState } from './common'
 import {
     getReminder,
-    createReminder,
-    enableReminder,
-    disableReminder,
-    setTime,
-    setRecurrence
+    setReminderActive,
+    setReminderTime,
+    setReminderRecurrence
 } from '../api/reminder';
 
 
 export default {
     namespaced: true,
+    state: {
+        reminder: null,
+        reminderLoadingState: RequestState.initiated,
+        reminderUpdating: null,
+        reminderUpdated: false,
+        reminderError: null
+    },
+    getters: {
+        isReminderActive(state) {
+            return state.reminder !== null && state.reminder.active === true;
+        },
+        reminderTime(state) {
+            return _.get(state.reminder, 'time', '00:00:00');
+        },
+        reminderRecurrence(state) {
+            return _.get(state.reminder, 'recur', null);
+        },
+        reminderLoadingState(state) {
+            return state.reminderLoadingState;
+        },
+        reminderUpdating(state) {
+            return state.reminderUpdating;
+        },
+        reminderError(state) {
+            return state.reminderError
+        },
+        reminderId(state) {
+            return _.get(state.reminder, 'id', null);
+        },
+        isReminderLoading(state) {
+            return state.reminderLoadingState === RequestState.requesting;
+        },
+        reminderUpdated(state) {
+            return state.reminderUpdated;
+        }
+    },
     mutations: {
-        reminderLoaded(state, options) {
-            state.reminderID = options.id;
-            state.active = options.active;
-            state.time = options.time;
-            state.recurrence = options.recur;
+        reminderLoading(state) {
+            state.reminderLoadingState = RequestState.requesting;
+            state.reminderError = null;
         },
-        enableReminder(state) {
-            state.active = true;
+        reminderLoaded(state, reminder) {
+            state.reminderLoadingState = RequestState.succeeded;
+            state.reminder = reminder;
         },
-        disableReminder(state) {
-            state.active = false;
+        reminderLoadingFailed(state, error) {
+            state.reminderLoadingState = RequestState.failed;
+            state.reminderError = error;
         },
-        setTime(state, newTime) {
-            state.time = newTime;
+        reminderUpdating(state, field) {
+            state.reminderLoadingState = RequestState.requesting;
+            state.reminderUpdating = field;
+            state.reminderUpdated = false;
         },
-        setRecurrence(state, recurrence) {
-            state.recurrence = recurrence;
+        reminderUpdated(state) {
+            state.reminderError = null;
+            state.reminderUpdated = true;
         },
-        reminderCreated(state, reminderID) {
-            state.reminderID = reminderID;
+        reminderUpdatingFailed(state, error) {
+            state.reminderLoadingState = RequestState.failed;
+            state.reminderError = error;
         }
     },
     actions: {
         loadReminder(context) {
-            return new Promise((resolve, reject) => {
-                getReminder(localStorage.getItem('subscriberId')).then((result) => {
-                    if (result.total_count > 0) {
-                        context.commit('reminderLoaded', result._embedded['ngcp:reminders'][0]); // open to suggestions on how to extract data here
-                    }
-                    else {
-                        // If no default reminder is set, then we need to create it.
-                        createReminder(localStorage.getItem('subscriberId')).then((result) => {
-                            context.commit('reminderCreated', result);
-                            resolve();
-                        }).catch((err) => {
-                            reject(err);
-                        });
-                    }
+            return new Promise((resolve, reject)=>{
+                context.commit('reminderLoading');
+                getReminder(localStorage.getItem('subscriberId')).then((reminder)=>{
+                    context.commit('reminderLoaded', reminder);
                     resolve();
-                }).catch((err) => {
+                }).catch((err)=>{
                     reject(err);
+                    context.commit('reminderLoadingFailed', err.message);
                 });
             });
         },
-        toggleReminder(context, enabled) {
-            return new Promise((resolve, reject) => {
-                if (enabled === true) {
-                    enableReminder(context.state.reminderID).then(() => {
-                        context.commit('enableReminder');
-                        resolve();
-                    }).catch((err) => {
-                        reject(err);
-                    });
-                }
-                else {
-                    disableReminder(context.state.reminderID).then(() => {
-                        context.commit('disableReminder');
-                        resolve();
-                    }).catch((err) => {
-                        reject(err);
-                    });
-                }
-            });
-        },
-        changeTime(context, time) {
-            return new Promise((resolve, reject) => {
-                setTime(context.state.reminderID, time).then(() => {
-                    context.commit('setTime', time);
-                    resolve();
-                }).catch((err) => {
-                    reject(err);
+        toggleReminder(context) {
+            context.commit('reminderUpdating', 'active');
+            if(context.getters.reminderId !== null) {
+                setReminderActive(context.getters.reminderId, !context.getters.isReminderActive).then(()=>{
+                    return context.dispatch('loadReminder');
+                }).then(()=>{
+                    context.commit('reminderUpdated');
+                }).catch((err)=>{
+                    context.commit('reminderUpdatingFailed', err.message);
                 });
-            });
+            }
         },
-        changeRecurrence(context, recurrence) {
-            return new Promise((resolve, reject) => {
-                setRecurrence(context.state.reminderID, recurrence).then(() => {
-                    context.commit('setRecurrence', recurrence);
-                    resolve();
-                }).catch((err) => {
-                    reject(err);
+        updateTime(context, time) {
+            context.commit('reminderUpdating', 'time');
+            if(context.getters.reminderId !== null) {
+                setReminderTime(context.getters.reminderId, moment(time).format('HH:mm:ss')).then(()=>{
+                    return context.dispatch('loadReminder');
+                }).then(()=>{
+                    context.commit('reminderUpdated');
+                }).catch((err)=>{
+                    context.commit('reminderUpdatingFailed', err.message);
                 });
-            });
+            }
+        },
+        updateRecurrence(context, recurrence) {
+            context.commit('reminderUpdating', 'recurrence');
+            if(context.getters.reminderId !== null) {
+                setReminderRecurrence(context.getters.reminderId, recurrence).then(()=>{
+                    return context.dispatch('loadReminder');
+                }).then(()=>{
+                    context.commit('reminderUpdated');
+                }).catch((err)=>{
+                    context.commit('reminderUpdatingFailed', err.message);
+                });
+            }
         }
     }
 };
