@@ -46,6 +46,7 @@
                 >
                 </q-btn>
                 <q-btn
+                    v-if="callAvailable"
                     icon="call"
                     color="primary"
                     slot="right"
@@ -77,7 +78,8 @@
     export default {
         name: 'csc-voice-mail-item',
         props: [
-            'voiceMail'
+            'voiceMail',
+            'callAvailable'
         ],
         components: {
             QItem,

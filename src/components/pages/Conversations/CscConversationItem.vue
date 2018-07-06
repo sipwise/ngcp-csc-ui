@@ -2,17 +2,20 @@
     <csc-call-item
         v-if="item.type == 'call'"
         :call="item"
+        :call-available="callAvailable"
         @init-call="initCall"
     />
     <csc-fax-item
         v-else-if="item.type == 'fax'"
         :fax="item"
+        :call-available="callAvailable"
         @init-call="initCall"
         @download-fax="downloadFax"
     />
     <csc-voice-mail-item
         v-else-if="item.type == 'voicemail'"
         :voice-mail="item"
+        :call-available="callAvailable"
         @init-call="initCall"
         @download-voice-mail="downloadVoiceMail"
         @play-voice-mail="playVoiceMail"
@@ -26,14 +29,14 @@
     export default {
         name: 'csc-conversation-item',
         props: [
-            'item'
+            'item',
+            'callAvailable'
         ],
         components: {
             CscCallItem,
             CscFaxItem,
             CscVoiceMailItem
         },
-        mounted() {},
         data () {
             return {}
         },

@@ -13,6 +13,7 @@
                 v-for="(item, index) in items"
                 :key="item._id"
                 :item="item"
+                :call-available="isCallAvailable"
                 @init-call="initCall"
                 @download-fax="downloadFax"
                 @download-voice-mail="downloadVoiceMail"
@@ -89,7 +90,8 @@
                 'reloadItemsError'
             ]),
             ...mapGetters('call', [
-                'callState'
+                'callState',
+                'isCallAvailable'
             ])
         },
         methods: {
