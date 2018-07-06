@@ -32,11 +32,13 @@ export function getUserData(id) {
     return new Promise((resolve, reject)=>{
         return Promise.all([
             getSubscriberById(id),
-            getCapabilities()
+            getCapabilities(),
+            getFaxServerSettingsById(id)
         ]).then((results)=>{
             resolve({
                 subscriber: results[0],
-                capabilities: results[1]
+                capabilities: results[1],
+                faxserver: results[2]
             });
         }).catch((err)=>{
             reject(err);
@@ -145,6 +147,17 @@ export function getNumbers() {
             }
             resolve(numbers);
         }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getFaxServerSettingsById(id) {
+    return new Promise((resolve, reject) => {
+        Vue.http.get('api/faxserversettings/' + id).then((result) => {
+            var body = JSON.parse(result.body);
+            resolve(body.active);
+        }).catch((err) => {
             reject(err);
         });
     });
