@@ -2,17 +2,20 @@
     <csc-call-item
         v-if="item.type == 'call'"
         :call="item"
+        :call-available="isCallAvailable"
         @init-call="initCall"
     />
     <csc-fax-item
         v-else-if="item.type == 'fax'"
         :fax="item"
+        :call-available="isCallAvailable"
         @init-call="initCall"
         @download-fax="downloadFax"
     />
     <csc-voice-mail-item
         v-else-if="item.type == 'voicemail'"
         :voice-mail="item"
+        :call-available="isCallAvailable"
         @init-call="initCall"
         @download-voice-mail="downloadVoiceMail"
         @play-voice-mail="playVoiceMail"
@@ -20,6 +23,7 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex'
     import CscCallItem from './CscCallItem'
     import CscFaxItem from './CscFaxItem'
     import CscVoiceMailItem from './CscVoiceMailItem'
@@ -33,9 +37,13 @@
             CscFaxItem,
             CscVoiceMailItem
         },
-        mounted() {},
         data () {
             return {}
+        },
+        computed: {
+            ...mapGetters('call', [
+                'isCallAvailable'
+            ])
         },
         methods: {
             initCall(call) {

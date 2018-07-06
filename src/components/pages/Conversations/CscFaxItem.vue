@@ -45,6 +45,7 @@
                 >
                 </q-btn>
                 <q-btn
+                    v-if="callAvailable"
                     icon="call"
                     color="primary"
                     slot="right"
@@ -75,7 +76,8 @@
     export default {
         name: 'csc-fax-item',
         props: [
-            'fax'
+            'fax',
+            'callAvailable'
         ],
         components: {
             QItem,

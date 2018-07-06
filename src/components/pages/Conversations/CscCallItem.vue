@@ -25,6 +25,7 @@
         >
             <q-item-tile>
                 <q-btn
+                    v-if="callAvailable"
                     icon="call"
                     color="primary"
                     slot="right"
@@ -58,7 +59,8 @@
     export default {
         name: 'csc-call-item',
         props: [
-            'call'
+            'call',
+            'callAvailable'
         ],
         components: {
             QItem,
