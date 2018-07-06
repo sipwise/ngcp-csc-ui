@@ -57,7 +57,8 @@ export default {
         },
         hasFaxCapability(state) {
             return state.capabilities !== null &&
-                state.capabilities.faxserver  === true;
+                state.capabilities.faxserver &&
+                state.capabilities.faxactive;
         },
         hasRtcEngineCapability(state) {
             return state.capabilities !== null && _.has(state.capabilities, 'rtcengine');
@@ -149,12 +150,13 @@ export default {
             state.userDataRequesting = false;
             state.userDataSucceeded = false;
             state.userDataError = null;
-        }
+        },
+
     },
     actions: {
         login(context, options) {
             context.commit('loginRequesting');
-            login(options.username, options.password).then((result)=>{
+            login(options.username, options.password).then((result) => {
                 localStorage.setItem('jwt', result.jwt);
                 localStorage.setItem('subscriberId', result.subscriberId);
                 context.commit('loginSucceeded', {
@@ -172,10 +174,14 @@ export default {
         },
         initUser(context) {
             context.commit('userDataRequesting');
-            getUserData(localStorage.getItem('subscriberId')).then((result)=>{
+            getUserData(localStorage.getItem('subscriberId')).then((result) => {
+                let capabilities = Object.assign(
+                    { faxactive: result.faxactive },
+                    result.capabilities
+                );
                 context.commit('userDataSucceeded', {
                     subscriber: result.subscriber,
-                    capabilities: result.capabilities
+                    capabilities: capabilities
                 });
                 if(_.isNumber(context.getters.jwtTTL)) {
                     setTimeout(()=>{

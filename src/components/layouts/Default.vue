@@ -1,116 +1,240 @@
 <template>
-    <q-layout ref="layout" :view="layoutView" :right-breakpoint="1100"
-              @right-breakpoint="rightBreakPoint" :right-class="callClasses">
+    <q-layout
+        ref="layout"
+        :view="layoutView"
+        :right-breakpoint="1100"
+        @right-breakpoint="rightBreakPoint"
+        :right-class="callClasses"
+    >
         <q-toolbar slot="header">
-            <q-btn flat @click="$refs.layout.toggleLeft()">
-                <q-icon name="menu"/>
+            <q-btn
+                flat
+                @click="$refs.layout.toggleLeft()"
+            >
+                <q-icon name="menu" />
             </q-btn>
             <q-toolbar-title>
                 {{ pageTitle }}
-                <span slot="subtitle">{{ pageSubtitle }}</span>
+                <span slot="subtitle">
+                    {{ pageSubtitle }}
+                </span>
             </q-toolbar-title>
-            <q-btn flat class="csc-toolbar-btn">
+            <q-btn
+                flat
+                class="csc-toolbar-btn"
+                v-if="hasCommunicationCapabilities"
+            >
                 <q-icon name="question answer" />
                 <q-popover ref="communicationPopover">
-                    <q-list item-separator link class="csc-toolbar-btn-popover">
-                        <q-item @click="call();$refs.communicationPopover.close()" v-if="isCallAvailable">
-                            <q-item-side icon="fa-phone" color="primary" />
+                    <q-list
+                        item-separator
+                        link
+                        class="csc-toolbar-btn-popover"
+                    >
+                        <q-item
+                            @click="call();$refs.communicationPopover.close()"
+                            v-if="isCallAvailable"
+                        >
+                            <q-item-side
+                                icon="fa-phone"
+                                color="primary"
+                            />
                             <q-item-main :label="$t('startCall')" />
                         </q-item>
-                        <q-item @click="showSendFax();$refs.communicationPopover.close()" v-if="hasFaxCapability && hasSendFaxFeature">
-                            <q-item-side icon="fa-fax" color="primary"/>
+                        <q-item
+                            @click="showSendFax();$refs.communicationPopover.close()"
+                            v-if="hasFaxCapability && hasSendFaxFeature"
+                        >
+                            <q-item-side
+                                icon="fa-fax"
+                                color="primary"
+                            />
                             <q-item-main :label="$t('sendFax')" />
                         </q-item>
-                        <q-item @click="$refs.communicationPopover.close()" v-if="hasSmsCapability && hasSendSmsFeature">
-                            <q-item-side icon="fa-send" color="primary"/>
+                        <q-item
+                            @click="$refs.communicationPopover.close()"
+                            v-if="hasSmsCapability && hasSendSmsFeature"
+                        >
+                            <q-item-side
+                                icon="fa-send"
+                                color="primary"
+                            />
                             <q-item-main :label="$t('sendSms')" />
                         </q-item>
                     </q-list>
                 </q-popover>
             </q-btn>
-            <q-btn flat class="csc-toolbar-btn csc-toolbar-btn-right">
-                <q-icon name="fa-user-circle" class="csc-toolbar-btn-icon" />
-                <span id="user-login-as" class="gt-sm">{{ $t('loggedInAs') }}</span>
-                <span id="user-name" class="gt-xs">{{ getUsername }}</span>
+            <q-btn
+                flat
+                class="csc-toolbar-btn csc-toolbar-btn-right"
+            >
+                <q-icon
+                    name="fa-user-circle"
+                    class="csc-toolbar-btn-icon"
+                />
+                <span
+                    id="user-login-as"
+                    class="gt-sm"
+                >
+                    {{ $t('loggedInAs') }}
+                </span>
+                <span
+                    id="user-name"
+                    class="gt-xs"
+                >
+                    {{ getUsername }}
+                </span>
                 <q-popover ref="popover">
-                    <q-list item-separator link class="csc-toolbar-btn-popover">
+                    <q-list
+                        item-separator
+                        link
+                        class="csc-toolbar-btn-popover"
+                    >
                         <q-item @click="logout()">
-                            <q-item-side icon="exit to app" color="primary"/>
+                            <q-item-side
+                                icon="exit to app"
+                                color="primary"
+                            />
                             <q-item-main label="Logout" />
                         </q-item>
                     </q-list>
                 </q-popover>
             </q-btn>
         </q-toolbar>
-        <q-list id="main-menu" slot="left" no-border link inset-delimiter>
-            <q-side-link item to="/user/home">
-                <q-item-side icon="home"></q-item-side>
-                <q-item-main :label="$t('navigation.home.title')"
-                             :sublabel="$t('navigation.home.subTitle')"/>
+        <q-list
+            id="main-menu"
+            slot="left"
+            no-border
+            link
+            inset-delimiter
+        >
+            <q-side-link
+                item
+                to="/user/home"
+            >
+                <q-item-side icon="home" />
+                <q-item-main
+                    :label="$t('navigation.home.title')"
+                    :sublabel="$t('navigation.home.subTitle')"
+                />
             </q-side-link>
-            <q-side-link item to="/user/conversations">
-                <q-item-side icon="question answer"></q-item-side>
-                <q-item-main :label="$t('navigation.conversations.title')"
-                             :sublabel="$t('navigation.conversations.subTitle')"/>
+            <q-side-link
+                item
+                to="/user/conversations"
+            >
+                <q-item-side icon="question answer" />
+                <q-item-main
+                    :label="$t('navigation.conversations.title')"
+                    :sublabel="$t('navigation.conversations.subTitle')"
+                />
             </q-side-link>
-            <q-collapsible :opened="isCallForward" intend icon="phone forwarded"
-                           :label="$t('navigation.callForward.title')"
-                           :sublabel="$t('navigation.callForward.subTitle')">
-                <q-side-link item to="/user/call-forward/always">
-                    <q-item-side icon="check circle"/>
-                    <q-item-main :label="$t('navigation.callForward.always')"/>
+            <q-collapsible
+                :opened="isCallForward"
+                intend
+                icon="phone forwarded"
+                :label="$t('navigation.callForward.title')"
+                :sublabel="$t('navigation.callForward.subTitle')"
+            >
+                <q-side-link
+                    item
+                    to="/user/call-forward/always"
+                >
+                    <q-item-side icon="check circle" />
+                    <q-item-main :label="$t('navigation.callForward.always')" />
                 </q-side-link>
-                <q-side-link item to="/user/call-forward/company-hours">
-                    <q-item-side icon="schedule"/>
-                    <q-item-main :label="$t('navigation.callForward.companyHours')"/>
+                <q-side-link
+                    item
+                    to="/user/call-forward/company-hours"
+                >
+                    <q-item-side icon="schedule" />
+                    <q-item-main :label="$t('navigation.callForward.companyHours')" />
                 </q-side-link>
-                <q-side-link item to="/user/call-forward/after-hours">
-                    <q-item-side icon="watch later"/>
-                    <q-item-main :label="$t('navigation.callForward.afterHours')"/>
+                <q-side-link
+                    item
+                    to="/user/call-forward/after-hours"
+                >
+                    <q-item-side icon="watch later" />
+                    <q-item-main :label="$t('navigation.callForward.afterHours')" />
                 </q-side-link>
             </q-collapsible>
-            <q-collapsible :opened="isCallBlocking" intend icon="fa-ban"
-                           :label="$t('navigation.callBlocking.title')"
-                           :sublabel="$t('navigation.callBlocking.subTitle')">
-                <q-side-link item to="/user/call-blocking/incoming">
-                    <q-item-side icon="call received"/>
-                    <q-item-main :label="$t('navigation.callBlocking.incoming')"/>
+            <q-collapsible
+                :opened="isCallBlocking"
+                intend icon="fa-ban"
+                :label="$t('navigation.callBlocking.title')"
+                :sublabel="$t('navigation.callBlocking.subTitle')"
+            >
+                <q-side-link
+                    item
+                    to="/user/call-blocking/incoming"
+                >
+                    <q-item-side icon="call received" />
+                    <q-item-main :label="$t('navigation.callBlocking.incoming')" />
                 </q-side-link>
-                <q-side-link item to="/user/call-blocking/outgoing">
-                    <q-item-side icon="call made"/>
-                    <q-item-main :label="$t('navigation.callBlocking.outgoing')"/>
+                <q-side-link
+                    item
+                    to="/user/call-blocking/outgoing"
+                >
+                    <q-item-side icon="call made" />
+                    <q-item-main :label="$t('navigation.callBlocking.outgoing')" />
                 </q-side-link>
-                <q-side-link item to="/user/call-blocking/privacy">
-                    <q-item-side icon="fa-user-secret"/>
-                    <q-item-main :label="$t('navigation.callBlocking.privacy')"/>
+                <q-side-link
+                    item
+                    to="/user/call-blocking/privacy"
+                >
+                    <q-item-side icon="fa-user-secret" />
+                    <q-item-main :label="$t('navigation.callBlocking.privacy')" />
                 </q-side-link>
             </q-collapsible>
-            <q-side-link item to="/user/reminder">
+            <q-side-link
+                item
+                to="/user/reminder"
+            >
                 <q-item-side icon="fa-bell"/>
                 <q-item-main
                     label="Reminder"
-                    sublabel="Set your personal alarm"/>
+                    sublabel="Set your personal alarm"
+                />
             </q-side-link>
-            <q-collapsible v-if="isPbxAdmin" :opened="isPbxConfiguration" intend icon="fa-gear"
-                           :label="$t('navigation.pbxConfiguration.title')"
-                           :sublabel="$t('navigation.pbxConfiguration.subTitle')">
-                <q-side-link item to="/user/pbx-configuration/groups">
+            <q-collapsible
+                v-if="isPbxAdmin"
+                :opened="isPbxConfiguration"
+                intend
+                icon="fa-gear"
+                :label="$t('navigation.pbxConfiguration.title')"
+                :sublabel="$t('navigation.pbxConfiguration.subTitle')"
+            >
+                <q-side-link
+                    item
+                    to="/user/pbx-configuration/groups"
+                >
                     <q-item-side icon="group"/>
-                    <q-item-main :label="$t('navigation.pbxConfiguration.groups')"/>
+                    <q-item-main :label="$t('navigation.pbxConfiguration.groups')" />
                 </q-side-link>
-                <q-side-link item to="/user/pbx-configuration/seats">
+                <q-side-link
+                    item
+                    to="/user/pbx-configuration/seats"
+                >
                     <q-item-side icon="person"/>
-                    <q-item-main :label="$t('navigation.pbxConfiguration.seats')"/>
+                    <q-item-main :label="$t('navigation.pbxConfiguration.seats')" />
                 </q-side-link>
-                <q-side-link item to="/user/pbx-configuration/devices">
+                <q-side-link
+                    item
+                    to="/user/pbx-configuration/devices"
+                >
                     <q-item-side icon="fa-fax"/>
-                    <q-item-main :label="$t('navigation.pbxConfiguration.devices')"/>
+                    <q-item-main :label="$t('navigation.pbxConfiguration.devices')" />
                 </q-side-link>
             </q-collapsible>
         </q-list>
         <router-view />
-        <csc-call ref="cscCall" slot="right" @close="closeCall()" @fullscreen="toggleFullscreen()"
-                  :fullscreen="isFullscreenEnabled" region="DE" />
+        <csc-call
+            ref="cscCall"
+            slot="right"
+            @close="closeCall()"
+            @fullscreen="toggleFullscreen()"
+            :fullscreen="isFullscreenEnabled"
+            region="DE"
+        />
         <q-window-resize-observable @resize="onWindowResize" />
         <csc-send-fax ref="sendFax" />
     </q-layout>
@@ -140,12 +264,7 @@
         QItemSide,
         QItemMain,
         QPopover,
-        QFab,
-        QFabAction,
-        QFixedPosition,
-        QTooltip,
         QSideLink,
-        QTransition,
         QCollapsible,
         Platform,
         QWindowResizeObservable
@@ -175,12 +294,7 @@
             QItemSide,
             QItemMain,
             QPopover,
-            QFab,
-            QFabAction,
-            QFixedPosition,
-            QTooltip,
             QSideLink,
-            QTransition,
             QCollapsible,
             CscCall,
             QWindowResizeObservable,
