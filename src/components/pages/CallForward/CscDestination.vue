@@ -12,7 +12,7 @@
                     <span class="dest-values">
                         {{ destination.destination | destinationFormat }}
                     </span>
-                    <span v-if="isNumber(destination.destination)">
+                    <span v-if="isNonTerminating(destination.destination)">
                         <span>
                             {{ $t('pages.callForward.for') }}
                         </span>
@@ -154,14 +154,12 @@
                     prevId: this.prevDestId
                 });
             },
-            isNumber(destination) {
+            isNonTerminating(destination) {
                 let dest = destination.split(/:|@/);
-                if (dest[2] === 'fax2mail.local') {
-                    return false;
-                }
-                else {
-                    return !isNaN(dest[1]);
-                }
+                let host = dest[2];
+                let type = host.split('.')[0];
+                let isLocal = host.split('.')[1] === 'local' ? true : false;
+                return type !== 'fax2mail' && type !== 'voicebox' && !isLocal;
             },
             deleteDestination(index) {
                 let clonedDestinations = _.cloneDeep(this.destinations);
