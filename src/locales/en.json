@@ -167,7 +167,7 @@
             "addInputError": "Input a valid number or subscriber name",
             "timeout": "Timeout",
             "destination": "Destination",
-            "terminatedTooltip": "This destination precedes a terminating destinations, and is therefore inactive.",
+            "terminatedTooltip": "This destination comes after a terminating destinations, and is therefore inactive.",
             "times": {
                 "removeDialogTitle": "Remove call forward time",
                 "removeDialogText": "You are about to remove the time entry for {day}",
