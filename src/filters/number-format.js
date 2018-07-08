@@ -12,6 +12,7 @@ const DestinationHosts = {
     VoiceBox: 'voicebox.local',
     Fax2Mail: 'fax2mail.local',
     ManagerSecretary: 'managersecretary.local',
+    Conference: 'conference.local',
     App: 'app.local'
 };
 
@@ -92,11 +93,14 @@ export function normalizeDestination(destination) {
         else if (authParts[0] === 'custom-hours') {
             return 'Custom Announcement';
         }
+        else if (host === DestinationHosts.Conference) {
+            return 'Conference';
+        }
         else if (host === DestinationHosts.App) {
             return _.capitalize(authParts[0]);
         }
         else if (!isNumber) {
-            return _.capitalize(host.split('.')[0]);
+            return authParts[0];
         }
         else {
             return normalizedNumber;
