@@ -12,7 +12,7 @@ export default function(value) {
 export function smartTime($date, $today) {
 
     let today = $today || new Date();
-    let date = new Date($date);
+    let date = moment($date, 'YYYY-MM-DD HH:mm:SS').toDate();
     let diffSeconds = Math.floor((today.getTime() - date.getTime()) / 1000);
     let diffMinutes = Math.floor(diffSeconds / 60);
     let momentDate = moment(date);
