@@ -34,6 +34,24 @@
       "revId": "ca80300e73b1273acf3651fb399375b3b1687a2b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_d677e7d2",
+        "filename": "src/components/pages/Conversations/CscConversationItem.vue",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-07-09T09:31:49Z",
+      "side": 1,
+      "message": "correction: \"...capabilities state, as* state.capabilities is* not...\"",
+      "parentUuid": "5ad0253b_166d5f04",
+      "revId": "ca80300e73b1273acf3651fb399375b3b1687a2b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
