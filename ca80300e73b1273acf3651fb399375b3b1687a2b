@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_96496fd3",
+        "filename": "src/components/pages/Conversations/CscConversationItem.vue",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2018-07-09T06:47:24Z",
+      "side": 1,
+      "message": "Keep this sub component clean and decoupled from vuex store. Just move it to the parent component wich is already connected to the vuex store and pass the call capability as prop.\n\nFrom my perspective it would even make sense to pass all capabilities as a single prop. It could be helpful later. And would take less effort, if we want to add something like \"send fax\", \"send sms\" or \"send message\" in the future.",
+      "revId": "ca80300e73b1273acf3651fb399375b3b1687a2b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
