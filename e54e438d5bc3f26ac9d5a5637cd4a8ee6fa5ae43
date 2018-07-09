@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad0253b_d626c715",
+        "filename": "src/components/pages/CallForward/CscDestination.vue",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2018-07-09T07:11:07Z",
+      "side": 1,
+      "message": "You can simplify your code by reducing it to a logical expression like this.\n\nreturn type !\u003d\u003d \u0027fax2mail\u0027 \u0026\u0026 type !\u003d\u003d \u0027voicebox\u0027 \u0026\u0026 !isLocal;",
+      "revId": "e54e438d5bc3f26ac9d5a5637cd4a8ee6fa5ae43",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
