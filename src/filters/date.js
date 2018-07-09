@@ -11,6 +11,10 @@ export default function(value) {
 
 export function smartTime($date, $today) {
 
+    // TODO: Refactor to use momentjs for all timestamps, by defining our
+    // own replacement strings for all the fromNow() cases:
+    // https://momentjs.com/docs/#/customization/relative-time/
+
     let today = $today || new Date();
     let date = new Date($date);
     let diffSeconds = Math.floor((today.getTime() - date.getTime()) / 1000);
@@ -28,6 +32,8 @@ export function smartTime($date, $today) {
     }
 
     if(diffSeconds < 60) {
+        // TODO: For Chrome, all cases are evaluated as less than 60 seconds,
+        // and therefore seconds returned for all
         return diffSeconds + ' ' + seconds + ' ago';
     }
     else if (diffSeconds < 3600) {
@@ -43,6 +49,8 @@ export function smartTime($date, $today) {
         return momentDate.format('dddd, HH:mm');
     }
     else {
+        // TODO: For Safari, all cases are evaluated as belonging to this last
+        // else condition, and it returns "Invalid date"
         return momentDate.format('LLL');
     }
 }
