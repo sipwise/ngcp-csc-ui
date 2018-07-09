@@ -16,6 +16,24 @@
       "revId": "ca80300e73b1273acf3651fb399375b3b1687a2b",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ad0253b_166d5f04",
+        "filename": "src/components/pages/Conversations/CscConversationItem.vue",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-07-09T09:30:28Z",
+      "side": 1,
+      "message": "Thanks for the feedback, appreciate it.\n\nRe decoupling, I\u0027ve now moved the getter to the parent and passed down as prop.\n\nRe passing all capabilities as single prop, I agree, but chose not to spend time on this now as it seems like a bigger effort due to context and multiple states together needed to form complete capabilities state, adstate.capabilities not enough on it\u0027s own. For example isCallAvailable is relying on state.initialized and both fax and sms features have an extra state.features manually set state to keep in mind.",
+      "parentUuid": "5ad0253b_96496fd3",
+      "revId": "ca80300e73b1273acf3651fb399375b3b1687a2b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
