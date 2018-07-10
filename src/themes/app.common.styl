@@ -1,6 +1,15 @@
 
 @import 'quasar.variables'
 
+.csc-item-field
+    .csc-item-value
+        display inline-block
+        margin-right 4px
+    .csc-item-value::after
+        content ','
+    .csc-item-value:last-child:after
+        content ''
+
 .csc-list-item
     position relative
     .csc-list-item-main

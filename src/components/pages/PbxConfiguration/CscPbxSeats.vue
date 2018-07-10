@@ -16,11 +16,11 @@
             </q-btn>
         </div>
         <div
-            class="row justify-center"
+            class="row justify-center margin-sm"
+            v-show="addFormEnabled"
         >
             <csc-pbx-seat-add-form
                 class="col-xs-12 col-md-6"
-                v-show="addFormEnabled"
                 ref="addForm"
                 :alias-number-options="aliasNumberOptions"
                 :group-options="groupOptions"
