@@ -161,7 +161,6 @@ export default {
     },
     deviceListRequesting(state, options) {
         options = options || {};
-        // state.listCurrentPage = _.get(options, 'page', 1);
         state.listLastPage = null;
         state.listLoadingSilently = _.get(options, 'silent', false);
         state.listState = RequestState.requesting;
@@ -176,6 +175,10 @@ export default {
         state.devicesOrdered.forEach((device)=>{
             state.devices[device.id + ""] = device;
         });
+        if (data.length === 0) {
+            state.filterByMacAddress = null;
+            state.filterByProfile = null;
+        }
     },
     deviceListFailed(state, error) {
         state.listState = RequestState.failed;
@@ -333,9 +336,20 @@ export default {
     filterByProfile(state, profile) {
         state.listProfileFilter = profile.id;
         state.listCurrentPage = 1;
+        state.chipModelFilter = profile.name;
+    },
+    filterByMacAddress(state, macAddress) {
+        state.listMacAddressFilter = macAddress;
+        state.listCurrentPage = 1;
+        state.chipMacAddressFilter = macAddress;
     },
     resetProfileFilter(state) {
         state.listProfileFilter = null;
+        state.chipModelFilter = null;
+    },
+    resetMacAddressFilter(state) {
+        state.listMacAddressFilter = null;
+        state.chipMacAddressFilter = null;
     },
     goToPage(state, page) {
         state.listCurrentPage = page;

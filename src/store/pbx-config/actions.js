@@ -261,7 +261,8 @@ export default {
             context.commit('deviceListRequesting', silent);
             getDeviceList({
                 page: _.get(context, 'getters.listCurrentPage', 1),
-                profile_id: _.get(context, 'getters.listProfileFilter', null)
+                profile_id: _.get(context, 'getters.listProfileFilter', null),
+                identifier: _.get(context, 'getters.listMacAddressFilter', null)
             }).then((devices)=>{
                 context.commit('deviceListSucceeded', devices);
                 devices.items.forEach((device)=>{
@@ -385,8 +386,16 @@ export default {
         context.commit('filterByProfile', profileId);
         context.dispatch('listDevices');
     },
+    filterByMacAddress(context, macAddress) {
+        context.commit('filterByMacAddress', macAddress);
+        context.dispatch('listDevices');
+    },
     resetProfileFilter(context) {
         context.commit('resetProfileFilter');
+        context.dispatch('listDevices');
+    },
+    resetMacAddressFilter(context) {
+        context.commit('resetMacAddressFilter');
         context.dispatch('listDevices');
     },
     goToPage(context, page) {

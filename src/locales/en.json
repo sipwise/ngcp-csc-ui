@@ -307,8 +307,10 @@
         "deviceModel": "Model",
         "groupsTitle": "Groups",
         "seatsTitle": "Seats",
-        "noDevices": "No devices created yet",
+        "noDevicesCreated": "No devices created yet",
+        "noDevicesFound": "Could not find any device matching any of the filter criteria",
         "noModel": "Could not find any device with model matching the filter criteria",
+        "noMacAddress": "Could not find any device with MAC address matching the filter criteria",
         "noGroups": "No groups created yet",
         "noSeats": "No seats created yet",
         "toasts": {
@@ -327,6 +329,7 @@
             "updatedIdentifier": "Updated identifier to {identifier}",
             "createdDevice": "Created device {name} successfully"
         },
+        "addDevice": "Add device",
         "removeDevice": "Remove device",
         "removeDeviceTitle": "Remove device",
         "removeDeviceText": "You are about to remove device {device}",
@@ -338,7 +341,11 @@
         "keyTypeShared": "Shared",
         "keyTypeBLF": "Busy Lamp Field",
         "keyTypePrivate": "Private",
-        "filterPhoneModel": "Filter by phone model"
+        "filterPhoneModel": "Filter by phone model",
+        "filterMacAddress": "Filter by MAC address",
+        "showFilters": "Show filters",
+        "filterDevices": "Filter devices",
+        "resetFilters": "Reset filters"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",
