@@ -1,15 +1,22 @@
 <template>
-    <csc-page :title="$t('pbxConfig.groupsTitle')">
-        <csc-pbx-group-add-form
+    <csc-page
+        class="csc-list-page"
+    >
+        <div
             v-show="addFormEnabled"
-            ref="addForm"
-            @save="addGroup"
-            @cancel="disableAddForm"
-            :loading="isAdding"
-            :alias-number-options="aliasNumberOptions"
-            :seat-options="seatOptions"
-            :hunt-policy-options="huntPolicyOptions"
-        />
+            class="row justify-center"
+        >
+            <csc-pbx-group-add-form
+                class="col-xs-12 col-md-6"
+                ref="addForm"
+                @save="addGroup"
+                @cancel="disableAddForm"
+                :loading="isAdding"
+                :alias-number-options="aliasNumberOptions"
+                :seat-options="seatOptions"
+                :hunt-policy-options="huntPolicyOptions"
+            />
+        </div>
         <div
             v-show="!addFormEnabled"
             class="row justify-center"
@@ -42,22 +49,31 @@
                 @change="changePage"
             />
         </div>
-        <csc-pbx-group
-            v-for="group in groups"
-            :key="group.id"
-            :group="group"
-            :alias-number-options="aliasNumberOptions"
-            :seat-options="seatOptions"
-            :hunt-policy-options="huntPolicyOptions"
-            @remove="removeGroup"
-            :loading="isItemLoading(group.id)"
-            @save-name="setGroupName"
-            @save-extension="setGroupExtension"
-            @save-hunt-policy="setGroupHuntPolicy"
-            @save-hunt-timeout="setGroupHuntTimeout"
-            @save-alias-numbers="updateAliasNumbers"
-            @save-seats="updateSeats"
-        />
+        <q-list
+            class=""
+            no-border
+            separator
+            sparse
+            multiline
+            :highlight="!isMobile"
+        >
+            <csc-pbx-group
+                v-for="group in groups"
+                :key="group.id"
+                :group="group"
+                :alias-number-options="aliasNumberOptions"
+                :seat-options="seatOptions"
+                :hunt-policy-options="huntPolicyOptions"
+                @remove="removeGroup"
+                :loading="isItemLoading(group.id)"
+                @save-name="setGroupName"
+                @save-extension="setGroupExtension"
+                @save-hunt-policy="setGroupHuntPolicy"
+                @save-hunt-timeout="setGroupHuntTimeout"
+                @save-alias-numbers="updateAliasNumbers"
+                @save-seats="updateSeats"
+            />
+        </q-list>
         <div
             v-if="groups.length === 0 && !isListRequesting"
             class="row justify-center csc-no-entities"
@@ -95,7 +111,8 @@
         QSpinnerDots,
         QSpinnerMat,
         Dialog,
-        QPagination
+        QPagination,
+        Platform
     } from 'quasar-framework'
 
     export default {
@@ -194,7 +211,10 @@
                 'lastUpdatedField',
                 'updateAliasNumbersState',
                 'updateGroupsAndSeatsState'
-            ])
+            ]),
+            isMobile() {
+                return Platform.is.mobile;
+            },
         },
         watch: {
             addState(state) {
