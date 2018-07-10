@@ -270,5 +270,14 @@ export default {
     },
     listProfileFilter(state) {
         return state.listProfileFilter;
+    },
+    listMacAddressFilter(state) {
+        return state.listMacAddressFilter;
+    },
+    chipModelFilter(state) {
+        return state.chipModelFilter;
+    },
+    chipMacAddressFilter(state) {
+        return state.chipMacAddressFilter;
     }
 }

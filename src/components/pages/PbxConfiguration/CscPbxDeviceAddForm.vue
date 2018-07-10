@@ -1,6 +1,6 @@
 <template>
-    <div class="row justify-center">
-        <div v-if="formEnabled" class="col col-md-6 col-sm-12">
+    <div class="col">
+        <div class="col">
             <q-field>
                 <q-input
                     v-model="data.station_name"
@@ -40,22 +40,12 @@
                 >{{ $t('buttons.cancel') }}</q-btn>
                 <q-btn
                     v-if="!loading"
-                    flat color="primary"
+                    flat
+                    color="primary"
                     icon="done"
                     @click="save()"
                 >{{ $t('buttons.save') }}</q-btn>
             </div>
-        </div>
-        <div
-            v-else
-            class="row justify-center"
-        >
-            <q-btn
-                color="primary"
-                icon="add"
-                flat
-                @click="enableForm()"
-            >Add device</q-btn>
         </div>
         <q-inner-loading
             v-show="loading"
@@ -87,6 +77,7 @@
         QItem,
         QItemMain } from 'quasar-framework'
     import CscPbxModelSelect from './CscPbxModelSelect'
+    import CscPbxDeviceFilter from './CscPbxDeviceFilter'
 
     export default {
         name: 'csc-pbx-device-add-form',
@@ -96,8 +87,22 @@
             'loading'
         ],
         components: {
-            CscPbxModelSelect, QCard, QCardTitle, QCardMain, QCardActions, QCardSeparator, QBtn,
-            QInnerLoading, QSpinnerMat, QField, QInput, QSelect, QIcon, QItem, QItemMain
+            CscPbxModelSelect,
+            CscPbxDeviceFilter,
+            QCard,
+            QCardTitle,
+            QCardMain,
+            QCardActions,
+            QCardSeparator,
+            QBtn,
+            QInnerLoading,
+            QSpinnerMat,
+            QField,
+            QInput,
+            QSelect,
+            QIcon,
+            QItem,
+            QItemMain
         },
         data () {
             return {
@@ -115,11 +120,11 @@
                 }
             },
             enableForm(){
-                this.reset();
                 this.formEnabled = true;
             },
             disableForm(){
-                this.formEnabled = false;
+                this.reset();
+                this.$emit('cancelForm');
             },
             cancel() {
                 this.disableForm();
