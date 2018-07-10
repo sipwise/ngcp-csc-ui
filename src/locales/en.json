@@ -314,9 +314,16 @@
         "noStationName": "Could not find any device with station name matching the filter criteria",
         "noGroups": "No groups created yet",
         "noSeats": "No seats created yet",
+        "requiredGroupName": "Group name is required",
+        "groupNameMaxLength": "Group name must have at most {maxLength} letters",
+        "requiredExtension": "Extension is required",
+        "extensionMinValue": "Extension must be at least {minValue}",
+        "extensionMaxValue": "Extension must be maximum {maxValue}",
+        "requiredHuntTimeout": "Hunt timeout is required",
+        "huntTimeoutMinValue": "Hunt timeout must be at least {minValue} second",
+        "huntTimeoutMaxValue": "Hunt timeout must be maximum {maxValue} seconds",
         "requiredSeatName": "Seat name is required",
         "seatNameMaxLength": "Seat name must have at most {maxLength} letters",
-        "requiredExtension": "Extension is required",
         "extensionMaxLength": "Extension must have at most {maxLength} letters",
         "extensionAlphaNum": "Only numeric characters are allowed",
         "toasts": {
@@ -357,7 +364,9 @@
         "resetFilters": "Reset filters",
         "closeFilters": "Close filters",
         "createSeat": "Create seat",
-        "noGroupAssigned": "Not assigned to any group"
+        "noGroupAssigned": "Not assigned to any group",
+        "noSeatAssigned": "No seats assigned",
+        "createGroup": "Create group"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

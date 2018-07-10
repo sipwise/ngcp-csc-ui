@@ -157,6 +157,7 @@
             separator
             sparse
             multiline
+            :highlight="!isMobile"
         >
             <csc-pbx-device
                 v-for="device in devices"
