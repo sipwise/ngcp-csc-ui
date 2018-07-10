@@ -1,22 +1,37 @@
 <template>
     <div class="times-card">
         <q-list no-border>
-            <csc-call-forward-time class="csc-call-forward-times" v-if="times.length > 0" v-for="(time, index) in times"
-                :key="index" :time="time" :index="index" />
+            <csc-call-forward-time
+                class="csc-call-forward-times"
+                v-if="times.length > 0"
+                v-for="(time, index) in times"
+                :key="index"
+                :time="time"
+                :index="index"
+            />
         </q-list>
-        <csc-add-time-form v-if="activeTimeForm" type="existing" :timeset="timesetName" ref="addFormExisting" />
-        <q-btn v-else
-            color="primary"
-            class="add-time"
-            icon="fa-plus" flat
-            @click="enableAddForm()">
+        <div v-if="timesetTimesLoaded">
+            <csc-add-time-form
+                v-if="activeTimeForm"
+                type="existing"
+                :timeset="timesetName"
+                ref="addFormExisting"
+            />
+            <q-btn
+                v-else
+                color="primary"
+                class="add-time"
+                icon="fa-plus" flat
+                @click="enableAddForm()"
+            >
                 {{ $t('pages.callForward.times.addTimeButton') }}
-        </q-btn>
+            </q-btn>
+        </div>
     </div>
 </template>
 
 <script>
-    import { mapState } from 'vuex'
+    import { mapGetters } from 'vuex'
     import CscCallForwardTime from './CscCallForwardTime'
     import CscAddTimeForm from './CscAddTimeForm'
     import { QField, QBtn, QList } from 'quasar-framework'
@@ -39,8 +54,9 @@
             QList
         },
         computed: {
-            ...mapState('callForward', [
-                'activeTimeForm'
+            ...mapGetters('callForward', [
+                'activeTimeForm',
+                'timesetTimesLoaded'
             ])
         },
         methods: {

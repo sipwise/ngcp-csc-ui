@@ -6,8 +6,6 @@ import { i18n } from '../i18n';
 import {
     getSourcesets,
     getDestinationsets,
-    getTimesets,
-    getMappings,
     deleteDestinationFromDestinationset,
     addDestinationToDestinationset,
     addDestinationToEmptyGroup,
@@ -29,7 +27,7 @@ import {
 } from '../api/call-forward';
 
 const RequestState = {
-    button: 'button',
+    initial: 'initial',
     requesting: 'requesting',
     succeeded: 'succeeded',
     failed: 'failed'
@@ -44,33 +42,33 @@ export default {
         timesets: null,
         destinationsets: null,
         destinations: [],
-        loadDestinationState: RequestState.button,
+        loadDestinationState: RequestState.initial,
         loadDestinationError: null,
-        removeDestinationState: RequestState.button,
+        removeDestinationState: RequestState.initial,
         removeDestinationError: null,
         lastRemovedDestination: null,
-        addDestinationState: RequestState.button,
+        addDestinationState: RequestState.initial,
         addDestinationError: null,
         lastAddedDestination: null,
-        changeDestinationState: RequestState.button,
+        changeDestinationState: RequestState.initial,
         changeDestinationError: null,
-        removeTimeState: RequestState.button,
+        removeTimeState: RequestState.initial,
         removeTimeError: null,
         lastRemovedDay: null,
-        resetTimeState: RequestState.button,
+        resetTimeState: RequestState.initial,
         resetTimeError: null,
-        addTimeState: RequestState.button,
+        addTimeState: RequestState.initial,
         addTimeError: null,
-        addSourcesetState: RequestState.button,
+        addSourcesetState: RequestState.initial,
         addSourcesetError: null,
-        removeSourcesetState: RequestState.button,
+        removeSourcesetState: RequestState.initial,
         removeSourcesetError: null,
         lastRemovedSourceset: null,
         lastAddedSourceset: null,
-        addSourceState: RequestState.button,
+        addSourceState: RequestState.initial,
         addSourceError: null,
         lastAddedSource: null,
-        removeSourceState: RequestState.button,
+        removeSourceState: RequestState.initial,
         removeSourceError: null,
         lastRemovedSource: null,
         activeForm: '',
@@ -90,7 +88,8 @@ export default {
         timesetHasDuplicate: false,
         timesetId: null,
         activeTimeForm: false,
-        addSourceFormEnabled: false
+        addSourceFormEnabled: false,
+        timesetTimesLoaded: false
     },
     getters: {
         hasFaxCapability(state, getters, rootState, rootGetters) {
@@ -180,17 +179,53 @@ export default {
         },
         lastRemovedSource(state) {
             return state.lastRemovedSource;
+        },
+        timesetTimesLoaded(state) {
+            return state.timesetTimesLoaded;
+        },
+        destinations(state) {
+            return state.destinations;
+        },
+        timesetTimes(state) {
+            return state.timesetTimes;
+        },
+        resetTimeState(state) {
+            return state.resetTimeState;
+        },
+        addTimeState(state) {
+            return state.addTimeState;
+        },
+        timesetHasDuplicate(state) {
+            return state.timesetHasDuplicate;
+        },
+        timesetIsCompatible(state) {
+            return state.timesetIsCompatible;
+        },
+        timesetHasReverse(state) {
+            return state.timesetHasReverse;
+        },
+        timesetExists(state) {
+            return state.timesetExists;
+        },
+        activeTimeForm(state) {
+            return state.activeTimeForm;
+        },
+        sourcesets(state) {
+            return state.sourcesets;
+        },
+        loadDestinationState(state) {
+            return state.loadDestinationState;
+        },
+        addSourcesetState(state) {
+            return state.addSourcesetState;
+        },
+        lastAddedSourceset(state) {
+            return state.lastAddedSourceset;
         }
     },
     mutations: {
-        loadMappings(state, result) {
-            state.mappings = result;
-        },
         loadSourcesets(state, result) {
             state.sourcesets = result;
-        },
-        loadTimesets(state, result) {
-            state.timesets = result;
         },
         loadDestinations(state, result) {
             state.destinations = result;
@@ -229,9 +264,9 @@ export default {
             state.formType = '';
             state.destinationsetId = '';
             state.groupName = '';
-            state.addDestinationState = RequestState.button;
-            state.changeDestinationState = RequestState.button;
-            state.removeDestinationState = RequestState.button;
+            state.addDestinationState = RequestState.initial;
+            state.changeDestinationState = RequestState.initial;
+            state.removeDestinationState = RequestState.initial;
         },
         addDestinationRequesting(state) {
             state.addDestinationState = RequestState.requesting;
@@ -285,6 +320,7 @@ export default {
             state.lastRemovedDay = value;
         },
         loadTimesSucceeded(state, result) {
+            state.timesetTimesLoaded = true;
             state.timesetTimes = result.times;
             state.timesetIsCompatible = result.timesetIsCompatible;
             state.timesetExists = result.timesetExists;
@@ -320,7 +356,7 @@ export default {
             state.activeTimeForm = value;
         },
         resetAddTimeState(state) {
-            state.addTimeState = RequestState.button;
+            state.addTimeState = RequestState.initial;
         },
         resetTimesetState(state) {
             state.timesetIsCompatible = true;
@@ -328,7 +364,8 @@ export default {
             state.timesetHasReverse = false;
             state.timesetHasDuplicate = false;
             state.activeTimeForm = false;
-            state.addTimeState = RequestState.button;
+            state.addTimeState = RequestState.initial;
+            state.timesetTimesLoaded = false;
         },
         setSourceset(state, result) {
             state.sourceset = result;
@@ -410,32 +447,12 @@ export default {
         }
     },
     actions: {
-        loadMappings(context) {
-            return new Promise((resolve, reject) => {
-                getMappings(localStorage.getItem('subscriberId'))
-                    .then(result => {
-                        context.commit('loadMappings', result);
-                    }).catch(err => {
-                        reject(err);
-                    });
-            });
-        },
         loadSourcesets(context) {
             return new Promise((resolve, reject) => {
                 getSourcesets(localStorage.getItem('subscriberId'))
                     .then(result => {
                         context.commit('loadSourcesets', result);
                     }).catch(err => {
-                        reject(err);
-                    });
-            });
-        },
-        loadTimesets(context) {
-            return new Promise((resolve, reject) => {
-                getTimesets(localStorage.getItem('subscriberId'))
-                    .then(result => {
-                        context.commit('loadTimesets', result);
-                    }).catch((err) => {
                         reject(err);
                     });
             });

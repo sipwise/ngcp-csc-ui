@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="showTimesAndDestinations">
+        <div v-if="showSections">
             <csc-call-forward-times
                 :times="timesetTimes"
                 :timesetName="timesetName"
@@ -60,7 +60,7 @@
                 </q-alert>
             </div>
             <csc-add-time-form
-                v-if="activeTimeForm && !timesetExists"
+                v-if="showTimesetForm"
                 type="new"
                 :timeset="timesetName"
                 ref="addTimeNew"
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-    import { mapState, mapGetters } from 'vuex'
+    import { mapGetters } from 'vuex'
     import { QAlert, QCard } from 'quasar-framework'
     import {
         startLoading,
@@ -104,7 +104,7 @@
             QCard
         },
         computed: {
-            ...mapState('callForward', [
+            ...mapGetters('callForward', [
                 'destinations',
                 'timesetTimes',
                 'resetTimeState',
@@ -116,16 +116,15 @@
                 'activeTimeForm',
                 'sourcesets',
                 'loadDestinationState',
-                'addSourcesetState'
-            ]),
-            ...mapGetters('callForward', [
+                'addSourcesetState',
                 'resetTimeError',
                 'addTimeError',
                 'showDefinedAlert',
                 'destinationsLoaded',
                 'showTimesAndDestinations',
                 'loadDestinationError',
-                'addSourcesetError'
+                'addSourcesetError',
+                'timesetTimesLoaded'
             ]),
             labelReset() {
                 return this.$t('pages.callForward.times.resetTimeset', {
@@ -136,6 +135,12 @@
                 return this.$t('pages.callForward.times.addTimeset', {
                     timeset: this.timesetName
                 });
+            },
+            showTimesetForm() {
+                return this.activeTimeForm && !this.timesetExists && this.timesetTimesLoaded;
+            },
+            showSections() {
+                return this.showTimesAndDestinations && this.timesetTimesLoaded;
             }
         },
         methods: {
