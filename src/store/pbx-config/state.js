@@ -22,6 +22,7 @@ export default {
     listCurrentPage: 1,
     listLastPage: null,
     listProfileFilter: null,
+    listMacAddressFilter: null,
     addState: RequestState.initiated,
     addError: null,
     addItem: null,
@@ -64,5 +65,7 @@ export default {
     groupReloadingError: null,
     seatReloading: null,
     seatReloadingState: RequestState.initiated,
-    seatReloadingError: null
+    seatReloadingError: null,
+    chipModelFilter: null,
+    chipMacAddressFilter: null
 }

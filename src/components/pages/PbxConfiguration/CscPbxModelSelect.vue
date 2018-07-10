@@ -8,10 +8,23 @@
                 :float-label="label"
                 :after="clearButton"
             />
-            <q-popover ref="popover" fit @open="opened()">
-                <q-list no-borders class="csc-pbx-model-list" highlight inset-separator>
-                    <q-item v-for="(profile, index) in profiles" :key="profile.id"
-                            @click="selectProfile(profile)" class="cursor-pointer">
+            <q-popover 
+                ref="popover"
+                fit
+                @open="opened()"
+            >
+                <q-list 
+                    no-borders
+                    class="csc-pbx-model-list"
+                    highlight
+                    inset-separator
+                >
+                    <q-item 
+                        v-for="(profile, index) in profiles"
+                        :key="profile.id"
+                        @click="selectProfile(profile)"
+                        class="cursor-pointer"
+                    >
                         <q-item-side>
                             <q-item-tile avatar>
                                 <img :src="frontImageUrl(profile.device_id)" />
@@ -24,16 +37,31 @@
                 </q-list>
             </q-popover>
         </div>
-        <div v-if="selectedProfile.device_id != null && preview" class="csc-pbx-model-image">
-            <img :src="frontImageUrl(selectedProfile.device_id)" class="csc-pbx-model-select-preview" />
+        <div 
+            v-if="selectedProfile.device_id != null && preview"
+            class="csc-pbx-model-image"
+        >
+            <img 
+                :src="frontImageUrl(selectedProfile.device_id)"
+                class="csc-pbx-model-select-preview"
+            />
         </div>
     </div>
 </template>
 
 <script>
 
-    import { QInput, QPopover, QList, QItem, QItemMain, QItemTile, QItemSide } from 'quasar-framework'
     import _ from 'lodash';
+    import { 
+        QInput,
+        QPopover,
+        QList,
+        QItem,
+        QItemMain,
+        QItemTile,
+        QItemSide } from 'quasar-framework'
+    import { mapGetters } from 'vuex';
+
 
     export default {
         name: 'csc-pbx-model-select',
@@ -73,14 +101,28 @@
             }
         },
         components: {
-            QInput, QPopover, QList, QItem, QItemMain, QItemTile, QItemSide
+            QInput,
+            QPopover,
+            QList,
+            QItem,
+            QItemMain,
+            QItemTile,
+            QItemSide
         },
         data () {
             return {
                 selectedProfile: this.getDefaults()
             }
         },
+        created() {
+            if (this.listProfileFilter) {
+                this.selectById(this.listProfileFilter);
+            }
+        },
         computed: {
+            ...mapGetters('pbxConfig', [
+                'listProfileFilter'
+            ]),
             clearButton() {
                 let self = this;
                 let buttons = [];
@@ -129,12 +171,17 @@
                 });
             }
         },
-        mounted(){
+        mounted() {
             this.selectById(this.selectedId);
         },
         watch: {
             selectedId(id) {
                 this.selectById(id);
+            },
+            listProfileFilter() {
+                if(this.listProfileFilter === null) {
+                    this.selectedProfile = this.getDefaults();
+                }
             }
         }
     }

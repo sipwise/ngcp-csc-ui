@@ -176,29 +176,42 @@ export default {
         state.devicesOrdered.forEach((device)=>{
             state.devices[device.id + ""] = device;
         });
+        if (data.length === 0) {
+            state.filterByMacAddress = null;
+            state.filterByProfile = null;
+        }
     },
     deviceListFailed(state, error) {
         state.listState = RequestState.failed;
         state.listError = error;
     },
-    deviceRequesting(state, deviceId) {
-        reactiveSet(state.deviceStates, deviceId + "", RequestState.requesting);
+    deviceRequesting(state, device) {
+        reactiveSet(state.deviceStates, device.id + "", RequestState.requesting);
+        reactiveSet(state.deviceStates, device.identifier + "", RequestState.requesting);
     },
     deviceSucceeded(state, device) {
         let deviceId = device.id + "";
+        let deviceMacAddress = device.identifier + "";
         reactiveSet(state.deviceStates, deviceId, RequestState.succeeded);
         reactiveSet(state.deviceErrors, deviceId, null);
         reactiveSet(state.devices, deviceId, device);
+        reactiveSet(state.deviceStates, deviceMacAddress, RequestState.succeeded);
+        reactiveSet(state.deviceErrors, deviceMacAddress, null);
+        reactiveSet(state.devices, deviceMacAddress, device);
+
         for(let i = 0; i <= state.devicesOrdered.length; i++) {
-            if(state.devicesOrdered[i].id === device.id) {
+            if(state.devicesOrdered[i].id === device.id && state.devicesOrdered[i].identifier === device.identifier) {
                 state.devicesOrdered[i] = device;
             }
         }
     },
-    deviceFailed(state, deviceId, error) {
-        deviceId = deviceId + "";
+    deviceFailed(state, device, error) {
+        let deviceId = device.id + "";
+        let deviceMacAddress = device.identifier;
         reactiveSet(state.deviceStates, deviceId, RequestState.failed);
         reactiveSet(state.deviceErrors, deviceId, error);
+        reactiveSet(state.deviceStates, deviceMacAddress, RequestState.failed);
+        reactiveSet(state.deviceErrors, deviceMacAddress, error);
     },
     deviceRemoved(state, device) {
         let deviceId = device.id + "";
@@ -333,9 +346,20 @@ export default {
     filterByProfile(state, profile) {
         state.listProfileFilter = profile.id;
         state.listCurrentPage = 1;
+        state.chipModelFilter = profile.name;
+    },
+    filterByMacAddress(state, macAddress) {
+        state.listMacAddressFilter = macAddress;
+        state.listCurrentPage = 1;
+        state.chipMacAddressFilter = macAddress;
     },
     resetProfileFilter(state) {
         state.listProfileFilter = null;
+        state.chipModelFilter = null;
+    },
+    resetMacAddressFilter(state) {
+        state.listMacAddressFilter = null;
+        state.chipMacAddressFilter = null;
     },
     goToPage(state, page) {
         state.listCurrentPage = page;
