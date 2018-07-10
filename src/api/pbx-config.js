@@ -200,11 +200,15 @@ export function getDeviceList(options) {
         let params = {
             page: options.page,
             profile_id: options.profile_id,
+            identifier: options.identifier,
             order_by: PBX_CONFIG_ORDER_BY,
             order_by_direction: PBX_CONFIG_ORDER_DIRECTION
         };
         if(params.profile_id === null) {
             delete params['profile_id'];
+        }
+        if(params.identifier === null) {
+            delete params['identifier'];
         }
         return getDevices({
             params: params
@@ -311,7 +315,7 @@ export function getDeviceFull(id, options) {
     return getDevice(id, options);
 }
 
-export function getDevice(id, options) {
+export function getDevice(data, options) {
     return new Promise((resolve, reject)=>{
         options = options || {};
         let device = null;
@@ -319,7 +323,7 @@ export function getDevice(id, options) {
         let joinLines = _.get(options, 'joinLines', false);
         Promise.resolve().then(()=>{
             return get({
-                path: 'api/pbxdevices/' + id
+                path: 'api/pbxdevices/' + data.id
             });
         }).then(($device)=> {
             device = $device;
