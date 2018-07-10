@@ -16,7 +16,7 @@
                     ref="image"
                     :src="imageUrl"
                     :style="imageStyles"
-                    @load="imageLoaded"s
+                    @load="imageLoaded"
                 />
             </div>
             <div
