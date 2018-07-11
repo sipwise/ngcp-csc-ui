@@ -29,6 +29,10 @@ export function getGroups(options) {
     });
 }
 
+export function getGroup(groupId) {
+    return getSubscriber(groupId);
+}
+
 export function getSeats(options) {
     return new Promise((resolve, reject)=>{
         options = options || {};
@@ -44,6 +48,10 @@ export function getSeats(options) {
             reject(err);
         });
     });
+}
+
+export function getSeat(seatId) {
+    return getSubscriber(seatId);
 }
 
 export function getAllGroupsAndSeats(options) {

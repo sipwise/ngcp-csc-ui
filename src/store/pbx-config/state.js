@@ -59,4 +59,10 @@ export default {
     modelImageStates: {},
     modelImageErrors: {},
     modelImages: {},
+    groupReloading: null,
+    groupReloadingState: RequestState.initiated,
+    groupReloadingError: null,
+    seatReloading: null,
+    seatReloadingState: RequestState.initiated,
+    seatReloadingError: null
 }

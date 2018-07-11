@@ -198,7 +198,7 @@
                 this.$store.dispatch('pbxConfig/setGroupHuntTimeout', group);
             },
             updateAliasNumbers(data) {
-                this.$store.dispatch('pbxConfig/updateAliasNumbers', data);
+                this.$store.dispatch('pbxConfig/updateGroupAliasNumbers', data);
             },
             updateSeats(data) {
                 this.$store.dispatch('pbxConfig/updateSeats', data);

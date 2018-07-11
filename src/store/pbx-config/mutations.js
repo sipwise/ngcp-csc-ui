@@ -339,5 +339,53 @@ export default {
     },
     goToPage(state, page) {
         state.listCurrentPage = page;
+    },
+    groupReloading(state, group) {
+        state.groupReloadingState = RequestState.requesting;
+        state.groupReloadingError = null;
+        state.groupReloading = group;
+    },
+    groupReloaded(state, group) {
+        state.groupReloadingState = RequestState.succeeded;
+        state.groupReloadingError = null;
+        Vue.set(state.groups, group.id, group);
+        for(let i = 0; i < state.groupsOrdered.length; i++) {
+            if(state.groupsOrdered[i].id === group.id) {
+                state.groupsOrdered[i] = group;
+            }
+        }
+        let seatIds = _.get(group, 'pbx_groupmember_ids', []);
+        group.seats = [];
+        seatIds.forEach((seatId)=>{
+            group.seats.push(state.seats[seatId]);
+        });
+    },
+    groupReloadingFailed(state, err) {
+        state.groupReloadingState = RequestState.failed;
+        state.groupReloadingError = err;
+    },
+    seatReloading(state, seat) {
+        state.seatReloadingState = RequestState.requesting;
+        state.seatReloadingError = null;
+        state.seatReloading = seat;
+    },
+    seatReloaded(state, seat) {
+        state.seatReloadingState = RequestState.succeeded;
+        state.seatReloadingError = null;
+        Vue.set(state.seats, seat.id, seat);
+        for(let i = 0; i < state.seatsOrdered.length; i++) {
+            if(state.seatsOrdered[i].id === seat.id) {
+                state.seatsOrdered[i] = seat;
+            }
+        }
+        let groupIds = _.get(seat, 'pbx_group_ids', []);
+        seat.groups = [];
+        groupIds.forEach((groupId)=>{
+            seat.groups.push(state.groups[groupId]);
+        });
+    },
+    seatReloadingFailed(state, err) {
+        state.seatReloadingState = RequestState.failed;
+        state.seatReloadingError = err;
     }
 }
