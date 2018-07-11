@@ -1,17 +1,56 @@
 <template>
-    <q-card class="csc-entity csc-pbx-group shadow-1">
-        <q-card-title class="csc-entity-title">
-            <q-icon name="group" color="secondary" size="24px"/>
-            <span class="csc-entity-title-text">{{ group.display_name }}</span>
-            <q-chip v-if="!expanded" pointing="left" color="primary" class="gt-md cursor-pointer">
+    <q-card
+        class="csc-entity csc-pbx-group shadow-1"
+    >
+        <q-card-title
+            class="csc-entity-title"
+        >
+            <q-icon
+                name="group"
+                color="secondary"
+                size="24px"
+            />
+            <span
+                class="csc-entity-title-text">
+                {{ group.display_name }}
+            </span>
+            <q-chip
+                v-if="!expanded"
+                pointing="left"
+                color="primary"
+                class="gt-md cursor-pointer"
+            >
                 {{ $t('pbxConfig.extension') }}: <span class="csc-important">{{ group.pbx_extension }}</span>
             </q-chip>
-            <q-btn :icon="titleIcon" :small="isMobile" color="primary" slot="right" flat @click="toggleMain()" />
-            <q-btn icon="delete" :small="isMobile"  color="negative" slot="right" flat @click="remove()" />
+            <q-btn
+                :icon="titleIcon"
+                :small="isMobile"
+                color="primary"
+                slot="right"
+                flat
+                @click="toggleMain()"
+            />
+            <q-btn
+                icon="delete"
+                :small="isMobile"
+                color="negative"
+                slot="right"
+                flat
+                @click="remove()"
+            />
         </q-card-title>
-        <q-card-main v-if="expanded" class="transition-generic">
-            <q-field :label="$t('pbxConfig.groupName')">
-                <q-input v-model="changes.name" :after="nameButtons" @keyup.enter="saveName" />
+        <q-card-main
+            v-if="expanded"
+            class="transition-generic"
+        >
+            <q-field
+                :label="$t('pbxConfig.groupName')"
+            >
+                <q-input
+                    v-model="changes.name"
+                    :after="nameButtons"
+                    @keyup.enter="saveName"
+                />
             </q-field>
             <q-field :label="$t('pbxConfig.extension')">
                 <q-input v-model="changes.extension" type="number" :after="extensionButtons"
@@ -29,12 +68,25 @@
                 <q-input v-model="primaryNumber" readonly disabled />
             </q-field>
             <q-field :label="$t('pbxConfig.aliasNumbers')">
-                <q-select ref="aliasNumbers" v-model="changes.aliasNumbers" :options="aliasNumberOptions"
-                          multiple chips clearable :after="aliasNumberButtons" @change="aliasNumberChange"/>
+                <q-select
+                    ref="aliasNumbers"
+                    v-model="changes.aliasNumbers"
+                    :options="aliasNumberOptions"
+                    multiple
+                    chips
+                    clearable
+                    :after="aliasNumberButtons"
+                />
             </q-field>
             <q-field :label="$t('pbxConfig.seats')">
-                <q-select v-model="changes.seats" :options="seatOptions" multiple chips clearable
-                          :after="seatButtons" @change="seatChange" />
+                <q-select
+                    v-model="changes.seats"
+                    :options="seatOptions"
+                    multiple
+                    chips
+                    clearable
+                    :after="seatButtons"
+                />
             </q-field>
         </q-card-main>
         <q-inner-loading :visible="isLoading">
@@ -380,7 +432,7 @@
         },
         watch: {
             group() {
-                this.changes = this.getGroup()
+                this.changes = this.getGroup();
             }
         }
     }

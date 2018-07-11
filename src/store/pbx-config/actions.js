@@ -28,7 +28,9 @@ import {
     getAllGroupsAndSeats,
     setStationName,
     setIdentifier,
-    setProfile
+    setProfile,
+    getGroup,
+    getSeat
 } from '../../api/pbx-config'
 
 export default {
@@ -58,11 +60,28 @@ export default {
             context.commit('addItemFailed', err.message);
         });
     },
+    reloadGroup(context, group) {
+        return new Promise((resolve, reject)=>{
+            context.commit('groupReloading', group);
+            getGroup(group.id).then(($group)=>{
+                context.commit('groupReloaded', $group);
+            }).catch((err)=>{
+                context.commit('groupReloadingFailed', {
+                    group: group,
+                    error: err.message
+                });
+            }).then(()=>{
+                resolve();
+            }).catch((err)=>{
+                reject(err);
+            });
+        });
+    },
     setGroupName(context, group) {
         context.commit('updateItemRequesting', group);
         context.commit('lastUpdatedField', {name: group.name, type: 'group name'});
         setGroupName(group.id, group.name).then(() => {
-            return context.dispatch('listGroups', true);
+            return context.dispatch('reloadGroup', group);
         }).then(()=>{
             context.commit('updateItemSucceeded');
         }).catch((err) => {
@@ -73,7 +92,7 @@ export default {
         context.commit('updateItemRequesting', group);
         context.commit('lastUpdatedField', {name: group.extension, type: 'group extension'});
         setGroupExtension(group.id, group.extension).then(()=>{
-            return context.dispatch('listGroups', true);
+            return context.dispatch('reloadGroup', group);
         }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
@@ -84,7 +103,7 @@ export default {
         context.commit('updateItemRequesting', group);
         context.commit('lastUpdatedField', {name: group.huntPolicy + " ringing", type: 'group hunt policy'});
         setGroupHuntPolicy(group.id, group.huntPolicy).then(() => {
-            return context.dispatch('listGroups', true);
+            return context.dispatch('reloadGroup', group);
         }).then(()=>{
             context.commit('updateItemSucceeded');
         }).catch((err) => {
@@ -95,20 +114,33 @@ export default {
         context.commit('updateItemRequesting', group);
         context.commit('lastUpdatedField', {name: group.huntTimeout + " seconds", type: 'group hunt timeout'});
         setGroupHuntTimeout(group.id, group.huntTimeout).then(()=>{
-            return context.dispatch('listGroups', true);
+            return context.dispatch('reloadGroup', group);
         }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
         });
     },
-    updateAliasNumbers(context, data) {
+    updateGroupAliasNumbers(context, data) {
         context.commit('updateAliasNumbersRequesting', data.item);
         Promise.all([
             assignNumbers(data.add, data.item.id),
             assignNumbers(data.remove, context.getters.pilotId)
         ]).then(()=>{
-            return context.dispatch('listGroups', true);
+            return context.dispatch('reloadGroup', data.item);
+        }).then(()=>{
+            context.commit('updateAliasNumbersSucceeded');
+        }).catch((err)=>{
+            context.commit('updateAliasNumbersFailed', err.message);
+        });
+    },
+    updateSeatAliasNumbers(context, data) {
+        context.commit('updateAliasNumbersRequesting', data.item);
+        Promise.all([
+            assignNumbers(data.add, data.item.id),
+            assignNumbers(data.remove, context.getters.pilotId)
+        ]).then(()=>{
+            return context.dispatch('reloadSeat', data.item);
         }).then(()=>{
             context.commit('updateAliasNumbersSucceeded');
         }).catch((err)=>{
@@ -118,7 +150,7 @@ export default {
     updateSeats(context, group) {
         context.commit('updateGroupsAndSeatsRequesting', group);
         updateGroupSeats(group.id, group.seats).then(()=>{
-            return context.dispatch('listGroups', true);
+            return context.dispatch('reloadGroup', group);
         }).then(() => {
             context.commit('updateGroupsAndSeatsSucceeded');
         }).catch((err) => {
@@ -163,11 +195,28 @@ export default {
             context.commit('addItemFailed', err.message);
         });
     },
+    reloadSeat(context, seat) {
+        return new Promise((resolve, reject)=>{
+            context.commit('seatReloading', seat);
+            getSeat(seat.id).then(($seat)=>{
+                context.commit('seatReloaded', $seat);
+            }).catch((err)=>{
+                context.commit('seatReloadingFailed', {
+                    seat: seat,
+                    error: err.message
+                });
+            }).then(()=>{
+                resolve();
+            }).catch((err)=>{
+                reject(err);
+            });
+        });
+    },
     setSeatName(context, seat) {
         context.commit('updateItemRequesting', seat);
         context.commit('lastUpdatedField', {name: seat.name, type: 'seat name'});
         setSeatName(seat.id, seat.name).then(() => {
-            return context.dispatch('listSeats', true);
+            return context.dispatch('reloadSeat', seat);
         }).then(()=>{
             context.commit('updateItemSucceeded');
         }).catch((err) => {
@@ -178,7 +227,7 @@ export default {
         context.commit('updateItemRequesting', seat);
         context.commit('lastUpdatedField', {name: seat.extension, type: 'seat extension'});
         setSeatExtension(seat.id, seat.extension).then(()=>{
-            return context.dispatch('listSeats', true);
+            return context.dispatch('reloadSeat', seat);
         }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
@@ -188,7 +237,7 @@ export default {
     updateGroups(context, seat) {
         context.commit('updateGroupsAndSeatsRequesting', seat);
         updateSeatGroups(seat.id, seat.groups).then(()=>{
-            return context.dispatch('listSeats', true);
+            return context.dispatch('reloadSeat', seat);
         }).then(() => {
             context.commit('updateGroupsAndSeatsSucceeded');
         }).catch((err) => {
