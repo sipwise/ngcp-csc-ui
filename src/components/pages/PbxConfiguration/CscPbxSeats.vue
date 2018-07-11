@@ -168,7 +168,7 @@
                 this.$store.dispatch('pbxConfig/setSeatExtension', seat);
             },
             updateAliasNumbers(data) {
-                this.$store.dispatch('pbxConfig/updateAliasNumbers', data);
+                this.$store.dispatch('pbxConfig/updateSeatAliasNumbers', data);
             },
             updateGroups(data) {
                 this.$store.dispatch('pbxConfig/updateGroups', data);
