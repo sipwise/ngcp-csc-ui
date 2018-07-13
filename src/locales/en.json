@@ -29,7 +29,7 @@
         },
         "conversations": {
             "title": "Conversations",
-            "subTitle": "Calls, SMS, VoiceMails"
+            "subTitle": "Calls, Faxes, VoiceMails"
         },
         "callForward": {
             "title": "Call Forward",
