@@ -114,7 +114,7 @@ export function assignNumbers(numberIds, subscriberId) {
 export function getNumbers() {
     return new Promise((resolve, reject)=>{
         let params = {};
-        let path = 'api/numbers';
+        let path = 'api/numbers/';
         Promise.resolve().then(()=>{
             return Vue.http.get(path, {
                 params: _.assign(params, {
