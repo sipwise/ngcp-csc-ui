@@ -83,12 +83,26 @@
     import _ from 'lodash';
     import { mapGetters } from 'vuex'
     import CscMedia from './CscMedia'
-    import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
-        QCardActions, QBtn, QIcon, QSpinnerRings, Dialog, Platform, QAlert } from 'quasar-framework'
     import { normalizeNumber, rawNumber } from '../filters/number-format'
     import numberFormat from '../filters/number-format'
     import { showCallNotification } from '../helpers/ui'
     import { getChromeExtensionUrl } from '../helpers/cdk-lib'
+    import {
+        QLayout,
+        QCard,
+        QCardTitle,
+        QCardSeparator,
+        QCardMain,
+        QField,
+        QInput,
+        QCardActions,
+        QBtn,
+        QIcon,
+        QSpinnerRings,
+        Dialog,
+        Platform,
+        QAlert
+    } from 'quasar-framework'
 
     export default {
         name: 'csc-call',
@@ -113,7 +127,6 @@
             QIcon,
             QSpinnerRings,
             CscMedia,
-            Dialog,
             QAlert
         },
         methods: {

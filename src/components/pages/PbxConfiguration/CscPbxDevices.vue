@@ -86,8 +86,17 @@
     import CscPbxDevice from './CscPbxDevice'
     import CscPbxDeviceAddForm from './CscPbxDeviceAddForm'
     import CscPbxModelSelect from './CscPbxModelSelect'
-    import { QSpinnerDots, QPagination, QList, Dialog, QItem, QItemMain, QBtn, QSelect } from 'quasar-framework'
     import { showToast, showGlobalError } from '../../../helpers/ui'
+    import {
+        QSpinnerDots,
+        QPagination,
+        QList,
+        Dialog,
+        QItem,
+        QItemMain,
+        QBtn,
+        QSelect
+    } from 'quasar-framework'
 
     export default {
         data () {
@@ -108,7 +117,6 @@
             QSpinnerDots,
             QPagination,
             QList,
-            Dialog,
             QItem,
             QBtn,
             QSelect,

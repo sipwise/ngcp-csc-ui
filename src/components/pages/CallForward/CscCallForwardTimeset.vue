@@ -71,7 +71,6 @@
 
 <script>
     import { mapGetters } from 'vuex'
-    import { QAlert, QCard } from 'quasar-framework'
     import {
         startLoading,
         stopLoading,
@@ -82,6 +81,11 @@
     import CscCallForwardTimes from './CscCallForwardTimes'
     import CscAddTimeForm from './CscAddTimeForm'
     import CscSourcesets from './CscSourcesets'
+    import {
+        QAlert,
+        QCard
+    } from 'quasar-framework'
+
     export default {
         name: 'csc-call-forward-timeset',
         props: [
