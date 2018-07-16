@@ -91,8 +91,19 @@
     import _ from 'lodash'
     import { startLoading, stopLoading,
         showGlobalError } from '../../../helpers/ui'
-    import { QItem, QItemMain, QItemSide, QItemTile,
-        Dialog, QBtn, QTooltip, QPopover, QList, Platform } from 'quasar-framework'
+    import {
+        QItem,
+        QItemMain,
+        QItemSide,
+        QItemTile,
+        Dialog,
+        QBtn,
+        QTooltip,
+        QPopover,
+        QList,
+        Platform
+    } from 'quasar-framework'
+
     export default {
         name: 'csc-destination',
         props: [
@@ -106,7 +117,6 @@
             QItemMain,
             QItemSide,
             QItemTile,
-            Dialog,
             QBtn,
             QTooltip,
             QPopover,

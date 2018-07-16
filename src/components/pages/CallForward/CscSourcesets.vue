@@ -204,9 +204,7 @@
             QInput,
             QIcon,
             QSelect,
-            QBtn,
-            Dialog,
-            Alert
+            QBtn
         },
         computed: {
             ...mapGetters('callForward', [
@@ -280,10 +278,11 @@
                 this.tab = 'Everybody';
             },
             sourcesetSources(id) {
-                if (this.sourcesets[0]) {
-                    return this.sourcesets.filter((sourceset) => {
-                        return sourceset.id === id;
-                    })[0].sources;
+                let sourceset = this.sourcesets.filter((sourceset) => {
+                    return sourceset.id === id;
+                })[0];
+                if (this.sourcesets[0] && sourceset) {
+                    return sourceset.sources;
                 }
                 else {
                     return [];

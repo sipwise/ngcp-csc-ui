@@ -67,8 +67,29 @@
     import { showToast } from '../../../helpers/ui'
     import CscPage  from '../../CscPage'
     import CscToggle from '../../form/CscToggle'
-    import { QInput, QCard, QBtn, QField, QIcon, QCardTitle, QCardActions, Dialog, QSpinnerMat, QToggle,
-        Toast, QList, QItem, QItemSide, QItemMain, QItemTile, QCardMain, QInnerLoading, QOptionGroup, QSelect, QRadio } from 'quasar-framework'
+    import {
+        QInput,
+        QCard,
+        QBtn,
+        QField,
+        QIcon,
+        QCardTitle,
+        QCardActions,
+        Dialog,
+        QSpinnerMat,
+        QToggle,
+        Toast,
+        QList,
+        QItem,
+        QItemSide,
+        QItemMain,
+        QItemTile,
+        QCardMain,
+        QInnerLoading,
+        QOptionGroup,
+        QSelect,
+        QRadio
+    } from 'quasar-framework'
     export default {
         name: 'csc-call-blocking',
         props: [
@@ -116,7 +137,6 @@
             QIcon,
             QCardTitle,
             QCardActions,
-            Dialog,
             QInnerLoading,
             QSpinnerMat,
             CscToggle,

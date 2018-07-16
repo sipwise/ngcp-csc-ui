@@ -165,6 +165,9 @@ export default {
         startRinging(state) {
             state.callState = CallState.ringing;
         },
+        stopRinging(state) {
+            state.callState = CallState.ended;
+        },
         establishCall(state, remoteMediaStream) {
             state.remoteMediaStream = remoteMediaStream;
             state.callState = CallState.established;

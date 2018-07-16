@@ -36,11 +36,23 @@
 </template>
 
 <script>
-    import { QField, QInput, QDatetime, Dialog,
-        QBtn, QItem, QItemMain, QItemTile, QItemSide, Alert, date } from 'quasar-framework'
     import { mapGetters } from 'vuex'
     import 'quasar-extras/animate/bounceInRight.css'
     import 'quasar-extras/animate/bounceOutRight.css'
+    import {
+        QField,
+        QInput,
+        QDatetime,
+        Dialog,
+        QBtn,
+        QItem,
+        QItemMain,
+        QItemTile,
+        QItemSide,
+        Alert,
+        date
+    } from 'quasar-framework'
+
     export default {
         name: 'csc-call-forward-time',
         props: [
@@ -55,7 +67,6 @@
             QField,
             QInput,
             QDatetime,
-            Dialog,
             QBtn,
             QItem,
             QItemMain,

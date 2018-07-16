@@ -26,14 +26,32 @@
     import CscPage  from '../../CscPage'
     import CscPbxSeatAddForm  from './CscPbxSeatAddForm'
     import CscPbxSeat  from './CscPbxSeat'
-    import { QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
-        QCardActions, QIcon, QPopover, QList, QItem, QItemMain,
-        QField, QInput, QBtn, QSelect, QInnerLoading, QSpinnerDots,
-        QSpinnerMat, Dialog, QPagination } from 'quasar-framework'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
     import { mapGetters } from 'vuex'
     import { showToast } from '../../../helpers/ui'
+    import {
+        QChip,
+        QCard,
+        QCardSeparator,
+        QCardTitle,
+        QCardMain,
+        QCardActions,
+        QIcon,
+        QPopover,
+        QList,
+        QItem,
+        QItemMain,
+        QField,
+        QInput,
+        QBtn,
+        QSelect,
+        QInnerLoading,
+        QSpinnerDots,
+        QSpinnerMat,
+        Dialog,
+        QPagination
+    } from 'quasar-framework'
 
     export default {
         mixins: [aliasNumberOptions, itemError],
@@ -48,11 +66,28 @@
             }
         },
         components: {
-            CscPage, CscPbxSeat, CscPbxSeatAddForm,
-            QChip, QCard, QCardSeparator, QCardTitle, QCardMain,
-            QCardActions, QIcon, QPopover, QList, QItem, QItemMain,
-            QField, QInput, QBtn, QSelect, QInnerLoading, QSpinnerDots,
-            QSpinnerMat, Dialog, QPagination
+            CscPage,
+            CscPbxSeat,
+            CscPbxSeatAddForm,
+            QChip,
+            QCard,
+            QCardSeparator,
+            QCardTitle,
+            QCardMain,
+            QCardActions,
+            QIcon,
+            QPopover,
+            QList,
+            QItem,
+            QItemMain,
+            QField,
+            QInput,
+            QBtn,
+            QSelect,
+            QInnerLoading,
+            QSpinnerDots,
+            QSpinnerMat,
+            QPagination
         },
         computed: {
             ...mapGetters('pbxConfig', [
