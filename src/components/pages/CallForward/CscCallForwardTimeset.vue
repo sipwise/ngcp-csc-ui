@@ -103,6 +103,9 @@
             QAlert,
             QCard
         },
+        created() {
+            this.loadAll();
+        },
         computed: {
             ...mapGetters('callForward', [
                 'destinations',
@@ -179,8 +182,7 @@
         },
         watch: {
             '$route': {
-                handler: 'loadAll',
-                immediate: true
+                handler: 'loadAll'
             },
             resetTimeState(state) {
                 if (state === 'requesting') {
@@ -225,6 +227,7 @@
                 }
             },
             loadDestinationState(state) {
+                console.log('loadDestinationState', state);
                 if (state === 'requesting') {
                     startLoading();
                 }

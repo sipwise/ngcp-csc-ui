@@ -371,6 +371,7 @@ export default {
             state.sourceset = result;
         },
         loadDestinationRequesting(state) {
+            console.log('loadDestinationRequesting');
             state.loadDestinationState = RequestState.requesting;
             state.loadDestinationError = null;
         },

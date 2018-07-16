@@ -55,6 +55,7 @@
         },
         watch: {
             loadDestinationState(state) {
+                console.log('loadDestinationState', state);
                 if (state === 'requesting') {
                     startLoading();
                 }
