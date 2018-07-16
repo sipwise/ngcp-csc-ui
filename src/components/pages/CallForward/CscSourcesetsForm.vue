@@ -36,7 +36,7 @@
     export default {
         name: 'csc-sourcesets-form',
         props: {
-            sourcesetId: String
+            sourcesetId: Number
         },
         data() {
             return {
