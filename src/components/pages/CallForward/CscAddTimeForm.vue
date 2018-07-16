@@ -35,9 +35,19 @@
 
 <script>
     import { mapState } from 'vuex'
-    import { QField, QSelect, QDatetime, QList, QItem, QItemMain, QItemTile,
-        QBtn, date } from 'quasar-framework'
     import { showGlobalError } from '../../../helpers/ui'
+    import {
+        QField,
+        QSelect,
+        QDatetime,
+        QList,
+        QItem,
+        QItemMain,
+        QItemTile,
+        QBtn,
+        date
+    } from 'quasar-framework'
+
     export default {
         name: 'csc-add-time-form',
         props: [
@@ -68,8 +78,7 @@
             QItem,
             QItemMain,
             QItemTile,
-            QBtn,
-            date
+            QBtn
         },
         computed: {
             ...mapState('callForward', [

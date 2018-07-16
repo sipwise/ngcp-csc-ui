@@ -1,11 +1,12 @@
 <template>
     <q-item>
         <q-item-main>
-            <q-item-tile class="row no-wrap">
+            <q-item-tile class="row no-wrap csc-time">
                 <q-input
                     class="col"
                     v-model="weekday"
-                    readonly />
+                    readonly
+                />
                 <q-datetime
                     class="col"
                     color="primary"
@@ -13,7 +14,8 @@
                     align="right"
                     type="time"
                     format24h
-                    readonly />
+                    disable
+                />
                 <q-datetime
                     class="col"
                     color="primary"
@@ -21,7 +23,8 @@
                     align="right"
                     type="time"
                     format24h
-                    readonly />
+                    disable
+                />
             </q-item-tile>
         </q-item-main>
         <q-item-side class="csc-call-forward-time-btn-container">
@@ -36,11 +39,23 @@
 </template>
 
 <script>
-    import { QField, QInput, QDatetime, Dialog,
-        QBtn, QItem, QItemMain, QItemTile, QItemSide, Alert, date } from 'quasar-framework'
     import { mapGetters } from 'vuex'
     import 'quasar-extras/animate/bounceInRight.css'
     import 'quasar-extras/animate/bounceOutRight.css'
+    import {
+        QField,
+        QInput,
+        QDatetime,
+        Dialog,
+        QBtn,
+        QItem,
+        QItemMain,
+        QItemTile,
+        QItemSide,
+        Alert,
+        date
+    } from 'quasar-framework'
+
     export default {
         name: 'csc-call-forward-time',
         props: [
@@ -55,7 +70,6 @@
             QField,
             QInput,
             QDatetime,
-            Dialog,
             QBtn,
             QItem,
             QItemMain,
@@ -133,10 +147,17 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables.styl'
 
     .q-item-side.csc-call-forward-time-btn-container
         margin-left 0
         .q-btn.csc-call-forward-time-btn
             .q-icon
                 margin-right 0
+
+    .csc-time
+        .q-if-disabled::before
+            background-image none
+            background-color currentColor
+
 </style>
