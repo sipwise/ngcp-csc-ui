@@ -2,6 +2,7 @@
 'use strict';
 
 import _ from 'lodash';
+import { RequestState } from './common'
 import { i18n } from '../i18n';
 import {
     getSourcesets,
@@ -25,13 +26,6 @@ import {
     deleteSourcesetById,
     deleteSourceFromSourcesetByIndex
 } from '../api/call-forward';
-
-const RequestState = {
-    initial: 'initial',
-    requesting: 'requesting',
-    succeeded: 'succeeded',
-    failed: 'failed'
-};
 
 export default {
     namespaced: true,
@@ -95,7 +89,7 @@ export default {
         hasFaxCapability(state, getters, rootState, rootGetters) {
             return rootGetters['user/hasFaxCapability'];
         },
-        getSubscriberId(state, getters, rootState, rootGetters) {
+        subscriberId(state, getters, rootState, rootGetters) {
             return rootGetters['user/getSubscriberId'];
         },
         getForm(state) {
@@ -509,7 +503,7 @@ export default {
                 form.destination = options.form.destination;
             }
             updatedOptions = {
-                subscriberId: context.getters.getSubscriberId,
+                subscriberId: context.getters.subscriberId,
                 data: form,
                 groupName: context.getters.getGroupName,
                 id: context.getters.getDestinationsetId,
@@ -585,7 +579,7 @@ export default {
                     changePositionOfDestination({
                         destinations: clonedDestinations,
                         id: options.id,
-                        subscriberId: context.getters.getSubscriberId
+                        subscriberId: context.getters.subscriberId
                     }).then(() => {
                         context.commit('changeDestinationSucceeded');
                     }).catch((err) => {
@@ -597,7 +591,7 @@ export default {
         loadTimesetTimes(context, options) {
             loadTimesetTimes({
                 timeset: options.timeset,
-                subscriberId: context.getters.getSubscriberId
+                subscriberId: context.getters.subscriberId
             }).then((result) => {
                 context.commit('loadTimesSucceeded', result);
             });
@@ -613,7 +607,7 @@ export default {
                 delete time.to;
             });
             deleteTimeFromTimeset({
-                subscriberId: context.getters.getSubscriberId,
+                subscriberId: context.getters.subscriberId,
                 timesetId: context.getters.getTimesetId,
                 times: clonedTimes
                 }).then(() => {
@@ -636,7 +630,7 @@ export default {
         resetTimesetByName(context, name) {
             context.commit('resetTimeRequesting');
             resetTimesetByName({
-                id: context.getters.getSubscriberId,
+                id: context.getters.subscriberId,
                 name: name
                 }).then(() => {
                     context.commit('resetTimesetState');
@@ -651,7 +645,7 @@ export default {
                     time: options.time,
                     weekday: options.weekday,
                     name: options.name,
-                    subscriberId: context.getters.getSubscriberId
+                    subscriberId: context.getters.subscriberId
                 }).then(() => {
                     context.commit('addTimeSucceeded');
                 }).catch((err) => {
@@ -674,7 +668,7 @@ export default {
             context.commit('loadDestinationRequesting');
             loadDestinations({
                 timeset: options.timeset,
-                subscriberId: context.getters.getSubscriberId
+                subscriberId: context.getters.subscriberId
             }).then((result) => {
                 context.commit('loadDestinations', result);
                 context.commit('loadDestinationSucceeded');
@@ -687,7 +681,7 @@ export default {
             createSourcesetWithSource({
                 sourcesetName: options.sourcesetName,
                 source: options.source,
-                subscriberId: context.getters.getSubscriberId,
+                subscriberId: context.getters.subscriberId,
                 mode: options.mode
             }).then(() => {
                 context.commit('setLastAddedSourceset', options.sourcesetName);

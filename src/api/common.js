@@ -8,7 +8,7 @@ export const LIST_DEFAULT_ROWS = 25;
 export const LIST_ALL_ROWS = 1000;
 
 export function getList(options) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         options = options || {};
         options = _.merge({
             all: false,
@@ -20,7 +20,7 @@ export function getList(options) {
                 'Accept': 'application/json'
             }
         }, options);
-        Promise.resolve().then(()=>{
+        Promise.resolve().then(() => {
             if(options.all === true) {
                 options.params.rows = LIST_ALL_ROWS;
             }
@@ -28,7 +28,7 @@ export function getList(options) {
                 params: options.params,
                 headers: options.headers
             });
-        }).then((res)=>{
+        }).then((res) => {
             let body = getJsonBody(res.body);
             if(options.all === true && body.total_count > LIST_ALL_ROWS) {
                 return Vue.http.get(options.path, {
@@ -41,7 +41,7 @@ export function getList(options) {
             else {
                 return Promise.resolve(res);
             }
-        }).then((res)=>{
+        }).then((res) => {
             let body = getJsonBody(res.body);
             let lastPage = Math.ceil( body.total_count / options.params.rows );
             if(options.all === true) {
@@ -51,21 +51,21 @@ export function getList(options) {
                 items: _.get(body, options.root, []),
                 lastPage: lastPage
             });
-        }).catch((err)=>{
+        }).catch((err) => {
             reject(err);
         });
     });
 }
 
 export function get(options) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         return Vue.http.get(options.path, {
             headers: {
                 'Accept': 'application/json'
             }
-        }).then((result)=>{
+        }).then((result) => {
             resolve(getJsonBody(result.body));
-        }).catch((err)=>{
+        }).catch((err) => {
             if(err.status && err.status >= 400) {
                 reject(new Error(err.body.message));
             }
@@ -77,7 +77,7 @@ export function get(options) {
 }
 
 export function patchReplace(options) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         Vue.http.patch(options.path, [{
             op: 'replace',
             path: '/'+ options.fieldPath,
@@ -87,15 +87,34 @@ export function patchReplace(options) {
                 'Content-Type': 'application/json-patch+json',
                 'Prefer': 'return=minimal'
             }
-        }).then((result)=>{
+        }).then((result) => {
             resolve(result);
-        }).catch((err)=>{
+        }).catch((err) => {
             if(err.status >= 400) {
                 reject(new Error(err.body.message));
             }
             else {
                 reject(err);
             }
+        });
+    });
+}
+
+export function getFieldList(options) {
+    return new Promise((resolve, reject) => {
+        options = options || {};
+        options = _.merge({
+            headers: {
+                'Accept': 'application/json'
+            }
+        }, options);
+        Vue.http.get(options.path, {
+            headers: options.headers
+        }).then((result) => {
+            let fieldList = getJsonBody(result.body)[options.field];
+            resolve(fieldList);
+        }).catch((err) => {
+            reject(err);
         });
     });
 }

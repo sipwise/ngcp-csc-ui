@@ -46,7 +46,12 @@
             "privacy": "Privacy"
         },
         "reminder": {
-            "title": "Reminder"
+            "title": "Reminder",
+            "subTitle": "Set your personal alarm"
+        },
+        "speeddial": {
+            "title": "Speed Dial",
+            "subTitle": "Set your speed dials"
         },
         "pbxConfiguration": {
             "title": "PBX Configuration",
@@ -127,7 +132,13 @@
             "tabLabelAll": "All",
             "tabLabelCalls": "Calls",
             "tabLabelFaxes": "Faxes",
-            "tabLabelVoicemails": "Voicemails"
+            "tabLabelVoicemails": "Voicemails",
+            "fax": "Fax",
+            "page": "page",
+            "pages": "pages",
+            "voicemail": "Voicemail",
+            "duration": "Duration",
+            "seconds": "seconds"
         },
         "reminder": {
             "toggleEnabled": "Reminder is enabled",
@@ -239,6 +250,7 @@
                 "callForward": "Call Forward",
                 "callBlocking": "Call Blocking",
                 "reminder": "Reminder",
+                "speeddial": "Speed Dial",
                 "buddyList": "Buddy List",
                 "welcome": "Welcome"
             },
@@ -351,5 +363,11 @@
         "cancel": "Cancel",
         "createFaxErrorMessage": "An error occured while trying to send the fax. Please try again.",
         "createFaxSuccessMessage": "Sending fax completed successfully."
+    },
+    "speedDial": {
+        "whenIDial": "When I dial {slot} ...",
+        "ring": "ring",
+        "loadSpeedDialErrorMessage": "An error occured while trying to load the speed dials. Please try again.",
+        "noResultsMessage": "No speed dials found"
     }
 }

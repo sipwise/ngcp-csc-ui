@@ -83,6 +83,18 @@
                 </router-link>
             </div>
             <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+                <router-link to="/user/speeddial">
+                    <q-card class="home-card-active no-margin" flat>
+                        <q-card-main align="center">
+                            <q-icon name="touch app" class="home-icons" />
+                        </q-card-main>
+                        <q-card-actions align="center">
+                            {{ $t('pages.home.cards.speeddial') }}
+                        </q-card-actions>
+                    </q-card>
+                </router-link>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
                 <q-card @click="buddyList()" class="home-card-inactive no-margin" flat>
                     <q-card-main align="center">
                         <q-icon name="contacts" class="home-icons" />
