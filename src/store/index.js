@@ -10,6 +10,7 @@ import ConversationsModule from './conversations'
 import LayoutModule from './layout'
 import PbxConfigModule from './pbx-config/index'
 import ReminderModule from './reminder'
+import SpeedDialModule from './speed-dial'
 import UserModule from './user'
 import CommunicationModule from './communication'
 
@@ -24,6 +25,7 @@ export const store = new Vuex.Store({
         layout: LayoutModule,
         pbxConfig: PbxConfigModule,
         reminder: ReminderModule,
+        speedDial: SpeedDialModule,
         user: UserModule,
         communication: CommunicationModule
     },
