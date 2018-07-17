@@ -21,6 +21,9 @@ export default {
         reminderError: null
     },
     getters: {
+        subscriberId(state, getters, rootState, rootGetters) {
+            return rootGetters['user/getSubscriberId'];
+        },
         isReminderActive(state) {
             return state.reminder !== null && state.reminder.active === true;
         },
@@ -80,7 +83,7 @@ export default {
         loadReminder(context) {
             return new Promise((resolve, reject)=>{
                 context.commit('reminderLoading');
-                getReminder(localStorage.getItem('subscriberId')).then((reminder)=>{
+                getReminder(context.getters.subscriberId).then((reminder)=>{
                     context.commit('reminderLoaded', reminder);
                     resolve();
                 }).catch((err)=>{

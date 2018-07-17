@@ -10,9 +10,15 @@
             <q-item-tile
                 label
             >
-                <span class="gt-sm csc-entity-title">Voicemail </span>
-                <span class="gt-sm csc-entity-title">{{ direction }}</span>
-                <span class="csc-entity-title">{{ voiceMail.caller | numberFormat }}</span>
+                <span class="gt-sm csc-entity-title">
+                    {{ $t('pages.conversations.voicemail') }}
+                </span>
+                <span class="gt-sm csc-entity-title">
+                    {{ direction }}
+                </span>
+                <span class="csc-entity-title">
+                    {{ voiceMail.caller | numberFormat }}
+                </span>
             </q-item-tile>
             <q-item-tile
                 sublabel
@@ -22,7 +28,9 @@
             <q-item-tile
                 sublabel
             >
-                Duration: {{ voiceMail.duration }} seconds
+                {{ t$('pages.conversations.duration') }}
+                {{ voiceMail.duration }}
+                {{ t$('pages.conversations.seconds') }}
             </q-item-tile>
             <q-item-tile>
                 <csc-voice-mail-player
