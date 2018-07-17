@@ -2,17 +2,14 @@
     <q-card
         class="csc-entity csc-pbx-group shadow-1"
     >
-        <q-card-title
-            class="csc-entity-title"
-        >
+        <q-card-title class="csc-entity-title">
             <q-icon
                 name="group"
                 color="secondary"
                 size="24px"
             />
-            <span
-                class="csc-entity-title-text">
-                {{ group.display_name }}
+            <span class="csc-entity-title-text">
+                {{ entityTitle }}
             </span>
             <q-chip
                 v-if="!expanded"
@@ -43,9 +40,7 @@
             v-if="expanded"
             class="transition-generic"
         >
-            <q-field
-                :label="$t('pbxConfig.groupName')"
-            >
+            <q-field :label="$t('pbxConfig.groupName')">
                 <q-input
                     v-model="changes.name"
                     :after="nameButtons"
@@ -53,19 +48,37 @@
                 />
             </q-field>
             <q-field :label="$t('pbxConfig.extension')">
-                <q-input v-model="changes.extension" type="number" :after="extensionButtons"
-                         @keyup.enter="saveExtension" />
+                <q-input
+                    v-model="changes.extension"
+                    type="number"
+                    :after="extensionButtons"
+                    @keyup.enter="saveExtension"
+                />
             </q-field>
             <q-field :label="$t('pbxConfig.huntPolicy')">
-                <q-select v-model="changes.huntPolicy" :options="huntPolicyOptions"
-                          radio @change="huntPolicyChanged"/>
+                <q-select
+                    v-model="changes.huntPolicy"
+                    :options="huntPolicyOptions"
+                    radio
+                    @change="huntPolicyChanged"
+                />
             </q-field>
             <q-field :label="$t('pbxConfig.huntTimeout')">
-                <q-input v-model="changes.huntTimeout" type="number" suffix="seconds"
-                         :after="huntTimeoutButtons" :min="0" @keyup.enter="saveHuntTimeout" />
+                <q-input
+                    v-model="changes.huntTimeout"
+                    type="number"
+                    suffix="seconds"
+                    :after="huntTimeoutButtons"
+                    :min="0"
+                    @keyup.enter="saveHuntTimeout"
+                />
             </q-field>
             <q-field :label="$t('pbxConfig.primaryNumber')">
-                <q-input v-model="primaryNumber" readonly disabled />
+                <q-input
+                    v-model="primaryNumber"
+                    readonly
+                    disable
+                />
             </q-field>
             <q-field :label="$t('pbxConfig.aliasNumbers')">
                 <q-select
@@ -90,7 +103,10 @@
             </q-field>
         </q-card-main>
         <q-inner-loading :visible="isLoading">
-            <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
+            <q-spinner-mat
+                size="60px"
+                color="primary"
+            />
         </q-inner-loading>
     </q-card>
 </template>
@@ -145,6 +161,10 @@
             QTransition
         },
         computed: {
+            entityTitle() {
+                return this.group.display_name ?
+                    this.group.display_name : this.group.username;
+            },
             id() {
                 return this.group.id;
             },
