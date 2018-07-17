@@ -191,8 +191,15 @@
             >
                 <q-item-side icon="fa-bell"/>
                 <q-item-main
-                    label="Reminder"
-                    sublabel="Set your personal alarm"
+                    :label="$t('navigation.reminder.title')"
+                    :sublabel="$t('navigation.reminder.subTitle')"
+                />
+            </q-side-link>
+            <q-side-link item to="/user/speeddial">
+                <q-item-side icon="touch app"/>
+                <q-item-main
+                    :label="$t('navigation.speeddial.title')"
+                    :sublabel="$t('navigation.speeddial.subTitle')"
                 />
             </q-side-link>
             <q-collapsible

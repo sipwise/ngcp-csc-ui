@@ -8,9 +8,15 @@
             <q-item-tile
                 label
             >
-                <span class="gt-sm csc-entity-title">Fax </span>
-                <span class="gt-sm csc-entity-title">{{ direction }}</span>
-                <span class="csc-entity-title">{{ fax.caller | numberFormat }}</span>
+                <span class="gt-sm csc-entity-title">
+                    {{ $t('pages.conversations.fax') }}
+                </span>
+                <span class="gt-sm csc-entity-title">
+                    {{ direction }}
+                </span>
+                <span class="csc-entity-title">
+                    {{ fax.caller | numberFormat }}
+                </span>
             </q-item-tile>
             <q-item-tile
                 sublabel
@@ -23,12 +29,14 @@
             <q-item-tile
                 v-else-if="fax.pages === 1"
                 sublabel
-            >{{ fax.pages }} page
+            >
+                {{ fax.pages }} {{ $t('pages.conversations.page') }}
             </q-item-tile>
             <q-item-tile
                 v-else
                 sublabel
-            >{{ fax.pages }} pages
+            >
+                {{ fax.pages }} {{ $t('pages.conversations.pages') }}
             </q-item-tile>
         </q-item-main>
         <q-item-side
