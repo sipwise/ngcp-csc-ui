@@ -1,22 +1,17 @@
 <template>
-    <q-item
-        class="csc-entity csc-call-item"
-    >
+    <q-item class="csc-entity csc-call-item">
         <q-item-side
             :icon="icon"
             :color="color"
         />
         <q-item-main>
-            <q-item-tile
-                label
-            >
+            <q-item-tile label>
                 <span class="gt-sm csc-entity-title">{{ typeTerm }}</span>
                 <span class="gt-sm csc-entity-title">{{ direction }}</span>
                 <span class="csc-entity-title">{{ number | destinationFormat }}</span>
             </q-item-tile>
-            <q-item-tile
-                sublabel
-            >{{ call.start_time | smartTime }}
+            <q-item-tile sublabel>
+                {{ call.start_time | smartTime }}
             </q-item-tile>
         </q-item-main>
         <q-item-side
@@ -53,7 +48,6 @@
         QItemTile,
         QBtn,
         QPopover,
-        QList,
         Platform
     } from 'quasar-framework'
     export default {
@@ -69,7 +63,6 @@
             QItemTile,
             QBtn,
             QPopover,
-            QList,
             CscCallOptionList
         },
         data () {
