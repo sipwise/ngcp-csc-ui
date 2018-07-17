@@ -1,36 +1,92 @@
 <template>
     <q-card class="csc-entity csc-pbx-seat shadow-1">
         <q-card-title class="csc-entity-title">
-            <q-icon name="person" color="secondary" size="24px"/>
-            <span class="csc-entity-title-text">{{ seat.display_name }}</span>
-            <q-chip v-if="!expanded" pointing="left" color="primary" class="gt-md">
+            <q-icon
+                name="person"
+                color="secondary"
+                size="24px"
+            />
+            <span class="csc-entity-title-text">
+                {{ entityTitle }}
+            </span>
+            <q-chip
+                v-if="!expanded"
+                pointing="left"
+                color="primary"
+                class="gt-md"
+            >
                 {{ $t('pbxConfig.extension') }}: <span class="csc-important">{{ seat.pbx_extension }}</span>
             </q-chip>
-            <q-btn :icon="titleIcon" :small="isMobile" color="primary" slot="right" flat @click="toggleMain()" />
-            <q-btn icon="delete" :small="isMobile"  color="negative" slot="right" flat @click="remove()" />
+            <q-btn
+                :icon="titleIcon"
+                :small="isMobile"
+                color="primary"
+                slot="right"
+                flat
+                @click="toggleMain()"
+            />
+            <q-btn
+                icon="delete"
+                :small="isMobile"
+                color="negative"
+                slot="right"
+                flat
+                @click="remove()"
+            />
         </q-card-title>
-        <q-card-main v-if="expanded" class="transition-generic">
+        <q-card-main
+            v-if="expanded"
+            class="transition-generic"
+        >
             <q-field :label="$t('pbxConfig.seatName')">
-                <q-input v-model="changes.name" :after="nameButtons" @keyup.enter="saveName" />
+                <q-input
+                    v-model="changes.name"
+                    :after="nameButtons"
+                    @keyup.enter="saveName"
+                />
             </q-field>
             <q-field :label="$t('pbxConfig.extension')">
-                <q-input v-model="changes.extension" type="number"
-                         :after="extensionButtons" @keyup.enter="saveExtension" />
+                <q-input
+                    v-model="changes.extension"
+                    type="number"
+                    :after="extensionButtons"
+                    @keyup.enter="saveExtension"
+                />
             </q-field>
             <q-field :label="$t('pbxConfig.primaryNumber')">
-                <q-input v-model="primaryNumber" readonly disabled />
+                <q-input
+                    v-model="primaryNumber"
+                    readonly
+                    disable
+                />
             </q-field>
             <q-field :label="$t('pbxConfig.aliasNumbers')">
-                <q-select ref="aliasNumbers" v-model="changes.aliasNumbers" :options="aliasNumberOptions"
-                          multiple chips clearable :after="aliasNumberButtons" />
+                <q-select
+                    ref="aliasNumbers"
+                    v-model="changes.aliasNumbers"
+                    :options="aliasNumberOptions"
+                    multiple
+                    chips
+                    clearable
+                    :after="aliasNumberButtons"
+                />
             </q-field>
             <q-field :label="$t('pbxConfig.groups')">
-                <q-select v-model="changes.groups" :options="groupOptions" multiple chips clearable
-                          :after="groupButtons" />
+                <q-select
+                    v-model="changes.groups"
+                    :options="groupOptions"
+                    multiple
+                    chips
+                    clearable
+                    :after="groupButtons"
+                />
             </q-field>
         </q-card-main>
         <q-inner-loading :visible="isLoading">
-            <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
+            <q-spinner-mat
+                size="60px"
+                color="primary"
+            />
         </q-inner-loading>
     </q-card>
 </template>
@@ -84,6 +140,10 @@
             QTransition
         },
         computed: {
+            entityTitle() {
+                return this.seat.display_name ?
+                    this.seat.display_name : this.seat.username;
+            },
             id() {
                 return this.seat.id;
             },

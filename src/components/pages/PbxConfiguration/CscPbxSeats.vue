@@ -1,22 +1,63 @@
 <template>
     <csc-page :title="$t('pbxConfig.seatsTitle')">
-        <csc-pbx-seat-add-form v-show="addFormEnabled" ref="addForm" :alias-number-options="aliasNumberOptions"
-                               :group-options="groupOptions" :loading="isAdding" @save="addSeat"
-                               @cancel="disableAddForm" />
-        <div v-show="!addFormEnabled" class="row justify-center">
-            <q-btn color="primary" icon="add" flat @click="enableAddForm">{{ $t('pbxConfig.addSeat') }}</q-btn>
+        <csc-pbx-seat-add-form
+            v-show="addFormEnabled"
+            ref="addForm"
+            :alias-number-options="aliasNumberOptions"
+            :group-options="groupOptions"
+            :loading="isAdding"
+            @save="addSeat"
+            @cancel="disableAddForm"
+        />
+        <div
+            v-show="!addFormEnabled"
+            class="row justify-center"
+        >
+            <q-btn
+                color="primary"
+                icon="add"
+                flat
+                @click="enableAddForm"
+            >
+                {{ $t('pbxConfig.addSeat') }}
+            </q-btn>
         </div>
-        <div v-if="isListLoadingVisible" class="row justify-center">
-            <q-spinner-dots color="primary" :size="40" />
+        <div
+            v-if="isListLoadingVisible"
+            class="row justify-center"
+        >
+            <q-spinner-dots
+                color="primary"
+                :size="40"
+            />
         </div>
-        <div v-if="seats.length > 0 && !isListRequesting && listLastPage > 1" class="row justify-center">
-            <q-pagination :value="listCurrentPage" :max="listLastPage" @change="changePage" />
+        <div
+            v-if="seats.length > 0 && !isListRequesting && listLastPage > 1"
+            class="row justify-center"
+        >
+            <q-pagination
+                :value="listCurrentPage"
+                :max="listLastPage"
+                @change="changePage"
+            />
         </div>
-        <csc-pbx-seat v-for="seat in seats" :key="seat.id" :seat="seat" :alias-number-options="aliasNumberOptions"
-                      :group-options="groupOptions" @remove="removeSeat" :loading="isItemLoading(seat.id)"
-                      @save-name="setSeatName" @save-extension="setSeatExtension"
-                      @save-alias-numbers="updateAliasNumbers" @save-groups="updateGroups" />
-        <div v-if="seats.length === 0 && !isListRequesting" class="row justify-center csc-no-entities">
+        <csc-pbx-seat
+            v-for="seat in seats"
+            :key="seat.id"
+            :seat="seat"
+            :alias-number-options="aliasNumberOptions"
+            :group-options="groupOptions"
+            @remove="removeSeat"
+            :loading="isItemLoading(seat.id)"
+            @save-name="setSeatName"
+            @save-extension="setSeatExtension"
+            @save-alias-numbers="updateAliasNumbers"
+            @save-groups="updateGroups"
+        />
+        <div
+            v-if="seats.length === 0 && !isListRequesting"
+            class="row justify-center csc-no-entities"
+        >
             {{ $t('pbxConfig.noSeats') }}
         </div>
     </csc-page>
@@ -121,7 +162,7 @@
                 let groups = [];
                 this.groups.forEach((group)=>{
                     groups.push({
-                        label: group.display_name,
+                        label: group.display_name ? group.display_name : group.username,
                         sublabel: this.$t('pbxConfig.extension') + ': ' + group.pbx_extension,
                         value: group.id
                     });

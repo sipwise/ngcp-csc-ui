@@ -1,23 +1,67 @@
 <template>
     <csc-page :title="$t('pbxConfig.groupsTitle')">
-        <csc-pbx-group-add-form v-show="addFormEnabled" ref="addForm" @save="addGroup" @cancel="disableAddForm"
-                                :loading="isAdding" :alias-number-options="aliasNumberOptions"
-                                :seat-options="seatOptions" :hunt-policy-options="huntPolicyOptions"/>
-        <div v-show="!addFormEnabled" class="row justify-center ">
-            <q-btn color="primary" icon="add" flat @click="enableAddForm">{{ $t('pbxConfig.addGroup') }}</q-btn>
+        <csc-pbx-group-add-form
+            v-show="addFormEnabled"
+            ref="addForm"
+            @save="addGroup"
+            @cancel="disableAddForm"
+            :loading="isAdding"
+            :alias-number-options="aliasNumberOptions"
+            :seat-options="seatOptions"
+            :hunt-policy-options="huntPolicyOptions"
+        />
+        <div
+            v-show="!addFormEnabled"
+            class="row justify-center"
+        >
+            <q-btn
+                color="primary"
+                icon="add"
+                flat
+                @click="enableAddForm"
+            >
+                {{ $t('pbxConfig.addGroup') }}
+            </q-btn>
         </div>
-        <div v-if="isListLoadingVisible" class="row justify-center">
-            <q-spinner-dots color="primary" :size="40" />
+        <div
+            v-if="isListLoadingVisible"
+            class="row justify-center"
+        >
+            <q-spinner-dots
+                color="primary"
+                :size="40"
+            />
         </div>
-        <div v-if="groups.length > 0 && !isListRequesting && listLastPage > 1" class="row justify-center">
-            <q-pagination :value="listCurrentPage" :max="listLastPage" @change="changePage" />
+        <div
+            v-if="groups.length > 0 && !isListRequesting && listLastPage > 1"
+            class="row justify-center"
+        >
+            <q-pagination
+                :value="listCurrentPage"
+                :max="listLastPage"
+                @change="changePage"
+            />
         </div>
-        <csc-pbx-group v-for="group in groups" :key="group.id" :group="group" :alias-number-options="aliasNumberOptions"
-                       :seat-options="seatOptions" :hunt-policy-options="huntPolicyOptions" @remove="removeGroup"
-                       :loading="isItemLoading(group.id)" @save-name="setGroupName" @save-extension="setGroupExtension"
-                        @save-hunt-policy="setGroupHuntPolicy" @save-hunt-timeout="setGroupHuntTimeout"
-                        @save-alias-numbers="updateAliasNumbers" @save-seats="updateSeats" />
-        <div v-if="groups.length === 0 && !isListRequesting" class="row justify-center csc-no-entities">
+        <csc-pbx-group
+            v-for="group in groups"
+            :key="group.id"
+            :group="group"
+            :alias-number-options="aliasNumberOptions"
+            :seat-options="seatOptions"
+            :hunt-policy-options="huntPolicyOptions"
+            @remove="removeGroup"
+            :loading="isItemLoading(group.id)"
+            @save-name="setGroupName"
+            @save-extension="setGroupExtension"
+            @save-hunt-policy="setGroupHuntPolicy"
+            @save-hunt-timeout="setGroupHuntTimeout"
+            @save-alias-numbers="updateAliasNumbers"
+            @save-seats="updateSeats"
+        />
+        <div
+            v-if="groups.length === 0 && !isListRequesting"
+            class="row justify-center csc-no-entities"
+        >
             {{ $t('pbxConfig.noGroups') }}
         </div>
     </csc-page>
@@ -116,7 +160,7 @@
                 let seats = [];
                 this.seats.forEach((seat)=>{
                     seats.push({
-                        label: seat.display_name,
+                        label: seat.display_name ? seat.display_name : seat.username,
                         sublabel: this.$t('pbxConfig.extension') + ': ' + seat.pbx_extension,
                         value: seat.id
                     });
