@@ -29,7 +29,7 @@
                 </div>
                 <div v-if="$q.platform.is.mobile" class="dest-row" :class="{ terminated: destination.terminated, mobile: mobileClasses }">
                     <q-item-tile class="dest-values" label>
-                        <span v-if="!isNumber(destination.destination)">
+                        <span v-if="!isNonTerminating(destination.destination)">
                             <span v-if="index == 0">
                                 {{ $t('pages.callForward.firstRing') }}
                             </span>
@@ -40,13 +40,13 @@
                         {{ destination.destination | destinationFormat }}
                     </q-item-tile>
                     <q-item-tile class="dest-sublabel" sublabel>
-                        <span v-if="index == 0 && isNumber(destination.destination)">
+                        <span v-if="index == 0 && isNonTerminating(destination.destination)">
                             {{ $t('pages.callForward.firstRing') }}
                         </span>
-                        <span v-else-if="index > 0 && isNumber(destination.destination)">
+                        <span v-else-if="index > 0 && isNonTerminating(destination.destination)">
                             {{ $t('pages.callForward.thenRing') }}
                         </span>
-                        <span v-if="isNumber(destination.destination)">
+                        <span v-if="isNonTerminating(destination.destination)">
                             <span>
                                 {{ $t('pages.callForward.for') }}
                             </span>
