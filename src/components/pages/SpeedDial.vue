@@ -36,7 +36,7 @@
                             icon="delete"
                             color="negative"
                             slot="right"
-                            @click="deleteAssignment(index)"
+                            @click="unassignSlot(assigned)"
                         />
                     </q-item-tile>
                 </q-item-side>
@@ -56,6 +56,7 @@
     import {
         startLoading,
         stopLoading,
+        showToast,
         showGlobalError
     } from '../../helpers/ui'
     import CscPage from '../CscPage'
@@ -66,7 +67,8 @@
         QItemTile,
         QItemSide,
         QChip,
-        QBtn
+        QBtn,
+        Dialog
     } from 'quasar-framework'
 
     export default {
@@ -87,12 +89,32 @@
             ...mapGetters('speedDial', [
                 'assignedSlots',
                 'speedDialLoadingState',
-                'speedDialLoadingError'
+                'speedDialLoadingError',
+                'unassignSlotState',
+                'unassignSlotError',
+                'lastUnassignedSlot'
             ])
         },
         methods: {
-            deleteAssignment(index) {
-                console.log('deleteAssignment(), index', index);
+            unassignSlot(slot) {
+                let self = this;
+                let store = this.$store;
+                Dialog.create({
+                    title: self.$t('speedDial.removeDialogTitle'),
+                    message: self.$t('speedDial.removeDialogText', {
+                        slot: slot.slot
+                    }),
+                    buttons: [
+                        self.$t('buttons.cancel'),
+                        {
+                            label: self.$t('buttons.remove'),
+                            color: 'negative',
+                            handler () {
+                                store.dispatch('speedDial/unassignSpeedDialSlot', slot)
+                            }
+                        }
+                    ]
+                });
             }
         },
         watch: {
@@ -106,6 +128,21 @@
                 }
                 else if (state === 'succeeded') {
                     stopLoading();
+                }
+            },
+            unassignSlotState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                }
+                else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.unassignSlotError);
+                }
+                else if (state === 'succeeded') {
+                    stopLoading();
+                    showToast(this.$t('speedDial.unassignSlotSuccessMessage', {
+                        slot: this.lastUnassignedSlot
+                    }));
                 }
             }
         }

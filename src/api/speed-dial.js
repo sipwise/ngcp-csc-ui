@@ -1,5 +1,6 @@
 
 import _ from 'lodash'
+import Vue from 'vue';
 import { getFieldList } from './common'
 
 export function getSpeedDials(id) {
@@ -29,6 +30,24 @@ export function getUnassignedSlots(id) {
                 return slot.slot;
             }));
             resolve(unassignedSlots);
+        }).catch((err) => {
+            reject(err.body.message);
+        });
+    });
+}
+
+export function unassignSpeedDialSlot(options) {
+    return new Promise((resolve, reject) => {
+        let updatedAssignedSlots = _.without(options.slots, options.slot);
+        let headers = {
+            'Content-Type': 'application/json-patch+json'
+        };
+        Vue.http.patch('api/speeddials/' + options.id, [{
+            op: 'replace',
+            path: '/speeddials',
+            value: updatedAssignedSlots
+        }], { headers: headers }).then(() => {
+            resolve();
         }).catch((err) => {
             reject(err.body.message);
         });

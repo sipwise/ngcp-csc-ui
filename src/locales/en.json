@@ -368,6 +368,10 @@
         "whenIDial": "When I dial {slot} ...",
         "ring": "ring",
         "loadSpeedDialErrorMessage": "An error occured while trying to load the speed dials. Please try again.",
-        "noResultsMessage": "No speed dials found"
+        "noResultsMessage": "No speed dials found",
+        "removeDialogTitle": "Remove speed dial",
+        "removeDialogText": "You are about to remove the speed dial {slot}",
+        "unassignSlotErrorMessage": "An error occured while trying to unassign the speed dial slot. Please try again.",
+        "unassignSlotSuccessMessage": "Unassigned slot {slot}"
     }
 }
