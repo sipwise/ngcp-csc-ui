@@ -3,7 +3,8 @@
 import { i18n } from '../i18n';
 import { RequestState } from './common'
 import {
-    getSpeedDials
+    getSpeedDials,
+    unassignSpeedDialSlot
 } from '../api/speed-dial';
 
 export default {
@@ -12,7 +13,10 @@ export default {
         assignedSlots: [],
         slotOptions: [],
         speedDialLoadingState: RequestState.initiated,
-        speedDialError: null
+        speedDialError: null,
+        unassignSlotState: RequestState.initiated,
+        unassignSlotError: null,
+        lastUnassignedSlot: null
     },
     getters: {
         reminderLoadingState(state) {
@@ -32,6 +36,15 @@ export default {
         },
         speedDialLoadingError(state) {
             return state.speedDialLoadingError || i18n.t('speedDial.loadSpeedDialErrorMessage');
+        },
+        unassignSlotState(state) {
+            return state.unassignSlotState;
+        },
+        unassignSlotError(state) {
+            return state.unassignSlotError || i18n.t('speedDial.unassignSlotErrorMessage');
+        },
+        lastUnassignedSlot(state) {
+            return state.lastUnassignedSlot;
         }
     },
     mutations: {
@@ -47,6 +60,19 @@ export default {
         speedDialFailed(state, error) {
             state.speedDialLoadingState = RequestState.failed;
             state.speedDialLoadingError = error;
+        },
+        unassignSlotRequesting(state) {
+            state.unassignSlotState = RequestState.requesting;
+            state.unassignSlotError = null;
+        },
+        unassignSlotSucceeded(state, last) {
+            state.lastUnassignedSlot = last;
+            state.unassignSlotState = RequestState.succeeded;
+            state.unassignSlotError = null;
+        },
+        unassignSlotFailed(state, error) {
+            state.unassignSlotState = RequestState.failed;
+            state.unassignSlotError = error;
         }
     },
     actions: {
@@ -56,6 +82,19 @@ export default {
                 context.commit('speedDialSucceeded', slots);
             }).catch((error) => {
                 context.commit('speedDialFailed', error);
+            });
+        },
+        unassignSpeedDialSlot(context, slot) {
+            context.commit('unassignSlotRequesting');
+            unassignSpeedDialSlot({
+                slots: context.state.assignedSlots,
+                slot: slot,
+                id: context.getters.subscriberId
+            }).then(() => {
+                context.commit('unassignSlotSucceeded', slot.slot);
+                context.dispatch('loadSpeedDials');
+            }).catch((error) => {
+                context.commit('unassignSlotFailed', error);
             });
         }
     }
