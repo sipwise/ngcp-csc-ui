@@ -3,8 +3,10 @@
 import { i18n } from '../i18n';
 import { RequestState } from './common'
 import {
-    getSpeedDials,
-    unassignSpeedDialSlot
+    getSpeedDialsById,
+    unassignSpeedDialSlot,
+    getUnassignedSlots,
+    assignSpeedDialSlot
 } from '../api/speed-dial';
 
 export default {
@@ -16,7 +18,8 @@ export default {
         speedDialError: null,
         unassignSlotState: RequestState.initiated,
         unassignSlotError: null,
-        lastUnassignedSlot: null
+        lastUnassignedSlot: null,
+        unassignedSlots: []
     },
     getters: {
         reminderLoadingState(state) {
@@ -45,6 +48,9 @@ export default {
         },
         lastUnassignedSlot(state) {
             return state.lastUnassignedSlot;
+        },
+        unassignedSlots(state) {
+            return state.unassignedSlots;
         }
     },
     mutations: {
@@ -73,12 +79,15 @@ export default {
         unassignSlotFailed(state, error) {
             state.unassignSlotState = RequestState.failed;
             state.unassignSlotError = error;
+        },
+        loadUnassignedSlots(state, result) {
+            state.unassignedSlots = result;
         }
     },
     actions: {
         loadSpeedDials(context) {
             context.commit('speedDialRequesting');
-            getSpeedDials(context.getters.subscriberId).then((slots) => {
+            getSpeedDialsById(context.getters.subscriberId).then((slots) => {
                 context.commit('speedDialSucceeded', slots);
             }).catch((error) => {
                 context.commit('speedDialFailed', error);
@@ -95,6 +104,20 @@ export default {
                 context.dispatch('loadSpeedDials');
             }).catch((error) => {
                 context.commit('unassignSlotFailed', error);
+            });
+        },
+        getUnassignedSlots(context) {
+            getUnassignedSlots(context.getters.subscriberId).then((result) => {
+                context.commit('loadUnassignedSlots', result);
+            });
+        },
+        assignSpeedDialSlot(context, slot) {
+            assignSpeedDialSlot({
+                id: context.getters.subscriberId,
+                slot: slot
+            //}).then((result) => {
+            }).then(() => {
+                context.dispatch('loadSpeedDials');
             });
         }
     }
