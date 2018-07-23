@@ -69,9 +69,9 @@
 
 <script>
     import { mapGetters } from 'vuex'
-    import CscPage  from '../../CscPage'
-    import CscPbxGroup  from './CscPbxGroup'
-    import CscPbxGroupAddForm  from './CscPbxGroupAddForm'
+    import CscPage from '../../CscPage'
+    import CscPbxGroup from './CscPbxGroup'
+    import CscPbxGroupAddForm from './CscPbxGroupAddForm'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
     import { showToast } from '../../../helpers/ui'
