@@ -10,7 +10,7 @@ import CallBlockingIncoming from './components/pages/CallBlocking/Incoming'
 import CallBlockingOutgoing from './components/pages/CallBlocking/Outgoing'
 import CallBlockingPrivacy from './components/pages/CallBlocking/Privacy'
 import Reminder from './components/pages/Reminder';
-import SpeedDial from './components/pages/SpeedDial'
+import SpeedDial from './components/pages/SpeedDial/SpeedDial'
 import PbxConfigurationGroups from './components/pages/PbxConfiguration/CscPbxGroups'
 import PbxConfigurationSeats from './components/pages/PbxConfiguration/CscPbxSeats'
 import PbxConfigurationDevices from './components/pages/PbxConfiguration/CscPbxDevices'

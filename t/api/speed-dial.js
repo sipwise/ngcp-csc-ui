@@ -7,7 +7,7 @@ import {
     getFieldList
 } from '../../src/api/common';
 import {
-    getSpeedDials
+    getSpeedDialsById
 } from '../../src/api/speed-dial';
 import { assert } from 'chai';
 
@@ -88,7 +88,7 @@ describe('Speed Dials', function(){
                 status: 200
             }));
         });
-        getSpeedDials(subscriberId).then((result)=>{
+        getSpeedDialsById(subscriberId).then((result)=>{
             assert.deepEqual(result, fieldList);
             done();
         }).catch((err)=>{

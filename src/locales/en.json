@@ -372,6 +372,10 @@
         "removeDialogTitle": "Remove speed dial",
         "removeDialogText": "You are about to remove the speed dial {slot}",
         "unassignSlotErrorMessage": "An error occured while trying to unassign the speed dial slot. Please try again.",
-        "unassignSlotSuccessMessage": "Unassigned slot {slot}"
+        "unassignSlotSuccessMessage": "Unassigned slot {slot}",
+        "addSpeedDial": "Add Speed Dial",
+        "slot": "Slot",
+        "destination": "Destination",
+        "addNoSlotsDialogText": "All available speed dial slots have already been assigned. Please delete one first."
     }
 }
