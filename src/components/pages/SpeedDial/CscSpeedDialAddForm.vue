@@ -1,0 +1,147 @@
+<template>
+    <div class="row justify-center">
+        <!--TODO: 1. Handle case where no more speed dial slots available-->
+        <!--TODO: 2. Check how it looks and behaves on mobile-->
+        <div v-if="formEnabled" class="col col-md-6 col-sm-12">
+            <q-field>
+                <q-select
+                    :disabled="loading"
+                    :readonly="loading"
+                    v-model="slot"
+                    :float-label="$t('speedDial.slot')"
+                    :options="slotOptions"
+                    radio
+                />
+            </q-field>
+            <!--TODO: 3. Make custom component for number auto format input-->
+            <q-field>
+                <q-input
+                    :disabled="loading"
+                    :readonly="loading"
+                    type="text"
+                    v-model="destination"
+                    clearable
+                    :float-label="$t('speedDial.destination')"
+                    @keyup.enter="save()"
+                />
+            </q-field>
+            <div
+                class="row justify-center form-actions"
+            >
+                <q-btn
+                    v-if="!loading"
+                    flat
+                    color="secondary"
+                    icon="clear"
+                    @click="cancel()"
+                >
+                    {{ $t('buttons.cancel') }}
+                </q-btn>
+                <q-btn
+                    v-if="!loading"
+                    flat
+                    color="primary"
+                    icon="done"
+                    @click="save()"
+                >
+                    {{ $t('buttons.save') }}
+                </q-btn>
+            </div>
+        </div>
+        <div
+            v-else
+            class="row justify-center"
+        >
+            <q-btn
+                color="primary"
+                icon="add"
+                flat
+                @click="enableForm()"
+            >
+                {{ $t('speedDial.addSpeedDial') }}
+            </q-btn>
+        </div>
+        <q-inner-loading
+            v-show="loading"
+            :visible="loading"
+        >
+            <q-spinner-mat
+                size="60px"
+                color="primary"
+            />
+        </q-inner-loading>
+    </div>
+</template>
+
+<script>
+
+    import {
+        QCard,
+        QCardTitle,
+        QCardMain,
+        QCardActions,
+        QCardSeparator,
+        QBtn,
+        QInnerLoading,
+        QSpinnerMat,
+        QField,
+        QInput,
+        QSelect,
+        QIcon
+    } from 'quasar-framework'
+
+    export default {
+        name: 'csc-speed-dial-add-form',
+        props: [
+            'slotOptions',
+            'loading'
+        ],
+        data () {
+            return {
+                formEnabled: false,
+                destination: '',
+                slot: ''
+            }
+        },
+        components: {
+            QCard,
+            QCardTitle,
+            QCardMain,
+            QCardActions,
+            QCardSeparator,
+            QBtn,
+            QInnerLoading,
+            QSpinnerMat,
+            QField,
+            QInput,
+            QSelect,
+            QIcon
+        },
+        methods: {
+            enableForm(){
+                this.reset();
+                this.formEnabled = true;
+            },
+            cancel() {
+                this.formEnabled = false;
+            },
+            save() {
+                this.$emit('save', {
+                    destination: this.destination,
+                    slot: this.slot
+                });
+            },
+            reset() {
+                this.destination = '';
+                this.slot = this.slotOptions[0].value ? this.slotOptions[0].value : '';
+            }
+        }
+    }
+</script>
+
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables.styl';
+    .form-actions
+        margin-top 16px
+        margin-bottom 8px
+</style>

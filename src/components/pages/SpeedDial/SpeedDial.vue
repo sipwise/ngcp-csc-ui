@@ -1,5 +1,12 @@
 <template>
     <csc-page class="csc-list-page">
+        <csc-speed-dial-add-form
+            v-show="addFormEnabled"
+            ref="addForm"
+            @save="addSpeedDial"
+            :loading="isAdding"
+            :slot-options="unassignedSlots"
+        />
         <q-list
             no-border
             inset-separator
@@ -53,13 +60,14 @@
 
 <script>
     import { mapGetters } from 'vuex'
+    import CscPage from '../../CscPage'
+    import CscSpeedDialAddForm from './CscSpeedDialAddForm'
     import {
         startLoading,
         stopLoading,
         showToast,
         showGlobalError
-    } from '../../helpers/ui'
-    import CscPage from '../CscPage'
+    } from '../../../helpers/ui'
     import {
         QList,
         QItem,
@@ -72,8 +80,15 @@
     } from 'quasar-framework'
 
     export default {
+        data () {
+            return {
+                addFormEnabled: true,
+                isAdding: false
+            }
+        },
         components: {
             CscPage,
+            CscSpeedDialAddForm,
             QList,
             QItem,
             QItemMain,
@@ -84,6 +99,7 @@
         },
         created() {
             this.$store.dispatch('speedDial/loadSpeedDials');
+            this.$store.dispatch('speedDial/getUnassignedSlots');
         },
         computed: {
             ...mapGetters('speedDial', [
@@ -92,10 +108,14 @@
                 'speedDialLoadingError',
                 'unassignSlotState',
                 'unassignSlotError',
-                'lastUnassignedSlot'
+                'lastUnassignedSlot',
+                'unassignedSlots'
             ])
         },
         methods: {
+            addSpeedDial(slot) {
+                this.$store.dispatch('speedDial/assignSpeedDialSlot', slot);
+            },
             unassignSlot(slot) {
                 let self = this;
                 let store = this.$store;
