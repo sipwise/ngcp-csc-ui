@@ -2,10 +2,20 @@
     <csc-page class="csc-list-page">
         <q-list
             no-border
-            inset-separator
+            separator
             sparse
             multiline
         >
+            <q-item>
+                <q-item-main>
+                    <csc-speed-dial-add-form
+                        ref="addForm"
+                        @save="addSpeedDial"
+                        :loading="isAdding"
+                        :slot-options="unassignedSlots"
+                    />
+                </q-item-main>
+            </q-item>
             <q-item
                 v-for="(assigned, index) in assignedSlots"
                 :key="index"
@@ -53,13 +63,14 @@
 
 <script>
     import { mapGetters } from 'vuex'
+    import CscPage from '../../CscPage'
+    import CscSpeedDialAddForm from './CscSpeedDialAddForm'
     import {
         startLoading,
         stopLoading,
         showToast,
         showGlobalError
-    } from '../../helpers/ui'
-    import CscPage from '../CscPage'
+    } from '../../../helpers/ui'
     import {
         QList,
         QItem,
@@ -72,8 +83,14 @@
     } from 'quasar-framework'
 
     export default {
+        data () {
+            return {
+                addFormEnabled: true
+            }
+        },
         components: {
             CscPage,
+            CscSpeedDialAddForm,
             QList,
             QItem,
             QItemMain,
@@ -84,6 +101,7 @@
         },
         created() {
             this.$store.dispatch('speedDial/loadSpeedDials');
+            this.$store.dispatch('speedDial/getUnassignedSlots');
         },
         computed: {
             ...mapGetters('speedDial', [
@@ -92,10 +110,18 @@
                 'speedDialLoadingError',
                 'unassignSlotState',
                 'unassignSlotError',
-                'lastUnassignedSlot'
+                'lastUnassignedSlot',
+                'unassignedSlots',
+                'assignSlotState',
+                'assignSlotError',
+                'lastAssignedSlot',
+                'isAdding'
             ])
         },
         methods: {
+            addSpeedDial(slot) {
+                this.$store.dispatch('speedDial/assignSpeedDialSlot', slot);
+            },
             unassignSlot(slot) {
                 let self = this;
                 let store = this.$store;
@@ -142,6 +168,17 @@
                     stopLoading();
                     showToast(this.$t('speedDial.unassignSlotSuccessMessage', {
                         slot: this.lastUnassignedSlot
+                    }));
+                }
+            },
+            assignSlotState(state) {
+                if (state === 'failed') {
+                    showGlobalError(this.assignSlotError);
+                }
+                else if (state === 'succeeded') {
+                    this.$refs.addForm.cancel();
+                    showToast(this.$t('speedDial.assignSlotSuccessMessage', {
+                        slot: this.lastAssignedSlot
                     }));
                 }
             }
