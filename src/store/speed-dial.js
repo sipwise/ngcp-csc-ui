@@ -3,20 +3,25 @@
 import { i18n } from '../i18n';
 import { RequestState } from './common'
 import {
-    getSpeedDials,
-    unassignSpeedDialSlot
+    getSpeedDialsById,
+    unassignSpeedDialSlot,
+    getUnassignedSlots,
+    assignSpeedDialSlot
 } from '../api/speed-dial';
 
 export default {
     namespaced: true,
     state: {
         assignedSlots: [],
-        slotOptions: [],
         speedDialLoadingState: RequestState.initiated,
         speedDialError: null,
         unassignSlotState: RequestState.initiated,
         unassignSlotError: null,
-        lastUnassignedSlot: null
+        lastUnassignedSlot: null,
+        unassignedSlots: [],
+        assignSlotState: RequestState.initiated,
+        assignSlotError: null,
+        lastAssignedSlot: null
     },
     getters: {
         reminderLoadingState(state) {
@@ -45,6 +50,21 @@ export default {
         },
         lastUnassignedSlot(state) {
             return state.lastUnassignedSlot;
+        },
+        unassignedSlots(state) {
+            return state.unassignedSlots;
+        },
+        assignSlotState(state) {
+            return state.assignSlotState;
+        },
+        assignSlotError(state) {
+            return state.assignSlotError || i18n.t('speedDial.assignSlotErrorMessage');
+        },
+        lastAssignedSlot(state) {
+            return state.lastAssignedSlot;
+        },
+        isAdding(state) {
+            return state.assignSlotState === RequestState.requesting;
         }
     },
     mutations: {
@@ -73,28 +93,62 @@ export default {
         unassignSlotFailed(state, error) {
             state.unassignSlotState = RequestState.failed;
             state.unassignSlotError = error;
+        },
+        loadUnassignedSlots(state, result) {
+            state.unassignedSlots = result;
+        },
+        assignSlotRequesting(state) {
+            state.assignSlotState = RequestState.requesting;
+            state.assignSlotError = null;
+        },
+        assignSlotSucceeded(state, last) {
+            state.lastAssignedSlot = last;
+            state.assignSlotState = RequestState.succeeded;
+            state.assignSlotError = null;
+        },
+        assignSlotFailed(state, error) {
+            state.assignSlotState = RequestState.failed;
+            state.assignSlotError = error;
         }
     },
     actions: {
         loadSpeedDials(context) {
             context.commit('speedDialRequesting');
-            getSpeedDials(context.getters.subscriberId).then((slots) => {
+            getSpeedDialsById(context.getters.subscriberId).then((slots) => {
                 context.commit('speedDialSucceeded', slots);
             }).catch((error) => {
                 context.commit('speedDialFailed', error);
             });
         },
-        unassignSpeedDialSlot(context, slot) {
+        unassignSpeedDialSlot(context, unassigned) {
             context.commit('unassignSlotRequesting');
             unassignSpeedDialSlot({
                 slots: context.state.assignedSlots,
-                slot: slot,
+                slot: unassigned,
                 id: context.getters.subscriberId
             }).then(() => {
-                context.commit('unassignSlotSucceeded', slot.slot);
+                context.commit('unassignSlotSucceeded', unassigned.slot);
                 context.dispatch('loadSpeedDials');
             }).catch((error) => {
                 context.commit('unassignSlotFailed', error);
+            });
+        },
+        getUnassignedSlots(context) {
+            getUnassignedSlots(context.getters.subscriberId).then((result) => {
+                context.commit('loadUnassignedSlots', result);
+            });
+        },
+        assignSpeedDialSlot(context, assigned) {
+            context.commit('assignSlotRequesting');
+            assignSpeedDialSlot({
+                id: context.getters.subscriberId,
+                slot: assigned
+            }).then(() => {
+                context.commit('assignSlotSucceeded', assigned.slot);
+                context.dispatch('loadSpeedDials');
+                context.dispatch('getUnassignedSlots');
+            }).catch((error) => {
+                context.commit('assignSlotFailed', error);
             });
         }
     }
