@@ -1,3 +1,54 @@
+ngcp-csc-ui (6.5.0.0+0~mr6.5.0.0) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [e7d974e] TT#32966 Update Conversations List After Call
+  * [7abe8f2] TT#37311 Extract playable voicemail audio file
+  * [7c22a93] TT#37654 Filter PBXDevices by phone model
+  * [7cb906c] TT#37651 Change station name of PBXDevice
+  * [d1071ba] TT#38778 Fix voicemail component file permissions
+  * [126bd12] TT#38781 Update conversations list when call ends
+  * [af8602d] TT#38786 Fix console errors in timeset modules
+  * [3aec25e] TT#38810 See failed Faxes marked differently
+  * [beda2c8] TT#39947 Fix issue with cancel button saving
+  * [8d008b8] TT#39932 Call button visible when call disabled
+  * [a64f92b] TT#39817 Show non-number dests and fix tooltip
+  * [1b74777] TT#39930 Issues timestamp convs for Chrome/Safari
+  * [50f7c5e] TT#39927 Fix issue time and dests briefly shown
+  * [6d2515e] TT#40051 Fix manual authentication pbx safari
+  * [bcaf178] TT#40452 Fix loading animation in timesets
+  * [0caebab] TT#39926 Fix add source vue-warn prop error
+  * [5a104b4] TT#39810 Disabled send fax if fax is inactive
+  * [bb39aa1] TT#39618 Alternative pbx seats/groups entity title
+  * [a691c1c] TT#40422 Fix issue with destinations list mobile
+
+  [ Tijana Maksimovic ]
+  * [f2b2902] TT#37314 Implement UI for player (buttons and progress bar)
+  * [dbea287] TT#20309 Conversations: As a Customer, I want to filter items by type (call, voicemail, fax, etc. ...)
+
+  [ Hans-Peter Herzog ]
+  * [bd629d5] TT#20520 PBXConfig: As a Customer, I want to remove PBX Devices
+  * [f81efe9] TT#37259 Dev: Enable PATCH requests with header Prefer for CORS config
+  * [3f026fa] TT#36173 Global: As a Customer I want to see the page title in the title bar
+  * [93dff5b] TT#37302 PBXConfig: As a Customer, I want to assign groups or seats to a PBXDevice button
+  * [0c98a79] TT#20519 PBXConfig: As a Customer, I want to add new PBX Devices
+  * [60fd754] TT#37652 PBXConfig: As a Customer, I want to change the MAC address of a PBXDevice
+  * [858f812] TT#37555 Conversations: Fix and refactor conversation list and infinite scroll
+  * [57957c8] TT#38602 Conversations: Fix the reset process to be able to reload the list properly
+  * [1064711] TT#37653 PBXConfig: As a Customer, I want to change the phone model of a PBXDevice
+  * [32d6de6] TT#39164 Conversation: As a Customer, I want to see a message if list is empty
+  * [d435d67] TT#37657 Release: Enable the new CSC by default
+  * [9c1f6ae] TT#38820 PBXConfig: As a Customer, I want to be able to assign groups and seats to keys coming from multiple line ranges
+  * [63b9433] TT#39754 Global: Implement dynamic page title
+  * [54c1b07] TT#39593 [Issue] Call: Unable to open right drawer again after resizing and swiping it away
+  * [84d0197] TT#39589 CallBlocking: Refactor component, actions and store methods
+  * [d99f6fa] TT#39948 Reminder: Refactor api methods, component, mutations and actions
+  * [35e13e6] TT#40099 PBXConfig: As a Customer, I want to stay in the expanded seat/group after saving a single field
+  * [eeb9df5] TT#40454 [Issue] General: Adjust subtitle of conversations
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 24 Jul 2018 13:36:23 +0200
+
 ngcp-csc-ui (6.4.0.0+0~mr6.4.0.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
