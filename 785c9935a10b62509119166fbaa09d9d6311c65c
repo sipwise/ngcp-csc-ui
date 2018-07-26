@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1aca2d91_9cb889e7",
+        "filename": "src/components/pages/SpeedDial/CscSpeedDialAddForm.vue",
+        "patchSetId": 8
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-07-26T14:03:09Z",
+      "side": 1,
+      "message": "This is deliberate, and the same way we\u0027ve done it in other cases where the user needs to be informed why their attempted action can not be done, or needs to be done with caution. The \"multiple clicks results in multiple warnings\" behavior is due to the alert being dismissible, and is the same behavior across the use of alerts in CSC. If it\u0027s fine with you, for the reasons above, I propose we leave as is for this change, and keep it in mind for future overall alert improvements across CSC.",
+      "parentUuid": "1aca2d91_1c5239de",
+      "range": {
+        "startLine": 128,
+        "startChar": 20,
+        "endLine": 135,
+        "endChar": 23
+      },
+      "revId": "785c9935a10b62509119166fbaa09d9d6311c65c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aca2d91_3c55f5c5",
         "filename": "src/store/speed-dial.js",
         "patchSetId": 8
@@ -36,6 +60,30 @@
       "writtenOn": "2018-07-26T12:31:25Z",
       "side": 1,
       "message": "Leftover comma :)",
+      "range": {
+        "startLine": 112,
+        "startChar": 9,
+        "endLine": 112,
+        "endChar": 10
+      },
+      "revId": "785c9935a10b62509119166fbaa09d9d6311c65c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_5ccb1173",
+        "filename": "src/store/speed-dial.js",
+        "patchSetId": 8
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-07-26T14:03:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1aca2d91_3c55f5c5",
       "range": {
         "startLine": 112,
         "startChar": 9,
