@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "1aca2d91_3cdbb51d",
+        "filename": "src/components/pages/SpeedDial/CscSpeedDialAddForm.vue",
+        "patchSetId": 8
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1000044
+      },
+      "writtenOn": "2018-07-26T14:20:47Z",
+      "side": 1,
+      "message": "Sure. Good point!",
+      "parentUuid": "1aca2d91_9cb889e7",
+      "range": {
+        "startLine": 128,
+        "startChar": 20,
+        "endLine": 135,
+        "endChar": 23
+      },
+      "revId": "785c9935a10b62509119166fbaa09d9d6311c65c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aca2d91_3c55f5c5",
         "filename": "src/store/speed-dial.js",
         "patchSetId": 8
