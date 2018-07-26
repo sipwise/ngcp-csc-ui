@@ -7,10 +7,12 @@
         <div class="title">
             {{ $t('communication.sendFax') }}
         </div>
-        <q-field>
+        <q-field :error-label="errorMessage">
             <q-input
                 type="text"
                 v-model="form.destination"
+				@blur="$v.form.destination.$touch"
+				:error="$v.form.destination.$error"
                 :float-label="$t('communication.label.destination')" />
         </q-field>
         <q-field>
@@ -25,12 +27,15 @@
                 v-model="form.pageheader"
                 :float-label="$t('communication.label.pageHeader')" />
         </q-field>
-        <q-field>
+        <q-field :error-label="errorMessage">
             <q-input
                 type="textarea"
                 :max-height="100"
                 :min-rows="10"
                 v-model="form.data"
+				@blur="$v.form.data.$touch"
+				:error="$v.form.data.$error"
+				:error-label="errorMessage"
                 :float-label="$t('communication.label.content')" />
         </q-field>
         <q-btn flat dark @click="hideModal">{{ $t('communication.cancel') }}</q-btn>
@@ -39,6 +44,8 @@
 </template>
 
 <script>
+	import { required, minLength } from 'vuelidate/lib/validators'
+	import { showGlobalError } from '../helpers/ui'
     import {
         QModal,
         QBtn,
@@ -72,7 +79,21 @@
             QSelect,
             QInput
         },
+        validations: {
+			form: {
+				destination: {
+					required,
+					minLength: minLength(4)
+				},
+				data: {
+					required
+				}
+			}
+        },
         computed: {
+			errorMessage() {
+				return 'Error error';
+			},
             formDisabled() {
                 return !(this.form.destination &&
                     this.form.data && this.form.quality) ? true : false;
@@ -80,6 +101,11 @@
         },
         methods: {
             sendFax() {
+				this.$v.form.$touch();
+				if (this.$v.form.$error) {
+					showGlobalError('Please review fields again.');
+					return;
+				}
                 this.$store.dispatch('communication/createFax', this.form);
             },
             showModal() {
