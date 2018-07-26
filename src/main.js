@@ -17,6 +17,7 @@ import { RtcEngineCall } from './plugins/call'
 import App from './App.vue'
 import './filters'
 import VueScrollTo from 'vue-scrollto'
+import Vuelidate from 'vuelidate'
 
 import config from './config'
 
@@ -25,6 +26,7 @@ Vue.use(Quasar);
 Vue.use(VueResource);
 Vue.use(RtcEngineCall);
 Vue.use(VueScrollTo);
+Vue.use(Vuelidate)
 
 sync(store, router);
 
