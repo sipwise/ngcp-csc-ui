@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aca2d91_47ad7e87",
+        "filename": "src/api/pbx-config.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-07-27T15:00:38Z",
+      "side": 1,
+      "message": "This is causing issues when editing devices. Will fix.",
+      "range": {
+        "startLine": 326,
+        "startChar": 42,
+        "endLine": 326,
+        "endChar": 46
+      },
+      "revId": "34f64ece3898111bc2a4bcff5e1221d05632d1a5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aca2d91_c7598e90",
+        "filename": "src/store/pbx-config/mutations.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-07-27T15:00:38Z",
+      "side": 1,
+      "message": "I see no need to add mac address to device state. Also, I see no change of param type in the actions that call this mutation, which seems to have broken some of the loading animation functionality. I will fix by reverting.",
+      "range": {
+        "startLine": 188,
+        "startChar": 4,
+        "endLine": 214,
+        "endChar": 65
+      },
+      "revId": "34f64ece3898111bc2a4bcff5e1221d05632d1a5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
