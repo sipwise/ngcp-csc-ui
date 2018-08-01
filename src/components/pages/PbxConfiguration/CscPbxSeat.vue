@@ -1,94 +1,230 @@
 <template>
-    <q-card class="csc-entity csc-pbx-seat shadow-1">
-        <q-card-title class="csc-entity-title">
+
+    <q-item class="csc-list-item csc-pbx-seat">
+        <q-item-side
+            v-if="!expanded"
+        >
             <q-icon
+                size="32px"
                 name="person"
                 color="secondary"
-                size="24px"
             />
-            <span class="csc-entity-title-text">
-                {{ entityTitle }}
-            </span>
-            <q-chip
+        </q-item-side>
+        <q-item-main>
+            <q-item-tile
                 v-if="!expanded"
-                pointing="left"
-                color="primary"
-                class="gt-md"
+                class="csc-item-title"
+                label
             >
-                {{ $t('pbxConfig.extension') }}: <span class="csc-important">{{ seat.pbx_extension }}</span>
-            </q-chip>
-            <q-btn
-                :icon="titleIcon"
-                :small="isMobile"
-                color="primary"
-                slot="right"
-                flat
-                @click="toggleMain()"
-            />
-            <q-btn
-                icon="delete"
-                :small="isMobile"
-                color="negative"
-                slot="right"
-                flat
-                @click="remove()"
-            />
-        </q-card-title>
-        <q-card-main
-            v-if="expanded"
-            class="transition-generic"
+                {{ seat.display_name }}
+            </q-item-tile>
+            <q-item-tile
+                v-if="!expanded"
+                class="csc-item-subtitle"
+                sublabel
+            >
+                <div>
+                    <span class="csc-item-label">{{ $t('pbxConfig.extension') }}:</span>
+                    <span class="csc-item-value">{{ seat.pbx_extension }}</span>
+                </div>
+            </q-item-tile>
+            <q-item-tile
+                v-if="!expanded"
+                class="csc-item-subtitle"
+                sublabel
+            >
+                <div
+                    v-if="!hasGroups"
+                    class="csc-form-info"
+                >
+                    <q-icon name="info" color="info" size="24px"/>
+                    <span class="csc-info-text">{{ $t('pbxConfig.noGroupAssigned') }}</span>
+                </div>
+                <div
+                    v-if="hasGroups">
+                    <span
+                        class="csc-item-label">
+                        {{ $t('pbxConfig.groups') }}:
+                    </span>
+                    <span
+                        class="csc-item-value"
+                        v-for="group in seat.groups"
+                    >
+                        {{ group.display_name }}
+                    </span>
+                </div>
+            </q-item-tile>
+            <q-item-tile
+                class="csc-list-item-main"
+                v-if="expanded"
+            >
+                <q-field :label="$t('pbxConfig.seatName')">
+                    <q-input
+                        v-model="changes.name"
+                        :after="nameButtons"
+                        @keyup.enter="saveName"
+                    />
+                </q-field>
+                <q-field :label="$t('pbxConfig.extension')">
+                    <q-input
+                        v-model="changes.extension"
+                        :after="extensionButtons"
+                        @keyup.enter="saveExtension"
+                    />
+                </q-field>
+                <q-field :label="$t('pbxConfig.primaryNumber')">
+                    <q-input
+                        v-model="primaryNumber"
+                        readonly
+                        disable
+                    />
+                </q-field>
+                <q-field :label="$t('pbxConfig.aliasNumbers')">
+                    <q-select
+                        ref="aliasNumbers"
+                        v-model="changes.aliasNumbers"
+                        :options="aliasNumberOptions"
+                        multiple
+                        chips
+                        clearable
+                        :after="aliasNumberButtons"
+                    />
+                </q-field>
+                <q-field :label="$t('pbxConfig.groups')">
+                    <q-select
+                        v-model="changes.groups"
+                        :options="groupOptions"
+                        multiple
+                        chips
+                        clearable
+                        :after="groupButtons"
+                    />
+                </q-field>
+            </q-item-tile>
+        </q-item-main>
+        <q-item-side
+            right
+            class="csc-item-buttons"
         >
-            <q-field :label="$t('pbxConfig.seatName')">
-                <q-input
-                    v-model="changes.name"
-                    :after="nameButtons"
-                    @keyup.enter="saveName"
-                />
-            </q-field>
-            <q-field :label="$t('pbxConfig.extension')">
-                <q-input
-                    v-model="changes.extension"
-                    type="number"
-                    :after="extensionButtons"
-                    @keyup.enter="saveExtension"
-                />
-            </q-field>
-            <q-field :label="$t('pbxConfig.primaryNumber')">
-                <q-input
-                    v-model="primaryNumber"
-                    readonly
-                    disable
-                />
-            </q-field>
-            <q-field :label="$t('pbxConfig.aliasNumbers')">
-                <q-select
-                    ref="aliasNumbers"
-                    v-model="changes.aliasNumbers"
-                    :options="aliasNumberOptions"
-                    multiple
-                    chips
-                    clearable
-                    :after="aliasNumberButtons"
-                />
-            </q-field>
-            <q-field :label="$t('pbxConfig.groups')">
-                <q-select
-                    v-model="changes.groups"
-                    :options="groupOptions"
-                    multiple
-                    chips
-                    clearable
-                    :after="groupButtons"
-                />
-            </q-field>
-        </q-card-main>
+            <q-item-tile>
+                <div class="csc-item-button">
+                    <q-icon
+                        size="26px"
+                        :name="titleIcon"
+                        color="primary"
+                        slot="right"
+                        @click="toggleMain()"
+                    />
+                </div>
+                <div class="csc-item-button">
+                    <q-icon
+                        size="26px"
+                        name="delete"
+                        color="negative"
+                        slot="right"
+                        @click="remove()"
+                    />
+                </div>
+            </q-item-tile>
+        </q-item-side>
         <q-inner-loading :visible="isLoading">
             <q-spinner-mat
                 size="60px"
                 color="primary"
             />
         </q-inner-loading>
-    </q-card>
+    </q-item>
+
+    <!--<q-card class="csc-entity csc-pbx-seat shadow-1">-->
+        <!--<q-card-title class="csc-entity-title">-->
+            <!--<q-icon-->
+                <!--name="person"-->
+                <!--color="secondary"-->
+                <!--size="24px"-->
+            <!--/>-->
+            <!--<span class="csc-entity-title-text">-->
+                <!--{{ entityTitle }}-->
+            <!--</span>-->
+            <!--<q-chip-->
+                <!--v-if="!expanded"-->
+                <!--pointing="left"-->
+                <!--color="primary"-->
+                <!--class="gt-md"-->
+            <!--&gt;-->
+                <!--{{ $t('pbxConfig.extension') }}: <span class="csc-important">{{ seat.pbx_extension }}</span>-->
+            <!--</q-chip>-->
+            <!--<q-btn-->
+                <!--:icon="titleIcon"-->
+                <!--:small="isMobile"-->
+                <!--color="primary"-->
+                <!--slot="right"-->
+                <!--flat-->
+                <!--@click="toggleMain()"-->
+            <!--/>-->
+            <!--<q-btn-->
+                <!--icon="delete"-->
+                <!--:small="isMobile"-->
+                <!--color="negative"-->
+                <!--slot="right"-->
+                <!--flat-->
+                <!--@click="remove()"-->
+            <!--/>-->
+        <!--</q-card-title>-->
+        <!--<q-card-main-->
+            <!--v-if="expanded"-->
+            <!--class="transition-generic"-->
+        <!--&gt;-->
+            <!--<q-field :label="$t('pbxConfig.seatName')">-->
+                <!--<q-input-->
+                    <!--v-model="changes.name"-->
+                    <!--:after="nameButtons"-->
+                    <!--@keyup.enter="saveName"-->
+                <!--/>-->
+            <!--</q-field>-->
+            <!--<q-field :label="$t('pbxConfig.extension')">-->
+                <!--<q-input-->
+                    <!--v-model="changes.extension"-->
+                    <!--type="number"-->
+                    <!--:after="extensionButtons"-->
+                    <!--@keyup.enter="saveExtension"-->
+                <!--/>-->
+            <!--</q-field>-->
+            <!--<q-field :label="$t('pbxConfig.primaryNumber')">-->
+                <!--<q-input-->
+                    <!--v-model="primaryNumber"-->
+                    <!--readonly-->
+                    <!--disable-->
+                <!--/>-->
+            <!--</q-field>-->
+            <!--<q-field :label="$t('pbxConfig.aliasNumbers')">-->
+                <!--<q-select-->
+                    <!--ref="aliasNumbers"-->
+                    <!--v-model="changes.aliasNumbers"-->
+                    <!--:options="aliasNumberOptions"-->
+                    <!--multiple-->
+                    <!--chips-->
+                    <!--clearable-->
+                    <!--:after="aliasNumberButtons"-->
+                <!--/>-->
+            <!--</q-field>-->
+            <!--<q-field :label="$t('pbxConfig.groups')">-->
+                <!--<q-select-->
+                    <!--v-model="changes.groups"-->
+                    <!--:options="groupOptions"-->
+                    <!--multiple-->
+                    <!--chips-->
+                    <!--clearable-->
+                    <!--:after="groupButtons"-->
+                <!--/>-->
+            <!--</q-field>-->
+        <!--</q-card-main>-->
+        <!--<q-inner-loading :visible="isLoading">-->
+            <!--<q-spinner-mat-->
+                <!--size="60px"-->
+                <!--color="primary"-->
+            <!--/>-->
+        <!--</q-inner-loading>-->
+    <!--</q-card>-->
 </template>
 
 <script>
@@ -108,7 +244,12 @@
         QInnerLoading,
         QSpinnerMat,
         QTransition,
-        Platform
+        Platform,
+        QItem,
+        QItemSide,
+        QItemMain,
+        QItemTile,
+        QAlert
     } from 'quasar-framework'
     export default {
         name: 'csc-pbx-seat',
@@ -137,7 +278,12 @@
             QBtn,
             QInnerLoading,
             QSpinnerMat,
-            QTransition
+            QTransition,
+            QItem,
+            QItemSide,
+            QItemMain,
+            QItemTile,
+            QAlert
         },
         computed: {
             entityTitle() {
@@ -285,6 +431,9 @@
                     );
                 }
                 return buttons;
+            },
+            hasGroups() {
+                return _.isArray(_.get(this.seat, 'groups')) && this.seat.groups.length > 0;
             }
         },
         methods: {

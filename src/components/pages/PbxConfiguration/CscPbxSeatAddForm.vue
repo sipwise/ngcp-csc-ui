@@ -1,44 +1,100 @@
 <template>
-    <q-card class="csc-pbx-seat-add-form shadow-1">
-        <q-card-title>
-            <q-icon name="add" color="primary" size="22px"/>
-            <span>{{ $t('pbxConfig.addSeat') }}</span>
-        </q-card-title>
-        <q-card-main>
-            <q-field>
-                <q-input :disabled="loading" :readonly="loading" v-model="data.name" autofocus
-                         :float-label="$t('pbxConfig.seatName')"  clearable />
-            </q-field>
-            <q-field>
-                <q-input :disabled="loading" :readonly="loading" type="number" v-model="data.extension"
-                         clearable :min="1" :max="1000000" :float-label="$t('pbxConfig.extension')"  />
-            </q-field>
-            <q-field>
-                <q-select :disabled="loading" :readonly="loading" v-model="data.aliasNumbers" multiple chips clearable
-                          :float-label="$t('pbxConfig.aliasNumbers')" :options="aliasNumberOptions" />
-            </q-field>
-            <q-field>
-                <q-select :disabled="loading" :readonly="loading" v-model="data.groups" multiple chips clearable
-                          :float-label="$t('pbxConfig.groups')" :options="groupOptions" />
-            </q-field>
-        </q-card-main>
-        <q-card-separator/>
-        <q-card-actions align="center">
-            <q-btn v-if="!loading" flat color="secondary" icon="clear"
-                   @click="cancel()">{{ $t('buttons.cancel') }}</q-btn>
-            <q-btn v-if="!loading" flat color="primary" icon="done"
-                   @click="save()">{{ $t('buttons.save') }}</q-btn>
-        </q-card-actions>
+    <div class="csc-form csc-pbx-seat-add-form">
+        <q-field :error-label="seatNameErrorMessage">
+            <q-input
+                @input="$v.data.name.$touch"
+                :error="$v.data.name.$error"
+                :disabled="loading"
+                :readonly="loading"
+                v-model="data.name"
+                autofocus
+                :float-label="$t('pbxConfig.seatName')"
+                clearable
+            />
+        </q-field>
+        <q-field :error-label="extensionErrorMessage">
+            <q-input
+                @input="$v.data.extension.$touch"
+                :error="$v.data.extension.$error"
+                :disabled="loading"
+                :readonly="loading"
+                v-model="data.extension"
+                :float-label="$t('pbxConfig.extension')"
+                clearable
+            />
+        </q-field>
+        <q-field>
+            <q-select
+                :disabled="loading"
+                :readonly="loading"
+                v-model="data.aliasNumbers"
+                multiple
+                chips
+                clearable
+                :float-label="$t('pbxConfig.aliasNumbers')"
+                :options="aliasNumberOptions"
+            />
+        </q-field>
+        <q-field>
+            <q-select
+                :disabled="loading"
+                :readonly="loading"
+                v-model="data.groups"
+                multiple
+                chips
+                clearable
+                :float-label="$t('pbxConfig.groups')"
+                :options="groupOptions"
+            />
+        </q-field>
+        <div class="csc-form-actions row justify-center">
+            <q-btn
+                v-if="!loading"
+                flat
+                color="secondary"
+                icon="clear"
+                @click="cancel()"
+            >
+                {{ $t('buttons.cancel') }}
+            </q-btn>
+            <q-btn
+                v-if="!loading"
+                :disabled="$v.data.$invalid"
+                flat
+                color="primary"
+                icon="person"
+                @click="save()"
+            >
+                {{ $t('pbxConfig.createSeat') }}
+            </q-btn>
+        </div>
         <q-inner-loading :visible="loading">
-            <q-spinner-mat size="60px" color="primary"></q-spinner-mat>
+            <q-spinner-mat size="60px" color="primary" />
         </q-inner-loading>
-    </q-card>
+    </div>
 </template>
 
 <script>
 
-    import { QCard, QCardTitle, QCardMain, QCardActions, QCardSeparator, QBtn,
-        QInnerLoading, QSpinnerMat, QField, QInput, QSelect, QIcon } from 'quasar-framework'
+    import {
+        required,
+        maxLength,
+        numeric
+    } from 'vuelidate/lib/validators'
+    import {
+        QCard,
+        QCardTitle,
+        QCardMain,
+        QCardActions,
+        QCardSeparator,
+        QBtn,
+        QInnerLoading,
+        QSpinnerMat,
+        QField,
+        QInput,
+        QSelect,
+        QIcon
+    } from 'quasar-framework'
 
     export default {
         name: 'csc-pbx-seat-add-form',
@@ -48,12 +104,60 @@
             'loading'
         ],
         components: {
-            QCard, QCardTitle, QCardMain, QCardActions, QCardSeparator, QBtn,
-            QInnerLoading, QSpinnerMat, QField, QInput, QSelect, QIcon
+            QCard,
+            QCardTitle,
+            QCardMain,
+            QCardActions,
+            QCardSeparator,
+            QBtn,
+            QInnerLoading,
+            QSpinnerMat,
+            QField,
+            QInput,
+            QSelect,
+            QIcon
+        },
+        validations: {
+            data: {
+                name: {
+                    required,
+                    maxLength: maxLength(64)
+                },
+                extension: {
+                    required,
+                    numeric,
+                    maxLength: maxLength(64)
+                }
+            }
         },
         data () {
             return {
                 data: this.getDefaults()
+            }
+        },
+        computed: {
+            seatNameErrorMessage() {
+                if (!this.$v.data.name.required) {
+                    return this.$t('pbxConfig.requiredSeatName');
+                }
+                else if (!this.$v.data.name.maxLength) {
+                    return this.$t('pbxConfig.seatNameMaxLength', {
+                        maxLength: this.$v.data.name.$params.maxLength.max
+                    });
+                }
+            },
+            extensionErrorMessage() {
+                if (!this.$v.data.extension.required) {
+                    return this.$t('pbxConfig.requiredExtension');
+                }
+                else if (!this.$v.data.name.maxLength) {
+                    return this.$t('pbxConfig.extensionMaxLength', {
+                        maxLength: this.$v.data.extension.$params.maxLength.max
+                    });
+                }
+                else if (!this.$v.data.name.numeric) {
+                    return this.$t('pbxConfig.extensionAlphaNum');
+                }
             }
         },
         methods: {
@@ -73,16 +177,12 @@
             },
             reset() {
                 this.data = this.getDefaults();
+                this.$v.$reset();
             }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/quasar.variables.styl';
-    .csc-pbx-seat-add-form
-        position: relative
-    .csc-pbx-seat-add-form
-        .q-field:last-child
-            margin-bottom: 36px
+    @import '../../../themes/app.common.styl';
 </style>

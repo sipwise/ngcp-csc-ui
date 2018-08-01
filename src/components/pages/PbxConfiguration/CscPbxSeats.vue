@@ -1,14 +1,7 @@
 <template>
-    <csc-page :title="$t('pbxConfig.seatsTitle')">
-        <csc-pbx-seat-add-form
-            v-show="addFormEnabled"
-            ref="addForm"
-            :alias-number-options="aliasNumberOptions"
-            :group-options="groupOptions"
-            :loading="isAdding"
-            @save="addSeat"
-            @cancel="disableAddForm"
-        />
+    <csc-page
+        class="csc-list-page"
+    >
         <div
             v-show="!addFormEnabled"
             class="row justify-center"
@@ -22,6 +15,21 @@
                 {{ $t('pbxConfig.addSeat') }}
             </q-btn>
         </div>
+        <div
+            class="row justify-center"
+        >
+            <csc-pbx-seat-add-form
+                class="col-xs-12 col-md-6"
+                v-show="addFormEnabled"
+                ref="addForm"
+                :alias-number-options="aliasNumberOptions"
+                :group-options="groupOptions"
+                :loading="isAdding"
+                @save="addSeat"
+                @cancel="disableAddForm"
+            />
+        </div>
+
         <div
             v-if="isListLoadingVisible"
             class="row justify-center"
@@ -41,19 +49,31 @@
                 @change="changePage"
             />
         </div>
-        <csc-pbx-seat
-            v-for="seat in seats"
-            :key="seat.id"
-            :seat="seat"
-            :alias-number-options="aliasNumberOptions"
-            :group-options="groupOptions"
-            @remove="removeSeat"
-            :loading="isItemLoading(seat.id)"
-            @save-name="setSeatName"
-            @save-extension="setSeatExtension"
-            @save-alias-numbers="updateAliasNumbers"
-            @save-groups="updateGroups"
-        />
+        <div
+            class="">
+            <q-list
+                class=""
+                no-border
+                separator
+                sparse
+                multiline
+                :highlight="!isMobile"
+            >
+                <csc-pbx-seat
+                    v-for="seat in seats"
+                    :key="seat.id"
+                    :seat="seat"
+                    :alias-number-options="aliasNumberOptions"
+                    :group-options="groupOptions"
+                    @remove="removeSeat"
+                    :loading="isItemLoading(seat.id)"
+                    @save-name="setSeatName"
+                    @save-extension="setSeatExtension"
+                    @save-alias-numbers="updateAliasNumbers"
+                    @save-groups="updateGroups"
+                />
+            </q-list>
+        </div>
         <div
             v-if="seats.length === 0 && !isListRequesting"
             class="row justify-center csc-no-entities"
@@ -91,7 +111,8 @@
         QSpinnerDots,
         QSpinnerMat,
         Dialog,
-        QPagination
+        QPagination,
+        Platform
     } from 'quasar-framework'
 
     export default {
@@ -168,6 +189,9 @@
                     });
                 });
                 return groups;
+            },
+            isMobile() {
+                return Platform.is.mobile;
             }
         },
         watch: {

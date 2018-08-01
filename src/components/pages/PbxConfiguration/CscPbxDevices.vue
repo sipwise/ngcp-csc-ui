@@ -32,7 +32,7 @@
                         :after="searchButtonStationName"
                     />
                     <q-chip
-                        class="full-width"
+                        class="full-width csc-search-criteria"
                         v-if="listStationNameFilter != null"
                         color="primary"
                     >{{ listStationNameFilter }}
@@ -54,7 +54,7 @@
                         :after="searchButtonMacAddress"
                     />
                     <q-chip
-                        class="full-width"
+                        class="full-width csc-search-criteria"
                         v-if="listMacAddressFilter != null"
                         color="primary"
                     >{{ listMacAddressFilter }}
@@ -79,7 +79,7 @@
                         @select="filterByProfile"
                     />
                     <q-chip
-                        class="full-width"
+                        class="full-width csc-search-criteria"
                         v-if="listProfileFilter != null"
                         :avatar="profileUrl"
                         color="primary"
@@ -533,7 +533,7 @@
     .filter-model-select
         margin 16px 16px 8px 16px
 
-    .q-chip
+    .q-chip.csc-search-criteria
         position relative
         .q-chip-main
             text-overflow ellipsis

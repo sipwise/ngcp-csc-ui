@@ -10,7 +10,7 @@ import { getList, get, patchReplace } from './common'
 
 var createId = uuid.v4;
 
-export const PBX_CONFIG_ORDER_BY = 'created_timestamp';
+export const PBX_CONFIG_ORDER_BY = 'create_timestamp';
 export const PBX_CONFIG_ORDER_DIRECTION = 'desc';
 
 export function getGroups(options) {
