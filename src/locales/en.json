@@ -296,7 +296,7 @@
         "removeGroup": "Remove group",
         "removeGroupTitle": "Remove group",
         "removeGroupText": "You are about to remove group {group}",
-        "seatName": "Seat Name",
+        "seatName": "Name",
         "addSeat": "Add Seat",
         "removeSeat": "Remove seat",
         "removeSeatTitle": "Remove seat",
@@ -314,6 +314,11 @@
         "noStationName": "Could not find any device with station name matching the filter criteria",
         "noGroups": "No groups created yet",
         "noSeats": "No seats created yet",
+        "requiredSeatName": "Seat name is required",
+        "seatNameMaxLength": "Seat name must have at most {maxLength} letters",
+        "requiredExtension": "Extension is required",
+        "extensionMaxLength": "Extension must have at most {maxLength} letters",
+        "extensionAlphaNum": "Only alphanumeric characters are allowed",
         "toasts": {
             "changedFieldToast": "Changed {type} to {name}",
             "updatedAliasNumbersToast": "Alias numbers field updated!",
@@ -350,7 +355,9 @@
         "filterDevices": "Filter devices",
         "filterDevicesShort": "Filter",
         "resetFilters": "Reset filters",
-        "closeFilters": "Close filters"
+        "closeFilters": "Close filters",
+        "createSeat": "Create seat",
+        "noGroupAssigned": "Not assigned to any group"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",
