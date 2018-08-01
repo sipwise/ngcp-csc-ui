@@ -313,6 +313,8 @@
         "noMacAddress": "Could not find any device with MAC address matching the filter criteria",
         "noGroups": "No groups created yet",
         "noSeats": "No seats created yet",
+        "requiredSeatName": "Seat name is required",
+        "seatNameMaxLength": "Seat name must have at most {maxLength} letters",
         "toasts": {
             "changedFieldToast": "Changed {type} to {name}",
             "updatedAliasNumbersToast": "Alias numbers field updated!",
