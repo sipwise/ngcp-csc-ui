@@ -343,6 +343,11 @@ export default {
         state.listCurrentPage = 1;
         state.chipMacAddressFilter = macAddress;
     },
+    filterByStationName(state, stationName) {
+        state.listStationNameFilter = stationName;
+        state.listCurrentPage = 1;
+        state.chipStationNameFilter = stationName;
+    },
     resetProfileFilter(state) {
         state.listProfileFilter = null;
         state.chipModelFilter = null;
@@ -350,6 +355,10 @@ export default {
     resetMacAddressFilter(state) {
         state.listMacAddressFilter = null;
         state.chipMacAddressFilter = null;
+    },
+    resetStationNameFilter(state) {
+        state.listStationNameFilter = null;
+        state.chipStationNameFilter = null;
     },
     goToPage(state, page) {
         state.listCurrentPage = page;
