@@ -1,80 +1,324 @@
 <template>
     <div class="csc-call">
-        <audio ref="incomingSound" loop preload="auto" src="statics/ring.mp3"></audio>
-        <q-card flat color="secondary">
+        <audio
+            ref="incomingSound"
+            loop
+            preload="auto"
+            src="statics/ring.mp3"
+        ></audio>
+        <q-card
+            flat
+            color="secondary"
+        >
             <q-card-title>
-
                 <span v-if="isRinging || isInitiating || isIncoming">
-                    <q-spinner-rings color="primary" :size="50" />
+                    <q-spinner-rings
+                        color="primary"
+                        :size="50"
+                    />
                 </span>
 
-                <q-icon v-if="isPreparing" name="call" color="primary" size="26px"/>
-                <q-icon v-if="isEstablished && isCaller" name="call made" color="primary" size="26px"/>
-                <q-icon v-if="isEstablished && isCallee" name="call received" color="primary" size="26px"/>
-                <q-icon v-if="isEnded" name="error" color="primary" size="26px"/>
+                <q-icon
+                    v-if="isPreparing"
+                    name="call"
+                    color="primary"
+                    size="26px"
+                />
+                <q-icon
+                    v-if="isEstablished && isCaller"
+                    name="call made"
+                    color="primary"
+                    size="26px"
+                />
+                <q-icon
+                    v-if="isEstablished && isCallee"
+                    name="call received"
+                    color="primary"
+                    size="26px"
+                />
+                <q-icon
+                    v-if="isEnded"
+                    name="error"
+                    color="primary"
+                    size="26px"
+                />
 
-                <span v-if="isPreparing" class="text">{{ $t('call.startNew') }}</span>
-                <span v-else-if="isInitiating" class="text">{{ $t('call.initiating') }}</span>
-                <span v-else-if="isRinging" class="text">{{ $t('call.ringing') }}</span>
-                <span v-else-if="isEnded" class="text">{{ $t('call.ended') }}</span>
-                <span v-else-if="isIncoming" class="text">{{ $t('call.incoming') }}</span>
-                <span v-else class="text">{{ $t('call.call') }}</span>
+                <span
+                    v-if="isPreparing"
+                    class="text"
+                >
+                    {{ $t('call.startNew') }}
+                </span>
+                <span
+                    v-else-if="isInitiating"
+                    class="text"
+                >
+                    {{ $t('call.initiating') }}
+                </span>
+                <span
+                    v-else-if="isRinging"
+                    class="text"
+                >
+                    {{ $t('call.ringing') }}
+                </span>
+                <span
+                    v-else-if="isEnded"
+                    class="text"
+                >
+                    {{ $t('call.ended') }}
+                </span>
+                <span
+                    v-else-if="isIncoming"
+                    class="text"
+                >
+                    {{ $t('call.incoming') }}
+                </span>
+                <span
+                    v-else
+                    class="text"
+                >
+                    {{ $t('call.call') }}
+                </span>
 
-                <q-btn v-if="isFullscreenEnabled && !isMobile" round :small="!isFullscreenEnabled" slot="right"
-                       class="no-shadow" @click="toggleFullscreen()" icon="fullscreen exit"/>
-                <q-btn v-else-if="!isMobile" round :small="!isFullscreenEnabled" slot="right"
-                       class="no-shadow" @click="toggleFullscreen()" icon="fullscreen"/>
-                <q-btn round :small="!isFullscreenEnabled" slot="right"
-                       class="no-shadow" @click="close()" icon="clear"/>
+                <q-btn
+                    v-if="isFullscreenEnabled && !isMobile"
+                    round
+                    :small="!isFullscreenEnabled"
+                    slot="right"
+                    class="no-shadow"
+                    @click="toggleFullscreen()"
+                    icon="fullscreen exit"
+                />
+                <q-btn
+                    v-else-if="!isMobile"
+                    round
+                    :small="!isFullscreenEnabled"
+                    slot="right"
+                    class="no-shadow"
+                    @click="toggleFullscreen()"
+                    icon="fullscreen"
+                />
+                <q-btn
+                    round
+                    :small="!isFullscreenEnabled"
+                    slot="right"
+                    class="no-shadow"
+                    @click="close()"
+                    icon="clear"
+                />
             </q-card-title>
             <q-card-main>
-
-                <q-alert v-if="desktopSharingInstall" v-model="desktopSharingInstall"
-                         color="warning" :actions="desktopSharingAlertActions">
+                <q-alert
+                    v-if="desktopSharingInstall"
+                    v-model="desktopSharingInstall"
+                    color="warning"
+                    :actions="desktopSharingAlertActions"
+                >
                     {{ $t('call.desktopSharingNotInstalled') }}
                 </q-alert>
 
                 <div class="csc-call-info">
-                    <q-field v-show="isPreparing" :helper="$t('call.inputNumber')" :count="64" dark
-                             :error="validationEnabled && phoneNumberError" :error-label="$t('call.inputValidNumber')">
-                        <q-input type="text" :float-label="$t('call.number')" :value="phoneNumber" @input="inputPhoneNumber"
-                                 ref="numberInput" dark clearable :max="64" @blur="phoneNumberBlur" @focus="phoneNumberFocus"
-                                 @keypress.space.prevent @keydown.space.prevent />
+                    <q-field
+                        v-show="isPreparing"
+                        :helper="$t('call.inputNumber')"
+                        :count="64"
+                        dark
+                        :error="validationEnabled && phoneNumberError"
+                        :error-label="$t('call.inputValidNumber')"
+                    >
+                        <q-input
+                            type="text"
+                            :float-label="$t('call.number')"
+                            :value="phoneNumber"
+                            @input="inputPhoneNumber"
+                            ref="numberInput"
+                            dark
+                            clearable
+                            :max="64"
+                            @blur="phoneNumberBlur"
+                            @focus="phoneNumberFocus"
+                            @change="inputPhoneNumber"
+                            @click="phoneNumberFocus"
+                            @keypress.space.prevent
+                            @keydown.space.prevent
+                            :readonly="isMobile"
+                        />
                     </q-field>
-                    <div v-if="!isPreparing" class="phone-number">
-                        <q-icon v-if="isCalling && (localMediaType == 'audioVideo' || remoteMediaType == 'audioVideo')"
-                                name="videocam" color="primary" size="26px"/>
-                        <q-icon v-else-if="isCalling && (localMediaType == 'audioOnly' || remoteMediaType == 'audioVideo')"
-                                name="mic" color="primary" size="26px"/>
+                    <div
+                        v-if="!isPreparing"
+                        class="phone-number"
+                    >
+                        <q-icon
+                            v-if="isCalling && (localMediaType == 'audioVideo' || remoteMediaType == 'audioVideo')"
+                            name="videocam"
+                            color="primary"
+                            size="26px"
+                        />
+                        <q-icon
+                            v-else-if="isCalling && (localMediaType == 'audioOnly' || remoteMediaType == 'audioVideo')"
+                            name="mic"
+                            color="primary"
+                            size="26px"
+                        />
                         {{ getNumber | destinationFormat }}
                     </div>
-                    <div v-if="isEnded" class="ended-reason">{{ getEndedReason }}</div>
+                    <div
+                        v-if="isEnded"
+                        class="ended-reason"
+                    >
+                        {{ getEndedReason }}
+                    </div>
+                    <csc-call-dialpad
+                        v-if="(isMobile || isFullscreenEnabled) && showDialpad"
+                        @inserted="finalizePhoneNumber"
+                    />
                 </div>
 
                 <div class="csc-call-media">
-                    <csc-media :class="mediaPreviewClasses" id="local-media" :muted="true"
-                               v-show="isCalling" :stream="localMediaStream" />
-                    <csc-media class="csc-media-remote" id="remote-media" :muted="isMuted"
-                               v-show="isEstablished" :stream="remoteMediaStream" />
+                    <csc-media
+                        :class="mediaPreviewClasses"
+                        id="local-media"
+                        :muted="true"
+                        v-show="isCalling"
+                        :stream="localMediaStream"
+                    />
+                    <csc-media
+                        class="csc-media-remote"
+                        id="remote-media"
+                        :muted="isMuted"
+                        v-show="isEstablished"
+                        :stream="remoteMediaStream"
+                    />
                 </div>
 
             </q-card-main>
             <q-card-actions align="center">
-                <q-btn v-if="isEstablished" round :small="!isFullscreenEnabled" color="primary" @click="toggleAudio()" :icon="toggleAudioIcon" />
-                <q-btn v-if="isEstablished && localMediaType == 'audioVideo'" round :small="!isFullscreenEnabled" color="primary" @click="toggleVideo()" :icon="toggleVideoIcon" />
-                <q-btn v-if="isEstablished" round :small="!isFullscreenEnabled" color="primary" @click="toggleMute()" :icon="toggleMuteIcon" />
-                <q-btn v-if="isPreparing" round :small="!isFullscreenEnabled" color="primary" @click="call('audioOnly')" icon="mic" />
-                <q-btn v-if="isPreparing" round :small="!isFullscreenEnabled" color="primary" @click="call('audioVideo')" icon="videocam" />
-                <q-btn v-if="isPreparing && !isMobile" round :small="!isFullscreenEnabled" color="primary" @click="call('audioScreen')" icon="computer" />
-                <q-btn v-if="isCalling" round :small="!isFullscreenEnabled" color="negative" @click="hangUp()" icon="call end" />
-                <q-btn v-if="isEnded" round :small="!isFullscreenEnabled" color="negative" @click="init()" icon="clear"/>
-                <q-btn v-if="isIncoming" round :small="!isFullscreenEnabled" color="primary" @click="accept('audioOnly')" icon="mic" />
-                <q-btn v-if="isIncoming" round :small="!isFullscreenEnabled" color="primary" @click="accept('audioVideo')" icon="videocam" />
-                <q-btn v-if="isIncoming && !isMobile" round :small="!isFullscreenEnabled" color="primary" @click="accept('audioScreen')" icon="computer" />
-                <q-btn v-if="isIncoming" round :small="!isFullscreenEnabled" color="negative" @click="decline()" icon="call end" />
+                <q-btn
+                    v-if="isEstablished"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="toggleAudio()"
+                    :icon="toggleAudioIcon"
+                />
+                <q-btn
+                    v-if="isEstablished && localMediaType == 'audioVideo'"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="toggleVideo()"
+                    :icon="toggleVideoIcon"
+                />
+                <q-btn
+                    v-if="isEstablished"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="toggleMute()"
+                    :icon="toggleMuteIcon"
+                />
+                <q-btn
+                    v-if="isEstablished"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="toggleDialpad()"
+                    icon="dialpad"
+                />
+                <q-btn
+                    v-if="isPreparing"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="call('audioOnly')"
+                    icon="mic"
+                />
+                <q-btn
+                    v-if="isPreparing"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="call('audioVideo')"
+                    icon="videocam"
+                />
+                <q-btn
+                    v-if="isPreparing && !isMobile"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="call('audioScreen')"
+                    icon="computer"
+                />
+                <q-btn
+                    v-if="isPreparing"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="toggleDialpad()"
+                    icon="dialpad"
+                />
+                <q-btn
+                    v-if="isCalling"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="negative"
+                    @click="hangUp()"
+                    icon="call end"
+                />
+                <q-btn
+                    v-if="isEnded"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="negative"
+                    @click="init()"
+                    icon="clear"
+                />
+                <q-btn
+                    v-if="isIncoming"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="accept('audioOnly')"
+                    icon="mic"
+                />
+                <q-btn
+                    v-if="isIncoming"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="accept('audioVideo')"
+                    icon="videocam"
+                />
+                <q-btn
+                    v-if="isIncoming && !isMobile"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="accept('audioScreen')"
+                    icon="computer"
+                />
+                <q-btn
+                    v-if="isIncoming"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="primary"
+                    @click="toggleDialpad()"
+                    icon="dialpad"
+                />
+                <q-btn
+                    v-if="isIncoming"
+                    round
+                    :small="!isFullscreenEnabled"
+                    color="negative"
+                    @click="decline()"
+                    icon="call end"
+                />
             </q-card-actions>
         </q-card>
-
+        <csc-call-dialpad
+            v-if="!isMobile && !isFullscreenEnabled && showDialpad"
+            @inserted="finalizePhoneNumber"
+        />
     </div>
 </template>
 
@@ -87,6 +331,7 @@
     import numberFormat from '../filters/number-format'
     import { showCallNotification } from '../helpers/ui'
     import { getChromeExtensionUrl } from '../helpers/cdk-lib'
+    import CscCallDialpad from './CscCallDialpad'
     import {
         QLayout,
         QCard,
@@ -111,7 +356,8 @@
             return {
                 phoneNumber: '',
                 phoneNumberError: false,
-                validationEnabled: false
+                validationEnabled: false,
+                showDialpad: true
             }
         },
         components: {
@@ -127,11 +373,25 @@
             QIcon,
             QSpinnerRings,
             CscMedia,
-            QAlert
+            QAlert,
+            CscCallDialpad
+        },
+        created() {
+            if(Platform.is.mobile) {
+                this.showDialpad = true
+            }
+            else {
+                this.showDialpad = false;
+            }
         },
         methods: {
             inputPhoneNumber(value) {
                 this.phoneNumber = normalizeNumber(value, Platform.is.mobile);
+            },
+            finalizePhoneNumber(value) {
+                this.phoneNumber += value;
+                this.inputPhoneNumber(this.phoneNumber);
+                this.focusNumberInput();
             },
             focusNumberInput() {
                 Vue.nextTick(() => {
@@ -231,6 +491,9 @@
             },
             toggleFullscreen() {
                 this.$emit('fullscreen');
+            },
+            toggleDialpad() {
+                this.showDialpad = !this.showDialpad;
             }
         },
         computed: {
