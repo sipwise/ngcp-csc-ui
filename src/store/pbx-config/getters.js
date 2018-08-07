@@ -271,13 +271,29 @@ export default {
     listProfileFilter(state) {
         return state.listProfileFilter;
     },
+    listProfileFilterObject(state) {
+        if(state.listProfileFilter !== null) {
+            let profile = state.profiles[state.listProfileFilter];
+            profile.modelImage = state.modelImages[profile.device_id];
+            return profile;
+        }
+        else {
+            return null;
+        }
+    },
     listMacAddressFilter(state) {
         return state.listMacAddressFilter;
+    },
+    listStationNameFilter(state) {
+        return state.listStationNameFilter;
     },
     chipModelFilter(state) {
         return state.chipModelFilter;
     },
     chipMacAddressFilter(state) {
         return state.chipMacAddressFilter;
+    },
+    chipStationNameFilter(state) {
+        return state.chipStationNameFilter;
     }
 }

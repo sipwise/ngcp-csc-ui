@@ -7,6 +7,7 @@
         </q-item-side>
         <q-item-main :style="{zIndex: 10}">
             <q-item-tile
+                class="csc-device-title"
                 v-if="!expanded"
                 label
             >
@@ -350,4 +351,11 @@
 
     .csc-pbx-device-buttons
         margin-top 32px
+
+    .csc-device-title
+        text-overflow ellipsis
+        white-space: nowrap;
+        width 100%
+        overflow hidden
+        padding-right 72px
 </style>

@@ -336,20 +336,23 @@ export default {
     filterByProfile(state, profile) {
         state.listProfileFilter = profile.id;
         state.listCurrentPage = 1;
-        state.chipModelFilter = profile.name;
     },
     filterByMacAddress(state, macAddress) {
         state.listMacAddressFilter = macAddress;
         state.listCurrentPage = 1;
-        state.chipMacAddressFilter = macAddress;
+    },
+    filterByStationName(state, stationName) {
+        state.listStationNameFilter = stationName;
+        state.listCurrentPage = 1;
     },
     resetProfileFilter(state) {
         state.listProfileFilter = null;
-        state.chipModelFilter = null;
     },
     resetMacAddressFilter(state) {
         state.listMacAddressFilter = null;
-        state.chipMacAddressFilter = null;
+    },
+    resetStationNameFilter(state) {
+        state.listStationNameFilter = null;
     },
     goToPage(state, page) {
         state.listCurrentPage = page;
