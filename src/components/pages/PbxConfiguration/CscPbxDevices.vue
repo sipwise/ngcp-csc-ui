@@ -2,11 +2,117 @@
     <csc-page
         class="csc-list-page"
     >
-        <csc-pbx-devices-toolbar
-            @showForm="showForm"
-            @toggleFilterOptions="toggleFilterOptions"
-            @resetAll="resetAllFilters"
-        />
+        <div
+            class="row justify-center">
+            <q-btn
+                v-if="!formEnabled"
+                flat
+                icon="add"
+                color="primary"
+                @click="showForm()"
+            >Add Device</q-btn>
+            <q-btn
+                v-if="!filterEnabled"
+                flat
+                icon="fa-filter"
+                color="primary"
+                @click="toggleFilter()"
+            >Filter Devices</q-btn>
+            <q-btn
+                v-if="filterEnabled"
+                flat
+                icon="clear"
+                color="negative"
+                @click="resetFilter()"
+            >{{ filterButtonLabel }}</q-btn>
+        </div>
+
+        <div v-if="filterEnabled" class="row justify-center sm-gutter items-center">
+            <q-field
+                class="col-xs-12 col-md-4 col-lg-2">
+                <q-input
+                    v-if="listStationNameFilter == null"
+                    v-model="filterStationNameInput"
+                    :float-label="$t('pbxConfig.filterStationName')"
+                    @keyup.enter="filterByStationName()"
+                />
+                <q-chip
+                    class="full-width"
+                    v-if="listStationNameFilter != null"
+                    color="primary"
+                >{{ listStationNameFilter }}
+                    <q-icon
+                        size="26px"
+                        class="csc-chip-remove absolute-right cursor-pointer"
+                        name="fa-times-circle"
+                        @click="resetStationNameFilter()"
+                    />
+                </q-chip>
+            </q-field>
+            <q-field
+                class="col-xs-12 col-md-4 col-lg-2">
+                <q-input
+                    v-if="listMacAddressFilter == null"
+                    v-model="filterMacAddressInput"
+                    :float-label="$t('pbxConfig.filterMacAddress')"
+                    @keyup.enter="filterByMacAddress()"
+                />
+                <q-chip
+                    class="full-width"
+                    v-if="listMacAddressFilter != null"
+                    color="primary"
+                >{{ listMacAddressFilter }}
+                    <q-icon
+                        size="26px"
+                        class="csc-chip-remove absolute-right cursor-pointer"
+                        name="fa-times-circle"
+                        @click="resetMacAddressFilter()"
+                    />
+                </q-chip>
+            </q-field>
+            <q-field
+                class="col-xs-12 col-md-4 col-lg-2">
+                <csc-pbx-model-select
+                    v-if="listProfileFilter == null"
+                    :preview="false"
+                    :erasable="false"
+                    :profiles="profiles"
+                    :modelImages="modelImages"
+                    :label="$t('pbxConfig.filterPhoneModel')"
+                    @opened="modelSelectOpened()"
+                    @select="filterByProfile"
+                />
+                <q-chip
+                    class="full-width"
+                    v-if="listProfileFilter != null"
+                    :avatar="profileUrl"
+                    color="primary"
+                >{{ profileName }}
+                    <q-icon
+                        size="26px"
+                        class="csc-chip-remove absolute-right cursor-pointer"
+                        name="fa-times-circle"
+                        @click="resetProfileFilter()"
+                    />
+                </q-chip>
+            </q-field>
+        </div>
+
+        <div class="row justify-center">
+            <csc-pbx-device-add-form
+                class="col col-md-6 col-sm-12"
+                v-if="formEnabled"
+                ref="deviceAddForm"
+                :profiles="profiles"
+                :modelImages="modelImages"
+                :loading="createDeviceRequesting"
+                @remove="removeDevice"
+                @modelSelectOpened="modelSelectOpened()"
+                @save="saveDevice"
+                @cancelForm="cancelForm"
+            />
+        </div>
+
         <q-list
             no-border
             separator
@@ -16,22 +122,7 @@
             <q-item>
                 <q-item-main>
                     <div class="row justify-center">
-                        <csc-pbx-device-add-form
-                            class="col col-md-6 col-sm-12"
-                            v-if="formEnabled"
-                            ref="deviceAddForm"
-                            :profiles="profiles"
-                            :modelImages="modelImages"
-                            :loading="createDeviceRequesting"
-                            @remove="removeDevice"
-                            @modelSelectOpened="modelSelectOpened()"
-                            @save="saveDevice"
-                            @cancelForm="cancelForm"
-                        />
-                        <csc-pbx-devices-filter
-                            class="col col-md-6 col-sm-12"
-                            v-if="filterOptionsPanelOpened"
-                        />
+
                     </div>
                     <div
                         v-if="devices.length > 0 && !isListRequesting && listLastPage > 1"
@@ -81,13 +172,12 @@
 </template>
 
 <script>
+    import _ from 'lodash'
     import { mapGetters } from 'vuex'
     import CscPage  from '../../CscPage'
     import CscPbxDevice from './CscPbxDevice'
     import CscPbxDeviceAddForm from './CscPbxDeviceAddForm'
-    import CscPbxDevicesFilter from './CscPbxDevicesFilter'
     import CscPbxModelSelect from './CscPbxModelSelect'
-    import CscPbxDevicesToolbar from './CscPbxDevicesToolbar'
     import { showToast, showGlobalError } from '../../../helpers/ui'
     import {
         QSpinnerDots,
@@ -97,15 +187,20 @@
         QItem,
         QItemMain,
         QBtn,
-        QSelect
+        QSelect,
+        QField,
+        QInput,
+        QChip,
+        QIcon
     } from 'quasar-framework'
 
     export default {
         data () {
             return {
                 formEnabled: false,
-                filterOptionsPanelOpened: false,
-                platform: this.$q.platform.is
+                filterEnabled: false,
+                filterStationNameInput: '',
+                filterMacAddressInput: ''
             }
         },
         mounted() {
@@ -125,7 +220,11 @@
             QItem,
             QBtn,
             QSelect,
-            QItemMain
+            QItemMain,
+            QField,
+            QInput,
+            QChip,
+            QIcon
         },
         computed: {
             ...mapGetters('pbxConfig', [
@@ -155,36 +254,52 @@
                 'updatedDeviceError',
                 'updatedDeviceProperty',
                 'listProfileFilter',
-                'listMacAddressFilter'
+                'listProfileFilterObject',
+                'listMacAddressFilter',
+                'listStationNameFilter'
             ]),
             noDeviceMessage() {
-                if (this.listProfileFilter && !this.listMacAddressFilter) {
+                if (this.listProfileFilter && !this.listMacAddressFilter && !this.listStationNameFilter) {
                     return this.$t('pbxConfig.noModel');
                 }
-                else if (this.listMacAddressFilter && !this.listProfileFilter) {
+                else if (this.listMacAddressFilter && !this.listProfileFilter && !this.listStationNameFilter) {
                     return this.$t('pbxConfig.noMacAddress')
                 }
-                if (this.listMacAddressFilter && this.listProfileFilter) {
+                else if (this.listStationNameFilter && !this.listProfileFilter && !this.listMacAddressFilter) {
+                    return this.$t('pbxConfig.noStationName');
+                }
+                if (this.listMacAddressFilter && this.listProfileFilter && this.listStationNameFilter ||
+                    this.listMacAddressFilter && this.listProfileFilter && !this.listStationNameFilter ||
+                    this.listMacAddressFilter && !this.listProfileFilter && this.listStationNameFilter ||
+                    !this.listMacAddressFilter && this.listProfileFilter && this.listStationNameFilter
+                ) {
                     return this.$t('pbxConfig.noDevicesFound');
                 }
                 else if (this.devices.length === 0) {
                     return this.$t('pbxConfig.noDevicesCreated');
                 }
+            },
+            profileUrl() {
+                return _.get(this.listProfileFilterObject, 'modelImage.url', null);
+            },
+            profileName() {
+                return this.listProfileFilterObject.name;
+            },
+            hasFilters() {
+                return this.listProfileFilterObject !== null ||
+                    this.listMacAddressFilter !== null ||
+                    this.listStationNameFilter !== null;
+            },
+            filterButtonLabel() {
+                if(this.hasFilters) {
+                    return 'Reset Filters';
+                }
+                else {
+                    return 'Close Filters';
+                }
             }
         },
         methods: {
-            resetAllFilters() {
-                this.filterOptionsPanelOpened = false;
-                this.$emit('resetAllFilters');
-                this.resetProfileFilter();
-                this.resetMacAddressFilter();
-            },
-            resetProfileFilter() {
-                this.$store.dispatch('pbxConfig/resetProfileFilter');
-            },
-            resetMacAddressFilter() {
-                this.$store.dispatch('pbxConfig/resetMacAddressFilter');
-            },
             changePage(page) {
                 this.$store.dispatch('pbxConfig/goToPage', page);
             },
@@ -236,19 +351,52 @@
                 this.$store.dispatch('pbxConfig/setProfile', data);
             },
             showForm() {
-                if(this.filterOptionsPanelOpened) {
-                    this.toggleFilterOptions();
+                if(this.filterEnabled) {
+                    this.resetFilter();
                 }
                 this.formEnabled = true;
             },
             cancelForm() {
                 this.formEnabled = false;
             },
-            toggleFilterOptions() {
-                if(this.formEnabled) {
+            toggleFilter() {
+                if(this.formEnabled && !this.filterEnabled) {
                     this.cancelForm();
                 }
-                this.filterOptionsPanelOpened = !this.filterOptionsPanelOpened;
+                this.filterEnabled = !this.filterEnabled;
+            },
+            resetFilter() {
+                this.filterEnabled = false;
+                this.filterStationNameInput = '';
+                this.filterMacAddressInput = '';
+                if(this.hasFilters) {
+                    this.resetFilters();
+                }
+            },
+            filterByStationName() {
+                this.$store.dispatch('pbxConfig/filterByStationName', this.filterStationNameInput);
+                this.filterStationNameInput = '';
+            },
+            resetStationNameFilter() {
+                this.filterStationNameInput = this.listStationNameFilter;
+                this.$store.dispatch('pbxConfig/resetStationNameFilter');
+            },
+            filterByMacAddress() {
+                this.$store.dispatch('pbxConfig/filterByMacAddress', this.filterMacAddressInput);
+                this.filterMacAddressInput = '';
+            },
+            resetMacAddressFilter() {
+                this.filterMacAddressInput = this.listMacAddressFilter;
+                this.$store.dispatch('pbxConfig/resetMacAddressFilter');
+            },
+            filterByProfile(profile) {
+                this.$store.dispatch('pbxConfig/filterByProfile', profile);
+            },
+            resetProfileFilter() {
+                this.$store.dispatch('pbxConfig/resetProfileFilter');
+            },
+            resetFilters() {
+                this.$store.dispatch('pbxConfig/resetDeviceFilters');
             }
         },
         watch: {
@@ -317,4 +465,26 @@
 <style lang="stylus" rel="stylesheet/stylus">
     .filter-model-select
         margin 16px 16px 8px 16px
+
+    .q-chip
+        position relative
+        .q-chip-main
+            text-overflow ellipsis
+            white-space: nowrap;
+            width 100%
+            overflow hidden
+            padding-right 18px
+
+        .csc-chip-remove
+            right 6px
+
+        .q-chip-side
+            background-color white
+            position relative
+            img
+                position absolute
+                display block
+                top 0
+
+
 </style>
