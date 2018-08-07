@@ -306,6 +306,15 @@ export class RtcEngineCall {
         }
     }
 
+    sendDTMF(char) {
+        if(this.localCall !== null) {
+            this.localCall.sendDTMF(char);
+        }
+        else if (this.remoteCall !== null) {
+            this.remoteCall.sendDTMF(char);
+        }
+    }
+
     getCall() {
         if(this.localCall !== null) {
             return this.localCall;
