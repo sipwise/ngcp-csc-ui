@@ -1,51 +1,49 @@
 <template>
-    <div class="col">
-        <div class="col">
-            <q-field>
-                <q-input
-                    v-model="data.station_name"
-                    :disabled="loading"
-                    :readonly="loading"
-                    autofocus
-                    :float-label="$t('pbxConfig.deviceStationName')"
-                    clearable
-                />
-            </q-field>
-            <q-field>
-                <q-input
-                    v-model="data.identifier"
-                    :disabled="loading"
-                    :readonly="loading"
-                    :float-label="$t('pbxConfig.deviceIdentifier')"
-                    clearable
-                />
-            </q-field>
-            <q-field>
-                <csc-pbx-model-select
-                    :profiles="profiles"
-                    :modelImages="modelImages"
-                    :label="$t('pbxConfig.deviceModel')"
-                    @opened="modelSelectOpened()"
-                    @select="selectProfile"
-                />
-            </q-field>
-            <div
-                class="row justify-center form-actions"
-            >
-                <q-btn
-                    v-if="!loading"
-                    flat color="secondary"
-                    icon="clear"
-                    @click="cancel()"
-                >{{ $t('buttons.cancel') }}</q-btn>
-                <q-btn
-                    v-if="!loading"
-                    flat
-                    color="primary"
-                    icon="done"
-                    @click="save()"
-                >{{ $t('buttons.save') }}</q-btn>
-            </div>
+    <div>
+        <q-field>
+            <q-input
+                v-model="data.station_name"
+                :disabled="loading"
+                :readonly="loading"
+                autofocus
+                :float-label="$t('pbxConfig.deviceStationName')"
+                clearable
+            />
+        </q-field>
+        <q-field>
+            <q-input
+                v-model="data.identifier"
+                :disabled="loading"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.deviceIdentifier')"
+                clearable
+            />
+        </q-field>
+        <q-field>
+            <csc-pbx-model-select
+                :profiles="profiles"
+                :modelImages="modelImages"
+                :label="$t('pbxConfig.deviceModel')"
+                @opened="modelSelectOpened()"
+                @select="selectProfile"
+            />
+        </q-field>
+        <div
+            class="row justify-center form-actions"
+        >
+            <q-btn
+                v-if="!loading"
+                flat color="secondary"
+                icon="clear"
+                @click="cancel()"
+            >{{ $t('buttons.cancel') }}</q-btn>
+            <q-btn
+                v-if="!loading"
+                flat
+                color="primary"
+                icon="done"
+                @click="save()"
+            >{{ $t('buttons.save') }}</q-btn>
         </div>
         <q-inner-loading
             v-show="loading"
