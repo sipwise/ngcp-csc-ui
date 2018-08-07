@@ -262,11 +262,16 @@ export default {
             getDeviceList({
                 page: _.get(context, 'getters.listCurrentPage', 1),
                 profile_id: _.get(context, 'getters.listProfileFilter', null),
-                identifier: _.get(context, 'getters.listMacAddressFilter', null)
+                identifier: _.get(context, 'getters.listMacAddressFilter', null),
+                station_name: _.get(context, 'getters.listStationNameFilter', null)
             }).then((devices)=>{
                 context.commit('deviceListSucceeded', devices);
                 devices.items.forEach((device)=>{
-                    context.dispatch('loadDevice', device.id);
+                    context.dispatch('loadDevice', {
+                        id: device.id,
+                        macAddress: device.identifier,
+                        station_name: device.station_name
+                    });
                 });
                 resolve();
             }).catch((err)=>{
@@ -390,12 +395,20 @@ export default {
         context.commit('filterByMacAddress', macAddress);
         context.dispatch('listDevices');
     },
+    filterByStationName(context, stationName) {
+        context.commit('filterByStationName', stationName);
+        context.dispatch('listDevices');
+    },
     resetProfileFilter(context) {
         context.commit('resetProfileFilter');
         context.dispatch('listDevices');
     },
     resetMacAddressFilter(context) {
         context.commit('resetMacAddressFilter');
+        context.dispatch('listDevices');
+    },
+    resetStationNameFilter(context) {
+        context.commit('resetStationNameFilter');
         context.dispatch('listDevices');
     },
     goToPage(context, page) {

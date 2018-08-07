@@ -274,10 +274,16 @@ export default {
     listMacAddressFilter(state) {
         return state.listMacAddressFilter;
     },
+    listStationNameFilter(state) {
+        return state.listStationNameFilter;
+    },
     chipModelFilter(state) {
         return state.chipModelFilter;
     },
     chipMacAddressFilter(state) {
         return state.chipMacAddressFilter;
+    },
+    chipStationNameFilter(state) {
+        return state.chipStationNameFilter;
     }
 }

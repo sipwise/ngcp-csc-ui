@@ -311,6 +311,7 @@
         "noDevicesFound": "Could not find any device matching any of the filter criteria",
         "noModel": "Could not find any device with model matching the filter criteria",
         "noMacAddress": "Could not find any device with MAC address matching the filter criteria",
+        "noStationName": "Could not find any device with station name matching the filter criteria",
         "noGroups": "No groups created yet",
         "noSeats": "No seats created yet",
         "toasts": {
@@ -343,6 +344,7 @@
         "keyTypePrivate": "Private",
         "filterPhoneModel": "Filter by phone model",
         "filterMacAddress": "Filter by MAC address",
+        "filterStationName": "Filter by station name",
         "showFilters": "Show filters",
         "filterDevices": "Filter devices",
         "resetFilters": "Reset filters"

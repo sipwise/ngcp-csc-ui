@@ -114,6 +114,11 @@
                 selectedProfile: this.getDefaults()
             }
         },
+        created() {
+            if (this.listProfileFilter) {
+                this.selectById(this.listProfileFilter);
+            }
+        },
         computed: {
             ...mapGetters('pbxConfig', [
                 'listProfileFilter'

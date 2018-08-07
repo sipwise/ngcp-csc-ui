@@ -1,6 +1,10 @@
 <template>
     <div class="col">
         <div class="filterOptionsPanel">
+            <csc-pbx-station-name-input
+                @filter="filterByStationName"
+                @reset="resetStationNameFilter"
+            />
             <csc-pbx-mac-input
                 @filter="filterByMacAddress"
                 @reset="resetMacAddressFilter"
@@ -21,12 +25,14 @@
 
 <script>
     import { mapGetters } from 'vuex'
+    import CscPbxStationNameInput from './CscPbxStationNameInput'
     import CscPbxModelSelect from './CscPbxModelSelect'
     import CscPbxMacInput from './CscPbxMacInput'
 
     export default {
         name: 'csc-pbx-devices-filter',
         components: {
+            CscPbxStationNameInput,
             CscPbxModelSelect,
             CscPbxMacInput
         },
@@ -43,11 +49,17 @@
             filterByMacAddress(identifier) {
                 this.$store.dispatch('pbxConfig/filterByMacAddress', identifier);
             },
+            filterByStationName(stationName) {
+                this.$store.dispatch('pbxConfig/filterByStationName', stationName);
+            },
             resetProfileFilter() {
                 this.$store.dispatch('pbxConfig/resetProfileFilter');
             },
             resetMacAddressFilter() {
                 this.$store.dispatch('pbxConfig/resetMacAddressFilter');
+            },
+            resetStationNameFilter() {
+                this.$store.dispatch('pbxConfig/resetStationNameFilter');
             },
             modelSelectOpened() {
                 this.$store.dispatch('pbxConfig/loadProfiles');
