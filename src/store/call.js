@@ -34,7 +34,8 @@ export default {
         muted: false,
         caller: false,
         callee: false,
-        desktopSharingInstall: false
+        desktopSharingInstall: false,
+        dtmf: null
     },
     getters: {
         getNumber(state) {
@@ -136,6 +137,9 @@ export default {
         },
         desktopSharingInstall(state) {
             return state.desktopSharingInstall;
+        },
+        dtmfState(state) {
+            return state.dtmf;
         }
     },
     mutations: {
@@ -227,6 +231,9 @@ export default {
         },
         desktopSharingInstall(state)  {
             state.desktopSharingInstall = true;
+        },
+        sendDTMF(state, value) {
+            state.dtmf = value;
         }
     },
     actions: {
@@ -323,6 +330,12 @@ export default {
         },
         hideCall(context) {
             context.commit('layout/hideRight', null, { root: true });
+        },
+        sendDTMF(context, value) {
+            context.commit('sendDTMF', value);
+            if(Vue.call.hasRunningCall()) {
+                Vue.call.sendDTMF(value);
+            }
         }
     }
 };

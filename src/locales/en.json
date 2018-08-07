@@ -266,7 +266,7 @@
         "call": "Established",
         "inputNumber": "Input a phone number",
         "inputValidNumber": "Input a valid phone number",
-        "number": "Number",
+        "number": "Phone number",
         "endCall": "End Call",
         "endCallDialog": "You are about to end the current call. Are you sure?",
         "notificationTitle": "Incoming call from {number}",
