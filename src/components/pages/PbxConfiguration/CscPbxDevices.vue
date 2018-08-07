@@ -155,16 +155,24 @@
                 'updatedDeviceError',
                 'updatedDeviceProperty',
                 'listProfileFilter',
-                'listMacAddressFilter'
+                'listMacAddressFilter',
+                'listStationNameFilter'
             ]),
             noDeviceMessage() {
-                if (this.listProfileFilter && !this.listMacAddressFilter) {
+                if (this.listProfileFilter && !this.listMacAddressFilter && !this.listStationNameFilter) {
                     return this.$t('pbxConfig.noModel');
                 }
-                else if (this.listMacAddressFilter && !this.listProfileFilter) {
+                else if (this.listMacAddressFilter && !this.listProfileFilter && !this.listStationNameFilter) {
                     return this.$t('pbxConfig.noMacAddress')
                 }
-                if (this.listMacAddressFilter && this.listProfileFilter) {
+                else if (this.listStationNameFilter && !this.listProfileFilter && !this.listMacAddressFilter) {
+                    return this.$t('pbxConfig.noStationName');
+                }
+                if (this.listMacAddressFilter && this.listProfileFilter && this.listStationNameFilter ||
+                    this.listMacAddressFilter && this.listProfileFilter && !this.listStationNameFilter ||
+                    this.listMacAddressFilter && !this.listProfileFilter && this.listStationNameFilter ||
+                    !this.listMacAddressFilter && this.listProfileFilter && this.listStationNameFilter
+                ) {
                     return this.$t('pbxConfig.noDevicesFound');
                 }
                 else if (this.devices.length === 0) {
@@ -178,12 +186,16 @@
                 this.$emit('resetAllFilters');
                 this.resetProfileFilter();
                 this.resetMacAddressFilter();
+                this.resetStationNameFilter();
             },
             resetProfileFilter() {
                 this.$store.dispatch('pbxConfig/resetProfileFilter');
             },
             resetMacAddressFilter() {
                 this.$store.dispatch('pbxConfig/resetMacAddressFilter');
+            },
+            resetStationNameFilter() {
+                this.$store.dispatch('pbxConfig/resetStationNameFilter');
             },
             changePage(page) {
                 this.$store.dispatch('pbxConfig/goToPage', page);
