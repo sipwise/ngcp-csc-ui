@@ -11,7 +11,7 @@
                     icon="add"
                     flat
                     @click="enableForm()"
-                    :class="{ cscLabelMobile: isSmallLabelBreakpoint }"
+                    :class="[{ cscLabelMobile: isSmallLabelBreakpoint }, { cscIconMobile: isSmallIconBreakpoint }]"
                 >
                     {{ $t('pbxConfig.addDevice') }}
                 </q-btn>
@@ -39,6 +39,15 @@
                 >
                     {{ $t('pbxConfig.filterDevices') }}
                 </q-btn>
+                <q-chip
+                    small
+                    tag
+                    square
+                    color="primary"
+                    v-if="chipStationNameFilter"
+                >
+                    {{ chipStationNameFilter | removeTrailingWildcard }}
+                </q-chip>
                 <q-chip
                     small
                     tag
@@ -105,7 +114,8 @@
             ...mapGetters('pbxConfig', [
                 'devices',
                 'chipModelFilter',
-                'chipMacAddressFilter'
+                'chipMacAddressFilter',
+                'chipStationNameFilter'
             ]),
             isSmallLabelBreakpoint() {
                 return (width <= 390 && width > 352);
@@ -117,27 +127,27 @@
                 return (Platform.is.mobile || width < 1270);
             },
             filtersApplied() {
-                return (this.chipModelFilter || this.chipMacAddressFilter);
+                return (this.chipModelFilter || this.chipMacAddressFilter || this.chipStationNameFilter);
             },
             showFilterLabel() {
                 return this.filtersApplied ? this.$t('pbxConfig.showFilters')  : this.$t('pbxConfig.filterDevices');
             },
             checkFiltersApplied() {
-                return !(this.chipModelFilter || this.chipMacAddressFilter);
+                return !(this.chipModelFilter || this.chipMacAddressFilter || this.chipStationNameFilter);
             },
             checkDevicesCreated() {
-                return (this.devices.length === 0 && !this.chipModelFilter && !this.chipMacAddressFilter);
+                return (this.devices.length === 0 && !this.chipModelFilter && !this.chipMacAddressFilter && !this.chipStationNameFilter);
             }
         },
         methods: {
             enableForm() {
-                if(this.chipModelFilter || this.chipMacAddressFilter) {
+                if(this.chipModelFilter || this.chipMacAddressFilter || this.chipStationNameFilter) {
                     this.resetAllFilters();
                 }
                 this.$emit('showForm');
             },
             toggleFilterOptions() {
-                if(this.devices.length !== 0 || this.chipModelFilter || this.chipMacAddressFilter) {
+                if(this.devices.length !== 0 || this.chipModelFilter || this.chipMacAddressFilter || this.chipStationNameFilter) {
                     this.$emit('toggleFilterOptions');
                 }
             },

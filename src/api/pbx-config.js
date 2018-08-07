@@ -201,6 +201,7 @@ export function getDeviceList(options) {
             page: options.page,
             profile_id: options.profile_id,
             identifier: options.identifier,
+            station_name: options.station_name,
             order_by: PBX_CONFIG_ORDER_BY,
             order_by_direction: PBX_CONFIG_ORDER_DIRECTION
         };
@@ -209,6 +210,9 @@ export function getDeviceList(options) {
         }
         if(params.identifier === null) {
             delete params['identifier'];
+        }
+        if(params.station_name === null) {
+            delete params['station_name'];
         }
         return getDevices({
             params: params
