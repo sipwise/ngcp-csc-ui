@@ -53,8 +53,6 @@
                     :float-label="$t('pages.callForward.timeout')"
                     type="number"
                     v-model="destinationForm.timeout"
-                    :min="0"
-                    :max="600"
                     suffix="seconds"
                 />
             </q-field>
