@@ -186,6 +186,9 @@
             "timeout": "Timeout",
             "destination": "Destination",
             "terminatedTooltip": "This destination comes after a terminating destinations, and is therefore inactive.",
+            "ownPhoneEnabled": "Own phone called first",
+            "ownPhoneDisabled": "Own phone not called first",
+            "updateOwnPhoneErrorMessage": "An error occured while trying to update own phone. Please try again",
             "times": {
                 "removeDialogTitle": "Remove call forward time",
                 "removeDialogText": "You are about to remove the time entry for {day}",
