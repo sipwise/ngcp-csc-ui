@@ -1,8 +1,18 @@
 <template>
     <div>
-        <q-item highlight separator class="csc-destination" :key="index" v-for="(destination, index) in destinations">
+        <q-item
+            highlight
+            separator
+            class="csc-destination"
+            :key="index"
+            v-for="(destination, index) in destinations"
+        >
             <q-item-main>
-                <div v-if="$q.platform.is.desktop" class="dest-row" :class="{ terminated: destination.terminated }">
+                <div
+                    v-if="$q.platform.is.desktop"
+                    class="dest-row"
+                    :class="{ terminated: destination.terminated }"
+                >
                     <span v-if="index == 0">
                         {{ $t('pages.callForward.firstRing') }}
                     </span>
@@ -27,8 +37,15 @@
                         {{ $t('pages.callForward.terminatedTooltip') }}
                     </q-tooltip>
                 </div>
-                <div v-if="$q.platform.is.mobile" class="dest-row" :class="{ terminated: destination.terminated, mobile: mobileClasses }">
-                    <q-item-tile class="dest-values" label>
+                <div
+                    v-if="$q.platform.is.mobile"
+                    class="dest-row mobile"
+                    :class="{ terminated: destination.terminated }"
+                >
+                    <q-item-tile
+                        class="dest-values"
+                        label
+                    >
                         <span v-if="!isNonTerminating(destination.destination)">
                             <span v-if="index == 0">
                                 {{ $t('pages.callForward.firstRing') }}
@@ -39,7 +56,10 @@
                         </span>
                         {{ destination.destination | destinationFormat }}
                     </q-item-tile>
-                    <q-item-tile class="dest-sublabel" sublabel>
+                    <q-item-tile
+                        class="dest-sublabel"
+                        sublabel
+                    >
                         <span v-if="index == 0 && isNonTerminating(destination.destination)">
                             {{ $t('pages.callForward.firstRing') }}
                         </span>
@@ -63,20 +83,42 @@
                     </q-tooltip>
                 </div>
             </q-item-main>
-            <q-item-side class="dest-btns" icon="more_vert" right>
+            <q-item-side
+                class="dest-btns"
+                icon="more_vert"
+                right
+            >
                 <q-popover ref="popover">
-                    <q-list separator link>
-                        <q-item v-if="destinations.length > 1 && !hasNoUpOption(index)" @click="moveDestination('up', index), $refs.popover[index].close()">
+                    <q-list
+                        separator
+                        link
+                    >
+                        <q-item
+                            v-if="destinations.length > 1 && !hasNoUpOption(index)"
+                            @click="moveDestination('up', index), $refs.popover[index].close()"
+                        >
                             <q-item-main :label="$t('buttons.moveUp')" />
-                            <q-item-side icon="keyboard_arrow_up" color="secondary"></q-item-side>
+                            <q-item-side
+                                icon="keyboard_arrow_up"
+                                color="secondary"
+                            />
                         </q-item>
-                        <q-item v-if="destinations.length > 1 && !hasNoDownOption(index)" @click="moveDestination('down', index), $refs.popover[index].close()">
+                        <q-item
+                            v-if="destinations.length > 1 && !hasNoDownOption(index)"
+                            @click="moveDestination('down', index), $refs.popover[index].close()"
+                        >
                             <q-item-main :label="$t('buttons.moveDown')" />
-                            <q-item-side icon="keyboard_arrow_down" color="secondary"></q-item-side>
+                            <q-item-side
+                                icon="keyboard_arrow_down"
+                                color="secondary"
+                            />
                         </q-item>
                         <q-item @click="deleteDestination(index), $refs.popover[index].close()">
                             <q-item-main :label="$t('buttons.remove')" />
-                            <q-item-side icon="delete" color="negative"></q-item-side>
+                            <q-item-side
+                                icon="delete"
+                                color="negative"
+                            />
                         </q-item>
                     </q-list>
                 </q-popover>
@@ -100,8 +142,7 @@
         QBtn,
         QTooltip,
         QPopover,
-        QList,
-        Platform
+        QList
     } from 'quasar-framework'
 
     export default {
@@ -126,14 +167,7 @@
             ...mapState('callForward', [
                 'changeDestinationState',
                 'changeDestinationError'
-            ]),
-            mobileClasses() {
-                let classes = ['dest-row'];
-                if(Platform.is.mobile) {
-                    classes.push('mobile');
-                }
-                return classes;
-            }
+            ])
         },
         watch: {
             changeDestinationState(state) {
@@ -221,9 +255,6 @@
     .dest-row.terminated.mobile
         color $grey
 
-    .q-item.csc-destination
-        padding 0
-
     .q-item-highlight.csc-destination:hover
         background-color lighten($primary, 70%)
 
@@ -232,6 +263,7 @@
         white-space nowrap
         overflow hidden
         font-size 16px
+
         .dest-values
             font-weight 500
 
