@@ -14,8 +14,7 @@ import {
     convertTimesetToWeekdays,
     deleteTimeFromTimeset,
     convertAddTime,
-    addNameIdAndTerminating,
-    createSourcesetWithSource,
+    addNameIdOwnPhoneAndTerminating,
     deleteItemFromArrayByIndex
 } from '../../src/api/call-forward';
 import { assert } from 'chai';
@@ -906,7 +905,8 @@ describe('CallForward', function() {
                 }
             ],
             groupName: "cfu",
-            timesetId: null
+            timesetId: null,
+            ownPhone: false
         };
         let data = [
             {
@@ -938,6 +938,7 @@ describe('CallForward', function() {
                 groupName: "cfu",
                 id: 3,
                 name: "t1",
+                ownPhone: false,
                 priority: 1,
                 subscriber_id: 311,
                 timeset: null,
@@ -957,6 +958,7 @@ describe('CallForward', function() {
                 groupName: "cfu",
                 id: 5,
                 name: "t2",
+                ownPhone: false,
                 priority: 1,
                 subscriber_id: 311,
                 timeset: null,
@@ -964,7 +966,7 @@ describe('CallForward', function() {
             }
         ];
 
-        assert.deepEqual(addNameIdAndTerminating(options), data);
+        assert.deepEqual(addNameIdOwnPhoneAndTerminating(options), data);
 
     });
 

@@ -24,7 +24,10 @@ import {
     createSourcesetWithSource,
     appendSourceToSourceset,
     deleteSourcesetById,
-    deleteSourceFromSourcesetByIndex
+    deleteSourceFromSourcesetByIndex,
+    flipCfuAndCft,
+    getOwnPhoneTimeout,
+    updateOwnPhoneTimeout
 } from '../api/call-forward';
 
 export default {
@@ -83,7 +86,12 @@ export default {
         timesetId: null,
         activeTimeForm: false,
         addSourceFormEnabled: false,
-        timesetTimesLoaded: false
+        timesetTimesLoaded: false,
+        updateOwnPhoneState: RequestState.initial,
+        updateOwnPhoneError: null,
+        ownPhoneTimeout: null,
+        updateOwnPhoneTimeoutState: RequestState.initial,
+        updateOwnPhoneTimeoutError: null
     },
     getters: {
         hasFaxCapability(state, getters, rootState, rootGetters) {
@@ -215,6 +223,19 @@ export default {
         },
         lastAddedSourceset(state) {
             return state.lastAddedSourceset;
+        },
+        updateOwnPhoneState(state) {
+            return state.updateOwnPhoneState;
+        },
+        updateOwnPhoneError(state) {
+            return state.updateOwnPhoneError ||
+                i18n.t('pages.callForward.updateOwnPhoneErrorMessage');
+        },
+        isUpdating(state) {
+            return state.updateOwnPhoneState === RequestState.requesting;
+        },
+        ownPhoneTimeout(state) {
+            return state.ownPhoneTimeout;
         }
     },
     mutations: {
@@ -438,6 +459,33 @@ export default {
         },
         setLastRemovedSource(state, value) {
             state.lastRemovedSource = value;
+        },
+        updateOwnPhoneRequesting(state) {
+            state.updateOwnPhoneState = RequestState.requesting;
+            state.updateOwnPhoneError  = null
+        },
+        updateOwnPhoneSucceeded(state) {
+            state.updateOwnPhoneState = RequestState.succeeded;
+            state.updateOwnPhoneError  = null
+        },
+        updateOwnPhoneFailed(state, error) {
+            state.updateOwnPhoneState = RequestState.failed;
+            state.updateOwnPhoneError = error;
+        },
+        loadOwnPhoneTimeout(state, value) {
+            state.ownPhoneTimeout = value;
+        },
+        updateOwnPhoneTimeoutRequesting(state) {
+            state.updateOwnPhoneTimeoutState = RequestState.requesting;
+            state.updateOwnPhoneTimeoutError  = null
+        },
+        updateOwnPhoneTimeoutSucceeded(state) {
+            state.updateOwnPhoneTimeoutState = RequestState.succeeded;
+            state.updateOwnPhoneTimeoutError  = null
+        },
+        updateOwnPhoneTimeoutFailed(state, error) {
+            state.updateOwnPhoneTimeoutState = RequestState.failed;
+            state.updateOwnPhoneTimeoutError = error;
         }
     },
     actions: {
@@ -715,6 +763,39 @@ export default {
                 context.commit('removeSourceSucceeded');
             }).catch((err) => {
                 context.commit('removeSourceFailed', err.message);
+            });
+        },
+        updateOwnPhone(context, options) {
+            context.commit('updateOwnPhoneRequesting');
+            flipCfuAndCft({
+                fromType: options.toggle ? 'cfu' : 'cft',
+                toType: !options.toggle ? 'cfu' : 'cft',
+                sourcesetId: options.sourcesetId,
+                timesetId: options.timesetId,
+                subscriberId: context.getters.subscriberId
+            }).then(() => {
+                return context.dispatch('loadOwnPhoneTimeout');
+            }).then(() => {
+                context.commit('updateOwnPhoneSucceeded');
+            }).catch((err) => {
+                context.commit('updateOwnPhoneFailed', err.message);
+            });
+        },
+        loadOwnPhoneTimeout(context) {
+            getOwnPhoneTimeout(context.getters.subscriberId).then((result) => {
+                console.log('loaded loaded', result);
+                context.commit('loadOwnPhoneTimeout', result);
+            });
+        },
+        updateOwnPhoneTimeout(context, options) {
+            context.commit('updateOwnPhoneTimeoutRequesting');
+            updateOwnPhoneTimeout({
+                subscriberId: context.getters.subscriberId,
+                timeout: options.timeout
+            }).then(() => {
+                context.commit('updateOwnPhoneTimeoutSucceeded');
+            }).catch((err) => {
+                context.commit('updateOwnPhoneTimeoutFailed', err.message);
             });
         }
     }

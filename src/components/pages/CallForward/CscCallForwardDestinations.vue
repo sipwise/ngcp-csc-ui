@@ -6,6 +6,9 @@
             group-name="cfu"
             :timeset="timeset"
             :sourceset="sourceset"
+            :show-own-phone="true"
+            :own-phone-timeout="ownPhoneTimeout"
+            :loading="isUpdating"
             icon="smartphone" />
         <csc-destinations :title="$t('pages.callForward.whenBusy')"
             class="csc-destinations"
@@ -36,12 +39,11 @@
             'sourceset',
             'destinations'
         ],
-        data () {
-            return {
-            }
-        },
         components: {
             CscDestinations
+        },
+        created() {
+            this.$store.dispatch('callForward/loadOwnPhoneTimeout');
         },
         computed: {
             ...mapState('callForward', {
@@ -59,10 +61,14 @@
                 removeTimeError(state) {
                     return state.removeTimeError ||
                         this.$t('pages.callForward.times.removeErrorMessage');
-                }
+                },
+                updateOwnPhoneState: 'updateOwnPhoneState'
             }),
             ...mapGetters('callForward', {
-                timesLength: 'getTimesetTimesLength'
+                timesLength: 'getTimesetTimesLength',
+                isUpdating: 'isUpdating',
+                updateOwnPhoneError: 'updateOwnPhoneError',
+                ownPhoneTimeout: 'ownPhoneTimeout'
             })
         },
         methods: {
@@ -124,24 +130,19 @@
                 }
             },
             removeTimeState(state) {
-                if (state === 'requesting') {
-                    startLoading();
-                }
-                else if (state === 'failed') {
-                    stopLoading();
-                    showGlobalError(this.removeTimeError);
+                if (state === 'failed') {
+                    showGlobalError(this.changeDestinationError);
                 }
                 else if (state === 'succeeded') {
-                    stopLoading();
-                    if (this.timesLength <= 1) {
-                        showToast(this.$t('pages.callForward.times.removeTimesetSuccessMessage'));
-                    }
-                    else {
-                        showToast(this.$t('pages.callForward.times.removeSuccessMessage', {
-                            day: this.lastRemovedDay
-                        }));
-                    }
                     this.reloadTimes(this.timeset);
+                }
+            },
+            updateOwnPhoneState(state) {
+                if (state === 'failed') {
+                    showGlobalError(this.updateOwnPhoneError);
+                }
+                else if (state === 'succeeded') {
+                    this.reloadDestinations(this.timeset);
                 }
             }
         }

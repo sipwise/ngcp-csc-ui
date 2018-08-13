@@ -434,7 +434,7 @@
             padding 12px 0 0 0
 
             .q-item
-                padding 8px 0 0 0
+                padding 5px 0 5px 0
 
     .sourceset-add-button
         margin-top 8px
