@@ -16,11 +16,16 @@
         "add": "Add",
         "moveUp": "Move up",
         "moveDown": "Move down",
-        "dismiss": "Dismiss"
+        "dismiss": "Dismiss",
+        "reset": "Reset"
     },
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",
         "callNotAvailable": "Could not initialize call functionality properly"
+    },
+    "validationErrors": {
+        "minValue": "The value you entered is too low, and needs to be higher than {value}.",
+        "required": "One or more required fields are missing."
     },
     "navigation": {
         "home": {
@@ -186,6 +191,14 @@
             "timeout": "Timeout",
             "destination": "Destination",
             "terminatedTooltip": "This destination comes after a terminating destinations, and is therefore inactive.",
+            "updateOwnPhoneToggleErrorMessage": "An error occured while trying to update own phone. Please try again",
+            "editTimeout": "Edit timeout",
+            "toggleTimeout": "{mode} own phone",
+            "ownPhoneDisabled": "do not ring own phone",
+            "updateOwnPhoneToggleSuccessMessage": "Own phone is {toggle}",
+            "updateOwnPhoneTimeoutSuccessMessage": "Own phone timeout set to {timeout}",
+            "updateOwnPhoneTimeoutErrorMessage": "An error occured while trying to update own phone timeout. Please try again",
+            "ownPhone": "own phone",
             "times": {
                 "removeDialogTitle": "Remove call forward time",
                 "removeDialogText": "You are about to remove the time entry for {day}",

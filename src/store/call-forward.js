@@ -24,7 +24,10 @@ import {
     createSourcesetWithSource,
     appendSourceToSourceset,
     deleteSourcesetById,
-    deleteSourceFromSourcesetByIndex
+    deleteSourceFromSourcesetByIndex,
+    flipCfuAndCft,
+    getOwnPhoneTimeout,
+    updateOwnPhoneTimeout
 } from '../api/call-forward';
 
 export default {
@@ -83,7 +86,14 @@ export default {
         timesetId: null,
         activeTimeForm: false,
         addSourceFormEnabled: false,
-        timesetTimesLoaded: false
+        timesetTimesLoaded: false,
+        updateOwnPhoneToggleState: RequestState.initial,
+        updateOwnPhoneToggleError: null,
+        lastOwnPhoneToggle: null,
+        lastOwnPhoneTimeout: null,
+        ownPhoneTimeout: null,
+        updateOwnPhoneTimeoutState: RequestState.initial,
+        updateOwnPhoneTimeoutError: null
     },
     getters: {
         hasFaxCapability(state, getters, rootState, rootGetters) {
@@ -215,6 +225,32 @@ export default {
         },
         lastAddedSourceset(state) {
             return state.lastAddedSourceset;
+        },
+        updateOwnPhoneToggleState(state) {
+            return state.updateOwnPhoneToggleState;
+        },
+        updateOwnPhoneToggleError(state) {
+            return state.updateOwnPhoneToggleError ||
+                i18n.t('pages.callForward.updateOwnPhoneToggleErrorMessage');
+        },
+        isUpdating(state) {
+            return state.updateOwnPhoneToggleState === RequestState.requesting;
+        },
+        ownPhoneTimeout(state) {
+            return state.ownPhoneTimeout;
+        },
+        lastOwnPhoneToggle(state) {
+            return state.lastOwnPhoneToggle;
+        },
+        updateOwnPhoneTimeoutState(state) {
+            return state.updateOwnPhoneTimeoutState;
+        },
+        updateOwnPhoneTimeoutError(state) {
+            return state.updateOwnPhoneTimeoutError ||
+                i18n.t('pages.callForward.updateOwnPhoneTimeoutErrorMessage');
+        },
+        lastOwnPhoneTimeout(state) {
+            return state.lastOwnPhoneTimeout;
         }
     },
     mutations: {
@@ -438,6 +474,36 @@ export default {
         },
         setLastRemovedSource(state, value) {
             state.lastRemovedSource = value;
+        },
+        updateOwnPhoneRequesting(state) {
+            state.updateOwnPhoneToggleState = RequestState.requesting;
+            state.updateOwnPhoneToggleError  = null
+        },
+        updateOwnPhoneSucceeded(state, type) {
+            let toggle = type === 'cft' ? 'enabled' : 'disabled';
+            state.lastOwnPhoneToggle = toggle;
+            state.updateOwnPhoneToggleState = RequestState.succeeded;
+            state.updateOwnPhoneToggleError  = null
+        },
+        updateOwnPhoneFailed(state, error) {
+            state.updateOwnPhoneToggleState = RequestState.failed;
+            state.updateOwnPhoneToggleError = error;
+        },
+        loadOwnPhoneTimeout(state, value) {
+            state.ownPhoneTimeout = value;
+        },
+        updateOwnPhoneTimeoutRequesting(state) {
+            state.updateOwnPhoneTimeoutState = RequestState.requesting;
+            state.updateOwnPhoneTimeoutError  = null
+        },
+        updateOwnPhoneTimeoutSucceeded(state, timeout) {
+            state.lastOwnPhoneTimeout = timeout;
+            state.updateOwnPhoneTimeoutState = RequestState.succeeded;
+            state.updateOwnPhoneTimeoutError  = null
+        },
+        updateOwnPhoneTimeoutFailed(state, error) {
+            state.updateOwnPhoneTimeoutState = RequestState.failed;
+            state.updateOwnPhoneTimeoutError = error;
         }
     },
     actions: {
@@ -715,6 +781,42 @@ export default {
                 context.commit('removeSourceSucceeded');
             }).catch((err) => {
                 context.commit('removeSourceFailed', err.message);
+            });
+        },
+        updateOwnPhone(context, options) {
+            let fromType = options.toggle ? 'cfu' : 'cft';
+            let toType = !options.toggle ? 'cfu' : 'cft';
+            context.commit('updateOwnPhoneRequesting');
+            flipCfuAndCft({
+                fromType: fromType,
+                toType: toType,
+                sourcesetId: options.sourcesetId,
+                timesetId: options.timesetId,
+                subscriberId: context.getters.subscriberId
+            }).then(() => {
+                return context.dispatch('loadOwnPhoneTimeout');
+            }).then(() => {
+                context.commit('updateOwnPhoneSucceeded', toType);
+            }).catch((err) => {
+                context.commit('updateOwnPhoneFailed', err.message);
+            });
+        },
+        loadOwnPhoneTimeout(context) {
+            getOwnPhoneTimeout(context.getters.subscriberId).then((result) => {
+                context.commit('loadOwnPhoneTimeout', result);
+            });
+        },
+        updateOwnPhoneTimeout(context, options) {
+            context.commit('updateOwnPhoneTimeoutRequesting');
+            updateOwnPhoneTimeout({
+                subscriberId: context.getters.subscriberId,
+                timeout: options.timeout
+            }).then(() => {
+                return context.dispatch('loadOwnPhoneTimeout');
+            }).then(() => {
+                context.commit('updateOwnPhoneTimeoutSucceeded', options.timeout);
+            }).catch((err) => {
+                context.commit('updateOwnPhoneTimeoutFailed', err.message);
             });
         }
     }
