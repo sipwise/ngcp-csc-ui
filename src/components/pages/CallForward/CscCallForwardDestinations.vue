@@ -1,26 +1,33 @@
 <template>
     <div class="dest-card">
         <csc-destinations :title="$t('pages.callForward.whenOnline')"
+            ref="online"
             class="csc-destinations"
             :group="destinations.online"
             group-name="cfu"
             :timeset="timeset"
             :sourceset="sourceset"
-            icon="smartphone" />
+            :show-own-phone="true"
+            :own-phone-timeout="ownPhoneTimeout"
+            :loading="isUpdating"
+            icon="smartphone"
+        />
         <csc-destinations :title="$t('pages.callForward.whenBusy')"
             class="csc-destinations"
             :group="destinations.busy"
             group-name="cfb"
             :timeset="timeset"
             :sourceset="sourceset"
-            icon="phonelink_ring" />
+            icon="phonelink_ring"
+        />
         <csc-destinations :title="$t('pages.callForward.whenOffline')"
             class="csc-destinations"
             :group="destinations.offline"
             group-name="cfna"
             :timeset="timeset"
             :sourceset="sourceset"
-            icon="phonelink_erase" />
+            icon="phonelink_erase"
+        />
     </div>
 </template>
 
@@ -36,12 +43,11 @@
             'sourceset',
             'destinations'
         ],
-        data () {
-            return {
-            }
-        },
         components: {
             CscDestinations
+        },
+        created() {
+            this.$store.dispatch('callForward/loadOwnPhoneTimeout');
         },
         computed: {
             ...mapState('callForward', {
@@ -62,7 +68,15 @@
                 }
             }),
             ...mapGetters('callForward', {
-                timesLength: 'getTimesetTimesLength'
+                timesLength: 'getTimesetTimesLength',
+                isUpdating: 'isUpdating',
+                updateOwnPhoneToggleState: 'updateOwnPhoneToggleState',
+                updateOwnPhoneToggleError: 'updateOwnPhoneToggleError',
+                ownPhoneTimeout: 'ownPhoneTimeout',
+                lastOwnPhoneToggle: 'lastOwnPhoneToggle',
+                updateOwnPhoneTimeoutState: 'updateOwnPhoneTimeoutState',
+                updateOwnPhoneTimeoutError: 'updateOwnPhoneTimeoutError',
+                lastOwnPhoneTimeout: 'lastOwnPhoneTimeout'
             })
         },
         methods: {
@@ -124,24 +138,34 @@
                 }
             },
             removeTimeState(state) {
-                if (state === 'requesting') {
-                    startLoading();
-                }
-                else if (state === 'failed') {
-                    stopLoading();
-                    showGlobalError(this.removeTimeError);
+                if (state === 'failed') {
+                    showGlobalError(this.changeDestinationError);
                 }
                 else if (state === 'succeeded') {
-                    stopLoading();
-                    if (this.timesLength <= 1) {
-                        showToast(this.$t('pages.callForward.times.removeTimesetSuccessMessage'));
-                    }
-                    else {
-                        showToast(this.$t('pages.callForward.times.removeSuccessMessage', {
-                            day: this.lastRemovedDay
-                        }));
-                    }
                     this.reloadTimes(this.timeset);
+                }
+            },
+            updateOwnPhoneToggleState(state) {
+                if (state === 'failed') {
+                    showGlobalError(this.updateOwnPhoneToggleError);
+                }
+                else if (state === 'succeeded') {
+                    this.reloadDestinations(this.timeset);
+                    showToast(this.$t('pages.callForward.updateOwnPhoneToggleSuccessMessage', {
+                        toggle: this.lastOwnPhoneToggle
+                    }));
+                }
+            },
+            updateOwnPhoneTimeoutState(state) {
+                if (state === 'failed') {
+                    showGlobalError(this.updateOwnPhoneToggleError);
+                }
+                else if (state === 'succeeded') {
+                    this.$refs.online.hideModal();
+                    this.reloadDestinations(this.timeset);
+                    showToast(this.$t('pages.callForward.updateOwnPhoneTimeoutSuccessMessage', {
+                        timeout: this.lastOwnPhoneTimeout
+                    }));
                 }
             }
         }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <q-item highlight separator class="csc-destination" :key="index" v-for="(destination, index) in destinations">
+        <q-item highlight separator dense class="csc-destination" :key="index" v-for="(destination, index) in destinations">
             <q-item-main>
                 <div v-if="$q.platform.is.desktop" class="dest-row" :class="{ terminated: destination.terminated }">
                     <span v-if="index == 0">
