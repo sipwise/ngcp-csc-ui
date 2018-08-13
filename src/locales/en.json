@@ -16,7 +16,8 @@
         "add": "Add",
         "moveUp": "Move up",
         "moveDown": "Move down",
-        "dismiss": "Dismiss"
+        "dismiss": "Dismiss",
+        "reset": "Reset"
     },
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",
@@ -186,6 +187,10 @@
             "timeout": "Timeout",
             "destination": "Destination",
             "terminatedTooltip": "This destination comes after a terminating destinations, and is therefore inactive.",
+            "ownPhoneEnabled": "Own phone called first",
+            "ownPhoneDisabled": "Own phone not called first",
+            "updateOwnPhoneErrorMessage": "An error occured while trying to update own phone. Please try again",
+            "editTimeout": "Edit Timeout",
             "times": {
                 "removeDialogTitle": "Remove call forward time",
                 "removeDialogText": "You are about to remove the time entry for {day}",

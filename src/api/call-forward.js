@@ -131,15 +131,25 @@ export function loadDestinations(options) {
 
 export function getDestinationsBySourcesetId(options) {
     return new Promise((resolve, reject) => {
+        let cftTimeset = null;
         let cfuTimeset = null;
         let cfnaTimeset = null;
         let cfbTimeset = null;
         Promise.resolve().then(() => {
             return getMappings(options.subscriberId);
         }).then((mappings) => {
+            let cftPromises = [];
             let cfuPromises = [];
             let cfnaPromises = [];
             let cfbPromises = [];
+            if(_.has(mappings, 'cft') && _.isArray(mappings.cft) && mappings.cft.length > 0) {
+                mappings.cft.forEach((cftMapping) => {
+                    if (cftMapping.timeset === options.timeset && cftMapping.sourceset_id === options.sourceset_id) {
+                        cftTimeset = cftMapping.timeset_id;
+                        cftPromises.push(getDestinationsetById(cftMapping.destinationset_id));
+                    }
+                });
+            }
             if(_.has(mappings, 'cfu') && _.isArray(mappings.cfu) && mappings.cfu.length > 0) {
                 mappings.cfu.forEach((cfuMapping) => {
                     if (cfuMapping.timeset === options.timeset && cfuMapping.sourceset_id === options.sourceset_id) {
@@ -165,22 +175,27 @@ export function getDestinationsBySourcesetId(options) {
                 });
             }
             return Promise.all([
+                Promise.all(cftPromises),
                 Promise.all(cfuPromises),
                 Promise.all(cfnaPromises),
                 Promise.all(cfbPromises)
             ]);
         }).then((result) => {
-            addNameIdAndTerminating({ group: result[0], groupName: 'cfu', timesetId: cfuTimeset });
-            addNameIdAndTerminating({ group: result[1], groupName: 'cfna', timesetId: cfnaTimeset });
-            addNameIdAndTerminating({ group: result[2], groupName: 'cfb', timesetId: cfbTimeset });
+            let ownPhone = result[0].length > 0 && result[1].length === 0;
+            let cftDestinations = addNameIdOwnPhoneAndTerminating({ group: _.cloneDeep(result[0]), groupName: 'cft', timesetId: cftTimeset, ownPhone: ownPhone });
+            let cfuDestinations = addNameIdOwnPhoneAndTerminating({ group: _.cloneDeep(result[1]), groupName: 'cfu', timesetId: cfuTimeset, ownPhone: ownPhone });
+            let offlineDestinations = addNameIdOwnPhoneAndTerminating({ group: _.cloneDeep(result[2]), groupName: 'cfna', timesetId: cfnaTimeset, ownPhone: ownPhone });
+            let busyDestinations = addNameIdOwnPhoneAndTerminating({ group: _.cloneDeep(result[3]), groupName: 'cfb', timesetId: cfbTimeset, ownPhone: ownPhone });
+            let onlineDestinations = getOnlineDestinations({ cftDestinations: cftDestinations, cfuDestinations: cfuDestinations });
             resolve({
                 sourcesetId: options.sourceset_id,
                 sourcesetName: options.sourceset_name,
                 sourcesetMode: options.sourceset_mode,
+                ownPhone: ownPhone,
                 destinationGroups: {
-                    online: result[0],
-                    offline: result[1],
-                    busy: result[2]
+                    online: onlineDestinations,
+                    offline: offlineDestinations,
+                    busy: busyDestinations
                 }
             })
         }).catch((err)=>{
@@ -189,13 +204,24 @@ export function getDestinationsBySourcesetId(options) {
     });
 }
 
-export function addNameIdAndTerminating(options) {
+export function getOnlineDestinations(options) {
+    if (options.cftDestinations.length > 0 && options.cfuDestinations.length === 0) {
+        return options.cftDestinations;
+    }
+    else {
+        return options.cfuDestinations;
+    }
+}
+
+export function addNameIdOwnPhoneAndTerminating(options) {
     let terminatingFlag = false;
     options.group.forEach(destinationset => {
         destinationset.groupName = options.groupName;
         destinationset.timesetId = options.timesetId;
+        destinationset.ownPhone = options.ownPhone;
         destinationset.destinations.forEach(destination => {
             let normalized = normalizeDestination(destination.destination);
+
             if (!terminatingFlag && _.includes(['Voicebox', 'Fax2Mail', 'Manager Secretary',
                 'Custom Announcement', 'Conference'], normalized)) {
                     terminatingFlag = true;
@@ -836,6 +862,55 @@ export function deleteSourceFromSourcesetByIndex(options) {
             value: sources
         }], { headers: headers }).then(() => {
             resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function flipCfuAndCft(options) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            return getMappings(options.subscriberId);
+        }).then((mappings) => {
+            let flipValues = mappings[options.fromType].filter((destinationset) => {
+                return destinationset.sourceset_id === options.sourcesetId && destinationset.timeset_id === options.timesetId;
+            });
+            let fromValues = mappings[options.fromType].filter((destinationset) => {
+                return !(destinationset.sourceset_id === options.sourcesetId && destinationset.timeset_id === options.timesetId);
+            })
+            let toValues = mappings[options.toType].concat(flipValues);
+            return new Promise((resolve, reject) => {
+                let headers = {
+                    'Content-Type': 'application/json-patch+json'
+                };
+                Vue.http.patch('api/cfmappings/' + options.subscriberId, [{
+                    op: 'replace',
+                    path: '/' + options.fromType,
+                    value: fromValues
+                },{
+                    op: 'replace',
+                    path: '/' + options.toType,
+                    value: toValues
+                }], { headers: headers }).then((result) => {
+                    resolve(result);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function getOwnPhoneTimeout(id) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.get('api/cfmappings/' + id).then((res)=>{
+            let timeout = getJsonBody(res.body).cft_ringtimeout;
+            resolve(timeout);
         }).catch((err) => {
             reject(err);
         });
