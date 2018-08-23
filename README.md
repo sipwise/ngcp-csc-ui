@@ -158,11 +158,17 @@ Now you can log in to csc with one of the normal subscriber you just created. UR
 You need to first enable faxserver and activate it for the subscriber, to be able to send a fax via the "action button menu".
 
 1. By default, vagrant-ngcp has faxserver enabled by default in the config, so currently we do not need to make any changes here. Otherwise, it would be enabled via /etc/ngcp-config/config.yml by setting "faxserver: enable:" to "yes" and applying the changes with ngcpcfg apply 'enable faxserver'""
-1. SSH in to vagrant box, become root, and then execute:
-`dpkg-reconfigure exim4-config`
-1. Follow the install prompt by first choosing 'mail sent by smarthost; no local mail'
-1. Then press enter for default sp1 selection, until you get asked for "IP address or host name of the outgoing smarthost:". There you enter mail.sipwise.com and press enter
-1. For the rest of the prompts, press enter to choose the defaults
+1. We need to set up the MTA (Mail Transfer Agent) exim4 so we can send the fax via mail. SSH in to the vagrant system and then execute ``sudoedit /etc/ngcp-config/config.yml` with the following configuration:
+`email:
+  domain: ''
+  hostname: ''
+  smarthost:
+    hostname: 'mail.sipwise.com'
+    password: ''
+    reverse_hostnames: []
+    username: ''
+`
+1. Apply the exim configuration changes via `sudo ngcpcfg apply 'adjust exim4 / MTA configuration'`
 1. Log in to ngcp-panel with administrator credentials
 1. Go to "Settings > Subscribers", find subscriber you want to use as caller, and click "Details"
 1. Under "Master Data" click edit, and enter subscribers number also in the E164 field

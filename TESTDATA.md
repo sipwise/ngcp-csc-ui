@@ -56,10 +56,17 @@ See [calls section](#calls) for information on how to initiate calls.
 For outgoing you need to use the api (also with E 164 number set to sms number from wiki). According to gjungwirth pretty simple with POST request containing the destination number and the content. 
 
 ## FAX
-1. Install exim package, so we can send the fax via mail. SSH in to vagrant box, become root, and then execute:
-`dpkg-reconfigure exim4-config`
-1. Follow the install prompt by first choosing 'mail sent by smarthost; no local mail'
-1. Then press enter for default sp1 selection, until you get asked for "IP address or host name of the outgoing smarthost:". There you enter mail.sipwise.com and press enter
+1. We need to set up the MTA (Mail Transfer Agent) exim4 so we can send the fax via mail. SSH in to the vagrant system and then execute ``sudoedit /etc/ngcp-config/config.yml` with the following configuration:
+`email:
+  domain: ''
+  hostname: ''
+  smarthost:
+    hostname: 'mail.sipwise.com'
+    password: ''
+    reverse_hostnames: []
+    username: ''
+`
+1. Apply the exim configuration changes via `sudo ngcpcfg apply 'adjust exim4 / MTA configuration'`
 1. For the rest of the prompts, press enter to choose the defaults
 1. Go to Settings > Subscribers, find subscriber you want to use as caller, and click "Details"
 1. Under "Master Data" click edit, and enter subscribers number also in the E164 field
