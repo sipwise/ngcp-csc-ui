@@ -58,7 +58,7 @@
                 class="csc-list-item-main"
                 v-if="expanded"
             >
-                <q-field :label="$t('pbxConfig.seatName')">
+                <q-field :label="$t('pbxConfig.name')">
                     <q-input
                         v-model="changes.name"
                         :after="nameButtons"
