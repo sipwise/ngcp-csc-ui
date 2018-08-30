@@ -71,10 +71,10 @@
         ],
         computed: {
             errorMessage() {
-                return this.$t('call.inputValidNumber');
+                return this.$t('validationErrors.inputValidNumber');
             },
             helperMessage() {
-                return this.$t('call.inputNumber');
+                return this.$t('validationErrors.inputNumber');
             },
             inputReadonly() {
                 return this.isMobile;

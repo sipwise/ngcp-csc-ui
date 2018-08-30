@@ -3,6 +3,7 @@
         <q-field :error-label="groupNameErrorMessage">
             <q-input
                 @input="$v.data.name.$touch"
+                @blur="$v.data.name.$touch"
                 :error="$v.data.name.$error"
                 :disabled="loading"
                 :readonly="loading"
@@ -15,6 +16,7 @@
         <q-field :error-label="extensionErrorMessage">
             <q-input
                 @input="$v.data.extension.$touch"
+                @blur="$v.data.extension.$touch"
                 :error="$v.data.extension.$error"
                 :disabled="loading"
                 :readonly="loading"
@@ -100,7 +102,6 @@
 </template>
 
 <script>
-
     import {
         required,
         minValue,
@@ -171,38 +172,50 @@
         computed: {
             groupNameErrorMessage() {
                 if (!this.$v.data.name.required) {
-                    return this.$t('pbxConfig.requiredGroupName');
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.groupName')
+                    });
                 }
                 else if (!this.$v.data.name.maxLength) {
-                    return this.$t('pbxConfig.groupNameMaxLength', {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('pbxConfig.groupName'),
                         maxLength: this.$v.data.name.$params.maxLength.max
                     });
                 }
             },
             extensionErrorMessage() {
                 if (!this.$v.data.extension.required) {
-                    return this.$t('pbxConfig.requiredExtension');
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.extension')
+                    });
                 }
-                else if (!this.$v.data.name.maxLength) {
-                    return this.$t('pbxConfig.extensionMaxLength', {
+                else if (!this.$v.data.extension.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('pbxConfig.extension'),
                         maxLength: this.$v.data.extension.$params.maxLength.max
                     });
                 }
-                else if (!this.$v.data.name.numeric) {
-                    return this.$t('pbxConfig.extensionAlphaNum');
+                else if (!this.$v.data.extension.numeric) {
+                    return this.$t('validationErrors.alphaNum', {
+                        field: this.$t('pbxConfig.extension'),
+                    });
                 }
             },
             huntTimeoutErrorMessage() {
                 if (!this.$v.data.huntTimeout.required) {
-                    return this.$t('pbxConfig.requiredHuntTimeout');
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.huntTimeoutSentence')
+                    });
                 }
                 else if (!this.$v.data.huntTimeout.minValue) {
-                    return this.$t('pbxConfig.huntTimeoutMinValue', {
+                    return this.$t('validationErrors.minValueSecond', {
+                        field: this.$t('pbxConfig.huntTimeoutSentence'),
                         minValue: this.$v.data.huntTimeout.$params.minValue.min
                     });
                 }
                 else if (!this.$v.data.huntTimeout.maxValue) {
-                    return this.$t('pbxConfig.huntTimeoutMaxValue', {
+                    return this.$t('validationErrors.maxValueSecond', {
+                        field: this.$t('pbxConfig.huntTimeoutSentence'),
                         maxValue: this.$v.data.huntTimeout.$params.maxValue.max
                     });
                 }
