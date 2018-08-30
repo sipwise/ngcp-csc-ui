@@ -3,18 +3,20 @@
         <q-field :error-label="seatNameErrorMessage">
             <q-input
                 @input="$v.data.name.$touch"
+                @blur="$v.data.name.$touch"
                 :error="$v.data.name.$error"
                 :disabled="loading"
                 :readonly="loading"
                 v-model="data.name"
                 autofocus
-                :float-label="$t('pbxConfig.seatName')"
+                :float-label="$t('pbxConfig.name')"
                 clearable
             />
         </q-field>
         <q-field :error-label="extensionErrorMessage">
             <q-input
                 @input="$v.data.extension.$touch"
+                @blur="$v.data.extension.$touch"
                 :error="$v.data.extension.$error"
                 :disabled="loading"
                 :readonly="loading"
@@ -138,25 +140,33 @@
         computed: {
             seatNameErrorMessage() {
                 if (!this.$v.data.name.required) {
-                    return this.$t('pbxConfig.requiredSeatName');
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.seatName')
+                    });
                 }
                 else if (!this.$v.data.name.maxLength) {
-                    return this.$t('pbxConfig.seatNameMaxLength', {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('pbxConfig.seatName'),
                         maxLength: this.$v.data.name.$params.maxLength.max
                     });
                 }
             },
             extensionErrorMessage() {
                 if (!this.$v.data.extension.required) {
-                    return this.$t('pbxConfig.requiredExtension');
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.extension')
+                    });
                 }
-                else if (!this.$v.data.name.maxLength) {
-                    return this.$t('pbxConfig.extensionMaxLength', {
+                else if (!this.$v.data.extension.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('pbxConfig.extension'),
                         maxLength: this.$v.data.extension.$params.maxLength.max
                     });
                 }
-                else if (!this.$v.data.name.numeric) {
-                    return this.$t('pbxConfig.extensionAlphaNum');
+                else if (!this.$v.data.extension.numeric) {
+                    return this.$t('validationErrors.alphaNum', {
+                        field: this.$t('pbxConfig.extension'),
+                    });
                 }
             }
         },
