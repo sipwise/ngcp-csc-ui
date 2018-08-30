@@ -29,8 +29,7 @@
         </q-btn>
         <div v-if="isFormEnabled">
             <q-field
-                :error="addFormError"
-                :error-label="$t('pages.callForward.addInputError')"
+                :error-label="destinationInputError"
             >
                 <q-input
                     :before="beforeIconDestination"
@@ -41,11 +40,13 @@
                     :clearable="isFormTypeNumber"
                     :autofocus="isFormTypeNumber"
                     :disable="!isFormTypeNumber || addDestinationIsRequesting"
+                    @input="$v.destinationForm.destination.$touch"
+                    @blur="$v.destinationForm.destination.$touch"
+                    :error="$v.destinationForm.destination.$error"
                 />
             </q-field>
             <q-field
-                :error="addFormError"
-                :error-label="$t('pages.callForward.addInputError')"
+                :error-label="timeoutInputError"
             >
                 <q-input
                     v-if="isFormTypeNumber"
@@ -53,9 +54,10 @@
                     :float-label="$t('pages.callForward.timeout')"
                     type="number"
                     v-model="destinationForm.timeout"
-                    :min="0"
-                    :max="600"
                     suffix="seconds"
+                    @input="$v.destinationForm.timeout.$touch"
+                    @blur="$v.destinationForm.timeout.$touch"
+                    :error="$v.destinationForm.timeout.$error"
                 />
             </q-field>
             <q-btn
@@ -70,6 +72,7 @@
                 color="primary"
                 icon-right="fa-save"
                 @click="addDestination()"
+				:disable="$v.destinationForm.destination.$error || $v.destinationForm.timeout.$error"
             >
                 {{ $t('buttons.save') }}
             </q-btn>
@@ -78,12 +81,31 @@
 </template>
 
 <script>
-
     import _ from 'lodash'
-    import { startLoading } from '../../../helpers/ui'
-    import { mapGetters, mapState } from 'vuex'
-    import { QItem, Toast, QBtn, QSelect, QPopover, QList,
-        QField, QInput, QSlider } from 'quasar-framework'
+    import {
+        startLoading,
+        showGlobalError
+    } from '../../../helpers/ui'
+    import {
+        mapGetters,
+        mapState
+    } from 'vuex'
+    import {
+        required,
+        maxLength,
+		minValue
+    } from 'vuelidate/lib/validators'
+    import {
+        QItem,
+        Toast,
+        QBtn,
+        QSelect,
+        QPopover,
+        QList,
+        QField,
+        QInput,
+        QSlider
+    } from 'quasar-framework'
     export default {
         name: 'csc-add-destination-form',
         props: [
@@ -97,7 +119,6 @@
         ],
         data () {
             return {
-                addFormError: false,
                 formEnabled: false,
                 destinationForm: {
                     destination: '',
@@ -116,6 +137,18 @@
             Toast,
             QBtn
         },
+        validations: {
+            destinationForm: {
+                destination: {
+                    required,
+                    maxLength: maxLength(64)
+                },
+                timeout: {
+                    required,
+                    minValue: minValue(1)
+                }
+            }
+        },
         computed: {
             ...mapState('callForward', [
                 'activeForm',
@@ -126,6 +159,26 @@
                 'hasSendFaxFeature',
                 'hasFaxCapability'
             ]),
+			destinationInputError() {
+                if (!this.$v.destinationForm.destination.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        length: this.$v.destinationForm.destination.$params.maxLength.max + 1
+                    });
+                }
+                else if (!this.$v.destinationForm.destination.required) {
+                    return this.$t('validationErrors.required');
+                }
+			},
+			timeoutInputError() {
+                if (!this.$v.destinationForm.timeout.minValue) {
+                    return this.$t('validationErrors.minValue', {
+                        value: this.$v.destinationForm.timeout.$params.minValue.min - 1
+                    });
+                }
+                else if (!this.$v.destinationForm.timeout.required) {
+                    return this.$t('validationErrors.required');
+                }
+			},
             isFormTypeNumber() {
                 return this.formType === 'number';
             },
@@ -180,14 +233,20 @@
                 this.$store.commit('callForward/resetDestinationState');
             },
             addDestination() {
-                startLoading();
-                this.$store.dispatch('callForward/addDestination', {
-                    form: this.destinationForm,
-                    destinations: this.destinations,
-                    timeset: this.timeset,
-                    timesetId: this.timesetId,
-                    sourcesetId: this.sourcesetId
-                });
+                if (this.$v.destinationForm.destination.$error ||
+                    this.$v.destinationForm.timeout.$error) {
+                        showGlobalError(this.$t('validationErrors.generic'));
+                }
+                else {
+                    startLoading();
+                    this.$store.dispatch('callForward/addDestination', {
+                        form: this.destinationForm,
+                        destinations: this.destinations,
+                        timeset: this.timeset,
+                        timesetId: this.timesetId,
+                        sourcesetId: this.sourcesetId
+                    });
+                }
             }
         }
     }

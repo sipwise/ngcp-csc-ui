@@ -22,6 +22,12 @@
         "callAvailable": "You are now able to start and receive calls",
         "callNotAvailable": "Could not initialize call functionality properly"
     },
+    "validationErrors": {
+        "generic": "You have invalid form input. Please check and try again.",
+        "minValue": "The value you entered is too low, and needs to be higher than {value}.",
+        "required": "One or more required fields are missing.",
+        "maxLength": "The value you've entered is too long, and needs to be less than {length}."
+    },
     "navigation": {
         "home": {
             "title": "Home",
