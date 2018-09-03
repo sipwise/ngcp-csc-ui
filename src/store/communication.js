@@ -38,11 +38,12 @@ export default {
         }
     },
     actions: {
-        createFax(context, options) {
+        createFax(context, $options) {
+            let options = Object.assign($options, {
+                subscriber_id: context.getters.subscriberId
+            });
             context.commit('createFaxRequesting');
-            createFax(options, {
-                    subscriber_id: context.getters.subscriberId
-                }).then(() => {
+            createFax(options).then(() => {
                     context.commit('createFaxSucceeded');
                 }).catch((err) => {
                     context.commit('createFaxFailed', err.message);
