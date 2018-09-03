@@ -385,7 +385,8 @@
             "destination": "Destination Number",
             "quality": "Quality",
             "pageHeader": "Page Header",
-            "content": "Content"
+            "content": "Content",
+            "file": "File"
         },
         "send": "Send",
         "cancel": "Cancel",
