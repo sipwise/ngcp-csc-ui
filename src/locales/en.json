@@ -32,7 +32,8 @@
         "maxValueSecond": "{field} must be maximum of {maxValue} seconds",
         "alphaNum": "{field} must consist of numeric characters only",
         "inputNumber": "Input a phone number",
-        "inputValidNumber": "Input a valid phone number"
+        "inputValidNumber": "Input a valid phone number",
+        "fieldRequiredXor": "{fieldOne} or {fieldTwo} is required"
     },
     "navigation": {
         "home": {
@@ -394,7 +395,10 @@
             "destination": "Destination Number",
             "quality": "Quality",
             "pageHeader": "Page Header",
-            "content": "Content"
+            "content": "Content",
+            "file": "File",
+            "faxFile": "Fax File",
+            "uploadFile": "Upload File"
         },
         "send": "Send",
         "cancel": "Cancel",

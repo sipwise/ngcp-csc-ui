@@ -67,7 +67,6 @@ For outgoing you need to use the api (also with E 164 number set to sms number f
     username: ''
 `
 1. Apply the exim configuration changes via `sudo ngcpcfg apply 'adjust exim4 / MTA configuration'`
-1. For the rest of the prompts, press enter to choose the defaults
 1. Go to Settings > Subscribers, find subscriber you want to use as caller, and click "Details"
 1. Under "Master Data" click edit, and enter subscribers number also in the E164 field
 1. Then go to "Preferences", and set "Fax2Mail and Sendfax" to active
