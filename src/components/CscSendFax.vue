@@ -33,6 +33,12 @@
                 v-model="form.data"
                 :float-label="$t('communication.label.content')" />
         </q-field>
+        <q-field>
+            <input
+                type="file"
+                @change="processFile($event)"
+            />
+        </q-field>
         <q-btn flat dark @click="hideModal">{{ $t('communication.cancel') }}</q-btn>
         <q-btn flat color="primary" @click="sendFax" icon-right="insert drive file" :disable="formDisabled">{{ $t('communication.send') }}</q-btn>
     </q-modal>
@@ -55,7 +61,8 @@
                     destination: null,
                     pageheader: null,
                     data: null,
-                    quality: 'normal'
+                    quality: 'normal',
+                    file: null
                 },
                 qualityOptions: [
                     { label: this.$t('communication.quality.normal'), value: 'normal' },
@@ -79,6 +86,10 @@
             }
         },
         methods: {
+            processFile(event) {
+                this.file = event.target.files[0];
+                console.log('file', event.target.files[0]);
+            },
             sendFax() {
                 this.$store.dispatch('communication/createFax', this.form);
             },
@@ -87,7 +98,8 @@
                     destination: null,
                     pageheader: null,
                     data: null,
-                    quality: 'normal'
+                    quality: 'normal',
+                    file: null
                 };
                 this.showFaxModal = true;
             },
