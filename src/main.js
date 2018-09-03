@@ -36,7 +36,7 @@ Vue.http.interceptors.push(function(request, next) {
     if(!_.isEmpty(jwt)) {
         request.headers.set('Authorization', 'Bearer ' + jwt);
     }
-    if(request.method === 'POST' && _.isEmpty(request.body)) {
+    if(request.method === 'POST' && (request.body === void(0) || request.body === null)) {
         request.body = {};
     }
     next();
