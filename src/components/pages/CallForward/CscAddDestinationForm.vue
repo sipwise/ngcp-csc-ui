@@ -12,15 +12,15 @@
                     separator
                     link
                 >
-                    <q-item @click="enableForm('number'), $refs.popover.close()">
+                    <q-item @click="addDestinationByType('number'), $refs.popover.close()">
                         {{ $t('pages.callForward.buttons.addNumber') }}
                     </q-item>
-                    <q-item @click="enableForm('voicebox'), $refs.popover.close()">
+                    <q-item @click="addDestinationByType('voicebox'), $refs.popover.close()">
                         {{ $t('pages.callForward.buttons.addVoicemail') }}
                     </q-item>
                     <q-item
                         v-if="hasFaxCapability && hasSendFaxFeature"
-                        @click="enableForm('fax2mail'), $refs.popover.close()"
+                        @click="addDestinationByType('fax2mail'), $refs.popover.close()"
                     >
                         {{ $t('pages.callForward.buttons.addFax2Mail') }}
                     </q-item>
@@ -38,9 +38,9 @@
                     type="text"
                     v-model="destinationForm.destination"
                     @keyup.enter="addDestination()"
-                    :clearable="isFormTypeNumber"
-                    :autofocus="isFormTypeNumber"
-                    :disable="!isFormTypeNumber || addDestinationIsRequesting"
+                    clearable
+                    autofocus
+                    :disable="addDestinationIsRequesting"
                 />
             </q-field>
             <q-field
@@ -48,14 +48,12 @@
                 :error-label="$t('pages.callForward.addInputError')"
             >
                 <q-input
-                    v-if="isFormTypeNumber"
                     :before="beforeIconTimeout"
                     :float-label="$t('pages.callForward.timeout')"
                     type="number"
                     v-model="destinationForm.timeout"
-                    :min="0"
-                    :max="600"
                     suffix="seconds"
+                    clearable
                 />
             </q-field>
             <q-btn
@@ -119,16 +117,12 @@
         computed: {
             ...mapState('callForward', [
                 'activeForm',
-                'formType',
                 'addDestinationState',
             ]),
             ...mapGetters('user', [
                 'hasSendFaxFeature',
                 'hasFaxCapability'
             ]),
-            isFormTypeNumber() {
-                return this.formType === 'number';
-            },
             isFormEnabled() {
                 return this.activeForm === this.groupName && this.formEnabled;
             },
@@ -154,21 +148,23 @@
             }
         },
         methods: {
-            enableForm(type) {
-                let lastDestination = _.findLast(this.destinations) || {};
-                this.formEnabled = true;
+            addDestinationByType(type) {
                 this.$store.commit('callForward/setFormType', type);
-                this.$store.commit('callForward/setActiveForm', this.groupName);
+                let lastDestination = _.findLast(this.destinations) || {};
                 this.$store.commit('callForward/setDestinationsetId', this.id);
                 this.$store.commit('callForward/setGroupName', this.groupName);
                 this.$store.commit('callForward/setPriority', lastDestination.priority || 1);
                 if (type === 'voicebox') {
                     this.destinationForm.destination = 'Voicemail';
+                    this.addDestination();
                 }
                 else if (type === 'fax2mail') {
                     this.destinationForm.destination = 'Fax2Mail';
+                    this.addDestination();
                 }
                 else {
+                    this.formEnabled = true;
+                    this.$store.commit('callForward/setActiveForm', this.groupName);
                     this.destinationForm.destination = '';
                 }
             },
