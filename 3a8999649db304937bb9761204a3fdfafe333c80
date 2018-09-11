@@ -1,0 +1,11 @@
+Verified+1: Jenkins Jenkins
+Code-Review+1: Alexander Lutay <alutay@sipwise.com>
+Code-Review+1: Manuel Montecelo <mmontecelo@sipwise.com>
+Code-Review-1: Hans-Peter Herzog <hherzog@sipwise.com>
+Code-Review+2: Sergii Kipot <skipot@sipwise.com>
+Code-Review+2: Guillem Jover <gjover@sipwise.com>
+Submitted-by: Michael Prokop <mprokop@sipwise.com>
+Submitted-at: Tue, 11 Sep 2018 13:37:23 +0200
+Reviewed-on: http://gerrit.mgm.sipwise.com/23339
+Project: ngcp-csc-ui
+Branch: refs/heads/master
