@@ -22,6 +22,10 @@
         "callAvailable": "You are now able to start and receive calls",
         "callNotAvailable": "Could not initialize call functionality properly"
     },
+    "validationErrors": {
+        "maxLength": "{field} must have at most {maxLength} letters",
+        "fieldRequired": "{field} is required"
+    },
     "navigation": {
         "home": {
             "title": "Home",
