@@ -1,7 +1,10 @@
 <template>
     <div>
-        <q-field>
+        <q-field :error-label="stationNameErrorMessage">
             <q-input
+                @input="$v.data.station_name.$touch"
+                @blur="$v.data.station_name.$touch"
+                :error="$v.data.station_name.$error"
                 v-model="data.station_name"
                 :disabled="loading"
                 :readonly="loading"
@@ -10,8 +13,11 @@
                 clearable
             />
         </q-field>
-        <q-field>
+        <q-field :error-label="identifierErrorMessage">
             <q-input
+                @input="$v.data.identifier.$touch"
+                @blur="$v.data.identifier.$touch"
+                :error="$v.data.identifier.$error"
                 v-model="data.identifier"
                 :disabled="loading"
                 :readonly="loading"
@@ -36,14 +42,19 @@
                 flat color="secondary"
                 icon="clear"
                 @click="cancel()"
-            >{{ $t('buttons.cancel') }}</q-btn>
+            >
+                {{ $t('buttons.cancel') }}
+            </q-btn>
             <q-btn
                 v-if="!loading"
                 flat
                 color="primary"
                 icon="done"
                 @click="save()"
-            >{{ $t('buttons.save') }}</q-btn>
+                :disabled="$v.data.$invalid || !data.profile_id"
+            >
+                {{ $t('buttons.save') }}
+            </q-btn>
         </div>
         <q-inner-loading
             v-show="loading"
@@ -58,7 +69,10 @@
 </template>
 
 <script>
-
+    import {
+        required,
+        maxLength
+    } from 'vuelidate/lib/validators'
     import {
         QCard,
         QCardTitle,
@@ -100,10 +114,50 @@
             QItem,
             QItemMain
         },
+        validations: {
+            data: {
+                station_name: {
+                    required,
+                    maxLength: maxLength(64)
+                },
+                identifier: {
+                    required,
+                    maxLength: maxLength(64)
+                }
+            }
+        },
         data () {
             return {
                 formEnabled: false,
                 data: this.getDefaults()
+            }
+        },
+        computed: {
+            stationNameErrorMessage() {
+                if (!this.$v.data.station_name.required) {
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.deviceStationName')
+                    });
+                }
+                else if (!this.$v.data.station_name.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('pbxConfig.deviceStationName'),
+                        maxLength: this.$v.data.station_name.$params.maxLength.max
+                    });
+                }
+            },
+            identifierErrorMessage() {
+                if (!this.$v.data.identifier.required) {
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.deviceIdentifier')
+                    });
+                }
+                else if (!this.$v.data.identifier.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('pbxConfig.deviceIdentifier'),
+                        maxLength: this.$v.data.identifier.$params.maxLength.max
+                    });
+                }
             }
         },
         methods: {
