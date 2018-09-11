@@ -123,7 +123,7 @@
                 let buttons = [];
                 if (this.selectedProfile.device_id !== null && this.erasable === true) {
                     buttons = [{
-                        icon: 'clear',
+                        icon: 'cancel',
                         error: false,
                         handler (event) {
                             event.stopPropagation();

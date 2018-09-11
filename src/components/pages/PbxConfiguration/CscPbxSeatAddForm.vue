@@ -77,7 +77,6 @@
 </template>
 
 <script>
-
     import {
         required,
         maxLength,
