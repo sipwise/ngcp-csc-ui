@@ -43,9 +43,13 @@ export function getList(options) {
             }
         }).then((res) => {
             let body = getJsonBody(res.body);
-            let lastPage = Math.ceil( body.total_count / options.params.rows );
+            let totalCount = _.get(body, 'total_count', 0);
+            let lastPage = Math.ceil( totalCount / options.params.rows );
             if(options.all === true) {
                 lastPage = 1;
+            }
+            if(lastPage === 0) {
+                lastPage = null;
             }
             resolve({
                 items: _.get(body, options.root, []),

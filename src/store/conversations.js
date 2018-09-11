@@ -58,7 +58,7 @@ export default {
         playVoiceMailStates: {},
         playVoiceMailErrors: {},
         currentPage: 0,
-        lastPage: null,
+        reachedLastPage: false,
         nextPageState: RequestState.initiated,
         nextPageError: null,
         items: [],
@@ -88,8 +88,8 @@ export default {
         currentPage(state) {
             return state.currentPage;
         },
-        lastPage(state) {
-            return state.lastPage;
+        isLastPage(state) {
+            return state.reachedLastPage;
         },
         rowsAlreadyLoaded(state) {
             return state.items.length;
@@ -174,7 +174,7 @@ export default {
         resetList(state) {
             state.items = [];
             state.currentPage = 0;
-            state.lastPage = null;
+            state.reachedLastPage = false;
         },
         nextPageRequesting(state) {
             state.nextPageState = RequestState.requesting;
@@ -184,7 +184,7 @@ export default {
             state.nextPageState = RequestState.succeeded;
             state.nextPageError = null;
             state.items = state.items.concat(items.items);
-            state.lastPage = items.lastPage;
+            state.reachedLastPage = items.items.length === 0;
             state.currentPage = state.currentPage + 1;
             linkCallsWithSameId(state);
         },
@@ -252,12 +252,11 @@ export default {
             });
         },
         nextPage(context, type) {
-            let page = context.getters.currentPage + 1;
-            if(context.getters.lastPage === null || page <= context.getters.lastPage) {
+            if (!context.getters.isLastPage) {
                 context.commit('nextPageRequesting');
                 getConversations({
                     subscriberId: context.getters.getSubscriberId,
-                    page: page,
+                    page: context.getters.currentPage + 1,
                     rows: ROWS_PER_PAGE,
                     type: type
                 }).then((result) => {
