@@ -175,7 +175,7 @@
                 if(!this.isNextPageRequesting && !this.scrollEventEmitted && data.direction === 'down' &&
                     data.position > scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight + 30) {
                     this.scrollEventEmitted = true;
-                    this.nextPage();
+                    this.nextPage(this.selectedTab);
                 }
                 else if(data.position <= scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight + 30) {
                     this.scrollEventEmitted = false;
