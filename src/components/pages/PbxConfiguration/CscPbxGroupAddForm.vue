@@ -100,7 +100,6 @@
 </template>
 
 <script>
-
     import {
         required,
         minValue,
