@@ -10,18 +10,20 @@ export function getConversations(options) {
         let type = _.get(options, 'type', null);
         let params ={
             subscriber_id: _.get(options, 'subscriberId'),
-            page: _.get(options, 'page', 1),
-            rows: _.get(options, 'rows', 25),
             order_by: _.get(options, 'order_by', 'timestamp'),
-            order_by_direction: 'desc'
+            order_by_direction: 'desc',
+            no_count: true
         };
-        if(type !== null) {
+        if (type !== null) {
             params.type = type;
         }
         getList({
             path: 'api/conversations/',
             root: '_embedded.ngcp:conversations',
-            params: params
+            params: params,
+            all: true,
+            page: _.get(options, 'page', 1),
+            rows: _.get(options, 'rows', 25)
         }).then((list)=>{
             resolve(list);
         }).catch((err)=>{

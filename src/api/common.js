@@ -43,12 +43,18 @@ export function getList(options) {
             }
         }).then((res) => {
             let body = getJsonBody(res.body);
-            let lastPage = Math.ceil( body.total_count / options.params.rows );
-            if(options.all === true) {
+            let items = _.get(body, options.root, [])
+            let totalCount = body.total_count || items.length;
+            let rows = options.rows ? options.rows : options.params.rows;
+            let lastPage = Math.ceil( totalCount / rows );
+            if(options.all === true && body.total_count) {
                 lastPage = 1;
             }
+            else if (options.all === true && !body.total_count) {
+                items = items.slice((options.page-1)*options.rows, options.rows*options.page);
+            }
             resolve({
-                items: _.get(body, options.root, []),
+                items: items,
                 lastPage: lastPage
             });
         }).catch((err) => {

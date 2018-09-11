@@ -253,7 +253,7 @@ export default {
         },
         nextPage(context, type) {
             let page = context.getters.currentPage + 1;
-            if(context.getters.lastPage === null || page <= context.getters.lastPage) {
+            if (context.getters.lastPage === null || page <= context.getters.lastPage) {
                 context.commit('nextPageRequesting');
                 getConversations({
                     subscriberId: context.getters.getSubscriberId,
