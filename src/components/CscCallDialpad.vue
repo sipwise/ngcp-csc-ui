@@ -4,6 +4,34 @@
             class="column"
         >
             <div
+                class="csc-dialpad-btn-group csc-dialpad-btn-group-special"
+            >
+                <div
+                    class="csc-dialpad-btn"
+                >
+                    <q-btn
+                        color="primary"
+                        round
+                        outline
+                        small
+                        @click="remove()"
+                        icon="backspace"
+                    />
+                </div>
+                <div
+                    class="csc-dialpad-btn"
+                >
+                    <q-btn
+                        color="primary"
+                        round
+                        outline
+                        small
+                        @click="removeAll()"
+                        icon="cancel"
+                    />
+                </div>
+            </div>
+            <div
                 class="csc-dialpad-btn-group"
                 v-for="(keyRow, rowIndex) in keys"
                 :key="rowIndex"
@@ -81,6 +109,12 @@
                 if(this.isEstablished) {
                     this.$store.dispatch('call/sendDTMF', value);
                 }
+            },
+            remove() {
+                this.$emit('remove');
+            },
+            removeAll() {
+                this.$emit('remove-all');
             }
         }
     }
@@ -94,7 +128,8 @@
         padding-bottom 0
 
     .csc-dialpad-btn
-        display inline-block
+        display flex
+        flex-direction column
         margin-left 16px
         .q-btn-inner
             font-size 22px
@@ -106,8 +141,15 @@
         margin-left 0
 
     .csc-dialpad-btn-group
-        display: block
+        display: flex
+        flex-direction row
         margin-bottom 8px
+        justify-content: flex-end
+
+    .csc-dialpad-btn-group.csc-dialpad-btn-group-special
+        justify-content: center
+        .q-btn
+            font-size 14px
 
     .csc-dialpad-btn-group:last-child
         margin-bottom 0

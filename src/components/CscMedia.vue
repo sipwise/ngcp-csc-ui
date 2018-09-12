@@ -1,9 +1,23 @@
 <template>
-    <div class="csc-media">
-        <div v-show="loading" class="csc-spinner">
-            <q-spinner-mat color="primary" :size="60" />
+    <div
+        class="csc-media"
+    >
+        <div
+            v-show="loading"
+            class="csc-spinner"
+        >
+            <q-spinner-mat
+                color="primary"
+                :size="60"
+            />
         </div>
-        <video v-show="!loading && hasVideo" ref="media" autoplay :muted="muted"></video>
+        <video
+            v-show="!loading && hasVideo"
+            ref="media"
+            autoplay
+            :muted="muted"
+            playsinline
+        />
     </div>
 </template>
 
@@ -70,11 +84,20 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    .csc-media {
+
+    .csc-media
         position: relative;
-    }
-    .csc-media video {
-        position: relative;
-        width: 100%;
-    }
+        font-size 0
+
+        video
+            position: relative;
+            width: 100%;
+
+        .csc-spinner
+            display flex
+            flex-direction row
+            justify-content center
+            .q-spinner-mat
+                display flex
+                flex-direction column
 </style>

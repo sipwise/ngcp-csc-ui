@@ -581,11 +581,7 @@
     }
 
     .csc-call-fullscreen .csc-call .q-card-actions {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        z-index: 6001;
+
     }
 
     .csc-call-fullscreen .csc-call .q-card-main {
