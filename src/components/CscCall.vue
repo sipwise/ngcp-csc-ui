@@ -3,176 +3,126 @@
         <audio
             ref="incomingSound"
             loop
+            playsinline
             preload="auto"
             src="statics/ring.mp3"
-        ></audio>
-        <q-card
-            flat
-            color="secondary"
+        />
+        <div
+            v-if="!isMobile"
+            class="csc-call-top-actions absolute-top-right"
         >
-            <q-card-title>
-                <span v-if="isRinging || isInitiating || isIncoming">
-                    <q-spinner-rings
-                        color="primary"
-                        :size="50"
-                    />
-                </span>
-
-                <q-icon
-                    v-if="isPreparing"
-                    name="call"
-                    color="primary"
-                    size="26px"
-                />
-                <q-icon
-                    v-if="isEstablished && isCaller"
-                    name="call made"
-                    color="primary"
-                    size="26px"
-                />
-                <q-icon
-                    v-if="isEstablished && isCallee"
-                    name="call received"
-                    color="primary"
-                    size="26px"
-                />
-                <q-icon
-                    v-if="isEnded"
-                    name="error"
-                    color="primary"
-                    size="26px"
-                />
-
-                <span
-                    v-if="isPreparing"
-                    class="text"
-                >
-                    {{ $t('call.startNew') }}
-                </span>
-                <span
-                    v-else-if="isInitiating"
-                    class="text"
-                >
-                    {{ $t('call.initiating') }}
-                </span>
-                <span
-                    v-else-if="isRinging"
-                    class="text"
-                >
-                    {{ $t('call.ringing') }}
-                </span>
-                <span
-                    v-else-if="isEnded"
-                    class="text"
-                >
-                    {{ $t('call.ended') }}
-                </span>
-                <span
-                    v-else-if="isIncoming"
-                    class="text"
-                >
-                    {{ $t('call.incoming') }}
-                </span>
-                <span
-                    v-else
-                    class="text"
-                >
-                    {{ $t('call.call') }}
-                </span>
-
-                <q-btn
-                    v-if="isFullscreenEnabled && !isMobile"
-                    round
-                    :small="!isFullscreenEnabled"
-                    slot="right"
-                    class="no-shadow"
-                    @click="toggleFullscreen()"
-                    icon="fullscreen exit"
-                />
-                <q-btn
-                    v-else-if="!isMobile"
-                    round
-                    :small="!isFullscreenEnabled"
-                    slot="right"
-                    class="no-shadow"
-                    @click="toggleFullscreen()"
-                    icon="fullscreen"
-                />
-                <q-btn
-                    round
-                    :small="!isFullscreenEnabled"
-                    slot="right"
-                    class="no-shadow"
-                    @click="close()"
-                    icon="clear"
-                />
-            </q-card-title>
-            <q-card-main>
-                <q-alert
-                    v-if="desktopSharingInstall"
-                    v-model="desktopSharingInstall"
-                    color="warning"
-                    :actions="desktopSharingAlertActions"
-                >
-                    {{ $t('call.desktopSharingNotInstalled') }}
-                </q-alert>
-
-                <div class="csc-call-info">
-                    <csc-phone-number-input
-                        ref="phoneNumberInput"
-                        v-if="isPreparing"
-                        :enabled="isPhoneNumberInputEnabled"
-                    />
-                    <div
-                        v-if="!isPreparing"
-                        class="phone-number"
-                    >
-                        <q-icon
-                            v-if="isCalling && (localMediaType == 'audioVideo' || remoteMediaType == 'audioVideo')"
-                            name="videocam"
-                            color="primary"
-                            size="26px"
-                        />
-                        <q-icon
-                            v-else-if="isCalling && (localMediaType == 'audioOnly' || remoteMediaType == 'audioVideo')"
-                            name="mic"
-                            color="primary"
-                            size="26px"
-                        />
-                        {{ getNumber | destinationFormat }}
-                    </div>
-                    <div
-                        v-if="isEnded"
-                        class="ended-reason"
-                    >
-                        {{ getEndedReason }}
-                    </div>
-                    <csc-call-dialpad
-                        class="csc-call-dialpad"
-                        v-if="isDialpadEnabled"
-                        @inserted="dialpadInserted"
-                    />
-                </div>
-
-                <div class="csc-call-media">
-                    <csc-media
-                        :class="mediaPreviewClasses"
-                        id="local-media"
-                        :muted="true"
-                        v-show="isCalling"
-                        :stream="localMediaStream"
-                    />
-                    <csc-media
-                        class="csc-media-remote"
-                        id="remote-media"
-                        :muted="isMuted"
-                        v-show="isEstablished"
-                        :stream="remoteMediaStream"
-                    />
-                </div>
-
-            </q-card-main>
-            <q-card-actions align="center">
+            <q-btn
+                v-if="isFullscreenEnabled && !isMobile"
+                round
+                :small="!isFullscreenEnabled"
+                slot="right"
+                class="no-shadow"
+                @click="toggleFullscreen()"
+                icon="fullscreen exit"
+                color="default"
+            />
+            <q-btn
+                v-else-if="!isMobile"
+                round
+                :small="!isFullscreenEnabled"
+                slot="right"
+                class="no-shadow"
+                @click="toggleFullscreen()"
+                icon="fullscreen"
+                color="default"
+            />
+            <q-btn
+                round
+                :small="!isFullscreenEnabled"
+                slot="right"
+                class="no-shadow"
+                @click="close()"
+                icon="clear"
+                color="default"
+            />
+        </div>
+        <div
+            class="csc-call-spinner row justify-center"
+            v-if="isRinging || isInitiating || isIncoming"
+        >
+            <q-spinner-rings
+                color="primary"
+                :size="50"
+            />
+        </div>
+        <q-alert
+            v-if="desktopSharingInstall"
+            v-model="desktopSharingInstall"
+            color="warning"
+            :actions="desktopSharingAlertActions"
+        >
+            {{ $t('call.desktopSharingNotInstalled') }}
+        </q-alert>
+        <csc-phone-number-input
+            v-if="isPreparing"
+            class="csc-phone-number-input"
+            ref="phoneNumberInput"
+            :enabled="isPhoneNumberInputEnabled"
+            :dialpad-button="true"
+            @toggle-dialpad="toggleDialpad()"
+            @key-return="call('audioOnly')"
+        />
+        <div
+            v-if="!isPreparing"
+            class="csc-phone-number"
+        >
+            <q-icon
+                v-if="isCalling && (localMediaType == 'audioVideo' || remoteMediaType == 'audioVideo')"
+                name="videocam"
+                color="primary"
+                size="26px"
+            />
+            <q-icon
+                v-else-if="isCalling && (localMediaType == 'audioOnly' || remoteMediaType == 'audioVideo')"
+                name="mic"
+                color="primary"
+                size="26px"
+            />
+            {{ getNumber | destinationFormat }}
+        </div>
+        <div
+            v-if="isEnded"
+            class="csc-call-ended-reason"
+        >
+            {{ getEndedReason | startCase }}
+        </div>
+        <div
+            :class="callMediaClasses"
+            v-show="isCalling || isEstablished"
+        >
+            <csc-media
+                class="csc-media-local"
+                id="local-media"
+                :muted="true"
+                v-show="isCalling"
+                :stream="localMediaStream"
+            />
+            <csc-media
+                class="csc-media-remote"
+                id="remote-media"
+                :muted="isMuted"
+                v-show="isEstablished"
+                :stream="remoteMediaStream"
+            />
+        </div>
+        <div
+            :class="callControlClasses"
+        >
+            <csc-call-dialpad
+                class="csc-call-dialpad"
+                v-if="isDialpadEnabled"
+                @inserted="dialpadInserted"
+                @remove="dialpadRemove"
+                @remove-all="dialpadRemoveAll"
+            />
+            <div
+                class="csc-call-actions"
+            >
                 <q-btn
                     v-if="isEstablished"
                     round
@@ -262,14 +212,6 @@
                     icon="computer"
                 />
                 <q-btn
-                    v-if="isDialpadButtonEnabled"
-                    round
-                    :small="!isFullscreenEnabled"
-                    color="primary"
-                    @click="toggleDialpad()"
-                    icon="dialpad"
-                />
-                <q-btn
                     v-if="isIncoming"
                     round
                     :small="!isFullscreenEnabled"
@@ -277,8 +219,8 @@
                     @click="decline()"
                     icon="call end"
                 />
-            </q-card-actions>
-        </q-card>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -348,6 +290,16 @@
                 }
                 else {
                     this.$refs.phoneNumberInput.concat(value);
+                }
+            },
+            dialpadRemove() {
+                if(!this.isEstablished) {
+                    this.$refs.phoneNumberInput.remove();
+                }
+            },
+            dialpadRemoveAll() {
+                if(!this.isEstablished) {
+                    this.$refs.phoneNumberInput.removeAll();
                 }
             },
             focusNumberInput() {
@@ -474,13 +426,6 @@
                     return 'volume up';
                 }
             },
-            mediaPreviewClasses() {
-                var classes = [];
-                if(this.isEstablished && this.hasRemoteVideo) {
-                    classes.push('csc-media-preview');
-                }
-                return classes;
-            },
             localMediaStream() {
                 if(this.$store.state.call.localMediaStream !== null) {
                     return this.$store.state.call.localMediaStream.getStream();
@@ -544,18 +489,37 @@
             isDialpadEnabled() {
                 return this.dialpadEnabled && (this.isPreparing || this.isEstablished);
             },
-            isDialpadButtonEnabled() {
-                return this.isPreparing || this.isEstablished;
-            },
             callClasses() {
-                let callClasses = ['csc-call'];
-                if(this.isEstablished) {
-                    callClasses.push('csc-call-established');
+                let classes = ['csc-call', 'call-state-' + this.callState];
+                if (this.isFullscreenEnabled) {
+                   classes.push('csc-call-fullscreen');
                 }
-                return callClasses;
+                if (this.isMobile) {
+                    classes.push('csc-call-mobile');
+                }
+                return classes;
+            },
+            callMediaClasses() {
+                let classes = ['csc-call-media'];
+                if (this.hasVideo) {
+                    classes.push('csc-call-media-video');
+                }
+                return classes;
+            },
+            callControlClasses() {
+                let classes = ['csc-call-controls'];
+                if(this.isFullscreenEnabled  && !this.isMobile) {
+//                    classes.push('absolute-bottom');
+                }
+                return classes;
             }
         },
         watch: {
+            isEstablished(established) {
+                if(established) {
+                    this.dialpadEnabled = false;
+                }
+            },
             callState(state) {
                 if(state === 'incoming') {
                     showCallNotification(numberFormat(this.getNumber));
@@ -566,6 +530,9 @@
                 }
                 else if (state === 'input') {
                     this.stopIncomingSound();
+                    if(this.isMobile) {
+                        this.dialpadEnabled = true;
+                    }
                 }
                 else {
                     this.stopIncomingSound();
@@ -577,77 +544,151 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../themes/quasar.variables.styl';
-
-    .csc-call {
-        width: inherit;
-    }
-
-    .csc-call .q-card {
-        margin: 0;
-    }
-
-    .csc-call .q-card-main {
-        padding: 0;
-    }
-
-    .csc-call .q-field {
-        margin: 0px;
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
-    .csc-call .q-card-actions {
-        padding: 16px;
-    }
-
-    .csc-spinner {
-        text-align: center;
-        margin-bottom: 16px;
-    }
-
-    .q-card-title .text {
-        color: #adb3b8;
-    }
-    .csc-call-fullscreen .csc-call .q-card-title .text {
-        color: white;
-    }
-
-    .csc-call .phone-number {
-        font-size: 18px;
-        text-align: center;
-        color: #adb3b8;
-        margin-bottom: 16px;
-    }
-
-    .csc-call-fullscreen .csc-call .phone-number {
-        color: white;
-    }
-
-    .csc-call .ended-reason {
-        font-size: 18px;
-        text-align: center;
-        color: #adb3b8;
-    }
-
-    .csc-call-media {
-        position: relative;
-    }
-
-    .csc-media.csc-media-preview {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 25%;
-        z-index: 10;
-    }
-
-    .csc-call .q-alert-container {
-        margin-bottom: 16px;
-    }
-
-    .csc-call.csc-call-established
+    .csc-call
+        position relative
+        z-index 2
+        padding-top 64px
+        height 100%
+        .csc-call-top-actions
+            z-index 10
+            padding 16px
+        .csc-phone-number-input
+            position relative
+            z-index 9
+            margin 0
+            padding 16px
         .csc-call-dialpad
+            position relative
+            z-index 8
+            padding 16px
+        .csc-call-actions
+            display flex
+            flex-direction row
+            position relative
+            z-index 7
+            padding 16px
+            padding-top 8px
+            justify-content center
+            .q-btn
+                margin-right 16px
+                display flex
+            .q-btn:last-child
+                margin-right 0
+        .csc-call-ended-reason
+            color indianred
+            text-align center
+            padding 16px
             padding-top 0
+            position relative
+            z-index 6
+            font-size 16px
+        .csc-phone-number
+            text-align center
+            padding 16px
+            color white
+            position relative
+            z-index 6
+            font-size 16px
+            .q-icon
+                vertical-align middle
+        .csc-media-local
+            position relative
+        .csc-call-media.csc-call-media-video
+            padding-top 16px
             padding-bottom 16px
+            position relative
+            z-index 2
+        .csc-call-spinner
+            position relative
+            padding 16px
+            z-index 3
 
+    .csc-call.csc-call-fullscreen
+        .csc-call-controls
+            padding: 32px
+            .csc-call-actions
+                .q-btn
+                    margin-right 16px
+                .q-btn:last-child
+                    margin-right 0
+        .csc-call-media
+            padding 0
+            position absolute
+            top 0
+            left 0
+            right 0
+            bottom 0
+            .csc-media-local
+                position relative
+                padding 0
+                width: 100%
+                height: 100%
+        .csc-phone-number
+            font-size: 20px
+        .csc-call-ended-reason
+            font-size: 20px
+    .csc-call.csc-call-fullscreen.call-state-initiating,
+    .csc-call.csc-call-fullscreen.call-state-ringing
+        .csc-call-controls
+            position absolute
+            bottom 0
+            right 0
+            left 0
+            background-color alpha($secondary, 0.4)
+    .csc-call.call-state-established
+        .csc-call-media
+            .csc-media-local
+                position absolute
+                width 30%
+                height auto
+                z-index 2
+                bottom 24px
+                left 8px
+                -webkit-box-shadow: 0px 0px 29px -4px rgba(0,0,0,0.75);
+                -moz-box-shadow: 0px 0px 29px -4px rgba(0,0,0,0.75);
+                box-shadow: 0px 0px 29px -4px rgba(0,0,0,0.75);
+            .csc-media-remote
+                position relative
+                width 100%
+                height 100%
+                z-index 1
+    .csc-call.csc-call-fullscreen.call-state-established
+        .csc-call-media
+            .csc-media-local
+                bottom 16px
+                left 16px
+                width 20%
+                -webkit-box-shadow: 0px 0px 29px -4px rgba(0,0,0,0.75);
+                -moz-box-shadow: 0px 0px 29px -4px rgba(0,0,0,0.75);
+                box-shadow: 0px 0px 29px -4px rgba(0,0,0,0.75);
+        .csc-call-controls
+            position absolute
+            bottom 0
+            right 0
+            left 0
+            background-color alpha($secondary, 0.4)
+
+    .csc-call.csc-call-fullscreen.csc-call-mobile
+        padding-top 0
+        .csc-call-top-actions
+            padding 8px
+        .csc-phone-number-input
+            margin 0
+            padding 16px
+        .csc-call-dialpad
+            padding 4px
+        .csc-call-actions
+            padding 4px
+            .q-btn
+                margin-right 16px
+            .q-btn:last-child
+                margin-right 0
+
+    .csc-call.csc-call-fullscreen.csc-call-mobile.call-state-established
+        .csc-media-local
+            bottom 120px
+            left: 32px
+        .csc-call-controls
+            .csc-call-actions
+                padding-bottom 0
 </style>

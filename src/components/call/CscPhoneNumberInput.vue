@@ -1,5 +1,6 @@
 <template>
     <q-field
+        v-if="!isMobile"
         dark
         :count="maxLength"
         :helper="helperMessage"
@@ -19,6 +20,32 @@
             @input="inputPhoneNumber"
             @keypress.space.prevent
             @keydown.space.prevent
+            @keyup.space.prevent
+            :after="inputButtons"
+            @keyup.enter="keyReturn()"
+        />
+    </q-field>
+    <q-field
+        v-else
+        dark
+        :error="$v.phoneNumber.$error"
+        :error-label="errorMessage"
+    >
+        <q-input
+            ref="inputField"
+            dark
+            clearable
+            type="text"
+            :placeholder="$t('call.number')"
+            :value="phoneNumber"
+            :error="$v.phoneNumber.$error"
+            :max-length="maxLength"
+            :readonly="!enabled"
+            @input="inputPhoneNumber"
+            @keypress.space.prevent
+            @keydown.space.prevent
+            @keyup.space.prevent
+            :after="inputButtons"
         />
     </q-field>
 </template>
@@ -64,6 +91,10 @@
             enabled: {
                 type: Boolean,
                 default: true
+            },
+            dialpadButton: {
+                type: Boolean,
+                default: false
             }
         },
         mixins: [
@@ -78,9 +109,27 @@
             },
             inputReadonly() {
                 return this.isMobile;
+            },
+            inputButtons() {
+                let self = this;
+                let buttons = [];
+                if (this.dialpadButton) {
+                    buttons.push({
+                        icon: 'dialpad',
+                        error: false,
+                        handler (event) {
+                            event.stopPropagation();
+                            self.toggleDialpad();
+                        }
+                    });
+                }
+                return buttons;
             }
         },
         methods: {
+            keyReturn() {
+                this.$emit('key-return');
+            },
             inputPhoneNumber(value) {
                 this.phoneNumber = normalizeNumber(value, this.isMobile);
                 this.$v.phoneNumber.$touch();
@@ -106,6 +155,18 @@
                 Vue.nextTick(() => {
                     this.$refs.inputField.blur();
                 });
+            },
+            remove() {
+                this.phoneNumber = _.trim(this.phoneNumber.substring(0, this.phoneNumber.length - 1));
+                if (this.phoneNumber === '+') {
+                    this.phoneNumber = '';
+                }
+            },
+            removeAll() {
+                this.phoneNumber = '';
+            },
+            toggleDialpad() {
+                this.$emit('toggle-dialpad');
             }
         }
     }
