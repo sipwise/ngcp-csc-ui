@@ -39,42 +39,50 @@
                 label="Voicemails"
                 @click="filterByType('voicemail')"
             />
-            <q-list
-                no-border
-                inset-separator
-                sparse
-                multiline
-            >
-                <csc-conversation-item
-                    v-for="(item, index) in items"
-                    :key="item._id"
-                    :item="item"
-                    :call-available="isCallAvailable"
-                    @init-call="initCall"
-                    @download-fax="downloadFax"
-                    @download-voice-mail="downloadVoiceMail"
-                    @play-voice-mail="playVoiceMail"
-                />
-            </q-list>
-            <div
-                v-if="isNextPageRequesting"
-                class="row justify-center"
-            >
-                <q-spinner-dots
-                    color="primary"
-                    :size="40"
-                />
-            </div>
-            <div
-                v-if="!isNextPageRequesting && items.length === 0"
-                class="row justify-center"
-            >
-                {{ noResultsMessage }}
-            </div>
-            <q-scroll-observable
-                @scroll="scroll"
-            />
         </q-tabs>
+        <q-list
+            no-border
+            inset-separator
+            sparse
+            multiline
+        >
+            <csc-conversation-item
+                v-for="(item, index) in items"
+                :key="item._id"
+                :item="item"
+                :call-available="isCallAvailable"
+                @init-call="initCall"
+                @download-fax="downloadFax"
+                @download-voice-mail="downloadVoiceMail"
+                @play-voice-mail="playVoiceMail"
+            />
+        </q-list>
+        <div
+            v-if="isNextPageRequesting"
+            class="row justify-center"
+        >
+            <q-spinner-dots
+                color="primary"
+                :size="40"
+            />
+        </div>
+        <div
+            v-if="!isNextPageRequesting && items.length === 0"
+            class="row justify-center"
+        >
+            {{ noResultsMessage }}
+        </div>
+        <q-scroll-observable
+            @scroll="scroll"
+        />
+        <q-btn
+          v-back-to-top.animate="backToTopProps"
+          round
+          color="primary"
+          class="fixed-bottom-right animate-pop csc-back-to-top"
+        >
+            <q-icon name="keyboard_arrow_up" />
+        </q-btn>
     </csc-page>
 </template>
 
@@ -98,7 +106,10 @@
         dom,
         QTabs,
         QTab,
-        QTabPane
+        QTabPane,
+        BackToTop,
+        QBtn,
+        QIcon
     } from 'quasar-framework'
     const { offset } = dom
     export default {
@@ -134,7 +145,12 @@
             QSpinnerDots,
             QTabs,
             QTab,
-            QTabPane
+            QTabPane,
+            QBtn,
+            QIcon
+        },
+        directives: {
+            BackToTop
         },
         mounted() {
             this.$store.commit('conversations/resetList');
@@ -168,6 +184,9 @@
                 else if(this.selectedTab === 'voicemail') {
                     return this.$t('pages.conversations.noVoicemailsMessage');
                 }
+            },
+            backToTopProps() {
+                return {offset: 100, duration: 200};
             }
         },
         methods: {
@@ -278,8 +297,15 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+
     .q-infinite-scroll-message
         margin-bottom 50px
+
+    .conversations-tabs
+        position sticky
+        top 60px
+        z-index 12
+        background white
 
     .csc-voice-mail-item
         .csc-item-buttons
@@ -288,7 +314,10 @@
 
     .csc-item-buttons
         .q-btn
-            padding-left 8px;
-            padding-right 8px;
+            padding-left 8px
+            padding-right 8px
+
+    .csc-back-to-top
+        margin 0 15px 15px 0
 
 </style>
