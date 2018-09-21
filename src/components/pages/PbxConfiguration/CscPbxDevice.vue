@@ -1,5 +1,5 @@
 <template>
-    <q-item class="csc-entity csc-pbx-device">
+    <q-item :class="itemClasses">
         <q-item-side v-if="!expanded">
             <q-item-tile avatar>
                 <img :src="frontImageUrl" />
@@ -180,6 +180,13 @@
             }
         },
         computed: {
+            itemClasses() {
+                let classes = ['csc-entity', 'csc-pbx-device'];
+                if (this.expanded) {
+                    classes.push('csc-item-expanded');
+                }
+                return classes;
+            },
             isMobile() {
                 return Platform.is.mobile;
             },

@@ -1,5 +1,5 @@
 <template>
-    <q-item class="csc-list-item csc-pbx-group">
+    <q-item :class="itemClasses">
         <q-item-side
             v-if="!expanded"
         >
@@ -215,6 +215,13 @@
             QAlert
         },
         computed: {
+            itemClasses() {
+                let classes = ['csc-list-item', 'csc-pbx-group'];
+                if (this.expanded) {
+                    classes.push('csc-item-expanded');
+                }
+                return classes;
+            },
             entityTitle() {
                 return this.group.display_name ?
                     this.group.display_name : this.group.username;
