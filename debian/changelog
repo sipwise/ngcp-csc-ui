@@ -1,3 +1,37 @@
+ngcp-csc-ui (6.5.1.0+0~mr6.5.1.0) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [6117c5f] TT#40257 List of assigned speed dials
+  * [6c303cc] TT#40256 User wants to remove speed dial config
+  * [9823d6c] TT#40255 Customer wants to add speed dial config
+  * [72ad4e4] TT#40350 Add validation library vuelidate
+  * [91e33e2] TT#37304 CallForwarding: As a Customer, I want to enable/disable calls to my own number
+  * [f6795c7] TT#40253 Notify user invalid destination input
+  * [3ee3313] TT#44068 Single-step to add non-number destination
+  * [cd40d0b] TT#40252 Validation for PBXDevice add form
+  * [a8e7df6] TT#40352 See tabs nav sticky while scrolling down
+  * [a14d686] TT#43501 Speed up convs requests by using no_count
+
+  [ Tijana Maksimovic ]
+  * [7b6b3c0] TT#37655 Customer wants to filter by mac address
+
+  [ Hans-Peter Herzog ]
+  * [9b97844] TT#42658 Remove nginx customtt files and add new csc_dev flag to dev config script to enable CORS
+  * [c3963b1] TT#37656 PBXConfig: As a Customer, I want to filter PBXDevices by station_name
+  * [40e15ad] TT#40251 PBXConfig: As a Customer, I want to get notified about invalid input before creating a PBXSeat
+  * [f867c69] TT#40250 PBXConfig: As a Customer, I want to get notified about invalid input before creating a PBXGroup
+  * [fc6e8c6] TT#32756 Call: As a Customer, I want to input numbers via a Dialpad to be able to send DTMF
+  * [68ee708] TT#44518 PbxConfiguration: Fix item background color if in the expanded state
+  * [82a98ed] TT#43554 Call: Refactor CSC call vue.js component
+
+  [ Michael Prokop ]
+  * [4ca5ad5] TT#42950 Update instructions for configuring exim4 MTA
+  * [3a89996] TT#44161 Support Debian/buster by Build-Depending on either npm or nodejs
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Sep 2018 18:55:08 +0200
+
 ngcp-csc-ui (6.5.0.0+0~mr6.5.0.0) unstable; urgency=medium
 
   [ raxelsen ]
