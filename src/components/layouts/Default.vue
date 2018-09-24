@@ -232,6 +232,16 @@
                     <q-item-main :label="$t('navigation.pbxConfiguration.devices')" />
                 </q-side-link>
             </q-collapsible>
+            <q-side-link
+                item
+                to="/user/voicebox"
+            >
+                <q-item-side icon="voicemail"/>
+                <q-item-main
+                    :label="$t('navigation.voicebox.title')"
+                    :sublabel="$t('navigation.voicebox.subTitle')"
+                />
+            </q-side-link>
         </q-list>
         <router-view />
         <csc-call

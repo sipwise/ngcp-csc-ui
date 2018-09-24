@@ -13,6 +13,7 @@ import ReminderModule from './reminder'
 import SpeedDialModule from './speed-dial'
 import UserModule from './user'
 import CommunicationModule from './communication'
+import VoiceboxModule from './voicebox'
 
 Vue.use(Vuex);
 
@@ -27,7 +28,8 @@ export const store = new Vuex.Store({
         reminder: ReminderModule,
         speedDial: SpeedDialModule,
         user: UserModule,
-        communication: CommunicationModule
+        communication: CommunicationModule,
+        voicebox: VoiceboxModule
     },
     getters: {
         pageTitle(state) {
