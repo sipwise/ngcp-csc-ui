@@ -33,7 +33,8 @@
         "alphaNum": "{field} must consist of numeric characters only",
         "inputNumber": "Input a phone number",
         "inputValidNumber": "Input a valid phone number",
-        "fieldRequiredXor": "{fieldOne} or {fieldTwo} is required"
+        "fieldRequiredXor": "{fieldOne} or {fieldTwo} is required",
+        "email": "Input a valid email address"
     },
     "navigation": {
         "home": {
@@ -72,6 +73,10 @@
             "groups": "Groups",
             "seats": "Seats",
             "devices": "Devices"
+        },
+        "voicebox": {
+            "title": "Voicebox",
+            "subTitle": "Set your voicebox settings"
         }
     },
     "pages": {
@@ -382,7 +387,8 @@
         "privacyEnabledToast": "Your number is hidden to the callee",
         "privacyEnabledLabel": "Your number is hidden to the callee",
         "privacyDisabledToast": "Your number is visible to the callee",
-        "privacyDisabledLabel": "Your number is visible to the callee"
+        "privacyDisabledLabel": "Your number is visible to the callee",
+        "number": "Number"
     },
     "communication": {
         "sendFax": "Send Fax",
@@ -420,5 +426,25 @@
         "addNoSlotsDialogText": "All available speed dial slots have already been assigned. Please delete one first.",
         "assignSlotErrorMessage": "An error occured while trying to assign the speed dial slot. Please try again.",
         "assignSlotSuccessMessage": "Assigned slot {slot}"
+    },
+    "voicebox": {
+        "label": {
+            "changeEmail": "Change Email",
+            "changePin": "Change PIN",
+            "deletionEnabled": "Deletion is enabled",
+            "deletionDisabled": "Deletion is disabled",
+            "attachmentEnabled": "Attachment is enabled",
+            "attachmentDisabled": "Attachment is disabled"
+        },
+        "pin": "PIN",
+        "loadSettingsErrorMessage": "An error occured while trying to load the settings. Please reload the page or check your network connection.",
+        "toggleDeleteSuccessMessage": "Toggled deletion successfully.",
+        "toggleDeleteErrorMessage": "An error occured while trying to toggle the delete option. Please try again.",
+        "toggleAttachSuccessMessage": "Toggled attachment successfully.",
+        "toggleAttachErrorMessage": "An error occured while trying to toggle the attach option. Please try again.",
+        "updatePinSuccessMessage": "Changed PIN successfully.",
+        "updatePinErrorMessage": "An error occured while trying to update the pin field. Please try again.",
+        "updateEmailSuccessMessage": "Changed email successfully.",
+        "updateEmailErrorMessage": "An error occured while trying to update the email field. Please try again."
     }
 }
