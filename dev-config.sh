@@ -7,6 +7,7 @@ case "$1" in
     ngcpcfg set /etc/ngcp-config/config.yml rtcengine.enable=yes
     ngcpcfg set /etc/ngcp-config/config.yml pbx.enable=yes
     ngcpcfg set /etc/ngcp-config/config.yml www_admin.privileges.subscriberadmin.subscribers.0=write
+    ngcpcfg set /etc/ngcp-config/config.yml email.smarthost.hostname=mail.sipwise.com
     ngcpcfg apply 'Enable CSC, PBX and RtcEngine'
     ;;
 esac
