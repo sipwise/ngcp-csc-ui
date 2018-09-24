@@ -30,7 +30,7 @@
             </q-field>
             <div v-if="addFormEnabled">
                 <q-field :error="addFormError" :error-label="$t('pages.callBlocking' + suffix + '.addInputError')">
-                    <q-input type="text" float-label="Number" v-model="newNumber" clearable @keyup.enter="addNumber()" />
+                    <q-input type="text" :float-label="$t('callBlocking.number')" v-model="newNumber" clearable @keyup.enter="addNumber()" />
                 </q-field>
                 <q-btn flat @click="disableAddForm()">{{ $t('buttons.cancel') }}</q-btn>
                 <q-btn flat color="primary" icon-right="fa-save" @click="addNumber()">{{ $t('buttons.save') }}</q-btn>
@@ -43,7 +43,7 @@
                     <q-icon v-if="!(editing && editingIndex == index) && enabled == 'whitelist'" name="check" color="primary" size="22px"/>
                     <span class="blocked-number-title" v-if="!(editing && editingIndex == index)"
                           @click="editNumber(index)">{{ number }}</span>
-                    <q-input autofocus v-if="editing && editingIndex == index" type="text" float-label="Number"
+                    <q-input autofocus v-if="editing && editingIndex == index" type="text" :float-label="$t('callBlocking.number')"
                              v-model="editingNumber" @keyup.enter="saveNumber(index)" />
                     <q-btn color="primary" flat v-if="editing && editingIndex == index" slot="right"
                            icon="fa-save" @click="saveNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.save') }}</span></q-btn>
