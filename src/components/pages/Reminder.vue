@@ -3,7 +3,7 @@
         class="csc-simple-page"
     >
         <q-field
-            class="reminder-field"
+            class="csc-form-field"
         >
             <q-toggle
                 :disable="isReminderLoading"
@@ -15,7 +15,7 @@
             />
         </q-field>
         <q-field
-            class="reminder-field"
+            class="csc-form-field"
         >
             <q-datetime
                 format24h
@@ -28,7 +28,7 @@
             />
         </q-field>
         <q-field
-            class="reminder-field"
+            class="csc-form-field"
         >
             <q-option-group
                 color="positive"
@@ -164,7 +164,4 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    .reminder-field {
-        margin-bottom: 40px;
-    }
 </style>
