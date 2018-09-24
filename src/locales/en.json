@@ -71,6 +71,10 @@
             "groups": "Groups",
             "seats": "Seats",
             "devices": "Devices"
+        },
+        "voicebox": {
+            "title": "Voicebox",
+            "subTitle": "Set your voicebox settings"
         }
     },
     "pages": {
@@ -381,7 +385,8 @@
         "privacyEnabledToast": "Your number is hidden to the callee",
         "privacyEnabledLabel": "Your number is hidden to the callee",
         "privacyDisabledToast": "Your number is visible to the callee",
-        "privacyDisabledLabel": "Your number is visible to the callee"
+        "privacyDisabledLabel": "Your number is visible to the callee",
+        "number": "Number"
     },
     "communication": {
         "sendFax": "Send Fax",
@@ -416,5 +421,13 @@
         "addNoSlotsDialogText": "All available speed dial slots have already been assigned. Please delete one first.",
         "assignSlotErrorMessage": "An error occured while trying to assign the speed dial slot. Please try again.",
         "assignSlotSuccessMessage": "Assigned slot {slot}"
+    },
+    "voicebox": {
+        "label": {
+            "changeDeletion": "Change Deletion Setting",
+            "changeEmail": "Change Email",
+            "changeDelivery": "Change Delivery Setting",
+            "changePin": "Change PIN"
+        }
     }
 }

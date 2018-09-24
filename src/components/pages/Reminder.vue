@@ -164,7 +164,8 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    .reminder-field {
-        margin-bottom: 40px;
-    }
+
+    .reminder-field
+        margin-bottom 40px
+
 </style>
