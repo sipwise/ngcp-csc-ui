@@ -10,7 +10,6 @@ import {
     setReminderRecurrence
 } from '../api/reminder';
 
-
 export default {
     namespaced: true,
     state: {

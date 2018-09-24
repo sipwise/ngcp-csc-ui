@@ -14,6 +14,7 @@ import SpeedDial from './components/pages/SpeedDial/SpeedDial'
 import PbxConfigurationGroups from './components/pages/PbxConfiguration/CscPbxGroups'
 import PbxConfigurationSeats from './components/pages/PbxConfiguration/CscPbxSeats'
 import PbxConfigurationDevices from './components/pages/PbxConfiguration/CscPbxDevices'
+import Voicebox from './components/pages/Voicebox/Voicebox';
 import Login from './components/Login'
 import Error404 from './components/Error404'
 
@@ -90,14 +91,16 @@ export default [
                 path: 'reminder',
                 component: Reminder,
                 meta: {
-                    title: i18n.t('navigation.reminder.title')
+                    title: i18n.t('navigation.reminder.title'),
+                    subtitle: i18n.t('navigation.reminder.subTitle')
                 }
             },
             {
                 path: 'speeddial',
                 component: SpeedDial,
                 meta: {
-                    title: i18n.t('navigation.speeddial.title')
+                    title: i18n.t('navigation.speeddial.title'),
+                    subtitle: i18n.t('navigation.speeddial.subTitle')
                 }
             },
             {
@@ -122,6 +125,14 @@ export default [
                 meta: {
                     title: i18n.t('navigation.pbxConfiguration.title'),
                     subtitle: i18n.t('navigation.pbxConfiguration.devices')
+                }
+            },
+            {
+                path: 'voicebox',
+                component: Voicebox,
+                meta: {
+                    title: i18n.t('navigation.voicebox.title'),
+                    subtitle: i18n.t('navigation.voicebox.subTitle')
                 }
             }
         ]

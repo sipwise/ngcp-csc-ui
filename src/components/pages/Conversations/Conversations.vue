@@ -154,7 +154,7 @@
         directives: {
             BackToTop
         },
-        mounted() {
+        created() {
             this.$store.commit('conversations/resetList');
         },
         inject: ['layout'],
