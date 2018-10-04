@@ -117,26 +117,12 @@
         },
         "conversations": {
             "title": "Conversations",
-            "labels": {
-                "successful": "Successful",
-                "unsuccessful": "Unsuccessful",
-                "from": "from",
-                "to": "to"
-            },
             "buttons": {
                 "call": "CALL",
                 "audioCall": "Audio Call",
                 "videoCall": "Video Call",
                 "play": "Play",
                 "download": "Download"
-            },
-            "card": {
-                "date": "Date",
-                "duration": "Duration",
-                "folder": "Folder",
-                "pages": "Pages",
-                "cost": "Cost",
-                "message": "Message"
             },
             "downloadVoiceMailSuccessMessage": "Voicemail downloaded successfully",
             "downloadVoiceMailErrorMessage": "Downloading of voicemail failed",
@@ -156,7 +142,8 @@
             "pages": "pages",
             "voicemail": "Voicemail",
             "duration": "Duration",
-            "seconds": "seconds"
+            "seconds": "seconds",
+            "cost": "Cost"
         },
         "reminder": {
             "toggleEnabled": "Reminder is enabled",

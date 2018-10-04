@@ -6,12 +6,42 @@
         />
         <q-item-main>
             <q-item-tile label>
-                <span class="gt-sm csc-entity-title">{{ typeTerm }}</span>
-                <span class="gt-sm csc-entity-title">{{ direction }}</span>
-                <span class="csc-entity-title">{{ number | destinationFormat }}</span>
+                <span
+                    class="gt-sm csc-entity-title"
+                >
+                    {{ typeTerm }}
+                </span>
+                <span
+                    class="gt-sm csc-entity-title"
+                >
+                    {{ direction }}
+                </span>
+                <span
+                    class="csc-entity-title"
+                >
+                    {{ number | destinationFormat }}
+                </span>
             </q-item-tile>
             <q-item-tile sublabel>
                 {{ call.start_time | smartTime }}
+            </q-item-tile>
+            <q-item-tile sublabel>
+                <span
+                    class="csc-entity-subtitle"
+                >
+                    {{ $t('pages.conversations.cost') }}
+                </span>
+                <span
+                    class="csc-entity-subtitle"
+                >
+                    {{ call.customer_cost | wholeCurrency }}
+                </span>
+                <span
+                    v-if="call.currency.length > 0"
+                    class="csc-entity-subtitle"
+                >
+                    ({{ call.currency }})
+                </span>
             </q-item-tile>
         </q-item-main>
         <q-item-side
