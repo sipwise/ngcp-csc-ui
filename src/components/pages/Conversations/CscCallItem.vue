@@ -13,6 +13,9 @@
             <q-item-tile sublabel>
                 {{ call.start_time | smartTime }}
             </q-item-tile>
+            <q-item-tile sublabel>
+                Cost {{ call.currency }}{{ call.customer_cost | wholeCurrency }}
+            </q-item-tile>
         </q-item-main>
         <q-item-side
             right
