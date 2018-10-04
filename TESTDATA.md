@@ -75,8 +75,8 @@ For outgoing you need to use the api (also with E 164 number set to sms number f
 1. SSH in to the vagrant box, become root, and execute the following command to send a fax from one subscriber to another
 `echo "Test Fax!" | ngcp-fax --caller 43993006 --callee 43993007`
 1. To troubleshoot you can check logs:
-`tail -f /var/log/ngcp/faxserver.log`
-`tail -f /var/log/ngcp/kamailio-proxy.log`
+`tail -f /ngcp-data/logs/faxserver.log`
+`tail -f /ngcp-data/logs/kamailio-proxy.log`
 
 ## CALLS
 
