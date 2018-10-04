@@ -84,6 +84,15 @@ Can be created by calling from one subscriber to another using the ngcp-csc-ui c
 
 Another option is to use a soft phone client such as linphone for desktop and mobile. Simply enter the subscriber username and password, and in the domain field enter the ip of the vagrant box you're using.
 
+### CALL COST
+
+To be able to see anything else than "Cost 0" in the "Conversations" view, you first need to add some fees and currency symbol/ISO code:
+
+1. In ngcp-panel, go to Settings > Billing, find "Default Billing Profile", and click "Edit"
+1. Scroll down to "Currency" field, and enter either currency symbol or ISO code (e.g. € or EUR), and click "Save"
+1. In ngcp-panel, go to Settings > Billing, find "Default Billing Profile" again, click "Fees", and click "Edit" on the existing entry
+1. The simplest way to set fees for testing, is to simply enter "1" as value for the following fields: Onpeak init rate, Onpeak init interval, Onpeak follow rate, Onpeak follow interval, Offpeak init rate, Offpeak init interval, Offpeak follow rate, Offpeak follow interval. Then click "Save"
+
 ## XMPP CHAT
 
 Should be created using an xmpp client authenticating as subscribers, but have not been able to verify this.
