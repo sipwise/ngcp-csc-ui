@@ -20,7 +20,7 @@
                     :attachLabel="attachLabel"
                 />
                 <csc-sound-file-upload
-                    ref="uploadBusyGreeting"
+                    ref="uploadBusy"
                     icon="music_note"
                     file-types=".wav,.mp3"
                     :label="$t('voicebox.label.busyGreeting')"
@@ -31,20 +31,23 @@
                     @upload="uploadBusyGreeting"
                     @abort="abortBusy"
                     @reset="deleteBusy"
+                    :file-url="busyFileUrl"
+                    :loaded="busyGreetingLoaded"
+                    @init="initBusyGreetingAudio"
                 />
-                <csc-sound-file-upload
-                    ref="uploadUnavailGreeting"
-                    icon="music_note"
-                    file-types=".wav,.mp3"
-                    :label="$t('voicebox.label.unavailGreeting')"
-                    :value="unavailGreetingLabel"
-                    :progress="uploadUnavailProgress"
-                    :uploading="uploadUnavailGreetingRequesting"
-                    :uploaded="unavailGreetingId !== null"
-                    @upload="uploadUnavailGreeting"
-                    @abort="abortUnavail"
-                    @reset="deleteUnavail"
-                />
+                <!--<csc-sound-file-upload-->
+                    <!--ref="uploadUnavailGreeting"-->
+                    <!--icon="music_note"-->
+                    <!--file-types=".wav,.mp3"-->
+                    <!--:label="$t('voicebox.label.unavailGreeting')"-->
+                    <!--:value="unavailGreetingLabel"-->
+                    <!--:progress="uploadUnavailProgress"-->
+                    <!--:uploading="uploadUnavailGreetingRequesting"-->
+                    <!--:uploaded="unavailGreetingId !== null"-->
+                    <!--@upload="uploadUnavailGreeting"-->
+                    <!--@abort="abortUnavail"-->
+                    <!--@reset="deleteUnavail"-->
+                <!--/>-->
             </div>
         </div>
     </csc-page>
@@ -68,6 +71,7 @@
     export default {
         data () {
             return {
+                platform: this.$q.platform.is
             }
         },
         components: {
@@ -117,12 +121,23 @@
                 'deleteGreetingState',
                 'deleteGreetingError',
                 'busyGreetingLabel',
-                'unavailGreetingLabel'
-            ])
+                'unavailGreetingLabel',
+                'playGreetingLoaded',
+                'playGreetingUrl'
+            ]),
+            busyFileUrl() {
+                return this.playGreetingUrl(this.busyGreetingId);
+            },
+            busyGreetingLoaded() {
+                return this.playGreetingLoaded(this.busyGreetingId);
+            },
+            soundFileFormat() {
+                return this.platform.mozilla ? 'ogg' : 'mp3';
+            }
         },
         methods: {
             resetBusyFile() {
-                this.$refs.uploadBusyGreeting.reset();
+                this.$refs.uploadBusy.reset();
                 this.$store.commit('voicebox/resetBusyProgress');
             },
             resetUnavailFile() {
@@ -140,10 +155,10 @@
                 });
             },
             abortBusy() {
-                this.$store.dispatch('voicebox/abortPreviousRequest', 'busy');
+                this.$store.dispatch('voicebox/abortUploadBusyGreeting');
             },
             abortUnavail() {
-                this.$store.dispatch('voicebox/abortPreviousRequest', 'unavail');
+                this.$store.dispatch('voicebox/abortUploadUnavailGreeting');
             },
             deleteBusy() {
                 let self = this;
@@ -204,6 +219,17 @@
             },
             loadUnavailGreeting() {
                 this.$store.dispatch('voicebox/loadUnavailGreeting');
+            },
+            playBusyGreeting() {
+                this.$store.dispatch('voicebox/playGreeting', {
+                    id: this.busyGreetingId,
+                    format: this.soundFileFormat
+                });
+            },
+            initBusyGreetingAudio() {
+                this.playBusyGreeting();
+                this.$refs.uploadBusy.setPlayingTrue();
+                this.$refs.uploadBusy.setPausedFalse();
             }
         },
         watch: {
@@ -287,8 +313,5 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables';
-
-    .csc-upload-file-label
-        margin-bottom $flex-gutter-sm
 
 </style>
