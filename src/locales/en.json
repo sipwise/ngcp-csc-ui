@@ -17,7 +17,8 @@
         "moveUp": "Move up",
         "moveDown": "Move down",
         "dismiss": "Dismiss",
-        "reset": "Reset"
+        "reset": "Reset",
+        "uploadFile": "Upload file"
     },
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",
@@ -403,8 +404,7 @@
             "pageHeader": "Page Header",
             "content": "Content",
             "file": "File",
-            "faxFile": "Fax File",
-            "uploadFile": "Upload File"
+            "faxFile": "Fax File"
         },
         "send": "Send",
         "cancel": "Cancel",
@@ -434,7 +434,8 @@
             "deletionEnabled": "Voicemail will be deleted after email notification is delivered",
             "deletionDisabled": "Voicemail will not be deleted after email notification is delivered",
             "attachmentEnabled": "Voicemail will be attached to email notification",
-            "attachmentDisabled": "Voicemail will not be attached to email notification"
+            "attachmentDisabled": "Voicemail will not be attached to email notification",
+            "busyGreeting": "Busy Greeting"
         },
         "pin": "PIN",
         "loadSettingsErrorMessage": "An error occured while trying to load the settings. Please reload the page or check your network connection.",

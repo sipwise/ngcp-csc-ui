@@ -11,6 +11,9 @@
             :deleteLabel="deleteLabel"
             :attachLabel="attachLabel"
         />
+        <csc-voicebox-greetings
+            v-if="isSettingsLoaded"
+        />
     </csc-page>
 </template>
 
@@ -18,6 +21,7 @@
     import { mapGetters } from 'vuex'
     import CscPage from '../../CscPage'
     import CscVoiceboxSettings from './CscVoiceboxSettings'
+    import CscVoiceboxGreetings from './CscVoiceboxGreetings'
     import {
         startLoading,
         stopLoading,
@@ -31,7 +35,8 @@
         },
         components: {
             CscPage,
-            CscVoiceboxSettings
+            CscVoiceboxSettings,
+            CscVoiceboxGreetings
         },
         created() {
             this.$store.dispatch('voicebox/getVoiceboxSettings');
