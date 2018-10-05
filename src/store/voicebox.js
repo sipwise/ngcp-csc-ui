@@ -1,17 +1,18 @@
 
 'use strict';
 
+import Vue from 'vue';
 import { RequestState } from './common'
 import {
-    getVoiceboxSettings,
-    setVoiceboxDelete,
+    getVoiceboxSettings, setVoiceboxDelete,
     setVoiceboxAttach,
     setVoiceboxPin,
     setVoiceboxEmail,
     uploadGreeting,
     abortPreviousRequest,
     getVoiceboxGreetingByType,
-    deleteVoiceboxGreetingById
+    deleteVoiceboxGreetingById,
+    playGreeting
 } from '../api/voicebox';
 import { i18n } from '../i18n';
 
@@ -45,7 +46,10 @@ export default {
         loadUnavailGreetingState: RequestState.initial,
         loadUnavailGreetingError: null,
         deleteGreetingState: RequestState.initial,
-        deleteGreetingError: null
+        deleteGreetingError: null,
+        playGreetingUrls: {},
+        playGreetingStates: {},
+        playGreetingErrors: {}
     },
     getters: {
         subscriberId(state, getters, rootState, rootGetters) {
@@ -176,6 +180,16 @@ export default {
         unavailGreetingLabel(state) {
             return state.unavailGreetingId ? i18n.t('voicebox.label.customSoundActive') :
                 i18n.t('voicebox.label.defaultSoundActive')
+        },
+        playGreetingState(state) {
+            return (id) => {
+                return state.playGreetingStates[id];
+            }
+        },
+        playGreetingUrl(state) {
+            return (id) => {
+                return state.playGreetingUrls[id];
+            }
         }
     },
     mutations: {
@@ -329,6 +343,20 @@ export default {
         deleteGreetingFailed(state, error) {
             state.deleteGreetingState = RequestState.failed;
             state.deleteGreetingError = error;
+        },
+        playGreetingRequesting(state, id) {
+            Vue.set(state.playGreetingStates, id, RequestState.requesting);
+            Vue.set(state.playGreetingErrors, id, null);
+        },
+        playGreetingSucceeded(state, options) {
+            Vue.set(state.playGreetingUrls, options.id, options.url);
+            Vue.set(state.playGreetingStates, options.id, RequestState.succeeded);
+            Vue.set(state.playGreetingErrors, options.id, null);
+        },
+        playGreetingFailed(state, id, err) {
+            Vue.set(state.playGreetingUrls, id, null);
+            Vue.set(state.playGreetingStates, id, RequestState.failed);
+            Vue.set(state.playGreetingErrors, id, err);
         }
     },
     actions: {
@@ -479,6 +507,27 @@ export default {
                 }
             }).catch((err) => {
                 context.commit('deleteGreetingFailed', err.message);
+            });
+        },
+        playGreeting(context, options) {
+            context.commit('playGreetingRequesting', options.id);
+            playGreeting(options).then((url) => {
+                context.commit('playGreetingSucceeded', {
+                    id: options.id,
+                    url: url
+                });
+            }).catch((err) => {
+                context.commit('playGreetingFailed', options.id, err.mesage);
+            });
+        },
+        abortUploadBusyGreeting(context) {
+            abortPreviousRequest('busy').then(() => {
+                context.dispatch('loadBusyGreeting');
+            });
+        },
+        abortUploadUnavailGreeting(context) {
+            abortPreviousRequest('unavail').then(() => {
+                context.dispatch('loadUnavailGreeting');
             });
         }
     }

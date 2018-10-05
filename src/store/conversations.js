@@ -226,15 +226,15 @@ export default {
         },
         downloadVoiceMail(context, id) {
             context.commit('downloadVoiceMailRequesting');
-            downloadVoiceMail(id).then(()=>{
+            downloadVoiceMail(id).then(() => {
                 context.commit('downloadVoiceMailSucceeded');
-            }).catch((err)=>{
+            }).catch((err) => {
                 context.commit('downloadVoiceMailFailed', err.body.message);
             });
         },
         downloadFax(context, id) {
             context.commit('downloadFaxRequesting');
-            downloadFax(id).then(()=>{
+            downloadFax(id).then(() => {
                 context.commit('downloadFaxSucceeded');
             }).catch((err)=>{
                 context.commit('downloadFaxFailed', err.body.message);
@@ -242,12 +242,12 @@ export default {
         },
         playVoiceMail(context, options) {
             context.commit('playVoiceMailRequesting', options.id);
-            playVoiceMail(options).then((url)=>{
+            playVoiceMail(options).then((url) => {
                 context.commit('playVoiceMailSucceeded', {
                     id: options.id,
                     url: url
                 });
-            }).catch((err)=>{
+            }).catch((err) => {
                 context.commit('playVoiceMailFailed', options.id, err.mesage);
             });
         },
