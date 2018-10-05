@@ -1,6 +1,6 @@
 <template>
     <q-field
-        class="csc-upload-field"
+        :class="uploadFieldClasses"
         :icon="icon"
     >
         <q-input
@@ -60,6 +60,15 @@
                 flat
                 v-if="uploaded && selectedFile == null"
                 color="primary"
+                :icon="playerIcon"
+                @click="togglePlayer"
+            >
+                {{ playerLabel }}
+            </q-btn>
+            <q-btn
+                flat
+                v-if="uploaded && selectedFile == null"
+                color="primary"
                 icon="undo"
                 @click="undo"
             >
@@ -97,7 +106,8 @@
         ],
         data () {
             return {
-                selectedFile: null
+                selectedFile: null,
+                showPlayer: false
             }
         },
         computed: {
@@ -122,10 +132,36 @@
                     }
                 );
                 return buttons;
+            },
+            playerLabel() {
+                if (!this.showPlayer) {
+                    return this.$t('buttons.showPlayer');
+                }
+                else {
+                    return this.$t('buttons.hidePlayer');
+                }
+            },
+            playerIcon() {
+                if (!this.showPlayer) {
+                    return 'expand_more';
+                }
+                else {
+                    return 'expand_less';
+                }
+            },
+            uploadFieldClasses() {
+                let classes = ['csc-upload-field'];
+                if (this.showPlayer) {
+                    classes.push('csc-player-margin');
+                }
+                return classes;
             }
         },
         methods: {
             inputChange(event) {
+                if (this.showPlayer) {
+                    this.togglePlayer();
+                }
                 this.selectedFile = event.target.files[0];
             },
             cancel() {
@@ -146,6 +182,10 @@
             },
             undo() {
                 this.$emit('reset');
+            },
+            togglePlayer() {
+                this.showPlayer = !this.showPlayer;
+                this.$emit('togglePlayer', this.showPlayer);
             }
         }
     }
@@ -162,6 +202,9 @@
 
         .q-field-icon
             color $primary
+
+    .csc-upload-field.csc-player-margin
+        margin-bottom 0
 
     .csc-upload-progress-field
         margin 10px 0 5px 0
