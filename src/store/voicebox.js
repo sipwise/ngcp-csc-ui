@@ -4,11 +4,14 @@
 import _ from 'lodash'
 import { RequestState } from './common'
 import {
-    getVoiceboxSettings,
-    setVoiceboxDelete,
+    getVoiceboxSettings, setVoiceboxDelete,
     setVoiceboxAttach,
     setVoiceboxPin,
-    setVoiceboxEmail
+    setVoiceboxEmail,
+    uploadGreetingSound,
+    abortPreviousRequest,
+    getVoiceboxGreetingByType,
+    deleteVoiceboxGreetingById
 } from '../api/voicebox';
 import { i18n } from '../i18n';
 
@@ -32,7 +35,16 @@ export default {
         updatePinState: RequestState.initial,
         updatePinError: null,
         updateEmailState: RequestState.initial,
-        updateEmailError: null
+        updateEmailError: null,
+        uploadBusyGreetingState: RequestState.initial,
+        uploadBusyGreetingError: null,
+        uploadProgress: 0,
+        busyGreetingId: null,
+        unavailGreetingId: null,
+        loadBusyGreetingState: RequestState.initial,
+        loadBusyGreetingError: null,
+        deleteGreetingState: RequestState.initial,
+        deleteGreetingError: null
     },
     getters: {
         subscriberId(state, getters, rootState, rootGetters) {
@@ -106,6 +118,32 @@ export default {
         updateEmailError(state) {
             return state.updateEmailError ||
                 i18n.t('voicebox.updateEmailErrorMessage');
+        },
+        uploadBusyGreetingState(state) {
+            return state.uploadBusyGreetingState;
+        },
+        uploadBusyGreetingError(state) {
+            return state.uploadBusyGreetingError ||
+                i18n.t('voicebox.uploadGreetingErrorMessage');
+        },
+        uploadProgress(state) {
+            return state.uploadProgress;
+        },
+        uploadBusyGreetingRequesting(state) {
+            return state.uploadBusyGreetingState === 'requesting';
+        },
+        busyGreetingId(state) {
+            return state.busyGreetingId;
+        },
+        unavailGreetingId(state) {
+            return state.unavailGreetingId;
+        },
+        deleteGreetingState(state) {
+            return state.deleteGreetingState;
+        },
+        deleteGreetingError(state) {
+            return state.deleteGreetingError ||
+                i18n.t('voicebox.deleteGreetingErrorMessage');
         }
     },
     mutations: {
@@ -169,6 +207,50 @@ export default {
         updateEmailFailed(state, error) {
             state.updateEmailState = RequestState.failed;
             state.updateEmailError = error;
+        },
+        uploadBusyGreetingRequesting(state) {
+            state.uploadBusyGreetingState = RequestState.requesting;
+            state.uploadBusyGreetingError = null;
+        },
+        uploadBusyGreetingSucceeded(state) {
+            state.uploadBusyGreetingState = RequestState.succeeded;
+            state.uploadBusyGreetingError = null;
+        },
+        uploadBusyGreetingFailed(state, error) {
+            state.uploadBusyGreetingState = RequestState.failed;
+            state.uploadBusyGreetingError = error;
+        },
+        uploadProgress(state, progress) {
+            state.uploadProgress = progress;
+        },
+        resetProgress(state) {
+            state.uploadProgress = 0;
+        },
+        loadBusyGreetingRequesting(state) {
+            state.busyGreetingId = null,
+            state.loadBusyGreetingState = RequestState.requesting;
+            state.loadBusyGreetingError = null;
+        },
+        loadBusyGreetingSucceeded(state, greetings) {
+            state.loadBusyGreetingState = RequestState.succeeded;
+            state.loadBusyGreetingError = null;
+            state.busyGreetingId = greetings[0].id;
+        },
+        loadBusyGreetingFailed(state, error) {
+            state.loadBusyGreetingState = RequestState.failed;
+            state.loadBusyGreetingError = error;
+        },
+        deleteGreetingRequesting(state) {
+            state.deleteGreetingState = RequestState.requesting;
+            state.deleteGreetingError = null;
+        },
+        deleteGreetingSucceeded(state) {
+            state.deleteGreetingState = RequestState.succeeded;
+            state.deleteGreetingError = null;
+        },
+        deleteGreetingFailed(state, error) {
+            state.deleteGreetingState = RequestState.failed;
+            state.deleteGreetingError = error;
         }
     },
     actions: {
@@ -228,6 +310,45 @@ export default {
                 context.dispatch('getVoiceboxSettings');
             }).catch((err) => {
                 context.commit('updateEmailFailed', err.message);
+            });
+        },
+        uploadGreetingSound(context, $options) {
+            let options = Object.assign($options, {
+                subscriber_id: context.getters.subscriberId,
+                type: $options.dir
+            });
+            context.commit('uploadBusyGreetingRequesting');
+            uploadGreetingSound({
+                data: options,
+                onProgress: (progress) => { context.commit('uploadProgress', progress) }
+            }).then(() => {
+                context.commit('uploadBusyGreetingSucceeded');
+                context.dispatch('loadGreetings');
+            }).catch((err) => {
+                context.commit('uploadBusyGreetingFailed', err.message);
+            });
+        },
+        abortPreviousRequest() {
+            abortPreviousRequest();
+        },
+        loadBusyGreeting(context) {
+            context.commit('loadBusyGreetingRequesting');
+            getVoiceboxGreetingByType({
+                id: context.getters.subscriberId,
+                type: 'busy'
+            }).then((greetings) => {
+                context.commit('loadBusyGreetingSucceeded', greetings.items);
+            }).catch((err) => {
+                context.commit('loadGreetingsFailed', err.message);
+            });
+        },
+        deleteGreeting(context, id) {
+            context.commit('deleteGreetingRequesting');
+            deleteVoiceboxGreetingById(id).then(() => {
+                context.commit('deleteGreetingSucceeded');
+                context.dispatch('loadGreetings');
+            }).catch((err) => {
+                context.commit('deleteGreetingFailed', err.message);
             });
         }
     }

@@ -11,13 +11,46 @@
             :deleteLabel="deleteLabel"
             :attachLabel="attachLabel"
         />
+        <csc-upload-file
+            ref="uploadBusyGreeting"
+            v-if="isSettingsLoaded"
+            :progress="uploadProgress"
+            :requesting="uploadBusyGreetingRequesting"
+            :id="busyGreetingId"
+            file-types=".wav,.mp3"
+            @reset="resetBusyFile"
+            @upload="uploadBusyGreeting"
+            @abort="abort"
+        >
+            <slot slot="status-label">
+                <div
+                    class="csc-black-label"
+                >
+                    {{ busyGreetingLabel }}
+                </div>
+            </slot>
+            <slot slot="extra-buttons">
+                <q-btn
+                    flat
+                    color="negative"
+                    icon="delete"
+                    @click="deleteBusy"
+                >
+                    {{ $t('buttons.remove') }}
+                </q-btn>
+            </slot>
+        </csc-upload-file>
     </csc-page>
 </template>
 
 <script>
+    import {
+        QBtn
+    } from 'quasar-framework'
     import { mapGetters } from 'vuex'
     import CscPage from '../../CscPage'
     import CscVoiceboxSettings from './CscVoiceboxSettings'
+    import CscUploadFile from '../../form/CscUploadFile'
     import {
         startLoading,
         stopLoading,
@@ -31,12 +64,16 @@
         },
         components: {
             CscPage,
-            CscVoiceboxSettings
+            CscVoiceboxSettings,
+            CscUploadFile,
+            QBtn
         },
         created() {
             this.$store.dispatch('voicebox/getVoiceboxSettings');
+            this.loadBusyGreeting();
         },
         computed: {
+            // TODO: Rename loadingState to loadSettingsState, throughout files
             ...mapGetters('voicebox', [
                 'voiceboxSettings',
                 'deleteLabel',
@@ -56,7 +93,40 @@
                 'updatePinError',
                 'updateEmailState',
                 'updateEmailError',
-            ])
+                'uploadProgress',
+                'uploadBusyGreetingState',
+                'uploadBusyGreetingError',
+                'uploadBusyGreetingRequesting',
+                'busyGreetingId',
+                'unavailGreetingId',
+                'deleteGreetingState',
+                'deleteGreetingError'
+            ]),
+            busyGreetingLabel() {
+                return this.busyGreetingId ? this.$t('voicebox.label.voicemailSet') :
+                    this.$t('voicebox.label.voicemailNotSet')
+            }
+        },
+        methods: {
+            resetBusyFile() {
+                this.$refs.uploadBusyGreeting.reset();
+                this.$store.commit('voicebox/resetProgress');
+            },
+            uploadBusyGreeting(file) {
+                this.$store.dispatch('voicebox/uploadGreetingSound', {
+                    dir: 'busy',
+                    file: file
+                });
+            },
+            abort() {
+                this.$store.dispatch('voicebox/abortPreviousRequest');
+            },
+            deleteBusy() {
+                 this.$store.dispatch('voicebox/deleteGreeting', this.busyGreetingId);
+            },
+            loadBusyGreeting() {
+                this.$store.dispatch('voicebox/loadBusyGreeting');
+            }
         },
         watch: {
             loadingState(state) {
@@ -111,6 +181,32 @@
                 }
                 else if (state === 'failed') {
                     showGlobalError(this.updateEmailError);
+                }
+            },
+            uploadBusyGreetingState(state) {
+                if (state === 'succeeded') {
+                    showToast(this.$t('voicebox.uploadGreetingSuccessMessage'));
+                    this.resetBusyFile();
+                    this.loadBusyGreeting();
+                }
+                else if (state === 'failed') {
+                    showGlobalError(this.uploadBusyGreetingError);
+                    if (this.uploadProgress > 0) {
+                        this.resetBusyFile();
+                    }
+                }
+            },
+            deleteGreetingState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                }
+                else if (state === 'succeeded') {
+                    stopLoading();
+                    showToast(this.$t('voicebox.deleteGreetingSuccessMessage'));
+                }
+                else if (state === 'failed') {
+                    stopLoading();
+                    showGlobalError(this.deleteGreetingError);
                 }
             }
         }
