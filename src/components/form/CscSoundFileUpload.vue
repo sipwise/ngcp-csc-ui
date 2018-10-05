@@ -11,6 +11,7 @@
         />
         <input
             v-show="false"
+            :accept="fileTypes"
             ref="fileUpload"
             type="file"
             @change="inputChange"
@@ -130,7 +131,7 @@
             cancel() {
                 this.selectedFile = null;
                 this.$refs.fileUpload.value = null;
-                if(this.uploading) {
+                if (this.uploading) {
                     this.abort();
                 }
             },
@@ -152,11 +153,16 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../themes/quasar.variables';
+
     .csc-file-upload-actions
         padding-top $flex-gutter-xs
+
     .csc-upload-field
+        margin-bottom 40px
+
         .q-field-icon
             color $primary
+
     .csc-upload-progress-field
         margin 10px 0 5px 0
 
@@ -169,4 +175,5 @@
 
         .upload-progress
             height 20px
+
 </style>
