@@ -11,6 +11,15 @@
             :deleteLabel="deleteLabel"
             :attachLabel="attachLabel"
         />
+        <csc-upload-file
+            ref="createBusyGreeting"
+            v-if="isSettingsLoaded"
+            :progress="uploadProgress"
+            :requesting="createBusyGreetingRequesting"
+            file-types=".wav,.mp3,.ogg"
+            @reset="resetBusyFile"
+            @upload="uploadBusyGreeting"
+        />
     </csc-page>
 </template>
 
@@ -18,6 +27,7 @@
     import { mapGetters } from 'vuex'
     import CscPage from '../../CscPage'
     import CscVoiceboxSettings from './CscVoiceboxSettings'
+    import CscUploadFile from '../../form/CscUploadFile'
     import {
         startLoading,
         stopLoading,
@@ -31,7 +41,8 @@
         },
         components: {
             CscPage,
-            CscVoiceboxSettings
+            CscVoiceboxSettings,
+            CscUploadFile
         },
         created() {
             this.$store.dispatch('voicebox/getVoiceboxSettings');
@@ -56,7 +67,26 @@
                 'updatePinError',
                 'updateEmailState',
                 'updateEmailError',
+                'uploadProgress',
+                'createBusyGreetingState',
+                'createBusyGreetingError',
+                'createBusyGreetingRequesting'
             ])
+        },
+        methods: {
+            resetBusyFile() {
+                this.$refs.createBusyGreeting.reset();
+                this.$store.commit('voicebox/resetProgress');
+            },
+            uploadBusyGreeting(file) {
+                this.$store.dispatch('voicebox/uploadGreetingSound', {
+                    dir: 'busy',
+                    file: file
+                });
+            },
+            abort() {
+                this.$store.dispatch('voicebox/abortPreviousRequest');
+            }
         },
         watch: {
             loadingState(state) {
@@ -111,6 +141,18 @@
                 }
                 else if (state === 'failed') {
                     showGlobalError(this.updateEmailError);
+                }
+            },
+            createBusyGreetingState(state) {
+                if (state === 'succeeded') {
+                    showToast(this.$t('voicebox.createBusyGreetingsSuccessMessage'));
+                    this.resetBusyFile();
+                }
+                else if (state === 'failed') {
+                    showGlobalError(this.createBusyGreetingError);
+                    if (this.uploadProgress > 0) {
+                        this.resetBusyFile();
+                    }
                 }
             }
         }

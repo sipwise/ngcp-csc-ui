@@ -8,7 +8,9 @@ import {
     setVoiceboxDelete,
     setVoiceboxAttach,
     setVoiceboxPin,
-    setVoiceboxEmail
+    setVoiceboxEmail,
+    uploadGreetingSound,
+    abortPreviousRequest
 } from '../api/voicebox';
 import { i18n } from '../i18n';
 
@@ -32,7 +34,10 @@ export default {
         updatePinState: RequestState.initial,
         updatePinError: null,
         updateEmailState: RequestState.initial,
-        updateEmailError: null
+        updateEmailError: null,
+        createBusyGreetingState: RequestState.initial,
+        createBusyGreetingError: null,
+        uploadProgress: 0
     },
     getters: {
         subscriberId(state, getters, rootState, rootGetters) {
@@ -106,6 +111,19 @@ export default {
         updateEmailError(state) {
             return state.updateEmailError ||
                 i18n.t('voicebox.updateEmailErrorMessage');
+        },
+        createBusyGreetingState(state) {
+            return state.createBusyGreetingState;
+        },
+        createBusyGreetingError(state) {
+            return state.createBusyGreetingError ||
+                i18n.t('voicebox.createBusyGreetingsErrorMessage');
+        },
+        uploadProgress(state) {
+            return state.uploadProgress;
+        },
+        createBusyGreetingRequesting(state) {
+            return state.createBusyGreetingState === 'requesting';
         }
     },
     mutations: {
@@ -169,6 +187,24 @@ export default {
         updateEmailFailed(state, error) {
             state.updateEmailState = RequestState.failed;
             state.updateEmailError = error;
+        },
+        createBusyGreetingRequesting(state) {
+            state.createBusyGreetingState = RequestState.requesting;
+            state.createBusyGreetingError = null;
+        },
+        createBusyGreetingSucceeded(state) {
+            state.createBusyGreetingState = RequestState.succeeded;
+            state.createBusyGreetingError = null;
+        },
+        createBusyGreetingFailed(state, error) {
+            state.createBusyGreetingState = RequestState.failed;
+            state.createBusyGreetingError = error;
+        },
+        uploadProgress(state, progress) {
+            state.uploadProgress = progress;
+        },
+        resetProgress(state) {
+            state.uploadProgress = 0;
         }
     },
     actions: {
@@ -229,6 +265,30 @@ export default {
             }).catch((err) => {
                 context.commit('updateEmailFailed', err.message);
             });
+        },
+        uploadGreetingSound({commit, getters}, $options) {
+            let options = Object.assign($options, {
+                subscriber_id: getters.subscriberId
+            });
+            commit('createBusyGreetingRequesting');
+            uploadGreetingSound({
+                data: options,
+                onProgress: (progress) => { commit('uploadProgress', progress) }
+            }).then(() => {
+                commit('createBusyGreetingSucceeded');
+            }).catch((err) => {
+                commit('createBusyGreetingFailed', err.message);
+            });
+        },
+        abortPreviousRequest() {
+            abortPreviousRequest();
+        },
+        loadGreetings() {
+           // TODO: Store greeting ids for busy and avail in store
+        },
+        playGreeting() {
+            // TODO: Should take id and format, and API method returns
+            // and ObjectURL that can be played in component
         }
     }
 };
