@@ -1,5 +1,6 @@
 
 import _ from 'lodash'
+import Vue from 'vue';
 import {
     get,
     patchReplace
@@ -50,3 +51,52 @@ export function setVoiceboxEmail(options) {
         value: options.value
     });
 }
+
+export function createBusyGreeting(options) {
+    return new Promise((resolve, reject) => {
+        var formData = new FormData();
+        var fields = _.clone(options.data);
+        delete fields.file;
+        var json = JSON.stringify(fields);
+        formData.append('json', json);
+        if (options.data.file) {
+            formData.append('greetingfile', options.data.file);
+        }
+        Vue.http.post('api/voicemailgreetings/', formData, {
+            progress(e) {
+                if (e.lengthComputable) {
+                    options.onProgress((e.loaded / e.total ) * 100);
+                }
+            }
+        }).then(() => {
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+//export function createBusyGreeting(options, callback) {
+    //return new Promise((resolve, reject) => {
+        //var formData = new FormData();
+        //var fields = _.clone(options);
+        //delete fields.file;
+        //var json = JSON.stringify(fields);
+        //formData.append('json', json);
+        //if (options.file) {
+            //formData.append('greetingfile', options.file);
+        //}
+        //Vue.http.post('api/voicemailgreetings/', formData, {
+            //progress(e) {
+                //if (e.lengthComputable) {
+                    //callback(Math.ceil((e.loaded / e.total ) * 100));
+                    //console.log(`e.loaded: ${e.loaded}, e.total: ${e.total}, percent: ${(e.loaded / e.total ) * 100}`);
+                //}
+            //}
+        //}).then(() => {
+            //resolve();
+        //}).catch((err)=>{
+            //reject(err);
+        //});
+    //});
+//}

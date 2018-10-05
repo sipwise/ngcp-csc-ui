@@ -11,6 +11,10 @@
             :deleteLabel="deleteLabel"
             :attachLabel="attachLabel"
         />
+        <csc-voicebox-greetings
+            v-if="isSettingsLoaded"
+            :progress="uploadProgress"
+        />
     </csc-page>
 </template>
 
@@ -18,6 +22,7 @@
     import { mapGetters } from 'vuex'
     import CscPage from '../../CscPage'
     import CscVoiceboxSettings from './CscVoiceboxSettings'
+    import CscVoiceboxGreetings from './CscVoiceboxGreetings'
     import {
         startLoading,
         stopLoading,
@@ -31,7 +36,8 @@
         },
         components: {
             CscPage,
-            CscVoiceboxSettings
+            CscVoiceboxSettings,
+            CscVoiceboxGreetings
         },
         created() {
             this.$store.dispatch('voicebox/getVoiceboxSettings');
@@ -56,6 +62,9 @@
                 'updatePinError',
                 'updateEmailState',
                 'updateEmailError',
+                'uploadProgress',
+                'createBusyGreetingState',
+                'createBusyGreetingError'
             ])
         },
         watch: {
@@ -111,6 +120,14 @@
                 }
                 else if (state === 'failed') {
                     showGlobalError(this.updateEmailError);
+                }
+            },
+            createBusyGreetingState(state) {
+                if (state === 'succeeded') {
+                    showToast(this.$t('voicebox.createBusyGreetingsSuccessMessage'));
+                }
+                else if (state === 'failed') {
+                    showGlobalError(this.createBusyGreetingError);
                 }
             }
         }
