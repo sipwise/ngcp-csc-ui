@@ -21,18 +21,18 @@
            'loaded'
         ],
         mounted() {
-            this.$refs.audio.addEventListener('play', ()=>{
+            this.$refs.audio.addEventListener('play', ()=> {
                 this.playing = true;
             });
-            this.$refs.audio.addEventListener('playing', ()=>{
+            this.$refs.audio.addEventListener('playing', ()=> {
                 this.playing = true;
             });
-            this.$refs.audio.addEventListener('ended', ()=>{
+            this.$refs.audio.addEventListener('ended', ()=> {
                 this.playing = false;
                 this.stop();
             });
-            this.$refs.audio.addEventListener('canplay', ()=>{
-                if(!this.paused && this.playing) {
+            this.$refs.audio.addEventListener('canplay', ()=> {
+                if (!this.paused && this.playing) {
                     this.$refs.audio.play();
                 }
             });

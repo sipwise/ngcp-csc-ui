@@ -22,7 +22,9 @@
         "upload": "Upload",
         "abort": "Abort",
         "selectNew": "Select new",
-        "resetDefaults": "Reset to defaults"
+        "resetDefaults": "Reset to defaults",
+        "showPlayer": "Show player",
+        "hidePlayer": "Hide player"
     },
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",

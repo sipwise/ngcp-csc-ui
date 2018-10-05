@@ -31,6 +31,18 @@
                     @upload="uploadBusyGreeting"
                     @abort="abortBusy"
                     @reset="deleteBusy"
+                    @togglePlayer="togglePlayer"
+                />
+                <!--TODO: 1. Fix margins between upload and player-->
+                <!--TODO: 2. Make sure player can handle change of files-->
+                <!--TODO: 3. Fix class name or refactor class-->
+                <csc-audio-player
+                    v-show="showBusyPlayer"
+                    ref="busyGreetingPlayer"
+                    :file-url="busyFileUrl"
+                    :loaded="busyGreetingLoaded"
+                    class="csc-voice-mail-player"
+                    @load="initBusyGreetingAudio"
                 />
                 <csc-sound-file-upload
                     ref="uploadUnavailGreeting"
@@ -59,6 +71,7 @@
     import CscPage from '../../CscPage'
     import CscVoiceboxSettings from './CscVoiceboxSettings'
     import CscSoundFileUpload from '../../form/CscSoundFileUpload'
+    import CscAudioPlayer from '../../CscAudioPlayer'
     import {
         startLoading,
         stopLoading,
@@ -68,12 +81,15 @@
     export default {
         data () {
             return {
+                platform: this.$q.platform.is,
+                showBusyPlayer: false
             }
         },
         components: {
             CscSoundFileUpload,
             CscPage,
             CscVoiceboxSettings,
+            CscAudioPlayer,
             QBtn
         },
         mounted() {
@@ -117,8 +133,22 @@
                 'deleteGreetingState',
                 'deleteGreetingError',
                 'busyGreetingLabel',
-                'unavailGreetingLabel'
-            ])
+                'unavailGreetingLabel',
+                'playGreetingState',
+                'playGreetingUrl'
+            ]),
+            busyFileUrl() {
+                let getter = this.playGreetingUrl;
+                return getter(this.busyGreetingId);
+            },
+            busyGreetingLoaded() {
+                // TODO: Should be able to reduce this to a getter that does
+                // not need id
+                return this.playGreetingState(this.busyGreetingId) === 'succeeded';
+            },
+            soundFileFormat() {
+                return this.platform.mozilla ? 'ogg' : 'mp3';
+            }
         },
         methods: {
             resetBusyFile() {
@@ -204,6 +234,20 @@
             },
             loadUnavailGreeting() {
                 this.$store.dispatch('voicebox/loadUnavailGreeting');
+            },
+            playBusyGreeting() {
+                this.$store.dispatch('voicebox/playGreeting', {
+                    id: this.busyGreetingId,
+                    format: this.soundFileFormat
+                });
+            },
+            initBusyGreetingAudio() {
+                this.playBusyGreeting();
+                this.$refs.busyGreetingPlayer.setPlayingTrue();
+                this.$refs.busyGreetingPlayer.setPausedFalse();
+            },
+            togglePlayer(state) {
+                this.showBusyPlayer = state;
             }
         },
         watch: {

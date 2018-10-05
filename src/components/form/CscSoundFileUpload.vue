@@ -60,6 +60,15 @@
                 flat
                 v-if="uploaded && selectedFile == null"
                 color="primary"
+                :icon="playerIcon"
+                @click="togglePlayer"
+            >
+                {{ playerLabel }}
+            </q-btn>
+            <q-btn
+                flat
+                v-if="uploaded && selectedFile == null"
+                color="primary"
                 icon="undo"
                 @click="undo"
             >
@@ -97,7 +106,8 @@
         ],
         data () {
             return {
-                selectedFile: null
+                selectedFile: null,
+                showPlayer: false
             }
         },
         computed: {
@@ -122,10 +132,29 @@
                     }
                 );
                 return buttons;
+            },
+            playerLabel() {
+                if (!this.showPlayer) {
+                    return this.$t('buttons.showPlayer');
+                }
+                else {
+                    return this.$t('buttons.hidePlayer');
+                }
+            },
+            playerIcon() {
+                if (!this.showPlayer) {
+                    return 'expand_more';
+                }
+                else {
+                    return 'expand_less';
+                }
             }
         },
         methods: {
             inputChange(event) {
+                if (this.showPlayer) {
+                    this.togglePlayer();
+                }
                 this.selectedFile = event.target.files[0];
             },
             cancel() {
@@ -146,6 +175,10 @@
             },
             undo() {
                 this.$emit('reset');
+            },
+            togglePlayer() {
+                this.showPlayer = !this.showPlayer;
+                this.$emit('togglePlayer', this.showPlayer);
             }
         }
     }
