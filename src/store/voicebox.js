@@ -8,7 +8,8 @@ import {
     setVoiceboxDelete,
     setVoiceboxAttach,
     setVoiceboxPin,
-    setVoiceboxEmail
+    setVoiceboxEmail,
+    createBusyGreeting
 } from '../api/voicebox';
 import { i18n } from '../i18n';
 
@@ -32,7 +33,9 @@ export default {
         updatePinState: RequestState.initial,
         updatePinError: null,
         updateEmailState: RequestState.initial,
-        updateEmailError: null
+        updateEmailError: null,
+        createBusyGreetingState: RequestState.initial,
+        createBusyGreetingError: null
     },
     getters: {
         subscriberId(state, getters, rootState, rootGetters) {
@@ -106,6 +109,13 @@ export default {
         updateEmailError(state) {
             return state.updateEmailError ||
                 i18n.t('voicebox.updateEmailErrorMessage');
+        },
+        createBusyGreetingState(state) {
+            return state.createBusyGreetingState;
+        },
+        createFaxError(state) {
+            return state.createBusyGreetingError ||
+                i18n.t('voicebox.createBusyGreetingsErrorMessage');
         }
     },
     mutations: {
@@ -169,6 +179,18 @@ export default {
         updateEmailFailed(state, error) {
             state.updateEmailState = RequestState.failed;
             state.updateEmailError = error;
+        },
+        createBusyGreetingRequesting(state) {
+            state.createBusyGreetingState = RequestState.requesting;
+            state.createBusyGreetingError = null;
+        },
+        createBusyGreetingSucceeded(state) {
+            state.createBusyGreetingState = RequestState.succeeded;
+            state.createBusyGreetingError = null;
+        },
+        createBusyGreetingFailed(state, error) {
+            state.createBusyGreetingState = RequestState.failed;
+            state.createBusyGreetingError = error;
         }
     },
     actions: {
@@ -229,6 +251,17 @@ export default {
             }).catch((err) => {
                 context.commit('updateEmailFailed', err.message);
             });
+        },
+        createBusyGreeting(context, $options) {
+            let options = Object.assign($options, {
+                subscriber_id: context.getters.subscriberId
+            });
+            context.commit('createBusyGreetingRequesting');
+            createBusyGreeting(options).then(() => {
+                    context.commit('createBusyGreetingSucceeded');
+                }).catch((err) => {
+                    context.commit('createBusyGreetingFailed', err.message);
+                });
         }
     }
 };

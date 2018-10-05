@@ -1,5 +1,6 @@
 
 import _ from 'lodash'
+import Vue from 'vue';
 import {
     get,
     patchReplace
@@ -48,5 +49,23 @@ export function setVoiceboxEmail(options) {
         path: `api/voicemailsettings/${options.subscriberId}`,
         fieldPath: 'email',
         value: options.value
+    });
+}
+
+export function createBusyGreeting(options) {
+    return new Promise((resolve, reject) => {
+        var formData = new FormData();
+        var fields = _.clone(options);
+        delete fields.file;
+        var json = JSON.stringify(fields);
+        formData.append('json', json);
+        if (options.file) {
+            formData.append('greetingfile', options.file);
+        }
+        Vue.http.post('api/voicemailgreetings/', formData).then(() => {
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
     });
 }
