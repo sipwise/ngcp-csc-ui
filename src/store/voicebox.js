@@ -8,7 +8,11 @@ import {
     setVoiceboxDelete,
     setVoiceboxAttach,
     setVoiceboxPin,
-    setVoiceboxEmail
+    setVoiceboxEmail,
+    uploadGreeting,
+    abortPreviousRequest,
+    getVoiceboxGreetingByType,
+    deleteVoiceboxGreetingById
 } from '../api/voicebox';
 import { i18n } from '../i18n';
 
@@ -23,8 +27,8 @@ export default {
             pin: null,
             sms_number: ''
         },
-        loadingState: RequestState.initial,
-        loadingError: null,
+        loadSettingsState: RequestState.initial,
+        loadSettingsError: null,
         toggleDeleteState: RequestState.initial,
         toggleDeleteError: null,
         toggleAttachState: RequestState.initial,
@@ -32,14 +36,23 @@ export default {
         updatePinState: RequestState.initial,
         updatePinError: null,
         updateEmailState: RequestState.initial,
-        updateEmailError: null
+        updateEmailError: null,
+        uploadBusyGreetingState: RequestState.initial,
+        uploadBusyGreetingError: null,
+        uploadProgress: 0,
+        busyGreetingId: null,
+        unavailGreetingId: null,
+        loadBusyGreetingState: RequestState.initial,
+        loadBusyGreetingError: null,
+        deleteGreetingState: RequestState.initial,
+        deleteGreetingError: null
     },
     getters: {
         subscriberId(state, getters, rootState, rootGetters) {
             return parseInt(rootGetters['user/getSubscriberId']);
         },
         isSettingsLoaded(state) {
-            return state.loadingState === 'succeeded';
+            return state.loadSettingsState === 'succeeded';
         },
         isDeleteRequesting(state) {
             return state.toggleDeleteState === 'requesting';
@@ -53,11 +66,11 @@ export default {
         isEmailRequesting(state) {
             return state.updateEmailState === 'requesting';
         },
-        loadingState(state) {
-            return state.loadingState;
+        loadSettingsState(state) {
+            return state.loadSettingsState;
         },
-        loadingError(state) {
-            return state.loadingError ||
+        loadSettingsError(state) {
+            return state.loadSettingsError ||
                 i18n.t('voicebox.loadSettingsErrorMessage');
         },
         voiceboxDelete(state) {
@@ -106,21 +119,50 @@ export default {
         updateEmailError(state) {
             return state.updateEmailError ||
                 i18n.t('voicebox.updateEmailErrorMessage');
+        },
+        uploadBusyGreetingState(state) {
+            return state.uploadBusyGreetingState;
+        },
+        uploadBusyGreetingError(state) {
+            return state.uploadBusyGreetingError ||
+                i18n.t('voicebox.uploadGreetingErrorMessage');
+        },
+        uploadProgress(state) {
+            return state.uploadProgress;
+        },
+        uploadBusyGreetingRequesting(state) {
+            return state.uploadBusyGreetingState === 'requesting';
+        },
+        busyGreetingId(state) {
+            return state.busyGreetingId;
+        },
+        unavailGreetingId(state) {
+            return state.unavailGreetingId;
+        },
+        deleteGreetingState(state) {
+            return state.deleteGreetingState;
+        },
+        deleteGreetingError(state) {
+            return state.deleteGreetingError ||
+                i18n.t('voicebox.deleteGreetingErrorMessage');
+        },
+        isBusyGreetingLoaded(state) {
+            return state.loadBusyGreetingState === 'succeeded';
         }
     },
     mutations: {
-        loadingRequesting(state) {
-            state.loadingState = RequestState.requesting;
-            state.loadingError = null;
+        loadSettingsRequesting(state) {
+            state.loadSettingsState = RequestState.requesting;
+            state.loadSettingsError = null;
         },
-        loadingSucceeded(state, settings) {
-            state.loadingState = RequestState.succeeded;
+        loadSettingsSucceeded(state, settings) {
+            state.loadSettingsState = RequestState.succeeded;
             state.voiceboxSettings = settings;
-            state.loadingError = null;
+            state.loadSettingsError = null;
         },
-        loadingFailed(state, error) {
-            state.loadingState = RequestState.failed;
-            state.loadingError = error;
+        loadSettingsFailed(state, error) {
+            state.loadSettingsState = RequestState.failed;
+            state.loadSettingsError = error;
         },
         toggleDeleteRequesting(state) {
             state.toggleDeleteState = RequestState.requesting;
@@ -169,15 +211,61 @@ export default {
         updateEmailFailed(state, error) {
             state.updateEmailState = RequestState.failed;
             state.updateEmailError = error;
+        },
+        uploadBusyGreetingRequesting(state) {
+            state.uploadBusyGreetingState = RequestState.requesting;
+            state.uploadBusyGreetingError = null;
+        },
+        uploadBusyGreetingSucceeded(state) {
+            state.uploadBusyGreetingState = RequestState.succeeded;
+            state.uploadBusyGreetingError = null;
+        },
+        uploadBusyGreetingFailed(state, error) {
+            state.uploadBusyGreetingState = RequestState.failed;
+            state.uploadBusyGreetingError = error;
+        },
+        uploadProgress(state, progress) {
+            state.uploadProgress = progress;
+        },
+        resetProgress(state) {
+            state.uploadProgress = 0;
+        },
+        loadBusyGreetingRequesting(state) {
+            state.busyGreetingId = null,
+            state.loadBusyGreetingState = RequestState.requesting;
+            state.loadBusyGreetingError = null;
+        },
+        loadBusyGreetingSucceeded(state, greetings) {
+            state.loadBusyGreetingState = RequestState.succeeded;
+            state.loadBusyGreetingError = null;
+            if (greetings.length > 0) {
+                state.busyGreetingId = greetings[0].id;
+            }
+        },
+        loadBusyGreetingFailed(state, error) {
+            state.loadBusyGreetingState = RequestState.failed;
+            state.loadBusyGreetingError = error;
+        },
+        deleteGreetingRequesting(state) {
+            state.deleteGreetingState = RequestState.requesting;
+            state.deleteGreetingError = null;
+        },
+        deleteGreetingSucceeded(state) {
+            state.deleteGreetingState = RequestState.succeeded;
+            state.deleteGreetingError = null;
+        },
+        deleteGreetingFailed(state, error) {
+            state.deleteGreetingState = RequestState.failed;
+            state.deleteGreetingError = error;
         }
     },
     actions: {
         getVoiceboxSettings(context) {
-            context.commit('loadingRequesting');
+            context.commit('loadSettingsRequesting');
             getVoiceboxSettings(context.getters.subscriberId).then((settings) => {
-                context.commit('loadingSucceeded', settings);
+                context.commit('loadSettingsSucceeded', settings);
             }).catch((err) => {
-                context.commit('loadingFailed', err.message);
+                context.commit('loadSettingsFailed', err.message);
             })
         },
         toggleDelete(context) {
@@ -228,6 +316,45 @@ export default {
                 context.dispatch('getVoiceboxSettings');
             }).catch((err) => {
                 context.commit('updateEmailFailed', err.message);
+            });
+        },
+        uploadGreeting(context, $options) {
+            let options = Object.assign($options, {
+                subscriber_id: context.getters.subscriberId,
+                type: $options.dir
+            });
+            context.commit('uploadBusyGreetingRequesting');
+            uploadGreeting({
+                data: options,
+                onProgress: (progress) => { context.commit('uploadProgress', progress) }
+            }).then(() => {
+                context.commit('uploadBusyGreetingSucceeded');
+                context.dispatch('loadBusyGreeting');
+            }).catch((err) => {
+                context.commit('uploadBusyGreetingFailed', err.message);
+            });
+        },
+        abortPreviousRequest() {
+            abortPreviousRequest();
+        },
+        loadBusyGreeting(context) {
+            context.commit('loadBusyGreetingRequesting');
+            getVoiceboxGreetingByType({
+                id: context.getters.subscriberId,
+                type: 'busy'
+            }).then((greetings) => {
+                context.commit('loadBusyGreetingSucceeded', greetings.items);
+            }).catch((err) => {
+                context.commit('loadBusyGreetingFailed', err.message);
+            });
+        },
+        deleteGreeting(context, id) {
+            context.commit('deleteGreetingRequesting');
+            deleteVoiceboxGreetingById(id).then(() => {
+                context.commit('deleteGreetingSucceeded');
+                context.dispatch('loadBusyGreeting');
+            }).catch((err) => {
+                context.commit('deleteGreetingFailed', err.message);
             });
         }
     }
