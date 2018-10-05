@@ -1,14 +1,19 @@
 
 'use strict';
 
+import Vue from 'vue';
 import _ from 'lodash'
 import { RequestState } from './common'
 import {
-    getVoiceboxSettings,
-    setVoiceboxDelete,
+    getVoiceboxSettings, setVoiceboxDelete,
     setVoiceboxAttach,
     setVoiceboxPin,
-    setVoiceboxEmail
+    setVoiceboxEmail,
+    uploadGreetingSound,
+    abortPreviousRequest,
+    getVoiceboxGreetings,
+    deleteVoiceboxGreetingById,
+    playGreeting
 } from '../api/voicebox';
 import { i18n } from '../i18n';
 
@@ -32,7 +37,15 @@ export default {
         updatePinState: RequestState.initial,
         updatePinError: null,
         updateEmailState: RequestState.initial,
-        updateEmailError: null
+        updateEmailError: null,
+        createBusyGreetingState: RequestState.initial,
+        createBusyGreetingError: null,
+        uploadProgress: 0,
+        busyGreetingId: null,
+        unavailGreetingId: null,
+        playGreetingUrls: {},
+        playGreetingStates: {},
+        playGreetingErrors: {}
     },
     getters: {
         subscriberId(state, getters, rootState, rootGetters) {
@@ -106,7 +119,36 @@ export default {
         updateEmailError(state) {
             return state.updateEmailError ||
                 i18n.t('voicebox.updateEmailErrorMessage');
-        }
+        },
+        createBusyGreetingState(state) {
+            return state.createBusyGreetingState;
+        },
+        createBusyGreetingError(state) {
+            return state.createBusyGreetingError ||
+                i18n.t('voicebox.createBusyGreetingsErrorMessage');
+        },
+        uploadProgress(state) {
+            return state.uploadProgress;
+        },
+        createBusyGreetingRequesting(state) {
+            return state.createBusyGreetingState === 'requesting';
+        },
+        busyGreetingId(state) {
+            return state.busyGreetingId;
+        },
+        unavailGreetingId(state) {
+            return state.unavailGreetingId;
+        },
+        playGreetingState(state) {
+            return (id) => {
+                return state.playGreetingStates[id];
+            }
+        },
+        playGreetingUrl(state) {
+            return (id) => {
+                return state.playGreetingUrls[id];
+            }
+        },
     },
     mutations: {
         loadingRequesting(state) {
@@ -169,6 +211,48 @@ export default {
         updateEmailFailed(state, error) {
             state.updateEmailState = RequestState.failed;
             state.updateEmailError = error;
+        },
+        createBusyGreetingRequesting(state) {
+            state.createBusyGreetingState = RequestState.requesting;
+            state.createBusyGreetingError = null;
+        },
+        createBusyGreetingSucceeded(state) {
+            state.createBusyGreetingState = RequestState.succeeded;
+            state.createBusyGreetingError = null;
+        },
+        createBusyGreetingFailed(state, error) {
+            state.createBusyGreetingState = RequestState.failed;
+            state.createBusyGreetingError = error;
+        },
+        uploadProgress(state, progress) {
+            state.uploadProgress = progress;
+        },
+        resetProgress(state) {
+            state.uploadProgress = 0;
+        },
+        loadGreetingsSucceeded(state, greetings) {
+            greetings.forEach((greeting) => {
+                if (greeting.dir === 'busy') {
+                    state.busyGreetingId = greeting.id;
+                }
+                else if (greeting.dir === 'unavail') {
+                    state.unavailGreetingId = greeting.id;
+                }
+            })
+        },
+        playGreetingRequesting(state, id) {
+            Vue.set(state.playGreetingStates, id, RequestState.requesting);
+            Vue.set(state.playGreetingErrors, id, null);
+        },
+        playGreetingSucceeded(state, options) {
+            Vue.set(state.playGreetingUrls, options.id, options.url);
+            Vue.set(state.playGreetingStates, options.id, RequestState.succeeded);
+            Vue.set(state.playGreetingErrors, options.id, null);
+        },
+        playGreetingFailed(state, id, err) {
+            Vue.set(state.playGreetingUrls, id, null);
+            Vue.set(state.playGreetingStates, id, RequestState.failed);
+            Vue.set(state.playGreetingErrors, id, err);
         }
     },
     actions: {
@@ -229,6 +313,49 @@ export default {
             }).catch((err) => {
                 context.commit('updateEmailFailed', err.message);
             });
+        },
+        uploadGreetingSound({commit, getters}, $options) {
+            let options = Object.assign($options, {
+                subscriber_id: getters.subscriberId
+            });
+            commit('createBusyGreetingRequesting');
+            uploadGreetingSound({
+                data: options,
+                onProgress: (progress) => { commit('uploadProgress', progress) }
+            }).then(() => {
+                commit('createBusyGreetingSucceeded');
+            }).catch((err) => {
+                commit('createBusyGreetingFailed', err.message);
+            });
+        },
+        abortPreviousRequest() {
+            abortPreviousRequest();
+        },
+        loadGreetings(context) {
+           getVoiceboxGreetings().then((greetings) => {
+               context.commit('loadGreetingsSucceeded', greetings.items);
+           }).catch((err) => {
+               console.log(err);
+           });
+        },
+        playGreeting(context, id) {
+            context.commit('playGreetingRequesting', id);
+            playGreeting(id).then((url)=>{
+                context.commit('playGreetingSucceeded', {
+                    id: id,
+                    url: url
+                });
+            }).catch((err)=>{
+                context.commit('playGreetingFailed', id, err.mesage);
+            });
+        },
+        deleteGreeting(context, id) {
+           deleteVoiceboxGreetingById(id).then(() => {
+               console.log('deleteGreeting() succeeded');
+               context.dispatch('loadGreetings');
+           }).catch((err) => {
+               console.log(err);
+           });
         }
     }
 };

@@ -33,10 +33,12 @@
                 {{ $t('pages.conversations.seconds') }}
             </q-item-tile>
             <q-item-tile>
-                <csc-voice-mail-player
-                    :id="voiceMail.id"
+                <csc-audio-player
+                    ref="voicemailPlayer"
+                    :file-url="soundFileUrl"
+                    :loaded="voiceMailLoaded"
                     class="csc-voice-mail-player"
-                    @play-voice-mail="playVoiceMail"
+                    @load="load"
                 />
             </q-item-tile>
         </q-item-main>
@@ -73,8 +75,9 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex'
     import CscCallOptionList from './CscCallOptionList'
-    import CscVoiceMailPlayer from './CscVoiceMailPlayer'
+    import CscAudioPlayer from '../../CscAudioPlayer'
     import {
         QItem,
         QItemSide,
@@ -96,13 +99,19 @@
             QItemTile,
             QPopover,
             QBtn,
-            CscVoiceMailPlayer,
+            CscAudioPlayer,
             CscCallOptionList
         },
         data () {
-            return {}
+            return {
+                platform: this.$q.platform.is
+            }
         },
         computed: {
+            ...mapGetters('conversations', [
+                'playVoiceMailState',
+                'playVoiceMailUrl'
+            ]),
             direction() {
                 if(this.voiceMail.direction === 'out') {
                     return 'to';
@@ -110,6 +119,16 @@
                 else {
                     return 'from';
                 }
+            },
+            soundFileFormat() {
+                return this.platform.mozilla ? 'ogg' : 'mp3';
+            },
+            soundFileUrl() {
+                let getter = this.playVoiceMailUrl;
+                return getter(this.voiceMail.id);
+            },
+            voiceMailLoaded() {
+                return this.playVoiceMailState(this.voiceMail.id) === 'succeeded';
             }
         },
         methods: {
@@ -121,10 +140,18 @@
                 });
             },
             playVoiceMail() {
-                this.$emit('play-voice-mail', this.voiceMail);
+                this.$emit('play-voice-mail', {
+                    id: this.voiceMail.id,
+                    format: this.soundFileFormat
+                });
             },
             downloadVoiceMail() {
                 this.$emit('download-voice-mail', this.voiceMail);
+            },
+            load() {
+                this.playVoiceMail();
+                this.$refs.voicemailPlayer.setPlayingTrue();
+                this.$refs.voicemailPlayer.setPausedFalse();
             }
         }
     }
