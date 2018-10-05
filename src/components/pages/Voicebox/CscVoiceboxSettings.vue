@@ -6,8 +6,13 @@
             icon="lock"
             :error-label="pinErrorMessage"
         >
+            <q-inner-loading :visible="pinRequesting">
+                <q-spinner-dots
+                    color="primary"
+                    :size="24"
+                />
+            </q-inner-loading>
             <q-input
-                :loading="pinRequesting"
                 :disable="pinRequesting"
                 :float-label="$t('voicebox.label.changePin')"
                 v-model="changes.pin"
@@ -23,8 +28,13 @@
             icon="email"
             :error-label="emailErrorMessage"
         >
+            <q-inner-loading :visible="emailRequesting">
+                <q-spinner-dots
+                    color="primary"
+                    :size="24"
+                />
+            </q-inner-loading>
             <q-input
-                :loading="emailRequesting"
                 :disable="emailRequesting"
                 :float-label="$t('voicebox.label.changeEmail')"
                 v-model="changes.email"
@@ -36,23 +46,37 @@
             />
         </q-field>
         <q-field class="csc-form-field">
+            <q-inner-loading :visible="attachRequesting">
+                <q-spinner-dots
+                    color="primary"
+                    :size="24"
+                />
+            </q-inner-loading>
             <q-toggle
-                :disable="deleteRequesting || !canToggleDelete"
-                :label="deleteLabel"
-                v-model="changes.delete"
-                @input="toggle('delete')"
-                checked-icon="delete"
-                unchecked-icon="delete"
+                :class="attachClasses"
+                :disable="attachRequesting"
+                :label="attachLabel"
+                v-model="changes.attach"
+                @input="toggleAttach"
+                checked-icon="attach_file"
+                unchecked-icon="attach_file"
             />
         </q-field>
         <q-field class="csc-form-field">
+            <q-inner-loading :visible="deleteRequesting">
+                <q-spinner-dots
+                    color="primary"
+                    :size="24"
+                />
+            </q-inner-loading>
             <q-toggle
-                :disable="attachRequesting || !canToggleAttachment"
-                :label="attachLabel"
-                v-model="changes.attach"
-                @input="toggle('attach')"
-                checked-icon="attach_file"
-                unchecked-icon="attach_file"
+                :class="deleteClasses"
+                :disable="deleteRequesting || !canToggleDelete"
+                :label="deleteLabel"
+                v-model="changes.delete"
+                @input="toggleDelete"
+                checked-icon="delete"
+                unchecked-icon="delete"
             />
         </q-field>
     </div>
@@ -66,18 +90,23 @@
     import {
         QField,
         QInput,
-        QToggle
+        QToggle,
+        QSpinnerDots,
+        QInnerLoading
     } from 'quasar-framework'
     export default {
         name: 'csc-voicebox-settings',
         props: [
-            'settings',
             'deleteRequesting',
             'attachRequesting',
             'pinRequesting',
             'emailRequesting',
             'attachLabel',
-            'deleteLabel'
+            'deleteLabel',
+            'attach',
+            'delete',
+            'pin',
+            'email'
         ],
         data () {
             return {
@@ -87,7 +116,9 @@
         components: {
             QField,
             QInput,
-            QToggle
+            QToggle,
+            QSpinnerDots,
+            QInnerLoading
         },
         validations: {
             changes: {
@@ -110,16 +141,13 @@
                 return this.$t('validationErrors.email');
             },
             canToggleDelete() {
-                return this.settings.attach;
-            },
-            canToggleAttachment() {
-                return !this.settings.delete;
+                return this.attach;
             },
             pinHasChanged() {
-                return this.changes.pin !== this.settings.pin;
+                return this.changes.pin !== this.pin;
             },
             emailHasChanged() {
-                return this.changes.email !== this.settings.email;
+                return this.changes.email !== this.email;
             },
             pinButtons() {
                 let buttons = [];
@@ -166,33 +194,69 @@
                     );
                 }
                 return buttons;
+            },
+            attachClasses() {
+                let classes = [];
+                if(this.attach) {
+                    classes.push('csc-toggle-enabled');
+                }
+                else {
+                    classes.push('csc-toggle-disabled');
+                }
+                return classes;
+            },
+            deleteClasses() {
+                let classes = [];
+                if(this.delete) {
+                    classes.push('csc-toggle-enabled');
+                }
+                else {
+                    classes.push('csc-toggle-disabled');
+                }
+                return classes;
             }
         },
         methods: {
             getSettings() {
                 return {
-                    delete: this.settings.delete,
-                    attach: this.settings.attach,
-                    pin: this.settings.pin,
-                    email: this.settings.email
+                    delete: this.delete,
+                    attach: this.attach,
+                    pin: this.pin,
+                    email: this.email
                 }
             },
             resetFields() {
                 this.changes = this.getSettings();
             },
-            toggle(field) {
-                if (field === 'delete') {
-                    this.$store.dispatch('voicebox/toggleDelete');
-                }
-                else if (field === 'attach') {
-                    this.$store.dispatch('voicebox/toggleAttach');
-                }
+            toggleDelete() {
+                this.$store.dispatch('voicebox/toggleDelete');
+            },
+            toggleAttach() {
+                this.$store.dispatch('voicebox/toggleAttach');
             },
             updatePin() {
-                this.$store.dispatch('voicebox/updatePin', this.changes.pin);
+                if(this.pinHasChanged) {
+                    this.$store.dispatch('voicebox/updatePin', this.changes.pin);
+                }
             },
             updateEmail() {
-                this.$store.dispatch('voicebox/updateEmail', this.changes.email);
+                if(this.emailHasChanged) {
+                    this.$store.dispatch('voicebox/updateEmail', this.changes.email);
+                }
+            }
+        },
+        watch: {
+            pin() {
+                this.changes.pin = this.pin;
+            },
+            delete() {
+                this.changes.delete = this.delete;
+            },
+            attach() {
+                this.changes.attach = this.attach;
+            },
+            email() {
+                this.changes.email = this.email;
             }
         }
     }
