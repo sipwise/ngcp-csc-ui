@@ -144,3 +144,22 @@ export function abortPreviousRequest(name) {
     let requestKey = `previous${_.capitalize(name)}Request`;
     Vue[requestKey].abort();
 }
+
+export function playGreeting(id) {
+    return new Promise((resolve, reject) => {
+        let headers = {
+            'Accept': 'audio/mpeg'
+        };
+        let params = {
+            format: "mp3"
+        };
+        Vue.http.get(`api/voicemailgreetings/${id}`, { headers: headers, params: params, responseType: 'blob' })
+        //Vue.http.get(`api/voicemailgreetings/${id}`, { params: params, responseType: 'blob' })
+        //Vue.http.get(`api/voicemailgreetings/${id}`, { headers: headers, responseType: 'blob' })
+            .then((res) => {
+                resolve(URL.createObjectURL(res.body));
+            }).catch((err)=>{
+                reject(err);
+            });
+    });
+}

@@ -32,6 +32,15 @@
                     @abort="abortBusy"
                     @reset="deleteBusy"
                 />
+                <!--TODO: Fix class name or refactor class-->
+                <csc-audio-player
+                    ref="busyGreetingPlayer"
+                    :file-url="busyFileUrl"
+                    :loaded="busyGreetingLoaded"
+                    class="csc-voice-mail-player"
+                    @load="load"
+                />
+                Busy greeting sound id: {{ busyGreetingId }}
                 <csc-sound-file-upload
                     ref="uploadUnavailGreeting"
                     icon="music_note"
@@ -59,6 +68,7 @@
     import CscPage from '../../CscPage'
     import CscVoiceboxSettings from './CscVoiceboxSettings'
     import CscSoundFileUpload from '../../form/CscSoundFileUpload'
+    import CscAudioPlayer from '../../CscAudioPlayer'
     import {
         startLoading,
         stopLoading,
@@ -74,6 +84,7 @@
             CscSoundFileUpload,
             CscPage,
             CscVoiceboxSettings,
+            CscAudioPlayer,
             QBtn
         },
         mounted() {
@@ -117,8 +128,19 @@
                 'deleteGreetingState',
                 'deleteGreetingError',
                 'busyGreetingLabel',
-                'unavailGreetingLabel'
-            ])
+                'unavailGreetingLabel',
+                'playGreetingState',
+                'playGreetingUrl'
+            ]),
+            busyFileUrl() {
+                let getter = this.playGreetingUrl;
+                return getter(this.busyGreetingId);
+            },
+            busyGreetingLoaded() {
+                // TODO: Should be able to reduce this to a getter that does
+                // not need id
+                return this.playGreetingState(this.busyGreetingId) === 'succeeded';
+            }
         },
         methods: {
             resetBusyFile() {
@@ -204,6 +226,17 @@
             },
             loadUnavailGreeting() {
                 this.$store.dispatch('voicebox/loadUnavailGreeting');
+            },
+            playBusyGreeting() {
+                this.$store.dispatch('voicebox/playGreeting', this.busyGreetingId);
+            },
+            downloadVoiceMail() {
+                this.$emit('download-voice-mail', this.voiceMail);
+            },
+            load() {
+                this.playBusyGreeting();
+                this.$refs.busyGreetingPlayer.setPlayingTrue();
+                this.$refs.busyGreetingPlayer.setPausedFalse();
             }
         },
         watch: {
