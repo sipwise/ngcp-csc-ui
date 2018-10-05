@@ -20,7 +20,7 @@
                     :attachLabel="attachLabel"
                 />
                 <csc-sound-file-upload
-                    ref="uploadBusyGreeting"
+                    ref="uploadBusy"
                     icon="music_note"
                     file-types=".wav,.mp3"
                     :label="$t('voicebox.label.busyGreeting')"
@@ -31,9 +31,12 @@
                     @upload="uploadBusyGreeting"
                     @abort="abortBusy"
                     @reset="deleteBusy"
+                    :file-url="playBusyGreetingUrl"
+                    :loaded="playBusyGreetingLoaded"
+                    @init="initBusyGreetingAudio"
                 />
                 <csc-sound-file-upload
-                    ref="uploadUnavailGreeting"
+                    ref="uploadUnavail"
                     icon="music_note"
                     file-types=".wav,.mp3"
                     :label="$t('voicebox.label.unavailGreeting')"
@@ -44,6 +47,9 @@
                     @upload="uploadUnavailGreeting"
                     @abort="abortUnavail"
                     @reset="deleteUnavail"
+                    :file-url="playUnavailGreetingUrl"
+                    :loaded="playUnavailGreetingLoaded"
+                    @init="initUnavailGreetingAudio"
                 />
             </div>
         </div>
@@ -68,6 +74,7 @@
     export default {
         data () {
             return {
+                platform: this.$q.platform.is
             }
         },
         components: {
@@ -117,16 +124,23 @@
                 'deleteGreetingState',
                 'deleteGreetingError',
                 'busyGreetingLabel',
-                'unavailGreetingLabel'
-            ])
+                'unavailGreetingLabel',
+                'playBusyGreetingLoaded',
+                'playBusyGreetingUrl',
+                'playUnavailGreetingLoaded',
+                'playUnavailGreetingUrl'
+            ]),
+            soundFileFormat() {
+                return this.platform.mozilla ? 'ogg' : 'mp3';
+            }
         },
         methods: {
             resetBusyFile() {
-                this.$refs.uploadBusyGreeting.reset();
+                this.$refs.uploadBusy.reset();
                 this.$store.commit('voicebox/resetBusyProgress');
             },
             resetUnavailFile() {
-                this.$refs.uploadUnavailGreeting.reset();
+                this.$refs.uploadUnavail.reset();
                 this.$store.commit('voicebox/resetUnavailProgress');
             },
             uploadBusyGreeting(file) {
@@ -140,10 +154,10 @@
                 });
             },
             abortBusy() {
-                this.$store.dispatch('voicebox/abortPreviousRequest', 'busy');
+                this.$store.dispatch('voicebox/abortUploadBusyGreeting');
             },
             abortUnavail() {
-                this.$store.dispatch('voicebox/abortPreviousRequest', 'unavail');
+                this.$store.dispatch('voicebox/abortUploadUnavailGreeting');
             },
             deleteBusy() {
                 let self = this;
@@ -204,6 +218,22 @@
             },
             loadUnavailGreeting() {
                 this.$store.dispatch('voicebox/loadUnavailGreeting');
+            },
+            playBusyGreeting() {
+                this.$store.dispatch('voicebox/playBusyGreeting', this.soundFileFormat);
+            },
+            playUnavailGreeting() {
+                this.$store.dispatch('voicebox/playUnavailGreeting', this.soundFileFormat);
+            },
+            initBusyGreetingAudio() {
+                this.playBusyGreeting();
+                this.$refs.uploadBusy.setPlayingTrue();
+                this.$refs.uploadBusy.setPausedFalse();
+            },
+            initUnavailGreetingAudio() {
+                this.playUnavailGreeting();
+                this.$refs.uploadUnavail.setPlayingTrue();
+                this.$refs.uploadUnavail.setPausedFalse();
             }
         },
         watch: {
@@ -287,8 +317,5 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables';
-
-    .csc-upload-file-label
-        margin-bottom $flex-gutter-sm
 
 </style>

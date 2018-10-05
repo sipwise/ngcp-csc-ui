@@ -1,13 +1,49 @@
 <template>
-    <div class="voicemail-player">
-        <audio :src="fileUrl" ref="audio" preload="auto" @timeupdate="timeupdate($event)"/>
+    <div class="audio-player">
+        <audio
+            :src="fileUrl"
+            ref="audio"
+            preload="auto"
+            @timeupdate="timeupdate($event)"
+        />
         <div class="control-btns">
-            <q-btn class="play-pause-btn" round flat small color="primary"
-                   :icon="playPauseIcon" @click="toggle()" />
-
-            <q-btn class="stop-btn" round flat small color="primary" icon="stop" @click="stop()"/>
+            <q-btn
+                v-if="pausable"
+                :disable="disable"
+                round
+                flat
+                small
+                color="primary"
+                :icon="playPauseIcon"
+                @click="toggle()"
+            />
+            <q-btn
+                v-else
+                :disable="(this.disable || this.playing) ? true : false"
+                round
+                flat
+                small
+                color="primary"
+                icon="play_arrow"
+                @click="playLoad()"
+            />
+            <q-btn
+                :disable="(this.disable || !this.pausable && !this.playing) ? true : false"
+                round
+                flat
+                small
+                color="primary"
+                icon="stop"
+                @click="stop()"
+            />
         </div>
-        <q-progress class="progress-bar" :percentage="progressPercentage" stripe animate color="primary"/>
+        <q-progress
+            class="progress-bar"
+            :percentage="progressPercentage"
+            stripe
+            animate
+            color="primary"
+        />
     </div>
 </template>
 
@@ -17,22 +53,24 @@
     export default {
         name: 'csc-audio-player',
         props: [
-           'fileUrl',
-           'loaded'
+            'fileUrl',
+            'loaded',
+            'disable',
+            'pausable'
         ],
         mounted() {
-            this.$refs.audio.addEventListener('play', ()=>{
+            this.$refs.audio.addEventListener('play', ()=> {
                 this.playing = true;
             });
-            this.$refs.audio.addEventListener('playing', ()=>{
+            this.$refs.audio.addEventListener('playing', ()=> {
                 this.playing = true;
             });
-            this.$refs.audio.addEventListener('ended', ()=>{
+            this.$refs.audio.addEventListener('ended', ()=> {
                 this.playing = false;
                 this.stop();
             });
-            this.$refs.audio.addEventListener('canplay', ()=>{
-                if(!this.paused && this.playing) {
+            this.$refs.audio.addEventListener('canplay', ()=> {
+                if (!this.paused && this.playing) {
                     this.$refs.audio.play();
                 }
             });
@@ -58,6 +96,7 @@
                 this.$refs.audio.play();
                 this.playing = true;
                 this.paused = false;
+                this.$emit('setIsPlaying', true);
             },
             pause() {
                 this.$refs.audio.pause();
@@ -67,6 +106,7 @@
             stop() {
                 this.$refs.audio.currentTime = 0;
                 this.pause();
+                this.$emit('setIsPlaying', false);
             },
             setPlayingTrue() {
                 this.playing = true;
@@ -91,6 +131,14 @@
                 else {
                     this.pause();
                 }
+            },
+            playLoad() {
+                if (!this.loaded) {
+                    this.load();
+                }
+                else if (this.$refs.audio.paused) {
+                    this.play();
+                }
             }
         }
     }
@@ -99,7 +147,7 @@
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../themes/app.common'
 
-    .voicemail-player
+    .audio-player
         width 100%
         height 56px
         display flex
@@ -107,9 +155,11 @@
         align-items center
         border-radius 4px
         background-color #fff
+
         .control-btns
             display flex
             justify-content space-between
+
         .progress-bar
             margin-left 16px
             margin-right 16px
