@@ -51,7 +51,7 @@
         </q-field>
         <q-field class="upload-field">
             <label
-                for="file-upload"
+                for="fax-file-upload"
                 class="upload-label"
             >
                 <div class="upload-label">
@@ -61,10 +61,10 @@
                     class="upload-button"
                     flat
                     dark
-                    @click="$refs.upload.click()"
-                    icon-right="cloud_upload"
+                    @click="$refs.faxUpload.click()"
+                    icon="cloud_upload"
                 >
-                    {{ $t('communication.label.uploadFile') }}
+                    {{ $t('buttons.select') }}
                 </q-btn>
                 <span class="upload-filename">
                     {{ selectedFile }}
@@ -79,8 +79,8 @@
                 />
             </label>
             <input
-                ref="upload"
-                id="file-upload"
+                ref="faxUpload"
+                id="fax-file-upload"
                 type="file"
                 accept=".pdf,.tiff,.txt,.ps"
                 @change="processFile($event)"
@@ -139,7 +139,7 @@
                     pageHeader: null,
                     data: null,
                     quality: 'normal',
-                    file: null
+                    file: {}
                 },
                 qualityOptions: [
                     { label: this.$t('communication.quality.normal'), value: 'normal' },
@@ -231,10 +231,12 @@
         },
         methods: {
             resetFile() {
-                this.form.file = null;
+                this.form.file = {};
                 this.selectedFile = '';
+                this.$refs.faxUpload.value = '';
             },
             processFile(event) {
+                console.log('processFile()');
                 let file = event.target.files[0];
                 let fileName = file ? file.name : '';
                 let fileNameSplit = fileName.split('.');
@@ -306,7 +308,7 @@
         .upload-filename
             color black
 
-    #file-upload
+    #fax-file-upload
         display none
 
     #csc-error-label

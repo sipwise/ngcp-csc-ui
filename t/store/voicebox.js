@@ -25,8 +25,21 @@ describe('Voicebox', function(){
             pin: 1234,
             sms_number: ''
         };
-        VoiceboxModule.mutations.loadingSucceeded(state, settings);
+        VoiceboxModule.mutations.loadSettingsSucceeded(state, settings);
         assert.deepEqual(state.voiceboxSettings, settings);
+    });
+
+    it('should load all busy greeting id into store', function(){
+        let state = {
+            busyGreetingId: null
+        };
+        let greetings = [
+            {
+                id: 1
+            }
+        ];
+        VoiceboxModule.mutations.loadBusyGreetingSucceeded(state, greetings);
+        assert.deepEqual(state.busyGreetingId, greetings[0].id);
     });
 
 });
