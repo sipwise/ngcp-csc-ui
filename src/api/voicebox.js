@@ -1,7 +1,9 @@
 
 import _ from 'lodash'
+import Vue from 'vue';
 import {
     get,
+    getList,
     patchReplace
 } from './common'
 
@@ -49,4 +51,79 @@ export function setVoiceboxEmail(options) {
         fieldPath: 'email',
         value: options.value
     });
+}
+
+export function getVoiceboxGreetingByType(options) {
+    return new Promise((resolve, reject) => {
+        getList({
+            path: 'api/voicemailgreetings/',
+            root: '_embedded.ngcp:voicemailgreetings',
+            params: { subscriber_id: options.id, type: options.type }
+        }).then((result) => {
+            resolve(result);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function deleteVoiceboxGreetingById(id) {
+    return new Promise((resolve, reject) => {
+        Vue.http.delete(`api/voicemailgreetings/${id}`).then(() => {
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function createNewGreeting(formData, onProgress) {
+    return new Promise((resolve, reject) => {
+        Vue.http.post('api/voicemailgreetings/', formData, {
+            before(request) {
+                Vue.previousRequest = request;
+            },
+            progress(e) {
+                if (e.lengthComputable) {
+                    onProgress(Math.ceil((e.loaded / e.total ) * 100));
+                }
+            }
+        }).then(() => {
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function uploadGreeting(options) {
+    return new Promise((resolve, reject) => {
+        var formData = new FormData();
+        var fields = _.clone(options.data);
+        delete fields.file;
+        var json = JSON.stringify(fields);
+        formData.append('json', json);
+        if (options.data.file) {
+            formData.append('greetingfile', options.data.file);
+        }
+        Promise.resolve().then(() => {
+            return getVoiceboxGreetingByType({
+                id: options.data.subscriber_id,
+                type: options.data.type
+            });
+        }).then((greetings) => {
+            if (_.some(greetings.items, { dir: options.data.dir })) {
+                deleteVoiceboxGreetingById(greetings.items[0].id);
+            }
+            return createNewGreeting(formData, options.onProgress);
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function abortPreviousRequest() {
+    Vue.previousRequest.abort();
 }
