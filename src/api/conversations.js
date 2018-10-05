@@ -4,7 +4,6 @@ import { saveAs } from 'file-saver'
 import Vue from 'vue'
 import { getList } from './common'
 
-
 export function getConversations(options) {
     return new Promise((resolve, reject)=>{
         let type = _.get(options, 'type', null);

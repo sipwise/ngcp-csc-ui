@@ -4,20 +4,22 @@
 import Vue from 'vue';
 import VueResource from 'vue-resource';
 import {
-    get
+    get,
+	getList
 } from '../../src/api/common';
 import {
-    getVoiceboxSettings
+    getVoiceboxSettings,
+	getVoiceboxGreetingByType
 } from '../../src/api/voicebox';
 import { assert } from 'chai';
 
 Vue.use(VueResource);
 
-describe('Voicebox', function(){
+describe('Voicebox', function() {
 
     const subscriberId = 123;
 
-    it('should get subscriber\'s voicebox settings', function(done){
+    it('should get subscriber\'s voicebox settings', function(done) {
 
         let data = {
             "_links" : {
@@ -64,15 +66,52 @@ describe('Voicebox', function(){
         };
 
         Vue.http.interceptors = [];
-        Vue.http.interceptors.unshift((request, next)=>{
+        Vue.http.interceptors.unshift((request, next) => {
             next(request.respondWith(JSON.stringify(data), {
                 status: 200
             }));
         });
-        getVoiceboxSettings(subscriberId).then((result)=>{
+        getVoiceboxSettings(subscriberId).then((result) => {
             assert.deepEqual(result, settings);
             done();
-        }).catch((err)=>{
+        }).catch((err) => {
+            done(err);
+        });
+    });
+
+    it('should get subscriber\'s busy greeting', function(done) {
+
+        let data = {
+			"_embedded" : {
+				"ngcp:voicemailgreetings" : [
+					{
+						"dir" : "busy",
+						"id" : 1,
+						"subscriber_id" : 123
+					}
+				]
+			},
+			"total_count" : 1
+        };
+
+        let greeting = {
+            "dir" : "busy",
+            "id" : 1,
+            "subscriber_id" : 123
+        };
+
+        Vue.http.interceptors = [];
+        Vue.http.interceptors.unshift((request, next) => {
+            next(request.respondWith(JSON.stringify(data), {
+                status: 200
+            }));
+        });
+        getVoiceboxGreetingByType({id: subscriberId, type: 'busy'}).then((result) => {
+			console.log('1', result.items[0]);
+			console.log('2', greeting);
+            assert.deepEqual(result.items[0], greeting);
+            done();
+        }).catch((err) => {
             done(err);
         });
     });
