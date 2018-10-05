@@ -141,6 +141,21 @@ export function uploadGreeting(options) {
 }
 
 export function abortPreviousRequest(name) {
-    let requestKey = `previous${_.capitalize(name)}Request`;
-    Vue[requestKey].abort();
+    return new Promise((resolve) => {
+        let requestKey = `previous${_.capitalize(name)}Request`;
+        Vue[requestKey].abort();
+        resolve();
+    });
+}
+
+export function playGreeting(options) {
+    return new Promise((resolve, reject)=>{
+        let params = { format: options.format };
+        Vue.http.get(`api/voicemailgreetings/${options.id}`, { params: params, responseType: 'blob' })
+            .then((res) => {
+                resolve(URL.createObjectURL(res.body));
+            }).catch((err) => {
+                reject(err);
+            });
+    });
 }

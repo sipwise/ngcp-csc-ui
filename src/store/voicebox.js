@@ -3,15 +3,15 @@
 
 import { RequestState } from './common'
 import {
-    getVoiceboxSettings,
-    setVoiceboxDelete,
+    getVoiceboxSettings, setVoiceboxDelete,
     setVoiceboxAttach,
     setVoiceboxPin,
     setVoiceboxEmail,
     uploadGreeting,
     abortPreviousRequest,
     getVoiceboxGreetingByType,
-    deleteVoiceboxGreetingById
+    deleteVoiceboxGreetingById,
+    playGreeting
 } from '../api/voicebox';
 import { i18n } from '../i18n';
 
@@ -45,7 +45,13 @@ export default {
         loadUnavailGreetingState: RequestState.initial,
         loadUnavailGreetingError: null,
         deleteGreetingState: RequestState.initial,
-        deleteGreetingError: null
+        deleteGreetingError: null,
+        playBusyGreetingUrl: null,
+        playBusyGreetingState: RequestState.initial,
+        playBusyGreetingError: null,
+        playUnavailGreetingUrl: null,
+        playUnavailGreetingState: RequestState.initial,
+        playUnavailGreetingError: null
     },
     getters: {
         subscriberId(state, getters, rootState, rootGetters) {
@@ -176,6 +182,18 @@ export default {
         unavailGreetingLabel(state) {
             return state.unavailGreetingId ? i18n.t('voicebox.label.customSoundActive') :
                 i18n.t('voicebox.label.defaultSoundActive')
+        },
+        playBusyGreetingLoaded(state) {
+            return state.playBusyGreetingState === 'succeeded';
+        },
+        playBusyGreetingUrl(state) {
+            return state.playBusyGreetingUrl;
+        },
+        playUnavailGreetingLoaded(state) {
+            return state.playUnavailGreetingState === 'succeeded';
+        },
+        playUnavailGreetingUrl(state) {
+            return state.playUnavailGreetingUrl;
         }
     },
     mutations: {
@@ -329,6 +347,35 @@ export default {
         deleteGreetingFailed(state, error) {
             state.deleteGreetingState = RequestState.failed;
             state.deleteGreetingError = error;
+        },
+        // TODO: b. Remove playError if not needed
+        playBusyGreetingRequesting(state) {
+            state.playBusyGreetingState = RequestState.requesting;
+            state.playBusyGreetingError = null;
+        },
+        playBusyGreetingSucceeded(state, url) {
+            state.playBusyGreetingUrl = url;
+            state.playBusyGreetingState = RequestState.succeeded;
+            state.playBusyGreetingError = null;
+        },
+        playBusyGreetingFailed(state, err) {
+            state.playBusyGreetingUrl = null;
+            state.playBusyGreetingState = RequestState.failed;
+            state.playBusyGreetingError = err;
+        },
+        playUnavailGreetingRequesting(state) {
+            state.playUnavailGreetingState = RequestState.requesting;
+            state.playUnavailGreetingError = null;
+        },
+        playUnavailGreetingSucceeded(state, url) {
+            state.playUnavailGreetingUrl = url;
+            state.playUnavailGreetingState = RequestState.succeeded;
+            state.playUnavailGreetingError = null;
+        },
+        playUnavailGreetingFailed(state, err) {
+            state.playUnavailGreetingUrl = null;
+            state.playUnavailGreetingState = RequestState.failed;
+            state.playUnavailGreetingError = err;
         }
     },
     actions: {
@@ -479,6 +526,32 @@ export default {
                 }
             }).catch((err) => {
                 context.commit('deleteGreetingFailed', err.message);
+            });
+        },
+        playBusyGreeting(context, options) {
+            context.commit('playBusyGreetingRequesting');
+            playGreeting(options).then((url) => {
+                context.commit('playBusyGreetingSucceeded', url);
+            }).catch((err) => {
+                context.commit('playBusyGreetingFailed', err.mesage);
+            });
+        },
+        playUnavailGreeting(context, options) {
+            context.commit('playUnavailGreetingRequesting');
+            playGreeting(options).then((url) => {
+                context.commit('playUnavailGreetingSucceeded', url);
+            }).catch((err) => {
+                context.commit('playUnavailGreetingFailed', err.mesage);
+            });
+        },
+        abortUploadBusyGreeting(context) {
+            abortPreviousRequest('busy').then(() => {
+                context.dispatch('loadBusyGreeting');
+            });
+        },
+        abortUploadUnavailGreeting(context) {
+            abortPreviousRequest('unavail').then(() => {
+                context.dispatch('loadUnavailGreeting');
             });
         }
     }
