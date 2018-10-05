@@ -39,6 +39,7 @@
                     :loaded="voiceMailLoaded"
                     class="csc-voice-mail-player"
                     @load="load"
+                    :pausable="true"
                 />
             </q-item-tile>
         </q-item-main>
