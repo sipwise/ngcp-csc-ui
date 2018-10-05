@@ -2,6 +2,8 @@
 'use strict';
 
 import VoiceboxModule from '../../src/store/voicebox';
+import localeEn from '../../src/locales/en'
+import { i18n } from '../../src/i18n';
 import { assert } from 'chai';
 
 describe('Voicebox', function(){
@@ -40,6 +42,48 @@ describe('Voicebox', function(){
         ];
         VoiceboxModule.mutations.loadBusyGreetingSucceeded(state, greetings);
         assert.deepEqual(state.busyGreetingId, greetings[0].id);
+    });
+
+    it('should load busy greeting id into store', function(){
+        let state = {
+            busyGreetingId: null
+        };
+        let greetings = [
+            {
+                id: 1
+            }
+        ];
+        VoiceboxModule.mutations.loadBusyGreetingSucceeded(state, greetings);
+        assert.deepEqual(state.busyGreetingId, greetings[0].id);
+    });
+
+    it('should load unavailable greeting id into store', function(){
+        let state = {
+            unavailGreetingId: null
+        };
+        let greetings = [
+            {
+                id: 1
+            }
+        ];
+        VoiceboxModule.mutations.loadUnavailGreetingSucceeded(state, greetings);
+        assert.deepEqual(state.unavailGreetingId, greetings[0].id);
+    });
+
+    it('should get right label for busy greeting to indicate if it\'s custom or default', function(){
+        let state = {
+            busyGreetingId: null
+        };
+        let getterObject = VoiceboxModule.getters.busyGreetingLabel(state);
+        assert.equal(getterObject, 'Default sound');
+    });
+
+    it('should get right label for unavailable greeting to indicate if it\'s custom or default', function(){
+        let state = {
+            unavailGreetingId: 1
+        };
+        let getterObject = VoiceboxModule.getters.unavailGreetingLabel(state);
+        assert.equal(getterObject, 'Custom sound');
     });
 
 });

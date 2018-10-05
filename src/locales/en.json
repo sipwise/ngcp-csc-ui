@@ -422,11 +422,12 @@
         "label": {
             "changeEmail": "Change Email",
             "changePin": "Change PIN",
-            "deletionEnabled": "Deleted voicemail after email notification is delivered",
-            "deletionDisabled": "Deleted voicemail after email notification is delivered",
+            "deletionEnabled": "Delete voicemail after email notification is delivered",
+            "deletionDisabled": "Delete voicemail after email notification is delivered",
             "attachmentEnabled": "Attach voicemail to email notification",
             "attachmentDisabled": "Attach voicemail to email notification",
             "busyGreeting": "Busy Greeting",
+            "unavailGreeting": "Unavailable Greeting",
             "customSoundActive": "Custom sound",
             "defaultSoundActive": "Default sound"
         },
