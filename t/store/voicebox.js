@@ -70,6 +70,24 @@ describe('Voicebox', function(){
         assert.deepEqual(state.unavailGreetingId, greetings[0].id);
     });
 
+    it('should load busy greeting url into store', function(){
+        let state = {
+            playBusyGreetingUrl: null
+        };
+        let url = "blob:https://1.2.3.4/6341147c-3ed2-4112-876b-331e834a4821";
+        VoiceboxModule.mutations.playBusyGreetingSucceeded(state, url);
+        assert.deepEqual(state.playBusyGreetingUrl, url);
+    });
+
+    it('should load unavailable greeting id into store', function(){
+        let state = {
+            playUnavailGreetingUrl: null
+        };
+        let url = "blob:https://1.2.3.4/6341147c-3ed2-4112-876b-331e834a4821";
+        VoiceboxModule.mutations.playUnavailGreetingSucceeded(state, url);
+        assert.deepEqual(state.playUnavailGreetingUrl, url);
+    });
+
     it('should get right label for busy greeting to indicate if it\'s custom or default', function(){
         let state = {
             busyGreetingId: null
