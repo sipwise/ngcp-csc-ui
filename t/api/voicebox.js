@@ -114,4 +114,39 @@ describe('Voicebox', function() {
         });
     });
 
+    it('should get subscriber\'s unavailable greeting', function(done) {
+
+        let data = {
+            "_embedded" : {
+                "ngcp:voicemailgreetings" : [
+                    {
+                        "dir" : "unavail",
+                        "id" : 1,
+                        "subscriber_id" : 123
+                    }
+                ]
+            },
+            "total_count" : 1
+        };
+
+        let greeting = {
+            "dir" : "unavail",
+            "id" : 1,
+            "subscriber_id" : 123
+        };
+
+        Vue.http.interceptors = [];
+        Vue.http.interceptors.unshift((request, next) => {
+            next(request.respondWith(JSON.stringify(data), {
+                status: 200
+            }));
+        });
+        getVoiceboxGreetingByType({id: subscriberId, type: 'unavail'}).then((result) => {
+            assert.deepEqual(result.items[0], greeting);
+            done();
+        }).catch((err) => {
+            done(err);
+        });
+    });
+
 });

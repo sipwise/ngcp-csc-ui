@@ -19,63 +19,30 @@
                     :deleteLabel="deleteLabel"
                     :attachLabel="attachLabel"
                 />
-
                 <csc-sound-file-upload
                     ref="uploadBusyGreeting"
                     icon="music_note"
                     :label="$t('voicebox.label.busyGreeting')"
                     :value="busyGreetingLabel"
-                    :progress="uploadProgress"
+                    :progress="uploadBusyProgress"
                     :uploading="uploadBusyGreetingRequesting"
                     :uploaded="busyGreetingId !== null"
                     @upload="uploadBusyGreeting"
-                    @abort="abort"
+                    @abort="abortBusy"
                     @reset="deleteBusy"
                 />
-
-                <!--<q-field-->
-                    <!--icon="music_note"-->
-                <!--&gt;-->
-                    <!--<q-input-->
-                        <!--readonly-->
-                        <!--:float-label="$t('voicebox.label.busyGreeting')"-->
-                        <!--:value="busyGreetingLabel"-->
-                        <!--:after="busyGreetingButtons"-->
-                    <!--/>-->
-                    <!--<input-->
-                        <!--v-show="false"-->
-                        <!--ref="busyGreetingUpload"-->
-                        <!--type="file"-->
-                        <!--@change="busyGreetingFileChange"-->
-                    <!--/>-->
-                <!--</q-field>-->
-
-                <!--<csc-upload-file-->
-                    <!--ref="uploadBusyGreeting"-->
-                    <!--:progress="uploadProgress"-->
-                    <!--:requesting="uploadBusyGreetingRequesting"-->
-                    <!--:id="busyGreetingId"-->
-                    <!--file-types=".wav,.mp3"-->
-                    <!--@reset="resetBusyFile"-->
-                    <!--@upload="uploadBusyGreeting"-->
-                    <!--@abort="abort"-->
-                <!--&gt;-->
-                    <!--<div-->
-                        <!--slot="status-label"-->
-                        <!--:class="busyGreetingLabelClasses"-->
-                    <!--&gt;-->
-                        <!--{{ busyGreetingLabel }}-->
-                    <!--</div>-->
-                    <!--<q-btn-->
-                        <!--slot="extra-buttons"-->
-                        <!--flat-->
-                        <!--color="negative"-->
-                        <!--icon="delete"-->
-                        <!--@click="deleteBusy"-->
-                    <!--&gt;-->
-                        <!--{{ $t('buttons.remove') }}-->
-                    <!--</q-btn>-->
-                <!--</csc-upload-file>-->
+                <csc-sound-file-upload
+                    ref="uploadUnavailGreeting"
+                    icon="music_note"
+                    :label="$t('voicebox.label.unavailGreeting')"
+                    :value="unavailGreetingLabel"
+                    :progress="uploadUnavailProgress"
+                    :uploading="uploadUnavailGreetingRequesting"
+                    :uploaded="unavailGreetingId !== null"
+                    @upload="uploadUnavailGreeting"
+                    @abort="abortUnavail"
+                    @reset="deleteUnavail"
+                />
             </div>
         </div>
     </csc-page>
@@ -84,8 +51,6 @@
 <script>
     import {
         QBtn,
-        QField,
-        QInput,
         Dialog
     } from 'quasar-framework'
     import { mapGetters } from 'vuex'
@@ -107,13 +72,12 @@
             CscSoundFileUpload,
             CscPage,
             CscVoiceboxSettings,
-            QBtn,
-            QField,
-            QInput
+            QBtn
         },
         mounted() {
             this.$store.dispatch('voicebox/getVoiceboxSettings');
             this.loadBusyGreeting();
+            this.loadUnavailGreeting();
         },
         computed: {
             ...mapGetters('voicebox', [
@@ -138,58 +102,46 @@
                 'updatePinError',
                 'updateEmailState',
                 'updateEmailError',
-                'uploadProgress',
+                'uploadBusyProgress',
+                'uploadUnavailProgress',
                 'uploadBusyGreetingState',
                 'uploadBusyGreetingError',
                 'uploadBusyGreetingRequesting',
+                'uploadUnavailGreetingState',
+                'uploadUnavailGreetingError',
+                'uploadUnavailGreetingRequesting',
                 'busyGreetingId',
                 'unavailGreetingId',
                 'deleteGreetingState',
                 'deleteGreetingError',
-                'isBusyGreetingLoaded',
-                'busyGreetingLabel'
-            ]),
-            busyGreetingLabelClasses() {
-                let classes = ['csc-upload-file-label'];
-                if(this.busyGreetingId) {
-                    classes.push('active-label');
-                }
-                else {
-                    classes.push('inactive-label');
-                }
-                return classes;
-            },
-            busyGreetingButtons() {
-                let buttons = [];
-                let self = this;
-                buttons.push({
-                        icon: 'folder',
-                        error: false,
-                        handler (event) {
-                            event.stopPropagation();
-                            self.$refs.busyGreetingUpload.click();
-                        }
-                    }
-                );
-                return buttons;
-            }
+                'busyGreetingLabel',
+                'unavailGreetingLabel'
+            ])
         },
         methods: {
-            busyGreetingFileChange() {
-
-            },
             resetBusyFile() {
                 this.$refs.uploadBusyGreeting.reset();
-                this.$store.commit('voicebox/resetProgress');
+                this.$store.commit('voicebox/resetBusyProgress');
+            },
+            resetUnavailFile() {
+                this.$refs.uploadUnavailGreeting.reset();
+                this.$store.commit('voicebox/resetUnavailProgress');
             },
             uploadBusyGreeting(file) {
-                this.$store.dispatch('voicebox/uploadGreeting', {
-                    dir: 'busy',
+                this.$store.dispatch('voicebox/uploadBusyGreeting', {
                     file: file
                 });
             },
-            abort() {
-                this.$store.dispatch('voicebox/abortPreviousRequest');
+            uploadUnavailGreeting(file) {
+                this.$store.dispatch('voicebox/uploadUnavailGreeting', {
+                    file: file
+                });
+            },
+            abortBusy() {
+                this.$store.dispatch('voicebox/abortPreviousRequest', 'busy');
+            },
+            abortUnavail() {
+                this.$store.dispatch('voicebox/abortPreviousRequest', 'unavail');
             },
             deleteBusy() {
                 let self = this;
@@ -205,7 +157,33 @@
                             label: self.$t('buttons.reset'),
                             color: 'negative',
                             handler () {
-                                store.dispatch('voicebox/deleteGreeting', self.busyGreetingId)
+                                store.dispatch('voicebox/deleteGreeting', {
+                                    id: self.busyGreetingId,
+                                    type: 'busy'
+                                })
+                            }
+                        }
+                    ]
+                });
+            },
+            deleteUnavail() {
+                let self = this;
+                let store = this.$store;
+                Dialog.create({
+                    title: self.$t('voicebox.deleteCustomDialogTitle'),
+                    message: self.$t('voicebox.deleteCustomDialogText', {
+                        type: 'unavailable'
+                    }),
+                    buttons: [
+                        self.$t('buttons.cancel'),
+                        {
+                            label: self.$t('buttons.remove'),
+                            color: 'negative',
+                            handler () {
+                                store.dispatch('voicebox/deleteGreeting', {
+                                    id: self.unavailGreetingId,
+                                    type: 'unavail'
+                                })
                             }
                         }
                     ]
@@ -213,6 +191,9 @@
             },
             loadBusyGreeting() {
                 this.$store.dispatch('voicebox/loadBusyGreeting');
+            },
+            loadUnavailGreeting() {
+                this.$store.dispatch('voicebox/loadUnavailGreeting');
             }
         },
         watch: {
@@ -260,8 +241,20 @@
                 }
                 else if (state === 'failed') {
                     showGlobalError(this.uploadBusyGreetingError);
-                    if (this.uploadProgress > 0) {
+                    if (this.uploadBusyProgress > 0) {
                         this.resetBusyFile();
+                    }
+                }
+            },
+            uploadUnavailGreetingState(state) {
+                if (state === 'succeeded') {
+                    showToast(this.$t('voicebox.uploadGreetingSuccessMessage'));
+                    this.resetUnavailFile();
+                }
+                else if (state === 'failed') {
+                    showGlobalError(this.uploadUnavailGreetingError);
+                    if (this.uploadUnavailProgress > 0) {
+                        this.resetUnavailFile();
                     }
                 }
             },
