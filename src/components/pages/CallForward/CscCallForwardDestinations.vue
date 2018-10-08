@@ -180,6 +180,6 @@
         .csc-destinations
             .dest-icon
                 font-size 18px
-                margin-bottom 5px 
+                margin-bottom 5px
 
 </style>

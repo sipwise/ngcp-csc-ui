@@ -523,5 +523,4 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/quasar.variables';
 </style>

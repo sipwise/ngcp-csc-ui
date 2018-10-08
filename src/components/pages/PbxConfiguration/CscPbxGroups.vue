@@ -310,12 +310,13 @@
     }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl';
-    .add-form {
-        position: relative;
-    }
-    .add-form .q-field:last-child {
-        margin-bottom: 36px;
-    }
+
+    .add-form
+        position relative
+
+    .add-form .q-field:last-child
+        margin-bottom 36px
+
 </style>
