@@ -1,6 +1,5 @@
-
+import './themes/app.fonts.styl'
 import './themes/app.mat.styl'
-import 'quasar-extras/roboto-font';
 import 'quasar-extras/material-icons'
 import 'quasar-extras/fontawesome'
 import 'quasar-extras/animate'
@@ -26,7 +25,7 @@ Vue.use(Quasar);
 Vue.use(VueResource);
 Vue.use(RtcEngineCall);
 Vue.use(VueScrollTo);
-Vue.use(Vuelidate)
+Vue.use(Vuelidate);
 
 sync(store, router);
 
