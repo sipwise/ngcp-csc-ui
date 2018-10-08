@@ -258,7 +258,7 @@
         font-weight 300
 
     .dest-row.terminated.mobile
-        color $grey
+        color $faded
 
     .q-item-highlight.csc-destination:hover
         background-color lighten($primary, 70%)
@@ -273,7 +273,7 @@
             font-weight 500
 
     .dest-row.terminated
-        color $grey
+        color $faded
 
     .dest-btns
         display inline-block

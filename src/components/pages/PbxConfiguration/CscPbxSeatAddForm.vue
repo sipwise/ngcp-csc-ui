@@ -193,5 +193,4 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/app.common.styl';
 </style>

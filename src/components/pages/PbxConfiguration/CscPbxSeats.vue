@@ -282,8 +282,9 @@
     }
 </script>
 
-<style>
-    .pbx-seat .pbx-seat-title {
-        padding-left: 8px;
-    }
+<style lang="stylus" rel="stylesheet/stylus">
+
+    .pbx-seat .pbx-seat-title
+        padding-left 8px
+
 </style>

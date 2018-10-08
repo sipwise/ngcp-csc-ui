@@ -202,9 +202,9 @@
         border solid 2px #eeeeee
         .home-icons
             font-size 5.5rem
-            color $grey
+            color $faded
         .q-card-actions
-            color $grey
+            color $faded
 
     @media (max-width: $breakpoint-sm)
         #csc-page-home

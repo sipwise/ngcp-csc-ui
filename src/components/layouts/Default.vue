@@ -505,154 +505,126 @@
     @import '../../themes/quasar.variables';
     @import '../../themes/app.common';
 
-    #main-menu {
-        padding-top:60px;
-    }
+    #main-menu
+        padding-top 60px
 
-    #main-menu .q-item-side {
-        min-width: 30px;
-    }
+    #main-menu .q-item-side
+        min-width 30px
 
-    #main-menu .q-item {
-        padding: 12px 24px;
-    }
+    #main-menu .q-item
+        padding 12px 24px
 
     #main-menu .router-link-active,
-    #main-menu .q-item:hover {
-        background-color: #475360;
-    }
+    #main-menu .q-item:hover
+        background-color $tertiary
 
-    #main-menu .q-item .q-item-sublabel {
-        color: #5b7086;
-    }
+    #main-menu .q-item .q-item-sublabel
+        color $faded
 
     #main-menu .q-item .q-item-main,
-    #main-menu .q-item .q-item-side {
-        color: #ADB3B8;
-    }
+    #main-menu .q-item .q-item-side
+        color $light
 
-    #main-menu .q-collapsible-sub-item {
-        padding: 0;
-    }
+    #main-menu .q-collapsible-sub-item
+        padding 0
 
-    #main-menu .q-collapsible-sub-item .q-item {
-        padding-left: 60px;
-    }
+    #main-menu .q-collapsible-sub-item .q-item
+        padding-left 60px
 
-    #user-login-as {
-        display: inline-block;
-        text-transform: none;
-        color: #c5eab4;
-    }
-    #user-login-as:after {
-        content: " ";
-        white-space: pre;
-    }
-    #user-name {
-        font-weight: bold;
-    }
+    #user-login-as
+        display inline-block
+        text-transform none
+        color $white
 
-    .q-card {
-        margin: 15px;
-        margin-left: 0px;
-        margin-right: 0px;
-    }
+    #user-login-as:after
+        content " "
+        white-space pre
 
-    .q-card.page {
-        padding: 0px;
-        margin: 0;
-    }
+    #user-name
+        font-weight bold
 
-    .layout-aside.fixed.csc-call-fullscreen {
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        width: auto;
-        z-index: 5000;
-    }
+    .q-card
+        margin 15px
+        margin-left 0px
+        margin-right 0px
 
-    .csc-call-fullscreen .csc-call,
-    .csc-call-fullscreen .csc-call .q-card {
+    .q-card.page
+        padding 0px
+        margin 0
 
-    }
+    .layout-aside
+        background $secondary
 
-    .csc-call-fullscreen .csc-call .q-card .q-card-primary {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 72px;
-        line-height: 72px;
-        z-index: 6001;
-        background: -moz-linear-gradient(top, rgba(51,64,77,1) 0%, rgba(235,236,237,0) 90%, rgba(255,255,255,0) 100%);
-        background: -webkit-linear-gradient(top, rgba(51,64,77,1) 0%,rgba(235,236,237,0) 90%,rgba(255,255,255,0) 100%);
-        background: linear-gradient(to bottom, rgba(51,64,77,1) 0%,rgba(235,236,237,0) 90%,rgba(255,255,255,0) 100%);
-    }
+    .layout-aside.fixed.csc-call-fullscreen
+        left 0
+        right 0
+        top 0
+        bottom 0
+        width auto
+        z-index 5000
 
-    .csc-call-fullscreen .csc-call .q-card-actions {
+    .csc-call-fullscreen .csc-call .q-card .q-card-primary
+        position absolute
+        top 0
+        right 0
+        left 0
+        height 72px
+        line-height 72px
+        z-index 6001
+        background -moz-linear-gradient(top, rgba(51,64,77,1) 0%, rgba(235,236,237,0) 90%, rgba(255,255,255,0) 100%)
+        background -webkit-linear-gradient(top, rgba(51,64,77,1) 0%,rgba(235,236,237,0) 90%,rgba(255,255,255,0) 100%)
+        background linear-gradient(to bottom, rgba(51,64,77,1) 0%,rgba(235,236,237,0) 90%,rgba(255,255,255,0) 100%)
 
-    }
+    .csc-call-fullscreen .csc-call .q-card-main
+        position absolute
+        top 0
+        right 0
+        left 0
+        bottom 0
+        z-index 6000
+        font-size 0
 
-    .csc-call-fullscreen .csc-call .q-card-main {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-        z-index: 6000;
-        font-size: 0;
-    }
+    .csc-call-fullscreen .csc-call-media
+        position absolute
+        top 0
+        bottom 0
+        right 0
+        left 0
+        z-index 1
 
-    .csc-call-fullscreen .csc-call-media {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        z-index: 1;
-    }
+    .csc-media-remote
+        z-index 9
 
-    .csc-media-remote {
-        z-index: 9;
-    }
+    .csc-call-fullscreen .csc-media-preview
+        position absolute
+        bottom 0
+        left 0
+        width 20%
 
-    .csc-call-fullscreen .csc-media-preview {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 20%;
-    }
+    .csc-call-fullscreen .csc-media-preview video
+        position relative
+        height 100%
 
-    .csc-call-fullscreen .csc-media-preview video {
-        position: relative;
-        height: 100%;
-    }
+    .csc-call-fullscreen .csc-media-remote
+        position absolute
+        top 0
+        bottom 0
+        right 0
+        left 0
 
-    .csc-call-fullscreen .csc-media-remote {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-    }
+    .csc-call-fullscreen .csc-media-remote video
+        position absolute
+        height 100%
+        bottom 0
 
-    .csc-call-fullscreen .csc-media-remote video {
-        position: absolute;
-        height: 100%;
-        bottom: 0;
-    }
-
-    .csc-call-fullscreen .csc-call-info {
-        position: relative;
-        top: 73px;
-        z-index: 2;
-    }
+    .csc-call-fullscreen .csc-call-info
+        position relative
+        top 73px
+        z-index 2
 
     .q-if-control.q-if-control-before.q-icon,
-    .q-if-control.q-if-control-before.q-icon:before {
-        font-size:24px;
-    }
+    .q-if-control.q-if-control-before.q-icon:before
+        font-size 24px
 
     .csc-toolbar-btn-popover
         .q-item-main.q-item-section
