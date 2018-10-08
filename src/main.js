@@ -1,6 +1,5 @@
 
 import './themes/app.mat.styl'
-import 'quasar-extras/roboto-font';
 import 'quasar-extras/material-icons'
 import 'quasar-extras/fontawesome'
 import 'quasar-extras/animate'
