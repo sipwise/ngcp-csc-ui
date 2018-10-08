@@ -106,10 +106,12 @@
         justify-content space-around
         align-items center
         border-radius 4px
-        background-color #fff
+        background-color $white
+
         .control-btns
             display flex
             justify-content space-between
+
         .progress-bar
             margin-left 16px
             margin-right 16px

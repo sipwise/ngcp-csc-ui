@@ -199,7 +199,9 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl';
+
     .form-actions
         margin-top 16px
         margin-bottom 8px
+
 </style>

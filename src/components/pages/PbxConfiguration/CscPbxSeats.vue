@@ -282,8 +282,10 @@
     }
 </script>
 
-<style>
-    .pbx-seat .pbx-seat-title {
-        padding-left: 8px;
-    }
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables.styl';
+
+    .pbx-seat .pbx-seat-title
+        padding-left 8px
+
 </style>

@@ -446,9 +446,19 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables';
+
     $spotSize = 25px
 
     .csc-pbx-device-config-key-overlay
+        position absolute
+        top 0
+        left 0
+        right 0
+        bottom 0
+        background-color rgba(250,250,250,0.95)
+        z-index 10
+        padding 48px
+
         .title
             .q-icon
                 margin-right 8px
@@ -459,36 +469,29 @@
             margin-bottom 32px
             text-align center
 
-
-        position absolute
-        top 0
-        left 0
-        right 0
-        bottom 0
-        background-color rgba(250,250,250,0.95)
-        z-index 10
-        padding 48px
-
     .csc-pbx-device-key-details
         padding 50px
         position relative
 
     .csc-pbx-device-config
         position relative
+
         .spot-modal-content
             position relative
+
         .actions
             padding 32px
 
     .csc-pbx-device-image
         position relative
         overflow hidden
+
         img
             display block
             position relative
 
     .csc-pbx-device-canvas
-        position: relative
+        position relative
 
     .csc-pbx-key-popover-title
         font-size 18px
@@ -500,10 +503,10 @@
         z-index 20
 
     .csc-pbx-device-button-spot
-        border-radius: 50%;
+        border-radius 50%
         width $spotSize
         height $spotSize
-        background-color white
+        background-color $white
         line-height $spotSize
         color $primary
         text-align center
@@ -515,7 +518,7 @@
 
     .csc-pbx-device-button-active
         background-color $primary
-        color white
+        color $white
 
     .csc-pbx-key-popover
         min-height 40px

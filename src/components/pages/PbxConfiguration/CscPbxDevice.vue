@@ -358,10 +358,11 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables';
+
     .csc-pbx-device
 
         .csc-pbx-device-content
-            padding-top: 32px;
+            padding-top 32px
 
         .q-item-side.q-item-side-right
             position absolute
@@ -390,8 +391,9 @@
 
     .csc-device-title
         text-overflow ellipsis
-        white-space: nowrap;
+        white-space nowrap
         width 100%
         overflow hidden
         padding-right 80px
+
 </style>

@@ -168,22 +168,16 @@
         padding 0
         width calc(100% - 56px)
 
-    @media only screen and (min-width: 320px) {
-        .csc-add-time-form {
+    @media only screen and (min-width: 320px)
+        .csc-add-time-form
             width calc(100% - 43px)
-        }
-    }
 
-    @media only screen and (min-width: 360px) {
-        .csc-add-time-form {
+    @media only screen and (min-width: 360px)
+        .csc-add-time-form
             width calc(100% - 50.09px)
-        }
-    }
 
-    @media only screen and (min-width: 411px) {
-        .csc-add-time-form {
+    @media only screen and (min-width: 411px)
+        .csc-add-time-form
             width calc(100% - 56px)
-        }
-    }
 
 </style>
