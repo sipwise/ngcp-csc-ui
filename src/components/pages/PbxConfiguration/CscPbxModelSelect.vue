@@ -189,6 +189,7 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables';
+
     .csc-pbx-model-list
         .q-item-avatar
             overflow hidden
@@ -202,7 +203,7 @@
         text-align center
 
         img
-            width: 25%
+            width 25%
 
         @media (max-width: $breakpoint-sm)
             img

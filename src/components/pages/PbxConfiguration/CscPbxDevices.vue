@@ -531,14 +531,17 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables';
+
     .filter-model-select
         margin 16px 16px 8px 16px
 
     .q-chip.csc-search-criteria
         position relative
+
         .q-chip-main
             text-overflow ellipsis
-            white-space: nowrap;
+            white-space nowrap
             width 100%
             overflow hidden
             padding-right 18px
@@ -547,8 +550,9 @@
             right 6px
 
         .q-chip-side
-            background-color white
+            background-color $white
             position relative
+
             img
                 position absolute
                 display block
@@ -561,4 +565,5 @@
     .csc-form
         .q-field
             margin-bottom 0
+
 </style>

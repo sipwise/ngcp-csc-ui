@@ -248,9 +248,12 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl';
+
     .csc-pbx-group-add-form
-        position: relative
+        position relative
+
     .csc-pbx-group-add-form
         .q-field:last-child
-            margin-bottom: 36px
+            margin-bottom 36px
+
 </style>
