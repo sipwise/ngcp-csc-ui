@@ -1,3 +1,9 @@
+ngcp-csc-ui (6.5.2.0+0~mr6.5.2.0) unstable; urgency=medium
+
+  * New release.
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Oct 2018 21:17:27 +0200
+
 ngcp-csc-ui (6.5.1.0+0~mr6.5.1.0) unstable; urgency=medium
 
   [ raxelsen ]
