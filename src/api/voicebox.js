@@ -77,11 +77,12 @@ export function deleteVoiceboxGreetingById(id) {
     });
 }
 
-export function createNewGreeting(formData, onProgress) {
+export function createNewGreeting(formData, onProgress, type) {
     return new Promise((resolve, reject) => {
+        let requestKey = `previous${_.capitalize(type)}Request`;
         Vue.http.post('api/voicemailgreetings/', formData, {
             before(request) {
-                Vue.previousRequest = request;
+                Vue[requestKey] = request;
             },
             progress(e) {
                 if (e.lengthComputable) {
@@ -109,13 +110,13 @@ export function uploadGreeting(options) {
         Promise.resolve().then(() => {
             return getVoiceboxGreetingByType({
                 id: options.data.subscriber_id,
-                type: options.data.type
+                type: options.data.dir
             });
         }).then((greetings) => {
             if (_.some(greetings.items, { dir: options.data.dir })) {
                 deleteVoiceboxGreetingById(greetings.items[0].id);
             }
-            return createNewGreeting(formData, options.onProgress);
+            return createNewGreeting(formData, options.onProgress, options.data.dir);
         }).then(() => {
             resolve();
         }).catch((err) => {
@@ -124,6 +125,8 @@ export function uploadGreeting(options) {
     });
 }
 
-export function abortPreviousRequest() {
-    Vue.previousRequest.abort();
+export function abortPreviousRequest(name) {
+    let requestKey = `previous${_.capitalize(name)}Request`;
+    console.log(requestKey);
+    Vue[requestKey].abort();
 }
