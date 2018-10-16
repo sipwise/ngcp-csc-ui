@@ -40,6 +40,35 @@
                 </q-btn>
             </slot>
         </csc-upload-file>
+        <csc-upload-file
+            v-if="isUnavailGreetingLoaded"
+            ref="uploadUnavailGreeting"
+            :progress="uploadProgress"
+            :requesting="uploadUnavailGreetingRequesting"
+            :id="unavailGreetingId"
+            file-types=".wav,.mp3"
+            @reset="resetUnavailFile"
+            @upload="uploadUnavailGreeting"
+            @abort="abort"
+        >
+            <slot slot="status-label">
+                <div
+                    class="csc-black-label"
+                >
+                    {{ unavailGreetingLabel }}
+                </div>
+            </slot>
+            <slot slot="extra-buttons">
+                <q-btn
+                    flat
+                    color="negative"
+                    icon="delete"
+                    @click="deleteUnavail"
+                >
+                    {{ $t('buttons.remove') }}
+                </q-btn>
+            </slot>
+        </csc-upload-file>
     </csc-page>
 </template>
 
@@ -71,6 +100,7 @@
         created() {
             this.$store.dispatch('voicebox/getVoiceboxSettings');
             this.loadBusyGreeting();
+            this.loadUnavailGreeting();
         },
         computed: {
             ...mapGetters('voicebox', [
@@ -96,24 +126,45 @@
                 'uploadBusyGreetingState',
                 'uploadBusyGreetingError',
                 'uploadBusyGreetingRequesting',
+                'uploadUnavailGreetingState',
+                'uploadUnavailGreetingError',
+                'uploadUnavailGreetingRequesting',
                 'busyGreetingId',
                 'unavailGreetingId',
                 'deleteGreetingState',
                 'deleteGreetingError',
-                'isBusyGreetingLoaded'
+                'isBusyGreetingLoaded',
+                'isUnavailGreetingLoaded'
             ]),
             busyGreetingLabel() {
                 return this.busyGreetingId ? this.$t('voicebox.label.voicemailSet') :
                     this.$t('voicebox.label.voicemailNotSet')
+            },
+            unavailGreetingLabel() {
+                return this.unavailGreetingId ? this.$t('voicebox.label.voicemailSet') :
+                    this.$t('voicebox.label.voicemailNotSet')
             }
         },
         methods: {
-            resetBusyFile() {
-                this.$refs.uploadBusyGreeting.reset();
+            resetProgress() {
                 this.$store.commit('voicebox/resetProgress');
             },
+            resetBusyFile() {
+                this.$refs.uploadBusyGreeting.reset();
+                this.resetProgress();
+            },
+            resetUnavailFile() {
+                this.$refs.uploadUnavailGreeting.reset();
+                this.resetProgress();
+            },
             uploadBusyGreeting(file) {
-                this.$store.dispatch('voicebox/uploadGreeting', {
+                this.$store.dispatch('voicebox/uploadBusyGreeting', {
+                    dir: 'busy',
+                    file: file
+                });
+            },
+            uploadUnavailGreeting(file) {
+                this.$store.dispatch('voicebox/uploadUnavailGreeting', {
                     dir: 'busy',
                     file: file
                 });
@@ -124,8 +175,14 @@
             deleteBusy() {
                  this.$store.dispatch('voicebox/deleteGreeting', this.busyGreetingId);
             },
+            deleteUnavail() {
+                 this.$store.dispatch('voicebox/deleteGreeting', this.unavailGreetingId);
+            },
             loadBusyGreeting() {
                 this.$store.dispatch('voicebox/loadBusyGreeting');
+            },
+            loadUnavailGreeting() {
+                this.$store.dispatch('voicebox/loadUnavailGreeting');
             }
         },
         watch: {
@@ -193,6 +250,19 @@
                     showGlobalError(this.uploadBusyGreetingError);
                     if (this.uploadProgress > 0) {
                         this.resetBusyFile();
+                    }
+                }
+            },
+            uploadUnavailGreetingState(state) {
+                if (state === 'succeeded') {
+                    showToast(this.$t('voicebox.uploadGreetingSuccessMessage'));
+                    this.resetUnavailFile();
+                    this.loadUnavailGreeting();
+                }
+                else if (state === 'failed') {
+                    showGlobalError(this.uploadUnavailGreetingError);
+                    if (this.uploadProgress > 0) {
+                        this.resetUnavailFile();
                     }
                 }
             },
