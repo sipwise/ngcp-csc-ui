@@ -8,7 +8,7 @@
             for="voicemail-file-upload"
             class="upload-label"
         >
-            {{ $t('voicebox.label.busyGreeting') }}
+            {{ label }}
         </label>
         <span
             v-show="selectedFile.length === 0"
@@ -93,7 +93,8 @@
             'progress',
             'requesting',
             'fileTypes',
-            'id'
+            'id',
+            'label'
         ],
         data () {
             return {

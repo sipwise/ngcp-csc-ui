@@ -39,11 +39,16 @@ export default {
         updateEmailError: null,
         uploadBusyGreetingState: RequestState.initial,
         uploadBusyGreetingError: null,
-        uploadProgress: 0,
+        uploadUnavailGreetingState: RequestState.initial,
+        uploadUnavailGreetingError: null,
+        uploadBusyProgress: 0,
+        uploadUnavailProgress: 0,
         busyGreetingId: null,
         unavailGreetingId: null,
         loadBusyGreetingState: RequestState.initial,
         loadBusyGreetingError: null,
+        loadUnavailGreetingState: RequestState.initial,
+        loadUnavailGreetingError: null,
         deleteGreetingState: RequestState.initial,
         deleteGreetingError: null
     },
@@ -127,11 +132,24 @@ export default {
             return state.uploadBusyGreetingError ||
                 i18n.t('voicebox.uploadGreetingErrorMessage');
         },
-        uploadProgress(state) {
-            return state.uploadProgress;
+        uploadUnavailGreetingState(state) {
+            return state.uploadUnavailGreetingState;
+        },
+        uploadUnavailGreetingError(state) {
+            return state.uploadUnavailGreetingError ||
+                i18n.t('voicebox.uploadGreetingErrorMessage');
+        },
+        uploadBusyProgress(state) {
+            return state.uploadBusyProgress;
+        },
+        uploadUnavailProgress(state) {
+            return state.uploadUnavailProgress;
         },
         uploadBusyGreetingRequesting(state) {
             return state.uploadBusyGreetingState === 'requesting';
+        },
+        uploadUnavailGreetingRequesting(state) {
+            return state.uploadUnavailGreetingState === 'requesting';
         },
         busyGreetingId(state) {
             return state.busyGreetingId;
@@ -148,6 +166,29 @@ export default {
         },
         isBusyGreetingLoaded(state) {
             return state.loadBusyGreetingState === 'succeeded';
+        },
+        isUnavailGreetingLoaded(state) {
+            return state.loadUnavailGreetingState === 'succeeded';
+        },
+        busyGreetingLabel(state) {
+            return state.busyGreetingId ? i18n.t('voicebox.label.customSoundActive') :
+                i18n.t('voicebox.label.defaultSoundActive')
+        },
+        unavailGreetingLabel(state) {
+            return state.unavailGreetingId ? i18n.t('voicebox.label.customSoundActive') :
+                i18n.t('voicebox.label.defaultSoundActive')
+        },
+        busyActiveClass(state) {
+            return {
+                'inactive-label': !state.busyGreetingId,
+                'active-label': state.busyGreetingId
+            }
+        },
+        unavailActiveClass(state) {
+            return {
+                'inactive-label': !state.unavailGreetingId,
+                'active-label': state.unavailGreetingId
+            }
         }
     },
     mutations: {
@@ -212,6 +253,18 @@ export default {
             state.updateEmailState = RequestState.failed;
             state.updateEmailError = error;
         },
+        uploadUnavailGreetingRequesting(state) {
+            state.uploadUnavailGreetingState = RequestState.requesting;
+            state.uploadUnavailGreetingError = null;
+        },
+        uploadUnavailGreetingSucceeded(state) {
+            state.uploadUnavailGreetingState = RequestState.succeeded;
+            state.uploadUnavailGreetingError = null;
+        },
+        uploadUnavailGreetingFailed(state, error) {
+            state.uploadUnavailGreetingState = RequestState.failed;
+            state.uploadUnavailGreetingError = error;
+        },
         uploadBusyGreetingRequesting(state) {
             state.uploadBusyGreetingState = RequestState.requesting;
             state.uploadBusyGreetingError = null;
@@ -224,11 +277,17 @@ export default {
             state.uploadBusyGreetingState = RequestState.failed;
             state.uploadBusyGreetingError = error;
         },
-        uploadProgress(state, progress) {
-            state.uploadProgress = progress;
+        uploadBusyProgress(state, progress) {
+            state.uploadBusyProgress = progress;
         },
-        resetProgress(state) {
-            state.uploadProgress = 0;
+        uploadUnavailProgress(state, progress) {
+            state.uploadUnavailProgress = progress;
+        },
+        resetBusyProgress(state) {
+            state.uploadBusyProgress = 0;
+        },
+        resetUnavailProgress(state) {
+            state.uploadUnavailProgress = 0;
         },
         loadBusyGreetingRequesting(state) {
             state.busyGreetingId = null,
@@ -245,6 +304,22 @@ export default {
         loadBusyGreetingFailed(state, error) {
             state.loadBusyGreetingState = RequestState.failed;
             state.loadBusyGreetingError = error;
+        },
+        loadUnavailGreetingRequesting(state) {
+            state.unavailGreetingId = null,
+            state.loadUnavailGreetingState = RequestState.requesting;
+            state.loadUnavailGreetingError = null;
+        },
+        loadUnavailGreetingSucceeded(state, greetings) {
+            state.loadUnavailGreetingState = RequestState.succeeded;
+            state.loadUnavailGreetingError = null;
+            if (greetings.length > 0) {
+                state.unavailGreetingId = greetings[0].id;
+            }
+        },
+        loadUnavailGreetingFailed(state, error) {
+            state.loadUnavailGreetingState = RequestState.failed;
+            state.loadUnavailGreetingError = error;
         },
         deleteGreetingRequesting(state) {
             state.deleteGreetingState = RequestState.requesting;
@@ -318,15 +393,15 @@ export default {
                 context.commit('updateEmailFailed', err.message);
             });
         },
-        uploadGreeting(context, $options) {
+        uploadBusyGreeting(context, $options) {
             let options = Object.assign($options, {
                 subscriber_id: context.getters.subscriberId,
-                type: $options.dir
+                dir: 'busy'
             });
             context.commit('uploadBusyGreetingRequesting');
             uploadGreeting({
                 data: options,
-                onProgress: (progress) => { context.commit('uploadProgress', progress) }
+                onProgress: (progress) => { context.commit('uploadBusyProgress', progress) }
             }).then(() => {
                 context.commit('uploadBusyGreetingSucceeded');
                 context.dispatch('loadBusyGreeting');
@@ -334,8 +409,35 @@ export default {
                 context.commit('uploadBusyGreetingFailed', err.message);
             });
         },
-        abortPreviousRequest() {
-            abortPreviousRequest();
+        uploadUnavailGreeting(context, $options) {
+            let options = Object.assign($options, {
+                subscriber_id: context.getters.subscriberId,
+                dir: 'unavail'
+            });
+            context.commit('uploadUnavailGreetingRequesting');
+            uploadGreeting({
+                data: options,
+                onProgress: (progress) => { context.commit('uploadUnavailProgress', progress) }
+            }).then(() => {
+                context.commit('uploadUnavailGreetingSucceeded');
+                context.dispatch('loadUnavailGreeting');
+            }).catch((err) => {
+                context.commit('uploadUnavailGreetingFailed', err.message);
+            });
+        },
+        abortPreviousRequest(context, name) {
+            abortPreviousRequest(name);
+        },
+        loadGreetings(context) {
+            context.commit('loadBusyGreetingRequesting');
+            getVoiceboxGreetingByType({
+                id: context.getters.subscriberId,
+                type: 'busy'
+            }).then((greetings) => {
+                context.commit('loadBusyGreetingSucceeded', greetings.items);
+            }).catch((err) => {
+                context.commit('loadBusyGreetingFailed', err.message);
+            });
         },
         loadBusyGreeting(context) {
             context.commit('loadBusyGreetingRequesting');
@@ -348,11 +450,27 @@ export default {
                 context.commit('loadBusyGreetingFailed', err.message);
             });
         },
-        deleteGreeting(context, id) {
+        loadUnavailGreeting(context) {
+            context.commit('loadUnavailGreetingRequesting');
+            getVoiceboxGreetingByType({
+                id: context.getters.subscriberId,
+                type: 'unavail'
+            }).then((greetings) => {
+                context.commit('loadUnavailGreetingSucceeded', greetings.items);
+            }).catch((err) => {
+                context.commit('loadUnavailGreetingFailed', err.message);
+            });
+        },
+        deleteGreeting(context, options) {
             context.commit('deleteGreetingRequesting');
-            deleteVoiceboxGreetingById(id).then(() => {
+            deleteVoiceboxGreetingById(options.id).then(() => {
                 context.commit('deleteGreetingSucceeded');
-                context.dispatch('loadBusyGreeting');
+                if (options.type === 'busy') {
+                    context.dispatch('loadBusyGreeting');
+                }
+                else if (options.type === 'unavail') {
+                    context.dispatch('loadUnavailGreeting');
+                }
             }).catch((err) => {
                 context.commit('deleteGreetingFailed', err.message);
             });
