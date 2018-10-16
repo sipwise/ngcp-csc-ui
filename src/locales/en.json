@@ -426,6 +426,7 @@
             "attachmentEnabled": "Voicemail will be attached to email notification",
             "attachmentDisabled": "Voicemail will not be attached to email notification",
             "busyGreeting": "Busy Greeting",
+            "unavailGreeting": "Unavailable Greeting",
             "customSoundActive": "Custom sound active",
             "defaultSoundActive": "Default sound active"
         },
