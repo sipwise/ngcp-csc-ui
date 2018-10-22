@@ -49,10 +49,8 @@
                 @change="changePage"
             />
         </div>
-        <div
-            class="">
+        <div>
             <q-list
-                class=""
                 no-border
                 separator
                 sparse

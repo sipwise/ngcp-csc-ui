@@ -50,7 +50,6 @@
             />
         </div>
         <q-list
-            class=""
             no-border
             separator
             sparse
