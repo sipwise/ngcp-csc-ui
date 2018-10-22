@@ -380,7 +380,8 @@
         "privacyEnabledLabel": "Your number is hidden to the callee",
         "privacyDisabledToast": "Your number is visible to the callee",
         "privacyDisabledLabel": "Your number is visible to the callee",
-        "number": "Number"
+        "number": "Number",
+        "noNumbers": "No numbers added yet"
     },
     "communication": {
         "sendFax": "Send Fax",

@@ -40,7 +40,8 @@
         >
             <q-btn
                 v-if="!loading"
-                flat color="secondary"
+                flat
+                color="secondary"
                 icon="clear"
                 @click="cancel()"
             >
