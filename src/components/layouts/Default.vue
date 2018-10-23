@@ -3,8 +3,6 @@
         ref="layout"
         :view="layoutView"
         :right-breakpoint="1100"
-        @right-breakpoint="rightBreakPoint"
-        :right-class="callClasses"
     >
         <q-toolbar slot="header">
             <q-btn
@@ -244,16 +242,11 @@
             </q-side-link>
         </q-list>
         <router-view />
-        <csc-call
-            ref="cscCall"
-            slot="right"
-            @close="closeCall()"
-            @fullscreen="toggleFullscreen()"
-            :fullscreen="isFullscreenEnabled"
-            region="DE"
-        />
         <q-window-resize-observable @resize="onWindowResize" />
         <csc-send-fax ref="sendFax" />
+        <csc-call
+            :call-state="callState"
+        />
     </q-layout>
 </template>
 
@@ -267,7 +260,7 @@
         enableIncomingCallNotifications
     } from '../../helpers/ui'
     import { mapState, mapGetters } from 'vuex'
-    import CscCall from '../CscCall'
+    import CscCall from '../call/CscCall'
     import CscSendFax from '../CscSendFax'
     import {
         QLayout,
@@ -296,7 +289,6 @@
             else {
                 this.$store.commit('layout/showLeft');
             }
-            this.applyLayout();
             this.$store.dispatch('user/initUser');
         },
         components: {
@@ -324,6 +316,7 @@
                 'isFullscreenEnabled'
             ]),
             ...mapGetters('call', [
+                'callState',
                 'isCallAvailable',
                 'isCalling',
                 'hasCallInitFailure'
@@ -353,16 +346,6 @@
                 return this.isCallAvailable ||
                     (this.hasSmsCapability && this.hasSendSmsFeature) ||
                     (this.hasFaxCapability && this.hasSendFaxFeature);
-            },
-            callClasses() {
-                let classes = {};
-                if(this.isFullscreenEnabled) {
-                    classes['csc-call-fullscreen'] = true;
-                }
-                if(this.isCalling) {
-                    classes['csc-call-calling'] = true;
-                }
-                return classes;
             },
             layoutView() {
                 if(this.isFullscreenEnabled) {
@@ -413,55 +396,12 @@
                     this.$router.push({path: '/login'});
                 })
             },
-            rightBreakPoint() {
-                if(this.right) {
-                    this.$store.commit('layout/showRight');
-                    this.$store.commit('layout/hideLeft');
-                }
-                else {
-                    this.$store.commit('layout/hideRight');
-                }
-            },
             closeCall() {
                 this.$refs.layout.hideRight();
                 this.$store.commit('layout/hideRight');
-            },
-            applyLayout() {
-                if(this.right) {
-                    this.$refs.layout.showRight();
-                    this.$refs.cscCall.focusNumberInput();
-                }
-                else {
-                    this.$refs.layout.hideRight();
-                    this.$refs.cscCall.blurNumberInput();
-                }
-                if(this.left) {
-                    this.$refs.layout.showLeft();
-                }
-                else {
-                    this.$refs.layout.hideLeft();
-                }
             }
         },
         watch: {
-            right(value) {
-                if(value) {
-                    this.$refs.layout.showRight();
-                    this.$refs.cscCall.focusNumberInput();
-                }
-                else {
-                    this.$refs.layout.hideRight();
-                    this.$refs.cscCall.blurNumberInput();
-                }
-            },
-            left(value) {
-                if(value) {
-                    this.$refs.layout.showLeft();
-                }
-                else {
-                    this.$refs.layout.hideLeft();
-                }
-            },
             userDataRequesting(value) {
                 if(value) {
                     startLoading();
@@ -502,7 +442,6 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../themes/quasar.variables';
     @import '../../themes/app.common';
 
     #main-menu {
@@ -563,92 +502,6 @@
         margin: 0;
     }
 
-    .layout-aside.fixed.csc-call-fullscreen {
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        width: auto;
-        z-index: 5000;
-    }
-
-    .csc-call-fullscreen .csc-call,
-    .csc-call-fullscreen .csc-call .q-card {
-
-    }
-
-    .csc-call-fullscreen .csc-call .q-card .q-card-primary {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 72px;
-        line-height: 72px;
-        z-index: 6001;
-        background: -moz-linear-gradient(top, rgba(51,64,77,1) 0%, rgba(235,236,237,0) 90%, rgba(255,255,255,0) 100%);
-        background: -webkit-linear-gradient(top, rgba(51,64,77,1) 0%,rgba(235,236,237,0) 90%,rgba(255,255,255,0) 100%);
-        background: linear-gradient(to bottom, rgba(51,64,77,1) 0%,rgba(235,236,237,0) 90%,rgba(255,255,255,0) 100%);
-    }
-
-    .csc-call-fullscreen .csc-call .q-card-actions {
-
-    }
-
-    .csc-call-fullscreen .csc-call .q-card-main {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-        z-index: 6000;
-        font-size: 0;
-    }
-
-    .csc-call-fullscreen .csc-call-media {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        z-index: 1;
-    }
-
-    .csc-media-remote {
-        z-index: 9;
-    }
-
-    .csc-call-fullscreen .csc-media-preview {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 20%;
-    }
-
-    .csc-call-fullscreen .csc-media-preview video {
-        position: relative;
-        height: 100%;
-    }
-
-    .csc-call-fullscreen .csc-media-remote {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-    }
-
-    .csc-call-fullscreen .csc-media-remote video {
-        position: absolute;
-        height: 100%;
-        bottom: 0;
-    }
-
-    .csc-call-fullscreen .csc-call-info {
-        position: relative;
-        top: 73px;
-        z-index: 2;
-    }
-
     .q-if-control.q-if-control-before.q-icon,
     .q-if-control.q-if-control-before.q-icon:before {
         font-size:24px;
@@ -667,5 +520,4 @@
         .csc-toolbar-btn-right
             .csc-toolbar-btn-icon
                 margin-right 8px
-
 </style>
