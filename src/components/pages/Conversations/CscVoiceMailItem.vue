@@ -48,25 +48,44 @@
         >
             <q-item-tile>
                 <q-btn
-                    icon="file_download"
-                    color="primary"
-                    slot="right"
-                    flat
-                    @click="downloadVoiceMail"
-                >
-                </q-btn>
-                <q-btn
-                    v-if="callAvailable"
-                    icon="call"
-                    color="primary"
+                    icon="more_vert"
+                    color="default"
                     slot="right"
                     flat
                 >
-                    <q-popover ref="callPopover" anchor="bottom right" self="top right">
-                        <csc-call-option-list
-                            ref="callOptionPopover"
-                            @init-call="initCall"
-                        />
+                    <q-popover
+                        ref="callPopover"
+                        anchor="bottom right"
+                        self="top right"
+                    >
+                        <q-list
+                            item-separator
+                            link
+                            class="csc-toolbar-btn-popover">
+                            <q-item
+                                @click="downloadVoiceMail"
+                            >
+                                <q-item-side
+                                    icon="file_download"
+                                    color="primary"
+                                />
+                                <q-item-main
+                                    :label="$t('pages.conversations.buttons.downloadVoicemail')"
+                                />
+                            </q-item>
+                            <q-item
+                                v-if="callAvailable"
+                                @click="startCall"
+                            >
+                                <q-item-side
+                                    icon="call"
+                                    color="primary"
+                                />
+                                <q-item-main
+                                    :label="$t('pages.conversations.buttons.call')"
+                                />
+                            </q-item>
+                        </q-list>
                     </q-popover>
                 </q-btn>
             </q-item-tile>
@@ -75,10 +94,13 @@
 </template>
 
 <script>
-    import { mapGetters } from 'vuex'
+    import {
+        mapGetters
+    } from 'vuex'
     import CscCallOptionList from './CscCallOptionList'
     import CscAudioPlayer from '../../CscAudioPlayer'
     import {
+        QList,
         QItem,
         QItemSide,
         QItemMain,
@@ -93,6 +115,7 @@
             'callAvailable'
         ],
         components: {
+            QList,
             QItem,
             QItemSide,
             QItemMain,
@@ -132,13 +155,6 @@
             }
         },
         methods: {
-            initCall(media) {
-                this.$refs.callPopover.close();
-                this.$emit('init-call', {
-                    media: media,
-                    number: this.voiceMail.callee
-                });
-            },
             playVoiceMail() {
                 this.$emit('play-voice-mail', {
                     id: this.voiceMail.id,
@@ -152,6 +168,10 @@
                 this.playVoiceMail();
                 this.$refs.voicemailPlayer.setPlayingTrue();
                 this.$refs.voicemailPlayer.setPausedFalse();
+            },
+            startCall() {
+                this.$refs.callPopover.close();
+                this.$emit('start-call', this.voiceMail.callee);
             }
         }
     }
