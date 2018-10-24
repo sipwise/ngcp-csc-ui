@@ -26,45 +26,28 @@ export default {
         disabled: false,
         endedReason: null,
         callState: CallState.input,
-        number: null,
+        number: '',
+        numberInput: '',
         localMediaStream: null,
         remoteMediaStream: null,
-        audioEnabled: true,
-        videoEnabled: true,
-        muted: false,
         caller: false,
         callee: false,
         desktopSharingInstall: false,
-        dtmf: null
+        microphoneEnabled: true,
+        cameraEnabled: true,
+        remoteVolumeEnabled: true,
+        maximized: false,
+        dialpadOpened: false
     },
     getters: {
-        getNumber(state) {
+        endedReason(state) {
+            return state.endedReason;
+        },
+        callNumber(state) {
             return state.number;
         },
-        localMediaType(state) {
-            if(state.localMediaStream !== null && state.localMediaStream.hasAudio() && state.localMediaStream.hasVideo()) {
-                return MediaType.audioVideo;
-            }
-            else if (state.localMediaStream !== null && state.localMediaStream.hasAudio()) {
-                return MediaType.audioOnly;
-            }
-            else {
-                return null;
-            }
-        },
-        remoteMediaType(state) {
-            if(state.remoteMediaStream !== null && state.remoteMediaStream.hasAudio() && state.remoteMediaStream.hasVideo()) {
-                return MediaType.audioVideo;
-            }
-            else if (state.remoteMediaStream !== null && state.remoteMediaStream.hasAudio()) {
-                return MediaType.audioOnly;
-            }
-            else {
-                return null;
-            }
-        },
-        getEndedReason(state) {
-            return state.endedReason;
+        callNumberInput(state) {
+            return state.numberInput;
         },
         isNetworkConnected(state) {
             return state.initialized;
@@ -72,8 +55,11 @@ export default {
         isCallAvailable(state, getters) {
             return getters.isNetworkConnected;
         },
-        hasCallInitFailure(state) {
+        hasCallInitError(state) {
             return state.initError !== null && state.disabled === false;
+        },
+        callInitError(state) {
+            return state.initError;
         },
         isPreparing(state) {
             return state.callState === CallState.input;
@@ -94,7 +80,9 @@ export default {
         isCalling(state) {
             return state.callState === CallState.initiating ||
                 state.callState === CallState.ringing ||
-                state.callState === CallState.established;
+                state.callState === CallState.established ||
+                state.callState === CallState.incoming ||
+                state.callState === CallState.ended;
         },
         isEstablished(state) {
             return state.callState === CallState.established;
@@ -123,9 +111,6 @@ export default {
         isVideoEnabled(state) {
             return state.videoEnabled;
         },
-        isMuted(state) {
-            return state.muted;
-        },
         isCaller(state) {
             return state.caller;
         },
@@ -138,11 +123,38 @@ export default {
         desktopSharingInstall(state) {
             return state.desktopSharingInstall;
         },
-        dtmfState(state) {
-            return state.dtmf;
+        localMediaStream(state) {
+            if(state.localMediaStream !== null) {
+                return state.localMediaStream.getStream();
+            }
+            return null;
+        },
+        remoteMediaStream(state) {
+            if(state.remoteMediaStream !== null) {
+                return state.remoteMediaStream.getStream();
+            }
+            return null;
+        },
+        isMicrophoneEnabled(state) {
+            return state.microphoneEnabled;
+        },
+        isCameraEnabled(state) {
+            return state.cameraEnabled;
+        },
+        isRemoteVolumeEnabled(state) {
+            return state.remoteVolumeEnabled;
+        },
+        isMaximized(state) {
+            return state.maximized;
+        },
+        isDialpadOpened(state) {
+            return state.dialpadOpened;
         }
     },
     mutations: {
+        numberInputChanged(state, numberInput) {
+            state.numberInput = numberInput;
+        },
         initSucceeded(state) {
             state.initialized = true;
             state.initError = null;
@@ -156,12 +168,16 @@ export default {
         },
         inputNumber(state) {
             state.callState = CallState.input;
+            state.number = '';
+            state.numberInput = '';
+            state.endedReason = null;
         },
-        startCalling(state, options) {
-            state.number = options.number;
+        startCalling(state, number) {
+            state.number = number;
             state.callState = CallState.initiating;
             state.caller = true;
             state.callee = false;
+            state.endedReason = null;
         },
         localMediaSuccess(state, localMediaStream) {
             state.localMediaStream = localMediaStream;
@@ -175,15 +191,16 @@ export default {
         establishCall(state, remoteMediaStream) {
             state.remoteMediaStream = remoteMediaStream;
             state.callState = CallState.established;
-            state.audioEnabled = true;
-            state.videoEnabled = true;
-            state.muted = false;
+            state.microphoneEnabled = true;
+            state.cameraEnabled = true;
+            state.remoteVolumeEnabled = true;
         },
         incomingCall(state, options) {
             state.callState = CallState.incoming;
             state.number = options.number;
             state.callee = true;
             state.caller = false;
+            state.endedReason = null;
         },
         hangUpCall(state) {
             state.callState = CallState.input;
@@ -195,10 +212,15 @@ export default {
                 state.remoteMediaStream.stop();
                 state.remoteMediaStream = null;
             }
+            state.number = '';
+            state.numberInput = '';
+            state.endedReason = null;
         },
         endCall(state, reason) {
-            state.callState = CallState.ended;
-            state.endedReason = reason;
+            if(state.endedReason === null) {
+                state.callState = CallState.ended;
+                state.endedReason = reason;
+            }
             if(_.isObject(state.localMediaStream)) {
                 state.localMediaStream.stop();
                 state.localMediaStream = null;
@@ -208,24 +230,6 @@ export default {
                 state.remoteMediaStream = null;
             }
         },
-        disableAudio(state) {
-            state.audioEnabled = false;
-        },
-        enableAudio(state) {
-            state.audioEnabled = true;
-        },
-        disableVideo(state) {
-            state.videoEnabled = false;
-        },
-        enableVideo(state) {
-            state.videoEnabled = true;
-        },
-        mute(state) {
-            state.muted = true;
-        },
-        unmute(state) {
-            state.muted = false;
-        },
         desktopSharingInstallReset(state)  {
             state.desktopSharingInstall = false;
         },
@@ -234,13 +238,32 @@ export default {
         },
         sendDTMF(state, value) {
             state.dtmf = value;
+        },
+        toggleMicrophone(state) {
+            state.microphoneEnabled = !state.microphoneEnabled;
+        },
+        toggleCamera(state) {
+            state.cameraEnabled = !state.cameraEnabled;
+        },
+        toggleRemoteVolume(state) {
+            state.remoteVolumeEnabled = !state.remoteVolumeEnabled;
+        },
+        maximize(state) {
+            state.dialpadOpened = false;
+            state.maximized = true;
+        },
+        minimize(state) {
+            state.dialpadOpened = false;
+            state.maximized = false;
+        },
+        toggleDialpad(state) {
+            state.dialpadOpened = !state.dialpadOpened;
         }
     },
     actions: {
         initialize(context) {
             return new Promise((resolve, reject)=>{
                 Vue.call.onIncoming(()=>{
-                    context.commit('layout/showRight', null, { root: true });
                     context.commit('incomingCall', {
                         number: Vue.call.getNumber()
                     });
@@ -265,19 +288,19 @@ export default {
                 }
             });
         },
-        start(context, options) {
+        start(context, localMedia) {
+            let number = context.getters.callNumberInput;
             context.commit('desktopSharingInstallReset');
-            context.commit('layout/showRight', null, { root: true });
-            context.commit('startCalling', { number: options.number });
+            context.commit('startCalling', number);
             Promise.resolve().then(()=>{
-                return Vue.call.createLocalMedia(options.localMedia);
+                return Vue.call.createLocalMedia(localMedia);
             }).then((localMediaStream)=>{
                 context.commit('localMediaSuccess', localMediaStream);
                 Vue.call.onRingingStart(()=>{
                     context.commit('startRinging');
                 }).onRingingStop(()=>{
                     context.commit('stopRinging');
-                }).start(options.number, localMediaStream);
+                }).start(number, localMediaStream);
             }).catch((err)=>{
                 Vue.call.end();
                 if(err.message === 'plugin not detected') {
@@ -305,37 +328,35 @@ export default {
                 }
             });
         },
-        hangUp(context) {
-            Vue.call.hangUp();
+        end(context) {
+            Vue.call.end();
             context.commit('hangUpCall');
         },
-        disableAudio(context) {
-            Vue.call.disableAudio();
-            context.commit('disableAudio');
-        },
-        enableAudio(context) {
-            Vue.call.enableAudio();
-            context.commit('enableAudio');
-        },
-        disableVideo(context) {
-            Vue.call.disableVideo();
-            context.commit('disableVideo');
-        },
-        enableVideo(context) {
-            Vue.call.enableVideo();
-            context.commit('enableVideo');
-        },
-        showCall(context) {
-            context.commit('layout/showRight', null, { root: true });
-        },
-        hideCall(context) {
-            context.commit('layout/hideRight', null, { root: true });
-        },
         sendDTMF(context, value) {
-            context.commit('sendDTMF', value);
             if(Vue.call.hasRunningCall()) {
                 Vue.call.sendDTMF(value);
             }
+        },
+        toggleMicrophone(context) {
+            if(context.getters.isMicrophoneEnabled) {
+                Vue.call.disableAudio();
+            }
+            else {
+                Vue.call.enableAudio();
+            }
+            context.commit('toggleMicrophone');
+        },
+        toggleCamera(context) {
+            if(context.getters.isCameraEnabled) {
+                Vue.call.disableVideo();
+            }
+            else {
+                Vue.call.enableVideo();
+            }
+            context.commit('toggleCamera');
+        },
+        toggleRemoteVolume(context) {
+            context.commit('toggleRemoteVolume');
         }
     }
 };

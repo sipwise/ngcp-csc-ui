@@ -101,6 +101,4 @@
         margin-right: 10px;
         font-size: 24px !important;
     }
-
-
 </style>
