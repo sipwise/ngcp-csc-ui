@@ -21,7 +21,7 @@
                         </form>
                     </q-card-main>
                     <q-card-actions class="pull-right">
-                        <q-btn flat icon-right="fa-arrow-right"
+                        <q-btn flat icon="fa-arrow-right"
                                color="primary" @click="login()">{{ $t('pages.login.button') }}</q-btn>
                     </q-card-actions>
                 </q-card>

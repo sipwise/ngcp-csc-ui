@@ -177,13 +177,14 @@
             </q-field>
             <q-btn
                 flat
-                dark
+                icon="clear"
                 @click="hideModal"
             >
                 {{ $t('buttons.cancel') }}
             </q-btn>
             <q-btn
                 flat
+                icon="clear"
                 color="negative"
                 @click="resetTimeout"
             >
@@ -191,9 +192,9 @@
             </q-btn>
             <q-btn
                 flat
+                icon="check"
                 color="primary"
                 @click="updateTimeout"
-                icon-right="fa-save"
                 :disable="$v.editTimeout.$error"
             >
                 {{ $t('buttons.save') }}

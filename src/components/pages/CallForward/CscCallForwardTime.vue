@@ -109,13 +109,13 @@
                         icon: 'warning',
                         actions: [
                             {
+                                label: self.$t('buttons.cancel')
+                            },
+                            {
                                 label: self.$t('buttons.remove'),
                                 handler () {
                                     store.dispatch('callForward/deleteTimesetById')
                                 }
-                            },
-                            {
-                                label: self.$t('buttons.cancel')
                             }
                         ]
                     });
