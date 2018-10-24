@@ -74,6 +74,7 @@
         required,
         maxLength
     } from 'vuelidate/lib/validators'
+    import { customMacAddress } from '../../../helpers/validation'
     import {
         QCard,
         QCardTitle,
@@ -123,7 +124,7 @@
                 },
                 identifier: {
                     required,
-                    maxLength: maxLength(64)
+                    customMacAddress
                 }
             }
         },
@@ -153,11 +154,8 @@
                         field: this.$t('pbxConfig.deviceIdentifier')
                     });
                 }
-                else if (!this.$v.data.identifier.maxLength) {
-                    return this.$t('validationErrors.maxLength', {
-                        field: this.$t('pbxConfig.deviceIdentifier'),
-                        maxLength: this.$v.data.identifier.$params.maxLength.max
-                    });
+                else if (!this.$v.data.identifier.customMacAddress) {
+                    return this.$t('validationErrors.macAddress');
                 }
             }
         },
