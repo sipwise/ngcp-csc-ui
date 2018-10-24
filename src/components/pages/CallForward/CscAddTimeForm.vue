@@ -22,10 +22,19 @@
                     format24h />
             </q-item-tile>
             <q-item-tile>
-                <q-btn flat dark @click="disableForm()">
+                <q-btn
+                    flat
+                    icon="clear"
+                    @click="disableForm()"
+                >
                     {{ $t('buttons.cancel') }}
                 </q-btn>
-                <q-btn flat color="primary" icon-right="fa-save" @click="addTime()">
+                <q-btn
+                    flat
+                    icon="fa-save"
+                    color="primary"
+                    @click="addTime()"
+                >
                     {{ $t('buttons.save') }}
                 </q-btn>
             </q-item-tile>

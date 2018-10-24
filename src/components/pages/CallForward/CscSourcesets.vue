@@ -19,7 +19,7 @@
             slot="title"
             label="Add new"
             name="addnew"
-            icon="fa-plus"
+            icon="add"
         />
         <q-tab-pane
             v-for="sourceset in destinations"
@@ -73,7 +73,7 @@
                     v-if="!sourcesetsFormEnabled"
                     flat
                     color="primary"
-                    icon="fa-plus"
+                    icon="add"
                     @click="openForm()"
                 >
                     {{ $t('pages.callForward.sources.addSourceButton') }}
@@ -121,8 +121,8 @@
                         <q-item-tile>
                             <q-btn
                                 flat
+                                icon="fa-save"
                                 color="primary"
-                                icon-right="fa-save"
                                 @click="addSourceset()"
                                 :disable="!isValid"
                                 class="sourceset-add-button">

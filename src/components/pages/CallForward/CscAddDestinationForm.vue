@@ -4,7 +4,7 @@
             v-if="!isFormEnabled"
             flat
             color="primary"
-            icon="fa-plus"
+            icon="add"
         >
             {{ $t('pages.callForward.addDestinationButton') }}
             <q-popover ref="popover">
@@ -62,15 +62,15 @@
             </q-field>
             <q-btn
                 flat
-                dark
+                icon="clear"
                 @click="disableForm()"
             >
                 {{ $t('buttons.cancel') }}
             </q-btn>
             <q-btn
                 flat
+                icon="check"
                 color="primary"
-                icon-right="fa-save"
                 @click="addDestination()"
                 :disable="$v.destinationForm.destination.$error || $v.destinationForm.timeout.$error"
             >

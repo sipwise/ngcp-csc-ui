@@ -19,9 +19,10 @@
             />
             <q-btn
                 v-else
+                flat
+                icon="add"
                 color="primary"
                 class="add-time"
-                icon="fa-plus" flat
                 @click="enableAddForm()"
             >
                 {{ $t('pages.callForward.times.addTimeButton') }}

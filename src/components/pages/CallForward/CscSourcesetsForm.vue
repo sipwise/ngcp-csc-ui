@@ -10,15 +10,15 @@
         </q-field>
         <q-btn
             flat
-            dark
+            icon="clear"
             @click="disableForm()"
         >
             {{ $t('buttons.cancel') }}
         </q-btn>
         <q-btn
             flat
+            icon="fa-save"
             color="primary"
-            icon-right="fa-save"
             @click="addSource()"
             :disable="!isValid"
         >
