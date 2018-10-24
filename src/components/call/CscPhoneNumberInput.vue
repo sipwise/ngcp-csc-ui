@@ -1,67 +1,41 @@
 <template>
     <q-field
-        v-if="!isMobile"
-        dark
+        :dark="dark"
         :count="maxLength"
         :helper="helperMessage"
         :error-label="errorMessage"
+        :disabled="!enabled"
     >
         <q-input
             ref="inputField"
-            dark
+            :dark="dark"
             clearable
-            type="text"
+            type="tel"
             :float-label="$t('call.number')"
-            :readonly="!enabled"
-            v-model="phoneNumber"
+            :value="value"
+            :disable="!enabled"
+            :error="$v.phoneNumber.$error"
             @keypress.space.prevent
             @keydown.space.prevent
             @keyup.space.prevent
-            :after="inputButtons"
             @keyup.enter="keyReturn()"
-            @input="$v.phoneNumber.$touch"
-            @blur="$v.phoneNumber.$touch"
-            :error="$v.phoneNumber.$error"
-        />
-    </q-field>
-    <q-field
-        v-else
-        dark
-        :error-label="errorMessage"
-    >
-        <q-input
-            ref="inputField"
-            dark
-            clearable
-            type="text"
-            :placeholder="$t('call.number')"
-            :readonly="!enabled"
-            v-model="phoneNumber"
-            @keypress.space.prevent
-            @keydown.space.prevent
-            @keyup.space.prevent
-            :after="inputButtons"
-            @input="$v.phoneNumber.$touch"
-            @blur="$v.phoneNumber.$touch"
-            :error="$v.phoneNumber.$error"
+            @input="inputNumber"
         />
     </q-field>
 </template>
-
 <script>
     import Vue from 'vue'
-    import _ from 'lodash'
-    import { userInfo } from '../../helpers/validation'
     import {
-        maxLength,
-        required
+        userInfoAndEmpty
+    } from '../../helpers/validation'
+    import {
+        maxLength
     } from 'vuelidate/lib/validators'
     import {
         QField,
         QInput
     } from 'quasar-framework'
     import platformMixin from '../../mixins/platform'
-
     export default {
         name: 'csc-phone-number-input',
         components: {
@@ -70,14 +44,13 @@
         },
         data () {
             return {
-                phoneNumber: ''
+                phoneNumber: this.value
             }
         },
         validations: {
             phoneNumber: {
-                userInfo,
-                maxLength: maxLength(64),
-                required
+                userInfoAndEmpty,
+                maxLength: maxLength(64)
             }
         },
         props: {
@@ -89,9 +62,13 @@
                 type: Boolean,
                 default: true
             },
-            dialpadButton: {
+            dark: {
                 type: Boolean,
-                default: false
+                default: true
+            },
+            value: {
+                type: String,
+                default: ''
             }
         },
         mixins: [
@@ -116,64 +93,38 @@
             },
             helperMessage() {
                 return this.$t('validationErrors.inputNumber');
-            },
-            inputReadonly() {
-                return this.isMobile;
-            },
-            inputButtons() {
-                let self = this;
-                let buttons = [];
-                if (this.dialpadButton) {
-                    buttons.push({
-                        icon: 'dialpad',
-                        error: false,
-                        handler (event) {
-                            event.stopPropagation();
-                            self.toggleDialpad();
-                        }
-                    });
-                }
-                return buttons;
             }
         },
         methods: {
+            inputNumber(input) {
+                this.phoneNumber = input;
+                this.$v.phoneNumber.$touch();
+                this.$emit('number-changed', this.phoneNumber);
+            },
             keyReturn() {
                 this.$emit('key-return');
             },
-            getPhoneNumber() {
-                return this.phoneNumber;
-            },
-            hasPhoneNumber() {
-                return !this.$v.phoneNumber.$error && !_.isEmpty(this.phoneNumber);
-            },
-            concat(str) {
-                this.phoneNumber = this.phoneNumber + "" + str;
-            },
-            focusInput() {
+            focus() {
                 Vue.nextTick(() => {
-                    this.$refs.inputField.focus();
+                    if(this.$refs.inputField) {
+                        this.$refs.inputField.focus();
+                    }
                 });
             },
-            blurInput() {
+            blur() {
                 Vue.nextTick(() => {
-                    this.$refs.inputField.blur();
+                    if(this.$refs.inputField) {
+                        this.$refs.inputField.blur();
+                    }
                 });
-            },
-            remove() {
-                this.phoneNumber = _.trim(this.phoneNumber.substring(0, this.phoneNumber.length - 1));
-                if (this.phoneNumber === '+') {
-                    this.phoneNumber = '';
-                }
-            },
-            removeAll() {
-                this.phoneNumber = '';
-            },
-            toggleDialpad() {
-                this.$emit('toggle-dialpad');
+            }
+        },
+        watch: {
+            value() {
+                this.phoneNumber = this.value;
             }
         }
     }
 </script>
-
 <style lang="stylus" rel="stylesheet/stylus">
 </style>
