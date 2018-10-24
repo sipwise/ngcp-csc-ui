@@ -21,7 +21,8 @@
                 v-else
                 color="primary"
                 class="add-time"
-                icon="fa-plus" flat
+                icon="add"
+                flat
                 @click="enableAddForm()"
             >
                 {{ $t('pages.callForward.times.addTimeButton') }}

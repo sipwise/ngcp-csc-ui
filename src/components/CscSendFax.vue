@@ -58,11 +58,10 @@
                     {{ $t('communication.label.faxFile') }}
                 </div>
                 <q-btn
-                    class="upload-button"
                     flat
-                    dark
-                    @click="$refs.faxUpload.click()"
                     icon="cloud_upload"
+                    class="upload-button"
+                    @click="$refs.faxUpload.click()"
                 >
                     {{ $t('buttons.select') }}
                 </q-btn>
@@ -70,12 +69,11 @@
                     {{ selectedFile }}
                 </span>
                 <q-btn
+                    flat
+                    icon="cancel"
                     class="reset-button"
                     v-if="selectedFile.length > 0"
-                    flat
-                    dark
                     @click="resetFile"
-                    icon-right="cancel"
                 />
             </label>
             <input
@@ -97,7 +95,7 @@
         </div>
         <q-btn
             flat
-            dark
+            icon="clear"
             @click="hideModal"
         >
             {{ $t('communication.cancel') }}
@@ -106,7 +104,7 @@
             flat
             color="primary"
             @click="sendFax"
-            icon-right="insert drive file"
+            icon="insert drive file"
             :disable="formDisabled"
         >
             {{ $t('communication.send') }}

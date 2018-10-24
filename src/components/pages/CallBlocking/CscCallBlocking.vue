@@ -25,15 +25,15 @@
         <div id="add-number-form">
             <q-field v-if="!addFormEnabled">
                 <q-btn color="primary"
-                   icon="fa-plus" flat
+                   icon="add" flat
                    @click="enableAddForm()">{{ $t('pages.callBlocking' + suffix + '.addNumberButton') }}</q-btn>
             </q-field>
             <div v-if="addFormEnabled">
                 <q-field :error="addFormError" :error-label="$t('pages.callBlocking' + suffix + '.addInputError')">
                     <q-input type="text" :float-label="$t('callBlocking.number')" v-model="newNumber" clearable @keyup.enter="addNumber()" />
                 </q-field>
-                <q-btn flat @click="disableAddForm()">{{ $t('buttons.cancel') }}</q-btn>
-                <q-btn flat color="primary" icon-right="fa-save" @click="addNumber()">{{ $t('buttons.save') }}</q-btn>
+                <q-btn flat icon="clear" @click="disableAddForm()">{{ $t('buttons.cancel') }}</q-btn>
+                <q-btn flat icon="fa-save" color="primary" @click="addNumber()">{{ $t('buttons.save') }}</q-btn>
             </div>
         </div>
         <div>
