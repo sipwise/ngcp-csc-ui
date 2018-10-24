@@ -255,13 +255,14 @@ export class RtcEngineCall {
     }
 
     end() {
-        this.endedReason = this.fetchEndedReason();
         if(this.localCall !== null) {
             this.localCall.end();
+            this.endedReason = this.fetchEndedReason();
             this.localCall = null;
         }
         if(this.remoteCall !== null) {
             this.remoteCall.end();
+            this.endedReason = this.fetchEndedReason();
             this.remoteCall = null;
         }
         if(this.localMedia !== null) {
@@ -325,14 +326,6 @@ export class RtcEngineCall {
         else {
             return null;
         }
-    }
-
-    isRemoteSendingAudio() {
-        return this.getCall()._cdkCall.mediaInfo.remoteSdp.isOfferingAudio();
-    }
-
-    isRemoteSendingVideo() {
-        return this.getCall()._cdkCall.mediaInfo.remoteSdp.isOfferingVideo();
     }
 
     static getInstance() {

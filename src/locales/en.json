@@ -44,8 +44,8 @@
     },
     "navigation": {
         "home": {
-            "title": "Home",
-            "subTitle": "Access to main features"
+            "title": "Call",
+            "subTitle": ""
         },
         "conversations": {
             "title": "Conversations",
@@ -278,9 +278,10 @@
     },
     "call": {
         "startNew": "Start new call",
-        "initiating": "Initiating ...",
-        "ringing": "Ringing ...",
-        "incoming": "Incoming ...",
+        "initiating": "Calling {number}...",
+        "ringing": "Ringing at {number}...",
+        "incoming": "Incoming call from {number}...",
+        "established": "In call with {number}",
         "ended": "Ended",
         "call": "Established",
         "number": "Phone number",
