@@ -44,11 +44,15 @@
                 </q-field>
                 <q-field
                     :label="$t('pbxConfig.deviceIdentifier')"
+                    :error-label="identifierErrorMessage"
                 >
                     <q-input
                         v-model="device.identifier"
                         :after="identifierButtons"
                         @keyup.enter="saveIdentifier"
+                        @input="$v.device.identifier.$touch"
+                        @blur="$v.device.identifier.$touch"
+                        :error="$v.device.identifier.$error"
                     />
                 </q-field>
                 <q-field
@@ -116,7 +120,10 @@
 
 
 <script>
-
+    import {
+        required,
+        helpers
+    } from 'vuelidate/lib/validators'
     import _ from 'lodash'
     import {
         QCard,
@@ -139,6 +146,8 @@
     } from 'quasar-framework'
     import CscPbxDeviceConfig from './CscPbxDeviceConfig'
     import CscPbxModelSelect from './CscPbxModelSelect'
+    const customMacAddress = helpers.regex('customMacAddress',
+        /^(?:(?:[0-9A-Fa-f]{2}(?=([-:]|))(?:\1[0-9A-Fa-f]{2}){5}))$/)
 
     export default {
         name: 'csc-pbx-device',
@@ -177,6 +186,14 @@
                 expanded: false,
                 modalOpened: false,
                 changes: this.getDevice()
+            }
+        },
+        validations: {
+            device: {
+                identifier: {
+                    required,
+                    customMacAddress
+                }
             }
         },
         computed: {
@@ -271,6 +288,16 @@
             },
             profileId() {
                 return _.get(this.device, 'profile.id', null);
+            },
+            identifierErrorMessage() {
+                if (!this.$v.device.identifier.required) {
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.deviceIdentifier')
+                    });
+                }
+                else if (!this.$v.device.identifier.customMacAddress) {
+                    return this.$t('validationErrors.mac');
+                }
             }
         },
         mounted() {

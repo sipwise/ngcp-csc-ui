@@ -39,7 +39,8 @@
         "inputNumber": "Input a phone number",
         "inputValidNumber": "Input a valid phone number",
         "fieldRequiredXor": "{fieldOne} or {fieldTwo} is required",
-        "email": "Input a valid email address"
+        "email": "Input a valid email address",
+        "mac": "Input a valid mac address"
     },
     "navigation": {
         "home": {

@@ -72,7 +72,8 @@
 <script>
     import {
         required,
-        maxLength
+        maxLength,
+        helpers
     } from 'vuelidate/lib/validators'
     import {
         QCard,
@@ -90,6 +91,8 @@
         QItem,
         QItemMain } from 'quasar-framework'
     import CscPbxModelSelect from './CscPbxModelSelect'
+    const customMacAddress = helpers.regex('customMacAddress',
+        /^(?:(?:[0-9A-Fa-f]{2}(?=([-:]|))(?:\1[0-9A-Fa-f]{2}){5}))$/)
 
     export default {
         name: 'csc-pbx-device-add-form',
@@ -123,7 +126,7 @@
                 },
                 identifier: {
                     required,
-                    maxLength: maxLength(64)
+                    customMacAddress
                 }
             }
         },
@@ -153,11 +156,8 @@
                         field: this.$t('pbxConfig.deviceIdentifier')
                     });
                 }
-                else if (!this.$v.data.identifier.maxLength) {
-                    return this.$t('validationErrors.maxLength', {
-                        field: this.$t('pbxConfig.deviceIdentifier'),
-                        maxLength: this.$v.data.identifier.$params.maxLength.max
-                    });
+                else if (!this.$v.data.identifier.customMacAddress) {
+                    return this.$t('validationErrors.mac');
                 }
             }
         },
