@@ -44,8 +44,8 @@
     },
     "navigation": {
         "home": {
-            "title": "Home",
-            "subTitle": "Access to main features"
+            "title": "Start call",
+            "subTitle": ""
         },
         "conversations": {
             "title": "Conversations",
@@ -124,11 +124,13 @@
         "conversations": {
             "title": "Conversations",
             "buttons": {
-                "call": "CALL",
+                "call": "Call back",
                 "audioCall": "Audio Call",
                 "videoCall": "Video Call",
                 "play": "Play",
-                "download": "Download"
+                "download": "Download",
+                "downloadFax": "Download fax",
+                "downloadVoicemail": "Download voicemail"
             },
             "downloadVoiceMailSuccessMessage": "Voicemail downloaded successfully",
             "downloadVoiceMailErrorMessage": "Downloading of voicemail failed",
@@ -278,9 +280,16 @@
     },
     "call": {
         "startNew": "Start new call",
-        "initiating": "Initiating ...",
-        "ringing": "Ringing ...",
-        "incoming": "Incoming ...",
+        "initiating": "Calling {number}...",
+        "ringing": "Ringing at {number}...",
+        "incoming": "Incoming call from {number}...",
+        "established": "In call with {number}",
+        "inputShort": "Start new call",
+        "initiatingShort": "Calling",
+        "ringingShort": "Ringing at",
+        "incomingShort": "Incoming call from",
+        "establishedShort": "In call with",
+        "endedShort": "Call ended",
         "ended": "Ended",
         "call": "Established",
         "number": "Phone number",
@@ -290,7 +299,8 @@
         "notificationBlocked": "You have blocked incoming call notifications.",
         "notificationFailed": "Could not enable incoming call notifications.",
         "notificationNotSupported": "Incoming call notifications are not supported.",
-        "desktopSharingNotInstalled": "Desktop sharing extension for chrome is not installed."
+        "desktopSharingNotInstalled": "Desktop sharing extension for chrome is not installed.",
+        "rtcEngineNotEnabled": "You can neither make a call nor receive one because the RTC:engine is not active. If you operate a C5 CE then first upgrade to a C5 PRO to be able to use the RTC:engine."
     },
     "pbxConfig": {
         "seat": "Seat",

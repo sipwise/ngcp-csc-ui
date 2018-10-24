@@ -1,10 +1,10 @@
 <template>
     <q-layout
+        :class="layoutClasses"
         ref="layout"
-        :view="layoutView"
-        :right-breakpoint="1100"
-        @right-breakpoint="rightBreakPoint"
-        :right-class="callClasses"
+        view="lHh LpR lFf"
+        v-model="sideStates"
+        @left-breakpoint="leftBreakpoint"
     >
         <q-toolbar slot="header">
             <q-btn
@@ -14,9 +14,9 @@
                 <q-icon name="menu" />
             </q-btn>
             <q-toolbar-title>
-                {{ pageTitle }}
+                {{ pageTitleExt }}
                 <span slot="subtitle">
-                    {{ pageSubtitle }}
+                    {{ pageSubtitleExt }}
                 </span>
             </q-toolbar-title>
             <q-btn
@@ -31,16 +31,6 @@
                         link
                         class="csc-toolbar-btn-popover"
                     >
-                        <q-item
-                            @click="call();$refs.communicationPopover.close()"
-                            v-if="isCallAvailable"
-                        >
-                            <q-item-side
-                                icon="fa-phone"
-                                color="primary"
-                            />
-                            <q-item-main :label="$t('startCall')" />
-                        </q-item>
                         <q-item
                             @click="showSendFax();$refs.communicationPopover.close()"
                             v-if="hasFaxCapability && hasSendFaxFeature"
@@ -112,10 +102,10 @@
                 item
                 to="/user/home"
             >
-                <q-item-side icon="home" />
+                <q-item-side icon="call" />
                 <q-item-main
-                    :label="$t('navigation.home.title')"
-                    :sublabel="$t('navigation.home.subTitle')"
+                    :label="callStateTitle"
+                    :sublabel="callStateSubtitle"
                 />
             </q-side-link>
             <q-side-link
@@ -244,21 +234,46 @@
             </q-side-link>
         </q-list>
         <router-view />
-        <csc-call
-            ref="cscCall"
-            slot="right"
-            @close="closeCall()"
-            @fullscreen="toggleFullscreen()"
-            :fullscreen="isFullscreenEnabled"
-            region="DE"
+        <csc-send-fax
+            ref="sendFax"
         />
-        <q-window-resize-observable @resize="onWindowResize" />
-        <csc-send-fax ref="sendFax" />
+        <csc-call
+            :call-state="callState"
+            :call-number="callNumber"
+            :ended-reason="endedReason"
+            :full-view="isFullView"
+            :minimized="!isHome && !isMaximized"
+            :maximizable="!isHome"
+            :closed="!isCalling && !isHome"
+            :local-media-stream="localMediaStream"
+            :remote-media-stream="remoteMediaStream"
+            :is-video-call="hasVideo"
+            :has-local-video="hasLocalVideo"
+            :has-remote-video="hasRemoteVideo"
+            :microphone-enabled="isMicrophoneEnabled"
+            :camera-enabled="isCameraEnabled"
+            :remote-volume-enabled="isRemoteVolumeEnabled"
+            :dialpad-opened="isDialpadOpened"
+            @start-call="startCall"s
+            @accept-call="acceptCall"
+            @end-call="endCall"
+            @close-call="closeCall"
+            @toggle-microphone="toggleMicrophone"
+            @toggle-camera="toggleCamera"
+            @toggle-remote-volume="toggleRemoteVolume"
+            @click-dialpad="clickDialpad"
+            @toggle-dialpad="toggleDialpad"
+            @maximize-call="maximizeCall"
+            @minimize-call="minimizeCall"
+        />
     </q-layout>
 </template>
 
 <script>
-    import _ from 'lodash';
+    import {
+        normalizeDestination
+    } from '../../filters/number-format'
+    import platformMixin from '../../mixins/platform'
     import {
         startLoading,
         stopLoading,
@@ -266,8 +281,10 @@
         showGlobalError,
         enableIncomingCallNotifications
     } from '../../helpers/ui'
-    import { mapState, mapGetters } from 'vuex'
-    import CscCall from '../CscCall'
+    import {
+        mapGetters
+    } from 'vuex'
+    import CscCall from '../call/CscCall'
     import CscSendFax from '../CscSendFax'
     import {
         QLayout,
@@ -282,23 +299,25 @@
         QItemMain,
         QPopover,
         QSideLink,
-        QCollapsible,
-        Platform,
-        QWindowResizeObservable
+        QCollapsible
     } from 'quasar-framework'
     export default {
         name: 'default',
+        data() {
+            return {
+                sideStates: {
+                    left: true,
+                    right: false
+                },
+                mobileMenu: null
+            }
+        },
         mounted: function() {
-            if(Platform.is.mobile) {
-                this.$store.commit('layout/hideLeft');
-                this.$store.commit('layout/enableFullscreen');
-            }
-            else {
-                this.$store.commit('layout/showLeft');
-            }
-            this.applyLayout();
             this.$store.dispatch('user/initUser');
         },
+        mixins: [
+            platformMixin
+        ],
         components: {
             QLayout,
             QToolbar,
@@ -314,19 +333,38 @@
             QSideLink,
             QCollapsible,
             CscCall,
-            QWindowResizeObservable,
             CscSendFax
         },
         computed: {
-            ...mapGetters('layout', [
-                'right',
-                'left',
-                'isFullscreenEnabled'
+            ...mapGetters([
+                'pageTitle',
+                'pageSubtitle',
+                'isCallForward',
+                'isCallBlocking',
+                'isPbxConfiguration',
+                'isHome',
+                'title'
             ]),
             ...mapGetters('call', [
-                'isCallAvailable',
+                'callState',
+                'callNumber',
+                'callNumberInput',
+                'endedReason',
                 'isCalling',
-                'hasCallInitFailure'
+                'localMediaStream',
+                'remoteMediaStream',
+                'isCallAvailable',
+                'hasCallInitError',
+                'hasVideo',
+                'hasLocalVideo',
+                'hasRemoteVideo',
+                'isMicrophoneEnabled',
+                'isCameraEnabled',
+                'isRemoteVolumeEnabled',
+                'isMaximized',
+                'isDialpadOpened',
+                'callStateTitle',
+                'callStateSubtitle'
             ]),
             ...mapGetters('user', [
                 'isLogged',
@@ -344,50 +382,41 @@
                 'createFaxState',
                 'createFaxError'
             ]),
-            ...mapState({
-                isCallForward: state => _.startsWith(state.route.path, '/user/call-forward'),
-                isCallBlocking: state => _.startsWith(state.route.path, '/user/call-blocking'),
-                isPbxConfiguration: state => _.startsWith(state.route.path, '/user/pbx-configuration')
-            }),
             hasCommunicationCapabilities() {
-                return this.isCallAvailable ||
-                    (this.hasSmsCapability && this.hasSendSmsFeature) ||
+                return (this.hasSmsCapability && this.hasSendSmsFeature) ||
                     (this.hasFaxCapability && this.hasSendFaxFeature);
             },
-            callClasses() {
-                let classes = {};
-                if(this.isFullscreenEnabled) {
-                    classes['csc-call-fullscreen'] = true;
-                }
+            isMenuClosed() {
+                return !this.sideStates.left;
+            },
+            isFullView() {
+                return this.isMenuClosed || this.isMobile || this.mobileMenu;
+            },
+            layoutClasses() {
+                let classes = [];
                 if(this.isCalling) {
-                    classes['csc-call-calling'] = true;
+                    classes.push('csc-layout-call-active');
                 }
                 return classes;
             },
-            layoutView() {
-                if(this.isFullscreenEnabled) {
-                    return 'lHr LpR lFr';
+            callNumberFormatted() {
+                return normalizeDestination(this.callNumber);
+            },
+            pageTitleExt() {
+                if(this.isHome) {
+                    return this.callStateTitle;
                 }
                 else {
-                    return 'lHh LpR lFf';
+                    return this.pageTitle;
                 }
             },
-            fabOffset() {
-                if(Platform.is.mobile) {
-                    return [16, 16];
+            pageSubtitleExt() {
+                if(this.isHome) {
+                    return this.callStateSubtitle;
                 }
                 else {
-                    return [32, 32];
+                    return this.pageSubtitle;
                 }
-            },
-            isDesktop() {
-                return Platform.is.desktop;
-            },
-            pageTitle() {
-                return this.$store.getters['pageTitle'];
-            },
-            pageSubtitle() {
-                return this.$store.getters['pageSubtitle'];
             }
         },
         methods: {
@@ -397,14 +426,45 @@
             hideSendFax() {
                 this.$refs.sendFax.hideModal();
             },
-            onWindowResize() {
+            startCall(localMedia) {
+                if(this.callNumberInput !== '' && this.callNumberInput !== null) {
+                    this.$store.dispatch('call/start', localMedia);
+                }
             },
-            toggleFullscreen() {
-                this.$store.commit('layout/toggleFullscreen');
+            acceptCall(localMedia) {
+                this.$store.dispatch('call/accept', localMedia);
             },
-            call() {
-                this.$refs.layout.showRight();
-                this.$store.dispatch('call/showCall');
+            closeCall() {
+                this.$store.commit('call/inputNumber');
+            },
+            endCall() {
+                this.$store.dispatch('call/end');
+            },
+            toggleMicrophone() {
+                this.$store.dispatch('call/toggleMicrophone');
+            },
+            toggleCamera() {
+                this.$store.dispatch('call/toggleCamera');
+            },
+            toggleRemoteVolume() {
+                this.$store.dispatch('call/toggleRemoteVolume');
+            },
+            clickDialpad(value) {
+                this.$store.dispatch('call/sendDTMF', value);
+            },
+            toggleDialpad() {
+                this.$store.commit('call/toggleDialpad');
+            },
+            maximizeCall() {
+                if(this.isMobile) {
+                    this.$router.push('home');
+                }
+                else {
+                    this.$store.commit('call/maximize');
+                }
+            },
+            minimizeCall() {
+                this.$store.commit('call/minimize');
             },
             logout() {
                 startLoading();
@@ -413,53 +473,28 @@
                     this.$router.push({path: '/login'});
                 })
             },
-            rightBreakPoint() {
-                if(this.right) {
-                    this.$store.commit('layout/showRight');
-                    this.$store.commit('layout/hideLeft');
-                }
-                else {
-                    this.$store.commit('layout/hideRight');
-                }
+            leftBreakpoint(enabled) {
+                this.mobileMenu = !enabled;
             },
-            closeCall() {
-                this.$refs.layout.hideRight();
-                this.$store.commit('layout/hideRight');
-            },
-            applyLayout() {
-                if(this.right) {
-                    this.$refs.layout.showRight();
-                    this.$refs.cscCall.focusNumberInput();
+            setCallStateTitle() {
+                let title = this.callStateTitle;
+                if(this.callStateSubtitle !== '') {
+                    title = title + " (" + this.callStateSubtitle + ")";
                 }
-                else {
-                    this.$refs.layout.hideRight();
-                    this.$refs.cscCall.blurNumberInput();
-                }
-                if(this.left) {
-                    this.$refs.layout.showLeft();
-                }
-                else {
-                    this.$refs.layout.hideLeft();
-                }
+                document.title = this.title + " - " + title;
             }
         },
         watch: {
-            right(value) {
-                if(value) {
-                    this.$refs.layout.showRight();
-                    this.$refs.cscCall.focusNumberInput();
-                }
-                else {
-                    this.$refs.layout.hideRight();
-                    this.$refs.cscCall.blurNumberInput();
-                }
-            },
-            left(value) {
-                if(value) {
-                    this.$refs.layout.showLeft();
-                }
-                else {
+            callState(state) {
+                if(state === 'incoming' && this.isMobile) {
                     this.$refs.layout.hideLeft();
+                }
+                this.setCallStateTitle();
+            },
+            isHome(isHome) {
+                if(isHome) {
+                    this.$store.commit('call/minimize');
+                    this.setCallStateTitle();
                 }
             },
             userDataRequesting(value) {
@@ -478,7 +513,7 @@
                     showToast(this.$i18n.t('toasts.callAvailable'));
                 }
             },
-            hasCallInitFailure(value) {
+            hasCallInitError(value) {
                 if(value) {
                     showToast(this.$i18n.t('toasts.callNotAvailable'));
                 }
@@ -496,176 +531,68 @@
                     showToast(this.$t('communication.createFaxSuccessMessage'));
                     this.hideSendFax();
                 }
+            },
+            $route () {
+                if(!this.isHome) {
+                    this.$store.commit('call/minimize');
+                }
             }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../themes/quasar.variables';
-    @import '../../themes/app.common';
-
-    #main-menu {
-        padding-top:60px;
-    }
-
-    #main-menu .q-item-side {
-        min-width: 30px;
-    }
-
-    #main-menu .q-item {
-        padding: 12px 24px;
-    }
-
-    #main-menu .router-link-active,
-    #main-menu .q-item:hover {
-        background-color: #475360;
-    }
-
-    #main-menu .q-item .q-item-sublabel {
-        color: #5b7086;
-    }
-
-    #main-menu .q-item .q-item-main,
-    #main-menu .q-item .q-item-side {
-        color: #ADB3B8;
-    }
-
-    #main-menu .q-collapsible-sub-item {
-        padding: 0;
-    }
-
-    #main-menu .q-collapsible-sub-item .q-item {
-        padding-left: 60px;
-    }
-
-    #user-login-as {
-        display: inline-block;
-        text-transform: none;
-        color: #c5eab4;
-    }
-    #user-login-as:after {
-        content: " ";
-        white-space: pre;
-    }
-    #user-name {
-        font-weight: bold;
-    }
-
-    .q-card {
-        margin: 15px;
-        margin-left: 0px;
-        margin-right: 0px;
-    }
-
-    .q-card.page {
-        padding: 0px;
-        margin: 0;
-    }
-
-    .layout-aside.fixed.csc-call-fullscreen {
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        width: auto;
-        z-index: 5000;
-    }
-
-    .csc-call-fullscreen .csc-call,
-    .csc-call-fullscreen .csc-call .q-card {
-
-    }
-
-    .csc-call-fullscreen .csc-call .q-card .q-card-primary {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 72px;
-        line-height: 72px;
-        z-index: 6001;
-        background: -moz-linear-gradient(top, rgba(51,64,77,1) 0%, rgba(235,236,237,0) 90%, rgba(255,255,255,0) 100%);
-        background: -webkit-linear-gradient(top, rgba(51,64,77,1) 0%,rgba(235,236,237,0) 90%,rgba(255,255,255,0) 100%);
-        background: linear-gradient(to bottom, rgba(51,64,77,1) 0%,rgba(235,236,237,0) 90%,rgba(255,255,255,0) 100%);
-    }
-
-    .csc-call-fullscreen .csc-call .q-card-actions {
-
-    }
-
-    .csc-call-fullscreen .csc-call .q-card-main {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-        z-index: 6000;
-        font-size: 0;
-    }
-
-    .csc-call-fullscreen .csc-call-media {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        z-index: 1;
-    }
-
-    .csc-media-remote {
-        z-index: 9;
-    }
-
-    .csc-call-fullscreen .csc-media-preview {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 20%;
-    }
-
-    .csc-call-fullscreen .csc-media-preview video {
-        position: relative;
-        height: 100%;
-    }
-
-    .csc-call-fullscreen .csc-media-remote {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-    }
-
-    .csc-call-fullscreen .csc-media-remote video {
-        position: absolute;
-        height: 100%;
-        bottom: 0;
-    }
-
-    .csc-call-fullscreen .csc-call-info {
-        position: relative;
-        top: 73px;
-        z-index: 2;
-    }
-
+    @import '../../themes/app.common'
+    .page.page-call-active
+        padding-bottom 120px
+    #main-menu
+        padding-top 60px
+        .q-item-side
+            min-width 30px
+        .q-item
+            padding 12px 24px
+            .q-item-sublabel
+                color #5b7086
+            .q-item-main,
+            .q-item-side
+                color #ADB3B8
+        .router-link-active,
+        .q-item:hover
+            background-color #475360
+        .q-collapsible-sub-item
+            padding 0
+            .q-item
+                padding-left 60px
+    #user-login-as
+        display inline-block
+        text-transform none
+        color #c5eab4
+    #user-login-as:after
+        content " "
+        white-space pre
+    #user-name
+        font-weight bold
+    .q-card
+        margin 15px
+        margin-left 0
+        margin-right 0
+    .q-card.page
+        padding 0
+        margin 0
     .q-if-control.q-if-control-before.q-icon,
-    .q-if-control.q-if-control-before.q-icon:before {
-        font-size:24px;
-    }
-
+    .q-if-control.q-if-control-before.q-icon:before
+        font-size 24px
     .csc-toolbar-btn-popover
         .q-item-main.q-item-section
             margin-left 0
-
     .q-toolbar
-
         .csc-toolbar-btn.q-btn
             padding-left 8px
             padding-right 8px
-
         .csc-toolbar-btn-right
             .csc-toolbar-btn-icon
                 margin-right 8px
 
+    .csc-layout-call-active
+        padding-bottom 152px
 </style>

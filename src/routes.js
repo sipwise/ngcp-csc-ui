@@ -27,8 +27,7 @@ export default [
                 path: 'home',
                 component: Home,
                 meta: {
-                    title: i18n.t('navigation.home.title'),
-                    subtitle: i18n.t('navigation.home.subTitle')
+                    title: i18n.t('call.inputShort'),
                 }
             },
             {
