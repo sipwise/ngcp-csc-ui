@@ -44,11 +44,15 @@
                 </q-field>
                 <q-field
                     :label="$t('pbxConfig.deviceIdentifier')"
+                    :error-label="identifierErrorMessage"
                 >
                     <q-input
                         v-model="device.identifier"
                         :after="identifierButtons"
                         @keyup.enter="saveIdentifier"
+                        @input="$v.device.identifier.$touch"
+                        @blur="$v.device.identifier.$touch"
+                        :error="$v.device.identifier.$error"
                     />
                 </q-field>
                 <q-field
@@ -116,7 +120,9 @@
 
 
 <script>
-
+    import { showGlobalError } from '../../../helpers/ui'
+    import { required } from 'vuelidate/lib/validators'
+    import { customMacAddress } from '../../../helpers/validation'
     import _ from 'lodash'
     import {
         QCard,
@@ -177,6 +183,14 @@
                 expanded: false,
                 modalOpened: false,
                 changes: this.getDevice()
+            }
+        },
+        validations: {
+            device: {
+                identifier: {
+                    required,
+                    customMacAddress
+                }
             }
         },
         computed: {
@@ -271,6 +285,16 @@
             },
             profileId() {
                 return _.get(this.device, 'profile.id', null);
+            },
+            identifierErrorMessage() {
+                if (!this.$v.device.identifier.required) {
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.deviceIdentifier')
+                    });
+                }
+                else if (!this.$v.device.identifier.customMacAddress) {
+                    return this.$t('validationErrors.macAddress');
+                }
             }
         },
         mounted() {
@@ -309,7 +333,12 @@
                 this.changes.identifier = this.device.identifier;
             },
             saveIdentifier() {
-                this.$emit('save-identifier', this.deviceModel);
+                if (!this.$v.device.identifier.$error) {
+                    this.$emit('save-identifier', this.deviceModel);
+                }
+                else {
+                   showGlobalError(this.$t('validationErrors.macAddress'));
+                }
             },
             selectProfile(profile) {
                 this.$emit('update-profile', {
