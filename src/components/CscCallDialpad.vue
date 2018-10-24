@@ -4,9 +4,11 @@
             class="column"
         >
             <div
+                v-if="showBackspaceButton || showClearButton"
                 class="csc-dialpad-btn-group csc-dialpad-btn-group-special"
             >
                 <div
+                    v-if="showBackspaceButton"
                     class="csc-dialpad-btn"
                 >
                     <q-btn
@@ -19,6 +21,7 @@
                     />
                 </div>
                 <div
+                    v-if="showClearButton"
                     class="csc-dialpad-btn"
                 >
                     <q-btn
@@ -70,6 +73,10 @@
         data () {
             return {}
         },
+        props: [
+            'showBackspaceButton',
+            'showClearButton'
+        ],
         components: {
             QBtn,
             QIcon

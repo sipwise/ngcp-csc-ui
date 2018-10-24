@@ -7,7 +7,6 @@ import CallBlockingModule from './call-blocking'
 import CallForwardModule from './call-forward'
 import CallModule from './call'
 import ConversationsModule from './conversations'
-import LayoutModule from './layout'
 import PbxConfigModule from './pbx-config/index'
 import ReminderModule from './reminder'
 import SpeedDialModule from './speed-dial'
@@ -23,7 +22,6 @@ export const store = new Vuex.Store({
         callForward: CallForwardModule,
         call: CallModule,
         conversations: ConversationsModule,
-        layout: LayoutModule,
         pbxConfig: PbxConfigModule,
         reminder: ReminderModule,
         speedDial: SpeedDialModule,
@@ -37,6 +35,18 @@ export const store = new Vuex.Store({
         },
         pageSubtitle(state) {
             return _.get(state, 'route.meta.subtitle', '');
+        },
+        isCallForward(state) {
+            return _.startsWith(_.get(state, 'route.path', ''), '/user/call-forward');
+        },
+        isCallBlocking(state) {
+            return _.startsWith(_.get(state, 'route.path', ''), '/user/call-blocking');
+        },
+        isPbxConfiguration(state) {
+            return _.startsWith(_.get(state, 'route.path', ''), '/user/pbx-configuration');
+        },
+        isHome(state) {
+            return _.get(state, 'route.path', '') === '/user/home';
         }
     }
 });

@@ -1,7 +1,7 @@
 <template>
     <q-field
         v-if="!isMobile"
-        dark
+        :dark="dark"
         :count="maxLength"
         :helper="helperMessage"
         :error="$v.phoneNumber.$error"
@@ -9,7 +9,7 @@
     >
         <q-input
             ref="inputField"
-            dark
+            :dark="dark"
             clearable
             type="text"
             :float-label="$t('call.number')"
@@ -27,13 +27,13 @@
     </q-field>
     <q-field
         v-else
-        dark
+        :dark="dark"
         :error="$v.phoneNumber.$error"
         :error-label="errorMessage"
     >
         <q-input
             ref="inputField"
-            dark
+            :dark="dark"
             clearable
             type="text"
             :placeholder="$t('call.number')"
@@ -80,7 +80,8 @@
         },
         validations: {
             phoneNumber: {
-                maxLength: maxLength(64)
+                maxLength: maxLength(64),
+                required: true
             }
         },
         props: {
@@ -95,6 +96,14 @@
             dialpadButton: {
                 type: Boolean,
                 default: false
+            },
+            dark: {
+                type: Boolean,
+                default: true
+            },
+            value: {
+                type: String,
+                default: ''
             }
         },
         mixins: [
@@ -133,6 +142,7 @@
             inputPhoneNumber(value) {
                 this.phoneNumber = normalizeNumber(value, this.isMobile);
                 this.$v.phoneNumber.$touch();
+                this.$emit('number-changed', rawNumber(this.getPhoneNumber()));
             },
             getPhoneNumber() {
                 return this.phoneNumber;
@@ -167,6 +177,11 @@
             },
             toggleDialpad() {
                 this.$emit('toggle-dialpad');
+            }
+        },
+        watch: {
+            value() {
+                this.phoneNumber = normalizeNumber(this.value, this.isMobile);
             }
         }
     }

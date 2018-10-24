@@ -26,7 +26,8 @@ export default {
         disabled: false,
         endedReason: null,
         callState: CallState.input,
-        number: null,
+        number: '',
+        numberInput: '',
         localMediaStream: null,
         remoteMediaStream: null,
         audioEnabled: true,
@@ -38,8 +39,14 @@ export default {
         dtmf: null
     },
     getters: {
-        getNumber(state) {
+        endedReason(state) {
+            return state.endedReason;
+        },
+        callNumber(state) {
             return state.number;
+        },
+        callNumberInput(state) {
+            return state.numberInput;
         },
         localMediaType(state) {
             if(state.localMediaStream !== null && state.localMediaStream.hasAudio() && state.localMediaStream.hasVideo()) {
@@ -62,9 +69,6 @@ export default {
             else {
                 return null;
             }
-        },
-        getEndedReason(state) {
-            return state.endedReason;
         },
         isNetworkConnected(state) {
             return state.initialized;
@@ -94,7 +98,9 @@ export default {
         isCalling(state) {
             return state.callState === CallState.initiating ||
                 state.callState === CallState.ringing ||
-                state.callState === CallState.established;
+                state.callState === CallState.established ||
+                state.callState === CallState.incoming ||
+                state.callState === CallState.ended;
         },
         isEstablished(state) {
             return state.callState === CallState.established;
@@ -140,9 +146,25 @@ export default {
         },
         dtmfState(state) {
             return state.dtmf;
+        },
+        localMediaStream(state) {
+            if(state.localMediaStream !== null) {
+                return state.localMediaStream.getStream();
+            }
+            return null;
+        },
+        remoteMediaStream(state) {
+            if(state.remoteMediaStream !== null) {
+                return state.remoteMediaStream.getStream();
+            }
+            return null;
         }
+
     },
     mutations: {
+        numberInputChanged(state, numberInput) {
+            state.numberInput = numberInput;
+        },
         initSucceeded(state) {
             state.initialized = true;
             state.initError = null;
@@ -156,12 +178,16 @@ export default {
         },
         inputNumber(state) {
             state.callState = CallState.input;
+            state.number = '';
+            state.numberInput = '';
+            state.endedReason = null;
         },
-        startCalling(state, options) {
-            state.number = options.number;
+        startCalling(state, number) {
+            state.number = number;
             state.callState = CallState.initiating;
             state.caller = true;
             state.callee = false;
+            state.endedReason = null;
         },
         localMediaSuccess(state, localMediaStream) {
             state.localMediaStream = localMediaStream;
@@ -184,6 +210,7 @@ export default {
             state.number = options.number;
             state.callee = true;
             state.caller = false;
+            state.endedReason = null;
         },
         hangUpCall(state) {
             state.callState = CallState.input;
@@ -195,10 +222,15 @@ export default {
                 state.remoteMediaStream.stop();
                 state.remoteMediaStream = null;
             }
+            state.number = '';
+            state.numberInput = '';
+            state.endedReason = null;
         },
         endCall(state, reason) {
-            state.callState = CallState.ended;
-            state.endedReason = reason;
+            if(state.endedReason === null) {
+                state.callState = CallState.ended;
+                state.endedReason = reason;
+            }
             if(_.isObject(state.localMediaStream)) {
                 state.localMediaStream.stop();
                 state.localMediaStream = null;
@@ -240,7 +272,6 @@ export default {
         initialize(context) {
             return new Promise((resolve, reject)=>{
                 Vue.call.onIncoming(()=>{
-                    context.commit('layout/showRight', null, { root: true });
                     context.commit('incomingCall', {
                         number: Vue.call.getNumber()
                     });
@@ -265,19 +296,19 @@ export default {
                 }
             });
         },
-        start(context, options) {
+        start(context, localMedia) {
+            let number = context.getters.callNumberInput;
             context.commit('desktopSharingInstallReset');
-            context.commit('layout/showRight', null, { root: true });
-            context.commit('startCalling', { number: options.number });
+            context.commit('startCalling', number);
             Promise.resolve().then(()=>{
-                return Vue.call.createLocalMedia(options.localMedia);
+                return Vue.call.createLocalMedia(localMedia);
             }).then((localMediaStream)=>{
                 context.commit('localMediaSuccess', localMediaStream);
                 Vue.call.onRingingStart(()=>{
                     context.commit('startRinging');
                 }).onRingingStop(()=>{
                     context.commit('stopRinging');
-                }).start(options.number, localMediaStream);
+                }).start(number, localMediaStream);
             }).catch((err)=>{
                 Vue.call.end();
                 if(err.message === 'plugin not detected') {
@@ -305,8 +336,8 @@ export default {
                 }
             });
         },
-        hangUp(context) {
-            Vue.call.hangUp();
+        end(context) {
+            Vue.call.end();
             context.commit('hangUpCall');
         },
         disableAudio(context) {
@@ -324,12 +355,6 @@ export default {
         enableVideo(context) {
             Vue.call.enableVideo();
             context.commit('enableVideo');
-        },
-        showCall(context) {
-            context.commit('layout/showRight', null, { root: true });
-        },
-        hideCall(context) {
-            context.commit('layout/hideRight', null, { root: true });
         },
         sendDTMF(context, value) {
             context.commit('sendDTMF', value);
