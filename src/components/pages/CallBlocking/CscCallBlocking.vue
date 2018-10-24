@@ -25,15 +25,15 @@
         <div id="add-number-form">
             <q-field v-if="!addFormEnabled">
                 <q-btn color="primary"
-                   icon="fa-plus" flat
+                   flat icon="add"
                    @click="enableAddForm()">{{ $t('pages.callBlocking' + suffix + '.addNumberButton') }}</q-btn>
             </q-field>
             <div v-if="addFormEnabled">
                 <q-field :error="addFormError" :error-label="$t('pages.callBlocking' + suffix + '.addInputError')">
                     <q-input type="text" float-label="Number" v-model="newNumber" clearable @keyup.enter="addNumber()" />
                 </q-field>
-                <q-btn flat @click="disableAddForm()">{{ $t('buttons.cancel') }}</q-btn>
-                <q-btn flat color="primary" icon-right="fa-save" @click="addNumber()">{{ $t('buttons.save') }}</q-btn>
+                <q-btn flat icon="clear" @click="disableAddForm()">{{ $t('buttons.cancel') }}</q-btn>
+                <q-btn flat icon="check" color="primary" @click="addNumber()">{{ $t('buttons.save') }}</q-btn>
             </div>
         </div>
         <div>
@@ -46,7 +46,7 @@
                     <q-input autofocus v-if="editing && editingIndex == index" type="text" float-label="Number"
                              v-model="editingNumber" @keyup.enter="saveNumber(index)" />
                     <q-btn color="primary" flat v-if="editing && editingIndex == index" slot="right"
-                           icon="fa-save" @click="saveNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.save') }}</span></q-btn>
+                           icon="check" @click="saveNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.save') }}</span></q-btn>
                     <q-btn flat v-if="editing && editingIndex == index" slot="right"
                            icon="clear" @click="cancelEdit()" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.cancel') }}</span></q-btn>
                     <q-btn color="primary" flat v-if="!(editing && editingIndex == index)" slot="right"

@@ -33,8 +33,22 @@
                 v-model="form.data"
                 :float-label="$t('communication.label.content')" />
         </q-field>
-        <q-btn flat dark @click="hideModal">{{ $t('communication.cancel') }}</q-btn>
-        <q-btn flat color="primary" @click="sendFax" icon-right="insert drive file" :disable="formDisabled">{{ $t('communication.send') }}</q-btn>
+        <q-btn
+            flat
+            icon="clear"
+            @click="hideModal"
+        >
+            {{ $t('communication.cancel') }}
+        </q-btn>
+        <q-btn
+            flat
+            color="primary"
+            @click="sendFax"
+            icon="insert drive file"
+            :disable="formDisabled"
+        >
+            {{ $t('communication.send') }}
+        </q-btn>
     </q-modal>
 </template>
 
