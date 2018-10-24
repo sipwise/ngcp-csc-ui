@@ -4,40 +4,45 @@
     >
         <div
             v-show="loading"
-            class="csc-spinner"
+            class="csc-media-spinner"
         >
-            <q-spinner-mat
+            <q-spinner-dots
                 color="primary"
-                :size="60"
+                :size="24"
             />
         </div>
         <video
             v-show="!loading && hasVideo"
             ref="media"
             autoplay
-            :muted="muted"
             playsinline
+            :class="videoClasses"
+            :muted="muted"
         />
     </div>
 </template>
 
 <script>
-
     import _ from 'lodash';
-    import { QSpinnerMat, QIcon } from 'quasar-framework'
-
+    import {
+        QSpinnerDots,
+        QIcon
+    } from 'quasar-framework'
     export default {
         name: 'csc-media',
-        props: ['stream', 'muted'],
+        props: [
+            'stream',
+            'muted',
+            'fit'
+        ],
         data () {
             return {
                 currentStream: this.stream,
                 loading: true,
             }
         },
-        mounted() {},
         components: {
-            QSpinnerMat,
+            QSpinnerDots,
             QIcon
         },
         methods: {
@@ -78,26 +83,44 @@
             hasVideo() {
                 return this.currentStream !== null && _.isArray(this.currentStream.getVideoTracks()) &&
                     this.currentStream.getVideoTracks().length > 0;
+            },
+            videoClasses() {
+                let classes = [];
+                if(this.fit === 'full') {
+                    classes.push('fit-full');
+                }
+                else if(this.fit === 'width') {
+                    classes.push('fit-width');
+                }
+                return classes;
             }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-
+    @import '../themes/quasar.variables'
     .csc-media
-        position: relative;
-        font-size 0
-
-        video
+        position relative
+        height 100%
+        width 100%
+        .csc-media-spinner
+            position absolute
+            top 50%
+            left 50%
+            margin-top -12px
+            margin-left -12px
+        video.fit-full
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            background-size: cover;
+        video.fit-width
             position: relative;
             width: 100%;
-
-        .csc-spinner
-            display flex
-            flex-direction row
-            justify-content center
-            .q-spinner-mat
-                display flex
-                flex-direction column
+            height: 100%;
 </style>

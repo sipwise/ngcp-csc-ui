@@ -3,22 +3,22 @@
         v-if="item.type == 'call'"
         :call="item"
         :call-available="callAvailable"
-        @init-call="initCall"
+        @start-call="startCall"
     />
     <csc-fax-item
         v-else-if="item.type == 'fax'"
         :fax="item"
         :call-available="callAvailable"
-        @init-call="initCall"
         @download-fax="downloadFax"
+        @start-call="startCall"
     />
     <csc-voice-mail-item
         v-else-if="item.type == 'voicemail'"
         :voice-mail="item"
         :call-available="callAvailable"
-        @init-call="initCall"
         @download-voice-mail="downloadVoiceMail"
         @play-voice-mail="playVoiceMail"
+        @start-call="startCall"
     />
 </template>
 
@@ -41,8 +41,8 @@
             return {}
         },
         methods: {
-            initCall(call) {
-                this.$emit('init-call', call);
+            startCall(number) {
+                this.$emit('start-call', number);
             },
             downloadFax(fax) {
                 this.$emit('download-fax', fax);

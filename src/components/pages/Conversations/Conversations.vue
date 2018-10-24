@@ -53,7 +53,7 @@
                 :key="item._id"
                 :item="item"
                 :call-available="isCallAvailable"
-                @init-call="initCall"
+                @start-call="startCall"
                 @download-fax="downloadFax"
                 @download-voice-mail="downloadVoiceMail"
                 @play-voice-mail="playVoiceMail"
@@ -208,12 +208,9 @@
                 }
                 this.$store.dispatch('conversations/nextPage', type);
             },
-            initCall(call) {
-                this.layout.showRight();
-                this.$store.dispatch('call/start', {
-                    number: call.number,
-                    localMedia: call.media
-                });
+            startCall(number) {
+                this.$store.commit('call/numberInputChanged', number);
+                this.$router.push('home');
             },
             downloadFax(fax) {
                 this.$store.dispatch('conversations/downloadFax', fax.id);
