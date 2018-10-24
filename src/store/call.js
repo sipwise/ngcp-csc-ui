@@ -25,8 +25,8 @@ export default {
         initError: null,
         disabled: false,
         endedReason: null,
-        callState: CallState.input,
-        number: null,
+        callState: CallState.incoming,
+        number: '43993004',
         localMediaStream: null,
         remoteMediaStream: null,
         audioEnabled: true,
@@ -38,6 +38,12 @@ export default {
         dtmf: null
     },
     getters: {
+        endedReason(state) {
+            return state.endedReason;
+        },
+        callNumber(state) {
+            return state.number;
+        },
         getNumber(state) {
             return state.number;
         },
@@ -94,7 +100,9 @@ export default {
         isCalling(state) {
             return state.callState === CallState.initiating ||
                 state.callState === CallState.ringing ||
-                state.callState === CallState.established;
+                state.callState === CallState.established ||
+                state.callState === CallState.incoming ||
+                state.callState === CallState.ended;
         },
         isEstablished(state) {
             return state.callState === CallState.established;
@@ -140,9 +148,25 @@ export default {
         },
         dtmfState(state) {
             return state.dtmf;
+        },
+        localMediaStream(state) {
+            if(state.localMediaStream !== null) {
+                return state.localMediaStream.getStream();
+            }
+            return null;
+        },
+        remoteMediaStream(state) {
+            if(state.remoteMediaStream !== null) {
+                return state.remoteMediaStream.getStream();
+            }
+            return null;
         }
+
     },
     mutations: {
+        numberInputChanged(state, numberInput) {
+            state.number = numberInput;
+        },
         initSucceeded(state) {
             state.initialized = true;
             state.initError = null;
@@ -156,6 +180,7 @@ export default {
         },
         inputNumber(state) {
             state.callState = CallState.input;
+            state.numberInput = '';
         },
         startCalling(state, options) {
             state.number = options.number;
@@ -240,7 +265,6 @@ export default {
         initialize(context) {
             return new Promise((resolve, reject)=>{
                 Vue.call.onIncoming(()=>{
-                    context.commit('layout/showRight', null, { root: true });
                     context.commit('incomingCall', {
                         number: Vue.call.getNumber()
                     });
@@ -267,8 +291,9 @@ export default {
         },
         start(context, options) {
             context.commit('desktopSharingInstallReset');
-            context.commit('layout/showRight', null, { root: true });
-            context.commit('startCalling', { number: options.number });
+            context.commit('startCalling', {
+                number: context.getters.numberInput
+            });
             Promise.resolve().then(()=>{
                 return Vue.call.createLocalMedia(options.localMedia);
             }).then((localMediaStream)=>{
@@ -277,7 +302,7 @@ export default {
                     context.commit('startRinging');
                 }).onRingingStop(()=>{
                     context.commit('stopRinging');
-                }).start(options.number, localMediaStream);
+                }).start(context.getters.numberInput, localMediaStream);
             }).catch((err)=>{
                 Vue.call.end();
                 if(err.message === 'plugin not detected') {
@@ -325,12 +350,12 @@ export default {
             Vue.call.enableVideo();
             context.commit('enableVideo');
         },
-        showCall(context) {
-            context.commit('layout/showRight', null, { root: true });
-        },
-        hideCall(context) {
-            context.commit('layout/hideRight', null, { root: true });
-        },
+        // showCall(context) {
+        //     context.commit('layout/showRight', null, { root: true });
+        // },
+        // hideCall(context) {
+        //     context.commit('layout/hideRight', null, { root: true });
+        // },
         sendDTMF(context, value) {
             context.commit('sendDTMF', value);
             if(Vue.call.hasRunningCall()) {
