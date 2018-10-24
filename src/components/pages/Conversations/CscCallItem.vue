@@ -50,17 +50,32 @@
         >
             <q-item-tile>
                 <q-btn
-                    v-if="callAvailable"
-                    icon="call"
-                    color="primary"
+                    icon="more_vert"
+                    color="default"
                     slot="right"
                     flat
                 >
-                    <q-popover ref="callPopover" anchor="bottom right" self="top right">
-                        <csc-call-option-list
-                            ref="callOptionPopover"
-                            @init-call="initCall"
-                        />
+                    <q-popover
+                        ref="callPopover"
+                        anchor="bottom right"
+                        self="top right">
+                        <q-list
+                            item-separator
+                            link
+                            class="csc-toolbar-btn-popover">
+                            <q-item
+                                v-if="callAvailable"
+                                @click="startCall"
+                            >
+                                <q-item-side
+                                    icon="call"
+                                    color="primary"
+                                />
+                                <q-item-main
+                                    :label="$t('pages.conversations.buttons.call')"
+                                />
+                            </q-item>
+                        </q-list>
                     </q-popover>
                 </q-btn>
             </q-item-tile>
@@ -72,6 +87,7 @@
     import _ from 'lodash'
     import CscCallOptionList from './CscCallOptionList'
     import {
+        QList,
         QItem,
         QItemSide,
         QItemMain,
@@ -87,6 +103,7 @@
             'callAvailable'
         ],
         components: {
+            QList,
             QItem,
             QItemSide,
             QItemMain,
@@ -170,12 +187,9 @@
             }
         },
         methods: {
-            initCall(media) {
+            startCall() {
                 this.$refs.callPopover.close();
-                this.$emit('init-call', {
-                    media: media,
-                    number: this.numberDialBack
-                });
+                this.$emit('start-call', this.numberDialBack);
             }
         }
     }
