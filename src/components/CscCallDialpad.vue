@@ -4,27 +4,28 @@
             class="column"
         >
             <div
+                v-if="showBackspaceButton || showClearButton"
                 class="csc-dialpad-btn-group csc-dialpad-btn-group-special"
             >
                 <div
+                    v-if="showBackspaceButton"
                     class="csc-dialpad-btn"
                 >
                     <q-btn
                         color="primary"
                         round
-                        outline
                         small
                         @click="remove()"
                         icon="backspace"
                     />
                 </div>
                 <div
+                    v-if="showClearButton"
                     class="csc-dialpad-btn"
                 >
                     <q-btn
                         color="primary"
                         round
-                        outline
                         small
                         @click="removeAll()"
                         icon="cancel"
@@ -42,11 +43,10 @@
                     :key="rowIndex + ':' + keyIndex"
                 >
                     <q-btn
-                        color="primary"
+                        color="default"
                         round
-                        outline
-                        :small="!isFullscreenEnabled && !isMobile"
-                        @click="insert(key)"
+                        small
+                        @click="click(key)"
                     >
                         {{ key }}
                     </q-btn>
@@ -57,19 +57,20 @@
 </template>
 
 <script>
-
     import platformMixin from '../mixins/platform'
     import {
         QBtn,
         QIcon
     } from 'quasar-framework'
-    import { mapGetters } from 'vuex'
-
     export default {
         name: 'csc-call-dialpad',
         data () {
             return {}
         },
+        props: [
+            'showBackspaceButton',
+            'showClearButton'
+        ],
         components: {
             QBtn,
             QIcon
@@ -78,22 +79,6 @@
             platformMixin
         ],
         computed: {
-            ...mapGetters('layout', [
-                'isFullscreenEnabled'
-            ]),
-            ...mapGetters('call', [
-                'isEstablished'
-            ]),
-            isDialpadSmall() {
-                let classes = ['row', 'justify-center'];
-                if(!this.isFullscreenEnabled) {
-                    classes.push('small-dialpad');
-                }
-                else {
-                    classes.push('csc-dialpad');
-                }
-                return classes;
-            },
             keys() {
                 return [
                     ['1','2','3'],
@@ -104,11 +89,8 @@
             }
         },
         methods: {
-            insert(value) {
-                this.$emit('inserted', value);
-                if(this.isEstablished) {
-                    this.$store.dispatch('call/sendDTMF', value);
-                }
+            click(value) {
+                this.$emit('click', value);
             },
             remove() {
                 this.$emit('remove');
