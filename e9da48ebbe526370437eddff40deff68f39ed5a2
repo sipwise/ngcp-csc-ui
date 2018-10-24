@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ad58531_5958d656",
+        "filename": "src/components/pages/CallForward/CscCallForwardTime.vue",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2018-10-24T09:38:36Z",
+      "side": 1,
+      "message": "Note: I tried to add icons to dialog buttons, but after looking at Quasar documentation (as well as testing with \"icon: clear\u0027\" and \"name: \u0027clear\u0027\") I discovered that there is no option for that. Leaving as is.",
+      "range": {
+        "startLine": 111,
+        "startChar": 28,
+        "endLine": 113,
+        "endChar": 30
+      },
+      "revId": "e9da48ebbe526370437eddff40deff68f39ed5a2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
