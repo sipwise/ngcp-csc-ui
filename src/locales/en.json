@@ -43,8 +43,8 @@
     },
     "navigation": {
         "home": {
-            "title": "Home",
-            "subTitle": "Access to main features"
+            "title": "Call",
+            "subTitle": ""
         },
         "conversations": {
             "title": "Conversations",
@@ -277,7 +277,7 @@
     },
     "call": {
         "startNew": "Start new call",
-        "initiating": "Initiating ...",
+        "initiating": "Calling {number}...",
         "ringing": "Ringing ...",
         "incoming": "Incoming ...",
         "ended": "Ended",
