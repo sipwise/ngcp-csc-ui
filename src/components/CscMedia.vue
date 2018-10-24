@@ -1,14 +1,15 @@
 <template>
     <div
         class="csc-media"
+        :style="componentStyles"
     >
         <div
             v-show="loading"
-            class="csc-spinner"
+            class="csc-media-spinner"
         >
-            <q-spinner-mat
+            <q-spinner-dots
                 color="primary"
-                :size="60"
+                :size="24"
             />
         </div>
         <video
@@ -22,22 +23,25 @@
 </template>
 
 <script>
-
     import _ from 'lodash';
-    import { QSpinnerMat, QIcon } from 'quasar-framework'
-
+    import {
+        QSpinnerDots,
+        QIcon
+    } from 'quasar-framework'
     export default {
         name: 'csc-media',
-        props: ['stream', 'muted'],
+        props: [
+            'stream',
+            'muted'
+        ],
         data () {
             return {
                 currentStream: this.stream,
                 loading: true,
             }
         },
-        mounted() {},
         components: {
-            QSpinnerMat,
+            QSpinnerDots,
             QIcon
         },
         methods: {
@@ -78,26 +82,30 @@
             hasVideo() {
                 return this.currentStream !== null && _.isArray(this.currentStream.getVideoTracks()) &&
                     this.currentStream.getVideoTracks().length > 0;
+            },
+            componentStyles() {
+                let styles = {};
+                return styles;
             }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-
+    @import '../themes/quasar.variables'
     .csc-media
-        position: relative;
+        position relative
         font-size 0
-
+        width 100%
+        height 100%
+        .csc-media-spinner
+            position absolute
+            top 50%
+            left 50%
+            margin-top -12px
+            margin-left -12px
         video
-            position: relative;
-            width: 100%;
-
-        .csc-spinner
-            display flex
-            flex-direction row
-            justify-content center
-            .q-spinner-mat
-                display flex
-                flex-direction column
+            position relative
+            width 100%
+            height 100%
 </style>
