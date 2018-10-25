@@ -294,6 +294,7 @@
     import { getChromeExtensionUrl } from '../helpers/cdk-lib'
     import CscCallDialpad from './CscCallDialpad'
     import CscPhoneNumberInput from './call/CscPhoneNumberInput'
+    import { showGlobalError } from '../helpers/ui'
     import {
         QLayout,
         QCard,
@@ -384,9 +385,12 @@
             call(localMedia) {
                 if(this.$refs.phoneNumberInput.hasPhoneNumber()) {
                     this.$store.dispatch('call/start', {
-                        number: this.$refs.phoneNumberInput.getRawPhoneNumber(),
+                        number: this.$refs.phoneNumberInput.getPhoneNumber(),
                         localMedia: localMedia
                     });
+                }
+                else {
+                    showGlobalError(this.$t('validationErrors.inputValidNumber'));
                 }
             },
             accept(localMedia) {

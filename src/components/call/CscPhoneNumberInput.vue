@@ -4,7 +4,6 @@
         dark
         :count="maxLength"
         :helper="helperMessage"
-        :error="$v.phoneNumber.$error"
         :error-label="errorMessage"
     >
         <q-input
@@ -13,22 +12,21 @@
             clearable
             type="text"
             :float-label="$t('call.number')"
-            :value="phoneNumber"
-            :error="$v.phoneNumber.$error"
-            :max-length="maxLength"
             :readonly="!enabled"
-            @input="inputPhoneNumber"
+            v-model="phoneNumber"
             @keypress.space.prevent
             @keydown.space.prevent
             @keyup.space.prevent
             :after="inputButtons"
             @keyup.enter="keyReturn()"
+            @input="$v.phoneNumber.$touch"
+            @blur="$v.phoneNumber.$touch"
+            :error="$v.phoneNumber.$error"
         />
     </q-field>
     <q-field
         v-else
         dark
-        :error="$v.phoneNumber.$error"
         :error-label="errorMessage"
     >
         <q-input
@@ -37,30 +35,27 @@
             clearable
             type="text"
             :placeholder="$t('call.number')"
-            :value="phoneNumber"
-            :error="$v.phoneNumber.$error"
-            :max-length="maxLength"
             :readonly="!enabled"
-            @input="inputPhoneNumber"
+            v-model="phoneNumber"
             @keypress.space.prevent
             @keydown.space.prevent
             @keyup.space.prevent
             :after="inputButtons"
+            @input="$v.phoneNumber.$touch"
+            @blur="$v.phoneNumber.$touch"
+            :error="$v.phoneNumber.$error"
         />
     </q-field>
 </template>
 
 <script>
-
     import Vue from 'vue'
     import _ from 'lodash'
+    import { userInfo } from '../../helpers/validation'
     import {
-        maxLength
+        maxLength,
+        required
     } from 'vuelidate/lib/validators'
-    import {
-        normalizeNumber,
-        rawNumber
-    } from '../../filters/number-format'
     import {
         QField,
         QInput
@@ -80,7 +75,9 @@
         },
         validations: {
             phoneNumber: {
-                maxLength: maxLength(64)
+                userInfo,
+                maxLength: maxLength(64),
+                required
             }
         },
         props: {
@@ -102,7 +99,20 @@
         ],
         computed: {
             errorMessage() {
-                return this.$t('validationErrors.inputValidNumber');
+                if (!this.$v.phoneNumber.required) {
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('call.number')
+                    });
+                }
+                else if (!this.$v.phoneNumber.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('call.number'),
+                        maxLength: this.$v.phoneNumber.$params.maxLength.max
+                    });
+                }
+                else if (!this.$v.phoneNumber.userInfo) {
+                    return this.$t('validationErrors.inputValidNumber');
+                }
             },
             helperMessage() {
                 return this.$t('validationErrors.inputNumber');
@@ -130,21 +140,14 @@
             keyReturn() {
                 this.$emit('key-return');
             },
-            inputPhoneNumber(value) {
-                this.phoneNumber = normalizeNumber(value, this.isMobile);
-                this.$v.phoneNumber.$touch();
-            },
             getPhoneNumber() {
                 return this.phoneNumber;
             },
-            getRawPhoneNumber() {
-                return rawNumber(this.getPhoneNumber());
-            },
             hasPhoneNumber() {
-                return !_.isEmpty(this.phoneNumber);
+                return !this.$v.phoneNumber.$error && !_.isEmpty(this.phoneNumber);
             },
             concat(str) {
-                this.inputPhoneNumber(this.phoneNumber + "" + str);
+                this.phoneNumber = this.phoneNumber + "" + str;
             },
             focusInput() {
                 Vue.nextTick(() => {
