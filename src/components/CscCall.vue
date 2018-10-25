@@ -384,7 +384,7 @@
             call(localMedia) {
                 if(this.$refs.phoneNumberInput.hasPhoneNumber()) {
                     this.$store.dispatch('call/start', {
-                        number: this.$refs.phoneNumberInput.getRawPhoneNumber(),
+                        number: this.$refs.phoneNumberInput.getPhoneNumber(),
                         localMedia: localMedia
                     });
                 }

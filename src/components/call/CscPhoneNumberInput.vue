@@ -4,7 +4,6 @@
         dark
         :count="maxLength"
         :helper="helperMessage"
-        :error="$v.phoneNumber.$error"
         :error-label="errorMessage"
     >
         <q-input
@@ -13,16 +12,16 @@
             clearable
             type="text"
             :float-label="$t('call.number')"
-            :value="phoneNumber"
-            :error="$v.phoneNumber.$error"
-            :max-length="maxLength"
             :readonly="!enabled"
-            @input="inputPhoneNumber"
+            v-model="phoneNumber"
             @keypress.space.prevent
             @keydown.space.prevent
             @keyup.space.prevent
             :after="inputButtons"
             @keyup.enter="keyReturn()"
+            @input="$v.phoneNumber.$touch"
+            @blur="$v.phoneNumber.$touch"
+            :error="$v.phoneNumber.$error"
         />
     </q-field>
     <q-field
@@ -51,16 +50,9 @@
 </template>
 
 <script>
-
     import Vue from 'vue'
     import _ from 'lodash'
-    import {
-        maxLength
-    } from 'vuelidate/lib/validators'
-    import {
-        normalizeNumber,
-        rawNumber
-    } from '../../filters/number-format'
+    import { anyAsciiNotExtended } from '../../helpers/validation'
     import {
         QField,
         QInput
@@ -80,7 +72,7 @@
         },
         validations: {
             phoneNumber: {
-                maxLength: maxLength(64)
+                anyAsciiNotExtended
             }
         },
         props: {
@@ -130,18 +122,11 @@
             keyReturn() {
                 this.$emit('key-return');
             },
-            inputPhoneNumber(value) {
-                this.phoneNumber = normalizeNumber(value, this.isMobile);
-                this.$v.phoneNumber.$touch();
-            },
             getPhoneNumber() {
                 return this.phoneNumber;
             },
-            getRawPhoneNumber() {
-                return rawNumber(this.getPhoneNumber());
-            },
             hasPhoneNumber() {
-                return !_.isEmpty(this.phoneNumber);
+                return !this.$v.phoneNumber.$error && !_.isEmpty(this.phoneNumber);
             },
             concat(str) {
                 this.inputPhoneNumber(this.phoneNumber + "" + str);
