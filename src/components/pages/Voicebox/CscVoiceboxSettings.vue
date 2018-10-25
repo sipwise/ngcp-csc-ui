@@ -85,6 +85,7 @@
 <script>
     import {
         maxLength,
+        numeric,
         email
     } from 'vuelidate/lib/validators'
     import {
@@ -123,7 +124,8 @@
         validations: {
             changes: {
                 pin: {
-                    maxLength: maxLength(64)
+                    maxLength: maxLength(64),
+                    numeric
                 },
                 email: {
                     email
@@ -132,10 +134,17 @@
         },
         computed: {
             pinErrorMessage() {
-                return this.$t('validationErrors.maxLength', {
-                    field: this.$t('voicebox.pin'),
-                    maxLength: this.$v.changes.pin.$params.maxLength.max
-                });
+                if (!this.$v.changes.pin.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('voicebox.pin'),
+                        maxLength: this.$v.changes.pin.$params.maxLength.max
+                    });
+                }
+                else if (!this.$v.changes.pin.numeric) {
+                    return this.$t('validationErrors.numeric', {
+                        field: this.$t('voicebox.pin')
+                    });
+                }
             },
             emailErrorMessage() {
                 return this.$t('validationErrors.email');
