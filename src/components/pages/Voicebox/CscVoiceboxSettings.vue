@@ -83,8 +83,10 @@
 </template>
 
 <script>
+    import { showGlobalError } from '../../../helpers/ui'
     import {
         maxLength,
+        numeric,
         email
     } from 'vuelidate/lib/validators'
     import {
@@ -123,7 +125,8 @@
         validations: {
             changes: {
                 pin: {
-                    maxLength: maxLength(64)
+                    maxLength: maxLength(64),
+                    numeric
                 },
                 email: {
                     email
@@ -132,10 +135,17 @@
         },
         computed: {
             pinErrorMessage() {
-                return this.$t('validationErrors.maxLength', {
-                    field: this.$t('voicebox.pin'),
-                    maxLength: this.$v.changes.pin.$params.maxLength.max
-                });
+                if (!this.$v.changes.pin.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('voicebox.pin'),
+                        maxLength: this.$v.changes.pin.$params.maxLength.max
+                    });
+                }
+                else if (!this.$v.changes.pin.numeric) {
+                    return this.$t('validationErrors.numeric', {
+                        field: this.$t('voicebox.pin')
+                    });
+                }
             },
             emailErrorMessage() {
                 return this.$t('validationErrors.email');
@@ -152,7 +162,18 @@
             pinButtons() {
                 let buttons = [];
                 let self = this;
-                if (this.pinHasChanged) {
+                if (this.pinHasChanged && this.$v.changes.pin.$error) {
+                    buttons.push({
+                            icon: 'clear',
+                            error: true,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetFields();
+                            }
+                        }
+                    );
+                }
+                else if (this.pinHasChanged) {
                     buttons.push({
                             icon: 'check',
                             error: false,
@@ -175,7 +196,18 @@
             emailButtons() {
                 let buttons = [];
                 let self = this;
-                if (this.emailHasChanged) {
+                if (this.emailHasChanged && this.$v.changes.email.$error) {
+                    buttons.push({
+                            icon: 'clear',
+                            error: true,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetFields();
+                            }
+                        }
+                    );
+                }
+                else if (this.emailHasChanged) {
                     buttons.push({
                             icon: 'check',
                             error: false,
@@ -235,13 +267,19 @@
                 this.$store.dispatch('voicebox/toggleAttach');
             },
             updatePin() {
-                if(this.pinHasChanged) {
+                if (this.pinHasChanged && !this.$v.changes.pin.$error) {
                     this.$store.dispatch('voicebox/updatePin', this.changes.pin);
+                }
+                else {
+                    showGlobalError(this.$t('validationErrors.pin'));
                 }
             },
             updateEmail() {
-                if(this.emailHasChanged) {
+                if (this.emailHasChanged && !this.$v.changes.email.$error) {
                     this.$store.dispatch('voicebox/updateEmail', this.changes.email);
+                }
+                else {
+                    showGlobalError(this.$t('validationErrors.email'));
                 }
             }
         },

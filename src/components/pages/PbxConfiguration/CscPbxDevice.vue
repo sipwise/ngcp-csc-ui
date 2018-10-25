@@ -47,12 +47,12 @@
                     :error-label="identifierErrorMessage"
                 >
                     <q-input
-                        v-model="device.identifier"
+                        v-model="changes.identifier"
                         :after="identifierButtons"
                         @keyup.enter="saveIdentifier"
-                        @input="$v.device.identifier.$touch"
-                        @blur="$v.device.identifier.$touch"
-                        :error="$v.device.identifier.$error"
+                        @input="$v.changes.identifier.$touch"
+                        @blur="$v.changes.identifier.$touch"
+                        :error="$v.changes.identifier.$error"
                     />
                 </q-field>
                 <q-field
@@ -186,7 +186,7 @@
             }
         },
         validations: {
-            device: {
+            changes: {
                 identifier: {
                     required,
                     customMacAddress
@@ -247,6 +247,9 @@
             stationName() {
                 return this.device.station_name;
             },
+            identifier() {
+                return this.device.station_name;
+            },
             deviceModel() {
                 return {
                     id: this.changes.id,
@@ -263,7 +266,18 @@
             identifierButtons() {
                 let buttons = [];
                 let self = this;
-                if(this.identifierHasChanges) {
+                if (this.identifierHasChanges && this.$v.changes.identifier.$error) {
+                    buttons.push({
+                            icon: 'clear',
+                            error: true,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetIdentifier();
+                            }
+                        }
+                    );
+                }
+                else if (this.identifierHasChanges) {
                     buttons.push({
                             icon: 'check',
                             error: false,
@@ -287,12 +301,12 @@
                 return _.get(this.device, 'profile.id', null);
             },
             identifierErrorMessage() {
-                if (!this.$v.device.identifier.required) {
+                if (!this.$v.changes.identifier.required) {
                     return this.$t('validationErrors.fieldRequired', {
                         field: this.$t('pbxConfig.deviceIdentifier')
                     });
                 }
-                else if (!this.$v.device.identifier.customMacAddress) {
+                else if (!this.$v.changes.identifier.customMacAddress) {
                     return this.$t('validationErrors.macAddress');
                 }
             }
@@ -333,7 +347,7 @@
                 this.changes.identifier = this.device.identifier;
             },
             saveIdentifier() {
-                if (!this.$v.device.identifier.$error) {
+                if (!this.$v.changes.identifier.$error) {
                     this.$emit('save-identifier', this.deviceModel);
                 }
                 else {
