@@ -18,17 +18,20 @@
                     no-border
                     class="csc-pbx-model-list"
                     highlight
-                    inset-separator
                 >
                     <q-item
-                        v-for="(profile, index) in profiles"
+                        v-for="profile in profiles"
                         :key="profile.id"
                         @click="selectProfile(profile)"
                         class="cursor-pointer"
                     >
                         <q-item-side>
-                            <q-item-tile avatar>
-                                <img :src="frontImageUrl(profile.device_id)" />
+                            <q-item-tile
+                                avatar
+                            >
+                                <img
+                                    :src="frontImageUrl(profile.device_id)"
+                                />
                             </q-item-tile>
                         </q-item-side>
                         <q-item-main>

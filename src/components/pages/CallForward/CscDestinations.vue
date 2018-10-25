@@ -168,7 +168,6 @@
                     dark
                     v-if="ownPhone"
                     v-model="editTimeout"
-                    type="number"
                     suffix="seconds"
                     :before="[{ icon: 'schedule' }]"
                     :float-label="$t('pages.callForward.timeout')"
@@ -216,7 +215,8 @@
     import CscAddDestinationForm from './CscAddDestinationForm'
     import {
         required,
-        minValue
+        minValue,
+        numeric
     } from 'vuelidate/lib/validators'
     import {
         QList,
@@ -273,7 +273,8 @@
         validations: {
             editTimeout: {
                 required,
-                minValue: minValue(1)
+                minValue: minValue(1),
+                numeric
             }
         },
         computed: {
@@ -281,15 +282,20 @@
                 return this.ownPhone ? 'fa-toggle-off' : 'fa-toggle-on';
             },
             errorMessage() {
-                if (!this.$v.editTimeout.minValue) {
-                    return this.$t('validationErrors.minValueSecond', {
-						field: this.$t('pages.callForward.timeout'),
-                        minValue: this.$v.editTimeout.$params.minValue.min
-                    });
-                }
-                else if (!this.$v.editTimeout.required) {
+                if (!this.$v.editTimeout.required) {
                     return this.$t('validationErrors.fieldRequired', {
                         field: this.$t('pages.callForward.timeout')
+                    });
+                }
+                else if (!this.$v.editTimeout.numeric) {
+                    return this.$t('validationErrors.numeric', {
+                        field: this.$t('pages.callForward.timeout'),
+                    });
+                }
+                else if (!this.$v.editTimeout.minValue) {
+                    return this.$t('validationErrors.minValueSecond', {
+                        field: this.$t('pages.callForward.timeout'),
+                        minValue: this.$v.editTimeout.$params.minValue.min
                     });
                 }
             },

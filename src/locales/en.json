@@ -35,12 +35,13 @@
         "fieldRequired": "{field} is required",
         "minValueSecond": "{field} must be at least {minValue} second",
         "maxValueSecond": "{field} must be maximum of {maxValue} seconds",
-        "alphaNum": "{field} must consist of numeric characters only",
+        "numeric": "{field} must consist of numeric characters only",
         "inputNumber": "Input a phone number",
         "inputValidNumber": "Input a valid phone number",
         "fieldRequiredXor": "{fieldOne} or {fieldTwo} is required",
         "email": "Input a valid email address",
         "macAddress": "Input a valid mac address",
+        "pin": "Input a valid PIN",
         "userInfoAndEmpty": "Input contains invalid characters"
     },
     "navigation": {
@@ -325,7 +326,6 @@
         "removeGroup": "Remove group",
         "removeGroupTitle": "Remove group",
         "removeGroupText": "You are about to remove group {group}",
-        "groupName": "Group name",
         "name": "Name",
         "seatName": "Seat name",
         "addSeat": "Add Seat",

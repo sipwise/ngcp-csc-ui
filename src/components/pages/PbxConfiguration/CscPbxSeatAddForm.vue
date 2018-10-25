@@ -167,7 +167,7 @@
                     });
                 }
                 else if (!this.$v.data.extension.numeric) {
-                    return this.$t('validationErrors.alphaNum', {
+                    return this.$t('validationErrors.numeric', {
                         field: this.$t('pbxConfig.extension'),
                     });
                 }
