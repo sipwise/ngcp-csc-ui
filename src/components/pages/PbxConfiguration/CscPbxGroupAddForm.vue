@@ -41,7 +41,6 @@
                 :error="$v.data.huntTimeout.$error"
                 :disabled="loading"
                 :readonly="loading"
-                type="number"
                 v-model="data.huntTimeout"
                 clearable
                 :float-label="$t('pbxConfig.huntTimeout')"
@@ -159,6 +158,7 @@
                 },
                 huntTimeout: {
                     required,
+                    numeric,
                     minValue: minValue(1),
                     maxValue: maxValue(3600)
                 }
@@ -196,7 +196,7 @@
                     });
                 }
                 else if (!this.$v.data.extension.numeric) {
-                    return this.$t('validationErrors.alphaNum', {
+                    return this.$t('validationErrors.numeric', {
                         field: this.$t('pbxConfig.extension'),
                     });
                 }
@@ -205,6 +205,11 @@
                 if (!this.$v.data.huntTimeout.required) {
                     return this.$t('validationErrors.fieldRequired', {
                         field: this.$t('pbxConfig.huntTimeoutSentence')
+                    });
+                }
+                else if (!this.$v.data.huntTimeout.numeric) {
+                    return this.$t('validationErrors.numeric', {
+                        field: this.$t('pbxConfig.huntTimeoutSentence'),
                     });
                 }
                 else if (!this.$v.data.huntTimeout.minValue) {

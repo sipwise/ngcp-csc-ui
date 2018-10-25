@@ -51,7 +51,6 @@
                 <q-input
                     :before="beforeIconTimeout"
                     :float-label="$t('pages.callForward.timeout')"
-                    type="number"
                     v-model="destinationForm.timeout"
                     suffix="seconds"
                     clearable
@@ -93,7 +92,8 @@
     import {
         required,
         maxLength,
-        minValue
+        minValue,
+        numeric
     } from 'vuelidate/lib/validators'
     import {
         QItem,
@@ -145,7 +145,8 @@
                 },
                 timeout: {
                     required,
-                    minValue: minValue(1)
+                    minValue: minValue(1),
+                    numeric
                 }
             }
         },
@@ -173,15 +174,20 @@
                 }
             },
             timeoutInputError() {
-                if (!this.$v.destinationForm.timeout.minValue) {
+                if (!this.$v.destinationForm.timeout.required) {
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pages.callForward.timeout')
+                    });
+                }
+                else if (!this.$v.destinationForm.timeout.numeric) {
+                    return this.$t('validationErrors.numeric', {
+                        field: this.$t('pages.callForward.timeout'),
+                    });
+                }
+                else if (!this.$v.destinationForm.timeout.minValue) {
                     return this.$t('validationErrors.minValueSecond', {
                         field: this.$t('pages.callForward.timeout'),
                         minValue: this.$v.destinationForm.timeout.$params.minValue.min
-                    });
-                }
-                else if (!this.$v.destinationForm.timeout.required) {
-                    return this.$t('validationErrors.fieldRequired', {
-                        field: this.$t('pages.callForward.timeout')
                     });
                 }
             },
