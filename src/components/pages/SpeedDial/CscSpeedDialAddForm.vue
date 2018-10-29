@@ -11,14 +11,13 @@
                     radio
                 />
             </q-field>
-            <q-field>
-                <csc-destination-input
-                    :loading="loading"
-                    :label="$t('speedDial.destination')"
-                    v-model="destination"
-                    @submit="save()"
-                />
-            </q-field>
+            <csc-call-input
+                ref="callInput"
+                :label="$t('speedDial.destination')"
+                v-model="destination"
+                @submit="save"
+                @error="error"
+            />
             <div
                 class="row justify-center form-actions"
             >
@@ -37,6 +36,7 @@
                     color="primary"
                     icon="done"
                     @click="save()"
+                    :disable="destinationError"
                 >
                     {{ $t('buttons.save') }}
                 </q-btn>
@@ -70,7 +70,7 @@
 <script>
     import 'quasar-extras/animate/bounceInRight.css'
     import 'quasar-extras/animate/bounceOutRight.css'
-    import CscDestinationInput from '../../form/CscDestinationInput'
+    import CscCallInput from '../../form/CscCallInput'
     import {
         QCard,
         QCardTitle,
@@ -97,11 +97,12 @@
             return {
                 formEnabled: false,
                 destination: '',
-                slot: ''
+                slot: '',
+                destinationError: false
             }
         },
         components: {
-            CscDestinationInput,
+            CscCallInput,
             QCard,
             QCardTitle,
             QCardMain,
@@ -116,7 +117,7 @@
             QIcon
         },
         methods: {
-            destinationInput(input) {
+            callInput(input) {
                 this.destination = input;
             },
             enableForm(){
@@ -147,6 +148,9 @@
             reset() {
                 this.destination = '';
                 this.slot = this.slotOptions[0].value ? this.slotOptions[0].value : '';
+            },
+            error(state) {
+                this.destinationError = state;
             }
         }
     }
