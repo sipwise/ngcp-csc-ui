@@ -19,6 +19,9 @@
         "dismiss": "Dismiss",
         "reset": "Reset"
     },
+    "form": {
+        "destinationLabel": "Destination"
+    },
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",
         "callNotAvailable": "Could not initialize call functionality properly"
