@@ -11,14 +11,13 @@
                     radio
                 />
             </q-field>
-            <q-field>
-                <csc-destination-input
-                    :loading="loading"
-                    :label="$t('speedDial.destination')"
-                    v-model="destination"
-                    @submit="save()"
-                />
-            </q-field>
+            <csc-destination-input
+                ref="destinationInput"
+                :loading="loading"
+                :label="$t('speedDial.destination')"
+                v-model="destination"
+                @submit="save()"
+            />
             <div
                 class="row justify-center form-actions"
             >
@@ -71,6 +70,7 @@
     import 'quasar-extras/animate/bounceInRight.css'
     import 'quasar-extras/animate/bounceOutRight.css'
     import CscDestinationInput from '../../form/CscDestinationInput'
+    import { showGlobalError } from '../../../helpers/ui'
     import {
         QCard,
         QCardTitle,
@@ -139,10 +139,15 @@
                 this.formEnabled = false;
             },
             save() {
-                this.$emit('save', {
-                    destination: this.destination,
-                    slot: this.slot
-                });
+                if (this.$refs.destinationInput.hasDestination()) {
+                    this.$emit('save', {
+                        destination: this.$refs.destinationInput.getDestination(),
+                        slot: this.slot
+                    });
+                }
+                else {
+                    showGlobalError(this.$t('validationErrors.inputValidNumber'));
+                }
             },
             reset() {
                 this.destination = '';
