@@ -28,23 +28,13 @@
             </q-popover>
         </q-btn>
         <div v-if="isFormEnabled">
-            <q-field
-                :error-label="destinationInputError"
-            >
-                <q-input
-                    :before="beforeIconDestination"
-                    :float-label="$t('pages.callForward.destination')"
-                    type="text"
-                    v-model="destinationForm.destination"
-                    @keyup.enter="addDestination()"
-                    :clearable="isFormTypeNumber"
-                    :autofocus="isFormTypeNumber"
-                    :disable="!isFormTypeNumber || addDestinationIsRequesting"
-                    @input="$v.destinationForm.destination.$touch"
-                    @blur="$v.destinationForm.destination.$touch"
-                    :error="$v.destinationForm.destination.$error"
-                />
-            </q-field>
+            <csc-call-input
+                :label="$t('pages.callForward.destination')"
+                v-model="destinationForm.destination"
+                @submit="addDestination"
+                @error="error"
+                :before="beforeIconDestination"
+            />
             <q-field
                 :error-label="timeoutInputError"
             >
@@ -72,7 +62,7 @@
                 icon="check"
                 color="primary"
                 @click="addDestination()"
-                :disable="$v.destinationForm.destination.$error || $v.destinationForm.timeout.$error"
+                :disable="$v.destinationForm.timeout.$error || destinationError"
             >
                 {{ $t('buttons.save') }}
             </q-btn>
@@ -82,6 +72,7 @@
 
 <script>
     import _ from 'lodash'
+    import CscCallInput from '../../form/CscCallInput'
     import {
         startLoading,
         showGlobalError
@@ -92,7 +83,6 @@
     } from 'vuex'
     import {
         required,
-        maxLength,
         minValue
     } from 'vuelidate/lib/validators'
     import {
@@ -123,10 +113,12 @@
                 destinationForm: {
                     destination: '',
                     timeout: 300
-                }
+                },
+                destinationError: false
             }
         },
         components: {
+            CscCallInput,
             QSelect,
             QPopover,
             QField,
@@ -139,10 +131,6 @@
         },
         validations: {
             destinationForm: {
-                destination: {
-                    required,
-                    maxLength: maxLength(64)
-                },
                 timeout: {
                     required,
                     minValue: minValue(1)
@@ -159,19 +147,6 @@
                 'hasSendFaxFeature',
                 'hasFaxCapability'
             ]),
-            destinationInputError() {
-                if (!this.$v.destinationForm.destination.maxLength) {
-                    return this.$t('validationErrors.maxLength', {
-                        field: this.$t('pages.callForward.destination'),
-                        maxLength: this.$v.destinationForm.destination.$params.maxLength.max
-                    });
-                }
-                else if (!this.$v.destinationForm.destination.required) {
-                    return this.$t('validationErrors.fieldRequired', {
-                        field: this.$t('pages.callForward.destination')
-                    });
-                }
-            },
             timeoutInputError() {
                 if (!this.$v.destinationForm.timeout.minValue) {
                     return this.$t('validationErrors.minValueSecond', {
@@ -184,9 +159,6 @@
                         field: this.$t('pages.callForward.timeout')
                     });
                 }
-            },
-            isFormTypeNumber() {
-                return this.formType === 'number';
             },
             isFormEnabled() {
                 return this.activeForm === this.groupName && this.formEnabled;
@@ -243,8 +215,8 @@
                 this.$store.commit('callForward/resetDestinationState');
             },
             addDestination() {
-                if (this.$v.destinationForm.destination.$error ||
-                    this.$v.destinationForm.timeout.$error) {
+                if (this.$v.destinationForm.timeout.$error ||
+                    this.destinationError) {
                         showGlobalError(this.$t('validationErrors.generic'));
                 }
                 else {
@@ -257,6 +229,9 @@
                         sourcesetId: this.sourcesetId
                     });
                 }
+            },
+            error(state) {
+                this.destinationError = state;
             }
         }
     }
