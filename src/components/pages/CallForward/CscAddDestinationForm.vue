@@ -43,6 +43,9 @@
                     @input="$v.destinationForm.destination.$touch"
                     @blur="$v.destinationForm.destination.$touch"
                     :error="$v.destinationForm.destination.$error"
+                    @keypress.space.prevent
+                    @keydown.space.prevent
+                    @keyup.space.prevent
                 />
             </q-field>
             <q-field
@@ -82,6 +85,7 @@
 
 <script>
     import _ from 'lodash'
+    import { userInfo } from '../../../helpers/validation'
     import {
         startLoading,
         showGlobalError
@@ -141,7 +145,8 @@
             destinationForm: {
                 destination: {
                     required,
-                    maxLength: maxLength(64)
+                    maxLength: maxLength(64),
+                    userInfo
                 },
                 timeout: {
                     required,
@@ -170,6 +175,9 @@
                     return this.$t('validationErrors.fieldRequired', {
                         field: this.$t('pages.callForward.destination')
                     });
+                }
+                else if (!this.$v.destinationForm.destination.userInfo) {
+                    return this.$t('validationErrors.inputValidNumber');
                 }
             },
             timeoutInputError() {
