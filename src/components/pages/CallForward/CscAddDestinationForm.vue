@@ -28,24 +28,13 @@
             </q-popover>
         </q-btn>
         <div v-if="isFormEnabled">
-            <q-field
-                :error-label="destinationInputError"
-            >
-                <q-input
-                    dark
-                    :before="beforeIconDestination"
-                    :float-label="$t('pages.callForward.destination')"
-                    type="text"
-                    v-model="destinationForm.destination"
-                    @keyup.enter="addDestination()"
-                    :clearable="isFormTypeNumber"
-                    :autofocus="isFormTypeNumber"
-                    :disable="!isFormTypeNumber || addDestinationIsRequesting"
-                    @input="$v.destinationForm.destination.$touch"
-                    @blur="$v.destinationForm.destination.$touch"
-                    :error="$v.destinationForm.destination.$error"
-                />
-            </q-field>
+            <csc-call-input
+                :label="$t('pages.callForward.destination')"
+                v-model="destinationForm.destination"
+                @submit="addDestination"
+                @error="error"
+                :before="beforeIconDestination"
+            />
             <q-field
                 :error-label="timeoutInputError"
             >
@@ -74,7 +63,7 @@
                 icon="check"
                 color="primary"
                 @click="addDestination()"
-                :disable="$v.destinationForm.destination.$error || $v.destinationForm.timeout.$error"
+                :disable="$v.destinationForm.destination.$error || $v.destinationForm.timeout.$error || destinationError"
             >
                 {{ $t('buttons.save') }}
             </q-btn>
@@ -84,6 +73,8 @@
 
 <script>
     import _ from 'lodash'
+    import CscCallInput from '../../form/CscCallInput'
+    import { userInfo } from '../../../helpers/validation'
     import {
         startLoading,
         showGlobalError
@@ -126,10 +117,12 @@
                 destinationForm: {
                     destination: '',
                     timeout: 300
-                }
+                },
+                destinationError: false
             }
         },
         components: {
+            CscCallInput,
             QSelect,
             QPopover,
             QField,
@@ -144,7 +137,8 @@
             destinationForm: {
                 destination: {
                     required,
-                    maxLength: maxLength(64)
+                    maxLength: maxLength(64),
+                    userInfo
                 },
                 timeout: {
                     required,
@@ -174,6 +168,9 @@
                     return this.$t('validationErrors.fieldRequired', {
                         field: this.$t('pages.callForward.destination')
                     });
+                }
+                else if (!this.$v.destinationForm.destination.userInfo) {
+                    return this.$t('validationErrors.inputValidNumber');
                 }
             },
             timeoutInputError() {
@@ -253,7 +250,8 @@
             },
             addDestination() {
                 if (this.$v.destinationForm.destination.$error ||
-                    this.$v.destinationForm.timeout.$error) {
+                    this.$v.destinationForm.timeout.$error ||
+                    this.destinationError) {
                         showGlobalError(this.$t('validationErrors.generic'));
                 }
                 else {
@@ -266,6 +264,9 @@
                         sourcesetId: this.sourcesetId
                     });
                 }
+            },
+            error(state) {
+                this.destinationError = state;
             }
         }
     }

@@ -16,6 +16,7 @@
             @input="input"
             @blur="blur"
             :error="$v.inputValue.$error"
+            :before="beforeButtons"
         />
     </q-field>
 </template>
@@ -34,7 +35,8 @@
     export default {
         name: 'csc-call-input',
         props: {
-            label: String
+            label: String,
+            before: Array
         },
         data () {
             return {
@@ -69,6 +71,9 @@
                 else if (!this.$v.inputValue.userInfo) {
                     return this.$t('validationErrors.inputValidNumber');
                 }
+            },
+            beforeButtons() {
+                return this.before ? this.before : [];
             }
         },
         methods: {
