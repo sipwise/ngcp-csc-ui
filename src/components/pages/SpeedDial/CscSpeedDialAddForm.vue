@@ -71,6 +71,9 @@
     import 'quasar-extras/animate/bounceOutRight.css'
     import CscCallInput from '../../form/CscCallInput'
     import {
+        showGlobalError
+    } from '../../../helpers/ui'
+    import {
         QCard,
         QCardTitle,
         QCardMain,
@@ -136,10 +139,15 @@
                 this.formEnabled = false;
             },
             save() {
-                this.$emit('save', {
-                    destination: this.destination,
-                    slot: this.slot
-                });
+                if (this.destinationError) {
+                    showGlobalError(this.$t('validationErrors.generic'));
+                }
+                else {
+                    this.$emit('save', {
+                        destination: this.destination,
+                        slot: this.slot
+                    });
+                }
             },
             reset() {
                 this.destination = '';
