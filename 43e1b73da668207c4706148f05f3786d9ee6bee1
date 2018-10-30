@@ -1,0 +1,7 @@
+Code-Review+2: Hans-Peter Herzog <hherzog@sipwise.com>
+Verified+1: Jenkins Jenkins
+Submitted-by: Robert Axelsen <raxelsen@sipwise.com>
+Submitted-at: Tue, 30 Oct 2018 10:12:37 +0100
+Reviewed-on: http://gerrit.mgm.sipwise.com/24481
+Project: ngcp-csc-ui
+Branch: refs/heads/mr6.5
