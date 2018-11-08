@@ -2,6 +2,7 @@
     <div class="csc-form csc-pbx-seat-add-form">
         <q-field :error-label="seatNameErrorMessage">
             <q-input
+                dark
                 @input="$v.data.name.$touch"
                 @blur="$v.data.name.$touch"
                 :error="$v.data.name.$error"
@@ -15,6 +16,7 @@
         </q-field>
         <q-field :error-label="extensionErrorMessage">
             <q-input
+                dark
                 @input="$v.data.extension.$touch"
                 @blur="$v.data.extension.$touch"
                 :error="$v.data.extension.$error"
@@ -27,6 +29,7 @@
         </q-field>
         <q-field>
             <q-select
+                dark
                 :disabled="loading"
                 :readonly="loading"
                 v-model="data.aliasNumbers"
@@ -39,6 +42,7 @@
         </q-field>
         <q-field>
             <q-select
+                dark
                 :disabled="loading"
                 :readonly="loading"
                 v-model="data.groups"
@@ -53,7 +57,7 @@
             <q-btn
                 v-if="!loading"
                 flat
-                color="secondary"
+                color="default"
                 icon="clear"
                 @click="cancel()"
             >

@@ -30,9 +30,16 @@
             </q-field>
             <div v-if="addFormEnabled">
                 <q-field :error="addFormError" :error-label="$t('pages.callBlocking' + suffix + '.addInputError')">
-                    <q-input type="text" :float-label="$t('callBlocking.number')" v-model="newNumber" clearable @keyup.enter="addNumber()" />
+                    <q-input
+                        type="text"
+                        :float-label="$t('callBlocking.number')"
+                        v-model="newNumber"
+                        clearable
+                        @keyup.enter="addNumber()"
+                        dark
+                    />
                 </q-field>
-                <q-btn flat icon="clear" @click="disableAddForm()">{{ $t('buttons.cancel') }}</q-btn>
+                <q-btn flat icon="clear" color="default" @click="disableAddForm()">{{ $t('buttons.cancel') }}</q-btn>
                 <q-btn flat icon="check" color="primary" @click="addNumber()">{{ $t('buttons.save') }}</q-btn>
             </div>
         </div>
@@ -43,12 +50,19 @@
                     <q-icon v-if="!(editing && editingIndex == index) && enabled == 'whitelist'" name="check" color="primary" size="22px"/>
                     <span class="blocked-number-title" v-if="!(editing && editingIndex == index)"
                           @click="editNumber(index)">{{ number }}</span>
-                    <q-input autofocus v-if="editing && editingIndex == index" type="text" :float-label="$t('callBlocking.number')"
-                             v-model="editingNumber" @keyup.enter="saveNumber(index)" />
+                    <q-input
+                        dark
+                        autofocus
+                        v-if="editing && editingIndex == index"
+                        type="text"
+                        :float-label="$t('callBlocking.number')"
+                        v-model="editingNumber"
+                        @keyup.enter="saveNumber(index)"
+                    />
                     <q-btn color="primary" flat v-if="editing && editingIndex == index" slot="right"
                            icon="check" @click="saveNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.save') }}</span></q-btn>
                     <q-btn flat v-if="editing && editingIndex == index" slot="right"
-                           icon="clear" @click="cancelEdit()" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.cancel') }}</span></q-btn>
+                           icon="clear" color="white" @click="cancelEdit()" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.cancel') }}</span></q-btn>
                     <q-btn color="primary" flat v-if="!(editing && editingIndex == index)" slot="right"
                            icon="fa-edit" @click="editNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.edit') }}</span></q-btn>
                     <q-btn color="negative" flat v-if="!(editing && editingIndex == index)" slot="right"

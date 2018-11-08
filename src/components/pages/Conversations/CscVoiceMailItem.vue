@@ -16,7 +16,7 @@
                 <span class="gt-sm csc-entity-title">
                     {{ direction }}
                 </span>
-                <span class="csc-entity-title">
+                <span class="csc-entity-title csc-phone-number">
                     {{ voiceMail.caller | numberFormat }}
                 </span>
             </q-item-tile>
@@ -49,7 +49,7 @@
             <q-item-tile>
                 <q-btn
                     icon="more_vert"
-                    color="default"
+                    color="primary"
                     slot="right"
                     flat
                 >
@@ -61,7 +61,9 @@
                         <q-list
                             item-separator
                             link
-                            class="csc-toolbar-btn-popover">
+                            no-border
+                            class="csc-toolbar-btn-popover"
+                        >
                             <q-item
                                 @click="downloadVoiceMail"
                             >

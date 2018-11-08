@@ -13,6 +13,7 @@
                 />
             </q-inner-loading>
             <q-input
+                dark
                 :disable="pinRequesting"
                 :float-label="$t('voicebox.label.changePin')"
                 v-model="changes.pin"
@@ -35,6 +36,7 @@
                 />
             </q-inner-loading>
             <q-input
+                dark
                 :disable="emailRequesting"
                 :float-label="$t('voicebox.label.changeEmail')"
                 v-model="changes.email"
