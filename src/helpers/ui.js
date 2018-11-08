@@ -48,7 +48,7 @@ export function showToast(message) {
     Toast.create({
         html: message,
         color: 'white',
-        bgColor: '#68A44E'
+        bgColor: '#40cc3d'
     });
 }
 
