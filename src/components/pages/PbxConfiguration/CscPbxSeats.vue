@@ -1,6 +1,6 @@
 <template>
     <csc-page
-        class="csc-list-page"
+        :is-list="true"
     >
         <div
             v-show="!addFormEnabled"
@@ -16,11 +16,11 @@
             </q-btn>
         </div>
         <div
-            class="row justify-center margin-sm"
+            class="row justify-center"
             v-show="addFormEnabled"
         >
             <csc-pbx-seat-add-form
-                class="col-xs-12 col-md-6"
+                class="col-xs-12 col-md-6 csc-list-form"
                 ref="addForm"
                 :alias-number-options="aliasNumberOptions"
                 :group-options="groupOptions"
@@ -49,13 +49,10 @@
                 @change="changePage"
             />
         </div>
-        <div
-            class="">
+        <div>
             <q-list
-                class=""
+                striped-odd
                 no-border
-                separator
-                sparse
                 multiline
                 :highlight="!isMobile"
             >
@@ -282,8 +279,6 @@
     }
 </script>
 
-<style>
-    .pbx-seat .pbx-seat-title {
-        padding-left: 8px;
-    }
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/app.common.styl';
 </style>

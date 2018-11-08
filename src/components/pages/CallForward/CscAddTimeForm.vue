@@ -3,10 +3,12 @@
         <q-item-main>
             <q-item-tile class="row no-wrap">
                 <q-select
+                    dark
                     class="col"
                     v-model="selectedWeekday"
                     :options="selectOptions" />
                 <q-datetime
+                    dark
                     class="col"
                     color="primary"
                     v-model="timeFromConverted"
@@ -14,6 +16,7 @@
                     type="time"
                     format24h />
                 <q-datetime
+                    dark
                     class="col"
                     color="primary"
                     v-model="timeToConverted"
@@ -26,6 +29,7 @@
                     flat
                     icon="clear"
                     @click="disableForm()"
+                    color="default"
                 >
                     {{ $t('buttons.cancel') }}
                 </q-btn>
