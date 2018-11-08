@@ -42,7 +42,7 @@
                             <q-icon
                                 class="csc-media-icon"
                                 v-else
-                                name="mic"
+                                name="call"
                                 size="24px"
                             />
                             <span
@@ -80,7 +80,7 @@
                     <q-icon
                         class="csc-media-icon"
                         v-else
-                        name="mic"
+                        name="call"
                         size="24px"
                     />
                     <div
@@ -213,7 +213,7 @@
                     />
                     <q-fab-action
                         color="primary"
-                        icon="mic"
+                        icon="call"
                         @click="startCall('audioOnly')"
                     />
                 </q-fab>
@@ -245,7 +245,7 @@
                     <q-icon
                         class="csc-media-icon"
                         v-else-if="isActive"
-                        name="mic"
+                        name="call"
                         size="24px"
                         color="white"
                     />
