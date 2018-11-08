@@ -4,6 +4,7 @@
         :icon="icon"
     >
         <q-input
+            dark
             readonly
             :float-label="label"
             :value="inputValue"

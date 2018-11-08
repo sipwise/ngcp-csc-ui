@@ -1,6 +1,7 @@
 
 <template>
     <q-input
+        dark
         clearable
         type="text"
         :float-label="label"

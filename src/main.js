@@ -19,6 +19,11 @@ import VueScrollTo from 'vue-scrollto'
 import Vuelidate from 'vuelidate'
 
 import config from './config'
+import {
+    Platform
+} from 'quasar-framework'
+
+Platform.has.popstate = false;
 
 Vue.config.productionTip = false;
 Vue.use(Quasar);

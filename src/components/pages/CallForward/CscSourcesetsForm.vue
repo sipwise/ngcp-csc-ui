@@ -2,6 +2,7 @@
     <div class="add-source-form">
         <q-field>
             <q-input
+                dark
                 autofocus
                 v-model="source"
                 :float-label="$t('pages.callForward.sources.source')"
@@ -12,6 +13,7 @@
             flat
             icon="clear"
             @click="disableForm()"
+            color="default"
         >
             {{ $t('buttons.cancel') }}
         </q-btn>

@@ -154,11 +154,9 @@
                         type: 'busy'
                     }),
                     buttons: [
-                    // NOTE: Button object does not have an 'icon' option key,
-                    // so trying to add icon: 'clear' did not help
                         {
                             label: self.$t('buttons.cancel'),
-                            color: 'dark'
+                            color: 'white'
                         },
                         {
                             label: self.$t('buttons.reset'),

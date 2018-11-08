@@ -6,234 +6,91 @@
         v-model="sideStates"
         @left-breakpoint="leftBreakpoint"
     >
-        <q-toolbar slot="header">
-            <q-btn
-                flat
-                @click="$refs.layout.toggleLeft()"
+            <div
+                id="csc-header"
+                :class="headerClasses"
             >
-                <q-icon name="menu" />
-            </q-btn>
-            <q-toolbar-title>
-                {{ pageTitleExt }}
-                <span slot="subtitle">
-                    {{ pageSubtitleExt }}
-                </span>
-            </q-toolbar-title>
-            <q-btn
-                flat
-                class="csc-toolbar-btn"
-                v-if="hasCommunicationCapabilities"
-            >
-                <q-icon name="question answer" />
-                <q-popover ref="communicationPopover">
-                    <q-list
-                        item-separator
-                        link
-                        class="csc-toolbar-btn-popover"
-                    >
-                        <q-item
-                            @click="showSendFax();$refs.communicationPopover.close()"
-                            v-if="hasFaxCapability && hasSendFaxFeature"
-                        >
-                            <q-item-side
-                                icon="fa-fax"
-                                color="primary"
-                            />
-                            <q-item-main :label="$t('sendFax')" />
-                        </q-item>
-                        <q-item
-                            @click="$refs.communicationPopover.close()"
-                            v-if="hasSmsCapability && hasSendSmsFeature"
-                        >
-                            <q-item-side
-                                icon="fa-send"
-                                color="primary"
-                            />
-                            <q-item-main :label="$t('sendSms')" />
-                        </q-item>
-                    </q-list>
-                </q-popover>
-            </q-btn>
-            <q-btn
-                flat
-                class="csc-toolbar-btn csc-toolbar-btn-right"
-            >
-                <q-icon
-                    name="fa-user-circle"
-                    class="csc-toolbar-btn-icon"
+                <csc-logo
+                    id="csc-main-logo"
+                    color="light"
                 />
-                <span
-                    id="user-login-as"
-                    class="gt-sm"
+                <div
+                    class="csc-header-content"
                 >
-                    {{ $t('loggedInAs') }}
-                </span>
-                <span
-                    id="user-name"
-                    class="gt-xs"
-                >
-                    {{ getUsername }}
-                </span>
-                <q-popover ref="popover">
-                    <q-list
-                        item-separator
-                        link
-                        class="csc-toolbar-btn-popover"
+                    <q-btn
+                        v-if="isMobile"
+                        flat
+                        @click="$refs.layout.toggleLeft()"
                     >
-                        <q-item @click="logout()">
-                            <q-item-side
-                                icon="exit to app"
-                                color="primary"
-                            />
-                            <q-item-main label="Logout" />
-                        </q-item>
-                    </q-list>
-                </q-popover>
-            </q-btn>
-        </q-toolbar>
-        <q-list
-            id="main-menu"
-            slot="left"
-            no-border
-            link
-            inset-delimiter
+                        <q-icon name="menu" />
+                    </q-btn>
+                    <div
+                        id="csc-user-menu"
+                    >
+                        <q-btn
+                            icon="person"
+                            color="faded"
+                            round
+                            small
+                        />
+                        <span
+                            class="csc-username"
+                        >
+                            {{ getUsername }}
+                        </span>
+                        <q-popover ref="popover">
+                            <q-list
+                                no-border
+                                link
+                                class="csc-toolbar-btn-popover"
+                            >
+                                <q-item @click="logout()">
+                                    <q-item-side
+                                        icon="exit to app"
+                                        color="primary"
+                                    />
+                                    <q-item-main label="Logout" />
+                                </q-item>
+                            </q-list>
+                        </q-popover>
+                    </div>
+
+                </div>
+            </div>
+        <div
+            v-if="!isMobile"
+            slot=left
+            class="csc-toggle-menu"
         >
-            <q-side-link
-                item
-                to="/user/home"
-            >
-                <q-item-side icon="call" />
-                <q-item-main
-                    :label="callStateTitle"
-                    :sublabel="callStateSubtitle"
-                />
-            </q-side-link>
-            <q-side-link
-                item
-                to="/user/conversations"
-            >
-                <q-item-side icon="question answer" />
-                <q-item-main
-                    :label="$t('navigation.conversations.title')"
-                    :sublabel="$t('navigation.conversations.subTitle')"
-                />
-            </q-side-link>
-            <q-collapsible
-                :opened="isCallForward"
-                intend
-                icon="phone forwarded"
-                :label="$t('navigation.callForward.title')"
-                :sublabel="$t('navigation.callForward.subTitle')"
-            >
-                <q-side-link
-                    item
-                    to="/user/call-forward/always"
-                >
-                    <q-item-side icon="check circle" />
-                    <q-item-main :label="$t('navigation.callForward.always')" />
-                </q-side-link>
-                <q-side-link
-                    item
-                    to="/user/call-forward/company-hours"
-                >
-                    <q-item-side icon="schedule" />
-                    <q-item-main :label="$t('navigation.callForward.companyHours')" />
-                </q-side-link>
-                <q-side-link
-                    item
-                    to="/user/call-forward/after-hours"
-                >
-                    <q-item-side icon="watch later" />
-                    <q-item-main :label="$t('navigation.callForward.afterHours')" />
-                </q-side-link>
-            </q-collapsible>
-            <q-collapsible
-                :opened="isCallBlocking"
-                intend icon="block"
-                :label="$t('navigation.callBlocking.title')"
-                :sublabel="$t('navigation.callBlocking.subTitle')"
-            >
-                <q-side-link
-                    item
-                    to="/user/call-blocking/incoming"
-                >
-                    <q-item-side icon="call received" />
-                    <q-item-main :label="$t('navigation.callBlocking.incoming')" />
-                </q-side-link>
-                <q-side-link
-                    item
-                    to="/user/call-blocking/outgoing"
-                >
-                    <q-item-side icon="call made" />
-                    <q-item-main :label="$t('navigation.callBlocking.outgoing')" />
-                </q-side-link>
-                <q-side-link
-                    item
-                    to="/user/call-blocking/privacy"
-                >
-                    <q-item-side icon="fa-user-secret" />
-                    <q-item-main :label="$t('navigation.callBlocking.privacy')" />
-                </q-side-link>
-            </q-collapsible>
-            <q-side-link
-                item
-                to="/user/reminder"
-            >
-                <q-item-side icon="fa-bell"/>
-                <q-item-main
-                    :label="$t('navigation.reminder.title')"
-                    :sublabel="$t('navigation.reminder.subTitle')"
-                />
-            </q-side-link>
-            <q-side-link item to="/user/speeddial">
-                <q-item-side icon="touch app"/>
-                <q-item-main
-                    :label="$t('navigation.speeddial.title')"
-                    :sublabel="$t('navigation.speeddial.subTitle')"
-                />
-            </q-side-link>
-            <q-collapsible
-                v-if="isPbxAdmin"
-                :opened="isPbxConfiguration"
-                intend
-                icon="fa-gear"
-                :label="$t('navigation.pbxConfiguration.title')"
-                :sublabel="$t('navigation.pbxConfiguration.subTitle')"
-            >
-                <q-side-link
-                    item
-                    to="/user/pbx-configuration/groups"
-                >
-                    <q-item-side icon="group"/>
-                    <q-item-main :label="$t('navigation.pbxConfiguration.groups')" />
-                </q-side-link>
-                <q-side-link
-                    item
-                    to="/user/pbx-configuration/seats"
-                >
-                    <q-item-side icon="person"/>
-                    <q-item-main :label="$t('navigation.pbxConfiguration.seats')" />
-                </q-side-link>
-                <q-side-link
-                    item
-                    to="/user/pbx-configuration/devices"
-                >
-                    <q-item-side icon="fa-fax"/>
-                    <q-item-main :label="$t('navigation.pbxConfiguration.devices')" />
-                </q-side-link>
-            </q-collapsible>
-            <q-side-link
-                item
-                to="/user/voicebox"
-            >
-                <q-item-side icon="voicemail"/>
-                <q-item-main
-                    :label="$t('navigation.voicebox.title')"
-                    :sublabel="$t('navigation.voicebox.subTitle')"
-                />
-            </q-side-link>
-        </q-list>
-        <router-view />
+            <q-icon
+                name="keyboard_arrow_left"
+                @click="toggleMenu()"
+            />
+        </div>
+        <div
+            v-if="isMobile"
+            slot=left
+            class="csc-toggle-menu"
+        >
+            <q-icon
+                name="clear"
+                @click="$refs.layout.hideLeft()"
+                color="default"
+            />
+        </div>
+        <csc-main-menu
+            slot="left"
+            :call-state-title="callStateTitle"
+            :call-state-subtitle="callStateSubtitle"
+            :is-call-forward="isCallForward"
+            :is-call-blocking="isCallBlocking"
+            :is-pbx-admin="isPbxAdmin"
+            :is-pbx-configuration="isPbxConfiguration"
+        />
+        <router-view
+            :has-fax="hasFaxCapability && hasSendFaxFeature"
+            @send-fax="showSendFax()"
+        />
         <csc-send-fax
             ref="sendFax"
         />
@@ -254,6 +111,7 @@
             :camera-enabled="isCameraEnabled"
             :remote-volume-enabled="isRemoteVolumeEnabled"
             :dialpad-opened="isDialpadOpened"
+            :menu-minimized="menuMinimized"
             @start-call="startCall"s
             @accept-call="acceptCall"
             @end-call="endCall"
@@ -286,6 +144,7 @@
     } from 'vuex'
     import CscCall from '../call/CscCall'
     import CscSendFax from '../CscSendFax'
+    import CscLogo from '../CscLogo'
     import {
         QLayout,
         QToolbar,
@@ -301,6 +160,7 @@
         QSideLink,
         QCollapsible
     } from 'quasar-framework'
+    import CscMainMenu from "./MainMenu";
     export default {
         name: 'default',
         data() {
@@ -309,7 +169,8 @@
                     left: true,
                     right: false
                 },
-                mobileMenu: null
+                mobileMenu: null,
+                menuMinimized: false
             }
         },
         mounted() {
@@ -319,6 +180,7 @@
             platformMixin
         ],
         components: {
+            CscMainMenu,
             QLayout,
             QToolbar,
             QToolbarTitle,
@@ -333,7 +195,8 @@
             QSideLink,
             QCollapsible,
             CscCall,
-            CscSendFax
+            CscSendFax,
+            CscLogo
         },
         computed: {
             ...mapGetters([
@@ -397,6 +260,9 @@
                 if(this.isCalling) {
                     classes.push('csc-layout-call-active');
                 }
+                if(this.menuMinimized) {
+                    classes.push('csc-menu-minimized');
+                }
                 return classes;
             },
             callNumberFormatted() {
@@ -417,6 +283,16 @@
                 else {
                     return this.pageSubtitle;
                 }
+            },
+            headerClasses() {
+                let classes = ['transition-generic'];
+                if(this.isMobile) {
+                    classes.push('csc-header-mobile');
+                }
+                if(this.isMobile || this.isMenuClosed) {
+                    classes.push('csc-header-full');
+                }
+                return classes;
             }
         },
         methods: {
@@ -482,6 +358,9 @@
                     title = title + " (" + this.callStateSubtitle + ")";
                 }
                 document.title = this.title + " - " + title;
+            },
+            toggleMenu() {
+                this.menuMinimized = !this.menuMinimized;
             }
         },
         watch: {
@@ -542,27 +421,32 @@
     .page.page-call-active
         padding-bottom 120px
     #main-menu
-        padding-top 60px
-        .q-item-side
-            min-width 30px
+        padding 0
         .q-item
-            padding 12px 24px
+            padding-top $flex-gutter-xs * 1.4
+            padding-bottom  $flex-gutter-xs * 1.4
+            .q-icon
+                color $main-menu-icon-color
+            .q-item-label
+                color $main-menu-title-color
+                font-weight bold
+                white-space nowrap
             .q-item-sublabel
-                color #5b7086
-            .q-item-main,
-            .q-item-side
-                color #ADB3B8
-        .router-link-active,
+                color $main-menu-subtitle-color
         .q-item:hover
-            background-color #475360
-        .q-collapsible-sub-item
-            padding 0
-            .q-item
-                padding-left 60px
+            background-color $main-menu-item-hover-background
+        .q-item.router-link-active
+            .q-icon
+                color $main-menu-icon-active-color
+            .q-item-label
+                color $main-menu-title-active-color
+                font-weight bold
+            .q-item-sublabel
+                color $main-menu-subtitle-active-color
+            background-color transparent
     #user-login-as
         display inline-block
         text-transform none
-        color #c5eab4
     #user-login-as:after
         content " "
         white-space pre
@@ -588,7 +472,71 @@
         .csc-toolbar-btn-right
             .csc-toolbar-btn-icon
                 margin-right 8px
-
     .csc-layout-call-active
         padding-bottom 152px
+    #csc-header
+        position fixed
+        top 0
+        left $layout-aside-left-width
+        right 0
+        height $header-height
+        overflow hidden
+        z-index 100
+        background-color $secondary
+        #csc-main-logo
+            position absolute
+            height $header-height - ($logo-margin * 2)
+            right $logo-margin
+            top $logo-margin
+        .csc-header-content
+            position absolute
+            top 0
+            right 0
+            left 0
+            bottom 0
+            padding $logo-margin
+            background linear-gradient(to bottom, rgba(21,29,48,0.5) 0%,rgba(21,29,48,0) 75%,rgba(21,29,48,0) 100%)
+    #csc-header.csc-header-mobile
+        #csc-main-logo
+            position absolute
+            height $header-height-mobile - ($logo-margin-mobile * 2)
+            right $logo-margin-mobile
+            top $logo-margin-mobile
+    #csc-header.csc-header-full
+        left 0
+    #csc-user-menu
+        cursor pointer
+        display inline-block
+        .csc-username
+            padding-left 4px
+    .csc-toggle-menu
+        cursor pointer
+        position absolute
+        top $logo-margin
+        right $logo-margin
+        display flex
+        justify-content center
+        align-items center
+        width 40px
+        height 40px
+        .q-icon
+            display flex
+            position relative
+            font-size 24px
+    .layout-aside-left
+        padding-top $header-height
+    .csc-menu-minimized
+        .layout-aside-left
+            width $main-menu-minimized-width
+            .q-item-main
+                display none
+        .csc-toggle-menu
+            width $main-menu-minimized-width
+            left 0
+        #main-menu
+            .q-collapsible
+                .q-collapsible-sub-item
+                    padding 0
+        #csc-header
+            left $main-menu-minimized-width
 </style>

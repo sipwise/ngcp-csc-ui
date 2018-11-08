@@ -3,11 +3,13 @@
         <q-item-main>
             <q-item-tile class="row no-wrap csc-time">
                 <q-input
+                    dark
                     class="col"
                     v-model="weekday"
                     readonly
                 />
                 <q-datetime
+                    dark
                     class="col"
                     color="primary"
                     v-model="from"
@@ -17,6 +19,7 @@
                     disable
                 />
                 <q-datetime
+                    dark
                     class="col"
                     color="primary"
                     v-model="to"
@@ -39,20 +42,22 @@
 </template>
 
 <script>
-    import { mapGetters } from 'vuex'
+    import {
+        mapGetters
+    } from 'vuex'
     import 'quasar-extras/animate/bounceInRight.css'
     import 'quasar-extras/animate/bounceOutRight.css'
     import {
         QField,
         QInput,
         QDatetime,
-        Dialog,
+        // Dialog,
         QBtn,
         QItem,
         QItemMain,
         QItemTile,
         QItemSide,
-        Alert,
+        // Alert,
         date
     } from 'quasar-framework'
 
@@ -98,48 +103,55 @@
         },
         methods: {
             deleteTime(index) {
-                let self = this;
-                let store = this.$store;
+                // let self = this;
+                // let store = this.$store;
                 if (this.timesLength <= 1) {
-                    Alert.create({
-                        enter: 'bounceInRight',
-                        leave: 'bounceOutRight',
-                        position: 'top-center',
-                        html: self.$t('pages.callForward.times.removeLastDialogText'),
-                        icon: 'warning',
-                        actions: [
-                            {
-                                label: self.$t('buttons.cancel')
-                            },
-                            {
-                                label: self.$t('buttons.remove'),
-                                handler () {
-                                    store.dispatch('callForward/deleteTimesetById')
-                                }
-                            }
-                        ]
-                    });
+                    this.$emit('delete-last-time', index);
+
+
+                    // Alert.create({
+                    //     enter: 'bounceInRight',
+                    //     leave: 'bounceOutRight',
+                    //     position: 'top-center',
+                    //     html: self.$t('pages.callForward.times.removeLastDialogText'),
+                    //     icon: 'warning',
+                    //     actions: [
+                    //         {
+                    //             label: self.$t('buttons.cancel')
+                    //         },
+                    //         {
+                    //             label: self.$t('buttons.remove'),
+                    //             handler () {
+                    //                 store.dispatch('callForward/deleteTimesetById')
+                    //             }
+                    //         }
+                    //     ]
+                    // });
                 }
                 else {
-                    Dialog.create({
-                        title: self.$t('pages.callForward.times.removeDialogTitle'),
-                        message: self.$t('pages.callForward.times.removeDialogText', {
-                            day: self.weekday
-                        }),
-                        buttons: [
-                            self.$t('buttons.cancel'),
-                            {
-                                label: self.$t('buttons.remove'),
-                                color: 'negative',
-                                handler () {
-                                    store.dispatch('callForward/deleteTimeFromTimeset', {
-                                        index: index,
-                                        removedDay: self.weekday
-                                    })
-                                }
-                            }
-                        ]
+                    this.$emit('delete-time', {
+                        index: index,
+                        removedDay: this.weekday
                     });
+                    // Dialog.create({
+                    //     title: self.$t('pages.callForward.times.removeDialogTitle'),
+                    //     message: self.$t('pages.callForward.times.removeDialogText', {
+                    //         day: self.weekday
+                    //     }),
+                    //     buttons: [
+                    //         self.$t('buttons.cancel'),
+                    //         {
+                    //             label: self.$t('buttons.remove'),
+                    //             color: 'negative',
+                    //             handler () {
+                    //                 store.dispatch('callForward/deleteTimeFromTimeset', {
+                    //                     index: index,
+                    //                     removedDay: self.weekday
+                    //                 })
+                    //             }
+                    //         }
+                    //     ]
+                    // });
                 }
             }
         }

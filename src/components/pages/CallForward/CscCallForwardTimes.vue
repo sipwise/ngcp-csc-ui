@@ -1,6 +1,10 @@
 <template>
-    <div class="times-card">
-        <q-list no-border>
+    <div
+        class="times-card"
+    >
+        <q-list
+            no-border
+        >
             <csc-call-forward-time
                 class="csc-call-forward-times"
                 v-if="times.length > 0"
@@ -8,9 +12,13 @@
                 :key="index"
                 :time="time"
                 :index="index"
+                @delete-time="deleteTime"
+                @delete-last-time="deleteLastTime"
             />
         </q-list>
-        <div v-if="timesetTimesLoaded">
+        <div
+            v-if="timesetTimesLoaded"
+        >
             <csc-add-time-form
                 v-if="activeTimeForm"
                 type="existing"
@@ -32,15 +40,21 @@
 </template>
 
 <script>
-    import { mapGetters } from 'vuex'
     import CscCallForwardTime from './CscCallForwardTime'
     import CscAddTimeForm from './CscAddTimeForm'
-    import { QField, QBtn, QList } from 'quasar-framework'
+    import {
+        QField,
+        QBtn,
+        QList
+    } from 'quasar-framework'
     export default {
         name: 'csc-call-forward-times',
         props: [
             'times',
-            'timesetName'
+            'timesetName',
+            'activeTimeForm',
+            'timesetTimesLoaded'
+
         ],
         data () {
             return {
@@ -54,18 +68,18 @@
             QBtn,
             QList
         },
-        computed: {
-            ...mapGetters('callForward', [
-                'activeTimeForm',
-                'timesetTimesLoaded'
-            ])
-        },
         methods: {
             resetTimes() {
                 this.$refs.addFormExisting.resetTimes();
             },
             enableAddForm() {
-                this.$store.commit('callForward/setActiveTimeForm', true);
+                this.$emit('enable-add-form');
+            },
+            deleteTime(data) {
+                this.$emit('delete-time', data);
+            },
+            deleteLastTime(data) {
+                this.$emit('delete-last-time', data);
             }
         }
     }

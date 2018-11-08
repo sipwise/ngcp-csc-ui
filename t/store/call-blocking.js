@@ -9,14 +9,14 @@ describe('CallBlocking', function(){
 
         it('should enable list', function(){
             var state = {};
-            CallBlockingModule.mutations.enableIncoming(state);
-            assert.equal(state.incomingEnabled, true);
+            CallBlockingModule.mutations.toggleSucceeded(state, true);
+            assert.equal(state.enabled, true);
         });
 
         it('should disable list', function(){
             var state = {};
-            CallBlockingModule.mutations.disableIncoming(state);
-            assert.equal(state.incomingEnabled, false);
+            CallBlockingModule.mutations.toggleSucceeded(state, false);
+            assert.equal(state.enabled, false);
         });
 
         it('should load list and flag', function(){
@@ -25,12 +25,12 @@ describe('CallBlocking', function(){
                 '0123456789',
                 '0987654321'
             ];
-            CallBlockingModule.mutations.loadIncoming(state, {
+            CallBlockingModule.mutations.numberListSucceeded(state, {
                 enabled: true,
                 list: list
             });
-            assert.equal(state.incomingEnabled, true);
-            assert.deepEqual(state.incomingList, list);
+            assert.equal(state.enabled, true);
+            assert.deepEqual(state.list, list);
         });
     });
 
@@ -38,14 +38,14 @@ describe('CallBlocking', function(){
 
         it('should enable list', function(){
             var state = {};
-            CallBlockingModule.mutations.enableOutgoing(state);
-            assert.equal(state.outgoingEnabled, true);
+            CallBlockingModule.mutations.toggleSucceeded(state, true);
+            assert.equal(state.enabled, true);
         });
 
         it('should disable list', function(){
             var state = {};
-            CallBlockingModule.mutations.disableOutgoing(state);
-            assert.equal(state.outgoingEnabled, false);
+            CallBlockingModule.mutations.toggleSucceeded(state, false);
+            assert.equal(state.enabled, false);
         });
 
         it('should load list and flag', function(){
@@ -54,12 +54,12 @@ describe('CallBlocking', function(){
                 '0123456789',
                 '0987654321'
             ];
-            CallBlockingModule.mutations.loadOutgoing(state, {
+            CallBlockingModule.mutations.numberListSucceeded(state, {
                 enabled: true,
                 list: list
             });
-            assert.equal(state.outgoingEnabled, true);
-            assert.deepEqual(state.outgoingList, list);
+            assert.equal(state.enabled, true);
+            assert.deepEqual(state.list, list);
         });
     });
 });

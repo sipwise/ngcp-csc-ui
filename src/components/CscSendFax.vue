@@ -9,6 +9,7 @@
         </div>
         <q-field :error-label="destinationErrorMessage">
             <q-input
+                dark
                 clearable
                 type="text"
                 v-model="form.destination"
@@ -20,6 +21,7 @@
         </q-field>
         <q-field>
             <q-select
+                dark
                 v-model="form.quality"
                 :options="qualityOptions"
                 :float-label="$t('communication.label.quality')"
@@ -27,6 +29,7 @@
         </q-field>
         <q-field :error-label="pageHeaderErrorMessage">
             <q-input
+                dark
                 clearable
                 type="text"
                 v-model="form.pageHeader"
@@ -38,6 +41,7 @@
         </q-field>
         <q-field :error-label="dataErrorMessage">
             <q-input
+                dark
                 clearable
                 type="textarea"
                 :max-height="100"
@@ -59,6 +63,7 @@
                 </div>
                 <q-btn
                     flat
+                    color="white"
                     icon="cloud_upload"
                     class="upload-button"
                     @click="$refs.faxUpload.click()"
@@ -77,6 +82,7 @@
                 />
             </label>
             <input
+                dark
                 ref="faxUpload"
                 id="fax-file-upload"
                 type="file"
@@ -97,6 +103,7 @@
             flat
             icon="clear"
             @click="hideModal"
+            color="default"
         >
             {{ $t('communication.cancel') }}
         </q-btn>
@@ -280,17 +287,14 @@
             padding 20px 15px
 
         .title
-            color $primary
             line-height $csc-subtitle-line-height
             font-size $csc-subtitle-font-size
             font-weight $csc-subtitle-font-weight
-
     .upload-field
         margin-bottom 10px
 
         .upload-label
             display block
-            color $csc-label
             font-size 16px
             margin-bottom 5px
 

@@ -2,9 +2,14 @@
     <div>
         <div v-if="showSections">
             <csc-call-forward-times
+                ref="times"
                 :times="timesetTimes"
                 :timesetName="timesetName"
-                ref="times"
+                :active-time-form="activeTimeForm"
+                :timeset-times-loaded="timesetTimesLoaded"
+                @enable-add-form="enableTimesAddForm"
+                @delete-time="deleteTimeDialog"
+                @delete-last-time="deleteLastTimeDialog"
             />
             <csc-sourcesets
                 v-if="destinationsLoaded"
@@ -66,11 +71,27 @@
                 ref="addTimeNew"
             />
         </q-card>
+        <csc-remove-dialog
+            ref="removeTimeDialog"
+            :title="$t('pages.callForward.times.removeDialogTitle')"
+            titleIcon="delete"
+            :message="deleteTimeMessage"
+            @remove="deleteTime"
+        />
+        <csc-remove-dialog
+            ref="removeLastTimeDialog"
+            :title="$t('pages.callForward.times.removeDialogTitle')"
+            titleIcon="delete_forever"
+            :message="$t('pages.callForward.times.removeLastDialogText')"
+            @remove="deleteLastTime"
+        />
     </div>
 </template>
 
 <script>
-    import { mapGetters } from 'vuex'
+    import {
+        mapGetters
+    } from 'vuex'
     import {
         startLoading,
         stopLoading,
@@ -81,6 +102,7 @@
     import CscCallForwardTimes from './CscCallForwardTimes'
     import CscAddTimeForm from './CscAddTimeForm'
     import CscSourcesets from './CscSourcesets'
+    import CscRemoveDialog from '../../CscRemoveDialog'
     import {
         QAlert,
         QCard
@@ -96,7 +118,8 @@
                 showAlertDuplicate: true,
                 showAlertCompatible: true,
                 showAlertReverse: true,
-                showAlertDefined: true
+                showAlertDefined: true,
+                deleteTimeData: null
             }
         },
         components: {
@@ -105,7 +128,8 @@
             CscAddTimeForm,
             CscSourcesets,
             QAlert,
-            QCard
+            QCard,
+            CscRemoveDialog
         },
         created() {
             this.loadAll();
@@ -148,6 +172,16 @@
             },
             showSections() {
                 return this.showTimesAndDestinations && this.timesetTimesLoaded;
+            },
+            deleteTimeMessage() {
+                if(this.deleteTimeData !== null) {
+                    return this.$t('pages.callForward.times.removeDialogText', {
+                        day: this.deleteTimeData.removedDay
+                    });
+                }
+                else {
+                    return '';
+                }
             }
         },
         methods: {
@@ -182,6 +216,23 @@
                 this.showAlertCompatible = true;
                 this.showAlertReverse = true;
                 this.showAlertDefined = true;
+            },
+            enableTimesAddForm() {
+                this.$store.commit('callForward/setActiveTimeForm', true);
+            },
+            deleteTimeDialog(data) {
+                this.deleteTimeData = data;
+                this.$refs.removeTimeDialog.open();
+            },
+            deleteTime() {
+                this.$store.dispatch('callForward/deleteTimeFromTimeset', this.deleteTimeData);
+                this.deleteTimeData = null;
+            },
+            deleteLastTimeDialog() {
+                this.$refs.removeLastTimeDialog.open();
+            },
+            deleteLastTime() {
+                this.$store.dispatch('callForward/deleteTimesetById');
             }
         },
         watch: {

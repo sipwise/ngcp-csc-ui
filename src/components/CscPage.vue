@@ -1,6 +1,6 @@
 <template>
-    <div class="page">
-        <div class="page-content">
+    <div :class="componentClasses">
+        <div class="csc-page-content">
             <slot></slot>
         </div>
     </div>
@@ -8,13 +8,23 @@
 
 <script>
 
-    import { QIcon, QFixedPosition, QFab, QFabAction, QTooltip } from 'quasar-framework'
-    import { mapGetters } from 'vuex'
+    import platformMixin from '../mixins/platform'
+    import {
+        QIcon,
+        QFixedPosition,
+        QFab,
+        QFabAction,
+        QTooltip
+    } from 'quasar-framework'
 
     export default {
         name: 'csc-page',
         props: [
-            'title'
+            'title',
+            'isList'
+        ],
+        mixins: [
+            platformMixin
         ],
         data () {
             return {}
@@ -27,78 +37,31 @@
             QTooltip
         },
         computed: {
-            pageTitleClasses() {
-                var classes = ['page-title', 'transition-generic'];
-                if(this.right) {
-                    classes.push('page-title-right');
+            componentClasses() {
+                let classes = ['csc-page'];
+                if(this.isMobile) {
+                    classes.push('csc-page-mobile');
+                }
+                if(this.isList) {
+                    classes.push('csc-page-list');
                 }
                 return classes;
-            },
-            ...mapGetters('layout', ['left', 'right'])
+            }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../themes/quasar.variables.styl';
-
-    .page {
-        position: relative;
-        padding: 48px;
-        margin: 0px;
-    }
-
-    .page h2 {
-        margin: 0px;
-        font-size: 26px;
-        line-height: 26px;
-        color: #68A44E;
-    }
-
-    .page .page-title {
-        padding: 30px;
-        padding-left: 60px;
-        padding-right: 60px;
-        z-index: 1000;
-        right: 0;
-        background: -moz-linear-gradient(top, rgba(255,255,255,1) 44%, rgba(255,255,255,0.86) 71%, rgba(255,255,255,0) 100%);
-        background: -webkit-linear-gradient(top, rgba(255,255,255,1) 44%,rgba(255,255,255,0.86) 71%,rgba(255,255,255,0) 100%);
-        background: linear-gradient(to bottom, rgba(255,255,255,1) 44%,rgba(255,255,255,0.86) 71%,rgba(255,255,255,0) 100%);
-    }
-
-    .page .page-title.page-title-right {
-        right: $layout-aside-right-width;
-    }
-
-    .page .page-button {
-        padding-top: 20px;
-        padding-right: 60px;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-        .page {
-            padding: 16px;
-            padding-top: 32px;
-            margin: 0px;
-        }
-        .page .page-content {
-            margin: 0px;
-            padding: 0px;
-        }
-
-        .page h2 {
-            margin: 0px;
-            font-size: 22px;
-            line-height: 22px;
-        }
-
-        .page .page-title {
-            padding: 16px;
-        }
-    }
-
-    .page-title-icon {
-        margin-right: 10px;
-        font-size: 24px !important;
-    }
+    .csc-page
+        position relative
+        padding $flex-gutter-lg
+        padding-top $header-height
+        margin 0
+    .csc-page.csc-page-mobile
+        padding-left $flex-gutter-sm * 1.4
+        padding-right $flex-gutter-sm * 1.4
+    .csc-page.csc-page-mobile.csc-page-list
+        padding-left 0
+        padding-right 0
 </style>

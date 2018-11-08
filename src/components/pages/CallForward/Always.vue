@@ -1,5 +1,5 @@
 <template>
-    <csc-page :title="$t('pages.callForward.titles.always')">
+    <csc-page>
         <csc-sourcesets
             v-if="destinationsLoaded"
             :sourcesets="sourcesets"

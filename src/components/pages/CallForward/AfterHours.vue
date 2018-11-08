@@ -1,6 +1,8 @@
 <template>
-    <csc-page :title="$t('pages.callForward.titles.afterHours')">
-        <csc-call-forward-timeset timesetName="After Hours" />
+    <csc-page>
+        <csc-call-forward-timeset
+            timesetName="After Hours"
+        />
     </csc-page>
 </template>
 

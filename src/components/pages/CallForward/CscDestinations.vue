@@ -103,8 +103,9 @@
                 >
                     <q-popover ref="popover">
                         <q-list
-                            separator
                             link
+                            no-border
+                            highlight
                         >
                             <q-item
                                v-if="isMobile"
@@ -164,6 +165,7 @@
             </div>
             <q-field :error-label="errorMessage">
                 <q-input
+                    dark
                     v-if="ownPhone"
                     v-model="editTimeout"
                     type="number"
@@ -179,12 +181,13 @@
                 flat
                 icon="clear"
                 @click="hideModal"
+                color="default"
             >
                 {{ $t('buttons.cancel') }}
             </q-btn>
             <q-btn
                 flat
-                icon="clear"
+                icon="undo"
                 color="negative"
                 @click="resetTimeout"
             >
@@ -377,11 +380,12 @@
         padding-bottom 30px
 
     .dest-title
-        color $secondary
         font-size 16px
+        color $white
 
     .dest-icon
         margin-right 5px
+        color $white
 
     .q-item.csc-no-destination
         margin-left 0px
@@ -393,13 +397,13 @@
             padding 20px 15px
 
         .title
-            color $primary
+            color $white
             line-height $csc-subtitle-line-height
             font-size $csc-subtitle-font-size
             font-weight $csc-subtitle-font-weight
 
     .q-item-highlight.csc-own-phone:hover
-        background-color lighten($primary, 70%)
+        background-color $item-highlight-color
 
     .q-tab-pane
         .csc-dest-separator
@@ -415,19 +419,20 @@
             padding-top 8px
 
     .dest-row
-        color $secondary
+        color $wite
         white-space nowrap
         overflow hidden
         font-size 16px
 
         .dest-values
-            font-weight 500
+            font-weight bold
+            color $white
 
     .dest-row.mobile
         padding 16px
-        padding-left 0px
+        padding-left 0
         .dest-values > span
-            font-weight 300
+            font-weight bold
 
     .dest-row.mobile .dest-sublabel span
         font-weight 300

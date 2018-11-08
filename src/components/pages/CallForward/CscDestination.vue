@@ -90,8 +90,8 @@
             >
                 <q-popover ref="popover">
                     <q-list
-                        separator
                         link
+                        no-border
                     >
                         <q-item
                             v-if="destinations.length > 1 && !hasNoUpOption(index)"
@@ -100,7 +100,7 @@
                             <q-item-main :label="$t('buttons.moveUp')" />
                             <q-item-side
                                 icon="keyboard_arrow_up"
-                                color="secondary"
+                                color="white"
                             />
                         </q-item>
                         <q-item
@@ -110,7 +110,7 @@
                             <q-item-main :label="$t('buttons.moveDown')" />
                             <q-item-side
                                 icon="keyboard_arrow_down"
-                                color="secondary"
+                                color="white"
                             />
                         </q-item>
                         <q-item @click="deleteDestination(index), $refs.popover[index].close()">
@@ -248,6 +248,12 @@
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl'
 
+    .csc-own-phone,
+    .csc-destination
+        .q-item-side-right
+            .q-icon
+                color $primary
+
     .dest-row.mobile
         padding 16px
         padding-left 0px
@@ -261,16 +267,16 @@
         color $grey
 
     .q-item-highlight.csc-destination:hover
-        background-color lighten($primary, 70%)
+        background-color $item-highlight-color
 
     .dest-row
-        color $secondary
+        color $white
         white-space nowrap
         overflow hidden
         font-size 16px
 
         .dest-values
-            font-weight 500
+            font-weight bold
 
     .dest-row.terminated
         color $grey
@@ -278,7 +284,7 @@
     .dest-btns
         display inline-block
         position absolute
-        right 0px
+        right 0
 
     .btnhidden
         opacity 0

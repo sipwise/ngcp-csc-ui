@@ -40,7 +40,8 @@
         "inputValidNumber": "Input a valid phone number",
         "fieldRequiredXor": "{fieldOne} or {fieldTwo} is required",
         "email": "Input a valid email address",
-        "macAddress": "Input a valid mac address"
+        "macAddress": "Input a valid mac address",
+        "userInfoAndEmpty": "Input contains invalid characters"
     },
     "navigation": {
         "home": {
@@ -97,8 +98,8 @@
         },
         "callBlockingIncoming": {
             "title": "Block/Allow incoming calls",
-            "toggleEnableLabel": "Allow only listed numbers",
-            "toggleDisableLabel": "Block all listed number",
+            "toggleEnableLabel": "Only incoming calls from listed numbers are allowed",
+            "toggleDisableLabel": "All incoming calls from listed numbers are blocked",
             "toggleEnabledToast": "All listed numbers are allowed",
             "toggleDisabledToast": "All listed numbers are blocked",
             "removeDialogTitle": "Remove number",
@@ -110,8 +111,8 @@
         },
         "callBlockingOutgoing": {
             "title": "Block/Allow outgoing calls",
-            "toggleEnableLabel": "Allow only listed numbers",
-            "toggleDisableLabel": "Block all listed number",
+            "toggleEnableLabel": "Only outgoing calls to listed numbers are allowed",
+            "toggleDisableLabel": "All outgoing calls to listed numbers are blocked",
             "toggleEnabledToast": "All listed numbers are allowed",
             "toggleDisabledToast": "All listed numbers are blocked",
             "removeDialogTitle": "Remove number",
@@ -382,8 +383,8 @@
         "resetFilters": "Reset filters",
         "closeFilters": "Close filters",
         "createSeat": "Create seat",
-        "noGroupAssigned": "Not assigned to any group",
-        "noSeatAssigned": "No seats assigned",
+        "noGroupAssigned": "No groups",
+        "noSeatAssigned": "No seats",
         "createGroup": "Create group"
     },
     "callBlocking": {
@@ -391,7 +392,8 @@
         "privacyEnabledLabel": "Your number is hidden to the callee",
         "privacyDisabledToast": "Your number is visible to the callee",
         "privacyDisabledLabel": "Your number is visible to the callee",
-        "number": "Number"
+        "number": "Number",
+        "listEmptyMessage": "No numbers found"
     },
     "communication": {
         "sendFax": "Send Fax",

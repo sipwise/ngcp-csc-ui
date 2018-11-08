@@ -42,7 +42,7 @@
                             <q-icon
                                 class="csc-media-icon"
                                 v-else
-                                name="mic"
+                                name="call"
                                 size="24px"
                             />
                             <span
@@ -80,7 +80,7 @@
                     <q-icon
                         class="csc-media-icon"
                         v-else
-                        name="mic"
+                        name="call"
                         size="24px"
                     />
                     <div
@@ -213,7 +213,7 @@
                     />
                     <q-fab-action
                         color="primary"
-                        icon="mic"
+                        icon="call"
                         @click="startCall('audioOnly')"
                     />
                 </q-fab>
@@ -245,7 +245,7 @@
                     <q-icon
                         class="csc-media-icon"
                         v-else-if="isActive"
-                        name="mic"
+                        name="call"
                         size="24px"
                         color="white"
                     />
@@ -355,7 +355,8 @@
             'cameraEnabled',
             'remoteVolumeEnabled',
             'maximizable',
-            'dialpadOpened'
+            'dialpadOpened',
+            'menuMinimized'
         ],
         components: {
             CscCallDialpad,
@@ -392,6 +393,9 @@
                 }
                 if(this.isMobile) {
                     classes.push('csc-call-mobile');
+                }
+                if(this.menuMinimized) {
+                    classes.push('csc-main-menu-minimized');
                 }
                 return classes;
             },
@@ -550,11 +554,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../themes/quasar.variables'
-    $call-footer-height = $toolbar-min-height
-    $call-footer-height-big = $call-footer-height * 2
-    $call-footer-action-margin = 27px
-    $call-footer-height-mobile = $call-footer-height * 1.4
+    @import '../../themes/quasar.variables.styl'
     .csc-call
         left $layout-aside-left-width
         top $call-footer-height
@@ -571,7 +571,7 @@
             right 0
             left 0
             z-index 2
-            background-color white
+            background-color $secondary
             .csc-call-info
                 .csc-call-info-content
                     margin-top -80px
@@ -618,7 +618,7 @@
             left 0
             right 0
             height $call-footer-height
-            background-color $secondary
+            background-color $call-minimized-background
             z-index 3
             display flex
             flex-wrap no-wrap
@@ -656,6 +656,9 @@
                 right 0
                 top 0
                 margin-top -27px
+                .q-btn
+                    .q-btn-inner
+                        color $dark
                 .q-btn.q-btn-round
                     box-shadow none
                 .csc-call-button
@@ -702,6 +705,8 @@
         opacity 1
     .csc-call.csc-call-full-width
         left 0
+    .csc-call.csc-main-menu-minimized
+        left $main-menu-minimized-width
     .csc-call.csc-call-mobile
         .csc-call-content
             .csc-call-media-local
