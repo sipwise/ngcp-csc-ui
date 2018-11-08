@@ -8,6 +8,18 @@
             <div
                 class="csc-call-page-content"
             >
+                <div
+                    v-if="hasFax"
+                    class="csc-communication-actions row justify-center"
+                >
+                    <q-btn
+                        v-if="hasFax"
+                        icon="fa-fax"
+                        round
+                        color="primary"
+                        @click="sendFax()"
+                    />
+                </div>
                 <q-alert
                     v-if="!isCallInitializing && desktopSharingInstall"
                     v-model="desktopSharingInstall"
@@ -38,7 +50,7 @@
                 <csc-phone-number-input
                     v-if="!isCallInitializing"
                     class="csc-call-phone-number"
-                    :dark="false"
+                    :dark="true"
                     :value="callNumberInput"
                     :enabled="isCallInitialized"
                     @number-changed="numberInputChanged"
@@ -60,7 +72,8 @@
     import {
         QIcon,
         QAlert,
-        QSpinnerDots
+        QSpinnerDots,
+        QBtn
     } from 'quasar-framework'
     export default {
         data() {
@@ -72,12 +85,19 @@
             CscPage,
             QIcon,
             QAlert,
-            QSpinnerDots
+            QSpinnerDots,
+            QBtn
         },
+        props: [
+            'hasFax'
+        ],
         methods: {
             numberInputChanged(number) {
                 this.$store.commit('call/numberInputChanged', number);
             },
+            sendFax() {
+                this.$emit('send-fax');
+            }
         },
         computed: {
             ...mapGetters('call', [
@@ -118,6 +138,16 @@
     .csc-call-page
         height calc(100vh - 120px)
         padding 0
+        padding-top $header-height
+        .csc-communication-actions
+            position absolute
+            top $header-height
+            right 0
+            left 0
+            .q-btn
+                box-shadow none
+                .q-btn-inner
+                    color $dark
     .csc-call-page-content
         margin-top -80px
     .csc-info
@@ -127,4 +157,5 @@
         .csc-info-text
             line-height 1.4em
             color $white
+
 </style>

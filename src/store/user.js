@@ -36,7 +36,7 @@ export default {
                 return state.subscriber.display_name;
             }
             else if (state.subscriber !== null) {
-                return state.subscriber.username + "@" + state.subscriber.domain;
+                return state.subscriber.webusername;
             }
             else {
                 return "";

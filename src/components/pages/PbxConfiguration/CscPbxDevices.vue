@@ -1,6 +1,6 @@
 <template>
     <csc-page
-        class="csc-list-page"
+        :is-list="true"
     >
         <div
             class="row justify-center">
@@ -20,11 +20,12 @@
             >{{ filterButtonLabel }}</q-btn>
         </div>
 
-        <div v-if="filterEnabled" class="csc-form margin-sm">
+        <div v-if="filterEnabled" class="csc-form csc-list-form">
             <div :class="filterClasses">
                 <q-field
                     class="col-xs-12 col-md-4 col-lg-2">
                     <q-input
+                        dark
                         v-if="listStationNameFilter == null"
                         v-model="filterStationNameInput"
                         :float-label="$t('pbxConfig.filterStationName')"
@@ -47,6 +48,7 @@
                 <q-field
                     class="col-xs-12 col-md-4 col-lg-2">
                     <q-input
+                        dark
                         v-if="listMacAddressFilter == null"
                         v-model="filterMacAddressInput"
                         :float-label="$t('pbxConfig.filterMacAddress')"
@@ -116,9 +118,9 @@
 
         <div
             v-if="formEnabled"
-            class="row justify-center margin-sm csc-form">
+            class="row justify-center csc-form">
             <csc-pbx-device-add-form
-                class="col col-md-6 col-sm-12"
+                class="col col-md-6 col-sm-12 csc-list-form"
                 v-if="formEnabled"
                 ref="deviceAddForm"
                 :profiles="profiles"
@@ -154,12 +156,12 @@
 
         <q-list
             no-border
-            separator
-            sparse
             multiline
+            striped-odd
             :highlight="!isMobile"
         >
             <csc-pbx-device
+                class="csc-list-item"
                 v-for="device in devices"
                 :key="device.id"
                 :device="device"

@@ -7,6 +7,7 @@
                 class="cursor-pointer"
                 :float-label="label"
                 :after="clearButton"
+                dark
             />
             <q-popover
                 ref="popover"
@@ -14,7 +15,7 @@
                 @open="opened()"
             >
                 <q-list
-                    no-borders
+                    no-border
                     class="csc-pbx-model-list"
                     highlight
                     inset-separator

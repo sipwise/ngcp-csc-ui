@@ -4,9 +4,9 @@
             v-if="!expanded"
         >
             <q-icon
-                size="32px"
+                size="24px"
                 name="person"
-                color="secondary"
+                color="white"
             />
         </q-item-side>
         <q-item-main>
@@ -60,6 +60,7 @@
             >
                 <q-field :label="$t('pbxConfig.name')">
                     <q-input
+                        dark
                         v-model="changes.name"
                         :after="nameButtons"
                         @keyup.enter="saveName"
@@ -67,6 +68,7 @@
                 </q-field>
                 <q-field :label="$t('pbxConfig.extension')">
                     <q-input
+                        dark
                         v-model="changes.extension"
                         :after="extensionButtons"
                         @keyup.enter="saveExtension"
@@ -74,6 +76,7 @@
                 </q-field>
                 <q-field :label="$t('pbxConfig.primaryNumber')">
                     <q-input
+                        dark
                         v-model="primaryNumber"
                         readonly
                         disable
@@ -81,6 +84,7 @@
                 </q-field>
                 <q-field :label="$t('pbxConfig.aliasNumbers')">
                     <q-select
+                        dark
                         ref="aliasNumbers"
                         v-model="changes.aliasNumbers"
                         :options="aliasNumberOptions"
@@ -92,6 +96,7 @@
                 </q-field>
                 <q-field :label="$t('pbxConfig.groups')">
                     <q-select
+                        dark
                         v-model="changes.groups"
                         :options="groupOptions"
                         multiple
@@ -104,27 +109,24 @@
         </q-item-main>
         <q-item-side
             right
-            class="csc-item-buttons"
+            class="csc-list-actions-pinned"
         >
             <q-item-tile>
-                <div class="csc-item-button">
-                    <q-icon
-                        size="26px"
-                        :name="titleIcon"
-                        color="primary"
-                        slot="right"
-                        @click="toggleMain()"
-                    />
-                </div>
-                <div class="csc-item-button">
-                    <q-icon
-                        size="26px"
-                        name="delete"
-                        color="negative"
-                        slot="right"
-                        @click="remove()"
-                    />
-                </div>
+                <q-btn
+                    v-if="expanded"
+                    icon="delete"
+                    :big="isMobile"
+                    color="negative"
+                    flat
+                    @click="remove()"
+                />
+                <q-btn
+                    :icon="titleIcon"
+                    :big="isMobile"
+                    color="primary"
+                    flat
+                    @click="toggleMain()"
+                />
             </q-item-tile>
         </q-item-side>
         <q-inner-loading :visible="isLoading">

@@ -53,10 +53,12 @@
                     <q-popover
                         ref="callPopover"
                         anchor="bottom right"
-                        self="top right">
+                        self="top right"
+                    >
                         <q-list
                             item-separator
                             link
+                            no-border
                             class="csc-toolbar-btn-popover">
                             <q-item
                                 @click="downloadFax"
