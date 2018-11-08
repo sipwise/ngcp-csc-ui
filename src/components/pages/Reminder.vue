@@ -19,6 +19,7 @@
         >
             <q-datetime
                 format24h
+                dark
                 type="time"
                 :no-clear="true"
                 :disable="isReminderLoading"

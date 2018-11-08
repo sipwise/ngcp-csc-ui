@@ -7,7 +7,6 @@
         </q-item-side>
         <q-item-main :style="{zIndex: 10}">
             <q-item-tile
-                class="csc-device-title"
                 v-if="!expanded"
                 label
             >
@@ -37,6 +36,7 @@
                 >
                 <q-field :label="$t('pbxConfig.deviceStationName')">
                     <q-input
+                        dark
                         v-model="changes.stationName"
                         :after="stationNameButtons"
                         @keyup.enter="saveStationName"
@@ -47,6 +47,7 @@
                     :error-label="identifierErrorMessage"
                 >
                     <q-input
+                        dark
                         v-model="device.identifier"
                         :after="identifierButtons"
                         @keyup.enter="saveIdentifier"
@@ -83,25 +84,24 @@
         </q-item-main>
         <q-item-side
             right
-            class="csc-item-buttons"
             :style="{zIndex: 11}"
+            class="csc-list-actions-pinned"
         >
             <q-item-tile>
+                <q-btn
+                    v-if="expanded"
+                    icon="delete"
+                    :big="isMobile"
+                    color="negative"
+                    flat
+                    @click="remove()"
+                />
                 <q-btn
                     :icon="titleIcon"
                     :big="isMobile"
                     color="primary"
-                    slot="right"
                     flat
                     @click="toggleMain()"
-                />
-                <q-btn
-                    icon="delete"
-                    :big="isMobile"
-                    color="negative"
-                    slot="right"
-                    flat
-                    @click="remove()"
                 />
             </q-item-tile>
         </q-item-side>
@@ -195,7 +195,7 @@
         },
         computed: {
             itemClasses() {
-                let classes = ['csc-entity', 'csc-pbx-device'];
+                let classes = ['csc-entity', 'csc-pbx-device', 'csc-list-item'];
                 if (this.expanded) {
                     classes.push('csc-item-expanded');
                 }
@@ -358,40 +358,7 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables';
-    .csc-pbx-device
-
-        .csc-pbx-device-content
-            padding-top: 32px;
-
-        .q-item-side.q-item-side-right
-            position absolute
-            right 10px
-
-        .q-item-avatar
-            overflow hidden
-            border-radius 0
-            img
-                border-radius 0
-                height auto
-
-        .q-item-label
-            font-size 18px
-            font-weight 400
-            letter-spacing normal
-            line-height 1.8rem
-
-    .csc-item-buttons
-        .q-btn
-            padding-left 8px
-            padding-right 8px
-
-    .csc-pbx-device-buttons
-        margin-top 32px
-
     .csc-device-title
         text-overflow ellipsis
-        white-space: nowrap;
-        width 100%
-        overflow hidden
-        padding-right 80px
+        white-space nowrap
 </style>

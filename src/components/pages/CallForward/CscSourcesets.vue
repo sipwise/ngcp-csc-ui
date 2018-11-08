@@ -52,7 +52,10 @@
                     {{ $t('pages.callForward.sources.sourcesTitleMode',
                         { mode: capitalizedMode(sourceset.sourcesetMode) }) }}
                 </div>
-                <q-list no-border>
+                <q-list
+                    no-border
+                    striped-odd
+                >
                     <q-item
                         highlight
                         separator
@@ -99,6 +102,7 @@
                     <q-item-main>
                         <q-item-tile class="row no-wrap">
                             <q-input
+                                dark
                                 autofocus
                                 class="col"
                                 v-model="sourcesetName"
@@ -106,12 +110,14 @@
                                 color="primary"
                                 @keyup.enter="addSourceset()" />
                             <q-input
+                                dark
                                 class="col"
                                 v-model="source"
                                 :float-label="$t('pages.callForward.sources.source')"
                                 color="primary"
                                 @keyup.enter="addSourceset()" />
                             <q-select
+                                dark
                                 v-model="mode"
                                 :options="modes"
                                 color="primary"
@@ -423,10 +429,7 @@
     @import '../../../themes/quasar.variables.styl'
 
     .q-item-highlight.source-item:hover
-        background-color lighten($primary, 70%)
-
-    .q-item.source-item
-        padding 0
+        background-color $item-highlight-color
 
     .sourceset-tabs
 

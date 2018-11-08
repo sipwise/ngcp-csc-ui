@@ -1,5 +1,7 @@
 <template>
-    <csc-call-blocking page-name="outgoing" />
+    <csc-call-blocking
+        page-name="outgoing"
+    />
 </template>
 
 <script>

@@ -47,6 +47,7 @@
                 :icon="selectedKeyIcon"
             >
                 <q-select
+                    dark
                     ref="selectSubscriber"
                     :value="selectedKeySubscriber"
                     :options="groupsAndSeatsOptions"
@@ -57,6 +58,7 @@
                 label="Type"
             >
                 <q-select
+                    dark
                     ref="selectType"
                     v-model="selectedKeyType"
                     :options="typeOptions"
@@ -465,7 +467,7 @@
         left 0
         right 0
         bottom 0
-        background-color rgba(250,250,250,0.95)
+        background-color $main-menu-background
         z-index 10
         padding 48px
 
@@ -474,6 +476,8 @@
         position relative
 
     .csc-pbx-device-config
+        background-color $white
+        margin-top $flex-gutter-lg
         position relative
         .spot-modal-content
             position relative
@@ -521,5 +525,4 @@
         min-height 40px
         padding 16px
         padding-right 40px
-
 </style>
