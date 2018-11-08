@@ -699,6 +699,7 @@
     .csc-call.csc-call-minimized.csc-call-established,
     .csc-call.csc-call-minimized.csc-call-ended
         bottom 0
+        opacity 1
     .csc-call.csc-call-full-width
         left 0
     .csc-call.csc-call-mobile

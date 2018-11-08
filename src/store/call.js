@@ -82,7 +82,7 @@ export default {
             return state.numberInput;
         },
         isNetworkConnected(state) {
-            return state.initialized;
+            return state.initializationState === RequestState.succeeded;
         },
         isCallAvailable(state, getters) {
             return getters.isNetworkConnected;
