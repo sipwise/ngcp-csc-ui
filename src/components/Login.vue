@@ -1,26 +1,60 @@
 <template>
     <q-layout>
-        <div id="csc-login" :class="loginClasses">
-            <div class="column col-lg-4 col-xl-4 col-md-3 gt-sm"></div>
-            <div class="column col-12 col-md-6 col-lg-4 col-xl-4">
-                <q-card :flat="isFlat">
-                    <q-card-title>
-                        <q-icon name="" />{{ $t('pages.login.title') }}
-                        <span slot="subtitle"></span>
+        <div
+            id="csc-login"
+            :class="loginClasses"
+        >
+            <div
+                class="col col-12 col-md-6 col-lg-4 col-xl-4">
+                <q-card
+                    class="no-shadow"
+                    :flat="isFlat"
+                >
+                    <q-card-title
+                        class="csc-title"
+                    >
+                        {{ $t('pages.login.title') }}
                     </q-card-title>
                     <q-card-main>
-                        <form id="csc-login-form">
-                            <q-field icon="fa-user-circle" :helper="$t('pages.login.username_helper')" :count="128">
-                                <q-input type="text" max-length="128" :float-label="$t('pages.login.username')"
-                                         autofocus clearable v-model="username" @keyup.enter="login()"/>
+                        <form
+                            id="csc-login-form"
+                        >
+                            <q-field
+                                icon="person"
+                                :helper="$t('pages.login.username_helper')"
+                                :count="128">
+                                <q-input
+                                    dark
+                                    type="text"
+                                    max-length="128"
+                                    :float-label="$t('pages.login.username')"
+                                    autofocus
+                                    clearable
+                                    dark
+                                    v-model="username"
+                                    @keyup.enter="login()"
+                                />
                             </q-field>
-                            <q-field icon="fa-lock" :helper="$t('pages.login.password_helper')" :count="32">
-                                <q-input type="password" max-length="32" :float-label="$t('pages.login.password')"
-                                         clearable v-model="password" @keyup.enter="login()" />
+                            <q-field
+                                icon="lock"
+                                :helper="$t('pages.login.password_helper')"
+                                :count="32">
+                                <q-input
+                                    dark
+                                    type="password"
+                                    max-length="32"
+                                    :float-label="$t('pages.login.password')"
+                                    clearable
+                                    dark
+                                    v-model="password"
+                                    @keyup.enter="login()"
+                                />
                             </q-field>
                         </form>
                     </q-card-main>
-                    <q-card-actions class="pull-right">
+                    <q-card-actions
+                        class="justify-end"
+                    >
                         <q-spinner-dots
                             v-if="loginRequesting"
                             color="primary"
@@ -29,14 +63,15 @@
                         <q-btn
                             v-if="!loginRequesting"
                             flat
-                            icon="fa-arrow-right"
+                            icon="arrow_forward"
                             color="primary"
                             @click="login()"
-                        >{{ $t('pages.login.button') }}</q-btn>
+                        >
+                            {{ $t('pages.login.button') }}
+                        </q-btn>
                     </q-card-actions>
                 </q-card>
             </div>
-            <div class="column col-lg-4 col-xl-4 col-md-3 gt-sm"></div>
         </div>
     </q-layout>
 </template>
@@ -47,8 +82,6 @@
         mapGetters
     } from 'vuex'
     import {
-        // startLoading,
-        // stopLoading,
         showGlobalError
     } from '../helpers/ui'
     import {
@@ -92,7 +125,7 @@
                 return Platform.is.mobile;
             },
             loginClasses() {
-                let classes = ['row'];
+                let classes = ['row', 'items-center', 'justify-center', 'full-height'];
                 if(Platform.is.mobile) {
                     classes.push('mobile');
                 }
@@ -113,11 +146,6 @@
             }
         },
         watch: {
-            // loginRequesting(logging) {
-            //     if(logging) {
-            //         startLoading();
-            //     }
-            // },
             loginSucceeded(loggedIn) {
                 if(loggedIn) {
                     this.$router.push({path : '/'});
@@ -133,36 +161,21 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../themes/app.variables.styl';
-
-    #csc-login {
-        padding-top: 12%;
-    }
-
-    #csc-login.mobile {
-        padding-top: 0;
-    }
-
-    #csc-login .q-card-title {
-        font-size: 22px;
-        color: $primary;
-    }
-
-    #csc-login .q-card-primary {
-        padding:30px;
-        padding-bottom: 0;
-    }
-
-    #csc-login .q-field:first-child {
-        margin-top:0;
-    }
-
-    #csc-login .q-card-main {
-        padding:30px;
-    }
-
-    #csc-login .q-card-actions {
-        padding:15px;
-        padding-top: 0;
-    }
+    @import '../themes/quasar.variables.styl';
+    #csc-login
+        min-height calc(100vh - 0px)
+        margin-top -30px
+        .q-card
+            margin 0
+            background-color $main-menu-background
+            .csc-title
+                padding $flex-gutter-md
+                padding-bottom $flex-gutter-sm
+                .q-card-title
+                    font-size 24px
+            .q-card-main
+                padding-left $flex-gutter-md
+                padding-right $flex-gutter-md
+            .q-card-actions
+                padding $flex-gutter-xs
 </style>

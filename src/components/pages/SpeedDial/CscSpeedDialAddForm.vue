@@ -3,6 +3,7 @@
         <div v-if="formEnabled" class="col col-md-6 col-sm-12">
             <q-field>
                 <q-select
+                    dark
                     :disabled="loading"
                     :readonly="loading"
                     v-model="slot"
@@ -25,7 +26,7 @@
                 <q-btn
                     v-if="!loading"
                     flat
-                    color="secondary"
+                    color="default"
                     icon="clear"
                     @click="cancel()"
                 >

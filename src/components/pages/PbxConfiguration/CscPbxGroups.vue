@@ -1,13 +1,13 @@
 <template>
     <csc-page
-        class="csc-list-page"
+        :is-list="true"
     >
         <div
             v-show="addFormEnabled"
-            class="row justify-center margin-sm"
+            class="row justify-center"
         >
             <csc-pbx-group-add-form
-                class="col-xs-12 col-md-6"
+                class="col-xs-12 col-md-6 csc-list-form"
                 ref="addForm"
                 @save="addGroup"
                 @cancel="disableAddForm"
@@ -50,10 +50,8 @@
             />
         </div>
         <q-list
-            class=""
             no-border
-            separator
-            sparse
+            striped-odd
             multiline
             :highlight="!isMobile"
         >
