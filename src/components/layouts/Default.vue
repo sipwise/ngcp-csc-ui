@@ -540,18 +540,24 @@
         padding-bottom 120px
     #main-menu
         padding-top 60px
+        background-color $main-menu-background
         .q-item-side
             min-width 30px
         .q-item
             padding 12px 24px
             .q-item-sublabel
-                color #5b7086
+                color $main-menu-subtitle-color
             .q-item-main,
             .q-item-side
-                color #ADB3B8
+                color $main-menu-title-color
         .router-link-active,
         .q-item:hover
-            background-color #475360
+            background-color $main-menu-hover-color
+            .q-item-sublabel
+                color $main-menu-subtitle-hover-color
+            .q-item-main,
+            .q-item-side
+                color $main-menu-title-hover-color
         .q-collapsible-sub-item
             padding 0
             .q-item
@@ -559,7 +565,6 @@
     #user-login-as
         display inline-block
         text-transform none
-        color #c5eab4
     #user-login-as:after
         content " "
         white-space pre
