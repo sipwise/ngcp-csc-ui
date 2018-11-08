@@ -177,28 +177,30 @@ export default {
             document.location.href = document.location.pathname;
         },
         initUser(context) {
-            context.commit('userDataRequesting');
-            getUserData(localStorage.getItem('subscriberId')).then((result) => {
-                let capabilities = Object.assign(
-                    { faxactive: result.faxactive },
-                    result.capabilities
-                );
-                context.commit('userDataSucceeded', {
-                    subscriber: result.subscriber,
-                    capabilities: capabilities
+            if(!context.getters.userDataSucceeded) {
+                context.commit('userDataRequesting');
+                getUserData(localStorage.getItem('subscriberId')).then((result) => {
+                    let capabilities = Object.assign(
+                        { faxactive: result.faxactive },
+                        result.capabilities
+                    );
+                    context.commit('userDataSucceeded', {
+                        subscriber: result.subscriber,
+                        capabilities: capabilities
+                    });
+                    if(_.isNumber(context.getters.jwtTTL)) {
+                        setTimeout(()=>{
+                            context.dispatch('logout');
+                        }, context.getters.jwtTTL * 1000);
+                    }
+                    if(context.getters.hasRtcEngineCapabilityEnabled) {
+                        context.dispatch('call/initialize', null, { root: true });
+                    }
+                }).catch((err)=>{
+                    context.commit('userDataFailed', err.message);
+                    context.dispatch('logout');
                 });
-                if(_.isNumber(context.getters.jwtTTL)) {
-                    setTimeout(()=>{
-                        context.dispatch('logout');
-                    }, context.getters.jwtTTL * 1000);
-                }
-                if(context.getters.hasRtcEngineCapabilityEnabled) {
-                    context.dispatch('call/initialize', null, { root: true });
-                }
-            }).catch((err)=>{
-                context.commit('userDataFailed', err.message);
-                context.dispatch('logout');
-            });
+            }
         }
     }
 };

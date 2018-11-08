@@ -312,6 +312,9 @@
                 mobileMenu: null
             }
         },
+        mounted() {
+            this.$store.dispatch('user/initUser');
+        },
         mixins: [
             platformMixin
         ],
