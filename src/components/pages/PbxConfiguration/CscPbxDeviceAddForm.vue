@@ -2,6 +2,7 @@
     <div>
         <q-field :error-label="stationNameErrorMessage">
             <q-input
+                dark
                 @input="$v.data.station_name.$touch"
                 @blur="$v.data.station_name.$touch"
                 :error="$v.data.station_name.$error"
@@ -15,6 +16,7 @@
         </q-field>
         <q-field :error-label="identifierErrorMessage">
             <q-input
+                dark
                 @input="$v.data.identifier.$touch"
                 @blur="$v.data.identifier.$touch"
                 :error="$v.data.identifier.$error"
@@ -40,7 +42,8 @@
         >
             <q-btn
                 v-if="!loading"
-                flat color="secondary"
+                flat
+                color="default"
                 icon="clear"
                 @click="cancel()"
             >

@@ -11,6 +11,7 @@
                 <q-list
                     separator
                     link
+                    no-border
                 >
                     <q-item @click="addDestinationByType('number'), $refs.popover.close()">
                         {{ $t('pages.callForward.buttons.addNumber') }}
@@ -32,6 +33,7 @@
                 :error-label="destinationInputError"
             >
                 <q-input
+                    dark
                     :before="beforeIconDestination"
                     :float-label="$t('pages.callForward.destination')"
                     type="text"
@@ -49,6 +51,7 @@
                 :error-label="timeoutInputError"
             >
                 <q-input
+                    dark
                     :before="beforeIconTimeout"
                     :float-label="$t('pages.callForward.timeout')"
                     type="number"

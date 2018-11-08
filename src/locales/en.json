@@ -382,8 +382,8 @@
         "resetFilters": "Reset filters",
         "closeFilters": "Close filters",
         "createSeat": "Create seat",
-        "noGroupAssigned": "Not assigned to any group",
-        "noSeatAssigned": "No seats assigned",
+        "noGroupAssigned": "No groups",
+        "noSeatAssigned": "No seats",
         "createGroup": "Create group"
     },
     "callBlocking": {

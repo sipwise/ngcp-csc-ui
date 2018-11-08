@@ -47,8 +47,8 @@ export function showPermanentGlobalWarning(message) {
 export function showToast(message) {
     Toast.create({
         html: message,
-        color: 'white',
-        bgColor: '#68A44E'
+        color: '#151d30',
+        bgColor: '#40cc3d'
     });
 }
 

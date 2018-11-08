@@ -1,78 +1,82 @@
 <template>
     <csc-page
         ref="page"
-        class="csc-list-page csc-page-conversations"
+        :is-list="true"
     >
         <q-tabs
             inverted
             color="primary"
             align="justify"
             v-model="selectedTab"
-            class="conversations-tabs"
+            id="csc-conversations-tabs"
         >
             <q-tab
                 default
                 name="call-fax-voicemail"
                 slot="title"
                 icon="inbox"
-                label="All"
+                :label="labelAll"
                 @click="filterByType('call-fax-voicemail')"
             />
             <q-tab
                 name="call"
                 slot="title"
                 icon="call"
-                label="Calls"
+                :label="labelCalls"
                 @click="filterByType('call')"
             />
             <q-tab
                 name="fax"
                 slot="title"
                 icon="description"
-                label="Faxes"
+                :label="labelFaxes"
                 @click="filterByType('fax')"
             />
             <q-tab
                 name="voicemail"
                 slot="title"
                 icon="voicemail"
-                label="Voicemails"
+                :label="labelVoicemails"
                 @click="filterByType('voicemail')"
             />
         </q-tabs>
-        <q-list
-            v-if="items.length > 0"
-            no-border
-            inset-separator
-            sparse
-            multiline
-            class="csc-conversation-list"
-        >
-            <csc-conversation-item
-                v-for="(item, index) in items"
-                :key="item._id"
-                :item="item"
-                :call-available="isCallAvailable"
-                @start-call="startCall"
-                @download-fax="downloadFax"
-                @download-voice-mail="downloadVoiceMail"
-                @play-voice-mail="playVoiceMail"
-            />
-        </q-list>
         <div
-            v-else-if="!isNextPageRequesting && items.length === 0"
-            class="row justify-center csc-conversation-list-message"
+            id="csc-conversation-content"
         >
-            {{ noResultsMessage }}
-        </div>
-        <div
-            v-if="isNextPageRequesting"
-            class="row justify-center"
-        >
-            <q-spinner-dots
-                color="primary"
-                :size="40"
-            />
+            <q-list
+                v-if="items.length > 0"
+                no-border
+                striped-odd
+                multiline
+                id="csc-conversation-list"
+            >
+                <csc-conversation-item
+                    class="csc-list-item csc-conversation-list-item"
+                    v-for="item in items"
+                    :key="item._id"
+                    :item="item"
+                    :call-available="isCallAvailable"
+                    @start-call="startCall"
+                    @download-fax="downloadFax"
+                    @download-voice-mail="downloadVoiceMail"
+                    @play-voice-mail="playVoiceMail"
+                />
+            </q-list>
+            <div
+                v-else-if="!isNextPageRequesting && items.length === 0"
+                class="row justify-center csc-conversation-list-message"
+            >
+                {{ noResultsMessage }}
+            </div>
+            <div
+                v-if="isNextPageRequesting"
+                class="row justify-center"
+            >
+                <q-spinner-dots
+                    color="primary"
+                    :size="40"
+                />
+            </div>
         </div>
         <q-scroll-observable
             @scroll="scroll"
@@ -89,6 +93,7 @@
 </template>
 
 <script>
+    import platformMixin from '../../../mixins/platform'
     import {
         mapGetters
     } from 'vuex'
@@ -113,7 +118,7 @@
         QBtn,
         QIcon
     } from 'quasar-framework'
-    const { offset } = dom
+    const offset = dom.offset;
     export default {
         data () {
             return {
@@ -139,6 +144,9 @@
                 ]
             }
         },
+        mixins: [
+            platformMixin
+        ],
         components: {
             CscPage,
             CscConversationItem,
@@ -157,7 +165,6 @@
         created() {
             this.$store.commit('conversations/resetList');
         },
-        inject: ['layout'],
         computed: {
             ...mapGetters('conversations', [
                 'items',
@@ -189,16 +196,48 @@
             },
             backToTopProps() {
                 return {offset: 100, duration: 200};
+            },
+            labelAll() {
+                if(this.isMobile) {
+                    return '';
+                }
+                else {
+                    return 'All'
+                }
+            },
+            labelCalls() {
+                if(this.isMobile) {
+                    return '';
+                }
+                else {
+                    return 'Calls'
+                }
+            },
+            labelFaxes() {
+                if(this.isMobile) {
+                    return '';
+                }
+                else {
+                    return 'Faxes'
+                }
+            },
+            labelVoicemails() {
+                if(this.isMobile) {
+                    return '';
+                }
+                else {
+                    return 'Voicemails'
+                }
             }
         },
         methods: {
             scroll(data) {
                 if(!this.isNextPageRequesting && !this.scrollEventEmitted && data.direction === 'down' &&
-                    data.position > scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight + 30) {
+                    data.position > scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight - 90) {
                     this.scrollEventEmitted = true;
                     this.nextPage(this.selectedTab);
                 }
-                else if(data.position <= scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight + 30) {
+                else if(data.position <= scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight - 90) {
                     this.scrollEventEmitted = false;
                 }
             },
@@ -296,41 +335,19 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-
-    @import '../../../themes/app.variables.styl'
-
-    .page.csc-page-conversations
-        padding-top 0
-
-    .csc-conversation-list
-        padding 0
-
-    .csc-conversation-list-message
-        padding 16
-        padding 16px
-
-    .q-infinite-scroll-message
-        margin-bottom 50px
-
-    .conversations-tabs
+    @import '../../../themes/quasar.variables.styl'
+    #csc-conversations-tabs
         position sticky
-        top $toolbar-min-height
+        top $header-height
         z-index 12
-        background white
-        padding-top 16px
-        padding-bottom 16px
-
-    .csc-voice-mail-item
-        .csc-item-buttons
-            position absolute
-            right 16px
-
-    .csc-item-buttons
-        .q-btn
-            padding-left 8px
-            padding-right 8px
-
+        background-color $secondary
+        .q-tab
+            .q-tab-icon
+                font-size 24px
+    #csc-conversation-content
+        padding-top $flex-gutter-lg
     .csc-back-to-top
         margin 0 15px 15px 0
-
+    .csc-conversation-list-item
+        padding $flex-gutter-sm
 </style>

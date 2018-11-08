@@ -61,7 +61,9 @@
                         <q-list
                             item-separator
                             link
-                            class="csc-toolbar-btn-popover">
+                            no-border
+                            class="csc-toolbar-btn-popover"
+                        >
                             <q-item
                                 @click="downloadVoiceMail"
                             >

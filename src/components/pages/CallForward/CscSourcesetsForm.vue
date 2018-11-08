@@ -2,6 +2,7 @@
     <div class="add-source-form">
         <q-field>
             <q-input
+                dark
                 autofocus
                 v-model="source"
                 :float-label="$t('pages.callForward.sources.source')"
