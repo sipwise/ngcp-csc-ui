@@ -1,7 +1,10 @@
 'use strict';
 
 import _ from 'lodash';
-import { login, getUserData} from '../api/user';
+import {
+    login,
+    getUserData
+} from '../api/user';
 
 export default {
     namespaced: true,
@@ -69,11 +72,11 @@ export default {
         getSubscriberId(state) {
             return state.subscriberId;
         },
-        loginRequesting(state) {
-            return state.loginRequesting;
+        loginRequesting(state, getters) {
+            return state.loginRequesting || getters.userDataRequesting;
         },
-        loginSucceeded(state) {
-            return state.loginSucceeded;
+        loginSucceeded(state, getters) {
+            return state.loginSucceeded && getters.userDataSucceeded;
         },
         loginError(state) {
             return state.loginError;
@@ -163,6 +166,7 @@ export default {
                     jwt: localStorage.getItem('jwt'),
                     subscriberId: localStorage.getItem('subscriberId')
                 });
+                context.dispatch('initUser');
             }).catch((err)=>{
                 context.commit('loginFailed', err.message);
             });
@@ -188,7 +192,9 @@ export default {
                         context.dispatch('logout');
                     }, context.getters.jwtTTL * 1000);
                 }
-                context.dispatch('call/initialize', null, { root: true });
+                if(context.getters.hasRtcEngineCapabilityEnabled) {
+                    context.dispatch('call/initialize', null, { root: true });
+                }
             }).catch((err)=>{
                 context.commit('userDataFailed', err.message);
                 context.dispatch('logout');

@@ -671,6 +671,7 @@
         .csc-call-content
             background-color transparent
     .csc-call.csc-call-minimized
+        opacity 0
         height $call-footer-height-big
         top auto
         bottom ($call-footer-height-big + $call-footer-action-margin) * -1

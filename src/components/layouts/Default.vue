@@ -149,7 +149,7 @@
             </q-collapsible>
             <q-collapsible
                 :opened="isCallBlocking"
-                intend icon="fa-ban"
+                intend icon="block"
                 :label="$t('navigation.callBlocking.title')"
                 :sublabel="$t('navigation.callBlocking.subTitle')"
             >
@@ -311,9 +311,6 @@
                 },
                 mobileMenu: null
             }
-        },
-        mounted: function() {
-            this.$store.dispatch('user/initUser');
         },
         mixins: [
             platformMixin
@@ -499,14 +496,8 @@
                     this.setCallStateTitle();
                 }
             },
-            userDataRequesting(value) {
-                if(value) {
-                    startLoading();
-                }
-            },
-            userDataSucceeded(value) {
-                if(value) {
-                    stopLoading();
+            userDataSucceeded(userDataSucceeded) {
+                if(userDataSucceeded) {
                     enableIncomingCallNotifications();
                 }
             },

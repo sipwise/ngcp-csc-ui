@@ -21,8 +21,18 @@
                         </form>
                     </q-card-main>
                     <q-card-actions class="pull-right">
-                        <q-btn flat icon="fa-arrow-right"
-                               color="primary" @click="login()">{{ $t('pages.login.button') }}</q-btn>
+                        <q-spinner-dots
+                            v-if="loginRequesting"
+                            color="primary"
+                            size="32px"
+                        />
+                        <q-btn
+                            v-if="!loginRequesting"
+                            flat
+                            icon="fa-arrow-right"
+                            color="primary"
+                            @click="login()"
+                        >{{ $t('pages.login.button') }}</q-btn>
                     </q-card-actions>
                 </q-card>
             </div>
@@ -33,10 +43,28 @@
 
 <script>
 
-    import { mapGetters } from 'vuex'
-    import { startLoading, stopLoading, showGlobalError } from '../helpers/ui'
-    import { QLayout, QCard, QCardTitle, QCardSeparator, QCardMain, QField, QInput,
-        QCardActions, QBtn, QIcon, Platform } from 'quasar-framework'
+    import {
+        mapGetters
+    } from 'vuex'
+    import {
+        // startLoading,
+        // stopLoading,
+        showGlobalError
+    } from '../helpers/ui'
+    import {
+        QLayout,
+        QCard,
+        QCardTitle,
+        QCardSeparator,
+        QCardMain,
+        QField,
+        QInput,
+        QCardActions,
+        QBtn,
+        QIcon,
+        Platform,
+        QSpinnerDots
+    } from 'quasar-framework'
 
     export default {
         name: 'login',
@@ -50,7 +78,8 @@
             QInput,
             QCardActions,
             QBtn,
-            QIcon
+            QIcon,
+            QSpinnerDots
         },
         data () {
             return {
@@ -84,11 +113,11 @@
             }
         },
         watch: {
-            loginRequesting(logging) {
-                if(logging) {
-                    startLoading();
-                }
-            },
+            // loginRequesting(logging) {
+            //     if(logging) {
+            //         startLoading();
+            //     }
+            // },
             loginSucceeded(loggedIn) {
                 if(loggedIn) {
                     this.$router.push({path : '/'});
@@ -96,7 +125,6 @@
             },
             loginError(error) {
                 if(error) {
-                    stopLoading();
                     showGlobalError(this.$i18n.t('pages.login.error'));
                 }
             }

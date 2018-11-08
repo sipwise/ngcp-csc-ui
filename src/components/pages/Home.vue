@@ -9,7 +9,7 @@
                 class="csc-call-page-content"
             >
                 <q-alert
-                    v-if="desktopSharingInstall"
+                    v-if="!isCallInitializing && desktopSharingInstall"
                     v-model="desktopSharingInstall"
                     color="warning"
                     :actions="desktopSharingAlertActions"
@@ -17,20 +17,30 @@
                     {{ $t('call.desktopSharingNotInstalled') }}
                 </q-alert>
                 <q-alert
+                    v-if="!isCallInitializing && !hasRtcEngineCapabilityEnabled"
                     class="csc-inline-alert"
                     appear
                     icon="info"
                     color="info"
-                    v-if="!hasRtcEngineCapabilityEnabled"
                     :actions="rtcEngineInfoActions"
                 >
                     {{ $t('call.rtcEngineNotEnabled') }}
                 </q-alert>
+                <div
+                    v-if="isCallInitializing"
+                    class="csc-main-spinner"
+                >
+                    <q-spinner-dots
+                        size="32px"
+                        color="primary"
+                    />
+                </div>
                 <csc-phone-number-input
+                    v-if="!isCallInitializing"
                     class="csc-call-phone-number"
                     :dark="false"
                     :value="callNumberInput"
-                    :enabled="hasRtcEngineCapabilityEnabled"
+                    :enabled="isCallInitialized"
                     @number-changed="numberInputChanged"
                 />
             </div>
@@ -49,7 +59,8 @@
     import CscPhoneNumberInput from "../call/CscPhoneNumberInput";
     import {
         QIcon,
-        QAlert
+        QAlert,
+        QSpinnerDots
     } from 'quasar-framework'
     export default {
         data() {
@@ -60,7 +71,8 @@
             CscPhoneNumberInput,
             CscPage,
             QIcon,
-            QAlert
+            QAlert,
+            QSpinnerDots
         },
         methods: {
             numberInputChanged(number) {
@@ -72,7 +84,9 @@
                 'callNumberInput',
                 'hasCallInitError',
                 'hasRtcEngineCapabilityEnabled',
-                'desktopSharingInstall'
+                'desktopSharingInstall',
+                'isCallInitialized',
+                'isCallInitializing'
             ]),
             rtcEngineInfoActions() {
                 return [];

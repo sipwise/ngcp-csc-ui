@@ -5,7 +5,7 @@
                 <q-item tag="label">
                     <q-item-side>
                         <q-radio v-model="enabled" val="blacklist" color="negative"
-                                 checked-icon="fa-ban" uncheck-icon="fa-ban"/>
+                                 checked-icon="block" uncheck-icon="block"/>
                     </q-item-side>
                     <q-item-main>
                         <q-item-tile label>{{ $t('pages.callBlocking' + suffix + '.toggleDisableLabel') }}</q-item-tile>
@@ -39,7 +39,7 @@
         <div>
             <q-card class="blocked-number" v-for="(number, index) in numbers" :key="index">
                 <q-card-title>
-                    <q-icon v-if="!(editing && editingIndex == index) && enabled == 'blacklist'" name="fa-ban" color="negative" size="22px"/>
+                    <q-icon v-if="!(editing && editingIndex == index) && enabled == 'blacklist'" name="block" color="negative" size="22px"/>
                     <q-icon v-if="!(editing && editingIndex == index) && enabled == 'whitelist'" name="check" color="primary" size="22px"/>
                     <span class="blocked-number-title" v-if="!(editing && editingIndex == index)"
                           @click="editNumber(index)">{{ number }}</span>

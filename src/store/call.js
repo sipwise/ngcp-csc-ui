@@ -11,6 +11,9 @@ import {
 import {
     startCase
 } from '../filters/string'
+import {
+    RequestState
+} from './common'
 
 export var CallState = {
     input: 'input',
@@ -27,12 +30,32 @@ export var MediaType = {
     audioScreen: 'audioScreen'
 };
 
+export const errorVisibilityTimeout = 5000;
+export const reinitializeTimeout = 5000;
+
+function handleUserMediaError(context, err) {
+    let errName = _.get(err, 'name', null);
+    let errMessage = _.get(err, 'message', null);
+    if(errName === 'UserMediaError' && errMessage === 'Permission denied') {
+        context.commit('endCall', 'userMediaPermissionDenied');
+    }
+    if(errMessage === 'plugin not detected') {
+        context.commit('desktopSharingInstall');
+        context.commit('hangUpCall');
+    }
+    else if(errMessage === 'PermissionDenied') {
+        context.commit('endCall', 'desktopSharingPermissionDenied');
+    }
+    else {
+        context.commit('endCall', errName);
+    }
+}
+
 export default {
     namespaced: true,
     state: {
-        initialized: false,
-        initError: null,
-        disabled: false,
+        initializationState: RequestState.initiated,
+        initializationError: null,
         endedReason: null,
         callState: CallState.input,
         number: '',
@@ -64,11 +87,18 @@ export default {
         isCallAvailable(state, getters) {
             return getters.isNetworkConnected;
         },
+        isCallInitializing(state, getters, rootState, rootGetters) {
+            return state.initializationState === RequestState.requesting ||
+                rootGetters['user/userDataRequesting'];
+        },
+        isCallInitialized(state) {
+            return state.initializationState === RequestState.succeeded
+        },
         hasCallInitError(state) {
-            return state.initError !== null && state.disabled === false;
+            return state.initializationError !== null;
         },
         callInitError(state) {
-            return state.initError;
+            return state.initializationError;
         },
         isPreparing(state) {
             return state.callState === CallState.input;
@@ -184,19 +214,18 @@ export default {
         }
     },
     mutations: {
-        numberInputChanged(state, numberInput) {
-            state.numberInput = numberInput;
+        initRequesting(state) {
+            state.initializationState = RequestState.requesting;
         },
         initSucceeded(state) {
-            state.initialized = true;
-            state.initError = null;
+            state.initializationState = RequestState.succeeded;
         },
-        initFailed(state, err) {
-            state.initialized = false;
-            state.initError = err;
+        initFailed(state, error) {
+            state.initializationState = RequestState.failed;
+            state.initializationError = error;
         },
-        disable(state) {
-            state.disabled = true;
+        numberInputChanged(state, numberInput) {
+            state.numberInput = numberInput;
         },
         inputNumber(state) {
             state.callState = CallState.input;
@@ -294,7 +323,8 @@ export default {
     },
     actions: {
         initialize(context) {
-            return new Promise((resolve, reject)=>{
+            if(!context.getters.isCallInitialized) {
+                context.commit('initRequesting');
                 Vue.call.onIncoming(()=>{
                     context.commit('incomingCall', {
                         number: Vue.call.getNumber()
@@ -304,21 +334,16 @@ export default {
                 }).onEnded(()=>{
                     Vue.call.end();
                     context.commit('endCall', Vue.call.getEndedReason());
+                    setTimeout(()=>{
+                        context.commit('inputNumber');
+                    }, errorVisibilityTimeout);
                 });
-                if(context.getters.hasRtcEngineCapabilityEnabled) {
-                    Vue.call.initialize().then(()=>{
-                        context.commit('initSucceeded');
-                        resolve();
-                    }).catch((err)=>{
-                        context.commit('initFailed', err);
-                        reject(err);
-                    });
-                }
-                else {
-                    context.commit('disable');
-                    resolve();
-                }
-            });
+                Vue.call.initialize().then(()=>{
+                    context.commit('initSucceeded');
+                }).catch((err)=>{
+                    context.commit('initFailed', err);
+                });
+            }
         },
         start(context, localMedia) {
             let number = context.getters.callNumberInput;
@@ -335,13 +360,10 @@ export default {
                 }).start(number, localMediaStream);
             }).catch((err)=>{
                 Vue.call.end();
-                if(err.message === 'plugin not detected') {
-                    context.commit('desktopSharingInstall');
-                    context.commit('hangUpCall');
-                }
-                else {
-                    context.commit('endCall', err.name);
-                }
+                handleUserMediaError(context, err);
+                setTimeout(()=>{
+                    context.commit('inputNumber');
+                }, errorVisibilityTimeout);
             });
         },
         accept(context, localMedia) {
@@ -351,13 +373,10 @@ export default {
                 context.commit('localMediaSuccess', localMediaStream);
             }).catch((err)=>{
                 Vue.call.end();
-                if(err.message === 'plugin not detected') {
-                    context.commit('desktopSharingInstall');
-                    context.commit('hangUpCall');
-                }
-                else {
-                    context.commit('endCall', err.name);
-                }
+                handleUserMediaError(context, err);
+                setTimeout(()=>{
+                    context.commit('inputNumber');
+                }, errorVisibilityTimeout);
             });
         },
         end(context) {
