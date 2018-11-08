@@ -3,11 +3,13 @@
         <q-item-main>
             <q-item-tile class="row no-wrap csc-time">
                 <q-input
+                    dark
                     class="col"
                     v-model="weekday"
                     readonly
                 />
                 <q-datetime
+                    dark
                     class="col"
                     color="primary"
                     v-model="from"
@@ -17,6 +19,7 @@
                     disable
                 />
                 <q-datetime
+                    dark
                     class="col"
                     color="primary"
                     v-model="to"

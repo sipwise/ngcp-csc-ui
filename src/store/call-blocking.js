@@ -23,14 +23,18 @@ import {
 export default {
     namespaced: true,
     state: {
-        incomingEnabled: false,
-        incomingList: [],
-        outgoingEnabled: false,
-        outgoingList: [],
+        enabled: false,
+        list: [],
         privacy: false,
         privacyLoadingState: RequestState.initiated,
         privacyUpdated: false,
-        privacyError: null
+        privacyError: null,
+        toggleState: RequestState.initiated,
+        addNumberState: RequestState.initiated,
+        editNumberState: RequestState.initiated,
+        removeNumberState: RequestState.initiated,
+        numberListState: RequestState.initiated,
+        currentNumberIndex: null
     },
     getters: {
         privacy(state) {
@@ -47,29 +51,53 @@ export default {
         },
         privacyLoading(state) {
             return state.privacyLoadingState === RequestState.requesting;
+        },
+        toggleState(state) {
+            return state.toggleState;
+        },
+        isToggleLoading(state) {
+            return state.toggleState === RequestState.requesting;
+        },
+        addNumberState(state) {
+            return state.addNumberState;
+        },
+        isAddNumberLoading(state) {
+            return state.addNumberState === RequestState.requesting;
+        },
+        editNumberState(state) {
+            return state.editNumberState;
+        },
+        isEditNumberLoading(state) {
+            return state.editNumberState === RequestState.requesting;
+        },
+        removeNumberState(state) {
+            return state.editNumberState;
+        },
+        isRemoveNumberLoading(state) {
+            return state.removeNumberState === RequestState.requesting;
+        },
+        numberListState(state) {
+            return state.numberListState;
+        },
+        isNumberListLoading(state) {
+            return state.numberListState === RequestState.requesting;
+        },
+        numbers(state) {
+            return state.list;
+        },
+        currentNumberIndex(state) {
+            return state.currentNumberIndex;
+        },
+        listMode(state) {
+            if(state.enabled) {
+                return 'whitelist';
+            }
+            else {
+                return 'blacklist';
+            }
         }
     },
     mutations: {
-        enableIncoming (state) {
-            state.incomingEnabled = true;
-        },
-        disableIncoming (state) {
-            state.incomingEnabled = false;
-        },
-        loadIncoming(state, options) {
-            state.incomingEnabled = options.enabled;
-            state.incomingList = options.list;
-        },
-        enableOutgoing (state) {
-            state.outgoingEnabled = true;
-        },
-        disableOutgoing (state) {
-            state.outgoingEnabled = false;
-        },
-        loadOutgoing(state, options) {
-            state.outgoingEnabled = options.enabled;
-            state.outgoingList = options.list;
-        },
         privacyLoading(state) {
             state.privacyLoadingState = RequestState.requesting;
             state.privacyError = null;
@@ -94,133 +122,188 @@ export default {
             state.privacyLoadingState = RequestState.failed;
             state.privacyError = error;
             state.privacyUpdated = true;
+        },
+        toggleRequesting(state) {
+            state.toggleState = RequestState.requesting;
+        },
+        toggleSucceeded(state, enabled) {
+            state.enabled = enabled;
+            state.toggleState = RequestState.succeeded;
+        },
+        toggleFailed(state) {
+            state.toggleState = RequestState.failed;
+        },
+        addNumberRequesting(state) {
+            state.addNumberState = RequestState.requesting;
+        },
+        addNumberSucceeded(state) {
+            state.addNumberState = RequestState.succeeded;
+        },
+        addNumberFailed(state) {
+            state.addNumberState = RequestState.failed;
+        },
+        editNumberRequesting(state, options) {
+            state.editNumberState = RequestState.requesting;
+            state.currentNumberIndex = options.index;
+        },
+        editNumberSucceeded(state) {
+            state.editNumberState = RequestState.succeeded;
+        },
+        editNumberFailed(state) {
+            state.editNumberState = RequestState.failed;
+        },
+        removeNumberRequesting(state, index) {
+            state.removeNumberState = RequestState.requesting;
+            state.currentNumberIndex = index;
+        },
+        removeNumberSucceeded(state) {
+            state.removeNumberState = RequestState.succeeded;
+        },
+        removeNumberFailed(state) {
+            state.removeNumberState = RequestState.failed;
+        },
+        numberListRequesting(state) {
+            state.numberListState = RequestState.requesting;
+            state.list = [];
+        },
+        numberListSucceeded(state, options) {
+            state.numberListState = RequestState.succeeded;
+            state.enabled = options.enabled;
+            state.list = options.list;
+        },
+        numberListFailed(state) {
+            state.numberListState = RequestState.failed;
         }
     },
     actions: {
         toggleIncoming(context, enabled) {
-            return new Promise((resolve, reject)=>{
+            context.commit('toggleRequesting');
+            Promise.resolve().then(()=>{
                 if(enabled) {
-                    enableIncomingCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
-                        context.commit('enableIncoming');
-                        resolve();
-                    }).catch((err)=>{
-                        reject(err);
-                    });
+                    return enableIncomingCallBlocking(localStorage.getItem('subscriberId'));
                 }
                 else {
-                    disableIncomingCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
-                        context.commit('disableIncoming');
-                        resolve();
-                    }).catch((err)=>{
-                        reject(err);
-                    });
+                    return disableIncomingCallBlocking(localStorage.getItem('subscriberId'));
                 }
+            }).then(()=>{
+                context.commit('toggleSucceeded', enabled);
+            }).catch((err)=>{
+                context.commit('toggleFailed', err.message);
             });
         },
         loadIncoming(context) {
-            return new Promise((resolve, reject)=>{
-                getIncomingCallBlocking(localStorage.getItem('subscriberId')).then((result)=>{
-                    context.commit('loadIncoming', result);
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
-                });
+            context.commit('numberListRequesting');
+            Promise.resolve().then(()=>{
+                return getIncomingCallBlocking(localStorage.getItem('subscriberId'));
+            }).then((result)=>{
+                context.commit('numberListSucceeded', result);
+            }).catch((err)=>{
+                context.commit('numberListFailed', err.message);
             });
         },
         addNumberIncoming(context, number) {
-            return new Promise((resolve, reject)=>{
-                addNumberToIncomingList(localStorage.getItem('subscriberId'), number).then(()=>{
-                    return context.dispatch('loadIncoming');
-                }).then(()=>{
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
-                });
+            context.commit('addNumberRequesting');
+            Promise.resolve().then(()=>{
+                return addNumberToIncomingList(localStorage.getItem('subscriberId'), number);
+            }).then(()=>{
+                return getIncomingCallBlocking(localStorage.getItem('subscriberId'));
+            }).then((result)=>{
+                context.commit('numberListSucceeded', result);
+                context.commit('addNumberSucceeded');
+            }).catch((err)=>{
+                context.commit('addNumberFailed', err.message);
             });
         },
         editNumberIncoming(context, options) {
-            return new Promise((resolve, reject)=>{
-                editNumberFromIncomingList(localStorage.getItem('subscriberId'), options.index, options.number).then(()=>{
-                    return context.dispatch('loadIncoming');
-                }).then(()=>{
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
-                });
+            context.commit('editNumberRequesting', options);
+            Promise.resolve().then(()=> {
+                return editNumberFromIncomingList(localStorage.getItem('subscriberId'),
+                    options.index, options.number);
+            }).then(()=>{
+                return getIncomingCallBlocking(localStorage.getItem('subscriberId'));
+            }).then((result)=>{
+                context.commit('numberListSucceeded', result);
+                context.commit('editNumberSucceeded');
+            }).catch((err)=>{
+                context.commit('editNumberFailed', err.message);
             });
         },
         removeNumberIncoming(context, index) {
-            return new Promise((resolve, reject)=>{
-                removeNumberFromIncomingList(localStorage.getItem('subscriberId'), index).then(()=>{
-                    return context.dispatch('loadIncoming');
-                }).then(()=>{
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
-                });
+            context.commit('removeNumberRequesting', index);
+            Promise.resolve().then(()=>{
+                return removeNumberFromIncomingList(localStorage.getItem('subscriberId'), index);
+            }).then(()=>{
+                return getIncomingCallBlocking(localStorage.getItem('subscriberId'));
+            }).then((result)=>{
+                context.commit('numberListSucceeded', result);
+                context.commit('removeNumberSucceeded');
+            }).catch((err)=>{
+                context.commit('removeNumberFailed', err.message);
             });
         },
         toggleOutgoing(context, enabled) {
-            return new Promise((resolve, reject)=>{
+            context.commit('toggleRequesting');
+            Promise.resolve().then(()=>{
                 if(enabled) {
-                    enableOutgoingCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
-                        context.commit('enableOutgoing');
-                        resolve();
-                    }).catch((err)=>{
-                        reject(err);
-                    });
+                    return enableOutgoingCallBlocking(localStorage.getItem('subscriberId'));
                 }
                 else {
-                    disableOutgoingCallBlocking(localStorage.getItem('subscriberId')).then(()=>{
-                        context.commit('disableOutgoing');
-                        resolve();
-                    }).catch((err)=>{
-                        reject(err);
-                    });
+                    return disableOutgoingCallBlocking(localStorage.getItem('subscriberId'));
                 }
+            }).then(()=>{
+                context.commit('toggleSucceeded', enabled);
+            }).catch((err)=>{
+                context.commit('toggleFailed', err.message);
             });
         },
         loadOutgoing(context) {
-            return new Promise((resolve, reject)=>{
-                getOutgoingCallBlocking(localStorage.getItem('subscriberId')).then((result)=>{
-                    context.commit('loadOutgoing', result);
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
-                });
+            context.commit('numberListRequesting');
+            Promise.resolve().then(()=>{
+                return getOutgoingCallBlocking(localStorage.getItem('subscriberId'));
+            }).then((result)=>{
+                context.commit('numberListSucceeded', result);
+            }).catch((err)=>{
+                context.commit('numberListFailed', err.message);
             });
         },
         addNumberOutgoing(context, number) {
-            return new Promise((resolve, reject)=>{
-                addNumberToOutgoingList(localStorage.getItem('subscriberId'), number).then(()=>{
-                    return context.dispatch('loadOutgoing');
-                }).then(()=>{
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
-                });
+            context.commit('addNumberRequesting');
+            Promise.resolve().then(()=>{
+                return addNumberToOutgoingList(localStorage.getItem('subscriberId'), number);
+            }).then(()=>{
+                return getOutgoingCallBlocking(localStorage.getItem('subscriberId'));
+            }).then((result)=>{
+                context.commit('numberListSucceeded', result);
+                context.commit('addNumberSucceeded');
+            }).catch((err)=>{
+                context.commit('addNumberFailed', err.message);
             });
         },
         editNumberOutgoing(context, options) {
-            return new Promise((resolve, reject)=>{
-                editNumberFromOutgoingList(localStorage.getItem('subscriberId'), options.index, options.number).then(()=>{
-                    return context.dispatch('loadOutgoing');
-                }).then(()=>{
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
-                });
+            context.commit('editNumberRequesting', options);
+            Promise.resolve().then(()=> {
+                return editNumberFromOutgoingList(localStorage.getItem('subscriberId'),
+                    options.index, options.number);
+            }).then(()=>{
+                return getOutgoingCallBlocking(localStorage.getItem('subscriberId'));
+            }).then((result)=>{
+                context.commit('numberListSucceeded', result);
+                context.commit('editNumberSucceeded');
+            }).catch((err)=>{
+                context.commit('editNumberFailed', err.message);
             });
         },
         removeNumberOutgoing(context, index) {
-            return new Promise((resolve, reject)=>{
-                removeNumberFromOutgoingList(localStorage.getItem('subscriberId'), index).then(()=>{
-                    return context.dispatch('loadOutgoing');
-                }).then(()=>{
-                    resolve();
-                }).catch((err)=>{
-                    reject(err);
-                });
+            context.commit('removeNumberRequesting', index);
+            Promise.resolve().then(()=>{
+                return removeNumberFromOutgoingList(localStorage.getItem('subscriberId'), index);
+            }).then(()=>{
+                return getOutgoingCallBlocking(localStorage.getItem('subscriberId'));
+            }).then((result)=>{
+                context.commit('numberListSucceeded', result);
+                context.commit('removeNumberSucceeded');
+            }).catch((err)=>{
+                context.commit('removeNumberFailed', err.message);
             });
         },
         updatePrivacy(context, privacy) {

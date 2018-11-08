@@ -1,25 +1,24 @@
 <template>
-    <csc-page class="csc-list-page">
+    <csc-page
+        :is-list="true"
+    >
+        <csc-speed-dial-add-form
+            class="csc-list-form"
+            ref="addForm"
+            @save="assignSpeedDial"
+            :loading="isAdding"
+            :slot-options="unassignedSlots"
+        />
         <q-list
             no-border
-            separator
-            sparse
             multiline
+            striped-odd
+            highlight
         >
-            <q-item>
-                <q-item-main>
-                    <csc-speed-dial-add-form
-                        ref="addForm"
-                        @save="assignSpeedDial"
-                        :loading="isAdding"
-                        :slot-options="unassignedSlots"
-                    />
-                </q-item-main>
-            </q-item>
             <q-item
                 v-for="(assigned, index) in assignedSlots"
                 :key="index"
-                class="csc-entity"
+                class="csc-entity csc-list-item csc-speed-dial-list-item"
             >
                 <q-item-side
                     icon="touch app"
@@ -27,7 +26,7 @@
                 />
                 <q-item-main>
                     <q-item-tile label>
-                        <span class="csc-entity-title">
+                        <span>
                             {{ $t('speedDial.whenIDial', { slot: assigned.slot }) }}
                         </span>
                     </q-item-tile>
@@ -187,4 +186,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/quasar.variables.styl';
+    .csc-speed-dial-list-item
+        padding $flex-gutter-sm
 </style>

@@ -1,72 +1,121 @@
 <template>
-    <csc-page :title="$t('pages.callBlocking' + suffix + '.title')">
-        <div class="row">
-            <q-list link no-border class="mode-list col">
-                <q-item tag="label">
-                    <q-item-side>
-                        <q-radio v-model="enabled" val="blacklist" color="negative"
-                                 checked-icon="block" uncheck-icon="block"/>
+    <csc-page
+        :is-list="true"
+    >
+        <div
+            class="row"
+        >
+            <q-list
+                link
+                no-border
+                class="col col col-xs-12 col-md-6">
+                <q-item
+                    tag="label"
+                >
+                    <q-item-side
+                    >
+                        <q-radio
+                            :value="listMode"
+                            val="blacklist"
+                            color="primary"
+                            @input="updateListMode"
+                        />
                     </q-item-side>
-                    <q-item-main>
-                        <q-item-tile label>{{ $t('pages.callBlocking' + suffix + '.toggleDisableLabel') }}</q-item-tile>
+                    <q-item-main
+                    >
+                        <q-item-tile
+                            label
+                        >
+                            {{ $t('pages.callBlocking' + suffix + '.toggleDisableLabel') }}
+                            <csc-spinner
+                                v-if="isNumberListLoading || (isToggleLoading && listMode == 'whitelist')"
+                            />
+                        </q-item-tile>
                     </q-item-main>
                 </q-item>
-                <q-item tag="label">
-                    <q-item-side>
-                        <q-radio v-model="enabled" val="whitelist" color="primary"
-                                 checked-icon="check" uncheck-icon="check" />
+                <q-item
+                    tag="label"
+                >
+                    <q-item-side
+                    >
+                        <q-radio
+                            :value="listMode"
+                            val="whitelist"
+                            color="primary"
+                            @input="updateListMode"
+                        />
                     </q-item-side>
-                    <q-item-main>
-                        <q-item-tile label>{{ $t('pages.callBlocking' + suffix + '.toggleEnableLabel') }}</q-item-tile>
+                    <q-item-main
+                    >
+                        <q-item-tile
+                            label
+                        >
+                            {{ $t('pages.callBlocking' + suffix + '.toggleEnableLabel') }}
+                            <csc-spinner
+                                v-if="isNumberListLoading || (isToggleLoading && listMode == 'blacklist')"
+                            />
+                        </q-item-tile>
                     </q-item-main>
                 </q-item>
             </q-list>
         </div>
-        <div id="add-number-form">
-            <q-field v-if="!addFormEnabled">
-                <q-btn color="primary"
-                   flat icon="add"
-                   @click="enableAddForm()">{{ $t('pages.callBlocking' + suffix + '.addNumberButton') }}</q-btn>
-            </q-field>
-            <div v-if="addFormEnabled">
-                <q-field :error="addFormError" :error-label="$t('pages.callBlocking' + suffix + '.addInputError')">
-                    <q-input type="text" :float-label="$t('callBlocking.number')" v-model="newNumber" clearable @keyup.enter="addNumber()" />
-                </q-field>
-                <q-btn flat icon="clear" @click="disableAddForm()">{{ $t('buttons.cancel') }}</q-btn>
-                <q-btn flat icon="check" color="primary" @click="addNumber()">{{ $t('buttons.save') }}</q-btn>
-            </div>
+        <div
+            class="row justify-center"
+        >
+            <csc-call-blocking-add-form
+                class="csc-list-form col-xs-12 col-md-4 col-lg-6"
+                ref="addForm"
+                :loading="isAddNumberLoading"
+                @save="addNumber"
+            />
         </div>
-        <div>
-            <q-card class="blocked-number" v-for="(number, index) in numbers" :key="index">
-                <q-card-title>
-                    <q-icon v-if="!(editing && editingIndex == index) && enabled == 'blacklist'" name="block" color="negative" size="22px"/>
-                    <q-icon v-if="!(editing && editingIndex == index) && enabled == 'whitelist'" name="check" color="primary" size="22px"/>
-                    <span class="blocked-number-title" v-if="!(editing && editingIndex == index)"
-                          @click="editNumber(index)">{{ number }}</span>
-                    <q-input autofocus v-if="editing && editingIndex == index" type="text" :float-label="$t('callBlocking.number')"
-                             v-model="editingNumber" @keyup.enter="saveNumber(index)" />
-                    <q-btn color="primary" flat v-if="editing && editingIndex == index" slot="right"
-                           icon="check" @click="saveNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.save') }}</span></q-btn>
-                    <q-btn flat v-if="editing && editingIndex == index" slot="right"
-                           icon="clear" @click="cancelEdit()" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.cancel') }}</span></q-btn>
-                    <q-btn color="primary" flat v-if="!(editing && editingIndex == index)" slot="right"
-                           icon="fa-edit" @click="editNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.edit') }}</span></q-btn>
-                    <q-btn color="negative" flat v-if="!(editing && editingIndex == index)" slot="right"
-                           icon="delete" @click="removeNumber(index)" class="cursor-pointer"><span class="gt-sm">{{ $t('buttons.remove') }}</span></q-btn>
-                </q-card-title>
-            </q-card>
-            <q-inner-loading :visible="listLoading">
-                <q-spinner-mat size="50px" color="primary"></q-spinner-mat>
-            </q-inner-loading>
+        <div
+            v-if="isNumberListLoading"
+            class="row justify-center"
+        >
+            <csc-spinner />
+        </div>
+        <q-list
+            v-if="numbers && numbers.length > 0"
+            striped-odd
+            no-border
+        >
+            <csc-blocked-number
+                class="csc-list-item"
+                v-for="(number, index) in numbers"
+                :key="index"
+                :number="number"
+                :index="index"
+                :loading="isEditNumberLoading && currentNumberIndex === index"
+                :removing="isRemoveNumberLoading && currentNumberIndex === index"
+                @save="saveNumber"
+                @remove="removeNumber"
+            >
+                {{ number }}
+            </csc-blocked-number>
+        </q-list>
+        <div
+            v-else
+            class="csc-list-message"
+        >
+            {{ $t('callBlocking.listEmptyMessage') }}
         </div>
     </csc-page>
 </template>
 
 <script>
     import _ from 'lodash';
-    import { showToast } from '../../../helpers/ui'
+    import CscSpinner from '../../CscSpinner'
+    import {
+        mapGetters
+    } from 'vuex'
+    // import {
+    //     showToast
+    // } from '../../../helpers/ui'
     import CscPage  from '../../CscPage'
     import CscToggle from '../../form/CscToggle'
+    import CscCallBlockingAddForm from '../../pages/CallBlocking/CscCallBlockingAddForm'
+    import CscBlockedNumber from '../../pages/CallBlocking/CscBlockedNumber'
     import {
         QInput,
         QCard,
@@ -88,38 +137,21 @@
         QInnerLoading,
         QOptionGroup,
         QSelect,
-        QRadio
+        QRadio,
+        QSpinnerDots
     } from 'quasar-framework'
     export default {
         name: 'csc-call-blocking',
         props: [
-            'pageName',
-            'title',
-            'loadMethod',
-            'addMethod',
-            'editMethod',
-            'removeMethod',
-            'toggleMethod'
+            'pageName'
         ],
         data () {
             return {
-                addFormEnabled: false,
-                addFormError: false,
-                newNumber: '',
-                listLoading: false,
-                editing: false,
-                editingIndex: 0,
-                editingNumber: '',
-                mode: null
+
             }
         },
         mounted() {
-            this.listLoading = true;
-            this.$store.dispatch('callBlocking/load' + this.suffix).then(() => {
-                this.listLoading = false;
-            }).catch(() => {
-                this.listLoading = false;
-            });
+            this.$store.dispatch('callBlocking/load' + this.suffix);
         },
         components: {
             QToggle,
@@ -143,31 +175,28 @@
             CscPage,
             QOptionGroup,
             QSelect,
-            QRadio
+            QRadio,
+            CscCallBlockingAddForm,
+            QSpinnerDots,
+            CscBlockedNumber,
+            CscSpinner
         },
         computed: {
-            numbers() {
-                return this.$store.state.callBlocking[this.pageName + 'List'];
-            },
-            enabled: {
-                get() {
-                    var enabled = this.$store.state.callBlocking[this.pageName + 'Enabled'];
-                    if(enabled) {
-                        return 'whitelist';
-                    }
-                    else {
-                        return 'blacklist';
-                    }
-                },
-                set(value) {
-                    if(value === 'blacklist') {
-                        this.mode = false;
-                    }
-                    else {
-                        this.mode = true;
-                    }
-                }
-            },
+            ...mapGetters('callBlocking', [
+                'toggleState',
+                'isToggleLoading',
+                'addNumberState',
+                'isAddNumberLoading',
+                'editNumberState',
+                'isEditNumberLoading',
+                'removeNumberState',
+                'isRemoveNumberLoading',
+                'numberListState',
+                'isNumberListLoading',
+                'numbers',
+                'currentNumberIndex',
+                'listMode'
+            ]),
             toggleButtonLabel() {
                 if(!this.enabled) {
                     return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleEnableLabel');
@@ -191,60 +220,25 @@
         watch: {
             mode(value) {
                 this.toggle(value);
+            },
+            addNumberState(state) {
+                if(state === 'succeeded') {
+                    this.$refs.addForm.reset();
+                }
             }
         },
         methods: {
-            enableAddForm() {
-                this.addFormEnabled = true;
-                this.newNumber = '';
-                this.addFormError = false;
+            addNumber(number) {
+                this.$store.dispatch('callBlocking/addNumber' + this.suffix, number);
             },
-            disableAddForm() {
-                this.addFormEnabled = false;
-            },
-            addNumber() {
-                this.listLoading = true;
-                this.$store.dispatch('callBlocking/addNumber' + this.suffix, this.newNumber).then(()=>{
-                    this.disableAddForm();
-                    showToast(this.$i18n.t('pages.callBlocking' + this.suffix + '.addedToast', {
-                        number:this.newNumber
-                    }));
-                    this.listLoading = false;
-                }).catch(()=>{
-                    this.listLoading = false;
-                    this.addFormError = true;
-                });
-            },
-            editNumber(index) {
-                this.editing = true;
-                this.editingIndex = index;
-                this.editingNumber = this.numbers[index];
-            },
-            cancelEdit() {
-                this.editing = false;
-            },
-            saveNumber(index) {
-                this.editing = false;
-                this.editingIndex = index;
-                this.listLoading = true;
-                if(this.numbers[index] !== this.editingNumber) {
-                    this.$store.dispatch('callBlocking/editNumber' + this.suffix, {
-                        index: index,
-                        number: this.editingNumber
-                    }).then(()=>{
-                        this.listLoading = false;
-                    }).catch(()=>{
-                        this.listLoading = false;
-                    });
-                }
-                else {
-                    this.listLoading = false;
-                }
+            saveNumber(data) {
+                console.log(data);
+                this.$store.dispatch('callBlocking/editNumber' + this.suffix, data);
             },
             removeNumber(index) {
-                var store = this.$store;
-                var state = this;
-                var i18n = this.$i18n;
+                let state = this;
+                let store = this.$store;
+                let i18n = this.$i18n;
                 Dialog.create({
                     title: i18n.t('pages.callBlocking' + this.suffix + '.removeDialogTitle'),
                     message: i18n.t('pages.callBlocking' + this.suffix + '.removeDialogText', {
@@ -256,33 +250,21 @@
                             label: i18n.t('buttons.remove'),
                             color: 'negative',
                             handler () {
-                                state.listLoading = true;
-                                store.dispatch('callBlocking/removeNumber' + state.suffix, index).then(()=>{
-                                    state.listLoading = false;
-                                    showToast(i18n.t('pages.callBlocking' + state.suffix + '.removedToast', {
-                                        number: state.numbers[index]
-                                    }));
-                                }).catch(()=>{
-                                    state.listLoading = false;
-                                });
+                                store.dispatch('callBlocking/removeNumber' + state.suffix, index);
                             }
                         }
                     ]
                 });
             },
-            toggle(enabled) {
-                this.$store.dispatch('callBlocking/toggle' + this.suffix, enabled).then(()=>{
-                    showToast(this.toggleToastMessage);
-                }).catch((err)=>{
-                    console.log(err);
-                });
+            updateListMode(listMode) {
+                this.$store.dispatch('callBlocking/toggle' + this.suffix, listMode === 'whitelist');
             }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-
+    @import '../../../themes/quasar.variables.styl'
     #toggle-call-blocking
         margin-bottom 60px
 
@@ -297,4 +279,8 @@
 
     .mode-list
         margin-bottom 30px
+
+    .csc-list-item.q-item.csc-blocked-number
+        padding-top $flex-gutter-xs
+        padding-bottom $flex-gutter-xs
 </style>
