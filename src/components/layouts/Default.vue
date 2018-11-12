@@ -457,7 +457,7 @@
             },
             maximizeCall() {
                 if(this.isMobile) {
-                    this.$router.push('home');
+                    this.$router.push({path: '/user/home'});
                 }
                 else {
                     this.$store.commit('call/maximize');
