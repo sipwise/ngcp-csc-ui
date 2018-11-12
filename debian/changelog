@@ -1,3 +1,29 @@
+ngcp-csc-ui (7.0.1.0+0~mr7.0.1.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [7e43285] TT#44636 Development: Add MTA configuration to dev script
+  * [2fb4691] TT#45686 Development: Extend dev config script to enable conferencing and related services by default
+  * [8c43755] TT#45712 Implement Nuwings CSC 1:1 call wire frames
+  * [36330a2] TT#45671 Call: Improved error handling
+  * [979eefd] TT#45671 Call: Fix loading the user data after refresh
+  * [9074e70] TT#47003 Call: Diverse bug fixes
+  * [80fa75d] TT#47274 Fix: Routing issue while maximizing the call on mobile devices
+
+  [ raxelsen ]
+  * [5f1133a] TT#34950 Add attachment option to send fax feature
+  * [74dc8cf] TT#40083 User wants to configure voicebox settings
+  * [aed143b] TT#44967 Customer wants to see cost of an item
+  * [f872d4d] TT#44661 Upload a custom "busy" greeting sound
+  * [399de96] TT#44664 Upload a custom "unavail" greeting sound
+  * [9d06ca5] TT#46169 Phone number input validation
+  * [b706d1b] TT#46165 Ensure consistent add and cancel icons
+  * [2fe7281] TT#46168 Impl MAC Address validation in PBXDevices
+  * [5998565] TT#45378 Integrate new standard font
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 12 Nov 2018 22:36:30 +0100
+
 ngcp-csc-ui (7.0.0.0+0~mr7.0.0.0) unstable; urgency=medium
 
   [ raxelsen ]
