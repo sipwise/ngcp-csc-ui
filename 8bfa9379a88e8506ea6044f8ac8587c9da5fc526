@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3ae2911b_0c2c4c49",
+        "filename": "src/components/pages/CallBlocking/CscCallBlocking.vue",
+        "patchSetId": 11
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2018-11-13T17:16:42Z",
+      "side": 1,
+      "message": "Yes, that is deliberate. And I will remove it.",
+      "parentUuid": "3ae2911b_8cf95ccb",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 114,
+        "endChar": 35
+      },
+      "revId": "8bfa9379a88e8506ea6044f8ac8587c9da5fc526",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae2911b_ac13f80c",
         "filename": "src/components/pages/CallBlocking/CscCallBlocking.vue",
         "patchSetId": 11
@@ -36,6 +60,30 @@
       "writtenOn": "2018-11-13T16:32:59Z",
       "side": 1,
       "message": "Can be removed.",
+      "range": {
+        "startLine": 235,
+        "startChar": 16,
+        "endLine": 235,
+        "endChar": 34
+      },
+      "revId": "8bfa9379a88e8506ea6044f8ac8587c9da5fc526",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_ec30e0a0",
+        "filename": "src/components/pages/CallBlocking/CscCallBlocking.vue",
+        "patchSetId": 11
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2018-11-13T17:16:42Z",
+      "side": 1,
+      "message": "Will remove it",
+      "parentUuid": "3ae2911b_ac13f80c",
       "range": {
         "startLine": 235,
         "startChar": 16,
