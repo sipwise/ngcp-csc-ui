@@ -303,3 +303,29 @@ export function blockAnonymous(id) {
 export function allowAnonymous(id) {
     return setBlockAnonymous(id, false);
 }
+
+export function getAllSubscriberIdsWithCallQueue(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/subscriberpreferences/',
+            root: '_embedded.ngcp:subscriberpreferences'
+        });
+        getList(options).then((list)=>{
+            resolve(list.items.
+                filter((subscriber) => {
+                    return subscriber.cloud_pbx_callqueue;
+                }).
+                map((subscriber) => {
+                    return {
+                        id: subscriber.id,
+                        max_queue_length: subscriber.max_queue_length || '5',
+                        queue_wrap_up_time: subscriber.queue_wrap_up_time || '10'
+                    }
+                })
+            );
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}

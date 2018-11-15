@@ -69,5 +69,6 @@ export default {
     seatReloadingError: null,
     chipModelFilter: null,
     chipMacAddressFilter: null,
-    chipStationNameFilter: null
+    chipStationNameFilter: null,
+    callQueueGroupsAndSeats: []
 }
