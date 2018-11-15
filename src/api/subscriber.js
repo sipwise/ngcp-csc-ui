@@ -291,3 +291,25 @@ export function getSubscriber(id) {
         });
     });
 }
+
+export function getAllSubscriberIdsWithCallQueue(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/subscriberpreferences/',
+            root: '_embedded.ngcp:subscriberpreferences'
+        });
+        getList(options).then((list)=>{
+            resolve(list.items.
+                filter((subscriberPreference) => {
+                    return subscriberPreference.cloud_pbx_callqueue;
+                }).
+                map((subscriberPreference) => {
+                    return subscriberPreference.id;
+                })
+            );
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
