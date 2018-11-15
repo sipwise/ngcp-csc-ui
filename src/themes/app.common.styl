@@ -28,14 +28,6 @@
     .csc-item-value:last-child:after
         content ''
 
-.csc-list-item
-    position relative
-    .csc-list-item-main
-        padding-top 16px
-
-.csc-item-title
-    text-overflow ellipsis
-
 .csc-item-label
     font-weight normal
 
@@ -108,6 +100,7 @@
     align-items center
     color $body-color
     padding $flex-gutter-sm
+    padding-left $flex-gutter-sm * 1.4
     .q-item-label
         color $body-color
         span
@@ -116,6 +109,12 @@
         color $body-color
         span
             color $body-color
+.csc-list-item.csc-item-collapsed.q-item
+    .q-item-main
+        margin-left $flex-gutter-sm * 1.4
+    .q-item-side-left
+        min-width auto
+
 .csc-list-form
     padding $flex-gutter-sm
 .csc-username
@@ -164,3 +163,24 @@
 
 .q-inner-loading
     background $main-menu-background
+
+.csc-item-title
+    font-weight bold
+    text-overflow ellipsis
+    .csc-item-label
+        font-weight bold
+        vertical-align middle
+    i
+        vertical-align middle
+.csc-item-subtitle
+    .csc-item-label
+        font-weight normal
+    .csc-item-value
+        font-weight bold
+
+.q-chip.text-white
+    color $dark
+    .q-chip-main
+        color $dark
+    .q-chip-side
+        color $dark

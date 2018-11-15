@@ -295,5 +295,8 @@ export default {
     },
     chipStationNameFilter(state) {
         return state.chipStationNameFilter;
+    },
+    callQueueGroupsAndSeats(state) {
+        return state.callQueueGroupsAndSeats;
     }
 }

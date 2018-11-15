@@ -425,6 +425,10 @@
         .q-item
             padding-top $flex-gutter-xs * 1.4
             padding-bottom  $flex-gutter-xs * 1.4
+            .q-item-side-left
+                min-width auto
+            .q-item-main
+                margin-left $flex-gutter-sm
             .q-icon
                 color $main-menu-icon-color
             .q-item-label
@@ -539,4 +543,8 @@
                     padding 0
         #csc-header
             left $main-menu-minimized-width
+    .mobile
+        .layout-aside-left
+            width auto
+            right 0
 </style>

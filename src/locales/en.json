@@ -80,7 +80,8 @@
             "subTitle": "Groups, Devices",
             "groups": "Groups",
             "seats": "Seats",
-            "devices": "Devices"
+            "devices": "Devices",
+            "callQueues": "Call Queues"
         },
         "voicebox": {
             "title": "Voicebox",
@@ -345,6 +346,7 @@
         "noStationName": "Could not find any device with station name matching the filter criteria",
         "noGroups": "No groups created yet",
         "noSeats": "No seats created yet",
+        "noCallQueues": "No call queues created yet",
         "toasts": {
             "changedFieldToast": "Changed {type} to {name}",
             "updatedAliasNumbersToast": "Alias numbers field updated!",
@@ -385,7 +387,10 @@
         "createSeat": "Create seat",
         "noGroupAssigned": "No groups",
         "noSeatAssigned": "No seats",
-        "createGroup": "Create group"
+        "createGroup": "Create group",
+        "queueLength": "Queue Length",
+        "wrapUpTime": "Wrap Up Time",
+        "queueExtensionName": "Group/Seat/Pilot"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

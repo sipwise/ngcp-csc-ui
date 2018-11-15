@@ -1,34 +1,44 @@
 <template>
     <q-item :class="itemClasses">
-        <q-item-side v-if="!expanded">
-            <q-item-tile avatar>
+        <q-item-side
+            v-if="!expanded"
+        >
+            <q-item-tile
+                v-if="hasFrontImage"
+                avatar
+            >
                 <img :src="frontImageUrl" />
             </q-item-tile>
+            <q-icon
+                v-else
+                size="24px"
+                name="fa-fax"
+                color="white"
+            />
         </q-item-side>
         <q-item-main :style="{zIndex: 10}">
             <q-item-tile
                 v-if="!expanded"
+                class="csc-item-title"
                 label
             >
                 {{ device.station_name }}
             </q-item-tile>
             <q-item-tile
                 v-if="!expanded"
+                class="csc-item-subtitle"
                 sublabel
             >
-                <span class="gt-sm">
-                    Model:
-                </span>
-                {{ name }}
+                <span class="csc-item-label">Model:</span>
+                <span class="csc-item-value">{{ name }}</span>
             </q-item-tile>
             <q-item-tile
                 v-if="!expanded"
+                class="csc-item-subtitle"
                 sublabel
             >
-                <span class="gt-sm">
-                    MAC address:
-                </span>
-                {{ device.identifier }}
+                <span class="csc-item-label">MAC address:</span>
+                <span class="csc-item-value">{{ device.identifier }}</span>
             </q-item-tile>
             <q-item-tile
                 v-if="expanded"
@@ -195,9 +205,12 @@
         },
         computed: {
             itemClasses() {
-                let classes = ['csc-entity', 'csc-pbx-device', 'csc-list-item'];
+                let classes = ['csc-pbx-device', 'csc-list-item'];
                 if (this.expanded) {
                     classes.push('csc-item-expanded');
+                }
+                else {
+                    classes.push('csc-item-collapsed');
                 }
                 return classes;
             },
