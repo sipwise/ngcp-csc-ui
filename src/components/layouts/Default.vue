@@ -221,6 +221,13 @@
                     <q-item-side icon="fa-fax"/>
                     <q-item-main :label="$t('navigation.pbxConfiguration.devices')" />
                 </q-side-link>
+                <q-side-link
+                    item
+                    to="/user/pbx-configuration/call-queues"
+                >
+                    <q-item-side icon="queue"/>
+                    <q-item-main :label="$t('navigation.pbxConfiguration.callQueues')" />
+                </q-side-link>
             </q-collapsible>
             <q-side-link
                 item
