@@ -295,5 +295,16 @@ export default {
     },
     chipStationNameFilter(state) {
         return state.chipStationNameFilter;
+    },
+    callQueueGroupsAndSeats(state) {
+        return state.callQueueGroupsAndSeats;
+    },
+    callQueueGroupsAndSeatsRequesting(state) {
+        return state.callQueueGroupsAndSeatsState = RequestState.requesting;
+    },
+    isCallQueueLoadingVisible(state, getters) {
+        // TODO: Look into significance of silently, and implement
+        //return getters.callQueueGroupsAndSeatsState && !getters.isListLoadingSilently;
+        return getters.callQueueGroupsAndSeatsState;
     }
 }
