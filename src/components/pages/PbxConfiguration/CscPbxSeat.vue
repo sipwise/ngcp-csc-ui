@@ -142,10 +142,6 @@
     import _ from 'lodash';
     import numberFilter from '../../../filters/number'
     import {
-        QCard,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
         QField,
         QInput,
         QIcon,
@@ -154,7 +150,6 @@
         QBtn,
         QInnerLoading,
         QSpinnerMat,
-        QTransition,
         Platform,
         QItem,
         QItemSide,
@@ -177,10 +172,6 @@
             }
         },
         components: {
-            QCard,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
             QField,
             QInput,
             QIcon,
@@ -189,7 +180,6 @@
             QBtn,
             QInnerLoading,
             QSpinnerMat,
-            QTransition,
             QItem,
             QItemSide,
             QItemMain,

@@ -404,5 +404,20 @@ export default {
     seatReloadingFailed(state, err) {
         state.seatReloadingState = RequestState.failed;
         state.seatReloadingError = err;
+    },
+    callQueueListRequesting(state, options) {
+        options = options || {};
+        state.listLoadingSilently = _.get(options, 'silent', false);
+        state.listState = RequestState.requesting;
+        state.listError = null;
+    },
+    callQueueListSucceeded(state, data) {
+        state.listState = RequestState.succeeded;
+        state.listError = null;
+        state.callQueueGroupsAndSeats = data.items;
+    },
+    callQueueListFailed(state, error) {
+        state.listState = RequestState.failed;
+        state.listError = error;
     }
 }
