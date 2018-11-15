@@ -30,7 +30,8 @@ import {
     setIdentifier,
     setProfile,
     getGroup,
-    getSeat
+    getSeat,
+    getCallQueueGroupsAndSeats
 } from '../../api/pbx-config'
 
 export default {
@@ -416,5 +417,13 @@ export default {
         context.commit('resetStationNameFilter');
         context.commit('resetMacAddressFilter');
         context.dispatch('listDevices');
+    },
+    listCallQueueGroupsAndSeats(context) {
+        context.commit('callQueueGroupsAndSeatsRequesting');
+        getCallQueueGroupsAndSeats().then((list) => {
+            context.commit('callQueueGroupsAndSeatsSucceeded', list);
+        }).catch((err) => {
+            context.commit('callQueueGroupsAndSeatsError', err.message);
+        });
     }
 }

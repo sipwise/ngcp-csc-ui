@@ -404,5 +404,17 @@ export default {
     seatReloadingFailed(state, err) {
         state.seatReloadingState = RequestState.failed;
         state.seatReloadingError = err;
+    },
+    callQueueGroupsAndSeatsRequesting(state) {
+        state.callQueueGroupsAndSeatsState = RequestState.requesting;
+        state.callQueueGroupsAndSeats = [];
+    },
+    callQueueGroupsAndSeatsSucceeded(state, list) {
+        state.callQueueGroupsAndSeatsState = RequestState.succeeded;
+        state.callQueueGroupsAndSeats = list;
+    },
+    callQueueGroupsAndSeatsError(state, error) {
+        state.callQueueGroupsAndSeatsState = RequestState.failed;
+        state.callQueueGroupsAndSeatsError = error;
     }
 }

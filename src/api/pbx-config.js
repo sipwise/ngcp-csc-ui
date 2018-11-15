@@ -1,10 +1,23 @@
 
 import _ from 'lodash';
 import Vue from 'vue';
-import { getNumbers, assignNumbers } from './user';
-import { createSubscriber, deleteSubscriber, setDisplayName,
-    setPbxExtension, setPbxHuntPolicy, setPbxHuntTimeout,
-    setPbxGroupMemberIds, setPbxGroupIds, getSubscribers, getSubscriber } from './subscriber';
+import {
+    getNumbers,
+    assignNumbers
+} from './user';
+import {
+    createSubscriber,
+    deleteSubscriber,
+    setDisplayName,
+    setPbxExtension,
+    setPbxHuntPolicy,
+    setPbxHuntTimeout,
+    setPbxGroupMemberIds,
+    setPbxGroupIds,
+    getSubscribers,
+    getSubscriber,
+	getAllSubscriberIdsWithCallQueue
+} from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace } from './common'
 
@@ -505,6 +518,24 @@ export function setProfile(deviceId, profileId) {
         }).then(()=>{
             resolve();
         }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getCallQueueGroupsAndSeats(options) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(() => {
+            return getAllSubscriberIdsWithCallQueue(options);
+        }).then((ids) => {
+            let subscriberPromises = [];
+            ids.forEach((id) => {
+                subscriberPromises.push(getSubscriber(id));
+            });
+            return Promise.all(subscriberPromises);
+        }).then((subscribersWithCallQueue) => {
+            resolve(subscribersWithCallQueue);
+        }).catch((err) => {
             reject(err);
         });
     });

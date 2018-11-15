@@ -80,7 +80,8 @@
             "subTitle": "Groups, Devices",
             "groups": "Groups",
             "seats": "Seats",
-            "devices": "Devices"
+            "devices": "Devices",
+            "callQueues": "Call Queues"
         },
         "voicebox": {
             "title": "Voicebox",
