@@ -224,6 +224,9 @@
                 if (this.expanded) {
                     classes.push('csc-item-expanded');
                 }
+                else {
+                    classes.push('csc-item-collapsed');
+                }
                 return classes;
             },
             entityTitle() {

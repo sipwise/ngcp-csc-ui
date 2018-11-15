@@ -303,3 +303,32 @@ export function blockAnonymous(id) {
 export function allowAnonymous(id) {
     return setBlockAnonymous(id, false);
 }
+
+export function getSubscribersByCallQueueEnabled() {
+    return new Promise((resolve, reject)=>{
+        let prefsByCallQueueEnabled = [];
+        Promise.resolve().then(()=>{
+            return getList({
+                path: 'api/subscriberpreferences/',
+                root: '_embedded.ngcp:subscriberpreferences',
+                all: true
+            });
+        }).then((prefs)=>{
+            let subscriberPromises = [];
+            prefsByCallQueueEnabled = prefs.items.filter((pref)=>{
+                return pref.cloud_pbx_callqueue === true;
+            });
+            prefsByCallQueueEnabled.forEach((pref)=>{
+                subscriberPromises.push(getSubscriber(pref.subscriber_id));
+            });
+            return Promise.all(subscriberPromises);
+        }).then((subscribers)=>{
+            subscribers.forEach((subscriber, index)=>{
+                subscriber.prefs = prefsByCallQueueEnabled[index];
+            });
+            resolve(subscribers);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}

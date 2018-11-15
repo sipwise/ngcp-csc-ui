@@ -252,7 +252,6 @@
                 'isDeviceLoading',
                 'deviceRemoved',
                 'groupsAndSeatsOptions',
-                'groupsAndSeats',
                 'getGroupOrSeatById',
                 'updatedDeviceKey',
                 'createDeviceRequesting',

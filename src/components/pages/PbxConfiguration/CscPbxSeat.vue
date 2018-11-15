@@ -22,10 +22,8 @@
                 class="csc-item-subtitle"
                 sublabel
             >
-                <div>
-                    <span class="csc-item-label">{{ $t('pbxConfig.extension') }}:</span>
-                    <span class="csc-item-value">{{ seat.pbx_extension }}</span>
-                </div>
+                <span class="csc-item-label">{{ $t('pbxConfig.extension') }}:</span>
+                <span class="csc-item-value">{{ seat.pbx_extension }}</span>
             </q-item-tile>
             <q-item-tile
                 v-if="!expanded"
@@ -41,9 +39,11 @@
                 </div>
                 <div
                     class="csc-item-field"
-                    v-if="hasGroups">
+                    v-if="hasGroups"
+                >
                     <span
-                        class="csc-item-label">
+                        class="csc-item-label"
+                    >
                         {{ $t('pbxConfig.groups') }}:
                     </span>
                     <span
@@ -142,10 +142,6 @@
     import _ from 'lodash';
     import numberFilter from '../../../filters/number'
     import {
-        QCard,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
         QField,
         QInput,
         QIcon,
@@ -154,7 +150,6 @@
         QBtn,
         QInnerLoading,
         QSpinnerMat,
-        QTransition,
         Platform,
         QItem,
         QItemSide,
@@ -177,10 +172,6 @@
             }
         },
         components: {
-            QCard,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
             QField,
             QInput,
             QIcon,
@@ -189,7 +180,6 @@
             QBtn,
             QInnerLoading,
             QSpinnerMat,
-            QTransition,
             QItem,
             QItemSide,
             QItemMain,
@@ -201,6 +191,9 @@
                 let classes = ['csc-list-item', 'csc-pbx-seat'];
                 if (this.expanded) {
                     classes.push('csc-item-expanded');
+                }
+                else {
+                    classes.push('csc-item-collapsed');
                 }
                 return classes;
             },

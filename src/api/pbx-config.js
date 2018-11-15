@@ -1,10 +1,23 @@
 
 import _ from 'lodash';
 import Vue from 'vue';
-import { getNumbers, assignNumbers } from './user';
-import { createSubscriber, deleteSubscriber, setDisplayName,
-    setPbxExtension, setPbxHuntPolicy, setPbxHuntTimeout,
-    setPbxGroupMemberIds, setPbxGroupIds, getSubscribers, getSubscriber } from './subscriber';
+import {
+    getNumbers,
+    assignNumbers
+} from './user';
+import {
+    createSubscriber,
+    deleteSubscriber,
+    setDisplayName,
+    setPbxExtension,
+    setPbxHuntPolicy,
+    setPbxHuntTimeout,
+    setPbxGroupMemberIds,
+    setPbxGroupIds,
+    getSubscribers,
+    getSubscriber,
+    getSubscribersByCallQueueEnabled
+} from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace } from './common'
 
@@ -504,6 +517,26 @@ export function setProfile(deviceId, profileId) {
             });
         }).then(()=>{
             resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getCallQueueConfigurations() {
+    return new Promise((resolve, reject)=>{
+        getSubscribersByCallQueueEnabled().then((subscribers)=>{
+            let callQueues = subscribers.map((subscriber)=>{
+                return {
+                    display_name: _.get(subscriber, 'display_name', null),
+                    is_pbx_group: _.get(subscriber, 'is_pbx_group', null),
+                    max_queue_length: _.get(subscriber, 'prefs.max_queue_length', 5),
+                    queue_wrap_up_time: _.get(subscriber, 'prefs.queue_wrap_up_time', 10)
+                };
+            });
+            resolve({
+                items: callQueues
+            });
         }).catch((err)=>{
             reject(err);
         });
