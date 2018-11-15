@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ae2911b_82e4830d",
+        "filename": "src/api/voicebox.js",
+        "patchSetId": 11
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2018-11-15T21:35:07Z",
+      "side": 1,
+      "message": "Can you just explain in a few words why this is a pseudo Promise without rejection?",
+      "revId": "372c64dc5760ceb15e1b182cab20b090c096357f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_62f197cd",
+        "filename": "src/components/CscAudioPlayer.vue",
+        "patchSetId": 11
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2018-11-15T21:35:07Z",
+      "side": 1,
+      "message": "This is an unusual way to bubble up events to the parent component. I would rather use something like this.$emit(\u0027playing\u0027). An event name should never contain prefixes like \"set\" or \"is\" etc. If you want to notify a state that reflects an ongoing process, then use always a verb in Present Continuous (e.g. playing, running, requesting, etc. ...) . If you want to notify something that has happened but is finished just use a verb in Simple Past (stopped, paused, finished, invoked, notified, etc. ...).",
+      "revId": "372c64dc5760ceb15e1b182cab20b090c096357f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ae2911b_42ee9bed",
+        "filename": "src/components/CscAudioPlayer.vue",
+        "patchSetId": 11
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2018-11-15T21:35:07Z",
+      "side": 1,
+      "message": "For instance here you could use \"this.$emit(\u0027stopped\u0027)\". By distinguishing both events (playing and stopped) instead of using one, you just avoid unnecessary merging of two blocks of logic in one handler.",
+      "revId": "372c64dc5760ceb15e1b182cab20b090c096357f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
