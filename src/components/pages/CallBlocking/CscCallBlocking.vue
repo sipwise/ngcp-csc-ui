@@ -2,6 +2,21 @@
     <csc-page
         :is-list="true"
     >
+        <q-field
+            v-if="pageName === 'incoming'"
+            :class="blockAnonymousClasses"
+        >
+            <q-toggle
+                :label="$t('callBlocking.anonymousBlocked')"
+                :value="isAnonymousBlocked"
+                checked-icon="block"
+                unchecked-icon="block"
+                @input="toggleBlockAnonymous()"
+            />
+            <csc-spinner
+                v-if="isNumberListLoading || isAnonymousBlockRequesting"
+            />
+        </q-field>
         <div
             class="row"
         >
@@ -199,7 +214,9 @@
                 'isNumberListLoading',
                 'numbers',
                 'currentNumberIndex',
-                'listMode'
+                'listMode',
+                'isAnonymousBlocked',
+                'isAnonymousBlockRequesting'
             ]),
             toggleButtonLabel() {
                 if(!this.enabled) {
@@ -226,6 +243,13 @@
                         number: this.numbers[this.currentRemovingIndex]
                     });
                 }
+            },
+            blockAnonymousClasses() {
+                let classes = ['csc-block-anonymous'];
+                if(!this.isAnonymousBlocked) {
+                    classes.push('csc-toggle-disabled');
+                }
+                return classes;
             }
         },
         watch: {
@@ -258,6 +282,9 @@
             },
             updateListMode(listMode) {
                 this.$store.dispatch('callBlocking/toggle' + this.suffix, listMode === 'whitelist');
+            },
+            toggleBlockAnonymous() {
+                this.$store.dispatch('callBlocking/toggleBlockAnonymous', !this.isAnonymousBlocked);
             }
         }
     }
@@ -283,4 +310,7 @@
     .csc-list-item.q-item.csc-blocked-number
         padding-top $flex-gutter-xs
         padding-bottom $flex-gutter-xs
+    .csc-block-anonymous
+        margin-bottom $flex-gutter-md
+
 </style>

@@ -393,7 +393,8 @@
         "privacyDisabledToast": "Your number is visible to the callee",
         "privacyDisabledLabel": "Your number is visible to the callee",
         "number": "Number",
-        "listEmptyMessage": "No numbers found"
+        "listEmptyMessage": "No numbers found",
+        "anonymousBlocked": "All anonymous incoming calls are blocked"
     },
     "communication": {
         "sendFax": "Send Fax",
