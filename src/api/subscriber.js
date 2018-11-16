@@ -291,3 +291,15 @@ export function getSubscriber(id) {
         });
     });
 }
+
+export function setBlockAnonymous(id, value) {
+    return setPreference(id, 'block_in_clir', value);
+}
+
+export function blockAnonymous(id) {
+    return setBlockAnonymous(id, true);
+}
+
+export function allowAnonymous(id) {
+    return setBlockAnonymous(id, false);
+}

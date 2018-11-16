@@ -178,4 +178,7 @@
                 padding-right $flex-gutter-md
             .q-card-actions
                 padding $flex-gutter-xs
+    #csc-login.mobile
+        .q-card
+            background-color transparent
 </style>

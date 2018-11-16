@@ -30,7 +30,8 @@ export function getIncomingCallBlocking(id) {
         getPreferences(id).then((result)=>{
             resolve({
                 enabled: result.block_in_mode,
-                list: result.block_in_list
+                list: result.block_in_list,
+                blockAnonymous: result.block_in_clir
             });
         }).catch((err)=>{
             reject(err);

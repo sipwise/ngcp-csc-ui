@@ -17,12 +17,15 @@ import {
     getPrivacyCallBlocking
 } from '../api/call-blocking';
 import {
-    setPrivacy
+    setPrivacy,
+    blockAnonymous,
+    allowAnonymous
 } from '../api/subscriber';
 
 export default {
     namespaced: true,
     state: {
+        blockAnonymous: null,
         enabled: false,
         list: [],
         privacy: false,
@@ -30,6 +33,7 @@ export default {
         privacyUpdated: false,
         privacyError: null,
         toggleState: RequestState.initiated,
+        toggleBlockAnonymousState: RequestState.initiated,
         addNumberState: RequestState.initiated,
         editNumberState: RequestState.initiated,
         removeNumberState: RequestState.initiated,
@@ -95,6 +99,12 @@ export default {
             else {
                 return 'blacklist';
             }
+        },
+        isAnonymousBlocked(state) {
+            return state.blockAnonymous === true;
+        },
+        isAnonymousBlockRequesting(state) {
+            return state.toggleBlockAnonymousState === RequestState.requesting;
         }
     },
     mutations: {
@@ -170,9 +180,20 @@ export default {
             state.numberListState = RequestState.succeeded;
             state.enabled = options.enabled;
             state.list = options.list;
+            state.blockAnonymous = options.blockAnonymous;
         },
         numberListFailed(state) {
             state.numberListState = RequestState.failed;
+        },
+        toggleBlockAnonymousRequesting(state) {
+            state.toggleBlockAnonymousState = RequestState.requesting;
+        },
+        toggleBlockAnonymousSucceeded(state, blockAnonymous) {
+            state.blockAnonymous = blockAnonymous;
+            state.toggleBlockAnonymousState = RequestState.succeeded;
+        },
+        toggleBlockAnonymousFailed(state) {
+            state.toggleBlockAnonymousState = RequestState.failed;
         }
     },
     actions: {
@@ -320,6 +341,21 @@ export default {
                 context.commit('privacyLoaded', privacy);
             }).catch((err)=>{
                 context.commit('privacyLoadingFailed', err.message);
+            });
+        },
+        toggleBlockAnonymous(context, blocked) {
+            let action = null;
+            if(blocked) {
+                action = blockAnonymous(localStorage.getItem('subscriberId'));
+            }
+            else {
+                action = allowAnonymous(localStorage.getItem('subscriberId'));
+            }
+            context.commit('toggleBlockAnonymousRequesting');
+            action.then(()=>{
+                context.commit('toggleBlockAnonymousSucceeded', blocked);
+            }).catch((err)=>{
+                context.commit('toggleBlockAnonymousFailed', err.message);
             });
         }
     }
