@@ -1,3 +1,14 @@
+ngcp-csc-ui (6.5.2.1+0~mr6.5.2.1) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [43e1b73] TT#46169 Phone number input validation
+  * [7c912a7] TT#46165 Ensure consistent add and cancel icons
+  * [a819082] TT#46168 Impl MAC Address validation in PBXDevices
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 20 Nov 2018 13:24:40 +0100
+
 ngcp-csc-ui (6.5.2.0+0~mr6.5.2.0) unstable; urgency=medium
 
   * New release.
