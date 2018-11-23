@@ -298,5 +298,12 @@ export default {
     },
     callQueueGroupsAndSeats(state) {
         return state.callQueueGroupsAndSeats;
+    },
+    //TODO: Rename to callQueue related, and also remove items that already
+    //      have a callQueue
+    assignableGroupsAndSeatsOptions(state, getters) {
+        return getters.groupsAndSeatsOptions.filter((option) => {
+            return option.label !== 'Unassigned';
+        });
     }
 }

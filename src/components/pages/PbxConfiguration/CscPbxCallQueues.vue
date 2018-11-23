@@ -3,6 +3,20 @@
     <csc-page
         class="csc-list-page"
     >
+        <div>
+            <q-btn
+                color="primary"
+                @click="addNew"
+            >
+                ADD NEW DUMMY
+            </q-btn>
+            <q-field>
+                <q-select
+                    v-model="form.subscriber"
+                    :options="assignableGroupsAndSeatsOptions"
+                />
+            </q-field>
+        </div>
         <div
             v-if="isListLoadingVisible"
             class="row justify-center"
@@ -51,7 +65,8 @@
         QItemMain,
         QItemTile,
         Platform,
-        QSpinnerDots
+        QSpinnerDots,
+        QBtn
     } from 'quasar-framework'
     export default {
         components: {
@@ -67,26 +82,41 @@
             QItemSide,
             QItemMain,
             QItemTile,
-            QSpinnerDots
+            QSpinnerDots,
+            QBtn
         },
         data () {
             return {
+                form: {
+                    subscriber: null,
+                    max_queue_length: null,
+                    queue_wrap_up_time: null
+                }
             }
         },
         mounted() {
             this.$store.dispatch('pbxConfig/listCallQueueGroupsAndSeats');
+            this.$store.dispatch('pbxConfig/getAllGroupsAndSeats');
         },
         computed: {
             ...mapGetters('pbxConfig', [
                 'callQueueGroupsAndSeats',
                 'isListLoadingVisible',
-                'isListRequesting'
+                'isListRequesting',
+                'assignableGroupsAndSeatsOptions'
             ]),
             isMobile() {
                 return Platform.is.mobile;
             }
         },
         methods: {
+            addNew() {
+                this.$store.dispatch('pbxConfig/addCallQueueConfig', {
+                    id: this.form.subscriber,
+                    max_queue_length: 150,
+                    queue_wrap_up_time: 30
+                });
+            }
         },
         watch: {
         }

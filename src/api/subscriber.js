@@ -329,3 +329,13 @@ export function getAllSubscriberIdsWithCallQueue(options) {
         });
     });
 }
+
+export function addNewCallQueueConfig(config) {
+    // TODO: Move prefs creation to action
+    let prefs = {
+        max_queue_length: config.max_queue_length,
+        queue_wrap_up_time: config.queue_wrap_up_time,
+        cloud_pbx_callqueue: true
+    };
+    return Vue.http.put('api/subscriberpreferences/' + config.id, prefs);
+}
