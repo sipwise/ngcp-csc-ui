@@ -332,3 +332,7 @@ export function getSubscribersByCallQueueEnabled() {
         });
     });
 }
+
+export function addNewCallQueueConfig(id, config) {
+    return Vue.http.put('api/subscriberpreferences/' + id, config);
+}

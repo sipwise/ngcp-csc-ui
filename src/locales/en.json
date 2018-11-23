@@ -361,7 +361,8 @@
             "updatedStationName": "Updated station name to {name}",
             "updatedProfile": "Updated model of device {name}",
             "updatedIdentifier": "Updated identifier to {identifier}",
-            "createdDevice": "Created device {name} successfully"
+            "createdDevice": "Created device {name} successfully",
+            "addedConfigToast": "Added call queue config for {subscriber}"
         },
         "addDevice": "Add device",
         "addDeviceShort": "Add",
@@ -390,7 +391,10 @@
         "createGroup": "Create group",
         "queueLength": "Queue Length",
         "wrapUpTime": "Wrap Up Time",
-        "queueExtensionName": "Group/Seat/Pilot"
+        "queueExtensionName": "Group/Seat/Pilot",
+        "addConfig": "Add Config",
+        "subscribers": "Subscribers",
+        "createConfig": "Create config"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

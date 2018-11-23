@@ -4,6 +4,32 @@
         :is-list="true"
     >
         <div
+            v-show="!addFormEnabled"
+            class="row justify-center"
+        >
+            <q-btn
+                color="primary"
+                icon="add"
+                flat
+                @click="enableAddForm"
+            >
+                {{ $t('pbxConfig.addConfig') }}
+            </q-btn>
+        </div>
+        <div
+            class="row justify-center"
+            v-show="addFormEnabled"
+        >
+            <csc-pbx-call-queue-add-form
+                class="col-xs-12 col-md-6 csc-list-form"
+                ref="addForm"
+                :options="callQueueGroupsAndSeatsOptions"
+                :loading="isAdding"
+                @save="addConfig"
+                @cancel="disableAddForm"
+            />
+        </div>
+        <div
             v-if="isListLoadingVisible"
             class="row justify-center"
         >
@@ -38,6 +64,7 @@
 <script>
     import CscPage from '../../CscPage'
     import CscPbxCallQueue from './CscPbxCallQueue'
+    import CscPbxCallQueueAddForm from './CscPbxCallQueueAddForm'
     import { mapGetters } from 'vuex'
     import {
         QField,
@@ -51,12 +78,14 @@
         QItemMain,
         QItemTile,
         Platform,
-        QSpinnerDots
+        QSpinnerDots,
+        QBtn
     } from 'quasar-framework'
     export default {
         components: {
-            CscPbxCallQueue,
             CscPage,
+            CscPbxCallQueue,
+            CscPbxCallQueueAddForm,
             QField,
             QInput,
             QIcon,
@@ -67,28 +96,56 @@
             QItemSide,
             QItemMain,
             QItemTile,
-            QSpinnerDots
+            QSpinnerDots,
+            QBtn
         },
         data () {
             return {
+                addFormEnabled: false
             }
         },
         mounted() {
             this.$store.dispatch('pbxConfig/listCallQueueGroupsAndSeats');
+            this.$store.dispatch('pbxConfig/getAllGroupsAndSeats');
         },
         computed: {
             ...mapGetters('pbxConfig', [
                 'callQueueGroupsAndSeats',
                 'isListLoadingVisible',
-                'isListRequesting'
+                'isListRequesting',
+                'callQueueGroupsAndSeatsOptions',
+                'isAdding',
+                'addState',
+                'lastAddedConfig'
             ]),
             isMobile() {
                 return Platform.is.mobile;
             }
         },
         methods: {
+            addConfig(data) {
+                this.$store.dispatch('pbxConfig/addCallQueueConfig', {
+                    config: data
+                });
+            },
+            enableAddForm() {
+                this.resetAddForm();
+                this.addFormEnabled = true;
+            },
+            disableAddForm() {
+                this.resetAddForm();
+                this.addFormEnabled = false;
+            },
+            resetAddForm() {
+                this.$refs.addForm.reset();
+            }
         },
         watch: {
+            addState(state) {
+                if (state === 'succeeded') {
+                    this.disableAddForm();
+                }
+            }
         }
     }
 </script>
