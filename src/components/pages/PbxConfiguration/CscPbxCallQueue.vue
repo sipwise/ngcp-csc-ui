@@ -66,6 +66,7 @@
                         dark
                         readonly
                         :value="subscriber.max_queue_length"
+                        suffix="callers"
                     />
                 </q-field>
                 <q-field
