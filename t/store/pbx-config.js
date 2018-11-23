@@ -49,4 +49,30 @@ describe('PBX Configuration Store', () => {
         assert.equal(state.groups[5], data.groups.items[1]);
         assert.deepEqual(state.numbers, data.numbers);
     });
+
+    it('should list all group/seat/pilot call queue configs', function(){
+        let state = {
+            callQueueGroupsAndSeats: []
+        };
+        let data = {
+            items: [
+                {
+                    display_name: "123",
+                    is_pbx_group: false,
+                    max_queue_length: "10",
+                    queue_wrap_up_time: "5"
+                },
+                {
+                    display_name: "456",
+                    is_pbx_group: false,
+                    max_queue_length: "5",
+                    queue_wrap_up_time: "10"
+                }
+            ]
+        };
+        PbxConfig.mutations.callQueueListSucceeded(state, data);
+        assert.deepEqual(state.callQueueGroupsAndSeats[0], data.items[0]);
+        assert.deepEqual(state.callQueueGroupsAndSeats[1], data.items[1]);
+    });
+
 });
