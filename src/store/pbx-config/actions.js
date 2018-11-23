@@ -31,7 +31,8 @@ import {
     setProfile,
     getGroup,
     getSeat,
-    getCallQueueConfigurations
+    getCallQueueConfigurations,
+    addCallQueueConfig
 } from '../../api/pbx-config'
 
 export default {
@@ -425,6 +426,19 @@ export default {
             context.commit('callQueueListSucceeded', list);
         }).catch((err) => {
             context.commit('callQueueListFailed', err.message);
+        });
+    },
+    addCallQueueConfig(context, options) {
+        let config = Object.assign(options.config, {
+            cloud_pbx_callqueue: true
+        });
+        context.commit('addItemRequesting', config);
+        addCallQueueConfig(options.id, config).then(() => {
+            return context.dispatch('listCallQueueGroupsAndSeats', true);
+        }).then(() => {
+            context.commit('addItemSucceeded');
+        }).catch((err) => {
+            context.commit('addItemFailed', err.message);
         });
     }
 }
