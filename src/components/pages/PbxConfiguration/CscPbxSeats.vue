@@ -29,7 +29,6 @@
                 @cancel="disableAddForm"
             />
         </div>
-
         <div
             v-if="isListLoadingVisible"
             class="row justify-center"
