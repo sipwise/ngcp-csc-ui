@@ -52,6 +52,7 @@
                     :loading="isItemLoading(subscriber.id)"
                     @save-queue-length="setQueueLength"
                     @save-wrap-up-time="setWrapUpTime"
+                    @remove="removeConfigDialog"
                 />
             </q-list>
         </div>
@@ -61,6 +62,12 @@
         >
             {{ $t('pbxConfig.noCallQueues') }}
         </div>
+        <csc-remove-dialog
+            ref="removeDialog"
+            :title="$t('pbxConfig.removeConfigTitle')"
+            :message="removeDialogMessage"
+            @remove="removeConfig"
+        />
     </csc-page>
 </template>
 
@@ -68,6 +75,7 @@
     import CscPage from '../../CscPage'
     import CscPbxCallQueue from './CscPbxCallQueue'
     import CscPbxCallQueueAddForm from './CscPbxCallQueueAddForm'
+    import CscRemoveDialog from '../../CscRemoveDialog'
     import { mapGetters } from 'vuex'
     import {
         QField,
@@ -89,6 +97,7 @@
             CscPage,
             CscPbxCallQueue,
             CscPbxCallQueueAddForm,
+            CscRemoveDialog,
             QField,
             QInput,
             QIcon,
@@ -104,7 +113,8 @@
         },
         data () {
             return {
-                addFormEnabled: false
+                addFormEnabled: false,
+                currentRemovingSubscriber: null
             }
         },
         mounted() {
@@ -120,10 +130,19 @@
                 'isAdding',
                 'addState',
                 'isUpdating',
-                'updateItemId'
+                'updateItemId',
+                'removeState',
+                'isRemoving'
             ]),
             isMobile() {
                 return Platform.is.mobile;
+            },
+            removeDialogMessage() {
+                if (this.currentRemovingSubscriber !== null) {
+                    return this.$t('pbxConfig.removeConfigText', {
+                        subscriber: this.currentRemovingSubscriber.display_name
+                    });
+                }
             }
         },
         methods: {
@@ -155,7 +174,15 @@
                 this.$store.dispatch('pbxConfig/setWrapUpTime', subscriber);
             },
             isItemLoading(subscriberId) {
-                return (this.isUpdating && this.updateItemId + "" === subscriberId + "");
+                return (this.isUpdating && this.updateItemId + "" === subscriberId + "") ||
+                    (this.isRemoving && this.currentRemovingSubscriber.id + "" === subscriberId + "");
+            },
+            removeConfigDialog(subscriber) {
+                this.currentRemovingSubscriber = subscriber;
+                this.$refs.removeDialog.open();
+            },
+            removeConfig() {
+                this.$store.dispatch('pbxConfig/removeCallQueue', this.currentRemovingSubscriber)
             }
         },
         watch: {

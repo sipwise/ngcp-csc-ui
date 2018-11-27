@@ -422,7 +422,7 @@ export default {
             state.callQueueGroupsAndSeats[config.id] = config;
             state.callQueueGroupsAndSeatsOrdered.push(config);
         });
-        state.callQueueGroupsAndSeats = _.filter(state.callQueueGroupsAndSeats, (item) => {
+        state.callQueueGroupsAndSeats = state.callQueueGroupsAndSeats.filter((item) => {
             return (item !== (undefined || null || ''));
         });
     },
