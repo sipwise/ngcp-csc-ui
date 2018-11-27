@@ -62,7 +62,7 @@
                 :alias-number-options="aliasNumberOptions"
                 :seat-options="seatOptions"
                 :hunt-policy-options="huntPolicyOptions"
-                @remove="removeGroup"
+                @remove="removeGroupDialog"
                 :loading="isItemLoading(group.id)"
                 @save-name="setGroupName"
                 @save-extension="setGroupExtension"
@@ -78,6 +78,12 @@
         >
             {{ $t('pbxConfig.noGroups') }}
         </div>
+        <csc-remove-dialog
+            ref="removeDialog"
+            :title="$t('pbxConfig.removeGroupTitle')"
+            :message="removeDialogMessage"
+            @remove="removeGroup"
+        />
     </csc-page>
 </template>
 
@@ -86,6 +92,7 @@
     import CscPage from '../../CscPage'
     import CscPbxGroup from './CscPbxGroup'
     import CscPbxGroupAddForm from './CscPbxGroupAddForm'
+    import CscRemoveDialog from '../../CscRemoveDialog'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
     import { showToast } from '../../../helpers/ui'
@@ -108,7 +115,6 @@
         QInnerLoading,
         QSpinnerDots,
         QSpinnerMat,
-        Dialog,
         QPagination,
         Platform
     } from 'quasar-framework'
@@ -119,6 +125,7 @@
             CscPage,
             CscPbxGroup,
             CscPbxGroupAddForm,
+            CscRemoveDialog,
             QChip,
             QCard,
             QCardSeparator,
@@ -147,7 +154,8 @@
         data () {
             return {
                 addFormEnabled: false,
-                page: 1
+                page: 1,
+                currentRemovingGroup: null
             }
         },
         computed: {
@@ -213,6 +221,13 @@
             isMobile() {
                 return Platform.is.mobile;
             },
+            removeDialogMessage() {
+                if (this.currentRemovingGroup !== null) {
+                    return this.$t('pbxConfig.removeGroupText', {
+                        group: this.currentRemovingGroup.name
+                    });
+                }
+            }
         },
         watch: {
             addState(state) {
@@ -263,23 +278,8 @@
             addGroup(group) {
                 this.$store.dispatch('pbxConfig/addGroup', group);
             },
-            removeGroup(group) {
-                var store = this.$store;
-                var i18n = this.$i18n;
-                Dialog.create({
-                    title: i18n.t('pbxConfig.removeGroupTitle'),
-                    message: i18n.t('pbxConfig.removeGroupText', { group: group.name }),
-                    buttons: [
-                        'Cancel',
-                        {
-                            label: i18n.t('pbxConfig.removeGroup'),
-                            color: 'negative',
-                            handler () {
-                                store.dispatch('pbxConfig/removeGroup', group);
-                            }
-                        }
-                    ]
-                });
+            removeGroup() {
+                this.$store.dispatch('pbxConfig/removeGroup', this.currentRemovingGroup);
             },
             setGroupName(group) {
                 this.$store.dispatch('pbxConfig/setGroupName', group);
@@ -303,6 +303,10 @@
                 this.$store.dispatch('pbxConfig/listGroups', {
                     page: page
                 });
+            },
+            removeGroupDialog(subscriber) {
+                this.currentRemovingGroup = subscriber;
+                this.$refs.removeDialog.open();
             }
         }
     }

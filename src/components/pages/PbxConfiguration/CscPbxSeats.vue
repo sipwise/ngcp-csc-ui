@@ -61,7 +61,7 @@
                     :seat="seat"
                     :alias-number-options="aliasNumberOptions"
                     :group-options="groupOptions"
-                    @remove="removeSeat"
+                    @remove="removeSeatDialog"
                     :loading="isItemLoading(seat.id)"
                     @save-name="setSeatName"
                     @save-extension="setSeatExtension"
@@ -76,13 +76,20 @@
         >
             {{ $t('pbxConfig.noSeats') }}
         </div>
+        <csc-remove-dialog
+            ref="removeDialog"
+            :title="$t('pbxConfig.removeSeatTitle')"
+            :message="removeDialogMessage"
+            @remove="removeSeat"
+        />
     </csc-page>
 </template>
 
 <script>
-    import CscPage  from '../../CscPage'
-    import CscPbxSeatAddForm  from './CscPbxSeatAddForm'
-    import CscPbxSeat  from './CscPbxSeat'
+    import CscPage from '../../CscPage'
+    import CscPbxSeatAddForm from './CscPbxSeatAddForm'
+    import CscPbxSeat from './CscPbxSeat'
+    import CscRemoveDialog from '../../CscRemoveDialog'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
     import { mapGetters } from 'vuex'
@@ -106,7 +113,6 @@
         QInnerLoading,
         QSpinnerDots,
         QSpinnerMat,
-        Dialog,
         QPagination,
         Platform
     } from 'quasar-framework'
@@ -120,13 +126,15 @@
         },
         data () {
             return {
-                addFormEnabled: false
+                addFormEnabled: false,
+                currentRemovingSeat: null
             }
         },
         components: {
             CscPage,
             CscPbxSeat,
             CscPbxSeatAddForm,
+            CscRemoveDialog,
             QChip,
             QCard,
             QCardSeparator,
@@ -188,6 +196,13 @@
             },
             isMobile() {
                 return Platform.is.mobile;
+            },
+            removeDialogMessage() {
+                if (this.currentRemovingSeat !== null) {
+                    return this.$t('pbxConfig.removeSeatText', {
+                        seat: this.currentRemovingSeat.name
+                    });
+                }
             }
         },
         watch: {
@@ -239,23 +254,8 @@
             addSeat(seat) {
                 this.$store.dispatch('pbxConfig/addSeat', seat);
             },
-            removeSeat(seat) {
-                var store = this.$store;
-                var i18n = this.$i18n;
-                Dialog.create({
-                    title: i18n.t('pbxConfig.removeSeatTitle'),
-                    message: i18n.t('pbxConfig.removeSeatText', { seat: seat.name }),
-                    buttons: [
-                        'Cancel',
-                        {
-                            label: i18n.t('pbxConfig.removeSeat'),
-                            color: 'negative',
-                            handler () {
-                                store.dispatch('pbxConfig/removeSeat', seat);
-                            }
-                        }
-                    ]
-                });
+            removeSeat() {
+                this.$store.dispatch('pbxConfig/removeSeat', this.currentRemovingSeat);
             },
             setSeatName(seat) {
                 this.$store.dispatch('pbxConfig/setSeatName', seat);
@@ -273,6 +273,10 @@
                 this.$store.dispatch('pbxConfig/listSeats', {
                     page: page
                 });
+            },
+            removeSeatDialog(subscriber) {
+                this.currentRemovingSeat = subscriber;
+                this.$refs.removeDialog.open();
             }
         }
     }

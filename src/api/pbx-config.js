@@ -17,7 +17,8 @@ import {
     getSubscribers,
     getSubscriber,
     getSubscribersByCallQueueEnabled,
-    addNewCallQueueConfig
+    addNewCallQueueConfig,
+    removeCallQueueConfig
 } from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace } from './common'
@@ -546,8 +547,18 @@ export function getCallQueueConfigurations() {
 }
 
 export function addCallQueueConfig(id, config) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         addNewCallQueueConfig(id, config).then(() => {
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function removeCallQueue(subscriberId) {
+    return new Promise((resolve, reject) => {
+        removeCallQueueConfig(subscriberId).then(() => {
             resolve();
         }).catch((err)=>{
             reject(err);
