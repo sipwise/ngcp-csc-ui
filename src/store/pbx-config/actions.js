@@ -31,7 +31,8 @@ import {
     setProfile,
     getGroup,
     getSeat,
-    getCallQueueConfigurations
+    getCallQueueConfigurations,
+    removeCallQueue
 } from '../../api/pbx-config'
 
 export default {
@@ -425,6 +426,16 @@ export default {
             context.commit('callQueueListSucceeded', list);
         }).catch((err) => {
             context.commit('callQueueListFailed', err.message);
+        });
+    },
+    removeCallQueue(context, config) {
+        context.commit('removeItemRequesting', config);
+        removeCallQueue(config.id).then(()=>{
+            return context.dispatch('listCallQueueGroupsAndSeats', true);
+        }).then(()=>{
+            context.commit('removeItemSucceeded');
+        }).catch((err)=>{
+            context.commit('removeItemFailed', err.message);
         });
     }
 }

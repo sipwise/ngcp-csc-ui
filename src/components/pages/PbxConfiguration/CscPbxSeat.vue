@@ -410,7 +410,7 @@
             },
             saveGroups() {
                 this.$emit('save-groups', this.seatModel);
-            },
+            }
         },
         watch: {
             seat() {
