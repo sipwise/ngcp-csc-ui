@@ -332,3 +332,8 @@ export function getSubscribersByCallQueueEnabled() {
         });
     });
 }
+
+export function removeCallQueueConfig(subscriberId) {
+	let param = { cloud_pbx_callqueue: false };
+	return Vue.http.put('api/subscriberpreferences/' + subscriberId, param);
+}

@@ -16,7 +16,8 @@ import {
     setPbxGroupIds,
     getSubscribers,
     getSubscriber,
-    getSubscribersByCallQueueEnabled
+    getSubscribersByCallQueueEnabled,
+    removeCallQueueConfig
 } from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace } from './common'
@@ -528,6 +529,7 @@ export function getCallQueueConfigurations() {
         getSubscribersByCallQueueEnabled().then((subscribers)=>{
             let callQueues = subscribers.map((subscriber)=>{
                 return {
+                    id: _.get(subscriber, 'id', null),
                     display_name: _.get(subscriber, 'display_name', null),
                     is_pbx_group: _.get(subscriber, 'is_pbx_group', null),
                     max_queue_length: _.get(subscriber, 'prefs.max_queue_length', 5),
@@ -537,6 +539,16 @@ export function getCallQueueConfigurations() {
             resolve({
                 items: callQueues
             });
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function removeCallQueue(subscriberId) {
+    return new Promise((resolve, reject)=>{
+        removeCallQueueConfig(subscriberId).then(() => {
+            resolve();
         }).catch((err)=>{
             reject(err);
         });
