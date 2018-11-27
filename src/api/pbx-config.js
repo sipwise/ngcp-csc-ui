@@ -20,7 +20,8 @@ import {
     addNewCallQueueConfig,
     setQueueLength,
     setWrapUpTime,
-    getPreferences
+    getPreferences,
+    removeCallQueueConfig
 } from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace } from './common'
@@ -549,7 +550,7 @@ export function getCallQueueConfigurations() {
 }
 
 export function addCallQueueConfig(id, config) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         addNewCallQueueConfig(id, config).then(() => {
             resolve();
         }).catch((err)=>{
@@ -559,9 +560,9 @@ export function addCallQueueConfig(id, config) {
 }
 
 export function getConfig(id) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         let $subscriber = {};
-        Promise.resolve().then(()=>{
+        Promise.resolve().then(() => {
             return getSubscriber(id);
         }).then((subscriber) => {
             $subscriber = subscriber;
@@ -574,6 +575,16 @@ export function getConfig(id) {
                 max_queue_length: _.get(prefs, 'max_queue_length', 5),
                 queue_wrap_up_time: _.get(prefs, 'queue_wrap_up_time', 10)
             });
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function removeCallQueue(subscriberId) {
+    return new Promise((resolve, reject) => {
+        removeCallQueueConfig(subscriberId).then(() => {
+            resolve();
         }).catch((err)=>{
             reject(err);
         });

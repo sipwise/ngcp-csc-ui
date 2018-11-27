@@ -99,6 +99,14 @@
         >
             <q-item-tile>
                 <q-btn
+                    v-if="expanded"
+                    icon="delete"
+                    :big="isMobile"
+                    color="negative"
+                    flat
+                    @click="remove()"
+                />
+                <q-btn
                     :icon="titleIcon"
                     :big="isMobile"
                     color="primary"
@@ -129,12 +137,12 @@
         QIcon,
         Platform,
         QBtn,
+        QInnerLoading,
+        QSpinnerMat,
         QItem,
         QItemSide,
         QItemMain,
-        QItemTile,
-        QInnerLoading,
-        QSpinnerMat
+        QItemTile
     } from 'quasar-framework'
     export default {
         name: 'csc-pbx-call-queue',
@@ -153,12 +161,12 @@
             QInput,
             QIcon,
             QBtn,
+            QInnerLoading,
+            QSpinnerMat,
             QItem,
             QItemSide,
             QItemMain,
-            QItemTile,
-            QInnerLoading,
-            QSpinnerMat
+            QItemTile
         },
         validations: {
             changes: {
@@ -314,15 +322,15 @@
             queueLengthHasChanged() {
                 return this.queueLength + "" !== this.changes.max_queue_length + "";
             },
+            isLoading() {
+                return this.loading;
+            },
             configModel() {
                 return {
                     id: this.subscriber.id,
                     max_queue_length: this.changes.max_queue_length,
                     queue_wrap_up_time: this.changes.queue_wrap_up_time
                 }
-            },
-            isLoading() {
-                return this.loading;
             }
         },
         methods: {
@@ -356,9 +364,16 @@
                 else {
                     this.$emit('save-queue-length', this.configModel);
                 }
+            },
+            remove() {
+                this.$emit('remove', this.subscriber);
             }
         },
         watch: {
+            subscriber() {
+                this.resetQueueLength();
+                this.resetWrapUpTime();
+            }
         }
     }
 </script>

@@ -361,3 +361,8 @@ export function setQueueLength(id, queueLength) {
 export function setWrapUpTime(id, wrapUpTime) {
     return editCallQueuePreference(id, { queue_wrap_up_time: wrapUpTime });
 }
+
+export function removeCallQueueConfig(subscriberId) {
+    let param = { cloud_pbx_callqueue: false };
+    return Vue.http.put('api/subscriberpreferences/' + subscriberId, param);
+}
