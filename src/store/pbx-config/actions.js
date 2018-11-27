@@ -35,7 +35,8 @@ import {
     addCallQueueConfig,
     setQueueLengthConfig,
     setWrapUpTimeConfig,
-    getConfig
+    getConfig,
+    removeCallQueue
 } from '../../api/pbx-config'
 
 export default {
@@ -435,6 +436,12 @@ export default {
         let config = Object.assign(data.config, {
             cloud_pbx_callqueue: true
         });
+        if (!_.isNull(config.max_queue_length) && config.max_queue_length.length === 0) {
+            config.max_queue_length = null;
+        }
+        if (!_.isNull(config.queue_wrap_up_time) && config.queue_wrap_up_time.length === 0) {
+            config.queue_wrap_up_time = null;
+        }
         context.commit('addItemRequesting', config);
         addCallQueueConfig(data.id, config).then(() => {
             return context.dispatch('listCallQueueGroupsAndSeats', true);
@@ -462,9 +469,14 @@ export default {
         });
     },
     setQueueLength(context, subscriber) {
-        context.commit('updateItemRequesting', subscriber);
-        setQueueLengthConfig(subscriber.id, subscriber.max_queue_length).then(() => {
-            return context.dispatch('reloadConfig', subscriber);
+        let updateItem = {
+            id: subscriber.id,
+            max_queue_length: subscriber.max_queue_length || 5,
+            queue_wrap_up_time: subscriber.queue_wrap_up_time || 10
+        };
+        context.commit('updateItemRequesting', updateItem);
+        setQueueLengthConfig(updateItem.id, updateItem.max_queue_length).then(() => {
+            return context.dispatch('reloadConfig', updateItem);
         }).then(()=>{
             context.commit('updateItemSucceeded');
         }).catch((err) => {
@@ -472,13 +484,28 @@ export default {
         });
     },
     setWrapUpTime(context, subscriber) {
-        context.commit('updateItemRequesting', subscriber);
-        setWrapUpTimeConfig(subscriber.id, subscriber.queue_wrap_up_time).then(() => {
-            return context.dispatch('reloadConfig', subscriber);
+        let updateItem = {
+            id: subscriber.id,
+            max_queue_length: subscriber.max_queue_length || 5,
+            queue_wrap_up_time: subscriber.queue_wrap_up_time || 10
+        };
+        context.commit('updateItemRequesting', updateItem);
+        setWrapUpTimeConfig(updateItem.id, updateItem.queue_wrap_up_time).then(() => {
+            return context.dispatch('reloadConfig', updateItem);
         }).then(()=>{
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
+        });
+    },
+    removeCallQueue(context, config) {
+        context.commit('removeItemRequesting', config);
+        removeCallQueue(config.id).then(()=>{
+            return context.dispatch('listCallQueueGroupsAndSeats', true);
+        }).then(()=>{
+            context.commit('removeItemSucceeded');
+        }).catch((err)=>{
+            context.commit('removeItemFailed', err.message);
         });
     }
 }
