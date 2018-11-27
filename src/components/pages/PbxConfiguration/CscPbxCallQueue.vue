@@ -85,6 +85,14 @@
         >
             <q-item-tile>
                 <q-btn
+                    v-if="expanded"
+                    icon="delete"
+                    :big="isMobile"
+                    color="negative"
+                    flat
+                    @click="remove()"
+                />
+                <q-btn
                     :icon="titleIcon"
                     :big="isMobile"
                     color="primary"
@@ -93,6 +101,12 @@
                 />
             </q-item-tile>
         </q-item-side>
+        <q-inner-loading :visible="isLoading">
+            <q-spinner-mat
+                size="60px"
+                color="primary"
+            />
+        </q-inner-loading>
     </q-item>
 </template>
 
@@ -103,6 +117,8 @@
         QIcon,
         Platform,
         QBtn,
+        QInnerLoading,
+        QSpinnerMat,
         QItem,
         QItemSide,
         QItemMain,
@@ -111,7 +127,8 @@
     export default {
         name: 'csc-pbx-call-queue',
         props: [
-            'subscriber'
+            'subscriber',
+            'loading'
         ],
         data () {
             return {
@@ -123,6 +140,8 @@
             QInput,
             QIcon,
             QBtn,
+            QInnerLoading,
+            QSpinnerMat,
             QItem,
             QItemSide,
             QItemMain,
@@ -149,11 +168,17 @@
                 else {
                     return 'keyboard arrow up';
                 }
+            },
+            isLoading() {
+                return this.loading;
             }
         },
         methods: {
             toggleMain() {
                 this.expanded = !this.expanded;
+            },
+            remove() {
+                this.$emit('remove', this.subscriber);
             }
         },
         watch: {
