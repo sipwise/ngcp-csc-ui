@@ -126,7 +126,7 @@
                 :profiles="profiles"
                 :modelImages="modelImages"
                 :loading="createDeviceRequesting"
-                @remove="removeDevice"
+                @remove="removeDeviceDialog"
                 @modelSelectOpened="modelSelectOpened()"
                 @save="saveDevice"
                 @cancelForm="cancelForm"
@@ -170,7 +170,7 @@
                 :subscribers="getGroupOrSeatById"
                 :profiles="profiles"
                 :modelImages="modelImages"
-                @remove="removeDevice"
+                @remove="removeDeviceDialog"
                 @loadGroupsAndSeats="loadGroupsAndSeats()"
                 @deviceKeysChanged="deviceKeysChanged"
                 @save-station-name="setStationName"
@@ -184,6 +184,12 @@
         >
             {{ noDeviceMessage }}
         </div>
+        <csc-remove-dialog
+            ref="removeDialog"
+            :title="$t('pbxConfig.removeDeviceTitle')"
+            :message="removeDialogMessage"
+            @remove="removeDevice"
+        />
     </csc-page>
 </template>
 
@@ -194,12 +200,12 @@
     import CscPbxDevice from './CscPbxDevice'
     import CscPbxDeviceAddForm from './CscPbxDeviceAddForm'
     import CscPbxModelSelect from './CscPbxModelSelect'
+    import CscRemoveDialog from '../../CscRemoveDialog'
     import { showToast, showGlobalError } from '../../../helpers/ui'
     import {
         QSpinnerDots,
         QPagination,
         QList,
-        Dialog,
         QItem,
         QItemMain,
         QBtn,
@@ -217,7 +223,8 @@
                 formEnabled: false,
                 filterEnabled: false,
                 filterStationNameInput: '',
-                filterMacAddressInput: ''
+                filterMacAddressInput: '',
+                currentRemovingDevice: null
             }
         },
         mounted() {
@@ -229,6 +236,7 @@
             CscPbxDevice,
             CscPbxDeviceAddForm,
             CscPbxModelSelect,
+            CscRemoveDialog,
             QSpinnerDots,
             QPagination,
             QList,
@@ -363,6 +371,13 @@
                         }
                     }
                 ];
+            },
+            removeDialogMessage() {
+                if (this.currentRemovingDevice !== null) {
+                    return this.$t('pbxConfig.removeDeviceText', {
+                        device: this.currentRemovingDevice.station_name
+                    });
+                }
             }
         },
         methods: {
@@ -378,23 +393,8 @@
             saveDevice(device) {
                 this.$store.dispatch('pbxConfig/createDevice', device);
             },
-            removeDevice(device) {
-                var store = this.$store;
-                var i18n = this.$i18n;
-                Dialog.create({
-                    title: i18n.t('pbxConfig.removeDeviceTitle'),
-                    message: i18n.t('pbxConfig.removeDeviceText', { device: device.station_name }),
-                    buttons: [
-                        'Cancel',
-                        {
-                            label: i18n.t('pbxConfig.removeDevice'),
-                            color: 'negative',
-                            handler () {
-                                store.dispatch('pbxConfig/removeDevice', device);
-                            }
-                        }
-                    ]
-                });
+            removeDevice() {
+                this.$store.dispatch('pbxConfig/removeDevice', this.currentRemovingDevice);
             },
             loadGroupsAndSeats() {
                 this.$store.dispatch('pbxConfig/getAllGroupsAndSeats');
@@ -466,6 +466,10 @@
             },
             resetFilters() {
                 this.$store.dispatch('pbxConfig/resetDeviceFilters');
+            },
+            removeDeviceDialog(device) {
+                this.currentRemovingDevice = device;
+                this.$refs.removeDialog.open();
             }
         },
         watch: {
