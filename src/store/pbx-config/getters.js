@@ -297,7 +297,7 @@ export default {
         return state.chipStationNameFilter;
     },
     callQueueGroupsAndSeats(state) {
-        return state.callQueueGroupsAndSeats;
+        return state.callQueueGroupsAndSeatsOrdered;
     },
     assignableGroupsAndSeatsOptions(state, getters) {
         return getters.groupsAndSeatsOptions.filter((option) => {
@@ -305,7 +305,7 @@ export default {
         });
     },
     callQueueGroupsAndSeatsOptions(state, getters) {
-        let ids = state.callQueueGroupsAndSeats.map((item) => {
+        let ids = _.map(state.callQueueGroupsAndSeats, (item) => {
             return item.id;
         });
         let options = getters.assignableGroupsAndSeatsOptions
@@ -314,5 +314,12 @@ export default {
             }
         );
         return options;
+    },
+    configItemById(state) {
+        return (id) => {
+            return state.callQueueGroupsAndSeats.filter((item) => {
+                return item.id === id;
+            })
+        }
     }
 }
