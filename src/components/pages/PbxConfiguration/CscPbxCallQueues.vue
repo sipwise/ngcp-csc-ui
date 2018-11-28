@@ -23,6 +23,9 @@
                     v-for="(subscriber, index) in callQueueGroupsAndSeats"
                     :key="index"
                     :subscriber="subscriber"
+                    :loading="isItemLoading(subscriber.id)"
+                    @save-queue-length="setQueueLength"
+                    @save-wrap-up-time="setWrapUpTime"
                 />
             </q-list>
         </div>
@@ -80,15 +83,24 @@
             ...mapGetters('pbxConfig', [
                 'callQueueGroupsAndSeats',
                 'isListLoadingVisible',
-                'isListRequesting'
+                'isListRequesting',
+                'isUpdating',
+                'updateItemId'
             ]),
             isMobile() {
                 return Platform.is.mobile;
             }
         },
         methods: {
-        },
-        watch: {
+            setQueueLength(subscriber) {
+                this.$store.dispatch('pbxConfig/setQueueLength', subscriber);
+            },
+            setWrapUpTime(subscriber) {
+                this.$store.dispatch('pbxConfig/setWrapUpTime', subscriber);
+            },
+            isItemLoading(subscriberId) {
+                return (this.isUpdating && this.updateItemId + "" === subscriberId + "");
+            }
         }
     }
 </script>
