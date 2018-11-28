@@ -297,6 +297,13 @@ export default {
         return state.chipStationNameFilter;
     },
     callQueueGroupsAndSeats(state) {
-        return state.callQueueGroupsAndSeats;
+        return state.callQueueGroupsAndSeatsOrdered;
+    },
+    configItemById(state) {
+        return (id) => {
+            return state.callQueueGroupsAndSeats.filter((item) => {
+                return item.id === id;
+            })
+        }
     }
 }

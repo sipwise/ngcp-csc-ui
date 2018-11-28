@@ -53,7 +53,8 @@
                 v-if="expanded"
             >
                 <q-field
-                    :label="$t('pbxConfig.queueExtensionName')">
+                    :label="$t('pbxConfig.queueExtensionName')"
+                >
                     <q-input
                         dark
                         readonly
@@ -61,20 +62,32 @@
                     />
                 </q-field>
                 <q-field
-                    :label="$t('pbxConfig.queueLength')">
+                    :label="$t('pbxConfig.queueLength')"
+                    :error-label="queueLengthErrorMessage"
+                >
                     <q-input
                         dark
-                        readonly
-                        :value="subscriber.max_queue_length"
+                        v-model="changes.max_queue_length"
+                        :after="queueLengthButtons"
+                        @keyup.enter="saveQueueLength"
+                        @input="$v.changes.max_queue_length.$touch"
+                        @blur="$v.changes.max_queue_length.$touch"
+                        :error="$v.changes.max_queue_length.$error"
                     />
                 </q-field>
                 <q-field
-                    :label="$t('pbxConfig.wrapUpTime')">
+                    :label="$t('pbxConfig.wrapUpTime')"
+                    :error-label="wrapUpTimeErrorMessage"
+                >
                     <q-input
                         dark
-                        readonly
-                        :value="subscriber.queue_wrap_up_time"
+                        v-model="changes.queue_wrap_up_time"
+                        :after="wrapUpTimeButtons"
                         suffix="seconds"
+                        @keyup.enter="saveWrapUpTime"
+                        @input="$v.changes.queue_wrap_up_time.$touch"
+                        @blur="$v.changes.queue_wrap_up_time.$touch"
+                        :error="$v.changes.queue_wrap_up_time.$error"
                     />
                 </q-field>
             </q-item-tile>
@@ -93,10 +106,22 @@
                 />
             </q-item-tile>
         </q-item-side>
+        <q-inner-loading :visible="isLoading">
+            <q-spinner-mat
+                size="60px"
+                color="primary"
+            />
+        </q-inner-loading>
     </q-item>
 </template>
 
 <script>
+    import { showGlobalError } from '../../../helpers/ui'
+    import {
+        minValue,
+        maxValue,
+        numeric
+    } from 'vuelidate/lib/validators'
     import {
         QField,
         QInput,
@@ -106,16 +131,20 @@
         QItem,
         QItemSide,
         QItemMain,
-        QItemTile
+        QItemTile,
+        QInnerLoading,
+        QSpinnerMat
     } from 'quasar-framework'
     export default {
         name: 'csc-pbx-call-queue',
         props: [
-            'subscriber'
+            'subscriber',
+            'loading'
         ],
         data () {
             return {
-                expanded: false
+                expanded: false,
+                changes: this.getConfig()
             }
         },
         components: {
@@ -126,9 +155,63 @@
             QItem,
             QItemSide,
             QItemMain,
-            QItemTile
+            QItemTile,
+            QInnerLoading,
+            QSpinnerMat
+        },
+        validations: {
+            changes: {
+                max_queue_length: {
+                    numeric,
+                    minValue: minValue(1),
+                    maxValue: maxValue(99999)
+                },
+                queue_wrap_up_time: {
+                    numeric,
+                    minValue: minValue(1),
+                    maxValue: maxValue(99999)
+                }
+            }
         },
         computed: {
+            queueLengthErrorMessage() {
+                if (!this.$v.changes.max_queue_length.numeric) {
+                    return this.$t('validationErrors.numeric', {
+                        field: this.$t('pbxConfig.queueLength'),
+                    });
+                }
+                else if (!this.$v.changes.max_queue_length.minValue) {
+                    return this.$t('validationErrors.minValueSecond', {
+                        field: this.$t('pbxConfig.queueLength'),
+                        minValue: this.$v.changes.max_queue_length.$params.minValue.min
+                    });
+                }
+                else if (!this.$v.changes.max_queue_length.maxValue) {
+                    return this.$t('validationErrors.maxValueSecond', {
+                        field: this.$t('pbxConfig.queueLength'),
+                        maxValue: this.$v.changes.max_queue_length.$params.maxValue.max
+                    });
+                }
+            },
+            wrapUpTimeErrorMessage() {
+                if (!this.$v.changes.queue_wrap_up_time.numeric) {
+                    return this.$t('validationErrors.numeric', {
+                        field: this.$t('pbxConfig.wrapUpTime'),
+                    });
+                }
+                else if (!this.$v.changes.queue_wrap_up_time.minValue) {
+                    return this.$t('validationErrors.minValueSecond', {
+                        field: this.$t('pbxConfig.wrapUpTime'),
+                        minValue: this.$v.changes.queue_wrap_up_time.$params.minValue.min
+                    });
+                }
+                else if (!this.$v.changes.queue_wrap_up_time.maxValue) {
+                    return this.$t('validationErrors.maxValueSecond', {
+                        field: this.$t('pbxConfig.wrapUpTime'),
+                        maxValue: this.$v.changes.queue_wrap_up_time.$params.maxValue.max
+                    });
+                }
+            },
             itemClasses() {
                 let classes = ['csc-list-item', 'csc-pbx-call-queue'];
                 if (this.expanded) {
@@ -149,11 +232,129 @@
                 else {
                     return 'keyboard arrow up';
                 }
+            },
+            wrapUpTimeButtons() {
+                let buttons = [];
+                let self = this;
+                if (this.wrapUpTimeHasChanged && this.$v.changes.queue_wrap_up_time.$error) {
+                    buttons.push({
+                            icon: 'clear',
+                            error: true,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetWrapUpTime();
+                            }
+                        }
+                    );
+                }
+                else if (this.wrapUpTimeHasChanged) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveWrapUpTime();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetWrapUpTime();
+                            }
+                        }
+                    );
+                }
+                return buttons;
+            },
+            wrapUpTime() {
+                return this.subscriber.queue_wrap_up_time;
+            },
+            wrapUpTimeHasChanged() {
+                return this.wrapUpTime + "" !== this.changes.queue_wrap_up_time + "";
+            },
+            queueLengthButtons() {
+                let buttons = [];
+                let self = this;
+                if (this.queueLengthHasChanged && this.$v.changes.max_queue_length.$error) {
+                    buttons.push({
+                            icon: 'clear',
+                            error: true,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetQueueLength();
+                            }
+                        }
+                    );
+                }
+                else if (this.queueLengthHasChanged) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveQueueLength();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetQueueLength();
+                            }
+                        }
+                    );
+                }
+                return buttons;
+            },
+            queueLength() {
+                return this.subscriber.max_queue_length;
+            },
+            queueLengthHasChanged() {
+                return this.queueLength + "" !== this.changes.max_queue_length + "";
+            },
+            configModel() {
+                return {
+                    id: this.subscriber.id,
+                    max_queue_length: this.changes.max_queue_length,
+                    queue_wrap_up_time: this.changes.queue_wrap_up_time
+                }
+            },
+            isLoading() {
+                return this.loading;
             }
         },
         methods: {
             toggleMain() {
                 this.expanded = !this.expanded;
+            },
+            getConfig() {
+                return {
+                    max_queue_length: this.subscriber.max_queue_length,
+                    queue_wrap_up_time: this.subscriber.queue_wrap_up_time
+                }
+            },
+            resetWrapUpTime() {
+                this.changes.queue_wrap_up_time = this.subscriber.queue_wrap_up_time;
+            },
+            saveWrapUpTime() {
+                if (this.$v.changes.$invalid) {
+                    showGlobalError(this.$t('validationErrors.generic'));
+                }
+                else {
+                    this.$emit('save-wrap-up-time', this.configModel);
+                }
+            },
+            resetQueueLength() {
+                this.changes.max_queue_length = this.subscriber.max_queue_length;
+            },
+            saveQueueLength() {
+                if (this.$v.changes.$invalid) {
+                    showGlobalError(this.$t('validationErrors.generic'));
+                }
+                else {
+                    this.$emit('save-queue-length', this.configModel);
+                }
             }
         },
         watch: {
