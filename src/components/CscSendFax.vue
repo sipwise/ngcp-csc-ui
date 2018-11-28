@@ -224,7 +224,6 @@
                 this.$refs.faxUpload.value = '';
             },
             processFile(event) {
-                console.log('processFile()');
                 let file = event.target.files[0];
                 let fileName = file ? file.name : '';
                 let fileNameSplit = fileName.split('.');
