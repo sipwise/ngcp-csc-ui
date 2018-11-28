@@ -415,10 +415,35 @@ export default {
     callQueueListSucceeded(state, data) {
         state.listState = RequestState.succeeded;
         state.listError = null;
-        state.callQueueGroupsAndSeats = data.items;
+        data.items.forEach((config)=>{
+            state.callQueueGroupsAndSeats[config.id] = config;
+            state.callQueueGroupsAndSeatsOrdered.push(config);
+        });
+		state.callQueueGroupsAndSeats = state.callQueueGroupsAndSeats.filter((item) => {
+			return (item !== (undefined || null || ''));
+		});
     },
     callQueueListFailed(state, error) {
         state.listState = RequestState.failed;
         state.listError = error;
+    },
+    configReloading(state, config) {
+        state.configReloadingState = RequestState.requesting;
+        state.configReloadingError = null;
+        state.configReloading = config;
+    },
+    configReloaded(state, config) {
+        state.configReloadingState = RequestState.succeeded;
+        state.configReloadingError = null;
+        Vue.set(state.callQueueGroupsAndSeats, config.id, config);
+        for (let i = 0; i < state.callQueueGroupsAndSeatsOrdered.length; i++) {
+            if (state.callQueueGroupsAndSeatsOrdered[i].id === config.id) {
+                state.callQueueGroupsAndSeatsOrdered[i] = config;
+            }
+        }
+    },
+    configReloadingFailed(state, err) {
+        state.configReloadingState = RequestState.failed;
+        state.configReloadingError = err;
     }
 }
