@@ -23,6 +23,8 @@
                     v-for="(subscriber, index) in callQueueGroupsAndSeats"
                     :key="index"
                     :subscriber="subscriber"
+                    @save-queue-length="setQueueLength"
+                    @save-wrap-up-time="setWrapUpTime"
                 />
             </q-list>
         </div>
@@ -87,6 +89,14 @@
             }
         },
         methods: {
+            setQueueLength(subscriber) {
+                console.log('saveQueueLength()', subscriber);
+                this.$store.dispatch('pbxConfig/setQueueLength', subscriber);
+            },
+            setWrapUpTime(subscriber) {
+                console.log('saveWrapUpTime()', subscriber);
+                this.$store.dispatch('pbxConfig/setWrapUpTime', subscriber);
+            }
         },
         watch: {
         }

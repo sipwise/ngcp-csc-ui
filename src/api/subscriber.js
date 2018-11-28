@@ -332,3 +332,15 @@ export function getSubscribersByCallQueueEnabled() {
         });
     });
 }
+
+export function setQueueLength(id, queueLength) {
+    console.log('setQueueLength()', id, queueLength);
+    // TODO: Not allowed to change non-existing field. Need to create first
+    // somehow
+    return setPreference(id, 'max_queue_length', queueLength);
+}
+
+export function setWrapUpTime(id, wrapUpTime) {
+    console.log('setWrapUpTime()', id, wrapUpTime);
+    return setPreference(id, 'queue_wrap_up_time', wrapUpTime);
+}

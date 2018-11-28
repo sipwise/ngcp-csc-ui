@@ -31,7 +31,9 @@ import {
     setProfile,
     getGroup,
     getSeat,
-    getCallQueueConfigurations
+    getCallQueueConfigurations,
+    setQueueLengthConfig,
+    setWrapUpTimeConfig
 } from '../../api/pbx-config'
 
 export default {
@@ -425,6 +427,27 @@ export default {
             context.commit('callQueueListSucceeded', list);
         }).catch((err) => {
             context.commit('callQueueListFailed', err.message);
+        });
+    },
+    setQueueLength(context, subscriber) {
+        context.commit('updateItemRequesting', subscriber);
+        setQueueLengthConfig(subscriber.id, subscriber.max_queue_length).then(() => {
+            // TODO: Create reloadConfig action and belonging mutations
+            //return context.dispatch('reloadConfig', subscriber);
+        }).then(()=>{
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
+        });
+    },
+    setWrapUpTime(context, subscriber) {
+        context.commit('updateItemRequesting', subscriber);
+        setWrapUpTimeConfig(subscriber.id, subscriber.queue_wrap_up_time).then(() => {
+            //return context.dispatch('reloadConfig', subscriber);
+        }).then(()=>{
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
         });
     }
 }

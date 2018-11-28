@@ -16,7 +16,9 @@ import {
     setPbxGroupIds,
     getSubscribers,
     getSubscriber,
-    getSubscribersByCallQueueEnabled
+    getSubscribersByCallQueueEnabled,
+    setQueueLength,
+    setWrapUpTime
 } from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace } from './common'
@@ -528,6 +530,7 @@ export function getCallQueueConfigurations() {
         getSubscribersByCallQueueEnabled().then((subscribers)=>{
             let callQueues = subscribers.map((subscriber)=>{
                 return {
+                    id: _.get(subscriber, 'id', null),
                     display_name: _.get(subscriber, 'display_name', null),
                     is_pbx_group: _.get(subscriber, 'is_pbx_group', null),
                     max_queue_length: _.get(subscriber, 'prefs.max_queue_length', 5),
@@ -541,4 +544,14 @@ export function getCallQueueConfigurations() {
             reject(err);
         });
     });
+}
+
+export function setQueueLengthConfig(id, queueLength) {
+    console.log('setQueueLengthConfig()');
+    return setQueueLength(id, queueLength);
+}
+
+export function setWrapUpTimeConfig(id, wrapUpTime) {
+    console.log('setWrapUpTimeConfig()');
+    return setWrapUpTime(id, wrapUpTime);
 }

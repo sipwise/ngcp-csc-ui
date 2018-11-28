@@ -64,16 +64,16 @@
                     :label="$t('pbxConfig.queueLength')">
                     <q-input
                         dark
-                        readonly
-                        :value="subscriber.max_queue_length"
+                        v-model="changes.max_queue_length"
+                        :after="queueLengthButtons"
                     />
                 </q-field>
                 <q-field
                     :label="$t('pbxConfig.wrapUpTime')">
                     <q-input
                         dark
-                        readonly
-                        :value="subscriber.queue_wrap_up_time"
+                        v-model="changes.queue_wrap_up_time"
+                        :after="wrapUpTimeButtons"
                         suffix="seconds"
                     />
                 </q-field>
@@ -115,7 +115,8 @@
         ],
         data () {
             return {
-                expanded: false
+                expanded: false,
+                changes: this.getConfig()
             }
         },
         components: {
@@ -149,11 +150,94 @@
                 else {
                     return 'keyboard arrow up';
                 }
+            },
+            wrapUpTimeButtons() {
+                let buttons = [];
+                let self = this;
+                if (this.wrapUpTimeHasChanges) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveWrapUpTime();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetWrapUpTime();
+                            }
+                        }
+                    );
+                }
+                return buttons;
+            },
+            wrapUpTime() {
+                return this.subscriber.queue_wrap_up_time;
+            },
+            wrapUpTimeHasChanges() {
+                return this.wrapUpTime + "" !== this.changes.queue_wrap_up_time + "";
+            },
+            queueLengthButtons() {
+                let buttons = [];
+                let self = this;
+                if (this.queueLengthHasChanges) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveQueueLength();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetQueueLength();
+                            }
+                        }
+                    );
+                }
+                return buttons;
+            },
+            queueLength() {
+                return this.subscriber.max_queue_length;
+            },
+            queueLengthHasChanges() {
+                return this.queueLength + "" !== this.changes.max_queue_length + "";
+            },
+            configModel() {
+                return {
+                    id: this.subscriber.id,
+                    max_queue_length: this.changes.max_queue_length,
+                    queue_wrap_up_time: this.changes.queue_wrap_up_time
+                }
             }
         },
         methods: {
             toggleMain() {
                 this.expanded = !this.expanded;
+            },
+            getConfig() {
+                return {
+                    max_queue_length: this.subscriber.max_queue_length,
+                    queue_wrap_up_time: this.subscriber.queue_wrap_up_time
+                }
+            },
+            resetWrapUpTime() {
+                this.changes.queue_wrap_up_time = this.subscriber.queue_wrap_up_time;
+            },
+            saveWrapUpTime() {
+                this.$emit('save-wrap-up-time', this.configModel);
+            },
+            resetQueueLength() {
+                this.changes.max_queue_length = this.subscriber.max_queue_length;
+            },
+            saveQueueLength() {
+                this.$emit('save-queue-length', this.configModel);
             }
         },
         watch: {
