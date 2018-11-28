@@ -267,7 +267,6 @@
                 this.$store.dispatch('callBlocking/addNumber' + this.suffix, number);
             },
             saveNumber(data) {
-                console.log(data);
                 this.$store.dispatch('callBlocking/editNumber' + this.suffix, data);
             },
             removeNumberDialog(index) {

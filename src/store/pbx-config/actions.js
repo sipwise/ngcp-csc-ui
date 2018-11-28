@@ -32,7 +32,10 @@ import {
     getGroup,
     getSeat,
     getCallQueueConfigurations,
-    addCallQueueConfig
+    addCallQueueConfig,
+    setQueueLengthConfig,
+    setWrapUpTimeConfig,
+    getConfig
 } from '../../api/pbx-config'
 
 export default {
@@ -439,6 +442,43 @@ export default {
             context.commit('addItemSucceeded');
         }).catch((err) => {
             context.commit('addItemFailed', err.message);
+        });
+    },
+    reloadConfig(context, config) {
+        return new Promise((resolve, reject) => {
+            context.commit('configReloading', config);
+            getConfig(config.id).then(($config) => {
+                context.commit('configReloaded', $config);
+            }).catch((err)=>{
+                context.commit('configReloadingFailed', {
+                    config: config,
+                    error: err.message
+                });
+            }).then(()=>{
+                resolve();
+            }).catch((err)=>{
+                reject(err);
+            });
+        });
+    },
+    setQueueLength(context, subscriber) {
+        context.commit('updateItemRequesting', subscriber);
+        setQueueLengthConfig(subscriber.id, subscriber.max_queue_length).then(() => {
+            return context.dispatch('reloadConfig', subscriber);
+        }).then(()=>{
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
+        });
+    },
+    setWrapUpTime(context, subscriber) {
+        context.commit('updateItemRequesting', subscriber);
+        setWrapUpTimeConfig(subscriber.id, subscriber.queue_wrap_up_time).then(() => {
+            return context.dispatch('reloadConfig', subscriber);
+        }).then(()=>{
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
         });
     }
 }

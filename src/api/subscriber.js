@@ -336,3 +336,28 @@ export function getSubscribersByCallQueueEnabled() {
 export function addNewCallQueueConfig(id, config) {
     return Vue.http.put('api/subscriberpreferences/' + id, config);
 }
+
+export function editCallQueuePreference(id, config) {
+    return new Promise((resolve, reject)=>{
+        let $prefs = Object.assign(config, { cloud_pbx_callqueue: true });
+        Promise.resolve().then(()=>{
+            return getPreferences(id);
+        }).then((result)=>{
+            var prefs = Object.assign(result, $prefs);
+            delete prefs._links;
+            return Vue.http.put('api/subscriberpreferences/' + id, prefs);
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function setQueueLength(id, queueLength) {
+    return editCallQueuePreference(id, { max_queue_length: queueLength });
+}
+
+export function setWrapUpTime(id, wrapUpTime) {
+    return editCallQueuePreference(id, { queue_wrap_up_time: wrapUpTime });
+}
