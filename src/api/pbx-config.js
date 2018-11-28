@@ -17,7 +17,10 @@ import {
     getSubscribers,
     getSubscriber,
     getSubscribersByCallQueueEnabled,
-    addNewCallQueueConfig
+    addNewCallQueueConfig,
+    setQueueLength,
+    setWrapUpTime,
+    getPreferences
 } from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace } from './common'
@@ -553,4 +556,34 @@ export function addCallQueueConfig(id, config) {
             reject(err);
         });
     });
+}
+
+export function getConfig(id) {
+    return new Promise((resolve, reject)=>{
+        let $subscriber = {};
+        Promise.resolve().then(()=>{
+            return getSubscriber(id);
+        }).then((subscriber) => {
+            $subscriber = subscriber;
+            return getPreferences(id);
+        }).then((prefs) => {
+            resolve({
+                id: _.get($subscriber, 'id', null),
+                display_name: _.get($subscriber, 'display_name', null),
+                is_pbx_group: _.get($subscriber, 'is_pbx_group', null),
+                max_queue_length: _.get(prefs, 'max_queue_length', 5),
+                queue_wrap_up_time: _.get(prefs, 'queue_wrap_up_time', 10)
+            });
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function setQueueLengthConfig(id, queueLength) {
+    return setQueueLength(id, queueLength);
+}
+
+export function setWrapUpTimeConfig(id, wrapUpTime) {
+    return setWrapUpTime(id, wrapUpTime);
 }

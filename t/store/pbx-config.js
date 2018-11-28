@@ -58,12 +58,14 @@ describe('PBX Configuration Store', () => {
             items: [
                 {
                     display_name: "123",
+                    id: 123,
                     is_pbx_group: false,
                     max_queue_length: "10",
                     queue_wrap_up_time: "5"
                 },
                 {
                     display_name: "456",
+                    id: 456,
                     is_pbx_group: false,
                     max_queue_length: "5",
                     queue_wrap_up_time: "10"
