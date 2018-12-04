@@ -28,9 +28,9 @@
             <q-item-tile
                 sublabel
             >
-                {{ t$('pages.conversations.duration') }}
+                {{ $t('pages.conversations.duration') }}
                 {{ voiceMail.duration }}
-                {{ t$('pages.conversations.seconds') }}
+                {{ $t('pages.conversations.seconds') }}
             </q-item-tile>
             <q-item-tile>
                 <csc-voice-mail-player
