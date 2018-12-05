@@ -53,7 +53,7 @@
             <q-btn
                 flat
                 icon="clear"
-                @click="disableForm()"
+                @mousedown.native="disableForm()"
                 color="default"
             >
                 {{ $t('buttons.cancel') }}
