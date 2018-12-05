@@ -42,7 +42,7 @@
                 v-if="!loading"
                 flat color="secondary"
                 icon="clear"
-                @click="cancel()"
+                @mousedown.native="cancel()"
             >
                 {{ $t('buttons.cancel') }}
             </q-btn>
