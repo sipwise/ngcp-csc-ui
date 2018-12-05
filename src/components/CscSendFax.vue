@@ -102,7 +102,7 @@
         <q-btn
             flat
             icon="clear"
-            @click="hideModal"
+            @mousedown.native="hideModal"
             color="default"
         >
             {{ $t('communication.cancel') }}
