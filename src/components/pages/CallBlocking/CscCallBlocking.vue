@@ -29,11 +29,14 @@
                    @click="enableAddForm()">{{ $t('pages.callBlocking' + suffix + '.addNumberButton') }}</q-btn>
             </q-field>
             <div v-if="addFormEnabled">
-                <q-field :error="addFormError" :error-label="$t('pages.callBlocking' + suffix + '.addInputError')">
-                    <q-input type="text" float-label="Number" v-model="newNumber" clearable @keyup.enter="addNumber()" />
-                </q-field>
-                <q-btn flat icon="clear" @click="disableAddForm()">{{ $t('buttons.cancel') }}</q-btn>
-                <q-btn flat icon="check" color="primary" @click="addNumber()">{{ $t('buttons.save') }}</q-btn>
+                <csc-call-input
+                    :label="$t('callBlocking.number')"
+                    v-model="newNumber"
+                    @submit="addNumber"
+                    @error="error"
+                />
+                <q-btn flat icon="clear" @mousedown.native="disableAddForm()">{{ $t('buttons.cancel') }}</q-btn>
+                <q-btn flat icon="check" :disabled="numberError" color="primary" @click="addNumber()">{{ $t('buttons.save') }}</q-btn>
             </div>
         </div>
         <div>
@@ -63,6 +66,7 @@
 </template>
 
 <script>
+    import CscCallInput from '../../form/CscCallInput'
     import _ from 'lodash';
     import { showToast } from '../../../helpers/ui'
     import CscPage  from '../../CscPage'
@@ -110,7 +114,8 @@
                 editing: false,
                 editingIndex: 0,
                 editingNumber: '',
-                mode: null
+                mode: null,
+                numberError: false
             }
         },
         mounted() {
@@ -122,6 +127,7 @@
             });
         },
         components: {
+            CscCallInput,
             QToggle,
             Toast,
             QField,
@@ -203,17 +209,19 @@
                 this.addFormEnabled = false;
             },
             addNumber() {
-                this.listLoading = true;
-                this.$store.dispatch('callBlocking/addNumber' + this.suffix, this.newNumber).then(()=>{
-                    this.disableAddForm();
-                    showToast(this.$i18n.t('pages.callBlocking' + this.suffix + '.addedToast', {
-                        number:this.newNumber
-                    }));
-                    this.listLoading = false;
-                }).catch(()=>{
-                    this.listLoading = false;
-                    this.addFormError = true;
-                });
+                if (!this.numberError) {
+                    this.listLoading = true;
+                    this.$store.dispatch('callBlocking/addNumber' + this.suffix, this.newNumber).then(()=>{
+                        this.disableAddForm();
+                        showToast(this.$i18n.t('pages.callBlocking' + this.suffix + '.addedToast', {
+                            number:this.newNumber
+                        }));
+                        this.listLoading = false;
+                    }).catch(()=>{
+                        this.listLoading = false;
+                        this.addFormError = true;
+                    });
+                }
             },
             editNumber(index) {
                 this.editing = true;
@@ -276,6 +284,9 @@
                 }).catch((err)=>{
                     console.log(err);
                 });
+            },
+            error(state) {
+                this.numberError = state;
             }
         }
     }
