@@ -7,18 +7,12 @@
         <div class="title">
             {{ $t('communication.sendFax') }}
         </div>
-        <q-field :error-label="destinationErrorMessage">
-            <q-input
-                dark
-                clearable
-                type="text"
-                v-model="form.destination"
-                :float-label="$t('communication.label.destination')"
-                @input="$v.form.destination.$touch"
-                @blur="$v.form.destination.$touch"
-                :error="$v.form.destination.$error"
-            />
-        </q-field>
+        <csc-call-input
+            :label="$t('communication.label.destination')"
+            v-model="form.destination"
+            @submit="sendFax"
+            @error="error"
+        />
         <q-field>
             <q-select
                 dark
@@ -120,8 +114,11 @@
 </template>
 
 <script>
+    import CscCallInput from './form/CscCallInput'
     import {
-        required,
+        showGlobalError
+    } from '../helpers/ui'
+    import {
         requiredUnless,
         maxLength
     } from 'vuelidate/lib/validators'
@@ -140,9 +137,9 @@
                 showFaxModal: false,
                 selectedFile: '',
                 form: {
-                    destination: null,
-                    pageHeader: null,
-                    data: null,
+                    destination: '',
+                    pageHeader: '',
+                    data: '',
                     quality: 'normal',
                     file: {}
                 },
@@ -151,10 +148,12 @@
                     { label: this.$t('communication.quality.fine'), value: 'fine' },
                     { label: this.$t('communication.quality.super'), value: 'super' }
                 ],
-                isMobile: this.$q.platform.is.mobile
+                isMobile: this.$q.platform.is.mobile,
+                destinationError: false
             }
         },
         components: {
+            CscCallInput,
             QModal,
             QBtn,
             QField,
@@ -164,10 +163,6 @@
         },
         validations: {
             form: {
-                destination: {
-                    required,
-                    maxLength: maxLength(64)
-                },
                 data: {
                     required: requiredUnless(function() {
                         return this.hasContentToSend;
@@ -256,22 +251,36 @@
                 this.selectedFile = fileName;
             },
             sendFax() {
-                this.$store.dispatch('communication/createFax', this.form);
+                if (this.$v.form.$error ||
+                    this.destinationError) {
+                        showGlobalError(this.$t('validationErrors.generic'));
+                }
+                else {
+                    this.$store.dispatch('communication/createFax', this.form);
+                }
             },
             showModal() {
-                this.form = {
-                    destination: null,
-                    pageHeader: null,
-                    data: null,
-                    quality: 'normal',
-                    file: null
-                };
+                this.form.destination = '';
+                this.form.pageHeader = '';
+                this.form.data = '';
+                this.form.quality = 'normal';
+                this.form.file = {};
+                //this.form = {
+                //    destination: '',
+                //    pageHeader: '',
+                //    data: '',
+                //    quality: 'normal',
+                //    file: null
+                //};
                 this.selectedFile = '';
-                this.showFaxModal = true;
                 this.$v.$reset();
+                this.showFaxModal = true;
             },
             hideModal() {
                 this.showFaxModal = false;
+            },
+            error(state) {
+                this.destinationError = state;
             }
         }
     }
