@@ -3,25 +3,12 @@
         v-if="enabled"
         class="csc-form"
     >
-        <q-field
-            :error="$v.number.$error"
-            :error-label="errorMessage"
-        >
-            <q-input
-                v-model="number"
-                :float-label="$t('callBlocking.number')"
-                :error="$v.number.$error"
-                type="text"
-                clearable
-                dark
-                @keyup.enter="save"
-                @input="$v.number.$touch"
-                @blur="blur()"
-                @focus="focus()"
-                :disable="disabled || loading"
-                autofocus
-            />
-        </q-field>
+        <csc-call-input
+            :label="$t('callBlocking.number')"
+            v-model="number"
+            @submit="save"
+            @error="error"
+        />
         <div
             class="csc-form-actions row justify-center"
         >
@@ -29,8 +16,7 @@
                 flat
                 color="default"
                 icon="clear"
-                @click="cancel()"
-                :disabled="disabled || loading"
+                @mousedown.native="cancel()"
             >
                 {{ $t('buttons.cancel') }}
             </q-btn>
@@ -68,87 +54,63 @@
 </template>
 
 <script>
+    import CscCallInput from '../../form/CscCallInput'
     import CscSpinner from '../../CscSpinner'
     import {
-        required
-    } from 'vuelidate/lib/validators'
-    import {
-        userInfoAndEmpty
-    } from '../../../helpers/validation'
+        showGlobalError
+    } from '../../../helpers/ui'
     import {
         QField,
         QInput,
-        QBtn,
-        QSpinnerDots
+        QBtn
     } from 'quasar-framework'
     export default {
         name: 'csc-call-blocking-add-form',
         components: {
+            CscCallInput,
+            CscSpinner,
             QField,
             QInput,
-            QBtn,
-            QSpinnerDots,
-            CscSpinner
+            QBtn
         },
         data () {
             return {
                 enabled: false,
-                number: ''
+                number: '',
+                numberError: false
             }
         },
         props: [
             'disabled',
             'loading'
         ],
-        validations: {
-            number: {
-                required,
-                userInfoAndEmpty
-            }
-        },
         computed: {
-            errorMessage() {
-                if (!this.$v.number.required) {
-                    return this.$t('validationErrors.fieldRequired', {
-                        field: this.$t('callBlocking.number')
-                    });
-                }
-                else if (!this.$v.number.userInfoAndEmpty) {
-                    return this.$t('validationErrors.userInfoAndEmpty');
-                }
-            },
             saveDisabled() {
-                return this.$v.$invalid || this.disabled || this.loading;
+                return this.numberError|| this.disabled || this.loading;
             }
         },
         methods: {
             save() {
-                if(!this.saveDisabled) {
+                if (this.numberError || this.saveDisabled) {
+                    showGlobalError(this.$t('validationErrors.generic'));
+                }
+                else {
                     this.$emit('save', this.number);
                 }
             },
             cancel() {
                 this.number = '';
-                this.$v.$reset();
                 this.enabled = false;
             },
             add() {
                 this.number = '';
-                this.$v.$reset();
                 this.enabled = true;
-            },
-            blur() {
-                if(this.number === '') {
-                    this.$v.$reset();
-                }
-            },
-            focus() {
-                if(this.number !== '') {
-                    this.$v.number.$touch();
-                }
             },
             reset() {
                 this.cancel();
+            },
+            error(state) {
+                this.numberError = state;
             }
         }
     }
