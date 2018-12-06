@@ -13,3 +13,4 @@ case "$1" in
     ngcpcfg apply 'Enable CSC, PBX and RtcEngine'
     ;;
 esac
+
