@@ -7,18 +7,13 @@
         <div class="title">
             {{ $t('communication.sendFax') }}
         </div>
-        <q-field :error-label="destinationErrorMessage">
-            <q-input
-                dark
-                clearable
-                type="text"
-                v-model="form.destination"
-                :float-label="$t('communication.label.destination')"
-                @input="$v.form.destination.$touch"
-                @blur="$v.form.destination.$touch"
-                :error="$v.form.destination.$error"
-            />
-        </q-field>
+        <csc-call-input
+            v-if="showFaxModal"
+            :label="$t('communication.label.destination')"
+            v-model="form.destination"
+            @submit="sendFax"
+            @error="error"
+        />
         <q-field>
             <q-select
                 dark
@@ -120,8 +115,11 @@
 </template>
 
 <script>
+    import CscCallInput from './form/CscCallInput'
     import {
-        required,
+        showGlobalError
+    } from '../helpers/ui'
+    import {
         requiredUnless,
         maxLength
     } from 'vuelidate/lib/validators'
@@ -151,10 +149,12 @@
                     { label: this.$t('communication.quality.fine'), value: 'fine' },
                     { label: this.$t('communication.quality.super'), value: 'super' }
                 ],
-                isMobile: this.$q.platform.is.mobile
+                isMobile: this.$q.platform.is.mobile,
+                destinationError: false
             }
         },
         components: {
+            CscCallInput,
             QModal,
             QBtn,
             QField,
@@ -164,10 +164,6 @@
         },
         validations: {
             form: {
-                destination: {
-                    required,
-                    maxLength: maxLength(64)
-                },
                 data: {
                     required: requiredUnless(function() {
                         return this.hasContentToSend;
@@ -190,22 +186,9 @@
             },
             formDisabled() {
                 return !this.$v.form.$anyDirty ||
-                    this.$v.form.destination.$error ||
+                    this.destinationError ||
                     this.$v.form.pageHeader.$error ||
                     !this.hasContentToSend;
-            },
-            destinationErrorMessage() {
-                if (!this.$v.form.destination.required) {
-                    return this.$t('validationErrors.fieldRequired', {
-                        field: this.$t('communication.label.destination')
-                    });
-                }
-                else if (!this.$v.form.destination.maxLength) {
-                    return this.$t('validationErrors.maxLength', {
-                        field: this.$t('communication.label.destination'),
-                        maxLength: this.$v.form.destination.$params.maxLength.max
-                    });
-                }
             },
             pageHeaderErrorMessage() {
                 return this.$t('validationErrors.maxLength', {
@@ -256,13 +239,19 @@
                 this.selectedFile = fileName;
             },
             sendFax() {
-                this.$store.dispatch('communication/createFax', this.form);
+                if (this.$v.form.$error ||
+                    this.destinationError) {
+                        showGlobalError(this.$t('validationErrors.generic'));
+                }
+                else {
+                    this.$store.dispatch('communication/createFax', this.form);
+                }
             },
             showModal() {
                 this.form = {
-                    destination: null,
-                    pageHeader: null,
-                    data: null,
+                    destination: '',
+                    pageHeader: '',
+                    data: '',
                     quality: 'normal',
                     file: null
                 };
@@ -272,6 +261,9 @@
             },
             hideModal() {
                 this.showFaxModal = false;
+            },
+            error(state) {
+                this.destinationError = state;
             }
         }
     }
