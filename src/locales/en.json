@@ -385,7 +385,8 @@
         "privacyEnabledToast": "Your number is hidden to the callee",
         "privacyEnabledLabel": "Your number is hidden to the callee",
         "privacyDisabledToast": "Your number is visible to the callee",
-        "privacyDisabledLabel": "Your number is visible to the callee"
+        "privacyDisabledLabel": "Your number is visible to the callee",
+        "number": "Number"
     },
     "communication": {
         "sendFax": "Send Fax",
