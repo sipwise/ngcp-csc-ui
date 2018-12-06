@@ -7,12 +7,13 @@
         <div class="title">
             {{ $t('communication.sendFax') }}
         </div>
-        <q-field>
-            <q-input
-                type="text"
-                v-model="form.destination"
-                :float-label="$t('communication.label.destination')" />
-        </q-field>
+        <csc-call-input
+            v-if="showFaxModal"
+            :label="$t('communication.label.destination')"
+            v-model="form.destination"
+            @submit="sendFax"
+            @error="error"
+        />
         <q-field>
             <q-select
                 v-model="form.quality"
@@ -53,6 +54,7 @@
 </template>
 
 <script>
+    import CscCallInput from './form/CscCallInput'
     import {
         QModal,
         QBtn,
@@ -76,10 +78,12 @@
                     { label: this.$t('communication.quality.fine'), value: 'fine' },
                     { label: this.$t('communication.quality.super'), value: 'super' }
                 ],
-                isMobile: this.$q.platform.is.mobile
+                isMobile: this.$q.platform.is.mobile,
+                destinationError: false
             }
         },
         components: {
+            CscCallInput,
             QModal,
             QBtn,
             QField,
@@ -88,13 +92,15 @@
         },
         computed: {
             formDisabled() {
-                return !(this.form.destination &&
+                return !(!this.destinationError &&
                     this.form.data && this.form.quality) ? true : false;
             }
         },
         methods: {
             sendFax() {
-                this.$store.dispatch('communication/createFax', this.form);
+                if (!this.destinationError) {
+                    this.$store.dispatch('communication/createFax', this.form);
+                }
             },
             showModal() {
                 this.form = {
@@ -107,6 +113,9 @@
             },
             hideModal() {
                 this.showFaxModal = false;
+            },
+            error(state) {
+                this.destinationError = state;
             }
         }
     }
