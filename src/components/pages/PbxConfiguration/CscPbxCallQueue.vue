@@ -101,7 +101,7 @@
                 <q-btn
                     :icon="titleIcon"
                     :big="isMobile"
-                    color="primary"
+                    :color="caretColor"
                     flat
                     @click="toggleMain()"
                 />
@@ -140,12 +140,14 @@
         name: 'csc-pbx-call-queue',
         props: [
             'subscriber',
-            'loading'
+            'loading',
+            'highlight'
         ],
         data () {
             return {
-                expanded: false,
-                changes: this.getConfig()
+                expanded: this.highlight,
+                changes: this.getConfig(),
+                highlightCollapsed: false
             }
         },
         components: {
@@ -213,9 +215,16 @@
                     });
                 }
             },
+            highlighted() {
+                return this.expanded && this.highlight && !this.highlightCollapsed;
+            },
             itemClasses() {
                 let classes = ['csc-list-item', 'csc-pbx-call-queue'];
-                if (this.expanded) {
+                if (this.highlighted) {
+                    classes.push('csc-item-expanded');
+                    classes.push('csc-item-highlight');
+                }
+                else if (this.expanded) {
                     classes.push('csc-item-expanded');
                 }
                 else {
@@ -323,10 +332,14 @@
             },
             isLoading() {
                 return this.loading;
+            },
+            caretColor() {
+                return this.highlighted ? 'white' : 'primary';
             }
         },
         methods: {
             toggleMain() {
+                this.highlightCollapsed = true;
                 this.expanded = !this.expanded;
             },
             getConfig() {

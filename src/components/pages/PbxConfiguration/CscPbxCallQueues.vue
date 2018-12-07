@@ -47,11 +47,13 @@
             >
                 <csc-pbx-call-queue
                     v-for="(subscriber, index) in callQueueGroupsAndSeats"
+                    :id="`queue-${subscriber.id}`"
                     :key="index"
                     :subscriber="subscriber"
                     :loading="isItemLoading(subscriber.id)"
                     @save-queue-length="setQueueLength"
                     @save-wrap-up-time="setWrapUpTime"
+                    :highlight="highlight(subscriber)"
                 />
             </q-list>
         </div>
@@ -84,6 +86,8 @@
         QSpinnerDots,
         QBtn
     } from 'quasar-framework'
+    import { scroll } from 'quasar-framework'
+    const { getScrollTarget, setScrollPosition } = scroll
     export default {
         components: {
             CscPage,
@@ -124,6 +128,18 @@
             ]),
             isMobile() {
                 return Platform.is.mobile;
+            },
+            callQueueItem() {
+                return this.$route.query.item;
+            },
+            handleScroll () {
+                const el = document.getElementById(`queue-${this.callQueueItem}`)
+                const target = el ? getScrollTarget(el) : null;
+                const offset = el ? el.offsetTop - el.scrollHeight : null;
+                const duration = 200
+                if (this.callQueueItem && target) {
+                    setScrollPosition(target, offset, duration)
+                }
             }
         },
         methods: {
@@ -156,12 +172,22 @@
             },
             isItemLoading(subscriberId) {
                 return (this.isUpdating && this.updateItemId + "" === subscriberId + "");
+            },
+            highlight(subscriber) {
+                return subscriber.id == this.$route.query.item;
             }
         },
         watch: {
             addState(state) {
                 if (state === 'succeeded') {
                     this.disableAddForm();
+                }
+            },
+            callQueueGroupsAndSeats(state) {
+                if (state.length > 0) {
+                    setTimeout(() => {
+                        this.handleScroll;
+                    }, 500);
                 }
             }
         }

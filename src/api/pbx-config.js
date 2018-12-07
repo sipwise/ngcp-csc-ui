@@ -587,3 +587,7 @@ export function setQueueLengthConfig(id, queueLength) {
 export function setWrapUpTimeConfig(id, wrapUpTime) {
     return setWrapUpTime(id, wrapUpTime);
 }
+
+export function getPrefs(id) {
+    return getPreferences(id);
+}

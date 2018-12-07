@@ -74,5 +74,9 @@ export default {
     callQueueGroupsAndSeatsOrdered: [],
     configReloading: null,
     configReloadingState: RequestState.initiated,
-    configReloadingError: null
+    configReloadingError: null,
+    groupStates: {},
+    groupErrors: {},
+    seatStates: {},
+    seatErrors: {}
 }
