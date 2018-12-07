@@ -16,7 +16,8 @@ import {
     setPbxGroupIds,
     getSubscribers,
     getSubscriber,
-    getSubscribersByCallQueueEnabled
+    getSubscribersByCallQueueEnabled,
+    getPreferences
 } from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace } from './common'
@@ -164,7 +165,7 @@ export function getGroupList(page) {
                 all: true
             }),
             getPilot(),
-            getNumbers()
+            getNumbers(),
         ]).then((result)=>{
             resolve({
                 groups: result[0],
@@ -528,6 +529,7 @@ export function getCallQueueConfigurations() {
         getSubscribersByCallQueueEnabled().then((subscribers)=>{
             let callQueues = subscribers.map((subscriber)=>{
                 return {
+                    id: _.get(subscriber, 'id', null),
                     display_name: _.get(subscriber, 'display_name', null),
                     is_pbx_group: _.get(subscriber, 'is_pbx_group', null),
                     max_queue_length: _.get(subscriber, 'prefs.max_queue_length', 5),
@@ -541,4 +543,8 @@ export function getCallQueueConfigurations() {
             reject(err);
         });
     });
+}
+
+export function getPrefs(id) {
+    return getPreferences(id);
 }
