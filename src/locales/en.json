@@ -395,7 +395,8 @@
         "wrapUpTime": "Wrap Up Time",
         "queueExtensionName": "Group/Seat/Pilot",
         "addConfig": "Add Call Queue",
-        "createConfig": "Create Call Queue"
+        "createConfig": "Create Call Queue",
+        "callQueue": "Call Queue"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",
