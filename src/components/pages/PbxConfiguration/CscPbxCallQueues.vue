@@ -23,6 +23,7 @@
                     v-for="(subscriber, index) in callQueueGroupsAndSeats"
                     :key="index"
                     :subscriber="subscriber"
+                    :highlight="highlight(subscriber)"
                 />
             </q-list>
         </div>
@@ -75,6 +76,7 @@
         },
         mounted() {
             this.$store.dispatch('pbxConfig/listCallQueueGroupsAndSeats');
+            console.log('callQueueItem', this.callQueueItem);
         },
         computed: {
             ...mapGetters('pbxConfig', [
@@ -87,6 +89,11 @@
             }
         },
         methods: {
+            highlight(subscriber) {
+                console.log('subscriber.id', subscriber.id);
+                console.log('$route.query.item', this.$route.query.item);
+                return subscriber.id == this.$route.query.item;
+            }
         },
         watch: {
         }

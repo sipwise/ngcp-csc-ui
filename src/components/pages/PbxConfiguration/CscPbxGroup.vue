@@ -142,6 +142,14 @@
                     @click="remove()"
                 />
                 <q-btn
+                    v-if="expanded"
+                    icon="queue"
+                    :big="isMobile"
+                    color="primary"
+                    flat
+                    @click="$router.push(callQueueRouteWithId)"
+                />
+                <q-btn
                     :icon="titleIcon"
                     :big="isMobile"
                     color="primary"
@@ -219,6 +227,13 @@
             QAlert
         },
         computed: {
+            callQueueRouteWithId() {
+                return {
+                    path: '/user/pbx-configuration/call-queues',
+                    //query: { item: this.id }
+                    query: { item: 341 }
+                };
+            },
             itemClasses() {
                 let classes = ['csc-list-item', 'csc-pbx-group'];
                 if (this.expanded) {
