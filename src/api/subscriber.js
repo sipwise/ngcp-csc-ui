@@ -332,3 +332,11 @@ export function getSubscribersByCallQueueEnabled() {
         });
     });
 }
+
+export function getSubscriberPreferences() {
+    return getList({
+        path: 'api/subscriberpreferences/',
+        root: '_embedded.ngcp:subscriberpreferences',
+        all: true
+    });
+}

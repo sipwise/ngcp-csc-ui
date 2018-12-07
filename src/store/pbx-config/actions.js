@@ -31,7 +31,8 @@ import {
     setProfile,
     getGroup,
     getSeat,
-    getCallQueueConfigurations
+    getCallQueueConfigurations,
+    getPrefs
 } from '../../api/pbx-config'
 
 export default {
@@ -42,8 +43,10 @@ export default {
             silent: silent,
             page: page
         });
-        getGroupList(page).then((groups)=>{
-            context.commit('listSucceeded', groups);
+        getGroupList(page).then((data)=>{
+            context.commit('listSucceeded', data);
+        }).then(() => {
+            context.dispatch('loadCallQueuesForGroups');
         }).catch((err)=>{
             context.commit('listFailed', err.message);
         });
@@ -179,6 +182,8 @@ export default {
         });
         getSeatList(page).then((seats)=>{
             context.commit('listSucceeded', seats);
+        }).then(() => {
+            context.dispatch('loadCallQueuesForSeats');
         }).catch((err)=>{
             context.commit('listFailed', err.message);
         });
@@ -426,5 +431,46 @@ export default {
         }).catch((err) => {
             context.commit('callQueueListFailed', err.message);
         });
+    },
+    loadCallQueueForGroup(context, subscriberId) {
+        context.commit('preferenceRequesting', 'group', subscriberId);
+        getPrefs(subscriberId).then(($preferences) => {
+            let preferences = $preferences;
+            delete preferences._link;
+            context.commit('preferenceSucceeded', {
+                type: 'group',
+                preferences: preferences
+            });
+        }).catch((err) => {
+            context.commit('preferenceFailed', 'group', subscriberId, err.message);
+        })
+    },
+    loadCallQueuesForGroups(context) {
+        context.commit('loadCallQueuesRequesting');
+        getCallQueueConfigurations().then((configs) => {
+            let callQueueIds = configs.items.map((callQueue) => {
+                return callQueue.id;
+            });
+            context.commit('loadCallQueuesSucceeded', {
+                type: 'groups',
+                ids: callQueueIds
+            });
+        }).catch((err) => {
+            context.commit('loadCallQueuesFailed', err.message);
+        })
+    },
+    loadCallQueuesForSeats(context) {
+        context.commit('loadCallQueuesRequesting');
+        getCallQueueConfigurations().then((configs) => {
+            let callQueueIds = configs.items.map((callQueue) => {
+                return callQueue.id;
+            });
+            context.commit('loadCallQueuesSucceeded', {
+                type: 'seats',
+                ids: callQueueIds
+            });
+        }).catch((err) => {
+            context.commit('loadCallQueuesFailed', err.message);
+        })
     }
 }
