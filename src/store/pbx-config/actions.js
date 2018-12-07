@@ -36,6 +36,7 @@ import {
     setQueueLengthConfig,
     setWrapUpTimeConfig,
     getConfig,
+    getPrefs,
     removeCallQueue
 } from '../../api/pbx-config'
 
@@ -47,8 +48,13 @@ export default {
             silent: silent,
             page: page
         });
-        getGroupList(page).then((groups)=>{
-            context.commit('listSucceeded', groups);
+        getGroupList(page).then((data)=>{
+            context.commit('listSucceeded', data);
+            return data;
+        }).then((groups) => {
+            groups.groups.items.forEach((group)=>{
+                context.dispatch('loadCallQueueForGroup', group.id);
+            });
         }).catch((err)=>{
             context.commit('listFailed', err.message);
         });
@@ -182,8 +188,13 @@ export default {
             silent: silent,
             page: page
         });
-        getSeatList(page).then((seats)=>{
-            context.commit('listSucceeded', seats);
+        getSeatList(page).then((data)=>{
+            context.commit('listSucceeded', data);
+            return data;
+        }).then((seats) => {
+            seats.seats.items.forEach((seat)=>{
+                context.dispatch('loadCallQueueForSeat', seat.id);
+            });
         }).catch((err)=>{
             context.commit('listFailed', err.message);
         });
@@ -497,6 +508,32 @@ export default {
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
         });
+    },
+    loadCallQueueForGroup(context, subscriberId) {
+        context.commit('preferenceRequesting', 'group', subscriberId);
+        getPrefs(subscriberId).then(($preferences) => {
+            let preferences = $preferences;
+            delete preferences._link;
+            context.commit('preferenceSucceeded', {
+                type: 'group',
+                preferences: preferences
+            });
+        }).catch((err) => {
+            context.commit('preferenceFailed', 'group', subscriberId, err.message);
+        })
+    },
+    loadCallQueueForSeat(context, subscriberId) {
+        context.commit('preferenceRequesting', 'seat', subscriberId);
+        getPrefs(subscriberId).then(($preferences) => {
+            let preferences = $preferences;
+            delete preferences._link;
+            context.commit('preferenceSucceeded', {
+                type: 'seat',
+                preferences: preferences
+            });
+        }).catch((err) => {
+            context.commit('preferenceFailed', 'seat', subscriberId, err.message);
+        })
     },
     removeCallQueue(context, config) {
         context.commit('removeItemRequesting', config);

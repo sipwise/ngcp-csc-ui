@@ -47,11 +47,13 @@
             >
                 <csc-pbx-call-queue
                     v-for="(subscriber, index) in callQueueGroupsAndSeats"
+                    :id="`queue-${subscriber.id}`"
                     :key="index"
                     :subscriber="subscriber"
                     :loading="isItemLoading(subscriber.id)"
                     @save-queue-length="setQueueLength"
                     @save-wrap-up-time="setWrapUpTime"
+                    :highlight="highlight(subscriber)"
                     @remove="removeConfigDialog"
                 />
             </q-list>
@@ -92,6 +94,8 @@
         QSpinnerDots,
         QBtn
     } from 'quasar-framework'
+    import { scroll } from 'quasar-framework'
+    const { getScrollTarget, setScrollPosition } = scroll
     export default {
         components: {
             CscPage,
@@ -137,6 +141,18 @@
             isMobile() {
                 return Platform.is.mobile;
             },
+            callQueueItem() {
+                return this.$route.query.item;
+            },
+            handleScroll () {
+                const el = document.getElementById(`queue-${this.callQueueItem}`)
+                const target = el ? getScrollTarget(el) : null;
+                const offset = el ? el.offsetTop - el.scrollHeight : null;
+                const duration = 200
+                if (this.callQueueItem && target) {
+                    setScrollPosition(target, offset, duration)
+                }
+            },
             removeDialogMessage() {
                 if (this.currentRemovingSubscriber !== null) {
                     return this.$t('pbxConfig.removeConfigText', {
@@ -177,6 +193,9 @@
                 return (this.isUpdating && this.updateItemId + "" === subscriberId + "") ||
                     (this.isRemoving && this.currentRemovingSubscriber.id + "" === subscriberId + "");
             },
+            highlight(subscriber) {
+                return subscriber.id == this.$route.query.item;
+            },
             removeConfigDialog(subscriber) {
                 this.currentRemovingSubscriber = subscriber;
                 this.$refs.removeDialog.open();
@@ -189,6 +208,13 @@
             addState(state) {
                 if (state === 'succeeded') {
                     this.disableAddForm();
+                }
+            },
+            callQueueGroupsAndSeats(state) {
+                if (state.length > 0) {
+                    setTimeout(() => {
+                        this.handleScroll;
+                    }, 500);
                 }
             }
         }

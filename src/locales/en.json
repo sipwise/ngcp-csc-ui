@@ -395,6 +395,7 @@
         "wrapUpTime": "Wrap Up Time",
         "queueExtensionName": "Group/Seat/Pilot",
         "addConfig": "Add Call Queue",
+        "callQueue": "Call Queue",
         "createConfig": "Create Call Queue",
         "removeConfigTitle": "Remove call queue",
         "removeConfigText": "You are about to remove call queue for {subscriber}"

@@ -192,7 +192,7 @@ export default {
         state.groupsAndSeats.forEach((item)=>{
             let icon = 'person';
             if(item.is_pbx_pilot) {
-                icon = 'person_outlined';
+                icon = 'person_outline';
             }
             else if (item.is_pbx_group){
                 icon = 'group';
@@ -312,7 +312,10 @@ export default {
             .filter((item) => {
                 return ids.indexOf(item.value) === -1;
             }
-        );
+        ).map((item)=>{
+            item.leftColor = 'primary';
+            return item;
+        });
         return options;
     },
     configItemById(state) {
