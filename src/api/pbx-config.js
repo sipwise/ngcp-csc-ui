@@ -528,6 +528,7 @@ export function getCallQueueConfigurations() {
         getSubscribersByCallQueueEnabled().then((subscribers)=>{
             let callQueues = subscribers.map((subscriber)=>{
                 return {
+                    id: _.get(subscriber, 'id', null),
                     display_name: _.get(subscriber, 'display_name', null),
                     is_pbx_group: _.get(subscriber, 'is_pbx_group', null),
                     max_queue_length: _.get(subscriber, 'prefs.max_queue_length', 5),

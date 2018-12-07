@@ -393,7 +393,8 @@
         "createGroup": "Create group",
         "queueLength": "Queue Length",
         "wrapUpTime": "Wrap Up Time",
-        "queueExtensionName": "Group/Seat/Pilot"
+        "queueExtensionName": "Group/Seat/Pilot",
+        "callQueue": "Call Queue"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",
