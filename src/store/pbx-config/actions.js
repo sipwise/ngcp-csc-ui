@@ -43,8 +43,10 @@ export default {
             silent: silent,
             page: page
         });
-        getGroupList(page).then((groups)=>{
-            context.commit('listSucceeded', groups);
+        getGroupList(page).then((data)=>{
+            context.commit('listSucceeded', data);
+        }).then(() => {
+            context.dispatch('loadCallQueuesForGroups');
         }).catch((err)=>{
             context.commit('listFailed', err.message);
         });
@@ -180,6 +182,8 @@ export default {
         });
         getSeatList(page).then((seats)=>{
             context.commit('listSucceeded', seats);
+        }).then(() => {
+            context.dispatch('loadCallQueuesForSeats');
         }).catch((err)=>{
             context.commit('listFailed', err.message);
         });
@@ -440,5 +444,33 @@ export default {
         }).catch((err) => {
             context.commit('addItemFailed', err.message);
         });
+    },
+    loadCallQueuesForGroups(context) {
+        context.commit('loadCallQueuesRequesting');
+        getCallQueueConfigurations().then((configs) => {
+            let callQueueIds = configs.items.map((callQueue) => {
+                return callQueue.id;
+            });
+            context.commit('loadCallQueuesSucceeded', {
+                type: 'groups',
+                ids: callQueueIds
+            });
+        }).catch((err) => {
+            context.commit('loadCallQueuesFailed', err.message);
+        })
+    },
+    loadCallQueuesForSeats(context) {
+        context.commit('loadCallQueuesRequesting');
+        getCallQueueConfigurations().then((configs) => {
+            let callQueueIds = configs.items.map((callQueue) => {
+                return callQueue.id;
+            });
+            context.commit('loadCallQueuesSucceeded', {
+                type: 'seats',
+                ids: callQueueIds
+            });
+        }).catch((err) => {
+            context.commit('loadCallQueuesFailed', err.message);
+        })
     }
 }

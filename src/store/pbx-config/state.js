@@ -70,5 +70,7 @@ export default {
     chipModelFilter: null,
     chipMacAddressFilter: null,
     chipStationNameFilter: null,
-    callQueueGroupsAndSeats: []
+    callQueueGroupsAndSeats: [],
+    loadCallQueuesState: RequestState.initiated,
+    loadCallQueuesError: null
 }
