@@ -420,5 +420,41 @@ export default {
     callQueueListFailed(state, error) {
         state.listState = RequestState.failed;
         state.listError = error;
+    },
+    loadCallQueuesRequesting(state) {
+        state.loadCallQueuesState = RequestState.requesting;
+        state.loadCallQueuesError = null;
+    },
+    loadCallQueuesSucceeded(state, data) {
+        let subscribersState = _.clone(state[data.type]);
+        let stateIdsWithCallQueue = _(subscribersState)
+            .keyBy('id')
+            .at(data.ids)
+            .filter()
+            .value()
+            .map((value) => {
+                return value.id;
+        });
+        state.loadCallQueuesError = null;
+        state.loadCallQueuesState = RequestState.succeeded;
+        stateIdsWithCallQueue.forEach((id) => {
+            let subscriberId = id + "";
+            Vue.set(
+                state[data.type],
+                subscriberId,
+                Object.assign(state[data.type][id],
+                    { cloud_pbx_callqueue: true })
+            );
+            Vue.set(
+                state[data.type + 'Ordered'],
+                subscriberId,
+                Object.assign(state[data.type + 'Ordered'][subscriberId],
+                    { cloud_pbx_callqueue: true })
+            );
+        });
+    },
+    loadCallQueuesFailed(state, error) {
+        state.loadCallQueuesState = RequestState.failed;
+        state.loadCallQueuesError = error;
     }
 }
