@@ -31,7 +31,8 @@ import {
     setProfile,
     getGroup,
     getSeat,
-    getCallQueueConfigurations
+    getCallQueueConfigurations,
+    getPrefs
 } from '../../api/pbx-config'
 
 export default {
@@ -44,6 +45,13 @@ export default {
         });
         getGroupList(page).then((groups)=>{
             context.commit('listSucceeded', groups);
+            // TODO: Can be improved by dispatching an action that gets
+            // listCallQueueGroupsAndSeats() once, and map over it to commit
+            // a mutation that sets cloud_pbx_callqueue key value for each
+            // subscriber with call queue
+            groups.groups.items.forEach((group)=>{
+                context.dispatch('loadCallQueueForGroup', group.id);
+            });
         }).catch((err)=>{
             context.commit('listFailed', err.message);
         });
@@ -426,5 +434,18 @@ export default {
         }).catch((err) => {
             context.commit('callQueueListFailed', err.message);
         });
+    },
+    loadCallQueueForGroup(context, subscriberId) {
+        context.commit('preferenceRequesting', 'group', subscriberId);
+        getPrefs(subscriberId).then(($preferences) => {
+            let preferences = $preferences;
+            delete preferences._link;
+            context.commit('preferenceSucceeded', {
+                type: 'group',
+                preferences: preferences
+            });
+        }).catch((err) => {
+            context.commit('preferenceFailed', 'group', subscriberId, err.message);
+        })
     }
 }

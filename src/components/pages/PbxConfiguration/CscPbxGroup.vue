@@ -135,12 +135,47 @@
             <q-item-tile>
                 <q-btn
                     v-if="expanded"
-                    icon="delete"
-                    :big="isMobile"
-                    color="negative"
+                    icon="more_vert"
+                    color="primary"
                     flat
-                    @click="remove()"
-                />
+                >
+                    <q-popover
+                        ref="morePopover"
+                        anchor="bottom right"
+                        self="top right"
+                    >
+                        <q-list
+                            class="csc-item-buttons-menu"
+                            no-border
+                        >
+                            <q-item
+                                v-if="group.cloud_pbx_callqueue"
+                                link
+                                @click="$router.push(callQueueRouteWithId)"
+                            >
+                                <q-item-side
+                                    icon="queue"
+                                    color="primary"
+                                />
+                                <q-item-main
+                                    :label="$t('pbxConfig.callQueue')"
+                                />
+                            </q-item>
+                            <q-item
+                                link
+                                @click="remove"
+                            >
+                                <q-item-side
+                                    icon="delete"
+                                    color="negative"
+                                />
+                                <q-item-main
+                                    :label="$t('buttons.remove')"
+                                />
+                            </q-item>
+                        </q-list>
+                    </q-popover>
+                </q-btn>
                 <q-btn
                     :icon="titleIcon"
                     :big="isMobile"
@@ -181,7 +216,9 @@
         QItemSide,
         QItemMain,
         QItemTile,
-        QAlert
+        QAlert,
+        QList,
+        QPopover
     } from 'quasar-framework'
     export default {
         name: 'csc-pbx-group',
@@ -216,9 +253,18 @@
             QItemSide,
             QItemMain,
             QItemTile,
-            QAlert
+            QAlert,
+            QList,
+            QPopover
         },
         computed: {
+            callQueueRouteWithId() {
+                return {
+                    path: '/user/pbx-configuration/call-queues',
+                    query: { item: this.id }
+                   // query: { item: 341 }
+                };
+            },
             itemClasses() {
                 let classes = ['csc-list-item', 'csc-pbx-group'];
                 if (this.expanded) {

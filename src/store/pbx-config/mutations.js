@@ -420,5 +420,24 @@ export default {
     callQueueListFailed(state, error) {
         state.listState = RequestState.failed;
         state.listError = error;
+    },
+    preferenceRequesting(state, type, id) {
+        reactiveSet(state[type + 'States'], id + "", RequestState.requesting);
+    },
+    preferenceSucceeded(state, data) {
+        let id = data.preferences.id + "";
+        reactiveSet(state[data.type + 'States'], id, RequestState.succeeded);
+        reactiveSet(state[data.type + 'Errors'], id, null);
+        Vue.set(state[data.type + 's'], id, Object.assign(state[data.type + 's'][id], data.preferences));
+        for(let i = 0; i <= state[data.type + 'sOrdered'].length; i++) {
+            if(state[data.type + 'sOrdered'][i].id === data.preferences.id) {
+                state[data.type + 'sOrdered'][i] = Object.assign(state[data.type + 'sOrdered'][i], data.preferences);
+            }
+        }
+    },
+    preferenceFailed(state, type, id, error) {
+        id = id + "";
+        reactiveSet(state[type + 'States'], id, RequestState.failed);
+        reactiveSet(state[type + 'Errors'], id, error);
     }
 }
