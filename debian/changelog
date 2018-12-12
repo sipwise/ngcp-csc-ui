@@ -1,3 +1,17 @@
+ngcp-csc-ui (6.5.1.2+0~mr6.5.1.2) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [4513053] TT#46169 Phone number input validation
+  * [6cab6b9] TT#46165 Ensure consistent add and cancel icons
+  * [39805a2] TT#46168 Impl MAC Address validation in PBXDevices
+  * [ae71727] TT#48223 Fix voicemail not shown in conversations
+  * [d50efe4] TT#46178 SpeedDial destination input validation
+  * [09919fb] TT#46176 CallForward destination input validation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 12 Dec 2018 10:07:52 +0100
+
 ngcp-csc-ui (6.5.1.1+0~mr6.5.1.1) unstable; urgency=medium
 
   * New release.
