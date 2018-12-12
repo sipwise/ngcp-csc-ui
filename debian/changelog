@@ -1,3 +1,14 @@
+ngcp-csc-ui (6.5.2.2+0~mr6.5.2.2) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [abaf042] TT#48223 Fix voicemail not shown in conversations
+  * [3428255] TT#46178 SpeedDial destination input validation
+  * [f3b8ea3] TT#46176 CallForward destination input validation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 12 Dec 2018 10:08:00 +0100
+
 ngcp-csc-ui (6.5.2.1+0~mr6.5.2.1) unstable; urgency=medium
 
   [ raxelsen ]
