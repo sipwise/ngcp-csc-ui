@@ -1,3 +1,12 @@
+ngcp-csc-ui (6.5.2.3+0~mr6.5.2.3) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [6d5e3d4] TT#48305 Fix cancel button stopped by validation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 17 Dec 2018 18:24:39 +0100
+
 ngcp-csc-ui (6.5.2.2+0~mr6.5.2.2) unstable; urgency=medium
 
   [ raxelsen ]
