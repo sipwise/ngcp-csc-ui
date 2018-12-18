@@ -38,7 +38,7 @@
                 :key="rowIndex"
             >
                 <div
-                    class="csc-dialpad-btn"
+                    class="csc-dialpad-btn csc-dialpad-btn-main"
                     v-for="(key, keyIndex) in keyRow"
                     :key="rowIndex + ':' + keyIndex"
                 >
@@ -84,7 +84,8 @@
                     ['1','2','3'],
                     ['4','5','6'],
                     ['7','8','9'],
-                    ['*','0','#']
+                    ['*','0','#'],
+                    ['+']
                 ];
             }
         },
@@ -114,10 +115,16 @@
         flex-direction column
         margin-left 16px
         .q-btn-inner
+            color $dark
             font-size 22px
         .q-btn-small
             .q-btn-inner
+                color $dark
                 font-size 18px
+
+    .csc-dialpad-btn.csc-dialpad-btn-main
+        .q-btn-inner
+            color white
 
     .csc-dialpad-btn:first-child
         margin-left 0
@@ -126,7 +133,7 @@
         display: flex
         flex-direction row
         margin-bottom 8px
-        justify-content: flex-end
+        justify-content: center
 
     .csc-dialpad-btn-group.csc-dialpad-btn-group-special
         justify-content: center
