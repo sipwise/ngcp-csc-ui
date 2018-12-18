@@ -10,7 +10,7 @@
             ref="inputField"
             :dark="dark"
             clearable
-            type="tel"
+            type="text"
             :float-label="$t('call.number')"
             :value="value"
             :disable="!enabled"
