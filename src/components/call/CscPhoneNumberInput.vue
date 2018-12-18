@@ -10,7 +10,7 @@
             ref="inputField"
             :dark="dark"
             clearable
-            type="tel"
+            type="text"
             :float-label="$t('call.number')"
             :value="value"
             :disable="!enabled"
@@ -122,6 +122,7 @@
         watch: {
             value() {
                 this.phoneNumber = this.value;
+                this.$v.phoneNumber.$touch();
             }
         }
     }

@@ -52,8 +52,16 @@
                     class="csc-call-phone-number"
                     :dark="true"
                     :value="callNumberInput"
-                    :enabled="isCallInitialized"
+                    :enabled="isCallInitialized && !dialpadOpened"
                     @number-changed="numberInputChanged"
+                />
+                <csc-call-dialpad
+                    v-if="dialpadOpened"
+                    :show-backspace-button="true"
+                    :show-clear-button="true"
+                    @click="dialpadClick"
+                    @remove="remove"
+                    @remove-all="removeAll"
                 />
             </div>
         </div>
@@ -61,6 +69,7 @@
 </template>
 
 <script>
+    import platformMixin from '../../mixins/platform'
     import {
         getChromeExtensionUrl
     } from '../../helpers/cdk-lib'
@@ -69,6 +78,7 @@
     } from 'vuex'
     import CscPage from '../CscPage'
     import CscPhoneNumberInput from "../call/CscPhoneNumberInput";
+    import CscCallDialpad from "../CscCallDialpad";
     import {
         QIcon,
         QAlert,
@@ -80,8 +90,12 @@
             return {
             }
         },
+        mixins: [
+            platformMixin
+        ],
         components: {
             CscPhoneNumberInput,
+            CscCallDialpad,
             CscPage,
             QIcon,
             QAlert,
@@ -97,17 +111,34 @@
             },
             sendFax() {
                 this.$emit('send-fax');
+            },
+            dialpadClick(value) {
+                let number = this.callNumberInput + value;
+                this.$store.commit('call/numberInputChanged', number);
+            },
+            remove() {
+                let number = this.callNumberInput.slice(0, -1);
+                this.$store.commit('call/numberInputChanged', number);
+            },
+            removeAll() {
+                this.$store.commit('call/numberInputChanged', '');
             }
         },
         computed: {
             ...mapGetters('call', [
+                'callState',
                 'callNumberInput',
-                'hasCallInitError',
                 'hasRtcEngineCapabilityEnabled',
                 'desktopSharingInstall',
                 'isCallInitialized',
                 'isCallInitializing'
             ]),
+            dialpadOpened() {
+                return this.callState == 'input' &&
+                    !this.isCallInitializing &&
+                    this.isMobile &&
+                    this.hasRtcEngineCapabilityEnabled;
+            },
             rtcEngineInfoActions() {
                 return [];
             },
@@ -135,6 +166,7 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../themes/quasar.variables'
+
     .csc-call-page
         height calc(100vh - 120px)
         padding 0
@@ -148,8 +180,10 @@
                 box-shadow none
                 .q-btn-inner
                     color $dark
+
     .csc-call-page-content
         margin-top -80px
+
     .csc-info
         background-color $info
         padding  $flex-gutter-md
