@@ -17,3 +17,5 @@ t/TESTS*
 csc/
 
 src/config.js
+
+.ngcpcfg_perms

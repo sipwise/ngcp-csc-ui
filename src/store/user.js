@@ -180,8 +180,9 @@ export default {
             if(!context.getters.userDataSucceeded) {
                 context.commit('userDataRequesting');
                 getUserData(localStorage.getItem('subscriberId')).then((result) => {
-                    let capabilities = Object.assign(
-                        { faxactive: result.faxactive },
+                    let capabilities = Object.assign({
+                            faxactive: result.faxactive
+                        },
                         result.capabilities
                     );
                     context.commit('userDataSucceeded', {
@@ -194,10 +195,12 @@ export default {
                         }, context.getters.jwtTTL * 1000);
                     }
                     if(context.getters.hasRtcEngineCapabilityEnabled) {
-                        context.dispatch('call/initialize', null, { root: true });
+                        context.dispatch('call/initialize', null, {
+                            root: true
+                        });
                     }
                 }).catch((err)=>{
-                    context.commit('userDataFailed', err.message);
+                    console.error(err);
                     context.dispatch('logout');
                 });
             }
