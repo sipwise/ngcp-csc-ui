@@ -1,12 +1,16 @@
 
 import _ from 'lodash';
 import Vue from 'vue';
-import { LIST_ALL_ROWS } from './common'
+import {
+    get,
+    getList,
+    patchReplace
+} from './common'
 
 export function login(username, password) {
     return new Promise((resolve, reject)=>{
-        var jwt = null;
-        var subscriberId = null;
+        let jwt = null;
+        let subscriberId = null;
         Vue.http.post('login_jwt', {
             username: username,
             password: password
@@ -32,7 +36,7 @@ export function getUserData(id) {
     return new Promise((resolve, reject)=>{
         return Promise.all([
             getSubscriberById(id),
-            getCapabilities(),
+            getCapabilities(id),
             getFaxServerSettingsById(id)
         ]).then((results)=>{
             resolve({
@@ -48,8 +52,9 @@ export function getUserData(id) {
 
 export function getSubscriberById(id) {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('api/subscribers/' + id).then((result)=>{
-            var body = JSON.parse(result.body);
+        get({
+            path: 'api/subscribers/' + id
+        }).then((body)=>{
             resolve(body);
         }).catch((err)=>{
             reject(err);
@@ -59,11 +64,14 @@ export function getSubscriberById(id) {
 
 export function getCapabilities() {
     return new Promise((resolve, reject)=>{
-        Vue.http.get('api/capabilities/').then((result)=>{
-            var capabilities = {};
-            var body = JSON.parse(result.body);
-            if(_.isArray(body["_embedded"]["ngcp:capabilities"])) {
-                body['_embedded']['ngcp:capabilities'].forEach((capability)=>{
+        getList({
+            path: 'api/capabilities/',
+            root: '_embedded.ngcp:capabilities',
+            all: true
+        }).then((capabilityList)=>{
+            let capabilities = {};
+            if(_.isArray(capabilityList.items)) {
+                capabilityList.items.forEach((capability)=>{
                     capabilities[capability.name] = capability.enabled;
                 });
             }
@@ -76,16 +84,10 @@ export function getCapabilities() {
 
 export function assignNumber(numberId, subscriberId) {
     return new Promise((resolve, reject)=>{
-        var headers = {};
-        headers['Content-Type'] = 'application/json-patch+json';
-        Promise.resolve().then(() => {
-            return Vue.http.patch('api/numbers/' + numberId, [{
-                op: 'replace',
-                path: '/subscriber_id',
-                value: subscriberId
-            }], {
-                headers: headers
-            });
+        patchReplace({
+            path: 'api/numbers/' + numberId,
+            fieldPath: 'subscriber_id',
+            value: subscriberId
         }).then(()=>{
             resolve();
         }).catch((err)=>{
@@ -115,37 +117,12 @@ export function assignNumbers(numberIds, subscriberId) {
 
 export function getNumbers() {
     return new Promise((resolve, reject)=>{
-        let params = {};
-        let path = 'api/numbers/';
-        Promise.resolve().then(()=>{
-            return Vue.http.get(path, {
-                params: _.assign(params, {
-                    page: 1,
-                    rows: LIST_ALL_ROWS,
-                })
-            });
-        }).then((res)=>{
-            let body = JSON.parse(res.body);
-            if(body.total_count > LIST_ALL_ROWS) {
-                return Vue.http.get(path, {
-                    params: _.assign(params, {
-                        page: 1,
-                        rows: body.total_count,
-                    })
-                });
-            }
-            else {
-                return Promise.resolve(res);
-            }
-        }).then((res)=>{
-            let body = JSON.parse(res.body);
-            let numbers = [];
-            if(_.isArray(body["_embedded"]["ngcp:numbers"])) {
-                body['_embedded']['ngcp:numbers'].forEach((number)=>{
-                    numbers.push(number);
-                });
-            }
-            resolve(numbers);
+        getList({
+            path: 'api/numbers/',
+            root: '_embedded.ngcp:numbers',
+            all: true
+        }).then((numberList)=>{
+            resolve(numberList.items);
         }).catch((err)=>{
             reject(err);
         });
@@ -154,10 +131,11 @@ export function getNumbers() {
 
 export function getFaxServerSettingsById(id) {
     return new Promise((resolve, reject) => {
-        Vue.http.get('api/faxserversettings/' + id).then((result) => {
-            var body = JSON.parse(result.body);
+        get({
+            path: 'api/faxserversettings/' + id
+        }).then((body)=>{
             resolve(body.active);
-        }).catch((err) => {
+        }).catch((err)=>{
             reject(err);
         });
     });
