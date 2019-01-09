@@ -1,3 +1,29 @@
+ngcp-csc-ui (7.2.0.0+0~mr7.2.0.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [8e1a960] TT#47003 Call: Integrate new color scheme
+  * [b346008] TT#47588 CallBlocking: As a Customer, I want to block anonymous incoming calls
+  * [091f37a] TT#48646 Security: Fix possible prototype pollution attack in lodash
+  * [167696e] TT#49036 Login: Report error coming from the login procedure to browser console
+
+  [ raxelsen ]
+  * [5a152e3] TT#44662 Customer wants to play busy greeting
+  * [02137b1] TT#46172 Impl PIN validation in Voicebox settings
+  * [26224ec] TT#47384 Page to manage CallQueueConfiguration
+  * [62c65b9] TT#46178 SpeedDial destination input validation
+  * [c75e215] TT#46176 CallForward destination input validation
+  * [4320ab2] TT#48305 Fix cancel button stopped by validation
+  * [5e29490] TT#47386 Create new call queue config item
+  * [8fd55c3] TT#46179 Send Fax number input validation
+  * [c8d522d] TT#46174 CallBlocking number input validation
+  * [2fbd048] TT#47389 Change queue length of subscriber
+  * [cdbb7ca] TT#47388 Remove call queue config item
+  * [bf661f4] TT#47986 Jump from a Seat/Group to CallQueue item
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 09 Jan 2019 21:58:27 +0100
+
 ngcp-csc-ui (7.1.0.0+0~mr7.1.0.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
