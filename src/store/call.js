@@ -49,6 +49,7 @@ function handleUserMediaError(context, err) {
     else {
         context.commit('endCall', errName);
     }
+    console.error(err);
 }
 
 export default {
@@ -247,7 +248,7 @@ export default {
             state.callState = CallState.ringing;
         },
         stopRinging(state) {
-            state.callState = CallState.ended;
+            state.callState = CallState.established;
         },
         establishCall(state, remoteMediaStream) {
             state.remoteMediaStream = remoteMediaStream;
@@ -331,9 +332,9 @@ export default {
                     });
                 }).onRemoteMedia((remoteMediaStream)=>{
                     context.commit('establishCall', remoteMediaStream);
-                }).onEnded(()=>{
+                }).onEnded((reason)=>{
                     Vue.call.end();
-                    context.commit('endCall', Vue.call.getEndedReason());
+                    context.commit('endCall', reason);
                     setTimeout(()=>{
                         context.commit('inputNumber');
                     }, errorVisibilityTimeout);
