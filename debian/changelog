@@ -1,3 +1,13 @@
+ngcp-csc-ui (6.5.2.4+0~mr6.5.2.4) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [a5243cf] TT#46174 CallBlocking number input validation
+  * [6b1ed7c] TT#46179 Send Fax number input validation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 11 Jan 2019 10:32:35 +0100
+
 ngcp-csc-ui (6.5.2.3+0~mr6.5.2.3) unstable; urgency=medium
 
   [ raxelsen ]
