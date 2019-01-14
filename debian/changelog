@@ -1,3 +1,17 @@
+ngcp-csc-ui (6.5.4.0+0~mr6.5.4.0) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [aebeecb] TT#48223 Fix voicemail not shown in conversations
+  * [8cac8fb] TT#46178 SpeedDial destination input validation
+  * [82a6f97] TT#46176 CallForward destination input validation
+  * [4e150cf] TT#48305 Fix cancel button stopped by validation
+  * [1cd3499] TT#46174 CallBlocking number input validation
+  * [c26c0be] TT#46179 Send Fax number input validation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Jan 2019 14:17:55 +0100
+
 ngcp-csc-ui (6.5.3.0+0~mr6.5.3.0) unstable; urgency=medium
 
   [ raxelsen ]
