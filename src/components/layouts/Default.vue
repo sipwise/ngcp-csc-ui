@@ -95,6 +95,7 @@
             ref="sendFax"
         />
         <csc-call
+            ref="call"
             :call-state="callState"
             :call-number="callNumber"
             :ended-reason="endedReason"
@@ -175,6 +176,12 @@
         },
         mounted() {
             this.$store.dispatch('user/initUser');
+            window.addEventListener('orientationchange', ()=>{
+                this.$root.$emit('orientation-changed');
+            });
+            window.addEventListener('resize', ()=>{
+                this.$root.$emit('window-resized');
+            });
         },
         mixins: [
             platformMixin
@@ -361,6 +368,9 @@
             },
             toggleMenu() {
                 this.menuMinimized = !this.menuMinimized;
+            },
+            sideStateLeft() {
+                return this.sideStates.left;
             }
         },
         watch: {

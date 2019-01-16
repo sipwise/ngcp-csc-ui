@@ -10,7 +10,6 @@
             src="statics/ring.mp3"
         />
         <div
-            v-show="isContentVisible"
             class="csc-call-content"
         >
             <div
@@ -114,18 +113,20 @@
                 />
             </div>
             <div
+                ref="localMediaWrapper"
                 class="csc-call-media-local"
             >
                 <csc-media
+                    ref="localMedia"
                     v-show="isActive && !minimized && hasLocalVideo"
                     :muted="true"
                     :stream="localMediaStream"
-                    fit="width"
+                    :preview="true"
+                    :width="localMediaWrapperWidth"
                 />
             </div>
         </div>
         <div
-            v-show="isEstablished && !(isMobile && minimized)"
             class="csc-call-media-remote transition-generic"
         >
             <div
@@ -139,9 +140,11 @@
                 />
             </div>
             <csc-media
+                ref="remoteMedia"
+                v-show="hasRemoteVideo || minimized"
                 :muted="!remoteVolumeEnabled"
                 :stream="remoteMediaStream"
-                :fit="remoteMediaFit"
+                :preview="false"
             />
         </div>
         <div
@@ -333,7 +336,9 @@
     export default {
         name: 'csc-call',
         data() {
-            return {}
+            return {
+                localMediaWrapperWidth: 0
+            }
         },
         mixins: [
             platformMixin
@@ -366,15 +371,14 @@
             QSpinnerRings,
             QIcon
         },
+        mounted() {
+            this.fetchLocalMediaWrapperWidth();
+            let fetchLocalMediaWrapperWidth = ()=>{ this.fetchLocalMediaWrapperWidth(); };
+            this.$root.$on('window-resized', fetchLocalMediaWrapperWidth);
+            this.$root.$on('content-resized', fetchLocalMediaWrapperWidth);
+            this.$root.$on('orientation-changed', fetchLocalMediaWrapperWidth);
+        },
         computed: {
-            remoteMediaFit() {
-                if(this.minimized) {
-                    return 'width';
-                }
-                else {
-                    return 'full';
-                }
-            },
             componentClasses() {
                 let classes = [
                     'transition-generic',
@@ -483,6 +487,14 @@
             }
         },
         methods: {
+            fetchLocalMediaWrapperWidth() {
+                if(this.$refs.localMediaWrapper) {
+                    this.localMediaWrapperWidth = this.$refs.localMediaWrapper.clientWidth;
+                }
+                else {
+                    this.localMediaWrapperWidth = 0;
+                }
+            },
             startCall(media) {
                 if(this.callState === 'input') {
                     this.$emit('start-call', media);
@@ -653,8 +665,7 @@
                 position absolute
                 left 0
                 right 0
-                top 0
-                margin-top -27px
+                top $call-footer-action-margin * -1
                 .q-btn
                     .q-btn-inner
                         color $dark
@@ -669,6 +680,15 @@
                 text-align center
     .csc-call.csc-call-input
         top auto
+        height $call-footer-height
+        .csc-call-content
+            bottom 0
+            height 0
+            visibility hidden
+        .csc-call-media-remote
+            bottom 0
+            height 0
+            visibility hidden
     .csc-call.csc-call-established
         .csc-call-content
             background-color transparent
@@ -677,6 +697,10 @@
         height $call-footer-height-big
         top auto
         bottom ($call-footer-height-big + $call-footer-action-margin) * -1
+        .csc-call-content
+            bottom 0
+            height 0
+            visibility hidden
         .csc-call-media-remote
             top auto
             bottom $call-footer-height-big + $flex-gutter-sm
@@ -689,7 +713,7 @@
         .csc-call-content-minimized
             height $call-footer-height-big
             .csc-call-actions
-                margin-bottom $call-footer-action-margin
+                top $call-footer-action-margin * -1
     .csc-call.csc-call-minimized.csc-call-incoming,
     .csc-call.csc-call-minimized.csc-call-initiating,
     .csc-call.csc-call-minimized.csc-call-ringing

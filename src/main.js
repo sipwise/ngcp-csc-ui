@@ -3,21 +3,27 @@ import './themes/app.mat.styl'
 import 'quasar-extras/material-icons'
 import 'quasar-extras/fontawesome'
 import 'quasar-extras/animate'
-
 import _ from 'lodash'
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import Quasar from 'quasar-framework'
-import { store } from './store'
-import { i18n } from './i18n'
+import {
+    store
+} from './store'
+import {
+    i18n
+} from './i18n'
 import router from './router'
-import { sync } from 'vuex-router-sync'
-import { RtcEngineCall } from './plugins/call'
+import {
+    sync
+} from 'vuex-router-sync'
+import {
+    RtcEngineCall
+} from './plugins/call'
 import App from './App.vue'
 import './filters'
 import VueScrollTo from 'vue-scrollto'
 import Vuelidate from 'vuelidate'
-
 import config from './config'
 import {
     Platform
@@ -36,7 +42,7 @@ sync(store, router);
 
 Vue.http.options.root = config.baseHttpUrl;
 Vue.http.interceptors.push(function(request, next) {
-    var jwt = localStorage.getItem('jwt');
+    let jwt = localStorage.getItem('jwt');
     if(!_.isEmpty(jwt)) {
         request.headers.set('Authorization', 'Bearer ' + jwt);
     }
