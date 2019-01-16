@@ -115,7 +115,8 @@ export class RtcEngineCall {
     createLocalMedia(localMedia) {
         return new Promise((resolve, reject)=>{
             let localMediaBuilder = cdk.media.create();
-            if (localMedia === LocalMedia.audioOnly || localMedia === LocalMedia.audioVideo) {
+            if (localMedia === LocalMedia.audioOnly || localMedia === LocalMedia.audioVideo ||
+                localMedia === LocalMedia.audioScreen) {
                 localMediaBuilder.enableMicrophone();
             }
             if (localMedia === LocalMedia.audioVideo || localMedia === LocalMedia.videoOnly) {
