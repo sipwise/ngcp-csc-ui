@@ -1,6 +1,7 @@
 <template>
     <div
-        class="csc-media"
+        :class="componentClasses"
+        :style="componentStyles"
     >
         <div
             v-show="loading"
@@ -13,10 +14,15 @@
         </div>
         <video
             ref="media"
+            class="csc-media-video"
             autoplay
             playsinline
-            :class="videoClasses"
+            :width="mediaWidth"
+            :height="mediaHeight"
+            :style="mediaStyles"
             :muted="muted"
+            @click="fitMedia"
+            @resize="fitMedia"
         />
     </div>
 </template>
@@ -32,15 +38,25 @@
         props: [
             'stream',
             'muted',
-            'fit'
+            'preview',
+            'width'
         ],
         data () {
             return {
                 currentStream: this.stream,
                 loading: true,
+                mediaHeight: 0,
+                mediaWidth: 0,
+                mediaTop: 0,
+                mediaLeft: 0
             }
         },
-
+        mounted () {
+            let fitMedia = ()=>{ this.fitMedia(); };
+            this.$root.$on('window-resized', fitMedia);
+            this.$root.$on('content-resized', fitMedia);
+            this.$root.$on('orientation-changed', fitMedia);
+        },
         components: {
             QSpinnerDots,
             QIcon
@@ -61,11 +77,84 @@
                     this.$refs.media.src = URL.createObjectURL(this.currentStream);
                 }
                 let timer = setInterval(()=>{
-                    if(this.currentStream !== null || this.$refs.media.currentTime > 0) {
+                    if(this.currentStream !== null && (this.$refs.media.currentTime > 0 ||
+                        this.$refs.media.readyState > 2)) {
                         this.loading = false;
                         clearInterval(timer);
+                        this.fitMedia();
                     }
                 }, 100);
+            },
+            fitMediaToParent() {
+                if(typeof(this.$refs.media.videoWidth) === 'number' &&
+                    typeof(this.$refs.media.videoHeight) === 'number') {
+                    let parentAspectRatio = this.$parent.$el.clientWidth / this.$parent.$el.clientHeight;
+                    let isParentLandscape = parentAspectRatio >= 1;
+                    let isParentPortrait = !isParentLandscape;
+                    let videoAspectRatio = this.$refs.media.videoWidth / this.$refs.media.videoHeight;
+                    let isVideoLandscape = videoAspectRatio >= 1;
+                    let isVideoPortrait = !isVideoLandscape;
+                    if(isParentLandscape && isVideoLandscape && parentAspectRatio > videoAspectRatio) {
+                        this.mediaWidth = this.$parent.$el.clientWidth;
+                        this.mediaHeight = this.$parent.$el.clientWidth / videoAspectRatio;
+                        this.mediaLeft = 0;
+                        this.mediaTop = (this.$parent.$el.clientHeight - this.mediaHeight) / 2;
+                    }
+                    else if (isParentLandscape && isVideoLandscape && parentAspectRatio < videoAspectRatio) {
+                        this.mediaWidth = this.$parent.$el.clientHeight * videoAspectRatio;
+                        this.mediaHeight = this.$parent.$el.clientHeight;
+                        this.mediaLeft = (this.$parent.$el.clientWidth - this.mediaWidth) / 2;
+                        this.mediaTop = 0;
+                    }
+                    else if (isParentLandscape && isVideoPortrait) {
+                        this.mediaWidth = this.$parent.$el.clientHeight * videoAspectRatio;
+                        this.mediaHeight = this.$parent.$el.clientHeight;
+                        this.mediaLeft = (this.$parent.$el.clientWidth - this.mediaWidth) / 2;
+                        this.mediaTop = 0;
+                    }
+                    else if(isParentPortrait && isVideoPortrait && parentAspectRatio < videoAspectRatio) {
+                        this.mediaWidth = this.$parent.$el.clientHeight * videoAspectRatio;
+                        this.mediaHeight = this.$parent.$el.clientHeight;
+                        this.mediaLeft = (this.$parent.$el.clientWidth - this.mediaWidth) / 2;
+                        this.mediaTop = 0;
+                    }
+                    else if(isParentPortrait && isVideoPortrait && parentAspectRatio > videoAspectRatio) {
+                        this.mediaWidth = this.$parent.$el.clientWidth;
+                        this.mediaHeight = this.$parent.$el.clientWidth / videoAspectRatio;
+                        this.mediaLeft = 0;
+                        this.mediaTop = (this.$parent.$el.clientHeight - this.mediaHeight) / 2;
+                    }
+                    else if (isParentPortrait && isVideoLandscape) {
+                        this.mediaWidth = this.$parent.$el.clientWidth;
+                        this.mediaHeight = this.$parent.$el.clientWidth / videoAspectRatio;
+                        this.mediaLeft = 0;
+                        this.mediaTop = (this.$parent.$el.clientHeight - this.mediaHeight) / 2;
+                    }
+                    else {
+                        this.mediaWidth = this.$parent.$el.clientWidth;
+                        this.mediaHeight = this.$parent.$el.clientHeight;
+                        this.mediaLeft = 0;
+                        this.mediaTop = 0;
+                    }
+                }
+            },
+            fitMediaHeightToParent() {
+                if(typeof(this.$refs.media.videoWidth) === 'number' &&
+                    typeof(this.$refs.media.videoHeight) === 'number') {
+                    let videoAspectRatio = this.$refs.media.videoWidth / this.$refs.media.videoHeight;
+                    this.mediaWidth = this.width;
+                    this.mediaHeight = this.mediaWidth / videoAspectRatio;
+                    this.mediaLeft = 0;
+                    this.mediaTop = 0;
+                }
+            },
+            fitMedia() {
+                if(this.preview) {
+                    this.fitMediaHeightToParent();
+                }
+                else {
+                    this.fitMediaToParent();
+                }
             }
         },
         watch: {
@@ -96,15 +185,26 @@
                 return this.currentStream !== null && _.isArray(this.currentStream.getVideoTracks()) &&
                     this.currentStream.getVideoTracks().length > 0;
             },
-            videoClasses() {
-                let classes = [];
-                if(this.fit === 'full') {
-                    classes.push('fit-full');
+            componentClasses(){
+                return ['csc-media'];
+            },
+            mediaStyles() {
+                let styles = {};
+                styles.left = this.mediaLeft + 'px';
+                styles.top = this.mediaTop + 'px';
+                return styles;
+            },
+            componentStyles() {
+                let styles = {};
+                if(this.preview) {
+                    styles.width = this.mediaWidth + 'px';
+                    styles.height = this.mediaHeight + 'px';
                 }
-                else if(this.fit === 'width') {
-                    classes.push('fit-width');
+                else {
+                    styles.width = '100%';
+                    styles.height = '100%';
                 }
-                return classes;
+                return styles;
             }
         }
     }
@@ -114,26 +214,13 @@
     @import '../themes/quasar.variables'
     .csc-media
         position relative
-        height 100%
-        width 100%
+        overflow hidden
         .csc-media-spinner
             position absolute
             top 50%
             left 50%
             margin-top -12px
             margin-left -12px
-        video.fit-full
+        video.csc-media-video
             position: absolute;
-            top: 0;
-            left: 0;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            background-size: cover;
-        video.fit-width
-            position: relative;
-            width: 100%;
-            height: auto;
-            font-size 0
 </style>

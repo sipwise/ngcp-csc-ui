@@ -2,6 +2,9 @@
     <div :class="componentClasses">
         <div class="csc-page-content">
             <slot></slot>
+            <q-resize-observable
+                @resize="resizeContent"
+            />
         </div>
     </div>
 </template>
@@ -14,7 +17,8 @@
         QFixedPosition,
         QFab,
         QFabAction,
-        QTooltip
+        QTooltip,
+        QResizeObservable
     } from 'quasar-framework'
 
     export default {
@@ -34,7 +38,8 @@
             QFixedPosition,
             QFab,
             QFabAction,
-            QTooltip
+            QTooltip,
+            QResizeObservable
         },
         computed: {
             componentClasses() {
@@ -46,6 +51,11 @@
                     classes.push('csc-page-list');
                 }
                 return classes;
+            }
+        },
+        methods: {
+            resizeContent() {
+                this.$root.$emit('content-resized');
             }
         }
     }
