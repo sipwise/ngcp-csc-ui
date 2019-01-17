@@ -12,7 +12,6 @@
             />
         </div>
         <video
-            v-show="!loading && hasVideo"
             ref="media"
             autoplay
             playsinline
@@ -41,6 +40,7 @@
                 loading: true,
             }
         },
+
         components: {
             QSpinnerDots,
             QIcon
@@ -69,14 +69,26 @@
             }
         },
         watch: {
-            stream() {
-                if(_.isObject(this.stream) && this.currentStream !== this.stream) {
+            stream(stream) {
+                if(stream !== null && stream !== this.currentStream) {
                     this.loading = true;
-                    this.assignStream(this.stream);
+                    this.assignStream(stream);
+                }
+                else {
+                    this.currentStream = null;
+                    if(this.$refs.media.srcObject) {
+                        this.$refs.media.srcObject = null;
+                    }
+                    else if(this.$refs.media.mozSrcObject) {
+                        this.$refs.media.mozSrcObject = null;
+                    }
+                    else {
+                        this.$refs.media.src = null;
+                    }
                 }
             },
-            muted() {
-                this.$refs.media.muted = this.muted;
+            muted(muted) {
+                this.$refs.media.muted = muted;
             }
         },
         computed: {

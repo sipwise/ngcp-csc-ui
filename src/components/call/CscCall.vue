@@ -139,7 +139,6 @@
                 />
             </div>
             <csc-media
-                v-show="hasRemoteVideo || minimized"
                 :muted="!remoteVolumeEnabled"
                 :stream="remoteMediaStream"
                 :fit="remoteMediaFit"
