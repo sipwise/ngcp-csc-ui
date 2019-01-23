@@ -37,7 +37,10 @@ import {
     setWrapUpTimeConfig,
     getConfig,
     getPrefs,
-    removeCallQueue
+    removeCallQueue,
+    getAllSoundSets,
+    getSoundFilesBySet,
+    getSoundHandles
 } from '../../api/pbx-config'
 
 export default {
@@ -544,5 +547,54 @@ export default {
         }).catch((err)=>{
             context.commit('removeItemFailed', err.message);
         });
+    },
+	loadSoundHandles(context) {
+		getSoundHandles().then((handles) => {
+			context.commit('loadSoundHandles', handles);
+		}).catch((err) => {
+			console.log(err.message);
+		});
+	},
+    listSoundSets(context) {
+		context.dispatch('loadSoundHandles');
+        context.commit('listSoundSetsRequesting');
+        getAllSoundSets().then((data) => {
+			console.log('data, data, data', data);
+            context.commit('listSoundSetsSucceeded', data);
+            return data;
+        }).then((sets) => {
+			console.log('sets', sets);
+			sets.items.forEach((set) => {
+				console.log('set.id', set.id);
+				context.dispatch('loadFilesForSoundSet', set.id);
+			});
+        }).catch((err) => {
+            context.commit('listSoundSetsFailed', err.message)
+        });
+    },
+    loadFilesForSoundSet(context, id) {
+		let options = {
+			params: {
+				set_id: id + ''
+			}
+		}
+        console.log('id', id);
+        context.commit('filesForSoundSetRequesting', id);
+		getSoundFilesBySet(options).then((files) => {
+			let id = options.params.set_id;
+			console.log('id here is', id);
+			context.commit('filesForSoundSetSucceeded', {
+				files: files,
+				id: id
+			});
+		}).catch((err) => {
+			context.commit('filesForSoundSetFailed',  id, err);
+		})
+    },
+    apiTest(context) {
+        console.log('works', context);
+		context.dispatch('listSoundSets');
+        //getSoundGroups();
+		//context.dispatch('loadSoundHandles');
     }
 }
