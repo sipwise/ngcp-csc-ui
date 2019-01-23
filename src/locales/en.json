@@ -87,7 +87,8 @@
             "groups": "Groups",
             "seats": "Seats",
             "devices": "Devices",
-            "callQueues": "Call Queues"
+            "callQueues": "Call Queues",
+            "soundSets": "Sound Sets"
         },
         "voicebox": {
             "title": "Voicebox",
@@ -360,6 +361,7 @@
         "noGroups": "No groups created yet",
         "noSeats": "No seats created yet",
         "noCallQueues": "No call queues created yet",
+        "noSoundSets": "No sound sets created yet",
         "toasts": {
             "changedFieldToast": "Changed {type} to {name}",
             "updatedAliasNumbersToast": "Alias numbers field updated!",
@@ -410,7 +412,8 @@
         "removeConfigTitle": "Remove call queue",
         "removeConfigText": "You are about to remove call queue for {subscriber}",
         "seconds": "seconds",
-        "callers": "callers"
+        "callers": "callers",
+        "description": "Description"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

@@ -24,7 +24,7 @@ import {
     removeCallQueueConfig
 } from './subscriber';
 import uuid from 'uuid';
-import { getList, get, patchReplace } from './common'
+import { getList, get, patchReplace} from './common'
 
 var createId = uuid.v4;
 
@@ -601,4 +601,114 @@ export function setWrapUpTimeConfig(id, wrapUpTime) {
 
 export function getPrefs(id) {
     return getPreferences(id);
+}
+
+export function getAllSoundSets(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundsets/',
+            root: '_embedded.ngcp:soundsets',
+            all: true
+        });
+        getList(options).then((list)=>{
+            list.items.map((set) => {
+                delete set._links;
+            });
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSoundHandles(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundhandles/',
+            root: '_embedded.ngcp:soundhandles',
+            all: true
+        });
+        getList(options).then((list) => {
+            // Ngcp-panel only lists three groups ('digits', 'music_on_hold'
+            // and 'pbx'). Filtering out the rest for that reason, as the
+            // enpoint has 11 groups total
+            let soundHandles = list.items.filter((handle) => {
+                return ['digits', 'music_on_hold', 'pbx'].indexOf(handle.group) > -1;
+            });
+            resolve(soundHandles);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSoundFilesBySet(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundfiles/',
+            root: '_embedded.ngcp:soundfiles',
+            all: true
+        });
+        getList(options).then((result)=>{
+            let list = result.items.map((file) => {
+                return {
+                    filename: file.filename,
+                    handle: file.handle,
+                    loopplay: file.loopplay,
+                    id: file.id
+                };
+            });
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSoundFilesGrouped(options) {
+    let handles = [];
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            return getSoundHandles();
+        }).then((soundHandles) => {
+            handles = soundHandles.map((handle) => {
+                return {
+                    group: handle.group,
+                    handle: handle.handle,
+                    filename: '',
+                    id: null,
+                    loopplay: null
+                };
+            });
+            return getSoundFilesBySet(options);
+        }).then((files) => {
+            files.forEach((file) => {
+                handles.forEach((handle) => {
+                    if (file.handle === handle.handle) {
+                        handle.filename = file.filename;
+                        handle.id = file.id;
+                        handle.loopplay = file.loopplay
+                    }
+                });
+            });
+            return handles;
+        }).then((merged) => {
+            let groupedFiles = {
+                groups: _(merged)
+                    .groupBy('group')
+                    .map((items, group) => {
+                        return {
+                            name: group,
+                            handles: items
+                        };
+                    }).value()
+            };
+            resolve(groupedFiles);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
 }
