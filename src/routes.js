@@ -15,6 +15,7 @@ import PbxConfigurationGroups from './components/pages/PbxConfiguration/CscPbxGr
 import PbxConfigurationSeats from './components/pages/PbxConfiguration/CscPbxSeats'
 import PbxConfigurationDevices from './components/pages/PbxConfiguration/CscPbxDevices'
 import PbxConfigurationCallQueues from './components/pages/PbxConfiguration/CscPbxCallQueues'
+import PbxConfigurationSoundSets from './components/pages/PbxConfiguration/CscPbxSoundSets'
 import Voicebox from './components/pages/Voicebox/Voicebox';
 import Login from './components/Login'
 import Error404 from './components/Error404'
@@ -133,6 +134,14 @@ export default [
                 meta: {
                     title: i18n.t('navigation.pbxConfiguration.title'),
                     subtitle: i18n.t('navigation.pbxConfiguration.callQueues')
+                }
+            },
+            {
+                path: 'pbx-configuration/sound-sets',
+                component: PbxConfigurationSoundSets,
+                meta: {
+                    title: i18n.t('navigation.pbxConfiguration.title'),
+                    subtitle: i18n.t('navigation.pbxConfiguration.soundSets')
                 }
             },
             {

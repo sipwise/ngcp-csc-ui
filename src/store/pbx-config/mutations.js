@@ -467,5 +467,19 @@ export default {
         id = id + "";
         reactiveSet(state[type + 'States'], id, RequestState.failed);
         reactiveSet(state[type + 'Errors'], id, error);
+    },
+    listSoundSetsRequesting(state) {
+        state.listSoundSetsState = RequestState.requesting;
+        state.listSoundSetsError = null;
+    },
+    listSoundSetsSucceeded(state, sets) {
+        state.listSoundSetsState = RequestState.succeeded;
+        state.listSoundSetsError = null;
+        state.soundSets= sets;
+        console.log('sets', sets);
+    },
+    listSoundSetsFailed(state, error) {
+        state.listSoundSetsState = RequestState.failed;
+        state.listSoundSetsError = error;
     }
 }

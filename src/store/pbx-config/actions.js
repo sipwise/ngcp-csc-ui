@@ -37,7 +37,11 @@ import {
     setWrapUpTimeConfig,
     getConfig,
     getPrefs,
-    removeCallQueue
+    removeCallQueue,
+    getSoundSetItems
+	//getAllSoundSets,
+	//getSoundFilesBySet,
+    //getSoundHandles
 } from '../../api/pbx-config'
 
 export default {
@@ -543,6 +547,14 @@ export default {
             context.commit('removeItemSucceeded');
         }).catch((err)=>{
             context.commit('removeItemFailed', err.message);
+        });
+    },
+    getSoundSets(context) {
+        context.commit('listSoundSetsRequesting');
+        getSoundSetItems().then((items) => {
+            context.commit('listSoundSetsSucceeded', items);
+        }).catch((err) => {
+            context.commit('listSoundSetsFailed', err.message)
         });
     }
 }
