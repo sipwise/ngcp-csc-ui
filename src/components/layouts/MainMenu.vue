@@ -191,6 +191,17 @@
                     :label="$t('navigation.pbxConfiguration.callQueues')"
                 />
             </q-side-link>
+            <q-side-link
+                item
+                to="/user/pbx-configuration/sound-sets"
+            >
+                <q-item-side
+                    icon="queue_music"
+                />
+                <q-item-main
+                    :label="$t('navigation.pbxConfiguration.soundSets')"
+                />
+            </q-side-link>
         </q-collapsible>
     </q-list>
 </template>

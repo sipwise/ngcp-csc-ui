@@ -324,5 +324,11 @@ export default {
                 return item.id === id;
             })
         }
+    },
+    soundSets(state) {
+        return state.soundSetsOrdered;
+    },
+    soundHandles(state) {
+           return state.soundHandles;
     }
 }

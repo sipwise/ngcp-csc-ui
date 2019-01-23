@@ -24,7 +24,7 @@ import {
     removeCallQueueConfig
 } from './subscriber';
 import uuid from 'uuid';
-import { getList, get, patchReplace } from './common'
+import { getList, get, patchReplace, SoundHandles } from './common'
 
 var createId = uuid.v4;
 
@@ -601,4 +601,91 @@ export function setWrapUpTimeConfig(id, wrapUpTime) {
 
 export function getPrefs(id) {
     return getPreferences(id);
+}
+
+export function getAllSoundSets(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundsets/',
+            root: '_embedded.ngcp:soundsets',
+			all: true
+        });
+        getList(options).then((list)=>{
+			list.items.map((set) => {
+				delete set._links;
+			});
+			resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+// Subscriber does not have permission to access soundhandles endpoint. Neither
+// soundhandles nor soundgroups can be created via the API, at least not
+// according to API docs, so don't need access unless we need to account for
+// dynamic groups and handles. Handling them as immutable for now, and
+// hardcoding groups and handles
+export function getSoundHandles() {
+	return new Promise((resolve, reject)=>{
+        //options = options || {};
+        //options = _.merge(options, {
+            //path: 'api/soundhandles/',
+            //root: '_embedded.ngcp:soundhandles'
+        //});
+		let soundHandles = new SoundHandles();
+		soundHandles.map((handle) => {
+			delete handle._links;
+		});
+		// Ngcp-panel only lists three groups ('digits', 'music_on_hold'
+		// and 'pbx'). Filtering out the rest for that reason, as the
+		// enpoint has 11 groups total:
+		soundHandles = soundHandles.filter((handle) => {
+			return ['digits', 'music_on_hold', 'pbx'].indexOf(handle.group) > -1;
+		});
+		resolve(soundHandles)
+		reject('error with soundGroups');
+        //getList(options).then((list)=>{
+        //Vue.http.get('api/soundhandles/').then((list) => {
+            //resolve(list);
+        //}).catch((err)=>{
+            //reject(err);
+        //});
+	});
+}
+
+export function getAllSoundFiles(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundfiles/',
+            root: '_embedded.ngcp:soundfiles',
+			all: true
+        });
+        getList(options).then((list)=>{
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSoundFilesBySet(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundfiles/',
+            root: '_embedded.ngcp:soundfiles',
+			all: true
+        });
+        getList(options).then((list)=>{
+			list.items.map((file) => {
+				delete file._links;
+			});
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
 }
