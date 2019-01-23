@@ -324,5 +324,16 @@ export default {
                 return item.id === id;
             })
         }
+    },
+    soundSets(state) {
+        return state.soundSetsOrdered;
+    },
+    soundSetFilesLoading(state) {
+        return (id) => {
+            return state.soundSetFilesStates[id] !== 'succeeded';
+        }
+    },
+    isSoundSetsRequesting(state) {
+        return state.listSoundSetsState === RequestState.requesting;
     }
 }
