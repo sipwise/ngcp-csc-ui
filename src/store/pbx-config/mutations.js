@@ -467,5 +467,37 @@ export default {
         id = id + "";
         reactiveSet(state[type + 'States'], id, RequestState.failed);
         reactiveSet(state[type + 'Errors'], id, error);
+    },
+    listSoundSetsRequesting(state) {
+        state.listSoundSetsState = RequestState.requesting;
+        state.listSoundSetsError = null;
+    },
+    listSoundSetsSucceeded(state, sets) {
+        state.listSoundSetsState = RequestState.succeeded;
+        state.listSoundSetsError = null;
+        state.soundSets = {};
+        state.soundSetsOrdered = [];
+        sets.items.forEach((set) => {
+            state.soundSets[set.id] = set;
+            state.soundSetsOrdered.push(set);
+        });
+    },
+    listSoundSetsFailed(state, error) {
+        state.listSoundSetsState = RequestState.failed;
+        state.listSoundSetsError = error;
+    },
+    filesForSoundSetRequesting(state, id) {
+        reactiveSet(state.soundSetFilesStates, id, RequestState.requesting);
+    },
+    filesForSoundSetSucceeded(state, options) {
+        let id = options.id;
+        reactiveSet(state.soundSetFilesStates, id, RequestState.succeeded);
+        reactiveSet(state.soundSetFilesErrors, id, null);
+        Vue.set(state.soundSets, id, Object.assign(state.soundSets[id], options.files));
+    },
+    filesForSoundSetFailed(state, id, error) {
+        id = id + "";
+        reactiveSet(state.soundSetFilesStates, id, RequestState.failed);
+        reactiveSet(state.soundSetFilesErrors, id, error);
     }
 }
