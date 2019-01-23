@@ -24,7 +24,8 @@ import {
     removeCallQueueConfig
 } from './subscriber';
 import uuid from 'uuid';
-import { getList, get, patchReplace } from './common'
+//import { getList, get, patchReplace, SoundHandles} from './common'
+import { getList, get, patchReplace} from './common'
 
 var createId = uuid.v4;
 
@@ -601,4 +602,85 @@ export function setWrapUpTimeConfig(id, wrapUpTime) {
 
 export function getPrefs(id) {
     return getPreferences(id);
+}
+
+export function getAllSoundSets(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundsets/',
+            root: '_embedded.ngcp:soundsets',
+            all: true
+        });
+        getList(options).then((list)=>{
+            list.items.map((set) => {
+                delete set._links;
+            });
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSoundHandles(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundhandles/',
+            root: '_embedded.ngcp:soundhandles',
+            all: true
+        });
+        getList(options).then((list) => {
+            // Ngcp-panel only lists three groups ('digits', 'music_on_hold'
+            // and 'pbx'). Filtering out the rest for that reason, as the
+            // enpoint has 11 groups total:
+            let soundHandles = list.items.filter((handle) => {
+                return ['digits', 'music_on_hold', 'pbx'].indexOf(handle.group) > -1;
+            });
+            resolve(soundHandles);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+//export function getSoundHandles() {
+    //return new Promise((resolve, reject)=>{
+        //let soundHandles = new SoundHandles();
+        //soundHandles.map((handle) => {
+            //delete handle._links;
+        //});
+        //soundHandles = soundHandles.filter((handle) => {
+            //return ['digits', 'music_on_hold', 'pbx'].indexOf(handle.group) > -1;
+        //});
+        //resolve(soundHandles)
+        //reject('error with soundGroups');
+    //});
+//}
+
+export function getSoundFilesBySet(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundfiles/',
+            root: '_embedded.ngcp:soundfiles',
+            all: true
+        });
+        getList(options).then((list)=>{
+            list.items.map((file) => {
+                delete file._links;
+            });
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSoundItemsByGroup(options) {
+    // TODO: Should get all sound items, including the ones that are empty,
+    // meaning that they have no files uploaded. This way we can mitigate the
+    // race condition that current version has, by abstracting away and
+    // controlling the flow with chained promises
 }
