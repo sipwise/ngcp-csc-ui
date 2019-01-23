@@ -37,7 +37,9 @@ import {
     setWrapUpTimeConfig,
     getConfig,
     getPrefs,
-    removeCallQueue
+    removeCallQueue,
+    getAllSoundSets,
+    getSoundFiles
 } from '../../api/pbx-config'
 
 export default {
@@ -544,5 +546,35 @@ export default {
         }).catch((err)=>{
             context.commit('removeItemFailed', err.message);
         });
+    },
+    listSoundSets(context) {
+        context.commit('listSoundSetsRequesting');
+        getAllSoundSets().then((data) => {
+            context.commit('listSoundSetsSucceeded', data);
+            return data;
+        }).then((sets) => {
+            sets.items.forEach((set) => {
+                context.dispatch('loadFilesForSoundSet', set.id);
+            });
+        }).catch((err) => {
+            context.commit('listSoundSetsFailed', err.message)
+        });
+    },
+    loadFilesForSoundSet(context, id) {
+        let options = {
+            params: {
+                set_id: id + ''
+            }
+        }
+        context.commit('filesForSoundSetRequesting', id);
+        getSoundFiles(options).then((files) => {
+            let id = options.params.set_id;
+            context.commit('filesForSoundSetSucceeded', {
+                files: files,
+                id: id
+            });
+        }).catch((err) => {
+            context.commit('filesForSoundSetFailed',  id, err);
+        })
     }
 }
