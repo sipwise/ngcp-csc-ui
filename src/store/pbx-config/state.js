@@ -78,5 +78,8 @@ export default {
     groupStates: {},
     groupErrors: {},
     seatStates: {},
-    seatErrors: {}
+    seatErrors: {},
+    listSoundSetsState: RequestState.initiated,
+    listSoundSetsError: null,
+    soundSets: []
 }

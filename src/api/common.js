@@ -122,3 +122,379 @@ export function getFieldList(options) {
         });
     });
 }
+
+export function SoundSet(name, desc, id) {
+    return {
+        name: name || '',
+        desc: desc || '',
+        id: id || null,
+        items: [
+            {
+                "handle": "0",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "1",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "10",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "100",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "11",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "12",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "13",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "14",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "15",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "16",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "17",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "18",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "19",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "2",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "20",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "3",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "30",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "4",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "40",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "5",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "50",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "6",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "60",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "7",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "70",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "8",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "80",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "9",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "90",
+                "filename": "",
+                "id": null,
+                "group": "digits"
+            },
+            {
+                "handle": "music_on_hold",
+                "filename": "",
+                "id": null,
+                "group": "music_on_hold"
+            },
+            {
+                "handle": "aa_0_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_0_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_1_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_1_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_2_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_2_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_3_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_3_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_4_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_4_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_5_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_5_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_6_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_6_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_7_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_7_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_8_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_8_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_9_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_9_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_enter_extension",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_invalid_extension",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_star_for",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_star_option",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "aa_welcome",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "office_hours",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "queue_full",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "queue_greeting",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "queue_prefix",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "queue_suffix",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            },
+            {
+                "handle": "queue_waiting_music",
+                "filename": "",
+                "id": null,
+                "group": "pbx"
+            }
+		]
+	}
+}
