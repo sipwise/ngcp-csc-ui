@@ -467,5 +467,55 @@ export default {
         id = id + "";
         reactiveSet(state[type + 'States'], id, RequestState.failed);
         reactiveSet(state[type + 'Errors'], id, error);
+    },
+    listSoundSetsRequesting(state) {
+        state.listSoundSetsState = RequestState.requesting;
+        state.listSoundSetsError = null;
+    },
+    listSoundSetsSucceeded(state, sets) {
+        state.listSoundSetsState = RequestState.succeeded;
+        state.listSoundSetsError = null;
+        state.soundSets = {};
+        state.soundSetsOrdered = [];
+        sets.items.forEach((set) => {
+            state.soundSets[set.id] = set;
+            state.soundSetsOrdered.push(set);
+        });
+    },
+    listSoundSetsFailed(state, error) {
+        state.listSoundSetsState = RequestState.failed;
+        state.listSoundSetsError = error;
+    },
+    filesForSoundSetRequesting(state, id) {
+        reactiveSet(state.soundSetFilesStates, id, RequestState.requesting);
+    },
+    filesForSoundSetSucceeded(state, options) {
+        let id = options.id;
+        let handles = _.cloneDeep(state.soundHandles);
+        let mergedHandles = _.values(_.merge(
+            _.keyBy(handles, 'handle'),
+            _.keyBy(options.files.items, 'handle')
+        ));
+        let handlesByGroups = {
+            groups: _(mergedHandles)
+                .groupBy('group')
+                .map((items, group) => {
+                    return {
+                        name: group,
+                        handles: items
+                    };
+                }).value()
+        };
+        reactiveSet(state.soundSetFilesStates, id, RequestState.succeeded);
+        reactiveSet(state.soundSetFilesErrors, id, null);
+        Vue.set(state.soundSets, id, Object.assign(state.soundSets[id], handlesByGroups));
+    },
+    filesForSoundSetFailed(state, id, error) {
+        id = id + "";
+        reactiveSet(state.soundSetFilesStates, id, RequestState.failed);
+        reactiveSet(state.soundSetFilesErrors, id, error);
+    },
+    loadSoundHandles(state, handles) {
+        state.soundHandles = handles;
     }
 }
