@@ -467,5 +467,46 @@ export default {
         id = id + "";
         reactiveSet(state[type + 'States'], id, RequestState.failed);
         reactiveSet(state[type + 'Errors'], id, error);
-    }
+    },
+    listSoundSetsRequesting(state) {
+        state.listSoundSetsState = RequestState.requesting;
+        state.listSoundSetsError = null;
+    },
+    listSoundSetsSucceeded(state, sets) {
+        state.listSoundSetsState = RequestState.succeeded;
+        state.listSoundSetsError = null;
+        console.log('sets', sets);
+        state.soundSets = {};
+        state.soundSetsOrdered = [];
+        sets.items.forEach((set) => {
+            console.log('set', set);
+            state.soundSets[set.id] = set;
+            state.soundSetsOrdered.push(set);
+        });
+    },
+    listSoundSetsFailed(state, error) {
+        state.listSoundSetsState = RequestState.failed;
+        state.listSoundSetsError = error;
+    },
+    soundGroupRequesting(state, id) {
+        reactiveSet(state.soundGroupStates, id, RequestState.requesting);
+    },
+    soundGroupSucceeded(state, data) {
+        // TODO: Finish
+        let id = data.id + "";
+        let groups = { groups: data.groups };
+        reactiveSet(state.soundGroupStates, id, RequestState.succeeded);
+        reactiveSet(state.soundGroupErrors, id, null);
+        Vue.set(state.soundSets, id, Object.assign(state.soundSets[id], groups));
+        for(let i = 0; i <= state.soundSetsOrdered.length; i++) {
+            if(state.soundSetsOrdered[i].id === data.id) {
+                state.SoundSetsOrdered[i] = Object.assign(state.soundSetsOrdered[i], groups);
+            }
+        }
+    },
+    soundGroupFailed(state, id, error) {
+        id = id + "";
+        reactiveSet(state.soundGroupStates, id, RequestState.failed);
+        reactiveSet(state.soundGroupErrors, id, error);
+    },
 }

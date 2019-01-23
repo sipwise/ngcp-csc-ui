@@ -37,7 +37,9 @@ import {
     setWrapUpTimeConfig,
     getConfig,
     getPrefs,
-    removeCallQueue
+    removeCallQueue,
+    getAllSoundSets,
+    getSoundGroupsWithFiles
 } from '../../api/pbx-config'
 
 export default {
@@ -544,5 +546,35 @@ export default {
         }).catch((err)=>{
             context.commit('removeItemFailed', err.message);
         });
+    },
+    listSoundSets(context) {
+        //let silent = _.get(options, 'silent', false);
+        //let page = _.get(options, 'page', 1);
+        //context.commit('listRequesting', {
+            //silent: silent,
+            //page: page
+        //});
+        context.commit('listSoundSetsRequesting');
+        getAllSoundSets().then((data) => {
+            context.commit('listSoundSetsSucceeded', data);
+            return data;
+        }).then((sets) => {
+            sets.items.forEach((set)=>{
+                context.dispatch('loadGroupsForSoundSet', set.id);
+            });
+        }).catch((err) => {
+            context.commit('listSoundSetsFailed', err.message)
+        });
+    },
+    loadGroupsForSoundSet(context, id) {
+        console.log('id', id);
+        context.commit('soundGroupRequesting', id);
+        getSoundGroupsWithFiles(id).then(($groups) => {
+            let groups = $groups;
+            delete groups._link;
+            context.commit('soundGroupSucceeded', groups);
+        }).catch((err) => {
+            context.commit('soundGroupFailed',  id, err.message);
+        })
     }
 }
