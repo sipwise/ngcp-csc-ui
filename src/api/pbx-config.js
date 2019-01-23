@@ -111,6 +111,7 @@ export function getPilot(options) {
 }
 
 export function getDevices(options) {
+    console.log('options were passed!', options);
     return new Promise((resolve, reject)=>{
         options = options || {};
         options = _.merge(options, {
@@ -601,4 +602,80 @@ export function setWrapUpTimeConfig(id, wrapUpTime) {
 
 export function getPrefs(id) {
     return getPreferences(id);
+}
+
+export function getAllSoundSets(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundsets/',
+            root: '_embedded.ngcp:soundsets',
+			all: true
+        });
+        getList(options).then((list)=>{
+            console.log('we got all sets!', list);
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+// Subscriber does not have permission to access soundhandles endpoint. Neither
+// soundhandles nor soundgroups can be created via the API, at least not
+// according to API docs, so don't need access unless we need to account for
+// dynamic groups and handles. Handling them as immutable for now, and
+// hardcoding groups and handles
+//export function getSoundHandles(options) {
+    //return new Promise((resolve, reject)=>{
+        //options = options || {};
+        //options = _.merge(options, {
+            //path: 'api/soundhandles/',
+            //root: '_embedded.ngcp:soundhandles',
+			//all: true
+        //});
+        //getList(options).then((list)=>{
+            //console.log('we got all handles!', list);
+            //resolve(list);
+        //}).catch((err)=>{
+            //reject(err);
+        //});
+    //});
+//}
+
+export function getAllSoundFiles(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundfiles/',
+            root: '_embedded.ngcp:soundfiles',
+			all: true
+        });
+        getList(options).then((list)=>{
+            console.log('we got all files!', list);
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSoundFilesBySet(id, options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/soundfiles/',
+            root: '_embedded.ngcp:soundfiles',
+			params: {
+				set_id: id + ''
+			},
+			all: true
+        });
+        getList(options).then((list)=>{
+            console.log('we got files!', list);
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
 }

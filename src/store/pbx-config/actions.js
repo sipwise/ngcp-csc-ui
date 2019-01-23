@@ -37,8 +37,12 @@ import {
     setWrapUpTimeConfig,
     getConfig,
     getPrefs,
-    removeCallQueue
+    removeCallQueue,
+	getAllSoundSets,
+	getAllSoundFiles,
+	getSoundFilesBySet
 } from '../../api/pbx-config'
+import { SoundSet } from '../common'
 
 export default {
     listGroups(context, options) {
@@ -544,5 +548,18 @@ export default {
         }).catch((err)=>{
             context.commit('removeItemFailed', err.message);
         });
+    },
+    getSoundSets(context) {
+		// TODO: 1. Create action with chained promise handling which loops over
+		//          sound sets, gets corresponding soundfiles, and adds them all
+		//          to a new instance of SoundSet object
+		var newSet = new SoundSet();
+        console.log('got it!', context);
+		getAllSoundSets();
+		getAllSoundFiles();
+		getSoundFilesBySet(17);
+		getSoundFilesBySet(15);
+		console.log('new empty set', newSet);
     }
 }
+
