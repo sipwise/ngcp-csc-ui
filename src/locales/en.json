@@ -84,7 +84,8 @@
             "groups": "Groups",
             "seats": "Seats",
             "devices": "Devices",
-            "callQueues": "Call Queues"
+            "callQueues": "Call Queues",
+            "soundSets": "Sound Sets"
         },
         "voicebox": {
             "title": "Voicebox",
@@ -398,7 +399,8 @@
         "callQueue": "Call Queue",
         "createConfig": "Create Call Queue",
         "removeConfigTitle": "Remove call queue",
-        "removeConfigText": "You are about to remove call queue for {subscriber}"
+        "removeConfigText": "You are about to remove call queue for {subscriber}",
+        "description": "Description"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

@@ -50,4 +50,31 @@ describe('PBX Configuration Store', () => {
         assert.deepEqual(state.numbers, data.numbers);
     });
 
+    it('should list all Sound Sets', () => {
+        let state = {};
+        let data = {
+            items: [
+                {
+                    contract_defaults: true,
+                    customer_id: null,
+                    description: 'Set description 1',
+                    groups: [],
+                    id: 15,
+                    name: 'Set 1'
+                },
+                {
+                    contract_defaults: false,
+                    customer_id: null,
+                    description: 'Set description 2',
+                    groups: [],
+                    id: 17,
+                    name: 'Set 2'
+                }
+            ]
+        };
+        PbxConfig.mutations.listSoundSetsSucceeded(state, data);
+        assert.equal(state.soundSets[15], data.items[0]);
+        assert.equal(state.soundSets[17], data.items[1]);
+    });
+
 });
