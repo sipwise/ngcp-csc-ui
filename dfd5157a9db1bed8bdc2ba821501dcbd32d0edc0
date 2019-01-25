@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da1255d7_9839a144",
+        "filename": "src/components/CscMedia.vue",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2019-01-25T10:42:15Z",
+      "side": 1,
+      "message": "These are the same. Could be merged into one single \"else if\", but feel free to keep as is if you prefer.",
+      "range": {
+        "startLine": 109,
+        "startChar": 20,
+        "endLine": 120,
+        "endChar": 21
+      },
+      "revId": "dfd5157a9db1bed8bdc2ba821501dcbd32d0edc0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
