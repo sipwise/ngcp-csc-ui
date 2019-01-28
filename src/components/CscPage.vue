@@ -64,14 +64,21 @@
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../themes/quasar.variables.styl';
     .csc-page
+        min-height 100vh
         position relative
-        padding $flex-gutter-lg
-        padding-top $header-height
         margin 0
+        padding 0
+        .csc-page-content
+            min-height 100vh
+            padding $flex-gutter-lg
+            padding-top $header-height
+            padding-bottom $call-footer-height
     .csc-page.csc-page-mobile
-        padding-left $flex-gutter-sm * 1.4
-        padding-right $flex-gutter-sm * 1.4
+        .csc-page-content
+            padding-left $flex-gutter-sm * 1.4
+            padding-right $flex-gutter-sm * 1.4
     .csc-page.csc-page-mobile.csc-page-list
-        padding-left 0
-        padding-right 0
+        .csc-page-content
+            padding-left 0
+            padding-right 0
 </style>

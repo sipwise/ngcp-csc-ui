@@ -3,64 +3,68 @@
         class="csc-simple-page"
     >
         <div
-            class="csc-call-page-content"
+            :class="pageClasses"
         >
             <div
-                v-if="hasFax"
-                class="csc-communication-actions row justify-center"
+                class="col col-xs-12 col-md-6 col-lg-4"
             >
-                <q-btn
+                <div
                     v-if="hasFax"
-                    icon="fa-fax"
-                    round
-                    color="primary"
-                    @click="sendFax()"
+                    class="csc-communication-actions row justify-center"
+                >
+                    <q-btn
+                        v-if="hasFax"
+                        icon="fa-fax"
+                        round
+                        color="primary"
+                        @click="sendFax()"
+                    />
+                </div>
+                <q-alert
+                    v-if="!isCallInitializing && desktopSharingInstall"
+                    v-model="desktopSharingInstall"
+                    color="warning"
+                    :actions="desktopSharingAlertActions"
+                >
+                    {{ $t('call.desktopSharingNotInstalled') }}
+                </q-alert>
+                <q-alert
+                    v-if="!isCallInitializing && !hasRtcEngineCapabilityEnabled"
+                    class="csc-inline-alert"
+                    appear
+                    icon="info"
+                    color="info"
+                    :actions="rtcEngineInfoActions"
+                >
+                    {{ $t('call.rtcEngineNotEnabled') }}
+                </q-alert>
+                <div
+                    v-if="isCallInitializing"
+                    class="csc-main-spinner"
+                >
+                    <q-spinner-dots
+                        size="32px"
+                        color="primary"
+                    />
+                </div>
+                <csc-phone-number-input
+                    v-if="!isCallInitializing"
+                    class="csc-call-phone-number"
+                    :dark="true"
+                    :value="callNumberInput"
+                    :readonly="dialpadOpened"
+                    :enabled="isCallInitialized"
+                    @number-changed="numberInputChanged"
+                />
+                <csc-call-dialpad
+                    v-if="dialpadOpened && isCallInitialized"
+                    :show-backspace-button="true"
+                    :show-clear-button="true"
+                    @click="dialpadClick"
+                    @remove="remove"
+                    @remove-all="removeAll"
                 />
             </div>
-            <q-alert
-                v-if="!isCallInitializing && desktopSharingInstall"
-                v-model="desktopSharingInstall"
-                color="warning"
-                :actions="desktopSharingAlertActions"
-            >
-                {{ $t('call.desktopSharingNotInstalled') }}
-            </q-alert>
-            <q-alert
-                v-if="!isCallInitializing && !hasRtcEngineCapabilityEnabled"
-                class="csc-inline-alert"
-                appear
-                icon="info"
-                color="info"
-                :actions="rtcEngineInfoActions"
-            >
-                {{ $t('call.rtcEngineNotEnabled') }}
-            </q-alert>
-            <div
-                v-if="isCallInitializing"
-                class="csc-main-spinner"
-            >
-                <q-spinner-dots
-                    size="32px"
-                    color="primary"
-                />
-            </div>
-            <csc-phone-number-input
-                v-if="!isCallInitializing"
-                class="csc-call-phone-number"
-                :dark="true"
-                :value="callNumberInput"
-                :readonly="dialpadOpened"
-                :enabled="isCallInitialized"
-                @number-changed="numberInputChanged"
-            />
-            <csc-call-dialpad
-                v-if="dialpadOpened && isCallInitialized"
-                :show-backspace-button="true"
-                :show-clear-button="true"
-                @click="dialpadClick"
-                @remove="remove"
-                @remove-all="removeAll"
-            />
         </div>
     </csc-page>
 </template>
@@ -156,6 +160,18 @@
                         }
                     }
                 ]
+            },
+            pageClasses() {
+                let classes = ["row", "justify-center"];
+                if(this.isMobile) {
+                    classes.push('items-end');
+                    classes.push('csc-call-page-mobile');
+                }
+                else {
+                    classes.push('items-center');
+                    classes.push('csc-call-page-mobile');
+                }
+                return classes;
             }
         }
     }
@@ -163,11 +179,9 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../themes/quasar.variables'
-
+    .csc-call-page-mobile
+        min-height calc(100vh - 203px)
     .csc-call-page
-        height calc(100vh - 120px)
-        padding 0
-        padding-top $header-height
         .csc-communication-actions
             position absolute
             top $header-height
@@ -184,5 +198,4 @@
         .csc-info-text
             line-height 1.4em
             color $white
-
 </style>
