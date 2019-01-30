@@ -77,6 +77,40 @@
                                     :label="$t('pages.conversations.buttons.call')"
                                 />
                             </q-item>
+                            <q-item
+                                @click="toggleBlockIncoming"
+                            >
+                                <q-item-side
+                                    icon="call received"
+                                    color="primary"
+                                />
+                                <q-item-main
+                                    :label="blockIncomingLabel"
+                                />
+                            </q-item>
+                            <q-item
+                                @click="toggleBlockOutgoing"
+                            >
+                                <q-item-side
+                                    icon="call made"
+                                    color="primary"
+                                />
+                                <q-item-main
+                                    :label="blockOutgoingLabel"
+                                />
+                            </q-item>
+                            <q-item
+                                v-if="blockBothPossible"
+                                @click="toggleBlockBoth"
+                            >
+                                <q-item-side
+                                    icon="block"
+                                    color="primary"
+                                />
+                                <q-item-main
+                                    :label="blockBothLabel"
+                                />
+                            </q-item>
                         </q-list>
                     </q-popover>
                 </q-btn>
@@ -102,7 +136,11 @@
         name: 'csc-call-item',
         props: [
             'call',
-            'callAvailable'
+            'callAvailable',
+            'blockIncomingLabel',
+            'blockOutgoingLabel',
+            'blockBothLabel',
+            'blockBothPossible'
         ],
         components: {
             QList,
@@ -116,6 +154,8 @@
         },
         data () {
             return {}
+        },
+        mounted() {
         },
         computed: {
             number() {
@@ -161,7 +201,7 @@
                 else if (this.call.call_type === 'call' && this.call.direction === 'in' && this.call.status === 'cancel') {
                     return 'call_missed';
                 }
-                else if (this.call.call_type === 'call' && this.call.direction === 'in') {
+                    else if (this.call.call_type === 'call' && this.call.direction === 'in') {
                     return 'call_received';
                 }
                 else if (this.call.call_type === 'call' && this.call.direction === 'out') {
@@ -192,6 +232,15 @@
             startCall() {
                 this.$refs.callPopover.close();
                 this.$emit('start-call', this.numberDialBack);
+            },
+            toggleBlockIncoming() {
+                this.$emit('toggle-block-incoming');
+            },
+            toggleBlockOutgoing() {
+                this.$emit('toggle-block-outgoing');
+            },
+            toggleBlockBoth() {
+                this.$emit('toggle-block-both');
             }
         }
     }
