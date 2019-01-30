@@ -127,4 +127,28 @@ describe('Conversations', function(){
         assert.deepEqual(state.items, data.items);
     });
 
+    it('should load blocked numbers and mode', function(){
+        let state = {
+            blockedNumbersIncoming: new Set(),
+            blockedModeIncoming: null,
+            blockedNumbersOutgoing: new Set(),
+            blockedModeOutgoing: null
+        };
+        let options = {
+            blockAnonymous: undefined,
+            enabled: undefined,
+            list: [
+                "123456",
+                "555555"
+            ]
+        };
+        let listSet = new Set(["123456", "555555"]);
+        ConversationsModule.mutations.blockedIncomingSucceeded(state, options);
+        ConversationsModule.mutations.blockedOutgoingSucceeded(state, options);
+        assert.deepEqual(state.blockedNumbersIncoming, listSet);
+        assert.equal(state.blockedModeIncoming, 'blacklist');
+        assert.deepEqual(state.blockedNumbersOutgoing, listSet);
+        assert.equal(state.blockedModeOutgoing, 'blacklist');
+    });
+
 });
