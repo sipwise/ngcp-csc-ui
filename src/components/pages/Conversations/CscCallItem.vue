@@ -102,7 +102,9 @@
         name: 'csc-call-item',
         props: [
             'call',
-            'callAvailable'
+            'callAvailable',
+            'blockedIncoming',
+            'blockedOutgoing'
         ],
         components: {
             QList,
@@ -116,6 +118,10 @@
         },
         data () {
             return {}
+        },
+        mounted() {
+            console.log('blockedIncoming', this.blockedIncoming);
+            console.log('blockedOutgoing', this.blockedOutgoing);
         },
         computed: {
             number() {

@@ -7,7 +7,9 @@ import {
     getConversations,
     downloadVoiceMail,
     downloadFax,
-    playVoiceMail
+    playVoiceMail,
+    getIncomingBlocked,
+    getOutgoingBlocked
 } from '../api/conversations'
 
 const ROWS_PER_PAGE = 15;
@@ -62,7 +64,9 @@ export default {
         nextPageState: RequestState.initiated,
         nextPageError: null,
         items: [],
-        itemsReloaded: false
+        itemsReloaded: false,
+        blockedNumbersIncoming: [],
+        blockedNumbersOutgoing: []
     },
     getters: {
         getSubscriberId(state, getters, rootState, rootGetters) {
@@ -114,6 +118,22 @@ export default {
         },
         itemsReloaded(state) {
             return state.itemsReloaded;
+        },
+        callerIsBlockedIncoming(state) {
+            return (number) => {
+                return state.blockedNumbersIncoming.has(number);
+            }
+        },
+        callerIsBlockedOutgoing(state) {
+            return (number) => {
+                return state.blockedNumbersIncoming.has(number);
+            }
+        },
+        blockedNumbersIncoming(state) {
+            return state.blockedNumbersIncoming;
+        },
+        blockedNumbersOutgoing(state) {
+            return state.blockedNumbersOutgoing;
         }
     },
     mutations: {
@@ -191,6 +211,16 @@ export default {
         nextPageFailed(state, error) {
             state.nextPageState = RequestState.failed;
             state.nextPageError = error;
+        },
+        blockedIncomingSucceeded(state, $numbers) {
+            let numbers = $numbers ? $numbers : [];
+            let numberSet = new Set(numbers);
+            state.blockedNumbersIncoming = numberSet;
+        },
+        blockedOutgoingSucceeded(state, $numbers) {
+            let numbers = $numbers ? $numbers : [];
+            let numberSet = new Set(numbers);
+            state.blockedNumbersOutgoing = numberSet;
         }
     },
     actions: {
@@ -265,6 +295,30 @@ export default {
                     context.commit('nextPageFailed', err.message);
                 });
             }
+        },
+        getBlockedNumbersIncoming(context) {
+            let id = context.getters.getSubscriberId;
+            getIncomingBlocked(id).then((data) => {
+                console.log('incoming list is', data);
+                context.commit('blockedIncomingSucceeded', data.list);
+            }).catch((err)=>{
+                // TODO
+                console.log(err);
+            });
+        },
+        getBlockedNumbersOutgoing(context) {
+            let id = context.getters.getSubscriberId;
+            getOutgoingBlocked(id).then((data) => {
+                console.log('outgoing list is', data);
+                context.commit('blockedOutgoingSucceeded', data.list);
+            }).catch((err)=>{
+                // TODO
+                console.log(err);
+            });
+        },
+        getBlockedNumbers(context) {
+            context.dispatch('getBlockedNumbersIncoming');
+            context.dispatch('getBlockedNumbersOutgoing');
         }
     }
 };

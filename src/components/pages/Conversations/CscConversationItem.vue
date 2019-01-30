@@ -3,6 +3,8 @@
         v-if="item.type == 'call'"
         :call="item"
         :call-available="callAvailable"
+        :blocked-incoming="blockedIncoming"
+        :blocked-outgoing="blockedOutgoing"
         @start-call="startCall"
     />
     <csc-fax-item
@@ -23,6 +25,9 @@
 </template>
 
 <script>
+    import {
+        mapGetters
+    } from 'vuex'
     import CscCallItem from './CscCallItem'
     import CscFaxItem from './CscFaxItem'
     import CscVoiceMailItem from './CscVoiceMailItem'
@@ -39,6 +44,32 @@
         },
         data () {
             return {}
+        },
+        computed: {
+            ...mapGetters('conversations', [
+                'callerIsBlockedIncoming',
+                'callerIsBlockedOutgoing',
+                'blockedNumbersIncoming',
+                'blockedNumbersOutgoing'
+            ]),
+            number() {
+                if(this.item.direction === 'out') {
+                    return this.item.callee;
+                }
+                else {
+                    return this.item.caller;
+                }
+            },
+            blockedIncoming() {
+                console.log('number is', this.number + '');
+                console.log('blockedNumbersIncoming', this.blockedNumbersIncoming);
+                return this.callerIsBlockedIncoming(this.number + '');
+            },
+            blockedOutgoing() {
+                console.log('number is', this.number + '');
+                console.log('blockedNumbersOutgoing', this.blockedNumbersOutgoing);
+                return this.callerIsBlockedOutgoing(this.number + '');
+            }
         },
         methods: {
             startCall(number) {

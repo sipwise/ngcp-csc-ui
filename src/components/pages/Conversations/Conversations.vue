@@ -164,6 +164,7 @@
         },
         created() {
             this.$store.commit('conversations/resetList');
+            this.$store.dispatch('conversations/getBlockedNumbers');
         },
         computed: {
             ...mapGetters('conversations', [
