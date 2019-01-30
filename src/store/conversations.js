@@ -7,8 +7,17 @@ import {
     getConversations,
     downloadVoiceMail,
     downloadFax,
-    playVoiceMail
+    playVoiceMail,
+    getIncomingBlocked,
+    getOutgoingBlocked
 } from '../api/conversations'
+import {
+    addNumberToIncomingList,
+    removeFromIncomingListByNumber,
+    addNumberToOutgoingList,
+    removeFromOutgoingListByNumber,
+    toggleNumberInBothLists
+} from '../api/call-blocking'
 
 const ROWS_PER_PAGE = 15;
 
@@ -62,7 +71,18 @@ export default {
         nextPageState: RequestState.initiated,
         nextPageError: null,
         items: [],
-        itemsReloaded: false
+        itemsReloaded: false,
+        blockedNumbersIncoming: new Set(),
+        blockedModeIncoming: null,
+        blockedIncomingState: RequestState.initiated,
+        blockedIncomingError: null,
+        blockedNumbersOutgoing: new Set(),
+        blockedModeOutgoing: null,
+        blockedOutgoingState: RequestState.initiated,
+        blockedOutgoingError: null,
+        toggleBlockedState: RequestState.initiated,
+        toggleBlockedError: null,
+        lastToggledType: null
     },
     getters: {
         getSubscriberId(state, getters, rootState, rootGetters) {
@@ -114,6 +134,74 @@ export default {
         },
         itemsReloaded(state) {
             return state.itemsReloaded;
+        },
+        callerIsBlockedIncoming(state) {
+            // TODO: Rename to isNumberIncomingBlocked
+            return (number) => {
+                if (state.blockedModeIncoming === 'whitelist') {
+                    return !state.blockedNumbersIncoming.has(number);
+                }
+                else {
+                    return state.blockedNumbersIncoming.has(number);
+                }
+            }
+        },
+        callerIsBlockedOutgoing(state) {
+            // TODO: Rename to isNumberOutgoingBlocked
+            return (number) => {
+                if (state.blockedModeOutgoing === 'whitelist') {
+                    return !state.blockedNumbersOutgoing.has(number);
+                }
+                else {
+                    return state.blockedNumbersOutgoing.has(number);
+                }
+            }
+        },
+        blockedNumbersIncoming(state) {
+            return state.blockedNumbersIncoming;
+        },
+        blockedNumbersOutgoing(state) {
+            return state.blockedNumbersOutgoing;
+        },
+        blockedIncomingLoaded(state) {
+            return state.blockedIncomingState === RequestState.succeeded;
+        },
+        blockedOutgoingLoaded(state) {
+            return state.blockedOutgoingState === RequestState.succeeded;
+        },
+        isWhitelistIncoming(state) {
+            // TODO: Rename to isNumberIncomingWhitelisted
+            return state.blockedModeIncoming === 'whitelist';
+        },
+        isWhitelistOutgoing(state) {
+            // TODO: Rename to isNumberIncomingWhitelisted
+            return state.blockedModeOutgoing === 'whitelist';
+        },
+        actionToToggleIncomingNumber(state) {
+            return (number) => {
+                if (state.blockedNumbersIncoming.has(number)) {
+                    return 'remove';
+                }
+                else {
+                    return 'add';
+                }
+            }
+        },
+        actionToToggleOutgoingNumber(state) {
+            return (number) => {
+                if (state.blockedNumbersOutgoing.has(number)) {
+                    return 'remove';
+                }
+                else {
+                    return 'add';
+                }
+            }
+        },
+        toggleBlockedState(state) {
+            return state.toggleBlockedState;
+        },
+        lastToggledType(state) {
+            return state.lastToggledType;
         }
     },
     mutations: {
@@ -191,6 +279,56 @@ export default {
         nextPageFailed(state, error) {
             state.nextPageState = RequestState.failed;
             state.nextPageError = error;
+        },
+        blockedIncomingRequesting(state) {
+            state.blockedIncomingState = RequestState.requesting;
+            state.blockedIncomingError = null;
+        },
+        blockedIncomingSucceeded(state, options) {
+            let mode = options.enabled ? 'whitelist' : 'blacklist';
+            let numbers = options.list ? options.list : [];
+            let numberSet = new Set(numbers);
+            state.blockedIncomingState = RequestState.succeeded;
+            state.blockedIncomingError = null;
+            state.blockedNumbersIncoming = numberSet;
+            state.blockedModeIncoming = mode;
+        },
+        blockedIncomingFailed(state, error) {
+            state.blockedIncomingState = RequestState.failed;
+            state.blockedIncomingError = error;
+        },
+        blockedOutgoingRequesting(state) {
+            state.blockedOutgoingState = RequestState.requesting;
+            state.blockedOutgoingError = null;
+        },
+        blockedOutgoingSucceeded(state, options) {
+            let mode = options.enabled ? 'whitelist' : 'blacklist';
+            let numbers = options.list ? options.list : [];
+            let numberSet = new Set(numbers);
+            state.blockedOutgoingState = RequestState.succeeded;
+            state.blockedOutgoingError = null;
+            state.blockedNumbersOutgoing = numberSet;
+            state.blockedModeOutgoing = mode;
+        },
+        blockedOutgoingFailed(state, error) {
+            state.blockedOutgoingState = RequestState.failed;
+            state.blockedOutgoingError = error;
+        },
+        toggleBlockedRequesting(state) {
+            state.toggleBlockedState = RequestState.requesting;
+            state.toggleBlockedError = null;
+        },
+        toggleBlockedSucceeded(state, type) {
+            let typePastTense = type ? type + 'ed' : 'toggled';
+            state.toggleBlockedState = RequestState.succeeded;
+            state.toggleBlockedError = null;
+            state.lastToggledType = typePastTense;
+        },
+        toggleBlockedFailed(state, error, type) {
+            let typePastTense = type ? type + 'ed' : 'toggled';
+            state.toggleBlockedState = RequestState.failed;
+            state.toggleBlockedError = error;
+            state.lastToggledType = typePastTense;
         }
     },
     actions: {
@@ -265,6 +403,101 @@ export default {
                     context.commit('nextPageFailed', err.message);
                 });
             }
+        },
+        getBlockedNumbersIncoming(context) {
+            let id = context.getters.getSubscriberId;
+            context.commit('blockedIncomingRequesting');
+            getIncomingBlocked(id).then((data) => {
+                context.commit('blockedIncomingSucceeded', data);
+            }).catch((err)=>{
+                context.commit('blockedIncomingFailed', err.message);
+            });
+        },
+        getBlockedNumbersOutgoing(context) {
+            let id = context.getters.getSubscriberId;
+            context.commit('blockedOutgoingRequesting');
+            getOutgoingBlocked(id).then((data) => {
+                context.commit('blockedOutgoingSucceeded', data);
+            }).catch((err)=>{
+                context.commit('blockedOutgoingFailed', err.message);
+            });
+        },
+        getBlockedNumbers(context) {
+            context.dispatch('getBlockedNumbersIncoming');
+            context.dispatch('getBlockedNumbersOutgoing');
+        },
+        toggleBlockIncoming(context, options) {
+            let id = context.getters.getSubscriberId;
+            let isWhitelist = context.getters.isWhitelistIncoming;
+			let isBlocked = context.getters.callerIsBlockedIncoming(options.number);
+            context.commit('toggleBlockedRequesting');
+            if ((isBlocked && isWhitelist) || (!isBlocked && !isWhitelist)) {
+                addNumberToIncomingList(id, options.number).then(() => {
+                    context.commit('resetList');
+                    // TODO: Check that nextPage is ok to use instead of reloadItems
+                    context.dispatch('nextPage', null);
+                    context.commit('toggleBlockedSucceeded', options.type);
+                }).catch((err) => {
+                    context.commit('toggleBlockedFailed', err.message, options.type);
+                });
+            }
+            else if ((isBlocked && !isWhitelist) || (!isBlocked && isWhitelist)) {
+                removeFromIncomingListByNumber(id, options.number).then(() => {
+                    context.commit('resetList');
+                    context.dispatch('nextPage', null);
+                    context.commit('toggleBlockedSucceeded', options.type);
+                }).catch((err) => {
+                    context.commit('toggleBlockedFailed', err.message, options.type);
+                });
+            }
+			else {
+                context.commit('toggleBlockedFailed', 'error while identifying blocked condition', options.type);
+			}
+        },
+        toggleBlockOutgoing(context, options) {
+            let id = context.getters.getSubscriberId;
+            let isWhitelist = context.getters.isWhitelistOutgoing;
+			let isBlocked = context.getters.callerIsBlockedOutgoing(options.number);
+            context.commit('toggleBlockedRequesting');
+            if ((isBlocked && isWhitelist) || (!isBlocked && !isWhitelist)) {
+                addNumberToOutgoingList(id, options.number).then(() => {
+                    context.commit('resetList');
+                    context.dispatch('nextPage', null);
+                    context.commit('toggleBlockedSucceeded', options.type);
+                }).catch((err) => {
+                    context.commit('toggleBlockedFailed', err.message, options.type);
+                });
+            }
+            else if ((isBlocked && !isWhitelist) || (!isBlocked && isWhitelist)) {
+                removeFromOutgoingListByNumber(id, options.number).then(() => {
+                    context.commit('resetList');
+                    context.dispatch('nextPage', null);
+                    context.commit('toggleBlockedSucceeded', options.type);
+                }).catch((err) => {
+                    context.commit('toggleBlockedFailed', err.message, options.type);
+                });
+            }
+			else {
+                context.commit('toggleBlockedFailed', 'error while identifying blocked condition', options.type);
+			}
+        },
+        toggleBlockBoth(context, options) {
+            let id = context.getters.getSubscriberId;
+            let inAction = context.getters.actionToToggleIncomingNumber(options.number);
+            let outAction = context.getters.actionToToggleOutgoingNumber(options.number);
+            context.commit('toggleBlockedRequesting');
+            toggleNumberInBothLists({
+                id: id,
+                number: options.number,
+                block_in_list: inAction,
+                block_out_list: outAction
+            }).then(() => {
+                context.commit('resetList');
+                context.dispatch('nextPage', null);
+                context.commit('toggleBlockedSucceeded', options.type);
+            }).catch((err) => {
+                context.commit('toggleBlockedFailed', err.message, options.type);
+            });
         }
     }
 };

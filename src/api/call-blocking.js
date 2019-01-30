@@ -1,5 +1,6 @@
 
 import _ from 'lodash';
+import Vue from 'vue';
 
 import {
     enableBlockIn,
@@ -143,6 +144,121 @@ export function getPrivacyCallBlocking(id) {
         getPreferences(id).then((result)=>{
             resolve(result.clir);
         }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function addNumberToBothLists(id, value) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            return getPreferences(id);
+        }).then((result) => {
+            let prefs = _.cloneDeep(result);
+            delete prefs._links;
+            prefs['block_in_list'] = _.get(prefs, 'block_in_list', []);
+            prefs['block_in_list'] = [value].concat(prefs['block_in_list']);
+            prefs['block_out_list'] = _.get(prefs, 'block_out_list', []);
+            prefs['block_out_list'] = [value].concat(prefs['block_out_list']);
+            return Vue.http.put('api/subscriberpreferences/' + id, prefs);
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function removeNumberFromBothLists(id, value) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return getPreferences(id);
+        }).then((result)=>{
+            var prefs = _.cloneDeep(result);
+            delete prefs._links;
+            prefs['block_in_list'] = _.get(prefs, 'block_in_list', []).filter((number) => {
+                return number !== value;
+            });
+            prefs['block_out_list'] = _.get(prefs, 'block_out_list', []).filter((number) => {
+                return number !== value;
+            });
+            return Vue.http.put('api/subscriberpreferences/' + id, prefs);
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function removeNumberFromList(id, field, value) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return getPreferences(id);
+        }).then((result)=>{
+            var prefs = _.cloneDeep(result);
+            delete prefs._links;
+            prefs[field] = _.get(prefs, field, []).filter((number) => {
+                return number !== value;
+            });
+            return Vue.http.put('api/subscriberpreferences/' + id, prefs);
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function removeFromIncomingListByNumber(id, number) {
+    return new Promise((resolve, reject) => {
+        removeNumberFromList(id, 'block_in_list', number).then(() => {
+            resolve()
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function removeFromOutgoingListByNumber(id, number) {
+    return new Promise((resolve, reject) => {
+        removeNumberFromList(id, 'block_out_list', number).then(() => {
+            resolve()
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function toggleNumberInBothLists(options) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            return getPreferences(options.id);
+        }).then((result) => {
+            let prefs = _.cloneDeep(result);
+            delete prefs._links;
+            prefs['block_in_list'] = _.get(prefs, 'block_in_list', []);
+            prefs['block_out_list'] = _.get(prefs, 'block_out_list', []);
+            if (options.block_in_list === 'add') {
+                prefs['block_in_list'] = [options.number].concat(prefs['block_in_list']);
+            }
+            else if (options.block_in_list === 'remove') {
+            prefs['block_in_list'] = prefs['block_in_list'].filter((number) => {
+                return number !== options.number;
+            });
+            }
+            if (options.block_out_list === 'add') {
+                prefs['block_out_list'] = [options.number].concat(prefs['block_out_list']);
+            }
+            else if (options.block_out_list === 'remove') {
+                prefs['block_out_list'] = prefs['block_out_list'].filter((number) => {
+                    return number !== options.number;
+                });
+            }
+            return Vue.http.put('api/subscriberpreferences/' + options.id, prefs);
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
             reject(err);
         });
     });
