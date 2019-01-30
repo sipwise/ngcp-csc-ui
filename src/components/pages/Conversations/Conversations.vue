@@ -56,10 +56,15 @@
                     :key="item._id"
                     :item="item"
                     :call-available="isCallAvailable"
+                    :blocked-incoming="blockedIncoming(item)"
+                    :blocked-outgoing="blockedOutgoing(item)"
                     @start-call="startCall"
                     @download-fax="downloadFax"
                     @download-voice-mail="downloadVoiceMail"
                     @play-voice-mail="playVoiceMail"
+                    @toggle-block-incoming="toggleBlockIncoming"
+                    @toggle-block-outgoing="toggleBlockOutgoing"
+                    @toggle-block-both="toggleBlockBoth"
                 />
             </q-list>
             <div
@@ -164,6 +169,7 @@
         },
         created() {
             this.$store.commit('conversations/resetList');
+            this.$store.dispatch('conversations/getBlockedNumbers');
         },
         computed: {
             ...mapGetters('conversations', [
@@ -174,7 +180,11 @@
                 'downloadFaxError',
                 'downloadVoiceMailError',
                 'itemsReloaded',
-                'reloadItemsError'
+                'reloadItemsError',
+                'toggleBlockedState',
+                'lastToggledType',
+                'isNumberIncomingBlocked',
+                'isNumberOutgoingBlocked'
             ]),
             ...mapGetters('call', [
                 'callState',
@@ -296,6 +306,32 @@
                     this.$store.commit('conversations/resetList');
                     this.$store.dispatch('conversations/nextPage', type);
                 }
+            },
+            toggleBlockIncoming(options) {
+                this.$store.dispatch('conversations/toggleBlockIncoming', options);
+            },
+            toggleBlockOutgoing(options) {
+                this.$store.dispatch('conversations/toggleBlockOutgoing', options);
+            },
+            toggleBlockBoth(options) {
+                this.$store.dispatch('conversations/toggleBlockBoth', options);
+            },
+            blockedIncoming(item) {
+                if (item.direction === 'out') {
+                    return this.isNumberIncomingBlocked(item.callee);
+                }
+                else {
+                    return this.isNumberIncomingBlocked(item.caller);
+                }
+
+            },
+            blockedOutgoing(item) {
+                if (item.direction === 'out') {
+                    return this.isNumberOutgoingBlocked(item.callee);
+                }
+                else {
+                    return this.isNumberOutgoingBlocked(item.caller);
+                }
             }
         },
         watch: {
@@ -346,6 +382,20 @@
                 let offsetTop = offset(this.$el).top;
                 if (state && offsetTop < -15) {
                     window.scrollTo(0, 0);
+                }
+            },
+            toggleBlockedState(state) {
+                if (state === 'requesting') {
+                    startLoading();
+                }
+                else if (state === 'failed') {
+                    stopLoading();
+                }
+                else if (state === 'succeeded') {
+                    stopLoading();
+                    showToast(this.$t('pages.conversations.toggledSuccessMessage', {
+                        type: this.lastToggledType
+                    }));
                 }
             }
         }
