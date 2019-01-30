@@ -136,7 +136,13 @@
                 "play": "Play",
                 "download": "Download",
                 "downloadFax": "Download fax",
-                "downloadVoicemail": "Download voicemail"
+                "downloadVoicemail": "Download voicemail",
+                "blockIncoming": "Block Incoming",
+                "unblockIncoming": "Unblock Incoming",
+                "blockOutgoing": "Block Outgoing",
+                "unblockOutgoing": "Unblock Outgoing",
+                "blockBoth": "Block Incoming/Outgoing",
+                "unblockBoth": "Unblock Incoming/Outgoing"
             },
             "downloadVoiceMailSuccessMessage": "Voicemail downloaded successfully",
             "downloadVoiceMailErrorMessage": "Downloading of voicemail failed",

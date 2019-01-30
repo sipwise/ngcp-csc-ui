@@ -7,8 +7,18 @@ import {
     getConversations,
     downloadVoiceMail,
     downloadFax,
-    playVoiceMail
+    playVoiceMail,
+    getIncomingBlocked,
+    getOutgoingBlocked
 } from '../api/conversations'
+import {
+    addNumberToIncomingList,
+    removeFromIncomingListByNumber,
+    addNumberToOutgoingList,
+    removeFromOutgoingListByNumber,
+    addNumberToBothLists,
+	removeNumberFromBothLists
+} from '../api/call-blocking'
 
 const ROWS_PER_PAGE = 15;
 
@@ -62,7 +72,15 @@ export default {
         nextPageState: RequestState.initiated,
         nextPageError: null,
         items: [],
-        itemsReloaded: false
+        itemsReloaded: false,
+        blockedNumbersIncoming: new Set(),
+        blockedModeIncoming: null,
+        blockedIncomingState: RequestState.initiated,
+        blockedIncomingError: null,
+        blockedNumbersOutgoing: new Set(),
+        blockedModeOutgoing: null,
+        blockedOutgoingState: RequestState.initiated,
+        blockedOutgoingError: null
     },
     getters: {
         getSubscriberId(state, getters, rootState, rootGetters) {
@@ -114,6 +132,44 @@ export default {
         },
         itemsReloaded(state) {
             return state.itemsReloaded;
+        },
+        callerIsBlockedIncoming(state) {
+            return (number) => {
+                if (state.blockedModeIncoming === 'whitelist') {
+                    return !state.blockedNumbersIncoming.has(number);
+                }
+                else {
+                    return state.blockedNumbersIncoming.has(number);
+                }
+            }
+        },
+        callerIsBlockedOutgoing(state) {
+            return (number) => {
+                if (state.blockedModeOutgoing === 'whitelist') {
+                    return !state.blockedNumbersOutgoing.has(number);
+                }
+                else {
+                    return state.blockedNumbersOutgoing.has(number);
+                }
+            }
+        },
+        blockedNumbersIncoming(state) {
+            return state.blockedNumbersIncoming;
+        },
+        blockedNumbersOutgoing(state) {
+            return state.blockedNumbersOutgoing;
+        },
+        blockedIncomingLoaded(state) {
+            return state.blockedIncomingState === RequestState.succeeded;
+        },
+        blockedOutgoingLoaded(state) {
+            return state.blockedOutgoingState === RequestState.succeeded;
+        },
+        isWhitelistIncoming(state) {
+            return state.blockedModeIncoming === 'whitelist';
+        },
+        isWhitelistOutgoing(state) {
+            return state.blockedModeOutgoing === 'whitelist';
         }
     },
     mutations: {
@@ -191,6 +247,40 @@ export default {
         nextPageFailed(state, error) {
             state.nextPageState = RequestState.failed;
             state.nextPageError = error;
+        },
+        blockedIncomingRequesting(state) {
+            state.blockedIncomingState = RequestState.requesting;
+            state.blockedIncomingError = null;
+        },
+        blockedIncomingSucceeded(state, options) {
+            let mode = options.enabled ? 'whitelist' : 'blacklist';
+            let numbers = options.list ? options.list : [];
+            let numberSet = new Set(numbers);
+            state.blockedIncomingState = RequestState.succeeded;
+            state.blockedIncomingError = null;
+            state.blockedNumbersIncoming = numberSet;
+            state.blockedModeIncoming = mode;
+        },
+        blockedIncomingFailed(state, error) {
+            state.blockedIncomingState = RequestState.failed;
+            state.blockedIncomingError = error;
+        },
+        blockedOutgoingRequesting(state) {
+            state.blockedOutgoingState = RequestState.requesting;
+            state.blockedOutgoingError = null;
+        },
+        blockedOutgoingSucceeded(state, options) {
+            let mode = options.enabled ? 'whitelist' : 'blacklist';
+            let numbers = options.list ? options.list : [];
+            let numberSet = new Set(numbers);
+            state.blockedOutgoingState = RequestState.succeeded;
+            state.blockedOutgoingError = null;
+            state.blockedNumbersOutgoing = numberSet;
+            state.blockedModeOutgoing = mode;
+        },
+        blockedOutgoingFailed(state, error) {
+            state.blockedOutgoingState = RequestState.failed;
+            state.blockedOutgoingError = error;
         }
     },
     actions: {
@@ -265,6 +355,126 @@ export default {
                     context.commit('nextPageFailed', err.message);
                 });
             }
+        },
+        getBlockedNumbersIncoming(context) {
+            let id = context.getters.getSubscriberId;
+            context.commit('blockedIncomingRequesting');
+            getIncomingBlocked(id).then((data) => {
+                context.commit('blockedIncomingSucceeded', data);
+            }).catch((err)=>{
+                context.commit('blockedIncomingFailed', err.message);
+            });
+        },
+        getBlockedNumbersOutgoing(context) {
+            let id = context.getters.getSubscriberId;
+            context.commit('blockedOutgoingRequesting');
+            getOutgoingBlocked(id).then((data) => {
+                context.commit('blockedOutgoingSucceeded', data);
+            }).catch((err)=>{
+                context.commit('blockedOutgoingFailed', err.message);
+            });
+        },
+        getBlockedNumbers(context) {
+            context.dispatch('getBlockedNumbersIncoming');
+            context.dispatch('getBlockedNumbersOutgoing');
+        },
+        toggleBlockIncoming(context, number) {
+			// TODO: Mutations for request state handling
+            let id = context.getters.getSubscriberId;
+            let isWhitelist = context.getters.isWhitelistIncoming;
+			let isBlocked = context.getters.callerIsBlockedIncoming(number);
+            if ((isBlocked && isWhitelist) || (!isBlocked && !isWhitelist)) {
+                addNumberToIncomingList(id, number).then(() => {
+                    context.commit('resetList');
+                    // TODO: Not reloading in UI. Check watcher or make a
+                    // separate simpler "reloadClean" action
+                    context.dispatch('reloadItems', {
+                        retryCount: 1,
+                        type: null
+                    });
+                }).catch((err) => {
+                    console.log('error adding number', err.message);
+                });
+				console.log('add match', isWhitelist, isBlocked);
+            }
+            else if ((isBlocked && !isWhitelist) || (!isBlocked && isWhitelist)) {
+                removeFromIncomingListByNumber(id, number).then(() => {
+                    context.commit('resetList');
+                    context.dispatch('reloadItems', {
+                        retryCount: 1,
+                        type: null
+                    });
+                }).catch((err) => {
+                    console.log('error removing number', err.message);
+                });
+				console.log('remove match', isWhitelist, isBlocked);
+            }
+			else {
+				// TODO: Commit failed mutation
+				console.log('no match', isWhitelist, isBlocked);
+			}
+        },
+        toggleBlockOutgoing(context, number) {
+			// TODO: Mutations for request state handling
+            let id = context.getters.getSubscriberId;
+            let isWhitelist = context.getters.isWhitelistIncoming;
+			let isBlocked = context.getters.callerIsBlockedIncoming(number);
+            if (isBlocked && isWhitelist || !isBlocked && isWhitelist) {
+                addNumberToOutgoingList(id, number).then(() => {
+                    context.commit('resetList');
+                    context.dispatch('reloadItems', {
+                        retryCount: 1,
+                        type: null
+                    });
+                }).catch((err) => {
+                    console.log('error adding number', err.message);
+                });
+            }
+            else if (isBlocked && !isWhitelist || !isBlocked && isWhitelist) {
+                removeFromOutgoingListByNumber(id, number).then(() => {
+                    context.commit('resetList');
+                    context.dispatch('reloadItems', {
+                        retryCount: 1,
+                        type: null
+                    });
+                }).catch((err) => {
+                    console.log('error removing number', err.message);
+                });
+            }
+			else {
+				// TODO: Commit failed mutation
+			}
+        },
+        toggleBlockBoth(context, number) {
+			// TODO: Mutations for request state handling
+            let id = context.getters.getSubscriberId;
+            let isWhitelist = context.getters.isWhitelistIncoming;
+			let isBlocked = context.getters.callerIsBlockedIncoming(number);
+            if (isBlocked && isWhitelist || !isBlocked && isWhitelist) {
+                addNumberToBothLists(id, number).then(() => {
+                    context.commit('resetList');
+                    context.dispatch('reloadItems', {
+                        retryCount: 1,
+                        type: null
+                    });
+                }).catch((err) => {
+                    console.log('error adding number', err.message);
+                });
+            }
+			else if (isBlocked && !isWhitelist || !isBlocked && isWhitelist) {
+				removeNumberFromBothLists(id, number).then(() => {
+					context.commit('resetList');
+					context.dispatch('reloadItems', {
+						retryCount: 1,
+						type: null
+					});
+				}).catch((err) => {
+					console.log('error removing number', err.message);
+				});
+			}
+			else {
+				// TODO: Commit failed mutation
+			}
         }
     }
 };

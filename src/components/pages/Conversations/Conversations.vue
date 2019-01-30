@@ -60,6 +60,9 @@
                     @download-fax="downloadFax"
                     @download-voice-mail="downloadVoiceMail"
                     @play-voice-mail="playVoiceMail"
+                    @toggle-block-incoming="toggleBlockIncoming"
+                    @toggle-block-outgoing="toggleBlockOutgoing"
+                    @toggle-block-both="toggleBlockBoth"
                 />
             </q-list>
             <div
@@ -164,6 +167,7 @@
         },
         created() {
             this.$store.commit('conversations/resetList');
+            this.$store.dispatch('conversations/getBlockedNumbers');
         },
         computed: {
             ...mapGetters('conversations', [
@@ -296,6 +300,15 @@
                     this.$store.commit('conversations/resetList');
                     this.$store.dispatch('conversations/nextPage', type);
                 }
+            },
+            toggleBlockIncoming(number) {
+                this.$store.dispatch('conversations/toggleBlockIncoming', number);
+            },
+            toggleBlockOutgoing(number) {
+                this.$store.dispatch('conversations/toggleBlockOutgoing', number);
+            },
+            toggleBlockBoth(number) {
+                this.$store.dispatch('conversations/toggleBlockBoth', number);
             }
         },
         watch: {

@@ -2,10 +2,14 @@
 import _ from 'lodash'
 import { saveAs } from 'file-saver'
 import Vue from 'vue'
+import {
+    getIncomingCallBlocking,
+    getOutgoingCallBlocking
+} from './call-blocking'
 import { getList } from './common'
 
 export function getConversations(options) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         let type = _.get(options, 'type', null);
         let params ={
             subscriber_id: _.get(options, 'subscriberId'),
@@ -32,7 +36,7 @@ export function getConversations(options) {
 }
 
 export function downloadVoiceMail(id) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         Vue.http.get('api/voicemailrecordings/' + id, { responseType: 'blob' })
             .then((res) => {
                 return res.blob();
@@ -46,7 +50,7 @@ export function downloadVoiceMail(id) {
 }
 
 export function downloadFax(id) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         Vue.http.get('api/faxrecordings/' + id, { responseType: 'blob' })
             .then((res) => {
                 return res.blob();
@@ -60,7 +64,7 @@ export function downloadFax(id) {
 }
 
 export function playVoiceMail(options) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         let params = { format: options.format };
         Vue.http.get(`api/voicemailrecordings/${options.id}`, { params: params, responseType: 'blob' })
             .then((res) => {
@@ -70,3 +74,24 @@ export function playVoiceMail(options) {
             });
     });
 }
+
+export function getIncomingBlocked(id) {
+    return new Promise((resolve, reject) => {
+        getIncomingCallBlocking(id).then((list) => {
+            resolve(list)
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function getOutgoingBlocked(id) {
+    return new Promise((resolve, reject) => {
+        getOutgoingCallBlocking(id).then((list) => {
+            resolve(list)
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
