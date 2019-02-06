@@ -215,8 +215,11 @@ export default {
     reloadSeat(context, seat) {
         return new Promise((resolve, reject)=>{
             context.commit('seatReloading', seat);
-            getSeat(seat.id).then(($seat)=>{
+            getSeat(seat.id).then(($seat) => {
                 context.commit('seatReloaded', $seat);
+                return $seat;
+            }).then((seat) => {
+                context.dispatch('loadCallQueueForSeat', seat.id);
             }).catch((err)=>{
                 context.commit('seatReloadingFailed', {
                     seat: seat,
