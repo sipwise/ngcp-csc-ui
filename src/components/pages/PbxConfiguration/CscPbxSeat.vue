@@ -200,7 +200,8 @@
             'seat',
             'aliasNumberOptions',
             'groupOptions',
-            'loading'
+            'loading',
+            'callQueue'
         ],
         data () {
             return {
@@ -459,7 +460,7 @@
         },
         watch: {
             seat() {
-                this.changes = this.getSeat()
+                this.changes = this.getSeat();
             }
         }
     }

@@ -77,6 +77,9 @@ export default {
             context.commit('groupReloading', group);
             getGroup(group.id).then(($group)=>{
                 context.commit('groupReloaded', $group);
+                return $group;
+            }).then((data) => {
+                context.dispatch('loadCallQueueForGroup', data.id);
             }).catch((err)=>{
                 context.commit('groupReloadingFailed', {
                     group: group,
@@ -215,8 +218,11 @@ export default {
     reloadSeat(context, seat) {
         return new Promise((resolve, reject)=>{
             context.commit('seatReloading', seat);
-            getSeat(seat.id).then(($seat)=>{
+            getSeat(seat.id).then(($seat) => {
                 context.commit('seatReloaded', $seat);
+                return $seat;
+            }).then((data) => {
+                context.dispatch('loadCallQueueForSeat', data.id);
             }).catch((err)=>{
                 context.commit('seatReloadingFailed', {
                     seat: seat,
