@@ -422,9 +422,11 @@ export default {
             state.callQueueGroupsAndSeats[config.id] = config;
             state.callQueueGroupsAndSeatsOrdered.push(config);
         });
-        state.callQueueGroupsAndSeats = state.callQueueGroupsAndSeats.filter((item) => {
-            return (item !== (undefined || null || ''));
-        });
+        if (state.callQueueGroupsAndSeats.length > 0) {
+            state.callQueueGroupsAndSeats = state.callQueueGroupsAndSeats.filter((item) => {
+                return (item !== (undefined || null || ''));
+            });
+        }
     },
     callQueueListFailed(state, error) {
         state.listState = RequestState.failed;
@@ -440,7 +442,8 @@ export default {
         state.configReloadingError = null;
         Vue.set(state.callQueueGroupsAndSeats, config.id, config);
         for (let i = 0; i < state.callQueueGroupsAndSeatsOrdered.length; i++) {
-            if (state.callQueueGroupsAndSeatsOrdered[i].id === config.id) {
+            let callQueueState = state.callQueueGroupsAndSeatsOrdered[i];
+            if (callQueueState && (state.callQueueGroupsAndSeatsOrdered[i].id === config.id)) {
                 state.callQueueGroupsAndSeatsOrdered[i] = config;
             }
         }
@@ -457,8 +460,9 @@ export default {
         reactiveSet(state[data.type + 'States'], id, RequestState.succeeded);
         reactiveSet(state[data.type + 'Errors'], id, null);
         Vue.set(state[data.type + 's'], id, Object.assign(state[data.type + 's'][id], data.preferences));
-        for(let i = 0; i <= state[data.type + 'sOrdered'].length; i++) {
-            if(state[data.type + 'sOrdered'][i].id === data.preferences.id) {
+        for (let i = 0; i <= state[data.type + 'sOrdered'].length; i++) {
+            let subscriberState = state[data.type + 'sOrdered'][i];
+            if (subscriberState && (state[data.type + 'sOrdered'][i].id === data.preferences.id)) {
                 state[data.type + 'sOrdered'][i] = Object.assign(state[data.type + 'sOrdered'][i], data.preferences);
             }
         }
