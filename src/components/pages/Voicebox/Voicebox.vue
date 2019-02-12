@@ -165,7 +165,7 @@
                 Dialog.create({
                     title: self.$t('voicebox.deleteCustomDialogTitle'),
                     message: self.$t('voicebox.deleteCustomDialogText', {
-                        type: 'busy'
+                        type: self.$t('voicebox.busy')
                     }),
                     buttons: [
                         {
@@ -191,7 +191,7 @@
                 Dialog.create({
                     title: self.$t('voicebox.deleteCustomDialogTitle'),
                     message: self.$t('voicebox.deleteCustomDialogText', {
-                        type: 'unavailable'
+                        type: self.$t('voicebox.unavailable')
                     }),
                     buttons: [
                         {

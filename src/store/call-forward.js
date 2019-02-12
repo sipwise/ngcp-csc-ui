@@ -480,7 +480,9 @@ export default {
             state.updateOwnPhoneToggleError  = null
         },
         updateOwnPhoneSucceeded(state, type) {
-            let toggle = type === 'cft' ? 'enabled' : 'disabled';
+            let toggle = type === 'cft'
+                ? i18n.t('pages.callForward.enabled')
+                : i18n.t('pages.callForward.disabled');
             state.lastOwnPhoneToggle = toggle;
             state.updateOwnPhoneToggleState = RequestState.succeeded;
             state.updateOwnPhoneToggleError  = null

@@ -67,7 +67,7 @@
                 >
                     <q-input
                         dark
-                        suffix="callers"
+                        :suffix="$t('pbxConfig.callers')"
                         v-model="changes.max_queue_length"
                         :after="queueLengthButtons"
                         @keyup.enter="saveQueueLength"
@@ -84,7 +84,7 @@
                         dark
                         v-model="changes.queue_wrap_up_time"
                         :after="wrapUpTimeButtons"
-                        suffix="seconds"
+                        :suffix="$t('pbxConfig.seconds')"
                         @keyup.enter="saveWrapUpTime"
                         @input="$v.changes.queue_wrap_up_time.$touch"
                         @blur="$v.changes.queue_wrap_up_time.$touch"

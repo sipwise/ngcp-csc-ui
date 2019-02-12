@@ -48,7 +48,7 @@
                 v-model="data.huntTimeout"
                 clearable
                 :float-label="$t('pbxConfig.huntTimeout')"
-                suffix="seconds"
+                :suffix="$t('pbxConfig.seconds')"
                 :min="1"
                 :max="3600"
             />

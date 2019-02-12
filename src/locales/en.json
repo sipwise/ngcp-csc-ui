@@ -8,6 +8,7 @@
     "sendSms": "Send SMS",
     "sendFax": "Send Fax",
     "loggedInAs": "Logged in as",
+    "notFound" : "404 Not Found",
     "buttons": {
         "cancel": "Cancel",
         "save": "Save",
@@ -22,7 +23,9 @@
         "upload": "Upload",
         "abort": "Abort",
         "selectNew": "Select new",
-        "resetDefaults": "Reset to defaults"
+        "resetDefaults": "Reset to defaults",
+        "install": "Install",
+        "addNew": "Add new"
     },
     "form": {
         "destinationLabel": "Destination"
@@ -213,6 +216,13 @@
             "updateOwnPhoneTimeoutSuccessMessage": "Own phone timeout set to {timeout}",
             "updateOwnPhoneTimeoutErrorMessage": "An error occured while trying to update own phone timeout. Please try again",
             "ownPhone": "own phone",
+            "disable": "Disable",
+            "enable": "Enable",
+            "whitelist": "Whitelist",
+            "blacklist": "Blacklist",
+            "enabled": "enabled",
+            "disabled": "disabled",
+            "seconds": "seconds",
             "times": {
                 "removeDialogTitle": "Remove call forward time",
                 "removeDialogText": "You are about to remove the time entry for {day}",
@@ -398,7 +408,9 @@
         "callQueue": "Call Queue",
         "createConfig": "Create Call Queue",
         "removeConfigTitle": "Remove call queue",
-        "removeConfigText": "You are about to remove call queue for {subscriber}"
+        "removeConfigText": "You are about to remove call queue for {subscriber}",
+        "seconds": "seconds",
+        "callers": "callers"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",
@@ -473,6 +485,7 @@
         "deleteGreetingSuccessMessage": "Deleted greeting sound successfully",
         "deleteGreetingErrorMessage": "An error occured while trying to delete the greeting sound. Please try again",
         "deleteCustomDialogTitle": "Reset busy greeting sound",
-        "deleteCustomDialogText": "You are about to reset the custom {type} greeting sound to defaults"
+        "deleteCustomDialogText": "You are about to reset the custom {type} greeting sound to defaults",
+        "unavailable": "unavailable"
     }
 }

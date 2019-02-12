@@ -147,14 +147,14 @@
                 let self = this;
                 return [
                     {
-                        label: 'Install',
+                        label: this.$t('buttons.install'),
                         handler () {
                             self.$store.commit('call/desktopSharingInstallReset');
                             window.open(getChromeExtensionUrl());
                         }
                     },
                     {
-                        label: 'Cancel',
+                        label: this.$t('buttons.cancel'),
                         handler () {
                             self.$store.commit('call/desktopSharingInstallReset');
                         }

@@ -16,7 +16,9 @@
             color="negative"
             flat
             @click="remove"
-        >Remove</q-btn>
+        >
+            {{ $t('buttons.remove') }}
+        </q-btn>
     </csc-dialog>
 </template>
 

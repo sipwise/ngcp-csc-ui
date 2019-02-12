@@ -43,7 +43,7 @@
                     :before="beforeIconTimeout"
                     :float-label="$t('pages.callForward.timeout')"
                     v-model="destinationForm.timeout"
-                    suffix="seconds"
+                    :suffix="$t('pages.callForward.seconds')"
                     clearable
                     @input="$v.destinationForm.timeout.$touch"
                     @blur="$v.destinationForm.timeout.$touch"

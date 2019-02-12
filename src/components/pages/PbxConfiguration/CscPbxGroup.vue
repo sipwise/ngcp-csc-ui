@@ -89,7 +89,7 @@
                         dark
                         v-model="changes.huntTimeout"
                         type="number"
-                        suffix="seconds"
+                        :suffix="$t('pbxConfig.seconds')"
                         :after="huntTimeoutButtons"
                         :min="0"
                         @keyup.enter="saveHuntTimeout"

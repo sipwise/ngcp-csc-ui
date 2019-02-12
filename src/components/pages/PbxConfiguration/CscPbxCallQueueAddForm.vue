@@ -25,7 +25,7 @@
                 autofocus
                 :float-label="$t('pbxConfig.queueLength')"
                 clearable
-                suffix="callers"
+                :suffix="$t('pbxConfig.callers')"
             />
         </q-field>
         <q-field :error-label="wrapUpTimeErrorMessage">
@@ -39,7 +39,7 @@
                 v-model="data.queue_wrap_up_time"
                 :float-label="$t('pbxConfig.wrapUpTime')"
                 clearable
-                suffix="seconds"
+                :suffix="$t('pbxConfig.seconds')"
             />
         </q-field>
         <div class="csc-form-actions row justify-center">
