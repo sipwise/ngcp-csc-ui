@@ -96,39 +96,3 @@ export function setReminderRecurrence(reminderId, reccurence) {
         value: reccurence
     });
 }
-
-// export function enableReminder(id) {
-//     return patchReminder(id, '/active', true);
-// }
-//
-// export function disableReminder(id) {
-//     return patchReminder(id, '/active', false);
-// }
-//
-// export function setTime(id, time) {
-//     return patchReminder(id, '/time', time);
-// }
-//
-// export function setRecurrence(id, recurrence) {
-//     return patchReminder(id, '/recur', recurrence);
-// }
-//
-// function patchReminder(id, field, value) {
-//     return new Promise((resolve, reject) => {
-//         var data = [{
-//             "op": "replace",
-//             "path": field,
-//             "value": value
-//         }];
-//         var patchHeaders = {
-//             headers: {
-//                 'Content-Type': 'application/json-patch+json'
-//             }
-//         };
-//         Vue.http.patch('api/reminders/' + id, data, patchHeaders).then(() => {
-//             resolve();
-//         }).catch((err) => {
-//             reject(err);
-//         });
-//     });
-// }

@@ -51,13 +51,11 @@
         QField,
         QInput,
         QDatetime,
-        // Dialog,
         QBtn,
         QItem,
         QItemMain,
         QItemTile,
         QItemSide,
-        // Alert,
         date
     } from 'quasar-framework'
 
@@ -103,55 +101,14 @@
         },
         methods: {
             deleteTime(index) {
-                // let self = this;
-                // let store = this.$store;
                 if (this.timesLength <= 1) {
                     this.$emit('delete-last-time', index);
-
-
-                    // Alert.create({
-                    //     enter: 'bounceInRight',
-                    //     leave: 'bounceOutRight',
-                    //     position: 'top-center',
-                    //     html: self.$t('pages.callForward.times.removeLastDialogText'),
-                    //     icon: 'warning',
-                    //     actions: [
-                    //         {
-                    //             label: self.$t('buttons.cancel')
-                    //         },
-                    //         {
-                    //             label: self.$t('buttons.remove'),
-                    //             handler () {
-                    //                 store.dispatch('callForward/deleteTimesetById')
-                    //             }
-                    //         }
-                    //     ]
-                    // });
                 }
                 else {
                     this.$emit('delete-time', {
                         index: index,
                         removedDay: this.weekday
                     });
-                    // Dialog.create({
-                    //     title: self.$t('pages.callForward.times.removeDialogTitle'),
-                    //     message: self.$t('pages.callForward.times.removeDialogText', {
-                    //         day: self.weekday
-                    //     }),
-                    //     buttons: [
-                    //         self.$t('buttons.cancel'),
-                    //         {
-                    //             label: self.$t('buttons.remove'),
-                    //             color: 'negative',
-                    //             handler () {
-                    //                 store.dispatch('callForward/deleteTimeFromTimeset', {
-                    //                     index: index,
-                    //                     removedDay: self.weekday
-                    //                 })
-                    //             }
-                    //         }
-                    //     ]
-                    // });
                 }
             }
         }

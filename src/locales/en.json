@@ -22,7 +22,8 @@
         "upload": "Upload",
         "abort": "Abort",
         "selectNew": "Select new",
-        "resetDefaults": "Reset to defaults"
+        "resetDefaults": "Reset to defaults",
+        "install": "Install"
     },
     "form": {
         "destinationLabel": "Destination"
@@ -213,6 +214,12 @@
             "updateOwnPhoneTimeoutSuccessMessage": "Own phone timeout set to {timeout}",
             "updateOwnPhoneTimeoutErrorMessage": "An error occured while trying to update own phone timeout. Please try again",
             "ownPhone": "own phone",
+            "disable": "Disable",
+            "enable": "Enable",
+            "whitelist": "Whitelist",
+            "blacklist": "Blacklist",
+            "enabled": "enabled",
+            "disabled": "disabled",
             "times": {
                 "removeDialogTitle": "Remove call forward time",
                 "removeDialogText": "You are about to remove the time entry for {day}",
@@ -473,6 +480,7 @@
         "deleteGreetingSuccessMessage": "Deleted greeting sound successfully",
         "deleteGreetingErrorMessage": "An error occured while trying to delete the greeting sound. Please try again",
         "deleteCustomDialogTitle": "Reset busy greeting sound",
-        "deleteCustomDialogText": "You are about to reset the custom {type} greeting sound to defaults"
+        "deleteCustomDialogText": "You are about to reset the custom {type} greeting sound to defaults",
+        "unavailable": "unavailable"
     }
 }

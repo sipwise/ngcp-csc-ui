@@ -184,11 +184,11 @@
                 mode: 'whitelist',
                 modes: [
                     {
-                        label: 'Whitelist',
+                        label: this.$t('pages.callForward.whitelist'),
                         value: 'whitelist'
                     },
                     {
-                        label: 'Blacklist',
+                        label: this.$t('pages.callForward.blacklist'),
                         value: 'blacklist'
                     }
                 ],

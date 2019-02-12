@@ -13,7 +13,7 @@
                 highlight
                 inset-separator
                 v-if="showOwnPhone && group.length > 0"
-                :class="{ ['csc-own-phone']: !isMobile }"
+                :class="itemClasses"
             >
                 <q-item-side v-if="!isMobile">
                     <q-field
@@ -111,9 +111,9 @@
                                v-if="isMobile"
                                 @click="toggle();$refs.popover.close()"
                             >
-                                <q-item-main :label="$t('pages.callForward.toggleTimeout', {
-                                        mode: this.ownPhone ? 'Disable' : 'Enable'
-                                    })" />
+                                <q-item-main
+                                    :label="toggleTimeoutLabel"
+                                />
                                 <q-item-side
                                     :icon="toggleIcon"
                                     color="secondary"
@@ -337,6 +337,21 @@
                 destinationset.priority = destinationset.lowestPriority || 1;
                 destinationset.timeset = this.timeset;
                 return destinationset;
+            },
+            itemClasses() {
+                let classes = ['csc-destination'];
+                if (!this.isMobile) {
+                    classes.push('csc-own-phone');
+                }
+                return classes;
+            },
+            toggleTimeoutLabel() {
+                let mode = this.ownPhone
+                    ? this.$t('pages.callForward.disable')
+                    : this.$t('pages.callForward.enable');
+                return this.$t('pages.callForward.toggleTimeout', {
+                    mode: mode
+                });
             }
         },
         methods: {
