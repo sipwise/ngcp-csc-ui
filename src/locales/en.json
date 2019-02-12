@@ -213,6 +213,8 @@
             "updateOwnPhoneTimeoutSuccessMessage": "Own phone timeout set to {timeout}",
             "updateOwnPhoneTimeoutErrorMessage": "An error occured while trying to update own phone timeout. Please try again",
             "ownPhone": "own phone",
+            "disable": "Disable",
+            "enable": "Enable",
             "times": {
                 "removeDialogTitle": "Remove call forward time",
                 "removeDialogText": "You are about to remove the time entry for {day}",
@@ -473,6 +475,7 @@
         "deleteGreetingSuccessMessage": "Deleted greeting sound successfully",
         "deleteGreetingErrorMessage": "An error occured while trying to delete the greeting sound. Please try again",
         "deleteCustomDialogTitle": "Reset busy greeting sound",
-        "deleteCustomDialogText": "You are about to reset the custom {type} greeting sound to defaults"
+        "deleteCustomDialogText": "You are about to reset the custom {type} greeting sound to defaults",
+        "unavailable": "unavailable"
     }
 }
