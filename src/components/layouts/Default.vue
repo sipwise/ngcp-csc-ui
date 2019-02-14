@@ -421,6 +421,11 @@
                 if(!this.isHome) {
                     this.$store.commit('call/minimize');
                 }
+                if(this.$refs.call) {
+                    this.$nextTick(()=>{
+                        this.$refs.call.fitMedia();
+                    });
+                }
             }
         }
     }

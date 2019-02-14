@@ -178,6 +178,11 @@
             },
             muted(muted) {
                 this.$refs.media.muted = muted;
+            },
+            preview() {
+                this.$nextTick(()=>{
+                    this.fitMedia();
+                });
             }
         },
         computed: {

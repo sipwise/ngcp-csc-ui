@@ -127,7 +127,8 @@
             </div>
         </div>
         <div
-            class="csc-call-media-remote transition-generic"
+            ref="remoteMediaWrapper"
+            class="csc-call-media-remote"
         >
             <div
                 v-show="!hasRemoteVideo && !minimized"
@@ -144,7 +145,8 @@
                 v-show="hasRemoteVideo || minimized"
                 :muted="!remoteVolumeEnabled"
                 :stream="remoteMediaStream"
-                :preview="false"
+                :preview="minimized"
+                :width="remoteMediaWrapperWidth"
             />
         </div>
         <div
@@ -337,7 +339,8 @@
         name: 'csc-call',
         data() {
             return {
-                localMediaWrapperWidth: 0
+                localMediaWrapperWidth: 0,
+                remoteMediaWrapperWidth: 0
             }
         },
         mixins: [
@@ -372,11 +375,14 @@
             QIcon
         },
         mounted() {
-            this.fetchLocalMediaWrapperWidth();
-            let fetchLocalMediaWrapperWidth = ()=>{ this.fetchLocalMediaWrapperWidth(); };
-            this.$root.$on('window-resized', fetchLocalMediaWrapperWidth);
-            this.$root.$on('content-resized', fetchLocalMediaWrapperWidth);
-            this.$root.$on('orientation-changed', fetchLocalMediaWrapperWidth);
+            let fetchMediaWrapperWidth = ()=>{
+                this.fetchLocalMediaWrapperWidth();
+                this.fetchRemoteMediaWrapperWidth();
+            };
+            fetchMediaWrapperWidth();
+            this.$root.$on('window-resized', fetchMediaWrapperWidth);
+            this.$root.$on('content-resized', fetchMediaWrapperWidth);
+            this.$root.$on('orientation-changed', fetchMediaWrapperWidth);
         },
         computed: {
             componentClasses() {
@@ -495,6 +501,14 @@
                     this.localMediaWrapperWidth = 0;
                 }
             },
+            fetchRemoteMediaWrapperWidth() {
+                if(this.$refs.remoteMediaWrapper) {
+                    this.remoteMediaWrapperWidth = this.$refs.remoteMediaWrapper.clientWidth;
+                }
+                else {
+                    this.remoteMediaWrapperWidth = 0;
+                }
+            },
             startCall(media) {
                 if(this.callState === 'input') {
                     this.$emit('start-call', media);
@@ -541,6 +555,18 @@
                 if(this.isMobile && this.isEstablished) {
                     this.maximize();
                 }
+            },
+            fitMedia() {
+                this.fetchLocalMediaWrapperWidth();
+                this.fetchRemoteMediaWrapperWidth();
+                this.$nextTick(()=>{
+                    if(this.$refs.localMedia) {
+                        this.$refs.localMedia.fitMedia();
+                    }
+                    if(this.$refs.remoteMedia) {
+                        this.$refs.remoteMedia.fitMedia();
+                    }
+                });
             }
         },
         watch: {
@@ -559,6 +585,13 @@
                 if(closed && this.$refs.startButton) {
                     this.$refs.startButton.close();
                 }
+            },
+            minimized() {
+                this.fetchLocalMediaWrapperWidth();
+                this.fetchRemoteMediaWrapperWidth();
+                this.$nextTick(()=>{
+                    this.fitMedia();
+                });
             }
         }
     }
