@@ -70,6 +70,14 @@
         >
             <q-item-tile>
                 <q-btn
+                    v-if="expanded"
+                    icon="delete"
+                    :big="mobile"
+                    color="negative"
+                    flat
+                    @click="remove()"
+                />
+                <q-btn
                     :icon="titleIcon"
                     :big="mobile"
                     color="primary"
@@ -155,6 +163,9 @@
         methods: {
             toggleMain() {
                 this.expanded = !this.expanded;
+            },
+            remove() {
+                this.$emit('remove', this.set);
             }
         },
         watch: {

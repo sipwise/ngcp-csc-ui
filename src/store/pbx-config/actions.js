@@ -39,7 +39,8 @@ import {
     getPrefs,
     removeCallQueue,
     getAllSoundSets,
-    getSoundFilesGrouped
+    getSoundFilesGrouped,
+    removeSoundSet
 } from '../../api/pbx-config'
 
 export default {
@@ -50,14 +51,14 @@ export default {
             silent: silent,
             page: page
         });
-        getGroupList(page).then((data)=>{
+        getGroupList(page).then((data) => {
             context.commit('listSucceeded', data);
             return data;
         }).then((groups) => {
-            groups.groups.items.forEach((group)=>{
+            groups.groups.items.forEach((group) => {
                 context.dispatch('loadCallQueueForGroup', group.id);
             });
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('listFailed', err.message);
         });
     },
@@ -66,18 +67,18 @@ export default {
         group.domainId = context.state.pilot.domain_id;
         context.commit('addItemRequesting', group);
         context.commit('lastAddedGroup', group.name);
-        addGroup(group).then(()=>{
+        addGroup(group).then(() => {
             return context.dispatch('listGroups', true);
-        }).then(()=>{
+        }).then(() => {
             context.commit('addItemSucceeded');
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('addItemFailed', err.message);
         });
     },
     reloadGroup(context, group) {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             context.commit('groupReloading', group);
-            getGroup(group.id).then(($group)=>{
+            getGroup(group.id).then(($group) => {
                 context.commit('groupReloaded', $group);
                 return $group;
             }).then((data) => {
@@ -87,9 +88,9 @@ export default {
                     group: group,
                     error: err.message
                 });
-            }).then(()=>{
+            }).then(() => {
                 resolve();
-            }).catch((err)=>{
+            }).catch((err) => {
                 reject(err);
             });
         });
@@ -99,7 +100,7 @@ export default {
         context.commit('lastUpdatedField', {name: group.name, type: 'group name'});
         setGroupName(group.id, group.name).then(() => {
             return context.dispatch('reloadGroup', group);
-        }).then(()=>{
+        }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
@@ -108,7 +109,7 @@ export default {
     setGroupExtension(context, group) {
         context.commit('updateItemRequesting', group);
         context.commit('lastUpdatedField', {name: group.extension, type: 'group extension'});
-        setGroupExtension(group.id, group.extension).then(()=>{
+        setGroupExtension(group.id, group.extension).then(() => {
             return context.dispatch('reloadGroup', group);
         }).then(() => {
             context.commit('updateItemSucceeded');
@@ -121,7 +122,7 @@ export default {
         context.commit('lastUpdatedField', {name: group.huntPolicy + " ringing", type: 'group hunt policy'});
         setGroupHuntPolicy(group.id, group.huntPolicy).then(() => {
             return context.dispatch('reloadGroup', group);
-        }).then(()=>{
+        }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
@@ -130,7 +131,7 @@ export default {
     setGroupHuntTimeout(context, group) {
         context.commit('updateItemRequesting', group);
         context.commit('lastUpdatedField', {name: group.huntTimeout + " seconds", type: 'group hunt timeout'});
-        setGroupHuntTimeout(group.id, group.huntTimeout).then(()=>{
+        setGroupHuntTimeout(group.id, group.huntTimeout).then(() => {
             return context.dispatch('reloadGroup', group);
         }).then(() => {
             context.commit('updateItemSucceeded');
@@ -143,11 +144,11 @@ export default {
         Promise.all([
             assignNumbers(data.add, data.item.id),
             assignNumbers(data.remove, context.getters.pilotId)
-        ]).then(()=>{
+        ]).then(() => {
             return context.dispatch('reloadGroup', data.item);
-        }).then(()=>{
+        }).then(() => {
             context.commit('updateAliasNumbersSucceeded');
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('updateAliasNumbersFailed', err.message);
         });
     },
@@ -156,17 +157,17 @@ export default {
         Promise.all([
             assignNumbers(data.add, data.item.id),
             assignNumbers(data.remove, context.getters.pilotId)
-        ]).then(()=>{
+        ]).then(() => {
             return context.dispatch('reloadSeat', data.item);
-        }).then(()=>{
+        }).then(() => {
             context.commit('updateAliasNumbersSucceeded');
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('updateAliasNumbersFailed', err.message);
         });
     },
     updateSeats(context, group) {
         context.commit('updateGroupsAndSeatsRequesting', group);
-        updateGroupSeats(group.id, group.seats).then(()=>{
+        updateGroupSeats(group.id, group.seats).then(() => {
             return context.dispatch('reloadGroup', group);
         }).then(() => {
             context.commit('updateGroupsAndSeatsSucceeded');
@@ -177,12 +178,12 @@ export default {
     removeGroup(context, group) {
         context.commit('removeItemRequesting', group);
         context.commit('lastRemovedGroup', group.name);
-        removeGroup(group.id).then(()=>{
+        removeGroup(group.id).then(() => {
             return context.dispatch('listGroups', true);
-        }).then(()=>{
+        }).then(() => {
             context.commit('removeGroup', group);
             context.commit('removeItemSucceeded');
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('removeItemFailed', err.message);
         });
     },
@@ -193,14 +194,14 @@ export default {
             silent: silent,
             page: page
         });
-        getSeatList(page).then((data)=>{
+        getSeatList(page).then((data) => {
             context.commit('listSucceeded', data);
             return data;
         }).then((seats) => {
-            seats.seats.items.forEach((seat)=>{
+            seats.seats.items.forEach((seat) => {
                 context.dispatch('loadCallQueueForSeat', seat.id);
             });
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('listFailed', err.message);
         });
     },
@@ -209,16 +210,16 @@ export default {
         seat.domainId = context.state.pilot.domain_id;
         context.commit('addItemRequesting', seat);
         context.commit('lastAddedSeat', seat.name);
-        addSeat(seat).then(()=>{
+        addSeat(seat).then(() => {
             return context.dispatch('listSeats', true);
-        }).then(()=>{
+        }).then(() => {
             context.commit('addItemSucceeded');
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('addItemFailed', err.message);
         });
     },
     reloadSeat(context, seat) {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             context.commit('seatReloading', seat);
             getSeat(seat.id).then(($seat) => {
                 context.commit('seatReloaded', $seat);
@@ -230,9 +231,9 @@ export default {
                     seat: seat,
                     error: err.message
                 });
-            }).then(()=>{
+            }).then(() => {
                 resolve();
-            }).catch((err)=>{
+            }).catch((err) => {
                 reject(err);
             });
         });
@@ -242,7 +243,7 @@ export default {
         context.commit('lastUpdatedField', {name: seat.name, type: 'seat name'});
         setSeatName(seat.id, seat.name).then(() => {
             return context.dispatch('reloadSeat', seat);
-        }).then(()=>{
+        }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
@@ -251,7 +252,7 @@ export default {
     setSeatExtension(context, seat) {
         context.commit('updateItemRequesting', seat);
         context.commit('lastUpdatedField', {name: seat.extension, type: 'seat extension'});
-        setSeatExtension(seat.id, seat.extension).then(()=>{
+        setSeatExtension(seat.id, seat.extension).then(() => {
             return context.dispatch('reloadSeat', seat);
         }).then(() => {
             context.commit('updateItemSucceeded');
@@ -261,7 +262,7 @@ export default {
     },
     updateGroups(context, seat) {
         context.commit('updateGroupsAndSeatsRequesting', seat);
-        updateSeatGroups(seat.id, seat.groups).then(()=>{
+        updateSeatGroups(seat.id, seat.groups).then(() => {
             return context.dispatch('reloadSeat', seat);
         }).then(() => {
             context.commit('updateGroupsAndSeatsSucceeded');
@@ -272,16 +273,16 @@ export default {
     removeSeat(context, seat) {
         context.commit('removeItemRequesting', seat);
         context.commit('lastRemovedSeat', seat.name);
-        removeSeat(seat.id).then(()=>{
+        removeSeat(seat.id).then(() => {
             return context.dispatch('listSeats', true);
-        }).then(()=>{
+        }).then(() => {
             context.commit('removeItemSucceeded');
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('removeItemFailed', err.message);
         });
     },
     listDevices(context, options) {
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject) => {
             let silent = _.get(options, 'silent', false);
             context.commit('deviceListRequesting', silent);
             getDeviceList({
@@ -289,13 +290,13 @@ export default {
                 profile_id: _.get(context, 'getters.listProfileFilter', null),
                 identifier: _.get(context, 'getters.listMacAddressFilter', null),
                 station_name: _.get(context, 'getters.listStationNameFilter', null)
-            }).then((devices)=>{
+            }).then((devices) => {
                 context.commit('deviceListSucceeded', devices);
-                devices.items.forEach((device)=>{
+                devices.items.forEach((device) => {
                     context.dispatch('loadDevice', device.id);
                 });
                 resolve();
-            }).catch((err)=>{
+            }).catch((err) => {
                 context.commit('deviceListFailed', err.message);
                 reject(err);
             });
@@ -306,78 +307,78 @@ export default {
         getDevice(deviceId, {
             join: true,
             joinLines: false,
-        }).then((device)=>{
+        }).then((device) => {
             context.commit('deviceSucceeded', device);
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('deviceFailed', deviceId, err.message);
         });
     },
     loadProfiles(context) {
         if(!context.getters.hasProfiles) {
-            getProfiles({ all: true }).then((profiles)=>{
+            getProfiles({ all: true }).then((profiles) => {
                 context.commit('profilesSucceeded', profiles);
-                profiles.items.forEach((profile)=>{
+                profiles.items.forEach((profile) => {
                     context.dispatch('loadModelImage', profile.device_id);
                 });
-            }).catch((err)=>{
+            }).catch((err) => {
                 context.commit('profilesFailed', err.message);
             });
         }
     },
     loadModelImage(context, modelId) {
         context.commit('modelImageRequesting', modelId);
-        getModelFrontImage(modelId).then((modelImage)=>{
+        getModelFrontImage(modelId).then((modelImage) => {
             context.commit('modelImageSucceeded', modelImage);
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('modelImageFailed', modelId, err.message);
         });
     },
     createDevice(context, device) {
         context.commit('createDeviceRequesting', device);
-        createDevice(device).then(()=>{
+        createDevice(device).then(() => {
             context.commit('createDeviceSucceeded');
             context.dispatch('listDevices', {
                 page: context.getters.listCurrentPage,
                 silent: true
             });
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('createDeviceFailed', err.message);
         });
     },
     removeDevice(context, device) {
         context.commit('deviceRequesting', device.id);
-        removeDevice(device.id).then(()=>{
+        removeDevice(device.id).then(() => {
             context.commit('deviceRemoved', device);
             context.dispatch('listDevices', {
                 page: context.getters.listCurrentPage,
                 silent: true
             });
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('deviceFailed', device.id, err.message);
         });
     },
     getAllGroupsAndSeats(context) {
         context.commit('groupsAndSeatsRequesting');
-        getAllGroupsAndSeats().then((list)=>{
+        getAllGroupsAndSeats().then((list) => {
             context.commit('groupsAndSeatsSucceeded', list);
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('groupsAndSeatsError', err.message);
         });
     },
     updateDeviceKeys(context, data) {
         context.commit('updateDeviceKeyRequesting', data.device.id);
-        updateDeviceKeys(data.device.id, data.keys).then(()=>{
+        updateDeviceKeys(data.device.id, data.keys).then(() => {
             context.commit('updateDeviceKeySucceeded', data);
             context.dispatch('loadDevice', data.device.id);
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('updateDeviceKeyFailed', data.device.id, err);
         });
     },
     listProfiles(context) {
         context.commit('listProfilesRequesting');
-        getProfiles({ all: true }).then((profiles)=>{
+        getProfiles({ all: true }).then((profiles) => {
             context.commit('listProfilesSucceeded', profiles);
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('listProfilesFailed', err.message);
         });
     },
@@ -475,14 +476,14 @@ export default {
             context.commit('configReloading', config);
             getConfig(config.id).then(($config) => {
                 context.commit('configReloaded', $config);
-            }).catch((err)=>{
+            }).catch((err) => {
                 context.commit('configReloadingFailed', {
                     config: config,
                     error: err.message
                 });
-            }).then(()=>{
+            }).then(() => {
                 resolve();
-            }).catch((err)=>{
+            }).catch((err) => {
                 reject(err);
             });
         });
@@ -496,7 +497,7 @@ export default {
         context.commit('updateItemRequesting', updateItem);
         setQueueLengthConfig(updateItem.id, updateItem.max_queue_length).then(() => {
             return context.dispatch('reloadConfig', updateItem);
-        }).then(()=>{
+        }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
@@ -511,7 +512,7 @@ export default {
         context.commit('updateItemRequesting', updateItem);
         setWrapUpTimeConfig(updateItem.id, updateItem.queue_wrap_up_time).then(() => {
             return context.dispatch('reloadConfig', updateItem);
-        }).then(()=>{
+        }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
@@ -545,11 +546,11 @@ export default {
     },
     removeCallQueue(context, config) {
         context.commit('removeItemRequesting', config);
-        removeCallQueue(config.id).then(()=>{
+        removeCallQueue(config.id).then(() => {
             return context.dispatch('listCallQueueGroupsAndSeats', true);
-        }).then(()=>{
+        }).then(() => {
             context.commit('removeItemSucceeded');
-        }).catch((err)=>{
+        }).catch((err) => {
             context.commit('removeItemFailed', err.message);
         });
     },
@@ -582,5 +583,15 @@ export default {
         }).catch((err) => {
             context.commit('filesForSoundSetFailed',  id, err);
         })
+    },
+    removeSoundSet(context, soundSet) {
+        context.commit('removeItemRequesting', soundSet);
+        removeSoundSet(soundSet.id).then(() => {
+            return context.dispatch('listSoundSets');
+        }).then(() => {
+            context.commit('removeItemSucceeded');
+        }).catch((err) => {
+            context.commit('removeItemFailed', err.message);
+        });
     }
 }

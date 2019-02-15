@@ -712,3 +712,7 @@ export function getSoundFilesGrouped(options) {
         });
     });
 }
+
+export function removeSoundSet(id) {
+    return Vue.http.delete('api/soundsets/' + id);
+}
