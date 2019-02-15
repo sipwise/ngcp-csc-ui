@@ -14,6 +14,7 @@
                 :key="set.id"
                 :set="set"
                 :mobile="isMobile"
+                @remove="removeSoundSetDialog"
             />
         </q-list>
         <div
@@ -22,13 +23,22 @@
         >
             {{ $t('pbxConfig.noSoundSets') }}
         </div>
+        <csc-remove-dialog
+            ref="removeDialog"
+            :title="$t('pbxConfig.removeSoundSetTitle')"
+            :message="removeDialogMessage"
+            @remove="removeSoundSet"
+        />
     </csc-page>
 </template>
 
 <script>
     import CscPage from '../../CscPage'
     import CscPbxSoundSet from './CscPbxSoundSet'
-    import { mapGetters } from 'vuex'
+    import CscRemoveDialog from '../../CscRemoveDialog'
+    import {
+        mapGetters
+    } from 'vuex'
     import {
         Platform,
         QList,
@@ -38,11 +48,13 @@
         components: {
             CscPage,
             CscPbxSoundSet,
+            CscRemoveDialog,
             QList,
             QBtn
         },
         data () {
             return {
+                currentRemovingSoundSet: null
             }
         },
         mounted() {
@@ -56,9 +68,23 @@
             ]),
             isMobile() {
                 return !!Platform.is.mobile;
+            },
+            removeDialogMessage() {
+                if (this.currentRemovingSoundSet !== null) {
+                    return this.$t('pbxConfig.removeSoundSetText', {
+                        set: this.currentRemovingSoundSet.name
+                    });
+                }
             }
         },
         methods: {
+            removeSoundSetDialog(soundSet) {
+                this.currentRemovingSoundSet = soundSet;
+                this.$refs.removeDialog.open();
+            },
+            removeSoundSet() {
+                this.$store.dispatch('pbxConfig/removeSoundSet', this.currentRemovingSoundSet)
+            }
         },
         watch: {
         }

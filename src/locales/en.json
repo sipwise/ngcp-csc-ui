@@ -413,7 +413,9 @@
         "removeConfigText": "You are about to remove call queue for {subscriber}",
         "seconds": "seconds",
         "callers": "callers",
-        "description": "Description"
+        "description": "Description",
+        "removeSoundSetTitle": "Remove sound set",
+        "removeSoundSetText": "You are about to remove the {set} sound set"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

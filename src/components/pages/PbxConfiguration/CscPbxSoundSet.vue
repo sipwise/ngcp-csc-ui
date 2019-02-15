@@ -25,8 +25,12 @@
                 sublabel
             >
                 <div>
-                    <span class="csc-item-label">{{ $t('pbxConfig.description') }}:</span>
-                    <span class="csc-item-value">{{ set.description }}</span>
+                    <span class="csc-item-label">
+                        {{ $t('pbxConfig.description') }}:
+                    </span>
+                    <span class="csc-item-value">
+                        {{ set.description }}
+                    </span>
                 </div>
             </q-item-tile>
             <q-item-tile
@@ -69,6 +73,14 @@
             class="csc-list-actions-pinned"
         >
             <q-item-tile>
+                <q-btn
+                    v-if="expanded"
+                    icon="delete"
+                    :big="mobile"
+                    color="negative"
+                    flat
+                    @click="remove()"
+                />
                 <q-btn
                     :icon="titleIcon"
                     :big="mobile"
@@ -155,6 +167,9 @@
         methods: {
             toggleMain() {
                 this.expanded = !this.expanded;
+            },
+            remove() {
+                this.$emit('remove', this.set);
             }
         },
         watch: {
