@@ -2,11 +2,13 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import localeEn from './locales/en'
+import localeFr from './locales/fr'
 
 Vue.use(VueI18n);
 
 export const locales = {
-    en: localeEn
+    en: localeEn,
+    fr: localeFr
 };
 
 export const i18n = new VueI18n({
