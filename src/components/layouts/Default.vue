@@ -44,12 +44,21 @@
                                 link
                                 class="csc-toolbar-btn-popover"
                             >
+                                <q-item
+                                    @click="navigateToUserSettings"
+                                >
+                                    <q-item-side
+                                        icon="person pin"
+                                        color="primary"
+                                    />
+                                    <q-item-main :label="$t('userSettings')" />
+                                </q-item>
                                 <q-item @click="logout()">
                                     <q-item-side
                                         icon="exit to app"
                                         color="primary"
                                     />
-                                    <q-item-main label="Logout" />
+                                    <q-item-main :label="$t('logout')" />
                                 </q-item>
                             </q-list>
                         </q-popover>
@@ -371,6 +380,10 @@
             },
             sideStateLeft() {
                 return this.sideStates.left;
+            },
+            navigateToUserSettings() {
+                this.$router.push('/user/user-settings');
+                this.$refs.popover.close();
             }
         },
         watch: {

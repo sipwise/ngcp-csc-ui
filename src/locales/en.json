@@ -9,6 +9,8 @@
     "sendFax": "Send Fax",
     "loggedInAs": "Logged in as",
     "notFound" : "404 Not Found",
+    "logout" : "Logout",
+    "userSettings": "User Settings",
     "buttons": {
         "cancel": "Cancel",
         "save": "Save",
@@ -93,6 +95,10 @@
         "voicebox": {
             "title": "Voicebox",
             "subTitle": "Set your voicebox settings"
+        },
+        "userSettings": {
+            "title": "User Settings",
+            "subTitle": "Set your user settings"
         }
     },
     "pages": {
