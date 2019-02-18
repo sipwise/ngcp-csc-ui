@@ -9,6 +9,8 @@
     "sendFax": "Send Fax",
     "loggedInAs": "Logged in as",
     "notFound" : "404 Not Found",
+    "logout" : "Logout",
+    "settings": "User Settings",
     "buttons": {
         "cancel": "Cancel",
         "save": "Save",
@@ -93,6 +95,10 @@
         "voicebox": {
             "title": "Voicebox",
             "subTitle": "Set your voicebox settings"
+        },
+        "userSettings": {
+            "title": "User Settings",
+            "subTitle": "Set your user settings"
         }
     },
     "pages": {
@@ -499,5 +505,8 @@
         "deleteCustomDialogTitle": "Reset busy greeting sound",
         "deleteCustomDialogText": "You are about to reset the custom {type} greeting sound to defaults",
         "unavailable": "unavailable"
+    },
+    "userSettings": {
+        "changeLanguage": "Change Language"
     }
 }
