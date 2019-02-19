@@ -16,6 +16,7 @@ export function getConversations(options) {
             order_by: _.get(options, 'order_by', 'timestamp'),
             order_by_direction: 'desc',
             no_count: true,
+            tz: 'UTC',
             page: _.get(options, 'page', 1),
             rows: _.get(options, 'rows', 25)
         };
