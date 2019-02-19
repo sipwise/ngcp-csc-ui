@@ -24,18 +24,6 @@ export function addDay(date) {
     return newDate;
 }
 
-export function addMonth(date) {
-    let newDate = new Date();
-    newDate.setUTCMonth(date.getUTCMonth() + 1);
-    return newDate;
-}
-
-export function addYear(date) {
-    let newDate = new Date();
-    newDate.setUTCFullYear(date.getUTCFullYear() + 1);
-    return newDate;
-}
-
 export function isToday(date, $today) {
     let today = $today || new Date();
     let todayStart = new Date(today.getTime());
