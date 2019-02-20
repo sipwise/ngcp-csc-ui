@@ -177,18 +177,18 @@
             },
             direction() {
                 if(this.call.direction === 'out') {
-                    return 'to';
+                    return this.$t('pages.conversations.to');
                 }
                 else {
-                    return 'from';
+                    return this.$t('pages.conversations.from');
                 }
             },
             typeTerm() {
                 if(this.call.call_type === 'call') {
-                    return 'Call';
+                    return this.$t('pages.conversations.call');
                 }
                 else {
-                    return 'Call forwarded'
+                    return this.$t('pages.conversations.callForwarded');
                 }
             },
             icon() {
