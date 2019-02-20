@@ -6,57 +6,78 @@
         v-model="sideStates"
         @left-breakpoint="leftBreakpoint"
     >
-            <div
-                id="csc-header"
-                :class="headerClasses"
+            <q-toolbar
+                id="csc-header-toolbar"
+                color="primary"
+                inverted
+                slot="header"
             >
+                <q-btn
+                    v-if="isMobile"
+                    flat
+                    color="white"
+                    @click="$refs.layout.toggleLeft()"
+                >
+                    <q-icon
+                        name="menu"
+                    />
+                </q-btn>
+                <q-btn
+                    class="csc-user-menu-button no-shadow"
+                    v-if="!isMobile"
+                    icon="language"
+                    color="tertiary"
+                    round
+                    small
+                >
+                    <q-popover ref="languagePopover">
+                        <csc-user-menu
+                            :language-label="languageLabel"
+                            @change-language="changeLanguage"
+                        />
+                    </q-popover>
+                </q-btn>
+                <div
+                    class="csc-user-menu-button"
+                >
+                    <q-btn
+                        icon="person"
+                        color="tertiary"
+                        round
+                        small
+                        class="no-shadow"
+                    >
+                    </q-btn>
+                    <span
+                        v-if="!isMobile"
+                        class="csc-username"
+                    >
+                        {{ getUsername }}
+                    </span>
+                    <q-popover>
+                        <q-list
+                            no-border
+                            link
+                        >
+                            <q-item @click="logout()">
+                                <q-item-side
+                                    icon="exit_to_app"
+                                    color="primary"
+                                />
+                                <q-item-main
+                                    label="Logout"
+                                    :sublabel="getUsername"
+                                >
+                                </q-item-main>
+                            </q-item>
+                        </q-list>
+                    </q-popover>
+                </div>
                 <csc-logo
                     id="csc-main-logo"
                     color="light"
                 />
-                <div
-                    class="csc-header-content"
-                >
-                    <q-btn
-                        v-if="isMobile"
-                        flat
-                        @click="$refs.layout.toggleLeft()"
-                    >
-                        <q-icon name="menu" />
-                    </q-btn>
-                    <div
-                        id="csc-user-menu"
-                    >
-                        <q-btn
-                            icon="person"
-                            color="faded"
-                            round
-                            small
-                        />
-                        <span
-                            class="csc-username"
-                        >
-                            {{ getUsername }}
-                        </span>
-                        <q-popover ref="popover">
-                            <q-list
-                                no-border
-                                link
-                                class="csc-toolbar-btn-popover"
-                            >
-                                <q-item @click="logout()">
-                                    <q-item-side
-                                        icon="exit to app"
-                                        color="primary"
-                                    />
-                                    <q-item-main label="Logout" />
-                                </q-item>
-                            </q-list>
-                        </q-popover>
-                    </div>
-
-                </div>
-            </div>
+            </q-toolbar>
         <div
             v-if="!isMobile"
             slot=left
@@ -78,6 +99,12 @@
                 color="default"
             />
         </div>
+        <csc-user-menu
+            slot="left"
+            v-if="isMobile"
+            :language-label="languageLabel"
+            @change-language="changeLanguage"
+        />
         <csc-main-menu
             slot="left"
             :call-state-title="callStateTitle"
@@ -157,11 +184,14 @@
         QItem,
         QItemSide,
         QItemMain,
+        QItemTile,
         QPopover,
         QSideLink,
         QCollapsible
     } from 'quasar-framework'
-    import CscMainMenu from "./MainMenu";
+    import CscMainMenu from "./MainMenu"
+    import CscUserMenu from "./UserMenu"
+    import { i18n } from "../../i18n"
     export default {
         name: 'default',
         data() {
@@ -188,6 +218,7 @@
         ],
         components: {
             CscMainMenu,
+            CscUserMenu,
             QLayout,
             QToolbar,
             QToolbarTitle,
@@ -198,6 +229,7 @@
             QItem,
             QItemSide,
             QItemMain,
+            QItemTile,
             QPopover,
             QSideLink,
             QCollapsible,
@@ -246,7 +278,8 @@
                 'hasSendSmsFeature',
                 'hasSendFaxFeature',
                 'userDataRequesting',
-                'userDataSucceeded'
+                'userDataSucceeded',
+                'changeSessionLocaleState'
             ]),
             ...mapGetters('communication', [
                 'createFaxState',
@@ -300,6 +333,17 @@
                     classes.push('csc-header-full');
                 }
                 return classes;
+            },
+            languageLabel() {
+                let i18nLocale = i18n.locale.split('-')[0];
+                let locale = 'Unknown';
+                if (i18nLocale === 'en') {
+                    locale = 'English';
+                }
+                else if (i18nLocale === 'fr') {
+                    locale = 'français';
+                }
+                return this.$t('language', {language: locale});
             }
         },
         methods: {
@@ -371,6 +415,15 @@
             },
             sideStateLeft() {
                 return this.sideStates.left;
+            },
+            changeLanguage(language) {
+                this.$store.dispatch('user/changeSessionLanguage', language);
+                if(this.isMobile) {
+                    this.$refs.layout.hideLeft();
+                }
+                else {
+                    this.$refs.languagePopover.close();
+                }
             }
         },
         watch: {
@@ -426,6 +479,12 @@
                         this.$refs.call.fitMedia();
                     });
                 }
+                window.scrollTo(0, 0);
+            },
+            changeSessionLocaleState(state) {
+                if (state === 'succeeded') {
+                    showToast(this.$t('toasts.changeSessionLanguageSuccessMessage'));
+                }
             }
         }
     }
@@ -433,6 +492,23 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../themes/app.common'
+    #csc-header-toolbar
+        background-color $secondary
+    #csc-main-logo
+        height 52px
+        width auto
+        right 12px
+        top 4px
+        position absolute
+    .csc-user-menu-button
+        margin 0 0.2rem
+        padding 0.2rem
+        .on-left
+            margin 0
+        .csc-username
+            padding-left 3px
+            font-weight normal
+            color rgba(255,255,255,0.6)
     .page.page-call-active
         padding-bottom 120px
     #main-menu
@@ -502,11 +578,6 @@
         overflow hidden
         z-index 100
         background-color $secondary
-        #csc-main-logo
-            position absolute
-            height $header-height - ($logo-margin * 2)
-            right $logo-margin
-            top $logo-margin
         .csc-header-content
             position absolute
             top 0
@@ -515,12 +586,6 @@
             bottom 0
             padding $logo-margin
             background linear-gradient(to bottom, rgba(21,29,48,0.5) 0%,rgba(21,29,48,0) 75%,rgba(21,29,48,0) 100%)
-    #csc-header.csc-header-mobile
-        #csc-main-logo
-            position absolute
-            height $header-height-mobile - ($logo-margin-mobile * 2)
-            right $logo-margin-mobile
-            top $logo-margin-mobile
     #csc-header.csc-header-full
         left 0
     #csc-user-menu
@@ -562,4 +627,12 @@
         .layout-aside-left
             width auto
             right 0
+    .csc-subitem-label
+        padding-left 20px
+    .csc-toolbar-btn-popover
+        .q-collapsible-sub-item
+            padding 0 16px 0 16px
+    .csc-collapsible-menu
+        .q-icon
+            display none
 </style>

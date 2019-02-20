@@ -2,44 +2,52 @@
     <csc-page
         class="csc-simple-page"
     >
-        <q-field
-            class="csc-form-field"
+        <div
+            class="row"
         >
-            <q-toggle
-                :disable="isReminderLoading"
-                :label="toggleLabel"
-                :value="isReminderActive"
-                @input="toggleReminder()"
-                checked-icon="notifications_active"
-                unchecked-icon="notifications_off"
-            />
-        </q-field>
-        <q-field
-            class="csc-form-field"
-        >
-            <q-datetime
-                format24h
-                dark
-                type="time"
-                :no-clear="true"
-                :disable="isReminderLoading"
-                :float-label="$t('pages.reminder.timeLabel')"
-                :value="normalizedTime"
-                @input="updateTime"
-            />
-        </q-field>
-        <q-field
-            class="csc-form-field"
-        >
-            <q-option-group
-                color="positive"
-                type="radio"
-                :disable="isReminderLoading"
-                :options="recurrenceOptions"
-                :value="reminderRecurrence"
-                @input="updateRecurrence"
-            />
-        </q-field>
+            <div
+                class="col col-xs-12 col-md-6"
+            >
+                <q-field
+                    class="csc-form-field"
+                >
+                    <q-toggle
+                        :disable="isReminderLoading"
+                        :label="toggleLabel"
+                        :value="isReminderActive"
+                        @input="toggleReminder()"
+                        checked-icon="notifications_active"
+                        unchecked-icon="notifications_off"
+                    />
+                </q-field>
+                <q-field
+                    class="csc-form-field"
+                >
+                    <q-datetime
+                        format24h
+                        dark
+                        type="time"
+                        :no-clear="true"
+                        :disable="isReminderLoading"
+                        :float-label="$t('pages.reminder.timeLabel')"
+                        :value="normalizedTime"
+                        @input="updateTime"
+                    />
+                </q-field>
+                <q-field
+                    class="csc-form-field"
+                >
+                    <q-option-group
+                        color="positive"
+                        type="radio"
+                        :disable="isReminderLoading"
+                        :options="recurrenceOptions"
+                        :value="reminderRecurrence"
+                        @input="updateRecurrence"
+                    />
+                </q-field>
+            </div>
+        </div>
     </csc-page>
 </template>
 

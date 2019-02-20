@@ -71,7 +71,7 @@
         .csc-page-content
             min-height 100vh
             padding $flex-gutter-lg
-            padding-top $header-height
+            padding-top 24px
             padding-bottom $call-footer-height
     .csc-page.csc-page-mobile
         .csc-page-content

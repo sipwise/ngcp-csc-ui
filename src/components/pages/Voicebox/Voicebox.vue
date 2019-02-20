@@ -1,6 +1,7 @@
 
 <template>
-    <csc-page class="csc-simple-page">
+    <csc-page
+        class="csc-simple-page">
         <div
             class="row"
         >
