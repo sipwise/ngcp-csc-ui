@@ -2,6 +2,7 @@
 import { isYesterday, isToday, isWithinLastWeek } from '../helpers/date-helper'
 import moment from 'moment'
 import { date } from 'quasar-framework'
+import { i18n } from '../i18n';
 const { formatDate } = date;
 
 export default function(value) {
@@ -17,27 +18,31 @@ export function smartTime($date) {
     let diffMinutes = Math.floor(diffSeconds / 60);
     let momentDate = moment(date);
 
-    let seconds = 'second';
+    let seconds = i18n.t('filters.second');
     if (diffSeconds > 1) {
-        seconds = seconds + "s";
+        seconds = i18n.t('filters.seconds');
     }
 
     let minutes = 'minute';
     if (diffSeconds > 120) {
-        minutes = minutes + "s";
+        minutes = i18n.t('filters.minutes');
     }
 
     if (diffSeconds < 60) {
-        return diffSeconds + ' ' + seconds + ' ago';
+        let descriptor = i18n.t('filters.ago');
+        return `${diffSeconds} ${seconds} ${descriptor}`;
     }
     else if (diffSeconds < 3600) {
-        return diffMinutes + ' ' + minutes + ' ago';
+        let descriptor = i18n.t('filters.ago');
+        return `${diffMinutes} ${minutes} ${descriptor}`;
     }
     else if (isToday(date)) {
-        return 'Today, ' + momentDate.format('HH:mm');
+        let descriptor = i18n.t('filters.today');
+        return `${descriptor}, ${momentDate.format('HH:mm')}`;
     }
     else if (isYesterday(date)) {
-        return 'Yesterday, ' + momentDate.format('HH:mm');
+        let descriptor = i18n.t('filters.yesterday');
+        return `${descriptor}, ${momentDate.format('HH:mm')}`;
     }
     else if (isWithinLastWeek(date)) {
         return momentDate.format('dddd, HH:mm');

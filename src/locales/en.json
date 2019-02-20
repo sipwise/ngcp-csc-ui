@@ -9,6 +9,7 @@
     "sendFax": "Send Fax",
     "loggedInAs": "Logged in as",
     "notFound" : "404 Not Found",
+    "language": "Language ({language})",
     "buttons": {
         "cancel": "Cancel",
         "save": "Save",
@@ -49,6 +50,15 @@
         "macAddress": "Input a valid mac address",
         "pin": "Input a valid PIN",
         "userInfoAndEmpty": "Input contains invalid characters"
+    },
+    "filters": {
+        "second": "second",
+        "seconds": "seconds",
+        "minute": "minute",
+        "minutes": "minutes",
+        "ago": "ago",
+        "today": "Today",
+        "yesterday": "Yesterday"
     },
     "navigation": {
         "home": {
@@ -168,7 +178,11 @@
             "duration": "Duration",
             "seconds": "seconds",
             "cost": "Cost",
-            "toggledSuccessMessage": "Number {type} successfully"
+            "toggledSuccessMessage": "Number {type} successfully",
+            "to": "to",
+            "from": "from",
+            "call": "Call",
+            "callForwarded": "Call forwarded"
         },
         "reminder": {
             "toggleEnabled": "Reminder is enabled",

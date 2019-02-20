@@ -1,6 +1,8 @@
 'use strict';
 
+import { i18n } from '../i18n';
 import _ from 'lodash';
+import { SessionStorage } from 'quasar-framework'
 import {
     login,
     getUserData
@@ -22,7 +24,8 @@ export default {
         loginError: null,
         userDataRequesting: false,
         userDataSucceeded: false,
-        userDataError: null
+        userDataError: null,
+        sessionLocale: null
     },
     getters: {
         isLogged(state) {
@@ -154,7 +157,11 @@ export default {
             state.userDataSucceeded = false;
             state.userDataError = null;
         },
-
+        changeSessionLocale(state, locale) {
+            SessionStorage.set('locale', locale);
+            i18n.locale = locale;
+            state.sessionLocale;
+        }
     },
     actions: {
         login(context, options) {
@@ -204,6 +211,9 @@ export default {
                     context.dispatch('logout');
                 });
             }
+        },
+        changeSessionLanguage(context, locale) {
+            context.commit('changeSessionLocale', locale);
         }
     }
 };
