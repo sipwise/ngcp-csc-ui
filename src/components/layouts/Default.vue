@@ -25,6 +25,53 @@
                         <q-icon name="menu" />
                     </q-btn>
                     <div
+                        v-if="isDesktop"
+                        id="csc-user-menu"
+                    >
+                        <q-btn
+                            icon="language"
+                            color="faded"
+                            round
+                            small
+                        />
+                        <q-popover ref="languagePopover">
+                            <q-list
+                                no-border
+                                link
+                                class="csc-toolbar-btn-popover"
+                            >
+                                <!--TODO: Work on styling-->
+                                <q-item @click="toggleLanguageAccordion()">
+                                    <q-item-side
+                                        color="primary"
+                                    />
+                                    <!--TODO: Fetch current language from i18n config, and not locales. Only prefix 'language' in locales.-->
+                                    <q-item-main
+                                        align-center
+                                        :label="$t('language', {language: 'English'})"
+                                    >
+                                        <q-item-tile
+                                            v-if="languageAccordionExpanded"
+                                            label
+                                            @click="changeToEnglish()"
+                                        >
+                                            <!--TODO: Make computed that fetches string based on i18n config-->
+                                            English
+                                        </q-item-tile>
+                                        <q-item-tile
+                                            v-if="languageAccordionExpanded"
+                                            label
+                                            @click="changeToFrench()"
+                                        >
+                                            <!--TODO: Make computed that fetches string based on i18n config-->
+                                            français
+                                        </q-item-tile>
+                                    </q-item-main>
+                                </q-item>
+                            </q-list>
+                        </q-popover>
+                    </div>
+                    <div
                         id="csc-user-menu"
                     >
                         <q-btn
@@ -38,7 +85,7 @@
                         >
                             {{ getUsername }}
                         </span>
-                        <q-popover ref="popover">
+                        <q-popover ref="subscriberPopover">
                             <q-list
                                 no-border
                                 link
@@ -54,7 +101,6 @@
                             </q-list>
                         </q-popover>
                     </div>
-
                 </div>
             </div>
         <div
@@ -157,6 +203,7 @@
         QItem,
         QItemSide,
         QItemMain,
+        QItemTile,
         QPopover,
         QSideLink,
         QCollapsible
@@ -171,7 +218,8 @@
                     right: false
                 },
                 mobileMenu: null,
-                menuMinimized: false
+                menuMinimized: false,
+                languageAccordionExpanded: false
             }
         },
         mounted() {
@@ -198,6 +246,7 @@
             QItem,
             QItemSide,
             QItemMain,
+            QItemTile,
             QPopover,
             QSideLink,
             QCollapsible,
@@ -371,6 +420,19 @@
             },
             sideStateLeft() {
                 return this.sideStates.left;
+            },
+            changeToEnglish() {
+                this.$store.dispatch('user/changeSessionLanguage', 'en');
+                this.toggleLanguageAccordion();
+                this.$refs.languagePopover.close();
+            },
+            changeToFrench() {
+                this.$store.dispatch('user/changeSessionLanguage', 'fr');
+                this.toggleLanguageAccordion();
+                this.$refs.languagePopover.close();
+            },
+            toggleLanguageAccordion() {
+                this.languageAccordionExpanded = !this.languageAccordionExpanded;
             }
         },
         watch: {
@@ -562,4 +624,7 @@
         .layout-aside-left
             width auto
             right 0
+    .csc-list-collapsible
+        .q-item-icon
+            display none
 </style>

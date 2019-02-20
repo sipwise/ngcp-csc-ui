@@ -1,6 +1,8 @@
 'use strict';
 
+import { i18n } from '../i18n';
 import _ from 'lodash';
+import { SessionStorage } from 'quasar-framework'
 import {
     login,
     getUserData
@@ -199,11 +201,17 @@ export default {
                             root: true
                         });
                     }
+                    context.dispatch('changeSessionLanguage', 'en');
                 }).catch((err)=>{
                     console.error(err);
                     context.dispatch('logout');
                 });
             }
+        },
+        changeSessionLanguage(context, locale) {
+            // TODO
+            SessionStorage.set('locale', locale);
+            i18n.locale = locale;
         }
     }
 };
