@@ -9,6 +9,7 @@
     "sendFax": "Send Fax",
     "loggedInAs": "Logged in as",
     "notFound" : "404 Not Found",
+    "language": "Language ({language})",
     "buttons": {
         "cancel": "Cancel",
         "save": "Save",
@@ -32,7 +33,8 @@
     },
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",
-        "callNotAvailable": "Could not initialize call functionality properly"
+        "callNotAvailable": "Could not initialize call functionality properly",
+        "changeSessionLanguageSuccessMessage": "Session language successfully changed"
     },
     "validationErrors": {
         "generic": "You have invalid form input. Please check and try again.",
@@ -49,6 +51,15 @@
         "macAddress": "Input a valid mac address",
         "pin": "Input a valid PIN",
         "userInfoAndEmpty": "Input contains invalid characters"
+    },
+    "filters": {
+        "second": "second",
+        "seconds": "seconds",
+        "minute": "minute",
+        "minutes": "minutes",
+        "ago": "ago",
+        "today": "Today",
+        "yesterday": "Yesterday"
     },
     "navigation": {
         "home": {
@@ -168,7 +179,11 @@
             "duration": "Duration",
             "seconds": "seconds",
             "cost": "Cost",
-            "toggledSuccessMessage": "Number {type} successfully"
+            "toggledSuccessMessage": "Number {type} successfully",
+            "to": "to",
+            "from": "from",
+            "call": "Call",
+            "callForwarded": "Call forwarded"
         },
         "reminder": {
             "toggleEnabled": "Reminder is enabled",

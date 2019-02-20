@@ -212,7 +212,7 @@
                     return '';
                 }
                 else {
-                    return 'All'
+                    return this.$t('pages.conversations.tabLabelAll');
                 }
             },
             labelCalls() {
@@ -220,7 +220,7 @@
                     return '';
                 }
                 else {
-                    return 'Calls'
+                    return this.$t('pages.conversations.tabLabelCalls');
                 }
             },
             labelFaxes() {
@@ -228,7 +228,7 @@
                     return '';
                 }
                 else {
-                    return 'Faxes'
+                    return this.$t('pages.conversations.tabLabelFaxes');
                 }
             },
             labelVoicemails() {
@@ -236,7 +236,7 @@
                     return '';
                 }
                 else {
-                    return 'Voicemails'
+                    return this.$t('pages.conversations.tabLabelVoicemails');
                 }
             },
             isCalling() {
