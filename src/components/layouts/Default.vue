@@ -25,6 +25,24 @@
                         <q-icon name="menu" />
                     </q-btn>
                     <div
+                        v-if="!isMobile"
+                        id="csc-user-menu"
+                    >
+                        <q-btn
+                            icon="language"
+                            color="faded"
+                            round
+                            small
+                        />
+                        <q-popover ref="languagePopover">
+                            <csc-user-menu
+                                :language-label="languageLabel"
+                                @change-to-english="changeToEnglish()"
+                                @change-to-french="changeToFrench()"
+                            />
+                        </q-popover>
+                    </div>
+                    <div
                         id="csc-user-menu"
                     >
                         <q-btn
@@ -38,7 +56,7 @@
                         >
                             {{ getUsername }}
                         </span>
-                        <q-popover ref="popover">
+                        <q-popover ref="subscriberPopover">
                             <q-list
                                 no-border
                                 link
@@ -54,7 +72,6 @@
                             </q-list>
                         </q-popover>
                     </div>
-
                 </div>
             </div>
         <div
@@ -78,6 +95,13 @@
                 color="default"
             />
         </div>
+        <csc-user-menu
+            slot="left"
+            v-if="isMobile"
+            :language-label="languageLabel"
+            @change-to-english="changeToEnglish()"
+            @change-to-french="changeToFrench()"
+        />
         <csc-main-menu
             slot="left"
             :call-state-title="callStateTitle"
@@ -157,11 +181,14 @@
         QItem,
         QItemSide,
         QItemMain,
+        QItemTile,
         QPopover,
         QSideLink,
         QCollapsible
     } from 'quasar-framework'
-    import CscMainMenu from "./MainMenu";
+    import CscMainMenu from "./MainMenu"
+    import CscUserMenu from "./UserMenu"
+    import { i18n } from "../../i18n"
     export default {
         name: 'default',
         data() {
@@ -188,6 +215,7 @@
         ],
         components: {
             CscMainMenu,
+            CscUserMenu,
             QLayout,
             QToolbar,
             QToolbarTitle,
@@ -198,6 +226,7 @@
             QItem,
             QItemSide,
             QItemMain,
+            QItemTile,
             QPopover,
             QSideLink,
             QCollapsible,
@@ -246,7 +275,8 @@
                 'hasSendSmsFeature',
                 'hasSendFaxFeature',
                 'userDataRequesting',
-                'userDataSucceeded'
+                'userDataSucceeded',
+                'changeSessionLocaleState'
             ]),
             ...mapGetters('communication', [
                 'createFaxState',
@@ -300,6 +330,17 @@
                     classes.push('csc-header-full');
                 }
                 return classes;
+            },
+            languageLabel() {
+                let i18nLocale = i18n.locale.split('-')[0];
+                let locale = 'Unknown';
+                if (i18nLocale === 'en') {
+                    locale = 'English';
+                }
+                else if (i18nLocale === 'fr') {
+                    locale = 'français';
+                }
+                return this.$t('language', {language: locale});
             }
         },
         methods: {
@@ -371,6 +412,14 @@
             },
             sideStateLeft() {
                 return this.sideStates.left;
+            },
+            changeToEnglish() {
+                this.$store.dispatch('user/changeSessionLanguage', 'en');
+                this.$refs.layout.hideLeft();
+            },
+            changeToFrench() {
+                this.$store.dispatch('user/changeSessionLanguage', 'fr');
+                this.$refs.layout.hideLeft();
             }
         },
         watch: {
@@ -425,6 +474,11 @@
                     this.$nextTick(()=>{
                         this.$refs.call.fitMedia();
                     });
+                }
+            },
+            changeSessionLocaleState(state) {
+                if (state === 'succeeded') {
+                    showToast(this.$t('toasts.changeSessionLanguageSuccessMessage'));
                 }
             }
         }
@@ -562,4 +616,12 @@
         .layout-aside-left
             width auto
             right 0
+    .csc-subitem-label
+        padding-left 20px
+    .csc-toolbar-btn-popover
+        .q-collapsible-sub-item
+            padding 0 16px 0 16px
+    .csc-collapsible-menu
+        .q-icon
+            display none
 </style>

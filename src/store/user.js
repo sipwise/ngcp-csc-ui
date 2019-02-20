@@ -1,6 +1,9 @@
 'use strict';
 
+import { i18n } from '../i18n';
 import _ from 'lodash';
+import { SessionStorage } from 'quasar-framework'
+import { RequestState } from './common'
 import {
     login,
     getUserData
@@ -22,7 +25,10 @@ export default {
         loginError: null,
         userDataRequesting: false,
         userDataSucceeded: false,
-        userDataError: null
+        userDataError: null,
+        sessionLocale: null,
+        changeSessionLocaleState: RequestState.initiated,
+        changeSessionLocaleError: null
     },
     getters: {
         isLogged(state) {
@@ -105,6 +111,9 @@ export default {
             catch(err) {
                 return null;
             }
+        },
+        changeSessionLocaleState(state) {
+            return state.changeSessionLocaleState;
         }
     },
     mutations: {
@@ -154,7 +163,20 @@ export default {
             state.userDataSucceeded = false;
             state.userDataError = null;
         },
-
+        changeSessionLocaleRequesting(state) {
+            state.changeSessionLocaleState = RequestState.requesting;
+            state.changeSessionLocaleError = null;
+        },
+        changeSessionLocaleSucceeded(state, locale) {
+            i18n.locale = locale;
+            state.sessionLocale = locale;
+            state.changeSessionLocaleState = RequestState.succeeded;
+            state.changeSessionLocaleError = null;
+        },
+        changeSessionLocaleFailed(state, error) {
+            state.changeSessionLocaleState = RequestState.failed;
+            state.changeSessionLocaleError = error;
+        }
     },
     actions: {
         login(context, options) {
@@ -203,6 +225,18 @@ export default {
                     console.error(err);
                     context.dispatch('logout');
                 });
+            }
+        },
+        changeSessionLanguage(context, locale) {
+            context.commit('changeSessionLocaleRequesting');
+            try {
+                SessionStorage.set('locale', locale);
+            }
+            catch(error) {
+                context.commit('changeSessionLocaleFailed', error);
+            }
+            finally {
+                context.commit('changeSessionLocaleSucceeded', locale);
             }
         }
     }
