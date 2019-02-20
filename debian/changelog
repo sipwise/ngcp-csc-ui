@@ -1,3 +1,12 @@
+ngcp-csc-ui (7.0.2.2+0~mr7.0.2.2) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [994b94e] TT#52974 Call history shows wrong call log time
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 20 Feb 2019 13:37:39 +0100
+
 ngcp-csc-ui (7.0.2.1+0~mr7.0.2.1) unstable; urgency=medium
 
   * New release.
