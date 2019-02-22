@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba076199_0bbb2110",
+        "filename": "src/store/user.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2019-02-22T12:30:19Z",
+      "side": 1,
+      "message": "Hans-Peter: I have an issue that I\u0027ve been unable to solve.\n\nThis getter updates only on the first change of language, and not on subsequent ones. I suspect it has to do with the change being to fast from \u0027suceeded\u0027 to \u0027requesting\u0027 to \u0027succeeded\u0027, for the getter to react. Tried with Vue.set(), \"immediate: true\" in watcher, and referencing the state directly with mapState. \n\nCould you have a look, please?",
+      "range": {
+        "startLine": 115,
+        "startChar": 0,
+        "endLine": 117,
+        "endChar": 9
+      },
+      "revId": "217b01d464bfbfaa5281728ec5fda81564412dba",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
