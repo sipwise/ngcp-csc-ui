@@ -14,18 +14,21 @@
                 <span class="gt-sm csc-entity-title">
                     {{ direction }}
                 </span>
-                <span class="csc-entity-title">
+                <span class="csc-entity-title csc-phone-number">
                     {{ fax.caller | numberFormat }}
                 </span>
             </q-item-tile>
             <q-item-tile
                 sublabel
-            >{{ fax.start_time | smartTime }}
+            >
+                {{ fax.start_time | smartTime }}
             </q-item-tile>
             <q-item-tile
                 v-if="fax.pages === 0"
                 sublabel
-            >No pages</q-item-tile>
+            >
+                No pages
+            </q-item-tile>
             <q-item-tile
                 v-else-if="fax.pages === 1"
                 sublabel
