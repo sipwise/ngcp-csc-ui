@@ -128,9 +128,6 @@
 </template>
 
 <script>
-    import {
-        normalizeDestination
-    } from '../../filters/number-format'
     import platformMixin from '../../mixins/platform'
     import {
         startLoading,
@@ -264,9 +261,6 @@
                     classes.push('csc-menu-minimized');
                 }
                 return classes;
-            },
-            callNumberFormatted() {
-                return normalizeDestination(this.callNumber);
             },
             pageTitleExt() {
                 if(this.isHome) {
