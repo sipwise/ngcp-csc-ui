@@ -270,9 +270,6 @@
 </template>
 
 <script>
-    import {
-        normalizeDestination
-    } from '../../filters/number-format'
     import platformMixin from '../../mixins/platform'
     import {
         startLoading,
@@ -398,9 +395,6 @@
                     classes.push('csc-layout-call-active');
                 }
                 return classes;
-            },
-            callNumberFormatted() {
-                return normalizeDestination(this.callNumber);
             },
             pageTitleExt() {
                 if(this.isHome) {

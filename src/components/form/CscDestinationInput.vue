@@ -14,12 +14,10 @@
 
 <script>
     import {
-        normalizeNumber,
         rawNumber
     } from '../../filters/number-format'
     import {
-        QInput,
-        Platform
+        QInput
     } from 'quasar-framework'
 
     export default {
@@ -41,8 +39,7 @@
                 this.$emit('submit');
             },
             inputDestination(value) {
-                this.destination = normalizeNumber(value, Platform.is.mobile);
-                this.$emit('input', rawNumber(this.destination));
+                this.$emit('input', rawNumber(value));
             }
         }
     }
