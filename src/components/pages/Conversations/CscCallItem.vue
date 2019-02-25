@@ -19,6 +19,12 @@
                 <span
                     class="csc-entity-title csc-phone-number"
                 >
+                    <!--TODO:  - also in Fax and Voicemail. This filter is alias-->
+                    <!--for normalizeDestination, which CscCall.vue also uses-->
+                    <!--TODO: - Fax and Voicemail uses numberFormat filter -->
+                    <!--instead, for some reason-->
+                    <!--NOTE: normalizeDestination and numberFormat filters both-->
+                    <!--found in src/filters/number-format-->
                     {{ number | destinationFormat }}
                 </span>
             </q-item-tile>

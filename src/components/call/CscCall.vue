@@ -46,18 +46,25 @@
                             />
                             <span
                                 v-if="isInitiating"
-                            >{{ $t('call.initiating', {number: callNumberFormatted}) }}</span>
+                            >
+                                <!--TODO-->
+                                {{ $t('call.initiating', {number: callNumberFormatted}) }}</span>
                             <span
                                 v-else-if="isRinging"
-                            >{{ $t('call.ringing', {number: callNumberFormatted}) }}</span>
+                            >
+                                <!--TODO-->
+                                {{ $t('call.ringing', {number: callNumberFormatted}) }}</span>
                             <span
                                 v-else-if="isIncoming"
-                            >{{ $t('call.incoming', {number: callNumberFormatted}) }}</span>
+                            >
+                                <!--TODO-->
+                                {{ $t('call.incoming', {number: callNumberFormatted}) }}</span>
                         </div>
                         <div
                             v-else-if="isEnded"
                             class="csc-call-error"
                         >
+                            <!--TODO-->
                             {{ endedReason | startCase }} ({{callNumberFormatted}})
                         </div>
                     </div>
@@ -84,6 +91,7 @@
                     />
                     <div
                     >
+                        <!--TODO-->
                         {{ $t('call.established', {number: callNumberFormatted}) }}
                     </div>
                     <q-btn
@@ -276,6 +284,7 @@
                         <div
                             class="csc-call-info-number"
                         >
+                            <!--TODO-->
                             {{ callNumberFormatted }}
                         </div>
                     </div>
@@ -292,6 +301,7 @@
                     <div
                         class="csc-call-info-number"
                     >
+                        <!--TODO-->
                         {{ callNumberFormatted }}
                     </div>
                 </div>
@@ -436,6 +446,7 @@
                 return this.callState === 'ended';
             },
             callNumberFormatted() {
+                // TODO
                 return normalizeDestination(this.callNumber);
             },
             isContentVisible() {

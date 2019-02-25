@@ -21,7 +21,7 @@ export default function numberFormat(number) {
         let destination = url.parse(number, true);
         let extractedNumber = destination.auth.split(':')[0];
         let normalizedNumber = normalizeNumber(extractedNumber);
-        if(normalizedNumber !== extractedNumber) {
+        if (normalizedNumber !== extractedNumber) {
             return normalizedNumber;
         }
         else {
@@ -34,17 +34,23 @@ export default function numberFormat(number) {
 }
 
 export function normalizeNumber(number, excludeLibPhoneNumber) {
-    if(_.isString(number)) {
+    // NOTE: Used by both numberFormat and normalizeDestination, so should
+    // be enough to do fix here
+    //excludeLibPhoneNumber = true;
+    if (_.isString(number)) {
         let normalizedNumber = number.replace(/\s*/g, '');
-        if(normalizedNumber.match(/^\+?[0-9]+$/)) {
-            if(normalizedNumber.match(/^\+/) === null) {
+        if (normalizedNumber.match(/^\+?[0-9]+$/)) {
+            if (normalizedNumber.match(/^\+/) === null) {
                 normalizedNumber = '+' + normalizedNumber;
             }
-            if(excludeLibPhoneNumber === true) {
+            if (excludeLibPhoneNumber === true) {
                 return normalizedNumber;
             }
             else {
                 try {
+                    // TODO: Only place google-libphonenumber is used, but does
+                    // it add + at all?? Answer: yes, and even more (example,
+                    // 43993006 became +4943993006
                     return phoneUtil.format(phoneUtil.parse(normalizedNumber, 'DE'),
                         PhoneNumberFormat.INTERNATIONAL);
                 }
@@ -70,7 +76,7 @@ export function normalizeDestination(destination) {
     try {
 
         destination = destination.replace(/\s*/g, '');
-        if(destination.match(/^sip:/g) === null && destination.match(/^sips:/g) === null &&
+        if (destination.match(/^sip:/g) === null && destination.match(/^sips:/g) === null &&
             destination.match(/^\+?[0-9]+$/) === null) {
             destination = 'sip:' + destination;
         }
