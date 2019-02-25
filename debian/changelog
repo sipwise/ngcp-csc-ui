@@ -1,3 +1,26 @@
+ngcp-csc-ui (7.3.0.0+0~mr7.3.0.0) unstable; urgency=medium
+
+  [ raxelsen ]
+  * [c8b4859] TT#48955 Use the CustomDialpad instead of native
+  * [a240993] TT#52575 Replace hardcoded english terms
+  * [c445837] TT#52352 Loading call queue preferences fail
+  * [fb4ba30] TT#47510 Extra page section for managing SoundSets
+  * [d5bc3d4] TT#52801 Subscriber Admin wants to remove soundset
+  * [1f051f4] TT#51303 API method to fetch blocked numbers
+  * [769b2fd] TT#52974 Call history shows wrong call log time
+
+  [ Hans-Peter Herzog ]
+  * [35989a7] TT#45554 WebRTC media stack refactoring
+  * [d16320e] TT#50227 Call: Fix screen sharing issues with Safari
+  * [e33e385] TT#50350 Call: Fix video element issue in Safari
+  * [dfd5157] TT#47538 Call: Fit the remote video always entirely to the current resolution and orientation
+  * [99e7725] TT#51083 Call: Fix number input position
+  * [0193351] TT#52484 Call: Fix resizing of the minimized remote video
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 25 Feb 2019 22:54:45 +0100
+
 ngcp-csc-ui (7.2.0.0+0~mr7.2.0.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
