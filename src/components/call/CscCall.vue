@@ -46,13 +46,16 @@
                             />
                             <span
                                 v-if="isInitiating"
-                            >{{ $t('call.initiating', {number: callNumberFormatted}) }}</span>
+                            >
+                                {{ $t('call.initiating', {number: callNumberFormatted}) }}</span>
                             <span
                                 v-else-if="isRinging"
-                            >{{ $t('call.ringing', {number: callNumberFormatted}) }}</span>
+                            >
+                                {{ $t('call.ringing', {number: callNumberFormatted}) }}</span>
                             <span
                                 v-else-if="isIncoming"
-                            >{{ $t('call.incoming', {number: callNumberFormatted}) }}</span>
+                            >
+                                {{ $t('call.incoming', {number: callNumberFormatted}) }}</span>
                         </div>
                         <div
                             v-else-if="isEnded"
