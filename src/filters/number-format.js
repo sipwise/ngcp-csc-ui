@@ -1,12 +1,6 @@
 
 import _ from 'lodash';
 import url from 'url';
-import {
-    PhoneNumberUtil,
-    PhoneNumberFormat
-} from 'google-libphonenumber';
-
-var phoneUtil = PhoneNumberUtil.getInstance();
 
 const DestinationHosts = {
     VoiceBox: 'voicebox.local',
@@ -17,49 +11,9 @@ const DestinationHosts = {
 };
 
 export default function numberFormat(number) {
-    try {
-        let destination = url.parse(number, true);
-        let extractedNumber = destination.auth.split(':')[0];
-        let normalizedNumber = normalizeNumber(extractedNumber);
-        if(normalizedNumber !== extractedNumber) {
-            return normalizedNumber;
-        }
-        else {
-            return extractedNumber;
-        }
-    }
-    catch(err) {
-        return normalizeNumber(number);
-    }
-}
-
-export function normalizeNumber(number, excludeLibPhoneNumber) {
-    if(_.isString(number)) {
-        let normalizedNumber = number.replace(/\s*/g, '');
-        if(normalizedNumber.match(/^\+?[0-9]+$/)) {
-            if(normalizedNumber.match(/^\+/) === null) {
-                normalizedNumber = '+' + normalizedNumber;
-            }
-            if(excludeLibPhoneNumber === true) {
-                return normalizedNumber;
-            }
-            else {
-                try {
-                    return phoneUtil.format(phoneUtil.parse(normalizedNumber, 'DE'),
-                        PhoneNumberFormat.INTERNATIONAL);
-                }
-                catch(err) {
-                    return normalizedNumber;
-                }
-            }
-        }
-        else {
-            return number;
-        }
-    }
-    else {
-        return number;
-    }
+    let destination = url.parse(number, true);
+    let extractedNumber = destination.auth ? destination.auth.split(':')[0] : destination.pathname;
+    return extractedNumber;
 }
 
 export function rawNumber(number) {
@@ -70,7 +24,7 @@ export function normalizeDestination(destination) {
     try {
 
         destination = destination.replace(/\s*/g, '');
-        if(destination.match(/^sip:/g) === null && destination.match(/^sips:/g) === null &&
+        if (destination.match(/^sip:/g) === null && destination.match(/^sips:/g) === null &&
             destination.match(/^\+?[0-9]+$/) === null) {
             destination = 'sip:' + destination;
         }
@@ -78,7 +32,7 @@ export function normalizeDestination(destination) {
         let parsedDestination = url.parse(destination, true);
         let authParts = parsedDestination.auth.split(':');
         let host = parsedDestination.host;
-        let normalizedNumber = normalizeNumber(authParts[0]);
+        let normalizedNumber = authParts[0];
         let isNumber = normalizedNumber !== authParts[0];
 
         if (host === DestinationHosts.VoiceBox) {
@@ -106,8 +60,8 @@ export function normalizeDestination(destination) {
             return normalizedNumber;
         }
     }
-    catch(err) {
-        return normalizeNumber(destination);
+    catch (err) {
+        return destination;
     }
 }
 
