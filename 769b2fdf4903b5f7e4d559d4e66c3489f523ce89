@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba076199_71ddea6f",
+        "filename": "src/filters/number-format.js",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2019-02-25T13:53:17Z",
+      "side": 0,
+      "message": "Hans-Peter: Shall we also remove google-libphonenumber from package.json and npm-shrinkwrap? If so, is it enough to do \"npm remove google-libphonenumber\" and remove manually in npm-shrinkwrap.json? If no, please advice.",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 31
+      },
+      "revId": "769b2fdf4903b5f7e4d559d4e66c3489f523ce89",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
