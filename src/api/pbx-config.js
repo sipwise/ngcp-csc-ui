@@ -628,7 +628,11 @@ export function getSoundHandles(options) {
         options = _.merge(options, {
             path: 'api/soundhandles/',
             root: '_embedded.ngcp:soundhandles',
-            all: true
+            all: true,
+            params: {
+                order_by: 'name',
+                order_by_direction: 'asc'
+            }
         });
         getList(options).then((list) => {
             // Ngcp-panel only lists three groups ('digits', 'music_on_hold'
@@ -697,14 +701,15 @@ export function getSoundFilesGrouped(options) {
             return handles;
         }).then((merged) => {
             let groupedFiles = {
-                groups: _(merged)
+                groups: _.sortBy(
+                    _(merged)
                     .groupBy('group')
                     .map((items, group) => {
                         return {
                             name: group,
                             handles: items
                         };
-                    }).value()
+                    }).value(), 'name')
             };
             resolve(groupedFiles);
         }).catch((err)=>{

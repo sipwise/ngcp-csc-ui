@@ -1,60 +1,34 @@
 <template>
     <q-item
         highlight
+        class="csc-sound-item"
     >
-        <q-item-main
-            v-if="!mobile"
-            class="row"
-        >
-
-            <!--NOTE: Would like some feedback on this, please. Made separate styling-->
-            <!--for mobile/desktop, as with 60 or more items in some of the groups-->
-            <!--I don't see a better way to display it. Will clean up css once-->
-            <!--feedback is implemented-->
-            <div class="col">
-                {{ item.handle }}
-            </div>
-            <div class="col">
-                {{ item.filename }}
-            </div>
-            <div class="col">
-                <q-checkbox
-                    readonly
-                    :value="loop"
-                />
-            </div>
-        </q-item-main>
-        <q-item-main
-            v-if="mobile"
-            class="sound-item-row mobile"
-        >
-            <div>
-                <span class="item-sublabel">
-                    Handle:
-                </span>
-                <span class="item-values">
-                    {{ item.handle }}
-                </span>
-            </div>
-            <div>
-                <span class="item-sublabel">
-                    Filename:
-                </span>
-                <span class="item-values">
-                    {{ item.filename }}
-                </span>
-            </div>
-            <div>
-                <span class="item-sublabel">
-                    Loopplay:
-                </span>
-                <span class="item-values">
-                    <q-checkbox
-                        readonly
-                        :value="loop"
+        <q-item-main>
+            <csc-sound-file-upload
+                :ref="refName"
+                icon="music_note"
+                file-types=".wav,.mp3"
+                :label="handleName"
+                :value="fileLabel"
+                :disabled="true"
+                :hide-player="!file"
+            >
+                <div
+                    slot="additional"
+                >
+                    <q-toggle
+                        :class="loopClasses"
+                        :label="$t('pbxConfig.playingInLoop')"
+                        v-model="loop"
+                        :disable="true"
+                        checked-icon="loop"
+                        unchecked-icon="loop"
                     />
-                </span>
-            </div>
+                    <q-tooltip>
+                        {{ loopTooltipLabel }}
+                    </q-tooltip>
+                </div>
+            </csc-sound-file-upload>
         </q-item-main>
     </q-item>
 </template>
@@ -63,43 +37,66 @@
     import {
         QList,
         QItem,
-        QItemSide,
         QItemMain,
-        QItemTile,
-        QBtn,
-        QIcon,
-        QCollapsible,
-        QCheckbox
+        QToggle,
+        QTooltip
     } from 'quasar-framework'
+    import CscSoundFileUpload from '../../form/CscSoundFileUpload'
     export default {
         name: 'csc-pbx-sound-item',
         props: {
             item: Object,
-            mobile: Boolean
+            group: String
         },
         components: {
+            CscSoundFileUpload,
             QList,
             QItem,
-            QItemSide,
             QItemMain,
-            QItemTile,
-            QBtn,
-            QIcon,
-            QCollapsible,
-            QCheckbox
+            QToggle,
+            QTooltip
         },
         data () {
             return {
-                loop: this.hasLoop()
+                loop: this.hasLoop(),
+                file: this.hasFile()
             }
         },
         mounted() {
         },
         computed: {
+            handleName() {
+                return `${this.group}: ${this.item.handle}`;
+            },
+            refName() {
+                return `handle-${this.item.handle}`;
+            },
+            fileLabel() {
+                let noSound = this.$t('pbxConfig.noSoundUploaded');
+                return this.item.filename.length > 0 ? this.item.filename : noSound;
+            },
+            loopClasses() {
+                let classes = ['csc-additional'];
+                if(this.loop) {
+                    classes.push('csc-toggle-enabled');
+                }
+                else {
+                    classes.push('csc-toggle-disabled');
+                }
+                return classes;
+            },
+            loopTooltipLabel() {
+                return this.loop ?
+                    this.$t('pbxConfig.dontPlayInLoop') :
+                    this.$t('pbxConfig.playInLoop');
+            }
         },
         methods: {
             hasLoop() {
                 return !!this.item.loopplay;
+            },
+            hasFile() {
+                return this.item.filename.length > 0;
             }
         },
         watch: {
@@ -109,21 +106,12 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl';
-    @import '../../../themes/quasar.variables.styl';
 
-    .sound-item-row.mobile
-        padding 16px
-        padding-left 0px
-        display block
-        color $white
-        white-space nowrap
-        overflow hidden
-        font-size 16px
+    .csc-sound-item
+        .q-field-icon
+            padding-left 12px
 
-        .item-values
-            color $white
-
-        .item-sublabel
-            color $light
+        .csc-upload-field
+            margin 0 0 10px 0
 
 </style>
