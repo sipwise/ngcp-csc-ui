@@ -422,7 +422,8 @@
         "callers": "callers",
         "description": "Description",
         "removeSoundSetTitle": "Remove sound set",
-        "removeSoundSetText": "You are about to remove the {set} sound set"
+        "removeSoundSetText": "You are about to remove the {set} sound set",
+        "noSoundUploaded": "No sound uploaded"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

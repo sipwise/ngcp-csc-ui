@@ -2,12 +2,23 @@
     <q-field
         class="csc-upload-field"
         :icon="icon"
+        :label="noFloatLabel"
     >
+        <!--TODO: Simplify noFloat/hidePlayer/width into one single param-->
         <q-input
+            v-if="!noFloat"
             :disable="isPlaying"
             dark
             readonly
             :float-label="label"
+            :value="inputValue"
+            :after="inputButtons"
+        />
+        <q-input
+            v-if="noFloat"
+            :disable="isPlaying"
+            dark
+            readonly
             :value="inputValue"
             :after="inputButtons"
         />
@@ -38,6 +49,7 @@
             />
         </div>
         <csc-audio-player
+            v-if="!hidePlayer"
             ref="audioPlayer"
             :file-url="fileUrl"
             :loaded="loaded"
@@ -48,6 +60,7 @@
             @stopped="audioPlayerStopped"
         />
         <div
+            v-if="!hidePlayer"
             class="csc-file-upload-actions"
         >
             <q-btn
@@ -110,7 +123,11 @@
             'progress',
             'fileTypes',
             'fileUrl',
-            'loaded'
+            'loaded',
+            'width',
+            'disabled',
+            'hidePlayer',
+            'noFloat'
         ],
         data () {
             return {
@@ -133,7 +150,7 @@
             inputButtons() {
                 let buttons = [];
                 let self = this;
-                if (this.isPlaying) {
+                if (this.isPlaying || this.disabled) {
                     buttons.push({
                             icon: 'folder',
                             error: false,
@@ -155,6 +172,14 @@
                     );
                 }
                 return buttons;
+            },
+            noFloatLabel() {
+                if (this.noFloat) {
+                    return this.label;
+                }
+                else {
+                    return '';
+                }
             }
         },
         methods: {

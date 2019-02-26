@@ -7,7 +7,7 @@
         >
             <q-icon
                 size="24px"
-                name="music_note"
+                name="queue_music"
                 color="white"
             />
         </q-item-side>
@@ -63,8 +63,6 @@
                     v-for="(group, index) in set.groups"
                     :group="group"
                     :key="index"
-                    :highlight="!mobile"
-                    :mobile="mobile"
                 />
             </q-item-tile>
         </q-item-main>
