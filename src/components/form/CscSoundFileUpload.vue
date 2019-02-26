@@ -2,22 +2,44 @@
     <q-field
         class="csc-upload-field"
         :icon="icon"
+        :label="noFloatLabel"
     >
-        <q-input
-            :disable="isPlaying"
-            dark
-            readonly
-            :float-label="label"
-            :value="inputValue"
-            :after="inputButtons"
-        />
-        <input
-            v-show="false"
-            :accept="fileTypes"
-            ref="fileUpload"
-            type="file"
-            @change="inputChange"
-        />
+        <!--TODO: 1. See if you need to simplify noFloat/hidePlayer/width into one single param-->
+        <!--TODO: 2. Try making it work to simply pass in :float-label if float and :label if normal-->
+        <!--TODO: 3. Adjust styling with reactively added classes depending on whether slot is used or not-->
+        <div class="row items-end">
+            <slot
+                class="col-auto"
+                name="additional"
+            >
+            </slot>
+            <q-input
+                class="col-xl col-sm-12"
+                v-if="!noFloat"
+                :disable="isPlaying"
+                dark
+                readonly
+                :float-label="label"
+                :value="inputValue"
+                :after="inputButtons"
+            />
+            <q-input
+                class="col-xl col-sm-12"
+                v-if="noFloat"
+                :disable="isPlaying"
+                dark
+                readonly
+                :value="inputValue"
+                :after="inputButtons"
+            />
+            <input
+                v-show="false"
+                :accept="fileTypes"
+                ref="fileUpload"
+                type="file"
+                @change="inputChange"
+            />
+        </div>
         <div
             v-show="uploading"
             class="row no-wrap csc-upload-progress-field"
@@ -38,6 +60,7 @@
             />
         </div>
         <csc-audio-player
+            v-if="!hidePlayer"
             ref="audioPlayer"
             :file-url="fileUrl"
             :loaded="loaded"
@@ -48,6 +71,7 @@
             @stopped="audioPlayerStopped"
         />
         <div
+            v-if="!hidePlayer"
             class="csc-file-upload-actions"
         >
             <q-btn
@@ -110,7 +134,10 @@
             'progress',
             'fileTypes',
             'fileUrl',
-            'loaded'
+            'loaded',
+            'disabled',
+            'hidePlayer',
+            'noFloat'
         ],
         data () {
             return {
@@ -133,7 +160,7 @@
             inputButtons() {
                 let buttons = [];
                 let self = this;
-                if (this.isPlaying) {
+                if (this.isPlaying || this.disabled) {
                     buttons.push({
                             icon: 'folder',
                             error: false,
@@ -155,6 +182,14 @@
                     );
                 }
                 return buttons;
+            },
+            noFloatLabel() {
+                if (this.noFloat) {
+                    return this.label;
+                }
+                else {
+                    return '';
+                }
             }
         },
         methods: {
@@ -208,6 +243,9 @@
 
         .q-field-icon
             color $primary
+
+        .items-end
+            margin-left -1.3rem
 
     .csc-upload-field.csc-player-margin
         margin-bottom 0

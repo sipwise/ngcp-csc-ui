@@ -1,37 +1,25 @@
 <template>
+    <!--TODO: 4. Adjust collapsible header backgroung color and position of label-->
     <q-collapsible
-        :label="group.name"
+        :label="groupLabel"
     >
         <q-list
             striped-odd
             no-border
             multiline
-            :highlight="!mobile"
         >
-            <q-item
-                v-if="!mobile"
-            >
-                <div class="col">
-                    Handle
-                </div>
-                <div class="col">
-                    Filename
-                </div>
-                <div class="col">
-                    Loopplay
-                </div>
-            </q-item>
             <csc-pbx-sound-item
                 v-for="item in group.handles"
                 :key="item.id"
                 :item="item"
-                :mobile="mobile"
+                :group="groupLabel"
             />
         </q-list>
     </q-collapsible>
 </template>
 
 <script>
+    import _ from 'lodash'
     import CscPbxSoundItem from './CscPbxSoundItem'
     import {
         QList,
@@ -47,8 +35,7 @@
     export default {
         name: 'csc-pbx-sound-group',
         props: {
-            group: Object,
-            mobile: Boolean
+            group: Object
         },
         components: {
             CscPbxSoundItem,
@@ -69,6 +56,11 @@
         mounted() {
         },
         computed: {
+            groupLabel() {
+                let regex = /[-_]/g;
+                let name = _.capitalize(this.group.name.replace(regex, ' '));
+                return name;
+            }
         },
         methods: {
         },
