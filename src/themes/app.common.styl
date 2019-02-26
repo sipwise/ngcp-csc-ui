@@ -17,7 +17,7 @@
 
 .csc-toggle-disabled
     .q-option-label
-        color: $faded
+        color $faded
 
 .csc-item-field
     .csc-item-value
@@ -109,6 +109,7 @@
         color $body-color
         span
             color $body-color
+
 .csc-list-item.csc-item-collapsed.q-item
     .q-item-main
         margin-left $flex-gutter-sm * 1.4
@@ -132,9 +133,9 @@
             margin 0
 .csc-item-expanded
     .csc-list-actions-pinned.q-item-side-right
-            top $flex-gutter-sm
-            right $flex-gutter-sm
-            margin auto
+        top $flex-gutter-sm
+        right $flex-gutter-sm
+        margin auto
     .q-item-main
         padding-top $flex-gutter-md
 
@@ -188,3 +189,9 @@
 .csc-item-highlight,
 .csc-item-highlight:hover
     background alpha($primary, 0.3) !important
+
+.csc-additional
+    padding-right $flex-gutter-lg
+    padding-bottom $flex-gutter-xs
+    .q-option-label
+        color $light

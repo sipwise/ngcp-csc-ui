@@ -7,7 +7,7 @@
         >
             <q-icon
                 size="24px"
-                name="music_note"
+                name="queue_music"
                 color="white"
             />
         </q-item-side>
@@ -63,8 +63,6 @@
                     v-for="(group, index) in set.groups"
                     :group="group"
                     :key="index"
-                    :highlight="!mobile"
-                    :mobile="mobile"
                 />
             </q-item-tile>
         </q-item-main>
@@ -185,18 +183,25 @@
 
         .q-item
             padding-left 0
+            margin-bottom 10px
 
         .q-item-section
-            padding-top 0
+            padding 10px 0 !important
 
         .q-item-icon
             color $primary
 
-        .q-collapsible-sub-item
-            padding 0
-
         .csc-sublabel
             color $light
             margin-bottom $flex-gutter-sm
+
+        .q-item-label
+            padding-left $flex-gutter-sm
+
+        .q-item-link
+            background alpha(white, 0.04)
+
+        .q-item-link:hover
+            background alpha(white, 0.10)
 
 </style>

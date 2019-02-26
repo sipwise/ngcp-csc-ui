@@ -2,12 +2,33 @@
     <q-field
         class="csc-upload-field"
         :icon="icon"
+        :label="label"
     >
+        <!--TODO: 2. Styling with reactively added classes depending on whether slot is used or not-->
+        <div
+            v-if="label"
+            class="row items-end"
+        >
+            <slot
+                class="col-auto"
+                name="additional"
+            >
+            </slot>
+            <q-input
+                class="col-xl col-sm-12"
+                :disable="isPlaying"
+                dark
+                readonly
+                :value="inputValue"
+                :after="inputButtons"
+            />
+        </div>
         <q-input
+            v-if="floatLabel"
             :disable="isPlaying"
             dark
             readonly
-            :float-label="label"
+            :float-label="floatLabel"
             :value="inputValue"
             :after="inputButtons"
         />
@@ -38,6 +59,7 @@
             />
         </div>
         <csc-audio-player
+            v-if="!hidePlayer"
             ref="audioPlayer"
             :file-url="fileUrl"
             :loaded="loaded"
@@ -48,6 +70,7 @@
             @stopped="audioPlayerStopped"
         />
         <div
+            v-if="!hidePlayer"
             class="csc-file-upload-actions"
         >
             <q-btn
@@ -110,7 +133,10 @@
             'progress',
             'fileTypes',
             'fileUrl',
-            'loaded'
+            'loaded',
+            'disabled',
+            'hidePlayer',
+            'floatLabel'
         ],
         data () {
             return {
@@ -133,7 +159,7 @@
             inputButtons() {
                 let buttons = [];
                 let self = this;
-                if (this.isPlaying) {
+                if (this.isPlaying || this.disabled) {
                     buttons.push({
                             icon: 'folder',
                             error: false,
@@ -155,6 +181,14 @@
                     );
                 }
                 return buttons;
+            },
+            noFloatLabel() {
+                if (this.noFloat) {
+                    return this.label;
+                }
+                else {
+                    return '';
+                }
             }
         },
         methods: {
@@ -208,6 +242,9 @@
 
         .q-field-icon
             color $primary
+
+        .items-end
+            margin-left -1.3rem
 
     .csc-upload-field.csc-player-margin
         margin-bottom 0
