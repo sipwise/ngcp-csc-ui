@@ -437,7 +437,11 @@
         "callers": "callers",
         "description": "Description",
         "removeSoundSetTitle": "Remove sound set",
-        "removeSoundSetText": "You are about to remove the {set} sound set"
+        "removeSoundSetText": "You are about to remove the {set} sound set",
+        "noSoundUploaded": "No sound uploaded",
+        "loop": "Loop",
+        "playInLoop": "Play sound in loop",
+        "dontPlayInLoop": "Don't play sound in loop"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",
