@@ -7,7 +7,7 @@
         >
             <q-icon
                 size="24px"
-                name="music_note"
+                name="queue_music"
                 color="white"
             />
         </q-item-side>
@@ -63,8 +63,6 @@
                     v-for="(group, index) in set.groups"
                     :group="group"
                     :key="index"
-                    :highlight="!mobile"
-                    :mobile="mobile"
                 />
             </q-item-tile>
         </q-item-main>
@@ -179,24 +177,4 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables.styl';
-
-    .csc-list-collapsible
-        margin-top $flex-gutter-md
-
-        .q-item
-            padding-left 0
-
-        .q-item-section
-            padding-top 0
-
-        .q-item-icon
-            color $primary
-
-        .q-collapsible-sub-item
-            padding 0
-
-        .csc-sublabel
-            color $light
-            margin-bottom $flex-gutter-sm
-
 </style>
