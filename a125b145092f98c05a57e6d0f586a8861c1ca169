@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a0c5dc1_adaf897c",
+        "filename": "src/components/layouts/Default.vue",
+        "patchSetId": 5
+      },
+      "lineNbr": 418,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2019-02-28T15:12:57Z",
+      "side": 1,
+      "message": "Fixed the menu close issue. Menu now closes after changing language on mobile.",
+      "range": {
+        "startLine": 418,
+        "startChar": 16,
+        "endLine": 418,
+        "endChar": 45
+      },
+      "revId": "a125b145092f98c05a57e6d0f586a8861c1ca169",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
