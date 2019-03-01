@@ -22,6 +22,30 @@
       "revId": "217b01d464bfbfaa5281728ec5fda81564412dba",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a0c5dc1_503e62b9",
+        "filename": "src/store/user.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2019-03-01T08:53:54Z",
+      "side": 1,
+      "message": "Hans-Peter: Did you look into this?",
+      "parentUuid": "ba076199_0bbb2110",
+      "range": {
+        "startLine": 115,
+        "startChar": 0,
+        "endLine": 117,
+        "endChar": 9
+      },
+      "revId": "217b01d464bfbfaa5281728ec5fda81564412dba",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
