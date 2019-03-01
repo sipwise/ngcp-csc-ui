@@ -2,6 +2,15 @@
     <csc-page
         :is-list="true"
     >
+        <div
+            v-if="isListLoadingVisible"
+            class="row justify-center"
+        >
+            <q-spinner-dots
+                color="primary"
+                :size="40"
+            />
+        </div>
         <q-list
             striped-odd
             no-border
@@ -10,11 +19,14 @@
         >
             <csc-pbx-sound-set
                 v-for="set in soundSets"
-                :loading="soundSetFilesLoading(set.id)"
+                :loading="isItemLoading(set.id)"
                 :key="set.id"
                 :set="set"
                 :mobile="isMobile"
                 @remove="removeSoundSetDialog"
+                @save-name="saveSoundSetName"
+                @save-description="saveSoundSetDescription"
+                @save-contract-default="saveContractDefault"
             />
         </q-list>
         <div
@@ -40,9 +52,14 @@
         mapGetters
     } from 'vuex'
     import {
+        showToast
+    } from '../../../helpers/ui'
+    import {
         Platform,
         QList,
-        QBtn
+        QBtn,
+        QInnerLoading,
+        QSpinnerDots
     } from 'quasar-framework'
     export default {
         components: {
@@ -50,7 +67,9 @@
             CscPbxSoundSet,
             CscRemoveDialog,
             QList,
-            QBtn
+            QBtn,
+            QInnerLoading,
+            QSpinnerDots
         },
         data () {
             return {
@@ -64,7 +83,12 @@
             ...mapGetters('pbxConfig', [
                 'soundSets',
                 'soundSetFilesLoading',
-                'isSoundSetsRequesting'
+                'isSoundSetsRequesting',
+                'isUpdating',
+                'updateItemId',
+                'updateState',
+                'lastUpdatedField',
+                'isListLoadingVisible'
             ]),
             isMobile() {
                 return !!Platform.is.mobile;
@@ -83,10 +107,28 @@
                 this.$refs.removeDialog.open();
             },
             removeSoundSet() {
-                this.$store.dispatch('pbxConfig/removeSoundSet', this.currentRemovingSoundSet)
+                this.$store.dispatch('pbxConfig/removeSoundSet', this.currentRemovingSoundSet);
+            },
+            saveSoundSetName(set) {
+                this.$store.dispatch('pbxConfig/saveSoundSetName', set);
+            },
+            saveSoundSetDescription(set) {
+                this.$store.dispatch('pbxConfig/saveSoundSetDescription', set);
+            },
+            saveContractDefault(set) {
+                this.$store.dispatch('pbxConfig/saveContractDefault', set);
+            },
+            isItemLoading(setId) {
+                return (this.isUpdating && this.updateItemId + "" === setId + "") ||
+                    this.soundSetFilesLoading(setId) || this.isSoundSetsRequesting;
             }
         },
         watch: {
+            updateState(state) {
+                if (state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.changedFieldToast', this.lastUpdatedField));
+                }
+            }
         }
     }
 </script>

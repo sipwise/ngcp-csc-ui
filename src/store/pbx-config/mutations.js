@@ -473,10 +473,12 @@ export default {
         reactiveSet(state[type + 'Errors'], id, error);
     },
     listSoundSetsRequesting(state) {
+        state.listState = RequestState.requesting;
         state.listSoundSetsState = RequestState.requesting;
         state.listSoundSetsError = null;
     },
     listSoundSetsSucceeded(state, sets) {
+        state.listState = RequestState.succeeded;
         state.listSoundSetsState = RequestState.succeeded;
         state.listSoundSetsError = null;
         state.soundSets = {};
@@ -487,6 +489,7 @@ export default {
         });
     },
     listSoundSetsFailed(state, error) {
+        state.listState = RequestState.failed;
         state.listSoundSetsState = RequestState.failed;
         state.listSoundSetsError = error;
     },
@@ -503,5 +506,24 @@ export default {
         id = id + "";
         reactiveSet(state.soundSetFilesStates, id, RequestState.failed);
         reactiveSet(state.soundSetFilesErrors, id, error);
+    },
+    soundSetReloading(state, set) {
+        state.soundSetReloadingState = RequestState.requesting;
+        state.soundSetReloadingError = null;
+        state.soundSetReloading = set;
+    },
+    soundSetReloaded(state, set) {
+        state.soundSetReloadingState = RequestState.succeeded;
+        state.soundSetReloadingError = null;
+        Vue.set(state.soundSets, set.id, set);
+        for (let i = 0; i < state.soundSetsOrdered.length; i++) {
+            if(state.soundSetsOrdered[i].id === set.id) {
+                state.soundSetsOrdered[i] = set;
+            }
+        }
+    },
+    soundSetReloadingFailed(state, err) {
+        state.soundSetReloadingState = RequestState.failed;
+        state.soundSetReloadingError = err;
     }
 }

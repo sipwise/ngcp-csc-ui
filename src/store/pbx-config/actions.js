@@ -40,7 +40,11 @@ import {
     removeCallQueue,
     getAllSoundSets,
     getSoundFilesGrouped,
-    removeSoundSet
+    removeSoundSet,
+    setSoundSetName,
+    setSoundSetDescription,
+    setSoundSetContractDefault,
+    getSoundSetWithFiles
 } from '../../api/pbx-config'
 
 export default {
@@ -592,6 +596,57 @@ export default {
             context.commit('removeItemSucceeded');
         }).catch((err) => {
             context.commit('removeItemFailed', err.message);
+        });
+    },
+    saveSoundSetName(context, set) {
+        context.commit('updateItemRequesting', set);
+        context.commit('lastUpdatedField', {name: set.name, type: 'sound set name'});
+        setSoundSetName(set.id, set.name).then(() => {
+            return context.dispatch('reloadSoundSet', set);
+        }).then(() => {
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
+        });
+    },
+    saveSoundSetDescription(context, set) {
+        context.commit('updateItemRequesting', set);
+        context.commit('lastUpdatedField', {name: set.name, type: 'sound set name'});
+        setSoundSetDescription(set.id, set.description).then(() => {
+            return context.dispatch('reloadSoundSet', set);
+        }).then(() => {
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
+        });
+    },
+    saveContractDefault(context, set) {
+        let defaultName = set.contract_default ? 'on' : 'off';
+        context.commit('updateItemRequesting', set);
+        context.commit('lastUpdatedField', {name: defaultName, type: 'default for subscribers'});
+        setSoundSetContractDefault(set.id, set.contract_default).then(() => {
+            return context.dispatch('reloadSoundSet', set);
+        }).then(() => {
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
+        });
+    },
+    reloadSoundSet(context, set) {
+        return new Promise((resolve, reject) => {
+            context.commit('soundSetReloading', set);
+            getSoundSetWithFiles(set.id).then(($set) => {
+                context.commit('soundSetReloaded', $set);
+            }).catch((err)=>{
+                context.commit('soundSetReloadingFailed', {
+                    set: set,
+                    error: err.message
+                });
+            }).then(() => {
+                resolve();
+            }).catch((err) => {
+                reject(err);
+            });
         });
     }
 }
