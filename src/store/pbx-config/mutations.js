@@ -503,5 +503,24 @@ export default {
         id = id + "";
         reactiveSet(state.soundSetFilesStates, id, RequestState.failed);
         reactiveSet(state.soundSetFilesErrors, id, error);
+    },
+    soundSetReloading(state, set) {
+        state.soundSetReloadingState = RequestState.requesting;
+        state.soundSetReloadingError = null;
+        state.soundSetReloading = set;
+    },
+    soundSetReloaded(state, set) {
+        state.soundSetReloadingState = RequestState.succeeded;
+        state.soundSetReloadingError = null;
+        Vue.set(state.soundSets, set.id, set);
+        for(let i = 0; i < state.soundSetsOrdered.length; i++) {
+            if(state.soundSetsOrdered[i].id === set.id) {
+                state.soundSetsOrdered[i] = set;
+            }
+        }
+    },
+    soundSetReloadingFailed(state, err) {
+        state.soundSetReloadingState = RequestState.failed;
+        state.soundSetReloadingError = err;
     }
 }

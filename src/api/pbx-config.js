@@ -716,3 +716,44 @@ export function getSoundFilesGrouped(options) {
 export function removeSoundSet(id) {
     return Vue.http.delete('api/soundsets/' + id);
 }
+
+export function getSoundSet(id) {
+    return new Promise((resolve, reject)=>{
+        get({
+            path: 'api/soundsets/' + id
+        }).then((soundSet)=>{
+            resolve(soundSet);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function editSoundSetFields(id, fields) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return getSoundSet(id);
+        }).then((result)=>{
+            let prefs = Object.assign(result, fields);
+            delete fields._links;
+            return Vue.http.put('api/soundsets/' + id, prefs);
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function setSoundSetName(id, value) {
+    return editSoundSetFields(id, { name: value });
+}
+
+export function setSoundSetDescription(id, value) {
+    return editSoundSetFields(id, { description: value });
+}
+
+export function setSoundSetContractDefault(id, value) {
+    return editSoundSetFields(id, { contract_default: value });
+}
+
