@@ -88,14 +88,18 @@
 </template>
 
 <script>
-    import { mapGetters } from 'vuex'
     import CscPage from '../../CscPage'
     import CscPbxGroup from './CscPbxGroup'
     import CscPbxGroupAddForm from './CscPbxGroupAddForm'
     import CscRemoveDialog from '../../CscRemoveDialog'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
-    import { showToast } from '../../../helpers/ui'
+    import {
+        mapGetters
+    } from 'vuex'
+    import {
+        showToast
+    } from '../../../helpers/ui'
     import {
         QChip,
         QCard,
@@ -231,28 +235,28 @@
         },
         watch: {
             addState(state) {
-                if(state === 'succeeded') {
+                if (state === 'succeeded') {
                     this.disableAddForm();
                     showToast(this.$t('pbxConfig.toasts.addedGroupToast', { group: this.lastAddedGroup }));
                 }
             },
             removeState(state) {
-                if(state === 'succeeded') {
+                if (state === 'succeeded') {
                     showToast(this.$t('pbxConfig.toasts.removedGroupToast', { group: this.lastRemovedGroup }));
                 }
             },
             updateState(state) {
-                if(state === 'succeeded') {
+                if (state === 'succeeded') {
                     showToast(this.$t('pbxConfig.toasts.changedFieldToast', this.lastUpdatedField));
                 }
             },
             updateAliasNumbersState(state) {
-                if(state === 'succeeded') {
+                if (state === 'succeeded') {
                     showToast(this.$t('pbxConfig.toasts.updatedAliasNumbersToast'));
                 }
             },
             updateGroupsAndSeatsState(state) {
-                if(state === 'succeeded') {
+                if (state === 'succeeded') {
                     showToast(this.$t('pbxConfig.toasts.updatedSeatsInGroupToast', {group: this.seat}));
                 }
             }

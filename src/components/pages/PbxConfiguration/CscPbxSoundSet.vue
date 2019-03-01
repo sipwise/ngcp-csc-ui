@@ -37,18 +37,47 @@
                 v-if="expanded"
                 class="csc-list-item-main"
             >
-                <q-field label="Name">
+                <q-field
+                    class="csc-form-field"
+                    :label="$t('pbxConfig.name')"
+                    :error-label="nameErrorMessage"
+                >
                     <q-input
                         dark
-                        readonly
-                        :value="set.name"
+                        v-model="changes.name"
+                        :after="nameButtons"
+                        @keyup.enter="saveName"
+                        @input="$v.changes.name.$touch"
+                        @blur="$v.changes.name.$touch"
+                        :error="$v.changes.name.$error"
                     />
                 </q-field>
-                <q-field label="Description">
+                <q-field
+                    class="csc-form-field"
+                    :label="$t('pbxConfig.description')"
+                    :error-label="descriptionErrorMessage"
+                >
                     <q-input
                         dark
-                        readonly
-                        :value="set.description"
+                        v-model="changes.description"
+                        :after="descriptionButtons"
+                        @keyup.enter="saveDescription"
+                        @input="$v.changes.description.$touch"
+                        @blur="$v.changes.description.$touch"
+                        :error="$v.changes.description.$error"
+                    />
+                </q-field>
+                <q-field
+                    dark
+                    class="csc-form-field"
+                    :label="$t('pbxConfig.defaultForSubscribers')"
+                >
+                    <q-toggle
+                        :class="contractDefaultClasses"
+                        v-model="changes.contract_default"
+                        @input="toggleContractDefault"
+                        checked-icon="check_circle"
+                        unchecked-icon="check_circle"
                     />
                 </q-field>
             </q-item-tile>
@@ -90,7 +119,7 @@
                 />
             </q-item-tile>
         </q-item-side>
-        <q-inner-loading :visible="loading">
+        <q-inner-loading :visible="isLoading">
             <q-spinner-mat
                 size="60px"
                 color="primary"
@@ -113,8 +142,14 @@
         QField,
         QInput,
         QInnerLoading,
-        QSpinnerMat
+        QSpinnerMat,
+        QSpinnerDots,
+        QToggle
     } from 'quasar-framework'
+    import {
+        maxLength
+    } from 'vuelidate/lib/validators'
+    import { showGlobalError } from '../../../helpers/ui'
     export default {
         name: 'csc-pbx-sound-set',
         props: {
@@ -135,14 +170,25 @@
             QField,
             QInput,
             QInnerLoading,
-            QSpinnerMat
+            QSpinnerMat,
+            QSpinnerDots,
+            QToggle
         },
         data () {
             return {
-                expanded: false
+                expanded: false,
+                changes: this.getSet()
             }
         },
-        mounted() {
+        validations: {
+            changes: {
+                name: {
+                    maxLength: maxLength(64)
+                },
+                description: {
+                    maxLength: maxLength(500)
+                }
+            },
         },
         computed: {
             itemClasses() {
@@ -162,6 +208,123 @@
                 else {
                     return 'keyboard arrow up';
                 }
+            },
+            name() {
+                return this.set.name;
+            },
+            nameHasChanged() {
+                return this.name + "" !== this.changes.name + "";
+            },
+            description() {
+                return this.set.description;
+            },
+            descriptionHasChanged() {
+                return this.description + "" !== this.changes.description + "";
+            },
+            nameButtons() {
+                let buttons = [];
+                let self = this;
+                if (this.nameHasChanged && this.$v.changes.name.$error) {
+                    buttons.push({
+                            icon: 'clear',
+                            error: true,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetName();
+                            }
+                        }
+                    );
+                }
+                else if (this.nameHasChanged) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveName();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetName();
+                            }
+                        }
+                    );
+                }
+                return buttons;
+            },
+            descriptionButtons() {
+                let buttons = [];
+                let self = this;
+                if (this.descriptionHasChanged && this.$v.changes.description.$error) {
+                    buttons.push({
+                            icon: 'clear',
+                            error: true,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetDescription();
+                            }
+                        }
+                    );
+                }
+                else if (this.descriptionHasChanged) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveDescription();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetDescription();
+                            }
+                        }
+                    );
+                }
+                return buttons;
+            },
+            setModel() {
+                return {
+                    id: this.set.id,
+                    name: this.changes.name,
+                    description: this.changes.description,
+                    contract_default: this.changes.contract_default
+                }
+            },
+            contractDefaultClasses() {
+                let classes = [];
+                if(this.attach) {
+                    classes.push('csc-toggle-enabled');
+                }
+                else {
+                    classes.push('csc-toggle-disabled');
+                }
+                return classes;
+            },
+            nameErrorMessage() {
+                if (!this.$v.changes.name.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('pbxConfig.name'),
+                        maxLength: this.$v.changes.name.$params.maxLength.max
+                    });
+                }
+            },
+            descriptionErrorMessage() {
+                if (!this.$v.changes.description.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('pbxConfig.description'),
+                        maxLength: this.$v.changes.description.$params.maxLength.max
+                    });
+                }
+            },
+            isLoading() {
+                return this.loading;
             }
         },
         methods: {
@@ -170,6 +333,43 @@
             },
             remove() {
                 this.$emit('remove', this.set);
+            },
+            getSet() {
+                return {
+                    name: this.set.name,
+                    description: this.set.description,
+                    contract_default: this.set.contract_default
+                }
+            },
+            resetName() {
+                this.changes.name = this.set.name;
+            },
+            saveName() {
+                if (this.$v.changes.$invalid) {
+                    showGlobalError(this.$t('validationErrors.generic'));
+                }
+                else {
+                    this.$emit('save-name', this.setModel);
+                }
+            },
+            resetDescription() {
+                this.changes.description = this.set.description;
+            },
+            saveDescription() {
+                if (this.$v.changes.$invalid) {
+                    showGlobalError(this.$t('validationErrors.generic'));
+                }
+                else {
+                    this.$emit('save-description', this.setModel);
+                }
+            },
+            toggleContractDefault() {
+                if (this.$v.changes.$invalid) {
+                    showGlobalError(this.$t('validationErrors.generic'));
+                }
+                else {
+                    this.$emit('save-contract-default', this.setModel);
+                }
             }
         },
         watch: {
