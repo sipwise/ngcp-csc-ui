@@ -716,3 +716,41 @@ export function getSoundFilesGrouped(options) {
 export function removeSoundSet(id) {
     return Vue.http.delete('api/soundsets/' + id);
 }
+
+export function getSoundSet(id) {
+    return new Promise((resolve, reject)=>{
+        get({
+            path: 'api/soundsets/' + id
+        }).then((soundSet)=>{
+            resolve(soundSet);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function editSoundSetFields(id, fields) {
+    return new Promise((resolve, reject)=>{
+        //let $prefs = Object.assign(config, { cloud_pbx_callqueue: true });
+        Promise.resolve().then(()=>{
+            return getSoundSet(id);
+        }).then((result)=>{
+            let prefs = Object.assign(result, fields);
+            delete fields._links;
+            return Vue.http.put('api/soundsets/' + id, prefs);
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function setSoundSetName(id, name) {
+    return editSoundSetFields(id, { name: name });
+}
+
+export function setSoundSetDescription(id, description) {
+    return editSoundSetFields(id, { description: description });
+}
+

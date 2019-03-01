@@ -14,7 +14,12 @@
                 :key="set.id"
                 :set="set"
                 :mobile="isMobile"
+                :name-requesting="false"
+                :description-requesting="false"
+                :contract-default-requesting="false"
                 @remove="removeSoundSetDialog"
+                @save-name="saveSoundSetName"
+                @save-description="saveSoundSetDescription"
             />
         </q-list>
         <div
@@ -83,7 +88,13 @@
                 this.$refs.removeDialog.open();
             },
             removeSoundSet() {
-                this.$store.dispatch('pbxConfig/removeSoundSet', this.currentRemovingSoundSet)
+                this.$store.dispatch('pbxConfig/removeSoundSet', this.currentRemovingSoundSet);
+            },
+            saveSoundSetName(set) {
+                this.$store.dispatch('pbxConfig/saveSoundSetName', set);
+            },
+            saveSoundSetDescription(set) {
+                this.$store.dispatch('pbxConfig/saveSoundSetName', set);
             }
         },
         watch: {

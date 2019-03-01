@@ -40,7 +40,9 @@ import {
     removeCallQueue,
     getAllSoundSets,
     getSoundFilesGrouped,
-    removeSoundSet
+    removeSoundSet,
+    setSoundSetName,
+    setSoundSetDescription
 } from '../../api/pbx-config'
 
 export default {
@@ -592,6 +594,28 @@ export default {
             context.commit('removeItemSucceeded');
         }).catch((err) => {
             context.commit('removeItemFailed', err.message);
+        });
+    },
+    saveSoundSetName(context, set) {
+        context.commit('updateItemRequesting', set);
+        setSoundSetName(set.id, set.name).then(() => {
+            //return context.dispatch('reloadConfig', updateItem);
+            // TODO: Reload item
+        }).then(() => {
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
+        });
+    },
+    saveSoundSetDescription(context, set) {
+        context.commit('updateItemRequesting', set);
+        setSoundSetDescription(set.id, set.description).then(() => {
+            //return context.dispatch('reloadConfig', updateItem);
+            // TODO: Reload item
+        }).then(() => {
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
         });
     }
 }
