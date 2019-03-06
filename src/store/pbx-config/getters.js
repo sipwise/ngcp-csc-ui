@@ -335,5 +335,15 @@ export default {
     },
     isSoundSetsRequesting(state) {
         return state.listSoundSetsState === RequestState.requesting;
+    },
+    playSoundFileUrl(state) {
+        return (id) => {
+            return state.soundFileUrls[id];
+        }
+    },
+    playSoundFileLoaded(state) {
+        return (id) => {
+            return state.soundFileUrls[id] ? true : false;
+        }
     }
 }

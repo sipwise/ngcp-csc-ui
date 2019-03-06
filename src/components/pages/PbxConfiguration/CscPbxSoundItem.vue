@@ -5,13 +5,15 @@
     >
         <q-item-main>
             <csc-sound-file-upload
-                :ref="refName"
+                ref="uploadSoundFile"
                 icon="music_note"
                 file-types=".wav,.mp3"
                 :label="handleName"
                 :value="fileLabel"
-                :disabled="true"
                 :hide-player="!file"
+                :file-url="playSoundFileUrl(item.id)"
+                :loaded="playSoundFileLoaded(item.id)"
+                @init="initSoundFileAudio"
             >
                 <div
                     slot="additional"
@@ -42,6 +44,9 @@
         QTooltip
     } from 'quasar-framework'
     import CscSoundFileUpload from '../../form/CscSoundFileUpload'
+    import {
+        mapGetters
+    } from 'vuex'
     export default {
         name: 'csc-pbx-sound-item',
         props: {
@@ -59,12 +64,17 @@
         data () {
             return {
                 loop: this.hasLoop(),
-                file: this.hasFile()
+                file: this.hasFile(),
+                platform: this.$q.platform.is
             }
         },
         mounted() {
         },
         computed: {
+            ...mapGetters('pbxConfig', [
+                'playSoundFileUrl',
+                'playSoundFileLoaded'
+            ]),
             handleName() {
                 return `${this.group}: ${this.item.handle}`;
             },
@@ -89,6 +99,9 @@
                 return this.loop ?
                     this.$t('pbxConfig.dontPlayInLoop') :
                     this.$t('pbxConfig.playInLoop');
+            },
+            soundFileFormat() {
+                return this.platform.mozilla ? 'ogg' : 'mp3';
             }
         },
         methods: {
@@ -97,6 +110,17 @@
             },
             hasFile() {
                 return this.item.filename.length > 0;
+            },
+            playSoundFile() {
+                this.$store.dispatch('pbxConfig/playSoundFile', {
+                    id: this.item.id,
+                    format: this.soundFileFormat
+                });
+            },
+            initSoundFileAudio() {
+                this.playSoundFile();
+                this.$refs.uploadSoundFile.setPlayingTrue();
+                this.$refs.uploadSoundFile.setPausedFalse();
             }
         },
         watch: {
