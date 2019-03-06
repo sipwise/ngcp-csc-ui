@@ -525,5 +525,19 @@ export default {
     soundSetReloadingFailed(state, err) {
         state.soundSetReloadingState = RequestState.failed;
         state.soundSetReloadingError = err;
+    },
+    playSoundFileRequesting(state) {
+        state.playSoundFileState = RequestState.requesting;
+        state.playSoundFileError = null;
+    },
+    playSoundFileSucceeded(state, options) {
+        Vue.set(state.soundFileUrls, options.id, options.url);
+        state.lastPlayed = options.id;
+        state.playSoundFileState = RequestState.succeeded;
+        state.playSoundFileError = null;
+    },
+    playSoundFileFailed(state, err) {
+        state.playSoundFileState = RequestState.failed;
+        state.playSoundFileError = err;
     }
 }

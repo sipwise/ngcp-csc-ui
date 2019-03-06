@@ -5,13 +5,17 @@
     >
         <q-item-main>
             <csc-sound-file-upload
-                :ref="refName"
+                ref="uploadSoundFile"
                 icon="music_note"
                 file-types=".wav,.mp3"
                 :label="handleName"
                 :value="fileLabel"
-                :disabled="true"
-                :hide-player="!file"
+                :file-url="playSoundFileUrl(item.id)"
+                :loaded="playSoundFileLoaded(item.id)"
+                :stop-all="!isLastPlayed(item.id)"
+                :uploaded="file"
+                :disable="true"
+                @init="initSoundFileAudio"
             >
                 <div
                     slot="additional"
@@ -42,6 +46,9 @@
         QTooltip
     } from 'quasar-framework'
     import CscSoundFileUpload from '../../form/CscSoundFileUpload'
+    import {
+        mapGetters
+    } from 'vuex'
     export default {
         name: 'csc-pbx-sound-item',
         props: {
@@ -59,12 +66,18 @@
         data () {
             return {
                 loop: this.hasLoop(),
-                file: this.hasFile()
+                file: this.hasFile(),
+                platform: this.$q.platform.is
             }
         },
         mounted() {
         },
         computed: {
+            ...mapGetters('pbxConfig', [
+                'playSoundFileUrl',
+                'playSoundFileLoaded',
+                'isLastPlayed'
+            ]),
             handleName() {
                 return `${this.group}: ${this.item.handle}`;
             },
@@ -73,7 +86,7 @@
             },
             fileLabel() {
                 let noSound = this.$t('pbxConfig.noSoundUploaded');
-                return this.item.filename.length > 0 ? this.item.filename : noSound;
+                return this.file ? this.item.filename : noSound;
             },
             loopClasses() {
                 let classes = ['csc-additional'];
@@ -89,6 +102,9 @@
                 return this.loop ?
                     this.$t('pbxConfig.dontPlayInLoop') :
                     this.$t('pbxConfig.playInLoop');
+            },
+            soundFileFormat() {
+                return this.platform.mozilla ? 'ogg' : 'mp3';
             }
         },
         methods: {
@@ -96,7 +112,18 @@
                 return !!this.item.loopplay;
             },
             hasFile() {
-                return this.item.filename.length > 0;
+                return this.item.filename ? this.item.filename.length > 0 : false;
+            },
+            playSoundFile() {
+                this.$store.dispatch('pbxConfig/playSoundFile', {
+                    id: this.item.id,
+                    format: this.soundFileFormat
+                });
+            },
+            initSoundFileAudio() {
+                this.playSoundFile();
+                this.$refs.uploadSoundFile.setPlayingTrue();
+                this.$refs.uploadSoundFile.setPausedFalse();
             }
         },
         watch: {
