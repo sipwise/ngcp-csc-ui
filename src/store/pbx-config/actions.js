@@ -40,7 +40,8 @@ import {
     removeCallQueue,
     getAllSoundSets,
     getSoundFilesGrouped,
-    removeSoundSet
+    removeSoundSet,
+    playSoundFile
 } from '../../api/pbx-config'
 
 export default {
@@ -592,6 +593,21 @@ export default {
             context.commit('removeItemSucceeded');
         }).catch((err) => {
             context.commit('removeItemFailed', err.message);
+        });
+    },
+    playSoundFile(context, options) {
+        console.log('playSoundFile() in store');
+        context.commit('playSoundFileRequesting');
+        //playSoundFile({
+            //id: id,
+            //format: format
+        playSoundFile(options).then((url) => {
+            context.commit('playSoundFileSucceeded', {
+                id: options.id,
+                url: url
+            });
+        }).catch((err) => {
+            context.commit('playSoundFileFailed', err.message);
         });
     }
 }

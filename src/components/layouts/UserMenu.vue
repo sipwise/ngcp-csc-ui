@@ -15,9 +15,10 @@
                 highlight
             >
                 <q-item
-                    v-for="language in languages"
+                    v-for="(language, index) in languages"
                     @click="changeLanguage(language[0])"
                     class="csc-subitem"
+                    :key="index"
                 >
                     <q-item-main
                         :label="language[1]"
@@ -59,7 +60,7 @@
                 console.log(language);
                 this.$emit('change-language', language);
                 this.$refs.languageCollapsible.close();
-            },
+            }
         }
     }
 </script>
