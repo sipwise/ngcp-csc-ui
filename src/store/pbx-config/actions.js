@@ -44,7 +44,8 @@ import {
     setSoundSetName,
     setSoundSetDescription,
     setSoundSetContractDefault,
-    getSoundSetWithFiles
+    getSoundSetWithFiles,
+    playSoundFile
 } from '../../api/pbx-config'
 
 export default {
@@ -647,6 +648,18 @@ export default {
             }).catch((err) => {
                 reject(err);
             });
+        });
+    },
+    playSoundFile(context, options) {
+        console.log('playSoundFile() in store');
+        context.commit('playSoundFileRequesting');
+        playSoundFile(options).then((url) => {
+            context.commit('playSoundFileSucceeded', {
+                id: options.id,
+                url: url
+            });
+        }).catch((err) => {
+            context.commit('playSoundFileFailed', err.message);
         });
     }
 }
