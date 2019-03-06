@@ -537,7 +537,7 @@ export default {
             }).then((url) => {
                 context.commit('playBusyGreetingSucceeded', url);
             }).catch((err) => {
-                context.commit('playBusyGreetingFailed', err.mesage);
+                context.commit('playBusyGreetingFailed', err.message);
             });
         },
         playUnavailGreeting(context, format) {
@@ -548,7 +548,7 @@ export default {
             }).then((url) => {
                 context.commit('playUnavailGreetingSucceeded', url);
             }).catch((err) => {
-                context.commit('playUnavailGreetingFailed', err.mesage);
+                context.commit('playUnavailGreetingFailed', err.message);
             });
         },
         abortUploadBusyGreeting(context) {

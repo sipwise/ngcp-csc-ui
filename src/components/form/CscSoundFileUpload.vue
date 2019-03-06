@@ -64,7 +64,6 @@
             :loaded="loaded"
             class="csc-greeting-player"
             @load="init"
-            :disable="disablePlayer"
             @playing="audioPlayerPlaying"
             @stopped="audioPlayerStopped"
         />

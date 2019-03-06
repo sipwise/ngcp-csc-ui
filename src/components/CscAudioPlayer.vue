@@ -93,6 +93,7 @@
         },
         methods: {
             play() {
+                console.log('play() in CscAudioPlayer');
                 this.$refs.audio.play();
                 this.playing = true;
                 this.paused = false;

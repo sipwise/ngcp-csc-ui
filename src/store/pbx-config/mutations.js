@@ -503,5 +503,18 @@ export default {
         id = id + "";
         reactiveSet(state.soundSetFilesStates, id, RequestState.failed);
         reactiveSet(state.soundSetFilesErrors, id, error);
+    },
+    playSoundFileRequesting(state) {
+        state.playSoundFileState = RequestState.requesting;
+        state.playSoundFileError = null;
+    },
+    playSoundFileSucceeded(state, options) {
+        Vue.set(state.soundFileUrls, options.id, options.url);
+        state.playSoundFileState = RequestState.succeeded;
+        state.playSoundFileError = null;
+    },
+    playSoundFileFailed(state, err) {
+        state.playSoundFileState = RequestState.failed;
+        state.playSoundFileError = err;
     }
 }
