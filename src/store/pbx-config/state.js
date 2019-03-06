@@ -87,5 +87,9 @@ export default {
     soundSetFilesErrors: {},
     soundSetReloading: null,
     soundSetReloadingState: RequestState.initiated,
-    soundSetReloadingError: null
+    soundSetReloadingError: null,
+    playSoundFileState: RequestState.initiated,
+    playSoundFileError: null,
+    soundFileUrls: {},
+    lastPlayed: null
 }
