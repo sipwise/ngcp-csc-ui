@@ -64,7 +64,6 @@
             :loaded="loaded"
             class="csc-greeting-player"
             @load="init"
-            :disable="disablePlayer"
             @playing="audioPlayerPlaying"
             @stopped="audioPlayerStopped"
         />
@@ -135,7 +134,8 @@
             'loaded',
             'disabled',
             'hidePlayer',
-            'floatLabel'
+            'floatLabel',
+            'stopAll'
         ],
         data () {
             return {
@@ -220,6 +220,14 @@
             },
             init() {
                 this.$emit('init');
+            }
+        },
+        watch: {
+            stopAll(state) {
+                if (state && this.$refs.audioPlayer) {
+                    this.$refs.audioPlayer.stop();
+                    this.audioPlayerStopped();
+                }
             }
         }
     }
