@@ -58,18 +58,16 @@
             />
         </div>
         <csc-audio-player
-            v-if="!hidePlayer"
             ref="audioPlayer"
+            class="csc-greeting-player"
             :file-url="fileUrl"
             :loaded="loaded"
-            class="csc-greeting-player"
-            @load="init"
             :disable="disablePlayer"
+            @load="init"
             @playing="audioPlayerPlaying"
             @stopped="audioPlayerStopped"
         />
         <div
-            v-if="!hidePlayer"
             class="csc-file-upload-actions"
         >
             <q-btn
@@ -93,7 +91,7 @@
             <q-btn
                 :disable="isPlaying"
                 flat
-                v-if="uploaded && selectedFile == null"
+                v-if="uploaded && selectedFile == null && !disabled"
                 color="primary"
                 icon="undo"
                 @click="undo"
@@ -134,8 +132,8 @@
             'fileUrl',
             'loaded',
             'disabled',
-            'hidePlayer',
-            'floatLabel'
+            'floatLabel',
+            'stopAll'
         ],
         data () {
             return {
@@ -158,7 +156,7 @@
             inputButtons() {
                 let buttons = [];
                 let self = this;
-                if (this.isPlaying || this.disabled) {
+                if (this.isPlaying) {
                     buttons.push({
                             icon: 'folder',
                             error: false,
@@ -168,7 +166,7 @@
                         }
                     );
                 }
-                else {
+                else if (!this.disabled) {
                     buttons.push({
                             icon: 'folder',
                             error: false,
@@ -220,6 +218,14 @@
             },
             init() {
                 this.$emit('init');
+            }
+        },
+        watch: {
+            stopAll(state) {
+                if (state && this.$refs.audioPlayer) {
+                    this.$refs.audioPlayer.stop();
+                    this.audioPlayerStopped();
+                }
             }
         }
     }
