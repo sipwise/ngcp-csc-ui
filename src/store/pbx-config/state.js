@@ -84,5 +84,6 @@ export default {
     soundSets: {},
     soundSetsOrdered: [],
     soundSetFilesStates: {},
-    soundSetFilesErrors: {}
+    soundSetFilesErrors: {},
+    playSoundFileUrl: null
 }

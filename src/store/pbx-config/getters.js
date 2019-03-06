@@ -335,5 +335,12 @@ export default {
     },
     isSoundSetsRequesting(state) {
         return state.listSoundSetsState === RequestState.requesting;
+    },
+    playSoundFileUrl(state) {
+        return state.playSoundFileUrl;
+    },
+    playSoundFileLoaded(state) {
+        console.log('random state', state.listSoundSetsState);
+        return true;
     }
 }

@@ -64,7 +64,6 @@
             :loaded="loaded"
             class="csc-greeting-player"
             @load="init"
-            :disable="disablePlayer"
             @playing="audioPlayerPlaying"
             @stopped="audioPlayerStopped"
         />
@@ -191,6 +190,7 @@
                 this.$refs.audioPlayer.setPausedFalse();
             },
             audioPlayerPlaying() {
+                console.log('audioPlayerPlaying() in CscSoundFileUpload');
                 this.isPlaying = true;
             },
             audioPlayerStopped() {

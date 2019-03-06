@@ -503,5 +503,21 @@ export default {
         id = id + "";
         reactiveSet(state.soundSetFilesStates, id, RequestState.failed);
         reactiveSet(state.soundSetFilesErrors, id, error);
+    },
+    playSoundFileRequesting(state) {
+        console.log('some random state', state.listSoundSetsError);
+        //state.playUnavailGreetingState = RequestState.requesting;
+        //state.playUnavailGreetingError = null;
+    },
+    playSoundFileSucceeded(state, url) {
+        state.playSoundFileUrl = url;
+        //state.playUnavailGreetingState = RequestState.succeeded;
+        //state.playUnavailGreetingError = null;
+    },
+    playSoundFileFailed(state, err) {
+        console.log('some random state', state.listSoundSetsError, 'err', err);
+        state.playSoundFileUrl = null;
+        //state.playUnavailGreetingState = RequestState.failed;
+        //state.playUnavailGreetingError = err;
     }
 }
