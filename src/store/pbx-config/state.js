@@ -95,5 +95,8 @@ export default {
     createSoundSetState: RequestState.initiated,
     createSoundSetItem: null,
     createSoundSetError: null,
-    lastAddedCallQueue: null
+    lastAddedCallQueue: null,
+    uploadSoundFileStates: {},
+    uploadSoundFileErrors: {},
+    uploadSoundFileProgresses: {}
 }
