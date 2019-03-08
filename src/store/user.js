@@ -114,6 +114,9 @@ export default {
         },
         changeSessionLocaleState(state) {
             return state.changeSessionLocaleState;
+        },
+        jwt(state) {
+            return state.jwt;
         }
     },
     mutations: {

@@ -517,5 +517,24 @@ export default {
     playSoundFileFailed(state, err) {
         state.playSoundFileState = RequestState.failed;
         state.playSoundFileError = err;
+    },
+    uploadSoundFileRequesting(state, id) {
+        id = id + "";
+        reactiveSet(state.uploadSoundFileStates, id, RequestState.requesting);
+        reactiveSet(state.uploadSoundFileErrors, id, null);
+    },
+    uploadSoundFileSucceeded(state, id) {
+        id = id + "";
+        reactiveSet(state.uploadSoundFileStates, id, RequestState.succeeded);
+        reactiveSet(state.uploadSoundFileErrors, id, null);
+    },
+    uploadSoundFileFailed(state, id, error) {
+        id = id + "";
+        reactiveSet(state.uploadSoundFileStates, id, RequestState.failed);
+        reactiveSet(state.uploadSoundFileErrors, id, error);
+    },
+    uploadSoundFileProgress(state, id, progress) {
+        id = id + "";
+        reactiveSet(state.uploadSoundFileProgresses, id, progress);
     }
 }

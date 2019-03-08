@@ -9,13 +9,18 @@
                 icon="music_note"
                 file-types=".wav,.mp3"
                 :label="handleName"
-                :value="fileLabel"
+				:value="fileLabel"
+				:progress="uploadSoundFileProgress(item.id)"
                 :hide-player="!file"
                 :file-url="playSoundFileUrl(item.id)"
                 :loaded="playSoundFileLoaded(item.id)"
                 :stop-all="!isLastPlayed(item.id)"
-                :uploaded="true"
+				:uploading="uploadSoundFileRequesting(item.id)"
+                :uploaded="file"
                 @init="initSoundFileAudio"
+				@upload="uploadSoundFile"
+				@abort="abortUpload"
+				@reset="deleteSoundFile"
             >
                 <div
                     slot="additional"
@@ -76,7 +81,11 @@
             ...mapGetters('pbxConfig', [
                 'playSoundFileUrl',
                 'playSoundFileLoaded',
-                'isLastPlayed'
+                'isLastPlayed',
+                'uploadSoundFileProgress',
+                'uploadSoundFileRequesting',
+                'playSoundFileUrl',
+                'playSoundFileLoaded'
             ]),
             handleName() {
                 return `${this.group}: ${this.item.handle}`;
@@ -124,6 +133,17 @@
                 this.playSoundFile();
                 this.$refs.uploadSoundFile.setPlayingTrue();
                 this.$refs.uploadSoundFile.setPausedFalse();
+            },
+            uploadSoundFile(file) {
+                this.$store.dispatch('pbxConfig/uploadSoundFile', {
+                    file: file
+                });
+            },
+            abortUpload() {
+                console.log('abortUpload()');
+            },
+            deleteSoundFile() {
+                console.log('deleteSoundFile()');
             }
         },
         watch: {

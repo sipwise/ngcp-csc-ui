@@ -64,7 +64,13 @@
             ...mapGetters('pbxConfig', [
                 'soundSets',
                 'soundSetFilesLoading',
-                'isSoundSetsRequesting'
+                'isSoundSetsRequesting',
+                'soundFileLabel',
+                'uploadSoundFileProgress',
+                'uploadSoundFileRequesting',
+                'uploadSoundFileDone',
+                'playSoundFileUrl',
+                'playSoundFileLoaded'
             ]),
             isMobile() {
                 return !!Platform.is.mobile;

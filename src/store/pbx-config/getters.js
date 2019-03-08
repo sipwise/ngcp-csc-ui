@@ -350,5 +350,15 @@ export default {
         return (id) => {
             return state.lastPlayed + '' === id + '';
         }
+    },
+    uploadSoundFileProgress(state) {
+        return (id) => {
+            return state.uploadSoundFileProgresses[id];
+        }
+    },
+    uploadSoundFileRequesting(state) {
+        return (id) => {
+            return state.uploadSoundFileStates[id] === 'requesting';
+        }
     }
 }
