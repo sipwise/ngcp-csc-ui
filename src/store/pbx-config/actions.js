@@ -41,7 +41,8 @@ import {
     getAllSoundSets,
     getSoundFilesGrouped,
     removeSoundSet,
-    playSoundFile
+    playSoundFile,
+    uploadSoundFile
 } from '../../api/pbx-config'
 
 export default {
@@ -598,9 +599,6 @@ export default {
     playSoundFile(context, options) {
         console.log('playSoundFile() in store');
         context.commit('playSoundFileRequesting');
-        //playSoundFile({
-            //id: id,
-            //format: format
         playSoundFile(options).then((url) => {
             context.commit('playSoundFileSucceeded', {
                 id: options.id,
@@ -608,6 +606,17 @@ export default {
             });
         }).catch((err) => {
             context.commit('playSoundFileFailed', err.message);
+        });
+    },
+    uploadSoundFile(context, options) {
+        let handle = options.item.handle;
+        context.commit('uploadSoundFileRequesting', handle);
+        uploadSoundFile(options).then(() => {
+            // TODO: Make method to only load one specific sound file, unless
+            // it makes for two many requests just to build the data structure
+            context.commit('uploadSoundFileSucceeded', handle);
+        }).catch(() => {
+            context.commit('uploadSoundFileFailed', handle);
         });
     }
 }

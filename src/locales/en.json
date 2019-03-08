@@ -398,7 +398,8 @@
             "updatedStationName": "Updated station name to {name}",
             "updatedProfile": "Updated model of device {name}",
             "updatedIdentifier": "Updated identifier to {identifier}",
-            "createdDevice": "Created device {name} successfully"
+            "createdDevice": "Created device {name} successfully",
+            "uploadedSoundFileToast": "Uploaded new sound for handle {handle}"
         },
         "addDevice": "Add device",
         "addDeviceShort": "Add",

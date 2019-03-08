@@ -733,3 +733,42 @@ export function playSoundFile(options) {
             });
     });
 }
+
+export function _uploadSoundFile(options) {
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+		// TODO: Base change on change story, and get
+		// loopplay value from there
+        let params = {
+            loopplay: 1,
+            filename: options.file.name,
+            set_id: 17,
+            handle: options.item.handle
+        };
+        let headers = {
+            "Content-Type": "audio/x-wav"
+        };
+        reader.onload = () => {
+            Vue.http.post('api/soundfiles/', reader.result, {
+                headers: headers,
+                params: params
+            }).then(() => {
+                resolve();
+            }).catch((err)=>{
+                reject(err);
+            });
+        };
+        reader.readAsDataURL(options.file);
+    });
+}
+
+export function uploadSoundFile(options) {
+	console.log('options', options);
+	return fetch('https://httpbin.org/post?loopplay=1&filename=bbb&set_id=17&handle=90', {
+		method: 'POST',
+		headers: {
+			"Content-Type": "audio/x-wav"
+		},
+		body: options.file
+	});
+}
