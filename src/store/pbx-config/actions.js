@@ -45,7 +45,8 @@ import {
     setSoundSetDescription,
     setSoundSetContractDefault,
     getSoundSetWithFiles,
-    playSoundFile
+    playSoundFile,
+    uploadSoundFile
 } from '../../api/pbx-config'
 
 export default {
@@ -660,6 +661,17 @@ export default {
             });
         }).catch((err) => {
             context.commit('playSoundFileFailed', err.message);
+        });
+    },
+    uploadSoundFile(context, options) {
+        let handle = options.item.handle;
+        context.commit('uploadSoundFileRequesting', handle);
+        uploadSoundFile(options).then(() => {
+            // TODO: Make method to only load one specific sound file, unless
+            // it makes for two many requests just to build the data structure
+            context.commit('uploadSoundFileSucceeded', handle);
+        }).catch(() => {
+            context.commit('uploadSoundFileFailed', handle);
         });
     }
 }

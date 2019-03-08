@@ -69,7 +69,6 @@
             @stopped="audioPlayerStopped"
         />
         <div
-            v-if="!hidePlayer"
             class="csc-file-upload-actions"
         >
             <q-btn
