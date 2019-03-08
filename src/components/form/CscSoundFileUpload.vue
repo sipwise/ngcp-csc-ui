@@ -131,7 +131,9 @@
             'fileTypes',
             'fileUrl',
             'loaded',
-            'disable'
+            'disable',
+            'floatLabel',
+            'stopAll'
         ],
         data () {
             return {
