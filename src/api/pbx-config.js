@@ -733,3 +733,54 @@ export function playSoundFile(options) {
             });
     });
 }
+
+export function uploadSoundFile(options) {
+    // createNewGreeting()
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+		//let params = {
+			//loopplay: 1,
+			//filename: 'xxx',
+			//set_id: 17,
+			//handle: 5
+		//};
+		let headers = {
+			'Content-Type': 'audio/x-wav'
+		};
+        reader.onload = () => {
+            console.log(reader.result);
+            Vue.http.post('api/soundfiles/?loopplay=1&filename=xxx&set_id=17&handle=5', { headers: headers }).then(() => {
+                resolve();
+            }).catch((err)=>{
+                reject(err);
+            });
+        };
+        reader.readAsBinaryString(options.file);
+    });
+    // NOTE: original uploadGreeting
+    //return new Promise((resolve, reject) => {
+        //var formData = new FormData();
+        //var fields = _.clone(options.data);
+        //delete fields.file;
+        //var json = JSON.stringify(fields);
+        //formData.append('json', json);
+        //if (options.data.file) {
+            //formData.append('greetingfile', options.data.file);
+        //}
+        //Promise.resolve().then(() => {
+            //return getVoiceboxGreetingByType({
+                //id: options.data.subscriber_id,
+                //type: options.data.dir
+            //});
+        //}).then((greetings) => {
+            //if (_.some(greetings.items, { dir: options.data.dir })) {
+                //deleteVoiceboxGreetingById(greetings.items[0].id);
+            //}
+            //return createNewGreeting(formData, options.onProgress, options.data.dir);
+        //}).then(() => {
+            //resolve();
+        //}).catch((err) => {
+            //reject(err);
+        //});
+    //});
+}

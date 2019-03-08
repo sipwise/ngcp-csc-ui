@@ -41,7 +41,8 @@ import {
     getAllSoundSets,
     getSoundFilesGrouped,
     removeSoundSet,
-    playSoundFile
+    playSoundFile,
+    uploadSoundFile
 } from '../../api/pbx-config'
 
 export default {
@@ -598,9 +599,6 @@ export default {
     playSoundFile(context, options) {
         console.log('playSoundFile() in store');
         context.commit('playSoundFileRequesting');
-        //playSoundFile({
-            //id: id,
-            //format: format
         playSoundFile(options).then((url) => {
             context.commit('playSoundFileSucceeded', {
                 id: options.id,
@@ -609,5 +607,35 @@ export default {
         }).catch((err) => {
             context.commit('playSoundFileFailed', err.message);
         });
+    },
+    uploadSoundFile(context, $options) {
+        //let options = Object.assign($options, {
+            //subscriber_id: context.getters.subscriberId,
+            //dir: 'busy'
+        //});
+        console.log('$options', $options);
+        uploadSoundFile($options)
+            .then(() => {
+                console.log('SUCCESS');
+            })
+            .catch(() => {
+                console.log('FAILED');
+            });
+        //context.commit('uploadBusyGreetingRequesting');
+        //uploadGreeting({
+            //data: options,
+            //onProgress: (progress) => { context.commit('uploadBusyProgress', progress) }
+        //}).then(() => {
+            //context.commit('loadBusyGreetingRequesting');
+            //return getVoiceboxGreetingByType({
+                //id: context.getters.subscriberId,
+                //type: 'busy'
+            //})
+        //}).then((greetings) => {
+            //context.commit('loadBusyGreetingSucceeded', greetings.items);
+            //context.commit('uploadBusyGreetingSucceeded');
+        //}).catch((err) => {
+            //context.commit('uploadBusyGreetingFailed', err.message);
+        //});
     }
 }

@@ -350,5 +350,21 @@ export default {
         return (id) => {
             return state.lastPlayed + '' === id + '';
         }
+    },
+    soundFileLabel() {
+        return 'some label';
+        //return state.unavailGreetingId ? i18n.t('voicebox.label.customSoundActive') :
+            //i18n.t('voicebox.label.defaultSoundActive')
+    },
+    uploadSoundFileProgress() {
+        return 0.30;
+        //return state.uploadUnavailProgress;
+    },
+    uploadSoundFileRequesting() {
+        return false;
+    },
+    uploadSoundFileDone() {
+        return false;
+        //:uploaded="unavailGreetingId !== null"
     }
 }
