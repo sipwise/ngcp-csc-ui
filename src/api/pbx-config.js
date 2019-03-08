@@ -798,3 +798,68 @@ export function playSoundFile(options) {
             });
     });
 }
+
+export function __uploadSoundFile(options) {
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+		// TODO: Base change on change story, and get
+		// loopplay value from there
+        let params = {
+            loopplay: 1,
+            filename: options.file.name,
+            set_id: 17,
+            handle: options.item.handle
+        };
+        let headers = {
+            "Content-Type": "audio/x-wav"
+        };
+        reader.onload = () => {
+            Vue.http.post('api/soundfiles/', reader.result, {
+                headers: headers,
+                params: params
+            }).then(() => {
+                resolve();
+            }).catch((err)=>{
+                reject(err);
+            });
+        };
+        reader.readAsBinaryString(options.file);
+    });
+}
+
+export function _uploadSoundFile(options) {
+	console.log('options', options);
+	return fetch('https://httpbin.org/post?loopplay=1&filename=bbb&set_id=17&handle=90', {
+		method: 'POST',
+		headers: {
+			"Content-Type": "audio/x-wav"
+		},
+		body: options.file
+	});
+}
+
+export function uploadSoundFile(options) {
+    return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        //var fields = _.clone(options.data);
+        let loopplay = options.item.loopplay ? 1 : 2;
+        let fields = {
+            loopplay: loopplay,
+            filename: options.file.name,
+            set_id: options.item.set_id,
+            handle: options.item.handle,
+        };
+        let json = JSON.stringify(fields);
+        formData.append('json', json);
+        if (options.file) {
+            formData.append('soundfile', options.file);
+        }
+        // TODO: Implement progress callback and abort option
+        Vue.http.post('api/soundfiles/', formData)
+        .then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}

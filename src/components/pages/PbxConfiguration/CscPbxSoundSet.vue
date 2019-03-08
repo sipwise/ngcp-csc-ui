@@ -93,6 +93,7 @@
                     :invalid-group="invalidGroup(group)"
                     :group="group"
                     :group-label="groupLabel(group.name)"
+                    :set-id="set.id"
                     :key="index"
                 />
             </q-item-tile>

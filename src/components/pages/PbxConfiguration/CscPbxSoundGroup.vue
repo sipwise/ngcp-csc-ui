@@ -13,6 +13,7 @@
                 :key="item.id"
                 :item="item"
                 :group="groupLabel"
+                :set-id="setId"
             />
         </q-list>
     </q-collapsible>
@@ -36,7 +37,8 @@
         props: {
             group: Object,
             groupLabel: String,
-            invalidGroup: Boolean
+            invalidGroup: Boolean,
+            setId: Number
         },
         components: {
             CscPbxSoundItem,
