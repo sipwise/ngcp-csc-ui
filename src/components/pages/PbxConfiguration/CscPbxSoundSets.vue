@@ -88,7 +88,13 @@
                 'updateItemId',
                 'updateState',
                 'lastUpdatedField',
-                'isListLoadingVisible'
+                'isListLoadingVisible',
+                'soundFileLabel',
+                'uploadSoundFileProgress',
+                'uploadSoundFileRequesting',
+                'uploadSoundFileDone',
+                'playSoundFileUrl',
+                'playSoundFileLoaded'
             ]),
             isMobile() {
                 return !!Platform.is.mobile;
