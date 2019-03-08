@@ -2,6 +2,23 @@
     <csc-page
         :is-list="true"
     >
+        <!--TODO: Remove-->
+        <csc-sound-file-upload
+            ref="testUpload"
+            icon="music_note"
+            file-types=".wav,.mp3"
+            float-label="My label goes here"
+            :value="soundFileLabel"
+            :progress="uploadSoundFileProgress"
+            :uploading="uploadSoundFileRequesting"
+            :uploaded="true"
+            @upload="uploadSoundFile"
+            @abort="abortUpload"
+            @reset="deleteSoundFile"
+            :file-url="playSoundFileUrl(125)"
+            :loaded="playSoundFileLoaded(125)"
+            @init="initSoundFileAudio"
+        />
         <q-list
             striped-odd
             no-border
@@ -36,6 +53,7 @@
     import CscPage from '../../CscPage'
     import CscPbxSoundSet from './CscPbxSoundSet'
     import CscRemoveDialog from '../../CscRemoveDialog'
+    import CscSoundFileUpload from '../../form/CscSoundFileUpload' // TODO: Remove
     import {
         mapGetters
     } from 'vuex'
@@ -46,6 +64,7 @@
     } from 'quasar-framework'
     export default {
         components: {
+            CscSoundFileUpload, // TODO: Remove
             CscPage,
             CscPbxSoundSet,
             CscRemoveDialog,
@@ -64,7 +83,13 @@
             ...mapGetters('pbxConfig', [
                 'soundSets',
                 'soundSetFilesLoading',
-                'isSoundSetsRequesting'
+                'isSoundSetsRequesting',
+                'soundFileLabel',
+                'uploadSoundFileProgress',
+                'uploadSoundFileRequesting',
+                'uploadSoundFileDone',
+                'playSoundFileUrl',
+                'playSoundFileLoaded'
             ]),
             isMobile() {
                 return !!Platform.is.mobile;
@@ -84,6 +109,28 @@
             },
             removeSoundSet() {
                 this.$store.dispatch('pbxConfig/removeSoundSet', this.currentRemovingSoundSet)
+            },
+            playSoundFile() { // TODO: Remove
+                this.$store.dispatch('pbxConfig/playSoundFile', {
+                    id: 125,
+                    format: 'mp3'
+                });
+            },
+            initSoundFileAudio() { // TODO: Remove
+                this.playSoundFile();
+                this.$refs.testUpload.setPlayingTrue();
+                this.$refs.testUpload.setPausedFalse();
+            },
+            uploadSoundFile(file) { // TODO: Remove
+                this.$store.dispatch('pbxConfig/uploadSoundFile', {
+                    file: file
+                });
+            },
+            abortUpload() { // TODO: Remove
+                console.log('abortUpload()');
+            },
+            deleteSoundFile() { // TODO: Remove
+                console.log('deleteSoundFile()');
             }
         },
         watch: {

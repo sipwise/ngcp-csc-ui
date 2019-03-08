@@ -4,6 +4,8 @@
         class="csc-sound-item"
     >
         <q-item-main>
+            <!--TODO: Pass in progress and upload state, plus handle-->
+            <!--input event for selection of custom sound file-->
             <csc-sound-file-upload
                 ref="uploadSoundFile"
                 icon="music_note"
