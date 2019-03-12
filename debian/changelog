@@ -1,3 +1,12 @@
+ngcp-csc-ui (7.0.2.3+0~mr7.0.2.3) unstable; urgency=medium
+
+  [ Robert Axelsen ]
+  * [4bf8e25] TT#53607 Remove '+' symbol on logs and outgoing
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 12 Mar 2019 08:15:59 +0100
+
 ngcp-csc-ui (7.0.2.2+0~mr7.0.2.2) unstable; urgency=medium
 
   [ raxelsen ]
