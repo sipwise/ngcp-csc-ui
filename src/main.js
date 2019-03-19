@@ -17,9 +17,6 @@ import router from './router'
 import {
     sync
 } from 'vuex-router-sync'
-import {
-    RtcEngineCall
-} from './plugins/call'
 import App from './App.vue'
 import './filters'
 import VueScrollTo from 'vue-scrollto'
@@ -34,7 +31,6 @@ Platform.has.popstate = false;
 Vue.config.productionTip = false;
 Vue.use(Quasar);
 Vue.use(VueResource);
-Vue.use(RtcEngineCall);
 Vue.use(VueScrollTo);
 Vue.use(Vuelidate);
 

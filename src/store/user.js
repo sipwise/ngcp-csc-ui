@@ -1,9 +1,16 @@
 'use strict';
 
-import { i18n } from '../i18n';
+import Vue from 'vue';
+import {
+    i18n
+} from '../i18n';
 import _ from 'lodash';
-import { SessionStorage } from 'quasar-framework'
-import { RequestState } from './common'
+import {
+    SessionStorage
+} from 'quasar-framework'
+import {
+    RequestState
+} from './common'
 import {
     login,
     getUserData
@@ -26,6 +33,8 @@ export default {
         userDataRequesting: false,
         userDataSucceeded: false,
         userDataError: null,
+        rtcEngineInitState: RequestState.initiated,
+        rtcEngineInitError: null,
         sessionLocale: null,
         changeSessionLocaleState: RequestState.initiated,
         changeSessionLocaleError: null
@@ -112,6 +121,12 @@ export default {
                 return null;
             }
         },
+        isRtcEngineInitialized(state) {
+            return state.rtcEngineInitState === RequestState.succeeded;
+        },
+        isRtcEngineInitializing(state) {
+            return state.rtcEngineInitState === RequestState.requesting;
+        },
         changeSessionLocaleState(state) {
             return state.changeSessionLocaleState;
         }
@@ -162,6 +177,16 @@ export default {
             state.userDataRequesting = false;
             state.userDataSucceeded = false;
             state.userDataError = null;
+        },
+        rtcEngineInitRequesting(state) {
+            state.rtcEngineInitState = RequestState.requesting;
+        },
+        rtcEngineInitSucceeded(state) {
+            state.rtcEngineInitState = RequestState.succeeded;
+        },
+        rtcEngineInitFailed(state, error) {
+            state.rtcEngineInitState = RequestState.failed;
+            state.rtcEngineInitError = error;
         },
         changeSessionLocaleRequesting(state) {
             state.changeSessionLocaleState = RequestState.requesting;
@@ -217,8 +242,12 @@ export default {
                         }, context.getters.jwtTTL * 1000);
                     }
                     if(context.getters.hasRtcEngineCapabilityEnabled) {
-                        context.dispatch('call/initialize', null, {
-                            root: true
+                        context.commit('rtcEngineInitRequesting');
+                        Vue.$rtcEngine.setNgcpApiJwt(localStorage.getItem('jwt'));
+                        Vue.$rtcEngine.initialize().then(()=>{
+                            context.commit('rtcEngineInitSucceeded');
+                        }).catch((err)=>{
+                            context.commit('rtcEngineInitFailed', err.message);
                         });
                     }
                 }).catch((err)=>{

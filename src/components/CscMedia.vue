@@ -86,7 +86,9 @@
                 }, 100);
             },
             fitMediaToParent() {
-                if(typeof(this.$refs.media.videoWidth) === 'number' &&
+                if(this.$refs.media && this.$refs.media &&
+                    this.$refs.media.videoWidth && this.$refs.media.videoHeight &&
+                    typeof(this.$refs.media.videoWidth) === 'number' &&
                     typeof(this.$refs.media.videoHeight) === 'number') {
                     let parentAspectRatio = this.$parent.$el.clientWidth / this.$parent.$el.clientHeight;
                     let isParentLandscape = parentAspectRatio >= 1;
@@ -139,7 +141,9 @@
                 }
             },
             fitMediaHeightToParent() {
-                if(typeof(this.$refs.media.videoWidth) === 'number' &&
+                if(this.$refs.media && this.$refs.media &&
+                    this.$refs.media.videoWidth && this.$refs.media.videoHeight &&
+                    typeof(this.$refs.media.videoWidth) === 'number' &&
                     typeof(this.$refs.media.videoHeight) === 'number') {
                     let videoAspectRatio = this.$refs.media.videoWidth / this.$refs.media.videoHeight;
                     this.mediaWidth = this.width;
