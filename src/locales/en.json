@@ -441,7 +441,12 @@
         "noSoundUploaded": "No sound uploaded",
         "playingInLoop": "Playing in loop",
         "playInLoop": "Play sound in loop",
-        "dontPlayInLoop": "Don't play sound in loop"
+        "dontPlayInLoop": "Don't play sound in loop",
+        "defaultForSubscribers": "Default For Subscribers",
+        "loadFiles": "Load Files",
+        "createSoundSet": "Create sound set",
+        "addSoundSet": "Add Sound Set",
+        "language": "Language"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

@@ -115,11 +115,6 @@
         numeric
     } from 'vuelidate/lib/validators'
     import {
-        QCard,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
-        QCardSeparator,
         QBtn,
         QInnerLoading,
         QSpinnerMat,
@@ -138,11 +133,6 @@
             'loading',
         ],
         components: {
-            QCard,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
-            QCardSeparator,
             QBtn,
             QInnerLoading,
             QSpinnerMat,

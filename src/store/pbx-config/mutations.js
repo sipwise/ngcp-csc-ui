@@ -503,5 +503,17 @@ export default {
         id = id + "";
         reactiveSet(state.soundSetFilesStates, id, RequestState.failed);
         reactiveSet(state.soundSetFilesErrors, id, error);
+    },
+    createSoundSetRequesting(state, soundSet) {
+        state.createSoundSetState = RequestState.requesting;
+        state.createSoundSetItem = soundSet;
+        state.createSoundSetError = null;
+    },
+    createSoundSetSucceeded(state) {
+        state.createSoundSetState = RequestState.succeeded;
+    },
+    createSoundSetFailed(state, error) {
+        state.createSoundSetState = RequestState.failed;
+        state.createSoundSetError = error;
     }
 }

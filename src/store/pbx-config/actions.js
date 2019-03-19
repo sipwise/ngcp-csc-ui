@@ -40,7 +40,8 @@ import {
     removeCallQueue,
     getAllSoundSets,
     getSoundFilesGrouped,
-    removeSoundSet
+    removeSoundSet,
+    createSoundSet
 } from '../../api/pbx-config'
 
 export default {
@@ -592,6 +593,18 @@ export default {
             context.commit('removeItemSucceeded');
         }).catch((err) => {
             context.commit('removeItemFailed', err.message);
+        });
+    },
+    createSoundSet(context, soundSet) {
+        context.commit('addItemRequesting', soundSet);
+        createSoundSet(soundSet).then(() => {
+            // TODO: After rebase, can reload here instead. But check
+            // that it's consistent with other flows
+            return context.dispatch('listSoundSets');
+        }).then(() => {
+            context.commit('addItemSucceeded');
+        }).catch((err) => {
+            context.commit('addItemFailed', err.message);
         });
     }
 }
