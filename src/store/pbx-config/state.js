@@ -91,5 +91,9 @@ export default {
     playSoundFileState: RequestState.initiated,
     playSoundFileError: null,
     soundFileUrls: {},
-    lastPlayed: null
+    lastPlayed: null,
+    createSoundSetState: RequestState.initiated,
+    createSoundSetItem: null,
+    createSoundSetError: null,
+    lastAddedCallQueue: null
 }

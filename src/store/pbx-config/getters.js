@@ -350,5 +350,24 @@ export default {
         return (id) => {
             return state.lastPlayed + '' === id + '';
         }
+    },
+    lastAddedCallQueue(state, getters) {
+        let lastAddedItem = '';
+        if (state.addItem) {
+            let added = _.find(getters.callQueueGroupsAndSeatsOptions, (option) => {
+                return option.value == state.addItem.id
+            });
+            lastAddedItem = added ? added.label : '';
+        }
+        return lastAddedItem;
+    },
+    lastAddedSoundSet(state) {
+        return state.addItem ? state.addItem.name : '';
+    },
+    groupLabel() {
+        return (name) => {
+            let regex = /[-_]/g;
+            return _.capitalize(name.replace(regex, ' '));
+        }
     }
 }

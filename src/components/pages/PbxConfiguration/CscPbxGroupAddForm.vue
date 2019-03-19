@@ -3,65 +3,65 @@
         <q-field :error-label="groupNameErrorMessage">
             <q-input
                 dark
+                clearable
+                autofocus
+                v-model="data.name"
+                :error="$v.data.name.$error"
+                :disable="loading"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.groupName')"
                 @input="$v.data.name.$touch"
                 @blur="$v.data.name.$touch"
-                :error="$v.data.name.$error"
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.name"
-                autofocus
-                :float-label="$t('pbxConfig.groupName')"
-                clearable
             />
         </q-field>
         <q-field :error-label="extensionErrorMessage">
             <q-input
                 dark
+                clearable
+                v-model="data.extension"
+                :error="$v.data.extension.$error"
+                :disable="loading"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.extension')"
                 @input="$v.data.extension.$touch"
                 @blur="$v.data.extension.$touch"
-                :error="$v.data.extension.$error"
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.extension"
-                :float-label="$t('pbxConfig.extension')"
-                clearable
             />
         </q-field>
         <q-field>
             <q-select
                 dark
-                :disabled="loading"
-                :readonly="loading"
+                radio
                 v-model="data.huntPolicy"
+                :disable="loading"
+                :readonly="loading"
                 :float-label="$t('pbxConfig.huntPolicy')"
                 :options="huntPolicyOptions"
-                radio
             />
         </q-field>
         <q-field :error-label="huntTimeoutErrorMessage">
             <q-input
                 dark
-                @input="$v.data.huntTimeout.$touch"
-                :error="$v.data.huntTimeout.$error"
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.huntTimeout"
                 clearable
+                v-model="data.huntTimeout"
+                :error="$v.data.huntTimeout.$error"
+                :disable="loading"
+                :readonly="loading"
                 :float-label="$t('pbxConfig.huntTimeout')"
                 :suffix="$t('pbxConfig.seconds')"
                 :min="1"
                 :max="3600"
+                @input="$v.data.huntTimeout.$touch"
             />
         </q-field>
         <q-field>
             <q-select
                 dark
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.aliasNumbers"
                 multiple
                 chips
                 clearable
+                v-model="data.aliasNumbers"
+                :disable="loading"
+                :readonly="loading"
                 :float-label="$t('pbxConfig.aliasNumbers')"
                 :options="aliasNumberOptions"
             />
@@ -69,20 +69,20 @@
         <q-field>
             <q-select
                 dark
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.seats"
                 multiple
                 chips
                 clearable
+                v-model="data.seats"
+                :disable="loading"
+                :readonly="loading"
                 :float-label="$t('pbxConfig.seats')"
                 :options="seatOptions"
             />
         </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
-                v-if="!loading"
                 flat
+                v-if="!loading"
                 color="default"
                 icon="clear"
                 @mousedown.native="cancel()"
@@ -90,11 +90,11 @@
                 {{ $t('buttons.cancel') }}
             </q-btn>
             <q-btn
-                v-if="!loading"
-                :disabled="$v.data.$invalid"
                 flat
+                v-if="!loading"
                 color="primary"
                 icon="group"
+                :disable="$v.data.$invalid"
                 @click="save()"
             >
                 {{ $t('pbxConfig.createGroup') }}
@@ -115,11 +115,6 @@
         numeric
     } from 'vuelidate/lib/validators'
     import {
-        QCard,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
-        QCardSeparator,
         QBtn,
         QInnerLoading,
         QSpinnerMat,
@@ -138,11 +133,6 @@
             'loading',
         ],
         components: {
-            QCard,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
-            QCardSeparator,
             QBtn,
             QInnerLoading,
             QSpinnerMat,

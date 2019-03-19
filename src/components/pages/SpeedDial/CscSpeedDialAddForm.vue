@@ -4,7 +4,7 @@
             <q-field>
                 <q-select
                     dark
-                    :disabled="loading"
+                    :disable="loading"
                     :readonly="loading"
                     v-model="slot"
                     :float-label="$t('speedDial.slot')"

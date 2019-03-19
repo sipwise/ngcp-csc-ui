@@ -7,7 +7,7 @@
                 @blur="$v.data.station_name.$touch"
                 :error="$v.data.station_name.$error"
                 v-model="data.station_name"
-                :disabled="loading"
+                :disable="loading"
                 :readonly="loading"
                 autofocus
                 :float-label="$t('pbxConfig.deviceStationName')"
@@ -21,7 +21,7 @@
                 @blur="$v.data.identifier.$touch"
                 :error="$v.data.identifier.$error"
                 v-model="data.identifier"
-                :disabled="loading"
+                :disable="loading"
                 :readonly="loading"
                 :float-label="$t('pbxConfig.deviceIdentifier')"
                 clearable
@@ -55,7 +55,7 @@
                 color="primary"
                 icon="done"
                 @click="save()"
-                :disabled="$v.data.$invalid || !data.profile_id"
+                :disable="$v.data.$invalid || !data.profile_id"
             >
                 {{ $t('buttons.save') }}
             </q-btn>

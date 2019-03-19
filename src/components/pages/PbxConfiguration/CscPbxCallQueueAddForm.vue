@@ -4,11 +4,11 @@
         <q-field>
             <q-select
                 dark
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.subscriber_id"
                 chips
                 clearable
+                v-model="data.subscriber_id"
+                :disable="loading"
+                :readonly="loading"
                 :float-label="$t('pbxConfig.queueExtensionName')"
                 :options="options"
             />
@@ -16,36 +16,36 @@
         <q-field :error-label="maxQueueLengthErrorMessage">
             <q-input
                 dark
+                clearable
+                autofocus
+                v-model="data.max_queue_length"
+                :error="$v.data.max_queue_length.$error"
+                :disable="loading"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.queueLength')"
+                :suffix="$t('pbxConfig.callers')"
                 @input="$v.data.max_queue_length.$touch"
                 @blur="$v.data.max_queue_length.$touch"
-                :error="$v.data.max_queue_length.$error"
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.max_queue_length"
-                autofocus
-                :float-label="$t('pbxConfig.queueLength')"
-                clearable
-                :suffix="$t('pbxConfig.callers')"
             />
         </q-field>
         <q-field :error-label="wrapUpTimeErrorMessage">
             <q-input
                 dark
+                clearable
+                v-model="data.queue_wrap_up_time"
+                :error="$v.data.queue_wrap_up_time.$error"
+                :disable="loading"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.wrapUpTime')"
+                :suffix="$t('pbxConfig.seconds')"
                 @input="$v.data.queue_wrap_up_time.$touch"
                 @blur="$v.data.queue_wrap_up_time.$touch"
-                :error="$v.data.queue_wrap_up_time.$error"
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.queue_wrap_up_time"
-                :float-label="$t('pbxConfig.wrapUpTime')"
-                clearable
-                :suffix="$t('pbxConfig.seconds')"
             />
         </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
-                v-if="!loading"
                 flat
+                v-if="!loading"
                 color="default"
                 icon="clear"
                 @mousedown.native="cancel()"
@@ -53,9 +53,9 @@
                 {{ $t('buttons.cancel') }}
             </q-btn>
             <q-btn
-                v-if="!loading"
-                :disabled="$v.data.$invalid"
                 flat
+                v-if="!loading"
+                :disable="$v.data.$invalid"
                 color="primary"
                 icon="person"
                 @click="save()"

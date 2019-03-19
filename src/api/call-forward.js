@@ -268,7 +268,7 @@ export function deleteDestinationFromDestinationset(options) {
                 deleteDestinationsetById(options.id).then((res) => {
                     resolve(res);
                 }).catch((err) => {
-                    console.log(err);
+                    reject(err);
                 });
             }
             else {

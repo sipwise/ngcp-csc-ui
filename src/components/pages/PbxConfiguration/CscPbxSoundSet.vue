@@ -91,6 +91,7 @@
                 <csc-pbx-sound-group
                     v-for="(group, index) in set.groups"
                     :group="group"
+                    :group-label="groupLabel(group.name)"
                     :key="index"
                 />
             </q-item-tile>
@@ -144,7 +145,12 @@
     import {
         maxLength
     } from 'vuelidate/lib/validators'
-    import { showGlobalError } from '../../../helpers/ui'
+    import {
+        mapGetters
+    } from 'vuex'
+    import {
+        showGlobalError
+    } from '../../../helpers/ui'
     export default {
         name: 'csc-pbx-sound-set',
         props: {
@@ -183,6 +189,9 @@
             },
         },
         computed: {
+            ...mapGetters('pbxConfig', [
+                'groupLabel'
+            ]),
             itemClasses() {
                 let classes = ['csc-list-item'];
                 if (this.expanded) {

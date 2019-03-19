@@ -62,8 +62,8 @@
                 :alias-number-options="aliasNumberOptions"
                 :seat-options="seatOptions"
                 :hunt-policy-options="huntPolicyOptions"
-                @remove="removeGroupDialog"
                 :loading="isItemLoading(group.id)"
+                @remove="removeGroupDialog"
                 @save-name="setGroupName"
                 @save-extension="setGroupExtension"
                 @save-hunt-policy="setGroupHuntPolicy"
@@ -185,7 +185,7 @@
             },
             seatOptions() {
                 let seats = [];
-                this.seats.forEach((seat)=>{
+                this.seats.forEach((seat) => {
                     seats.push({
                         label: seat.display_name ? seat.display_name : seat.username,
                         sublabel: this.$t('pbxConfig.extension') + ': ' + seat.pbx_extension,

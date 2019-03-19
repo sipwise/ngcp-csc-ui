@@ -17,7 +17,7 @@
             >
                 <q-item-side v-if="!isMobile">
                     <q-field
-                        :disabled="loading"
+                        :disable="loading"
                     >
                         <q-toggle
                             :value="ownPhone"

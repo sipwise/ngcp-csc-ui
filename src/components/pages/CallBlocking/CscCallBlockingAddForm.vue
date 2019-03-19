@@ -26,7 +26,7 @@
                 color="primary"
                 icon="done"
                 @click="save()"
-                :disabled="saveDisabled"
+                :disable="saveDisabled"
             >
                 {{ $t('buttons.save') }}
             </q-btn>
@@ -81,12 +81,12 @@
             }
         },
         props: [
-            'disabled',
+            'disable',
             'loading'
         ],
         computed: {
             saveDisabled() {
-                return this.numberError|| this.disabled || this.loading;
+                return this.numberError|| this.disable || this.loading;
             }
         },
         methods: {
