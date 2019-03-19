@@ -3,39 +3,39 @@
         <q-field :error-label="seatNameErrorMessage">
             <q-input
                 dark
-                @input="$v.data.name.$touch"
-                @blur="$v.data.name.$touch"
+                clearable
+                autofocus
+                v-model="data.name"
                 :error="$v.data.name.$error"
                 :disabled="loading"
                 :readonly="loading"
-                v-model="data.name"
-                autofocus
                 :float-label="$t('pbxConfig.name')"
-                clearable
+                @input="$v.data.name.$touch"
+                @blur="$v.data.name.$touch"
             />
         </q-field>
         <q-field :error-label="extensionErrorMessage">
             <q-input
                 dark
-                @input="$v.data.extension.$touch"
-                @blur="$v.data.extension.$touch"
+                clearable
+                v-model="data.extension"
                 :error="$v.data.extension.$error"
                 :disabled="loading"
                 :readonly="loading"
-                v-model="data.extension"
                 :float-label="$t('pbxConfig.extension')"
-                clearable
+                @input="$v.data.extension.$touch"
+                @blur="$v.data.extension.$touch"
             />
         </q-field>
         <q-field>
             <q-select
                 dark
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.aliasNumbers"
                 multiple
                 chips
                 clearable
+                v-model="data.aliasNumbers"
+                :disabled="loading"
+                :readonly="loading"
                 :float-label="$t('pbxConfig.aliasNumbers')"
                 :options="aliasNumberOptions"
             />
@@ -43,20 +43,20 @@
         <q-field>
             <q-select
                 dark
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.groups"
                 multiple
                 chips
                 clearable
+                v-model="data.groups"
+                :disabled="loading"
+                :readonly="loading"
                 :float-label="$t('pbxConfig.groups')"
                 :options="groupOptions"
             />
         </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
-                v-if="!loading"
                 flat
+                v-if="!loading"
                 color="default"
                 icon="clear"
                 @mousedown.native="cancel()"
@@ -64,11 +64,11 @@
                 {{ $t('buttons.cancel') }}
             </q-btn>
             <q-btn
-                v-if="!loading"
-                :disabled="$v.data.$invalid"
                 flat
+                v-if="!loading"
                 color="primary"
                 icon="person"
+                :disabled="$v.data.$invalid"
                 @click="save()"
             >
                 {{ $t('pbxConfig.createSeat') }}
@@ -87,11 +87,6 @@
         numeric
     } from 'vuelidate/lib/validators'
     import {
-        QCard,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
-        QCardSeparator,
         QBtn,
         QInnerLoading,
         QSpinnerMat,
@@ -109,11 +104,6 @@
             'loading'
         ],
         components: {
-            QCard,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
-            QCardSeparator,
             QBtn,
             QInnerLoading,
             QSpinnerMat,

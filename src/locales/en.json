@@ -399,7 +399,9 @@
             "updatedStationName": "Updated station name to {name}",
             "updatedProfile": "Updated model of device {name}",
             "updatedIdentifier": "Updated identifier to {identifier}",
-            "createdDevice": "Created device {name} successfully"
+            "createdDevice": "Created device {name} successfully",
+            "addedCallQueueToast": "Added call queue configuration for {name}",
+            "addedSoundSetToast": "Added sound set {name}"
         },
         "addDevice": "Add device",
         "addDeviceShort": "Add",
@@ -443,7 +445,11 @@
         "playingInLoop": "Playing in loop",
         "playInLoop": "Play sound in loop",
         "dontPlayInLoop": "Don't play sound in loop",
-        "defaultForSubscribers": "Default For Subscribers"
+        "defaultForSubscribers": "Default For Subscribers",
+        "loadFiles": "Load Files",
+        "createSoundSet": "Create sound set",
+        "addSoundSet": "Add Sound Set",
+        "language": "Language"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

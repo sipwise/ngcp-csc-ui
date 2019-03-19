@@ -57,7 +57,6 @@
         },
         methods: {
             changeLanguage(language) {
-                console.log(language);
                 this.$emit('change-language', language);
                 this.$refs.languageCollapsible.close();
             }
