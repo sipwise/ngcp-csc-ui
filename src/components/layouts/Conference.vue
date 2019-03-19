@@ -1,0 +1,130 @@
+<template>
+    <q-layout>
+
+        <div
+            id="csc-conf-header"
+            class="csc-conf-full-height"
+        >
+            <div
+                class="row justify-end"
+            >
+                <q-btn
+                    class="csc-conf-button"
+                    color="primary"
+                    icon="clear"
+                    flat
+                    round
+                    @click="close()"
+                />
+            </div>
+        </div>
+        <div
+            id="csc-conf-body"
+        >
+            <csc-conference-join
+                v-if="!isJoined"
+            />
+            <csc-conference-joined
+                v-else
+            >
+            </csc-conference-joined>
+        </div>
+        <div
+            id="csc-conf-footer"
+        >
+            <div
+                id="csc-conf-actions"
+                class="row justify-center"
+            >
+                <q-btn
+                    class="csc-conf-button"
+                    color="primary"
+                    icon="mic"
+                    round
+                />
+                <q-btn
+                    class="csc-conf-button"
+                    color="primary"
+                    icon="videocam"
+                    round
+                />
+                <q-btn
+                    class="csc-conf-button"
+                    color="primary"
+                    icon="computer"
+                    round
+                />
+            </div>
+        </div>
+    </q-layout>
+</template>
+
+<script>
+    import {
+        mapGetters
+    } from 'vuex'
+    import CscConferenceJoin from '../pages/Conference/CscConferenceJoin'
+    import CscConferenceJoined from '../pages/Conference/CscConferenceJoined'
+    import CscMedia from "../CscMedia";
+    import {
+        QLayout,
+        QBtn
+    } from 'quasar-framework'
+    export default {
+        data () {
+            return {}
+        },
+        mounted() {
+            this.$store.dispatch('user/initUser');
+        },
+        components: {
+            CscMedia,
+            CscConferenceJoin,
+            CscConferenceJoined,
+            QLayout,
+            QBtn
+        },
+        computed: {
+            ...mapGetters('conference', [
+                'isConferencingEnabled',
+                'isJoined',
+                'isMicrophoneEnabled',
+                'isCameraEnabled',
+                'isScreenEnabled'
+            ])
+        },
+        methods: {
+            close() {
+                this.$router.push({path: '/user/home'});
+            }
+        }
+    }
+</script>
+
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../themes/app.common.styl'
+    #csc-conf-header
+        top 0
+        left 0
+        right 0
+        position fixed
+        background-color transparent
+        height $call-footer-height
+        .csc-conf-button.q-btn
+            .q-btn-inner
+                color white
+    #csc-conf-footer
+        bottom 0
+        left 0
+        right 0
+        position fixed
+        background-color $layout-aside-background
+        height $call-footer-height
+
+        #csc-conf-actions
+            margin: -28px
+            .q-btn:last-child
+                margin-right 0
+            .q-btn
+                margin-right $flex-gutter-sm
+</style>
