@@ -44,7 +44,8 @@ import {
     setSoundSetName,
     setSoundSetDescription,
     setSoundSetContractDefault,
-    getSoundSetWithFiles
+    getSoundSetWithFiles,
+    createSoundSet
 } from '../../api/pbx-config'
 
 export default {
@@ -466,7 +467,7 @@ export default {
         if (!_.isNull(config.queue_wrap_up_time) && config.queue_wrap_up_time.length === 0) {
             config.queue_wrap_up_time = null;
         }
-        context.commit('addItemRequesting', config);
+        context.commit('addItemRequesting', data);
         addCallQueueConfig(data.id, config).then(() => {
             return context.dispatch('listCallQueueGroupsAndSeats', true);
         }).then(() => {
@@ -647,6 +648,16 @@ export default {
             }).catch((err) => {
                 reject(err);
             });
+        });
+    },
+    createSoundSet(context, soundSet) {
+        context.commit('addItemRequesting', soundSet);
+        createSoundSet(soundSet).then(() => {
+            return context.dispatch('listSoundSets');
+        }).then(() => {
+            context.commit('addItemSucceeded');
+        }).catch((err) => {
+            context.commit('addItemFailed', err.message);
         });
     }
 }

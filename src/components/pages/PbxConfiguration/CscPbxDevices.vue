@@ -111,7 +111,7 @@
                     icon="fa-filter"
                     color="negative"
                     @click="resetFilter()"
-                    :disabled="!hasFilters"
+                    :disable="!hasFilters"
                 >{{ $t('pbxConfig.resetFilters') }}</q-btn>
             </div>
         </div>
