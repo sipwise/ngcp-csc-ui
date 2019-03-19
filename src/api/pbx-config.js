@@ -721,3 +721,13 @@ export function getSoundFilesGrouped(options) {
 export function removeSoundSet(id) {
     return Vue.http.delete('api/soundsets/' + id);
 }
+
+export function createSoundSet(soundSet) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.post('api/soundsets/', soundSet).then(() => {
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}

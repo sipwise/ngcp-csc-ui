@@ -84,5 +84,8 @@ export default {
     soundSets: {},
     soundSetsOrdered: [],
     soundSetFilesStates: {},
-    soundSetFilesErrors: {}
+    soundSetFilesErrors: {},
+    createSoundSetState: RequestState.initiated,
+    createSoundSetItem: null,
+    createSoundSetError: null
 }

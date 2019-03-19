@@ -1,6 +1,6 @@
 <template>
     <div class="csc-form csc-pbx-seat-add-form">
-        <q-field :error-label="seatNameErrorMessage">
+        <q-field :error-label="nameErrorMessage">
             <q-input
                 dark
                 @input="$v.data.name.$touch"
@@ -10,47 +10,43 @@
                 :readonly="loading"
                 v-model="data.name"
                 autofocus
-                :float-label="$t('pbxConfig.name')"
+                :float-label="$t('pbxConfig.groupName')"
                 clearable
             />
         </q-field>
-        <q-field :error-label="extensionErrorMessage">
+        <q-field :error-label="descriptionErrorMessage">
             <q-input
                 dark
-                @input="$v.data.extension.$touch"
-                @blur="$v.data.extension.$touch"
-                :error="$v.data.extension.$error"
+                @input="$v.data.description.$touch"
+                @blur="$v.data.description.$touch"
+                :error="$v.data.description.$error"
                 :disabled="loading"
                 :readonly="loading"
-                v-model="data.extension"
-                :float-label="$t('pbxConfig.extension')"
+                v-model="data.description"
+                :float-label="$t('pbxConfig.description')"
                 clearable
             />
         </q-field>
-        <q-field>
-            <q-select
-                dark
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.aliasNumbers"
-                multiple
-                chips
-                clearable
-                :float-label="$t('pbxConfig.aliasNumbers')"
-                :options="aliasNumberOptions"
+        <q-field class="csc-form-field">
+            <q-toggle
+                :class="contractDefaultClasses"
+                :disable="loading"
+                :label="$t('pbxConfig.defaultForSubscribers')"
+                v-model="data.contract_default"
+                @input="toggleContractDefault"
+                checked-icon="check_circle"
+                unchecked-icon="check_circle"
             />
         </q-field>
-        <q-field>
-            <q-select
-                dark
-                :disabled="loading"
-                :readonly="loading"
-                v-model="data.groups"
-                multiple
-                chips
-                clearable
-                :float-label="$t('pbxConfig.groups')"
-                :options="groupOptions"
+        <q-field class="csc-form-field">
+            <q-toggle
+                :class="loadFilesClasses"
+                :disable="loading"
+                :label="$t('pbxConfig.loadFiles')"
+                v-model="data.copy_from_default"
+                @input="toggleLoadFiles"
+                checked-icon="move_to_inbox"
+                unchecked-icon="move_to_inbox"
             />
         </q-field>
         <div class="csc-form-actions row justify-center">
@@ -68,10 +64,10 @@
                 :disabled="$v.data.$invalid"
                 flat
                 color="primary"
-                icon="person"
+                icon="group"
                 @click="save()"
             >
-                {{ $t('pbxConfig.createSeat') }}
+                {{ $t('pbxConfig.createSoundSet') }}
             </q-btn>
         </div>
         <q-inner-loading :visible="loading">
@@ -83,8 +79,7 @@
 <script>
     import {
         required,
-        maxLength,
-        numeric
+        maxLength
     } from 'vuelidate/lib/validators'
     import {
         QBtn,
@@ -93,14 +88,13 @@
         QField,
         QInput,
         QSelect,
-        QIcon
+        QIcon,
+        QToggle
     } from 'quasar-framework'
 
     export default {
-        name: 'csc-pbx-seat-add-form',
+        name: 'csc-pbx-sound-set-add-form',
         props: [
-            'aliasNumberOptions',
-            'groupOptions',
             'loading'
         ],
         components: {
@@ -110,7 +104,8 @@
             QField,
             QInput,
             QSelect,
-            QIcon
+            QIcon,
+            QToggle
         },
         validations: {
             data: {
@@ -118,10 +113,9 @@
                     required,
                     maxLength: maxLength(64)
                 },
-                extension: {
+                description: {
                     required,
-                    numeric,
-                    maxLength: maxLength(64)
+                    maxLength: maxLength(255)
                 }
             }
         },
@@ -131,45 +125,63 @@
             }
         },
         computed: {
-            seatNameErrorMessage() {
+            nameErrorMessage() {
                 if (!this.$v.data.name.required) {
                     return this.$t('validationErrors.fieldRequired', {
-                        field: this.$t('pbxConfig.seatName')
+                        field: this.$t('pbxConfig.name')
                     });
                 }
                 else if (!this.$v.data.name.maxLength) {
                     return this.$t('validationErrors.maxLength', {
-                        field: this.$t('pbxConfig.seatName'),
+                        field: this.$t('pbxConfig.name'),
                         maxLength: this.$v.data.name.$params.maxLength.max
                     });
                 }
             },
-            extensionErrorMessage() {
-                if (!this.$v.data.extension.required) {
+            descriptionErrorMessage() {
+                if (!this.$v.data.description.required) {
                     return this.$t('validationErrors.fieldRequired', {
-                        field: this.$t('pbxConfig.extension')
+                        field: this.$t('pbxConfig.description')
                     });
                 }
-                else if (!this.$v.data.extension.maxLength) {
+                else if (!this.$v.data.description.maxLength) {
                     return this.$t('validationErrors.maxLength', {
-                        field: this.$t('pbxConfig.extension'),
-                        maxLength: this.$v.data.extension.$params.maxLength.max
+                        field: this.$t('pbxConfig.description'),
+                        maxLength: this.$v.data.description.$params.maxLength.max
                     });
                 }
-                else if (!this.$v.data.extension.numeric) {
-                    return this.$t('validationErrors.numeric', {
-                        field: this.$t('pbxConfig.extension'),
-                    });
+            },
+            contractDefaultClasses() {
+                let classes = [];
+                if(this.contract_default) {
+                    classes.push('csc-toggle-enabled');
                 }
+                else {
+                    classes.push('csc-toggle-disabled');
+                }
+                return classes;
+            },
+            loadFilesClasses() {
+                let classes = [];
+                if(this.copy_from_default) {
+                    classes.push('csc-toggle-enabled');
+                }
+                else {
+                    classes.push('csc-toggle-disabled');
+                }
+                return classes;
             }
         },
         methods: {
             getDefaults() {
                 return {
                     name: '',
-                    extension: '',
-                    aliasNumbers: [],
-                    groups: []
+                    loopplay: false,
+                    replace_existing: false,
+                    language: 'en', // [ en, es, ru, it, ro, de ]
+                    contract_default: false,
+                    copy_from_default: false,
+                    description: ''
                 }
             },
             cancel() {
@@ -181,11 +193,22 @@
             reset() {
                 this.data = this.getDefaults();
                 this.$v.$reset();
+            },
+            toggleContractDefault() {
+                console.log('toggleContractDefault()', this.data);
+            },
+            toggleLoadFiles() {
+                console.log('toggleLoadFiles()', this.data);
             }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/app.common.styl';
+    @import '../../../themes/quasar.variables.styl';
+    .csc-pbx-group-add-form
+        position: relative
+    .csc-pbx-group-add-form
+        .q-field:last-child
+            margin-bottom: 36px
 </style>
