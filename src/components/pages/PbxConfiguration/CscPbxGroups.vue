@@ -181,7 +181,7 @@
             },
             seatOptions() {
                 let seats = [];
-                this.seats.forEach((seat)=>{
+                this.seats.forEach((seat) => {
                     seats.push({
                         label: seat.display_name ? seat.display_name : seat.username,
                         sublabel: this.$t('pbxConfig.extension') + ': ' + seat.pbx_extension,

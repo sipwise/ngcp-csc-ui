@@ -441,7 +441,9 @@
         "noSoundUploaded": "No sound uploaded",
         "playingInLoop": "Playing in loop",
         "playInLoop": "Play sound in loop",
-        "dontPlayInLoop": "Don't play sound in loop"
+        "dontPlayInLoop": "Don't play sound in loop",
+        "createSoundSet": "Create sound set",
+        "addSoundSet": "Add Sound Set"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

@@ -593,5 +593,8 @@ export default {
         }).catch((err) => {
             context.commit('removeItemFailed', err.message);
         });
+    },
+    addSoundSet(context, soundSet) {
+        console.log('addSoundSet', soundSet);
     }
 }

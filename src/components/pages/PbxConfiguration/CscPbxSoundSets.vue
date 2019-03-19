@@ -2,6 +2,31 @@
     <csc-page
         :is-list="true"
     >
+        <div
+            v-show="addFormEnabled"
+            class="row justify-center"
+        >
+            <csc-pbx-sound-set-add-form
+                class="col-xs-12 col-md-6 csc-list-form"
+                ref="addForm"
+                @save="addSoundSet"
+                @cancel="disableAddForm"
+                :loading="isAdding"
+            />
+        </div>
+        <div
+            v-show="!addFormEnabled"
+            class="row justify-center"
+        >
+            <q-btn
+                color="primary"
+                icon="add"
+                flat
+                @click="enableAddForm"
+            >
+                {{ $t('pbxConfig.addSoundSet') }}
+            </q-btn>
+        </div>
         <q-list
             striped-odd
             no-border
@@ -36,6 +61,7 @@
     import CscPage from '../../CscPage'
     import CscPbxSoundSet from './CscPbxSoundSet'
     import CscRemoveDialog from '../../CscRemoveDialog'
+    import CscPbxSoundSetAddForm from './CscPbxSoundSetAddForm'
     import {
         mapGetters
     } from 'vuex'
@@ -49,12 +75,14 @@
             CscPage,
             CscPbxSoundSet,
             CscRemoveDialog,
+            CscPbxSoundSetAddForm,
             QList,
             QBtn
         },
         data () {
             return {
-                currentRemovingSoundSet: null
+                currentRemovingSoundSet: null,
+                addFormEnabled: false,
             }
         },
         mounted() {
@@ -64,7 +92,8 @@
             ...mapGetters('pbxConfig', [
                 'soundSets',
                 'soundSetFilesLoading',
-                'isSoundSetsRequesting'
+                'isSoundSetsRequesting',
+                'isAdding'
             ]),
             isMobile() {
                 return !!Platform.is.mobile;
@@ -84,6 +113,20 @@
             },
             removeSoundSet() {
                 this.$store.dispatch('pbxConfig/removeSoundSet', this.currentRemovingSoundSet)
+            },
+            resetAddForm() {
+                this.$refs.addForm.reset();
+            },
+            enableAddForm() {
+                this.resetAddForm();
+                this.addFormEnabled = true;
+            },
+            disableAddForm() {
+                this.resetAddForm();
+                this.addFormEnabled = false;
+            },
+            addSoundSet(set) {
+                this.$store.dispatch('pbxConfig/addSoundSet', set);
             }
         },
         watch: {
