@@ -34,6 +34,7 @@
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",
         "callNotAvailable": "Could not initialize call functionality properly",
+        "conferencingAvailable": "You are now able to create WebRTC multiparty conferences",
         "changeSessionLanguageSuccessMessage": "Session language successfully changed"
     },
     "validationErrors": {

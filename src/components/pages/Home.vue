@@ -53,11 +53,11 @@
                     :dark="true"
                     :value="callNumberInput"
                     :readonly="dialpadOpened"
-                    :enabled="isCallInitialized"
+                    :enabled="isCallEnabled"
                     @number-changed="numberInputChanged"
                 />
                 <csc-call-dialpad
-                    v-if="dialpadOpened && isCallInitialized"
+                    v-if="dialpadOpened && isCallEnabled"
                     :show-backspace-button="true"
                     :show-clear-button="true"
                     @click="dialpadClick"
@@ -131,7 +131,7 @@
                 'callNumberInput',
                 'hasRtcEngineCapabilityEnabled',
                 'desktopSharingInstall',
-                'isCallInitialized',
+                'isCallEnabled',
                 'isCallInitializing'
             ]),
             dialpadOpened() {

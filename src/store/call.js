@@ -11,9 +11,6 @@ import {
 import {
     startCase
 } from '../filters/string'
-import {
-    RequestState
-} from './common'
 
 export var CallState = {
     input: 'input',
@@ -54,8 +51,7 @@ function handleUserMediaError(context, err) {
 export default {
     namespaced: true,
     state: {
-        initializationState: RequestState.initiated,
-        initializationError: null,
+        callEnabled: false,
         endedReason: null,
         callState: CallState.input,
         number: '',
@@ -72,6 +68,9 @@ export default {
         dialpadOpened: false
     },
     getters: {
+        isCallEnabled(state) {
+            return state.callEnabled;
+        },
         endedReason(state) {
             return state.endedReason;
         },
@@ -81,24 +80,27 @@ export default {
         callNumberInput(state) {
             return state.numberInput;
         },
-        isNetworkConnected(state) {
-            return state.initializationState === RequestState.succeeded;
-        },
-        isCallAvailable(state, getters) {
-            return getters.isNetworkConnected;
-        },
+        // isNetworkConnected(state) {
+        //     return state.initializationState === RequestState.succeeded;
+        // },
+        // isCallAvailable(state, getters) {
+        //     return getters.isNetworkConnected;
+        // },
+        // isCallInitializing(state, getters, rootState, rootGetters) {
+        //     return state.initializationState === RequestState.requesting ||
+        //         rootGetters['user/userDataRequesting'];
+        // },
+        // isCallInitialized(state) {
+        //     return state.initializationState === RequestState.succeeded
+        // },
+        // hasCallInitError(state) {
+        //     return state.initializationError !== null;
+        // },
+        // callInitError(state) {
+        //     return state.initializationError;
+        // },
         isCallInitializing(state, getters, rootState, rootGetters) {
-            return state.initializationState === RequestState.requesting ||
-                rootGetters['user/userDataRequesting'];
-        },
-        isCallInitialized(state) {
-            return state.initializationState === RequestState.succeeded
-        },
-        hasCallInitError(state) {
-            return state.initializationError !== null;
-        },
-        callInitError(state) {
-            return state.initializationError;
+            return rootGetters['user/isRtcEngineInitializing'];
         },
         isPreparing(state) {
             return state.callState === CallState.input;
@@ -214,16 +216,6 @@ export default {
         }
     },
     mutations: {
-        initRequesting(state) {
-            state.initializationState = RequestState.requesting;
-        },
-        initSucceeded(state) {
-            state.initializationState = RequestState.succeeded;
-        },
-        initFailed(state, error) {
-            state.initializationState = RequestState.failed;
-            state.initializationError = error;
-        },
         numberInputChanged(state, numberInput) {
             state.numberInput = numberInput;
         },
@@ -319,47 +311,30 @@ export default {
         },
         toggleDialpad(state) {
             state.dialpadOpened = !state.dialpadOpened;
+        },
+        enableCall(state) {
+            state.callEnabled = true;
+        },
+        disableCall(state) {
+            state.callEnabled = false;
         }
     },
     actions: {
-        initialize(context) {
-            if(!context.getters.isCallInitialized) {
-                context.commit('initRequesting');
-                Vue.call.onIncoming(()=>{
-                    context.commit('incomingCall', {
-                        number: Vue.call.getNumber()
-                    });
-                }).onRemoteMedia((remoteMediaStream)=>{
-                    context.commit('establishCall', remoteMediaStream);
-                }).onEnded((reason)=>{
-                    Vue.call.end();
-                    context.commit('endCall', reason);
-                    setTimeout(()=>{
-                        context.commit('inputNumber');
-                    }, errorVisibilityTimeout);
-                });
-                Vue.call.initialize().then(()=>{
-                    context.commit('initSucceeded');
-                }).catch((err)=>{
-                    context.commit('initFailed', err);
-                });
-            }
-        },
         start(context, localMedia) {
             let number = context.getters.callNumberInput;
             context.commit('desktopSharingInstallReset');
             context.commit('startCalling', number);
             Promise.resolve().then(()=>{
-                return Vue.call.createLocalMedia(localMedia);
+                return Vue.$call.createLocalMedia(localMedia);
             }).then((localMediaStream)=>{
                 context.commit('localMediaSuccess', localMediaStream);
-                Vue.call.onRingingStart(()=>{
+                Vue.$call.onRingingStart(()=>{
                     context.commit('startRinging');
                 }).onRingingStop(()=>{
                     context.commit('stopRinging');
                 }).start(number, localMediaStream);
             }).catch((err)=>{
-                Vue.call.end();
+                Vue.$call.end();
                 handleUserMediaError(context, err);
                 setTimeout(()=>{
                     context.commit('inputNumber');
@@ -368,11 +343,11 @@ export default {
         },
         accept(context, localMedia) {
             context.commit('desktopSharingInstallReset');
-            Vue.call.createLocalMedia(localMedia).then((localMediaStream)=>{
-                Vue.call.accept(localMediaStream);
+            Vue.$call.createLocalMedia(localMedia).then((localMediaStream)=>{
+                Vue.$call.accept(localMediaStream);
                 context.commit('localMediaSuccess', localMediaStream);
             }).catch((err)=>{
-                Vue.call.end();
+                Vue.$call.end();
                 handleUserMediaError(context, err);
                 setTimeout(()=>{
                     context.commit('inputNumber');
@@ -380,29 +355,29 @@ export default {
             });
         },
         end(context) {
-            Vue.call.end();
+            Vue.$call.end();
             context.commit('hangUpCall');
         },
         sendDTMF(context, value) {
-            if(Vue.call.hasRunningCall()) {
-                Vue.call.sendDTMF(value);
+            if(Vue.$call.hasRunningCall()) {
+                Vue.$call.sendDTMF(value);
             }
         },
         toggleMicrophone(context) {
             if(context.getters.isMicrophoneEnabled) {
-                Vue.call.disableAudio();
+                Vue.$call.disableAudio();
             }
             else {
-                Vue.call.enableAudio();
+                Vue.$call.enableAudio();
             }
             context.commit('toggleMicrophone');
         },
         toggleCamera(context) {
             if(context.getters.isCameraEnabled) {
-                Vue.call.disableVideo();
+                Vue.$call.disableVideo();
             }
             else {
-                Vue.call.enableVideo();
+                Vue.$call.enableVideo();
             }
             context.commit('toggleCamera');
         },

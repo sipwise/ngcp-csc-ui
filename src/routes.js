@@ -1,5 +1,8 @@
 
-import { i18n } from './i18n'
+import {
+    i18n
+} from './i18n'
+import ConferenceLayout from './components/layouts/Conference'
 import DefaultLayout from './components/layouts/Default'
 import Home from './components/pages/Home'
 import Conversations from './components/pages/Conversations/Conversations'
@@ -162,8 +165,24 @@ export default [
         }
     },
     {
+        path: '/conference',
+        component: ConferenceLayout,
+        meta: {
+            title: 'Conference'
+        }
+    },
+    {
+        path: '/conference/:id',
+        component: ConferenceLayout,
+        meta: {
+            title: 'Conference'
+        }
+    },
+    {
         path: '/',
-        redirect: {path:'/user/home'}
+        redirect: {
+            path:'/user/home'
+        }
     },
     {
         path: '*',
