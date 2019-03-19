@@ -5,7 +5,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import CallBlockingModule from './call-blocking'
 import CallForwardModule from './call-forward'
-import CallModule from './call'
+import CallModule, {errorVisibilityTimeout} from './call'
 import ConversationsModule from './conversations'
 import PbxConfigModule from './pbx-config/index'
 import ReminderModule from './reminder'
@@ -13,11 +13,17 @@ import SpeedDialModule from './speed-dial'
 import UserModule from './user'
 import CommunicationModule from './communication'
 import VoiceboxModule from './voicebox'
-
+import ConferenceModule from './conference'
 import {
     i18n
 } from '../i18n';
+import RtcEnginePlugin from "../plugins/rtc-engine";
+import CallPlugin from "../plugins/call";
+import ConferencePlugin from "../plugins/conference";
 
+Vue.use(RtcEnginePlugin);
+Vue.use(CallPlugin);
+Vue.use(ConferencePlugin);
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
@@ -31,9 +37,13 @@ export const store = new Vuex.Store({
         speedDial: SpeedDialModule,
         user: UserModule,
         communication: CommunicationModule,
-        voicebox: VoiceboxModule
+        voicebox: VoiceboxModule,
+        conference: ConferenceModule
     },
     getters: {
+        conferenceId(state) {
+            return _.get(state, 'route.params.id', null);
+        },
         pageTitle(state) {
             return _.get(state, 'route.meta.title', 'Not defined');
         },
@@ -55,5 +65,31 @@ export const store = new Vuex.Store({
         title() {
             return i18n.t('title');
         }
-    }
+    },
+    plugins: [
+        function rtcEngine(store) {
+            Vue.$rtcEngine.onSipNetworkConnected(()=>{
+                store.commit('call/enableCall');
+            }).onSipNetworkDisconnected(()=>{
+                store.commit('call/disableCall');
+            }).onConferenceNetworkConnected(() => {
+                store.commit('conference/enableConferencing');
+            }).onConferenceNetworkDisconnected(() => {
+                store.commit('conference/disableConferencing');
+            });
+            Vue.$call.onIncoming(()=>{
+                store.commit('call/incomingCall', {
+                    number: Vue.call.getNumber()
+                });
+            }).onRemoteMedia((remoteMediaStream)=>{
+                store.commit('call/establishCall', remoteMediaStream);
+            }).onEnded((reason)=>{
+                Vue.$call.end();
+                store.commit('call/endCall', reason);
+                setTimeout(()=>{
+                    store.commit('call/inputNumber');
+                }, errorVisibilityTimeout);
+            });
+        }
+    ]
 });
