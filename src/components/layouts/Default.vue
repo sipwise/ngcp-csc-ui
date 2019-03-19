@@ -245,6 +245,7 @@
                 'title'
             ]),
             ...mapGetters('call', [
+                'isCallEnabled',
                 'callState',
                 'callNumber',
                 'callNumberInput',
@@ -252,8 +253,6 @@
                 'isCalling',
                 'localMediaStream',
                 'remoteMediaStream',
-                'isCallAvailable',
-                'hasCallInitError',
                 'hasVideo',
                 'hasLocalVideo',
                 'hasRemoteVideo',
@@ -264,6 +263,9 @@
                 'isDialpadOpened',
                 'callStateTitle',
                 'callStateSubtitle'
+            ]),
+            ...mapGetters('conference', [
+                'isConferencingEnabled'
             ]),
             ...mapGetters('user', [
                 'isLogged',
@@ -440,14 +442,14 @@
                     enableIncomingCallNotifications();
                 }
             },
-            isCallAvailable(value) {
+            isCallEnabled(value) {
                 if(value) {
                     showToast(this.$i18n.t('toasts.callAvailable'));
                 }
             },
-            hasCallInitError(value) {
+            isConferencingEnabled(value) {
                 if(value) {
-                    showToast(this.$i18n.t('toasts.callNotAvailable'));
+                    // showToast(this.$i18n.t('toasts.conferencingAvailable'));
                 }
             },
             createFaxState(state) {

@@ -34,6 +34,7 @@
     "toasts": {
         "callAvailable": "You are now able to start and receive calls",
         "callNotAvailable": "Could not initialize call functionality properly",
+        "conferencingAvailable": "You are now able to create WebRTC multiparty conferences",
         "changeSessionLanguageSuccessMessage": "Session language successfully changed"
     },
     "validationErrors": {
@@ -518,5 +519,8 @@
         "deleteCustomDialogTitle": "Reset busy greeting sound",
         "deleteCustomDialogText": "You are about to reset the custom {type} greeting sound to defaults",
         "unavailable": "unavailable"
+    },
+    "conferencing": {
+        "joinText": "Join conference with name"
     }
 }

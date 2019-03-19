@@ -190,6 +190,19 @@
 .csc-item-highlight:hover
     background alpha($primary, 0.3) !important
 
+.csc-conf-full-height
+    position relative
+    top 0
+    min-height "calc(100vh - %s)" % (2 * $call-footer-height + $call-footer-height / 2)
+
+.csc-button.q-btn
+.csc-conf-button.q-btn
+    .q-btn-inner
+        color black
+
+input.q-input-target
+    height auto
+
 .csc-additional
     padding-right $flex-gutter-lg
     padding-bottom $flex-gutter-xs
