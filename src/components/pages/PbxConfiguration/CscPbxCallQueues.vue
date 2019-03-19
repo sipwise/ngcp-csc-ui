@@ -78,7 +78,9 @@
     import CscPbxCallQueue from './CscPbxCallQueue'
     import CscPbxCallQueueAddForm from './CscPbxCallQueueAddForm'
     import CscRemoveDialog from '../../CscRemoveDialog'
-    import { mapGetters } from 'vuex'
+    import {
+        mapGetters
+    } from 'vuex'
     import {
         QField,
         QInput,
@@ -94,7 +96,12 @@
         QSpinnerDots,
         QBtn
     } from 'quasar-framework'
-    import { scroll } from 'quasar-framework'
+    import {
+        showToast
+    } from '../../../helpers/ui'
+    import {
+        scroll
+    } from 'quasar-framework'
     const { getScrollTarget, setScrollPosition } = scroll
     export default {
         components: {
@@ -136,7 +143,8 @@
                 'isUpdating',
                 'updateItemId',
                 'removeState',
-                'isRemoving'
+                'isRemoving',
+                'lastAddedCallQueue'
             ]),
             isMobile() {
                 return Platform.is.mobile;
@@ -208,6 +216,8 @@
             addState(state) {
                 if (state === 'succeeded') {
                     this.disableAddForm();
+                    showToast(this.$t('pbxConfig.toasts.addedCallQueueToast',
+                        { name: this.lastAddedCallQueue }));
                 }
             },
             callQueueGroupsAndSeats(state) {

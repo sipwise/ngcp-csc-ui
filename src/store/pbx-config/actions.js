@@ -45,7 +45,8 @@ import {
     setSoundSetDescription,
     setSoundSetContractDefault,
     getSoundSetWithFiles,
-    playSoundFile
+    playSoundFile,
+    createSoundSet
 } from '../../api/pbx-config'
 
 export default {
@@ -467,7 +468,7 @@ export default {
         if (!_.isNull(config.queue_wrap_up_time) && config.queue_wrap_up_time.length === 0) {
             config.queue_wrap_up_time = null;
         }
-        context.commit('addItemRequesting', config);
+        context.commit('addItemRequesting', data);
         addCallQueueConfig(data.id, config).then(() => {
             return context.dispatch('listCallQueueGroupsAndSeats', true);
         }).then(() => {
@@ -612,7 +613,7 @@ export default {
     },
     saveSoundSetDescription(context, set) {
         context.commit('updateItemRequesting', set);
-        context.commit('lastUpdatedField', {name: set.name, type: 'sound set name'});
+        context.commit('lastUpdatedField', {name: set.description, type: 'sound set description'});
         setSoundSetDescription(set.id, set.description).then(() => {
             return context.dispatch('reloadSoundSet', set);
         }).then(() => {
@@ -659,6 +660,16 @@ export default {
             });
         }).catch((err) => {
             context.commit('playSoundFileFailed', err.message);
+        });
+    },
+    createSoundSet(context, soundSet) {
+        context.commit('addItemRequesting', soundSet);
+        createSoundSet(soundSet).then(() => {
+            return context.dispatch('listSoundSets');
+        }).then(() => {
+            context.commit('addItemSucceeded');
+        }).catch((err) => {
+            context.commit('addItemFailed', err.message);
         });
     }
 }

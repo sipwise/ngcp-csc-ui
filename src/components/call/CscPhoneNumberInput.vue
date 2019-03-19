@@ -4,7 +4,6 @@
         :count="maxLength"
         :helper="helperMessage"
         :error-label="errorMessage"
-        :disabled="!enabled"
     >
         <q-input
             ref="inputField"

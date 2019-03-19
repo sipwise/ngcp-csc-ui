@@ -23,7 +23,7 @@
                 <csc-sound-file-upload
                     ref="uploadBusy"
                     icon="music_note"
-                    file-types=".wav,.mp3"
+                    file-types=".wav,.mp3,.ogg"
                     :float-label="$t('voicebox.label.busyGreeting')"
                     :value="busyGreetingLabel"
                     :progress="uploadBusyProgress"
@@ -39,7 +39,7 @@
                 <csc-sound-file-upload
                     ref="uploadUnavail"
                     icon="music_note"
-                    file-types=".wav,.mp3"
+                    file-types=".wav,.mp3,.ogg"
                     :float-label="$t('voicebox.label.unavailGreeting')"
                     :value="unavailGreetingLabel"
                     :progress="uploadUnavailProgress"
