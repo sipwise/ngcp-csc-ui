@@ -45,10 +45,11 @@ let rtcEngineCallInstance = null;
 export class RtcEngineCall {
 
     constructor() {
-        this.networkTag = 'sip';
+        // this.networkTag = 'sip';
         this.network = null;
-        this.loadedLibrary = null;
-        this.sessionToken = null;
+        // this.loadedLibrary = null;
+        // this.sessionToken = null;
+        this.rtcEngine = null;
         this.localMedia = null;
         this.remoteMedia = null;
         this.currentCall = null;
@@ -56,17 +57,11 @@ export class RtcEngineCall {
         this.endedReason = null;
     }
 
-    initialize() {
-        return new Promise((resolve, reject)=>{
-            Promise.resolve().then(($loadedLibrary)=>{
-                this.loadedLibrary = $loadedLibrary;
-                return this.loadLibrary();
-            }).then(()=>{
-                return this.createSession();
-            }).then(($sessionToken)=>{
-                this.sessionToken = $sessionToken;
-                return this.connectNetwork($sessionToken);
-            }).then(($network)=>{
+    setRtcEngine(rtcEngine) {
+        if(this.rtcEngine === null) {
+            this.rtcEngine = rtcEngine;
+            this.rtcEngine.onSipNetworkConnected(($network)=>{
+                this.events.emit('connected');
                 this.network = $network;
                 this.network.onIncomingCall((remoteCall)=>{
                     if(this.network !== null && this.currentCall === null) {
@@ -85,11 +80,10 @@ export class RtcEngineCall {
                     }
                     this.events.emit('incoming');
                 });
-                resolve();
-            }).catch((err)=>{
-                reject(err);
+            }).onSipNetworkDisconnected(()=>{
+                this.events.emit('disconnected');
             });
-        });
+        }
     }
 
     isAvailable() {
@@ -218,6 +212,16 @@ export class RtcEngineCall {
         return this;
     }
 
+    onConnected(listener) {
+        this.events.on('connected', listener);
+        return this;
+    }
+
+    onDisconnected(listener) {
+        this.events.on('disconnected', listener);
+        return this;
+    }
+
     accept(localMediaStream) {
         if(this.currentCall !== null) {
             this.currentCall.accept(localMediaStream).then(()=>{
@@ -293,8 +297,11 @@ export class RtcEngineCall {
         }
         return rtcEngineCallInstance;
     }
+}
 
-    static install(Vue) {
-        Vue.call = RtcEngineCall.getInstance();
+export default {
+    install(Vue) {
+        Vue.$call = RtcEngineCall.getInstance();
+        Vue.$call.setRtcEngine(Vue.$rtcEngine);
     }
 }
