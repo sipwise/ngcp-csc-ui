@@ -96,6 +96,7 @@
     } from 'quasar-framework'
     import { scroll } from 'quasar-framework'
     const { getScrollTarget, setScrollPosition } = scroll
+    import { showToast } from '../../../helpers/ui'
     export default {
         components: {
             CscPage,
@@ -136,7 +137,8 @@
                 'isUpdating',
                 'updateItemId',
                 'removeState',
-                'isRemoving'
+                'isRemoving',
+                'lastAddedCallQueue'
             ]),
             isMobile() {
                 return Platform.is.mobile;
@@ -169,6 +171,7 @@
                 };
                 this.$store.dispatch('pbxConfig/addCallQueueConfig', {
                     id: data.subscriber_id,
+                    name: data.subscriber_name,
                     config: config
                 });
             },
@@ -208,6 +211,7 @@
             addState(state) {
                 if (state === 'succeeded') {
                     this.disableAddForm();
+                    showToast(this.$t('pbxConfig.toasts.addedCallQueueToast', { name: this.lastAddedCallQueue }));
                 }
             },
             callQueueGroupsAndSeats(state) {

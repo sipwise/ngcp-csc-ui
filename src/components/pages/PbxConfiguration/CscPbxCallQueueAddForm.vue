@@ -4,7 +4,7 @@
         <q-field>
             <q-select
                 dark
-                :disabled="loading"
+                :disable="loading"
                 :readonly="loading"
                 v-model="data.subscriber_id"
                 chips
@@ -19,7 +19,7 @@
                 @input="$v.data.max_queue_length.$touch"
                 @blur="$v.data.max_queue_length.$touch"
                 :error="$v.data.max_queue_length.$error"
-                :disabled="loading"
+                :disable="loading"
                 :readonly="loading"
                 v-model="data.max_queue_length"
                 autofocus
@@ -34,7 +34,7 @@
                 @input="$v.data.queue_wrap_up_time.$touch"
                 @blur="$v.data.queue_wrap_up_time.$touch"
                 :error="$v.data.queue_wrap_up_time.$error"
-                :disabled="loading"
+                :disable="loading"
                 :readonly="loading"
                 v-model="data.queue_wrap_up_time"
                 :float-label="$t('pbxConfig.wrapUpTime')"

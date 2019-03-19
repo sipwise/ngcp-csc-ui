@@ -92,8 +92,12 @@
     import CscRemoveDialog from '../../CscRemoveDialog'
     import aliasNumberOptions from '../../../mixins/alias-number-options'
     import itemError from '../../../mixins/item-error'
-    import { mapGetters } from 'vuex'
-    import { showToast } from '../../../helpers/ui'
+    import {
+        mapGetters
+    } from 'vuex'
+    import {
+        showToast
+    } from '../../../helpers/ui'
     import {
         QChip,
         QCard,

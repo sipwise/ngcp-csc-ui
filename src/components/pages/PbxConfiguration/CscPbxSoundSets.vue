@@ -11,6 +11,31 @@
                 :size="40"
             />
         </div>
+        <div
+            v-show="addFormEnabled"
+            class="row justify-center"
+        >
+            <csc-pbx-sound-set-add-form
+                class="col-xs-12 col-md-6 csc-list-form"
+                ref="addForm"
+                @save="addSoundSet"
+                @cancel="disableAddForm"
+                :loading="isAdding"
+            />
+        </div>
+        <div
+            v-show="!addFormEnabled"
+            class="row justify-center"
+        >
+            <q-btn
+                color="primary"
+                icon="add"
+                flat
+                @click="enableAddForm"
+            >
+                {{ $t('pbxConfig.addSoundSet') }}
+            </q-btn>
+        </div>
         <q-list
             striped-odd
             no-border
@@ -48,6 +73,7 @@
     import CscPage from '../../CscPage'
     import CscPbxSoundSet from './CscPbxSoundSet'
     import CscRemoveDialog from '../../CscRemoveDialog'
+    import CscPbxSoundSetAddForm from './CscPbxSoundSetAddForm'
     import {
         mapGetters
     } from 'vuex'
@@ -66,6 +92,7 @@
             CscPage,
             CscPbxSoundSet,
             CscRemoveDialog,
+            CscPbxSoundSetAddForm,
             QList,
             QBtn,
             QInnerLoading,
@@ -73,7 +100,8 @@
         },
         data () {
             return {
-                currentRemovingSoundSet: null
+                currentRemovingSoundSet: null,
+                addFormEnabled: false,
             }
         },
         mounted() {
@@ -88,7 +116,10 @@
                 'updateItemId',
                 'updateState',
                 'lastUpdatedField',
-                'isListLoadingVisible'
+                'isListLoadingVisible',
+                'isAdding',
+                'addState',
+                'lastAddedSoundSet'
             ]),
             isMobile() {
                 return !!Platform.is.mobile;
@@ -107,7 +138,7 @@
                 this.$refs.removeDialog.open();
             },
             removeSoundSet() {
-                this.$store.dispatch('pbxConfig/removeSoundSet', this.currentRemovingSoundSet);
+                this.$store.dispatch('pbxConfig/removeSoundSet', this.currentRemovingSoundSet)
             },
             saveSoundSetName(set) {
                 this.$store.dispatch('pbxConfig/saveSoundSetName', set);
@@ -121,9 +152,29 @@
             isItemLoading(setId) {
                 return (this.isUpdating && this.updateItemId + "" === setId + "") ||
                     this.soundSetFilesLoading(setId) || this.isSoundSetsRequesting;
+            },
+            resetAddForm() {
+                this.$refs.addForm.reset();
+            },
+            enableAddForm() {
+                this.resetAddForm();
+                this.addFormEnabled = true;
+            },
+            disableAddForm() {
+                this.resetAddForm();
+                this.addFormEnabled = false;
+            },
+            addSoundSet(set) {
+                this.$store.dispatch('pbxConfig/createSoundSet', set);
             }
         },
         watch: {
+            addState(state) {
+                if (state === 'succeeded') {
+                    this.disableAddForm();
+                    showToast(this.$t('pbxConfig.toasts.addedSoundSetToast', { name: this.lastAddedSoundSet }));
+                }
+            },
             updateState(state) {
                 if (state === 'succeeded') {
                     showToast(this.$t('pbxConfig.toasts.changedFieldToast', this.lastUpdatedField));

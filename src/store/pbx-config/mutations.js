@@ -525,5 +525,20 @@ export default {
     soundSetReloadingFailed(state, err) {
         state.soundSetReloadingState = RequestState.failed;
         state.soundSetReloadingError = err;
+    },
+    createSoundSetRequesting(state, soundSet) {
+        state.createSoundSetState = RequestState.requesting;
+        state.createSoundSetItem = soundSet;
+        state.createSoundSetError = null;
+    },
+    createSoundSetSucceeded(state) {
+        state.createSoundSetState = RequestState.succeeded;
+    },
+    createSoundSetFailed(state, error) {
+        state.createSoundSetState = RequestState.failed;
+        state.createSoundSetError = error;
+    },
+    lastAddedCallQueue(state, callQueue) {
+        state.lastAddedCallQueue = callQueue.name;
     }
 }

@@ -749,6 +749,15 @@ export function editSoundSetFields(id, fields) {
         });
     });
 }
+export function createSoundSet(soundSet) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.post('api/soundsets/', soundSet).then(() => {
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
 
 export function setSoundSetName(id, value) {
     return editSoundSetFields(id, { name: value });
