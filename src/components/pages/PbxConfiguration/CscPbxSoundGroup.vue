@@ -18,7 +18,6 @@
 </template>
 
 <script>
-    import _ from 'lodash'
     import CscPbxSoundItem from './CscPbxSoundItem'
     import {
         QList,
@@ -34,7 +33,8 @@
     export default {
         name: 'csc-pbx-sound-group',
         props: {
-            group: Object
+            group: Object,
+            groupLabel: String
         },
         components: {
             CscPbxSoundItem,
@@ -55,11 +55,6 @@
         mounted() {
         },
         computed: {
-            groupLabel() {
-                let regex = /[-_]/g;
-                let name = _.capitalize(this.group.name.replace(regex, ' '));
-                return name;
-            }
         },
         methods: {
         },

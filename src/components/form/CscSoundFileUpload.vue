@@ -133,7 +133,7 @@
             'fileTypes',
             'fileUrl',
             'loaded',
-            'disabled',
+            'disable',
             'hidePlayer',
             'floatLabel'
         ],
@@ -158,7 +158,7 @@
             inputButtons() {
                 let buttons = [];
                 let self = this;
-                if (this.isPlaying || this.disabled) {
+                if (this.isPlaying || this.disable) {
                     buttons.push({
                             icon: 'folder',
                             error: false,

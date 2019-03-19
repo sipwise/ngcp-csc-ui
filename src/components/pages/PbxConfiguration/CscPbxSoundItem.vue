@@ -10,7 +10,7 @@
                 file-types=".wav,.mp3"
                 :label="handleName"
                 :value="fileLabel"
-                :disabled="true"
+                :disable="true"
                 :hide-player="!file"
             >
                 <div
