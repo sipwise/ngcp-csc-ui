@@ -55,7 +55,7 @@
                     v-for="item in items"
                     :key="item._id"
                     :item="item"
-                    :call-available="isCallAvailable"
+                    :call-available="isCallEnabled"
                     :blocked-incoming="blockedIncoming(item)"
                     :blocked-outgoing="blockedOutgoing(item)"
                     @start-call="startCall"
@@ -188,7 +188,7 @@
             ]),
             ...mapGetters('call', [
                 'callState',
-                'isCallAvailable'
+                'isCallEnabled'
             ]),
             noResultsMessage() {
                 if(this.selectedTab === 'call-fax-voicemail') {
