@@ -635,13 +635,7 @@ export function getSoundHandles(options) {
             }
         });
         getList(options).then((list) => {
-            // Ngcp-panel only lists three groups ('digits', 'music_on_hold'
-            // and 'pbx'). Filtering out the rest for that reason, as the
-            // enpoint has 11 groups total
-            let soundHandles = list.items.filter((handle) => {
-                return ['digits', 'music_on_hold', 'pbx'].indexOf(handle.group) > -1;
-            });
-            resolve(soundHandles);
+            resolve(list.items);
         }).catch((err)=>{
             reject(err);
         });
