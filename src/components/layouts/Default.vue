@@ -33,6 +33,7 @@
                     <q-popover ref="languagePopover">
                         <csc-user-menu
                             :language-label="languageLabel"
+                            :language-labels="languageLabels"
                             @change-language="changeLanguage"
                         />
                     </q-popover>
@@ -188,7 +189,10 @@
     } from 'quasar-framework'
     import CscMainMenu from "./MainMenu"
     import CscUserMenu from "./UserMenu"
-    import { i18n } from "../../i18n"
+    import {
+        getLanguageLabel
+    } from "../../i18n";
+
     export default {
         name: 'default',
         data() {
@@ -278,7 +282,9 @@
                 'hasSendFaxFeature',
                 'userDataRequesting',
                 'userDataSucceeded',
-                'changeSessionLocaleState'
+                'changeSessionLocaleState',
+                'locale',
+                'languageLabels'
             ]),
             ...mapGetters('communication', [
                 'createFaxState',
@@ -331,15 +337,9 @@
                 return classes;
             },
             languageLabel() {
-                let i18nLocale = i18n.locale.split('-')[0];
-                let locale = 'Unknown';
-                if (i18nLocale === 'en') {
-                    locale = 'English';
-                }
-                else if (i18nLocale === 'fr') {
-                    locale = 'français';
-                }
-                return this.$t('language', {language: locale});
+                return this.$t('language', {
+                    language: getLanguageLabel(this.locale)
+                });
             }
         },
         methods: {

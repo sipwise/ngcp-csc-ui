@@ -3,28 +3,22 @@
         no-border
         link
         highlight
-        class="csc-toolbar-btn-popover"
+        class="csc-language-selection csc-toolbar-btn-popover"
     >
         <q-collapsible
             ref="languageCollapsible"
             :label="languageLabel"
-            class="csc-collapsible-menu"
+            intend
         >
-            <q-list
-                no-border
-                highlight
+            <q-item
+                v-for="(language, index) in languageLabels"
+                @click="changeLanguage(language[0])"
+                :key="index"
             >
-                <q-item
-                    v-for="(language, index) in languages"
-                    @click="changeLanguage(language[0])"
-                    class="csc-subitem"
-                    :key="index"
-                >
-                    <q-item-main
-                        :label="language[1]"
-                    />
-                </q-item>
-            </q-list>
+                <q-item-main
+                    :label="language[1]"
+                />
+            </q-item>
         </q-collapsible>
     </q-list>
 </template>
@@ -34,26 +28,24 @@
         QList,
         QItem,
         QItemMain,
-        QCollapsible
+        QCollapsible,
+        QItemSide
     } from 'quasar-framework'
     export default {
         name: 'csc-user-menu',
         props: [
-            'languageLabel'
+            'languageLabel',
+            'languageLabels'
         ],
         data () {
-            return {
-                languages: [
-                    ['en', 'English'],
-                    ['fr', 'français']
-                ]
-            }
+            return {}
         },
         components: {
             QList,
             QItem,
             QItemMain,
-            QCollapsible
+            QCollapsible,
+            QItemSide
         },
         methods: {
             changeLanguage(language) {
@@ -66,4 +58,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+    .csc-language-selection
+        .q-item-side-right
+            color white
 </style>
