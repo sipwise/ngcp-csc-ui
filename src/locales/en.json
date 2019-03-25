@@ -443,7 +443,8 @@
         "playingInLoop": "Playing in loop",
         "playInLoop": "Play sound in loop",
         "dontPlayInLoop": "Don't play sound in loop",
-        "defaultForSubscribers": "Default For Subscribers"
+        "defaultForSubscribers": "Default For Subscribers",
+        "invalidTooltip": "This sound set is invalid"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",
