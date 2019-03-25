@@ -1,4 +1,5 @@
 
+import _ from 'lodash'
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import localeEn from './locales/en'
@@ -33,6 +34,11 @@ export function getLanguageLabels() {
 }
 
 export function getLanguageLabel(locale) {
-    return i18n.messages[locale].languageLabel;
+    if(_.has(i18n.messages, locale)) {
+        return i18n.messages[locale].languageLabel;
+    }
+    else {
+        return i18n.messages[defaultLocale].languageLabel;
+    }
 }
 
