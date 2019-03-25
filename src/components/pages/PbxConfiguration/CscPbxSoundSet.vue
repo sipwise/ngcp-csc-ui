@@ -3,7 +3,7 @@
         :class="itemClasses"
     >
         <q-item-side
-            v-if="!expanded"
+            v-show="!expanded"
         >
             <q-icon
                 size="24px"
@@ -13,14 +13,14 @@
         </q-item-side>
         <q-item-main>
             <q-item-tile
-                v-if="!expanded"
+                v-show="!expanded"
                 class="csc-item-title"
                 label
             >
                 {{ set.name }}
             </q-item-tile>
             <q-item-tile
-                v-if="!expanded"
+                v-show="!expanded"
                 class="csc-item-subtitle"
                 sublabel
             >
@@ -34,7 +34,7 @@
                 </div>
             </q-item-tile>
             <q-item-tile
-                v-if="expanded"
+                v-show="expanded"
                 class="csc-list-item-main"
             >
                 <q-field
@@ -83,7 +83,7 @@
             </q-item-tile>
             <q-item-tile
                 class="csc-list-collapsible"
-                v-if="expanded"
+                v-show="expanded"
             >
                 <div class="csc-sublabel">
                     {{ $t('pbxConfig.groups') }}
@@ -101,7 +101,7 @@
         >
             <q-item-tile>
                 <q-btn
-                    v-if="expanded"
+                    v-show="expanded"
                     icon="delete"
                     :big="mobile"
                     color="negative"
