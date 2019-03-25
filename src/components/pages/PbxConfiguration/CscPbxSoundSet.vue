@@ -108,6 +108,14 @@
                     flat
                     @click="remove()"
                 />
+                <q-chip
+                    v-show="!expanded"
+                    square
+                    color="negative"
+                    class="shadow-2"
+                >
+                    {{ invalidCount }}
+                </q-chip>
                 <q-btn
                     :icon="titleIcon"
                     :big="mobile"
@@ -139,13 +147,17 @@
         QInput,
         QInnerLoading,
         QSpinnerMat,
-        QToggle
+        QToggle,
+        QChip
     } from 'quasar-framework'
     import {
         maxLength
     } from 'vuelidate/lib/validators'
     import { showGlobalError } from '../../../helpers/ui'
     export default {
+        mounted() {
+            console.log(this.invalidCount);
+        },
         name: 'csc-pbx-sound-set',
         props: {
             set: Object,
@@ -164,7 +176,8 @@
             QInput,
             QInnerLoading,
             QSpinnerMat,
-            QToggle
+            QToggle,
+            QChip
         },
         data () {
             return {
@@ -329,6 +342,19 @@
                 else {
                     return this.set.description;
                 }
+            },
+            invalidCount() {
+                let count = 0;
+                if (this.set.groups) {
+                    this.set.groups.map((group) => {
+                        group.handles.map((handle) => {
+                            if (handle.filename.length === 0) {
+                                count++;
+                            }
+                        })
+                    });
+                }
+                return count;
             }
         },
         methods: {
