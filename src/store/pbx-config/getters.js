@@ -350,5 +350,21 @@ export default {
         return (id) => {
             return state.lastPlayed + '' === id + '';
         }
+    },
+    isSoundSetInvalid(state) {
+        return (id) => {
+            let count = 0;
+            let soundSet = _.get(state, 'soundSets', {})[id];
+            if (soundSet.hasOwnProperty('groups')) {
+                soundSet.groups.forEach((group) => {
+                    group.handles.forEach((handle) => {
+                        if (handle.filename.length === 0) {
+                            count++;
+                        }
+                    })
+                });
+            }
+            return count > 0;
+        }
     }
 }
