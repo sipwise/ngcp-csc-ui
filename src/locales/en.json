@@ -10,6 +10,7 @@
     "loggedInAs": "Logged in as",
     "notFound" : "404 Not Found",
     "language": "Language ({language})",
+    "languageLabel": "English",
     "buttons": {
         "cancel": "Cancel",
         "save": "Save",

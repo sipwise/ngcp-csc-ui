@@ -37,7 +37,8 @@ export default {
         rtcEngineInitError: null,
         sessionLocale: null,
         changeSessionLocaleState: RequestState.initiated,
-        changeSessionLocaleError: null
+        changeSessionLocaleError: null,
+        languageLabels: []
     },
     getters: {
         isLogged(state) {
@@ -129,6 +130,12 @@ export default {
         },
         changeSessionLocaleState(state) {
             return state.changeSessionLocaleState;
+        },
+        locale(state) {
+            return state.sessionLocale;
+        },
+        languageLabels(state) {
+            return state.languageLabels;
         }
     },
     mutations: {
@@ -193,7 +200,6 @@ export default {
             state.changeSessionLocaleError = null;
         },
         changeSessionLocaleSucceeded(state, locale) {
-            i18n.locale = locale;
             state.sessionLocale = locale;
             state.changeSessionLocaleState = RequestState.succeeded;
             state.changeSessionLocaleError = null;
@@ -201,6 +207,9 @@ export default {
         changeSessionLocaleFailed(state, error) {
             state.changeSessionLocaleState = RequestState.failed;
             state.changeSessionLocaleError = error;
+        },
+        setLanguageLabels(state, languageLabels) {
+            state.languageLabels = languageLabels;
         }
     },
     actions: {
@@ -260,12 +269,11 @@ export default {
             context.commit('changeSessionLocaleRequesting');
             try {
                 SessionStorage.set('locale', locale);
+                i18n.locale = locale;
+                context.commit('changeSessionLocaleSucceeded', locale);
             }
             catch(error) {
                 context.commit('changeSessionLocaleFailed', error);
-            }
-            finally {
-                context.commit('changeSessionLocaleSucceeded', locale);
             }
         }
     }

@@ -70,7 +70,8 @@
         </q-collapsible>
         <q-collapsible
             :opened="isCallBlocking"
-            intend icon="block"
+            intend
+            icon="block"
             :label="$t('navigation.callBlocking.title')"
         >
             <q-side-link

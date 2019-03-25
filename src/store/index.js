@@ -15,7 +15,8 @@ import CommunicationModule from './communication'
 import VoiceboxModule from './voicebox'
 import ConferenceModule from './conference'
 import {
-    i18n
+    i18n,
+    getLanguageLabels
 } from '../i18n';
 import RtcEnginePlugin from "../plugins/rtc-engine";
 import CallPlugin from "../plugins/call";
@@ -90,6 +91,10 @@ export const store = new Vuex.Store({
                     store.commit('call/inputNumber');
                 }, errorVisibilityTimeout);
             });
+        },
+        function initI18n(store) {
+            store.commit('user/setLanguageLabels', getLanguageLabels());
+            store.commit('user/changeSessionLocaleSucceeded', i18n.locale);
         }
     ]
 });
