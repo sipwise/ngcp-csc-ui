@@ -90,6 +90,7 @@
                 </div>
                 <csc-pbx-sound-group
                     v-for="(group, index) in set.groups"
+                    :invalid-group="invalidGroup(group)"
                     :group="group"
                     :group-label="groupLabel(group.name)"
                     :key="index"
@@ -101,6 +102,17 @@
             class="csc-list-actions-pinned"
         >
             <q-item-tile>
+                <q-btn
+                    v-if="invalid"
+                    icon="info"
+                    :big="mobile"
+                    color="negative"
+                    flat
+                >
+                    <q-tooltip>
+                        {{ $t('pbxConfig.invalidTooltip') }}
+                    </q-tooltip>
+                </q-btn>
                 <q-btn
                     v-show="expanded"
                     icon="delete"
@@ -140,7 +152,8 @@
         QInput,
         QInnerLoading,
         QSpinnerMat,
-        QToggle
+        QToggle,
+        QTooltip
     } from 'quasar-framework'
     import {
         maxLength
@@ -156,7 +169,8 @@
         props: {
             set: Object,
             mobile: Boolean,
-            loading: Boolean
+            loading: Boolean,
+            invalid: Boolean
         },
         components: {
             CscPbxSoundGroup,
@@ -170,7 +184,8 @@
             QInput,
             QInnerLoading,
             QSpinnerMat,
-            QToggle
+            QToggle,
+            QTooltip
         },
         data () {
             return {
@@ -383,6 +398,15 @@
                 else {
                     this.$emit('save-contract-default', this.setModel);
                 }
+            },
+            invalidGroup(group) {
+                let count = 0;
+                group.handles.forEach((handle) => {
+                    if (handle.filename.length === 0) {
+                        count++;
+                    }
+                });
+                return count > 0;
             }
         },
         watch: {

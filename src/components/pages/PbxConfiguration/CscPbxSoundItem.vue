@@ -1,7 +1,7 @@
 <template>
     <q-item
         highlight
-        class="csc-sound-item"
+        :class="itemClasses"
     >
         <q-item-main>
             <csc-sound-file-upload
@@ -16,6 +16,7 @@
                 :uploaded="file"
                 :disable="true"
                 @init="initSoundFileAudio"
+                :invalid="isInvalid"
             >
                 <div
                     slot="additional"
@@ -105,6 +106,16 @@
             },
             soundFileFormat() {
                 return this.platform.mozilla ? 'ogg' : 'mp3';
+            },
+            isInvalid() {
+                return !this.file;
+            },
+            itemClasses() {
+                let classes = ['csc-sound-item'];
+                if(this.isInvalid) {
+                    classes.push('csc-item-invalid');
+                }
+                return classes;
             }
         },
         methods: {
