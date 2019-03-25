@@ -23,6 +23,7 @@
                 :key="set.id"
                 :set="set"
                 :mobile="isMobile"
+                :invalid="isSoundSetInvalid(set.id)"
                 @remove="removeSoundSetDialog"
                 @save-name="saveSoundSetName"
                 @save-description="saveSoundSetDescription"
@@ -88,7 +89,8 @@
                 'updateItemId',
                 'updateState',
                 'lastUpdatedField',
-                'isListLoadingVisible'
+                'isListLoadingVisible',
+                'isSoundSetInvalid'
             ]),
             isMobile() {
                 return !!Platform.is.mobile;

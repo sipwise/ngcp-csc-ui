@@ -1,7 +1,7 @@
 <template>
     <q-item
         highlight
-        class="csc-sound-item"
+        :class="itemClasses"
     >
         <q-item-main>
             <csc-sound-file-upload
@@ -12,6 +12,7 @@
                 :value="fileLabel"
                 :disabled="true"
                 :hide-player="!file"
+                :invalid="!file"
             >
                 <div
                     slot="additional"
@@ -39,7 +40,9 @@
         QItem,
         QItemMain,
         QToggle,
-        QTooltip
+        QTooltip,
+        QItemSide,
+        QChip
     } from 'quasar-framework'
     import CscSoundFileUpload from '../../form/CscSoundFileUpload'
     export default {
@@ -54,7 +57,9 @@
             QItem,
             QItemMain,
             QToggle,
-            QTooltip
+            QTooltip,
+            QItemSide,
+            QChip
         },
         data () {
             return {
@@ -89,6 +94,16 @@
                 return this.loop ?
                     this.$t('pbxConfig.dontPlayInLoop') :
                     this.$t('pbxConfig.playInLoop');
+            },
+            isInvalid() {
+                return !this.file;
+            },
+            itemClasses() {
+                let classes = ['csc-sound-item'];
+                if(this.isInvalid) {
+                    classes.push('csc-item-invalid');
+                }
+                return classes;
             }
         },
         methods: {
