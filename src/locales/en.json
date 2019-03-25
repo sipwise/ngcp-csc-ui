@@ -450,7 +450,8 @@
         "loadFiles": "Load Files",
         "createSoundSet": "Create sound set",
         "addSoundSet": "Add Sound Set",
-        "language": "Language"
+        "language": "Language",
+        "invalidTooltip": "This sound set is invalid"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",
