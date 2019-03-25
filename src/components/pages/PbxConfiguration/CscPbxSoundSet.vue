@@ -139,7 +139,8 @@
         QInput,
         QInnerLoading,
         QSpinnerMat,
-        QToggle
+        QToggle,
+        QChip
     } from 'quasar-framework'
     import {
         maxLength
@@ -164,7 +165,8 @@
             QInput,
             QInnerLoading,
             QSpinnerMat,
-            QToggle
+            QToggle,
+            QChip
         },
         data () {
             return {
@@ -190,6 +192,9 @@
                 }
                 else {
                     classes.push('csc-item-collapsed');
+                }
+                if (this.invalidCount > 0) {
+                    classes.push('csc-invalid-item');
                 }
                 return classes;
             },
@@ -329,6 +334,21 @@
                 else {
                     return this.set.description;
                 }
+            },
+            invalidCount() {
+                // TODO: Convert to getter, that is passed down as props.
+                // Currently it is not propely reactive
+                let count = 0;
+                if (this.set.groups) {
+                    this.set.groups.forEach((group) => {
+                        group.handles.forEach((handle) => {
+                            if (handle.filename.length === 0) {
+                                count++;
+                            }
+                        })
+                    });
+                }
+                return count;
             }
         },
         methods: {

@@ -1,6 +1,8 @@
 <template>
+    <!--<q-collapsible icon="info" :label="groupLabel" class="invalid-icon">-->
     <q-collapsible
         :label="groupLabel"
+        :class="groupLabelClasses"
     >
         <q-list
             striped-odd
@@ -52,13 +54,31 @@
             return {
             }
         },
-        mounted() {
-        },
         computed: {
             groupLabel() {
                 let regex = /[-_]/g;
                 let name = _.capitalize(this.group.name.replace(regex, ' '));
                 return name;
+            },
+            invalidCount() {
+                // TODO: Convert to getter, that is passed down as props.
+                // Currently it is not propely reactive
+                let count = 0;
+                if (this.group) {
+                    this.group.handles.forEach((handle) => {
+                        if (handle.filename.length === 0) {
+                            count++;
+                        }
+                    });
+                }
+                return count;
+            },
+            groupLabelClasses() {
+                let classes = [];
+                if (this.invalidCount) {
+                    classes.push('invalid-group');
+                }
+                return classes;
             }
         },
         methods: {

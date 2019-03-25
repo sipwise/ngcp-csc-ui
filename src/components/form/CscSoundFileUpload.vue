@@ -3,6 +3,7 @@
         class="csc-upload-field"
         :icon="icon"
         :label="label"
+        :error="invalid"
     >
         <div
             v-if="label"
@@ -135,7 +136,8 @@
             'loaded',
             'disabled',
             'hidePlayer',
-            'floatLabel'
+            'floatLabel',
+            'invalid'
         ],
         data () {
             return {
