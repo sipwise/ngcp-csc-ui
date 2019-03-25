@@ -1,7 +1,7 @@
 <template>
     <q-item
         highlight
-        class="csc-sound-item"
+        :class="itemClasses"
     >
         <q-item-main>
             <csc-sound-file-upload
@@ -12,6 +12,7 @@
                 :value="fileLabel"
                 :disabled="true"
                 :hide-player="!file"
+                :invalid="isInvalid"
             >
                 <div
                     slot="additional"
@@ -89,6 +90,16 @@
                 return this.loop ?
                     this.$t('pbxConfig.dontPlayInLoop') :
                     this.$t('pbxConfig.playInLoop');
+            },
+            isInvalid() {
+                return !this.file;
+            },
+            itemClasses() {
+                let classes = ['csc-sound-item'];
+                if(this.isInvalid) {
+                    classes.push('csc-item-invalid');
+                }
+                return classes;
             }
         },
         methods: {
