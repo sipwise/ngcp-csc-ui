@@ -1,6 +1,7 @@
 <template>
     <q-collapsible
         :label="groupLabel"
+        :class="groupLabelClasses"
     >
         <q-list
             striped-odd
@@ -34,7 +35,8 @@
         name: 'csc-pbx-sound-group',
         props: {
             group: Object,
-            groupLabel: String
+            groupLabel: String,
+            invalidGroup: Boolean
         },
         components: {
             CscPbxSoundItem,
@@ -52,9 +54,14 @@
             return {
             }
         },
-        mounted() {
-        },
         computed: {
+            groupLabelClasses() {
+                let classes = [];
+                if (this.invalidGroup) {
+                    classes.push('csc-collapsible-label-warning');
+                }
+                return classes;
+            }
         },
         methods: {
         },

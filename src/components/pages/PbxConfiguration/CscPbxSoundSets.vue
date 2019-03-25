@@ -48,6 +48,8 @@
                 :key="set.id"
                 :set="set"
                 :mobile="isMobile"
+                :invalid="isSoundSetInvalid(set.id)"
+                :invalid-count="soundSetInvalidCount(set.id)"
                 @remove="removeSoundSetDialog"
                 @save-name="saveSoundSetName"
                 @save-description="saveSoundSetDescription"
@@ -119,7 +121,8 @@
                 'isListLoadingVisible',
                 'isAdding',
                 'addState',
-                'lastAddedSoundSet'
+                'lastAddedSoundSet',
+                'soundSetInvalidCount'
             ]),
             isMobile() {
                 return !!Platform.is.mobile;
@@ -130,7 +133,7 @@
                         set: this.currentRemovingSoundSet.name
                     });
                 }
-            }
+            },
         },
         methods: {
             removeSoundSetDialog(soundSet) {
@@ -166,6 +169,9 @@
             },
             addSoundSet(soundSet) {
                 this.$store.dispatch('pbxConfig/createSoundSet', soundSet);
+            },
+            isSoundSetInvalid(setId) {
+                return this.soundSetInvalidCount(setId) > 0;
             }
         },
         watch: {

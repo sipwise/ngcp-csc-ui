@@ -90,6 +90,7 @@
                 </div>
                 <csc-pbx-sound-group
                     v-for="(group, index) in set.groups"
+                    :invalid-group="invalidGroup(group)"
                     :group="group"
                     :group-label="groupLabel(group.name)"
                     :key="index"
@@ -101,6 +102,17 @@
             class="csc-list-actions-pinned"
         >
             <q-item-tile>
+                <q-btn
+                    v-if="invalid"
+                    icon="info"
+                    :big="mobile"
+                    color="negative"
+                    flat
+                >
+                    <q-tooltip>
+                        {{ tooltipLabel }}
+                    </q-tooltip>
+                </q-btn>
                 <q-btn
                     v-show="expanded"
                     icon="delete"
@@ -140,7 +152,8 @@
         QInput,
         QInnerLoading,
         QSpinnerMat,
-        QToggle
+        QToggle,
+        QTooltip
     } from 'quasar-framework'
     import {
         maxLength
@@ -156,7 +169,9 @@
         props: {
             set: Object,
             mobile: Boolean,
-            loading: Boolean
+            loading: Boolean,
+            invalid: Boolean,
+            invalidCount: Number
         },
         components: {
             CscPbxSoundGroup,
@@ -170,7 +185,8 @@
             QInput,
             QInnerLoading,
             QSpinnerMat,
-            QToggle
+            QToggle,
+            QTooltip
         },
         data () {
             return {
@@ -338,6 +354,14 @@
                 else {
                     return this.set.description;
                 }
+            },
+            tooltipLabel() {
+                if (this.invalidCount === 1) {
+                    return this.$t('pbxConfig.invalidFileTooltip', { amount: this.invalidCount });
+                }
+                else if (this.invalidCount > 1) {
+                    return this.$t('pbxConfig.invalidFilesTooltip', { amount: this.invalidCount });
+                }
             }
         },
         methods: {
@@ -383,6 +407,15 @@
                 else {
                     this.$emit('save-contract-default', this.setModel);
                 }
+            },
+            invalidGroup(group) {
+                let count = 0;
+                group.handles.forEach((handle) => {
+                    if (handle.filename.length === 0) {
+                        count++;
+                    }
+                });
+                return count > 0;
             }
         },
         watch: {

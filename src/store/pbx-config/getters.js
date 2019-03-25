@@ -369,5 +369,21 @@ export default {
             let regex = /[-_]/g;
             return _.capitalize(name.replace(regex, ' '));
         }
+    },
+    soundSetInvalidCount(state) {
+        return (id) => {
+            let count = 0;
+            let soundSet = _.get(state, 'soundSets', {})[id];
+            if (soundSet.hasOwnProperty('groups')) {
+                soundSet.groups.forEach((group) => {
+                    group.handles.forEach((handle) => {
+                        if (handle.filename.length === 0) {
+                            count++;
+                        }
+                    })
+                });
+            }
+            return count;
+        }
     }
 }
