@@ -25,12 +25,13 @@
                     slot="additional"
                 >
                     <q-toggle
-                        :class="loopClasses"
-                        :label="$t('pbxConfig.playingInLoop')"
+                        v-if="file"
                         v-model="loop"
-                        :disable="true"
                         checked-icon="loop"
                         unchecked-icon="loop"
+                        :class="loopClasses"
+                        :label="$t('pbxConfig.playingInLoop')"
+                        @change="toggleLoop"
                     />
                     <q-tooltip>
                         {{ loopTooltipLabel }}
@@ -142,6 +143,10 @@
             },
             removeFile() {
                 this.$emit('remove-file', this.item)
+                return this.item.filename.length > 0;
+            },
+            toggleLoop() {
+                this.$emit('toggle-loop', this.item)
             }
         },
         watch: {
