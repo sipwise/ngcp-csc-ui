@@ -843,3 +843,12 @@ export function abortPreviousSoundFileUpload(handle) {
         resolve();
     });
 }
+
+export function setSoundSetItemLoopplay(id, loopplay) {
+    let loopflag = !loopplay ? 'true' : 'false';
+    return patchReplace({
+        path: 'api/soundfiles/' + id,
+        fieldPath: 'loopplay',
+        value: loopflag
+    });
+}

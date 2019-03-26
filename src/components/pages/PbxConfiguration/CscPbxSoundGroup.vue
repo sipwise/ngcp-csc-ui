@@ -13,9 +13,10 @@
                 :key="item.id"
                 :item="item"
                 :group="groupLabel"
-                :updating="isRemoveFileRequesting(item.id)"
                 :set-id="setId"
+                :updating="isRemoveFileRequesting(item.id) || isToggleLoopplayRequesting(item.id)"
                 @remove-file="removeFile"
+                @toggle-loop="toggleLoop"
             />
         </q-list>
     </q-collapsible>
@@ -63,7 +64,8 @@
         },
         computed: {
             ...mapGetters('pbxConfig', [
-                'isRemoveFileRequesting'
+                'isRemoveFileRequesting',
+                'isToggleLoopplayRequesting'
             ]),
             groupLabelClasses() {
                 let classes = [];
@@ -76,6 +78,9 @@
         methods: {
             removeFile(item) {
                 this.$emit('remove-file', item);
+            },
+            toggleLoop(item) {
+                this.$emit('toggle-loop', item)
             }
         },
         watch: {
