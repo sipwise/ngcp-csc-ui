@@ -802,3 +802,26 @@ export function playSoundFile(options) {
 export function removeSoundFile(id) {
     return Vue.http.delete('api/soundfiles/' + id);
 }
+
+export function getSoundFile(id) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return get({
+                path: 'api/soundfiles/' + id
+            });
+        }).then((soundFile)=> {
+            console.log('soundFile', soundFile);
+            resolve(soundFile);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function setSoundSetItemLoopplay(id, loopplay) {
+    return patchReplace({
+        path: 'api/soundfiles/' + id,
+        fieldPath: 'loopplay',
+        value: !loopplay
+    });
+}

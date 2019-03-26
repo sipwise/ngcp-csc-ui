@@ -47,7 +47,8 @@ import {
     getSoundSetWithFiles,
     playSoundFile,
     createSoundSet,
-    removeSoundFile
+    removeSoundFile,
+    setSoundSetItemLoopplay
 } from '../../api/pbx-config'
 
 export default {
@@ -567,8 +568,8 @@ export default {
             context.commit('listSoundSetsSucceeded', data);
             return data;
         }).then((sets) => {
-            sets.items.forEach((set) => {
-                context.dispatch('loadFilesForSoundSet', set.id);
+            sets.items.forEach((soundSet) => {
+                context.dispatch('loadFilesForSoundSet', soundSet.id);
             });
         }).catch((err) => {
             context.commit('listSoundSetsFailed', err.message)
@@ -601,48 +602,48 @@ export default {
             context.commit('removeItemFailed', err.message);
         });
     },
-    saveSoundSetName(context, set) {
-        context.commit('updateItemRequesting', set);
-        context.commit('lastUpdatedField', {name: set.name, type: 'sound set name'});
-        setSoundSetName(set.id, set.name).then(() => {
-            return context.dispatch('reloadSoundSet', set);
+    saveSoundSetName(context, soundSet) {
+        context.commit('updateItemRequesting', soundSet);
+        context.commit('lastUpdatedField', {name: soundSet.name, type: 'sound set name'});
+        setSoundSetName(soundSet.id, soundSet.name).then(() => {
+            return context.dispatch('reloadSoundSet', soundSet);
         }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
         });
     },
-    saveSoundSetDescription(context, set) {
-        context.commit('updateItemRequesting', set);
-        context.commit('lastUpdatedField', {name: set.description, type: 'sound set description'});
-        setSoundSetDescription(set.id, set.description).then(() => {
-            return context.dispatch('reloadSoundSet', set);
+    saveSoundSetDescription(context, soundSet) {
+        context.commit('updateItemRequesting', soundSet);
+        context.commit('lastUpdatedField', {name: soundSet.description, type: 'sound set description'});
+        setSoundSetDescription(soundSet.id, soundSet.description).then(() => {
+            return context.dispatch('reloadSoundSet', soundSet);
         }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
         });
     },
-    saveContractDefault(context, set) {
-        let defaultName = set.contract_default ? 'on' : 'off';
-        context.commit('updateItemRequesting', set);
+    saveContractDefault(context, soundSet) {
+        let defaultName = soundSet.contract_default ? 'on' : 'off';
+        context.commit('updateItemRequesting', soundSet);
         context.commit('lastUpdatedField', {name: defaultName, type: 'default for subscribers'});
-        setSoundSetContractDefault(set.id, set.contract_default).then(() => {
-            return context.dispatch('reloadSoundSet', set);
+        setSoundSetContractDefault(soundSet.id, soundSet.contract_default).then(() => {
+            return context.dispatch('reloadSoundSet', soundSet);
         }).then(() => {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
         });
     },
-    reloadSoundSet(context, set) {
+    reloadSoundSet(context, soundSet) {
         return new Promise((resolve, reject) => {
-            context.commit('soundSetReloading', set);
-            getSoundSetWithFiles(set.id).then(($set) => {
-                context.commit('soundSetReloaded', $set);
+            context.commit('soundSetReloading', soundSet);
+            getSoundSetWithFiles(soundSet.id).then(($soundSet) => {
+                context.commit('soundSetReloaded', $soundSet);
             }).catch((err)=>{
                 context.commit('soundSetReloadingFailed', {
-                    set: set,
+                    set: soundSet,
                     error: err.message
                 });
             }).then(() => {
@@ -681,6 +682,19 @@ export default {
             context.commit('removeItemSucceeded');
         }).catch((err) => {
             context.commit('removeItemFailed', err.message);
+        });
+    },
+    setLoopplay(context, soundSet) {
+        let loopName = soundSet.loopplay ? 'on' : 'off';
+        context.commit('updateItemRequesting', soundSet);
+        context.commit('lastUpdatedField', {name: loopName, type: 'playing in loop'});
+        setSoundSetItemLoopplay(soundSet.id, soundSet.loopplay).then(() => {
+            //return context.dispatch('reloadGroup', group);
+            return;
+        }).then(() => {
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
         });
     }
 }
