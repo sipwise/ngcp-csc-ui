@@ -109,6 +109,7 @@
                     :set-id="set.id"
                     :key="index"
                     @remove-file="removeFile"
+                    @toggle-loop="toggleLoop"
                 />
             </q-item-tile>
         </q-item-main>
@@ -453,6 +454,14 @@
                     soundSet: this.setModel
                 };
                 this.$emit('remove-file', options);
+            },
+            toggleLoop(item) {
+                let options = {
+                    id: item.id,
+                    loopplay: item.loopplay,
+                    soundSet: this.setModel
+                };
+                this.$emit('toggle-loop', options);
             }
         },
         watch: {
