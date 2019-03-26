@@ -390,7 +390,12 @@ export default {
     },
     isRemoveFileRequesting(state) {
         return (id) => {
-            return id ? state.removeItem === id : false;
+            return state.removeState === 'requesting' && id ? state.removeItem === id : false;
+        }
+    },
+    isToggleLoopplayRequesting(state) {
+        return (id) => {
+            return state.updateState === 'requesting' && id ? state.updateItem === id : false;
         }
     }
 }
