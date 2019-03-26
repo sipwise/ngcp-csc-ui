@@ -55,6 +55,7 @@
                 @save-description="saveSoundSetDescription"
                 @save-contract-default="saveContractDefault"
                 @remove-file="removeSoundFileDialog"
+                @toggle-loop="toggleLoop"
             />
         </q-list>
         <div
@@ -194,6 +195,9 @@
             },
             removeFile() {
                 this.$store.dispatch('pbxConfig/removeSoundFile', this.currentRemovingSoundFile);
+            },
+            toggleLoop(item) {
+                this.$store.dispatch('pbxConfig/setLoopplay', item);
             }
         },
         watch: {
