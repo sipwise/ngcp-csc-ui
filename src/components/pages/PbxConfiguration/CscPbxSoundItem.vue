@@ -28,12 +28,13 @@
                     slot="additional"
                 >
                     <q-toggle
+                        v-if="file"
                         v-model="loop"
-                        unchecked-icon="loop"
                         checked-icon="loop"
-                        :disable="true"
+                        unchecked-icon="loop"
                         :class="loopClasses"
                         :label="$t('pbxConfig.playingInLoop')"
+                        @change="toggleLoop"
                     />
                     <q-tooltip>
                         {{ loopTooltipLabel }}
@@ -167,6 +168,9 @@
             resetFile() {
                 this.$refs.uploadSoundFile.reset();
                 this.$store.commit('pbxConfig/resetSoundFileProgress', this.item.handle);
+            },
+            toggleLoop() {
+                this.$emit('toggle-loop', this.item)
             }
         },
         watch: {
