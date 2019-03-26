@@ -17,12 +17,13 @@
                     slot="additional"
                 >
                     <q-toggle
-                        :class="loopClasses"
-                        :label="$t('pbxConfig.playingInLoop')"
+                        v-if="file"
                         v-model="loop"
-                        :disable="true"
                         checked-icon="loop"
                         unchecked-icon="loop"
+                        :class="loopClasses"
+                        :label="$t('pbxConfig.playingInLoop')"
+                        @change="toggleLoop"
                     />
                     <q-tooltip>
                         {{ loopTooltipLabel }}
@@ -97,6 +98,10 @@
             },
             hasFile() {
                 return this.item.filename.length > 0;
+            },
+            toggleLoop() {
+                console.log('toggleLoop()');
+                this.$store.dispatch('pbxConfig/setLoopplay', this.item);
             }
         },
         watch: {

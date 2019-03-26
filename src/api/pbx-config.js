@@ -777,3 +777,37 @@ export function getSoundSetWithFiles(id) {
         });
     });
 }
+
+export function getSoundFile(id) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return get({
+                path: 'api/soundfiles/' + id
+            });
+        }).then((soundFile)=> {
+            console.log('soundFile', soundFile);
+            resolve(soundFile);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function setSoundSetItemLoopplay(id, loopplay) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            console.log(loopplay);
+            return getSoundFile(id);
+        }).then((result)=>{
+            delete result._links;
+            result.loopplay = !loopplay;
+            // TODO: Fix. Get "415 Unsupported Media Type", and also tried
+            // with loopplay as only param
+            return Vue.http.put('api/soundsets/' + id, result);
+        }).then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
