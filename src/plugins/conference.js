@@ -8,26 +8,83 @@ export class ConferencePlugin {
     constructor() {
         this.events = new EventEmitter();
         this.rtcEngine = null;
+        this.conference = null;
+        this.localMediaStream = null;
     }
 
     setRtcEngine(rtcEngine) {
         if(this.rtcEngine === null) {
             this.rtcEngine = rtcEngine;
-            this.rtcEngine.onConferenceNetworkConnected(()=>{
+            this.rtcEngine.onConferenceNetworkConnected((network)=>{
                 this.events.emit('connected');
+                network
+                    .onConferenceParticipantJoined((participant)=>{
+                        this.events.emit('participantJoined', participant);
+                    })
+                    .onConferenceParticipantLeft((participant)=>{
+                        this.events.emit('participantLeft', participant);
+                    })
+                    .onConferenceEvent((event)=>{
+                        this.events.emit('conferenceEvent', event);
+                    })
+                    .onConferenceMessage((message)=>{
+                        this.events.emit('conferenceMessage', message);
+                    })
+                    .onConferenceFile((file)=>{
+                        this.events.emit('conferenceFile', file);
+                    });
             }).onConferenceNetworkDisconnected(()=>{
                 this.events.emit('disconnected');
             });
         }
     }
 
-    onConnected(listener) {
-        this.events.on('connected', listener);
+    getNetwork() {
+        return this.rtcEngine.getConferenceNetwork();
+    }
+
+    joinConference(options) {
+        return new Promise((resolve, reject)=>{
+            this.getNetwork().joinConference(options).then((conference)=>{
+                resolve(conference);
+            }).catch((err)=>{
+                reject(err);
+            });
+        });
+    }
+
+    onLeft(listener) {
+        this.events.on('left', listener);
         return this;
     }
 
-    onDisconnected(listener) {
-        this.events.on('disconnected', listener);
+    onConferenceParticipantJoined(listener) {
+        this.events.on('participantJoined', listener);
+        return this;
+    }
+
+    onConferenceParticipantLeft(listener) {
+        this.events.on('participantLeft', listener);
+        return this;
+    }
+
+    onConferenceEvent(listener) {
+        this.events.on('conferenceEvent', listener);
+        return this;
+    }
+
+    onConferenceMessage(listener) {
+        this.events.on('conferenceMessage', listener);
+        return this;
+    }
+
+    onConferenceFile(listener) {
+        this.events.on('conferenceFile', listener);
+        return this;
+    }
+
+    onError(listener) {
+        this.events.on('error', listener);
         return this;
     }
 
@@ -36,6 +93,40 @@ export class ConferencePlugin {
             conferencePlugin = new ConferencePlugin();
         }
         return conferencePlugin;
+    }
+
+    setLocalMediaStream(localMediaStream) {
+        this.removeLocalMediaStream();
+        this.localMediaStream = localMediaStream;
+    }
+
+    getLocalMediaStream() {
+        return this.localMediaStream;
+    }
+
+    hasLocalMediaStream() {
+        return this.localMediaStream !== null;
+    }
+
+    removeLocalMediaStream() {
+        if(this.hasLocalMediaStream()) {
+            this.getLocalMediaStream().stop();
+        }
+    }
+
+    getLocalMediaStreamNative() {
+        if(this.hasLocalMediaStream()) {
+            return this.getLocalMediaStream().getStream();
+        }
+        return null;
+    }
+
+    getLocalParticipant() {
+        this.conference.getLocalParticipant();
+    }
+
+    getRemoteParticipant(id) {
+        this.conference.getRemoteParticipant(id);
     }
 }
 

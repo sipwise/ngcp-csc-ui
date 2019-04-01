@@ -24,21 +24,25 @@
             <csc-conference-join
                 id="csc-conf-join"
                 v-if="!isJoined"
-                :conferenceId="conferenceId"
+                :conference-id="conferenceId"
+                :has-conference-id="hasConferenceId"
+                :conference-url="conferenceUrl"
                 :local-media-stream="localMediaStream"
                 :is-microphone-enabled="isMicrophoneEnabled"
                 :is-camera-enabled="isCameraEnabled"
                 :is-screen-enabled="isScreenEnabled"
                 :is-media-enabled="isMediaEnabled"
+                :is-joining="isJoining"
+                :is-joined="isJoined"
+                @join="join"
             />
             <csc-conference-joined
-                v-else
-            >
-            </csc-conference-joined>
+                v-if="!isJoining && isJoined"
+            />
         </div>
         <div
             id="csc-conf-main-media"
-            v-show="isMediaEnabled && isCameraEnabled"
+            v-show="isMediaEnabled && (isCameraEnabled || isScreenEnabled)"
         >
             <csc-media
                 ref="localMedia"
@@ -60,6 +64,7 @@
                     icon="mic"
                     round
                     @click="toggleMicrophone()"
+                    :disable="!hasConferenceId || isJoining"
                 />
                 <q-btn
                     class="csc-conf-button"
@@ -67,6 +72,7 @@
                     icon="videocam"
                     round
                     @click="toggleCamera()"
+                    :disable="!hasConferenceId || isJoining"
                 />
                 <q-btn
                     class="csc-conf-button"
@@ -74,8 +80,10 @@
                     icon="computer"
                     round
                     @click="toggleScreen()"
+                    :disable="!hasConferenceId || isJoining"
                 />
             </div>
+
         </div>
     </q-layout>
 </template>
@@ -87,6 +95,7 @@
     import CscConferenceJoin from '../pages/Conference/CscConferenceJoin'
     import CscConferenceJoined from '../pages/Conference/CscConferenceJoined'
     import CscMedia from "../CscMedia";
+    import CscSpinner from "../CscSpinner";
     import {
         QLayout,
         QBtn
@@ -99,6 +108,7 @@
             this.$store.dispatch('user/initUser');
         },
         components: {
+            CscSpinner,
             CscMedia,
             CscConferenceJoin,
             CscConferenceJoined,
@@ -106,12 +116,13 @@
             QBtn
         },
         computed: {
-            ...mapGetters([
-                'conferenceId'
-            ]),
             ...mapGetters('conference', [
+                'conferenceId',
+                'conferenceUrl',
+                'hasConferenceId',
                 'isConferencingEnabled',
                 'isJoined',
+                'isJoining',
                 'isMicrophoneEnabled',
                 'isCameraEnabled',
                 'isScreenEnabled',
@@ -149,13 +160,31 @@
                 this.$store.commit('conference/disposeLocalMedia');
             },
             toggleMicrophone() {
-                this.$store.dispatch('conference/toggleMicrophone');
+                if(this.hasConferenceId) {
+                    this.$store.dispatch('conference/toggleMicrophone');
+                }
             },
             toggleCamera() {
-                this.$store.dispatch('conference/toggleCamera');
+                if(this.hasConferenceId) {
+                    this.$store.dispatch('conference/toggleCamera');
+                }
             },
             toggleScreen() {
-                this.$store.dispatch('conference/toggleScreen');
+                if(this.hasConferenceId) {
+                    this.$store.dispatch('conference/toggleScreen');
+                }
+            },
+            join(conferenceId) {
+                if(this.hasConferenceId) {
+                    this.$store.dispatch('conference/join', conferenceId);
+                }
+            }
+        },
+        watch: {
+            hasConferenceId(value) {
+                if(!value) {
+                    this.$store.commit('conference/disposeLocalMedia');
+                }
             }
         }
     }

@@ -4,7 +4,7 @@
         minimized
     >
         <div
-            class="csc-dialog"
+            class="csc-dialog csc-share-dialog"
         >
             <div
                 class="csc-dialog-title"
@@ -98,6 +98,8 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../themes/quasar.variables.styl'
+    .csc-share-dialog
+        min-width 480px
     .csc-dialog
         max-width 480px
         background-color $body-background
