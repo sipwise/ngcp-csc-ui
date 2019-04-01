@@ -13,6 +13,10 @@ export class RtcEnginePlugin {
 
     constructor() {
         this.script = null;
+        /**
+         *
+         * @type {cdk.Client}
+         */
         this.client = null;
         this.sessionToken = null;
         this.ngcpApiJwt = null;
@@ -149,6 +153,10 @@ export class RtcEnginePlugin {
     onDisconnected(listener) {
         this.events.on('disconnected', listener);
         return this;
+    }
+
+    getConferenceNetwork() {
+        return this.client.getNetworkByTag('conference');
     }
 
     static getInstance() {
