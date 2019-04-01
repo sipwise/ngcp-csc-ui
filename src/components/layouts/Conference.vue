@@ -38,7 +38,7 @@
         </div>
         <div
             id="csc-conf-main-media"
-            v-show="isMediaEnabled && isCameraEnabled"
+            v-show="isMediaEnabled && (isCameraEnabled || isScreenEnabled)"
         >
             <csc-media
                 ref="localMedia"

@@ -21,8 +21,9 @@ export default {
         screenEnabled: false,
         localMediaState: RequestState.initiated,
         localMediaError: null,
-        localMediaStream: null,
-        remoteMediaStreams: []
+        joinState: RequestState.initiated,
+        joinError: null,
+        participants: []
     },
     getters: {
         isJoined() {
@@ -41,13 +42,19 @@ export default {
             return state.screenEnabled;
         },
         isMediaEnabled(state) {
-            return state.localMediaStream !== null;
+            return (state.localMediaState === RequestState.succeeded ||
+                state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream();
         },
         localMediaStream(state) {
-            if(state.localMediaStream !== null) {
-                return state.localMediaStream.getStream();
+            if((state.localMediaState === RequestState.succeeded ||
+                state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream()) {
+                return Vue.$conference.getLocalMediaStreamNative();
             }
             return null;
+        },
+        hasLocalMediaStream(state) {
+            return (state.localMediaState === RequestState.succeeded ||
+                state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream();
         }
     },
     mutations: {
@@ -79,13 +86,8 @@ export default {
             state.localMediaState = RequestState.requesting;
             state.localMediaError = null;
         },
-        localMediaSucceeded(state, localMediaStream) {
-            if(state.localMediaStream !== null) {
-                state.localMediaStream.stop();
-                state.localMediaStream = null;
-            }
+        localMediaSucceeded(state) {
             state.localMediaState = RequestState.succeeded;
-            state.localMediaStream = localMediaStream;
             state.localMediaError = null;
         },
         localMediaFailed(state, error) {
@@ -96,13 +98,31 @@ export default {
             return state.localMediaState === RequestState.requesting;
         },
         disposeLocalMedia(state) {
-            if(state.localMediaStream !== null) {
-                state.localMediaStream.stop();
-                state.localMediaStream = null;
-                state.cameraEnabled = false;
-                state.microphoneEnabled = false;
-                state.screenEnabled = false;
-            }
+            Vue.$conference.removeLocalMediaStream();
+            state.cameraEnabled = false;
+            state.microphoneEnabled = false;
+            state.screenEnabled = false;
+        },
+        joinRequesting(state) {
+            state.joinState = RequestState.requesting;
+            state.joinError = null;
+        },
+        joinSucceeded(state) {
+            state.joinState = RequestState.succeeded;
+            state.joinError = null;
+        },
+        joinFailed(state, error) {
+            state.joinState = RequestState.failed;
+            state.joinError = error;
+        },
+        participantJoined(state, participant) {
+            state.participants.push(participant.getId());
+
+        },
+        participantLeft(state, participant) {
+            state.participants = state.participants.filter(($participant)=>{
+                return participant.getId() !== $participant.getId();
+            });
         }
     },
     actions: {
@@ -130,6 +150,7 @@ export default {
                     break;
             }
             media.build().then((localMediaStream)=>{
+                Vue.$conference.setLocalMediaStream(localMediaStream);
                 context.commit('localMediaSucceeded', localMediaStream);
                 switch(type) {
                     default:
@@ -252,6 +273,22 @@ export default {
             }
             else {
                 context.dispatch('disableScreen');
+            }
+        },
+        join(context, conferenceId) {
+            if(context.getters.hasLocalMediaStream) {
+                context.commit('joinRequesting');
+                Vue.$conference.onLeft((conference)=>{
+                    context.commit('leftSuccessfully', conference);
+                }).onParticipantJoined((participant)=>{
+                    context.commit('participantJoined', participant);
+                }).onParticipantLeft((participant)=>{
+                    context.commit('participantLeft', participant);
+                }).join(conferenceId, context.getters.localMediaStream).then(()=>{
+                    context.commit('joinSucceeded');
+                }).catch((err)=>{
+                    context.commit('joinFailed', err.message);
+                });
             }
         }
     }

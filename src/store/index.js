@@ -78,6 +78,8 @@ export const store = new Vuex.Store({
             }).onConferenceNetworkDisconnected(() => {
                 store.commit('conference/disableConferencing');
             });
+        },
+        function call(store) {
             Vue.$call.onIncoming(()=>{
                 store.commit('call/incomingCall', {
                     number: Vue.call.getNumber()

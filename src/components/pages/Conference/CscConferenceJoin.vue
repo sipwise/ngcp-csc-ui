@@ -4,7 +4,7 @@
     >
         <div
             id="csc-conf-join-content"
-            class="col col-4 text-center"
+            :class="contentClasses"
         >
             <p
                 id="csc-conf-join-text"
@@ -13,16 +13,17 @@
                 ref="conferenceName"
                 id="csc-conf-link-input"
                 dark
-                :value="conferenceId"
+                :value="conferenceIdInput"
                 align="center"
-                readonly
                 :after="conferenceNameButtons"
+                @change="conferenceIdChanged"
             />
             <q-btn
                 class="csc-button"
-                color="primary"
+                :color="joinButtonColor"
                 icon="call"
                 round
+                @click="join"
             />
         </div>
     </div>
@@ -37,7 +38,9 @@
     export default {
         name: 'csc-conference-join',
         data () {
-            return {}
+            return {
+                conferenceIdInput: this.conferenceId
+            }
         },
         props: [
             'conferenceId',
@@ -69,13 +72,48 @@
             },
             conferenceLinkValue() {
                 return window.location.href;
-            }
+            },
+            contentClasses() {
+                let classes = ['col', 'col-4', 'text-center'];
+                if(this.isCameraEnabled) {
+                    classes.push('csc-camera-background');
+                }
+                else if (this.isScreenEnabled) {
+                    classes.push('csc-screen-background');
+                }
+                return classes;
+            },
+            joinButtonColor() {
+                if(this.isCameraEnabled || this.isScreenEnabled || this.isMicrophoneEnabled) {
+                    return 'primary';
+                }
+                else {
+                    return 'grey';
+                }
+            },
         },
         watch: {
+            conferenceId(value) {
+                this.conferenceIdInput = value;
+            }
         },
         methods:{
             copyLinkToClipboard() {
 
+            },
+            join() {
+
+            },
+            conferenceIdChanged(value) {
+                try {
+                    this.$router.push({
+                        path: '/conference/' + value
+                    });
+                    this.conferenceIdInput = value;
+                }
+                catch(err) {
+                    this.conferenceIdInput = this.conferenceId;
+                }
             }
         }
     }
@@ -90,6 +128,11 @@
         font-weight bold
         font-size 1rem
     #csc-conf-join-content
+        padding $flex-gutter-md
         position relative
         z-index 2
+    #csc-conf-join-content.csc-camera-background
+        background-color alpha($main-menu-background, 0.5)
+    #csc-conf-join-content.csc-screen-background
+        background-color alpha($main-menu-background, 0.5)
 </style>
