@@ -45,6 +45,13 @@ export const store = new Vuex.Store({
         conferenceId(state) {
             return _.get(state, 'route.params.id', null);
         },
+        conferenceUrl(state) {
+            let id = _.get(state, 'route.params.id', null);id;
+            return window.location.href;
+        },
+        hasConferenceId(state, getters) {
+            return getters.conferenceId !== null && getters.conferenceId !== void(0);
+        },
         pageTitle(state) {
             return _.get(state, 'route.meta.title', 'Not defined');
         },
@@ -78,6 +85,8 @@ export const store = new Vuex.Store({
             }).onConferenceNetworkDisconnected(() => {
                 store.commit('conference/disableConferencing');
             });
+        },
+        function call(store) {
             Vue.$call.onIncoming(()=>{
                 store.commit('call/incomingCall', {
                     number: Vue.call.getNumber()
@@ -90,6 +99,21 @@ export const store = new Vuex.Store({
                 setTimeout(()=>{
                     store.commit('call/inputNumber');
                 }, errorVisibilityTimeout);
+            });
+        },
+        function conference(store) {
+            Vue.$conference.onLeft((conference)=>{
+                store.commit('conference/leftSuccessfully', conference);
+            }).onConferenceParticipantJoined((participant)=>{
+                store.commit('conference/participantJoined', participant);
+            }).onConferenceParticipantLeft((participant)=>{
+                store.commit('conference/participantLeft', participant);
+            }).onConferenceEvent((event)=>{
+                store.commit('conference/event', event);
+            }).onConferenceMessage(()=>{
+                store.commit('conference/message', event);
+            }).onConferenceFile(()=>{
+                store.commit('conference/file', event);
             });
         },
         function initI18n(store) {

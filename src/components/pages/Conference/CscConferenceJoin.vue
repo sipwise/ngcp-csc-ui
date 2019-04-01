@@ -2,9 +2,10 @@
     <div
         class="row justify-center items-center csc-conf-full-height"
     >
+
         <div
             id="csc-conf-join-content"
-            class="col col-4 text-center"
+            :class="contentClasses"
         >
             <p
                 id="csc-conf-join-text"
@@ -13,69 +14,122 @@
                 ref="conferenceName"
                 id="csc-conf-link-input"
                 dark
-                :value="conferenceId"
-                align="center"
-                readonly
-                :after="conferenceNameButtons"
-            />
+                :value="conferenceIdInput"
+                placeholder="Conference name"
+                align="left"
+                @change="conferenceIdChanged"
+                :disable="isJoining"
+            >
+                <q-btn
+                    :disable="!hasConferenceId || isJoining"
+                    :color="shareButtonColor"
+                    flat
+                    icon="link"
+                    @click="showShareDialog"
+                >Share</q-btn>
+            </q-input>
             <q-btn
                 class="csc-button"
-                color="primary"
+                :color="joinButtonColor"
+                :disable="!(isMediaEnabled && hasConferenceId) || isJoining"
                 icon="call"
                 round
+                @click="join"
             />
         </div>
+        <csc-share-conference-dialog
+            ref="shareDialog"
+            :conference-url="conferenceUrl"
+        />
     </div>
 </template>
 
 <script>
     import CscMedia from '../../CscMedia'
+    import CscSpinner from '../../CscSpinner'
     import {
         QBtn,
         QInput
     } from 'quasar-framework'
+    import CscShareConferenceDialog from "./CscShareConferenceDialog";
     export default {
         name: 'csc-conference-join',
         data () {
-            return {}
+            return {
+                conferenceIdInput: this.conferenceId
+            }
         },
         props: [
             'conferenceId',
+            'hasConferenceId',
+            'conferenceUrl',
             'localMediaStream',
             'isMicrophoneEnabled',
             'isCameraEnabled',
             'isScreenEnabled',
-            'isMediaEnabled'
+            'isJoining',
+            'isJoined'
         ],
         components: {
+            CscShareConferenceDialog,
             QBtn,
             QInput,
-            CscMedia
+            CscMedia,
+            CscSpinner
         },
         computed: {
-            conferenceNameButtons() {
-                let buttons = [];
-                let self = this;
-                buttons.push({
-                        icon: 'link',
-                        error: false,
-                        handler (event) {
-                            event.stopPropagation();
-                            self.copyLinkToClipboard();
-                        }
-                    }
-                );
-                return buttons;
+            contentClasses() {
+                let classes = ['col', 'col-4', 'text-center'];
+                if(this.isCameraEnabled) {
+                    classes.push('csc-camera-background');
+                }
+                else if (this.isScreenEnabled) {
+                    classes.push('csc-screen-background');
+                }
+                return classes;
             },
-            conferenceLinkValue() {
-                return window.location.href;
+            joinButtonColor() {
+                if(this.isMediaEnabled && this.hasConferenceId) {
+                    return 'primary';
+                }
+                else {
+                    return 'grey';
+                }
+            },
+            shareButtonColor() {
+                if(this.hasConferenceId) {
+                    return 'primary';
+                }
+                else {
+                    return 'grey';
+                }
+            },
+            isMediaEnabled() {
+                return this.isCameraEnabled || this.isScreenEnabled || this.isMicrophoneEnabled;
             }
         },
         watch: {
+            conferenceId(value) {
+                this.conferenceIdInput = value;
+            }
         },
         methods:{
-            copyLinkToClipboard() {
-
+            join() {
+                this.$emit('join', this.conferenceId);
+            },
+            conferenceIdChanged(value) {
+                try {
+                    this.$router.push({
+                        path: '/conference/' + value
+                    });
+                    this.conferenceIdInput = value;
+                }
+                catch(err) {
+                    this.conferenceIdInput = this.conferenceId;
+                }
+            },
+            showShareDialog() {
+                this.$refs.shareDialog.open();
             }
         }
     }
@@ -90,6 +144,11 @@
         font-weight bold
         font-size 1rem
     #csc-conf-join-content
+        padding $flex-gutter-md
         position relative
         z-index 2
+    #csc-conf-join-content.csc-camera-background
+        background-color alpha($main-menu-background, 0.5)
+    #csc-conf-join-content.csc-screen-background
+        background-color alpha($main-menu-background, 0.5)
 </style>
