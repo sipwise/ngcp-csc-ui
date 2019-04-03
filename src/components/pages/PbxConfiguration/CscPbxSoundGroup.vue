@@ -13,6 +13,8 @@
                 :key="item.id"
                 :item="item"
                 :group="groupLabel"
+                :updating="isRemoveFileRequesting(item.id)"
+                @remove-file="removeFile"
             />
         </q-list>
     </q-collapsible>
@@ -31,6 +33,9 @@
         QCollapsible,
         QCheckbox
     } from 'quasar-framework'
+    import {
+        mapGetters
+    } from 'vuex'
     export default {
         name: 'csc-pbx-sound-group',
         props: {
@@ -55,6 +60,9 @@
             }
         },
         computed: {
+            ...mapGetters('pbxConfig', [
+                'isRemoveFileRequesting'
+            ]),
             groupLabelClasses() {
                 let classes = [];
                 if (this.invalidGroup) {
@@ -64,6 +72,9 @@
             }
         },
         methods: {
+            removeFile(item) {
+                this.$emit('remove-file', item);
+            }
         },
         watch: {
         }

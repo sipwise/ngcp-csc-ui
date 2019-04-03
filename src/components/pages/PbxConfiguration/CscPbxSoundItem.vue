@@ -15,8 +15,11 @@
                 :stop-all="!isLastPlayed(item.id)"
                 :uploaded="file"
                 :disable="true"
-                @init="initSoundFileAudio"
                 :invalid="isInvalid"
+                :updating="updating"
+                delete-term="remove"
+                @remove="removeFile"
+                @init="initSoundFileAudio"
             >
                 <div
                     slot="additional"
@@ -54,7 +57,8 @@
         name: 'csc-pbx-sound-item',
         props: {
             item: Object,
-            group: String
+            group: String,
+            updating: Boolean
         },
         components: {
             CscSoundFileUpload,
@@ -135,6 +139,9 @@
                 this.playSoundFile();
                 this.$refs.uploadSoundFile.setPlayingTrue();
                 this.$refs.uploadSoundFile.setPausedFalse();
+            },
+            removeFile() {
+                this.$emit('remove-file', this.item)
             }
         },
         watch: {

@@ -326,7 +326,9 @@ export default {
         }
     },
     soundSets(state) {
-        return state.soundSetsOrdered;
+        return state.soundSetsList.map((setId) => {
+            return state.soundSets[setId];
+        });
     },
     soundSetFilesLoading(state) {
         return (id) => {
@@ -384,6 +386,11 @@ export default {
                 });
             }
             return count;
+        }
+    },
+    isRemoveFileRequesting(state) {
+        return (id) => {
+            return id ? state.removeItem === id : false;
         }
     }
 }
