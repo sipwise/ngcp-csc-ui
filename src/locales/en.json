@@ -27,7 +27,8 @@
         "selectNew": "Select new",
         "resetDefaults": "Reset to defaults",
         "install": "Install",
-        "addNew": "Add new"
+        "addNew": "Add new",
+        "removeFile": "Remove file"
     },
     "form": {
         "destinationLabel": "Destination"
@@ -452,7 +453,9 @@
         "addSoundSet": "Add Sound Set",
         "language": "Language",
         "invalidFileTooltip": "This sound set is incomplete ({amount} file is missing)",
-        "invalidFilesTooltip": "This sound set is incomplete ({amount} files are missing)"
+        "invalidFilesTooltip": "This sound set is incomplete ({amount} files are missing)",
+        "removeSoundFileTitle": "Remove sound file",
+        "removeSoundFileText": "You are about to remove the sound file for {handle}"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

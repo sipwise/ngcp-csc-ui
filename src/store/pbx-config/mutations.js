@@ -482,11 +482,10 @@ export default {
         state.listSoundSetsState = RequestState.succeeded;
         state.listSoundSetsError = null;
         state.soundSets = {};
-        state.soundSetsOrdered = [];
         sets.items.forEach((set) => {
             state.soundSets[set.id] = set;
-            state.soundSetsOrdered.push(set);
         });
+        state.soundSetsList = Object.keys(state.soundSets);
     },
     listSoundSetsFailed(state, error) {
         state.listState = RequestState.failed;
@@ -516,11 +515,7 @@ export default {
         state.soundSetReloadingState = RequestState.succeeded;
         state.soundSetReloadingError = null;
         Vue.set(state.soundSets, set.id, set);
-        for (let i = 0; i < state.soundSetsOrdered.length; i++) {
-            if(state.soundSetsOrdered[i].id === set.id) {
-                state.soundSetsOrdered[i] = set;
-            }
-        }
+        state.soundSetsList = Object.keys(state.soundSets);
     },
     soundSetReloadingFailed(state, err) {
         state.soundSetReloadingState = RequestState.failed;

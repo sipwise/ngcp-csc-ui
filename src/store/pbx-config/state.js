@@ -82,7 +82,7 @@ export default {
     listSoundSetsState: RequestState.initiated,
     listSoundSetsError: null,
     soundSets: {},
-    soundSetsOrdered: [],
+    soundSetsList: [],
     soundSetFilesStates: {},
     soundSetFilesErrors: {},
     soundSetReloading: null,

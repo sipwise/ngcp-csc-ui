@@ -94,6 +94,7 @@
                     :group="group"
                     :group-label="groupLabel(group.name)"
                     :key="index"
+                    @remove-file="removeFile"
                 />
             </q-item-tile>
         </q-item-main>
@@ -130,8 +131,10 @@
                 />
             </q-item-tile>
         </q-item-side>
-        <q-inner-loading :visible="isLoading">
-            <q-spinner-mat
+        <q-inner-loading
+            :visible="isLoading"
+        >
+            <q-spinner-dots
                 size="60px"
                 color="primary"
             />
@@ -151,7 +154,7 @@
         QField,
         QInput,
         QInnerLoading,
-        QSpinnerMat,
+        QSpinnerDots,
         QToggle,
         QTooltip
     } from 'quasar-framework'
@@ -184,7 +187,7 @@
             QField,
             QInput,
             QInnerLoading,
-            QSpinnerMat,
+            QSpinnerDots,
             QToggle,
             QTooltip
         },
@@ -416,6 +419,14 @@
                     }
                 });
                 return count > 0;
+            },
+            removeFile(item) {
+                let options = {
+                    id: item.id,
+                    handle: item.handle,
+                    soundSet: this.setModel
+                };
+                this.$emit('remove-file', options);
             }
         },
         watch: {
