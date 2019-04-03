@@ -91,12 +91,12 @@
             <q-btn
                 :disable="isPlaying"
                 flat
-                v-if="uploaded && selectedFile == null && !disable"
+                v-if="uploaded && selectedFile == null"
                 color="primary"
-                icon="undo"
+                :icon="undoIcon"
                 @click="undo"
             >
-                {{ $t('buttons.resetDefaults') }}
+                {{ undoLabel }}
             </q-btn>
         </div>
     </q-field>
@@ -132,7 +132,8 @@
             'fileUrl',
             'loaded',
             'disable',
-            'floatLabel'
+            'floatLabel',
+            'deleteTerm'
         ],
         data () {
             return {
@@ -177,6 +178,24 @@
                     );
                 }
                 return buttons;
+            },
+            undoLabel() {
+                // TODO: Add default case
+                if (this.deleteTerm === 'revert') {
+                    return this.$t('buttons.resetDefaults');
+                }
+                else if (this.deleteTerm === 'remove') {
+                    return this.$t('buttons.removeFile');
+                }
+            },
+            undoIcon() {
+                // TODO: Add default case
+                if (this.deleteTerm === 'revert') {
+                    return 'undo';
+                }
+                else if (this.deleteTerm === 'remove') {
+                    return 'delete';
+                }
             }
         },
         methods: {
@@ -213,7 +232,12 @@
                 this.cancel();
             },
             undo() {
-                this.$emit('reset');
+                if (this.deleteTerm === 'revert') {
+                    this.$emit('revert');
+                }
+                else if (this.deleteTerm === 'remove') {
+                    this.$emit('remove');
+                }
             },
             init() {
                 this.$emit('init');

@@ -15,8 +15,10 @@
                 :stop-all="!isLastPlayed(item.id)"
                 :uploaded="file"
                 :disable="true"
-                @init="initSoundFileAudio"
                 :invalid="isInvalid"
+                delete-term="remove"
+                @remove="removeFile"
+                @init="initSoundFileAudio"
             >
                 <div
                     slot="additional"
@@ -135,6 +137,9 @@
                 this.playSoundFile();
                 this.$refs.uploadSoundFile.setPlayingTrue();
                 this.$refs.uploadSoundFile.setPausedFalse();
+            },
+            removeFile() {
+                this.$emit('remove-file', this.item.id)
             }
         },
         watch: {

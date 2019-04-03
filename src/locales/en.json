@@ -27,7 +27,8 @@
         "selectNew": "Select new",
         "resetDefaults": "Reset to defaults",
         "install": "Install",
-        "addNew": "Add new"
+        "addNew": "Add new",
+        "removeFile": "Remove file"
     },
     "form": {
         "destinationLabel": "Destination"

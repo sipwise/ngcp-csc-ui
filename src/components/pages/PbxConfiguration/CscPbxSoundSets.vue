@@ -54,6 +54,7 @@
                 @save-name="saveSoundSetName"
                 @save-description="saveSoundSetDescription"
                 @save-contract-default="saveContractDefault"
+                @remove-file="removeFile"
             />
         </q-list>
         <div
@@ -103,7 +104,7 @@
         data () {
             return {
                 currentRemovingSoundSet: null,
-                addFormEnabled: false,
+                addFormEnabled: false
             }
         },
         mounted() {
@@ -172,6 +173,9 @@
             },
             isSoundSetInvalid(setId) {
                 return this.soundSetInvalidCount(setId) > 0;
+            },
+            removeFile(options) {
+                this.$store.dispatch('pbxConfig/removeSoundFile', options);
             }
         },
         watch: {
@@ -186,6 +190,7 @@
                     showToast(this.$t('pbxConfig.toasts.changedFieldToast', this.lastUpdatedField));
                 }
             }
+
         }
     }
 </script>
