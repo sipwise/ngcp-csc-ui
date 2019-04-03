@@ -798,3 +798,7 @@ export function playSoundFile(options) {
             });
     });
 }
+
+export function removeSoundFile(id) {
+    return Vue.http.delete('api/soundfiles/' + id);
+}

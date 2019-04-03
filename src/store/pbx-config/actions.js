@@ -46,7 +46,8 @@ import {
     setSoundSetContractDefault,
     getSoundSetWithFiles,
     playSoundFile,
-    createSoundSet
+    createSoundSet,
+    removeSoundFile
 } from '../../api/pbx-config'
 
 export default {
@@ -670,6 +671,16 @@ export default {
             context.commit('addItemSucceeded');
         }).catch((err) => {
             context.commit('addItemFailed', err.message);
+        });
+    },
+    removeSoundFile(context, options) {
+        context.commit('removeItemRequesting', options.id);
+        removeSoundFile(options.id).then(() => {
+            return context.dispatch('reloadSoundSet', options.soundSet);
+        }).then(() => {
+            context.commit('removeItemSucceeded');
+        }).catch((err) => {
+            context.commit('removeItemFailed', err.message);
         });
     }
 }

@@ -54,6 +54,7 @@
                 @save-name="saveSoundSetName"
                 @save-description="saveSoundSetDescription"
                 @save-contract-default="saveContractDefault"
+                @remove-file="removeSoundFileDialog"
             />
         </q-list>
         <div
@@ -63,10 +64,16 @@
             {{ $t('pbxConfig.noSoundSets') }}
         </div>
         <csc-remove-dialog
-            ref="removeDialog"
+            ref="removeSoundSetDialog"
             :title="$t('pbxConfig.removeSoundSetTitle')"
-            :message="removeDialogMessage"
+            :message="removeSoundSetDialogMessage"
             @remove="removeSoundSet"
+        />
+        <csc-remove-dialog
+            ref="removeSoundFileDialog"
+            :title="$t('pbxConfig.removeSoundFileTitle')"
+            :message="removeSoundFileDialogMessage"
+            @remove="removeFile"
         />
     </csc-page>
 </template>
@@ -103,7 +110,8 @@
         data () {
             return {
                 currentRemovingSoundSet: null,
-                addFormEnabled: false,
+                currentRemovingSoundFile: null,
+                addFormEnabled: false
             }
         },
         mounted() {
@@ -127,18 +135,29 @@
             isMobile() {
                 return !!Platform.is.mobile;
             },
-            removeDialogMessage() {
+            removeSoundSetDialogMessage() {
                 if (this.currentRemovingSoundSet !== null) {
                     return this.$t('pbxConfig.removeSoundSetText', {
                         set: this.currentRemovingSoundSet.name
                     });
                 }
             },
+            removeSoundFileDialogMessage() {
+                if (this.currentRemovingSoundFile !== null) {
+                    return this.$t('pbxConfig.removeSoundFileText', {
+                        handle: this.currentRemovingSoundFile.handle
+                    });
+                }
+            }
         },
         methods: {
             removeSoundSetDialog(soundSet) {
                 this.currentRemovingSoundSet = soundSet;
-                this.$refs.removeDialog.open();
+                this.$refs.removeSoundSetDialog.open();
+            },
+            removeSoundFileDialog(item) {
+                this.currentRemovingSoundFile = item;
+                this.$refs.removeSoundFileDialog.open();
             },
             removeSoundSet() {
                 this.$store.dispatch('pbxConfig/removeSoundSet', this.currentRemovingSoundSet);
@@ -172,6 +191,9 @@
             },
             isSoundSetInvalid(setId) {
                 return this.soundSetInvalidCount(setId) > 0;
+            },
+            removeFile() {
+                this.$store.dispatch('pbxConfig/removeSoundFile', this.currentRemovingSoundFile);
             }
         },
         watch: {

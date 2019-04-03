@@ -1,105 +1,117 @@
 <template>
-    <q-field
-        class="csc-upload-field"
-        :icon="icon"
-        :label="label"
-    >
-        <div
-            v-if="label"
-            class="row items-end"
+    <div>
+        <q-field
+            class="csc-upload-field"
+            :icon="icon"
+            :label="label"
         >
-            <slot
-                class="col-auto"
-                name="additional"
+            <div
+                v-if="label"
+                class="row items-end"
             >
-            </slot>
+                <slot
+                    class="col-auto"
+                    name="additional"
+                >
+                </slot>
+                <q-input
+                    class="col-xl col-sm-12"
+                    :disable="isPlaying"
+                    dark
+                    readonly
+                    :value="inputValue"
+                    :after="inputButtons"
+                >
+                </q-input>
+            </div>
             <q-input
-                class="col-xl col-sm-12"
+                v-if="floatLabel"
                 :disable="isPlaying"
                 dark
                 readonly
+                :float-label="floatLabel"
                 :value="inputValue"
                 :after="inputButtons"
             />
-        </div>
-        <q-input
-            v-if="floatLabel"
-            :disable="isPlaying"
-            dark
-            readonly
-            :float-label="floatLabel"
-            :value="inputValue"
-            :after="inputButtons"
-        />
-        <input
-            v-show="false"
-            :accept="fileTypes"
-            ref="fileUpload"
-            type="file"
-            @change="inputChange"
-        />
-        <div
-            v-show="uploading"
-            class="row no-wrap csc-upload-progress-field"
-        >
-            <q-chip
-                square
-                color="primary"
-                class="upload-chip"
-            >
-                {{ `${progress}%` }}
-            </q-chip>
-            <q-progress
-                stripe
-                animate
-                color="primary"
-                :percentage="progress"
-                class="upload-progress"
+            <input
+                v-show="false"
+                :accept="fileTypes"
+                ref="fileUpload"
+                type="file"
+                @change="inputChange"
             />
-        </div>
-        <csc-audio-player
-            ref="audioPlayer"
-            class="csc-greeting-player"
-            :file-url="fileUrl"
-            :loaded="loaded"
-            :disable="disablePlayer"
-            @load="init"
-            @playing="audioPlayerPlaying"
-            @stopped="audioPlayerStopped"
-        />
-        <div
-            class="csc-file-upload-actions"
+            <div
+                v-show="uploading"
+                class="row no-wrap csc-upload-progress-field"
+            >
+                <q-chip
+                    square
+                    color="primary"
+                    class="upload-chip"
+                >
+                    {{ `${progress}%` }}
+                </q-chip>
+                <q-progress
+                    stripe
+                    animate
+                    color="primary"
+                    :percentage="progress"
+                    class="upload-progress"
+                />
+            </div>
+            <csc-audio-player
+                ref="audioPlayer"
+                class="csc-greeting-player"
+                :file-url="fileUrl"
+                :loaded="loaded"
+                :disable="disablePlayer"
+                @load="init"
+                @playing="audioPlayerPlaying"
+                @stopped="audioPlayerStopped"
+            />
+            <div
+                class="csc-file-upload-actions"
+            >
+                <q-btn
+                    v-if="selectedFile != null"
+                    flat
+                    color="default"
+                    icon="clear"
+                    @click="cancel"
+                >
+                    {{ $t('buttons.cancel') }}
+                </q-btn>
+                <q-btn
+                    flat
+                    v-if="selectedFile != null && !uploading"
+                    color="primary"
+                    icon="cloud_upload"
+                    @click="upload"
+                >
+                    {{ $t('buttons.upload') }}
+                </q-btn>
+                <q-btn
+                    :disable="isPlaying"
+                    flat
+                    v-if="uploaded && selectedFile == null"
+                    color="primary"
+                    :icon="removeIcon"
+                    @click="remove"
+                >
+                    {{ removeLabel }}
+                </q-btn>
+            </div>
+        </q-field>
+        <q-inner-loading
+            :visible="updating"
         >
-            <q-btn
-                v-if="selectedFile != null"
-                flat
-                color="default"
-                icon="clear"
-                @click="cancel"
-            >
-                {{ $t('buttons.cancel') }}
-            </q-btn>
-            <q-btn
-                flat
-                v-if="selectedFile != null && !uploading"
+            <q-spinner-dots
+                v-if="updating"
                 color="primary"
-                icon="cloud_upload"
-                @click="upload"
-            >
-                {{ $t('buttons.upload') }}
-            </q-btn>
-            <q-btn
-                :disable="isPlaying"
-                flat
-                v-if="uploaded && selectedFile == null && !disable"
-                color="primary"
-                icon="undo"
-                @click="undo"
-            >
-                {{ $t('buttons.resetDefaults') }}
-            </q-btn>
-        </div>
-    </q-field>
+                :size="40"
+            />
+        </q-inner-loading>
+    </div>
 </template>
 
 <script>
@@ -109,7 +121,9 @@
         QField,
         QBtn,
         QChip,
-        QProgress
+        QProgress,
+        QInnerLoading,
+        QSpinnerDots
     } from 'quasar-framework'
     export default {
         name: 'csc-sound-file-upload',
@@ -119,7 +133,9 @@
             QField,
             QBtn,
             QChip,
-            QProgress
+            QProgress,
+            QInnerLoading,
+            QSpinnerDots
         },
         props: [
             'icon',
@@ -132,7 +148,9 @@
             'fileUrl',
             'loaded',
             'disable',
-            'floatLabel'
+            'floatLabel',
+            'deleteTerm',
+            'updating'
         ],
         data () {
             return {
@@ -145,7 +163,7 @@
                 return (this.selectedFile ? true : false) || !this.uploaded;
             },
             inputValue() {
-                if(this.selectedFile === null) {
+                if (this.selectedFile === null) {
                     return this.value;
                 }
                 else {
@@ -177,6 +195,22 @@
                     );
                 }
                 return buttons;
+            },
+            removeLabel() {
+                if (this.deleteTerm === 'remove') {
+                    return this.$t('buttons.removeFile');
+                }
+                else {
+                    return this.$t('buttons.resetDefaults');
+                }
+            },
+            removeIcon() {
+                if (this.deleteTerm === 'remove') {
+                    return 'delete';
+                }
+                else {
+                    return 'undo';
+                }
             }
         },
         methods: {
@@ -212,8 +246,8 @@
             reset() {
                 this.cancel();
             },
-            undo() {
-                this.$emit('reset');
+            remove() {
+                this.$emit('remove');
             },
             init() {
                 this.$emit('init');

@@ -29,12 +29,13 @@
                     :progress="uploadBusyProgress"
                     :uploading="uploadBusyGreetingRequesting"
                     :uploaded="busyGreetingId !== null"
-                    @upload="uploadBusyGreeting"
-                    @abort="abortBusy"
-                    @reset="deleteBusy"
                     :file-url="playBusyGreetingUrl"
                     :loaded="playBusyGreetingLoaded"
                     @init="initBusyGreetingAudio"
+                    delete-term="revert"
+                    @remove="deleteBusy"
+                    @upload="uploadBusyGreeting"
+                    @abort="abortBusy"
                 />
                 <csc-sound-file-upload
                     ref="uploadUnavail"
@@ -45,12 +46,13 @@
                     :progress="uploadUnavailProgress"
                     :uploading="uploadUnavailGreetingRequesting"
                     :uploaded="unavailGreetingId !== null"
-                    @upload="uploadUnavailGreeting"
-                    @abort="abortUnavail"
-                    @reset="deleteUnavail"
                     :file-url="playUnavailGreetingUrl"
                     :loaded="playUnavailGreetingLoaded"
                     @init="initUnavailGreetingAudio"
+                    delete-term="revert"
+                    @remove="deleteUnavail"
+                    @upload="uploadUnavailGreeting"
+                    @abort="abortUnavail"
                 />
             </div>
         </div>
