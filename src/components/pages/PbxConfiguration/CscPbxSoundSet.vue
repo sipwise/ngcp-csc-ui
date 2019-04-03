@@ -94,6 +94,7 @@
                     :group="group"
                     :group-label="groupLabel(group.name)"
                     :key="index"
+                    @remove-file="removeFile"
                 />
             </q-item-tile>
         </q-item-main>
@@ -416,6 +417,13 @@
                     }
                 });
                 return count > 0;
+            },
+            removeFile(id) {
+                let options = {
+                    id: id,
+                    soundSet: this.setModel
+                };
+                this.$emit('remove-file', options);
             }
         },
         watch: {

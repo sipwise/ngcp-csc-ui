@@ -13,6 +13,7 @@
                 :key="item.id"
                 :item="item"
                 :group="groupLabel"
+                @remove-file="removeFile"
             />
         </q-list>
     </q-collapsible>
@@ -64,6 +65,9 @@
             }
         },
         methods: {
+            removeFile(id) {
+                this.$emit('remove-file', id);
+            }
         },
         watch: {
         }

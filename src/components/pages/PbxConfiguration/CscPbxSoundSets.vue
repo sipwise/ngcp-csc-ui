@@ -54,6 +54,7 @@
                 @save-name="saveSoundSetName"
                 @save-description="saveSoundSetDescription"
                 @save-contract-default="saveContractDefault"
+                @remove-file="removeFile"
             />
         </q-list>
         <div
@@ -172,6 +173,9 @@
             },
             isSoundSetInvalid(setId) {
                 return this.soundSetInvalidCount(setId) > 0;
+            },
+            removeFile(options) {
+                this.$store.dispatch('pbxConfig/removeSoundFile', options);
             }
         },
         watch: {
