@@ -14,6 +14,7 @@
                 :item="item"
                 :group="groupLabel"
                 :updating="isRemoveFileRequesting(item.id)"
+                :set-id="setId"
                 @remove-file="removeFile"
             />
         </q-list>
@@ -41,7 +42,8 @@
         props: {
             group: Object,
             groupLabel: String,
-            invalidGroup: Boolean
+            invalidGroup: Boolean,
+            setId: Number
         },
         components: {
             CscPbxSoundItem,

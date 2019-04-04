@@ -150,7 +150,8 @@
             'disable',
             'floatLabel',
             'deleteTerm',
-            'updating'
+            'updating',
+            'stopAll'
         ],
         data () {
             return {
@@ -238,6 +239,7 @@
                 }
             },
             upload() {
+                console.log('upload()');
                 this.$emit('upload', this.selectedFile);
             },
             abort() {
