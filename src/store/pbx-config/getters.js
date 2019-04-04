@@ -392,5 +392,20 @@ export default {
         return (id) => {
             return id ? state.removeItem === id : false;
         }
+    },
+    uploadSoundFileProgress(state) {
+        return (id) => {
+            return state.uploadSoundFileProgresses[id];
+        }
+    },
+    uploadSoundFileRequesting(state) {
+        return (id) => {
+            return state.uploadSoundFileStates[id] === 'requesting';
+        }
+    },
+    uploadSoundFileSucceeded(state) {
+        return (id) => {
+            return state.uploadSoundFileStates[id] === 'succeeded';
+        }
     }
 }

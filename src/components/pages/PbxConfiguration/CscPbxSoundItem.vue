@@ -10,9 +10,11 @@
                 file-types=".wav,.mp3"
                 :label="handleName"
                 :value="fileLabel"
+                :progress="uploadSoundFileProgress(item.id)"
                 :file-url="playSoundFileUrl(item.id)"
                 :loaded="playSoundFileLoaded(item.id)"
                 :stop-all="!isLastPlayed(item.id)"
+                :uploading="uploadSoundFileRequesting(item.id)"
                 :uploaded="file"
                 :disable="true"
                 :invalid="isInvalid"
@@ -20,6 +22,9 @@
                 delete-term="remove"
                 @remove="removeFile"
                 @init="initSoundFileAudio"
+                @upload="uploadSoundFile"
+                @abort="abortUpload"
+                @reset="deleteSoundFile"
             >
                 <div
                     slot="additional"
@@ -53,12 +58,14 @@
     import {
         mapGetters
     } from 'vuex'
+    import { showToast } from '../../../helpers/ui'
     export default {
         name: 'csc-pbx-sound-item',
         props: {
             item: Object,
             group: String,
-            updating: Boolean
+            updating: Boolean,
+            setId: Number
         },
         components: {
             CscSoundFileUpload,
@@ -81,7 +88,12 @@
             ...mapGetters('pbxConfig', [
                 'playSoundFileUrl',
                 'playSoundFileLoaded',
-                'isLastPlayed'
+                'isLastPlayed',
+                'uploadSoundFileProgress',
+                'uploadSoundFileRequesting',
+                'uploadSoundFileSucceeded',
+                'playSoundFileUrl',
+                'playSoundFileLoaded'
             ]),
             handleName() {
                 return `${this.group}: ${this.item.handle}`;
@@ -141,10 +153,29 @@
                 this.$refs.uploadSoundFile.setPausedFalse();
             },
             removeFile() {
-                this.$emit('remove-file', this.item)
+                this.$emit('remove-file', this.item);
+            },
+            uploadSoundFile(file) {
+                console.log('this.item', this.item);
+                let item = Object.assign(this.item, { set_id: this.setId });
+                this.$store.dispatch('pbxConfig/uploadSoundFile', {
+                    item: item,
+                    file: file
+                });
+            },
+            abortUpload() {
+                console.log('abortUpload()');
+            },
+            deleteSoundFile() {
+                console.log('deleteSoundFile()');
             }
         },
         watch: {
+            uploadSoundFileSucceeded(state) {
+                if (state) {
+                    showToast(this.$t('pbxConfig.toasts.uploadSoundFileToast', { handle: this.item.handle }));
+                }
+            }
         }
     }
 </script>

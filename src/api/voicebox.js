@@ -114,10 +114,10 @@ export function createNewGreeting(formData, onProgress, type) {
 
 export function uploadGreeting(options) {
     return new Promise((resolve, reject) => {
-        var formData = new FormData();
-        var fields = _.clone(options.data);
+        let formData = new FormData();
+        let fields = _.clone(options.data);
         delete fields.file;
-        var json = JSON.stringify(fields);
+        let json = JSON.stringify(fields);
         formData.append('json', json);
         if (options.data.file) {
             formData.append('greetingfile', options.data.file);
