@@ -6,31 +6,34 @@
         <q-item-main>
             <csc-sound-file-upload
                 ref="uploadSoundFile"
-                icon="music_note"
                 file-types=".wav,.mp3"
+                delete-term="remove"
+                icon="music_note"
                 :label="handleName"
                 :value="fileLabel"
+                :progress="uploadSoundFileProgress(item.handle)"
                 :file-url="playSoundFileUrl(item.id)"
                 :loaded="playSoundFileLoaded(item.id)"
                 :stop-all="!isLastPlayed(item.id)"
+                :uploading="uploadSoundFileRequesting(item.handle)"
                 :uploaded="file"
-                :disable="true"
                 :invalid="isInvalid"
                 :updating="updating"
-                delete-term="remove"
                 @remove="removeFile"
                 @init="initSoundFileAudio"
+                @upload="uploadSoundFile"
+                @abort="abortUpload"
             >
                 <div
                     slot="additional"
                 >
                     <q-toggle
+                        v-model="loop"
+                        unchecked-icon="loop"
+                        checked-icon="loop"
+                        :disable="true"
                         :class="loopClasses"
                         :label="$t('pbxConfig.playingInLoop')"
-                        v-model="loop"
-                        :disable="true"
-                        checked-icon="loop"
-                        unchecked-icon="loop"
                     />
                     <q-tooltip>
                         {{ loopTooltipLabel }}
@@ -53,12 +56,14 @@
     import {
         mapGetters
     } from 'vuex'
+    import { showToast } from '../../../helpers/ui'
     export default {
         name: 'csc-pbx-sound-item',
         props: {
             item: Object,
             group: String,
-            updating: Boolean
+            updating: Boolean,
+            setId: Number
         },
         components: {
             CscSoundFileUpload,
@@ -81,7 +86,10 @@
             ...mapGetters('pbxConfig', [
                 'playSoundFileUrl',
                 'playSoundFileLoaded',
-                'isLastPlayed'
+                'isLastPlayed',
+                'uploadSoundFileProgress',
+                'uploadSoundFileRequesting',
+                'uploadSoundFileState'
             ]),
             handleName() {
                 return `${this.group}: ${this.item.handle}`;
@@ -120,6 +128,9 @@
                     classes.push('csc-item-invalid');
                 }
                 return classes;
+            },
+            uploadFileState() {
+                return this.uploadSoundFileState(this.item.handle);
             }
         },
         methods: {
@@ -141,10 +152,33 @@
                 this.$refs.uploadSoundFile.setPausedFalse();
             },
             removeFile() {
-                this.$emit('remove-file', this.item)
+                this.$emit('remove-file', this.item);
+            },
+            uploadSoundFile(file) {
+                let item = Object.assign(this.item, { set_id: this.setId });
+                this.$store.dispatch('pbxConfig/uploadSoundFile', {
+                    item: item,
+                    file: file
+                });
+            },
+            abortUpload() {
+                this.$store.dispatch('pbxConfig/abortPreviousSoundFileUpload', this.item.handle);
+            },
+            resetFile() {
+                this.$refs.uploadSoundFile.reset();
+                this.$store.commit('pbxConfig/resetSoundFileProgress', this.item.handle);
             }
         },
         watch: {
+            uploadFileState(state) {
+                if (state === 'succeeded') {
+                    showToast(this.$t('pbxConfig.toasts.uploadSoundFileToast', { handle: this.item.handle }));
+                    this.resetFile();
+                }
+                else if (state === 'failed' && this.uploadProgress > 0) {
+                    this.resetFile();
+                }
+            }
         }
     }
 </script>

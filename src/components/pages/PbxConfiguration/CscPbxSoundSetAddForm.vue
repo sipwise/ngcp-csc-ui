@@ -106,7 +106,7 @@
             </q-btn>
         </div>
         <q-inner-loading :visible="loading">
-            <q-spinner-mat size="60px" color="primary" />
+            <q-spinner-dots size="60px" color="primary" />
         </q-inner-loading>
     </div>
 </template>
@@ -119,7 +119,7 @@
     import {
         QBtn,
         QInnerLoading,
-        QSpinnerMat,
+        QSpinnerDots,
         QField,
         QInput,
         QSelect,
@@ -134,7 +134,7 @@
         components: {
             QBtn,
             QInnerLoading,
-            QSpinnerMat,
+            QSpinnerDots,
             QField,
             QInput,
             QSelect,
