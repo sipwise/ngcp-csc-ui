@@ -802,3 +802,38 @@ export function playSoundFile(options) {
 export function removeSoundFile(id) {
     return Vue.http.delete('api/soundfiles/' + id);
 }
+
+export function uploadSoundFile(data, onProgress) {
+    console.log('HERE HERE');
+    return new Promise((resolve, reject) => {
+        let options = data.options;
+        let formData = new FormData();
+        //var fields = _.clone(options.data);
+        let loopplay = options.item.loopplay ? 1 : 2;
+        let fields = {
+            loopplay: loopplay,
+            filename: options.file.name,
+            set_id: options.item.set_id,
+            handle: options.item.handle,
+        };
+        let json = JSON.stringify(fields);
+        formData.append('json', json);
+        if (options.file) {
+            formData.append('soundfile', options.file);
+        }
+        Vue.http.post('api/soundfiles/', formData, {
+            before(request) {
+                Vue['previousRequest'] = request;
+            },
+            progress(e) {
+                if (e.lengthComputable) {
+                    onProgress(Math.ceil((e.loaded / e.total ) * 100));
+                }
+            }
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
