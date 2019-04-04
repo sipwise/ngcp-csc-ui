@@ -130,7 +130,13 @@
                 'isAdding',
                 'addState',
                 'lastAddedSoundSet',
-                'soundSetInvalidCount'
+                'soundSetInvalidCount',
+                'soundFileLabel',
+                'uploadSoundFileProgress',
+                'uploadSoundFileRequesting',
+                'uploadSoundFileDone',
+                'playSoundFileUrl',
+                'playSoundFileLoaded'
             ]),
             isMobile() {
                 return !!Platform.is.mobile;

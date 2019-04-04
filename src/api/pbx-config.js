@@ -766,6 +766,7 @@ export function setSoundSetContractDefault(id, value) {
 }
 
 export function getSoundSetWithFiles(id) {
+    console.log('id is', id);
     return new Promise((resolve, reject)=>{
         let soundSet;
         Promise.resolve().then(()=>{
@@ -801,4 +802,43 @@ export function playSoundFile(options) {
 
 export function removeSoundFile(id) {
     return Vue.http.delete('api/soundfiles/' + id);
+}
+
+export function uploadSoundFile(options, onProgress) {
+    return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        let loopplay = options.item.loopplay ? 1 : 2;
+        let fields = {
+            loopplay: loopplay,
+            filename: options.file.name,
+            set_id: options.item.set_id,
+            handle: options.item.handle,
+        };
+        let json = JSON.stringify(fields);
+        formData.append('json', json);
+        if (options.file) {
+            formData.append('soundfile', options.file);
+        }
+        Vue.http.post('api/soundfiles/', formData, {
+            before(request) {
+                Vue['previousRequest'] = request;
+            },
+            progress(e) {
+                if (e.lengthComputable) {
+                    onProgress(Math.ceil((e.loaded / e.total ) * 100));
+                }
+            }
+        }).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function abortPreviousRequest() {
+    return new Promise((resolve) => {
+        Vue['previousRequest'].abort();
+        resolve();
+    });
 }

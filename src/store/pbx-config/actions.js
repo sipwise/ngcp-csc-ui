@@ -47,7 +47,9 @@ import {
     getSoundSetWithFiles,
     playSoundFile,
     createSoundSet,
-    removeSoundFile
+    removeSoundFile,
+    uploadSoundFile,
+    abortPreviousRequest
 } from '../../api/pbx-config'
 
 export default {
@@ -636,6 +638,7 @@ export default {
         });
     },
     reloadSoundSet(context, set) {
+        console.log('set is', set);
         return new Promise((resolve, reject) => {
             context.commit('soundSetReloading', set);
             getSoundSetWithFiles(set.id).then(($set) => {
@@ -681,6 +684,28 @@ export default {
             context.commit('removeItemSucceeded');
         }).catch((err) => {
             context.commit('removeItemFailed', err.message);
+        });
+    },
+    uploadSoundFile(context, options) {
+        let handle = options.item.handle;
+        context.commit('uploadSoundFileRequesting', handle);
+        uploadSoundFile(
+            options, function onProgress(progress) {
+                context.commit('uploadProgress', progress);
+            }
+        ).then(() => {
+            return context.dispatch('reloadSoundSet', { id: options.item.set_id });
+        }).then(() => {
+            context.commit('uploadSoundFileSucceeded', handle);
+        }).catch(() => {
+            context.commit('uploadSoundFileFailed', handle);
+        });
+    },
+    abortPreviousRequest() {
+        // TODO: Fix
+        abortPreviousRequest().then(() => {
+            //context.dispatch('loadBusyGreeting');
+            console.log('aborted');
         });
     }
 }

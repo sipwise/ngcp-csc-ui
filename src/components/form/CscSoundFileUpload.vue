@@ -41,7 +41,6 @@
                 @change="inputChange"
             />
             <div
-                v-show="uploading"
                 class="row no-wrap csc-upload-progress-field"
             >
                 <q-chip
@@ -150,7 +149,8 @@
             'disable',
             'floatLabel',
             'deleteTerm',
-            'updating'
+            'updating',
+            'stopAll'
         ],
         data () {
             return {
@@ -238,6 +238,7 @@
                 }
             },
             upload() {
+                console.log('upload()');
                 this.$emit('upload', this.selectedFile);
             },
             abort() {
