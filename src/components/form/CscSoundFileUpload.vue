@@ -150,7 +150,8 @@
             'disable',
             'floatLabel',
             'deleteTerm',
-            'updating'
+            'updating',
+            'stopAll'
         ],
         data () {
             return {

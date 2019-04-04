@@ -549,5 +549,23 @@ export default {
     },
     lastAddedCallQueue(state, callQueue) {
         state.lastAddedCallQueue = callQueue.name;
+    },
+    uploadSoundFileRequesting(state, handle) {
+        reactiveSet(state.uploadSoundFileStates, handle, RequestState.requesting);
+        reactiveSet(state.uploadSoundFileErrors, handle, null);
+    },
+    uploadSoundFileSucceeded(state, handle) {
+        reactiveSet(state.uploadSoundFileStates, handle, RequestState.succeeded);
+        reactiveSet(state.uploadSoundFileErrors, handle, null);
+    },
+    uploadSoundFileFailed(state, handle, error) {
+        reactiveSet(state.uploadSoundFileStates, handle, RequestState.failed);
+        reactiveSet(state.uploadSoundFileErrors, handle, error);
+    },
+    uploadSoundFileProgress(state, options) {
+        reactiveSet(state.uploadSoundFileProgresses, options.handle, options.progress);
+    },
+    resetProgress(state, handle) {
+        reactiveSet(state.uploadSoundFileProgresses, handle, 0);
     }
 }

@@ -392,5 +392,26 @@ export default {
         return (id) => {
             return id ? state.removeItem === id : false;
         }
+    },
+    uploadSoundFileRequesting(state) {
+        return (handle) => {
+            return state.uploadSoundFileStates[handle] === 'requesting';
+        }
+    },
+    uploadSoundFileSucceeded(state) {
+        // TODO: Needed?
+        return (handle) => {
+            return state.uploadSoundFileStates[handle] === 'succeeded';
+        }
+    },
+    uploadSoundFileState(state) {
+        return (handle) => {
+            return state.uploadSoundFileStates[handle];
+        }
+    },
+    uploadSoundFileProgress(state) {
+        return (handle) => {
+            return state.uploadSoundFileProgresses[handle];
+        }
     }
 }

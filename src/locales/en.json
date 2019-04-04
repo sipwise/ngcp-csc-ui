@@ -403,7 +403,8 @@
             "updatedIdentifier": "Updated identifier to {identifier}",
             "createdDevice": "Created device {name} successfully",
             "addedCallQueueToast": "Added call queue configuration for {name}",
-            "addedSoundSetToast": "Added sound set {name}"
+            "addedSoundSetToast": "Added sound set {name}",
+            "uploadSoundFileToast": "Uploaded new sound for handle {handle}"
         },
         "addDevice": "Add device",
         "addDeviceShort": "Add",
