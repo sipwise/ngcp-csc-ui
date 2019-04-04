@@ -47,7 +47,9 @@ import {
     getSoundSetWithFiles,
     playSoundFile,
     createSoundSet,
-    removeSoundFile
+    removeSoundFile,
+    uploadSoundFile,
+    abortPreviousSoundFileUpload
 } from '../../api/pbx-config'
 
 export default {
@@ -682,5 +684,23 @@ export default {
         }).catch((err) => {
             context.commit('removeItemFailed', err.message);
         });
+    },
+    uploadSoundFile(context, options) {
+        let handle = options.item.handle;
+        context.commit('uploadSoundFileRequesting', handle);
+        uploadSoundFile(
+            options, function onProgress(progress) {
+                context.commit('uploadSoundFileProgress', {handle: handle, progress: progress });
+            }
+        ).then(() => {
+            return context.dispatch('reloadSoundSet', { id: options.item.set_id });
+        }).then(() => {
+            context.commit('uploadSoundFileSucceeded', handle);
+        }).catch(() => {
+            context.commit('uploadSoundFileFailed', handle);
+        });
+    },
+    abortPreviousSoundFileUpload(state, handle) {
+        abortPreviousSoundFileUpload(handle);
     }
 }
