@@ -366,3 +366,19 @@ export function removeCallQueueConfig(subscriberId) {
     let param = { cloud_pbx_callqueue: false };
     return Vue.http.put('api/subscriberpreferences/' + subscriberId, param);
 }
+
+export function getAllPreferences(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            path: 'api/subscriberpreferences/',
+            root: '_embedded.ngcp:subscriberpreferences'
+        });
+        getList(options).then((list)=>{
+            resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
