@@ -36,7 +36,6 @@ import {
     setQueueLengthConfig,
     setWrapUpTimeConfig,
     getConfig,
-    getPrefs,
     removeCallQueue,
     getAllSoundSets,
     getSoundFilesGrouped,
@@ -49,7 +48,9 @@ import {
     createSoundSet,
     removeSoundFile,
     uploadSoundFile,
-    abortPreviousSoundFileUpload
+    abortPreviousSoundFileUpload,
+    getDefaultSoundSet,
+    setSubscriberSoundSet
 } from '../../api/pbx-config'
 
 export default {
@@ -62,11 +63,6 @@ export default {
         });
         getGroupList(page).then((data) => {
             context.commit('listSucceeded', data);
-            return data;
-        }).then((groups) => {
-            groups.groups.items.forEach((group) => {
-                context.dispatch('loadCallQueueForGroup', group.id);
-            });
         }).catch((err) => {
             context.commit('listFailed', err.message);
         });
@@ -89,9 +85,6 @@ export default {
             context.commit('groupReloading', group);
             getGroup(group.id).then(($group) => {
                 context.commit('groupReloaded', $group);
-                return $group;
-            }).then((data) => {
-                context.dispatch('loadCallQueueForGroup', data.id);
             }).catch((err)=>{
                 context.commit('groupReloadingFailed', {
                     group: group,
@@ -190,7 +183,6 @@ export default {
         removeGroup(group.id).then(() => {
             return context.dispatch('listGroups', true);
         }).then(() => {
-            context.commit('removeGroup', group);
             context.commit('removeItemSucceeded');
         }).catch((err) => {
             context.commit('removeItemFailed', err.message);
@@ -205,11 +197,6 @@ export default {
         });
         getSeatList(page).then((data) => {
             context.commit('listSucceeded', data);
-            return data;
-        }).then((seats) => {
-            seats.seats.items.forEach((seat) => {
-                context.dispatch('loadCallQueueForSeat', seat.id);
-            });
         }).catch((err) => {
             context.commit('listFailed', err.message);
         });
@@ -232,9 +219,6 @@ export default {
             context.commit('seatReloading', seat);
             getSeat(seat.id).then(($seat) => {
                 context.commit('seatReloaded', $seat);
-                return $seat;
-            }).then((data) => {
-                context.dispatch('loadCallQueueForSeat', data.id);
             }).catch((err)=>{
                 context.commit('seatReloadingFailed', {
                     seat: seat,
@@ -527,32 +511,6 @@ export default {
             context.commit('updateItemFailed', err.message);
         });
     },
-    loadCallQueueForGroup(context, subscriberId) {
-        context.commit('preferenceRequesting', 'group', subscriberId);
-        getPrefs(subscriberId).then(($preferences) => {
-            let preferences = $preferences;
-            delete preferences._link;
-            context.commit('preferenceSucceeded', {
-                type: 'group',
-                preferences: preferences
-            });
-        }).catch((err) => {
-            context.commit('preferenceFailed', 'group', subscriberId, err.message);
-        })
-    },
-    loadCallQueueForSeat(context, subscriberId) {
-        context.commit('preferenceRequesting', 'seat', subscriberId);
-        getPrefs(subscriberId).then(($preferences) => {
-            let preferences = $preferences;
-            delete preferences._link;
-            context.commit('preferenceSucceeded', {
-                type: 'seat',
-                preferences: preferences
-            });
-        }).catch((err) => {
-            context.commit('preferenceFailed', 'seat', subscriberId, err.message);
-        })
-    },
     removeCallQueue(context, config) {
         context.commit('removeItemRequesting', config);
         removeCallQueue(config.id).then(() => {
@@ -563,7 +521,7 @@ export default {
             context.commit('removeItemFailed', err.message);
         });
     },
-    listSoundSets(context) {
+    listSoundSetsWithFiles(context) {
         context.commit('listSoundSetsRequesting');
         getAllSoundSets().then((data) => {
             context.commit('listSoundSetsSucceeded', data);
@@ -596,7 +554,7 @@ export default {
     removeSoundSet(context, soundSet) {
         context.commit('removeItemRequesting', soundSet);
         removeSoundSet(soundSet.id).then(() => {
-            return context.dispatch('listSoundSets');
+            return context.dispatch('listSoundSetsWithFiles');
         }).then(() => {
             context.commit('removeItemSucceeded');
         }).catch((err) => {
@@ -668,7 +626,7 @@ export default {
     createSoundSet(context, soundSet) {
         context.commit('addItemRequesting', soundSet);
         createSoundSet(soundSet).then(() => {
-            return context.dispatch('listSoundSets');
+            return context.dispatch('listSoundSetsWithFiles');
         }).then(() => {
             context.commit('addItemSucceeded');
         }).catch((err) => {
@@ -702,5 +660,43 @@ export default {
     },
     abortPreviousSoundFileUpload(state, handle) {
         abortPreviousSoundFileUpload(handle);
+    },
+    listSoundSets(context) {
+        context.commit('listSoundSetsRequesting');
+        getAllSoundSets().then((data) => {
+            context.commit('listSoundSetsSucceeded', data);
+        }).catch((err) => {
+            context.commit('listSoundSetsFailed', err.message)
+        });
+    },
+    getDefaultSoundSet(context) {
+        context.commit('defaultSoundSetRequesting');
+        getDefaultSoundSet().then((soundSet) => {
+            context.commit('defaultSoundSetSucceeded', soundSet);
+        }).catch((err) => {
+            context.commit('defaultSoundSetFailed', err.message);
+        });
+    },
+    setSeatSoundSet(context, seat) {
+        context.commit('updateItemRequesting', seat);
+        context.commit('lastUpdatedField', {name: seat.soundSet, type: 'seat sound set'});
+        setSubscriberSoundSet(seat.id, seat.soundSet).then(() => {
+            return context.dispatch('reloadSeat', seat);
+        }).then(() => {
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
+        });
+    },
+    setGroupSoundSet(context, group) {
+        context.commit('updateItemRequesting', group);
+        context.commit('lastUpdatedField', {name: group.soundSet, type: 'group sound set'});
+        setSubscriberSoundSet(group.id, group.soundSet).then(() => {
+            return context.dispatch('reloadGroup', group);
+        }).then(() => {
+            context.commit('updateItemSucceeded');
+        }).catch((err) => {
+            context.commit('updateItemFailed', err.message);
+        });
     }
 }
