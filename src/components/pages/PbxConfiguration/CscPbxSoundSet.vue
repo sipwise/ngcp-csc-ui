@@ -119,17 +119,6 @@
         >
             <q-item-tile>
                 <q-btn
-                    v-if="invalid && !mobile && !expanded"
-                    icon="info"
-                    :big="mobile"
-                    color="negative"
-                    flat
-                >
-                    <q-tooltip>
-                        {{ tooltipLabel }}
-                    </q-tooltip>
-                </q-btn>
-                <q-btn
                     v-show="expanded"
                     icon="delete"
                     :big="mobile"
@@ -146,14 +135,10 @@
                 />
             </q-item-tile>
         </q-item-side>
-        <q-inner-loading
-            :visible="isLoading"
-        >
-            <q-spinner-dots
-                size="60px"
-                color="primary"
-            />
-        </q-inner-loading>
+        <csc-object-spinner
+            v-if="loading"
+            :loading="loading"
+        />
     </q-item>
 </template>
 
@@ -182,6 +167,7 @@
     import {
         showGlobalError
     } from '../../../helpers/ui'
+    import CscObjectSpinner from "../../CscObjectSpinner";
     export default {
         name: 'csc-pbx-sound-set',
         props: {
@@ -192,6 +178,7 @@
             invalidCount: Number
         },
         components: {
+            CscObjectSpinner,
             CscPbxSoundGroup,
             QItem,
             QItemSide,

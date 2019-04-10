@@ -115,24 +115,24 @@
                 />
             </q-item-tile>
         </q-item-side>
-        <q-inner-loading
+        <csc-object-spinner
             v-if="loading"
-            :visible="loading"
-            :style="{zIndex: 12}"
-        >
-            <q-spinner-mat
-                size="60px"
-                color="primary"
-            />
-        </q-inner-loading>
+            :loading="loading"
+        />
     </q-item>
 </template>
 
 
 <script>
-    import { showGlobalError } from '../../../helpers/ui'
-    import { required } from 'vuelidate/lib/validators'
-    import { customMacAddress } from '../../../helpers/validation'
+    import {
+        showGlobalError
+    } from '../../../helpers/ui'
+    import {
+        required
+    } from 'vuelidate/lib/validators'
+    import {
+        customMacAddress
+    } from '../../../helpers/validation'
     import _ from 'lodash'
     import {
         QCard,
@@ -155,7 +155,7 @@
     } from 'quasar-framework'
     import CscPbxDeviceConfig from './CscPbxDeviceConfig'
     import CscPbxModelSelect from './CscPbxModelSelect'
-
+    import CscObjectSpinner from "../../CscObjectSpinner";
     export default {
         name: 'csc-pbx-device',
         props: [
@@ -168,6 +168,7 @@
             'modelImages'
         ],
         components: {
+            CscObjectSpinner,
             CscPbxDeviceConfig,
             CscPbxModelSelect,
             QCard,

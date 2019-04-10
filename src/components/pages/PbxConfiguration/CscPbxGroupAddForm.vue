@@ -79,6 +79,22 @@
                 :options="seatOptions"
             />
         </q-field>
+        <q-field>
+            <q-select
+                dark
+                clearable
+                v-model="data.soundSet"
+                :disable="loading || !defaultSoundSet"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.soundSet')"
+                :options="soundSetOptions"
+            />
+            <q-tooltip
+                v-if="!defaultSoundSet"
+            >
+                {{ $t('pbxConfig.defaultNotSet') }}
+            </q-tooltip>
+        </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
                 flat
@@ -100,9 +116,10 @@
                 {{ $t('pbxConfig.createGroup') }}
             </q-btn>
         </div>
-        <q-inner-loading :visible="loading">
-            <q-spinner-mat size="60px" color="primary" />
-        </q-inner-loading>
+        <csc-object-spinner
+            v-if="loading"
+            :loading="loading"
+        />
     </div>
 </template>
 
@@ -117,13 +134,14 @@
     import {
         QBtn,
         QInnerLoading,
-        QSpinnerMat,
+        QSpinnerDots,
         QField,
         QInput,
         QSelect,
-        QIcon
+        QIcon,
+        QTooltip
     } from 'quasar-framework'
-
+    import CscObjectSpinner from "../../CscObjectSpinner";
     export default {
         name: 'csc-pbx-group-add-form',
         props: [
@@ -131,15 +149,20 @@
             'aliasNumberOptions',
             'seatOptions',
             'loading',
+            'soundSetOptions',
+            'soundSetLabel',
+            'defaultSoundSet'
         ],
         components: {
+            CscObjectSpinner,
             QBtn,
             QInnerLoading,
-            QSpinnerMat,
+            QSpinnerDots,
             QField,
             QInput,
             QSelect,
-            QIcon
+            QIcon,
+            QTooltip
         },
         validations: {
             data: {
@@ -163,6 +186,11 @@
         data () {
             return {
                 data: this.getDefaults()
+            }
+        },
+        created() {
+            if (this.defaultSoundSet) {
+                this.soundSet = this.defaultSoundSet;
             }
         },
         computed: {
@@ -220,6 +248,17 @@
                         maxValue: this.$v.data.huntTimeout.$params.maxValue.max
                     });
                 }
+            },
+            groupModel() {
+                return {
+                    name: this.data.name,
+                    extension: this.data.extension,
+                    huntPolicy: this.data.huntPolicy,
+                    huntTimeout: this.data.huntTimeout,
+                    aliasNumbers: this.data.aliasNumbers,
+                    seats: this.data.seats,
+                    soundSet: this.soundSetLabel(this.data.soundSet)
+                }
             }
         },
         methods: {
@@ -230,14 +269,15 @@
                     huntPolicy: 'serial',
                     huntTimeout: 10,
                     aliasNumbers: [],
-                    seats: []
+                    seats: [],
+                    soundSet: null
                 }
             },
             cancel() {
                 this.$emit('cancel');
             },
             save() {
-                this.$emit('save', this.data);
+                this.$emit('save', this.groupModel);
             },
             reset() {
                 this.data = this.getDefaults();

@@ -59,6 +59,7 @@
             />
         </q-field>
         <q-field
+            v-if="data.copy_from_default"
             class="csc-form-field"
         >
             <q-toggle
@@ -71,6 +72,7 @@
             />
         </q-field>
         <q-field
+            v-if="data.copy_from_default"
             class="csc-form-field"
         >
             <q-select
@@ -105,9 +107,10 @@
                 {{ $t('pbxConfig.createSoundSet') }}
             </q-btn>
         </div>
-        <q-inner-loading :visible="loading">
-            <q-spinner-dots size="60px" color="primary" />
-        </q-inner-loading>
+        <csc-object-spinner
+            v-if="loading"
+            :loading="loading"
+        />
     </div>
 </template>
 
@@ -126,12 +129,14 @@
         QIcon,
         QToggle
     } from 'quasar-framework'
+    import CscObjectSpinner from "../../CscObjectSpinner";
     export default {
         name: 'csc-pbx-sound-set-add-form',
         props: [
             'loading'
         ],
         components: {
+            CscObjectSpinner,
             QBtn,
             QInnerLoading,
             QSpinnerDots,

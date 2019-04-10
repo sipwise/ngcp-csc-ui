@@ -60,15 +60,10 @@
                 {{ $t('buttons.save') }}
             </q-btn>
         </div>
-        <q-inner-loading
-            v-show="loading"
-            :visible="loading"
-        >
-            <q-spinner-mat
-                size="60px"
-                color="primary"
-            />
-        </q-inner-loading>
+        <csc-object-spinner
+            v-if="loading"
+            :loading="loading"
+        />
     </div>
 </template>
 
@@ -94,7 +89,7 @@
         QItem,
         QItemMain } from 'quasar-framework'
     import CscPbxModelSelect from './CscPbxModelSelect'
-
+    import CscObjectSpinner from "../../CscObjectSpinner";
     export default {
         name: 'csc-pbx-device-add-form',
         props: [
@@ -103,6 +98,7 @@
             'loading'
         ],
         components: {
+            CscObjectSpinner,
             CscPbxModelSelect,
             QCard,
             QCardTitle,

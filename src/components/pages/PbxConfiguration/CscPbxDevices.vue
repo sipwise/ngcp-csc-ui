@@ -148,10 +148,7 @@
             v-if="isListLoadingVisible"
             class="row justify-center"
         >
-            <q-spinner-dots
-                color="primary"
-                :size="40"
-            />
+            <csc-spinner />
         </div>
 
         <q-list
@@ -216,6 +213,7 @@
         QIcon,
         Platform
     } from 'quasar-framework'
+    import CscSpinner from "../../CscSpinner";
 
     export default {
         data () {
@@ -232,6 +230,7 @@
             this.$store.dispatch('pbxConfig/loadProfiles');
         },
         components: {
+            CscSpinner,
             CscPage,
             CscPbxDevice,
             CscPbxDeviceAddForm,

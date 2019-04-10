@@ -30,9 +30,9 @@
         <q-field>
             <q-select
                 dark
-                multiple
                 chips
                 clearable
+                multiple
                 v-model="data.aliasNumbers"
                 :disable="loading"
                 :readonly="loading"
@@ -43,15 +43,31 @@
         <q-field>
             <q-select
                 dark
-                multiple
                 chips
                 clearable
+                multiple
                 v-model="data.groups"
                 :disable="loading"
                 :readonly="loading"
                 :float-label="$t('pbxConfig.groups')"
                 :options="groupOptions"
             />
+        </q-field>
+        <q-field>
+            <q-select
+                dark
+                clearable
+                v-model="data.soundSet"
+                :disable="loading || !defaultSoundSet"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.soundSet')"
+                :options="soundSetOptions"
+            />
+            <q-tooltip
+                v-if="!defaultSoundSet"
+            >
+                {{ $t('pbxConfig.defaultNotSet') }}
+            </q-tooltip>
         </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
@@ -74,9 +90,10 @@
                 {{ $t('pbxConfig.createSeat') }}
             </q-btn>
         </div>
-        <q-inner-loading :visible="loading">
-            <q-spinner-mat size="60px" color="primary" />
-        </q-inner-loading>
+        <csc-object-spinner
+            v-if="loading"
+            :loading="loading"
+        />
     </div>
 </template>
 
@@ -89,28 +106,34 @@
     import {
         QBtn,
         QInnerLoading,
-        QSpinnerMat,
+        QSpinnerDots,
         QField,
         QInput,
         QSelect,
-        QIcon
+        QIcon,
+        QTooltip
     } from 'quasar-framework'
-
+    import CscObjectSpinner from "../../CscObjectSpinner";
     export default {
         name: 'csc-pbx-seat-add-form',
         props: [
             'aliasNumberOptions',
             'groupOptions',
-            'loading'
+            'loading',
+            'soundSetOptions',
+            'soundSetLabel',
+            'defaultSoundSet'
         ],
         components: {
+            CscObjectSpinner,
             QBtn,
             QInnerLoading,
-            QSpinnerMat,
+            QSpinnerDots,
             QField,
             QInput,
             QSelect,
-            QIcon
+            QIcon,
+            QTooltip
         },
         validations: {
             data: {
@@ -128,6 +151,11 @@
         data () {
             return {
                 data: this.getDefaults()
+            }
+        },
+        created() {
+            if (this.defaultSoundSet) {
+                this.soundSet = this.defaultSoundSet;
             }
         },
         computed: {
@@ -161,6 +189,15 @@
                         field: this.$t('pbxConfig.extension'),
                     });
                 }
+            },
+            seatModel() {
+                return {
+                    name: this.data.name,
+                    extension: this.data.extension,
+                    aliasNumbers: this.data.aliasNumbers,
+                    groups: this.data.groups,
+                    soundSet: this.soundSetLabel(this.data.soundSet)
+                }
             }
         },
         methods: {
@@ -169,14 +206,15 @@
                     name: '',
                     extension: '',
                     aliasNumbers: [],
-                    groups: []
+                    groups: [],
+                    soundSet: null
                 }
             },
             cancel() {
                 this.$emit('cancel');
             },
             save() {
-                this.$emit('save', this.data);
+                this.$emit('save', this.seatModel);
             },
             reset() {
                 this.data = this.getDefaults();

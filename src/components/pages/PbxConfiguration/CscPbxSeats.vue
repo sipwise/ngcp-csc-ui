@@ -24,7 +24,10 @@
                 class="col-xs-12 col-md-6 csc-list-form"
                 :alias-number-options="aliasNumberOptions"
                 :group-options="groupOptions"
+                :sound-set-options="soundSetOptions"
+                :sound-set-label="soundSetLabel"
                 :loading="isAdding"
+                :default-sound-set="!!defaultSoundSet"
                 @save="addSeat"
                 @cancel="disableAddForm"
             />
@@ -33,10 +36,7 @@
             v-if="isListLoadingVisible"
             class="row justify-center"
         >
-            <q-spinner-dots
-                color="primary"
-                :size="40"
-            />
+            <csc-spinner />
         </div>
         <div
             v-if="seats.length > 0 && !isListRequesting && listLastPage > 1"
@@ -61,19 +61,23 @@
                     :seat="seat"
                     :alias-number-options="aliasNumberOptions"
                     :group-options="groupOptions"
-                    @remove="removeSeatDialog"
                     :loading="isItemLoading(seat.id)"
                     :seat-name="seatName"
                     :group-name="groupName"
+                    :sound-set-options="soundSetOptions"
+                    :sound-set-label="soundSetLabel"
+                    :default-sound-set="!!defaultSoundSet"
+                    @remove="removeSeatDialog"
                     @save-name="setSeatName"
                     @save-extension="setSeatExtension"
                     @save-alias-numbers="updateAliasNumbers"
                     @save-groups="updateGroups"
+                    @save-sound-set="updateSoundSet"
                 />
             </q-list>
         </div>
         <div
-            v-if="seats.length === 0 && !isListRequesting"
+            v-if="isSeatsEmpty && !isListRequesting"
             class="row justify-center csc-no-entities"
         >
             {{ $t('pbxConfig.noSeats') }}
@@ -122,10 +126,13 @@
         QPagination,
         Platform
     } from 'quasar-framework'
+    import CscSpinner from "../../CscSpinner";
 
     export default {
         mixins: [aliasNumberOptions, itemError],
-        mounted() {
+        created() {
+            this.$store.dispatch('pbxConfig/listSoundSets');
+            this.$store.dispatch('pbxConfig/getDefaultSoundSet');
             this.$store.dispatch('pbxConfig/listSeats', {
                 page: 1
             });
@@ -137,6 +144,7 @@
             }
         },
         components: {
+            CscSpinner,
             CscPage,
             CscPbxSeat,
             CscPbxSeatAddForm,
@@ -189,19 +197,12 @@
                 'updateGroupsAndSeatsState',
                 'updateState',
                 'seatName',
-                'groupName'
+                'groupName',
+                'soundSetOptions',
+                'soundSetLabel',
+                'defaultSoundSet',
+                'groupOptions'
             ]),
-            groupOptions() {
-                let groups = [];
-                this.groups.forEach((group)=>{
-                    groups.push({
-                        label: group.display_name ? group.display_name : group.username,
-                        sublabel: this.$t('pbxConfig.extension') + ': ' + group.pbx_extension,
-                        value: group.id
-                    });
-                });
-                return groups;
-            },
             isMobile() {
                 return Platform.is.mobile;
             },
@@ -211,6 +212,9 @@
                         seat: this.currentRemovingSeat.name
                     });
                 }
+            },
+            isSeatsEmpty() {
+                return Object.entries(this.seats).length === 0;
             }
         },
         watch: {
@@ -276,6 +280,9 @@
             },
             updateGroups(data) {
                 this.$store.dispatch('pbxConfig/updateGroups', data);
+            },
+            updateSoundSet(data) {
+                this.$store.dispatch('pbxConfig/setSeatSoundSet', data);
             },
             changePage(page) {
                 this.$store.dispatch('pbxConfig/listSeats', {

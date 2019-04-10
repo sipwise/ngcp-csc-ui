@@ -115,17 +115,17 @@
                 />
             </q-item-tile>
         </q-item-side>
-        <q-inner-loading :visible="isLoading">
-            <q-spinner-mat
-                size="60px"
-                color="primary"
-            />
-        </q-inner-loading>
+        <csc-object-spinner
+            v-if="loading"
+            :loading="loading"
+        />
     </q-item>
 </template>
 
 <script>
-    import { showGlobalError } from '../../../helpers/ui'
+    import {
+        showGlobalError
+    } from '../../../helpers/ui'
     import {
         minValue,
         maxValue,
@@ -144,6 +144,7 @@
         QItemMain,
         QItemTile
     } from 'quasar-framework'
+    import CscObjectSpinner from "../../CscObjectSpinner";
     export default {
         name: 'csc-pbx-call-queue',
         props: [
@@ -159,6 +160,7 @@
             }
         },
         components: {
+            CscObjectSpinner,
             QField,
             QInput,
             QIcon,
