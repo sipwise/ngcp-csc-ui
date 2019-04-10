@@ -30,9 +30,9 @@
         <q-field>
             <q-select
                 dark
-                multiple
                 chips
                 clearable
+                multiple
                 v-model="data.aliasNumbers"
                 :disable="loading"
                 :readonly="loading"
@@ -43,14 +43,25 @@
         <q-field>
             <q-select
                 dark
-                multiple
                 chips
                 clearable
+                multiple
                 v-model="data.groups"
                 :disable="loading"
                 :readonly="loading"
                 :float-label="$t('pbxConfig.groups')"
                 :options="groupOptions"
+            />
+        </q-field>
+        <q-field>
+            <q-select
+                dark
+                clearable
+                v-model="data.soundSet"
+                :disable="loading"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.soundSet')"
+                :options="soundSetOptions"
             />
         </q-field>
         <div class="csc-form-actions row justify-center">
@@ -101,7 +112,8 @@
         props: [
             'aliasNumberOptions',
             'groupOptions',
-            'loading'
+            'loading',
+            'soundSetOptions'
         ],
         components: {
             QBtn,
@@ -169,7 +181,8 @@
                     name: '',
                     extension: '',
                     aliasNumbers: [],
-                    groups: []
+                    groups: [],
+                    soundSet: null
                 }
             },
             cancel() {
