@@ -461,6 +461,10 @@ export default {
         reactiveSet(state[data.type + 'Errors'], id, null);
         Vue.set(state[data.type + 's'], id, Object.assign(state[data.type + 's'][id], data.preferences));
         for (let i = 0; i <= state[data.type + 'sOrdered'].length; i++) {
+            // TODO: Need to be restructured. One solution is to fetch this
+            // in with getSeats/getGroups, so we can get this in action
+            // sequence. Also would be good to simply refactor this to the
+            // new pattern used for SoundSets, a la soundSets getter
             let subscriberState = state[data.type + 'sOrdered'][i];
             if (subscriberState && (state[data.type + 'sOrdered'][i].id === data.preferences.id)) {
                 state[data.type + 'sOrdered'][i] = Object.assign(state[data.type + 'sOrdered'][i], data.preferences);
@@ -549,5 +553,18 @@ export default {
     },
     lastAddedCallQueue(state, callQueue) {
         state.lastAddedCallQueue = callQueue.name;
+    },
+    defaultSoundSetRequesting(state) {
+        state.defaultSoundSetState = RequestState.requesting;
+        state.defaultSoundSetError = null;
+    },
+    defaultSoundSetSucceeded(state, soundSet) {
+        state.defaultSoundSet = soundSet;
+        state.defaultSoundSetState = RequestState.succeeded;
+        state.defaultSoundSetError = null;
+    },
+    defaultSoundSetFailed(state, error) {
+        state.defaultSoundSetState = RequestState.failed;
+        state.defaultSoundSetError = error;
     }
 }

@@ -47,7 +47,9 @@ import {
     getSoundSetWithFiles,
     playSoundFile,
     createSoundSet,
-    removeSoundFile
+    removeSoundFile,
+    getSubscriberSoundSet,
+    getDefaultSoundSet
 } from '../../api/pbx-config'
 
 export default {
@@ -561,7 +563,7 @@ export default {
             context.commit('removeItemFailed', err.message);
         });
     },
-    listSoundSets(context) {
+    listSoundSetsWithFiles(context) {
         context.commit('listSoundSetsRequesting');
         getAllSoundSets().then((data) => {
             context.commit('listSoundSetsSucceeded', data);
@@ -594,7 +596,7 @@ export default {
     removeSoundSet(context, soundSet) {
         context.commit('removeItemRequesting', soundSet);
         removeSoundSet(soundSet.id).then(() => {
-            return context.dispatch('listSoundSets');
+            return context.dispatch('listSoundSetsWithFiles');
         }).then(() => {
             context.commit('removeItemSucceeded');
         }).catch((err) => {
@@ -666,7 +668,7 @@ export default {
     createSoundSet(context, soundSet) {
         context.commit('addItemRequesting', soundSet);
         createSoundSet(soundSet).then(() => {
-            return context.dispatch('listSoundSets');
+            return context.dispatch('listSoundSetsWithFiles');
         }).then(() => {
             context.commit('addItemSucceeded');
         }).catch((err) => {
@@ -682,5 +684,40 @@ export default {
         }).catch((err) => {
             context.commit('removeItemFailed', err.message);
         });
-    }
+    },
+    listSoundSets(context) {
+        context.commit('listSoundSetsRequesting');
+        getAllSoundSets().then((data) => {
+            context.commit('listSoundSetsSucceeded', data);
+        }).catch((err) => {
+            context.commit('listSoundSetsFailed', err.message)
+        });
+    },
+    getDefaultSoundSet(context) {
+        context.commit('defaultSoundSetRequesting');
+        getDefaultSoundSet().then((soundSet) => {
+            context.commit('defaultSoundSetSucceeded', soundSet);
+        }).catch((err) => {
+            context.commit('defaultSoundSetFailed', err.message);
+        });
+    },
+    getSubscriberSoundSet() {
+        getSubscriberSoundSet(343).then((soundSet) => {
+            console.log('soundSet', soundSet);
+        }).catch((err) => {
+            console.log('err', err);
+        });
+    },
+    setSubscriberSoundSet(context, seat) {
+        console.log('actions.js: setSubscriberSoundSet()', context, seat);
+        //context.commit('updateItemRequesting', seat);
+        //context.commit('lastUpdatedField', {name: seat.contract_sound_set, type: 'sound set'});
+        //setSeatName(seat.id, seat.name).then(() => {
+            //return context.dispatch('reloadSeat', seat);
+        //}).then(() => {
+            //context.commit('updateItemSucceeded');
+        //}).catch((err) => {
+            //context.commit('updateItemFailed', err.message);
+        //});
+    },
 }
