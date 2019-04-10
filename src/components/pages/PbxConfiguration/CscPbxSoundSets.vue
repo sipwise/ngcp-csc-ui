@@ -116,7 +116,7 @@
             }
         },
         mounted() {
-            this.$store.dispatch('pbxConfig/listSoundSets');
+            this.$store.dispatch('pbxConfig/listSoundSetsWithFiles');
         },
         computed: {
             ...mapGetters('pbxConfig', [
