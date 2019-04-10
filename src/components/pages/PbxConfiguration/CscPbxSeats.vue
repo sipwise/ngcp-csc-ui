@@ -2,6 +2,7 @@
     <csc-page
         :is-list="true"
     >
+        Default sound set: {{ defaultSoundSet }}
         <div
             v-show="!addFormEnabled"
             class="row justify-center"
@@ -19,11 +20,15 @@
             class="row justify-center"
             v-show="addFormEnabled"
         >
+            <!--TODO: 0. Need to pass in defaultSoundSet-->
+            <!--TODO: 1. Implement ability to add soundSet null or selected in-->
+            <!--add form and corresponding action and API creation call-->
             <csc-pbx-seat-add-form
                 ref="addForm"
                 class="col-xs-12 col-md-6 csc-list-form"
                 :alias-number-options="aliasNumberOptions"
                 :group-options="groupOptions"
+                :sound-set-options="soundSetOptions"
                 :loading="isAdding"
                 @save="addSeat"
                 @cancel="disableAddForm"
@@ -55,14 +60,17 @@
                 multiline
                 :highlight="!isMobile"
             >
+                <!--TODO: 0. Need to pass in defaultSoundSet-->
+                <!--TODO: 2. Add soundSet preference to seats data structure,-->
+                <!--and add in API layer-->
                 <csc-pbx-seat
                     v-for="seat in seats"
                     :key="seat.id"
                     :seat="seat"
                     :alias-number-options="aliasNumberOptions"
                     :group-options="groupOptions"
-                    @remove="removeSeatDialog"
                     :loading="isItemLoading(seat.id)"
+                    @remove="removeSeatDialog"
                     @save-name="setSeatName"
                     @save-extension="setSeatExtension"
                     @save-alias-numbers="updateAliasNumbers"
@@ -127,6 +135,9 @@
             this.$store.dispatch('pbxConfig/listSeats', {
                 page: 1
             });
+            this.$store.dispatch('pbxConfig/listSoundSets');
+            this.$store.dispatch('pbxConfig/getSubscriberSoundSet');
+            this.$store.dispatch('pbxConfig/getDefaultSoundSet');
         },
         data () {
             return {
@@ -185,7 +196,9 @@
                 'lastUpdatedField',
                 'updateAliasNumbersState',
                 'updateGroupsAndSeatsState',
-                'updateState'
+                'updateState',
+                'soundSetOptions',
+                'defaultSoundSet'
             ]),
             groupOptions() {
                 let groups = [];

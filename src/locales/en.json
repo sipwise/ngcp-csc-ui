@@ -455,7 +455,8 @@
         "invalidFileTooltip": "This sound set is incomplete ({amount} file is missing)",
         "invalidFilesTooltip": "This sound set is incomplete ({amount} files are missing)",
         "removeSoundFileTitle": "Remove sound file",
-        "removeSoundFileText": "You are about to remove the sound file for {handle}"
+        "removeSoundFileText": "You are about to remove the sound file for {handle}",
+        "soundSet": "Sound Set"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

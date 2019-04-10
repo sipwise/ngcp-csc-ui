@@ -549,5 +549,18 @@ export default {
     },
     lastAddedCallQueue(state, callQueue) {
         state.lastAddedCallQueue = callQueue.name;
+    },
+    defaultSoundSetRequesting(state) {
+        state.defaultSoundSetState = RequestState.requesting;
+        state.defaultSoundSetError = null;
+    },
+    defaultSoundSetSucceeded(state, soundSet) {
+        state.defaultSoundSet = soundSet;
+        state.defaultSoundSetState = RequestState.succeeded;
+        state.defaultSoundSetError = null;
+    },
+    defaultSoundSetFailed(state, error) {
+        state.defaultSoundSetState = RequestState.failed;
+        state.defaultSoundSetError = error;
     }
 }

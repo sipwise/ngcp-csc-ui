@@ -95,5 +95,8 @@ export default {
     createSoundSetState: RequestState.initiated,
     createSoundSetItem: null,
     createSoundSetError: null,
-    lastAddedCallQueue: null
+    lastAddedCallQueue: null,
+    defaultSoundSetState : RequestState.initiated,
+    defaultSoundSetError: null,
+    defaultSoundSet: null
 }
