@@ -7,14 +7,17 @@
             class="row justify-center"
         >
             <csc-pbx-group-add-form
-                class="col-xs-12 col-md-6 csc-list-form"
                 ref="addForm"
-                @save="addGroup"
-                @cancel="disableAddForm"
-                :loading="isAdding"
+                class="col-xs-12 col-md-6 csc-list-form"
                 :alias-number-options="aliasNumberOptions"
                 :seat-options="seatOptions"
                 :hunt-policy-options="huntPolicyOptions"
+                :sound-set-options="soundSetOptions"
+                :sound-set-label="soundSetLabel"
+                :loading="isAdding"
+                :default-sound-set="!!defaultSoundSet"
+                @save="addGroup"
+                @cancel="disableAddForm"
             />
         </div>
         <div
@@ -63,6 +66,9 @@
                 :seat-options="seatOptions"
                 :hunt-policy-options="huntPolicyOptions"
                 :loading="isItemLoading(group.id)"
+                :sound-set-options="soundSetOptions"
+                :sound-set-label="soundSetLabel"
+                :default-sound-set="!!defaultSoundSet"
                 @remove="removeGroupDialog"
                 @save-name="setGroupName"
                 @save-extension="setGroupExtension"
@@ -70,6 +76,7 @@
                 @save-hunt-timeout="setGroupHuntTimeout"
                 @save-alias-numbers="updateAliasNumbers"
                 @save-seats="updateSeats"
+                @save-sound-set="updateSoundSet"
             />
         </q-list>
         <div
@@ -154,11 +161,12 @@
             this.$store.dispatch('pbxConfig/listGroups', {
                 page: 1
             });
+            this.$store.dispatch('pbxConfig/listSoundSets');
+            this.$store.dispatch('pbxConfig/getDefaultSoundSet');
         },
         data () {
             return {
                 addFormEnabled: false,
-                page: 1,
                 currentRemovingGroup: null
             }
         },
@@ -182,17 +190,6 @@
                         value: 'circular'
                     }
                 ];
-            },
-            seatOptions() {
-                let seats = [];
-                this.seats.forEach((seat) => {
-                    seats.push({
-                        label: seat.display_name ? seat.display_name : seat.username,
-                        sublabel: this.$t('pbxConfig.extension') + ': ' + seat.pbx_extension,
-                        value: seat.id
-                    });
-                });
-                return seats;
             },
             ...mapGetters('pbxConfig', [
                 'groups',
@@ -220,7 +217,11 @@
                 'lastRemovedGroup',
                 'lastUpdatedField',
                 'updateAliasNumbersState',
-                'updateGroupsAndSeatsState'
+                'updateGroupsAndSeatsState',
+                'seatOptions',
+                'soundSetOptions',
+                'soundSetLabel',
+                'defaultSoundSet'
             ]),
             isMobile() {
                 return Platform.is.mobile;
@@ -266,7 +267,8 @@
                 return (this.isUpdating && this.updateItemId + "" === groupId + "") ||
                     (this.isRemoving && this.removeItemId + "" === groupId + "") ||
                     (this.isUpdatingAliasNumbers && this.updateAliasNumbersItemId + "" === groupId + "") ||
-                    (this.isUpdatingGroupsAndSeats && this.updateGroupsAndSeatsItemId + "" === groupId + "");
+                    (this.isUpdatingGroupsAndSeats && this.updateGroupsAndSeatsItemId + "" === groupId + "") ||
+                    this.isListRequesting;
             },
             resetAddForm() {
                 this.$refs.addForm.reset();
@@ -280,6 +282,7 @@
                 this.addFormEnabled = false;
             },
             addGroup(group) {
+                // TODO: Fix issue with Unprocessable Entity
                 this.$store.dispatch('pbxConfig/addGroup', group);
             },
             removeGroup() {
@@ -302,6 +305,9 @@
             },
             updateSeats(data) {
                 this.$store.dispatch('pbxConfig/updateSeats', data);
+            },
+            updateSoundSet(data) {
+                this.$store.dispatch('pbxConfig/setSubscriberSoundSet', data);
             },
             changePage(page) {
                 this.$store.dispatch('pbxConfig/listGroups', {

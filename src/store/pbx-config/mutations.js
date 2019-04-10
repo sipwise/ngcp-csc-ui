@@ -30,57 +30,19 @@ export default {
         state.listLoadingSilently = _.get(options, 'silent', false);
         state.listState = RequestState.requesting;
         state.listError = null;
-        state.groups = {};
-        state.groupsOrdered = [];
-        state.seats = {};
-        state.seatsOrdered = [];
-        state.numbersMap = {};
     },
     listSucceeded(state, all) {
+        console.log('all', all);
         state.listState = RequestState.succeeded;
         state.listError = null;
         state.listLastPage = all.lastPage;
         state.pilot = all.pilot;
-        state.groups = {};
-        state.groupsOrdered = [];
-        state.seats = {};
-        state.seatsOrdered = [];
-        state.numbersMap = {};
-        all.groups.items.forEach((group)=>{
-            state.groups[group.id] = group;
-            state.groupsOrdered.push(group);
-        });
-        all.seats.items.forEach((seat)=>{
-            seat.pbx_group_ids.forEach((groupId)=>{
-                let group = state.groups[groupId];
-                let seats = _.get(group, 'seats', []);
-                seats.push(seat);
-                _.set(group, 'seats', seats);
-                let groups = _.get(seat, 'groups', []);
-                groups.push(group);
-                _.set(seat, 'groups', groups);
-            });
-            state.seats[seat.id] = seat;
-            state.seatsOrdered.push(seat);
-        });
-        if(_.isArray(all.numbers) && all.numbers.length > 0) {
-            all.numbers.forEach((number)=>{
-                if(_.has(state.groups, number.subscriber_id)) {
-                    number.subscriber = state.groups[number.subscriber_id];
-                }
-                else if (_.has(state.seats, number.subscriber_id)) {
-                    number.subscriber = state.seats[number.subscriber_id];
-                }
-                else if (state.pilot.id === number.subscriber_id) {
-                    number.subscriber = state.pilot;
-                }
-                else {
-                    number.subscriber = null;
-                }
-                state.numbersMap[number.id] = number;
-            });
-            state.numbers = all.numbers;
-        }
+        state.groups = all.groups;
+        state.seats = all.seats;
+        state.numbersMap = all.numbersMap;
+        state.numbers = all.numbers;
+        state.seatsList = Object.keys(state.seats);
+        state.groupsList = Object.keys(state.groups);
     },
     listFailed(state, error) {
         state.listState = RequestState.failed;
@@ -390,14 +352,12 @@ export default {
         state.seatReloadingState = RequestState.succeeded;
         state.seatReloadingError = null;
         Vue.set(state.seats, seat.id, seat);
-        for(let i = 0; i < state.seatsOrdered.length; i++) {
-            if(state.seatsOrdered[i].id === seat.id) {
-                state.seatsOrdered[i] = seat;
-            }
-        }
+        state.seatsList = Object.keys(state.seats);
+        // TODO: Do we need to put the logic below into API layer instead, or
+        // sufficient as we only need for groupOptions?
         let groupIds = _.get(seat, 'pbx_group_ids', []);
         seat.groups = [];
-        groupIds.forEach((groupId)=>{
+        groupIds.forEach((groupId) => {
             seat.groups.push(state.groups[groupId]);
         });
     },
@@ -451,26 +411,6 @@ export default {
     configReloadingFailed(state, err) {
         state.configReloadingState = RequestState.failed;
         state.configReloadingError = err;
-    },
-    preferenceRequesting(state, type, id) {
-        reactiveSet(state[type + 'States'], id + "", RequestState.requesting);
-    },
-    preferenceSucceeded(state, data) {
-        let id = data.preferences.id + "";
-        reactiveSet(state[data.type + 'States'], id, RequestState.succeeded);
-        reactiveSet(state[data.type + 'Errors'], id, null);
-        Vue.set(state[data.type + 's'], id, Object.assign(state[data.type + 's'][id], data.preferences));
-        for (let i = 0; i <= state[data.type + 'sOrdered'].length; i++) {
-            let subscriberState = state[data.type + 'sOrdered'][i];
-            if (subscriberState && (state[data.type + 'sOrdered'][i].id === data.preferences.id)) {
-                state[data.type + 'sOrdered'][i] = Object.assign(state[data.type + 'sOrdered'][i], data.preferences);
-            }
-        }
-    },
-    preferenceFailed(state, type, id, error) {
-        id = id + "";
-        reactiveSet(state[type + 'States'], id, RequestState.failed);
-        reactiveSet(state[type + 'Errors'], id, error);
     },
     listSoundSetsRequesting(state) {
         state.listState = RequestState.requesting;
@@ -567,5 +507,18 @@ export default {
     },
     resetSoundFileProgress(state, handle) {
         reactiveSet(state.uploadSoundFileProgresses, handle, 0);
+    },
+    defaultSoundSetRequesting(state) {
+        state.defaultSoundSetState = RequestState.requesting;
+        state.defaultSoundSetError = null;
+    },
+    defaultSoundSetSucceeded(state, soundSet) {
+        state.defaultSoundSet = soundSet;
+        state.defaultSoundSetState = RequestState.succeeded;
+        state.defaultSoundSetError = null;
+    },
+    defaultSoundSetFailed(state, error) {
+        state.defaultSoundSetState = RequestState.failed;
+        state.defaultSoundSetError = error;
     }
 }

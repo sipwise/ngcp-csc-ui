@@ -79,6 +79,22 @@
                 :options="seatOptions"
             />
         </q-field>
+        <q-field>
+            <q-select
+                dark
+                clearable
+                v-model="data.soundSet"
+                :disable="loading || !defaultSoundSet"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.soundSet')"
+                :options="soundSetOptions"
+            />
+            <q-tooltip
+                v-if="!defaultSoundSet"
+            >
+                {{ $t('pbxConfig.defaultNotSet') }}
+            </q-tooltip>
+        </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
                 flat
@@ -101,7 +117,7 @@
             </q-btn>
         </div>
         <q-inner-loading :visible="loading">
-            <q-spinner-mat size="60px" color="primary" />
+            <q-spinner-dots size="60px" color="primary" />
         </q-inner-loading>
     </div>
 </template>
@@ -117,11 +133,12 @@
     import {
         QBtn,
         QInnerLoading,
-        QSpinnerMat,
+        QSpinnerDots,
         QField,
         QInput,
         QSelect,
-        QIcon
+        QIcon,
+        QTooltip
     } from 'quasar-framework'
 
     export default {
@@ -131,15 +148,19 @@
             'aliasNumberOptions',
             'seatOptions',
             'loading',
+            'soundSetOptions',
+            'soundSetLabel',
+            'defaultSoundSet'
         ],
         components: {
             QBtn,
             QInnerLoading,
-            QSpinnerMat,
+            QSpinnerDots,
             QField,
             QInput,
             QSelect,
-            QIcon
+            QIcon,
+            QTooltip
         },
         validations: {
             data: {
@@ -163,6 +184,11 @@
         data () {
             return {
                 data: this.getDefaults()
+            }
+        },
+        created() {
+            if (this.defaultSoundSet) {
+                this.soundSet = this.defaultSoundSet;
             }
         },
         computed: {
@@ -230,14 +256,26 @@
                     huntPolicy: 'serial',
                     huntTimeout: 10,
                     aliasNumbers: [],
-                    seats: []
+                    seats: [],
+                    soundSet: null
+                }
+            },
+            groupModel() {
+                return {
+                    name: this.data.name,
+                    extension: this.data.extension,
+                    huntPolicy: this.data.huntPolicy,
+                    huntTimeout: this.data.huntTimeout,
+                    aliasNumbers: this.data.aliasNumbers,
+                    seats: this.data.seats,
+                    soundSet: this.soundSetLabel(this.data.soundSet)
                 }
             },
             cancel() {
                 this.$emit('cancel');
             },
             save() {
-                this.$emit('save', this.data);
+                this.$emit('save', this.groupModel);
             },
             reset() {
                 this.data = this.getDefaults();
