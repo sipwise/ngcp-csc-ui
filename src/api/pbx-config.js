@@ -21,10 +21,16 @@ import {
     setQueueLength,
     setWrapUpTime,
     getPreferences,
-    removeCallQueueConfig
+    removeCallQueueConfig,
+    getAllPreferences
 } from './subscriber';
 import uuid from 'uuid';
-import { getList, get, patchReplace} from './common'
+import {
+    getList,
+    get,
+    patchReplace,
+    patchAdd
+} from './common'
 
 var createId = uuid.v4;
 
@@ -33,14 +39,40 @@ export const PBX_CONFIG_ORDER_DIRECTION = 'desc';
 
 export function getGroups(options) {
     return new Promise((resolve, reject)=>{
+        let subscribers = {
+            items: []
+        };
+        let soundSets = {};
+        let preferences = {};
         options = options || {};
         options = _.merge(options, {
             params: {
                 is_pbx_group: 1
             }
         });
-        getSubscribers(options).then((res)=>{
-            resolve(res);
+        Promise.resolve().then(()=>{
+            return getSubscribers(options);
+        }).then(($subscribers)=> {
+            subscribers = $subscribers;
+            return getAllSoundSets();
+        }).then(($soundSets)=> {
+            soundSets = _.keyBy($soundSets.items, 'name');
+            return getAllPreferences();
+        }).then(($preferences)=>{
+            preferences = _.keyBy($preferences.items, 'id');
+            subscribers.items.forEach((subscriber) => {
+                delete preferences[subscriber.id]._links;
+                delete subscriber._links;
+                Object.assign(subscriber, preferences[subscriber.id]);
+                if (preferences[subscriber.id] && preferences[subscriber.id].contract_sound_set) {
+                    subscriber.contract_sound_set_id = soundSets[preferences[subscriber.id].contract_sound_set].id;
+                }
+                else {
+                    subscriber.contract_sound_set = null;
+                    subscriber.contract_sound_set_id = null;
+                }
+            });
+            resolve(subscribers);
         }).catch((err)=>{
             reject(err);
         });
@@ -48,11 +80,44 @@ export function getGroups(options) {
 }
 
 export function getGroup(groupId) {
-    return getSubscriber(groupId);
+    return new Promise((resolve, reject) => {
+        let subscriber = {};
+        let soundSets = {};
+        let preferences = {};
+        Promise.resolve().then(() => {
+            return getSubscriber(groupId);
+        }).then(($subscriber) => {
+            subscriber = $subscriber;
+            return getAllSoundSets();
+        }).then(($soundSets) => {
+            soundSets = _.keyBy($soundSets.items, 'name');
+            return getPreferences(groupId);
+        }).then(($preferences) => {
+            preferences = $preferences;
+            delete preferences._links;
+            delete subscriber._links;
+            Object.assign(subscriber, preferences);
+            if (preferences && preferences.contract_sound_set) {
+                subscriber.contract_sound_set_id = soundSets[preferences.contract_sound_set].id;
+            }
+            else {
+                subscriber.contract_sound_set = null;
+                subscriber.contract_sound_set_id = null;
+            }
+            resolve(subscriber);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
 }
 
 export function getSeats(options) {
     return new Promise((resolve, reject)=>{
+        let subscribers = {
+            items: []
+        };
+        let soundSets = {};
+        let preferences = {};
         options = options || {};
         options = _.merge(options, {
             params: {
@@ -60,8 +125,29 @@ export function getSeats(options) {
                 is_pbx_pilot: 0
             }
         });
-        getSubscribers(options).then((res)=>{
-            resolve(res);
+        Promise.resolve().then(()=>{
+            return getSubscribers(options);
+        }).then(($subscribers)=> {
+            subscribers = $subscribers;
+            return getAllSoundSets();
+        }).then(($soundSets)=> {
+            soundSets = _.keyBy($soundSets.items, 'name');
+            return getAllPreferences();
+        }).then(($preferences)=>{
+            preferences = _.keyBy($preferences.items, 'id');
+            subscribers.items.forEach((subscriber) => {
+                delete preferences[subscriber.id]._links;
+                delete subscriber._links;
+                Object.assign(subscriber, preferences[subscriber.id]);
+                if (preferences[subscriber.id] && preferences[subscriber.id].contract_sound_set) {
+                    subscriber.contract_sound_set_id = soundSets[preferences[subscriber.id].contract_sound_set].id;
+                }
+                else {
+                    subscriber.contract_sound_set = null;
+                    subscriber.contract_sound_set_id = null;
+                }
+            });
+            resolve(subscribers);
         }).catch((err)=>{
             reject(err);
         });
@@ -69,7 +155,35 @@ export function getSeats(options) {
 }
 
 export function getSeat(seatId) {
-    return getSubscriber(seatId);
+    return new Promise((resolve, reject) => {
+        let subscriber = {};
+        let soundSets = {};
+        let preferences = {};
+        Promise.resolve().then(() => {
+            return getSubscriber(seatId);
+        }).then(($subscriber) => {
+            subscriber = $subscriber;
+            return getAllSoundSets();
+        }).then(($soundSets) => {
+            soundSets = _.keyBy($soundSets.items, 'name');
+            return getPreferences(seatId);
+        }).then(($preferences) => {
+            preferences = $preferences;
+            delete preferences._links;
+            delete subscriber._links;
+            Object.assign(subscriber, preferences);
+            if (preferences && preferences.contract_sound_set) {
+                subscriber.contract_sound_set_id = soundSets[preferences.contract_sound_set].id;
+            }
+            else {
+                subscriber.contract_sound_set = null;
+                subscriber.contract_sound_set_id = null;
+            }
+            resolve(subscriber);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
 }
 
 export function getAllGroupsAndSeats(options) {
@@ -98,7 +212,7 @@ export function getPilot(options) {
             }
         });
         getSubscribers(options).then((subscribers)=>{
-            if(subscribers.items.length === 1) {
+            if (subscribers.items.length === 1) {
                 resolve(subscribers.items[0]);
             }
             else {
@@ -171,17 +285,68 @@ export function getGroupList(page) {
             getPilot(),
             getNumbers()
         ]).then((result)=>{
-            resolve({
-                groups: result[0],
-                seats: result[1],
-                pilot: result[2],
-                numbers: result[3],
-                lastPage: result[0].lastPage
-            });
+            resolve(normalizeSubscribers(
+                {
+                    groups: result[0],
+                    seats: result[1],
+                    pilot: result[2],
+                    numbers: result[3],
+                    lastPage: result[0].lastPage
+                }
+            ));
         }).catch((err)=>{
             reject(err);
         });
     });
+}
+
+export function normalizeSubscribers(all) {
+    let pilot = all.pilot;
+    let groups = {};
+    let seats = {};
+    let numbersMap = {};
+    let numbers= [];
+    all.groups.items.forEach((group)=>{
+        groups[group.id] = group;
+    });
+    all.seats.items.forEach((seat)=>{
+        seat.pbx_group_ids.forEach((groupId)=>{
+            let group = groups[groupId];
+            let $seats = _.get(group, 'seats', []);
+            $seats.push(seat);
+            _.set(group, 'seats', $seats);
+            let $groups = _.get(seat, 'groups', []);
+            $groups.push(group);
+            _.set(seat, 'groups', $groups);
+        });
+        seats[seat.id] = seat;
+    });
+    if (_.isArray(all.numbers) && all.numbers.length > 0) {
+        all.numbers.forEach((number)=>{
+            if (_.has(groups, number.subscriber_id)) {
+                number.subscriber = groups[number.subscriber_id];
+            }
+            else if (_.has(seats, number.subscriber_id)) {
+                number.subscriber = seats[number.subscriber_id];
+            }
+            else if (pilot.id === number.subscriber_id) {
+                number.subscriber = pilot;
+            }
+            else {
+                number.subscriber = null;
+            }
+            numbersMap[number.id] = number;
+        });
+        numbers = all.numbers;
+    }
+    return {
+        seats: seats,
+        groups: groups,
+        pilot: pilot,
+        numbers: numbers,
+        numbersMap: numbersMap,
+        lastPage: all.lastPage
+    };
 }
 
 export function getSeatList(page) {
@@ -199,15 +364,17 @@ export function getSeatList(page) {
             }),
             getPilot(),
             getNumbers()
-        ]).then((result)=>{
-            resolve({
-                seats: result[0],
-                groups: result[1],
-                pilot: result[2],
-                numbers: result[3],
-                lastPage: result[0].lastPage
-            });
-        }).catch((err)=>{
+        ]).then((result) => {
+            resolve(normalizeSubscribers(
+                {
+                    seats: result[0],
+                    groups: result[1],
+                    pilot: result[2],
+                    numbers: result[3],
+                    lastPage: result[0].lastPage
+                }
+            ));
+        }).catch((err) => {
             reject(err);
         });
     });
@@ -223,13 +390,13 @@ export function getDeviceList(options) {
             order_by: PBX_CONFIG_ORDER_BY,
             order_by_direction: PBX_CONFIG_ORDER_DIRECTION
         };
-        if(params.profile_id === null) {
+        if (params.profile_id === null) {
             delete params['profile_id'];
         }
-        if(params.identifier === null) {
+        if (params.identifier === null) {
             delete params['identifier'];
         }
-        if(params.station_name === null) {
+        if (params.station_name === null) {
             delete params['station_name'];
         }
         return getDevices({
@@ -259,6 +426,12 @@ export function addGroup(group) {
             });
         }).then((subscriberId)=>{
             assignNumbers(group.aliasNumbers, subscriberId);
+            return subscriberId;
+        }).then((subscriberId)=>{
+            if (group.soundSet) {
+                setSubscriberSoundSet(subscriberId, group.soundSet);
+            }
+            return;
         }).then(()=>{
             resolve();
         }).catch((err)=>{
@@ -286,6 +459,12 @@ export function addSeat(seat) {
             });
         }).then((subscriberId)=>{
             assignNumbers(seat.aliasNumbers, subscriberId);
+            return subscriberId;
+        }).then((subscriberId)=>{
+            if (seat.soundSet) {
+                setSubscriberSoundSet(subscriberId, seat.soundSet);
+            }
+            return;
         }).then(()=>{
             resolve();
         }).catch((err)=>{
@@ -349,11 +528,11 @@ export function getDevice(id, options) {
             });
         }).then(($device)=> {
             device = $device;
-            if(join === true) {
+            if (join === true) {
                 let requests = [
                     getProfile(device.profile_id, join)
                 ];
-                if(joinLines === true && _.isArray(device.lines) && device.lines.length > 0) {
+                if (joinLines === true && _.isArray(device.lines) && device.lines.length > 0) {
                     device.lines.forEach((line)=>{
                         requests.push(getSubscriber(line.subscriber_id));
                     });
@@ -365,7 +544,7 @@ export function getDevice(id, options) {
             }
         }).then((results)=>{
             device.profile = results[0];
-            if(results.length > 1) {
+            if (results.length > 1) {
                 for(let i = 1; i < results.length; i++) {
                     device.lines[i - 1].subscriber = results[i];
                 }
@@ -386,7 +565,7 @@ export function getProfile(id, join) {
             });
         }).then(($profile)=> {
             profile = $profile;
-            if(join === true) {
+            if (join === true) {
                 return getModelFull(profile.device_id);
             }
             else {
@@ -457,7 +636,7 @@ export function createDevice(device) {
         Vue.http.post('api/pbxdevices/', device).then((res)=>{
             resolve(res);
         }).catch((err)=>{
-            if(err.status >= 400) {
+            if (err.status >= 400) {
                 reject(new Error(err.body.message));
             }
             else {
@@ -472,7 +651,7 @@ export function removeDevice(id) {
         Vue.http.delete('api/pbxdevices/' + id).then(()=>{
             resolve();
         }).catch((err)=>{
-            if(err.status >= 400) {
+            if (err.status >= 400) {
                 reject(new Error(err.body.message));
             }
             else {
@@ -597,10 +776,6 @@ export function setQueueLengthConfig(id, queueLength) {
 
 export function setWrapUpTimeConfig(id, wrapUpTime) {
     return setWrapUpTime(id, wrapUpTime);
-}
-
-export function getPrefs(id) {
-    return getPreferences(id);
 }
 
 export function getAllSoundSets(options) {
@@ -841,5 +1016,27 @@ export function abortPreviousSoundFileUpload(handle) {
         let requestKey = `previous-${handle}-request`;
         Vue[requestKey].abort();
         resolve();
+    });
+}
+
+export function setSubscriberSoundSet(id, soundSet) {
+    return patchAdd({
+        path: 'api/subscriberpreferences/' + id,
+        fieldPath: 'contract_sound_set',
+        value: soundSet
+    });
+}
+
+export function getDefaultSoundSet() {
+    return new Promise((resolve, reject)=>{
+        getAllSoundSets().then((result) => {
+            let defaultSoundSets = result.items.filter((soundSet) => {
+                return _.get(soundSet, 'contract_default', false);
+            })
+            let defaultSoundSet = defaultSoundSets[0] ? defaultSoundSets[0].id : null;
+            resolve(defaultSoundSet);
+        }).catch((err)=>{
+            reject(err);
+        });
     });
 }
