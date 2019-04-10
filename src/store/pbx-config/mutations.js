@@ -30,57 +30,18 @@ export default {
         state.listLoadingSilently = _.get(options, 'silent', false);
         state.listState = RequestState.requesting;
         state.listError = null;
-        state.groups = {};
-        state.groupsOrdered = [];
-        state.seats = {};
-        state.seatsOrdered = [];
-        state.numbersMap = {};
     },
     listSucceeded(state, all) {
         state.listState = RequestState.succeeded;
         state.listError = null;
         state.listLastPage = all.lastPage;
         state.pilot = all.pilot;
-        state.groups = {};
-        state.groupsOrdered = [];
-        state.seats = {};
-        state.seatsOrdered = [];
-        state.numbersMap = {};
-        all.groups.items.forEach((group)=>{
-            state.groups[group.id] = group;
-            state.groupsOrdered.push(group);
-        });
-        all.seats.items.forEach((seat)=>{
-            seat.pbx_group_ids.forEach((groupId)=>{
-                let group = state.groups[groupId];
-                let seats = _.get(group, 'seats', []);
-                seats.push(seat);
-                _.set(group, 'seats', seats);
-                let groups = _.get(seat, 'groups', []);
-                groups.push(group);
-                _.set(seat, 'groups', groups);
-            });
-            state.seats[seat.id] = seat;
-            state.seatsOrdered.push(seat);
-        });
-        if(_.isArray(all.numbers) && all.numbers.length > 0) {
-            all.numbers.forEach((number)=>{
-                if(_.has(state.groups, number.subscriber_id)) {
-                    number.subscriber = state.groups[number.subscriber_id];
-                }
-                else if (_.has(state.seats, number.subscriber_id)) {
-                    number.subscriber = state.seats[number.subscriber_id];
-                }
-                else if (state.pilot.id === number.subscriber_id) {
-                    number.subscriber = state.pilot;
-                }
-                else {
-                    number.subscriber = null;
-                }
-                state.numbersMap[number.id] = number;
-            });
-            state.numbers = all.numbers;
-        }
+        state.groups = all.groups;
+        state.seats = all.seats;
+        state.numbersMap = all.numbersMap;
+        state.numbers = all.numbers;
+        state.seatsList = Object.keys(state.seats);
+        state.groupsList = Object.keys(state.groups);
     },
     listFailed(state, error) {
         state.listState = RequestState.failed;
@@ -150,14 +111,6 @@ export default {
     removeItemFailed(state, error) {
         state.removeState = RequestState.failed;
         state.removeError = error;
-    },
-    removeGroup(state, group) {
-        delete state.groups[group.id];
-        state.groupsOrdered.forEach(($group, index)=>{
-            if(group.id === $group.id) {
-                delete state.groupsOrdered[index];
-            }
-        });
     },
     deviceListRequesting(state, options) {
         options = options || {};
@@ -363,15 +316,11 @@ export default {
         state.groupReloading = group;
     },
     groupReloaded(state, group) {
+        let seatIds = _.get(group, 'pbx_groupmember_ids', []);
         state.groupReloadingState = RequestState.succeeded;
         state.groupReloadingError = null;
         Vue.set(state.groups, group.id, group);
-        for(let i = 0; i < state.groupsOrdered.length; i++) {
-            if(state.groupsOrdered[i].id === group.id) {
-                state.groupsOrdered[i] = group;
-            }
-        }
-        let seatIds = _.get(group, 'pbx_groupmember_ids', []);
+        state.groupsList = Object.keys(state.groups);
         group.seats = [];
         seatIds.forEach((seatId)=>{
             group.seats.push(state.seats[seatId]);
@@ -387,17 +336,13 @@ export default {
         state.seatReloading = seat;
     },
     seatReloaded(state, seat) {
+        let groupIds = _.get(seat, 'pbx_group_ids', []);
         state.seatReloadingState = RequestState.succeeded;
         state.seatReloadingError = null;
         Vue.set(state.seats, seat.id, seat);
-        for(let i = 0; i < state.seatsOrdered.length; i++) {
-            if(state.seatsOrdered[i].id === seat.id) {
-                state.seatsOrdered[i] = seat;
-            }
-        }
-        let groupIds = _.get(seat, 'pbx_group_ids', []);
+        state.seatsList = Object.keys(state.seats);
         seat.groups = [];
-        groupIds.forEach((groupId)=>{
+        groupIds.forEach((groupId) => {
             seat.groups.push(state.groups[groupId]);
         });
     },
@@ -451,26 +396,6 @@ export default {
     configReloadingFailed(state, err) {
         state.configReloadingState = RequestState.failed;
         state.configReloadingError = err;
-    },
-    preferenceRequesting(state, type, id) {
-        reactiveSet(state[type + 'States'], id + "", RequestState.requesting);
-    },
-    preferenceSucceeded(state, data) {
-        let id = data.preferences.id + "";
-        reactiveSet(state[data.type + 'States'], id, RequestState.succeeded);
-        reactiveSet(state[data.type + 'Errors'], id, null);
-        Vue.set(state[data.type + 's'], id, Object.assign(state[data.type + 's'][id], data.preferences));
-        for (let i = 0; i <= state[data.type + 'sOrdered'].length; i++) {
-            let subscriberState = state[data.type + 'sOrdered'][i];
-            if (subscriberState && (state[data.type + 'sOrdered'][i].id === data.preferences.id)) {
-                state[data.type + 'sOrdered'][i] = Object.assign(state[data.type + 'sOrdered'][i], data.preferences);
-            }
-        }
-    },
-    preferenceFailed(state, type, id, error) {
-        id = id + "";
-        reactiveSet(state[type + 'States'], id, RequestState.failed);
-        reactiveSet(state[type + 'Errors'], id, error);
     },
     listSoundSetsRequesting(state) {
         state.listState = RequestState.requesting;
@@ -567,5 +492,18 @@ export default {
     },
     resetSoundFileProgress(state, handle) {
         reactiveSet(state.uploadSoundFileProgresses, handle, 0);
+    },
+    defaultSoundSetRequesting(state) {
+        state.defaultSoundSetState = RequestState.requesting;
+        state.defaultSoundSetError = null;
+    },
+    defaultSoundSetSucceeded(state, soundSet) {
+        state.defaultSoundSet = soundSet;
+        state.defaultSoundSetState = RequestState.succeeded;
+        state.defaultSoundSetError = null;
+    },
+    defaultSoundSetFailed(state, error) {
+        state.defaultSoundSetState = RequestState.failed;
+        state.defaultSoundSetError = error;
     }
 }
