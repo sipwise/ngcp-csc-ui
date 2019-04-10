@@ -5,9 +5,9 @@ import { RequestState } from '../common'
 export default {
     pilot: null,
     groups: {},
-    groupsOrdered: [],
+    groupsList: [],
     seats: {},
-    seatsOrdered: [],
+    seatsList: [],
     numbers: [],
     numbersMap : {},
     devicesOrdered: [],
@@ -98,5 +98,8 @@ export default {
     lastAddedCallQueue: null,
     uploadSoundFileStates: {},
     uploadSoundFileErrors: {},
-    uploadSoundFileProgresses: {}
+    uploadSoundFileProgresses: {},
+    defaultSoundSetState : RequestState.initiated,
+    defaultSoundSetError: null,
+    defaultSoundSet: null
 }
