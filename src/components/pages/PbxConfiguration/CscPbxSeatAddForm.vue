@@ -30,9 +30,9 @@
         <q-field>
             <q-select
                 dark
-                multiple
                 chips
                 clearable
+                multiple
                 v-model="data.aliasNumbers"
                 :disable="loading"
                 :readonly="loading"
@@ -43,15 +43,31 @@
         <q-field>
             <q-select
                 dark
-                multiple
                 chips
                 clearable
+                multiple
                 v-model="data.groups"
                 :disable="loading"
                 :readonly="loading"
                 :float-label="$t('pbxConfig.groups')"
                 :options="groupOptions"
             />
+        </q-field>
+        <q-field>
+            <q-select
+                dark
+                clearable
+                v-model="soundSet"
+                :disable="loading || !defaultSoundSet"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.soundSet')"
+                :options="soundSetOptions"
+            />
+            <q-tooltip
+                v-if="!defaultSoundSet"
+            >
+                {{ $t('pbxConfig.defaultNotSet') }}
+            </q-tooltip>
         </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
@@ -75,7 +91,7 @@
             </q-btn>
         </div>
         <q-inner-loading :visible="loading">
-            <q-spinner-mat size="60px" color="primary" />
+            <q-spinner-dots size="60px" color="primary" />
         </q-inner-loading>
     </div>
 </template>
@@ -89,11 +105,12 @@
     import {
         QBtn,
         QInnerLoading,
-        QSpinnerMat,
+        QSpinnerDots,
         QField,
         QInput,
         QSelect,
-        QIcon
+        QIcon,
+        QTooltip
     } from 'quasar-framework'
 
     export default {
@@ -101,16 +118,20 @@
         props: [
             'aliasNumberOptions',
             'groupOptions',
-            'loading'
+            'loading',
+            'soundSetOptions',
+            'soundSetValue',
+            'defaultSoundSet'
         ],
         components: {
             QBtn,
             QInnerLoading,
-            QSpinnerMat,
+            QSpinnerDots,
             QField,
             QInput,
             QSelect,
-            QIcon
+            QIcon,
+            QTooltip
         },
         validations: {
             data: {
@@ -127,7 +148,13 @@
         },
         data () {
             return {
-                data: this.getDefaults()
+                data: this.getDefaults(),
+                soundSet: null
+            }
+        },
+        created() {
+            if (this.defaultSoundSet) {
+                this.soundSet = this.defaultSoundSet;
             }
         },
         computed: {
@@ -165,6 +192,7 @@
         },
         methods: {
             getDefaults() {
+                // TODO: Add soundSet here, as in CscPbxSeat.vue etc
                 return {
                     name: '',
                     extension: '',
@@ -176,10 +204,11 @@
                 this.$emit('cancel');
             },
             save() {
-                this.$emit('save', this.data);
+                this.$emit('save', Object.assign({ soundSet: this.soundSetValue(this.soundSet) }, this.data));
             },
             reset() {
                 this.data = this.getDefaults();
+                this.soundSet = null;
                 this.$v.$reset();
             }
         }
