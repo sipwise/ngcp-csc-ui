@@ -105,6 +105,22 @@
                         :after="groupButtons"
                     />
                 </q-field>
+                <q-field :label="$t('pbxConfig.soundSet')">
+                    <q-select
+                        dark
+                        clearable
+                        v-model="changes.soundSet"
+                        :disable="!defaultSoundSet"
+                        :readonly="loading"
+                        :options="soundSetOptions"
+                        :after="soundSetButtons"
+                    />
+                    <q-tooltip
+                        v-if="!defaultSoundSet"
+                    >
+                        {{ $t('pbxConfig.defaultNotSet') }}
+                    </q-tooltip>
+                </q-field>
             </q-item-tile>
         </q-item-main>
         <q-item-side
@@ -192,7 +208,8 @@
         QItemTile,
         QAlert,
         QList,
-        QPopover
+        QPopover,
+        QTooltip
     } from 'quasar-framework'
     export default {
         name: 'csc-pbx-seat',
@@ -201,7 +218,9 @@
             'aliasNumberOptions',
             'groupOptions',
             'loading',
-            'callQueue'
+            'callQueue',
+            'defaultSoundSet',
+            'soundSetOptions'
         ],
         data () {
             return {
@@ -224,7 +243,8 @@
             QItemTile,
             QAlert,
             QList,
-            QPopover
+            QPopover,
+            QTooltip
         },
         computed: {
             callQueueRouteWithId() {
@@ -256,6 +276,9 @@
             extension() {
                 return this.seat.pbx_extension;
             },
+            soundSet() {
+                return this.seat.contract_sound_set_id;
+            },
             primaryNumber() {
                 return numberFilter(this.seat.primary_number);
             },
@@ -266,7 +289,8 @@
                     extension: this.changes.extension,
                     primaryNumber: this.primaryNumber,
                     aliasNumbers: this.changes.aliasNumbers,
-                    groups: this.changes.groups
+                    groups: this.changes.groups,
+                    soundSet: this.changes.soundSet
                 }
             },
             isLoading() {
@@ -391,6 +415,32 @@
             },
             hasGroups() {
                 return _.isArray(_.get(this.seat, 'groups')) && this.seat.groups.length > 0;
+            },
+            soundSetChanges() {
+                return this.soundSet + "" !== this.changes.soundSet + "";
+            },
+            soundSetButtons() {
+                let buttons = [];
+                let self = this;
+                if(this.soundSetChanges) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveSoundSet();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetSoundSet();
+                            }
+                        }
+                    );
+                }
+                return buttons;
             }
         },
         methods: {
@@ -439,7 +489,8 @@
                     name: this.seat.display_name,
                     extension: this.seat.pbx_extension,
                     aliasNumbers: this.numbersToIds(this.seat.alias_numbers),
-                    groups: this.groupsToIds(this.seat.groups)
+                    groups: this.groupsToIds(this.seat.groups),
+                    soundSet: this.seat.contract_sound_set_id
                 }
             },
             groupsToIds(groups) {
@@ -456,6 +507,12 @@
             },
             saveGroups() {
                 this.$emit('save-groups', this.seatModel);
+            },
+            resetSoundSet() {
+                this.changes.soundSet = this.seat.contract_sound_set_id;
+            },
+            saveSoundSet() {
+                this.$emit('save-sound-set', this.seatModel);
             }
         },
         watch: {

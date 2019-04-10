@@ -1,4 +1,3 @@
-
 <template>
     <div class="csc-form csc-pbx-call-queue-add-form">
         <q-field>

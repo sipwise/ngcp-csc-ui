@@ -24,7 +24,9 @@
                 class="col-xs-12 col-md-6 csc-list-form"
                 :alias-number-options="aliasNumberOptions"
                 :group-options="groupOptions"
+                :sound-set-options="soundSetOptions"
                 :loading="isAdding"
+                :default-sound-set="!!defaultSoundSet"
                 @save="addSeat"
                 @cancel="disableAddForm"
             />
@@ -61,12 +63,15 @@
                     :seat="seat"
                     :alias-number-options="aliasNumberOptions"
                     :group-options="groupOptions"
-                    @remove="removeSeatDialog"
                     :loading="isItemLoading(seat.id)"
+                    :sound-set-options="soundSetOptions"
+                    :default-sound-set="!!defaultSoundSet"
+                    @remove="removeSeatDialog"
                     @save-name="setSeatName"
                     @save-extension="setSeatExtension"
                     @save-alias-numbers="updateAliasNumbers"
                     @save-groups="updateGroups"
+                    @save-sound-set="updateSoundSet"
                 />
             </q-list>
         </div>
@@ -127,6 +132,8 @@
             this.$store.dispatch('pbxConfig/listSeats', {
                 page: 1
             });
+            this.$store.dispatch('pbxConfig/listSoundSets');
+            this.$store.dispatch('pbxConfig/getDefaultSoundSet');
         },
         data () {
             return {
@@ -160,6 +167,7 @@
             QPagination
         },
         computed: {
+            // TODO: Can remove soundSetValue?
             ...mapGetters('pbxConfig', [
                 'seats',
                 'groups',
@@ -185,19 +193,12 @@
                 'lastUpdatedField',
                 'updateAliasNumbersState',
                 'updateGroupsAndSeatsState',
-                'updateState'
+                'updateState',
+                'soundSetOptions',
+                'soundSetValue',
+                'defaultSoundSet',
+                'groupOptions'
             ]),
-            groupOptions() {
-                let groups = [];
-                this.groups.forEach((group)=>{
-                    groups.push({
-                        label: group.display_name ? group.display_name : group.username,
-                        sublabel: this.$t('pbxConfig.extension') + ': ' + group.pbx_extension,
-                        value: group.id
-                    });
-                });
-                return groups;
-            },
             isMobile() {
                 return Platform.is.mobile;
             },
@@ -272,6 +273,9 @@
             },
             updateGroups(data) {
                 this.$store.dispatch('pbxConfig/updateGroups', data);
+            },
+            updateSoundSet(data) {
+                this.$store.dispatch('pbxConfig/setSubscriberSoundSet', data);
             },
             changePage(page) {
                 this.$store.dispatch('pbxConfig/listSeats', {
