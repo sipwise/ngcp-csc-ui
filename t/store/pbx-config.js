@@ -10,28 +10,22 @@ describe('PBX Configuration Store', () => {
         let data = {
             pilot: {},
             seats: {
-                items: [
-                    {
+                2:  {
                         id: 2,
                         pbx_group_ids: []
                     },
+                3:
                     {
                         id: 3,
                         pbx_group_ids: []
                     }
-                ],
-                lastPage: 1
             },
+            lastPage: 1,
             groups: {
-                items: [
-                    {
-                        id: 4
-                    },
-                    {
-                        id: 5
+                4:  {
+                        id: 4,
+                        display_name: 'Marketing'
                     }
-                ],
-                lastPage: 1
             },
             numbers: [
                 {
@@ -43,10 +37,8 @@ describe('PBX Configuration Store', () => {
             ]
         };
         PbxConfig.mutations.listSucceeded(state, data);
-        assert.equal(state.seats[2], data.seats.items[0]);
-        assert.equal(state.seats[3], data.seats.items[1]);
-        assert.equal(state.groups[4], data.groups.items[0]);
-        assert.equal(state.groups[5], data.groups.items[1]);
+        assert.equal(state.seats, data.seats);
+        assert.equal(state.groups, data.groups);
         assert.deepEqual(state.numbers, data.numbers);
     });
 
