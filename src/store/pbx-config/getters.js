@@ -6,10 +6,14 @@ import { i18n } from '../../i18n';
 
 export default {
     groups(state) {
-        return state.groupsOrdered;
+        return state.groupsList.map((groupId) => {
+            return state.groups[groupId];
+        });
     },
     seats(state) {
-        return state.seatsOrdered;
+        return state.seatsList.map((seatId) => {
+            return state.seats[seatId];
+        });
     },
     numbers(state) {
         return _.get(state, 'numbers', []);
@@ -407,5 +411,51 @@ export default {
         return (handle) => {
             return state.uploadSoundFileProgresses[handle] || 0;
         }
+    },
+    soundSetOptions(state) {
+        let options = [];
+        Object.entries(state.soundSets).forEach((item)=>{
+            options.push({
+                label: item[1].name,
+                value: item[1].id
+            });
+        });
+        return options;
+    },
+    defaultSoundSet(state) {
+        return state.defaultSoundSet;
+    },
+    soundSetValue(state, getters) {
+        return (label) => {
+            let value = null;
+            getters.soundSetOptions.forEach((soundSet) => {
+                if (soundSet.label === label) {
+                    value = soundSet.value;
+                }
+            });
+            return value;
+        }
+    },
+    seatOptions(state) {
+        let options = [];
+        Object.values(state.seats).forEach((seat) => {
+            options.push({
+                label: seat.display_name ? seat.display_name : seat.username,
+                sublabel: i18n.t('pbxConfig.extension') + ': ' + seat.pbx_extension,
+                value: seat.id
+            });
+        });
+        return options;
+    },
+    groupOptions(state) {
+        let options = [];
+        Object.values(state.groups).forEach((group) => {
+            options.push({
+                label: group.display_name ? group.display_name : group.username,
+                sublabel: i18n.t('pbxConfig.extension') + ': ' + group.pbx_extension,
+                value: group.id
+            });
+        });
+        return options;
     }
 }

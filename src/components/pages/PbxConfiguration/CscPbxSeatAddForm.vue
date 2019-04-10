@@ -30,9 +30,9 @@
         <q-field>
             <q-select
                 dark
-                multiple
                 chips
                 clearable
+                multiple
                 v-model="data.aliasNumbers"
                 :disable="loading"
                 :readonly="loading"
@@ -43,15 +43,31 @@
         <q-field>
             <q-select
                 dark
-                multiple
                 chips
                 clearable
+                multiple
                 v-model="data.groups"
                 :disable="loading"
                 :readonly="loading"
                 :float-label="$t('pbxConfig.groups')"
                 :options="groupOptions"
             />
+        </q-field>
+        <q-field>
+            <q-select
+                dark
+                clearable
+                v-model="soundSet"
+                :disable="loading || !defaultSoundSet"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.soundSet')"
+                :options="soundSetOptions"
+            />
+            <q-tooltip
+                v-if="!defaultSoundSet"
+            >
+                {{ $t('pbxConfig.defaultNotSet') }}
+            </q-tooltip>
         </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
@@ -93,7 +109,8 @@
         QField,
         QInput,
         QSelect,
-        QIcon
+        QIcon,
+        QTooltip
     } from 'quasar-framework'
 
     export default {
@@ -101,7 +118,9 @@
         props: [
             'aliasNumberOptions',
             'groupOptions',
-            'loading'
+            'loading',
+            'soundSetOptions',
+            'defaultSoundSet'
         ],
         components: {
             QBtn,
@@ -110,7 +129,8 @@
             QField,
             QInput,
             QSelect,
-            QIcon
+            QIcon,
+            QTooltip
         },
         validations: {
             data: {
@@ -127,7 +147,13 @@
         },
         data () {
             return {
-                data: this.getDefaults()
+                data: this.getDefaults(),
+                soundSet: null
+            }
+        },
+        created() {
+            if (this.defaultSoundSet) {
+                this.soundSet = this.defaultSoundSet;
             }
         },
         computed: {
@@ -161,6 +187,16 @@
                         field: this.$t('pbxConfig.extension'),
                     });
                 }
+            },
+            soundSetLabel() {
+                let label = null;
+                if (this.soundSet) {
+                    console.log('soundSetOptions', this.soundSetOptions);
+                    label = this.soundSetOptions.filter((soundSet) => {
+                        return soundSet.value === this.soundSet;
+                    })[0].label;
+                }
+                return label;
             }
         },
         methods: {
@@ -176,10 +212,11 @@
                 this.$emit('cancel');
             },
             save() {
-                this.$emit('save', this.data);
+                this.$emit('save', Object.assign({ soundSet: this.soundSetLabel }, this.data));
             },
             reset() {
                 this.data = this.getDefaults();
+                this.soundSet = null;
                 this.$v.$reset();
             }
         }

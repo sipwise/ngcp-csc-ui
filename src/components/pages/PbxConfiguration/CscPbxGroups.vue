@@ -183,17 +183,6 @@
                     }
                 ];
             },
-            seatOptions() {
-                let seats = [];
-                this.seats.forEach((seat) => {
-                    seats.push({
-                        label: seat.display_name ? seat.display_name : seat.username,
-                        sublabel: this.$t('pbxConfig.extension') + ': ' + seat.pbx_extension,
-                        value: seat.id
-                    });
-                });
-                return seats;
-            },
             ...mapGetters('pbxConfig', [
                 'groups',
                 'seats',
@@ -220,7 +209,8 @@
                 'lastRemovedGroup',
                 'lastUpdatedField',
                 'updateAliasNumbersState',
-                'updateGroupsAndSeatsState'
+                'updateGroupsAndSeatsState',
+                'seatOptions'
             ]),
             isMobile() {
                 return Platform.is.mobile;
