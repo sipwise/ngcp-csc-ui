@@ -33,10 +33,7 @@
             v-if="isListLoadingVisible"
             class="row justify-center"
         >
-            <q-spinner-dots
-                color="primary"
-                :size="40"
-            />
+            <csc-spinner />
         </div>
         <div>
             <q-list
@@ -102,9 +99,14 @@
     import {
         scroll
     } from 'quasar-framework'
-    const { getScrollTarget, setScrollPosition } = scroll
+    import CscSpinner from "../../CscSpinner";
+    const {
+        getScrollTarget,
+        setScrollPosition
+    } = scroll
     export default {
         components: {
+            CscSpinner,
             CscPage,
             CscPbxCallQueue,
             CscPbxCallQueueAddForm,

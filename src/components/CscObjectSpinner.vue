@@ -1,9 +1,11 @@
 <template>
     <q-inner-loading
-        :visible="loading">
+        :visible="loading"
+        :style="{zIndex: 12}"
+    >
         <q-spinner-dots
             size="32px"
-            color="white"
+            color="primary"
         />
     </q-inner-loading>
 </template>

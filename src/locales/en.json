@@ -459,7 +459,9 @@
         "invalidFilesText": "This sound set is incomplete ({amount} files are missing)",
         "invalidTextMobile": "Sound set is incomplete ({amount})",
         "removeSoundFileTitle": "Remove sound file",
-        "removeSoundFileText": "You are about to remove the sound file for {handle}"
+        "removeSoundFileText": "You are about to remove the sound file for {handle}",
+        "soundSet": "Sound Set",
+        "defaultNotSet": "A default subscriber sound set to be set before being able to select, in the Sound Sets page."
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

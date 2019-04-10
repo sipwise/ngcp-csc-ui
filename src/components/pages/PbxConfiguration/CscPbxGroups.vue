@@ -7,14 +7,17 @@
             class="row justify-center"
         >
             <csc-pbx-group-add-form
-                class="col-xs-12 col-md-6 csc-list-form"
                 ref="addForm"
-                @save="addGroup"
-                @cancel="disableAddForm"
-                :loading="isAdding"
+                class="col-xs-12 col-md-6 csc-list-form"
                 :alias-number-options="aliasNumberOptions"
                 :seat-options="seatOptions"
                 :hunt-policy-options="huntPolicyOptions"
+                :sound-set-options="soundSetOptions"
+                :sound-set-label="soundSetLabel"
+                :loading="isAdding"
+                :default-sound-set="!!defaultSoundSet"
+                @save="addGroup"
+                @cancel="disableAddForm"
             />
         </div>
         <div
@@ -34,10 +37,7 @@
             v-if="isListLoadingVisible"
             class="row justify-center"
         >
-            <q-spinner-dots
-                color="primary"
-                :size="40"
-            />
+            <csc-spinner />
         </div>
         <div
             v-if="groups.length > 0 && !isListRequesting && listLastPage > 1"
@@ -65,6 +65,9 @@
                 :loading="isItemLoading(group.id)"
                 :group-name="groupName"
                 :seat-name="seatName"
+                :sound-set-options="soundSetOptions"
+                :sound-set-label="soundSetLabel"
+                :default-sound-set="!!defaultSoundSet"
                 @remove="removeGroupDialog"
                 @save-name="setGroupName"
                 @save-extension="setGroupExtension"
@@ -72,10 +75,11 @@
                 @save-hunt-timeout="setGroupHuntTimeout"
                 @save-alias-numbers="updateAliasNumbers"
                 @save-seats="updateSeats"
+                @save-sound-set="updateSoundSet"
             />
         </q-list>
         <div
-            v-if="groups.length === 0 && !isListRequesting"
+            v-if="isGroupsEmpty && !isListRequesting"
             class="row justify-center csc-no-entities"
         >
             {{ $t('pbxConfig.noGroups') }}
@@ -124,10 +128,12 @@
         QPagination,
         Platform
     } from 'quasar-framework'
+    import CscSpinner from "../../CscSpinner";
 
     export default {
         mixins: [aliasNumberOptions, itemError],
         components: {
+            CscSpinner,
             CscPage,
             CscPbxGroup,
             CscPbxGroupAddForm,
@@ -152,7 +158,9 @@
             QSpinnerMat,
             QPagination
         },
-        mounted() {
+        created() {
+            this.$store.dispatch('pbxConfig/listSoundSets');
+            this.$store.dispatch('pbxConfig/getDefaultSoundSet');
             this.$store.dispatch('pbxConfig/listGroups', {
                 page: 1
             });
@@ -160,7 +168,6 @@
         data () {
             return {
                 addFormEnabled: false,
-                page: 1,
                 currentRemovingGroup: null
             }
         },
@@ -184,17 +191,6 @@
                         value: 'circular'
                     }
                 ];
-            },
-            seatOptions() {
-                let seats = [];
-                this.seats.forEach((seat) => {
-                    seats.push({
-                        label: seat.display_name ? seat.display_name : seat.username,
-                        sublabel: this.$t('pbxConfig.extension') + ': ' + seat.pbx_extension,
-                        value: seat.id
-                    });
-                });
-                return seats;
             },
             ...mapGetters('pbxConfig', [
                 'groups',
@@ -224,7 +220,11 @@
                 'updateAliasNumbersState',
                 'updateGroupsAndSeatsState',
                 'groupName',
-                'seatName'
+                'seatName',
+                'seatOptions',
+                'soundSetOptions',
+                'soundSetLabel',
+                'defaultSoundSet'
             ]),
             isMobile() {
                 return Platform.is.mobile;
@@ -235,6 +235,9 @@
                         group: this.currentRemovingGroup.name
                     });
                 }
+            },
+            isGroupsEmpty() {
+                return Object.entries(this.groups).length === 0;
             }
         },
         watch: {
@@ -306,6 +309,9 @@
             },
             updateSeats(data) {
                 this.$store.dispatch('pbxConfig/updateSeats', data);
+            },
+            updateSoundSet(data) {
+                this.$store.dispatch('pbxConfig/setGroupSoundSet', data);
             },
             changePage(page) {
                 this.$store.dispatch('pbxConfig/listGroups', {

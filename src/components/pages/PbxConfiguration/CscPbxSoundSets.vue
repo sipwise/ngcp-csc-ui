@@ -3,15 +3,6 @@
         :is-list="true"
     >
         <div
-            v-if="isListLoadingVisible"
-            class="row justify-center"
-        >
-            <q-spinner-dots
-                color="primary"
-                :size="40"
-            />
-        </div>
-        <div
             v-show="addFormEnabled"
             class="row justify-center"
         >
@@ -35,6 +26,12 @@
             >
                 {{ $t('pbxConfig.addSoundSet') }}
             </q-btn>
+        </div>
+        <div
+            v-if="isListLoadingVisible"
+            class="row justify-center"
+        >
+            <csc-spinner />
         </div>
         <q-list
             striped-odd
@@ -97,8 +94,10 @@
         QInnerLoading,
         QSpinnerDots
     } from 'quasar-framework'
+    import CscSpinner from "../../CscSpinner";
     export default {
         components: {
+            CscSpinner,
             CscPage,
             CscPbxSoundSet,
             CscRemoveDialog,
@@ -116,7 +115,7 @@
             }
         },
         mounted() {
-            this.$store.dispatch('pbxConfig/listSoundSets');
+            this.$store.dispatch('pbxConfig/listSoundSetsWithFiles');
         },
         computed: {
             ...mapGetters('pbxConfig', [

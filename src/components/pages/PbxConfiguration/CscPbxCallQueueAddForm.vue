@@ -1,4 +1,3 @@
-
 <template>
     <div class="csc-form csc-pbx-call-queue-add-form">
         <q-field>
@@ -63,9 +62,10 @@
                 {{ $t('pbxConfig.createConfig') }}
             </q-btn>
         </div>
-        <q-inner-loading :visible="loading">
-            <q-spinner-mat size="60px" color="primary" />
-        </q-inner-loading>
+        <csc-object-spinner
+            v-if="loading"
+            :loading="loading"
+        />
     </div>
 </template>
 
@@ -90,7 +90,7 @@
         QSelect,
         QIcon
     } from 'quasar-framework'
-
+    import CscObjectSpinner from "../../CscObjectSpinner"
     export default {
         name: 'csc-pbx-call-queue-add-form',
         props: [
@@ -98,6 +98,7 @@
             'loading'
         ],
         components: {
+            CscObjectSpinner,
             QCard,
             QCardTitle,
             QCardMain,

@@ -126,6 +126,21 @@
                         :after="seatButtons"
                     />
                 </q-field>
+                <q-field :label="$t('pbxConfig.soundSet')">
+                    <q-select
+                        dark
+                        v-model="changes.soundSet"
+                        :disable="!defaultSoundSet"
+                        :readonly="loading"
+                        :options="soundSetOptions"
+                        :after="soundSetButtons"
+                    />
+                    <q-tooltip
+                        v-if="!defaultSoundSet"
+                    >
+                        {{ $t('pbxConfig.defaultNotSet') }}
+                    </q-tooltip>
+                </q-field>
             </q-item-tile>
         </q-item-main>
         <q-item-side
@@ -185,12 +200,10 @@
                 />
             </q-item-tile>
         </q-item-side>
-        <q-inner-loading :visible="isLoading">
-            <q-spinner-mat
-                size="60px"
-                color="primary"
-            />
-        </q-inner-loading>
+        <csc-object-spinner
+            v-if="loading"
+            :loading="loading"
+        />
     </q-item>
 </template>
 
@@ -209,7 +222,7 @@
         QChip,
         QBtn,
         QInnerLoading,
-        QSpinnerMat,
+        QSpinnerDots,
         QTransition,
         Platform,
         QItem,
@@ -218,8 +231,10 @@
         QItemTile,
         QAlert,
         QList,
-        QPopover
+        QPopover,
+        QTooltip
     } from 'quasar-framework'
+    import CscObjectSpinner from "../../CscObjectSpinner";
     export default {
         name: 'csc-pbx-group',
         props: [
@@ -229,7 +244,10 @@
             'seatOptions',
             'loading',
             'groupName',
-            'seatName'
+            'seatName',
+            'defaultSoundSet',
+            'soundSetOptions',
+            'soundSetLabel'
         ],
         data () {
             return {
@@ -238,6 +256,7 @@
             }
         },
         components: {
+            CscObjectSpinner,
             QCard,
             QCardTitle,
             QCardMain,
@@ -249,7 +268,7 @@
             QChip,
             QBtn,
             QInnerLoading,
-            QSpinnerMat,
+            QSpinnerDots,
             QTransition,
             QItem,
             QItemSide,
@@ -257,7 +276,8 @@
             QItemTile,
             QAlert,
             QList,
-            QPopover
+            QPopover,
+            QTooltip
         },
         computed: {
             callQueueRouteWithId() {
@@ -295,6 +315,9 @@
             huntTimeout() {
                 return this.group.pbx_hunt_timeout;
             },
+            soundSet() {
+                return this.group.contract_sound_set_id;
+            },
             primaryNumber() {
                 return numberFilter(this.group.primary_number);
             },
@@ -307,7 +330,8 @@
                     huntTimeout: this.changes.huntTimeout,
                     primaryNumber: this.primaryNumber,
                     aliasNumbers: this.changes.aliasNumbers,
-                    seats: this.changes.seats
+                    seats: this.changes.seats,
+                    soundSet: this.soundSetLabel(this.changes.soundSet)
                 }
             },
             isLoading() {
@@ -484,6 +508,32 @@
             },
             hasSeats() {
                 return _.isArray(_.get(this.group, 'seats')) && this.group.seats.length > 0;
+            },
+            soundSetChanges() {
+                return this.soundSet + "" !== this.changes.soundSet + "";
+            },
+            soundSetButtons() {
+                let buttons = [];
+                let self = this;
+                if(this.soundSetChanges) {
+                    buttons.push({
+                            icon: 'check',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.saveSoundSet();
+                            }
+                        }, {
+                            icon: 'clear',
+                            error: false,
+                            handler (event) {
+                                event.stopPropagation();
+                                self.resetSoundSet();
+                            }
+                        }
+                    );
+                }
+                return buttons;
             }
         },
         methods: {
@@ -549,7 +599,8 @@
                     huntPolicy: this.group.pbx_hunt_policy,
                     huntTimeout: this.group.pbx_hunt_timeout,
                     aliasNumbers: this.numbersToIds(this.group.alias_numbers),
-                    seats: this.seatsToIds(this.group.seats)
+                    seats: this.seatsToIds(this.group.seats),
+                    soundSet: this.group.contract_sound_set_id
                 }
             },
             seatsToIds(seats) {
@@ -567,6 +618,12 @@
             saveSeats() {
                 this.$emit('save-seats', this.groupModel);
             },
+            resetSoundSet() {
+                this.changes.soundSet = this.group.contract_sound_set_id;
+            },
+            saveSoundSet() {
+                this.$emit('save-sound-set', this.groupModel);
+            }
         },
         watch: {
             group() {

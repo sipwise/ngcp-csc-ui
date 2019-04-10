@@ -4,7 +4,7 @@
     >
         <q-spinner-dots
             size="32px"
-            color="white"
+            color="primary"
         />
     </div>
 </template>
