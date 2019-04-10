@@ -24,7 +24,12 @@ import {
     removeCallQueueConfig
 } from './subscriber';
 import uuid from 'uuid';
-import { getList, get, patchReplace} from './common'
+import {
+    getList,
+    get,
+    patchReplace,
+    patchAdd
+} from './common'
 
 var createId = uuid.v4;
 
@@ -286,6 +291,15 @@ export function addSeat(seat) {
             });
         }).then((subscriberId)=>{
             assignNumbers(seat.aliasNumbers, subscriberId);
+            return subscriberId;
+        }).then((subscriberId)=>{
+            if (seat.soundSet) {
+                setSubscriberSoundSet({
+                    soundSet: seat.soundSet,
+                    id: subscriberId
+                });
+            }
+            return;
         }).then(()=>{
             resolve();
         }).catch((err)=>{
@@ -836,10 +850,42 @@ export function uploadSoundFile(options, onProgress) {
     });
 }
 
+export function getSubscriberSoundSet(id) {
+    return new Promise((resolve, reject)=>{
+        getPreferences(id).then((result) => {
+            resolve(result.contract_sound_set);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
 export function abortPreviousSoundFileUpload(handle) {
     return new Promise((resolve) => {
         let requestKey = `previous-${handle}-request`;
         Vue[requestKey].abort();
         resolve();
+    });
+}
+
+export function setSubscriberSoundSet(options) {
+    return patchAdd({
+        path: 'api/subscriberpreferences/' + options.id,
+        fieldPath: 'contract_sound_set',
+        value: options.soundSet
+    });
+}
+
+export function getDefaultSoundSet() {
+    return new Promise((resolve, reject)=>{
+        getAllSoundSets().then((result) => {
+            let defaultSoundSets = result.items.filter((soundSet) => {
+                return _.get(soundSet, 'contract_default', false);
+            })
+            let defaultSoundSet = defaultSoundSets[0] ? defaultSoundSets[0].id : null;
+            resolve(defaultSoundSet);
+        }).catch((err)=>{
+            reject(err);
+        });
     });
 }
