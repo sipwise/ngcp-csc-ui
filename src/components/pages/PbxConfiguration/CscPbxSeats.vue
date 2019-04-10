@@ -24,7 +24,9 @@
                 class="col-xs-12 col-md-6 csc-list-form"
                 :alias-number-options="aliasNumberOptions"
                 :group-options="groupOptions"
+                :sound-set-options="soundSetOptions"
                 :loading="isAdding"
+                :default-sound-set="!!defaultSoundSet"
                 @save="addSeat"
                 @cancel="disableAddForm"
             />
@@ -55,18 +57,23 @@
                 multiline
                 :highlight="!isMobile"
             >
+                <!--TODO: 2. Add soundSet preference to seats data structure,-->
+                <!--and add in API layer-->
                 <csc-pbx-seat
                     v-for="seat in seats"
                     :key="seat.id"
                     :seat="seat"
                     :alias-number-options="aliasNumberOptions"
                     :group-options="groupOptions"
-                    @remove="removeSeatDialog"
                     :loading="isItemLoading(seat.id)"
+                    :sound-set-options="soundSetOptions"
+                    :default-sound-set="!!defaultSoundSet"
+                    @remove="removeSeatDialog"
                     @save-name="setSeatName"
                     @save-extension="setSeatExtension"
                     @save-alias-numbers="updateAliasNumbers"
                     @save-groups="updateGroups"
+                    @save-sound-set="updateSoundSet"
                 />
             </q-list>
         </div>
@@ -127,6 +134,8 @@
             this.$store.dispatch('pbxConfig/listSeats', {
                 page: 1
             });
+            this.$store.dispatch('pbxConfig/listSoundSets');
+            this.$store.dispatch('pbxConfig/getDefaultSoundSet');
         },
         data () {
             return {
@@ -185,7 +194,10 @@
                 'lastUpdatedField',
                 'updateAliasNumbersState',
                 'updateGroupsAndSeatsState',
-                'updateState'
+                'updateState',
+                'soundSetOptions',
+                'soundSetValue',
+                'defaultSoundSet'
             ]),
             groupOptions() {
                 let groups = [];
@@ -272,6 +284,9 @@
             },
             updateGroups(data) {
                 this.$store.dispatch('pbxConfig/updateGroups', data);
+            },
+            updateSoundSet(data) {
+                this.$store.dispatch('pbxConfig/setSubscriberSoundSet', data);
             },
             changePage(page) {
                 this.$store.dispatch('pbxConfig/listSeats', {

@@ -7,7 +7,7 @@ export default {
     groups: {},
     groupsOrdered: [],
     seats: {},
-    seatsOrdered: [],
+    //seatsOrdered: [],
     numbers: [],
     numbersMap : {},
     devicesOrdered: [],
@@ -98,5 +98,9 @@ export default {
     lastAddedCallQueue: null,
     uploadSoundFileStates: {},
     uploadSoundFileErrors: {},
-    uploadSoundFileProgresses: {}
+    uploadSoundFileProgresses: {},
+    defaultSoundSetState : RequestState.initiated,
+    defaultSoundSetError: null,
+    defaultSoundSet: null,
+    seatsList: []
 }

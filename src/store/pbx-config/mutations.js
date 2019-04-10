@@ -37,6 +37,11 @@ export default {
         state.numbersMap = {};
     },
     listSucceeded(state, all) {
+        console.log('all', all);
+    //listSucceeded(state, options) {
+        //let all = options.all;
+        //let seats = options.seatList;
+        //console.log('seats', seats);
         state.listState = RequestState.succeeded;
         state.listError = null;
         state.listLastPage = all.lastPage;
@@ -44,7 +49,7 @@ export default {
         state.groups = {};
         state.groupsOrdered = [];
         state.seats = {};
-        state.seatsOrdered = [];
+        //state.seatsOrdered = [];
         state.numbersMap = {};
         all.groups.items.forEach((group)=>{
             state.groups[group.id] = group;
@@ -61,7 +66,7 @@ export default {
                 _.set(seat, 'groups', groups);
             });
             state.seats[seat.id] = seat;
-            state.seatsOrdered.push(seat);
+            //state.seatsOrdered.push(seat);
         });
         if(_.isArray(all.numbers) && all.numbers.length > 0) {
             all.numbers.forEach((number)=>{
@@ -81,6 +86,26 @@ export default {
             });
             state.numbers = all.numbers;
         }
+        /* Block from listSoundSetsSucceeded()
+            state.listState = RequestState.succeeded;
+            state.listSoundSetsState = RequestState.succeeded;
+            state.listSoundSetsError = null;
+            state.soundSets = {};
+            sets.items.forEach((set) => {
+                state.soundSets[set.id] = set;
+            });
+            state.soundSetsList = Object.keys(state.soundSets);
+        */
+        // HYPO: Simply replace seatsOrdered with seatsList, and change getter
+        // TODO: Split listSucceeded() into listSeatsSucceeded and
+        // listGroupsSucceeded (at least to begin with), as line below has no
+        // seats to operate on yet. Might also need to push some logic to other
+        // action or API layer instead, to simplify
+        //state.seatsList = Object.keys(state.seats);
+        setTimeout(() => {
+            console.log('state.seats', state.seats);
+            state.seatsList = Object.keys(state.seats);
+        }, 1500);
     },
     listFailed(state, error) {
         state.listState = RequestState.failed;
@@ -390,11 +415,12 @@ export default {
         state.seatReloadingState = RequestState.succeeded;
         state.seatReloadingError = null;
         Vue.set(state.seats, seat.id, seat);
-        for(let i = 0; i < state.seatsOrdered.length; i++) {
-            if(state.seatsOrdered[i].id === seat.id) {
-                state.seatsOrdered[i] = seat;
-            }
-        }
+        //for(let i = 0; i < state.seatsOrdered.length; i++) {
+            //if(state.seatsOrdered[i].id === seat.id) {
+                //state.seatsOrdered[i] = seat;
+            //}
+        //}
+        state.seatsList = Object.keys(state.seats);
         let groupIds = _.get(seat, 'pbx_group_ids', []);
         seat.groups = [];
         groupIds.forEach((groupId)=>{
@@ -452,6 +478,8 @@ export default {
         state.configReloadingState = RequestState.failed;
         state.configReloadingError = err;
     },
+    // TODO: Possibly remove all preference fetching and mutations, if choosing
+    // to instead fetch as part of listSeats/listGroups
     preferenceRequesting(state, type, id) {
         reactiveSet(state[type + 'States'], id + "", RequestState.requesting);
     },
@@ -461,6 +489,10 @@ export default {
         reactiveSet(state[data.type + 'Errors'], id, null);
         Vue.set(state[data.type + 's'], id, Object.assign(state[data.type + 's'][id], data.preferences));
         for (let i = 0; i <= state[data.type + 'sOrdered'].length; i++) {
+            // TODO: Need to be restructured. One solution is to fetch this
+            // in with getSeats/getGroups, so we can get this in action
+            // sequence. Also would be good to simply refactor this to the
+            // new pattern used for SoundSets, a la soundSets getter
             let subscriberState = state[data.type + 'sOrdered'][i];
             if (subscriberState && (state[data.type + 'sOrdered'][i].id === data.preferences.id)) {
                 state[data.type + 'sOrdered'][i] = Object.assign(state[data.type + 'sOrdered'][i], data.preferences);
@@ -567,5 +599,18 @@ export default {
     },
     resetSoundFileProgress(state, handle) {
         reactiveSet(state.uploadSoundFileProgresses, handle, 0);
+    },
+    defaultSoundSetRequesting(state) {
+        state.defaultSoundSetState = RequestState.requesting;
+        state.defaultSoundSetError = null;
+    },
+    defaultSoundSetSucceeded(state, soundSet) {
+        state.defaultSoundSet = soundSet;
+        state.defaultSoundSetState = RequestState.succeeded;
+        state.defaultSoundSetError = null;
+    },
+    defaultSoundSetFailed(state, error) {
+        state.defaultSoundSetState = RequestState.failed;
+        state.defaultSoundSetError = error;
     }
 }

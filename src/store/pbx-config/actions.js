@@ -49,7 +49,8 @@ import {
     createSoundSet,
     removeSoundFile,
     uploadSoundFile,
-    abortPreviousSoundFileUpload
+    abortPreviousSoundFileUpload,
+    getDefaultSoundSet
 } from '../../api/pbx-config'
 
 export default {
@@ -199,11 +200,19 @@ export default {
     listSeats(context, options) {
         let silent = _.get(options, 'silent', false);
         let page = _.get(options, 'page', 1);
+        //let data = {};
         context.commit('listRequesting', {
             silent: silent,
             page: page
         });
         getSeatList(page).then((data) => {
+        //getSeatList(page).then((result) => {
+            //let seats = [];
+            //data = result;
+            //data.seats.items.forEach((seat)=>{
+                //// TODO: Missing seats/groups logic
+                //seats[seat.id] = seat;
+            //});
             context.commit('listSucceeded', data);
             return data;
         }).then((seats) => {
@@ -563,7 +572,7 @@ export default {
             context.commit('removeItemFailed', err.message);
         });
     },
-    listSoundSets(context) {
+    listSoundSetsWithFiles(context) {
         context.commit('listSoundSetsRequesting');
         getAllSoundSets().then((data) => {
             context.commit('listSoundSetsSucceeded', data);
@@ -596,7 +605,7 @@ export default {
     removeSoundSet(context, soundSet) {
         context.commit('removeItemRequesting', soundSet);
         removeSoundSet(soundSet.id).then(() => {
-            return context.dispatch('listSoundSets');
+            return context.dispatch('listSoundSetsWithFiles');
         }).then(() => {
             context.commit('removeItemSucceeded');
         }).catch((err) => {
@@ -668,7 +677,7 @@ export default {
     createSoundSet(context, soundSet) {
         context.commit('addItemRequesting', soundSet);
         createSoundSet(soundSet).then(() => {
-            return context.dispatch('listSoundSets');
+            return context.dispatch('listSoundSetsWithFiles');
         }).then(() => {
             context.commit('addItemSucceeded');
         }).catch((err) => {
@@ -702,5 +711,21 @@ export default {
     },
     abortPreviousSoundFileUpload(state, handle) {
         abortPreviousSoundFileUpload(handle);
+    },
+    listSoundSets(context) {
+        context.commit('listSoundSetsRequesting');
+        getAllSoundSets().then((data) => {
+            context.commit('listSoundSetsSucceeded', data);
+        }).catch((err) => {
+            context.commit('listSoundSetsFailed', err.message)
+        });
+    },
+    getDefaultSoundSet(context) {
+        context.commit('defaultSoundSetRequesting');
+        getDefaultSoundSet().then((soundSet) => {
+            context.commit('defaultSoundSetSucceeded', soundSet);
+        }).catch((err) => {
+            context.commit('defaultSoundSetFailed', err.message);
+        });
     }
 }

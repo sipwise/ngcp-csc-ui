@@ -21,10 +21,16 @@ import {
     setQueueLength,
     setWrapUpTime,
     getPreferences,
-    removeCallQueueConfig
+    removeCallQueueConfig,
+    getAllPreferences
 } from './subscriber';
 import uuid from 'uuid';
-import { getList, get, patchReplace} from './common'
+import {
+    getList,
+    get,
+    patchReplace,
+    patchAdd
+} from './common'
 
 var createId = uuid.v4;
 
@@ -53,6 +59,11 @@ export function getGroup(groupId) {
 
 export function getSeats(options) {
     return new Promise((resolve, reject)=>{
+        let subscribers = {
+            items: []
+        };
+        let soundSets = {};
+        let preferences = {};
         options = options || {};
         options = _.merge(options, {
             params: {
@@ -60,8 +71,23 @@ export function getSeats(options) {
                 is_pbx_pilot: 0
             }
         });
-        getSubscribers(options).then((res)=>{
-            resolve(res);
+        Promise.resolve().then(()=>{
+            return getSubscribers(options);
+        }).then((subs)=> {
+            subscribers = subs;
+            return getAllSoundSets();
+        }).then((sets)=> {
+            soundSets = _.keyBy(sets.items, 'name');
+            return getAllPreferences();
+        }).then((prefs)=>{
+            preferences = _.keyBy(prefs.items, 'id');
+            subscribers.items.forEach((subscriber) => {
+                if (preferences[subscriber.id]) {
+                    subscriber.contract_sound_set = preferences[subscriber.id].contract_sound_set;
+                    subscriber.contract_sound_set_id = soundSets[preferences[subscriber.id].contract_sound_set].id;
+                }
+            });
+            resolve(subscribers);
         }).catch((err)=>{
             reject(err);
         });
@@ -286,6 +312,15 @@ export function addSeat(seat) {
             });
         }).then((subscriberId)=>{
             assignNumbers(seat.aliasNumbers, subscriberId);
+            return subscriberId;
+        }).then((subscriberId)=>{
+            if (seat.soundSet) {
+                setSubscriberSoundSet({
+                    soundSet: seat.soundSet,
+                    id: subscriberId
+                });
+            }
+            return;
         }).then(()=>{
             resolve();
         }).catch((err)=>{
@@ -841,5 +876,27 @@ export function abortPreviousSoundFileUpload(handle) {
         let requestKey = `previous-${handle}-request`;
         Vue[requestKey].abort();
         resolve();
+    });
+}
+
+export function setSubscriberSoundSet(options) {
+    return patchAdd({
+        path: 'api/subscriberpreferences/' + options.id,
+        fieldPath: 'contract_sound_set',
+        value: options.soundSet
+    });
+}
+
+export function getDefaultSoundSet() {
+    return new Promise((resolve, reject)=>{
+        getAllSoundSets().then((result) => {
+            let defaultSoundSets = result.items.filter((soundSet) => {
+                return _.get(soundSet, 'contract_default', false);
+            })
+            let defaultSoundSet = defaultSoundSets[0] ? defaultSoundSets[0].id : null;
+            resolve(defaultSoundSet);
+        }).catch((err)=>{
+            reject(err);
+        });
     });
 }

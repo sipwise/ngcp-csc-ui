@@ -9,8 +9,13 @@ export default {
         return state.groupsOrdered;
     },
     seats(state) {
-        return state.seatsOrdered;
+        return state.seatsList.map((seatId) => {
+            return state.seats[seatId];
+        });
     },
+    //seats(state) {
+        //return state.seatsOrdered;
+    //},
     numbers(state) {
         return _.get(state, 'numbers', []);
     },
@@ -406,6 +411,33 @@ export default {
     uploadSoundFileProgress(state) {
         return (handle) => {
             return state.uploadSoundFileProgresses[handle] || 0;
+        }
+    },
+    soundSetOptions(state) {
+        let options = [];
+        Object.entries(state.soundSets).forEach((item)=>{
+            options.push({
+                label: item[1].name,
+                value: item[1].id
+            });
+        });
+        return options;
+    },
+    defaultSoundSet(state) {
+        return state.defaultSoundSet;
+    },
+    soundSetValue(state, getters) {
+        return (label) => {
+            let value = null;
+            getters.soundSetOptions.forEach((soundSet) => {
+                console.log('soundSet HERE', soundSet);
+                console.log('label', label);
+                console.log('value', soundSet.value);
+                if (soundSet.label === label) {
+                    value = soundSet.value;
+                }
+            });
+            return value;
         }
     }
 }
