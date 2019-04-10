@@ -392,5 +392,15 @@ export default {
         return (id) => {
             return id ? state.removeItem === id : false;
         }
+    },
+    soundSetOptions(state) {
+        let options = [];
+        Object.entries(state.soundSets).forEach((item)=>{
+            options.push({
+                label: item[1].name,
+                value: item[1].id
+            });
+        });
+        return options;
     }
 }

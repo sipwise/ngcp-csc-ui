@@ -30,9 +30,9 @@
         <q-field>
             <q-select
                 dark
-                multiple
                 chips
                 clearable
+                multiple
                 v-model="data.aliasNumbers"
                 :disable="loading"
                 :readonly="loading"
@@ -43,14 +43,25 @@
         <q-field>
             <q-select
                 dark
-                multiple
                 chips
                 clearable
+                multiple
                 v-model="data.groups"
                 :disable="loading"
                 :readonly="loading"
                 :float-label="$t('pbxConfig.groups')"
                 :options="groupOptions"
+            />
+        </q-field>
+        <q-field>
+            <q-select
+                dark
+                clearable
+                v-model="soundSet"
+                :disable="loading"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.soundSet')"
+                :options="soundSetOptions"
             />
         </q-field>
         <div class="csc-form-actions row justify-center">
@@ -101,7 +112,8 @@
         props: [
             'aliasNumberOptions',
             'groupOptions',
-            'loading'
+            'loading',
+            'soundSetOptions'
         ],
         components: {
             QBtn,
@@ -127,7 +139,8 @@
         },
         data () {
             return {
-                data: this.getDefaults()
+                data: this.getDefaults(),
+                soundSet: null
             }
         },
         computed: {
@@ -161,6 +174,11 @@
                         field: this.$t('pbxConfig.extension'),
                     });
                 }
+            },
+            soundSetLabel() {
+                return this.soundSetOptions.filter((soundSet) => {
+                    return soundSet.value === this.soundSet;
+                })[0].label;
             }
         },
         methods: {
@@ -176,10 +194,11 @@
                 this.$emit('cancel');
             },
             save() {
-                this.$emit('save', this.data);
+                this.$emit('save', Object.assign({ soundSet: this.soundSetLabel }, this.data));
             },
             reset() {
                 this.data = this.getDefaults();
+                this.soundSet = null;
                 this.$v.$reset();
             }
         }

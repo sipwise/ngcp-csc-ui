@@ -286,6 +286,15 @@ export function addSeat(seat) {
             });
         }).then((subscriberId)=>{
             assignNumbers(seat.aliasNumbers, subscriberId);
+            return subscriberId;
+        }).then((subscriberId)=>{
+            if (seat.soundSet) {
+                setSubscriberSoundSet({
+                    soundSet: seat.soundSet,
+                    id: subscriberId
+                });
+            }
+            return;
         }).then(()=>{
             resolve();
         }).catch((err)=>{
@@ -801,4 +810,12 @@ export function playSoundFile(options) {
 
 export function removeSoundFile(id) {
     return Vue.http.delete('api/soundfiles/' + id);
+}
+
+export function setSubscriberSoundSet(options) {
+    return patchReplace({
+        path: 'api/subscriberpreferences/' + options.id,
+        fieldPath: 'contract_sound_set',
+        value: options.soundSet
+    });
 }
