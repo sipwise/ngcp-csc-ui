@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5afe65bd_25f16ece",
+        "filename": "src/api/pbx-config.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2019-04-15T09:33:08Z",
+      "side": 1,
+      "message": "We need to ensure that the state management stays in the store and does not slip in the API layer over time. I propose that we create a Vue plugin, since this is the perfect case for it.  The Vue plugin should manage the upload requests and should prevent uploads to the same handle at the same time by throwing an appropriate exception. And it should provide the interface methods onProgress(...), onSuccess(...), onError(...), upload(handle, file) and abort(handle).",
+      "revId": "1e5ed02ccda0ab5af71479c0be41575512e7d949",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5afe65bd_e5b916ee",
+        "filename": "src/api/pbx-config.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 839,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2019-04-15T09:33:08Z",
+      "side": 1,
+      "message": "This method will be obsolete with the creation of the Vue plugin.",
+      "revId": "1e5ed02ccda0ab5af71479c0be41575512e7d949",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
