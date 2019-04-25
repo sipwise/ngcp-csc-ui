@@ -1,3 +1,27 @@
+ngcp-csc-ui (7.3.1.0+0~mr7.3.1.0) unstable; urgency=medium
+
+  [ Robert Axelsen ]
+  * [af2c112] TT#52621 Change language for current session
+  * [da0da9d] TT#53607 Remove '+' symbol on logs and outgoing
+  * [8d95437] TT#47513 Grouped list of SoundItems
+  * [125cdd8] TT#47520 Change an existing SoundSet
+  * [be8ece3] TT#55874 Remove hardcoded sound handles filter
+  * [e136698] TT#47514 Play sound item sound file
+  * [6252fdc] TT#55908 Fix delay after clicking expand button
+  * [81dcafe] TT#56068 Fix sound file upload floatLabel bug
+  * [fa7f91f] TT#47509 Create new SoundSet
+  * [35e9c8d] TT#47518 Get alerted about invalid soundsets
+  * [b39ff78] TT#47516 User can remove sound file
+
+  [ Hans-Peter Herzog ]
+  * [f1f5bc3] TT#31302 Conferencing: As a Customer, I want to join a conference by using a URL
+  * [1fc7d7c] TT#55909 i18n: After first login the current selected language shows "unknown"
+  * [fbb97b1] TT#55909 i18n: Fix language label retrieval
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 25 Apr 2019 14:28:51 +0200
+
 ngcp-csc-ui (7.3.0.0+0~mr7.3.0.0) unstable; urgency=medium
 
   [ raxelsen ]
