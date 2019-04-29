@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "da37b569_010aead2",
+        "filename": "src/api/pbx-config.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 1000033
+      },
+      "writtenOn": "2019-04-29T08:00:37Z",
+      "side": 1,
+      "message": "This implementation is taken from the vue-resource documentation: https://github.com/pagekit/vue-resource/blob/master/docs/recipes.md#abort-a-request\n\nWhile a plugin might be a good case for this, I have two concerns/questions:\n- 1. I am unsure about how to implement this, especially keeping in mind that it will be a wrapper around a vue-resource method that already has instance methods implemented. Would appreciate your help\n- 2. You mention \"ensure that the state management stays in the store\". Your ideas is to ensure this by using the plugin from inside the store, with plugin state being synced with the store? You relayed to me recently that during your work with the rtcengine plugins, you wanted to avoid putting complex state in the store, as we\u0027ve seen/hear about issues with that. Does that not also apply here. I am sure I missing something, so would be nice to discuss.\n\nWould you be ok with merging this story as is, and create a follow-up story for this? If not, I propose we re-estimate the current story.",
+      "parentUuid": "5afe65bd_25f16ece",
+      "revId": "1e5ed02ccda0ab5af71479c0be41575512e7d949",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5afe65bd_e5b916ee",
         "filename": "src/api/pbx-config.js",
         "patchSetId": 6
