@@ -407,5 +407,10 @@ export default {
         return (handle) => {
             return state.uploadSoundFileProgresses[handle] || 0;
         }
+    },
+    managerSecretaryGroupsAndSeats(state) {
+        return state.managerSecretaryGroupsAndSeatsList.map((setId) => {
+            return state.managerSecretaryGroupsAndSeats[setId];
+        });
     }
 }
