@@ -203,6 +203,17 @@
                     :label="$t('navigation.pbxConfiguration.soundSets')"
                 />
             </q-side-link>
+            <q-side-link
+                item
+                to="/user/pbx-configuration/manager-secretary"
+            >
+                <q-item-side
+                    icon="record_voice_over"
+                />
+                <q-item-main
+                    :label="$t('navigation.pbxConfiguration.managerSecretary')"
+                />
+            </q-side-link>
         </q-collapsible>
     </q-list>
 </template>

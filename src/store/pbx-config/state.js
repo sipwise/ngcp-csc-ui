@@ -98,5 +98,7 @@ export default {
     lastAddedCallQueue: null,
     uploadSoundFileStates: {},
     uploadSoundFileErrors: {},
-    uploadSoundFileProgresses: {}
+    uploadSoundFileProgresses: {},
+    managerSecretaryGroupsAndSeats: {},
+    managerSecretaryGroupsAndSeatsList: []
 }

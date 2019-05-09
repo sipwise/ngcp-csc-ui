@@ -567,5 +567,23 @@ export default {
     },
     resetSoundFileProgress(state, handle) {
         reactiveSet(state.uploadSoundFileProgresses, handle, 0);
+    },
+    managerSecretaryListRequesting(state, options) {
+        options = options || {};
+        state.listLoadingSilently = _.get(options, 'silent', false);
+        state.listState = RequestState.requesting;
+        state.listError = null;
+    },
+    managerSecretaryListSucceeded(state, data) {
+        state.listState = RequestState.succeeded;
+        state.listError = null;
+        data.items.forEach((config)=>{
+            state.managerSecretaryGroupsAndSeats[config.id] = config;
+        });
+        state.managerSecretaryGroupsAndSeatsList = Object.keys(state.managerSecretaryGroupsAndSeats);
+    },
+    managerSecretaryListFailed(state, error) {
+        state.listState = RequestState.failed;
+        state.listError = error;
     }
 }

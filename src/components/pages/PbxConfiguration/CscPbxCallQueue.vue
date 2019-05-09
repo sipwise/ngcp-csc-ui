@@ -30,7 +30,7 @@
                     name="person"
                     color="white"
                 />
-                <span class="csc-item-label">{{ subscriber.display_name }}</span>
+                <span class="csc-item-label">{{ subscriber.name }}</span>
             </q-item-tile>
             <q-item-tile
                 v-if="!expanded"
