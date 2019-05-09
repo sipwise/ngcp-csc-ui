@@ -102,7 +102,8 @@
             "seats": "Seats",
             "devices": "Devices",
             "callQueues": "Call Queues",
-            "soundSets": "Sound Sets"
+            "soundSets": "Sound Sets",
+            "managerSecretary": "Manager Secretary"
         },
         "voicebox": {
             "title": "Voicebox",
