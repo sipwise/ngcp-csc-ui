@@ -50,7 +50,8 @@ import {
     removeSoundFile,
     uploadSoundFile,
     abortPreviousSoundFileUpload,
-    setSoundSetItemLoopplay
+    setSoundSetItemLoopplay,
+    getManagerSecretaryConfigurations
 } from '../../api/pbx-config'
 
 export default {
@@ -714,6 +715,15 @@ export default {
             context.commit('updateItemSucceeded');
         }).catch((err) => {
             context.commit('updateItemFailed', err.message);
+        });
+    },
+    listManagerSecretaryGroupsAndSeats(context, options) {
+        let silent = _.get(options, 'silent', false);
+        context.commit('managerSecretaryListRequesting', silent);
+        getManagerSecretaryConfigurations().then((list) => {
+            context.commit('managerSecretaryListSucceeded', list);
+        }).catch((err) => {
+            context.commit('managerSecretaryListFailed', err.message);
         });
     }
 }

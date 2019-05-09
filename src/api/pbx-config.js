@@ -21,7 +21,8 @@ import {
     setQueueLength,
     setWrapUpTime,
     getPreferences,
-    removeCallQueueConfig
+    removeCallQueueConfig,
+    getSubscribersByManagerSecretaryEnabled
 } from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace} from './common'
@@ -81,7 +82,15 @@ export function getAllGroupsAndSeats(options) {
             }
         });
         getSubscribers(options).then((res)=>{
-            resolve(res);
+            let subscribers = res.items.map((subscriber)=>{
+                let name = subscriber.display_name ? subscriber.display_name : subscriber.webusername;
+                return Object.assign(subscriber, {
+                    name: name
+                });
+            });
+            resolve({
+                items: subscribers
+            });
         }).catch((err)=>{
             reject(err);
         });
@@ -532,9 +541,11 @@ export function getCallQueueConfigurations() {
     return new Promise((resolve, reject)=>{
         getSubscribersByCallQueueEnabled().then((subscribers)=>{
             let callQueues = subscribers.map((subscriber)=>{
+                let name = subscriber.display_name ? subscriber.display_name : subscriber.webusername;
                 return {
                     id: _.get(subscriber, 'id', null),
                     display_name: _.get(subscriber, 'display_name', null),
+                    name: name,
                     is_pbx_group: _.get(subscriber, 'is_pbx_group', null),
                     max_queue_length: _.get(subscriber, 'prefs.max_queue_length', 5),
                     queue_wrap_up_time: _.get(subscriber, 'prefs.queue_wrap_up_time', 10)
@@ -568,9 +579,11 @@ export function getConfig(id) {
             $subscriber = subscriber;
             return getPreferences(id);
         }).then((prefs) => {
+            let name = $subscriber.display_name ? $subscriber.display_name : $subscriber.webusername;
             resolve({
                 id: _.get($subscriber, 'id', null),
                 display_name: _.get($subscriber, 'display_name', null),
+                name: name,
                 is_pbx_group: _.get($subscriber, 'is_pbx_group', null),
                 max_queue_length: _.get(prefs, 'max_queue_length', 5),
                 queue_wrap_up_time: _.get(prefs, 'queue_wrap_up_time', 10)
@@ -850,5 +863,27 @@ export function setSoundSetItemLoopplay(id, loopplay) {
         path: 'api/soundfiles/' + id,
         fieldPath: 'loopplay',
         value: loopflag
+    });
+}
+
+export function getManagerSecretaryConfigurations() {
+    return new Promise((resolve, reject) => {
+        getSubscribersByManagerSecretaryEnabled().then((subscribers) => {
+            let managerSecretaries = subscribers.map((subscriber) => {
+                let name = subscriber.display_name ? subscriber.display_name : subscriber.webusername;
+                return {
+                    id: _.get(subscriber, 'id', null),
+                    display_name: _.get(subscriber, 'display_name', null),
+                    name: name,
+                    is_pbx_group: _.get(subscriber, 'is_pbx_group', null),
+                    secretary_numbers: _.get(subscriber, 'prefs.secretary_numbers', [])
+                };
+            });
+            resolve({
+                items: managerSecretaries
+            });
+        }).catch((err) => {
+            reject(err);
+        });
     });
 }

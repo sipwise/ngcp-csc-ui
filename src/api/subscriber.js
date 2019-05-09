@@ -366,3 +366,32 @@ export function removeCallQueueConfig(subscriberId) {
     let param = { cloud_pbx_callqueue: false };
     return Vue.http.put('api/subscriberpreferences/' + subscriberId, param);
 }
+
+export function getSubscribersByManagerSecretaryEnabled() {
+    return new Promise((resolve, reject)=>{
+        let prefsByManagerSecretaryEnabled = [];
+        Promise.resolve().then(()=>{
+            return getList({
+                path: 'api/subscriberpreferences/',
+                root: '_embedded.ngcp:subscriberpreferences',
+                all: true
+            });
+        }).then((prefs)=>{
+            let subscriberPromises = [];
+            prefsByManagerSecretaryEnabled = prefs.items.filter((pref)=>{
+                return pref.manager_secretary === true;
+            });
+            prefsByManagerSecretaryEnabled.forEach((pref)=>{
+                subscriberPromises.push(getSubscriber(pref.subscriber_id));
+            });
+            return Promise.all(subscriberPromises);
+        }).then((subscribers)=>{
+            subscribers.forEach((subscriber, index)=>{
+                subscriber.prefs = prefsByManagerSecretaryEnabled[index];
+            });
+            resolve(subscribers);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
