@@ -15,7 +15,7 @@
                 class="csc-item-title"
                 label
             >
-                {{ seat.display_name }}
+                {{ seatName(seat.id) }}
             </q-item-tile>
             <q-item-tile
                 v-if="!expanded"
@@ -50,7 +50,7 @@
                         class="csc-item-value"
                         v-for="group in seat.groups"
                     >
-                        {{ group.display_name }}
+                        {{ groupName(group.id) }}
                     </span>
                 </div>
             </q-item-tile>
@@ -201,7 +201,9 @@
             'aliasNumberOptions',
             'groupOptions',
             'loading',
-            'callQueue'
+            'callQueue',
+            'seatName',
+            'groupName'
         ],
         data () {
             return {
