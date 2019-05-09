@@ -421,5 +421,10 @@ export default {
             let webusername = state.groups[id].webusername;
             return display_name ? display_name : webusername;
         }
+    },
+    managerSecretaryGroupsAndSeats(state) {
+        return state.managerSecretaryGroupsAndSeatsList.map((setId) => {
+            return state.managerSecretaryGroupsAndSeats[setId];
+        });
     }
 }

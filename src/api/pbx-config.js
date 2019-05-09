@@ -21,7 +21,8 @@ import {
     setQueueLength,
     setWrapUpTime,
     getPreferences,
-    removeCallQueueConfig
+    removeCallQueueConfig,
+    getSubscribersByManagerSecretaryEnabled
 } from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace} from './common'
@@ -571,6 +572,7 @@ export function getConfig(id) {
             resolve({
                 id: _.get($subscriber, 'id', null),
                 display_name: _.get($subscriber, 'display_name', null),
+                webusername: _.get($subscriber, 'webusername', null),
                 is_pbx_group: _.get($subscriber, 'is_pbx_group', null),
                 max_queue_length: _.get(prefs, 'max_queue_length', 5),
                 queue_wrap_up_time: _.get(prefs, 'queue_wrap_up_time', 10)
@@ -841,5 +843,27 @@ export function abortPreviousSoundFileUpload(handle) {
         let requestKey = `previous-${handle}-request`;
         Vue[requestKey].abort();
         resolve();
+    });
+}
+
+export function getManagerSecretaryConfigurations() {
+    return new Promise((resolve, reject)=>{
+        getSubscribersByManagerSecretaryEnabled().then((subscribers)=>{
+            let managerSecretaries = subscribers.map((subscriber)=>{
+                let name = subscriber.display_name ? subscriber.display_name : subscriber.webusername;
+                return {
+                    id: _.get(subscriber, 'id', null),
+                    display_name: _.get(subscriber, 'display_name', null),
+                    name: name,
+                    is_pbx_group: _.get(subscriber, 'is_pbx_group', null),
+                    secretary_numbers: _.get(subscriber, 'prefs.secretary_numbers', [])
+                };
+            });
+            resolve({
+                items: managerSecretaries
+            });
+        }).catch((err)=>{
+            reject(err);
+        });
     });
 }
