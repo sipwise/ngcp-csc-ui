@@ -34,6 +34,20 @@
                 </div>
             </q-item-tile>
             <q-item-tile
+                v-show="!expanded"
+                class="csc-item-subtitle"
+                sublabel
+            >
+                <div>
+                    <span class="csc-item-label">
+                        {{ $t('pbxConfig.validity') }}:
+                    </span>
+                    <span class="csc-item-value">
+                        {{ validityLabel }}
+                    </span>
+                </div>
+            </q-item-tile>
+            <q-item-tile
                 v-show="expanded"
                 class="csc-list-item-main"
             >
@@ -105,7 +119,7 @@
         >
             <q-item-tile>
                 <q-btn
-                    v-if="invalid"
+                    v-if="invalid && !mobile && !expanded"
                     icon="info"
                     :big="mobile"
                     color="negative"
@@ -361,10 +375,26 @@
             },
             tooltipLabel() {
                 if (this.invalidCount === 1) {
-                    return this.$t('pbxConfig.invalidFileTooltip', { amount: this.invalidCount });
+                    return this.$t('pbxConfig.invalidFileText', { amount: this.invalidCount });
                 }
                 else if (this.invalidCount > 1) {
-                    return this.$t('pbxConfig.invalidFilesTooltip', { amount: this.invalidCount });
+                    return this.$t('pbxConfig.invalidFilesText', { amount: this.invalidCount });
+                }
+            },
+            validityLabel() {
+                let invalidFileSingle = this.invalid && this.invalidCount === 1;
+                let invalidFileMultiple = this.invalid && this.invalidCount > 1;
+                if (this.invalid && this.mobile) {
+                    return this.$t('pbxConfig.invalidTextMobile', { amount: this.invalidCount });
+                }
+                else if (invalidFileSingle) {
+                    return this.$t('pbxConfig.invalidFilesText', { amount: this.invalidCount });
+                }
+                else if (invalidFileMultiple) {
+                    return this.$t('pbxConfig.invalidFilesText', { amount: this.invalidCount });
+                }
+                else {
+                    return this.$t('pbxConfig.validText');
                 }
             }
         },
