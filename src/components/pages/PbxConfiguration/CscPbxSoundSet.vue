@@ -34,6 +34,19 @@
                 </div>
             </q-item-tile>
             <q-item-tile
+                v-show="!expanded"
+                class="csc-item-subtitle"
+                sublabel
+            >
+                <div
+                    v-if="invalid"
+                    class="csc-form-info"
+                >
+                    <q-icon name="info" color="negative" size="24px"/>
+                    <span class="csc-info-text">{{ validityLabel }}</span>
+                </div>
+            </q-item-tile>
+            <q-item-tile
                 v-show="expanded"
                 class="csc-list-item-main"
             >
@@ -105,7 +118,7 @@
         >
             <q-item-tile>
                 <q-btn
-                    v-if="invalid"
+                    v-if="invalid && !mobile && !expanded"
                     icon="info"
                     :big="mobile"
                     color="negative"
@@ -361,10 +374,22 @@
             },
             tooltipLabel() {
                 if (this.invalidCount === 1) {
-                    return this.$t('pbxConfig.invalidFileTooltip', { amount: this.invalidCount });
+                    return this.$t('pbxConfig.invalidFileText', { amount: this.invalidCount });
                 }
                 else if (this.invalidCount > 1) {
-                    return this.$t('pbxConfig.invalidFilesTooltip', { amount: this.invalidCount });
+                    return this.$t('pbxConfig.invalidFilesText', { amount: this.invalidCount });
+                }
+            },
+            validityLabel() {
+                let invalidFileMultiple = this.invalidCount > 1;
+                if (this.mobile) {
+                    return this.$t('pbxConfig.invalidTextMobile', { amount: this.invalidCount });
+                }
+                else if (invalidFileMultiple) {
+                    return this.$t('pbxConfig.invalidFilesText', { amount: this.invalidCount });
+                }
+                else {
+                    return this.$t('pbxConfig.invalidFileText', { amount: this.invalidCount });
                 }
             }
         },
