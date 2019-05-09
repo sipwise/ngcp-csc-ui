@@ -63,6 +63,8 @@
                     :group-options="groupOptions"
                     @remove="removeSeatDialog"
                     :loading="isItemLoading(seat.id)"
+                    :seat-name="seatName"
+                    :group-name="groupName"
                     @save-name="setSeatName"
                     @save-extension="setSeatExtension"
                     @save-alias-numbers="updateAliasNumbers"
@@ -185,7 +187,9 @@
                 'lastUpdatedField',
                 'updateAliasNumbersState',
                 'updateGroupsAndSeatsState',
-                'updateState'
+                'updateState',
+                'seatName',
+                'groupName'
             ]),
             groupOptions() {
                 let groups = [];

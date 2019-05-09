@@ -407,5 +407,19 @@ export default {
         return (handle) => {
             return state.uploadSoundFileProgresses[handle] || 0;
         }
+    },
+    seatName(state) {
+        return (id) => {
+            let display_name = state.seats[id].display_name;
+            let webusername = state.seats[id].webusername;
+            return display_name ? display_name : webusername;
+        }
+    },
+    groupName(state) {
+        return (id) => {
+            let display_name = state.groups[id].display_name;
+            let webusername = state.groups[id].webusername;
+            return display_name ? display_name : webusername;
+        }
     }
 }

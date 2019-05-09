@@ -63,6 +63,8 @@
                 :seat-options="seatOptions"
                 :hunt-policy-options="huntPolicyOptions"
                 :loading="isItemLoading(group.id)"
+                :group-name="groupName"
+                :seat-name="seatName"
                 @remove="removeGroupDialog"
                 @save-name="setGroupName"
                 @save-extension="setGroupExtension"
@@ -220,7 +222,9 @@
                 'lastRemovedGroup',
                 'lastUpdatedField',
                 'updateAliasNumbersState',
-                'updateGroupsAndSeatsState'
+                'updateGroupsAndSeatsState',
+                'groupName',
+                'seatName'
             ]),
             isMobile() {
                 return Platform.is.mobile;
