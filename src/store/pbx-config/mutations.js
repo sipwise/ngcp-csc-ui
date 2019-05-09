@@ -567,5 +567,33 @@ export default {
     },
     resetSoundFileProgress(state, handle) {
         reactiveSet(state.uploadSoundFileProgresses, handle, 0);
+    },
+    managerSecretaryListRequesting(state, options) {
+        options = options || {};
+        state.listLoadingSilently = _.get(options, 'silent', false);
+        state.listState = RequestState.requesting;
+        state.listError = null;
+        state.managerSecretaryGroupsAndSeats = {};
+        // TODO: Replace Ordered with Object.keys pattern
+        state.managerSecretaryGroupsAndSeatsOrdered = [];
+    },
+    managerSecretaryListSucceeded(state, data) {
+        state.listState = RequestState.succeeded;
+        state.listError = null;
+        state.managerSecretaryGroupsAndSeats = {};
+        state.managerSecretaryGroupsAndSeatsOrdered = [];
+        data.items.forEach((config)=>{
+            state.managerSecretaryGroupsAndSeats[config.id] = config;
+            state.managerSecretaryGroupsAndSeatsOrdered.push(config);
+        });
+        if (state.managerSecretaryGroupsAndSeats.length > 0) {
+            state.managerSecretaryGroupsAndSeats = state.managerSecretaryGroupsAndSeats.filter((item) => {
+                return (item !== (undefined || null || ''));
+            });
+        }
+    },
+    managerSecretaryListFailed(state, error) {
+        state.listState = RequestState.failed;
+        state.listError = error;
     }
 }

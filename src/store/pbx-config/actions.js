@@ -49,7 +49,8 @@ import {
     createSoundSet,
     removeSoundFile,
     uploadSoundFile,
-    abortPreviousSoundFileUpload
+    abortPreviousSoundFileUpload,
+    getManagerSecretaryConfigurations
 } from '../../api/pbx-config'
 
 export default {
@@ -702,5 +703,14 @@ export default {
     },
     abortPreviousSoundFileUpload(state, handle) {
         abortPreviousSoundFileUpload(handle);
+    },
+    listManagerSecretaryGroupsAndSeats(context, options) {
+        let silent = _.get(options, 'silent', false);
+        context.commit('managerSecretaryListRequesting', silent);
+        getManagerSecretaryConfigurations().then((list) => {
+            context.commit('managerSecretaryListSucceeded', list);
+        }).catch((err) => {
+            context.commit('managerSecretaryListFailed', err.message);
+        });
     }
 }

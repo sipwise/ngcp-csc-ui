@@ -407,5 +407,8 @@ export default {
         return (handle) => {
             return state.uploadSoundFileProgresses[handle] || 0;
         }
+    },
+    managerSecretaryGroupsAndSeats(state) {
+        return state.managerSecretaryGroupsAndSeatsOrdered;
     }
 }
