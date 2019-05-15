@@ -395,3 +395,8 @@ export function getSubscribersByManagerSecretaryEnabled() {
         });
     });
 }
+
+export function removeManagerSecretaryConfig(subscriberId) {
+    let param = { manager_secretary: false };
+    return Vue.http.put('api/subscriberpreferences/' + subscriberId, param);
+}

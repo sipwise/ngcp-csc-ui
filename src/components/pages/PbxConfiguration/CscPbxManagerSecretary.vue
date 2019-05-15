@@ -22,6 +22,7 @@
                 :key="index"
                 :subscriber="subscriber"
                 :loading="isItemLoading()"
+                @remove="removeConfigDialog"
             />
         </q-list>
         <div
@@ -30,12 +31,19 @@
         >
             {{ $t('pbxConfig.noManagerSecretaryConfigs') }}
         </div>
+        <csc-remove-dialog
+            ref="removeDialog"
+            :title="$t('pbxConfig.removeManagerSecretaryTitle')"
+            :message="removeDialogMessage"
+            @remove="removeConfig"
+        />
     </csc-page>
 </template>
 
 <script>
     import CscPage from '../../CscPage'
     import CscPbxManagerSecretaryConfig from './CscPbxManagerSecretaryConfig'
+    import CscRemoveDialog from '../../CscRemoveDialog'
     import {
         mapGetters
     } from 'vuex'
@@ -48,11 +56,13 @@
         components: {
             CscPage,
             CscPbxManagerSecretaryConfig,
+            CscRemoveDialog,
             QSpinnerDots,
             QList
         },
         data () {
             return {
+                currentRemovingSubscriber: null
             }
         },
         mounted() {
@@ -69,11 +79,25 @@
             },
             isManagerSecretaryGroupsAndSeatsEmpty() {
                 return Object.entries(this.managerSecretaryGroupsAndSeats).length === 0;
+            },
+            removeDialogMessage() {
+                if (this.currentRemovingSubscriber !== null) {
+                    return this.$t('pbxConfig.removeManagerSecretaryText', {
+                        subscriber: this.currentRemovingSubscriber.name
+                    });
+                }
             }
         },
         methods: {
             isItemLoading() {
                 return this.isListRequesting;
+            },
+            removeConfigDialog(subscriber) {
+                this.currentRemovingSubscriber = subscriber;
+                this.$refs.removeDialog.open();
+            },
+            removeConfig() {
+                this.$store.dispatch('pbxConfig/removeManagerSecretary', this.currentRemovingSubscriber)
             }
         },
         watch: {

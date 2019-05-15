@@ -66,7 +66,7 @@
         </div>
         <csc-remove-dialog
             ref="removeDialog"
-            :title="$t('pbxConfig.removeConfigTitle')"
+            :title="$t('pbxConfig.removeCallQueueTitle')"
             :message="removeDialogMessage"
             @remove="removeConfig"
         />
@@ -163,7 +163,7 @@
             },
             removeDialogMessage() {
                 if (this.currentRemovingSubscriber !== null) {
-                    return this.$t('pbxConfig.removeConfigText', {
+                    return this.$t('pbxConfig.removeCallQueueText', {
                         subscriber: this.currentRemovingSubscriber.display_name
                     });
                 }
