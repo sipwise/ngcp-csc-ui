@@ -577,7 +577,8 @@ export default {
     managerSecretaryListSucceeded(state, data) {
         state.listState = RequestState.succeeded;
         state.listError = null;
-        data.items.forEach((config)=>{
+        state.managerSecretaryGroupsAndSeats = {};
+        data.items.forEach((config) => {
             state.managerSecretaryGroupsAndSeats[config.id] = config;
         });
         state.managerSecretaryGroupsAndSeatsList = Object.keys(state.managerSecretaryGroupsAndSeats);

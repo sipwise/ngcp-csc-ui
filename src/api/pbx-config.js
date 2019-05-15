@@ -22,7 +22,8 @@ import {
     setWrapUpTime,
     getPreferences,
     removeCallQueueConfig,
-    getSubscribersByManagerSecretaryEnabled
+    getSubscribersByManagerSecretaryEnabled,
+    removeManagerSecretaryConfig
 } from './subscriber';
 import uuid from 'uuid';
 import { getList, get, patchReplace} from './common'
@@ -883,6 +884,16 @@ export function getManagerSecretaryConfigurations() {
                 items: managerSecretaries
             });
         }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function removeManagerSecretary(subscriberId) {
+    return new Promise((resolve, reject) => {
+        removeManagerSecretaryConfig(subscriberId).then(() => {
+            resolve();
+        }).catch((err)=>{
             reject(err);
         });
     });
