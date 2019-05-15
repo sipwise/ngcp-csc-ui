@@ -110,10 +110,12 @@ export const store = new Vuex.Store({
                 store.commit('conference/participantLeft', participant);
             }).onConferenceEvent((event)=>{
                 store.commit('conference/event', event);
-            }).onConferenceMessage(()=>{
-                store.commit('conference/message', event);
-            }).onConferenceFile(()=>{
-                store.commit('conference/file', event);
+            }).onConferenceMessage((message)=>{
+                store.commit('conference/message', message);
+            }).onConferenceFile((file)=>{
+                store.commit('conference/file', file);
+            }).onLocalMediaStreamEnded(()=>{
+                store.commit('conference/disposeLocalMedia');
             });
         },
         function initI18n(store) {

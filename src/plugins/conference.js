@@ -45,8 +45,21 @@ export class ConferencePlugin {
 
     joinConference(options) {
         return new Promise((resolve, reject)=>{
+            options.localMediaStream = this.getLocalMediaStream();
             this.getNetwork().joinConference(options).then((conference)=>{
                 resolve(conference);
+            }).catch((err)=>{
+                reject(err);
+            });
+        });
+    }
+
+    changeConferenceMedia() {
+        return new Promise((resolve, reject)=>{
+            this.getNetwork().changeConferenceMedia({
+                localMediaStream: this.getLocalMediaStream()
+            }).then(()=>{
+                resolve();
             }).catch((err)=>{
                 reject(err);
             });
@@ -98,10 +111,17 @@ export class ConferencePlugin {
     setLocalMediaStream(localMediaStream) {
         this.removeLocalMediaStream();
         this.localMediaStream = localMediaStream;
+        this.localMediaStream.onEnded(()=>{
+            this.events.emit('localMediaStreamEnded', this.localMediaStream);
+        });
     }
 
     getLocalMediaStream() {
         return this.localMediaStream;
+    }
+
+    onLocalMediaStreamEnded(listener) {
+        this.events.on('localMediaStreamEnded', listener);
     }
 
     hasLocalMediaStream() {
@@ -110,7 +130,7 @@ export class ConferencePlugin {
 
     removeLocalMediaStream() {
         if(this.hasLocalMediaStream()) {
-            this.getLocalMediaStream().stop();
+            // this.getLocalMediaStream().stop();
         }
     }
 
