@@ -51,7 +51,8 @@ import {
     uploadSoundFile,
     abortPreviousSoundFileUpload,
     setSoundSetItemLoopplay,
-    getManagerSecretaryConfigurations
+    getManagerSecretaryConfigurations,
+    removeManagerSecretary
 } from '../../api/pbx-config'
 
 export default {
@@ -724,6 +725,16 @@ export default {
             context.commit('managerSecretaryListSucceeded', list);
         }).catch((err) => {
             context.commit('managerSecretaryListFailed', err.message);
+        });
+    },
+    removeManagerSecretary(context, config) {
+        context.commit('removeItemRequesting', config);
+        removeManagerSecretary(config.id).then(() => {
+            return context.dispatch('listManagerSecretaryGroupsAndSeats');
+        }).then(() => {
+            context.commit('removeItemSucceeded');
+        }).catch((err) => {
+            context.commit('removeItemFailed', err.message);
         });
     }
 }

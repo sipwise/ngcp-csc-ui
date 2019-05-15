@@ -439,8 +439,8 @@
         "addConfig": "Add Call Queue",
         "callQueue": "Call Queue",
         "createConfig": "Create Call Queue",
-        "removeConfigTitle": "Remove call queue",
-        "removeConfigText": "You are about to remove call queue for {subscriber}",
+        "removeCallQueueTitle": "Remove call queue",
+        "removeCallQueueText": "You are about to remove call queue for {subscriber}",
         "seconds": "seconds",
         "callers": "callers",
         "description": "Description",
@@ -460,7 +460,9 @@
         "invalidTextMobile": "Sound set is incomplete ({amount})",
         "removeSoundFileTitle": "Remove sound file",
         "removeSoundFileText": "You are about to remove the sound file for {handle}",
-        "secretaryNumbers": "Secretary Numbers"
+        "secretaryNumbers": "Secretary Numbers",
+        "removeManagerSecretaryTitle": "Remove manager secretary configuration",
+        "removeManagerSecretaryText": "You are about to remove manager secretary configuration for {subscriber}"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

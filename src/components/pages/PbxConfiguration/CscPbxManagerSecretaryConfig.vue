@@ -74,6 +74,14 @@
             <q-item-tile>
                 <q-btn
                     flat
+                    v-if="expanded"
+                    icon="delete"
+                    :big="isMobile"
+                    color="negative"
+                    @click="remove()"
+                />
+                <q-btn
+                    flat
                     :icon="titleIcon"
                     :big="isMobile"
                     color="primary"
@@ -187,6 +195,9 @@
                     numbers.push(parseInt(number))
                 });
                 return numbers;
+            },
+            remove() {
+                this.$emit('remove', this.subscriber);
             }
         },
         watch: {
