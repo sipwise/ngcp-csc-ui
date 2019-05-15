@@ -164,9 +164,10 @@ export default {
                     media.enableScreen();
                     break;
             }
-            media.build().then((localMediaStream)=>{
+            let localMediaStream;
+            media.build().then(($localMediaStream)=>{
+                localMediaStream = $localMediaStream;
                 Vue.$conference.setLocalMediaStream(localMediaStream);
-                context.commit('localMediaSucceeded', localMediaStream);
                 switch(type) {
                     default:
                     case MediaTypes.mic:
@@ -195,6 +196,16 @@ export default {
                         context.commit('enableScreen');
                         break;
                 }
+                return Promise.resolve();
+            }).then(()=>{
+                if(context.getters.isJoined) {
+                    return Vue.$conference.changeConferenceMedia();
+                }
+                else {
+                    return Promise.resolve();
+                }
+            }).then(()=>{
+                context.commit('localMediaSucceeded', localMediaStream);
             }).catch((err)=>{
                 context.commit('localMediaFailed', err.message);
             });
@@ -295,8 +306,7 @@ export default {
                 context.commit('joinRequesting');
                 Vue.$conference.joinConference({
                     conferenceName: conferenceId,
-                    displayName: context.getters.username,
-                    localMediaStream: context.getters.localMediaStream
+                    displayName: context.getters.username
                 }).then(()=>{
                     context.commit('joinSucceeded');
                 }).catch((err)=>{
