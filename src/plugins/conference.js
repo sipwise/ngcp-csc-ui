@@ -130,7 +130,7 @@ export class ConferencePlugin {
 
     removeLocalMediaStream() {
         if(this.hasLocalMediaStream()) {
-            // this.getLocalMediaStream().stop();
+            this.getLocalMediaStream().stop();
         }
     }
 
