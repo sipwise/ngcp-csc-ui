@@ -23,6 +23,8 @@ export default {
         localMediaError: null,
         joinState: RequestState.initiated,
         joinError: null,
+        leaveState: RequestState.initiated,
+        leaveError: null,
         participants: []
     },
     getters: {
@@ -43,6 +45,12 @@ export default {
         },
         isJoining(state) {
             return state.joinState === RequestState.requesting;
+        },
+        isLeft(state) {
+            return state.leaveState === RequestState.succeeded;
+        },
+        isLeaving(state) {
+            return state.leaveState === RequestState.requesting;
         },
         isConferencingEnabled(state) {
             return state.conferencingEnabled;
@@ -129,6 +137,20 @@ export default {
         joinFailed(state, error) {
             state.joinState = RequestState.failed;
             state.joinError = error;
+        },
+        leaveRequesting(state) {
+            state.leaveState = RequestState.requesting;
+            state.leaveError = null;
+        },
+        leaveSucceeded(state) {
+            state.leaveState = RequestState.succeeded;
+            state.leaveError = null;
+            state.joinState = RequestState.initiated;
+            state.joinError = null;
+        },
+        leaveFailed(state, error) {
+            state.leaveState = RequestState.failed;
+            state.leaveError = error;
         },
         participantJoined(state, participant) {
             state.participants.push(participant.getId());
@@ -311,6 +333,17 @@ export default {
                     context.commit('joinSucceeded');
                 }).catch((err)=>{
                     context.commit('joinFailed', err.message);
+                });
+            }
+        },
+        leave(context) {
+            if(context.getters.isJoined) {
+                context.commit('leaveRequesting');
+                Vue.$conference.leaveConference().then(()=>{
+                    context.commit('leaveSucceeded');
+                    context.commit('disposeLocalMedia');
+                }).catch((err)=>{
+                    context.commit('leaveFailed', err.message);
                 });
             }
         }

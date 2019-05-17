@@ -83,8 +83,13 @@
                     :disable="!hasConferenceId || isJoining"
                 />
             </div>
-
         </div>
+        <csc-confirm-dialog
+            ref="confirmDialog"
+            title-icon="exit_to_app"
+            title="Exit conference"
+            @confirm="leave"
+        />
     </q-layout>
 </template>
 
@@ -100,6 +105,7 @@
         QLayout,
         QBtn
     } from 'quasar-framework'
+    import CscConfirmDialog from "../CscConfirmationDialog";
     export default {
         data () {
             return {}
@@ -108,6 +114,7 @@
             this.$store.dispatch('user/initUser');
         },
         components: {
+            CscConfirmDialog,
             CscSpinner,
             CscMedia,
             CscConferenceJoin,
@@ -156,8 +163,14 @@
         },
         methods: {
             close() {
-                this.$router.push({path: '/user/home'});
-                this.$store.commit('conference/disposeLocalMedia');
+                if(!this.isJoined) {
+                    this.$router.push({path: '/user/home'});
+                    this.$store.commit('conference/disposeLocalMedia');
+                }
+                else {
+                    this.$refs.confirmDialog.open();
+                }
+
             },
             toggleMicrophone() {
                 if(this.hasConferenceId) {
@@ -177,6 +190,11 @@
             join(conferenceId) {
                 if(this.hasConferenceId) {
                     this.$store.dispatch('conference/join', conferenceId);
+                }
+            },
+            leave() {
+                if(this.isJoined) {
+                    this.$store.dispatch('conference/leave');
                 }
             }
         },

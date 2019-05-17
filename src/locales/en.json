@@ -28,7 +28,9 @@
         "resetDefaults": "Reset to defaults",
         "install": "Install",
         "addNew": "Add new",
-        "removeFile": "Remove file"
+        "removeFile": "Remove file",
+        "confirm": "Confirm",
+        "exit": "Exit"
     },
     "form": {
         "destinationLabel": "Destination"

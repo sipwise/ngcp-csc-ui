@@ -66,6 +66,10 @@ export class ConferencePlugin {
         });
     }
 
+    leaveConference() {
+        return this.getNetwork().leaveConference();
+    }
+
     onLeft(listener) {
         this.events.on('left', listener);
         return this;
