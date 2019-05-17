@@ -15,7 +15,7 @@
                 id="csc-conf-link-input"
                 dark
                 :value="conferenceIdInput"
-                placeholder="Conference name"
+                :placeholder="$t('conferencing.idPlaceholder')"
                 align="left"
                 @change="conferenceIdChanged"
                 :disable="isJoining"
@@ -26,7 +26,7 @@
                     flat
                     icon="link"
                     @click="showShareDialog"
-                >Share</q-btn>
+                >{{ $t('conferencing.shareButtonLabel') }}</q-btn>
             </q-input>
             <q-btn
                 class="csc-button"

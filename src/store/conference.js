@@ -189,6 +189,9 @@ export default {
             let localMediaStream;
             media.build().then(($localMediaStream)=>{
                 localMediaStream = $localMediaStream;
+                localMediaStream.onVideoEnded(()=>{
+                    context.dispatch('createLocalMedia', MediaTypes.mic);
+                });
                 Vue.$conference.setLocalMediaStream(localMediaStream);
                 switch(type) {
                     default:
@@ -229,7 +232,9 @@ export default {
             }).then(()=>{
                 context.commit('localMediaSucceeded', localMediaStream);
             }).catch((err)=>{
-                context.commit('localMediaFailed', err.message);
+                if(!context.getters.hasLocalMediaStream) {
+                    context.commit('localMediaFailed', err.message);
+                }
             });
         },
         enableMicrophone(context) {

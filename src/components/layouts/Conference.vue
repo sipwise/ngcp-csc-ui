@@ -87,7 +87,8 @@
         <csc-confirm-dialog
             ref="confirmDialog"
             title-icon="exit_to_app"
-            title="Exit conference"
+            :title="$t('conferencing.exitDialogTitle')"
+            :message="$t('conferencing.exitDialogText')"
             @confirm="leave"
         />
     </q-layout>

@@ -539,6 +539,13 @@
         "busy": "busy"
     },
     "conferencing": {
-        "joinText": "Join conference with name"
+        "joinText": "Join conference with name",
+        "idPlaceholder": "Conference name",
+        "shareButtonLabel": "Share",
+        "shareDialogTitle": "Share conference",
+        "copyLinkButtonLabel": "Copy link",
+        "exitDialogTitle": "Leave conference",
+        "exitDialogText": "Leave current conference now!",
+        "leaveButtonLabel": "Leave"
     }
 }
