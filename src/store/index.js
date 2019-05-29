@@ -89,7 +89,7 @@ export const store = new Vuex.Store({
         function call(store) {
             Vue.$call.onIncoming(()=>{
                 store.commit('call/incomingCall', {
-                    number: Vue.call.getNumber()
+                    number: Vue.$call.getNumber()
                 });
             }).onRemoteMedia((remoteMediaStream)=>{
                 store.commit('call/establishCall', remoteMediaStream);
