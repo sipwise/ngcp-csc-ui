@@ -91,6 +91,7 @@
             },
             cancel() {
                 this.close();
+                this.$emit('cancel');
             }
         }
     }
@@ -98,8 +99,6 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../themes/quasar.variables.styl'
-    .csc-share-dialog
-        min-width 480px
     .csc-dialog
         max-width 480px
         background-color $body-background

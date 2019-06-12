@@ -1,638 +1,477 @@
 <template>
-    <q-item :class="itemClasses">
-        <q-item-side
-            v-if="!expanded"
-        >
-            <q-icon
-                size="24px"
-                name="group"
-                color="white"
-            />
-        </q-item-side>
-        <q-item-main>
-            <q-item-tile
-                v-if="!expanded"
-                class="csc-item-title"
-                label
+    <csc-list-item
+        ref="listItem"
+        icon="group"
+        :expanded="expanded"
+        :odd="odd"
+        :loading="loading"
+        @toggle="toggle"
+    >
+        <template slot="title">
+            <csc-list-item-title
             >
-                {{ groupName(group.id) }}
-            </q-item-tile>
-            <q-item-tile
-                v-if="!expanded"
-                class="csc-item-subtitle"
-                sublabel
-            >
-                <div>
-                    <span class="csc-item-label">{{ $t('pbxConfig.extension') }}:</span>
-                    <span class="csc-item-value">{{ group.pbx_extension }}</span>
-                </div>
-            </q-item-tile>
-            <q-item-tile
-                v-if="!expanded"
-                class="csc-item-subtitle"
-                sublabel
-            >
-                <div
-                    v-if="!hasSeats"
-                    class="csc-form-info"
+                {{ group | groupName }}
+            </csc-list-item-title>
+            <q-slide-transition>
+                <csc-list-item-subtitle
+                    v-if="!expanded"
                 >
-                    <q-icon name="info" color="info" size="24px"/>
-                    <span class="csc-info-text">{{ $t('pbxConfig.noSeatAssigned') }}</span>
-                </div>
-                <div
-                    class="csc-item-field"
-                    v-if="hasSeats"
+                    {{ $t('pbxConfig.extension')}}: {{ group.pbx_extension }}
+                </csc-list-item-subtitle>
+            </q-slide-transition>
+            <q-slide-transition>
+                <csc-list-item-subtitle
+                    v-if="!expanded"
                 >
                     <span
-                        class="csc-item-label"
-                    >{{ $t('pbxConfig.seats') }}:
-                    </span>
-                    <span
-                        class="csc-item-value"
-                        v-for="seat in group.seats"
-                    >{{ seatName(seat.id) }}
-                    </span>
-                </div>
-            </q-item-tile>
-            <q-item-tile
-                class="csc-list-item-main"
-                v-if="expanded"
-            >
-                <q-field :label="$t('pbxConfig.groupName')">
-                    <q-input
-                        dark
-                        v-model="changes.name"
-                        :after="nameButtons"
-                        @keyup.enter="saveName"
-                    />
-                </q-field>
-                <q-field :label="$t('pbxConfig.extension')">
-                    <q-input
-                        dark
-                        v-model="changes.extension"
-                        type="number"
-                        :after="extensionButtons"
-                        @keyup.enter="saveExtension"
-                    />
-                </q-field>
-                <q-field :label="$t('pbxConfig.huntPolicy')">
-                    <q-select
-                        dark
-                        v-model="changes.huntPolicy"
-                        :options="huntPolicyOptions"
-                        radio
-                        @change="huntPolicyChanged"
-                    />
-                </q-field>
-                <q-field :label="$t('pbxConfig.huntTimeout')">
-                    <q-input
-                        dark
-                        v-model="changes.huntTimeout"
-                        type="number"
-                        :suffix="$t('pbxConfig.seconds')"
-                        :after="huntTimeoutButtons"
-                        :min="0"
-                        @keyup.enter="saveHuntTimeout"
-                    />
-                </q-field>
-                <q-field :label="$t('pbxConfig.primaryNumber')">
-                    <q-input
-                        dark
-                        v-model="primaryNumber"
-                        readonly
-                        disable
-                    />
-                </q-field>
-                <q-field :label="$t('pbxConfig.aliasNumbers')">
-                    <q-select
-                        dark
-                        ref="aliasNumbers"
-                        v-model="changes.aliasNumbers"
-                        :options="aliasNumberOptions"
-                        multiple
-                        chips
-                        clearable
-                        :after="aliasNumberButtons"
-                    />
-                </q-field>
-                <q-field :label="$t('pbxConfig.seats')">
-                    <q-select
-                        dark
-                        v-model="changes.seats"
-                        :options="seatOptions"
-                        multiple
-                        chips
-                        clearable
-                        :after="seatButtons"
-                    />
-                </q-field>
-                <q-field :label="$t('pbxConfig.soundSet')">
-                    <q-select
-                        dark
-                        v-model="changes.soundSet"
-                        :disable="!defaultSoundSet"
-                        :readonly="loading"
-                        :options="soundSetOptions"
-                        :after="soundSetButtons"
-                    />
-                    <q-tooltip
-                        v-if="!defaultSoundSet"
+                        v-if="group.pbx_groupmember_ids.length > 0"
                     >
-                        {{ $t('pbxConfig.defaultNotSet') }}
-                    </q-tooltip>
-                </q-field>
-            </q-item-tile>
-        </q-item-main>
-        <q-item-side
-            right
-            class="csc-list-actions-pinned"
-        >
-            <q-item-tile>
-                <q-btn
-                    v-if="expanded"
-                    icon="more_vert"
-                    color="primary"
-                    flat
-                >
-                    <q-popover
-                        ref="morePopover"
-                        anchor="bottom right"
-                        self="top right"
-                    >
-                        <q-list
-                            class="csc-item-buttons-menu"
-                            no-border
+                        {{ $t('pbxConfig.seats')}}:
+                        <span
+                            v-for="seatId in group.pbx_groupmember_ids"
+                            :key="seatId"
+                            class="csc-list-item-title-keyword"
                         >
-                            <q-item
-                                v-if="group.cloud_pbx_callqueue"
-                                link
-                                @click="$router.push(callQueueRouteWithId)"
-                            >
-                                <q-item-side
-                                    icon="queue"
-                                    color="primary"
-                                />
-                                <q-item-main
-                                    :label="$t('pbxConfig.callQueue')"
-                                />
-                            </q-item>
-                            <q-item
-                                link
-                                @click="remove"
-                            >
-                                <q-item-side
-                                    icon="delete"
-                                    color="negative"
-                                />
-                                <q-item-main
-                                    :label="$t('buttons.remove')"
-                                />
-                            </q-item>
-                        </q-list>
-                    </q-popover>
-                </q-btn>
-                <q-btn
-                    :icon="titleIcon"
-                    :big="isMobile"
-                    color="primary"
-                    flat
-                    @click="toggleMain()"
+                            <q-icon
+                                name="person"
+                                size="16px"
+                            />
+                            {{ seats[seatId] | seatName }}
+                        </span>
+                    </span>
+                    <span
+                        v-else
+                    >
+                        <q-icon
+                            name="info"
+                            color="info"
+                            size="24px"
+                        />
+                        {{ $t('pbxConfig.noSeatAssigned') }}
+                    </span>
+                </csc-list-item-subtitle>
+            </q-slide-transition>
+        </template>
+        <template slot="menu">
+            <csc-list-menu-item
+                icon="delete"
+                icon-color="negative"
+                @click="deleteSeat"
+            >
+                {{ $t('buttons.remove') }}
+            </csc-list-menu-item>
+        </template>
+        <template slot="body">
+            <q-field
+                :labelWidth="labelWidth"
+                :label="$t('pbxConfig.name')"
+            >
+                <q-input
+                    dark
+                    v-model="changes.name"
+                    @keyup.enter="saveName"
                 />
-            </q-item-tile>
-        </q-item-side>
-        <csc-object-spinner
-            v-if="loading"
-            :loading="loading"
-        />
-    </q-item>
+                <csc-fade>
+                    <csc-form-save-button
+                        v-if="hasNameChanged"
+                        @click="saveName"
+                    />
+                </csc-fade>
+                <csc-fade>
+                    <csc-form-reset-button
+                        v-if="hasNameChanged"
+                        @click="resetName"
+                    />
+                </csc-fade>
+            </q-field>
+            <q-field
+                :labelWidth="labelWidth"
+                :label="$t('pbxConfig.extension')"
+            >
+                <q-input
+                    dark
+                    v-model="changes.extension"
+                    @keyup.enter="saveExtension"
+                />
+                <csc-fade>
+                    <csc-form-save-button
+                        v-if="hasExtensionChanged"
+                        @click="saveExtension"
+                    />
+                </csc-fade>
+                <csc-fade>
+                    <csc-form-reset-button
+                        v-if="hasExtensionChanged"
+                        @click="resetExtension"
+                    />
+                </csc-fade>
+            </q-field>
+            <q-field
+                :labelWidth="labelWidth"
+                :label="$t('pbxConfig.primaryNumber')"
+            >
+                <q-input
+                    dark
+                    readonly
+                    disable
+                    :value="getPrimaryNumber"
+                />
+            </q-field>
+            <q-field
+                :labelWidth="labelWidth"
+                :label="$t('pbxConfig.huntPolicy')">
+                <q-select
+                    dark
+                    radio
+                    v-model="changes.huntPolicy"
+                    :options="huntPolicyOptions"
+                />
+                <csc-fade>
+                    <csc-form-save-button
+                        v-if="hasHuntPolicyChanged"
+                        @click="saveHuntPolicy"
+                    />
+                </csc-fade>
+                <csc-fade>
+                    <csc-form-reset-button
+                        v-if="hasHuntPolicyChanged"
+                        @click="resetHuntPolicy"
+                    />
+                </csc-fade>
+            </q-field>
+            <q-field
+                :labelWidth="labelWidth"
+                :label="$t('pbxConfig.huntTimeout')"
+            >
+                <q-input
+                    dark
+                    v-model="changes.huntTimeout"
+                    @keyup.enter="saveHuntTimeout"
+                />
+                <csc-fade>
+                    <csc-form-save-button
+                        v-if="hasHuntTimeoutChanged"
+                        @click="saveHuntTimeout"
+                    />
+                </csc-fade>
+                <csc-fade>
+                    <csc-form-reset-button
+                        v-if="hasHuntTimeoutChanged"
+                        @click="resetHuntTimeout"
+                    />
+                </csc-fade>
+            </q-field>
+            <q-field
+                :labelWidth="labelWidth"
+                :label="$t('pbxConfig.aliasNumbers')">
+                <q-select
+                    dark
+                    chips
+                    multiple
+                    v-model="changes.aliasNumbers"
+                    :options="aliasNumberOptions"
+                />
+                <csc-fade>
+                    <csc-form-save-button
+                        v-if="hasAliasNumbersChanged"
+                        @click="saveAliasNumbers"
+                    />
+                </csc-fade>
+                <csc-fade>
+                    <csc-form-reset-button
+                        v-if="hasAliasNumbersChanged"
+                        @click="resetAliasNumbers"
+                    />
+                </csc-fade>
+            </q-field>
+            <q-field
+                :labelWidth="labelWidth"
+                :label="$t('pbxConfig.seats')">
+                <q-select
+                    dark
+                    chips
+                    multiple
+                    v-model="changes.seats"
+                    :options="seatOptions"
+                />
+                <csc-fade>
+                    <csc-form-save-button
+                        v-if="hasSeatsChanged"
+                        @click="saveSeats"
+                    />
+                </csc-fade>
+                <csc-fade>
+                    <csc-form-reset-button
+                        v-if="hasSeatsChanged"
+                        @click="resetSeats"
+                    />
+                </csc-fade>
+            </q-field>
+            <q-field
+                :labelWidth="labelWidth"
+                :label="$t('pbxConfig.soundSet')">
+                <q-select
+                    dark
+                    radio
+                    v-model="changes.soundSet"
+                    :options="soundSetOptions"
+                />
+                <csc-fade>
+                    <csc-form-save-button
+                        v-if="hasSoundSetChanged"
+                        @click="saveSoundSet"
+                    />
+                </csc-fade>
+                <csc-fade>
+                    <csc-form-reset-button
+                        v-if="hasSoundSetChanged"
+                        @click="resetSoundSet"
+                    />
+                </csc-fade>
+            </q-field>
+            <q-field
+                v-if="hasCallQueue"
+                :labelWidth="labelWidth"
+                label=" "
+                dark
+            >
+                <q-btn
+                    icon="queue"
+                    flat
+                    color="primary"
+                >
+                    {{ $t('pbxConfig.callQueue') }}
+                </q-btn>
+            </q-field>
+        </template>
+    </csc-list-item>
 </template>
 
 <script>
-    import _ from 'lodash';
-    import numberFilter from '../../../filters/number'
+    import _ from 'lodash'
     import {
-        QCard,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
         QField,
         QInput,
         QIcon,
         QSelect,
         QChip,
         QBtn,
-        QInnerLoading,
-        QSpinnerDots,
-        QTransition,
-        Platform,
         QItem,
         QItemSide,
         QItemMain,
         QItemTile,
-        QAlert,
+        QTransition,
         QList,
-        QPopover,
-        QTooltip
+        QSlideTransition
     } from 'quasar-framework'
-    import CscObjectSpinner from "../../CscObjectSpinner";
+    import CscListItem from "../../CscListItem";
+    import CscListItemTitle from "../../CscListItemTitle";
+    import CscListItemSubtitle from "../../CscListItemSubtitle";
+    import CscFadeDown from "../../transitions/CscFadeDown";
+    import CscFade from "../../transitions/CscFade";
+    import CscListMenuItem from "../../CscListMenuItem";
+    import CscFormSaveButton from "../../form/CscFormSaveButton"
+    import CscFormResetButton from "../../form/CscFormResetButton"
+    import numberFilter from '../../../filters/number'
     export default {
         name: 'csc-pbx-group',
         props: [
             'group',
-            'huntPolicyOptions',
+            'seats',
+            'soundSet',
+            'expanded',
+            'loading',
             'aliasNumberOptions',
             'seatOptions',
-            'loading',
-            'groupName',
-            'seatName',
-            'defaultSoundSet',
             'soundSetOptions',
-            'soundSetLabel'
+            'huntPolicyOptions',
+            'odd',
+            'labelWidth',
+            'hasCallQueue'
         ],
         data () {
             return {
-                expanded: false,
-                changes: this.getGroup()
+                changes: this.getGroupData()
             }
         },
         components: {
-            CscObjectSpinner,
-            QCard,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
+            CscListMenuItem,
+            CscFade,
+            CscFadeDown,
+            CscListItem,
+            CscListItemTitle,
+            CscListItemSubtitle,
+            QSlideTransition,
             QField,
             QInput,
             QIcon,
             QSelect,
             QChip,
             QBtn,
-            QInnerLoading,
-            QSpinnerDots,
-            QTransition,
             QItem,
             QItemSide,
             QItemMain,
             QItemTile,
-            QAlert,
+            QTransition,
             QList,
-            QPopover,
-            QTooltip
+            CscFormSaveButton,
+            CscFormResetButton
         },
         computed: {
-            callQueueRouteWithId() {
-                return {
-                    path: '/user/pbx-configuration/call-queues',
-                    query: { item: this.id }
-                };
-            },
-            itemClasses() {
-                let classes = ['csc-list-item', 'csc-pbx-group'];
-                if (this.expanded) {
-                    classes.push('csc-item-expanded');
-                }
-                else {
-                    classes.push('csc-item-collapsed');
-                }
-                return classes;
-            },
-            entityTitle() {
-                return this.group.display_name ?
-                    this.group.display_name : this.group.username;
-            },
-            id() {
-                return this.group.id;
-            },
-            name() {
-                return this.group.display_name;
-            },
-            extension() {
-                return this.group.pbx_extension;
-            },
-            huntPolicy() {
-                return this.group.pbx_hunt_policy;
-            },
-            huntTimeout() {
-                return this.group.pbx_hunt_timeout;
-            },
-            soundSet() {
-                return this.group.contract_sound_set_id;
-            },
-            primaryNumber() {
+            getPrimaryNumber() {
                 return numberFilter(this.group.primary_number);
             },
-            groupModel() {
-                return {
-                    id: this.id,
-                    name: this.changes.name,
-                    extension: this.changes.extension,
-                    huntPolicy: this.changes.huntPolicy,
-                    huntTimeout: this.changes.huntTimeout,
-                    primaryNumber: this.primaryNumber,
-                    aliasNumbers: this.changes.aliasNumbers,
-                    seats: this.changes.seats,
-                    soundSet: this.soundSetLabel(this.changes.soundSet)
-                }
+            hasNameChanged() {
+                return this.changes.name !== this.group.display_name;
             },
-            isLoading() {
-                return this.loading;
+            hasExtensionChanged() {
+                return this.changes.extension !== this.group.pbx_extension;
             },
-            titleIcon() {
-                if(!this.expanded) {
-                    return 'keyboard arrow down';
-                }
-                else {
-                    return 'keyboard arrow up';
-                }
+            hasHuntPolicyChanged() {
+                return this.changes.huntPolicy !== this.group.pbx_hunt_policy;
             },
-            isMobile() {
-                return Platform.is.mobile;
+            hasHuntTimeoutChanged() {
+                return this.changes.huntTimeout !== this.group.pbx_hunt_timeout;
             },
-            nameHasChanges() {
-                return this.name !== this.changes.name;
+            hasAliasNumbersChanged() {
+                return !_.isEqual(this.changes.aliasNumbers.sort(), this.getAliasNumberIds().sort());
             },
-            nameButtons() {
-                let buttons = [];
-                let self = this;
-                if(this.nameHasChanges) {
-                    buttons.push({
-                            icon: 'check',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.saveName();
-                            }
-                        }, {
-                            icon: 'clear',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.resetName();
-                            }
-                        }
-                    );
-                }
-                return buttons;
+            hasSeatsChanged() {
+                return !_.isEqual(this.changes.seats.sort(), this.group.pbx_groupmember_ids.sort());
             },
-            extensionHasChanges() {
-                return this.extension + "" !== this.changes.extension + "";
-            },
-            extensionButtons() {
-                let buttons = [];
-                let self = this;
-                if(this.extensionHasChanges) {
-                    buttons.push({
-                            icon: 'check',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.saveExtension();
-                            }
-                        }, {
-                            icon: 'clear',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.resetExtension();
-                            }
-                        }
-                    );
-                }
-                return buttons;
-            },
-            huntPolicyHasChanges() {
-                return this.huntPolicy !== this.changes.huntPolicy;
-            },
-            huntPolicyButtons() {
-                let buttons = [];
-                let self = this;
-                if(this.huntPolicyHasChanges) {
-                    buttons.push({
-                            icon: 'check',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.saveHuntPolicy();
-                            }
-                        }, {
-                            icon: 'clear',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.resetHuntPolicy();
-                            }
-                        }
-                    );
-                }
-                return buttons;
-            },
-            huntTimeoutHasChanges() {
-                return this.huntTimeout !== this.changes.huntTimeout;
-            },
-            huntTimeoutButtons() {
-                let buttons = [];
-                let self = this;
-                if(this.huntTimeoutHasChanges) {
-                    buttons.push({
-                            icon: 'check',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.saveHuntTimeout();
-                            }
-                        }, {
-                            icon: 'clear',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.resetHuntTimeout();
-                            }
-                        }
-                    );
-                }
-                return buttons;
-            },
-            aliasNumbersChanges() {
-                return !_.isEqual(this.changes.aliasNumbers.sort(),
-                    this.numbersToIds(this.group.alias_numbers).sort());
-            },
-            aliasNumberButtons() {
-                let buttons = [];
-                let self = this;
-                if(this.aliasNumbersChanges) {
-                    buttons.push({
-                            icon: 'check',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.saveAliasNumbers();
-                            }
-                        }, {
-                            icon: 'clear',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.resetAliasNumbers();
-                            }
-                        }
-                    );
-                }
-                return buttons;
-            },
-            seatChanges() {
-                return !_.isEqual(this.changes.seats.sort(),
-                    this.seatsToIds(this.group.seats).sort());
-            },
-            seatButtons() {
-                let buttons = [];
-                let self = this;
-                if(this.seatChanges) {
-                    buttons.push({
-                            icon: 'check',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.saveSeats();
-                            }
-                        }, {
-                            icon: 'clear',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.resetSeats();
-                            }
-                        }
-                    );
-                }
-                return buttons;
-            },
-            hasSeats() {
-                return _.isArray(_.get(this.group, 'seats')) && this.group.seats.length > 0;
-            },
-            soundSetChanges() {
-                return this.soundSet + "" !== this.changes.soundSet + "";
-            },
-            soundSetButtons() {
-                let buttons = [];
-                let self = this;
-                if(this.soundSetChanges) {
-                    buttons.push({
-                            icon: 'check',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.saveSoundSet();
-                            }
-                        }, {
-                            icon: 'clear',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.resetSoundSet();
-                            }
-                        }
-                    );
-                }
-                return buttons;
+            hasSoundSetChanged() {
+                return this.changes.soundSet !== this.getSoundSetId();
             }
         },
         methods: {
-            toggleMain() {
-                this.expanded = !this.expanded;
-            },
-            remove() {
-                this.$emit('remove', this.groupModel);
-            },
-            resetName() {
-                this.changes.name = this.group.display_name;
-            },
-            saveName() {
-                this.$emit('save-name', this.groupModel);
-            },
-            resetExtension() {
-                this.changes.extension = this.group.pbx_extension;
-            },
-            saveExtension() {
-                this.$emit('save-extension', this.groupModel);
-            },
-            resetHuntPolicy() {
-                this.changes.huntPolicy = this.group.pbx_hunt_policy;
-            },
-            saveHuntPolicy() {
-                this.$emit('save-hunt-policy', this.groupModel);
-            },
-            resetHuntTimeout() {
-                this.changes.huntTimeout = this.group.pbx_hunt_timeout;
-            },
-            saveHuntTimeout() {
-                this.$emit('save-hunt-timeout', this.groupModel);
-            },
-            huntPolicyChanged() {
-                this.saveHuntPolicy();
-            },
-            numbersToIds(aliasNumbers) {
-                let numbers = [];
-                if(_.isArray(aliasNumbers)) {
-                    aliasNumbers.forEach((number) => {
-                        numbers.push(number.number_id);
-                    });
-                }
-                return numbers;
-            },
-            resetAliasNumbers() {
-                this.changes.aliasNumbers = this.numbersToIds(this.group.alias_numbers);
-            },
-            saveAliasNumbers() {
-                var oldNumbers = this.numbersToIds(this.group.alias_numbers);
-                var numbersToAdd = _.difference(this.changes.aliasNumbers, oldNumbers);
-                var numbersToRemove = _.difference(oldNumbers, this.changes.aliasNumbers);
-                this.$emit('save-alias-numbers', {
-                    item: this.groupModel,
-                    add: numbersToAdd,
-                    remove: numbersToRemove
+            getAliasNumberIds() {
+                let numberIds = [];
+                this.group.alias_numbers.forEach((number) => {
+                    numberIds.push(number.number_id);
                 });
+                return numberIds;
             },
-            getGroup() {
+            getSeatIds() {
+                return _.clone(this.group.pbx_groupmember_ids);
+            },
+            getSoundSetId() {
+                if(this.soundSet !== null) {
+                    return this.soundSet.id;
+                }
+                return null;
+            },
+            getGroupData() {
                 return {
                     name: this.group.display_name,
                     extension: this.group.pbx_extension,
                     huntPolicy: this.group.pbx_hunt_policy,
                     huntTimeout: this.group.pbx_hunt_timeout,
-                    aliasNumbers: this.numbersToIds(this.group.alias_numbers),
-                    seats: this.seatsToIds(this.group.seats),
-                    soundSet: this.group.contract_sound_set_id
+                    aliasNumbers: this.getAliasNumberIds(),
+                    seats: this.getSeatIds(),
+                    soundSet: this.getSoundSetId()
+                };
+            },
+            toggle() {
+                if(this.expanded) {
+                    this.$emit('collapse');
+                }
+                else {
+                    this.$emit('expand');
                 }
             },
-            seatsToIds(seats) {
-                let seatIds = [];
-                if(_.isArray(seats)) {
-                    seats.forEach((seat) => {
-                        seatIds.push(seat.id);
+            saveName() {
+                if(this.hasNameChanged) {
+                    this.$emit('save-name', {
+                        groupId: this.group.id,
+                        groupName: this.changes.name
                     });
                 }
-                return seatIds;
             },
-            resetSeats() {
-                this.changes.seats = this.seatsToIds(this.group.seats);
+            resetName() {
+                this.changes.name = this.group.display_name;
+            },
+            saveExtension() {
+                if(this.hasExtensionChanged) {
+                    this.$emit('save-extension', {
+                        groupId: this.group.id,
+                        groupExtension: this.changes.extension
+                    });
+                }
+            },
+            resetExtension() {
+                this.changes.extension = this.group.pbx_extension;
+            },
+            saveHuntPolicy(){
+                if(this.hasHuntPolicyChanged) {
+                    this.$emit('save-hunt-policy', {
+                        groupId: this.group.id,
+                        groupHuntPolicy: this.changes.huntPolicy
+                    });
+                }
+            },
+            resetHuntPolicy() {
+                this.changes.huntPolicy = this.group.pbx_hunt_policy;
+            },
+            saveHuntTimeout(){
+                if(this.hasHuntTimeoutChanged) {
+                    this.$emit('save-hunt-timeout', {
+                        groupId: this.group.id,
+                        groupHuntTimeout: this.changes.huntTimeout
+                    });
+                }
+            },
+            resetHuntTimeout() {
+                this.changes.huntTimeout = this.group.pbx_hunt_timeout;
+            },
+            saveAliasNumbers() {
+                if(this.hasAliasNumbersChanged) {
+                    this.$emit('save-alias-numbers', {
+                        groupId: this.group.id,
+                        assignedNumbers: _.difference(this.changes.aliasNumbers, this.getAliasNumberIds()),
+                        unassignedNumbers: _.difference(this.getAliasNumberIds(), this.changes.aliasNumbers)
+                    });
+                }
+            },
+            resetAliasNumbers() {
+                this.changes.aliasNumbers = this.getAliasNumberIds();
             },
             saveSeats() {
-                this.$emit('save-seats', this.groupModel);
+                if(this.hasSeatsChanged) {
+                    this.$emit('save-seats', {
+                        groupId: this.group.id,
+                        seatIds: this.changes.seats
+                    });
+                }
             },
-            resetSoundSet() {
-                this.changes.soundSet = this.group.contract_sound_set_id;
+            resetSeats() {
+                this.changes.seats = this.getSeatIds();
             },
             saveSoundSet() {
-                this.$emit('save-sound-set', this.groupModel);
+                if(this.hasSoundSetChanged) {
+                    this.$emit('save-sound-set', {
+                        groupId: this.group.id,
+                        soundSetId: this.changes.soundSet
+                    });
+                }
+            },
+            resetSoundSet() {
+                this.changes.soundSet = this.getSoundSetId();
+            },
+            deleteSeat() {
+                if(this.$refs.listItem) {
+                    this.$refs.listItem.closePopoverMenu();
+                }
+                this.$emit('remove');
             }
         },
         watch: {
             group() {
-                this.changes = this.getGroup();
+                this.changes = this.getGroupData()
             }
         }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/quasar.variables';
+    @import '../../../themes/app.common';
 </style>

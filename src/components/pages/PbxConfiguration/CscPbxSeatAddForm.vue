@@ -1,6 +1,9 @@
 <template>
-    <div class="csc-form csc-pbx-seat-add-form">
-        <q-field :error-label="seatNameErrorMessage">
+    <div
+        class="csc-form csc-pbx-seat-add-form"
+    >
+        <q-field
+            :error-label="seatNameErrorMessage">
             <q-input
                 dark
                 clearable
@@ -11,7 +14,6 @@
                 :readonly="loading"
                 :float-label="$t('pbxConfig.name')"
                 @input="$v.data.name.$touch"
-                @blur="$v.data.name.$touch"
             />
         </q-field>
         <q-field :error-label="extensionErrorMessage">
@@ -24,7 +26,6 @@
                 :readonly="loading"
                 :float-label="$t('pbxConfig.extension')"
                 @input="$v.data.extension.$touch"
-                @blur="$v.data.extension.$touch"
             />
         </q-field>
         <q-field>
@@ -56,18 +57,13 @@
         <q-field>
             <q-select
                 dark
-                clearable
+                radio
                 v-model="data.soundSet"
-                :disable="loading || !defaultSoundSet"
+                :disable="loading"
                 :readonly="loading"
-                :float-label="$t('pbxConfig.soundSet')"
+                :stack-label="$t('pbxConfig.soundSet')"
                 :options="soundSetOptions"
             />
-            <q-tooltip
-                v-if="!defaultSoundSet"
-            >
-                {{ $t('pbxConfig.defaultNotSet') }}
-            </q-tooltip>
         </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
@@ -75,7 +71,7 @@
                 v-if="!loading"
                 color="default"
                 icon="clear"
-                @mousedown.native="cancel()"
+                @click="cancel()"
             >
                 {{ $t('buttons.cancel') }}
             </q-btn>
@@ -117,12 +113,10 @@
     export default {
         name: 'csc-pbx-seat-add-form',
         props: [
+            'loading',
             'aliasNumberOptions',
             'groupOptions',
-            'loading',
-            'soundSetOptions',
-            'soundSetLabel',
-            'defaultSoundSet'
+            'soundSetOptions'
         ],
         components: {
             CscObjectSpinner,
@@ -196,7 +190,7 @@
                     extension: this.data.extension,
                     aliasNumbers: this.data.aliasNumbers,
                     groups: this.data.groups,
-                    soundSet: this.soundSetLabel(this.data.soundSet)
+                    soundSet: this.data.soundSet
                 }
             }
         },
