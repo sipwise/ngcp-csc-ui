@@ -30,7 +30,8 @@
         "addNew": "Add new",
         "removeFile": "Remove file",
         "confirm": "Confirm",
-        "exit": "Exit"
+        "exit": "Exit",
+        "close": "Close"
     },
     "form": {
         "destinationLabel": "Destination"
@@ -390,7 +391,7 @@
         "noCallQueues": "No call queues created yet",
         "noSoundSets": "No sound sets created yet",
         "toasts": {
-            "changedFieldToast": "Changed {type} to {name}",
+            "changedFieldToast": "Changed {field} successfully",
             "updatedAliasNumbersToast": "Alias numbers field updated!",
             "updatedSeatsInGroupToast": "Group seat field updated!",
             "updatedGroupsInSeatToast": "Seat group field updated!",
@@ -461,7 +462,15 @@
         "removeSoundFileTitle": "Remove sound file",
         "removeSoundFileText": "You are about to remove the sound file for {handle}",
         "soundSet": "Sound Set",
-        "defaultNotSet": "A default subscriber sound set to be set before being able to select, in the Sound Sets page."
+        "defaultNotSet": "A default subscriber sound set to be set before being able to select, in the Sound Sets page.",
+        "defaultSoundSetName": "Default",
+        "deviceKeyType": "Lamp/Key",
+        "createDevice": "Create device",
+        "callQueueMaxLength": "Maximum calls in queue",
+        "callQueueWrapUpTime": "Wrap up time",
+        "addCallQueue": "Add call queue",
+        "callQueueRemovalDialogTitle": "Remove call queue",
+        "callQueueRemovalDialogText": "You are about to remove call queue for {subscriber}"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

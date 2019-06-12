@@ -11,4 +11,5 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+    @import '../themes/quasar.variables.styl'
 </style>

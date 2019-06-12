@@ -1,6 +1,10 @@
 <template>
-    <div class="csc-form csc-pbx-seat-add-form">
-        <q-field :error-label="groupNameErrorMessage">
+    <div
+        class="csc-form csc-pbx-seat-add-form"
+    >
+        <q-field
+            :error-label="groupNameErrorMessage"
+        >
             <q-input
                 dark
                 clearable
@@ -11,10 +15,11 @@
                 :readonly="loading"
                 :float-label="$t('pbxConfig.groupName')"
                 @input="$v.data.name.$touch"
-                @blur="$v.data.name.$touch"
             />
         </q-field>
-        <q-field :error-label="extensionErrorMessage">
+        <q-field
+            :error-label="extensionErrorMessage"
+        >
             <q-input
                 dark
                 clearable
@@ -24,7 +29,6 @@
                 :readonly="loading"
                 :float-label="$t('pbxConfig.extension')"
                 @input="$v.data.extension.$touch"
-                @blur="$v.data.extension.$touch"
             />
         </q-field>
         <q-field>
@@ -38,7 +42,9 @@
                 :options="huntPolicyOptions"
             />
         </q-field>
-        <q-field :error-label="huntTimeoutErrorMessage">
+        <q-field
+            :error-label="huntTimeoutErrorMessage"
+        >
             <q-input
                 dark
                 clearable
@@ -82,18 +88,13 @@
         <q-field>
             <q-select
                 dark
-                clearable
+                radio
                 v-model="data.soundSet"
-                :disable="loading || !defaultSoundSet"
+                :disable="loading"
                 :readonly="loading"
-                :float-label="$t('pbxConfig.soundSet')"
+                :stack-label="$t('pbxConfig.soundSet')"
                 :options="soundSetOptions"
             />
-            <q-tooltip
-                v-if="!defaultSoundSet"
-            >
-                {{ $t('pbxConfig.defaultNotSet') }}
-            </q-tooltip>
         </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
@@ -148,10 +149,8 @@
             'huntPolicyOptions',
             'aliasNumberOptions',
             'seatOptions',
-            'loading',
             'soundSetOptions',
-            'soundSetLabel',
-            'defaultSoundSet'
+            'loading'
         ],
         components: {
             CscObjectSpinner,
@@ -257,7 +256,7 @@
                     huntTimeout: this.data.huntTimeout,
                     aliasNumbers: this.data.aliasNumbers,
                     seats: this.data.seats,
-                    soundSet: this.soundSetLabel(this.data.soundSet)
+                    soundSet: this.data.soundSet
                 }
             }
         },
