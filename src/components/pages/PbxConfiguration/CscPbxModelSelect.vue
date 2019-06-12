@@ -1,61 +1,95 @@
 <template>
-    <div class="csc-pbx-model-select">
-        <div>
-            <q-input
-                :value="selectedProfile.name"
-                readonly
-                class="cursor-pointer"
-                :float-label="label"
-                :after="clearButton"
-                dark
+    <div class="csc-pbx-model-select row items-end xs-gutter">
+        <div
+            v-if="selectedProfile !== null"
+            class="col-auto"
+        >
+            <q-icon
+                class="csc-pbx-device-model-icon"
+                v-if="selectedProfileImageUrl === null"
+                size="24px"
+                name="fa-fax"
+                color="white"
             />
-            <q-popover
-                ref="popover"
-                fit
-                @open="opened()"
+            <div
+                v-else
+                class="csc-pbx-device-model-image"
             >
-                <q-list
-                    no-border
-                    class="csc-pbx-model-list"
-                    highlight
-                >
-                    <q-item
-                        v-for="profile in profiles"
-                        :key="profile.id"
-                        @click="selectProfile(profile)"
-                        class="cursor-pointer"
-                    >
-                        <q-item-side>
-                            <q-item-tile
-                                avatar
-                            >
-                                <img
-                                    :src="frontImageUrl(profile.device_id)"
-                                />
-                            </q-item-tile>
-                        </q-item-side>
-                        <q-item-main>
-                            <q-item-tile>{{ profile.name }}</q-item-tile>
-                        </q-item-main>
-                    </q-item>
-                </q-list>
-            </q-popover>
+                <img
+                    :src="selectedProfileImageUrl"
+                />
+            </div>
         </div>
         <div
-            v-if="selectedProfile.device_id != null && preview"
-            class="csc-pbx-model-image"
+            class="col-grow"
         >
-            <img
-                :src="frontImageUrl(selectedProfile.device_id)"
-                class="csc-pbx-model-select-preview"
+            <q-input
+                dark
+                readonly
+                class="cursor-pointer"
+                float-label="Device Model"
+                :value="selectedProfileName"
+                :disable="disable"
+            />
+        </div>
+        <q-popover
+            ref="popover"
+            fit
+            @open="$emit('opened')"
+        >
+            <q-list
+                no-border
+                highlight
+            >
+                <q-item
+                    v-for="profile in profiles"
+                    class="cursor-pointer"
+                    :key="profile.id"
+                    @click="selectProfile(profile)"
+                >
+                    <q-item-side
+                        class="text-center"
+                    >
+                        <q-icon
+                            v-if="!modelImageMap[profile.device_id]"
+                            size="24px"
+                            name="fa-fax"
+                            color="white"
+                        />
+                        <div
+                            v-else
+                            class="csc-pbx-device-model-image row items-center"
+                        >
+                            <img
+                                :src="modelImageMap[profile.device_id].url"
+                            />
+                        </div>
+                    </q-item-side>
+                    <q-item-main>
+                        <q-item-tile>
+                            {{ profile.name }}
+                        </q-item-tile>
+                    </q-item-main>
+                </q-item>
+            </q-list>
+        </q-popover>
+        <div
+            class="col-auto"
+        >
+            <q-btn
+                v-if="selectedProfile !== null && hasResetButton"
+                icon="clear"
+                color="white"
+                flat
+                small
+                @click="resetProfile"
             />
         </div>
     </div>
 </template>
 
 <script>
-
-    import _ from 'lodash';
+    import _ from 'lodash'
     import {
         QInput,
         QPopover,
@@ -63,47 +97,20 @@
         QItem,
         QItemMain,
         QItemTile,
-        QItemSide } from 'quasar-framework'
-    import { mapGetters } from 'vuex';
-
-
+        QItemSide,
+        QIcon,
+        QBtn
+    } from 'quasar-framework'
     export default {
         name: 'csc-pbx-model-select',
-        props: {
-            profiles: {
-                type: Array,
-                default(){
-                    return [];
-                }
-            },
-            modelImages: {
-                type: Object,
-                default(){
-                    return {};
-                }
-            },
-            loading: {
-                type: Boolean,
-                default: false
-            },
-            label: String,
-            erasable: {
-                type: Boolean,
-                default: true
-            },
-            readonly: {
-                type: Boolean,
-                default: false
-            },
-            selectedId: {
-                type: Number,
-                default: null
-            },
-            preview: {
-                type: Boolean,
-                default: true
-            }
-        },
+        props: [
+            'profile',
+            'profiles',
+            'profileMap',
+            'modelImageMap',
+            'disable',
+            'hasResetButton'
+        ],
         components: {
             QInput,
             QPopover,
@@ -111,81 +118,43 @@
             QItem,
             QItemMain,
             QItemTile,
-            QItemSide
+            QItemSide,
+            QIcon,
+            QBtn
         },
         data () {
             return {
-                selectedProfile: this.getDefaults()
+                selectedProfile: this.getProfileById(this.profile)
             }
         },
         computed: {
-            ...mapGetters('pbxConfig', [
-                'listProfileFilter'
-            ]),
-            clearButton() {
-                let self = this;
-                let buttons = [];
-                if (this.selectedProfile.device_id !== null && this.erasable === true) {
-                    buttons = [{
-                        icon: 'cancel',
-                        error: false,
-                        handler (event) {
-                            event.stopPropagation();
-                            self.reset();
-                        }
-                    }];
-                }
-                return buttons;
+            selectedProfileName() {
+                return _.get(this.selectedProfile, 'name', '');
+            },
+            selectedProfileImageUrl() {
+                let deviceModelId = _.get(this.selectedProfile, 'device_id', null);
+                return _.get(this.modelImageMap, deviceModelId + '.url', null);
             }
         },
         methods: {
-            opened() {
-                this.$emit('opened');
-            },
             selectProfile(profile) {
-                if(this.readonly === false) {
-                    this.selectedProfile = profile;
-                }
+                this.selectedProfile = profile;
                 this.$refs.popover.close();
-                this.$emit("select", profile);
+                this.$emit('selected', profile.id);
             },
-            frontImageUrl(id) {
-                return _.get(this.modelImages, id + '.url', null);
+            resetProfile(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                this.selectedProfile = null;
+                this.$emit('reset');
             },
-            reset() {
-                this.selectedProfile = this.getDefaults();
-                this.$emit('reseted');
-            },
-            getDefaults() {
-                return {
-                    name: '',
-                    device_id: null
-                }
-            },
-            selectById(id) {
-                this.profiles.forEach(($profile)=>{
-                    if(id === $profile.id) {
-                        this.selectedProfile = $profile;
-                    }
-                });
-            }
-        },
-        mounted() {
-            if (this.listProfileFilter) {
-                this.selectById(this.listProfileFilter);
-            }
-            else {
-                this.selectById(this.selectedId);
+            getProfileById(id) {
+                return _.get(this.profileMap, id, null);
             }
         },
         watch: {
-            selectedId(id) {
-                this.selectById(id);
-            },
-            listProfileFilter() {
-                if(this.listProfileFilter === null) {
-                    this.selectedProfile = this.getDefaults();
-                }
+            profile(id) {
+                this.selectedProfile = this.getProfileById(id);
             }
         }
     }
@@ -193,23 +162,24 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/quasar.variables';
-    .csc-pbx-model-list
-        .q-item-avatar
-            overflow hidden
-            border-radius 0
-            img
-                border-radius 0
-                height auto
-
-    .csc-pbx-model-image
-        margin-top 16px
-        text-align center
-
+    .csc-pbx-model-select
+        .q-input
+            margin 0
+        .q-btn
+            padding-left $flex-gutter-xs
+            padding-right $flex-gutter-xs
+            .q-btn-inner
+                i
+                    margin 0
+    .csc-pbx-device-model-image
+        position relative
+        width 32px
+        height 32px
+        overflow hidden
+        background-color white
         img
-            width: 25%
-
-        @media (max-width: $breakpoint-sm)
-            img
-                width 40%
-
+            position absolute
+            width 32px
+            left 0
+            top 0
 </style>

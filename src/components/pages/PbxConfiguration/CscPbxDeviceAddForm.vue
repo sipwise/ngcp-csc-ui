@@ -1,63 +1,66 @@
 <template>
-    <div>
-        <q-field :error-label="stationNameErrorMessage">
+    <div
+        class="csc-form csc-add-form"
+    >
+        <q-field
+            :error-label="stationNameErrorMessage"
+        >
             <q-input
                 dark
-                @input="$v.data.station_name.$touch"
-                @blur="$v.data.station_name.$touch"
-                :error="$v.data.station_name.$error"
-                v-model="data.station_name"
+                autofocus
+                v-model="formData.stationName"
                 :disable="loading"
                 :readonly="loading"
-                autofocus
                 :float-label="$t('pbxConfig.deviceStationName')"
-                clearable
+                :error="$v.formData.stationName.$error"
+                @input="$v.formData.stationName.$touch"
             />
         </q-field>
-        <q-field :error-label="identifierErrorMessage">
+        <q-field
+            :error-label="identifierErrorMessage"
+        >
             <q-input
                 dark
-                @input="$v.data.identifier.$touch"
-                @blur="$v.data.identifier.$touch"
-                :error="$v.data.identifier.$error"
-                v-model="data.identifier"
+                v-model="formData.identifier"
                 :disable="loading"
                 :readonly="loading"
                 :float-label="$t('pbxConfig.deviceIdentifier')"
-                clearable
+                :error="$v.formData.identifier.$error"
+                @input="$v.formData.identifier.$touch"
             />
         </q-field>
         <q-field>
             <csc-pbx-model-select
+                :profile="formData.profile"
                 :profiles="profiles"
-                :modelImages="modelImages"
-                :label="$t('pbxConfig.deviceModel')"
-                @opened="modelSelectOpened()"
-                @select="selectProfile"
-                @reseted="resetProfile"
+                :profile-map="profileMap"
+                :model-image-map="modelImageMap"
+                :has-reset-button="true"
+                @opened="$emit('model-select-opened')"
+                @selected="selectedProfile"
+                @reset="resetProfile"
             />
         </q-field>
         <div
-            class="row justify-center form-actions"
+            class="csc-form-actions row justify-center"
         >
             <q-btn
-                v-if="!loading"
                 flat
                 color="default"
                 icon="clear"
-                @mousedown.native="cancel()"
+                :disable="loading"
+                @click="cancel"
             >
                 {{ $t('buttons.cancel') }}
             </q-btn>
             <q-btn
-                v-if="!loading"
                 flat
                 color="primary"
                 icon="done"
-                @click="save()"
-                :disable="$v.data.$invalid || !data.profile_id"
+                :disable="$v.formData.$invalid || formData.profile === null || loading"
+                @click="submit"
             >
-                {{ $t('buttons.save') }}
+                {{ $t('pbxConfig.createDevice') }}
             </q-btn>
         </div>
         <csc-object-spinner
@@ -93,9 +96,10 @@
     export default {
         name: 'csc-pbx-device-add-form',
         props: [
+            'loading',
             'profiles',
-            'modelImages',
-            'loading'
+            'profileMap',
+            'modelImageMap'
         ],
         components: {
             CscObjectSpinner,
@@ -116,8 +120,8 @@
             QItemMain
         },
         validations: {
-            data: {
-                station_name: {
+            formData: {
+                stationName: {
                     required,
                     maxLength: maxLength(64)
                 },
@@ -129,68 +133,56 @@
         },
         data () {
             return {
-                formEnabled: false,
-                data: this.getDefaults()
+                formData: this.getDefaultFormData()
             }
         },
         computed: {
             stationNameErrorMessage() {
-                if (!this.$v.data.station_name.required) {
+                if (!this.$v.formData.stationName.required) {
                     return this.$t('validationErrors.fieldRequired', {
                         field: this.$t('pbxConfig.deviceStationName')
                     });
                 }
-                else if (!this.$v.data.station_name.maxLength) {
+                else if (!this.$v.formData.stationName.maxLength) {
                     return this.$t('validationErrors.maxLength', {
                         field: this.$t('pbxConfig.deviceStationName'),
-                        maxLength: this.$v.data.station_name.$params.maxLength.max
+                        maxLength: this.$v.formData.stationName.$params.maxLength.max
                     });
                 }
             },
             identifierErrorMessage() {
-                if (!this.$v.data.identifier.required) {
+                if (!this.$v.formData.identifier.required) {
                     return this.$t('validationErrors.fieldRequired', {
                         field: this.$t('pbxConfig.deviceIdentifier')
                     });
                 }
-                else if (!this.$v.data.identifier.customMacAddress) {
+                else if (!this.$v.formData.identifier.customMacAddress) {
                     return this.$t('validationErrors.macAddress');
                 }
             }
         },
         methods: {
-            getDefaults() {
+            getDefaultFormData() {
                 return {
-                    station_name: '',
+                    stationName: '',
                     identifier: '',
-                    profile_id: null,
-                    lines: null
+                    profile: null
                 }
             },
-            enableForm(){
-                this.formEnabled = true;
-            },
-            disableForm(){
-                this.reset();
-                this.$emit('cancelForm');
-            },
             cancel() {
-                this.disableForm();
+                this.$emit('cancel');
             },
-            save() {
-                this.$emit('save', this.data);
+            submit() {
+                this.$emit('submit', this.formData);
             },
             reset() {
-                this.data = this.getDefaults();
+                this.formData = this.getDefaultFormData();
             },
-            modelSelectOpened() {
-                this.$emit('modelSelectOpened');
-            },
-            selectProfile(profile) {
-                this.data.profile_id = profile.id;
+            selectedProfile(profileId) {
+                this.formData.profile = profileId;
             },
             resetProfile() {
-                this.data.profile_id = null;
+                this.formData.profile = null;
             }
         }
     }

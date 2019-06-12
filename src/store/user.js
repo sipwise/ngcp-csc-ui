@@ -260,7 +260,7 @@ export default {
                         });
                     }
                 }).catch((err)=>{
-                    console.error(err);
+                    console.debug(err);
                     context.dispatch('logout');
                 });
             }
