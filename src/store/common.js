@@ -6,3 +6,16 @@ export const RequestState = {
     succeeded: 'succeeded',
     failed: 'failed'
 };
+
+export const CreationState = {
+    initiated: 'initiated',
+    input: 'input',
+    creating: 'creating',
+    created: 'created',
+    error: 'error'
+};
+
+export const ListState = {
+    hidden: 'hidden',
+    visible: 'visible'
+};
