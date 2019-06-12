@@ -1,11 +1,32 @@
 
 import _ from 'lodash';
 import Vue from 'vue';
-import { getJsonBody } from './utils';
+import {
+    getJsonBody
+} from './utils';
 
 export const LIST_DEFAULT_PAGE = 1;
-export const LIST_DEFAULT_ROWS = 25;
+export const LIST_DEFAULT_ROWS = 3;
 export const LIST_ALL_ROWS = 1000;
+
+const PATCH_HEADERS = {
+    'Content-Type': 'application/json-patch+json',
+    'Prefer': 'return=minimal'
+};
+
+const GET_HEADERS = {
+    'Accept': 'application/json'
+};
+
+export class ApiResponseError extends Error {
+
+    constructor(code, message) {
+        super();
+        this.code = code;
+        this.status = code;
+        this.message = message;
+    }
+}
 
 export function getList(options) {
     return new Promise((resolve, reject) => {
@@ -16,9 +37,7 @@ export function getList(options) {
                 page: LIST_DEFAULT_PAGE,
                 rows: LIST_DEFAULT_ROWS
             },
-            headers: {
-                'Accept': 'application/json'
-            }
+            headers: GET_HEADERS
         }, options);
         Promise.resolve().then(() => {
             if(options.all === true) {
@@ -51,8 +70,12 @@ export function getList(options) {
             if(lastPage === 0) {
                 lastPage = null;
             }
+            let items = _.get(body, options.root, []);
+            for(let i = 0; i < items.length; i++) {
+                items[i] = normalizeEntity(items[i]);
+            }
             resolve({
-                items: _.get(body, options.root, []),
+                items: items,
                 lastPage: lastPage
             });
         }).catch((err) => {
@@ -63,15 +86,61 @@ export function getList(options) {
 
 export function get(options) {
     return new Promise((resolve, reject) => {
-        return Vue.http.get(options.path, {
-            headers: {
-                'Accept': 'application/json'
+        options = options || {};
+        options = _.merge({
+            headers: GET_HEADERS
+        }, options);
+        let requestOptions ={
+            headers: options.headers,
+            params: options.params
+        };
+        if(options.blob === true) {
+            requestOptions.responseType = 'blob';
+        }
+        return Vue.http.get(options.path, requestOptions).then((result) => {
+            let body = null;
+            if(options.blob === true) {
+                body = URL.createObjectURL(result.body);
             }
-        }).then((result) => {
-            resolve(getJsonBody(result.body));
+            else {
+                body = normalizeEntity(getJsonBody(result.body));
+            }
+            resolve(body);
         }).catch((err) => {
-            if(err.status && err.status >= 400) {
-                reject(new Error(err.body.message));
+            let code = _.get(err, 'body.code', null);
+            let message = _.get(err, 'body.message', null);
+            if(code !== null && message !== null) {
+                reject(new ApiResponseError(err.body.code, err.body.message));
+            }
+            else {
+                reject(err);
+            }
+        });
+    });
+}
+
+export function patch(operation, options) {
+    return new Promise((resolve, reject) => {
+        options = options || {};
+        options = _.merge({
+            headers: PATCH_HEADERS
+        }, options);
+        let body = {
+            op: operation,
+            path: '/'+ options.fieldPath
+        };
+        if(options.value !== void(0)) {
+            body.value = options.value;
+        }
+        Vue.http.patch(options.path, [body], {
+            headers: options.headers
+        }).then((result) => {
+            resolve(result);
+        }).catch((err) => {
+            let code = _.get(err, 'body.code', null);
+            let message = _.get(err, 'body.message', null);
+            if(code !== null && message !== null) {
+                reject(new ApiResponseError(err.body.code, err.body.message));
             }
             else {
                 reject(err);
@@ -81,60 +150,50 @@ export function get(options) {
 }
 
 export function patchReplace(options) {
-    return new Promise((resolve, reject) => {
-        Vue.http.patch(options.path, [{
-            op: 'replace',
-            path: '/'+ options.fieldPath,
-            value: options.value
-        }], {
+    return patch('replace', options);
+}
+
+export function patchAdd(options) {
+    return patch('add', options);
+}
+
+export function patchRemove(options) {
+    return patch('remove', options);
+}
+
+export function patchFull(operation, options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
             headers: {
-                'Content-Type': 'application/json-patch+json',
-                'Prefer': 'return=minimal'
+                Prefer: 'return=representation'
             }
-        }).then((result) => {
-            resolve(result);
-        }).catch((err) => {
-            if(err.status >= 400) {
-                reject(new Error(err.body.message));
-            }
-            else {
-                reject(err);
-            }
+        });
+        patch(operation, options).then((result)=>{
+            resolve(getJsonBody(result.body));
+        }).catch((err)=>{
+            reject(err);
         });
     });
 }
 
-export function patchAdd(options) {
-    return new Promise((resolve, reject) => {
-        Vue.http.patch(options.path, [{
-            op: 'add',
-            path: '/'+ options.fieldPath,
-            value: options.value
-        }], {
-            headers: {
-                'Content-Type': 'application/json-patch+json',
-                'Prefer': 'return=minimal'
-            }
-        }).then((result) => {
-            resolve(result);
-        }).catch((err) => {
-            if(err.status >= 400) {
-                reject(new Error(err.body.message));
-            }
-            else {
-                reject(err);
-            }
-        });
-    });
+export function patchReplaceFull(options) {
+    return patchFull('replace', options);
+}
+
+export function patchAddFull(options) {
+    return patchFull('add', options);
+}
+
+export function patchRemoveFull(options) {
+    return patchFull('remove', options);
 }
 
 export function getFieldList(options) {
     return new Promise((resolve, reject) => {
         options = options || {};
         options = _.merge({
-            headers: {
-                'Accept': 'application/json'
-            }
+            headers: GET_HEADERS
         }, options);
         Vue.http.get(options.path, {
             headers: options.headers
@@ -142,6 +201,27 @@ export function getFieldList(options) {
             let fieldList = getJsonBody(result.body)[options.field];
             resolve(fieldList);
         }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function normalizeEntity(entity) {
+    if(entity && entity._links) {
+        delete entity._links;
+    }
+    return entity;
+}
+
+export function getAsBlob(options) {
+    return new Promise((resolve, reject)=>{
+        options = options || {};
+        options = _.merge(options, {
+            blob: true
+        });
+        get(options).then((body)=>{
+            resolve(body);
+        }).catch((err)=>{
             reject(err);
         });
     });

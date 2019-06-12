@@ -7,7 +7,14 @@ import CallBlockingModule from './call-blocking'
 import CallForwardModule from './call-forward'
 import CallModule, {errorVisibilityTimeout} from './call'
 import ConversationsModule from './conversations'
-import PbxConfigModule from './pbx-config/index'
+
+import PbxModule from './pbx'
+import PbxSeatsModule from './pbx-seats'
+import PbxGroupsModule from './pbx-groups'
+import PbxDevicesModule from './pbx-devices'
+import PbxCallQueuesModule from './pbx-callqueues'
+import PbxSoundSetsModule from './pbx-soundsets'
+
 import ReminderModule from './reminder'
 import SpeedDialModule from './speed-dial'
 import UserModule from './user'
@@ -33,13 +40,19 @@ export const store = new Vuex.Store({
         callForward: CallForwardModule,
         call: CallModule,
         conversations: ConversationsModule,
-        pbxConfig: PbxConfigModule,
         reminder: ReminderModule,
         speedDial: SpeedDialModule,
         user: UserModule,
         communication: CommunicationModule,
         voicebox: VoiceboxModule,
-        conference: ConferenceModule
+        conference: ConferenceModule,
+        pbx: PbxModule,
+        pbxSeats: PbxSeatsModule,
+        pbxGroups: PbxGroupsModule,
+        pbxDevices: PbxDevicesModule,
+        pbxCallQueues: PbxCallQueuesModule,
+        pbxSoundSets: PbxSoundSetsModule
+
     },
     getters: {
         conferenceId(state) {

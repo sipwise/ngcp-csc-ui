@@ -1,98 +1,90 @@
 <template>
-    <div class="csc-form csc-pbx-seat-add-form">
+    <div
+        class="csc-form csc-pbx-sound-set-add-form"
+    >
         <q-field
             :error-label="nameErrorMessage"
-            class="csc-form-field"
         >
             <q-input
                 dark
-                autofocus
                 v-model="data.name"
                 :error="$v.data.name.$error"
                 :disable="loading"
                 :readonly="loading"
                 :float-label="$t('pbxConfig.name')"
                 @input="$v.data.name.$touch"
-                @blur="$v.data.name.$touch"
-                clearable
             />
         </q-field>
         <q-field
             :error-label="descriptionErrorMessage"
-            class="csc-form-field"
         >
             <q-input
                 dark
-                clearable
                 v-model="data.description"
                 :error="$v.data.description.$error"
                 :disable="loading"
                 :readonly="loading"
                 :float-label="$t('pbxConfig.description')"
                 @input="$v.data.description.$touch"
-                @blur="$v.data.description.$touch"
             />
         </q-field>
         <q-field
-            class="csc-form-field"
         >
-            <q-toggle
+            <q-checkbox
                 v-model="data.contract_default"
-                checked-icon="check_circle"
-                unchecked-icon="check_circle"
-                :class="contractDefaultClasses"
                 :disable="loading"
-                :label="$t('pbxConfig.defaultForSubscribers')"
+                :label="$t('pbxConfig.soundSetUseAsDefault')"
             />
         </q-field>
         <q-field
-            class="csc-form-field"
         >
-            <q-toggle
+            <q-checkbox
                 v-model="data.copy_from_default"
-                checked-icon="move_to_inbox"
-                unchecked-icon="move_to_inbox"
-                :class="loadFilesClasses"
                 :disable="loading"
-                :label="$t('pbxConfig.loadFiles')"
+                :label="$t('pbxConfig.soundSetUseLanguagePreset')"
                 @input="toggleLoadFiles"
             />
         </q-field>
         <q-field
             v-if="data.copy_from_default"
-            class="csc-form-field"
         >
-            <q-toggle
-                v-model="data.loopplay"
-                checked-icon="loop"
-                unchecked-icon="loop"
-                :class="loopplayClasses"
-                :disable="loading || !data.copy_from_default"
-                :label="$t('pbxConfig.playingInLoop')"
-            />
+            <div
+                class="row items-baseline md-gutter no-vert-gutter"
+            >
+                <div
+                    class="column inline col-6"
+                >
+                    <q-select
+                        dark
+                        radio
+                        v-model="data.language"
+                        :disable="loading || !data.copy_from_default"
+                        :readonly="loading"
+                        :float-label="$t('pbxConfig.language')"
+                        :options="languageOptions"
+                    />
+                </div>
+                <div
+                    class="column inline col-grow"
+                >
+
+                    <q-checkbox
+                        class="col-auto"
+                        v-model="data.loopplay"
+                        :disable="loading || !data.copy_from_default"
+                        :label="$t('pbxConfig.soundSetPlayAllLoop')"
+                    />
+                </div>
+            </div>
         </q-field>
-        <q-field
-            v-if="data.copy_from_default"
-            class="csc-form-field"
-        >
-            <q-select
-                dark
-                chips
-                clearable
-                v-model="data.language"
-                :disable="loading || !data.copy_from_default"
-                :readonly="loading"
-                :float-label="$t('pbxConfig.language')"
-                :options="languageOptions"
-            />
-        </q-field>
-        <div class="csc-form-actions row justify-center">
+        <div
+            class="csc-form-actions row justify-center">
             <q-btn
                 flat
                 v-if="!loading"
                 color="default"
                 icon="clear"
-                @mousedown.native="cancel()"
+                @click="cancel()"
             >
                 {{ $t('buttons.cancel') }}
             </q-btn>
@@ -100,7 +92,7 @@
                 flat
                 v-if="!loading"
                 color="primary"
-                icon="group"
+                icon="queue_music"
                 :disable="$v.data.$invalid || !data.language"
                 @click="save()"
             >
@@ -127,7 +119,8 @@
         QInput,
         QSelect,
         QIcon,
-        QToggle
+        QToggle,
+        QCheckbox
     } from 'quasar-framework'
     import CscObjectSpinner from "../../CscObjectSpinner";
     export default {
@@ -144,7 +137,8 @@
             QInput,
             QSelect,
             QIcon,
-            QToggle
+            QToggle,
+            QCheckbox
         },
         validations: {
             data: {

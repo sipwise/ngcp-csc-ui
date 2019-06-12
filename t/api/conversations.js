@@ -64,31 +64,6 @@ describe('Conversations', function(){
 
         let innerDataTransformed = {
             items: [{
-                "_links" : {
-                    "collection": {
-                        "href": "/api/conversations/"
-                    },
-                    "curies": {
-                        "href": "http://purl.org/sipwise/ngcp-api/#rel-{rel}",
-                        "name": "ngcp",
-                        "templated": true
-                    },
-                    "ngcp:conversations": {
-                        "href": "/api/conversations/1?type=voicemail"
-                    },
-                    "ngcp:voicemailrecordings": {
-                        "href": "/api/voicemailrecordings/1"
-                    },
-                    "ngcp:voicemails": {
-                        "href": "/api/voicemails/1"
-                    },
-                    "profile": {
-                        "href": "http://purl.org/sipwise/ngcp-api/"
-                    },
-                    "self": {
-                        "href": "/api/conversations/1?type=voicemail"
-                    }
-                },
                 "call_id": "kp55kEGtNp",
                 "callee": "43993006",
                 "caller": "43993006",
