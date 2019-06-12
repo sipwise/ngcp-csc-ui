@@ -150,17 +150,6 @@
         >
             <q-side-link
                 item
-                to="/user/pbx-configuration/groups"
-            >
-                <q-item-side
-                    icon="group"
-                />
-                <q-item-main
-                    :label="$t('navigation.pbxConfiguration.groups')"
-                />
-            </q-side-link>
-            <q-side-link
-                item
                 to="/user/pbx-configuration/seats"
             >
                 <q-item-side
@@ -168,6 +157,17 @@
                 />
                 <q-item-main
                     :label="$t('navigation.pbxConfiguration.seats')"
+                />
+            </q-side-link>
+            <q-side-link
+                item
+                to="/user/pbx-configuration/groups"
+            >
+                <q-item-side
+                    icon="group"
+                />
+                <q-item-main
+                    :label="$t('navigation.pbxConfiguration.groups')"
                 />
             </q-side-link>
             <q-side-link

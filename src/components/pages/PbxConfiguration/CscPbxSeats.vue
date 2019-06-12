@@ -2,82 +2,88 @@
     <csc-page
         :is-list="true"
     >
-        <div
-            v-show="!addFormEnabled"
-            class="row justify-center"
-        >
-            <q-btn
-                color="primary"
-                icon="add"
-                flat
-                @click="enableAddForm"
+        <q-slide-transition>
+            <div
+                v-if="isSeatAddFormDisabled"
+                class="csc-add-button row justify-center"
             >
-                {{ $t('pbxConfig.addSeat') }}
-            </q-btn>
-        </div>
+                <q-btn
+                    color="primary"
+                    icon="add"
+                    flat
+                    :disable="isSeatListRequesting"
+                    @click="enableSeatAddForm"
+                >
+                    {{ $t('pbxConfig.addSeat') }}
+                </q-btn>
+            </div>
+        </q-slide-transition>
+        <q-slide-transition>
+            <div
+                v-if="!isSeatAddFormDisabled"
+                class="row justify-center"
+            >
+                <csc-pbx-seat-add-form
+                    ref="addForm"
+                    class="csc-list-form col-xs-12 col-md-6"
+                    :loading="isSeatCreating"
+                    :group-options="getGroupOptions"
+                    :alias-number-options="getNumberOptions"
+                    :sound-set-options="getSoundSetOptions"
+                    @save="createSeat"
+                    @cancel="disableSeatAddForm"
+                />
+            </div>
+        </q-slide-transition>
         <div
+            v-if="isSeatListPaginationActive"
             class="row justify-center"
-            v-show="addFormEnabled"
         >
-            <csc-pbx-seat-add-form
-                ref="addForm"
-                class="col-xs-12 col-md-6 csc-list-form"
-                :alias-number-options="aliasNumberOptions"
-                :group-options="groupOptions"
-                :sound-set-options="soundSetOptions"
-                :sound-set-label="soundSetLabel"
-                :loading="isAdding"
-                :default-sound-set="!!defaultSoundSet"
-                @save="addSeat"
-                @cancel="disableAddForm"
+            <q-pagination
+                :value="seatListCurrentPage"
+                :max="seatListLastPage"
+                @change="loadSeatListItemsPaginated"
             />
         </div>
         <div
-            v-if="isListLoadingVisible"
+            v-if="isSeatListRequesting && !(isSeatCreating || isSeatRemoving || isSeatUpdating)"
             class="row justify-center"
         >
             <csc-spinner />
         </div>
-        <div
-            v-if="seats.length > 0 && !isListRequesting && listLastPage > 1"
-            class="row justify-center"
+        <csc-list
+            v-if="!isSeatListEmpty && seatListVisibility === 'visible'"
         >
-            <q-pagination
-                :value="listCurrentPage"
-                :max="listLastPage"
-                @change="changePage"
-            />
-        </div>
-        <div>
-            <q-list
-                striped-odd
-                no-border
-                multiline
-                :highlight="!isMobile"
+            <csc-fade
+                v-for="(seat, index) in seatListItems"
+                :key="'csc-fade-' + seat.id"
             >
                 <csc-pbx-seat
-                    v-for="seat in seats"
                     :key="seat.id"
+                    :odd="(index % 2) === 0"
                     :seat="seat"
-                    :alias-number-options="aliasNumberOptions"
-                    :group-options="groupOptions"
-                    :loading="isItemLoading(seat.id)"
-                    :seat-name="seatName"
-                    :group-name="groupName"
-                    :sound-set-options="soundSetOptions"
-                    :sound-set-label="soundSetLabel"
-                    :default-sound-set="!!defaultSoundSet"
-                    @remove="removeSeatDialog"
+                    :groups="groupMapById"
+                    :expanded="isSeatExpanded(seat.id)"
+                    :loading="isSeatLoading(seat.id)"
+                    :alias-number-options="getNumberOptions"
+                    :group-options="getGroupOptions"
+                    :sound-set-options="getSoundSetOptions"
+                    :sound-set="getSoundSetBySeatId(seat.id)"
+                    :labelWidth="4"
+                    :has-call-queue="hasCallQueue(seat.id)"
+                    @expand="expandSeat(seat.id)"
+                    @collapse="collapseSeat(seat.id)"
+                    @remove="openSeatRemovalDialog(seat.id)"
                     @save-name="setSeatName"
                     @save-extension="setSeatExtension"
-                    @save-alias-numbers="updateAliasNumbers"
-                    @save-groups="updateGroups"
-                    @save-sound-set="updateSoundSet"
+                    @save-alias-numbers="setSeatNumbers"
+                    @save-groups="setSeatGroups"
+                    @save-sound-set="setSeatSoundSet"
                 />
-            </q-list>
-        </div>
+            </csc-fade>
+        </csc-list>
         <div
-            v-if="isSeatsEmpty && !isListRequesting"
+            v-if="!isSeatListRequesting && isSeatListEmpty"
             class="row justify-center csc-no-entities"
         >
             {{ $t('pbxConfig.noSeats') }}
@@ -85,8 +91,9 @@
         <csc-remove-dialog
             ref="removeDialog"
             :title="$t('pbxConfig.removeSeatTitle')"
-            :message="removeDialogMessage"
-            @remove="removeSeat"
+            :message="getSeatRemoveDialogMessage"
+            @remove="removeSeat({seatId:seatRemoving.id})"
+            @cancel="closeSeatRemovalDialog"
         />
     </csc-page>
 </template>
@@ -96,202 +103,174 @@
     import CscPbxSeatAddForm from './CscPbxSeatAddForm'
     import CscPbxSeat from './CscPbxSeat'
     import CscRemoveDialog from '../../CscRemoveDialog'
-    import aliasNumberOptions from '../../../mixins/alias-number-options'
-    import itemError from '../../../mixins/item-error'
     import {
-        mapGetters
+        mapState,
+        mapGetters,
+        mapActions,
+        mapMutations
     } from 'vuex'
     import {
+        showGlobalError,
         showToast
     } from '../../../helpers/ui'
     import {
-        QChip,
-        QCard,
-        QCardSeparator,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
-        QIcon,
-        QPopover,
         QList,
-        QItem,
-        QItemMain,
-        QField,
-        QInput,
         QBtn,
-        QSelect,
-        QInnerLoading,
-        QSpinnerDots,
-        QSpinnerMat,
         QPagination,
-        Platform
+        QTransition,
+        QSlideTransition
     } from 'quasar-framework'
     import CscSpinner from "../../CscSpinner";
+    import {
+        CreationState,
+        RequestState
+    } from "../../../store/common";
+    import platform from "../../../mixins/platform";
+    import CscFadeDown from "../../transitions/CscFadeDown";
+    import CscFadeUp from "../../transitions/CscFadeUp";
+    import CscZoom from "../../transitions/CscZoom";
+    import CscFade from "../../transitions/CscFade";
+    import CscList from "../../CscList";
 
     export default {
-        mixins: [aliasNumberOptions, itemError],
-        created() {
-            this.$store.dispatch('pbxConfig/listSoundSets');
-            this.$store.dispatch('pbxConfig/getDefaultSoundSet');
-            this.$store.dispatch('pbxConfig/listSeats', {
-                page: 1
-            });
+        mixins: [
+            platform
+        ],
+        mounted() {
+            this.$scrollTo(this.$parent.$el);
+            this.disableSeatAddForm();
+            this.loadSeatListItems();
         },
         data () {
-            return {
-                addFormEnabled: false,
-                currentRemovingSeat: null
-            }
+            return {}
         },
         components: {
+            CscFadeDown,
+            CscFadeUp,
+            CscZoom,
+            CscFade,
+            QList,
+            QBtn,
+            QPagination,
+            QTransition,
+            QSlideTransition,
             CscSpinner,
             CscPage,
             CscPbxSeat,
             CscPbxSeatAddForm,
             CscRemoveDialog,
-            QChip,
-            QCard,
-            QCardSeparator,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
-            QIcon,
-            QPopover,
-            QList,
-            QItem,
-            QItemMain,
-            QField,
-            QInput,
-            QBtn,
-            QSelect,
-            QInnerLoading,
-            QSpinnerDots,
-            QSpinnerMat,
-            QPagination
+            CscList
         },
         computed: {
-            ...mapGetters('pbxConfig', [
-                'seats',
-                'groups',
-                'addState',
-                'removeState',
-                'isAdding',
-                'isUpdating',
-                'updateItemId',
-                'isUpdatingAliasNumbers',
-                'updateAliasNumbersItemId',
-                'isUpdatingGroupsAndSeats',
-                'updateGroupsAndSeatsItemId',
-                'isRemoving',
-                'removeItemId',
-                'listState',
-                'listError',
-                'isListRequesting',
-                'isListLoadingVisible',
-                'listCurrentPage',
-                'listLastPage',
-                'lastAddedSeat',
-                'lastRemovedSeat',
-                'lastUpdatedField',
-                'updateAliasNumbersState',
-                'updateGroupsAndSeatsState',
-                'updateState',
-                'seatName',
-                'groupName',
-                'soundSetOptions',
-                'soundSetLabel',
-                'defaultSoundSet',
-                'groupOptions'
+            ...mapState('pbx', [
+                'groupMapById',
             ]),
-            isMobile() {
-                return Platform.is.mobile;
-            },
-            removeDialogMessage() {
-                if (this.currentRemovingSeat !== null) {
-                    return this.$t('pbxConfig.removeSeatText', {
-                        seat: this.currentRemovingSeat.name
-                    });
+            ...mapState('pbxSeats', [
+                'seatListItems',
+                'seatListCurrentPage',
+                'seatListLastPage',
+                'seatCreationState',
+                'seatCreationError',
+                'seatUpdateState',
+                'seatUpdateError',
+                'seatRemoving',
+                'seatRemovalState',
+                'seatRemovalError',
+                'seatListVisibility'
+            ]),
+            ...mapGetters('pbx', [
+                'getNumberOptions',
+                'getSoundSetOptions',
+                'getGroupOptions'
+            ]),
+            ...mapGetters('pbxSeats', [
+                'isSeatListEmpty',
+                'isSeatListRequesting',
+                'isSeatListPaginationActive',
+                'isSeatAddFormDisabled',
+                'isSeatCreating',
+                'isSeatUpdating',
+                'isSeatRemoving',
+                'isSeatExpanded',
+                'isSeatLoading',
+                'getSoundSetBySeatId',
+                'getSeatCreatingName',
+                'getSeatUpdatingField',
+                'getSeatRemovingName',
+                'getSeatRemoveDialogMessage',
+                'getSeatCreationToastMessage',
+                'getSeatUpdateToastMessage',
+                'getSeatRemovalToastMessage',
+                'hasCallQueue'
+            ])
+        },
+        methods: {
+            ...mapActions('pbxSeats', [
+                'loadSeatListItems',
+                'createSeat',
+                'removeSeat',
+                'setSeatName',
+                'setSeatExtension',
+                'setSeatGroups',
+                'setSeatNumbers',
+                'setSeatSoundSet'
+            ]),
+            ...mapMutations('pbxSeats', [
+                'enableSeatAddForm',
+                'disableSeatAddForm',
+                'expandSeat',
+                'collapseSeat',
+                'seatRemovalRequesting',
+                'seatRemovalCanceled'
+            ]),
+            resetSeatAddForm() {
+                if(this.$refs.addForm) {
+                    this.$refs.addForm.reset();
                 }
             },
-            isSeatsEmpty() {
-                return Object.entries(this.seats).length === 0;
+            openSeatRemovalDialog(seatId) {
+                if(this.$refs.removeDialog) {
+                    this.$refs.removeDialog.open();
+                    this.seatRemovalRequesting(seatId);
+                }
+            },
+            closeSeatRemovalDialog() {
+                this.seatRemovalCanceled();
+            },
+            loadSeatListItemsPaginated(page) {
+                this.$scrollTo(this.$parent.$el);
+                this.loadSeatListItems({
+                    page: page
+                });
             }
         },
         watch: {
-            addState(state) {
-                if(state === 'succeeded') {
-                    this.disableAddForm();
-                    showToast(this.$t('pbxConfig.toasts.addedSeatToast', { seat: this.lastAddedSeat }));
+            seatCreationState(state) {
+                if(state === CreationState.created) {
+                    this.resetSeatAddForm();
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getSeatCreationToastMessage);
+                }
+                else if(state === CreationState.error) {
+                    showGlobalError(this.seatCreationError);
                 }
             },
-            removeState(state) {
-                if(state === 'succeeded') {
-                    showToast(this.$t('pbxConfig.toasts.removedSeatToast', { seat: this.lastRemovedSeat }));
+            seatUpdateState(state) {
+                if(state === RequestState.succeeded) {
+                    showToast(this.getSeatUpdateToastMessage);
+                }
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.seatUpdateError);
                 }
             },
-            updateState(state) {
-                if(state === 'succeeded') {
-                    showToast(this.$t('pbxConfig.toasts.changedFieldToast', this.lastUpdatedField));
+            seatRemovalState(state) {
+                if(state === RequestState.succeeded) {
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getSeatRemovalToastMessage);
                 }
-            },
-            updateAliasNumbersState(state) {
-                if(state === 'succeeded') {
-                    showToast(this.$t('pbxConfig.toasts.updatedAliasNumbersToast'));
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.seatRemovalError);
                 }
-            },
-            updateGroupsAndSeatsState(state) {
-                if(state === 'succeeded') {
-                    showToast(this.$t('pbxConfig.toasts.updatedGroupsInSeatToast', {seat: this.group}));
-                }
-            }
-        },
-        methods: {
-            isItemLoading(seatId) {
-                return (this.isUpdating && this.updateItemId + "" === seatId + "") ||
-                    (this.isRemoving && this.removeItemId + "" === seatId + "") ||
-                    (this.isUpdatingAliasNumbers && this.updateAliasNumbersItemId + "" === seatId + "") ||
-                    (this.isUpdatingGroupsAndSeats && this.updateGroupsAndSeatsItemId + "" === seatId + "");
-            },
-            resetAddForm() {
-                this.$refs.addForm.reset();
-            },
-            enableAddForm() {
-                this.resetAddForm();
-                this.addFormEnabled = true;
-            },
-            disableAddForm() {
-                this.resetAddForm();
-                this.addFormEnabled = false;
-            },
-            addSeat(seat) {
-                this.$store.dispatch('pbxConfig/addSeat', seat);
-            },
-            removeSeat() {
-                this.$store.dispatch('pbxConfig/removeSeat', this.currentRemovingSeat);
-            },
-            setSeatName(seat) {
-                this.$store.dispatch('pbxConfig/setSeatName', seat);
-            },
-            setSeatExtension(seat) {
-                this.$store.dispatch('pbxConfig/setSeatExtension', seat);
-            },
-            updateAliasNumbers(data) {
-                this.$store.dispatch('pbxConfig/updateSeatAliasNumbers', data);
-            },
-            updateGroups(data) {
-                this.$store.dispatch('pbxConfig/updateGroups', data);
-            },
-            updateSoundSet(data) {
-                this.$store.dispatch('pbxConfig/setSeatSoundSet', data);
-            },
-            changePage(page) {
-                this.$store.dispatch('pbxConfig/listSeats', {
-                    page: page
-                });
-            },
-            removeSeatDialog(subscriber) {
-                this.currentRemovingSeat = subscriber;
-                this.$refs.removeDialog.open();
             }
         }
     }
@@ -299,4 +278,10 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/app.common.styl';
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s;
+    }
+    .fade-enter, .fade-leave-to {
+        opacity: 0;
+    }
 </style>

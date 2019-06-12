@@ -57,7 +57,7 @@ export class RtcEnginePlugin {
                 }, (err, script) => {
                     this.script = script;
                     if(err) {
-                        console.error(err);
+                        console.debug(err);
                         reject(new Error('Unable to load RTC:Engine client library'));
                     }
                     else {
