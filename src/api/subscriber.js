@@ -1,8 +1,16 @@
 
 import _ from 'lodash';
 import Vue from 'vue';
-import { getJsonBody } from './utils'
-import { getList, get } from './common'
+import {
+    getJsonBody
+} from './utils'
+import {
+    getList,
+    get
+} from './common'
+import {
+    assignNumbers
+} from "./user";
 
 export function getPreferences(id) {
     return new Promise((resolve, reject)=>{
@@ -16,7 +24,7 @@ export function getPreferences(id) {
 
 export function setPreference(id, field, value) {
     return new Promise((resolve, reject)=>{
-        var headers = {};
+        let headers = {};
         headers['Content-Type'] = 'application/json-patch+json';
         Promise.resolve().then(()=>{
             return Vue.http.patch('api/subscriberpreferences/' + id, [{
@@ -50,7 +58,7 @@ export function prependItemToArrayPreference(id, field, value) {
         Promise.resolve().then(()=>{
             return getPreferences(id);
         }).then((result)=>{
-            var prefs = _.cloneDeep(result);
+            let prefs = _.cloneDeep(result);
             delete prefs._links;
             prefs[field] = _.get(prefs, field, []);
             prefs[field] = [value].concat(prefs[field]);
@@ -86,7 +94,7 @@ export function editItemInArrayPreference(id, field, itemIndex, value) {
         Promise.resolve().then(()=>{
             return getPreferences(id);
         }).then((result)=>{
-            var prefs = _.cloneDeep(result);
+            let prefs = _.cloneDeep(result);
             delete prefs._links;
             if(_.isArray(prefs[field]) && itemIndex < prefs[field].length) {
                 prefs[field][itemIndex] = value;
@@ -108,7 +116,7 @@ export function removeItemFromArrayPreference(id, field, itemIndex) {
         Promise.resolve().then(()=>{
             return getPreferences(id);
         }).then((result)=>{
-            var prefs = _.cloneDeep(result);
+            let prefs = _.cloneDeep(result);
             delete prefs._links;
             prefs[field] = _.get(prefs, field, []);
             _.remove(prefs[field], (value, index)=>{
@@ -280,12 +288,49 @@ export function getSubscribers(options) {
     });
 }
 
+export function getFullSubscribers(options) {
+    return new Promise((resolve, reject)=>{
+        let subscribers = {
+            items: []
+        };
+        Promise.resolve().then(()=>{
+            return getSubscribers(options);
+        }).then(($subscribers)=> {
+            subscribers = $subscribers;
+            let promises = [];
+            subscribers.items.forEach((subscriber)=>{
+                promises.push(getSubscriberPreference(subscriber.id));
+            });
+            return Promise.all(promises);
+        }).then((preferences)=>{
+            resolve({
+                subscribers: subscribers,
+                preferences: preferences
+            });
+        }).catch((err)=>{
+            reject(err);
+        })
+    });
+}
+
 export function getSubscriber(id) {
     return new Promise((resolve, reject)=>{
         get({
             path: 'api/subscribers/' + id
         }).then((subscriber)=>{
             resolve(subscriber);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSubscriberPreference(id) {
+    return new Promise((resolve, reject)=>{
+        get({
+            path: 'api/subscriberpreferences/' + id
+        }).then((subscriberPreference)=>{
+            resolve(subscriberPreference);
         }).catch((err)=>{
             reject(err);
         });
@@ -343,7 +388,7 @@ export function editCallQueuePreference(id, config) {
         Promise.resolve().then(()=>{
             return getPreferences(id);
         }).then((result)=>{
-            var prefs = Object.assign(result, $prefs);
+            let prefs = Object.assign(result, $prefs);
             delete prefs._links;
             return Vue.http.put('api/subscriberpreferences/' + id, prefs);
         }).then(()=>{
@@ -372,10 +417,52 @@ export function getAllPreferences(options) {
         options = options || {};
         options = _.merge(options, {
             path: 'api/subscriberpreferences/',
-            root: '_embedded.ngcp:subscriberpreferences'
+            root: '_embedded.ngcp:subscriberpreferences',
+            all: true
         });
         getList(options).then((list)=>{
             resolve(list);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function getSubscriberAndPreferences(id) {
+    return new Promise((resolve, reject)=>{
+        Promise.all([
+            getSubscriber(id),
+            getPreferences(id)
+        ]).then((result)=>{
+            resolve({
+                subscriber: result[0],
+                preferences: result[1]
+            });
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function setSubscriberNumbers(options) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return Promise.all([
+                assignNumbers(options.assignedNumbers, options.subscriberId),
+                assignNumbers(options.unassignedNumbers, options.pilotId)
+            ]);
+        }).then(()=>{
+            if(options.assignedNumbers.length > 0) {
+                return Promise.resolve({
+                    subscriber: null,
+                    preferences: null
+                });
+            }
+            else {
+                return getSubscriberAndPreferences(options.subscriberId);
+            }
+        }).then((result)=>{
+            resolve(result);
         }).catch((err)=>{
             reject(err);
         });

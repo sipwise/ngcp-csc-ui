@@ -4,6 +4,7 @@
         :title="title"
         :titleIcon="titleIcon"
         :opened="opened"
+        @cancel="cancel"
     >
         <div
             slot="content"
@@ -53,6 +54,9 @@
             remove() {
                 this.close();
                 this.$emit('remove');
+            },
+            cancel() {
+                this.$emit('cancel');
             }
         }
     }
