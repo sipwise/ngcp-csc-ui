@@ -2,336 +2,288 @@
     <csc-page
         :is-list="true"
     >
-        <div
-            v-show="addFormEnabled"
-            class="row justify-center"
-        >
-            <csc-pbx-group-add-form
-                ref="addForm"
-                class="col-xs-12 col-md-6 csc-list-form"
-                :alias-number-options="aliasNumberOptions"
-                :seat-options="seatOptions"
-                :hunt-policy-options="huntPolicyOptions"
-                :sound-set-options="soundSetOptions"
-                :sound-set-label="soundSetLabel"
-                :loading="isAdding"
-                :default-sound-set="!!defaultSoundSet"
-                @save="addGroup"
-                @cancel="disableAddForm"
-            />
-        </div>
-        <div
-            v-show="!addFormEnabled"
-            class="row justify-center"
-        >
-            <q-btn
-                color="primary"
+        <csc-list-actions>
+            <csc-list-action-button
+                v-if="isGroupAddFormDisabled"
+                slot="slot1"
                 icon="add"
-                flat
-                @click="enableAddForm"
+                color="primary"
+                :label="$t('pbxConfig.addGroup')"
+                :disable="isGroupListRequesting"
+                @click="enableGroupAddForm"
+            />
+        </csc-list-actions>
+        <q-slide-transition>
+            <div
+                v-if="!isGroupAddFormDisabled"
+                class="row justify-center"
             >
-                {{ $t('pbxConfig.addGroup') }}
-            </q-btn>
-        </div>
+                <csc-pbx-group-add-form
+                    ref="addForm"
+                    class="col-xs-12 col-md-6 csc-list-form"
+                    :loading="isGroupCreating"
+                    :seat-options="getSeatOptions"
+                    :alias-number-options="getNumberOptions"
+                    :sound-set-options="getSoundSetOptions"
+                    :hunt-policy-options="getHuntPolicyOptions"
+                    @save="createGroup"
+                    @cancel="disableGroupAddForm"
+                />
+            </div>
+        </q-slide-transition>
         <div
-            v-if="isListLoadingVisible"
-            class="row justify-center"
-        >
-            <csc-spinner />
-        </div>
-        <div
-            v-if="groups.length > 0 && !isListRequesting && listLastPage > 1"
+            v-if="isGroupListPaginationActive"
             class="row justify-center"
         >
             <q-pagination
-                :value="listCurrentPage"
-                :max="listLastPage"
-                @change="changePage"
+                :value="groupListCurrentPage"
+                :max="groupListLastPage"
+                @change="loadGroupListItemsPaginated"
             />
         </div>
-        <q-list
-            no-border
-            striped-odd
-            multiline
-            :highlight="!isMobile"
+        <csc-list-spinner
+            v-if="isGroupListRequesting && !(isGroupCreating || isGroupRemoving || isGroupUpdating)"
+        />
+        <csc-list
+            v-if="!isGroupListEmpty && groupListVisibility === 'visible'"
         >
-            <csc-pbx-group
-                v-for="group in groups"
-                :key="group.id"
-                :group="group"
-                :alias-number-options="aliasNumberOptions"
-                :seat-options="seatOptions"
-                :hunt-policy-options="huntPolicyOptions"
-                :loading="isItemLoading(group.id)"
-                :group-name="groupName"
-                :seat-name="seatName"
-                :sound-set-options="soundSetOptions"
-                :sound-set-label="soundSetLabel"
-                :default-sound-set="!!defaultSoundSet"
-                @remove="removeGroupDialog"
-                @save-name="setGroupName"
-                @save-extension="setGroupExtension"
-                @save-hunt-policy="setGroupHuntPolicy"
-                @save-hunt-timeout="setGroupHuntTimeout"
-                @save-alias-numbers="updateAliasNumbers"
-                @save-seats="updateSeats"
-                @save-sound-set="updateSoundSet"
-            />
-        </q-list>
+            <csc-fade
+                v-for="(group, index) in groupListItems"
+                :key="'csc-fade-' + group.id"
+            >
+                <csc-pbx-group
+                    :key="group.id"
+                    :odd="(index % 2) === 0"
+                    :group="group"
+                    :seats="seatMapById"
+                    :expanded="isGroupExpanded(group.id)"
+                    :loading="isGroupLoading(group.id)"
+                    :alias-number-options="getNumberOptions"
+                    :seat-options="getSeatOptions"
+                    :sound-set-options="getSoundSetOptions"
+                    :hunt-policy-options="getHuntPolicyOptions"
+                    :sound-set="getSoundSetByGroupId(group.id)"
+                    :labelWidth="4"
+                    :has-call-queue="hasCallQueue(group.id)"
+                    @expand="expandGroup(group.id)"
+                    @collapse="collapseGroup(group.id)"
+                    @remove="openGroupRemovalDialog(group.id)"
+                    @save-name="setGroupName"
+                    @save-extension="setGroupExtension"
+                    @save-hunt-policy="setGroupHuntPolicy"
+                    @save-hunt-timeout="setGroupHuntTimeout"
+                    @save-alias-numbers="setGroupNumbers"
+                    @save-seats="setGroupSeats"
+                    @save-sound-set="setGroupSoundSet"
+                />
+            </csc-fade>
+        </csc-list>
         <div
-            v-if="isGroupsEmpty && !isListRequesting"
+            v-if="!isGroupListRequesting && isGroupListEmpty"
             class="row justify-center csc-no-entities"
         >
-            {{ $t('pbxConfig.noGroups') }}
+            {{ $t('pbxConfig.noSeats') }}
         </div>
         <csc-remove-dialog
             ref="removeDialog"
             :title="$t('pbxConfig.removeGroupTitle')"
-            :message="removeDialogMessage"
-            @remove="removeGroup"
+            :message="getGroupRemoveDialogMessage"
+            @remove="removeGroup({groupId:groupRemoving.id})"
+            @cancel="closeGroupRemovalDialog"
         />
     </csc-page>
 </template>
 
 <script>
     import CscPage from '../../CscPage'
-    import CscPbxGroup from './CscPbxGroup'
     import CscPbxGroupAddForm from './CscPbxGroupAddForm'
+    import CscPbxGroup from './CscPbxGroup'
     import CscRemoveDialog from '../../CscRemoveDialog'
-    import aliasNumberOptions from '../../../mixins/alias-number-options'
-    import itemError from '../../../mixins/item-error'
+    import CscListActions from "../../CscListActions";
+    import CscListActionButton from "../../CscListActionButton";
     import {
-        mapGetters
+        mapState,
+        mapGetters,
+        mapActions,
+        mapMutations
     } from 'vuex'
     import {
+        showGlobalError,
         showToast
     } from '../../../helpers/ui'
     import {
-        QChip,
-        QCard,
-        QCardSeparator,
-        QCardTitle,
-        QCardMain,
-        QCardActions,
-        QIcon,
-        QPopover,
         QList,
-        QItem,
-        QItemMain,
-        QField,
-        QInput,
         QBtn,
-        QSelect,
-        QInnerLoading,
-        QSpinnerDots,
-        QSpinnerMat,
         QPagination,
-        Platform
+        QTransition,
+        QSlideTransition
     } from 'quasar-framework'
     import CscSpinner from "../../CscSpinner";
+    import {
+        CreationState,
+        RequestState
+    } from "../../../store/common";
+    import platform from "../../../mixins/platform";
+    import CscFadeDown from "../../transitions/CscFadeDown";
+    import CscFadeUp from "../../transitions/CscFadeUp";
+    import CscZoom from "../../transitions/CscZoom";
+    import CscFade from "../../transitions/CscFade";
+    import CscList from "../../CscList";
+    import CscListSpinner from "../../CscListSpinner";
 
     export default {
-        mixins: [aliasNumberOptions, itemError],
+        mixins: [
+            platform
+        ],
+        mounted() {
+            this.$scrollTo(this.$parent.$el);
+            this.disableGroupAddForm();
+            this.loadGroupListItems();
+        },
+        data () {
+            return {}
+        },
         components: {
+            CscListSpinner,
+            CscFadeDown,
+            CscFadeUp,
+            CscZoom,
+            CscFade,
+            QList,
+            QBtn,
+            QPagination,
+            QTransition,
+            QSlideTransition,
             CscSpinner,
             CscPage,
             CscPbxGroup,
             CscPbxGroupAddForm,
             CscRemoveDialog,
-            QChip,
-            QCard,
-            QCardSeparator,
-            QCardTitle,
-            QCardMain,
-            QCardActions,
-            QIcon,
-            QPopover,
-            QList,
-            QItem,
-            QItemMain,
-            QField,
-            QInput,
-            QBtn,
-            QSelect,
-            QInnerLoading,
-            QSpinnerDots,
-            QSpinnerMat,
-            QPagination
-        },
-        created() {
-            this.$store.dispatch('pbxConfig/listSoundSets');
-            this.$store.dispatch('pbxConfig/getDefaultSoundSet');
-            this.$store.dispatch('pbxConfig/listGroups', {
-                page: 1
-            });
-        },
-        data () {
-            return {
-                addFormEnabled: false,
-                currentRemovingGroup: null
-            }
+            CscList,
+            CscListActions,
+            CscListActionButton
         },
         computed: {
-            huntPolicyOptions() {
-                return [
-                    {
-                        label: this.$t('pbxConfig.serialRinging'),
-                        value: 'serial'
-                    },
-                    {
-                        label: this.$t('pbxConfig.parallelRinging'),
-                        value: 'parallel'
-                    },
-                    {
-                        label: this.$t('pbxConfig.randomRinging'),
-                        value: 'random'
-                    },
-                    {
-                        label: this.$t('pbxConfig.circularRinging'),
-                        value: 'circular'
-                    }
-                ];
-            },
-            ...mapGetters('pbxConfig', [
-                'groups',
-                'seats',
-                'aliasNumbers',
-                'addState',
-                'removeState',
-                'isAdding',
-                'isUpdating',
-                'updateItemId',
-                'isUpdatingAliasNumbers',
-                'updateAliasNumbersItemId',
-                'isUpdatingGroupsAndSeats',
-                'updateGroupsAndSeatsItemId',
-                'updateState',
-                'isRemoving',
-                'removeItemId',
-                'listState',
-                'listError',
-                'isListRequesting',
-                'isListLoadingVisible',
-                'listCurrentPage',
-                'listLastPage',
-                'lastAddedGroup',
-                'lastRemovedGroup',
-                'lastUpdatedField',
-                'updateAliasNumbersState',
-                'updateGroupsAndSeatsState',
-                'groupName',
-                'seatName',
-                'seatOptions',
-                'soundSetOptions',
-                'soundSetLabel',
-                'defaultSoundSet'
+            ...mapState('pbx', [
+                'seatMapById',
             ]),
-            isMobile() {
-                return Platform.is.mobile;
-            },
-            removeDialogMessage() {
-                if (this.currentRemovingGroup !== null) {
-                    return this.$t('pbxConfig.removeGroupText', {
-                        group: this.currentRemovingGroup.name
-                    });
+            ...mapState('pbxGroups', [
+                'groupListItems',
+                'groupListCurrentPage',
+                'groupListLastPage',
+                'groupSelected',
+                'groupCreating',
+                'groupCreationState',
+                'groupCreationError',
+                'groupUpdating',
+                'groupUpdateState',
+                'groupUpdateError',
+                'groupRemoving',
+                'groupRemovalState',
+                'groupRemovalError',
+                'groupListVisibility'
+            ]),
+            ...mapGetters('pbx', [
+                'getNumberOptions',
+                'getSoundSetOptions',
+                'getSeatOptions'
+            ]),
+            ...mapGetters('pbxGroups', [
+                'isGroupListEmpty',
+                'isGroupListRequesting',
+                'isGroupListPaginationActive',
+                'isGroupAddFormDisabled',
+                'isGroupCreating',
+                'isGroupUpdating',
+                'isGroupRemoving',
+                'isGroupExpanded',
+                'isGroupLoading',
+                'getSoundSetByGroupId',
+                'getGroupCreatingName',
+                'getGroupUpdatingField',
+                'getGroupRemovingName',
+                'getGroupRemoveDialogMessage',
+                'getGroupCreationToastMessage',
+                'getGroupUpdateToastMessage',
+                'getGroupRemovalToastMessage',
+                'getHuntPolicyOptions',
+                'hasCallQueue'
+            ])
+        },
+        methods: {
+            ...mapActions('pbxGroups', [
+                'loadGroupListItems',
+                'createGroup',
+                'removeGroup',
+                'setGroupName',
+                'setGroupExtension',
+                'setGroupHuntPolicy',
+                'setGroupHuntTimeout',
+                'setGroupSeats',
+                'setGroupNumbers',
+                'setGroupSoundSet'
+            ]),
+            ...mapMutations('pbxGroups', [
+                'enableGroupAddForm',
+                'disableGroupAddForm',
+                'expandGroup',
+                'collapseGroup',
+                'groupRemovalRequesting',
+                'groupRemovalCanceled'
+            ]),
+            resetGroupAddForm() {
+                if(this.$refs.addForm) {
+                    this.$refs.addForm.reset();
                 }
             },
-            isGroupsEmpty() {
-                return Object.entries(this.groups).length === 0;
+            openGroupRemovalDialog(groupId) {
+                if(this.$refs.removeDialog) {
+                    this.groupRemovalRequesting(groupId);
+                    this.$refs.removeDialog.open();
+                }
+            },
+            closeGroupRemovalDialog() {
+                this.groupRemovalCanceled();
+            },
+            loadGroupListItemsPaginated(page) {
+                this.$scrollTo(this.$parent.$el);
+                this.loadGroupListItems({
+                    page: page
+                });
             }
         },
         watch: {
-            addState(state) {
-                if (state === 'succeeded') {
-                    this.disableAddForm();
-                    showToast(this.$t('pbxConfig.toasts.addedGroupToast', { group: this.lastAddedGroup }));
+            groupCreationState(state) {
+                if(state === CreationState.created) {
+                    this.resetGroupAddForm();
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getGroupCreationToastMessage);
+                }
+                else if(state === CreationState.error) {
+                    showGlobalError(this.groupCreationError);
                 }
             },
-            removeState(state) {
-                if (state === 'succeeded') {
-                    showToast(this.$t('pbxConfig.toasts.removedGroupToast', { group: this.lastRemovedGroup }));
+            groupUpdateState(state) {
+                if(state === RequestState.succeeded) {
+                    showToast(this.getGroupUpdateToastMessage);
+                }
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.groupUpdateError);
                 }
             },
-            updateState(state) {
-                if (state === 'succeeded') {
-                    showToast(this.$t('pbxConfig.toasts.changedFieldToast', this.lastUpdatedField));
+            groupRemovalState(state) {
+                if(state === RequestState.succeeded) {
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getGroupRemovalToastMessage);
                 }
-            },
-            updateAliasNumbersState(state) {
-                if (state === 'succeeded') {
-                    showToast(this.$t('pbxConfig.toasts.updatedAliasNumbersToast'));
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.groupRemovalError);
                 }
-            },
-            updateGroupsAndSeatsState(state) {
-                if (state === 'succeeded') {
-                    showToast(this.$t('pbxConfig.toasts.updatedSeatsInGroupToast', {group: this.seat}));
-                }
-            }
-        },
-        methods: {
-            isItemLoading(groupId) {
-                return (this.isUpdating && this.updateItemId + "" === groupId + "") ||
-                    (this.isRemoving && this.removeItemId + "" === groupId + "") ||
-                    (this.isUpdatingAliasNumbers && this.updateAliasNumbersItemId + "" === groupId + "") ||
-                    (this.isUpdatingGroupsAndSeats && this.updateGroupsAndSeatsItemId + "" === groupId + "");
-            },
-            resetAddForm() {
-                this.$refs.addForm.reset();
-            },
-            enableAddForm() {
-                this.resetAddForm();
-                this.addFormEnabled = true;
-            },
-            disableAddForm() {
-                this.resetAddForm();
-                this.addFormEnabled = false;
-            },
-            addGroup(group) {
-                this.$store.dispatch('pbxConfig/addGroup', group);
-            },
-            removeGroup() {
-                this.$store.dispatch('pbxConfig/removeGroup', this.currentRemovingGroup);
-            },
-            setGroupName(group) {
-                this.$store.dispatch('pbxConfig/setGroupName', group);
-            },
-            setGroupExtension(group) {
-                this.$store.dispatch('pbxConfig/setGroupExtension', group);
-            },
-            setGroupHuntPolicy(group) {
-                this.$store.dispatch('pbxConfig/setGroupHuntPolicy', group);
-            },
-            setGroupHuntTimeout(group) {
-                this.$store.dispatch('pbxConfig/setGroupHuntTimeout', group);
-            },
-            updateAliasNumbers(data) {
-                this.$store.dispatch('pbxConfig/updateGroupAliasNumbers', data);
-            },
-            updateSeats(data) {
-                this.$store.dispatch('pbxConfig/updateSeats', data);
-            },
-            updateSoundSet(data) {
-                this.$store.dispatch('pbxConfig/setGroupSoundSet', data);
-            },
-            changePage(page) {
-                this.$store.dispatch('pbxConfig/listGroups', {
-                    page: page
-                });
-            },
-            removeGroupDialog(subscriber) {
-                this.currentRemovingGroup = subscriber;
-                this.$refs.removeDialog.open();
             }
         }
     }
 </script>
 
-<style lang="stylus">
-    @import '../../../themes/quasar.variables.styl';
-    .add-form {
-        position: relative;
-    }
-    .add-form .q-field:last-child {
-        margin-bottom: 36px;
-    }
+<style lang="stylus" rel="stylesheet/stylus">
+    @import '../../../themes/app.common.styl';
 </style>
