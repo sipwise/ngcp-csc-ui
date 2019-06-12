@@ -73,7 +73,7 @@ export class RtcEngineCall {
                         }).onRemoteMediaEnded(()=>{
                             this.events.emit('remoteMediaEnded');
                         }).onError((err)=>{
-                            console.error(err);
+                            console.debug(err);
                             this.end();
                             this.events.emit('ended', err.message);
                         });
@@ -150,7 +150,7 @@ export class RtcEngineCall {
             }).onRingingStop(()=>{
                 this.events.emit('ringingStop');
             }).onError((err)=>{
-                console.error(err);
+                console.debug(err);
                 this.end();
                 this.events.emit('ended', err.message);
             });
@@ -227,7 +227,7 @@ export class RtcEngineCall {
             this.currentCall.accept(localMediaStream).then(()=>{
                 this.events.emit('locallyAccepted');
             }).catch((err)=>{
-                console.error(err);
+                console.debug(err);
                 this.end();
                 this.events.emit('ended', err.message);
             });

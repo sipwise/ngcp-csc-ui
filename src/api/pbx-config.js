@@ -2,18 +2,6 @@
 import _ from 'lodash';
 import Vue from 'vue';
 import {
-    getNumbers,
-    assignNumbers
-} from './user';
-import {
-    createSubscriber,
-    deleteSubscriber,
-    setDisplayName,
-    setPbxExtension,
-    setPbxHuntPolicy,
-    setPbxHuntTimeout,
-    setPbxGroupMemberIds,
-    setPbxGroupIds,
     getSubscribers,
     getSubscriber,
     getSubscribersByCallQueueEnabled,
@@ -21,63 +9,20 @@ import {
     setQueueLength,
     setWrapUpTime,
     getPreferences,
-    removeCallQueueConfig,
-    getAllPreferences
+    removeCallQueueConfig
 } from './subscriber';
 import uuid from 'uuid';
 import {
     getList,
     get,
     patchReplace,
-    patchAdd
+    patchAdd,
+    patchRemove
 } from './common'
 
-var createId = uuid.v4;
-
+export const createId = uuid.v4;
 export const PBX_CONFIG_ORDER_BY = 'create_timestamp';
 export const PBX_CONFIG_ORDER_DIRECTION = 'desc';
-
-export function getGroups(options) {
-    return new Promise((resolve, reject)=>{
-        let subscribers = {
-            items: []
-        };
-        let soundSets = {};
-        let preferences = {};
-        options = options || {};
-        options = _.merge(options, {
-            params: {
-                is_pbx_group: 1
-            }
-        });
-        Promise.resolve().then(()=>{
-            return getSubscribers(options);
-        }).then(($subscribers)=> {
-            subscribers = $subscribers;
-            return getAllSoundSets();
-        }).then(($soundSets)=> {
-            soundSets = _.keyBy($soundSets.items, 'name');
-            return getAllPreferences();
-        }).then(($preferences)=>{
-            preferences = _.keyBy($preferences.items, 'id');
-            subscribers.items.forEach((subscriber) => {
-                delete preferences[subscriber.id]._links;
-                delete subscriber._links;
-                Object.assign(subscriber, preferences[subscriber.id]);
-                if (preferences[subscriber.id] && preferences[subscriber.id].contract_sound_set) {
-                    subscriber.contract_sound_set_id = soundSets[preferences[subscriber.id].contract_sound_set].id;
-                }
-                else {
-                    subscriber.contract_sound_set = null;
-                    subscriber.contract_sound_set_id = null;
-                }
-            });
-            resolve(subscribers);
-        }).catch((err)=>{
-            reject(err);
-        });
-    });
-}
 
 export function getGroup(groupId) {
     return new Promise((resolve, reject) => {
@@ -106,49 +51,6 @@ export function getGroup(groupId) {
             }
             resolve(subscriber);
         }).catch((err) => {
-            reject(err);
-        });
-    });
-}
-
-export function getSeats(options) {
-    return new Promise((resolve, reject)=>{
-        let subscribers = {
-            items: []
-        };
-        let soundSets = {};
-        let preferences = {};
-        options = options || {};
-        options = _.merge(options, {
-            params: {
-                is_pbx_group: 0,
-                is_pbx_pilot: 0
-            }
-        });
-        Promise.resolve().then(()=>{
-            return getSubscribers(options);
-        }).then(($subscribers)=> {
-            subscribers = $subscribers;
-            return getAllSoundSets();
-        }).then(($soundSets)=> {
-            soundSets = _.keyBy($soundSets.items, 'name');
-            return getAllPreferences();
-        }).then(($preferences)=>{
-            preferences = _.keyBy($preferences.items, 'id');
-            subscribers.items.forEach((subscriber) => {
-                delete preferences[subscriber.id]._links;
-                delete subscriber._links;
-                Object.assign(subscriber, preferences[subscriber.id]);
-                if (preferences[subscriber.id] && preferences[subscriber.id].contract_sound_set) {
-                    subscriber.contract_sound_set_id = soundSets[preferences[subscriber.id].contract_sound_set].id;
-                }
-                else {
-                    subscriber.contract_sound_set = null;
-                    subscriber.contract_sound_set_id = null;
-                }
-            });
-            resolve(subscribers);
-        }).catch((err)=>{
             reject(err);
         });
     });
@@ -208,7 +110,8 @@ export function getPilot(options) {
         options = _.merge(options, {
             params: {
                 is_pbx_group: 0,
-                is_pbx_pilot: 1
+                is_pbx_pilot: 1,
+                rows: 1
             }
         });
         getSubscribers(options).then((subscribers)=>{
@@ -218,21 +121,6 @@ export function getPilot(options) {
             else {
                 resolve(null);
             }
-        }).catch((err)=>{
-            reject(err);
-        });
-    });
-}
-
-export function getDevices(options) {
-    return new Promise((resolve, reject)=>{
-        options = options || {};
-        options = _.merge(options, {
-            path: 'api/pbxdevices/',
-            root: '_embedded.ngcp:pbxdevices'
-        });
-        getList(options).then((list)=>{
-            resolve(list);
         }).catch((err)=>{
             reject(err);
         });
@@ -254,6 +142,12 @@ export function getProfiles(options) {
     });
 }
 
+export function getAllProfiles() {
+    return getProfiles({
+        all: true
+    });
+}
+
 export function getModels(options) {
     return new Promise((resolve, reject)=>{
         options = options || {};
@@ -269,34 +163,35 @@ export function getModels(options) {
     });
 }
 
-export function getGroupList(page) {
+export function getModelsFull(options) {
     return new Promise((resolve, reject)=>{
-        Promise.all([
-            getGroups({
-                params: {
-                    page: page,
-                    order_by: PBX_CONFIG_ORDER_BY,
-                    order_by_direction: PBX_CONFIG_ORDER_DIRECTION
-                }
-            }),
-            getSeats({
-                all: true
-            }),
-            getPilot(),
-            getNumbers()
-        ]).then((result)=>{
-            resolve(normalizeSubscribers(
-                {
-                    groups: result[0],
-                    seats: result[1],
-                    pilot: result[2],
-                    numbers: result[3],
-                    lastPage: result[0].lastPage
-                }
-            ));
+        let models = [];
+        Promise.resolve().then(()=>{
+            return getModels(options);
+        }).then((models)=>{
+            let modelImages = [];
+            models.items.forEach((model)=>{
+                modelImages.push(getModelFrontImage(model.id));
+            });
+            return Promise.all(modelImages);
+        }).then((modelImages)=>{
+            let images = {};
+            modelImages.forEach((modelImage)=>{
+                images[modelImage.id] = modelImage;
+            });
+            resolve({
+                models: models,
+                images: images
+            });
         }).catch((err)=>{
             reject(err);
         });
+    });
+}
+
+export function getAllModelsFull() {
+    return getModelsFull({
+        all: true
     });
 }
 
@@ -347,166 +242,6 @@ export function normalizeSubscribers(all) {
         numbersMap: numbersMap,
         lastPage: all.lastPage
     };
-}
-
-export function getSeatList(page) {
-    return new Promise((resolve, reject)=>{
-        Promise.all([
-            getSeats({
-                params: {
-                    page: page,
-                    order_by: PBX_CONFIG_ORDER_BY,
-                    order_by_direction: PBX_CONFIG_ORDER_DIRECTION
-                }
-            }),
-            getGroups({
-                all: true
-            }),
-            getPilot(),
-            getNumbers()
-        ]).then((result) => {
-            resolve(normalizeSubscribers(
-                {
-                    seats: result[0],
-                    groups: result[1],
-                    pilot: result[2],
-                    numbers: result[3],
-                    lastPage: result[0].lastPage
-                }
-            ));
-        }).catch((err) => {
-            reject(err);
-        });
-    });
-}
-
-export function getDeviceList(options) {
-    return new Promise((resolve, reject)=>{
-        let params = {
-            page: options.page,
-            profile_id: options.profile_id,
-            identifier: options.identifier,
-            station_name: options.station_name,
-            order_by: PBX_CONFIG_ORDER_BY,
-            order_by_direction: PBX_CONFIG_ORDER_DIRECTION
-        };
-        if (params.profile_id === null) {
-            delete params['profile_id'];
-        }
-        if (params.identifier === null) {
-            delete params['identifier'];
-        }
-        if (params.station_name === null) {
-            delete params['station_name'];
-        }
-        return getDevices({
-            params: params
-        }).then((devices)=>{
-            resolve(devices);
-        }).catch((err)=>{
-            reject(err);
-        });
-    });
-}
-
-export function addGroup(group) {
-    return new Promise((resolve, reject)=>{
-        Promise.resolve().then(()=>{
-            return createSubscriber({
-                customer_id: group.customerId,
-                domain_id: group.domainId,
-                username: createId(),
-                password: createId(),
-                display_name: group.name,
-                is_pbx_group: true,
-                pbx_extension: group.extension,
-                pbx_hunt_policy: group.huntPolicy,
-                pbx_hunt_timeout: group.huntTimeout,
-                pbx_groupmember_ids: group.seats
-            });
-        }).then((subscriberId)=>{
-            assignNumbers(group.aliasNumbers, subscriberId);
-            return subscriberId;
-        }).then((subscriberId)=>{
-            if (group.soundSet) {
-                setSubscriberSoundSet(subscriberId, group.soundSet);
-            }
-            return;
-        }).then(()=>{
-            resolve();
-        }).catch((err)=>{
-            reject(err);
-        });
-    });
-}
-
-export function removeGroup(id) {
-    return deleteSubscriber(id);
-}
-
-export function addSeat(seat) {
-    return new Promise((resolve, reject)=>{
-        Promise.resolve().then(()=>{
-            return createSubscriber({
-                customer_id: seat.customerId,
-                domain_id: seat.domainId,
-                username: createId(),
-                password: createId(),
-                display_name: seat.name,
-                is_pbx_group: false,
-                pbx_extension: seat.extension,
-                pbx_group_ids: seat.groups
-            });
-        }).then((subscriberId)=>{
-            assignNumbers(seat.aliasNumbers, subscriberId);
-            return subscriberId;
-        }).then((subscriberId)=>{
-            if (seat.soundSet) {
-                setSubscriberSoundSet(subscriberId, seat.soundSet);
-            }
-            return;
-        }).then(()=>{
-            resolve();
-        }).catch((err)=>{
-            reject(err);
-        });
-    });
-}
-
-export function removeSeat(id) {
-    return deleteSubscriber(id);
-}
-
-export function setGroupName(id, groupName) {
-    return setDisplayName(id, groupName);
-}
-
-export function setGroupExtension(id, groupExtension) {
-    return setPbxExtension(id, groupExtension);
-}
-
-export function setGroupHuntPolicy(id, huntPolicy) {
-    return setPbxHuntPolicy(id, huntPolicy);
-}
-
-export function setGroupHuntTimeout(id, huntTimeout) {
-    return setPbxHuntTimeout(id, huntTimeout);
-}
-
-export function updateGroupSeats(id, seatIds) {
-    return setPbxGroupMemberIds(id, seatIds);
-}
-
-export function setSeatName(id, seatName) {
-    return setDisplayName(id, seatName);
-}
-
-export function setSeatExtension(id, seatExtension) {
-    return setPbxExtension(id, seatExtension);
-}
-
-export function updateSeatGroups(id, seatIds) {
-    return setPbxGroupIds(id, seatIds);
 }
 
 export function getDeviceFull(id, options) {
@@ -597,7 +332,7 @@ export function getModel(id) {
 }
 
 export function getModelFrontImage(id) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve)=>{
         Vue.http.get('api/pbxdevicemodelimages/' + id, {
             responseType: 'blob',
             params: {
@@ -609,8 +344,12 @@ export function getModelFrontImage(id) {
                 url: URL.createObjectURL(res.body),
                 blob: res.body
             });
-        }).catch((err)=>{
-            reject(err);
+        }).catch(()=>{
+            resolve({
+                id: id,
+                url: null,
+                blob: null
+            });
         });
     });
 }
@@ -625,82 +364,6 @@ export function getModelFull(id) {
             model.frontImageBlob = res[1].blob;
             model.frontImageUrl = res[1].url;
             resolve(model);
-        }).catch((err)=>{
-            reject(err);
-        });
-    });
-}
-
-export function createDevice(device) {
-    return new Promise((resolve, reject)=>{
-        Vue.http.post('api/pbxdevices/', device).then((res)=>{
-            resolve(res);
-        }).catch((err)=>{
-            if (err.status >= 400) {
-                reject(new Error(err.body.message));
-            }
-            else {
-                reject(err);
-            }
-        });
-    });
-}
-
-export function removeDevice(id) {
-    return new Promise((resolve, reject)=>{
-        Vue.http.delete('api/pbxdevices/' + id).then(()=>{
-            resolve();
-        }).catch((err)=>{
-            if (err.status >= 400) {
-                reject(new Error(err.body.message));
-            }
-            else {
-                reject(err);
-            }
-        });
-    });
-}
-
-export function updateDeviceKeys(deviceId, keys) {
-    return patchReplace({
-        path: 'api/pbxdevices/' + deviceId,
-        fieldPath: 'lines',
-        value: keys
-    });
-}
-
-export function setStationName(options) {
-    return patchReplace({
-        path: 'api/pbxdevices/' + options.id,
-        fieldPath: 'station_name',
-        value: options.station_name
-    });
-}
-
-export function setIdentifier(deviceId, identifier) {
-    return patchReplace({
-        path: 'api/pbxdevices/' + deviceId,
-        fieldPath: 'identifier',
-        value: identifier
-    });
-}
-
-export function setProfile(deviceId, profileId) {
-    return new Promise((resolve, reject)=>{
-        Promise.resolve().then(()=>{
-            return patchReplace({
-                path: 'api/pbxdevices/' + deviceId,
-                fieldPath: 'lines',
-                value: []
-            });
-        }).then(()=>{
-            return patchReplace({
-                path: 'api/pbxdevices/' + deviceId,
-                fieldPath: 'profile_id',
-                value: profileId
-            });
-        }).then(()=>{
-            resolve();
         }).catch((err)=>{
             reject(err);
         });
@@ -787,9 +450,6 @@ export function getAllSoundSets(options) {
             all: true
         });
         getList(options).then((list)=>{
-            list.items.map((set) => {
-                delete set._links;
-            });
             resolve(list);
         }).catch((err)=>{
             reject(err);
@@ -1029,10 +689,28 @@ export function setSoundSetItemLoopplay(id, loopplay) {
 }
 
 export function setSubscriberSoundSet(id, soundSet) {
-    return patchAdd({
-        path: 'api/subscriberpreferences/' + id,
-        fieldPath: 'contract_sound_set',
-        value: soundSet
+    return new Promise((resolve, reject)=>{
+        let promise;
+        let path = 'api/subscriberpreferences/' + id;
+        let fieldPath = 'contract_sound_set';
+        if(soundSet === null || soundSet === void(0)) {
+            promise = patchRemove({
+                path: path,
+                fieldPath: 'contract_sound_set'
+            });
+        }
+        else {
+            promise = patchAdd({
+                path: path,
+                fieldPath: fieldPath,
+                value: soundSet
+            });
+        }
+        promise.then(()=>{
+            resolve();
+        }).catch((err)=>{
+            reject(err);
+        });
     });
 }
 
@@ -1041,7 +719,7 @@ export function getDefaultSoundSet() {
         getAllSoundSets().then((result) => {
             let defaultSoundSets = result.items.filter((soundSet) => {
                 return _.get(soundSet, 'contract_default', false);
-            })
+            });
             let defaultSoundSet = defaultSoundSets[0] ? defaultSoundSets[0].id : null;
             resolve(defaultSoundSet);
         }).catch((err) => {

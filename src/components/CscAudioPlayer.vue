@@ -48,7 +48,10 @@
 </template>
 
 <script>
-    import { QProgress, QBtn } from 'quasar-framework'
+    import {
+        QProgress,
+        QBtn
+    } from 'quasar-framework'
 
     export default {
         name: 'csc-audio-player',
@@ -89,14 +92,30 @@
         computed: {
             playPauseIcon() {
                 return this.playing ? 'pause': 'play_arrow';
+            },
+            isLoaded() {
+                return this.loaded || this.fileUrl;
             }
         },
         methods: {
             play() {
-                this.$refs.audio.play();
-                this.playing = true;
-                this.paused = false;
-                this.$emit('playing');
+                let playPromise = this.$refs.audio.play();
+                if(playPromise && playPromise.then) {
+                    playPromise.then(()=>{
+                        this.playing = true;
+                        this.paused = false;
+                        this.$emit('playing');
+                    }).catch(()=>{
+                        this.playing = true;
+                        this.paused = false;
+                        this.$emit('loading');
+                    });
+                }
+                else {
+                    this.playing = true;
+                    this.paused = false;
+                    this.$emit('playing');
+                }
             },
             pause() {
                 this.$refs.audio.pause();
@@ -121,21 +140,25 @@
                 this.$emit('load');
             },
             toggle() {
-                if (!this.loaded) {
-                    this.load();
-                }
-                else if (this.$refs.audio.paused) {
-                    this.play();
+                if (this.$refs.audio.paused) {
+                    this.playLoad();
                 }
                 else {
                     this.pause();
                 }
             },
             playLoad() {
-                if (!this.loaded) {
+                if (!this.isLoaded) {
                     this.load();
                 }
                 else if (this.$refs.audio.paused) {
+                    this.play();
+                }
+            }
+        },
+        watch: {
+            fileUrl() {
+                if(this.fileUrl) {
                     this.play();
                 }
             }
@@ -148,7 +171,6 @@
 
     .audio-player
         width 100%
-        height 56px
         display flex
         justify-content space-around
         align-items center

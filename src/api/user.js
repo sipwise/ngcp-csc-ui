@@ -122,7 +122,7 @@ export function getNumbers() {
             root: '_embedded.ngcp:numbers',
             all: true
         }).then((numberList)=>{
-            resolve(numberList.items);
+            resolve(numberList);
         }).catch((err)=>{
             reject(err);
         });

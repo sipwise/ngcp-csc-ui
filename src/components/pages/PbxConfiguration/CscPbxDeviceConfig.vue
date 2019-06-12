@@ -34,13 +34,22 @@
             class="csc-pbx-device-config-key-overlay animate-fade"
         >
             <div
-                class="title"
+                class="csc-device-key-title row justify-center items-center"
             >
                 <q-icon
+                    class="csc-device-key-title-icon"
                     name="touch_app"
-                    size="32px"
+                    size="24px"
                 />
-                {{ selectedKeySetName }} > Key {{ selectedKeyNumber }}
+                <div
+                    class="column"
+                >
+                    <div
+                        class="csc-device-key-title-main"
+                    >
+                        {{ selectedKeySetName }}: {{ $t('pbxConfig.deviceKeyType') }} {{ selectedKeyNumber }}
+                    </div>
+                </div>
             </div>
             <q-field
                 :label="selectedKeyLabel"
@@ -50,12 +59,14 @@
                     dark
                     ref="selectSubscriber"
                     :value="selectedKeySubscriber"
-                    :options="groupsAndSeatsOptions"
+                    :options="subscriberOptions"
                     @change="keySubscriberChanged"
                 />
             </q-field>
             <q-field
-                label="Type"
+                v-show="selectedKeySubscriber !== null"
+                :label="$t('pbxConfig.deviceKeyType')"
+                icon="radio_button_checked"
             >
                 <q-select
                     dark
@@ -72,24 +83,16 @@
                     class="column"
                 >
                     <q-btn
+                        flat
                         icon="clear"
+                        color="white"
                         :big="isMobile"
                         @click="closeKeyOverlay()"
-                        flat
-                        color="negative"
                     >
-                        Close
+                        {{ $t('buttons.close') }}
                     </q-btn>
                 </div>
             </div>
-            <q-btn
-                icon="clear"
-                :big="isMobile"
-                class="absolute-top-right"
-                @click="closeKeyOverlay()"
-                flat
-                color="primary"
-            />
         </div>
         <q-window-resize-observable
             @resize="windowResize"
@@ -108,9 +111,12 @@
         name: 'csc-pbx-device-config',
         props: [
             'device',
-            'loading',
+            'profile',
+            'model',
+            'modelImage',
             'subscribers',
-            'groupsAndSeatsOptions'
+            'subscriberOptions',
+            'subscriberMap'
         ],
         components: {
             QList, QItem, QItemMain, QItemTile, QTabs, QTab, Platform, QSelect, QInnerLoading, QSpinnerMat,
@@ -134,7 +140,7 @@
         computed: {
             selectedKeyIcon() {
                 if(this.selectedLine !== null) {
-                    let subscriber = this.subscribers(this.selectedLine.subscriber_id);
+                    let subscriber = this.subscriberMap[this.selectedLine.subscriber_id];
                     if(subscriber !== null && subscriber.is_pbx_pilot === true) {
                         return 'person_outlined';
                     }
@@ -152,7 +158,7 @@
             },
             selectedKeyLabel() {
                 if(this.selectedLine !== null) {
-                    let subscriber = this.subscribers(this.selectedLine.subscriber_id);
+                    let subscriber = this.subscriberMap[this.selectedLine.subscriber_id];
                     if(subscriber !== null && subscriber.is_pbx_pilot === true) {
                         return this.$t('pbxConfig.keyPilotLabel');
                     }
@@ -223,10 +229,10 @@
                 return Platform.is.mobile;
             },
             imageUrl() {
-                return _.get(this.device, 'profile.modelFrontImageUrl');
+                return _.get(this.modelImage, 'url', null);
             },
             keySets() {
-                return _.get(this.device, 'profile.model.linerange', []);
+                return _.get(this.model, 'linerange', []);
             },
             keys() {
                 let keys = [];
@@ -450,6 +456,18 @@
     @import '../../../themes/quasar.variables';
     $spotSize = 25px
 
+    .csc-device-key-title
+        margin-bottom $flex-gutter-md
+
+    .csc-device-key-title-icon
+        margin-right $flex-gutter-xs
+
+    .csc-device-key-title-main
+        font-size 1rem
+    .csc-device-key-title-sub
+        font-size 90%
+        margin-top 0.2rem
+
     .csc-pbx-device-config-key-overlay
         .title
             .q-icon
@@ -467,7 +485,7 @@
         left 0
         right 0
         bottom 0
-        background-color $main-menu-background
+        background-color alpha($secondary, 0.85)
         z-index 10
         padding 48px
 
@@ -525,4 +543,10 @@
         min-height 40px
         padding 16px
         padding-right 40px
+
+    .csc-close-button.q-btn
+        padding $flex-gutter-xs
+        .q-btn-inner
+            i
+                margin 0
 </style>
