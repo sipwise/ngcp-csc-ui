@@ -87,8 +87,8 @@ export function enableIncomingCallNotifications() {
         }).then(()=>{
             resolve();
         }).catch((err)=>{
+            console.debug(err);
             showPermanentGlobalWarning(i18n.t('call.notificationFailed'));
-            console.error(err);
         });
     });
 }
