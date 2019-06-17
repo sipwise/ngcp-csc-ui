@@ -1,3 +1,24 @@
+ngcp-csc-ui (7.5.0.0+0~mr7.5.0.0) unstable; urgency=medium
+
+  [ Robert Axelsen ]
+  * [caaa202] TT#47515 User can upload a sound file
+  * [022b9f2] TT#56373 SubscriberAdmin sees invalid collapsed
+  * [7783fd2] TT#56159 Customer wants to see alternative name
+  * [b691f24] TT#47517 Change sound item loop flag
+  * [f59f799] TT#55911 Assign SoundSet to PBXGroup or PBXSeat
+
+  [ Hans-Peter Herzog ]
+  * [fe50cda] TT#55900 Conferencing: As a Customer, I want to join the conference
+  * [f8e6484] TT#47703 Conferencing: Media renegotiation
+  * [29742e9] TT#47703 Conferencing: Improve media renegotiation
+  * [1b070aa] TT#44291 Conferencing: As a Customer, I want to leave the conference gracefully
+  * [fd9d72d] TT#44287 Conferencing: Replace hard coded strings
+  * [edc53e9] TT#59366 Call: Fix call store reference
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 17 Jun 2019 14:36:58 +0200
+
 ngcp-csc-ui (7.4.0.0+0~mr7.4.0.0) unstable; urgency=medium
 
   [ Robert Axelsen ]
