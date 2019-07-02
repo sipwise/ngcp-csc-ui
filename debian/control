@@ -6,7 +6,7 @@ Homepage: https://www.sipwise.com/
 Standards-Version: 3.9.8
 Build-Depends:
  debhelper (>= 10),
- npm | nodejs (>= 4.6.2~),
+ npm,
 
 Package: ngcp-csc-ui
 Architecture: all
