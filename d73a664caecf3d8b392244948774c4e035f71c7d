@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa1b9901_5ac52a59",
+        "filename": "debian/control",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2019-07-02T23:05:27Z",
+      "side": 1,
+      "message": "We still ship `nodejs: 6.11.4-1nodesource1` in mr7.4, this will work iff mr7.5 is really based on buster then, ack?",
+      "revId": "d73a664caecf3d8b392244948774c4e035f71c7d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
