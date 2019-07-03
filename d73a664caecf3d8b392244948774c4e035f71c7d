@@ -16,6 +16,24 @@
       "revId": "d73a664caecf3d8b392244948774c4e035f71c7d",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa1b9901_1a09f295",
+        "filename": "debian/control",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-07-03T08:41:15Z",
+      "side": 1,
+      "message": "trunk/mr7.5 already based on buster :-)\nLGTM",
+      "parentUuid": "fa1b9901_5ac52a59",
+      "revId": "d73a664caecf3d8b392244948774c4e035f71c7d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
