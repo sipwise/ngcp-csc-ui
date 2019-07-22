@@ -65,74 +65,6 @@
             @cancel="closeCallQueueRemovalDialog"
         />
     </csc-page>
-    <!--<csc-page-->
-        <!--:is-list="true"-->
-    <!--&gt;-->
-        <!--<div-->
-            <!--v-show="!addFormEnabled"-->
-            <!--class="row justify-center"-->
-        <!--&gt;-->
-            <!--<q-btn-->
-                <!--color="primary"-->
-                <!--icon="add"-->
-                <!--flat-->
-                <!--@click="enableAddForm"-->
-            <!--&gt;-->
-                <!--{{ $t('pbxConfig.addConfig') }}-->
-            <!--</q-btn>-->
-        <!--</div>-->
-        <!--<div-->
-            <!--class="row justify-center"-->
-            <!--v-show="addFormEnabled"-->
-        <!--&gt;-->
-            <!--<csc-pbx-call-queue-add-form-->
-                <!--class="col-xs-12 col-md-6 csc-list-form"-->
-                <!--ref="addForm"-->
-                <!--:options="callQueueGroupsAndSeatsOptions"-->
-                <!--:loading="isAdding"-->
-                <!--@save="addConfig"-->
-                <!--@cancel="disableAddForm"-->
-            <!--/>-->
-        <!--</div>-->
-        <!--<div-->
-            <!--v-if="isListLoadingVisible"-->
-            <!--class="row justify-center"-->
-        <!--&gt;-->
-            <!--<csc-spinner />-->
-        <!--</div>-->
-        <!--<div>-->
-            <!--<q-list-->
-                <!--striped-odd-->
-                <!--no-border-->
-                <!--multiline-->
-                <!--:highlight="!isMobile"-->
-            <!--&gt;-->
-                <!--<csc-pbx-call-queue-->
-                    <!--v-for="(subscriber, index) in callQueueGroupsAndSeats"-->
-                    <!--:id="`queue-${subscriber.id}`"-->
-                    <!--:key="index"-->
-                    <!--:subscriber="subscriber"-->
-                    <!--:loading="isItemLoading(subscriber.id)"-->
-                    <!--@save-queue-length="setQueueLength"-->
-                    <!--@save-wrap-up-time="setWrapUpTime"-->
-                    <!--:highlight="highlight(subscriber)"-->
-                    <!--@remove="removeConfigDialog"-->
-                <!--/>-->
-            <!--</q-list>-->
-        <!--</div>-->
-        <!--<div-->
-            <!--v-if="callQueueGroupsAndSeats.length === 0 && !isListRequesting"-->
-            <!--class="row justify-center csc-no-entities"-->
-        <!--&gt;-->
-            <!--{{ $t('pbxConfig.noCallQueues') }}-->
-        <!--</div>-->
-        <!--<csc-remove-dialog-->
-            <!--ref="removeDialog"-->
-            <!--:title="$t('pbxConfig.removeConfigTitle')"-->
-            <!--:message="removeDialogMessage"-->
-            <!--@remove="removeConfig"-->
-        <!--/>-->
-    <!--</csc-page>-->
 </template>
 
 <script>
@@ -149,6 +81,14 @@
         mapMutations
     } from 'vuex'
     import {
+        CreationState,
+        RequestState
+    } from "../../../store/common"
+    import {
+        showGlobalError,
+        showToast
+    } from '../../../helpers/ui'
+    import {
         QField,
         QInput,
         QIcon,
@@ -159,25 +99,14 @@
         QItemSide,
         QItemMain,
         QItemTile,
-        // Platform,
         QSpinnerDots,
         QBtn,
         QSlideTransition
     } from 'quasar-framework'
-    // import {
-    //     showToast
-    // } from '../../../helpers/ui'
-    // import {
-    //     scroll
-    // } from 'quasar-framework'
     import CscSpinner from "../../CscSpinner";
     import CscList from "../../CscList";
     import CscFade from "../../transitions/CscFade";
     import CscListActionButton from "../../CscListActionButton";
-    // const {
-    //     getScrollTarget,
-    //     setScrollPosition
-    // } = scroll
     export default {
         components: {
             CscListActionButton,
@@ -206,8 +135,6 @@
         },
         data () {
             return {
-                // addFormEnabled: false,
-                // currentRemovingSubscriber: null
             }
         },
         mounted() {
@@ -224,6 +151,12 @@
                 'subscriberMap',
                 'defaultMaxQueueLength',
                 'defaultQueueWrapUpTime',
+                'callQueueCreationState',
+                'callQueueUpdateState',
+                'callQueueRemovalState',
+                'callQueueCreationError',
+                'callQueueUpdateError',
+                'callQueueRemovalError'
             ]),
             ...mapGetters('pbxCallQueues', [
                 'isCallQueueListRequesting',
@@ -231,43 +164,11 @@
                 'isCallQueueCreating',
                 'getCallQueueRemoveDialogMessage',
                 'isCallQueueLoading',
-                'isCallQueueExpanded'
+                'isCallQueueExpanded',
+                'getCallQueueCreationToastMessage',
+                'getCallQueueUpdateToastMessage',
+                'getCallQueueRemovalToastMessage'
             ])
-            // ...mapGetters('pbxConfig', [
-            //     'callQueueGroupsAndSeats',
-            //     'isListLoadingVisible',
-            //     'isListRequesting',
-            //     'callQueueGroupsAndSeatsOptions',
-            //     'isAdding',
-            //     'addState',
-            //     'isUpdating',
-            //     'updateItemId',
-            //     'removeState',
-            //     'isRemoving',
-            //     'lastAddedCallQueue'
-            // ]),
-            // isMobile() {
-            //     return Platform.is.mobile;
-            // },
-            // callQueueItem() {
-            //     return this.$route.query.item;
-            // },
-            // handleScroll () {
-            //     const el = document.getElementById(`queue-${this.callQueueItem}`)
-            //     const target = el ? getScrollTarget(el) : null;
-            //     const offset = el ? el.offsetTop - el.scrollHeight : null;
-            //     const duration = 200
-            //     if (this.callQueueItem && target) {
-            //         setScrollPosition(target, offset, duration)
-            //     }
-            // },
-            // removeDialogMessage() {
-            //     if (this.currentRemovingSubscriber !== null) {
-            //         return this.$t('pbxConfig.removeConfigText', {
-            //             subscriber: this.currentRemovingSubscriber.display_name
-            //         });
-            //     }
-            // }
         },
         methods: {
             ...mapActions('pbx', [
@@ -300,63 +201,34 @@
                 }
                 this.callQueueRemovalCanceled();
             }
-            // addConfig(data) {
-            //     let config = {
-            //         max_queue_length: data.max_queue_length,
-            //         queue_wrap_up_time: data.queue_wrap_up_time
-            //     };
-            //     this.$store.dispatch('pbxConfig/addCallQueueConfig', {
-            //         id: data.subscriber_id,
-            //         config: config
-            //     });
-            // },
-            // enableAddForm() {
-            //     this.resetAddForm();
-            //     this.addFormEnabled = true;
-            // },
-            // disableAddForm() {
-            //     this.resetAddForm();
-            //     this.addFormEnabled = false;
-            // },
-            // resetAddForm() {
-            //     this.$refs.addForm.reset();
-            // },
-            // setQueueLength(subscriber) {
-            //     this.$store.dispatch('pbxConfig/setQueueLength', subscriber);
-            // },
-            // setWrapUpTime(subscriber) {
-            //     this.$store.dispatch('pbxConfig/setWrapUpTime', subscriber);
-            // },
-            // isItemLoading(subscriberId) {
-            //     return (this.isUpdating && this.updateItemId + "" === subscriberId + "") ||
-            //         (this.isRemoving && this.currentRemovingSubscriber.id + "" === subscriberId + "");
-            // },
-            // highlight(subscriber) {
-            //     return subscriber.id == this.$route.query.item;
-            // },
-            // removeConfigDialog(subscriber) {
-            //     this.currentRemovingSubscriber = subscriber;
-            //     this.$refs.removeDialog.open();
-            // },
-            // removeConfig() {
-            //     this.$store.dispatch('pbxConfig/removeCallQueue', this.currentRemovingSubscriber)
-            // }
         },
         watch: {
-            // addState(state) {
-            //     if (state === 'succeeded') {
-            //         this.disableAddForm();
-            //         showToast(this.$t('pbxConfig.toasts.addedCallQueueToast',
-            //             { name: this.lastAddedCallQueue }));
-            //     }
-            // },
-            // callQueueGroupsAndSeats(state) {
-            //     if (state.length > 0) {
-            //         setTimeout(() => {
-            //             this.handleScroll;
-            //         }, 500);
-            //     }
-            // }
+            callQueueCreationState(state) {
+                if(state === CreationState.created) {
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getCallQueueCreationToastMessage);
+                }
+                else if(state === CreationState.error) {
+                    showGlobalError(this.callQueueCreationError);
+                }
+            },
+            callQueueUpdateState(state) {
+                if(state === RequestState.succeeded) {
+                    showToast(this.getCallQueueUpdateToastMessage);
+                }
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.callQueueUpdateError);
+                }
+            },
+            callQueueRemovalState(state) {
+                if(state === RequestState.succeeded) {
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getCallQueueRemovalToastMessage);
+                }
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.callQueueRemovalError);
+                }
+            }
         }
     }
 </script>

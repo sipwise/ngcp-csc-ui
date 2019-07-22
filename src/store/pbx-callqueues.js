@@ -28,10 +28,14 @@ export default {
         callQueueSelected: null,
         callQueueCreationState: CreationState.initiated,
         callQueueCreationData: null,
+        callQueueCreationError: null,
         callQueueUpdateState: RequestState.initiated,
         callQueueUpdating: null,
+        callQueueUpdatingField: null,
+        callQueueUpdateError: null,
         callQueueRemovalState: RequestState.initiated,
         callQueueRemoving: null,
+        callQueueRemovalError: null,
         subscriberMap: {},
         defaultMaxQueueLength: 5,
         defaultQueueWrapUpTime: 10
@@ -73,6 +77,45 @@ export default {
                 });
             }
             return '';
+        },
+        getCallQueueRemovingName(state) {
+            let subscriber = state.subscriberMap[state.callQueueRemoving.id];
+            return _.get(subscriber, 'display_name', '');
+        },
+        getCallQueueCreatingName(state) {
+            let subscriber = state.subscriberMap[state.callQueueCreationData.subscriber_id];
+            return _.get(subscriber, 'display_name', '');
+        },
+        getCallQueueUpdatingName(state) {
+            let subscriber = state.subscriberMap[state.callQueueUpdating.id];
+            return _.get(subscriber, 'display_name', '');
+        },
+        getCallQueueUpdatingField(state) {
+            return state.callQueueUpdatingField;
+        },
+        getCallQueueRemovalDialogMessage(state, getters) {
+            if(getters.isCallQueueRemoving) {
+                return i18n.t('pbxConfig.callQueueRemovalDialogMessage', {
+                    callQueue: getters.getCallQueueRemovingName
+                });
+            }
+            return '';
+        },
+        getCallQueueCreationToastMessage(state, getters) {
+            return i18n.t('pbxConfig.callQueueCreationToast', {
+                callQueue: getters.getCallQueueCreatingName
+            });
+        },
+        getCallQueueUpdateToastMessage(state, getters) {
+            return i18n.t('pbxConfig.callQueueUpdateToast', {
+                callQueue: getters.getCallQueueUpdatingName,
+                field: getters.getCallQueueUpdatingField
+            });
+        },
+        getCallQueueRemovalToastMessage(state, getters) {
+            return i18n.t('pbxConfig.callQueueRemovalToast', {
+                callQueue: getters.getCallQueueRemovingName
+            });
         }
     },
     mutations: {
@@ -98,14 +141,16 @@ export default {
             });
             state.callQueueListVisible = true;
         },
-        callQueueCreationRequesting(state) {
+        callQueueCreationRequesting(state, data) {
             state.callQueueCreationState = CreationState.creating;
+            state.callQueueCreationData = data;
         },
         callQueueCreationSucceeded(state) {
             state.callQueueCreationState = CreationState.created;
         },
-        callQueueCreationFailed(state) {
+        callQueueCreationFailed(state, err) {
             state.callQueueCreationState = CreationState.error;
+            state.callQueueCreationError = err;
         },
         callQueueRemovalRequesting(state, callQueueId) {
             state.callQueueRemovalState = RequestState.requesting;
@@ -120,12 +165,14 @@ export default {
         callQueueRemovalSucceeded(state) {
             state.callQueueRemovalState = RequestState.succeeded;
         },
-        callQueueRemovalFailed(state) {
+        callQueueRemovalFailed(state, err) {
             state.callQueueRemovalState = RequestState.failed;
+            state.callQueueRemovalError = err;
         },
         callQueueUpdateRequesting(state, options) {
             state.callQueueUpdateState = RequestState.requesting;
             state.callQueueUpdating = state.callQueueMap[options.callQueueId];
+            state.callQueueUpdatingField = options.field;
         },
         callQueueUpdateSucceeded(state, preferences) {
             state.callQueueUpdateState = RequestState.succeeded;
@@ -139,8 +186,9 @@ export default {
                 Vue.set(state.callQueueMap, preferences.id, preferences);
             }
         },
-        callQueueUpdateFailed(state) {
+        callQueueUpdateFailed(state, err) {
             state.callQueueUpdateState = RequestState.failed;
+            state.callQueueUpdateError = err;
         },
         enableCallQueueAddForm(state) {
             state.callQueueCreationState = CreationState.input;
@@ -184,8 +232,9 @@ export default {
                 });
             }).then(()=>{
                 context.commit('callQueueCreationSucceeded');
-            }).catch(()=>{
-                context.commit('callQueueCreationFailed');
+            }).catch((err)=>{
+                console.debug(err);
+                context.commit('callQueueCreationFailed', err.message);
             });
         },
         removeCallQueue(context) {
@@ -197,28 +246,31 @@ export default {
             }).then(()=>{
                 context.commit('callQueueRemovalSucceeded');
             }).catch((err)=>{
+                console.debug(err);
                 context.commit('callQueueRemovalFailed', err.message);
             });
         },
         setCallQueueMaxLength(context, options) {
             context.commit('callQueueUpdateRequesting', {
                 callQueueId: options.callQueueId,
-                callQueueUpdatingField: 'maxLength'
+                field: 'maxLength'
             });
             setCallQueueMaxLength(options).then((preferences)=>{
                 context.commit('callQueueUpdateSucceeded', preferences);
             }).catch((err)=>{
+                console.debug(err);
                 context.commit('callQueueUpdateFailed', err.message);
             });
         },
         setCallQueueWrapUpTime(context, options) {
             context.commit('callQueueUpdateRequesting', {
                 callQueueId: options.callQueueId,
-                callQueueUpdatingField: 'wrapUpTime'
+                field: 'wrapUpTime'
             });
             setCallQueueWrapUpTime(options).then((preferences)=>{
                 context.commit('callQueueUpdateSucceeded', preferences);
             }).catch((err)=>{
+                console.debug(err);
                 context.commit('callQueueUpdateFailed', err.message);
             });
         },
