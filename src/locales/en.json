@@ -479,7 +479,11 @@
         "soundSetUseAsDefault": "Use as default for all seats and groups",
         "soundSetPlayAllLoop": "Play all files in loop",
         "soundSetRemovalDialogTitle": "Remove sound set",
-        "soundSetRemovalDialogText": "You are about to remove sound set {soundSetName}"
+        "soundSetRemovalDialogText": "You are about to remove sound set {soundSetName}",
+        "deviceCreationToast": "Created device {device} successfully",
+        "deviceUpdateToast": "Updated {field} for device {device} successfully",
+        "deviceRemovalToast": "Removed device {device} successfully",
+        "deviceLampsAndKeys": "Lamps/Keys"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

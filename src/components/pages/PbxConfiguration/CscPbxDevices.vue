@@ -131,17 +131,25 @@
         QSlideTransition,
         QPagination
     } from 'quasar-framework'
-    import CscPage from "../../CscPage";
-    import CscList from "../../CscList";
-    import CscPbxDevice from "./CscPbxDevice";
-    import CscFade from "../../transitions/CscFade";
-    import CscListSpinner from "../../CscListSpinner";
-    import CscListAddButton from "../../CscListAddButton";
-    import CscListActions from "../../CscListActions";
-    import CscListActionButton from "../../CscListActionButton";
-    import CscPbxDeviceFilters from "./CscPbxDeviceFilters";
-    import CscPbxDeviceAddForm from "./CscPbxDeviceAddForm";
-    import CscRemoveDialog from "../../CscRemoveDialog";
+    import CscPage from "../../CscPage"
+    import CscList from "../../CscList"
+    import CscPbxDevice from "./CscPbxDevice"
+    import CscFade from "../../transitions/CscFade"
+    import CscListSpinner from "../../CscListSpinner"
+    import CscListAddButton from "../../CscListAddButton"
+    import CscListActions from "../../CscListActions"
+    import CscListActionButton from "../../CscListActionButton"
+    import CscPbxDeviceFilters from "./CscPbxDeviceFilters"
+    import CscPbxDeviceAddForm from "./CscPbxDeviceAddForm"
+    import CscRemoveDialog from "../../CscRemoveDialog"
+    import {
+        showGlobalError,
+        showToast
+    } from '../../../helpers/ui'
+    import {
+        CreationState,
+        RequestState
+    } from "../../../store/common"
     export default {
         name: 'csc-pbx-devices',
         components: {
@@ -191,7 +199,10 @@
                 'deviceListItems',
                 'deviceListCurrentPage',
                 'deviceListLastPage',
-                'deviceListVisibility'
+                'deviceListVisibility',
+                'deviceCreationState',
+                'deviceUpdateState',
+                'deviceRemovalState'
             ]),
             ...mapGetters('pbxDevices', [
                 'isDeviceListRequesting',
@@ -202,7 +213,10 @@
                 'isDeviceUpdating',
                 'isDeviceRemoving',
                 'isDeviceLoading',
-                'getDeviceRemoveDialogMessage'
+                'getDeviceRemoveDialogMessage',
+                'getDeviceCreationToastMessage',
+                'getDeviceUpdateToastMessage',
+                'getDeviceRemovalToastMessage'
             ]),
             hasFilters() {
                 return this.stationNameFilter !== null ||
@@ -299,6 +313,34 @@
             closeDeviceRemovalDialog() {
                 this.deviceRemovalCanceled();
             },
+        },
+        watch: {
+            deviceCreationState(state) {
+                if(state === CreationState.created) {
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getDeviceCreationToastMessage);
+                }
+                else if(state === CreationState.error) {
+                    showGlobalError(this.deviceCreationError);
+                }
+            },
+            deviceUpdateState(state) {
+                if(state === RequestState.succeeded) {
+                    showToast(this.getDeviceUpdateToastMessage);
+                }
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.deviceUpdateError);
+                }
+            },
+            deviceRemovalState(state) {
+                if(state === RequestState.succeeded) {
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getDeviceRemovalToastMessage);
+                }
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.deviceRemovalError);
+                }
+            }
         }
     }
 </script>

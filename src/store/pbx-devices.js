@@ -79,6 +79,15 @@ export default {
         getDeviceRemovingName(state) {
             return _.get(state, 'deviceRemoving.station_name', '');
         },
+        getDeviceCreatingName(state) {
+            return _.get(state, 'deviceCreating.stationName', '');
+        },
+        getDeviceUpdatingName(state) {
+            return _.get(state, 'deviceUpdating.station_name', '');
+        },
+        getDeviceUpdatingField(state) {
+            return state.deviceUpdatingField;
+        },
         getDeviceRemoveDialogMessage(state, getters) {
             if(getters.isDeviceRemoving) {
                 return i18n.t('pbxConfig.removeDeviceText', {
@@ -87,6 +96,22 @@ export default {
             }
             return '';
         },
+        getDeviceCreationToastMessage(state, getters) {
+            return i18n.t('pbxConfig.deviceCreationToast', {
+                device: getters.getDeviceCreatingName
+            });
+        },
+        getDeviceUpdateToastMessage(state, getters) {
+            return i18n.t('pbxConfig.deviceUpdateToast', {
+                device: getters.getDeviceUpdatingName,
+                field: getters.getDeviceUpdatingField
+            });
+        },
+        getDeviceRemovalToastMessage(state, getters) {
+            return i18n.t('pbxConfig.deviceRemovalToast', {
+                device: getters.getDeviceRemovingName
+            });
+        }
     },
     mutations: {
         deviceListItemsRequesting(state, options) {
@@ -237,7 +262,7 @@ export default {
         setDeviceStationName(context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: 'Station name'
+                deviceField: i18n.t('pbxConfig.deviceStationName')
             });
             setDeviceStationName(options.deviceId, options.stationName).then((device) => {
                 context.commit('deviceUpdateSucceeded', device);
@@ -248,7 +273,7 @@ export default {
         setDeviceIdentifier(context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: 'Identifier'
+                deviceField: i18n.t('pbxConfig.deviceIdentifier')
             });
             setDeviceIdentifier(options.deviceId, options.identifier).then((device) => {
                 context.commit('deviceUpdateSucceeded', device);
@@ -259,7 +284,7 @@ export default {
         setDeviceProfile(context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: 'Profile'
+                deviceField: i18n.t('pbxConfig.deviceModel')
             });
             setDeviceProfile(options.deviceId, options.profileId).then((device) => {
                 context.commit('deviceUpdateSucceeded', device);
@@ -270,7 +295,7 @@ export default {
         setDeviceKeys(context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: 'Keys'
+                deviceField: i18n.t('pbxConfig.deviceLampsAndKeys')
             });
             setDeviceKeys(options.deviceId, options.keys).then((device) => {
                 context.commit('deviceUpdateSucceeded', device);
