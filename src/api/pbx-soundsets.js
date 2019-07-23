@@ -91,6 +91,10 @@ export function setAsDefault(soundSetId) {
     return setSoundSetProperty(soundSetId, 'contract_default', true);
 }
 
+export function unsetAsDefault(soundSetId) {
+    return setSoundSetProperty(soundSetId, 'contract_default', false);
+}
+
 export function setSoundSetName(soundSetId, name) {
     return setSoundSetProperty(soundSetId, 'name', name);
 }

@@ -209,9 +209,10 @@
         },
         methods: {
             saveAsDefault() {
-                if(!this.soundSet.contract_default) {
-                    this.$emit('save-as-default');
-                }
+                this.$emit('save-as-default', {
+                    soundSetId: this.soundSet.id,
+                    contractDefault: !this.soundSet.contract_default
+                });
             },
             remove() {
                 if(this.$refs.listItem) {
