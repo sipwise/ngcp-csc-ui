@@ -16,7 +16,7 @@ import {
     getAllSoundFilesBySoundSetId,
     getSoundFile,
     uploadSoundFile,
-    setLoopPlay
+    setLoopPlay, unsetAsDefault
 } from "../api/pbx-soundsets";
 import _ from "lodash";
 import {
@@ -324,9 +324,13 @@ export default {
                 context.commit('soundSetRemovalFailed', err.message);
             });
         },
-        setAsDefaultSoundSet(context, soundSetId) {
-            context.commit('soundSetUpdateRequesting', soundSetId);
-            setAsDefault(soundSetId).then(()=>{
+        setAsDefaultSoundSet(context, options) {
+            context.commit('soundSetUpdateRequesting', options.soundSetId);
+            let func = setAsDefault;
+            if(options.contractDefault !== true) {
+                func = unsetAsDefault;
+            }
+            func(options.soundSetId).then(()=>{
                 return context.dispatch('loadSoundSetList', {
                     listVisible: true,
                     page: context.state.soundSetListCurrentPage

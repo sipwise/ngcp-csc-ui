@@ -1,7 +1,7 @@
 <template>
     <csc-page
         :is-list="true"
-    >
+    >setAsDefaultSoundSet
         <csc-list-actions>
             <csc-list-action-button
                 v-if="!isSoundSetAddFormEnabled"
@@ -61,7 +61,7 @@
                     :sound-file-update-state="soundFileUpdateState"
                     @require-sound-handles="loadSoundSetResources(soundSet.id)"
                     @remove="openSoundSetRemovalDialog(soundSet.id)"
-                    @save-as-default="setAsDefaultSoundSet(soundSet.id)"
+                    @save-as-default="setAsDefaultSoundSet"
                     @save-name="setSoundSetName"
                     @save-description="setSoundSetDescription"
                     @expand="expandSoundSet(soundSet.id)"
