@@ -256,15 +256,6 @@
                     this.selectedFile = this.resetFile();
                 }
             }
-            // uploadFileState(state) {
-            //     if (state === 'succeeded') {
-            //         showToast(this.$t('pbxConfig.toasts.uploadSoundFileToast', { handle: this.item.handle }));
-            //         this.resetFile();
-            //     }
-            //     else if (state === 'failed' && this.uploadProgress > 0) {
-            //         this.resetFile();
-            //     }
-            // }
         }
     }
 </script>

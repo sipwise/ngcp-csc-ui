@@ -19,6 +19,7 @@ import PbxConfigurationSeats from './components/pages/PbxConfiguration/CscPbxSea
 import PbxConfigurationDevices from './components/pages/PbxConfiguration/CscPbxDevices'
 import PbxConfigurationCallQueues from './components/pages/PbxConfiguration/CscPbxCallQueues'
 import PbxConfigurationSoundSets from './components/pages/PbxConfiguration/CscPbxSoundSets'
+import PbxConfigurationMsConfigs from './components/pages/PbxConfiguration/CscPbxMsConfigs'
 import Voicebox from './components/pages/Voicebox/Voicebox';
 import Login from './components/Login'
 import Error404 from './components/Error404'
@@ -145,6 +146,14 @@ export default [
                 meta: {
                     title: i18n.t('navigation.pbxConfiguration.title'),
                     subtitle: i18n.t('navigation.pbxConfiguration.soundSets')
+                }
+            },
+            {
+                path: 'pbx-configuration/ms-configs',
+                component: PbxConfigurationMsConfigs,
+                meta: {
+                    title: i18n.t('navigation.pbxConfiguration.title'),
+                    subtitle: i18n.t('navigation.pbxConfiguration.msConfigs')
                 }
             },
             {

@@ -203,6 +203,17 @@
                     :label="$t('navigation.pbxConfiguration.soundSets')"
                 />
             </q-side-link>
+            <q-side-link
+                item
+                to="/user/pbx-configuration/ms-configs"
+            >
+                <q-item-side
+                    icon="arrow_forward"
+                />
+                <q-item-main
+                    :label="$t('navigation.pbxConfiguration.msConfigs')"
+                />
+            </q-side-link>
         </q-collapsible>
     </q-list>
 </template>
