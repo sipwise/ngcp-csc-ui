@@ -42,10 +42,15 @@ export default {
         soundSetListCurrentPage: 1,
         soundSetListLastPage: null,
         soundSetCreationState: CreationState.initiated,
+        soundSetCreationData: null,
+        soundSetCreationError: null,
         soundSetRemovalState: CreationState.initiated,
         soundSetRemoving: null,
+        soundSetRemovalError: null,
         soundSetUpdateState: CreationState.initiated,
+        soundSetUpdateError: null,
         soundSetUpdating: null,
+        soundSetUpdatingField: null,
         soundSetSelected: null,
         soundHandleList: [],
         soundHandleListState: RequestState.initiated,
@@ -105,6 +110,34 @@ export default {
             }
             return '';
         },
+        getSoundSetRemovingName(state) {
+            return _.get(state.soundSetRemoving, 'name', '');
+        },
+        getSoundSetCreatingName(state) {
+            return _.get(state.soundSetCreationData, 'name', '');
+        },
+        getSoundSetUpdatingName(state) {
+            return _.get(state.soundSetUpdating, 'name', '');
+        },
+        getSoundSetUpdatingField(state) {
+            return state.soundSetUpdatingField;
+        },
+        getSoundSetCreationToastMessage(state, getters) {
+            return i18n.t('pbxConfig.soundSetCreationToast', {
+                soundSet: getters.getSoundSetCreatingName
+            });
+        },
+        getSoundSetUpdateToastMessage(state, getters) {
+            return i18n.t('pbxConfig.soundSetUpdateToast', {
+                soundSet: getters.getSoundSetUpdatingName,
+                field: getters.getSoundSetUpdatingField
+            });
+        },
+        getSoundSetRemovalToastMessage(state, getters) {
+            return i18n.t('pbxConfig.soundSetRemovalToast', {
+                soundSet: getters.getSoundSetRemovingName
+            });
+        },
         isSoundHandleListRequesting(state) {
             return state.soundHandleListState === RequestState.requesting;
         },
@@ -134,24 +167,28 @@ export default {
                 Vue.set(state.soundSetMap, soundSet.id, soundSet);
             });
         },
-        soundSetCreationRequesting(state) {
+        soundSetCreationRequesting(state, options) {
             state.soundSetCreationState = CreationState.creating;
+            state.soundSetCreationData = options;
         },
         soundSetCreationSucceeded(state) {
             state.soundSetCreationState = CreationState.created;
         },
-        soundSetCreationFailed(state) {
+        soundSetCreationFailed(state, err) {
             state.soundSetCreationState = CreationState.error;
+            state.soundSetCreationError = err;
         },
-        soundSetUpdateRequesting(state, soundSetId) {
+        soundSetUpdateRequesting(state, options) {
             state.soundSetUpdateState = RequestState.requesting;
-            state.soundSetUpdating = state.soundSetMap[soundSetId];
+            state.soundSetUpdating = state.soundSetMap[options.soundSetId];
+            state.soundSetUpdatingField = options.field;
         },
         soundSetUpdateSucceeded(state) {
             state.soundSetUpdateState = RequestState.succeeded;
         },
-        soundSetUpdateFailed(state) {
+        soundSetUpdateFailed(state, err) {
             state.soundSetUpdateState = RequestState.failed;
+            state.soundSetUpdateError = err;
         },
         soundSetRemovalRequesting(state, soundSetId) {
             state.soundSetRemovalState = RequestState.requesting;
@@ -166,8 +203,9 @@ export default {
         soundSetRemovalSucceeded(state) {
             state.soundSetRemovalState = RequestState.succeeded;
         },
-        soundSetRemovalFailed(state) {
+        soundSetRemovalFailed(state, err) {
             state.soundSetRemovalState = RequestState.failed;
+            state.soundSetRemovalError = err;
         },
         enableSoundSetAddForm(state) {
             state.soundSetCreationState = CreationState.input;
@@ -299,7 +337,7 @@ export default {
             });
         },
         createSoundSet(context, options) {
-            context.commit('soundSetCreationRequesting');
+            context.commit('soundSetCreationRequesting', options);
             createSoundSet(options).then(()=>{
                 return context.dispatch('loadSoundSetList', {
                     listVisible: true,
@@ -325,7 +363,10 @@ export default {
             });
         },
         setAsDefaultSoundSet(context, options) {
-            context.commit('soundSetUpdateRequesting', options.soundSetId);
+            context.commit('soundSetUpdateRequesting', {
+                soundSetId: options.soundSetId,
+                field: i18n.t('pbxConfig.soundSetDefaultLabel')
+            });
             let func = setAsDefault;
             if(options.contractDefault !== true) {
                 func = unsetAsDefault;
@@ -342,7 +383,10 @@ export default {
             });
         },
         setSoundSetName(context, options) {
-            context.commit('soundSetUpdateRequesting', options.soundSetId);
+            context.commit('soundSetUpdateRequesting', {
+                soundSetId: options.soundSetId,
+                field: i18n.t('pbxConfig.soundSetNameLabel')
+            });
             setSoundSetName(options.soundSetId, options.name).then(()=>{
                 return context.dispatch('loadSoundSetList', {
                     listVisible: true,
@@ -355,7 +399,10 @@ export default {
             });
         },
         setSoundSetDescription(context, options) {
-            context.commit('soundSetUpdateRequesting', options.soundSetId);
+            context.commit('soundSetUpdateRequesting', {
+                soundSetId: options.soundSetId,
+                field: i18n.t('pbxConfig.soundSetDescriptionLabel')
+            });
             setSoundSetDescription(options.soundSetId, options.description).then(()=>{
                 return context.dispatch('loadSoundSetList', {
                     listVisible: true,

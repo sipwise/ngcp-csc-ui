@@ -83,6 +83,14 @@
 </template>
 
 <script>
+    import {
+        showGlobalError,
+        showToast
+    } from '../../../helpers/ui'
+    import {
+        CreationState,
+        RequestState
+    } from "../../../store/common"
     import CscPage from '../../CscPage'
     import CscList from "../../CscList"
     import CscFade from "../../transitions/CscFade"
@@ -134,7 +142,13 @@
                 'soundFileUrlMap',
                 'soundFileUploadState',
                 'soundFileUploadProgress',
-                'soundFileUpdateState'
+                'soundFileUpdateState',
+                'soundSetCreationState',
+                'soundSetCreationError',
+                'soundSetUpdateState',
+                'soundSetUpdateError',
+                'soundSetRemovalState',
+                'soundSetRemovalError'
             ]),
             ...mapGetters('pbxSoundSets', [
                 'isSoundSetListRequesting',
@@ -146,7 +160,10 @@
                 'isSoundSetExpanded',
                 'getSoundSetRemoveDialogMessage',
                 'isSoundHandleListRequesting',
-                'isSoundFileListRequesting'
+                'isSoundFileListRequesting',
+                'getSoundSetCreationToastMessage',
+                'getSoundSetUpdateToastMessage',
+                'getSoundSetRemovalToastMessage'
             ])
         },
         methods: {
@@ -186,6 +203,32 @@
             }
         },
         watch: {
+            soundSetCreationState(state) {
+                if(state === CreationState.created) {
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getSoundSetCreationToastMessage);
+                }
+                else if(state === CreationState.error) {
+                    showGlobalError(this.soundSetCreationError);
+                }
+            },
+            soundSetUpdateState(state) {
+                if(state === RequestState.succeeded) {
+                    showToast(this.getSoundSetUpdateToastMessage);
+                }
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.soundSetUpdateError);
+                }
+            },
+            soundSetRemovalState(state) {
+                if(state === RequestState.succeeded) {
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getSoundSetRemovalToastMessage);
+                }
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.soundSetRemovalError);
+                }
+            }
         }
     }
 </script>
