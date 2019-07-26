@@ -105,7 +105,8 @@
             "seats": "Seats",
             "devices": "Devices",
             "callQueues": "Call Queues",
-            "soundSets": "Sound Sets"
+            "soundSets": "Sound Sets",
+            "msConfigs": "Manager Secretary"
         },
         "voicebox": {
             "title": "Voicebox",
@@ -486,7 +487,15 @@
         "deviceCreationToast": "Created device {device} successfully",
         "deviceUpdateToast": "Updated {field} for device {device} successfully",
         "deviceRemovalToast": "Removed device {device} successfully",
-        "deviceLampsAndKeys": "Lamps/Keys"
+        "deviceLampsAndKeys": "Lamps/Keys",
+        "msConfigCreationIndicationLabel": "Add Config",
+        "msConfigCreationLabel": "Create Config",
+        "msConfigSubscriberSelectionLabel": "Select a manager",
+        "msConfigNumberSelectionLabel": "Select secretary numbers",
+        "msConfigNumbersLabel": "Secretary numbers",
+        "msConfigNoSecretaryNumbers": "No numbers assigned",
+        "msConfigRemovalDialogTitle": "Remove manager secretary config",
+        "msConfigRemovalDialogText": "You are about to remove config for {msConfig}"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

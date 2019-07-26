@@ -79,15 +79,15 @@ export default {
             return '';
         },
         getCallQueueRemovingName(state) {
-            let subscriber = state.subscriberMap[state.callQueueRemoving.id];
+            let subscriber = _.get(state.subscriberMap, _.get(state.callQueueRemoving, 'id', null), null);
             return _.get(subscriber, 'display_name', '');
         },
         getCallQueueCreatingName(state) {
-            let subscriber = state.subscriberMap[state.callQueueCreationData.subscriber_id];
+            let subscriber = _.get(state.subscriberMap, _.get(state.callQueueCreationData, 'subscriber_id', null), null);
             return _.get(subscriber, 'display_name', '');
         },
         getCallQueueUpdatingName(state) {
-            let subscriber = state.subscriberMap[state.callQueueUpdating.id];
+            let subscriber = _.get(state.subscriberMap, _.get(state.callQueueUpdating, 'id', null), null);
             return _.get(subscriber, 'display_name', '');
         },
         getCallQueueUpdatingField(state) {

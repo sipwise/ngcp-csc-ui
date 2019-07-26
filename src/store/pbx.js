@@ -18,6 +18,7 @@ import {
 import {
     loadDeviceModel
 } from "../api/pbx-devices";
+import {getNumbers} from "../api/user";
 
 export default {
     namespaced: true,
@@ -25,6 +26,7 @@ export default {
         pilot: null,
         numberList: [],
         numberMapById: {},
+        numberListState: RequestState.initiated,
         groupList: [],
         groupMapById: {},
         seatList: [],
@@ -56,6 +58,16 @@ export default {
                         value: number.id
                     });
                 }
+            });
+            return options;
+        },
+        getFullNumberOptions(state) {
+            let options = [];
+            state.numberList.forEach((number)=>{
+                options.push({
+                    label: numberFilter(number),
+                    value: numberFilter(number)
+                });
             });
             return options;
         },
@@ -133,13 +145,20 @@ export default {
         },
         isSubscribersRequesting(state) {
             return state.subscriberListState === RequestState.requesting;
+        },
+        isNumbersRequesting(state) {
+            return state.numberListState === RequestState.requesting;
         }
     },
     mutations: {
         pilotSucceeded(state, pilotItem) {
             state.pilot = pilotItem;
         },
+        numbersRequesting(state) {
+            state.numberListState = RequestState.requesting;
+        },
         numbersSucceeded(state, numberList) {
+            state.numberListState = RequestState.succeeded;
             state.numberList = _.get(numberList, 'items', []);
             state.numberMapById = {};
             state.numberList.forEach((number)=>{
@@ -246,6 +265,22 @@ export default {
                 }).catch((err)=>{
                     console.debug(err);
                     context.commit('subscribersSucceeded', {
+                        items: []
+                    });
+                });
+            }
+        },
+        loadNumbers(context) {
+            if(context.state.numberList.length === 0 &&
+                context.state.numberListState !== RequestState.requesting) {
+                context.commit('numbersRequesting');
+                getNumbers({
+                    all: true
+                }).then((numbers)=>{
+                    context.commit('numbersSucceeded', numbers);
+                }).catch((err)=>{
+                    console.debug(err);
+                    context.commit('numbersSucceeded', {
                         items: []
                     });
                 });

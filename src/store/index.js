@@ -14,6 +14,7 @@ import PbxGroupsModule from './pbx-groups'
 import PbxDevicesModule from './pbx-devices'
 import PbxCallQueuesModule from './pbx-callqueues'
 import PbxSoundSetsModule from './pbx-soundsets'
+import PbxMsConfigsModule from './pbx-ms-configs'
 
 import ReminderModule from './reminder'
 import SpeedDialModule from './speed-dial'
@@ -51,7 +52,8 @@ export const store = new Vuex.Store({
         pbxGroups: PbxGroupsModule,
         pbxDevices: PbxDevicesModule,
         pbxCallQueues: PbxCallQueuesModule,
-        pbxSoundSets: PbxSoundSetsModule
+        pbxSoundSets: PbxSoundSetsModule,
+        pbxMsConfigs: PbxMsConfigsModule
 
     },
     getters: {

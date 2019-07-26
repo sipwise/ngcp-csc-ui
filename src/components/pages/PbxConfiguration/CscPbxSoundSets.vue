@@ -186,17 +186,6 @@
             }
         },
         watch: {
-            // addState(state) {
-            //     if (state === 'succeeded') {
-            //         this.disableAddForm();
-            //         showToast(this.$t('pbxConfig.toasts.addedSoundSetToast', { name: this.lastAddedSoundSet }));
-            //     }
-            // },
-            // updateState(state) {
-            //     if (state === 'succeeded') {
-            //         showToast(this.$t('pbxConfig.toasts.changedFieldToast', this.lastUpdatedField));
-            //     }
-            // }
         }
     }
 </script>
