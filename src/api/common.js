@@ -6,7 +6,7 @@ import {
 } from './utils';
 
 export const LIST_DEFAULT_PAGE = 1;
-export const LIST_DEFAULT_ROWS = 3;
+export const LIST_DEFAULT_ROWS = 25;
 export const LIST_ALL_ROWS = 1000;
 
 const PATCH_HEADERS = {

@@ -80,14 +80,14 @@
         mapGetters,
         mapMutations
     } from 'vuex'
-    // import {
-    //     CreationState,
-    //     RequestState
-    // } from "../../../store/common"
-    // import {
-    //     showGlobalError,
-    //     showToast
-    // } from '../../../helpers/ui'
+    import {
+        CreationState,
+        RequestState
+    } from "../../../store/common"
+    import {
+        showGlobalError,
+        showToast
+    } from '../../../helpers/ui'
     import {
         QField,
         QInput,
@@ -207,32 +207,32 @@
             }
         },
         watch: {
-            // msConfigCreationState(state) {
-            //     if(state === CreationState.created) {
-            //         this.$scrollTo(this.$parent.$el);
-            //         showToast(this.getMsConfigCreationToastMessage);
-            //     }
-            //     else if(state === CreationState.error) {
-            //         showGlobalError(this.msConfigCreationError);
-            //     }
-            // },
-            // msConfigUpdateState(state) {
-            //     if(state === RequestState.succeeded) {
-            //         showToast(this.getMsConfigUpdateToastMessage);
-            //     }
-            //     else if(state === RequestState.failed) {
-            //         showGlobalError(this.msConfigUpdateError);
-            //     }
-            // },
-            // msConfigRemovalState(state) {
-            //     if(state === RequestState.succeeded) {
-            //         this.$scrollTo(this.$parent.$el);
-            //         showToast(this.getMsConfigRemovalToastMessage);
-            //     }
-            //     else if(state === RequestState.failed) {
-            //         showGlobalError(this.msConfigRemovalError);
-            //     }
-            // }
+            msConfigCreationState(state) {
+                if(state === CreationState.created) {
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getMsConfigCreationToastMessage);
+                }
+                else if(state === CreationState.error) {
+                    showGlobalError(this.msConfigCreationError);
+                }
+            },
+            msConfigUpdateState(state) {
+                if(state === RequestState.succeeded) {
+                    showToast(this.getMsConfigUpdateToastMessage);
+                }
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.msConfigUpdateError);
+                }
+            },
+            msConfigRemovalState(state) {
+                if(state === RequestState.succeeded) {
+                    this.$scrollTo(this.$parent.$el);
+                    showToast(this.getMsConfigRemovalToastMessage);
+                }
+                else if(state === RequestState.failed) {
+                    showGlobalError(this.msConfigRemovalError);
+                }
+            }
         }
     }
 </script>

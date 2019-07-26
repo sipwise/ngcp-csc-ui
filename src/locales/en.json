@@ -495,7 +495,10 @@
         "msConfigNumbersLabel": "Secretary numbers",
         "msConfigNoSecretaryNumbers": "No numbers assigned",
         "msConfigRemovalDialogTitle": "Remove manager secretary config",
-        "msConfigRemovalDialogText": "You are about to remove config for {msConfig}"
+        "msConfigRemovalDialogText": "You are about to remove config for {msConfig}",
+        "msConfigCreationToast": "Created manager secretary config for {msConfig} successfully",
+        "msConfigUpdateToast": "Updated {field} for manager secretary config {msConfig} successfully",
+        "msConfigRemovalToast": "Removed manager secretary config for {msConfig} successfully"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",
