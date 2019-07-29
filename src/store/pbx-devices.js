@@ -42,7 +42,7 @@ export default {
     },
     getters: {
         isDeviceListEmpty(state) {
-            return state.deviceListItems.length && state.deviceListItems.length === 0;
+            return Array.isArray(state.deviceListItems) && state.deviceListItems.length === 0;
         },
         isDeviceListRequesting(state) {
             return state.deviceListState === RequestState.requesting;

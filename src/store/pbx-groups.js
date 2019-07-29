@@ -46,7 +46,7 @@ export default {
     },
     getters: {
         isGroupListEmpty(state) {
-            return state.groupListItems.length && state.groupListItems.length === 0;
+            return Array.isArray(state.groupListItems) && state.groupListItems.length === 0;
         },
         isGroupListRequesting(state) {
             return state.groupListState === RequestState.requesting;

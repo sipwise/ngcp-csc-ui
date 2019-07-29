@@ -40,6 +40,9 @@ export default {
         subscriberMap: {}
     },
     getters: {
+        isMsConfigListEmpty(state) {
+            return Array.isArray(state.msConfigList) && state.msConfigList.length === 0;
+        },
         isMsConfigListRequesting(state) {
             return state.msConfigListState === RequestState.requesting;
         },

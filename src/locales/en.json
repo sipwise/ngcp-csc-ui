@@ -504,7 +504,8 @@
         "msConfigRemovalDialogText": "You are about to remove config for {msConfig}",
         "msConfigCreationToast": "Created manager secretary config for {msConfig} successfully",
         "msConfigUpdateToast": "Updated {field} for manager secretary config {msConfig} successfully",
-        "msConfigRemovalToast": "Removed manager secretary config for {msConfig} successfully"
+        "msConfigRemovalToast": "Removed manager secretary config for {msConfig} successfully",
+        "noMsConfigs": "No manager secretary configuration created yet"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

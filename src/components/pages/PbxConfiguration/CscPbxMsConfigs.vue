@@ -57,6 +57,12 @@
                 />
             </csc-fade>
         </csc-list>
+        <div
+            v-if="isMsConfigListEmpty && !isMsConfigListRequesting"
+            class="row justify-center csc-no-entities"
+        >
+            {{ $t('pbxConfig.noMsConfigs') }}
+        </div>
         <csc-remove-dialog
             ref="removeDialog"
             :title="$t('pbxConfig.msConfigRemovalDialogTitle')"
@@ -159,6 +165,7 @@
                 'msConfigRemovalError'
             ]),
             ...mapGetters('pbxMsConfigs', [
+                'isMsConfigListEmpty',
                 'isMsConfigListRequesting',
                 'isMsConfigAddFormEnabled',
                 'isMsConfigCreating',

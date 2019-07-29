@@ -64,7 +64,7 @@ export default {
     },
     getters: {
         isSoundSetListEmpty(state) {
-            return state.soundSetList.length && state.soundSetList.length === 0;
+            return Array.isArray(state.soundSetList) && state.soundSetList.length === 0;
         },
         isSoundSetListRequesting(state) {
             return state.soundSetListState === RequestState.requesting;

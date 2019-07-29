@@ -80,10 +80,10 @@
             </csc-fade>
         </csc-list>
         <div
-            v-if="!isGroupListRequesting && isGroupListEmpty"
+            v-if="isGroupListEmpty && !isGroupListRequesting"
             class="row justify-center csc-no-entities"
         >
-            {{ $t('pbxConfig.noSeats') }}
+            {{ $t('pbxConfig.noGroups') }}
         </div>
         <csc-remove-dialog
             ref="removeDialog"

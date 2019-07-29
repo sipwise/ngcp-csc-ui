@@ -72,6 +72,12 @@
                 />
             </csc-fade>
         </csc-list>
+        <div
+            v-if="isSoundSetListEmpty && !isSoundSetListRequesting"
+            class="row justify-center csc-no-entities"
+        >
+            {{ $t('pbxConfig.noSoundSets') }}
+        </div>
         <csc-remove-dialog
             ref="removeDialog"
             :title="$t('pbxConfig.soundSetRemovalDialogTitle')"
@@ -151,6 +157,7 @@
                 'soundSetRemovalError'
             ]),
             ...mapGetters('pbxSoundSets', [
+                'isSoundSetListEmpty',
                 'isSoundSetListRequesting',
                 'isSoundSetAddFormEnabled',
                 'isSoundSetListPaginationActive',

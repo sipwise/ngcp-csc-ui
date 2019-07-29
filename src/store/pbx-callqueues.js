@@ -41,6 +41,9 @@ export default {
         defaultQueueWrapUpTime: 10
     },
     getters: {
+        isCallQueueListEmpty(state) {
+            return Array.isArray(state.callQueueList) && state.callQueueList.length === 0;
+        },
         isCallQueueListRequesting(state) {
             return state.callQueueListState === RequestState.requesting;
         },

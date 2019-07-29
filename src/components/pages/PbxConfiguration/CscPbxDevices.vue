@@ -74,7 +74,7 @@
             v-if="isDeviceListRequesting && !(isDeviceCreating || isDeviceRemoving || isDeviceUpdating)"
         />
         <csc-list
-            v-if="deviceListVisibility === 'visible'"
+            v-if="!isDeviceListEmpty && deviceListVisibility === 'visible'"
         >
             <csc-fade
                 v-for="(device, index) in deviceListItems"
@@ -109,6 +109,18 @@
                 />
             </csc-fade>
         </csc-list>
+        <div
+            v-if="isDeviceListEmpty && !isDeviceListRequesting && hasFilters"
+            class="row justify-center csc-no-entities"
+        >
+            {{ $t('pbxConfig.noDevicesFound') }}
+        </div>
+        <div
+            v-else-if="isDeviceListEmpty && !isDeviceListRequesting"
+            class="row justify-center csc-no-entities"
+        >
+            {{ $t('pbxConfig.noDevicesCreated') }}
+        </div>
         <csc-remove-dialog
             ref="removeDialog"
             :title="$t('pbxConfig.removeDeviceTitle')"
@@ -205,6 +217,7 @@
                 'deviceRemovalState'
             ]),
             ...mapGetters('pbxDevices', [
+                'isDeviceListEmpty',
                 'isDeviceListRequesting',
                 'isDeviceExpanded',
                 'isDeviceListPaginationActive',

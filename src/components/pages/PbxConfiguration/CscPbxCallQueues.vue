@@ -57,6 +57,12 @@
                 />
             </csc-fade>
         </csc-list>
+        <div
+            v-if="isCallQueueListEmpty && !isCallQueueListRequesting"
+            class="row justify-center csc-no-entities"
+        >
+            {{ $t('pbxConfig.noCallQueues') }}
+        </div>
         <csc-remove-dialog
             ref="removeDialog"
             :title="$t('pbxConfig.callQueueRemovalDialogTitle')"
@@ -159,6 +165,7 @@
                 'callQueueRemovalError'
             ]),
             ...mapGetters('pbxCallQueues', [
+                'isCallQueueListEmpty',
                 'isCallQueueListRequesting',
                 'isCallQueueAddFormEnabled',
                 'isCallQueueCreating',
