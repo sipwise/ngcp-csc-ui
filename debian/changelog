@@ -1,3 +1,29 @@
+ngcp-csc-ui (7.5.1.0+0~mr7.5.1.0) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [6d64878] TT#60950 Switch ngcp-csc-ui docker to buster
+
+  [ Guillem Jover ]
+  * [d73a664] TT#61101 Remove obsolete alternative dependencies
+  * [efbab1b] TT#61954 Update copyright years
+  * [7efe66a] TT#61954 Namespace debhelper fragment files
+  * [fa5486e] TT#61954 Set debhelper compat level in Build-Depends instead of debian/compat
+  * [369e129] TT#63301 Fix package section
+
+  [ Hans-Peter Herzog ]
+  * [d2d4630] TT#61810 PBXConfig: Rework and improvements
+  * [5a15381] TT#61810 Activate toasts for crud operations on pbx devices
+  * [83771d7] TT#61810 Activate toasts and error messages for crud operations on call queues
+  * [4800776] TT#63409 SoundSets: As PBXAdmin I want to unset a SoundSet as contract default
+  * [3b25cc2] TT#56391 ManagerSecretary: As a PBXAdmin, I want to manage manager secretary configurations
+  * [1644065] TT#56394 Implemented toasts for all crud operations in manager secretary config
+  * [06488ae] TT#56394 Implemented toasts for section PBXConfiguration/SoundSets
+  * [d3dcb67] TT#56394 Show proper message if entity list is empty
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 05 Aug 2019 20:56:06 +0200
+
 ngcp-csc-ui (7.5.0.0+0~mr7.5.0.0) unstable; urgency=medium
 
   [ Robert Axelsen ]
