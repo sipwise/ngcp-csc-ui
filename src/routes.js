@@ -22,6 +22,7 @@ import PbxConfigurationSoundSets from './components/pages/PbxConfiguration/CscPb
 import PbxConfigurationMsConfigs from './components/pages/PbxConfiguration/CscPbxMsConfigs'
 import Voicebox from './components/pages/Voicebox/Voicebox';
 import Login from './components/Login'
+import CscUserSettings from './components/pages/CscUserSettings'
 import Error404 from './components/Error404'
 
 export default [
@@ -162,6 +163,14 @@ export default [
                 meta: {
                     title: i18n.t('navigation.voicebox.title'),
                     subtitle: i18n.t('navigation.voicebox.subTitle')
+                }
+            },
+            {
+                path: 'settings',
+                component: CscUserSettings,
+                meta: {
+                    title: i18n.t('navigation.userSettings.title'),
+                    subtitle: i18n.t('navigation.userSettings.subTitle')
                 }
             }
         ]
