@@ -9,7 +9,9 @@ import {
     get,
     patchAdd,
     patchReplace,
+    patchReplaceFull,
     patchAddFull
+
 } from './common'
 import {
     assignNumbers
@@ -496,6 +498,20 @@ export function setSubscriberNumbers(options) {
             }
         }).then((result)=>{
             resolve(result);
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+export function changePassword(subscriber, newPassword) {
+    return new Promise((resolve, reject)=>{
+        patchReplaceFull({
+            path: 'api/subscribers/' + subscriber,
+            fieldPath: 'webpassword',
+            value: newPassword
+        }).then((subscriber)=>{
+            resolve(subscriber);
         }).catch((err)=>{
             reject(err);
         });
