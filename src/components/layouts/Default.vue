@@ -30,8 +30,10 @@
                     round
                     small
                 >
-                    <q-popover ref="languagePopover">
-                        <csc-user-menu
+                    <q-popover
+                        ref="languagePopover"
+                    >
+                        <csc-language-menu
                             :language-label="languageLabel"
                             :language-labels="languageLabels"
                             @change-language="changeLanguage"
@@ -55,23 +57,14 @@
                     >
                         {{ getUsername }}
                     </span>
-                    <q-popover>
-                        <q-list
-                            no-border
-                            link
-                        >
-                            <q-item @click="logout()">
-                                <q-item-side
-                                    icon="exit_to_app"
-                                    color="primary"
-                                />
-                                <q-item-main
-                                    label="Logout"
-                                    :sublabel="getUsername"
-                                >
-                                </q-item-main>
-                            </q-item>
-                        </q-list>
+                    <q-popover
+                        ref="userPopover"
+                    >
+                        <csc-user-menu
+                            :username="getUsername"
+                            @logout="logout"
+                            @settings="userSettings"
+                        />
                     </q-popover>
                 </div>
                 <csc-logo
@@ -100,10 +93,11 @@
                 color="default"
             />
         </div>
-        <csc-user-menu
+        <csc-language-menu
             slot="left"
             v-if="isMobile"
             :language-label="languageLabel"
+            :language-labels="languageLabels"
             @change-language="changeLanguage"
         />
         <csc-main-menu
@@ -188,7 +182,8 @@
         QCollapsible
     } from 'quasar-framework'
     import CscMainMenu from "./MainMenu"
-    import CscUserMenu from "./UserMenu"
+    import CscLanguageMenu from "./CscLanguageMenu"
+    import CscUserMenu from "./CscUserMenu"
     import {
         getLanguageLabel
     } from "../../i18n";
@@ -219,7 +214,7 @@
         ],
         components: {
             CscMainMenu,
-            CscUserMenu,
+            CscLanguageMenu,
             QLayout,
             QToolbar,
             QToolbarTitle,
@@ -236,7 +231,8 @@
             QCollapsible,
             CscCall,
             CscSendFax,
-            CscLogo
+            CscLogo,
+            CscUserMenu
         },
         computed: {
             ...mapGetters([
@@ -420,6 +416,12 @@
                 else {
                     this.$refs.languagePopover.close();
                 }
+            },
+            userSettings() {
+                if(this.$refs.userPopover) {
+                    this.$refs.userPopover.close();
+                }
+                this.$router.push({path: '/user/settings'});
             }
         },
         watch: {
