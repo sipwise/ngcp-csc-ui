@@ -35,7 +35,7 @@
         QSideLink
     } from 'quasar-framework'
     export default {
-        name: 'csc-user-menu',
+        name: 'csc-language-menu',
         props: [
             'languageLabel',
             'languageLabels'

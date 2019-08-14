@@ -15,6 +15,7 @@ import {
     login,
     getUserData
 } from '../api/user';
+import {changePassword} from "../api/subscriber";
 
 export default {
     namespaced: true,
@@ -38,7 +39,9 @@ export default {
         sessionLocale: null,
         changeSessionLocaleState: RequestState.initiated,
         changeSessionLocaleError: null,
-        languageLabels: []
+        languageLabels: [],
+        changePasswordState: RequestState.initiated,
+        changePasswordError: null
     },
     getters: {
         isLogged(state) {
@@ -136,6 +139,12 @@ export default {
         },
         languageLabels(state) {
             return state.languageLabels;
+        },
+        getSubscriber(state) {
+            return state.subscriber;
+        },
+        isPasswordChanging(state) {
+            return state.changePasswordState === RequestState.requesting;
         }
     },
     mutations: {
@@ -210,6 +219,18 @@ export default {
         },
         setLanguageLabels(state, languageLabels) {
             state.languageLabels = languageLabels;
+        },
+        userPasswordRequesting(state) {
+            state.changePasswordState = RequestState.requesting;
+            state.changePasswordError = null;
+        },
+        userPasswordSucceeded(state) {
+            state.changePasswordState = RequestState.succeeded;
+            state.changePasswordError = null;
+        },
+        userPasswordFailed(state, error) {
+            state.changePasswordState = RequestState.failed;
+            state.changePasswordError = error;
         }
     },
     actions: {
@@ -275,6 +296,16 @@ export default {
             catch(error) {
                 context.commit('changeSessionLocaleFailed', error);
             }
+        },
+        changePassword(context, newPassword) {
+            let subscriberId = localStorage.getItem('subscriberId');
+            context.commit('userPasswordRequesting');
+            changePassword(subscriberId, newPassword).then(()=>{
+                context.commit('userPasswordSucceeded');
+                context.dispatch('logout');
+            }).catch((err)=>{
+                context.commit('userPasswordFailed', err.message);
+            });
         }
     }
 };
