@@ -593,5 +593,17 @@
         "exitDialogTitle": "Leave conference",
         "exitDialogText": "Leave current conference now!",
         "leaveButtonLabel": "Leave"
+    },
+    "userSettings": {
+        "changePassword": "Change password",
+        "saveNewPassword": "Save new password",
+        "newPasswordLabel": "New password",
+        "newPasswordRetypedLabel": "New password retyped",
+        "changePasswordDialogTitle": "Change login password",
+        "changePasswordDialogText": "You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password. "
+    },
+    "userMenu": {
+        "logout": "Logout",
+        "settings": "Settings"
     }
 }
