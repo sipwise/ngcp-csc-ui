@@ -1,3 +1,14 @@
+ngcp-csc-ui (7.5.2.0+0~mr7.5.2.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [f8cb9f2] TT#64704 Force npm cli to download packages from sipwise npm mirror
+  * [6c2a029] TT#64951 Migrate dependency locking mechanism from 0 to 1
+  * [783db44] TT#64952 Fix several vulnerabilities in dependencies
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 01 Sep 2019 21:50:28 +0200
+
 ngcp-csc-ui (7.5.1.0+0~mr7.5.1.0) unstable; urgency=medium
 
   [ Alexander Lutay ]
