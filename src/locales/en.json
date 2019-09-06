@@ -121,7 +121,8 @@
             "username": "Username",
             "username_helper": "Input username or username@domain",
             "password": "Password",
-            "password_helper": ""
+            "password_helper": "",
+            "myNewButton": "My new button"
         },
         "callBlockingIncoming": {
             "title": "Block/Allow incoming calls",

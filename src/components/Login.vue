@@ -69,6 +69,14 @@
                         >
                             {{ $t('pages.login.button') }}
                         </q-btn>
+                        <q-btn
+                            flat
+                            icon="person"
+                            color="white"
+                            @click="person()"
+                        >
+                            {{ $t('pages.login.myNewButton') }}
+                        </q-btn>
                     </q-card-actions>
                 </q-card>
             </div>
@@ -143,6 +151,9 @@
                     username: this.username,
                     password: this.password
                 });
+            },
+            person() {
+                alert('Hello person x');
             }
         },
         watch: {
