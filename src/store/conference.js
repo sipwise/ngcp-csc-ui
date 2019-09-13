@@ -336,6 +336,7 @@ export default {
                     displayName: context.getters.username
                 }).then(()=>{
                     context.commit('joinSucceeded');
+                    context.dispatch('enableMicrophone');
                 }).catch((err)=>{
                     context.commit('joinFailed', err.message);
                 });
