@@ -190,6 +190,7 @@
             },
             join(conferenceId) {
                 if(this.hasConferenceId) {
+                    this.$store.dispatch('conference/enableMicrophone');
                     this.$store.dispatch('conference/join', conferenceId);
                 }
             },
