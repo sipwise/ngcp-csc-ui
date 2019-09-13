@@ -188,8 +188,9 @@
                     this.$store.dispatch('conference/toggleScreen');
                 }
             },
-            join(conferenceId) {
+            async join(conferenceId) {
                 if(this.hasConferenceId) {
+                    await this.$store.dispatch('conference/enableMicrophone');
                     this.$store.dispatch('conference/join', conferenceId);
                 }
             },
