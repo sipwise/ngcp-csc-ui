@@ -31,7 +31,7 @@
             <q-btn
                 class="csc-button"
                 :color="joinButtonColor"
-                :disable="!(isMediaEnabled && hasConferenceId) || isJoining"
+                :disable="!hasConferenceId || isJoining"
                 icon="call"
                 round
                 @click="join"
@@ -92,12 +92,7 @@
                 return classes;
             },
             joinButtonColor() {
-                if(this.isMediaEnabled && this.hasConferenceId) {
-                    return 'primary';
-                }
-                else {
-                    return 'grey';
-                }
+                return 'primary';
             },
             shareButtonColor() {
                 if(this.hasConferenceId) {

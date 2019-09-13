@@ -187,7 +187,7 @@ export default {
                     break;
             }
             let localMediaStream;
-            media.build().then(($localMediaStream)=>{
+            return media.build().then(($localMediaStream)=>{
                 localMediaStream = $localMediaStream;
                 localMediaStream.onVideoEnded(()=>{
                     context.dispatch('createLocalMedia', MediaTypes.mic);
@@ -237,7 +237,7 @@ export default {
                 }
             });
         },
-        enableMicrophone(context) {
+        async enableMicrophone(context) {
             if(!context.getters.isLocalMediaRequesting) {
                 let mediaType = MediaTypes.mic;
                 if(context.getters.isCameraEnabled) {
@@ -246,7 +246,7 @@ export default {
                 else if(context.getters.isScreenEnabled) {
                     mediaType = MediaTypes.micScreen;
                 }
-                context.dispatch('createLocalMedia', mediaType);
+                await context.dispatch('createLocalMedia', mediaType);
             }
         },
         disableMicrophone(context) {
