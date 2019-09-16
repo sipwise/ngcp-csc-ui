@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a6e1049a_bfc0a06d",
+        "filename": "src/store/conference.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2019-09-16T10:05:26Z",
+      "side": 1,
+      "message": "To enable the mic here is to late. Media must be ready before calling join method.",
+      "revId": "4723eb5649685519f895cd41fc41261199a95432",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
