@@ -25,7 +25,8 @@ export default {
         joinError: null,
         leaveState: RequestState.initiated,
         leaveError: null,
-        participants: []
+        participants: [],
+        remoteMediaStreams: []
     },
     getters: {
         username(state, getters, rootState, rootGetters) {
@@ -78,7 +79,33 @@ export default {
         hasLocalMediaStream(state) {
             return (state.localMediaState === RequestState.succeeded ||
                 state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream();
+        },
+        localParticipant(state) {
+          if(state.joinState === RequestState.succeeded){
+            return Vue.$conference.getLocalParticipant();
+          }
+        },
+        remoteParticipant:  () => (participantId) => {
+          return Vue.$conference.getRemoteParticipant(participantId);
+        },
+        remoteMediaStream:  (state) => (participantId) => {
+          if(state.remoteMediaStreams.includes(participantId)){
+            const participant =  Vue.$conference.getRemoteParticipant(participantId);
+            return participant.mediaStream ? participant.mediaStream.getStream() :  null;
+          }
+          return;
+
+        },
+        participantsList(state) {
+          return state.participants;
+        },
+        remoteMediaStreams(state) {
+          return state.remoteMediaStreams;
+        },
+        hasRemoteMediaStream: (state) => (participantId) => {
+          return state.remoteMediaStreams.includes(participantId)
         }
+
     },
     mutations: {
         enableConferencing(state) {
@@ -126,6 +153,21 @@ export default {
             state.microphoneEnabled = false;
             state.screenEnabled = false;
         },
+        addRemoteMedia(state, participantId) {
+          if(state.remoteMediaStreams.includes(participantId)){
+            state.remoteMediaStreams = state.remoteMediaStreams.filter(($participant)=>{
+                return participantId !== $participant;
+            });
+          }
+          Vue.set(state.remoteMediaStreams, 0, participantId);
+          // state.remoteMediaStreams.push(participantId);
+
+        },
+        removeRemoteMedia(state, participant) {
+          state.remoteMediaStreams = state.remoteMediaStreams.filter(($participant)=>{
+              return participant !== $participant;
+          });
+        },
         joinRequesting(state) {
             state.joinState = RequestState.requesting;
             state.joinError = null;
@@ -133,6 +175,7 @@ export default {
         joinSucceeded(state) {
             state.joinState = RequestState.succeeded;
             state.joinError = null;
+            state.leaveState = null;
         },
         joinFailed(state, error) {
             state.joinState = RequestState.failed;
@@ -141,6 +184,7 @@ export default {
         leaveRequesting(state) {
             state.leaveState = RequestState.requesting;
             state.leaveError = null;
+            state.joinState = null;
         },
         leaveSucceeded(state) {
             state.leaveState = RequestState.succeeded;
@@ -153,42 +197,42 @@ export default {
             state.leaveError = error;
         },
         participantJoined(state, participant) {
-            state.participants.push(participant.getId());
-
+          if(!state.participants[participant.getId()]){
+            Vue.set(state.participants, 0, participant.getId());
+          }
         },
         participantLeft(state, participant) {
             state.participants = state.participants.filter(($participant)=>{
-                return participant.getId() !== $participant.getId();
+                return participant.getId() !== $participant;
             });
         }
     },
     actions: {
-        createLocalMedia(context, type) {
-            let media = Vue.$rtcEngine.createMedia();
-            context.commit('localMediaRequesting');
-            switch(type) {
-                default:
-                case MediaTypes.mic:
-                    media.enableMicrophone();
-                    break;
-                case MediaTypes.micCam:
-                    media.enableMicrophone();
-                    media.enableCamera();
-                    break;
-                case MediaTypes.micScreen:
-                    media.enableMicrophone();
-                    media.enableScreen();
-                    break;
-                case MediaTypes.cam:
-                    media.enableCamera();
-                    break;
-                case MediaTypes.screen:
-                    media.enableScreen();
-                    break;
-            }
-            let localMediaStream;
-            return media.build().then(($localMediaStream)=>{
-                localMediaStream = $localMediaStream;
+        async createLocalMedia(context, type) {
+            try {
+                let media = Vue.$rtcEngine.createMedia();
+                context.commit('localMediaRequesting');
+                switch(type) {
+                    default:
+                    case MediaTypes.mic:
+                        media.enableMicrophone();
+                        break;
+                    case MediaTypes.micCam:
+                        media.enableMicrophone();
+                        media.enableCamera();
+                        break;
+                    case MediaTypes.micScreen:
+                        media.enableMicrophone();
+                        media.enableScreen();
+                        break;
+                    case MediaTypes.cam:
+                        media.enableCamera();
+                        break;
+                    case MediaTypes.screen:
+                        media.enableScreen();
+                        break;
+                }
+                let localMediaStream = await media.build();
                 localMediaStream.onVideoEnded(()=>{
                     context.dispatch('createLocalMedia', MediaTypes.mic);
                 });
@@ -221,21 +265,15 @@ export default {
                         context.commit('enableScreen');
                         break;
                 }
-                return Promise.resolve();
-            }).then(()=>{
-                if(context.getters.isJoined) {
-                    return Vue.$conference.changeConferenceMedia();
-                }
-                else {
-                    return Promise.resolve();
-                }
-            }).then(()=>{
                 context.commit('localMediaSucceeded', localMediaStream);
-            }).catch((err)=>{
+                await Vue.$conference.changeConferenceMedia();
+
+            }
+            catch(err) {
                 if(!context.getters.hasLocalMediaStream) {
                     context.commit('localMediaFailed', err.message);
                 }
-            });
+            }
         },
         async enableMicrophone(context) {
             if(!context.getters.isLocalMediaRequesting) {

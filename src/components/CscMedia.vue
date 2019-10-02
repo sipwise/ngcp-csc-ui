@@ -79,6 +79,7 @@
                 let timer = setInterval(()=>{
                     if(this.currentStream !== null && (this.$refs.media.currentTime > 0 ||
                         this.$refs.media.readyState > 2)) {
+
                         this.loading = false;
                         clearInterval(timer);
                         this.fitMedia();
@@ -163,6 +164,7 @@
         },
         watch: {
             stream(stream) {
+
                 if(stream !== null && stream !== this.currentStream) {
                     this.loading = true;
                     this.assignStream(stream);
