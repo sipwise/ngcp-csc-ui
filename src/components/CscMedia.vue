@@ -77,8 +77,8 @@
                     this.$refs.media.src = URL.createObjectURL(this.currentStream);
                 }
                 let timer = setInterval(()=>{
-                    if(this.currentStream !== null && (this.$refs.media.currentTime > 0 ||
-                        this.$refs.media.readyState > 2)) {
+                    if(this.currentStream !== null && (this.$refs.media  && (this.$refs.media.currentTime > 0 ||
+                        this.$refs.media.readyState > 2))) {
                         this.loading = false;
                         clearInterval(timer);
                         this.fitMedia();
