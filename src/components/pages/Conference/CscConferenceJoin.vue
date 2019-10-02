@@ -2,7 +2,6 @@
     <div
         class="row justify-center items-center csc-conf-full-height"
     >
-
         <div
             id="csc-conf-join-content"
             :class="contentClasses"
