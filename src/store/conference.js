@@ -78,7 +78,19 @@ export default {
         hasLocalMediaStream(state) {
             return (state.localMediaState === RequestState.succeeded ||
                 state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream();
+        },
+        localParticipant(state) {
+          if(state.joinState === RequestState.succeeded){
+            return Vue.$conference.getLocalParticipant();
+          }
+        },
+        remoteParticipant:  () => (participantId) => {
+          return Vue.$conference.getRemoteParticipant(participantId);
+        },
+        participantsList(state) {
+          return state.participants;
         }
+
     },
     mutations: {
         enableConferencing(state) {
@@ -133,6 +145,7 @@ export default {
         joinSucceeded(state) {
             state.joinState = RequestState.succeeded;
             state.joinError = null;
+            state.leaveState = null;
         },
         joinFailed(state, error) {
             state.joinState = RequestState.failed;
@@ -141,6 +154,7 @@ export default {
         leaveRequesting(state) {
             state.leaveState = RequestState.requesting;
             state.leaveError = null;
+            state.joinState = null;
         },
         leaveSucceeded(state) {
             state.leaveState = RequestState.succeeded;
@@ -154,11 +168,10 @@ export default {
         },
         participantJoined(state, participant) {
             state.participants.push(participant.getId());
-
         },
         participantLeft(state, participant) {
             state.participants = state.participants.filter(($participant)=>{
-                return participant.getId() !== $participant.getId();
+                return participant.getId() !== $participant;
             });
         }
     },
