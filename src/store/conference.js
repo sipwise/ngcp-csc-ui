@@ -78,6 +78,9 @@ export default {
         hasLocalMediaStream(state) {
             return (state.localMediaState === RequestState.succeeded ||
                 state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream();
+        },
+        participantsList(state) {
+          return state.participants;
         }
     },
     mutations: {
@@ -154,7 +157,6 @@ export default {
         },
         participantJoined(state, participant) {
             state.participants.push(participant.getId());
-
         },
         participantLeft(state, participant) {
             state.participants = state.participants.filter(($participant)=>{

@@ -39,6 +39,9 @@
             <csc-conference-joined
                 v-if="!isJoining && isJoined"
             />
+            <csc-conference-participants
+              :participants="participantsList"
+            />
         </div>
         <div
             id="csc-conf-main-media"
@@ -100,6 +103,7 @@
     } from 'vuex'
     import CscConferenceJoin from '../pages/Conference/CscConferenceJoin'
     import CscConferenceJoined from '../pages/Conference/CscConferenceJoined'
+    import CscConferenceParticipants from '../pages/Conference/CscConferenceParticipants'
     import CscMedia from "../CscMedia";
     import CscSpinner from "../CscSpinner";
     import {
@@ -120,6 +124,7 @@
             CscMedia,
             CscConferenceJoin,
             CscConferenceJoined,
+            CscConferenceParticipants,
             QLayout,
             QBtn
         },
@@ -135,7 +140,8 @@
                 'isCameraEnabled',
                 'isScreenEnabled',
                 'isMediaEnabled',
-                'localMediaStream'
+                'localMediaStream',
+                'participantsList'
             ]),
             microphoneButtonColor() {
                 if(this.isMicrophoneEnabled) {
