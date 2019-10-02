@@ -23,7 +23,7 @@
             :muted="muted"
             @click="fitMedia"
             @resize="fitMedia"
-        />
+        ></video>
     </div>
 </template>
 
@@ -43,7 +43,7 @@
         ],
         data () {
             return {
-                currentStream: this.stream,
+                currentStream: null,
                 loading: true,
                 mediaHeight: 0,
                 mediaWidth: 0,
@@ -52,6 +52,7 @@
             }
         },
         mounted () {
+            this.assignStream(this.stream);
             let fitMedia = ()=>{ this.fitMedia(); };
             this.$root.$on('window-resized', fitMedia);
             this.$root.$on('content-resized', fitMedia);
@@ -63,27 +64,43 @@
         },
         methods: {
             assignStream(stream) {
-                this.currentStream = stream;
-                if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
-                    !_.isUndefined(this.$refs.media.srcObject)) {
-                    this.$refs.media.srcObject = this.currentStream;
-                }
-                else if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
-                    !_.isUndefined(this.$refs.media.mozSrcObject)) {
-                    this.$refs.media.mozSrcObject = this.currentStream;
-                }
-                else if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
-                    _.isObject(URL) && _.isFunction(URL.createObjectURL)) {
-                    this.$refs.media.src = URL.createObjectURL(this.currentStream);
-                }
-                let timer = setInterval(()=>{
-                    if(this.currentStream !== null && (this.$refs.media.currentTime > 0 ||
-                        this.$refs.media.readyState > 2)) {
-                        this.loading = false;
-                        clearInterval(timer);
-                        this.fitMedia();
+                if(stream !== this.currentStream && stream !== null && stream !== undefined) {
+                    this.loading = true;
+                    this.currentStream = stream;
+                    if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
+                        !_.isUndefined(this.$refs.media.srcObject)) {
+                        this.$refs.media.srcObject = this.currentStream;
                     }
-                }, 100);
+                    else if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
+                        !_.isUndefined(this.$refs.media.mozSrcObject)) {
+                        this.$refs.media.mozSrcObject = this.currentStream;
+                    }
+                    else if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
+                        _.isObject(URL) && _.isFunction(URL.createObjectURL)) {
+                        this.$refs.media.src = URL.createObjectURL(this.currentStream);
+                    }
+                    let timer = setInterval(()=>{
+                        if(this.currentStream !== null && (this.$refs.media  && (this.$refs.media.currentTime > 0 ||
+                            this.$refs.media.readyState > 2))) {
+                            this.loading = false;
+                            clearInterval(timer);
+                            this.fitMedia();
+                        }
+                    }, 100);
+                }
+                else {
+                    this.loading = false;
+                    this.currentStream = null;
+                    if(this.$refs.media.srcObject) {
+                        this.$refs.media.srcObject = null;
+                    }
+                    else if(this.$refs.media.mozSrcObject) {
+                        this.$refs.media.mozSrcObject = null;
+                    }
+                    else {
+                        this.$refs.media.src = null;
+                    }
+                }
             },
             fitMediaToParent() {
                 if(this.$refs.media && this.$refs.media &&
@@ -163,22 +180,7 @@
         },
         watch: {
             stream(stream) {
-                if(stream !== null && stream !== this.currentStream) {
-                    this.loading = true;
-                    this.assignStream(stream);
-                }
-                else {
-                    this.currentStream = null;
-                    if(this.$refs.media.srcObject) {
-                        this.$refs.media.srcObject = null;
-                    }
-                    else if(this.$refs.media.mozSrcObject) {
-                        this.$refs.media.mozSrcObject = null;
-                    }
-                    else {
-                        this.$refs.media.src = null;
-                    }
-                }
+                this.assignStream(stream);
             },
             muted(muted) {
                 this.$refs.media.muted = muted;
