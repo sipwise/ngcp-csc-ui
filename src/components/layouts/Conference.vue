@@ -39,6 +39,12 @@
             <csc-conference-joined
                 v-if="!isJoining && isJoined"
             />
+            <csc-conference-participants
+              :participants="participantsList"
+              :remote-media-streams="remoteMediaStreams"
+              :is-joined="isJoined"
+              :local-media-stream="localMediaStream"
+            />
         </div>
         <div
             id="csc-conf-main-media"
@@ -96,10 +102,12 @@
 
 <script>
     import {
-        mapGetters
+        mapGetters,
+        mapState
     } from 'vuex'
     import CscConferenceJoin from '../pages/Conference/CscConferenceJoin'
     import CscConferenceJoined from '../pages/Conference/CscConferenceJoined'
+    import CscConferenceParticipants from '../pages/Conference/CscConferenceParticipants'
     import CscMedia from "../CscMedia";
     import CscSpinner from "../CscSpinner";
     import {
@@ -120,10 +128,14 @@
             CscMedia,
             CscConferenceJoin,
             CscConferenceJoined,
+            CscConferenceParticipants,
             QLayout,
             QBtn
         },
         computed: {
+            ...mapState('conference', [
+              'remoteMediaStreams'
+            ]),
             ...mapGetters('conference', [
                 'conferenceId',
                 'conferenceUrl',
@@ -135,7 +147,8 @@
                 'isCameraEnabled',
                 'isScreenEnabled',
                 'isMediaEnabled',
-                'localMediaStream'
+                'localMediaStream',
+                'participantsList',
             ]),
             microphoneButtonColor() {
                 if(this.isMicrophoneEnabled) {
