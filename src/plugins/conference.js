@@ -47,6 +47,7 @@ export class ConferencePlugin {
         return new Promise((resolve, reject)=>{
             options.localMediaStream = this.getLocalMediaStream();
             this.getNetwork().joinConference(options).then((conference)=>{
+                this.conference = conference;
                 resolve(conference);
             }).catch((err)=>{
                 reject(err);
@@ -146,11 +147,11 @@ export class ConferencePlugin {
     }
 
     getLocalParticipant() {
-        this.conference.getLocalParticipant();
+       return this.conference.getLocalParticipant();
     }
 
     getRemoteParticipant(id) {
-        this.conference.getRemoteParticipant(id);
+      return this.conference.getRemoteParticipant(id);
     }
 }
 
