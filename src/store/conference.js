@@ -25,7 +25,8 @@ export default {
         joinError: null,
         leaveState: RequestState.initiated,
         leaveError: null,
-        participants: []
+        participants: [],
+        remoteMediaStreams: []
     },
     getters: {
         username(state, getters, rootState, rootGetters) {
@@ -78,7 +79,33 @@ export default {
         hasLocalMediaStream(state) {
             return (state.localMediaState === RequestState.succeeded ||
                 state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream();
+        },
+        localParticipant(state) {
+          if(state.joinState === RequestState.succeeded){
+            return Vue.$conference.getLocalParticipant();
+          }
+        },
+        remoteParticipant:  () => (participantId) => {
+          return Vue.$conference.getRemoteParticipant(participantId);
+        },
+        remoteMediaStream:  (state) => (participantId) => {
+          if(state.remoteMediaStreams.includes(participantId)){
+            const participant =  Vue.$conference.getRemoteParticipant(participantId);
+            return participant.mediaStream ? participant.mediaStream.getStream() :  null;
+          }
+          return null;
+
+        },
+        participantsList(state) {
+          return state.participants;
+        },
+        remoteMediaStreams(state) {
+          return state.remoteMediaStreams;
+        },
+        hasRemoteMediaStream: (state) => (participantId) => {
+          return state.remoteMediaStreams.includes(participantId)
         }
+
     },
     mutations: {
         enableConferencing(state) {
@@ -126,6 +153,20 @@ export default {
             state.microphoneEnabled = false;
             state.screenEnabled = false;
         },
+        addRemoteMedia(state, participantId) {
+          if(state.remoteMediaStreams.includes(participantId)){
+            state.remoteMediaStreams = state.remoteMediaStreams.filter(($participant)=>{
+                return participantId !== $participant;
+            });
+          }
+          state.remoteMediaStreams.push(participantId);
+
+        },
+        removeRemoteMedia(state, participant) {
+          state.remoteMediaStreams = state.remoteMediaStreams.filter(($participant)=>{
+              return participant !== $participant;
+          });
+        },
         joinRequesting(state) {
             state.joinState = RequestState.requesting;
             state.joinError = null;
@@ -133,6 +174,7 @@ export default {
         joinSucceeded(state) {
             state.joinState = RequestState.succeeded;
             state.joinError = null;
+            state.leaveState = null;
         },
         joinFailed(state, error) {
             state.joinState = RequestState.failed;
@@ -141,6 +183,7 @@ export default {
         leaveRequesting(state) {
             state.leaveState = RequestState.requesting;
             state.leaveError = null;
+            state.joinState = null;
         },
         leaveSucceeded(state) {
             state.leaveState = RequestState.succeeded;
@@ -153,12 +196,16 @@ export default {
             state.leaveError = error;
         },
         participantJoined(state, participant) {
-            state.participants.push(participant.getId());
-
+          if(state.participants.includes(participant.getId())){
+            state.participants = state.participants.filter(($participant)=>{
+                return participant.getId() !== $participant;
+            });
+          }
+          state.participants.push(participant.getId())
         },
         participantLeft(state, participant) {
             state.participants = state.participants.filter(($participant)=>{
-                return participant.getId() !== $participant.getId();
+                return participant.getId() !== $participant;
             });
         }
     },
