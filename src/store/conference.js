@@ -25,7 +25,8 @@ export default {
         joinError: null,
         leaveState: RequestState.initiated,
         leaveError: null,
-        participants: []
+        participants: [],
+        participantsData: []
     },
     getters: {
         username(state, getters, rootState, rootGetters) {
@@ -78,7 +79,11 @@ export default {
         hasLocalMediaStream(state) {
             return (state.localMediaState === RequestState.succeeded ||
                 state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream();
+        },
+        participantsList(state) {
+          return state.participantsData;
         }
+
     },
     mutations: {
         enableConferencing(state) {
@@ -154,7 +159,7 @@ export default {
         },
         participantJoined(state, participant) {
             state.participants.push(participant.getId());
-
+            state.participantsData.push(participant);
         },
         participantLeft(state, participant) {
             state.participants = state.participants.filter(($participant)=>{
