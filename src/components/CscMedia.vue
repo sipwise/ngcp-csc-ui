@@ -63,6 +63,7 @@
         },
         methods: {
             assignStream(stream) {
+              console.log('++++++++++++ ASSIGNSTREAM +++++++++++');
                 this.currentStream = stream;
                 if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
                     !_.isUndefined(this.$refs.media.srcObject)) {
@@ -77,11 +78,14 @@
                     this.$refs.media.src = URL.createObjectURL(this.currentStream);
                 }
                 let timer = setInterval(()=>{
+                  console.log('++++++++++++ STREAM NOT STARTED +++++++++++');
                     if(this.currentStream !== null && (this.$refs.media.currentTime > 0 ||
                         this.$refs.media.readyState > 2)) {
+
                         this.loading = false;
                         clearInterval(timer);
                         this.fitMedia();
+                          console.log('++++++++++++ STREAM STARTED +++++++++++');
                     }
                 }, 100);
             },
@@ -163,11 +167,14 @@
         },
         watch: {
             stream(stream) {
+
                 if(stream !== null && stream !== this.currentStream) {
+                  console.log('++++++++++++ ABOUT TO STREAM +++++++++++');
                     this.loading = true;
                     this.assignStream(stream);
                 }
                 else {
+                    console.log('++++++++++++ STREAM ALREADY THERE +++++++++++');
                     this.currentStream = null;
                     if(this.$refs.media.srcObject) {
                         this.$refs.media.srcObject = null;
