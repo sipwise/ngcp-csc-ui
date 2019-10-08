@@ -1,3 +1,20 @@
+ngcp-csc-ui (8.0.1.0+0~mr8.0.1.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [76b1bb5] TT#64704 Force npm cli to download packages from sipwise npm mirror
+  * [7bdc66d] TT#64951 Migrate dependency locking mechanism from 0 to 1
+  * [aac30cc] TT#64952 Fix several vulnerabilities in dependencies
+  * [e8abe0e] TT#66158 Call: Fix remote video bug in minimized state
+  * [7a56c26] TT#64750 General: As a Subscriber, I want to change my webpassword
+  * [617e13f] TT#67160 Set logging mode to debug for RTCEngine in dev-config script
+
+  [ Carlo Venusino ]
+  * [2dc660e] TT#66575 Conferencing: Join possible without media enabled
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 08 Oct 2019 09:08:57 +0200
+
 ngcp-csc-ui (8.0.0.0+0~mr8.0.0.0) unstable; urgency=medium
 
   [ Alexander Lutay ]
