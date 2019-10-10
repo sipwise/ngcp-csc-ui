@@ -4,6 +4,7 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import localeEn from './locales/en'
 import localeFr from './locales/fr'
+import localeIt from './locales/it'
 import {
     SessionStorage
 } from 'quasar-framework'
@@ -21,7 +22,8 @@ export const i18n = new VueI18n({
     fallbackLocale: defaultLocale,
     messages: {
         'en-US': localeEn,
-        'fr': localeFr
+        'fr': localeFr,
+        'it': localeIt
     }
 });
 
