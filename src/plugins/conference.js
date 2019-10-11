@@ -153,6 +153,11 @@ export class ConferencePlugin {
     getRemoteParticipant(id) {
       return this.conference.getRemoteParticipant(id);
     }
+
+    // getRemoteMediaStream(participantId) {
+    //   const remoteParticipant = this.conference.getRemoteParticipant(participantId);
+    //   return this.conference.getRemoteParticipant(id);
+    // }
 }
 
 export default {

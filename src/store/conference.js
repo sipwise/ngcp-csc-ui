@@ -25,7 +25,8 @@ export default {
         joinError: null,
         leaveState: RequestState.initiated,
         leaveError: null,
-        participants: []
+        participants: [],
+        remoteMediaStreams: []
     },
     getters: {
         username(state, getters, rootState, rootGetters) {
@@ -87,8 +88,18 @@ export default {
         remoteParticipant:  () => (participantId) => {
           return Vue.$conference.getRemoteParticipant(participantId);
         },
+        remoteMediaStream:  () => (participantId) => {
+          debugger
+          const participant =  Vue.$conference.getRemoteParticipant(participantId);
+          console.log('>>>>>>> remoteMediaStream');
+          console.log(participant);
+          return participant.mediaStream ? participant.mediaStream.getStream() :  null;
+        },
         participantsList(state) {
           return state.participants;
+        },
+        remoteMediaStreams(state) {
+          return state.remoteMediaStreams;
         }
 
     },
@@ -138,6 +149,17 @@ export default {
             state.microphoneEnabled = false;
             state.screenEnabled = false;
         },
+        addRemoteMedia(state, participantId) {
+          if(!state.remoteMediaStreams[participantId]){
+            state.remoteMediaStreams.push(participantId);
+          }
+        },
+        removeRemoteMedia(state, participant) {
+          console.log('>>>>> removeRemoteMedia: ' + participant);
+          state.remoteMediaStreams = state.remoteMediaStreams.filter(($participant)=>{
+              return participant !== $participant;
+          });
+        },
         joinRequesting(state) {
             state.joinState = RequestState.requesting;
             state.joinError = null;
@@ -167,7 +189,9 @@ export default {
             state.leaveError = error;
         },
         participantJoined(state, participant) {
+          if(!state.participants[participant.getId()]){
             state.participants.push(participant.getId());
+          }
         },
         participantLeft(state, participant) {
             state.participants = state.participants.filter(($participant)=>{

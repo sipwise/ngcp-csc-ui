@@ -2,15 +2,14 @@
     <div
         class="row justify-right items-center"
         id="csc-conf-participants-cont"
+        v-if="isJoined"
     >
       <q-card
-        v-if="isJoined"
         class="csc-conf-participants-item-cont"
       >
         <q-card-media>
           <img src="/statics/avatar.png">
-        </q-card-media
-        >
+        </q-card-media>
         <q-card-title
           class="csc-conf-participants-item-title"
         >
@@ -23,10 +22,19 @@
         <q-card
           class="csc-conf-participants-item-cont"
         >
-          <q-card-media> <!-- TODO use csc-media -->
+          <q-card-media
+              v-if="!remoteMediaStreams[participantId]"
+          > <!-- TODO use csc-media -->
             <img src="/statics/avatar.png">
-          </q-card-media
-          >
+          </q-card-media>
+          <csc-media
+              v-if="remoteMediaStreams[participantId]"
+              class="csc-media-cont"
+              ref="{{participantId}}"
+              :muted="false"
+              :stream="remoteMediaStream(remoteMediaStreams[participantId])"
+              :preview="true"
+          />
           <q-card-title
             class="csc-conf-participants-item-title"
           >
@@ -39,8 +47,8 @@
 
 <script>
     import { QCard, QCardMedia, QCardTitle } from 'quasar-framework'
-    import { mapGetters } from 'vuex'
-
+    import { mapGetters, mapState } from 'vuex'
+    import CscMedia from "../../CscMedia";
     export default {
         name: 'csc-conference-participants',
         data () {
@@ -52,13 +60,19 @@
         components: {
           QCard,
           QCardMedia,
-          QCardTitle
+          QCardTitle,
+          CscMedia
         },
         computed: {
+          ...mapState('conference', [
+            'remoteMediaStreams'
+          ]),
           ...mapGetters('conference', [
             'localParticipant',
+            'localMediaStream',
             'remoteParticipant',
-            'participantsList'
+            'participantsList',
+            'remoteMediaStream'
           ])
         }
     }
@@ -77,8 +91,8 @@
       height 100%
     .csc-conf-participants-item-cont
       margin-bottom 20px
-      max-width 120px
-      max-height 115px
+      width 115px
+      height 115px
       background white
     .csc-conf-participants-item-title
       position relative
@@ -90,6 +104,10 @@
       .q-card-title
         color $primary
         font-size 14px
-
+    .csc-media-cont
+      height 100% !important
+      width 100% !important
+      video
+        height: 100%;
 
 </style>

@@ -41,7 +41,9 @@
             />
             <csc-conference-participants
               :participants="participantsList"
+              :remote-media-streams="remoteMediaStreams"
               :is-joined="isJoined"
+              :local-media-stream="localMediaStream"
             />
         </div>
         <div
@@ -100,7 +102,8 @@
 
 <script>
     import {
-        mapGetters
+        mapGetters,
+        mapState
     } from 'vuex'
     import CscConferenceJoin from '../pages/Conference/CscConferenceJoin'
     import CscConferenceJoined from '../pages/Conference/CscConferenceJoined'
@@ -130,6 +133,9 @@
             QBtn
         },
         computed: {
+            ...mapState('conference', [
+              'remoteMediaStreams'
+            ]),
             ...mapGetters('conference', [
                 'conferenceId',
                 'conferenceUrl',
@@ -142,7 +148,7 @@
                 'isScreenEnabled',
                 'isMediaEnabled',
                 'localMediaStream',
-                'participantsList'
+                'participantsList',
             ]),
             microphoneButtonColor() {
                 if(this.isMicrophoneEnabled) {
