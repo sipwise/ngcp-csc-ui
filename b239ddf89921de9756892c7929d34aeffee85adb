@@ -1,0 +1,441 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0c025def_95738f58",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "Registrazione Interno",
+      "range": {
+        "startLine": 118,
+        "startChar": 22,
+        "endLine": 118,
+        "endChar": 40
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e4c40f9_f4d9975f",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "Registrazione",
+      "range": {
+        "startLine": 119,
+        "startChar": 23,
+        "endLine": 119,
+        "endChar": 30
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "acbc0a3b_44ea4c59",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "Nome Utente",
+      "range": {
+        "startLine": 120,
+        "startChar": 22,
+        "endLine": 120,
+        "endChar": 30
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e31c381_1d399ec6",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "Nome Utente",
+      "range": {
+        "startLine": 121,
+        "startChar": 25,
+        "endLine": 121,
+        "endChar": 33
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f88ca1a1_8bbb0b35",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "Nome Utente",
+      "range": {
+        "startLine": 122,
+        "startChar": 42,
+        "endLine": 122,
+        "endChar": 50
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5119410_2a753b7a",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "interno",
+      "range": {
+        "startLine": 136,
+        "startChar": 78,
+        "endLine": 136,
+        "endChar": 88
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d69e032b_aa173770",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "interno",
+      "range": {
+        "startLine": 149,
+        "startChar": 78,
+        "endLine": 149,
+        "endChar": 88
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97795d36_8d8753db",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "L\u0027estensione",
+      "range": {
+        "startLine": 348,
+        "startChar": 39,
+        "endLine": 348,
+        "endChar": 50
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a19cb2f_7ba6493c",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "non sarebbe meglio chiamarlo \"interno\" ?",
+      "range": {
+        "startLine": 374,
+        "startChar": 26,
+        "endLine": 374,
+        "endChar": 36
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3469cdae_db6afdf9",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "dispositivo",
+      "range": {
+        "startLine": 380,
+        "startChar": 35,
+        "endLine": 380,
+        "endChar": 43
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae846d42_8f4915e7",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "indirizzo MAC",
+      "range": {
+        "startLine": 381,
+        "startChar": 29,
+        "endLine": 381,
+        "endChar": 40
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ff60009_8aeaa4b0",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "del",
+      "range": {
+        "startLine": 382,
+        "startChar": 32,
+        "endLine": 382,
+        "endChar": 34
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca10ddf0_104226d7",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "Tempo di riposo membri coda",
+      "range": {
+        "startLine": 439,
+        "startChar": 23,
+        "endLine": 439,
+        "endChar": 35
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d1f64f1_016a7393",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "di continuo",
+      "range": {
+        "startLine": 452,
+        "startChar": 32,
+        "endLine": 452,
+        "endChar": 39
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e06dc45_4faa0292",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "ibidem.",
+      "range": {
+        "startLine": 453,
+        "startChar": 42,
+        "endLine": 453,
+        "endChar": 49
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "182938c3_482dbc3e",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "ibidem.",
+      "range": {
+        "startLine": 454,
+        "startChar": 52,
+        "endLine": 454,
+        "endChar": 59
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd227999_c66d368e",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "Predefinito per gli interni",
+      "range": {
+        "startLine": 455,
+        "startChar": 34,
+        "endLine": 455,
+        "endChar": 58
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7e5cdf2_f733f751",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "Tempo di riposo membri coda",
+      "range": {
+        "startLine": 471,
+        "startChar": 32,
+        "endLine": 471,
+        "endChar": 45
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c085bfa7_846c64b7",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 1000011
+      },
+      "writtenOn": "2019-10-22T13:08:03Z",
+      "side": 1,
+      "message": "predefinite",
+      "range": {
+        "startLine": 490,
+        "startChar": 41,
+        "endLine": 490,
+        "endChar": 51
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
