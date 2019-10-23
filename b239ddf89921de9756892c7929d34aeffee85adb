@@ -301,6 +301,30 @@
     },
     {
       "key": {
+        "uuid": "fd99f383_6a4a7a43",
+        "filename": "src/locales/it.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 1000050
+      },
+      "writtenOn": "2019-10-23T12:22:21Z",
+      "side": 1,
+      "message": "This is a technical term you can\u0027t translate according to me",
+      "parentUuid": "ca10ddf0_104226d7",
+      "range": {
+        "startLine": 439,
+        "startChar": 23,
+        "endLine": 439,
+        "endChar": 35
+      },
+      "revId": "b239ddf89921de9756892c7929d34aeffee85adb",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1d1f64f1_016a7393",
         "filename": "src/locales/it.json",
         "patchSetId": 6
