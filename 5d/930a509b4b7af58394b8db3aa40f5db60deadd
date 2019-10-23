@@ -1,0 +1,9 @@
+Code-Review+1: Christian Bergamaschi <cbergamaschi@sipwise.com>
+Code-Review+1: Carlo Venusino <cvenusino@sipwise.com>
+Code-Review+2: Marco Capetta <mcapetta@sipwise.com>
+Verified+1: Jenkins Jenkins
+Submitted-by: Marco Capetta <mcapetta@sipwise.com>
+Submitted-at: Wed, 23 Oct 2019 14:48:18 +0200
+Reviewed-on: http://gerrit.mgm.sipwise.com/c/ngcp-csc-ui/+/34280
+Project: ngcp-csc-ui
+Branch: refs/heads/master
