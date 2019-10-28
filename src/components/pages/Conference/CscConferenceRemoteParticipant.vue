@@ -1,54 +1,60 @@
 <template>
     <q-card
-      class="csc-conf-participant-cont"
+        class="csc-conf-participant-cont"
     >
-      <q-card-media
-        class="csc-avatar-cont"
-        v-show="!hasRemoteMediaStream(participantId)"
-      >
-        <img src="/statics/avatar.png">
-      </q-card-media>
-      <csc-media
-          v-show="hasRemoteMediaStream(participantId)"
-          class="csc-media-cont"
-          ref="{{participantId}}"
-          :muted="false"
-          :stream="remoteMediaStream(participantId)"
-          :preview="true"
-      />
-      <q-card-title
-        class="csc-conf-participants-item-title"
-      >
-        {{remoteParticipant(participantId).displayName}}
-      </q-card-title>
+        <q-card-media
+            class="csc-avatar-cont"
+            v-show="!hasRemoteVideo"
+        >
+            <img src="/statics/avatar.png">
+        </q-card-media>
+        <csc-media
+            v-show="hasRemoteVideo"
+            class="csc-media-cont"
+            ref="cscMedia"
+            :muted="false"
+            :preview="true"
+        />
+        <q-card-title
+            class="csc-conf-participants-item-title"
+        >
+            {{ remoteParticipant.displayName }}
+        </q-card-title>
     </q-card>
 </template>
 
 <script>
-    import { QCard, QCardMedia, QCardTitle } from 'quasar-framework'
-    import { mapGetters } from 'vuex'
+    import {QCard, QCardMedia, QCardTitle} from 'quasar-framework'
     import CscMedia from "../../CscMedia";
+
     export default {
         name: 'csc-conference-remote-participant',
         components: {
-          QCard,
-          QCardMedia,
-          QCardTitle,
-          CscMedia
+            QCard,
+            QCardMedia,
+            QCardTitle,
+            CscMedia
         },
-        props:['participantId'],
-        computed: {
-          ...mapGetters('conference', [
+        props: [
             'remoteParticipant',
             'remoteMediaStream',
-            'hasRemoteMediaStream'
-          ])
+            'remoteMediaStreams',
+            'hasRemoteVideo',
+        ],
+        mounted() {
+            this.assignStream();
         },
-        mounted(){
-          // workaround to retrigger :stream binding on csc-media component
-          if(this.hasRemoteMediaStream(this.participantId)){
-            this.$store.commit('conference/addRemoteMedia', this.participantId);
-          }
+        methods: {
+            assignStream() {
+                if (this.$refs.cscMedia && this.remoteMediaStreams[this.remoteParticipant.id] === this.remoteParticipant.id) {
+                    this.$refs.cscMedia.assignStream(this.remoteMediaStream(this.remoteParticipant.id));
+                }
+            }
+        },
+        watch: {
+            remoteMediaStreams() {
+                this.assignStream();
+            }
         }
     }
 </script>

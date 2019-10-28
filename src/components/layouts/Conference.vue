@@ -143,8 +143,7 @@
                 'localMediaStream',
                 'participantsList',
                 'remoteMediaStream',
-                'remoteMediaStreams',
-                'hasRemoteMediaStream'
+                'remoteMediaStreams'
             ]),
             microphoneButtonColor() {
                 if(this.isMicrophoneEnabled) {

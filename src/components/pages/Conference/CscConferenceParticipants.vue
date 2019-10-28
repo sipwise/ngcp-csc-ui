@@ -13,9 +13,15 @@
         />
         <div
             id="csc-conf-remote-participants-cont"
-            v-for="participantId in participantsList" :key="participantId">
+            v-for="participantId in participantsList"
+            :key="participantId"
+        >
             <csc-conference-remote-participant
-                :participant-id="participantId"
+                :key="participantId"
+                :remote-participant="remoteParticipant(participantId)"
+                :has-remote-video="hasRemoteVideo(participantId)"
+                :remote-media-stream="remoteMediaStream"
+                :remote-media-streams="remoteMediaStreams"
             />
         </div>
     </div>
@@ -23,7 +29,10 @@
 
 <script>
     import {QCard, QCardMedia, QCardTitle} from 'quasar-framework'
-    import {mapGetters} from 'vuex'
+    import {
+        mapGetters,
+        mapState,
+    } from 'vuex'
     import CscMedia from "../../CscMedia";
     import CscConferenceRemoteParticipant from './CscConferenceRemoteParticipant'
     import CscConferenceLocalParticipant from './CscConferenceLocalParticipant'
@@ -39,13 +48,19 @@
             CscConferenceLocalParticipant
         },
         computed: {
+            ...mapState('conference', [
+                'remoteMediaStreams'
+            ]),
             ...mapGetters('conference', [
                 'participantsList',
                 'localParticipant',
                 'localMediaStream',
                 'isMicrophoneEnabled',
                 'isCameraEnabled',
-                'isScreenEnabled'
+                'isScreenEnabled',
+                'remoteParticipant',
+                'remoteMediaStream',
+                'hasRemoteVideo'
             ])
         },
         mounted() {

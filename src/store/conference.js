@@ -1,4 +1,3 @@
-
 import Vue from 'vue'
 import {
     RequestState
@@ -26,7 +25,7 @@ export default {
         leaveState: RequestState.initiated,
         leaveError: null,
         participants: [],
-        remoteMediaStreams: []
+        remoteMediaStreams: {}
     },
     getters: {
         username(state, getters, rootState, rootGetters) {
@@ -70,7 +69,7 @@ export default {
                 state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream();
         },
         localMediaStream(state) {
-            if((state.localMediaState === RequestState.succeeded ||
+            if ((state.localMediaState === RequestState.succeeded ||
                 state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream()) {
                 return Vue.$conference.getLocalMediaStreamNative();
             }
@@ -81,31 +80,34 @@ export default {
                 state.localMediaState === RequestState.requesting) && Vue.$conference.hasLocalMediaStream();
         },
         localParticipant(state) {
-          if(state.joinState === RequestState.succeeded){
-            return Vue.$conference.getLocalParticipant();
-          }
+            if (state.joinState === RequestState.succeeded) {
+                return Vue.$conference.getLocalParticipant();
+            }
         },
-        remoteParticipant:  () => (participantId) => {
-          return Vue.$conference.getRemoteParticipant(participantId);
+        remoteParticipant: () => (participantId) => {
+            return Vue.$conference.getRemoteParticipant(participantId);
         },
-        remoteMediaStream:  (state) => (participantId) => {
-          if(state.remoteMediaStreams.includes(participantId)){
-            const participant =  Vue.$conference.getRemoteParticipant(participantId);
-            return participant.mediaStream ? participant.mediaStream.getStream() :  null;
-          }
-          return null;
+        remoteMediaStream: () => (participantId) => {
+            const participant = Vue.$conference.getRemoteParticipant(participantId);
+            if(participant !== null) {
+                return participant.mediaStream ? participant.mediaStream.getStream() : null;
+            }
+            return null;
 
         },
         participantsList(state) {
-          return state.participants;
+            return state.participants;
         },
         remoteMediaStreams(state) {
-          return state.remoteMediaStreams;
+            return state.remoteMediaStreams;
         },
-        hasRemoteMediaStream: (state) => (participantId) => {
-          return state.remoteMediaStreams.includes(participantId)
+        hasRemoteVideo: () => (participantId) => {
+            const participant = Vue.$conference.getRemoteParticipant(participantId);
+            if(participant !== null) {
+                return participant.mediaStream ? participant.mediaStream.hasVideo() : false;
+            }
+            return false;
         }
-
     },
     mutations: {
         enableConferencing(state) {
@@ -154,18 +156,10 @@ export default {
             state.screenEnabled = false;
         },
         addRemoteMedia(state, participantId) {
-          if(state.remoteMediaStreams.includes(participantId)){
-            state.remoteMediaStreams = state.remoteMediaStreams.filter(($participant)=>{
-                return participantId !== $participant;
-            });
-          }
-          state.remoteMediaStreams.push(participantId);
-
+            Vue.set(state.remoteMediaStreams, participantId, participantId);
         },
-        removeRemoteMedia(state, participant) {
-          state.remoteMediaStreams = state.remoteMediaStreams.filter(($participant)=>{
-              return participant !== $participant;
-          });
+        removeRemoteMedia(state, participantId) {
+            Vue.delete(state.remoteMediaStreams, participantId);
         },
         joinRequesting(state) {
             state.joinState = RequestState.requesting;
@@ -196,24 +190,26 @@ export default {
             state.leaveError = error;
         },
         participantJoined(state, participant) {
-          if(state.participants.includes(participant.getId())){
-            state.participants = state.participants.filter(($participant)=>{
-                return participant.getId() !== $participant;
-            });
-          }
-          state.participants.push(participant.getId())
+            if (state.participants.includes(participant.getId())) {
+                state.participants = state.participants.filter(($participant) => {
+                    return participant.getId() !== $participant;
+                });
+            }
+            state.participants.push(participant.getId());
+
         },
         participantLeft(state, participant) {
-            state.participants = state.participants.filter(($participant)=>{
+            state.participants = state.participants.filter(($participant) => {
                 return participant.getId() !== $participant;
             });
+            Vue.delete(state.remoteMediaStreams, participant.getId());
         }
     },
     actions: {
         createLocalMedia(context, type) {
             let media = Vue.$rtcEngine.createMedia();
             context.commit('localMediaRequesting');
-            switch(type) {
+            switch (type) {
                 default:
                 case MediaTypes.mic:
                     media.enableMicrophone();
@@ -234,13 +230,13 @@ export default {
                     break;
             }
             let localMediaStream;
-            return media.build().then(($localMediaStream)=>{
+            return media.build().then(($localMediaStream) => {
                 localMediaStream = $localMediaStream;
-                localMediaStream.onVideoEnded(()=>{
+                localMediaStream.onVideoEnded(() => {
                     context.dispatch('createLocalMedia', MediaTypes.mic);
                 });
                 Vue.$conference.setLocalMediaStream(localMediaStream);
-                switch(type) {
+                switch (type) {
                     default:
                     case MediaTypes.mic:
                         context.commit('enableMicrophone');
@@ -269,43 +265,43 @@ export default {
                         break;
                 }
                 return Promise.resolve();
-            }).then(()=>{
-                if(context.getters.isJoined) {
+            }).then(() => {
+                if (context.getters.isJoined) {
                     return Vue.$conference.changeConferenceMedia();
                 }
                 else {
                     return Promise.resolve();
                 }
-            }).then(()=>{
+            }).then(() => {
                 context.commit('localMediaSucceeded', localMediaStream);
-            }).catch((err)=>{
-                if(!context.getters.hasLocalMediaStream) {
+            }).catch((err) => {
+                if (!context.getters.hasLocalMediaStream) {
                     context.commit('localMediaFailed', err.message);
                 }
             });
         },
         async enableMicrophone(context) {
-            if(!context.getters.isLocalMediaRequesting) {
+            if (!context.getters.isLocalMediaRequesting) {
                 let mediaType = MediaTypes.mic;
-                if(context.getters.isCameraEnabled) {
+                if (context.getters.isCameraEnabled) {
                     mediaType = MediaTypes.micCam;
                 }
-                else if(context.getters.isScreenEnabled) {
+                else if (context.getters.isScreenEnabled) {
                     mediaType = MediaTypes.micScreen;
                 }
                 await context.dispatch('createLocalMedia', mediaType);
             }
         },
         disableMicrophone(context) {
-            if(!context.getters.isLocalMediaRequesting) {
+            if (!context.getters.isLocalMediaRequesting) {
                 let mediaType = null;
-                if(context.getters.isCameraEnabled) {
+                if (context.getters.isCameraEnabled) {
                     mediaType = MediaTypes.cam;
                 }
-                else if(context.getters.isScreenEnabled) {
+                else if (context.getters.isScreenEnabled) {
                     mediaType = MediaTypes.screen;
                 }
-                if(mediaType === null) {
+                if (mediaType === null) {
                     context.commit('disposeLocalMedia');
                 }
                 else {
@@ -314,7 +310,7 @@ export default {
             }
         },
         toggleMicrophone(context) {
-            if(!context.getters.isMicrophoneEnabled) {
+            if (!context.getters.isMicrophoneEnabled) {
                 context.dispatch('enableMicrophone');
             }
             else {
@@ -322,17 +318,17 @@ export default {
             }
         },
         enableCamera(context) {
-            if(!context.getters.isLocalMediaRequesting) {
+            if (!context.getters.isLocalMediaRequesting) {
                 context.dispatch('createLocalMedia', MediaTypes.micCam);
             }
         },
         disableCamera(context) {
-            if(!context.getters.isLocalMediaRequesting) {
+            if (!context.getters.isLocalMediaRequesting) {
                 let mediaType = null;
-                if(context.getters.isMicrophoneEnabled) {
+                if (context.getters.isMicrophoneEnabled) {
                     mediaType = MediaTypes.mic;
                 }
-                if(mediaType === null) {
+                if (mediaType === null) {
                     context.commit('disposeLocalMedia');
                 }
                 else {
@@ -341,7 +337,7 @@ export default {
             }
         },
         toggleCamera(context) {
-            if(!context.getters.isCameraEnabled) {
+            if (!context.getters.isCameraEnabled) {
                 context.dispatch('enableCamera');
             }
             else {
@@ -349,17 +345,17 @@ export default {
             }
         },
         enableScreen(context) {
-            if(!context.getters.isLocalMediaRequesting) {
+            if (!context.getters.isLocalMediaRequesting) {
                 context.dispatch('createLocalMedia', MediaTypes.micScreen);
             }
         },
         disableScreen(context) {
-            if(!context.getters.isLocalMediaRequesting) {
+            if (!context.getters.isLocalMediaRequesting) {
                 let mediaType = null;
-                if(context.getters.isMicrophoneEnabled) {
+                if (context.getters.isMicrophoneEnabled) {
                     mediaType = MediaTypes.mic;
                 }
-                if(mediaType === null) {
+                if (mediaType === null) {
                     context.commit('disposeLocalMedia');
                 }
                 else {
@@ -368,7 +364,7 @@ export default {
             }
         },
         toggleScreen(context) {
-            if(!context.getters.isScreenEnabled) {
+            if (!context.getters.isScreenEnabled) {
                 context.dispatch('enableScreen');
             }
             else {
@@ -376,25 +372,25 @@ export default {
             }
         },
         join(context, conferenceId) {
-            if(context.getters.hasLocalMediaStream) {
+            if (context.getters.hasLocalMediaStream) {
                 context.commit('joinRequesting');
                 Vue.$conference.joinConference({
                     conferenceName: conferenceId,
                     displayName: context.getters.username
-                }).then(()=>{
+                }).then(() => {
                     context.commit('joinSucceeded');
-                }).catch((err)=>{
+                }).catch((err) => {
                     context.commit('joinFailed', err.message);
                 });
             }
         },
         leave(context) {
-            if(context.getters.isJoined) {
+            if (context.getters.isJoined) {
                 context.commit('leaveRequesting');
-                Vue.$conference.leaveConference().then(()=>{
+                Vue.$conference.leaveConference().then(() => {
                     context.commit('leaveSucceeded');
                     context.commit('disposeLocalMedia');
-                }).catch((err)=>{
+                }).catch((err) => {
                     context.commit('leaveFailed', err.message);
                 });
             }

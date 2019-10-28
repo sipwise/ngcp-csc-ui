@@ -122,18 +122,11 @@ export const store = new Vuex.Store({
             }).onConferenceParticipantJoined((participant)=>{
                 store.commit('conference/participantJoined', participant);
                 participant.onMediaStream(()=>{
-                    store.commit('conference/addRemoteMedia', participant.id);
-                })
-                participant.onMediaStarted(()=>{
-                    store.commit('conference/addRemoteMedia', participant.id);
-                })
-                participant.onMediaRecovered(()=>{
-                    store.commit('conference/addRemoteMedia', participant.id);
-                })
-                participant.onMediaEnded(()=>{
                     store.commit('conference/removeRemoteMedia', participant.id);
-                })
-
+                    store.commit('conference/addRemoteMedia', participant.id);
+                }).onMediaEnded(()=>{
+                    store.commit('conference/removeRemoteMedia', participant.id);
+                });
             }).onConferenceParticipantLeft((participant)=>{
                 store.commit('conference/participantLeft', participant);
             }).onConferenceEvent((event)=>{

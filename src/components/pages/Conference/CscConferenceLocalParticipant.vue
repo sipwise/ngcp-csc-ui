@@ -14,7 +14,6 @@
           class="csc-media-cont"
           :muted="true"
           :stream="localMediaStream"
-          :preview="true"
       />
       <q-card-title
         class="csc-conf-participants-item-title"
@@ -26,7 +25,6 @@
 
 <script>
     import { QCard, QCardMedia, QCardTitle } from 'quasar-framework'
-    // import { mapGetters } from 'vuex'
     import CscMedia from "../../CscMedia";
     export default {
         name: 'csc-conference-local-participant',

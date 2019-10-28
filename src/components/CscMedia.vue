@@ -43,7 +43,6 @@
         ],
         data () {
             return {
-                currentStream: null,
                 loading: true,
                 mediaHeight: 0,
                 mediaWidth: 0,
@@ -57,6 +56,10 @@
             this.$root.$on('window-resized', fitMedia);
             this.$root.$on('content-resized', fitMedia);
             this.$root.$on('orientation-changed', fitMedia);
+            this.$refs.media.addEventListener('playing', ()=>{
+                this.loading = false;
+                this.fitMedia();
+            });
         },
         components: {
             QSpinnerDots,
@@ -64,41 +67,19 @@
         },
         methods: {
             assignStream(stream) {
-                if(stream !== this.currentStream && stream !== null && stream !== undefined) {
+                if(stream !== null && stream !== undefined) {
                     this.loading = true;
-                    this.currentStream = stream;
-                    if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
+                    if(_.isObject(stream) && _.isObject(this.$refs.media) &&
                         !_.isUndefined(this.$refs.media.srcObject)) {
-                        this.$refs.media.srcObject = this.currentStream;
+                        this.$refs.media.srcObject = stream;
                     }
-                    else if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
+                    else if(_.isObject(stream) && _.isObject(this.$refs.media) &&
                         !_.isUndefined(this.$refs.media.mozSrcObject)) {
-                        this.$refs.media.mozSrcObject = this.currentStream;
+                        this.$refs.media.mozSrcObject = stream;
                     }
-                    else if(_.isObject(this.currentStream) && _.isObject(this.$refs.media) &&
+                    else if(_.isObject(stream) && _.isObject(this.$refs.media) &&
                         _.isObject(URL) && _.isFunction(URL.createObjectURL)) {
-                        this.$refs.media.src = URL.createObjectURL(this.currentStream);
-                    }
-                    let timer = setInterval(()=>{
-                        if(this.currentStream !== null && (this.$refs.media  && (this.$refs.media.currentTime > 0 ||
-                            this.$refs.media.readyState > 2))) {
-                            this.loading = false;
-                            clearInterval(timer);
-                            this.fitMedia();
-                        }
-                    }, 100);
-                }
-                else {
-                    this.loading = false;
-                    this.currentStream = null;
-                    if(this.$refs.media.srcObject) {
-                        this.$refs.media.srcObject = null;
-                    }
-                    else if(this.$refs.media.mozSrcObject) {
-                        this.$refs.media.mozSrcObject = null;
-                    }
-                    else {
-                        this.$refs.media.src = null;
+                        this.$refs.media.src = URL.createObjectURL(stream);
                     }
                 }
             },
@@ -192,10 +173,6 @@
             }
         },
         computed: {
-            hasVideo() {
-                return this.currentStream !== null && _.isArray(this.currentStream.getVideoTracks()) &&
-                    this.currentStream.getVideoTracks().length > 0;
-            },
             componentClasses(){
                 return ['csc-media'];
             },
