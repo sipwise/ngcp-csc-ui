@@ -9,10 +9,16 @@
         <img src="/statics/avatar.png">
       </q-card-media>
       <csc-media
+<<<<<<< HEAD
           ref="cscMedia"
           v-show="localMediaStream && (isCameraEnabled || isScreenEnabled)"
           class="csc-media-cont"
           :muted="true"
+=======
+          v-show="localMediaStream && (isCameraEnabled || isScreenEnabled)"
+          class="csc-media-cont"
+          :muted="false"
+>>>>>>> 5f81544... TT#44287 Conferencing - display the list of participants
           :stream="localMediaStream"
           :preview="true"
       />
