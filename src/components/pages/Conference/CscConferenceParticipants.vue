@@ -16,6 +16,9 @@
             v-for="participantId in participantsList" :key="participantId">
             <csc-conference-remote-participant
                 :participant-id="participantId"
+                :remote-participant="remoteParticipant"
+                :remote-media-stream="remoteMediaStream"
+                :has-remote-media-stream-video-enabled="hasRemoteMediaStreamVideoEnabled"
             />
         </div>
     </div>
@@ -45,7 +48,10 @@
                 'localMediaStream',
                 'isMicrophoneEnabled',
                 'isCameraEnabled',
-                'isScreenEnabled'
+                'isScreenEnabled',
+                'remoteParticipant',
+                'remoteMediaStream',
+                'hasRemoteMediaStreamVideoEnabled'
             ])
         },
         mounted() {

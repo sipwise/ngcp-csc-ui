@@ -88,19 +88,14 @@
                         }
                     }, 100);
                 }
-                else {
-                    this.loading = false;
-                    this.currentStream = null;
-                    if(this.$refs.media.srcObject) {
-                        this.$refs.media.srcObject = null;
+                let timer = setInterval(()=>{
+                    if(this.currentStream !== null && (this.$refs.media  && (this.$refs.media.currentTime > 0 ||
+                        this.$refs.media.readyState > 2))) {
+                        this.loading = false;
+                        clearInterval(timer);
+                        this.fitMedia();
                     }
-                    else if(this.$refs.media.mozSrcObject) {
-                        this.$refs.media.mozSrcObject = null;
-                    }
-                    else {
-                        this.$refs.media.src = null;
-                    }
-                }
+                })
             },
             fitMediaToParent() {
                 if(this.$refs.media && this.$refs.media &&

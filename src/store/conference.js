@@ -102,8 +102,12 @@ export default {
         remoteMediaStreams(state) {
           return state.remoteMediaStreams;
         },
-        hasRemoteMediaStream: (state) => (participantId) => {
-          return state.remoteMediaStreams.includes(participantId)
+        hasRemoteMediaStreamVideoEnabled: (state) => (participantId) => {
+          if(state.remoteMediaStreams.includes(participantId)){
+            const participant =  Vue.$conference.getRemoteParticipant(participantId);
+            return participant.mediaStream ? participant.mediaStream.hasVideo() :  false;
+          }
+          return false;
         }
 
     },

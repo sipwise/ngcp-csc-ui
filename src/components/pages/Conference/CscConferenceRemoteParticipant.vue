@@ -4,14 +4,14 @@
     >
       <q-card-media
         class="csc-avatar-cont"
-        v-show="!hasRemoteMediaStream(participantId)"
+        v-show="!hasRemoteMediaStreamVideoEnabled(participantId)"
       >
         <img src="/statics/avatar.png">
       </q-card-media>
       <csc-media
-          v-show="hasRemoteMediaStream(participantId)"
+          v-show="hasRemoteMediaStreamVideoEnabled(participantId)"
           class="csc-media-cont"
-          ref="{{participantId}}"
+          ref="cscMedia"
           :muted="false"
           :stream="remoteMediaStream(participantId)"
           :preview="true"
@@ -26,7 +26,6 @@
 
 <script>
     import { QCard, QCardMedia, QCardTitle } from 'quasar-framework'
-    import { mapGetters } from 'vuex'
     import CscMedia from "../../CscMedia";
     export default {
         name: 'csc-conference-remote-participant',
@@ -36,19 +35,27 @@
           QCardTitle,
           CscMedia
         },
-        props:['participantId'],
-        computed: {
-          ...mapGetters('conference', [
-            'remoteParticipant',
-            'remoteMediaStream',
-            'hasRemoteMediaStream'
-          ])
-        },
+        props:[
+          'participantId',
+          'remoteParticipant',
+          'remoteMediaStream',
+          'hasRemoteMediaStreamVideoEnabled'
+        ],
         mounted(){
-          // workaround to retrigger :stream binding on csc-media component
-          if(this.hasRemoteMediaStream(this.participantId)){
-            this.$store.commit('conference/addRemoteMedia', this.participantId);
-          }
+          this.assignStream(this.remoteMediaStream(this.participantId));
+        },
+        methods: {
+            assignStream(stream) {
+                if(this.$refs.cscMedia) {
+                  this.$refs.cscMedia.assignStream(stream);
+                }
+
+            }
+        },
+        watch: {
+            localMediaStream(stream) {
+                this.assignStream(stream);
+            }
         }
     }
 </script>

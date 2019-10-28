@@ -13,8 +13,6 @@
           v-show="localMediaStream && (isCameraEnabled || isScreenEnabled)"
           class="csc-media-cont"
           :muted="true"
-          :stream="localMediaStream"
-          :preview="true"
       />
       <q-card-title
         class="csc-conf-participants-item-title"
