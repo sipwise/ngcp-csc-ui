@@ -6,7 +6,9 @@
         class="csc-avatar-cont"
         v-if="!localMediaStream || localMediaStream && (!isCameraEnabled && !isScreenEnabled)"
       >
-        <img src="/statics/avatar.png">
+          <img
+              src="statics/avatar.png"
+          />
       </q-card-media>
       <csc-media
           ref="cscMedia"

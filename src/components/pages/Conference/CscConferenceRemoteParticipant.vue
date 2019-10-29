@@ -6,7 +6,9 @@
             class="csc-avatar-cont"
             v-show="!hasRemoteVideo"
         >
-            <img src="/statics/avatar.png">
+            <img
+                src="statics/avatar.png"
+            />
         </q-card-media>
         <csc-media
             v-show="hasRemoteVideo"
