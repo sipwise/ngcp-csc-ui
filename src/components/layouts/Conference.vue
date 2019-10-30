@@ -99,7 +99,8 @@
 
 <script>
     import {
-        mapGetters
+        mapGetters,
+        mapState
     } from 'vuex'
     import CscConferenceJoin from '../pages/Conference/CscConferenceJoin'
     import CscConferenceJoined from '../pages/Conference/CscConferenceJoined'
@@ -112,8 +113,10 @@
     } from 'quasar-framework'
     import CscConfirmDialog from "../CscConfirmationDialog";
     export default {
-        data () {
-            return {}
+        data: function () {
+            return {
+                selectedMediaStream : null
+            }
         },
         mounted() {
             this.$store.dispatch('user/initUser');
@@ -129,6 +132,9 @@
             QBtn
         },
         computed: {
+            ...mapState('conference',[
+                'selectedParticipant'
+            ]),
             ...mapGetters('conference', [
                 'conferenceId',
                 'conferenceUrl',
@@ -206,6 +212,21 @@
                 if(this.isJoined) {
                     this.$store.dispatch('conference/leave');
                 }
+            },
+            showSelectedParticipant: ( participant, scope )=>{
+                if(scope.$refs.localMedia) {
+                    switch(participant){
+                        case 'local':
+                            scope.selectedMediaStream = scope.localMediaStream
+                            scope.$refs.localMedia.assignStream(scope.selectedMediaStream);
+                        break;
+                        default:
+                            scope.selectedMediaStream = scope.remoteMediaStream(participant);
+                            scope.$refs.localMedia.assignStream(scope.selectedMediaStream);
+
+                        break;
+                    }
+                }
             }
         },
         watch: {
@@ -213,6 +234,10 @@
                 if(!value) {
                     this.$store.commit('conference/disposeLocalMedia');
                 }
+            },
+            selectedParticipant(participant){
+                // debugger
+                this.showSelectedParticipant(participant, this);
             }
         }
     }

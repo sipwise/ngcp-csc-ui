@@ -26,7 +26,9 @@
 <script>
     import {QCard, QCardMedia, QCardTitle} from 'quasar-framework'
     import CscMedia from "../../CscMedia";
-
+    import {
+        mapGetters
+    } from 'vuex'
     export default {
         name: 'csc-conference-remote-participant',
         components: {
@@ -35,25 +37,40 @@
             QCardTitle,
             CscMedia
         },
+        data: function () {
+            return {
+                localMediaStream : null
+            }
+        },
         props: [
             'remoteParticipant',
             'remoteMediaStream',
             'remoteMediaStreams',
             'hasRemoteVideo',
         ],
+        computed: {
+            ...mapGetters('conference', [
+                'selectedParticipant'
+            ])
+        },
         mounted() {
-            this.assignStream();
+            this.assignStream(this);
         },
         methods: {
-            assignStream() {
-                if (this.$refs.cscMedia && this.remoteMediaStreams[this.remoteParticipant.id] === this.remoteParticipant.id) {
-                    this.$refs.cscMedia.assignStream(this.remoteMediaStream(this.remoteParticipant.id));
+            assignStream: (scope) => {
+                if (scope.$refs.cscMedia && scope.remoteMediaStreams[scope.remoteParticipant.id] === scope.remoteParticipant.id) {
+                    scope.localMediaStream = scope.remoteMediaStream(scope.remoteParticipant.id);
+                    scope.$refs.cscMedia.assignStream(scope.localMediaStream);
+                    if(scope.selectedParticipant == scope.remoteParticipant.id){
+                        scope.$store.commit('conference/setSelectedParticipant', '');
+                        scope.$store.commit('conference/setSelectedParticipant', scope.remoteParticipant.id);
+                    }
                 }
             }
         },
         watch: {
             remoteMediaStreams() {
-                this.assignStream();
+                this.assignStream(this);
             }
         }
     }
