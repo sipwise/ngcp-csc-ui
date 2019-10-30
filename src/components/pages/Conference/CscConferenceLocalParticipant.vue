@@ -2,14 +2,13 @@
     <q-card
       class="csc-conf-participant-cont"
     >
-      <q-card-media
-        class="csc-avatar-cont"
-        v-if="!localMediaStream || localMediaStream && (!isCameraEnabled && !isScreenEnabled)"
-      >
-          <img
-              src="statics/avatar.png"
-          />
-      </q-card-media>
+        <q-icon
+            name="person"
+            class="csc-conf-avatar"
+            v-if="!localMediaStream || localMediaStream && (!isCameraEnabled && !isScreenEnabled)"
+        >
+        </q-icon>
+
       <csc-media
           ref="cscMedia"
           v-show="localMediaStream && (isCameraEnabled || isScreenEnabled)"
@@ -26,25 +25,26 @@
 </template>
 
 <script>
-    import { QCard, QCardMedia, QCardTitle } from 'quasar-framework'
+    import { QIcon, QCard, QCardMedia, QCardTitle } from 'quasar-framework'
     import CscMedia from "../../CscMedia";
     export default {
         name: 'csc-conference-local-participant',
         components: {
-          QCard,
-          QCardMedia,
-          QCardTitle,
-          CscMedia
+            QIcon,
+            QCard,
+            QCardMedia,
+            QCardTitle,
+            CscMedia
         },
         props: [
-          'localParticipant',
-          'localMediaStream',
-          'isMicrophoneEnabled',
-          'isCameraEnabled',
-          'isScreenEnabled'
+            'localParticipant',
+            'localMediaStream',
+            'isMicrophoneEnabled',
+            'isCameraEnabled',
+            'isScreenEnabled'
         ],
         mounted(){
-          this.assignStream(this.localMediaStream);
+            this.assignStream(this.localMediaStream);
         },
         methods: {
             assignStream(stream) {
