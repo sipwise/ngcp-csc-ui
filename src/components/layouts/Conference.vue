@@ -41,6 +41,7 @@
             />
             <csc-conference-participants
                 v-if="!isJoining && isJoined"
+                :show-selected-participant="showSelectedParticipant"
             />
         </div>
         <div
@@ -206,6 +207,18 @@
                 if(this.isJoined) {
                     this.$store.dispatch('conference/leave');
                 }
+            },
+            showSelectedParticipant( participant ){
+                let stream;
+                switch(participant){
+                    case 'local':
+                        stream = this.localMediaStream;
+                    break;
+                    default:
+                        stream = this.remoteMediaStream(participant);
+                    break;
+                }
+                this.$refs.localMedia.assignStream(stream);
             }
         },
         watch: {

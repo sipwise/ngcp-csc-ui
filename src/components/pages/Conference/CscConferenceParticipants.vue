@@ -5,6 +5,7 @@
     >
         <csc-conference-local-participant
             ref="localParticipant"
+            @click.native="showSelectedParticipant('local')"
             :local-participant="localParticipant"
             :local-media-stream="localMediaStream"
             :is-microphone-enabled="isMicrophoneEnabled"
@@ -18,6 +19,7 @@
         >
             <csc-conference-remote-participant
                 :key="participantId"
+                @click.native="showSelectedParticipant(participantId)"
                 :remote-participant="remoteParticipant(participantId)"
                 :has-remote-video="hasRemoteVideo(participantId)"
                 :remote-media-stream="remoteMediaStream"
@@ -47,6 +49,7 @@
             CscConferenceRemoteParticipant,
             CscConferenceLocalParticipant
         },
+        props: ['showSelectedParticipant'],
         computed: {
             ...mapState('conference', [
                 'remoteMediaStreams'

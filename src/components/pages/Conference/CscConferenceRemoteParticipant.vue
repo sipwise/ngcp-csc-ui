@@ -35,6 +35,11 @@
             QCardTitle,
             CscMedia
         },
+        data: function () {
+            return {
+                localMediaStream : null
+            }
+        },
         props: [
             'remoteParticipant',
             'remoteMediaStream',
@@ -47,7 +52,8 @@
         methods: {
             assignStream() {
                 if (this.$refs.cscMedia && this.remoteMediaStreams[this.remoteParticipant.id] === this.remoteParticipant.id) {
-                    this.$refs.cscMedia.assignStream(this.remoteMediaStream(this.remoteParticipant.id));
+                    this.localMediaStream = this.remoteMediaStream(this.remoteParticipant.id);
+                    this.$refs.cscMedia.assignStream(this.localMediaStream);
                 }
             }
         },
