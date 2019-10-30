@@ -43,9 +43,42 @@
                 v-if="!isJoining && isJoined"
             />
         </div>
+        <q-card
+            class="csc-conf-selected-avatar-cont"
+            v-show="!isJoining
+                    && isJoined
+                    && selectedParticipant
+                    && !selectedHasVideo"
+        >
+            <q-card-media
+                class="csc-avatar-cont"
+            >
+                <img
+                    src="statics/avatar.png"
+                />
+            </q-card-media>
+        </q-card>
+        <div
+            id="csc-conf-selected-participant-name"
+            v-show="!isJoining
+                    && isJoined
+                    && selectedParticipantName"
+        >
+            {{selectedParticipantName}}
+        </div>
         <div
             id="csc-conf-main-media"
-            v-show="isMediaEnabled && (isCameraEnabled || isScreenEnabled)"
+            v-show="!isJoined
+                        && isMediaEnabled
+                        && ( isCameraEnabled || isScreenEnabled )
+                    ||  (selectedParticipant
+                            && (selectedParticipant == 'local'
+                                && isMediaEnabled
+                                && (isCameraEnabled
+                                    || isScreenEnabled)
+                                )
+                            || selectedHasVideo
+                        )"
         >
             <csc-media
                 ref="localMedia"
@@ -99,7 +132,8 @@
 
 <script>
     import {
-        mapGetters
+        mapGetters,
+        mapState
     } from 'vuex'
     import CscConferenceJoin from '../pages/Conference/CscConferenceJoin'
     import CscConferenceJoined from '../pages/Conference/CscConferenceJoined'
@@ -108,12 +142,17 @@
     import CscSpinner from "../CscSpinner";
     import {
         QLayout,
-        QBtn
+        QBtn,
+        QCard,
+        QCardMedia
     } from 'quasar-framework'
     import CscConfirmDialog from "../CscConfirmationDialog";
     export default {
-        data () {
-            return {}
+        data: function () {
+            return {
+                selectedMediaStream : null,
+                selectedParticipantName: null
+            }
         },
         mounted() {
             this.$store.dispatch('user/initUser');
@@ -126,9 +165,14 @@
             CscConferenceJoined,
             CscConferenceParticipants,
             QLayout,
-            QBtn
+            QBtn,
+            QCard,
+            QCardMedia
         },
         computed: {
+            ...mapState('conference',[
+                'selectedParticipant'
+            ]),
             ...mapGetters('conference', [
                 'conferenceId',
                 'conferenceUrl',
@@ -140,10 +184,13 @@
                 'isCameraEnabled',
                 'isScreenEnabled',
                 'isMediaEnabled',
+                'localParticipant',
                 'localMediaStream',
                 'participantsList',
+                'remoteParticipant',
                 'remoteMediaStream',
-                'remoteMediaStreams'
+                'remoteMediaStreams',
+                'hasRemoteVideo'
             ]),
             microphoneButtonColor() {
                 if(this.isMicrophoneEnabled) {
@@ -167,6 +214,17 @@
                 }
                 else {
                     return 'grey';
+                }
+            },
+            selectedHasVideo(){
+                const selectedParticipant = this.selectedParticipant;
+                switch(true){
+                    case !selectedParticipant:
+                        return false;
+                    case selectedParticipant == 'local':
+                        return this.isMediaEnabled && (this.isCameraEnabled || this.isScreenEnabled);
+                    default:
+                        return this.hasRemoteVideo(selectedParticipant);
                 }
             }
         },
@@ -206,6 +264,24 @@
                 if(this.isJoined) {
                     this.$store.dispatch('conference/leave');
                 }
+            },
+            showSelectedParticipant: ( participant, scope )=>{
+                if(scope.$refs.localMedia) {
+                    switch(participant){
+                        case 'local':
+                            if(scope.localParticipant){
+                                scope.selectedParticipantName = scope.localParticipant.displayName
+                                scope.selectedMediaStream = scope.localMediaStream
+                                scope.$refs.localMedia.assignStream(scope.selectedMediaStream);
+                            }
+                        break;
+                        default:
+                            scope.selectedMediaStream = scope.remoteMediaStream(participant);
+                            scope.$refs.localMedia.assignStream(scope.selectedMediaStream);
+                            scope.selectedParticipantName = scope.remoteParticipant(participant).displayName
+                        break;
+                    }
+                }
             }
         },
         watch: {
@@ -213,6 +289,14 @@
                 if(!value) {
                     this.$store.commit('conference/disposeLocalMedia');
                 }
+            },
+            selectedParticipant:{
+                handler: function(participant){
+                    if(participant){
+                        this.showSelectedParticipant(participant, this);
+                    }
+                },
+                deep: true
             }
         }
     }
@@ -220,6 +304,19 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../themes/app.common.styl'
+    #csc-conf-selected-participant-name
+        position absolute
+        top 20px
+        bottom 0
+        right 0
+        left 0
+        z-index 2
+        background-color rgba(0,0,0,0.3)
+        color $primary
+        font-size 24px
+        width 150px
+        height 50px
+        padding 10px
     #csc-conf-main-media
         position absolute
         top 0
