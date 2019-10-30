@@ -25,7 +25,9 @@ export default {
         leaveState: RequestState.initiated,
         leaveError: null,
         participants: [],
-        remoteMediaStreams: {}
+        remoteMediaStreams: {},
+        selectedParticipant: null,
+        manualSelection: false
     },
     getters: {
         username(state, getters, rootState, rootGetters) {
@@ -107,6 +109,9 @@ export default {
                 return participant.mediaStream ? participant.mediaStream.hasVideo() : false;
             }
             return false;
+        },
+        selectedParticipant(state){
+            return state.selectedParticipant;
         }
     },
     mutations: {
@@ -169,6 +174,7 @@ export default {
             state.joinState = RequestState.succeeded;
             state.joinError = null;
             state.leaveState = null;
+            state.selectedParticipant = 'local'
         },
         joinFailed(state, error) {
             state.joinState = RequestState.failed;
@@ -184,6 +190,7 @@ export default {
             state.leaveError = null;
             state.joinState = RequestState.initiated;
             state.joinError = null;
+            state.selectedParticipant = null;
         },
         leaveFailed(state, error) {
             state.leaveState = RequestState.failed;
@@ -199,10 +206,24 @@ export default {
 
         },
         participantLeft(state, participant) {
+            if(state.selectedParticipant == 'local' && !state.joinState === RequestState.succeeded){
+                state.selectedParticipant = null;
+            }
+            else if(state.selectedParticipant == participant.getId()){
+                state.selectedParticipant = 'local';
+                state.manualSelection = false;
+            }
             state.participants = state.participants.filter(($participant) => {
                 return participant.getId() !== $participant;
             });
             Vue.delete(state.remoteMediaStreams, participant.getId());
+
+        },
+        setSelectedParticipant(state, participant){
+            state.selectedParticipant = participant;
+        },
+        setManualSelection(state, val){
+            state.manualSelection = val;
         }
     },
     actions: {
