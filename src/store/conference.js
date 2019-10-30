@@ -25,7 +25,8 @@ export default {
         leaveState: RequestState.initiated,
         leaveError: null,
         participants: [],
-        remoteMediaStreams: {}
+        remoteMediaStreams: {},
+        selectedParticipant: 'local'
     },
     getters: {
         username(state, getters, rootState, rootGetters) {
@@ -107,6 +108,9 @@ export default {
                 return participant.mediaStream ? participant.mediaStream.hasVideo() : false;
             }
             return false;
+        },
+        selectedParticipant(state){
+            return state.selectedParticipant;
         }
     },
     mutations: {
@@ -203,6 +207,9 @@ export default {
                 return participant.getId() !== $participant;
             });
             Vue.delete(state.remoteMediaStreams, participant.getId());
+        },
+        setSelectedParticipant(state, participant){
+            state.selectedParticipant = participant;
         }
     },
     actions: {

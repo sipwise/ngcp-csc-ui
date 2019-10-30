@@ -5,6 +5,7 @@
     >
         <csc-conference-local-participant
             ref="localParticipant"
+            @click.native="setSelectedParticipant('local')"
             :local-participant="localParticipant"
             :local-media-stream="localMediaStream"
             :is-microphone-enabled="isMicrophoneEnabled"
@@ -17,7 +18,7 @@
             :key="participantId"
         >
             <csc-conference-remote-participant
-                :key="participantId"
+                @click.native="setSelectedParticipant(participantId)"
                 :remote-participant="remoteParticipant(participantId)"
                 :has-remote-video="hasRemoteVideo(participantId)"
                 :remote-media-stream="remoteMediaStream"
@@ -60,7 +61,7 @@
                 'isScreenEnabled',
                 'remoteParticipant',
                 'remoteMediaStream',
-                'hasRemoteVideo'
+                'hasRemoteVideo',
             ])
         },
         mounted() {
@@ -71,6 +72,9 @@
                 if(this.$refs.localParticipant) {
                     this.$refs.localParticipant.assignStream(stream);
                 }
+            },
+            setSelectedParticipant(participant){
+                this.$store.commit('conference/setSelectedParticipant', participant);
             }
         },
         watch: {
