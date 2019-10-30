@@ -120,6 +120,7 @@ export const store = new Vuex.Store({
             Vue.$conference.onLeft((conference)=>{
                 store.commit('conference/leftSuccessfully', conference);
             }).onConferenceParticipantJoined((participant)=>{
+                //debugger
                 store.commit('conference/participantJoined', participant);
                 participant.onMediaStream(()=>{
                     store.commit('conference/removeRemoteMedia', participant.id);
@@ -129,6 +130,7 @@ export const store = new Vuex.Store({
                 });
             }).onConferenceParticipantLeft((participant)=>{
                 store.commit('conference/participantLeft', participant);
+                store.commit('conference/removeRemoteMedia', participant.id);
             }).onConferenceEvent((event)=>{
                 store.commit('conference/event', event);
             }).onConferenceMessage((message)=>{
