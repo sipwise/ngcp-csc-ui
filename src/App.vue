@@ -1,11 +1,14 @@
 <template>
     <div id="q-app">
-        <router-view />
+        <router-view/>
     </div>
 </template>
 
 <script>
-    import { QTransition } from 'quasar-framework'
+    import {
+        QTransition
+    } from 'quasar-framework'
+
     export default {
         components: {
             QTransition
