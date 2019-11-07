@@ -19,6 +19,17 @@
         </q-side-link>
         <q-side-link
             item
+            to="/conference"
+        >
+            <q-item-side
+                icon="videocam"
+            />
+            <q-item-main
+                :label="$t('navigation.conference.title')"
+            />
+        </q-side-link>
+        <q-side-link
+            item
             to="/user/conversations"
         >
             <q-item-side

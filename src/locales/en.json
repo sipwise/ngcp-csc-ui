@@ -111,6 +111,9 @@
         "voicebox": {
             "title": "Voicebox",
             "subTitle": "Set your voicebox settings"
+        },
+        "conference": {
+            "title": "Join conference"
         }
     },
     "pages": {
