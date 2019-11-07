@@ -6,6 +6,7 @@ import localeEn from './locales/en'
 import localeFr from './locales/fr'
 import localeIt from './locales/it'
 import localeEs from './locales/es'
+import localeDe from './locales/de'
 import {
     SessionStorage
 } from 'quasar-framework'
@@ -25,7 +26,8 @@ export const i18n = new VueI18n({
         'en-US': localeEn,
         'fr': localeFr,
         'it': localeIt,
-        'es': localeEs
+        'es': localeEs,
+        'de': localeDe
     }
 });
 
