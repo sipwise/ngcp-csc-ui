@@ -10,8 +10,8 @@
             :default="index === 0"
             :count="destinationsCount(sourceset.destinationGroups)"
             :key="sourceset.sourcesetId || 0"
-            :name="sourceset.sourcesetName || 'Everybody'"
-            :label="sourceset.sourcesetName || 'Everybody'"
+            :name="sourceset.sourcesetName || $t('pages.callForward.everyCaller')"
+            :label="sourceset.sourcesetName || $t('pages.callForward.everyCaller')"
             icon="people"
             slot="title"
         />
@@ -24,7 +24,7 @@
         <q-tab-pane
             v-for="sourceset in destinations"
             :key="sourceset.sourcesetId || 0"
-            :name="sourceset.sourcesetName || 'Everybody'"
+            :name="sourceset.sourcesetName || $t('pages.callForward.everyCaller')"
             class="sourceset-pane"
         >
             <div
@@ -192,7 +192,7 @@
                         value: 'blacklist'
                     }
                 ],
-                tab: 'Everybody',
+                tab: this.$t('pages.callForward.everyCaller'),
                 sourcesetsFormEnabled: false
             }
         },
@@ -281,7 +281,7 @@
                 this.source = '';
                 this.sourcesetName = '';
                 this.mode = 'whitelist';
-                this.tab = 'Everybody';
+                this.tab = this.$t('pages.callForward.everyCaller');
             },
             sourcesetSources(id) {
                 let sourceset = this.sourcesets.filter((sourceset) => {

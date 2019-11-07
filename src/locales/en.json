@@ -309,7 +309,8 @@
                 "removeSourceDialogTitle": "Remove call forward source",
                 "removeSourceDialogText": "You are about to remove the source entry for {source}",
                 "removeLastSourceDialogText": "Removing the last source entry is not allowed."
-            }
+            },
+            "everyCaller": "Every caller"
         },
         "home": {
             "title": "Home",
