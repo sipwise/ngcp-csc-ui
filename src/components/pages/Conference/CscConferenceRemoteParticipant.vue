@@ -27,7 +27,8 @@
     import { QIcon, QCard, QCardMedia, QCardTitle } from 'quasar-framework'
     import CscMedia from "../../CscMedia";
     import {
-        mapGetters
+        mapGetters,
+        mapState
     } from 'vuex'
     export default {
         name: 'csc-conference-remote-participant',
@@ -50,12 +51,18 @@
             'hasRemoteVideo',
         ],
         computed: {
+            ...mapState('conference', [
+                'manualSelection'
+            ]),
             ...mapGetters('conference', [
                 'selectedParticipant'
             ])
         },
         mounted() {
             this.assignStream(this);
+            if(!this.manualSelection){
+                this.$store.commit('conference/setSelectedParticipant', this.remoteParticipant.id);
+            }
         },
         methods: {
             assignStream: (scope) => {
