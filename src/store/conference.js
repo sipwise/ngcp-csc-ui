@@ -26,7 +26,8 @@ export default {
         leaveError: null,
         participants: [],
         remoteMediaStreams: {},
-        selectedParticipant: null
+        selectedParticipant: null,
+        manualSelection: false
     },
     getters: {
         username(state, getters, rootState, rootGetters) {
@@ -210,6 +211,7 @@ export default {
             }
             else if(state.selectedParticipant == participant.getId()){
                 state.selectedParticipant = 'local';
+                state.manualSelection = false;
             }
             state.participants = state.participants.filter(($participant) => {
                 return participant.getId() !== $participant;
@@ -219,6 +221,9 @@ export default {
         },
         setSelectedParticipant(state, participant){
             state.selectedParticipant = participant;
+        },
+        setManualSelection(state, val){
+            state.manualSelection = val;
         }
     },
     actions: {
