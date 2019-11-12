@@ -75,6 +75,7 @@
             },
             setSelectedParticipant(participant){
                 this.$store.commit('conference/setSelectedParticipant', participant);
+                this.$store.commit('conference/setManualSelection', true);
             }
         },
         watch: {
