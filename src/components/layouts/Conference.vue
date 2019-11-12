@@ -297,6 +297,14 @@
                 if (this.$refs.localMedia && (stream === null || stream === undefined)) {
                     this.$refs.localMedia.reset();
                 }
+            },
+            selectedParticipant: {
+                handler: function(participant){
+                    if(participant){
+                        this.showSelectedParticipant(participant, this);
+                    }
+                },
+                deep: true
             }
         }
     }
