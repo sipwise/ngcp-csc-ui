@@ -247,25 +247,50 @@ input.q-input-target
         i
             margin 0
 
+.csc-conf-avatar
+    font-size 137px
+    color $conf-participant-icon-color
+    padding-left 11px
+    background-color transparent;
+    box-shadow none
+    position relative
+    width 100%
+    height 100%
+    top 0
+    bottom 0
+    left -22px
+    right 0
+    margin auto
+.csc-conf-selected-avatar
+    width: 220px;
+    height: 220px;
+    font-size 220px
+    color $conf-participant-icon-color
+    background-color transparent;
+    box-shadow none
+    position absolute
+    top 0
+    bottom 0
+    left 0
+    right 0
+    margin auto
 .csc-conf-participant-cont
     margin-bottom 20px
     width 115px
     height 115px
-    background white
+    background $conf-participant-box-color
+    cursor pointer
     .csc-conf-participants-item-title
       position relative
       background white
       bottom 24px
       text-align center
       padding 0
-      background rgba(0, 0, 0, 0.5)
+      background $conf-participant-box-color
       .q-card-title
         color $primary
         font-size 12px
         line-height 24px
-  .csc-avatar-cont
-      height 100%
-      top 6px
   .csc-media-cont
       height 100% !important
       width 100% !important

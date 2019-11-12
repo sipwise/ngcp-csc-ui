@@ -43,9 +43,37 @@
                 v-if="!isJoining && isJoined"
             />
         </div>
+
+        <q-icon
+            name="person"
+            class="csc-conf-selected-avatar"
+            v-show="!isJoining
+                    && isJoined
+                    && selectedParticipant
+                    && !selectedHasVideo"
+        >
+    </q-icon>
+        <div
+            id="csc-conf-selected-participant-name"
+            v-show="!isJoining
+                    && isJoined
+                    && selectedParticipantName"
+        >
+            {{selectedParticipantName}}
+        </div>
         <div
             id="csc-conf-main-media"
-            v-show="isMediaEnabled && (isCameraEnabled || isScreenEnabled)"
+            v-show="!isJoined
+                        && isMediaEnabled
+                        && ( isCameraEnabled || isScreenEnabled )
+                    ||  (selectedParticipant
+                            && (selectedParticipant == 'local'
+                                && isMediaEnabled
+                                && (isCameraEnabled
+                                    || isScreenEnabled)
+                                )
+                            || selectedHasVideo
+                        )"
         >
             <csc-media
                 ref="localMedia"
@@ -100,6 +128,7 @@
 <script>
     import {
         mapGetters,
+        mapState,
         mapActions
     } from 'vuex'
     import CscConferenceJoin from '../pages/Conference/CscConferenceJoin'
@@ -109,12 +138,18 @@
     import CscSpinner from "../CscSpinner";
     import {
         QLayout,
-        QBtn
+        QBtn,
+        QCard,
+        QCardMedia,
+        QIcon
     } from 'quasar-framework'
     import CscConfirmDialog from "../CscConfirmationDialog";
     export default {
-        data () {
-            return {}
+        data: function () {
+            return {
+                selectedMediaStream : null,
+                selectedParticipantName: null
+            }
         },
         mounted() {
             this.$store.dispatch('user/initUser');
@@ -127,9 +162,15 @@
             CscConferenceJoined,
             CscConferenceParticipants,
             QLayout,
-            QBtn
+            QBtn,
+            QCard,
+            QCardMedia,
+            QIcon
         },
         computed: {
+            ...mapState('conference',[
+                'selectedParticipant'
+            ]),
             ...mapGetters('conference', [
                 'conferenceId',
                 'conferenceUrl',
@@ -141,10 +182,13 @@
                 'isCameraEnabled',
                 'isScreenEnabled',
                 'isMediaEnabled',
+                'localParticipant',
                 'localMediaStream',
                 'participantsList',
+                'remoteParticipant',
                 'remoteMediaStream',
-                'remoteMediaStreams'
+                'remoteMediaStreams',
+                'hasRemoteVideo'
             ]),
             microphoneButtonColor() {
                 if(this.isMicrophoneEnabled) {
@@ -168,6 +212,17 @@
                 }
                 else {
                     return 'grey';
+                }
+            },
+            selectedHasVideo(){
+                const selectedParticipant = this.selectedParticipant;
+                switch(true){
+                    case !selectedParticipant:
+                        return false;
+                    case selectedParticipant == 'local':
+                        return this.isMediaEnabled && (this.isCameraEnabled || this.isScreenEnabled);
+                    default:
+                        return this.hasRemoteVideo(selectedParticipant);
                 }
             }
         },
@@ -204,6 +259,24 @@
                 if(this.hasConferenceId) {
                     await this.$store.dispatch('conference/join', conferenceId);
                 }
+            },
+            showSelectedParticipant: ( participant, scope )=>{
+                if(scope.$refs.localMedia) {
+                    switch(participant){
+                        case 'local':
+                            if(scope.localParticipant){
+                                scope.selectedParticipantName = scope.localParticipant.displayName
+                                scope.selectedMediaStream = scope.localMediaStream
+                                scope.$refs.localMedia.assignStream(scope.selectedMediaStream);
+                            }
+                        break;
+                        default:
+                            scope.selectedMediaStream = scope.remoteMediaStream(participant);
+                            scope.$refs.localMedia.assignStream(scope.selectedMediaStream);
+                            scope.selectedParticipantName = scope.remoteParticipant(participant).displayName
+                        break;
+                    }
+                }
             }
         },
         watch: {
@@ -216,6 +289,14 @@
                 if (this.$refs.localMedia && (stream === null || stream === undefined)) {
                     this.$refs.localMedia.reset();
                 }
+            },
+            selectedParticipant: {
+                handler: function(participant){
+                    if(participant){
+                        this.showSelectedParticipant(participant, this);
+                    }
+                },
+                deep: true
             }
         }
     }
@@ -223,6 +304,19 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../themes/app.common.styl'
+    #csc-conf-selected-participant-name
+        position absolute
+        top 20px
+        bottom 0
+        right 0
+        left 0
+        z-index 2
+        background-color $conf-participant-box-color
+        color $primary
+        font-size 20px
+        width 130px
+        height 45px
+        padding 10px
     #csc-conf-main-media
         position absolute
         top 0
