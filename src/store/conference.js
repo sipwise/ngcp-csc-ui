@@ -232,9 +232,6 @@ export default {
             let localMediaStream;
             return media.build().then(($localMediaStream) => {
                 localMediaStream = $localMediaStream;
-                localMediaStream.onVideoEnded(() => {
-                    context.dispatch('createLocalMedia', MediaTypes.mic);
-                });
                 Vue.$conference.setLocalMediaStream(localMediaStream);
                 switch (type) {
                     default:
@@ -371,28 +368,31 @@ export default {
                 context.dispatch('disableScreen');
             }
         },
-        join(context, conferenceId) {
-            if (context.getters.hasLocalMediaStream) {
+        async join(context, conferenceId) {
+            try {
+                if (!Vue.$conference.hasLocalMediaStream()) {
+                    await context.dispatch('enableMicrophone');
+                }
                 context.commit('joinRequesting');
-                Vue.$conference.joinConference({
+                await Vue.$conference.joinConference({
                     conferenceName: conferenceId,
                     displayName: context.getters.username
-                }).then(() => {
-                    context.commit('joinSucceeded');
-                }).catch((err) => {
-                    context.commit('joinFailed', err.message);
                 });
+                context.commit('joinSucceeded');
+            } catch (err) {
+                context.commit('joinFailed', err.message);
             }
         },
-        leave(context) {
+        async leave(context) {
             if (context.getters.isJoined) {
-                context.commit('leaveRequesting');
-                Vue.$conference.leaveConference().then(() => {
+                try {
+                    context.commit('leaveRequesting');
+                    await Vue.$conference.leaveConference();
                     context.commit('leaveSucceeded');
                     context.commit('disposeLocalMedia');
-                }).catch((err) => {
+                } catch (err) {
                     context.commit('leaveFailed', err.message);
-                });
+                }
             }
         }
     }

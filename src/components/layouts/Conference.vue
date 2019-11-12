@@ -99,7 +99,8 @@
 
 <script>
     import {
-        mapGetters
+        mapGetters,
+        mapActions
     } from 'vuex'
     import CscConferenceJoin from '../pages/Conference/CscConferenceJoin'
     import CscConferenceJoined from '../pages/Conference/CscConferenceJoined'
@@ -171,6 +172,9 @@
             }
         },
         methods: {
+            ...mapActions('conference', [
+                'leave'
+            ]),
             close() {
                 if(!this.isJoined) {
                     this.$router.push({path: '/user/home'});
@@ -198,13 +202,7 @@
             },
             async join(conferenceId) {
                 if(this.hasConferenceId) {
-                    await this.$store.dispatch('conference/enableMicrophone');
-                    this.$store.dispatch('conference/join', conferenceId);
-                }
-            },
-            leave() {
-                if(this.isJoined) {
-                    this.$store.dispatch('conference/leave');
+                    await this.$store.dispatch('conference/join', conferenceId);
                 }
             }
         },
@@ -212,6 +210,11 @@
             hasConferenceId(value) {
                 if(!value) {
                     this.$store.commit('conference/disposeLocalMedia');
+                }
+            },
+            localMediaStream(stream) {
+                if (this.$refs.localMedia && (stream === null || stream === undefined)) {
+                    this.$refs.localMedia.reset();
                 }
             }
         }

@@ -50,6 +50,8 @@
             assignStream() {
                 if (this.$refs.cscMedia && this.remoteMediaStreams[this.remoteParticipant.id] === this.remoteParticipant.id) {
                     this.$refs.cscMedia.assignStream(this.remoteMediaStream(this.remoteParticipant.id));
+                } else if (this.$refs.cscMedia) {
+                    this.$refs.cscMedia.reset();
                 }
             }
         },
