@@ -43,32 +43,20 @@ export class ConferencePlugin {
         return this.rtcEngine.getConferenceNetwork();
     }
 
-    joinConference(options) {
-        return new Promise((resolve, reject)=>{
-            options.localMediaStream = this.getLocalMediaStream();
-            this.getNetwork().joinConference(options).then((conference)=>{
-                this.conference = conference;
-                resolve(conference);
-            }).catch((err)=>{
-                reject(err);
-            });
+    async joinConference(options) {
+        options.localMediaStream = this.getLocalMediaStream();
+        this.conference = await this.getNetwork().joinConference(options);
+        return this.conference;
+    }
+
+    async changeConferenceMedia() {
+        await this.getNetwork().changeConferenceMedia({
+            localMediaStream: this.getLocalMediaStream()
         });
     }
 
-    changeConferenceMedia() {
-        return new Promise((resolve, reject)=>{
-            this.getNetwork().changeConferenceMedia({
-                localMediaStream: this.getLocalMediaStream()
-            }).then(()=>{
-                resolve();
-            }).catch((err)=>{
-                reject(err);
-            });
-        });
-    }
-
-    leaveConference() {
-        return this.getNetwork().leaveConference();
+    async leaveConference() {
+        await this.getNetwork().leaveConference();
     }
 
     onLeft(listener) {
@@ -137,6 +125,7 @@ export class ConferencePlugin {
         if(this.hasLocalMediaStream()) {
             this.getLocalMediaStream().stop();
         }
+        this.localMediaStream = null;
     }
 
     getLocalMediaStreamNative() {

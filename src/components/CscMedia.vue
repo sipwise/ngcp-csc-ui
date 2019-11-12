@@ -66,6 +66,13 @@
             QIcon
         },
         methods: {
+            reset() {
+                if (this.$refs.media) {
+                    this.$refs.media.pause();
+                    this.$refs.media.srcObject = null;
+                    this.$refs.media.load();
+                }
+            },
             assignStream(stream) {
                 if(stream !== null && stream !== undefined) {
                     this.loading = true;
