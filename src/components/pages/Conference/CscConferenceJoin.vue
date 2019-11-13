@@ -49,6 +49,9 @@
 <script>
     import CscMedia from '../../CscMedia'
     import {
+        randInRange
+    } from '../../../helpers/math-helper'
+    import {
         QBtn,
         QInput
     } from 'quasar-framework'
@@ -78,6 +81,11 @@
             QBtn,
             QInput,
             CscMedia
+        },
+        mounted() {
+            if(!this.conferenceId){
+                this.conferenceIdChanged(this.createConferenceId())
+            }
         },
         computed: {
             contentClasses() {
@@ -127,6 +135,12 @@
             },
             showShareDialog() {
                 this.$refs.shareDialog.open();
+            },
+            createConferenceId() {
+                const prefixes = ['conf', 'room', 'space'];
+                const randPrefixIndex = randInRange(0, prefixes.length -1);
+                const randSuffix = randInRange(100000, 999999);
+                return prefixes[randPrefixIndex] + randSuffix;
             }
         }
     }
