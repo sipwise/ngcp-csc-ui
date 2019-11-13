@@ -79,6 +79,11 @@
             QInput,
             CscMedia
         },
+        mounted() {
+            if(!this.conferenceId){
+                this.conferenceIdChanged(this.createConferenceId())
+            }
+        },
         computed: {
             contentClasses() {
                 let classes = ['col', 'col-4', 'text-center'];
@@ -127,6 +132,12 @@
             },
             showShareDialog() {
                 this.$refs.shareDialog.open();
+            },
+            createConferenceId() {
+                const prefixes = ['conf', 'room', 'space'];
+                const prefixRandIndex = Math.floor(Math.random() * ((prefixes.length -1) - 0 + 1)) + 0;
+                const suffix = Math.floor(100000 + Math.random() * 900000);
+                return prefixes[prefixRandIndex] + suffix;
             }
         }
     }
