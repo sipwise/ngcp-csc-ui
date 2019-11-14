@@ -1,0 +1,77 @@
+#!/bin/bash
+
+if ! [ -f /.dockerenv ] && ! grep -q 'devices:/docker' /proc/1/cgroup ; then
+  echo "Not running inside docker, exiting to avoid data damage." >&2
+  exit 1
+fi
+
+set -e
+set -u
+
+PASSWORD="selenium"
+
+if [ -z "${1:-}" ] ; then
+  echo "Usage: $0 <testsystem> [<output_directory>] [junit] [test_plan]" >&2
+  echo
+  echo "Usage examples:
+
+  $0 1.2.3.4
+  $0 1.2.3.4 /code/ tap"
+  exit 1
+fi
+
+SERVER="${1}"
+OUTPUT_DIRECTORY="${2:-/code/}"
+OUTPUT_TYPE=${3:-}
+shift; shift; shift # remove first three argv to use ${@} below.
+
+# vnc
+echo "Setting VNC password"
+printf '%s\n%s\n\n' "${PASSWORD}" "${PASSWORD}" | vncpasswd >/dev/null
+PASSWORD_ENCODED=$(hexdump -v -e '"\\""x" 1/1 "%02X"' < "${HOME}/.vnc/passwd")
+xvnc_process=$(pgrep -f 'Xtigervnc :99' || true)
+export DISPLAY=":99"
+if [ -n "${xvnc_process:-}" ] ; then
+  echo "Warning: existing VNC server found, not restarting Xtigervnc process (PID: $xvnc_process)."
+else
+  echo "Starting VNCserver on display :99"
+  vncserver -localhost no -geometry 1280x1024 :99
+fi
+
+echo "Firefox version:"
+firefox --version
+
+# ensure we don't leave any process behind causing problems with re-execution
+pkill -f 'geckodriver' || true
+DISPLAY=:99 ~/geckodriver -p 4444 --log fatal &
+#DISPLAY=:99 ~/geckodriver -p 5555 --log fatal &
+#DISPLAY=:99 ~/geckodriver -p 6666 --log fatal &
+#DISPLAY=:99 ~/geckodriver -p 7777 --log fatal &
+
+echo "################################################################################"
+echo "Finished main setup, now running tests ..."
+echo "Selenium server log file available at /home/selenium/selenium.log"
+echo "Watch at test runs by connecting via VNC (password: '${PASSWORD}'):"
+echo "echo -e '$PASSWORD_ENCODED' >/tmp/vncpasswd ; vncviewer geometry=1280x1024x16 passwd=/tmp/vncpasswd localhost:5999"
+
+RC=0
+export CATALYST_SERVER="https://${SERVER}"
+cd t/selenium
+
+if [ "${OUTPUT_TYPE:-}" = "junit" ] ; then
+  export JENKINS=1
+  nose2 -v -c nose2cfg/jenkinstest.cfg | \
+    tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
+  RC="${PIPESTATUS[0]}"
+else
+  nose2 -v -c nose2cfg/localtest.cfg || RC=$?
+fi
+
+echo "Finished test execution, test execution returned with exit code ${RC}."
+if [ -f "${OUTPUT_DIRECTORY}/selenium.xml" ] ; then
+  echo "Test results available at '${OUTPUT_DIRECTORY}/selenium.xml'"
+fi
+
+echo "################################################################################"
+
+exit "${RC}"
