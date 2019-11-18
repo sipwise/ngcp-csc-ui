@@ -1,3 +1,13 @@
+ngcp-csc-ui (7.5.2.1+0~mr7.5.2.1) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [888d525] TT#66158 Call: Fix remote video bug in minimized state
+  * [fdc1e51] TT#64750 General: As a Subscriber, I want to change my webpassword
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 18 Nov 2019 14:44:52 +0100
+
 ngcp-csc-ui (7.5.2.0+0~mr7.5.2.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
