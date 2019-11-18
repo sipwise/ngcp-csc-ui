@@ -596,7 +596,9 @@
         "copyLinkButtonLabel": "Copy link",
         "exitDialogTitle": "Leave conference",
         "exitDialogText": "Leave current conference now!",
-        "leaveButtonLabel": "Leave"
+        "leaveButtonLabel": "Leave",
+        "muteMicrophone": "Mute",
+        "unmuteMicrophone": "Unmute"
     },
     "userSettings": {
         "changePassword": "Change password",
