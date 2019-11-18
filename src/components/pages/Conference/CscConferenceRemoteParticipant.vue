@@ -3,6 +3,26 @@
         class="csc-conf-participant-cont"
     >
         <q-icon
+            slot="right"
+            name="more_vert"
+            class="csc-conf-toggle-audio-menu-icon"
+        >
+            <q-popover ref="popover">
+                <q-list
+                    link
+                    class="no-border csc-conf-toggle-audio-menu-item"
+                >
+                    <q-item
+                        @click="$refs.popover.close()"
+                    >
+                        <q-item-main
+                        :label="$t('conferencing.toggleAudio')"
+                        />
+                    </q-item>
+                </q-list>
+            </q-popover>
+        </q-icon>
+        <q-icon
             name="person"
             class="csc-conf-avatar"
             v-if="!hasRemoteVideo"
@@ -24,7 +44,7 @@
 </template>
 
 <script>
-    import { QIcon, QCard, QCardMedia, QCardTitle } from 'quasar-framework'
+    import { QIcon, QCard, QCardMedia, QCardTitle, QPopover, QList, QItem, QItemMain } from 'quasar-framework'
     import CscMedia from "../../CscMedia";
     import {
         mapGetters,
@@ -37,6 +57,10 @@
             QCard,
             QCardMedia,
             QCardTitle,
+            QPopover,
+            QList,
+            QItem,
+            QItemMain,
             CscMedia
         },
         data: function () {
@@ -89,4 +113,12 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/app.common.styl'
+    .csc-conf-toggle-audio-menu-icon
+        position absolute
+        padding-top 5px
+        z-index 10
+    .csc-conf-toggle-audio-menu-item
+        .q-item
+            font-size 14px
+
 </style>
