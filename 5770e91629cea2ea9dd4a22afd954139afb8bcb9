@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "10e9b70a_dc2f4424",
+        "filename": "t/selenium/Dockerfile",
+        "patchSetId": 7
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-11-19T12:39:33Z",
+      "side": 1,
+      "message": "are you from the past? ;-)\nP.S. not critical here, as it is a first build enyway.",
+      "range": {
+        "startLine": 8,
+        "startChar": 17,
+        "endLine": 8,
+        "endChar": 27
+      },
+      "revId": "5770e91629cea2ea9dd4a22afd954139afb8bcb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
