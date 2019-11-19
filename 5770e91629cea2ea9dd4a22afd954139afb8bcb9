@@ -39,6 +39,24 @@
       "revId": "5770e91629cea2ea9dd4a22afd954139afb8bcb9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0c58c07_dc3cbb67",
+        "filename": "t/selenium/test_login.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2019-11-19T12:55:55Z",
+      "side": 1,
+      "message": "And in addition, a simple change of a static string like an error message should not break a test at all in my opinion.",
+      "parentUuid": "a935dca9_c8a5b45a",
+      "revId": "5770e91629cea2ea9dd4a22afd954139afb8bcb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
