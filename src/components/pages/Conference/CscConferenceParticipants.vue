@@ -14,10 +14,10 @@
         />
         <div
             id="csc-conf-remote-participants-cont"
-            v-for="participantId in participantsList"
-            :key="participantId"
         >
             <csc-conference-remote-participant
+                v-for="participantId in participantsList"
+                :key="participantId"
                 @click.native="setSelectedParticipant(participantId)"
                 :remote-participant="remoteParticipant(participantId)"
                 :has-remote-video="hasRemoteVideo(participantId)"
