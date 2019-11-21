@@ -57,6 +57,42 @@
       "revId": "5770e91629cea2ea9dd4a22afd954139afb8bcb9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4dff572e_84305d08",
+        "filename": "t/selenium/test_login.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-11-21T12:10:13Z",
+      "side": 1,
+      "message": "i initially added them since those get tested in ngcp-panel. but i get your point, especially because currently python quits the entire tests if 1 assert fails. so i removed them for now",
+      "parentUuid": "f0c58c07_dc3cbb67",
+      "revId": "5770e91629cea2ea9dd4a22afd954139afb8bcb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45ee07cf_f5231040",
+        "filename": "t/selenium/test_login.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2019-11-21T12:10:13Z",
+      "side": 1,
+      "message": "i never really found direct ids for objects in csc panel like there are in ngcp-panel (except in csc login). i need to read a bit into css paths to see if objects can be identified better with it",
+      "parentUuid": "a935dca9_c8a5b45a",
+      "revId": "5770e91629cea2ea9dd4a22afd954139afb8bcb9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
     }
   ]
 }
