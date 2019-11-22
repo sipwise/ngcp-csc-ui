@@ -27,23 +27,21 @@ export function getPreferences(id) {
     });
 }
 
-export function setPreference(id, field, value) {
-    return new Promise((resolve, reject)=>{
-        replacePreference(id, field, value).then(()=>{
-            resolve();
-        }).catch((outerErr)=>{
-            if(outerErr.status === 422) {
-                addPreference(id, field, value).then(()=>{
-                    resolve();
-                }).catch((innerErr)=>{
-                    reject(innerErr);
-                });
+export async function setPreference(id, field, value) {
+    try {
+        await replacePreference(id, field, value);
+    }
+    catch(err) {
+        let errCode = err.status + "";
+        if(errCode === '422') {
+            try {
+                await addPreference(id, field, value);
             }
-            else {
-                reject(outerErr);
+            catch (innerErr) {
+                throw innerErr;
             }
-        });
-    });
+        }
+    }
 }
 
 export function addPreference(id, field, value) {
