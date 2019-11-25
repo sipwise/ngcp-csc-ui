@@ -40,7 +40,9 @@
                 v-if="!isJoining && isJoined"
             />
             <csc-conference-participants
+                ref="confParticipants"
                 v-if="!isJoining && isJoined"
+                :is-muted="isMuted"
             />
         </div>
 
@@ -113,6 +115,29 @@
                     @click="toggleScreen()"
                     :disable="!hasConferenceId || isJoining"
                 />
+                <q-btn
+                    class="csc-conf-button"
+                    :color="screenButtonColor"
+                    icon="more_vert"
+                    round
+                    :disable="!isJoined || !hasParticipants()"
+                >
+                    <q-popover ref="popover" class="">
+                        <q-list
+                            link
+                            class="no-border"
+                        >
+                            <q-item
+                                @click="toggleMuteAll"
+                            >
+                                <q-item-main
+                                    :label="muteLabel()"
+
+                                />
+                            </q-item>
+                        </q-list>
+                    </q-popover>
+                </q-btn>
             </div>
         </div>
         <csc-confirm-dialog
@@ -141,12 +166,17 @@
         QBtn,
         QCard,
         QCardMedia,
-        QIcon
+        QIcon,
+        QPopover,
+        QList,
+        QItem,
+        QItemMain
     } from 'quasar-framework'
     import CscConfirmDialog from "../CscConfirmationDialog";
     export default {
         data: function () {
             return {
+                isMuted: false,
                 selectedMediaStream : null,
                 selectedParticipantName: null
             }
@@ -165,7 +195,11 @@
             QBtn,
             QCard,
             QCardMedia,
-            QIcon
+            QIcon,
+            QPopover,
+            QList,
+            QItem,
+            QItemMain
         },
         computed: {
             ...mapState('conference',[
@@ -254,6 +288,18 @@
                 if(this.hasConferenceId) {
                     this.$store.dispatch('conference/toggleScreen');
                 }
+            },
+            toggleMuteAll(){
+                this.$refs.popover.close();
+                this.isMuted = !this.isMuted;
+            },
+            hasParticipants(){
+                return this.participantsList.length > 0;
+            },
+            muteLabel() {
+                return this.isMuted
+                        ? this.$t('conferencing.unmuteAll')
+                        : this.$t('conferencing.muteAll');
             },
             async join(conferenceId) {
                 if(this.hasConferenceId) {
