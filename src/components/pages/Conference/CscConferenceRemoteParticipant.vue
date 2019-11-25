@@ -25,13 +25,13 @@
             <q-icon
                 class="csc-conf-toggle-audio-icon"
                 name="volume_off"
-                v-if="isMuted"
+                v-if="isAudioMuted"
             >
             </q-icon>
             <q-icon
                 class="csc-conf-toggle-audio-icon"
                 name="volume_up"
-                v-if="!isMuted"
+                v-if="!isAudioMuted"
             >
             </q-icon>
         </div>
@@ -78,8 +78,8 @@
         },
         data: function () {
             return {
-                localMediaStream : null,
-                isMuted: false
+                isAudioMuted: JSON.parse(this.isMuted),
+                localMediaStream : null
             }
         },
         props: [
@@ -87,6 +87,7 @@
             'remoteMediaStream',
             'remoteMediaStreams',
             'hasRemoteVideo',
+            'isMuted'
         ],
         computed: {
             ...mapState('conference', [
@@ -117,11 +118,11 @@
                 }
             },
             toggleAudio(){
-                this.$refs.popover.close()
-                this.isMuted = this.$refs.cscMedia.toggleAudio();
+                this.$refs.popover.close();
+                this.isAudioMuted = this.$refs.cscMedia.toggleAudio();
             },
             audioLabel() {
-                return this.isMuted
+                return this.isAudioMuted
                         ? this.$t('conferencing.unmuteMicrophone')
                         : this.$t('conferencing.muteMicrophone');
             }
@@ -129,6 +130,10 @@
         watch: {
             remoteMediaStreams() {
                 this.assignStream();
+            },
+            isMuted(){
+                this.isAudioMuted = this.isMuted;
+                this.$refs.cscMedia.toggleAudio(this.isMuted);
             }
         }
     }
