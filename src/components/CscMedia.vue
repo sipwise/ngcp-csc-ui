@@ -165,8 +165,8 @@
                     this.fitMediaToParent();
                 }
             },
-            toggleAudio(){
-                return this.$refs.media.muted = !this.$refs.media.muted;
+            toggleAudio(muted){
+                return this.$refs.media.muted = muted || !this.$refs.media.muted;
             },
             isMuted(){
                 return this.$refs.media.muted;
