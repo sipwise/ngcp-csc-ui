@@ -598,7 +598,9 @@
         "exitDialogText": "Leave current conference now!",
         "leaveButtonLabel": "Leave",
         "muteMicrophone": "Mute",
-        "unmuteMicrophone": "Unmute"
+        "unmuteMicrophone": "Unmute",
+        "muteAll": "Mute all",
+        "unmuteAll": "Unmute all"
     },
     "userSettings": {
         "changePassword": "Change password",
