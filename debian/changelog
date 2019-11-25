@@ -1,3 +1,33 @@
+ngcp-csc-ui (8.2.0.0+0~mr8.2.0.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [5d930a5] TT#68659 Italian translations
+
+  [ Hans-Peter Herzog ]
+  * [b9bb89d] TT#69459 Fix media initialisation in CscMedia component
+  * [95939e9] TT#69419 Fix avatar image path
+  * [722a11e] TT#68657 Add Spanish language support
+  * [151dc02] TT#47712 Conferencing: As a Customer, I want to initiate a conference by clicking a button on the start page
+  * [81f46b5] TT#70157 Fix duplicate media creation issue
+  * [8f0fa87] TT#70200 Conferencing > most recent joined participant as current selected one
+  * [4ef7e35] TT#70100 i18n: Translate English to German
+  * [079e4a1] TT#71282 Fix error code type issue in ngcp api client
+
+  [ Carlo Venusino ]
+  * [37909a6] TT#47708 Conferencing > show participant local video
+  * [986d954] TT#44287 Conferencing - display the list of participants
+  * [8cf6234] TT#47718 Select participant in main content area
+  * [79fb9c9] TT#47712 As a Customer, I want to initiate a conference by clicking a button on the start page
+  * [8de739f] TT#47706 Conferencing: As a Customer, I want to mute/unmute each participant separately
+  * [7b4529b] TT#70963 Remove scrollbar from ParticipantItem container
+
+  [ Nico Schedel ]
+  * [a28cc29] TT#70901 initial commit for ngcp-csc-ui selenium tests
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 25 Nov 2019 14:55:59 +0100
+
 ngcp-csc-ui (8.1.0.0+0~mr8.1.0.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
