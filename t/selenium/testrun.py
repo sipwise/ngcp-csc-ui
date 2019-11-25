@@ -21,10 +21,10 @@ class test_login(unittest.TestCase):
             capabilities=caps, firefox_profile=profile, log_path='/dev/null')
         self.driver.implicitly_wait(10)
         self.driver.set_page_load_timeout(10)
+        Collections.create_subscriber(self.driver)
 
-    def test_login(self):
+    def test_login_logout(self):
         driver = self.driver
-        Collections.create_subscriber(driver)
         driver.find_element_by_link_text('Expand Groups').click()
         domainname = driver.find_element_by_xpath(
             '//*[@id="subscribers_table"]//tr[1]/td[3]').text
@@ -37,6 +37,10 @@ class test_login(unittest.TestCase):
         ).send_keys('user')
         driver.find_element_by_xpath(
             '//*[@id="csc-login"]//div//button').click()
+        self.assertEqual(
+            len(driver.find_elements_by_xpath(
+                '/html/body/div[contains(@class, "q-alert-container")]')), 1,
+            "Error Message was shown")
         driver.find_element_by_xpath(
             '//*[@id="csc-login-form"]//div//input[@type="text"]'
         ).send_keys(Keys.CONTROL + "a")
@@ -57,11 +61,16 @@ class test_login(unittest.TestCase):
         ).send_keys('testpasswd')
         driver.find_element_by_xpath(
             '//*[@id="csc-login"]//div//button').click()
-        self.assertEqual("testuser", (driver.find_element_by_xpath(
+        self.assertEqual("testuser", driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]//div//span[contains(text(), '
-            '"testuser")]').text)
-        )
-        WebDriverWait(driver, 1)
+            '"testuser")]').text, "Successfully logged in")
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/div[1]/button').click()
+        driver.find_element_by_xpath(
+            '/html/body//div[contains(text(), "Logout")]').click()
+        self.assertEqual(
+            driver.current_url, os.environ['CATALYST_SERVER'] +
+            "/login/subscriber/#/login", "Successfully logged out")
 
     def tearDown(self):
         driver = self.driver
