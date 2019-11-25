@@ -23,7 +23,6 @@
                 :has-remote-video="hasRemoteVideo(participantId)"
                 :remote-media-stream="remoteMediaStream"
                 :remote-media-streams="remoteMediaStreams"
-                :is-muted="isMuted"
             />
         </div>
     </div>
@@ -49,9 +48,6 @@
             CscConferenceRemoteParticipant,
             CscConferenceLocalParticipant
         },
-        props: [
-            'isMuted'
-        ],
         computed: {
             ...mapState('conference', [
                 'remoteMediaStreams'

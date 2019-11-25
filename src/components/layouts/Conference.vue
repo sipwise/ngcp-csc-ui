@@ -42,7 +42,6 @@
             <csc-conference-participants
                 ref="confParticipants"
                 v-if="!isJoining && isJoined"
-                :is-muted="isMuted"
             />
         </div>
 
@@ -116,6 +115,7 @@
                     :disable="!hasConferenceId || isJoining"
                 />
                 <q-btn
+                    v-if="isJoined"
                     class="csc-conf-button"
                     :color="screenButtonColor"
                     icon="more_vert"
@@ -178,7 +178,6 @@
     export default {
         data: function () {
             return {
-                isMuted: false,
                 selectedMediaStream : null,
                 selectedParticipantName: null
             }
@@ -224,7 +223,8 @@
                 'remoteParticipant',
                 'remoteMediaStream',
                 'remoteMediaStreams',
-                'hasRemoteVideo'
+                'hasRemoteVideo',
+                'mutedState'
             ]),
             microphoneButtonColor() {
                 if(this.isMicrophoneEnabled) {
@@ -293,12 +293,17 @@
             },
             toggleMuteAll(){
                 this.$refs.popover.close();
-                this.isMuted = !this.isMuted;
+                if(this.mutedState.length < 1) {
+                    this.$store.dispatch('conference/muteAll');
+                }
+                else{
+                    this.$store.dispatch('conference/unMuteAll');
+                }
             },
             muteLabel() {
-                return this.isMuted
-                        ? this.$t('conferencing.unmuteAll')
-                        : this.$t('conferencing.muteAll');
+                return this.mutedState.length < 1
+                        ? this.$t('conferencing.muteAll')
+                        : this.$t('conferencing.unmuteAll');
             },
             async join(conferenceId) {
                 if(this.hasConferenceId) {
