@@ -7,6 +7,25 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 
+def login(driver, name, pwd):
+    driver.get(os.environ['CATALYST_SERVER'])
+    driver.find_element_by_xpath(
+        '//*[@id="csc-login-form"]//div//input[@type="text"]'
+    ).send_keys(name)
+    driver.find_element_by_xpath(
+        '//*[@id="csc-login-form"]//div//input[@type="password"]'
+    ).send_keys(pwd)
+    driver.find_element_by_xpath(
+        '//*[@id="csc-login"]//div//button').click()
+
+
+def logout(driver):
+    driver.find_element_by_xpath(
+        '//*[@id="csc-header-toolbar"]/div[1]/button').click()
+    driver.find_element_by_xpath(
+        '/html/body//div[contains(text(), "Logout")]').click()
+
+
 def create_subscriber(driver):
     driver.get(os.environ['CATALYST_SERVER'] + ":1443/logout")
     driver.get(os.environ['CATALYST_SERVER'] + ":1443")
