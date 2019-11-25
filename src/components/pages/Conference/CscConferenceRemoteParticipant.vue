@@ -25,13 +25,13 @@
             <q-icon
                 class="csc-conf-toggle-audio-icon"
                 name="volume_off"
-                v-if="isMuted"
+                v-if="isAudioMuted"
             >
             </q-icon>
             <q-icon
                 class="csc-conf-toggle-audio-icon"
                 name="volume_up"
-                v-if="!isMuted"
+                v-if="!isAudioMuted"
             >
             </q-icon>
         </div>
@@ -78,22 +78,22 @@
         },
         data: function () {
             return {
-                localMediaStream : null,
-                isMuted: false
+                isAudioMuted: false,
+                localMediaStream : null
             }
         },
         props: [
             'remoteParticipant',
             'remoteMediaStream',
             'remoteMediaStreams',
-            'hasRemoteVideo',
+            'hasRemoteVideo'
         ],
         computed: {
             ...mapState('conference', [
                 'manualSelection'
             ]),
             ...mapGetters('conference', [
-                'selectedParticipant'
+                'mutedState'
             ])
         },
         mounted() {
@@ -117,11 +117,13 @@
                 }
             },
             toggleAudio(){
-                this.$refs.popover.close()
-                this.isMuted = this.$refs.cscMedia.toggleAudio();
+                this.$refs.popover.close();
+                this.isAudioMuted
+                    ? this.$store.commit('conference/removeMutedState', this.remoteParticipant.id)
+                    : this.$store.commit('conference/addMutedState', this.remoteParticipant.id)
             },
             audioLabel() {
-                return this.isMuted
+                return this.isAudioMuted
                         ? this.$t('conferencing.unmuteMicrophone')
                         : this.$t('conferencing.muteMicrophone');
             }
@@ -129,6 +131,10 @@
         watch: {
             remoteMediaStreams() {
                 this.assignStream();
+            },
+            mutedState(){
+                this.isAudioMuted = this.mutedState.includes(this.remoteParticipant.id);
+                this.$refs.cscMedia.toggleAudio(this.isAudioMuted);
             }
         }
     }
