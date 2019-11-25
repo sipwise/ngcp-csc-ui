@@ -78,7 +78,7 @@
         },
         data: function () {
             return {
-                isAudioMuted: JSON.parse(this.isMuted),
+                isAudioMuted: false,
                 localMediaStream : null
             }
         },
@@ -86,15 +86,14 @@
             'remoteParticipant',
             'remoteMediaStream',
             'remoteMediaStreams',
-            'hasRemoteVideo',
-            'isMuted'
+            'hasRemoteVideo'
         ],
         computed: {
             ...mapState('conference', [
                 'manualSelection'
             ]),
             ...mapGetters('conference', [
-                'selectedParticipant'
+                'mutedState'
             ])
         },
         mounted() {
@@ -119,7 +118,9 @@
             },
             toggleAudio(){
                 this.$refs.popover.close();
-                this.isAudioMuted = this.$refs.cscMedia.toggleAudio();
+                this.isAudioMuted
+                    ? this.$store.commit('conference/removeMutedState', this.remoteParticipant.id)
+                    : this.$store.commit('conference/addMutedState', this.remoteParticipant.id)
             },
             audioLabel() {
                 return this.isAudioMuted
@@ -131,9 +132,9 @@
             remoteMediaStreams() {
                 this.assignStream();
             },
-            isMuted(){
-                this.isAudioMuted = this.isMuted;
-                this.$refs.cscMedia.toggleAudio(this.isMuted);
+            mutedState(){
+                this.isAudioMuted = this.mutedState.includes(this.remoteParticipant.id);
+                this.$refs.cscMedia.toggleAudio(this.isAudioMuted);
             }
         }
     }

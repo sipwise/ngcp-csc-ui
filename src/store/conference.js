@@ -25,6 +25,7 @@ export default {
         leaveState: RequestState.initiated,
         leaveError: null,
         participants: [],
+        mutedState: [],
         remoteMediaStreams: {},
         selectedParticipant: null,
         manualSelection: false
@@ -99,6 +100,9 @@ export default {
         },
         participantsList(state) {
             return state.participants;
+        },
+        mutedState(state){
+            return state.mutedState;
         },
         remoteMediaStreams(state) {
             return state.remoteMediaStreams;
@@ -225,6 +229,16 @@ export default {
         },
         setManualSelection(state, val){
             state.manualSelection = val;
+        },
+        addMutedState(state, participantId){
+            if(!state.mutedState[participantId]){
+                state.mutedState.push(participantId);
+            }
+        },
+        removeMutedState(state, participantId){
+            state.mutedState = state.mutedState.filter(($participant) => {
+                return participantId !== $participant;
+            });
         }
     },
     actions: {
@@ -417,6 +431,17 @@ export default {
                 catch (err) {
                     context.commit('leaveFailed', err.message);
                 }
+            }
+        },
+        muteAll(context){
+            for(let participant of context.getters.participantsList){
+                context.commit('addMutedState', participant);
+            }
+
+        },
+        unMuteAll(context){
+            for(let participant of context.getters.participantsList){
+                context.commit('removeMutedState', participant);
             }
         }
     }
