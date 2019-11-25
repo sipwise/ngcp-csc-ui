@@ -40,6 +40,7 @@
                 v-if="!isJoining && isJoined"
             />
             <csc-conference-participants
+                ref="confParticipants"
                 v-if="!isJoining && isJoined"
             />
         </div>
@@ -113,6 +114,32 @@
                     @click="toggleScreen()"
                     :disable="!hasConferenceId || isJoining"
                 />
+                <q-btn
+                    v-if="isJoined"
+                    class="csc-conf-button"
+                    :color="screenButtonColor"
+                    icon="more_vert"
+                    round
+                    :disable="!hasConferenceId || isJoining"
+                >
+                    <q-popover
+                        ref="popover"
+                        :disable="participantsList.length < 1">
+                        <q-list
+                            link
+                            class="no-border"
+                        >
+                            <q-item
+                                @click="toggleMuteAll"
+                            >
+                                <q-item-main
+                                    :label="muteLabel()"
+
+                                />
+                            </q-item>
+                        </q-list>
+                    </q-popover>
+                </q-btn>
             </div>
         </div>
         <csc-confirm-dialog
@@ -141,7 +168,11 @@
         QBtn,
         QCard,
         QCardMedia,
-        QIcon
+        QIcon,
+        QPopover,
+        QList,
+        QItem,
+        QItemMain
     } from 'quasar-framework'
     import CscConfirmDialog from "../CscConfirmationDialog";
     export default {
@@ -165,7 +196,11 @@
             QBtn,
             QCard,
             QCardMedia,
-            QIcon
+            QIcon,
+            QPopover,
+            QList,
+            QItem,
+            QItemMain
         },
         computed: {
             ...mapState('conference',[
@@ -188,7 +223,8 @@
                 'remoteParticipant',
                 'remoteMediaStream',
                 'remoteMediaStreams',
-                'hasRemoteVideo'
+                'hasRemoteVideo',
+                'mutedState'
             ]),
             microphoneButtonColor() {
                 if(this.isMicrophoneEnabled) {
@@ -254,6 +290,20 @@
                 if(this.hasConferenceId) {
                     this.$store.dispatch('conference/toggleScreen');
                 }
+            },
+            toggleMuteAll(){
+                this.$refs.popover.close();
+                if(this.mutedState.length < 1) {
+                    this.$store.dispatch('conference/muteAll');
+                }
+                else{
+                    this.$store.dispatch('conference/unMuteAll');
+                }
+            },
+            muteLabel() {
+                return this.mutedState.length < 1
+                        ? this.$t('conferencing.muteAll')
+                        : this.$t('conferencing.unmuteAll');
             },
             async join(conferenceId) {
                 if(this.hasConferenceId) {
