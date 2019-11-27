@@ -71,6 +71,48 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
+    def test_speed_dial(self):
+        driver = self.driver
+        driver.find_element_by_link_text('Expand Groups').click()
+        domainname = driver.find_element_by_xpath(
+            '//*[@id="subscribers_table"]//tr[1]/td[3]').text
+        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]/div[7]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Speed Dial")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div//button[contains'
+            '(@class, "q-btn-rectangle")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"]').click()
+        driver.find_element_by_xpath(
+            '//*[@class="no-border scroll q-list q-list-link"]/div[2]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/input'
+            '[@class="col q-input-target text-left"]').send_keys("testtext")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="row justify-center form-actions"]'
+            '/button[contains(@class, "text-primary")]').click()
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-item-label"]'
+            '/span[contains(text(), "When")]')
+            .text, "When I dial *1 ...")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-item-sublabel"]'
+            '[contains(text(), "ring")]')
+            .text, "ring testtext")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/button[@slot="right"]').click()
+        driver.find_element_by_xpath(
+            '/html/body//div[@class="modal-buttons row"]//button'
+            '[contains(@class, "text-negative")]').click()
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "No speed dials found")]')
+            .is_displayed())
+        Collections.logout(driver)
+
     def tearDown(self):
         driver = self.driver
         try:
