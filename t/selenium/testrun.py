@@ -71,6 +71,61 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
+    def test_reminder(self):
+        driver = self.driver
+        driver.find_element_by_link_text('Expand Groups').click()
+        domainname = driver.find_element_by_xpath(
+            '//*[@id="subscribers_table"]//tr[1]/td[3]').text
+        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Reminder")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Reminder")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][@class="q-toggle '
+            'q-option cursor-pointer no-outline q-focusable row inline '
+            'no-wrap items-center"]')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"][@class="q-toggle '
+            'q-option cursor-pointer no-outline q-focusable row inline '
+            'no-wrap items-center"]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[contains(@class, '
+            '"q-input-target justify-start")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains'
+            '(@class, "q-input-target justify-start")]').click()
+        driver.find_element_by_xpath(
+            '/html/body//div[contains(@class, "q-datetime-clock-circle")]'
+            '//div[contains(@class, "q-datetime-clock-pos-13")]').click()
+        driver.find_element_by_xpath(
+            '/html/body//div[contains(@class, "q-datetime-clock-circle")]'
+            '//div[contains(@class, "q-datetime-clock-pos-7")]').click()
+        driver.find_element_by_xpath(
+            '/html/body//div[contains(@class, "q-datetime-controls")]'
+            '/button[2]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"]/span'
+            '[@class="q-option-label"][contains(text(), "Always")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"]//span'
+            '[contains(text(), "Always")]').click()
+        self.assertEqual('Reminder is enabled', driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"]//'
+            'span[contains(text(), "Reminder")]').text,
+            "Reminder is enabled")
+        self.assertEqual('13:35', driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains'
+            '(@class, "q-input-target justify-start")]').text,
+            "Time is correct")
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"]/div'
+            '[contains(@class, "active")]/../'
+            'span[contains(text(), "Always")]').is_displayed(),
+            "Option 'Always' was selected")
+
     def test_speed_dial(self):
         driver = self.driver
         driver.find_element_by_link_text('Expand Groups').click()
