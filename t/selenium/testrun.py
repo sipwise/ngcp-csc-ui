@@ -10,8 +10,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
+domainname = "thistextwillbereplaced"
+
 
 class testrun(unittest.TestCase):
+
     def setUp(self):
         profile = webdriver.FirefoxProfile()
         profile.accept_untrusted_certs = True
@@ -21,13 +24,18 @@ class testrun(unittest.TestCase):
             capabilities=caps, firefox_profile=profile, log_path='/dev/null')
         self.driver.implicitly_wait(10)
         self.driver.set_page_load_timeout(10)
-        Collections.create_subscriber(self.driver)
 
-    def test_login_logout(self):
+    def test_a_create_subscriber(self):
+        global domainname
         driver = self.driver
+        Collections.create_subscriber(self.driver)
         driver.find_element_by_link_text('Expand Groups').click()
         domainname = driver.find_element_by_xpath(
             '//*[@id="subscribers_table"]//tr[1]/td[3]').text
+
+    def test_b_login_logout(self):
+        global domainname
+        driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         driver.find_element_by_xpath(
             '//*[@id="csc-login-form"]//div//input[@type="text"]'
@@ -71,11 +79,9 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_reminder(self):
+    def test_c_reminder(self):
+        global domainname
         driver = self.driver
-        driver.find_element_by_link_text('Expand Groups').click()
-        domainname = driver.find_element_by_xpath(
-            '//*[@id="subscribers_table"]//tr[1]/td[3]').text
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
@@ -125,12 +131,14 @@ class testrun(unittest.TestCase):
             '[contains(@class, "active")]/../'
             'span[contains(text(), "Always")]').is_displayed(),
             "Option 'Always' was selected")
+        Collections.logout(driver)
+        self.assertEqual(
+            driver.current_url, os.environ['CATALYST_SERVER'] +
+            "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_speed_dial(self):
+    def test_d_speed_dial(self):
+        global domainname
         driver = self.driver
-        driver.find_element_by_link_text('Expand Groups').click()
-        domainname = driver.find_element_by_xpath(
-            '//*[@id="subscribers_table"]//tr[1]/td[3]').text
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
@@ -168,14 +176,26 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[contains(text(), "No speed dials found")]')
             .is_displayed())
         Collections.logout(driver)
+        self.assertEqual(
+            driver.current_url, os.environ['CATALYST_SERVER'] +
+            "/login/subscriber/#/login", "Successfully logged out")
+
+    def test_z_delete_subscriber(self):
+        global domainname
+        driver = self.driver
+        Collections.delete_subscriber(driver)
+        driver.find_element_by_link_text('Expand Groups').click()
+        driver.execute_script(
+            'arguments[0].scrollIntoView();',
+            driver.find_element_by_link_text('Subscribers')
+        )
+        self.assertTrue(driver.find_element_by_css_selector(
+            '#subscribers_table tr > td.dataTables_empty').is_displayed(),
+            "Subscriber has been successfully deleted")
 
     def tearDown(self):
         driver = self.driver
-        try:
-            Collections.delete_subscriber(driver)
-            driver.close()
-        except Exception:
-            driver.close()
+        driver.close()
 
 
 if __name__ == '__main__':
