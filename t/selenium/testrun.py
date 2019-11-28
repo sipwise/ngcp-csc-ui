@@ -46,7 +46,7 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="csc-login"]//div//button').click()
         self.assertTrue(driver.find_element_by_xpath(
-            '/html/body/div[contains(@class, "q-alert-container")]')
+            '//div[contains(@class, "q-alert-container")]')
             .is_displayed(), "Error Message was shown")
         driver.find_element_by_xpath(
             '//*[@id="csc-login-form"]//div//input[@type="text"]'
@@ -74,7 +74,7 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/div[1]/button').click()
         driver.find_element_by_xpath(
-            '/html/body//div[contains(text(), "Logout")]').click()
+            '//div[contains(text(), "Logout")]').click()
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
@@ -90,13 +90,11 @@ class testrun(unittest.TestCase):
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Reminder")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][@class="q-toggle '
-            'q-option cursor-pointer no-outline q-focusable row inline '
-            'no-wrap items-center"]')))
+            By.XPATH, '//*[@id="q-app"]//div[contains(@class, '
+            '"q-input-target justify-start")]')))
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"][@class="q-toggle '
-            'q-option cursor-pointer no-outline q-focusable row inline '
-            'no-wrap items-center"]').click()
+            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
+            '"q-toggle")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, '
             '"q-input-target justify-start")]')))
@@ -104,13 +102,13 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[contains'
             '(@class, "q-input-target justify-start")]').click()
         driver.find_element_by_xpath(
-            '/html/body//div[contains(@class, "q-datetime-clock-circle")]'
+            '//div[contains(@class, "q-datetime-clock-circle")]'
             '//div[contains(@class, "q-datetime-clock-pos-13")]').click()
         driver.find_element_by_xpath(
-            '/html/body//div[contains(@class, "q-datetime-clock-circle")]'
+            '//div[contains(@class, "q-datetime-clock-circle")]'
             '//div[contains(@class, "q-datetime-clock-pos-7")]').click()
         driver.find_element_by_xpath(
-            '/html/body//div[contains(@class, "q-datetime-controls")]'
+            '//div[contains(@class, "q-datetime-controls")]'
             '/button[2]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"]/span'
@@ -170,8 +168,8 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/button[@slot="right"]').click()
         driver.find_element_by_xpath(
-            '/html/body//div[@class="modal-buttons row"]//button'
-            '[contains(@class, "text-negative")]').click()
+            '//div[@class="modal-buttons row"]//button[contains(@class, '
+            '"text-negative")]').click()
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "No speed dials found")]')
             .is_displayed())
