@@ -3,6 +3,7 @@
 
 import Vue from 'vue';
 import VueResource from 'vue-resource';
+import { i18n } from '../../src/i18n';
 import {
     getMappings,
     getSourcesets,
@@ -21,7 +22,7 @@ import { assert } from 'chai';
 
 Vue.use(VueResource);
 
-describe('CallForward', function() {
+describe('CallForward', function() { 
 
     const subscriberId = 123;
 
@@ -402,7 +403,7 @@ describe('CallForward', function() {
             timesetId: 3,
             times: {
                 "weekday": "1",
-                "wday": "Monday",
+                "wday": i18n.t('pages.callForward.times.monday'),
                 "hour": "8-16",
                 "from": "8",
                 "to": "16"
@@ -449,7 +450,7 @@ describe('CallForward', function() {
                     minute: null,
                     to: "9:00",
                     wday: "1",
-                    weekday: "Sunday"
+                    weekday: i18n.t('pages.callForward.times.sunday')
                 },
                 {
                     from: "6:00",
@@ -457,7 +458,7 @@ describe('CallForward', function() {
                     minute: null,
                     to: "9:00",
                     wday: "2",
-                    weekday: "Monday"
+                    weekday: i18n.t('pages.callForward.times.monday')
                 }
             ],
             timesetIsCompatible: true,
@@ -497,7 +498,7 @@ describe('CallForward', function() {
                     minute: "0-30",
                     to: "6:31",
                     wday: "1",
-                    weekday: "Sunday"
+                    weekday: i18n.t('pages.callForward.times.sunday')
                 },
                 {
                     from: "7:0",
@@ -505,7 +506,7 @@ describe('CallForward', function() {
                     minute: "0-30",
                     to: "7:31",
                     wday: "1",
-                    weekday: "Sunday"
+                    weekday: i18n.t('pages.callForward.times.sunday')
                 },
                 {
                     from: "8:0",
@@ -513,7 +514,7 @@ describe('CallForward', function() {
                     minute: "0-30",
                     to: "8:31",
                     wday: "1",
-                    weekday: "Sunday"
+                    weekday: i18n.t('pages.callForward.times.sunday')
                 },
                 {
                     from: "6:0",
@@ -521,7 +522,7 @@ describe('CallForward', function() {
                     minute: "0-30",
                     to: "6:31",
                     wday: "2",
-                    weekday: "Monday"
+                    weekday: i18n.t('pages.callForward.times.monday')
                 },
                 {
                     from: "7:0",
@@ -529,7 +530,7 @@ describe('CallForward', function() {
                     minute: "0-30",
                     to: "7:31",
                     wday: "2",
-                    weekday: "Monday"
+                    weekday: i18n.t('pages.callForward.times.monday')
                 },
                 {
                     from: "8:0",
@@ -537,7 +538,7 @@ describe('CallForward', function() {
                     minute: "0-30",
                     to: "8:31",
                     wday: "2",
-                    weekday: "Monday"
+                    weekday: i18n.t('pages.callForward.times.monday')
                 }
             ],
             timesetIsCompatible: true,
@@ -577,7 +578,7 @@ describe('CallForward', function() {
                     minute: "0",
                     to: "6:1",
                     wday: "1",
-                    weekday: "Sunday"
+                    weekday: i18n.t('pages.callForward.times.sunday')
                 }
             ],
             timesetExists: true,
