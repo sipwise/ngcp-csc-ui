@@ -206,21 +206,22 @@ export default {
 
         },
         participantLeft(state, participant) {
-            if(state.selectedParticipant == 'local' && !state.joinState === RequestState.succeeded){
-                state.selectedParticipant = null;
-            }
-            else if(state.selectedParticipant == participant.getId()){
-                state.selectedParticipant = 'local';
-                state.manualSelection = false;
-            }
             state.participants = state.participants.filter(($participant) => {
                 return participant.getId() !== $participant;
             });
-            Vue.delete(state.remoteMediaStreams, participant.getId());
-
         },
         setSelectedParticipant(state, participant){
-            state.selectedParticipant = participant;
+            if(state.selectedParticipant == 'local' && !state.joinState === RequestState.succeeded){
+                state.selectedParticipant = null;
+            }
+            else if(state.selectedParticipant == participant){
+                state.selectedParticipant = 'local';
+                state.manualSelection = false;
+            }
+            else{
+                state.selectedParticipant = participant;
+            }
+
         },
         setManualSelection(state, val){
             state.manualSelection = val;
