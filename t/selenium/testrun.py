@@ -79,7 +79,137 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_c_reminder(self):
+    def test_c_call_blocking(self):
+        global domainname
+        driver = self.driver
+        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Call Blocking")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Call Blocking")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Incoming")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Incoming")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
+            '"q-toggle")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
+            '"q-toggle")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@class="q-item-label"]'
+            '[contains(text(), "Only incoming calls")]'
+        )))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-item-label"]'
+            '[contains(text(), "Only incoming calls")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div/button[contains(@class, '
+            '"q-btn-flat")]/span[contains(@class, "q-btn-inner")]'
+        )))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/button[contains(@class, "q-btn-flat")]'
+            '/span[contains(@class, "q-btn-inner")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/input[@type="text"]').send_keys('123456789')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="csc-form-actions row justify-center'
+            '"]/button[2]').click()
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
+            '"q-toggle")]/div[contains(@class, "active")]').is_displayed(),
+            "Option 'All anonymous incoming calls are blocked' was enabled")
+        self.assertEquals("123456789", driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
+            'csc-list-item ")]//div[@class="q-item-label"]').text,
+            "Number is correct")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
+            'div[@class="q-item-"]/button[contains(@class, "q-btn")]'
+        )))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
+            'div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
+        driver.find_element_by_xpath(
+            '//div[@class="csc-item-buttons-menu q-list no-border"]'
+            '/div[2]').click()
+        driver.find_element_by_xpath(
+            '//div[contains(@class, "csc-dialog-actions")]/button[contains'
+            '(@class, "text-negative")]').click()
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="csc-list-message"]'
+            '[contains(text(), "No numbers found")]').is_displayed(),
+            "Number has been deleted")
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Outgoing")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@class="q-item-label"]'
+            '[contains(text(), "Only outgoing calls")]'
+        )))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-item-label"]'
+            '[contains(text(), "Only outgoing calls")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div/button[contains(@class, '
+            '"q-btn-flat")]/span[contains(@class, "q-btn-inner")]'
+        )))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/button[contains(@class, "q-btn-flat")]'
+            '/span[contains(@class, "q-btn-inner")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/input[@type="text"]').send_keys('123456789')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="csc-form-actions row justify-center'
+            '"]/button[2]').click()
+        self.assertEquals("123456789", driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
+            'csc-list-item ")]//div[@class="q-item-label"]').text,
+            "Number is correct")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
+            'div[@class="q-item-"]/button[contains(@class, "q-btn")]'
+        )))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
+            'div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
+        driver.find_element_by_xpath(
+            '//div[@class="csc-item-buttons-menu q-list no-border"]'
+            '/div[2]').click()
+        driver.find_element_by_xpath(
+            '//div[contains(@class, "csc-dialog-actions")]/button[contains'
+            '(@class, "text-negative")]').click()
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="csc-list-message"]'
+            '[contains(text(), "No numbers found")]').is_displayed(),
+            "Number has been deleted")
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Privacy")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
+            '"q-toggle")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
+            '"q-toggle")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
+            '"q-toggle")]')))
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "q-toggle")]//span'
+            '[contains(text(), "Your number is hidden")]').is_displayed(),
+            "Option 'hide number' enabled")
+        Collections.logout(driver)
+        self.assertEqual(
+            driver.current_url, os.environ['CATALYST_SERVER'] +
+            "/login/subscriber/#/login", "Successfully logged out")
+
+    def test_d_reminder(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
@@ -134,7 +264,7 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_d_speed_dial(self):
+    def test_e_speed_dial(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
