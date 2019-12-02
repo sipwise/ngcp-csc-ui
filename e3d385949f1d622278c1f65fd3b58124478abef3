@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "24ce5314_991aa34c",
+        "filename": "src/components/pages/Conference/CscConferenceRemoteParticipant.vue",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1000026
+      },
+      "writtenOn": "2019-12-02T10:45:27Z",
+      "side": 1,
+      "message": "Why do we need to parse the JSON here?",
+      "revId": "e3d385949f1d622278c1f65fd3b58124478abef3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
