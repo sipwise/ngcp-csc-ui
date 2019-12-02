@@ -1,6 +1,7 @@
 import unittest
 import os
 import nose2
+import time
 import functions.Collections as Collections
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -220,14 +221,16 @@ class testrun(unittest.TestCase):
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Reminder")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-            By.XPATH, '//*[@id="q-app"]//div[contains(@class, '
-            '"q-input-target justify-start")]')))
+            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
+            '"q-toggle")]//span[contains(text(), "Reminder")]')))
+        time.sleep(1)
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
-            '"q-toggle")]').click()
+            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
+            ')]//span[contains(text(), "Reminder")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, '
             '"q-input-target justify-start")]')))
+        time.sleep(1)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains'
             '(@class, "q-input-target justify-start")]').click()
@@ -243,6 +246,7 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"]/span'
             '[@class="q-option-label"][contains(text(), "Always")]')))
+        time.sleep(1)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"]//span'
             '[contains(text(), "Always")]').click()
@@ -274,6 +278,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Speed Dial")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div//button[contains'
+            '(@class, "q-btn-rectangle")]')))
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div//button[contains'
             '(@class, "q-btn-rectangle")]').click()
