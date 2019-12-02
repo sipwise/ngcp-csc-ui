@@ -90,11 +90,23 @@ class testrun(unittest.TestCase):
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Reminder")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-            By.XPATH, '//*[@id="q-app"]//div[contains(@class, '
-            '"q-input-target justify-start")]')))
+            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"]/span'
+            '[@class="q-option-label"][contains(text(), "On weekdays")]')))
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
-            '"q-toggle")]').click()
+            '//*[@id="q-app"]//div[@tabindex="0"]//span'
+            '[contains(text(), "On weekdays")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"]/span'
+            '[@class="q-option-label"][contains(text(), "Always")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"]//span'
+            '[contains(text(), "Always")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
+            '"q-toggle")]//span[contains(text(), "Reminder")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
+            ')]//span[contains(text(), "Reminder")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, '
             '"q-input-target justify-start")]')))
@@ -110,12 +122,6 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//div[contains(@class, "q-datetime-controls")]'
             '/button[2]').click()
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-            By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"]/span'
-            '[@class="q-option-label"][contains(text(), "Always")]')))
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"]//span'
-            '[contains(text(), "Always")]').click()
         self.assertEqual('Reminder is enabled', driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"]//'
             'span[contains(text(), "Reminder")]').text,
@@ -144,6 +150,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Speed Dial")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div//button[contains'
+            '(@class, "q-btn-rectangle")]')))
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div//button[contains'
             '(@class, "q-btn-rectangle")]').click()
