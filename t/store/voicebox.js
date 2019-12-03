@@ -93,7 +93,7 @@ describe('Voicebox', function(){
             busyGreetingId: null
         };
         let getterObject = VoiceboxModule.getters.busyGreetingLabel(state);
-        assert.equal(getterObject, 'Default sound');
+        assert.equal(getterObject, i18n.t('voicebox.label.defaultSoundActive'));
     });
 
     it('should get right label for unavailable greeting to indicate if it\'s custom or default', function(){
@@ -101,7 +101,7 @@ describe('Voicebox', function(){
             unavailGreetingId: 1
         };
         let getterObject = VoiceboxModule.getters.unavailGreetingLabel(state);
-        assert.equal(getterObject, 'Custom sound');
+        assert.equal(getterObject, i18n.t('voicebox.label.customSoundActive'));
     });
 
 });

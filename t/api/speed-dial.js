@@ -11,6 +11,7 @@ import {
     getUnassignedSlots
 } from '../../src/api/speed-dial';
 import { assert } from 'chai';
+import { i18n } from '../../src/i18n';
 
 Vue.use(VueResource);
 
@@ -149,31 +150,31 @@ describe('SpeedDial', function(){
 
         let slotOptions = [
                 {
-                    "label" : "Slot *1",
+                    "label" : i18n.t('speedDial.slot').concat(" *1"),
                     "value" : "*1"
                 },
                 {
-                    "label" : "Slot *2",
+                    "label" : i18n.t('speedDial.slot').concat(" *2"),
                     "value" : "*2"
                 },
                 {
-                    "label" : "Slot *4",
+                    "label" : i18n.t('speedDial.slot').concat(" *4"),
                     "value" : "*4"
                 },
                 {
-                    "label" : "Slot *5",
+                    "label" : i18n.t('speedDial.slot').concat(" *5"),
                     "value" : "*5"
                 },
                 {
-                    "label" : "Slot *6",
+                    "label" : i18n.t('speedDial.slot').concat(" *6"),
                     "value" : "*6"
                 },
                 {
-                    "label" : "Slot *7",
+                    "label" : i18n.t('speedDial.slot').concat(" *7"),
                     "value" : "*7"
                 },
                 {
-                    "label" : "Slot *8",
+                    "label" : i18n.t('speedDial.slot').concat(" *8"),
                     "value" : "*8"
                 }
         ];
