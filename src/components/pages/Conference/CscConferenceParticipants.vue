@@ -96,5 +96,6 @@
         overflow hidden
 
     #csc-conf-remote-participants-cont
-        overflow scroll
+        overflow auto
+        height 100%
 </style>
