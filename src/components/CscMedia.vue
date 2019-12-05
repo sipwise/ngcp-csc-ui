@@ -221,4 +221,10 @@
             margin-left -12px
         video.csc-media-video
             position: absolute;
+            @media (max-width: $breakpoint-sm)
+                top 0px !important
+                left 0px !important
+                width 100%
+                height 100%
+                object-fit cover
 </style>

@@ -12,6 +12,7 @@
             :is-camera-enabled="isCameraEnabled"
             :is-screen-enabled="isScreenEnabled"
         />
+        <div v-touch-hold="showMobileMenu"></div>
         <div
             id="csc-conf-remote-participants-cont"
         >
@@ -30,6 +31,7 @@
 
 <script>
     import {QCard, QCardMedia, QCardTitle} from 'quasar-framework'
+    import {TouchHold} from 'quasar'
     import {
         mapGetters,
         mapState,
@@ -40,6 +42,9 @@
 
     export default {
         name: 'csc-conference-participants',
+        directives: {
+            TouchHold
+        },
         components: {
             QCard,
             QCardMedia,
@@ -76,6 +81,9 @@
             setSelectedParticipant(participant){
                 this.$store.commit('conference/setSelectedParticipant', participant);
                 this.$store.commit('conference/setManualSelection', true);
+            },
+            showMobileMenu(){
+                // debugger
             }
         },
         watch: {
@@ -94,7 +102,10 @@
         display inline-block
         height calc(100vh - 150px)
         overflow hidden
-
+        @media (max-width: $breakpoint-sm)
+            font-size 73px
+            left: -18px;
+            top: -2px;
     #csc-conf-remote-participants-cont
         overflow auto
         height 100%
