@@ -153,6 +153,7 @@
 </template>
 
 <script>
+    import _ from 'lodash';
     import {
         mapGetters,
         mapState,
@@ -293,7 +294,7 @@
             },
             toggleMuteAll(){
                 this.$refs.popover.close();
-                if(this.mutedState.length < 1) {
+                if(_.isEmpty(this.mutedState)) {
                     this.$store.dispatch('conference/muteAll');
                 }
                 else{
@@ -301,7 +302,7 @@
                 }
             },
             muteLabel() {
-                return this.mutedState.length < 1
+                return _.isEmpty(this.mutedState)
                         ? this.$t('conferencing.muteAll')
                         : this.$t('conferencing.unmuteAll');
             },

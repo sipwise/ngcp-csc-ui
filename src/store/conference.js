@@ -25,7 +25,7 @@ export default {
         leaveState: RequestState.initiated,
         leaveError: null,
         participants: [],
-        mutedState: [],
+        mutedState: {},
         remoteMediaStreams: {},
         selectedParticipant: null,
         manualSelection: false
@@ -231,14 +231,10 @@ export default {
             state.manualSelection = val;
         },
         addMutedState(state, participantId){
-            if(!state.mutedState[participantId]){
-                state.mutedState.push(participantId);
-            }
+            Vue.set(state.mutedState, participantId, participantId);
         },
         removeMutedState(state, participantId){
-            state.mutedState = state.mutedState.filter(($participant) => {
-                return participantId !== $participant;
-            });
+            Vue.delete(state.mutedState, participantId);
         }
     },
     actions: {

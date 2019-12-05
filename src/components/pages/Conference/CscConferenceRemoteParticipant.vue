@@ -57,6 +57,7 @@
 </template>
 
 <script>
+    import _ from 'lodash';
     import { QIcon, QCard, QCardMedia, QCardTitle, QPopover, QList, QItem, QItemMain } from 'quasar-framework'
     import CscMedia from "../../CscMedia";
     import {
@@ -133,7 +134,7 @@
                 this.assignStream();
             },
             mutedState(){
-                this.isAudioMuted = this.mutedState.includes(this.remoteParticipant.id);
+                this.isAudioMuted = _.has(this.mutedState, this.remoteParticipant.id);
                 this.$refs.cscMedia.toggleAudio(this.isAudioMuted);
             }
         }
