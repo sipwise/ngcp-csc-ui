@@ -1,6 +1,7 @@
 <template>
     <q-card
         class="csc-conf-participant-cont"
+        v-touch-hold="showMenu"
     >
         <div class="csc-conf-audio-icons-cont">
             <q-icon
@@ -60,12 +61,16 @@
     import _ from 'lodash';
     import { QIcon, QCard, QCardMedia, QCardTitle, QPopover, QList, QItem, QItemMain } from 'quasar-framework'
     import CscMedia from "../../CscMedia";
+    import { TouchHold } from 'quasar';
     import {
         mapGetters,
         mapState
     } from 'vuex'
     export default {
         name: 'csc-conference-remote-participant',
+        directives: {
+            TouchHold
+        },
         components: {
             QIcon,
             QCard,
@@ -118,15 +123,20 @@
                 }
             },
             toggleAudio(){
-                this.$refs.popover.close();
-                this.isAudioMuted
-                    ? this.$store.commit('conference/removeMutedState', this.remoteParticipant.id)
-                    : this.$store.commit('conference/addMutedState', this.remoteParticipant.id)
+                this.$refs.popover.close(()=>{
+                    this.isAudioMuted
+                        ? this.$store.commit('conference/removeMutedState', this.remoteParticipant.id)
+                        : this.$store.commit('conference/addMutedState', this.remoteParticipant.id)
+                });
+
             },
             audioLabel() {
                 return this.isAudioMuted
                         ? this.$t('conferencing.unmuteMicrophone')
                         : this.$t('conferencing.muteMicrophone');
+            },
+            showMenu(){
+                this.$refs.popover.open();
             }
         },
         watch: {
@@ -150,13 +160,27 @@
         position absolute
         padding-top 5px
         z-index 10
+        @media (max-width: $breakpoint-sm)
+            font-size 0px
     .csc-conf-toggle-audio-icon
         @extend .csc-conf-toggle-audio-menu-icon
         right 5px
         cursor default
+        @media (max-width: $breakpoint-sm)
+            font-size 10px
+            right 2px
+            top -3px
     .csc-conf-toggle-audio-popover
         width 115px
+        @media (max-width: $breakpoint-sm)
+            width 90px
     .csc-conf-toggle-audio-menu-item
+        @media (max-width: $breakpoint-sm)
+            height: 32px !important;
+            padding-top: 0px !important;
         .q-item
             font-size 14px
+            @media (max-width: $breakpoint-sm)
+                font-size 12px
+                padding-top 0px
 </style>
