@@ -210,7 +210,68 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_d_reminder(self):
+    def test_d_conference_conversations(self):
+        global domainname
+        driver = self.driver
+        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Join conference")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Join conference")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="csc-conf-link-input"]/div/input').send_keys(
+                "testconference")
+        driver.find_element_by_xpath(
+            '//*[@id="csc-conf-link-input"]/div/button[contains'
+            '(@class, "text-primary")]').click()
+        self.assertEqual(driver.current_url, driver.find_element_by_xpath(
+            '//div/input[@readonly="readonly"]').get_attribute('value'),
+            "Sharing URL is correct")
+        driver.find_element_by_xpath('/html/body').send_keys(Keys.ESCAPE)
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((
+            By.XPATH, '/html/body/div[@class="modal fullscreen row minimized'
+            ' flex-center"][@style="display: none;"]')))
+        driver.find_element_by_xpath(
+            '//*[@id="csc-conf-header"]/div/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Conversations")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Conversations")]').click()
+        self.assertEquals(driver.find_element_by_xpath(
+            '//*[@id="csc-conversation-content"]/div[@class="row justify-'
+            'center csc-conversation-list-message"]').text, 'No Calls, '
+            'Voicemails or Faxes found', "Section 'All' is empty")
+        driver.find_element_by_xpath(
+            '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller '
+            'row no-wrap"]//span[contains(text(), "Calls")]').click()
+        self.assertEquals(driver.find_element_by_xpath(
+            '//*[@id="csc-conversation-content"]/div[@class="row justify-'
+            'center csc-conversation-list-message"]').text, 'No Calls found',
+            "Section 'Calls' is empty")
+        driver.find_element_by_xpath(
+            '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller '
+            'row no-wrap"]//span[contains(text(), "Faxes")]').click()
+        self.assertEquals(driver.find_element_by_xpath(
+            '//*[@id="csc-conversation-content"]/div[@class="row justify-'
+            'center csc-conversation-list-message"]').text, 'No Faxes found',
+            "Section 'Faxes' is empty")
+        driver.find_element_by_xpath(
+            '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller '
+            'row no-wrap"]//span[contains(text(), "Voicemails")]').click()
+        self.assertEquals(driver.find_element_by_xpath(
+            '//*[@id="csc-conversation-content"]/div[@class="row justify-'
+            'center csc-conversation-list-message"]').text, 'No Voicemails '
+            'found', "Section 'Voicemails' is empty")
+        Collections.logout(driver)
+        self.assertEqual(
+            driver.current_url, os.environ['CATALYST_SERVER'] +
+            "/login/subscriber/#/login", "Successfully logged out")
+
+    def test_e_reminder(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
@@ -268,7 +329,7 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_e_speed_dial(self):
+    def test_f_speed_dial(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
