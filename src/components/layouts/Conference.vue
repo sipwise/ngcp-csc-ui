@@ -367,6 +367,11 @@
         width 130px
         height 45px
         padding 10px
+        @media (max-width: $breakpoint-sm)
+            font-size 16px
+            width 100px
+            height 36px
+            padding 8px
     #csc-conf-main-media
         position absolute
         top 0
@@ -376,6 +381,7 @@
         z-index 1
         background-color black
         font-size 0
+
     #csc-conf-header
         z-index 2
         top 0
