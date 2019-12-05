@@ -89,7 +89,7 @@
         },
         computed: {
             contentClasses() {
-                let classes = ['col', 'col-4', 'text-center'];
+                let classes = ['col', 'col-md-4', 'text-center'];
                 if(this.isCameraEnabled) {
                     classes.push('csc-camera-background');
                 }
