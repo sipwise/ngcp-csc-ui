@@ -145,6 +145,8 @@
     .csc-conf-audio-icons-cont
         position relative
         width 100%
+        @media (max-width: $breakpoint-sm)
+            display none
     .csc-conf-toggle-audio-menu-icon
         position absolute
         padding-top 5px
