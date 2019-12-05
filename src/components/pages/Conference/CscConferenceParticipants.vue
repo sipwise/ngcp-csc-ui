@@ -94,7 +94,10 @@
         display inline-block
         height calc(100vh - 150px)
         overflow hidden
-
+        @media (max-width: $breakpoint-sm)
+            font-size 73px
+            left: -18px;
+            top: -2px;
     #csc-conf-remote-participants-cont
         overflow auto
         height 100%
