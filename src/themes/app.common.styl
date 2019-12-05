@@ -260,6 +260,10 @@ input.q-input-target
     left -22px
     right 0
     margin auto
+    @media (max-width: $breakpoint-sm)
+        font-size 60px
+        left -16px
+        top -30px
 .csc-conf-selected-avatar
     width: 220px;
     height: 220px;
@@ -279,6 +283,10 @@ input.q-input-target
     height 115px
     background $conf-participant-box-color
     cursor pointer
+    @media (max-width: $breakpoint-sm)
+        width 50px
+        height 50px
+        margin-bottom 10px
     .csc-conf-participants-item-title
       position relative
       background white
@@ -286,6 +294,8 @@ input.q-input-target
       text-align center
       padding 0
       background $conf-participant-box-color
+      @media (max-width: $breakpoint-sm)
+          display none
       .q-card-title
         color $primary
         font-size 12px
