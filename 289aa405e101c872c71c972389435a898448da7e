@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9aaa229_43b6dd31",
+        "filename": "t/selenium/testrun.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2019-12-09T08:39:10Z",
+      "side": 1,
+      "message": "is it a typo or expected here, I do not see description in commit message. Just asking, better safe then sorry.",
+      "revId": "289aa405e101c872c71c972389435a898448da7e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
