@@ -24,7 +24,7 @@ export default {
         joinError: null,
         leaveState: RequestState.initiated,
         leaveError: null,
-        participants: [],
+        participants: {},
         mutedState: {},
         remoteMediaStreams: {},
         selectedParticipant: null,
@@ -201,18 +201,10 @@ export default {
             state.leaveError = error;
         },
         participantJoined(state, participant) {
-            if (state.participants.includes(participant.getId())) {
-                state.participants = state.participants.filter(($participant) => {
-                    return participant.getId() !== $participant;
-                });
-            }
-            state.participants.push(participant.getId());
-
+            Vue.set(state.participants, participant.getId(), participant.getId());
         },
         participantLeft(state, participant) {
-            state.participants = state.participants.filter(($participant) => {
-                return participant.getId() !== $participant;
-            });
+            Vue.delete(state.participants, participant.getId());
         },
         setSelectedParticipant(state, participant){
             if(state.selectedParticipant == 'local' && !state.joinState === RequestState.succeeded){
@@ -430,13 +422,13 @@ export default {
             }
         },
         muteAll(context){
-            for(let participant of context.getters.participantsList){
+            for(let participant in context.getters.participantsList){
                 context.commit('addMutedState', participant);
             }
 
         },
         unMuteAll(context){
-            for(let participant of context.getters.participantsList){
+            for(let participant in context.getters.participantsList){
                 context.commit('removeMutedState', participant);
             }
         }
