@@ -4,11 +4,11 @@
 import ConferenceModule from '../../src/store/conference';
 import { assert } from 'chai';
 
-describe('ConferenceModule', function(){
+describe('Conference', function(){
 
     it('should add a participant id to the store if not already stored', () => {
         let state = {
-            participants: []
+            participants: {}
         };
         const participant = {
             getId: () => {
@@ -16,13 +16,15 @@ describe('ConferenceModule', function(){
             }
         };
         ConferenceModule.mutations.participantJoined(state, participant);
-        assert.include(state.participants, participant.getId());
+        assert.exists(state.participants[participant.getId()]);
 
     });
 
     it('should not add a participant id to the store if already stored', () => {
         let state = {
-            participants: ['123456789']
+            participants: {
+                123456789: '123456789'
+            }
         };
         const participant = {
             getId: () => {
@@ -30,13 +32,15 @@ describe('ConferenceModule', function(){
             }
         };
         ConferenceModule.mutations.participantJoined(state, participant);
-        assert.equal(state.participants.length, 1);
+        assert.equal(Object.keys(state.participants).length, 1);
 
     });
 
     it('should remove a participant id from the store', () => {
         let state = {
-            participants: ['123456789']
+            participants: {
+                123456789: '123456789'
+            }
         };
         const participant = {
             getId: () => {
@@ -44,7 +48,7 @@ describe('ConferenceModule', function(){
             }
         };
         ConferenceModule.mutations.participantLeft(state, participant);
-        assert.notInclude(state.participants, participant.getId());
+        assert.notExists(state.participants[participant.getId()]);
 
     });
 

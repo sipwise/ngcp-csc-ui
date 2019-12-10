@@ -124,7 +124,7 @@
                 >
                     <q-popover
                         ref="popover"
-                        :disable="participantsList.length < 1">
+                        :disable="conferenceHasParticipants">
                         <q-list
                             link
                             class="no-border"
@@ -261,6 +261,9 @@
                     default:
                         return this.hasRemoteVideo(selectedParticipant);
                 }
+            },
+            conferenceHasParticipants(){
+                return Object.keys(this.participantsList).length < 1;
             }
         },
         methods: {
