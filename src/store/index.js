@@ -117,9 +117,7 @@ export const store = new Vuex.Store({
             });
         },
         function conference(store) {
-            Vue.$conference.onLeft((conference)=>{
-                store.commit('conference/leftSuccessfully', conference);
-            }).onConferenceParticipantJoined((participant)=>{
+            Vue.$conference.onConferenceParticipantJoined((participant)=>{
                 store.commit('conference/participantJoined', participant);
                 participant.onMediaStream(()=>{
                     store.commit('conference/removeRemoteMedia', participant.id);
@@ -139,6 +137,8 @@ export const store = new Vuex.Store({
                 store.commit('conference/file', file);
             }).onLocalMediaStreamEnded(()=>{
                 store.commit('conference/disposeLocalMedia');
+            }).onConferenceEnded(()=>{
+                store.dispatch('conference/leave');
             });
         },
         function initI18n(store) {

@@ -32,6 +32,9 @@ export class ConferencePlugin {
                     })
                     .onConferenceFile((file)=>{
                         this.events.emit('conferenceFile', file);
+                    })
+                    .onConferenceEnded(()=>{
+                        this.events.emit('conferenceEnded');
                     });
             }).onConferenceNetworkDisconnected(()=>{
                 this.events.emit('disconnected');
@@ -59,11 +62,6 @@ export class ConferencePlugin {
         await this.getNetwork().leaveConference();
     }
 
-    onLeft(listener) {
-        this.events.on('left', listener);
-        return this;
-    }
-
     onConferenceParticipantJoined(listener) {
         this.events.on('participantJoined', listener);
         return this;
@@ -86,6 +84,11 @@ export class ConferencePlugin {
 
     onConferenceFile(listener) {
         this.events.on('conferenceFile', listener);
+        return this;
+    }
+
+    onConferenceEnded(listener) {
+        this.events.on('conferenceEnded', listener);
         return this;
     }
 
@@ -115,6 +118,7 @@ export class ConferencePlugin {
 
     onLocalMediaStreamEnded(listener) {
         this.events.on('localMediaStreamEnded', listener);
+        return this;
     }
 
     hasLocalMediaStream() {
