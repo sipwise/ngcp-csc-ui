@@ -64,17 +64,7 @@
         </div>
         <div
             id="csc-conf-main-media"
-            v-show="!isJoined
-                        && isMediaEnabled
-                        && ( isCameraEnabled || isScreenEnabled )
-                    ||  (selectedParticipant
-                            && (selectedParticipant == 'local'
-                                && isMediaEnabled
-                                && (isCameraEnabled
-                                    || isScreenEnabled)
-                                )
-                            || selectedHasVideo
-                        )"
+            v-show="showMainMedia"
         >
             <csc-media
                 ref="localMedia"
@@ -124,7 +114,7 @@
                 >
                     <q-popover
                         ref="popover"
-                        :disable="participantsList.length < 1">
+                        :disable="conferenceHasParticipants">
                         <q-list
                             link
                             class="no-border"
@@ -261,6 +251,22 @@
                     default:
                         return this.hasRemoteVideo(selectedParticipant);
                 }
+            },
+            showMainMedia(){
+                return !this.isJoined
+                            && this.isMediaEnabled
+                            && ( this.isCameraEnabled || this.isScreenEnabled )
+                        ||  (this.selectedParticipant
+                                && (this.selectedParticipant == 'local'
+                                    && this.isMediaEnabled
+                                    && (this.isCameraEnabled
+                                        || this.isScreenEnabled)
+                                    )
+                                || this.selectedHasVideo
+                            )
+            },
+            conferenceHasParticipants(){
+                return Object.keys(this.participantsList).length < 1;
             }
         },
         methods: {
