@@ -4,7 +4,7 @@
 import ConferenceModule from '../../src/store/conference';
 import { assert } from 'chai';
 
-describe('ConferenceModule', function(){
+describe('Conference', function(){
 
     it('should add a participant id to the store if not already stored', () => {
         let state = {
@@ -45,17 +45,6 @@ describe('ConferenceModule', function(){
         };
         ConferenceModule.mutations.participantLeft(state, participant);
         assert.notInclude(state.participants, participant.getId());
-
-    });
-
-    it('should add a participant mediastream to the store', () => {
-        let state = {
-            remoteMediaStreams: {}
-        };
-        const participantId = '123456789';
-
-        ConferenceModule.mutations.addRemoteMedia(state, participantId);
-        assert.exists(state.remoteMediaStreams[participantId]);
 
     });
 
@@ -104,6 +93,4 @@ describe('ConferenceModule', function(){
         assert.equal(state.selectedParticipant, null);
 
     });
-
-
 });
