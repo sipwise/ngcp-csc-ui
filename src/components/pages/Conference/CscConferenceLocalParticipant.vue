@@ -8,19 +8,18 @@
             v-if="!localMediaStream || localMediaStream && (!isCameraEnabled && !isScreenEnabled)"
         >
         </q-icon>
-
-      <csc-media
+        <csc-media
           ref="cscMedia"
           v-show="localMediaStream && (isCameraEnabled || isScreenEnabled)"
           class="csc-media-cont"
           :muted="true"
           :stream="localMediaStream"
-      />
-      <q-card-title
+        />
+        <q-card-title
         class="csc-conf-participants-item-title"
-      >
-        {{ localParticipant.displayName }}
-      </q-card-title>
+        >
+            {{ localParticipant.displayName }}
+        </q-card-title>
     </q-card>
 </template>
 

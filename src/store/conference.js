@@ -211,7 +211,6 @@ export default {
                 });
             }
             state.participants.push(participant.getId());
-
         },
         participantLeft(state, participant) {
             state.participants = state.participants.filter(($participant) => {
