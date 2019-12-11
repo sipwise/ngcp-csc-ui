@@ -139,6 +139,8 @@ export const store = new Vuex.Store({
                 store.commit('conference/file', file);
             }).onLocalMediaStreamEnded(()=>{
                 store.commit('conference/disposeLocalMedia');
+            }).onConferenceEnded(()=>{
+                store.commit('conference/leftSuccessfully');
             });
         },
         function initI18n(store) {

@@ -32,6 +32,9 @@ export class ConferencePlugin {
                     })
                     .onConferenceFile((file)=>{
                         this.events.emit('conferenceFile', file);
+                    })
+                    .onConferenceEnded(()=>{
+                        this.events.emit('conferenceEnded');
                     });
             }).onConferenceNetworkDisconnected(()=>{
                 this.events.emit('disconnected');
@@ -86,6 +89,11 @@ export class ConferencePlugin {
 
     onConferenceFile(listener) {
         this.events.on('conferenceFile', listener);
+        return this;
+    }
+
+    onConferenceEnded(listener) {
+        this.events.on('conferenceEnded', listener);
         return this;
     }
 
