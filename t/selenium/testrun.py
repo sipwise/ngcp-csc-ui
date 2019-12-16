@@ -329,7 +329,64 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_f_speed_dial(self):
+    def test_f_settings(self):
+        global domainname
+        driver = self.driver
+        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/div[1]/button').click()
+        driver.find_element_by_xpath(
+            '/html/body//div[contains(text(), "Settings")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/button[contains(@class, '
+            '"q-btn-rectangle")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[text() = "New password"]/../'
+            'input').send_keys('pass1234')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[text() = "New password retyped"]/../'
+            'input').send_keys('pass1234')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="row justify-center"]/'
+            'button[2]').click()
+        driver.find_element_by_xpath(
+            '/html/body//div[@class="csc-dialog-actions row justify-end'
+            ' no-wrap"]/button[2]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="csc-login-form"]//div//input[@type="text"]')))
+        self.assertEqual(
+            driver.current_url, os.environ['CATALYST_SERVER'] +
+            "/login/subscriber/#/login", "Successfully logged out")
+        Collections.login(driver, "testuser@" + domainname, "pass1234")
+        self.assertEqual("testuser", driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]//div//span[contains(text(), '
+            '"testuser")]').text, "Successfully logged in")
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/div[1]/button').click()
+        driver.find_element_by_xpath(
+            '/html/body//div[contains(text(), "Settings")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/button[contains(@class, '
+            '"q-btn-rectangle")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[text() = "New password"]/..'
+            '/input').send_keys('testpasswd')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[text() = "New password retyped"]/../'
+            'input').send_keys('testpasswd')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="row justify-center"]'
+            '/button[2]').click()
+        driver.find_element_by_xpath(
+            '/html/body//div[@class="csc-dialog-actions row justify-end'
+            ' no-wrap"]/button[2]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="csc-login-form"]//div//input[@type="text"]')))
+        self.assertEqual(
+            driver.current_url, os.environ['CATALYST_SERVER'] +
+            "/login/subscriber/#/login", "Successfully logged out")
+
+    def test_g_speed_dial(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
@@ -376,7 +433,7 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_g_voicebox(self):
+    def test_h_voicebox(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
