@@ -376,6 +376,81 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
+    def test_g_voicebox(self):
+        global domainname
+        driver = self.driver
+        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Voicebox")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Voicebox")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[contains(text(), "Change PIN")]'
+            '/../input')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../'
+            'input').send_keys("invalid")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../../'
+            'i[1]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../'
+            'input').send_keys(Keys.CONTROL + "a")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../'
+            'input').send_keys(Keys.DELETE)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../'
+            'input').send_keys("12345")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../../'
+            'i[1]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../'
+            'input').send_keys("invalid")
+        self.assertTrue(driver.find_element_by_xpath(
+                '//*[@id="q-app"]//div[@class="q-field-error col"'
+                ']').is_displayed, "Invalid Email was detected")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../../'
+            'i[1]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../'
+            'input').send_keys(Keys.CONTROL + "a")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../'
+            'input').send_keys(Keys.DELETE)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../'
+            'input').send_keys("test@email.com")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../../'
+            'i[1]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "q-toggle")]/span[contains'
+            '(text(), "Delete voicemail")]').click()
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../input')
+            .get_attribute('value'), "12345", "PIN is correct")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../input')
+            .get_attribute('value'), "test@email.com", "Email is correct")
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "csc-toggle-enabled")]'
+            '/span[contains(text(), "Attach voicemail")]').is_displayed(),
+            "Option 'Attach voicemail to email notification' was enabled")
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "csc-toggle-enabled")]'
+            '/span[contains(text(), "Delete voicemail")]').is_displayed(),
+            "Option 'Delete voicemail after email notification is delivered' "
+            "was enabled")
+        Collections.logout(driver)
+        self.assertEqual(
+            driver.current_url, os.environ['CATALYST_SERVER'] +
+            "/login/subscriber/#/login", "Successfully logged out")
+
     def test_z_delete_subscriber(self):
         global domainname
         driver = self.driver
