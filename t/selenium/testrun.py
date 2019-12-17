@@ -210,7 +210,177 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_d_conference_conversations(self):
+    def test_d_call_forward_always(self):
+        global domainname
+        driver = self.driver
+        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Call Forward")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Call Forward")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Always")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Always")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[1]/div'
+            '[@class="add-destination-form"]/button')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//'
+            'div[contains(text(), "Add Number")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Destination")]/..'
+            '/input').send_keys('testdestination')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
+            'input').send_keys(Keys.CONTROL + "a")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
+            'input').send_keys(Keys.DELETE)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
+            'input').send_keys("100")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="add-destination-form"]//button'
+            '/span[contains(text(), "Save")]').click()
+        time.sleep(2)
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[1]/div'
+            '[@class="add-destination-form"]/button')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//div[contains(text(),'
+            ' "Add Voicemail")]').click()
+        time.sleep(2)
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[2]/div[@class='
+            '"add-destination-form"]/button')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//div'
+            '[contains(text(), "Add Number")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Destination")]/..'
+            '/input').send_keys('testdestination')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
+            'input').send_keys(Keys.CONTROL + "a")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
+            'input').send_keys(Keys.DELETE)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
+            'input').send_keys("200")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="add-destination-form"]//button/'
+            'span[contains(text(), "Save")]').click()
+        time.sleep(2)
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[2]/div'
+            '[@class="add-destination-form"]/button')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//div[contains(text(),'
+            ' "Add Voicemail")]').click()
+        time.sleep(2)
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[3]/div'
+            '[@class="add-destination-form"]/button')))
+        driver.execute_script(
+            "window.scrollTo(0, document.body.scrollHeight);")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[3]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//div[contains(text(),'
+            ' "Add Number")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Destination")]/..'
+            '/input').send_keys('testdestination')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
+            'input').send_keys(Keys.CONTROL + "a")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
+            'input').send_keys(Keys.DELETE)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
+            'input').send_keys("300")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="add-destination-form"]//button/'
+            'span[contains(text(), "Save")]').click()
+        time.sleep(2)
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[3]/div'
+            '[@class="add-destination-form"]/button')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[3]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//div[contains(text(),'
+            ' "Add Voicemail")]').click()
+        time.sleep(2)
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[3]/div'
+            '[@class="add-destination-form"]/button')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]'
+            '/div[@tabindex="0"]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "csc-destination '
+            'csc-own-phone")]/div[contains(@class, "dest-btns")]').click()
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
+            ')]/div[@class="q-option-inner relative-position '
+            'active"]').is_displayed(), "Option 'Ring own Phone' was not "
+            "enabled")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
+        ).text, 'first ring own phone for 15 secs', "Option 'Ring own Phone' "
+            "was not enabled")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-'
+            'row"]').text, 'then ring testdestination for 100 secs', "Option "
+            "'Ring testdestination for 100 secs' is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-'
+            'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
+            "im online' is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfb"]/div[1]//div[@class="dest-'
+            'row"]').text, 'first ring testdestination for 200 secs', "Option "
+            "'Ring testdestination for 200 secs' is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfb"]/div[2]//div[@class="dest-'
+            'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
+            "im busy' is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfna"]/div[1]//div[@class="dest'
+            '-row"]').text, 'first ring testdestination for 300 secs', "Option"
+            " 'Ring testdestination for 300 secs' is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfna"]/div[2]//div[@class="dest'
+            '-row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
+            "im offline' is missing")
+        Collections.logout(driver)
+        self.assertEqual(
+            driver.current_url, os.environ['CATALYST_SERVER'] +
+            "/login/subscriber/#/login", "Successfully logged out")
+
+    def test_e_conference_conversations(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
@@ -271,7 +441,7 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_e_reminder(self):
+    def test_f_reminder(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
@@ -329,7 +499,7 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_f_settings(self):
+    def test_g_settings(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
@@ -386,7 +556,7 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_g_speed_dial(self):
+    def test_h_speed_dial(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
@@ -433,7 +603,7 @@ class testrun(unittest.TestCase):
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Successfully logged out")
 
-    def test_h_voicebox(self):
+    def test_i_voicebox(self):
         global domainname
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
