@@ -25,6 +25,7 @@ class testrun(unittest.TestCase):
             capabilities=caps, firefox_profile=profile, log_path='/dev/null')
         self.driver.implicitly_wait(10)
         self.driver.set_page_load_timeout(10)
+        self.longMessage = True
 
     def test_a_create_subscriber(self):
         global domainname
@@ -33,6 +34,7 @@ class testrun(unittest.TestCase):
         driver.find_element_by_link_text('Expand Groups').click()
         domainname = driver.find_element_by_xpath(
             '//*[@id="subscribers_table"]//tr[1]/td[3]').text
+        self.assertFalse(domainname == "", "Subscriber has not been created")
 
     def test_b_login_logout(self):
         global domainname
@@ -48,7 +50,7 @@ class testrun(unittest.TestCase):
             '//*[@id="csc-login"]//div//button').click()
         self.assertTrue(driver.find_element_by_xpath(
             '//div[contains(@class, "q-alert-container")]')
-            .is_displayed(), "Error Message was shown")
+            .is_displayed(), "Error Message was not shown")
         driver.find_element_by_xpath(
             '//*[@id="csc-login-form"]//div//input[@type="text"]'
         ).send_keys(Keys.CONTROL + "a")
@@ -71,14 +73,14 @@ class testrun(unittest.TestCase):
             '//*[@id="csc-login"]//div//button').click()
         self.assertEqual("testuser", driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]//div//span[contains(text(), '
-            '"testuser")]').text, "Successfully logged in")
+            '"testuser")]').text, "Login failed")
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/div[1]/button').click()
         driver.find_element_by_xpath(
             '//div[contains(text(), "Logout")]').click()
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
-            "/login/subscriber/#/login", "Successfully logged out")
+            "/login/subscriber/#/login", "Logout failed")
 
     def test_c_call_blocking(self):
         global domainname
@@ -124,11 +126,12 @@ class testrun(unittest.TestCase):
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
             '"q-toggle")]/div[contains(@class, "active")]').is_displayed(),
-            "Option 'All anonymous incoming calls are blocked' was enabled")
+            "Option 'All anonymous incoming calls are blocked' was not "
+            "enabled")
         self.assertEquals("123456789", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
-            "Number is correct")
+            "Number is not correct")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]'
@@ -145,7 +148,7 @@ class testrun(unittest.TestCase):
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="csc-list-message"]'
             '[contains(text(), "No numbers found")]').is_displayed(),
-            "Number has been deleted")
+            "Number has not been deleted")
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Outgoing")]').click()
@@ -171,7 +174,7 @@ class testrun(unittest.TestCase):
         self.assertEquals("123456789", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
-            "Number is correct")
+            "Number is not correct")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]'
@@ -188,7 +191,7 @@ class testrun(unittest.TestCase):
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="csc-list-message"]'
             '[contains(text(), "No numbers found")]').is_displayed(),
-            "Number has been deleted")
+            "Number has not been deleted")
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Privacy")]').click()
@@ -204,11 +207,11 @@ class testrun(unittest.TestCase):
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "q-toggle")]//span'
             '[contains(text(), "Your number is hidden")]').is_displayed(),
-            "Option 'hide number' enabled")
+            "Option 'hide number' was not enabled")
         Collections.logout(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
-            "/login/subscriber/#/login", "Successfully logged out")
+            "/login/subscriber/#/login", "Logout failed")
 
     def test_d_call_forward_always(self):
         global domainname
@@ -378,7 +381,7 @@ class testrun(unittest.TestCase):
         Collections.logout(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
-            "/login/subscriber/#/login", "Successfully logged out")
+            "/login/subscriber/#/login", "Logout failed")
 
     def test_e_conference_conversations(self):
         global domainname
@@ -398,7 +401,7 @@ class testrun(unittest.TestCase):
             '(@class, "text-primary")]').click()
         self.assertEqual(driver.current_url, driver.find_element_by_xpath(
             '//div/input[@readonly="readonly"]').get_attribute('value'),
-            "Sharing URL is correct")
+            "Sharing URL is not correct")
         driver.find_element_by_xpath('/html/body').send_keys(Keys.ESCAPE)
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((
             By.XPATH, '/html/body/div[@class="modal fullscreen row minimized'
@@ -414,32 +417,32 @@ class testrun(unittest.TestCase):
         self.assertEquals(driver.find_element_by_xpath(
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Calls, '
-            'Voicemails or Faxes found', "Section 'All' is empty")
+            'Voicemails or Faxes found', "Section 'All' is not empty")
         driver.find_element_by_xpath(
             '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller '
             'row no-wrap"]//span[contains(text(), "Calls")]').click()
         self.assertEquals(driver.find_element_by_xpath(
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Calls found',
-            "Section 'Calls' is empty")
+            "Section 'Calls' is notempty")
         driver.find_element_by_xpath(
             '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller '
             'row no-wrap"]//span[contains(text(), "Faxes")]').click()
         self.assertEquals(driver.find_element_by_xpath(
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Faxes found',
-            "Section 'Faxes' is empty")
+            "Section 'Faxes' is not empty")
         driver.find_element_by_xpath(
             '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller '
             'row no-wrap"]//span[contains(text(), "Voicemails")]').click()
         self.assertEquals(driver.find_element_by_xpath(
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Voicemails '
-            'found', "Section 'Voicemails' is empty")
+            'found', "Section 'Voicemails' is not empty")
         Collections.logout(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
-            "/login/subscriber/#/login", "Successfully logged out")
+            "/login/subscriber/#/login", "Logout failed")
 
     def test_f_reminder(self):
         global domainname
@@ -484,20 +487,20 @@ class testrun(unittest.TestCase):
         self.assertEqual('Reminder is enabled', driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"]//'
             'span[contains(text(), "Reminder")]').text,
-            "Reminder is enabled")
+            "Reminder is not enabled")
         self.assertEqual('13:35', driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains'
             '(@class, "q-input-target justify-start")]').text,
-            "Time is correct")
+            "Time is not correct")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"]/div'
             '[contains(@class, "active")]/../'
             'span[contains(text(), "Always")]').is_displayed(),
-            "Option 'Always' was selected")
+            "Option 'Always' was not selected")
         Collections.logout(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
-            "/login/subscriber/#/login", "Successfully logged out")
+            "/login/subscriber/#/login", "Logout failed")
 
     def test_g_settings(self):
         global domainname
@@ -526,11 +529,11 @@ class testrun(unittest.TestCase):
             By.XPATH, '//*[@id="csc-login-form"]//div//input[@type="text"]')))
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
-            "/login/subscriber/#/login", "Successfully logged out")
+            "/login/subscriber/#/login", "Logout failed")
         Collections.login(driver, "testuser@" + domainname, "pass1234")
         self.assertEqual("testuser", driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]//div//span[contains(text(), '
-            '"testuser")]').text, "Successfully logged in")
+            '"testuser")]').text, "Login failed")
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/div[1]/button').click()
         driver.find_element_by_xpath(
@@ -554,7 +557,7 @@ class testrun(unittest.TestCase):
             By.XPATH, '//*[@id="csc-login-form"]//div//input[@type="text"]')))
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
-            "/login/subscriber/#/login", "Successfully logged out")
+            "/login/subscriber/#/login", "Logout failed")
 
     def test_h_speed_dial(self):
         global domainname
@@ -585,11 +588,11 @@ class testrun(unittest.TestCase):
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item-label"]'
             '/span[contains(text(), "When")]')
-            .text, "When I dial *1 ...")
+            .text, "When I dial *1 ...", "Speed dial has not been created")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item-sublabel"]'
             '[contains(text(), "ring")]')
-            .text, "ring testtext")
+            .text, "ring testtext", "Speed dial is not correct")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/button[@slot="right"]').click()
         driver.find_element_by_xpath(
@@ -597,11 +600,11 @@ class testrun(unittest.TestCase):
             '"text-negative")]').click()
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "No speed dials found")]')
-            .is_displayed())
+            .is_displayed(), "Speed dial was not deleted")
         Collections.logout(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
-            "/login/subscriber/#/login", "Successfully logged out")
+            "/login/subscriber/#/login", "Logout failed")
 
     def test_i_voicebox(self):
         global domainname
@@ -639,7 +642,7 @@ class testrun(unittest.TestCase):
             'input').send_keys("invalid")
         self.assertTrue(driver.find_element_by_xpath(
                 '//*[@id="q-app"]//div[@class="q-field-error col"'
-                ']').is_displayed, "Invalid Email was detected")
+                ']').is_displayed, "Invalid Email was not detected")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../../'
             'i[1]').click()
@@ -660,23 +663,23 @@ class testrun(unittest.TestCase):
             '(text(), "Delete voicemail")]').click()
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../input')
-            .get_attribute('value'), "12345", "PIN is correct")
+            .get_attribute('value'), "12345", "PIN is not correct")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../input')
-            .get_attribute('value'), "test@email.com", "Email is correct")
+            .get_attribute('value'), "test@email.com", "Email is not correct")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-toggle-enabled")]'
             '/span[contains(text(), "Attach voicemail")]').is_displayed(),
-            "Option 'Attach voicemail to email notification' was enabled")
+            "Option 'Attach voicemail to email notification' was not enabled")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-toggle-enabled")]'
             '/span[contains(text(), "Delete voicemail")]').is_displayed(),
             "Option 'Delete voicemail after email notification is delivered' "
-            "was enabled")
+            "was not enabled")
         Collections.logout(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
-            "/login/subscriber/#/login", "Successfully logged out")
+            "/login/subscriber/#/login", "Logout failed")
 
     def test_z_delete_subscriber(self):
         global domainname
@@ -689,7 +692,7 @@ class testrun(unittest.TestCase):
         )
         self.assertTrue(driver.find_element_by_css_selector(
             '#subscribers_table tr > td.dataTables_empty').is_displayed(),
-            "Subscriber has been successfully deleted")
+            "Subscriber has not been deleted")
 
     def tearDown(self):
         driver = self.driver
