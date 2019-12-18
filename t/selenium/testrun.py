@@ -3,6 +3,7 @@ import os
 import nose2
 import time
 import functions.Collections as Collections
+import functions.Functions as Functions
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -48,25 +49,13 @@ class testrun(unittest.TestCase):
             '//*[@id="csc-login"]//div//button').click()
         self.assertTrue(driver.find_element_by_xpath(
             '//div[contains(@class, "q-alert-container")]')
-            .is_displayed(), "Error Message was shown")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login-form"]//div//input[@type="text"]'
-        ).send_keys(Keys.CONTROL + "a")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login-form"]//div//input[@type="text"]'
-        ).send_keys(Keys.DELETE)
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login-form"]//div//input[@type="text"]'
-        ).send_keys('testuser@' + domainname)
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login-form"]//div//input[@type="password"]'
-        ).send_keys(Keys.CONTROL + "a")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login-form"]//div//input[@type="password"]'
-        ).send_keys(Keys.DELETE)
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login-form"]//div//input[@type="password"]'
-        ).send_keys('testpasswd')
+            .is_displayed(), "Error Message was not shown")
+        Functions.fill_element(
+            driver, '//*[@id="csc-login-form"]//div//input[@type='
+            '"text"]', "testuser@" + domainname)
+        Functions.fill_element(
+            driver, '//*[@id="csc-login-form"]//div//input[@type='
+            '"password"]', "testpasswd")
         driver.find_element_by_xpath(
             '//*[@id="csc-login"]//div//button').click()
         self.assertEqual("testuser", driver.find_element_by_xpath(
@@ -238,15 +227,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Destination")]/..'
             '/input').send_keys('testdestination')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
-            'input').send_keys(Keys.CONTROL + "a")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
-            'input').send_keys(Keys.DELETE)
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
-            'input').send_keys("100")
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/'
+            '../input', "100")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="add-destination-form"]//button'
             '/span[contains(text(), "Save")]').click()
@@ -273,15 +256,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Destination")]/..'
             '/input').send_keys('testdestination')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
-            'input').send_keys(Keys.CONTROL + "a")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
-            'input').send_keys(Keys.DELETE)
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
-            'input').send_keys("200")
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/'
+            '../input', "200")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="add-destination-form"]//button/'
             'span[contains(text(), "Save")]').click()
@@ -310,15 +287,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Destination")]/..'
             '/input').send_keys('testdestination')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
-            'input').send_keys(Keys.CONTROL + "a")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
-            'input').send_keys(Keys.DELETE)
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../'
-            'input').send_keys("300")
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/'
+            '../input', "300")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="add-destination-form"]//button/'
             'span[contains(text(), "Save")]').click()
@@ -622,15 +593,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../../'
             'i[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../'
-            'input').send_keys(Keys.CONTROL + "a")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../'
-            'input').send_keys(Keys.DELETE)
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../'
-            'input').send_keys("12345")
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../'
+            'input', "12345")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../../'
             'i[1]').click()
@@ -643,15 +608,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../../'
             'i[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../'
-            'input').send_keys(Keys.CONTROL + "a")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../'
-            'input').send_keys(Keys.DELETE)
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../'
-            'input').send_keys("test@email.com")
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[contains(text(), "Change Email")]'
+            '/../input', "test@email.com")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../../'
             'i[1]').click()
