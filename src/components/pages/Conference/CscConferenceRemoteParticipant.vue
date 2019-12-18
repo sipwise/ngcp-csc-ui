@@ -94,6 +94,7 @@
                 'manualSelection'
             ]),
             ...mapGetters('conference', [
+                'selectedParticipant',
                 'mutedState'
             ])
         },
@@ -105,7 +106,7 @@
         },
         methods: {
             assignStream(){
-                if (this.$refs.cscMedia && this.remoteMediaStreams[this.remoteParticipant.id] === this.remoteParticipant.id) {
+                if (this.$refs.cscMedia && _.has(this.remoteMediaStreams, this.remoteParticipant.id)){
                     this.localMediaStream = this.remoteMediaStream(this.remoteParticipant.id);
                     this.$refs.cscMedia.assignStream(this.localMediaStream);
                     if(this.selectedParticipant == this.remoteParticipant.id){

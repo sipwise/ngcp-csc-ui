@@ -195,6 +195,10 @@ export default {
             state.joinState = RequestState.initiated;
             state.joinError = null;
             state.selectedParticipant = null;
+            state.remoteMediaStreams = {}
+            state.manualSelection = false;
+            state.participants = {};
+            state.mutedState = {};
         },
         leaveFailed(state, error) {
             state.leaveState = RequestState.failed;

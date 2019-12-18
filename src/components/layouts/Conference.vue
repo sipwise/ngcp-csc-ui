@@ -311,22 +311,24 @@
                     await this.$store.dispatch('conference/join', conferenceId);
                 }
             },
-            showSelectedParticipant: ( participant, scope )=>{
-                if(scope.$refs.localMedia) {
+            showSelectedParticipant( participant ) {
+                if(this.$refs.localMedia) {
                     switch(participant){
                         case 'local':
-                            if(scope.localParticipant){
-                                scope.selectedParticipantName = scope.localParticipant.displayName
-                                scope.selectedMediaStream = scope.localMediaStream
-                                scope.$refs.localMedia.assignStream(scope.selectedMediaStream);
+                            if(this.localParticipant){
+                                this.selectedParticipantName = this.localParticipant.displayName
+                                this.selectedMediaStream = this.localMediaStream
+                                this.$refs.localMedia.assignStream(this.selectedMediaStream);
+
                             }
                         break;
                         default:
-                            scope.selectedMediaStream = scope.remoteMediaStream(participant);
-                            scope.$refs.localMedia.assignStream(scope.selectedMediaStream);
-                            scope.selectedParticipantName = scope.remoteParticipant(participant).displayName
+                            this.selectedMediaStream = this.remoteMediaStream(participant);
+                            this.$refs.localMedia.assignStream(this.selectedMediaStream);
+                            this.selectedParticipantName = this.remoteParticipant(participant).displayName;
                         break;
                     }
+
                 }
             }
         },
@@ -339,7 +341,7 @@
             selectedParticipant:{
                 handler: function(participant){
                     if(participant){
-                        this.showSelectedParticipant(participant, this);
+                        this.showSelectedParticipant(participant);
                     }
                 },
                 deep: true
