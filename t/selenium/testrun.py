@@ -138,13 +138,15 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@class="csc-list-message"]'
             '[contains(text(), "No numbers found")]').is_displayed(),
             "Number has not been deleted")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Outgoing")]')))
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Outgoing")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[@class="q-item-label"]'
-            '[contains(text(), "Only outgoing calls")]'
-        )))
+            '[contains(text(), "Only outgoing calls")]')))
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item-label"]'
             '[contains(text(), "Only outgoing calls")]').click()
@@ -181,6 +183,9 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@class="csc-list-message"]'
             '[contains(text(), "No numbers found")]').is_displayed(),
             "Number has not been deleted")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Privacy")]')))
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Privacy")]').click()
