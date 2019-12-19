@@ -13,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 domainname = "thistextwillbereplaced"
+filename = 0
 
 
 class testrun(unittest.TestCase):
@@ -30,15 +31,20 @@ class testrun(unittest.TestCase):
 
     def test_a_create_subscriber(self):
         global domainname
+        global filename
+        filename = "test_a_create_subscriber.png"
         driver = self.driver
         Collections.create_subscriber(self.driver)
         driver.find_element_by_link_text('Expand Groups').click()
         domainname = driver.find_element_by_xpath(
             '//*[@id="subscribers_table"]//tr[1]/td[3]').text
         self.assertFalse(domainname == "", "Subscriber has not been created")
+        filename = 0
 
     def test_b_login_logout(self):
         global domainname
+        global filename
+        filename = "test_b_login_logout.png"
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         driver.find_element_by_xpath(
@@ -70,9 +76,12 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        filename = 0
 
     def test_c_call_blocking(self):
         global domainname
+        global filename
+        filename = "test_c_call_blocking.png"
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -247,9 +256,12 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        filename = 0
 
     def test_d_call_forward_always(self):
         global domainname
+        global filename
+        filename = "test_d_call_forward_always.png"
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -399,9 +411,12 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        filename = 0
 
     def test_e_conference_conversations(self):
         global domainname
+        global filename
+        filename = "test_e_conference_conversations.png"
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -460,9 +475,12 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        filename = 0
 
     def test_f_reminder(self):
         global domainname
+        global filename
+        filename = "test_f_reminder.png"
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -518,9 +536,12 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        filename = 0
 
     def test_g_settings(self):
         global domainname
+        global filename
+        filename = "test_g_settings.png"
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
         driver.find_element_by_xpath(
@@ -575,9 +596,12 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        filename = 0
 
     def test_h_speed_dial(self):
         global domainname
+        global filename
+        filename = "test_h_speed_dial.png"
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -656,9 +680,12 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        filename = 0
 
     def test_i_voicebox(self):
         global domainname
+        global filename
+        filename = "test_i_voicebox.png"
         driver = self.driver
         Collections.login(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -719,9 +746,12 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        filename = 0
 
     def test_z_delete_subscriber(self):
         global domainname
+        global filename
+        filename = "test_z_delete_subscriber.png"
         driver = self.driver
         Collections.delete_subscriber(driver)
         driver.find_element_by_link_text('Expand Groups').click()
@@ -732,9 +762,14 @@ class testrun(unittest.TestCase):
         self.assertTrue(driver.find_element_by_css_selector(
             '#subscribers_table tr > td.dataTables_empty').is_displayed(),
             "Subscriber has not been deleted")
+        filename = 0
 
     def tearDown(self):
+        global filename
         driver = self.driver
+        if filename:
+            driver.save_screenshot('/results/' + filename)
+            filename = 0
         driver.close()
 
 
