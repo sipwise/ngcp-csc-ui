@@ -128,7 +128,7 @@ export const store = new Vuex.Store({
             }).onConferenceParticipantLeft((participant)=>{
                 store.commit('conference/participantLeft', participant);
                 store.commit('conference/removeRemoteMedia', participant.id);
-                store.commit('conference/setSelectedParticipant', 'local');
+                store.commit('conference/setSelectedParticipant', participant.id);
             }).onConferenceEvent((event)=>{
                 store.commit('conference/event', event);
             }).onConferenceMessage((message)=>{
