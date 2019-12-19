@@ -569,6 +569,40 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@class="q-item-sublabel"]'
             '[contains(text(), "ring")]')
             .text, "ring testtext", "Speed dial is not correct")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div//button[contains'
+            '(@class, "q-btn-rectangle")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div//button[contains'
+            '(@class, "q-btn-rectangle")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"]').click()
+        driver.find_element_by_xpath(
+            '//*[@class="no-border scroll q-list q-list-link"]/div[2]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/input'
+            '[@class="col q-input-target text-left"]').send_keys("asdf")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="row justify-center form-actions"]'
+            '/button[contains(@class, "text-primary")]').click()
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-item-label"]'
+            '/span[contains(text(), "*2")]')
+            .text, "When I dial *2 ...", "Speed dial has not been created")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-item-sublabel"]'
+            '[contains(text(), "asdf")]')
+            .text, "ring asdf", "Speed dial is not correct")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/button[@slot="right"]').click()
+        driver.find_element_by_xpath(
+            '//div[@class="modal-buttons row"]//button[contains(@class, '
+            '"text-negative")]').click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((
+            By.XPATH, '//div[@class="q-toast-container active"]//div[contains'
+            '(text(), "Unassigned slot *1")]')))
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div/button[@slot="right"]')))
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/button[@slot="right"]').click()
         driver.find_element_by_xpath(
@@ -576,7 +610,7 @@ class testrun(unittest.TestCase):
             '"text-negative")]').click()
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "No speed dials found")]')
-            .is_displayed(), "Speed dial was not deleted")
+            .is_displayed(), "Speed dials was not deleted")
         Collections.logout(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
