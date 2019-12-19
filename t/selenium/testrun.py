@@ -95,20 +95,18 @@ class testrun(unittest.TestCase):
             '"q-toggle")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[@class="q-item-label"]'
-            '[contains(text(), "Only incoming calls")]'
-        )))
+            '[contains(text(), "Only incoming calls")]')))
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item-label"]'
             '[contains(text(), "Only incoming calls")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div/button[contains(@class, '
-            '"q-btn-flat")]/span[contains(@class, "q-btn-inner")]'
-        )))
+            '"q-btn-flat")]/span[contains(@class, "q-btn-inner")]')))
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/button[contains(@class, "q-btn-flat")]'
             '/span[contains(@class, "q-btn-inner")]').click()
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/input[@type="text"]').send_keys('123456789')
+            '//*[@id="q-app"]//div/input[@type="text"]').send_keys('12345')
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="csc-form-actions row justify-center'
             '"]/button[2]').click()
@@ -117,14 +115,36 @@ class testrun(unittest.TestCase):
             '"q-toggle")]/div[contains(@class, "active")]').is_displayed(),
             "Option 'All anonymous incoming calls are blocked' was not "
             "enabled")
-        self.assertEquals("123456789", driver.find_element_by_xpath(
+        self.assertEquals("12345", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
             "Number is not correct")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
-            'div[@class="q-item-"]/button[contains(@class, "q-btn")]'
-        )))
+            'div[@class="q-item-"]/button[contains(@class, "q-btn")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
+            'div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
+        driver.find_element_by_xpath(
+            '//div[@class="csc-item-buttons-menu q-list no-border"]'
+            '/div[1]').click()
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div/input[@class="col q-input-target'
+            ' text-left"]', '54321')
+        elem = driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div//i[text()="check"]')
+        driver.execute_script("arguments[0].click();", elem)
+        driver.implicitly_wait(1)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element((
+            By.XPATH, '//*[@id="q-app"]//div[@class="csc-spinner"]/svg')))
+        driver.implicitly_wait(10)
+        self.assertEquals("54321", driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
+            'csc-list-item ")]//div[@class="q-item-label"]').text,
+            "Number is not correct")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
+            'div[@class="q-item-"]/button[contains(@class, "q-btn")]')))
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
@@ -152,24 +172,45 @@ class testrun(unittest.TestCase):
             '[contains(text(), "Only outgoing calls")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div/button[contains(@class, '
-            '"q-btn-flat")]/span[contains(@class, "q-btn-inner")]'
-        )))
+            '"q-btn-flat")]/span[contains(@class, "q-btn-inner")]')))
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/button[contains(@class, "q-btn-flat")]'
             '/span[contains(@class, "q-btn-inner")]').click()
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/input[@type="text"]').send_keys('123456789')
+            '//*[@id="q-app"]//div/input[@type="text"]').send_keys('12345')
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="csc-form-actions row justify-center'
             '"]/button[2]').click()
-        self.assertEquals("123456789", driver.find_element_by_xpath(
+        self.assertEquals("12345", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
             "Number is not correct")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
-            'div[@class="q-item-"]/button[contains(@class, "q-btn")]'
-        )))
+            'div[@class="q-item-"]/button[contains(@class, "q-btn")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
+            'div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
+        driver.find_element_by_xpath(
+            '//div[@class="csc-item-buttons-menu q-list no-border"]'
+            '/div[1]').click()
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div/input[@class="col q-input-target'
+            ' text-left"]', '54321')
+        elem = driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div//i[text()="check"]')
+        driver.execute_script("arguments[0].click();", elem)
+        driver.implicitly_wait(1)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element((
+            By.XPATH, '//*[@id="q-app"]//div[@class="csc-spinner"]/svg')))
+        driver.implicitly_wait(10)
+        self.assertEquals("54321", driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
+            'csc-list-item ")]//div[@class="q-item-label"]').text,
+            "Number is not correct")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
+            'div[@class="q-item-"]/button[contains(@class, "q-btn")]')))
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
