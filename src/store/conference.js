@@ -222,7 +222,7 @@ export default {
             if(state.selectedParticipant == 'local' && !state.joinState === RequestState.succeeded){
                 state.selectedParticipant = null;
             }
-            else if(state.selectedParticipant == participant){
+            else if(state.selectedParticipant == participant && !state.participants.includes(participant)){
                 state.selectedParticipant = 'local';
                 state.manualSelection = false;
             }

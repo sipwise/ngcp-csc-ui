@@ -83,9 +83,10 @@ describe('ConferenceModule', function(){
 
     });
 
-    it('should store the local participant as selected', () => {
+    it('should store the local participant as selected if current selected participant leaves', () => {
         let state = {
-            selectedParticipant: '123456789'
+            selectedParticipant: '123456789',
+            participants: []
         };
         const participantId = '123456789';
 
@@ -104,6 +105,5 @@ describe('ConferenceModule', function(){
         assert.equal(state.selectedParticipant, null);
 
     });
-
 
 });
