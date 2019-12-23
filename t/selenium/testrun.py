@@ -209,7 +209,7 @@ class testrun(unittest.TestCase):
         elem = driver.find_element_by_xpath(
             '//*[@id="q-app"]//div//i[text()="check"]')
         driver.execute_script("arguments[0].click();", elem)
-        driver.implicitly_wait(1)
+        driver.implicitly_wait(2)
         WebDriverWait(driver, 10).until(EC.invisibility_of_element((
             By.XPATH, '//*[@id="q-app"]//div[@class="csc-spinner"]/svg')))
         driver.implicitly_wait(10)
@@ -700,6 +700,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../'
             'input').send_keys("invalid")
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-field-error col"'
+            ']').is_displayed, "Invalid PIN was not detected")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../../'
             'i[1]').click()
