@@ -1,5 +1,29 @@
 <template>
     <q-layout>
+        <q-toolbar
+            id="csc-header-toolbar"
+            color="primary"
+            inverted
+            slot="header"
+        >
+            <q-btn
+                class="csc-user-menu-button no-shadow"
+                icon="language"
+                color="tertiary"
+                round
+                small
+            >
+                <q-popover
+                    ref="languagePopover"
+                >
+                    <csc-language-menu
+                        :language-label="languageLabel"
+                        :language-labels="languageLabels"
+                        @change-language="changeLanguage"
+                    />
+                </q-popover>
+            </q-btn>
+        </q-toolbar>
         <div
             id="csc-login"
             :class="loginClasses"
@@ -50,6 +74,18 @@
                                     @keyup.enter="login()"
                                 />
                             </q-field>
+<!--                            <q-field-->
+<!--                                dark-->
+<!--                                icon="language"-->
+<!--                                >-->
+<!--                                <q-select-->
+<!--                                    dark-->
+<!--                                    value=""-->
+<!--                                    :options="languageLabels"-->
+<!--                                    :float-label="languageLabel"-->
+<!--                                    @change="changeLanguage"-->
+<!--                                />-->
+<!--                            </q-field>-->
                         </form>
                     </q-card-main>
                     <q-card-actions
@@ -85,6 +121,7 @@
         showGlobalError
     } from '../helpers/ui'
     import {
+        QSelect,
         QLayout,
         QCard,
         QCardTitle,
@@ -96,12 +133,18 @@
         QBtn,
         QIcon,
         Platform,
-        QSpinnerDots
+        QSpinnerDots,
+        QToolbar,
+        QPopover
     } from 'quasar-framework'
-
+    import {
+        getLanguageLabel
+    } from "../i18n";
+    import CscLanguageMenu from "./layouts/CscLanguageMenu";
     export default {
         name: 'login',
         components: {
+            QSelect,
             QLayout,
             QCard,
             QCardTitle,
@@ -112,12 +155,15 @@
             QCardActions,
             QBtn,
             QIcon,
-            QSpinnerDots
+            QSpinnerDots,
+            QToolbar,
+            QPopover,
+            CscLanguageMenu
         },
         data () {
             return {
                 username: '',
-                password: ''
+                password: '',
             }
         },
         computed: {
@@ -134,8 +180,15 @@
             ...mapGetters('user', [
                 'loginRequesting',
                 'loginSucceeded',
-                'loginError'
+                'loginError',
+                'locale',
+                'languageLabels'
             ]),
+            languageLabel() {
+                return this.$t('language', {
+                    language: getLanguageLabel(this.locale)
+                });
+            }
         },
         methods: {
             login() {
@@ -143,6 +196,10 @@
                     username: this.username,
                     password: this.password
                 });
+            },
+            changeLanguage(language) {
+                this.$refs.languagePopover.close();
+                this.$store.dispatch('user/changeSessionLanguage', language);
             }
         },
         watch: {
