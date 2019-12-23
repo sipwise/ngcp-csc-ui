@@ -50,6 +50,18 @@
                                     @keyup.enter="login()"
                                 />
                             </q-field>
+                            <q-field
+                                dark
+                                icon="language"
+                                >
+                                <q-select
+                                    dark
+                                    value=""
+                                    :options="languageLabels"
+                                    :float-label="languageLabel"
+                                    @change="changeLanguage"
+                                />
+                            </q-field>
                         </form>
                     </q-card-main>
                     <q-card-actions
@@ -85,6 +97,7 @@
         showGlobalError
     } from '../helpers/ui'
     import {
+        QSelect,
         QLayout,
         QCard,
         QCardTitle,
@@ -98,10 +111,15 @@
         Platform,
         QSpinnerDots
     } from 'quasar-framework'
+    import {
+        getLanguageLabel,
+        getLanguageLabels
+    } from "../i18n";
 
     export default {
         name: 'login',
         components: {
+            QSelect,
             QLayout,
             QCard,
             QCardTitle,
@@ -117,7 +135,7 @@
         data () {
             return {
                 username: '',
-                password: ''
+                password: '',
             }
         },
         computed: {
@@ -134,8 +152,24 @@
             ...mapGetters('user', [
                 'loginRequesting',
                 'loginSucceeded',
-                'loginError'
+                'loginError',
+                'locale'
             ]),
+            languageLabel() {
+                return this.$t('language', {
+                    language: getLanguageLabel(this.locale)
+                });
+            },
+            languageLabels() {
+                let formattedLang = [];
+                for(let languageArr of getLanguageLabels(this.locale)) {
+                    formattedLang.push({
+                        value: languageArr[0],
+                        label: languageArr[1]
+                    })
+                }
+                return formattedLang;
+            }
         },
         methods: {
             login() {
@@ -143,6 +177,9 @@
                     username: this.username,
                     password: this.password
                 });
+            },
+            changeLanguage(language) {
+                this.$store.dispatch('user/changeSessionLanguage', language);
             }
         },
         watch: {
