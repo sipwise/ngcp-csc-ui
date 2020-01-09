@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4067d9dc_276abec6",
+        "filename": "t/selenium/testrun.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 915,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-01-09T14:03:23Z",
+      "side": 1,
+      "message": "JFMI, why do you need sleep 10 seconds here?",
+      "revId": "12bf595e89901271531e69e894a6ae60c8114f8f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
