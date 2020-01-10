@@ -34,6 +34,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_a_create_subscriber.png"
         driver = self.driver
+        Collections.login_panel(driver)
         Collections.create_subscriber(self.driver)
         driver.find_element_by_link_text('Expand Groups').click()
         domainname = driver.find_element_by_xpath(
@@ -83,7 +84,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_c_call_blocking.png"
         driver = self.driver
-        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Call Blocking")]')))
@@ -252,7 +253,7 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[contains(@class, "q-toggle")]//span'
             '[contains(text(), "Your number is hidden")]').is_displayed(),
             "Option 'hide number' was not enabled")
-        Collections.logout(driver)
+        Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
@@ -263,7 +264,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_d_call_forward_always.png"
         driver = self.driver
-        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Call Forward")]')))
@@ -407,7 +408,7 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfna"]/div[2]//div[@class="dest'
             '-row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
             "im offline' is missing")
-        Collections.logout(driver)
+        Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
@@ -418,7 +419,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_e_conference_conversations.png"
         driver = self.driver
-        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Join conference")]')))
@@ -471,7 +472,7 @@ class testrun(unittest.TestCase):
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Voicemails '
             'found', "Section 'Voicemails' is not empty")
-        Collections.logout(driver)
+        Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
@@ -482,7 +483,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_f_reminder.png"
         driver = self.driver
-        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Reminder")]')))
@@ -532,7 +533,7 @@ class testrun(unittest.TestCase):
             '[contains(@class, "active")]/../'
             'span[contains(text(), "Always")]').is_displayed(),
             "Option 'Always' was not selected")
-        Collections.logout(driver)
+        Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
@@ -543,7 +544,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_g_settings.png"
         driver = self.driver
-        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/div[1]/button').click()
         driver.find_element_by_xpath(
@@ -568,7 +569,7 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
-        Collections.login(driver, "testuser@" + domainname, "pass1234")
+        Collections.login_csc(driver, "testuser@" + domainname, "pass1234")
         self.assertEqual("testuser", driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]//div//span[contains(text(), '
             '"testuser")]').text, "Login failed")
@@ -603,7 +604,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_h_speed_dial.png"
         driver = self.driver
-        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Speed Dial")]')))
@@ -676,7 +677,7 @@ class testrun(unittest.TestCase):
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "No speed dials found")]')
             .is_displayed(), "Speed dials was not deleted")
-        Collections.logout(driver)
+        Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
@@ -687,7 +688,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_i_voicebox.png"
         driver = self.driver
-        Collections.login(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Voicebox")]')))
@@ -745,7 +746,7 @@ class testrun(unittest.TestCase):
             '/span[contains(text(), "Delete voicemail")]').is_displayed(),
             "Option 'Delete voicemail after email notification is delivered' "
             "was not enabled")
-        Collections.logout(driver)
+        Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
@@ -756,6 +757,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_z_delete_subscriber.png"
         driver = self.driver
+        Collections.login_panel(driver)
         Collections.delete_subscriber(driver)
         driver.find_element_by_link_text('Expand Groups').click()
         driver.execute_script(
