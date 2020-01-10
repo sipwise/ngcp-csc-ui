@@ -1,4 +1,6 @@
 import os
+import random
+from functions import Functions
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -43,18 +45,88 @@ def logout_panel(driver):
         '//*[@id="top-nav"]/ul//a[contains(text(), "Logout")]').click()
 
 
-def create_subscriber(driver):
+def create_customer(driver, name=None):
+    if not name:
+        name = 'customer' + str(random.randint(1, 100000)) + 'test'
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
+    driver.find_element_by_link_text('Create Customer').click()
+    driver.execute_script(
+        "arguments[0].scrollIntoView();", driver.find_element_by_xpath(
+            '//*[@id="contactidtable"]//tr[1]//td/input'))
+    driver.find_element_by_xpath(
+        '//*[@id="contactidtable"]//tr[1]//td/input').click()
+    driver.execute_script(
+        "arguments[0].scrollIntoView();", driver.find_element_by_xpath(
+            '//*[@id="billing_profileidtable"]//tr[1]//td/input'))
+    driver.find_element_by_xpath(
+        '//*[@id="billing_profileidtable"]//tr[1]//td/input').click()
+    driver.execute_script(
+        "arguments[0].scrollIntoView();", driver.find_element_by_xpath(
+            '//*[@id="external_id"]'))
+    Functions.fill_element(
+        driver, '//*[@id="external_id"]', name)
+    driver.find_element_by_xpath('//*[@id="save"]').click()
+    return name
+
+
+def delete_customer(driver, name):
+    driver.find_element_by_xpath(
+        '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
+    driver.find_element_by_link_text('Customers').click()
+    Functions.fill_element(
+        driver, '//*[@id="Customer_table_filter"]//input',
+        'thisshouldnotexist')
+    driver.find_element_by_css_selector(
+        '#Customer_table tr > td.dataTables_empty')
+    Functions.fill_element(
+        driver, '//*[@id="Customer_table_filter"]//input', name)
+    driver.find_element_by_xpath(
+        '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), "Details")]')
     hoverclick = ActionChains(driver)
     hoverclick.move_to_element(driver.find_element_by_xpath(
         '//*[@id="Customer_table"]//tr[1]'))
     hoverclick.click(driver.find_element_by_xpath(
         '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
-        '"Details")]')
+        '"Terminate")]')
     )
     hoverclick.perform()
+    driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
+
+
+def create_subscriber(driver, customername=None):
+    driver.find_element_by_xpath(
+        '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
+    driver.find_element_by_link_text('Customers').click()
+    if customername:
+        Functions.fill_element(
+            driver, '//*[@id="Customer_table_filter"]//input',
+            'thisshouldnotexist')
+        driver.find_element_by_css_selector(
+            '#Customer_table tr > td.dataTables_empty')
+        Functions.fill_element(
+            driver, '//*[@id="Customer_table_filter"]//input', customername)
+        driver.find_element_by_xpath(
+            '//*[@id="Customer_table"]//tr[1]//td//a[contains'
+            '(text(), "Details")]')
+        hoverclick = ActionChains(driver)
+        hoverclick.move_to_element(driver.find_element_by_xpath(
+            '//*[@id="Customer_table"]//tr[1]'))
+        hoverclick.click(driver.find_element_by_xpath(
+            '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
+            '"Details")]')
+        )
+        hoverclick.perform()
+    else:
+        hoverclick = ActionChains(driver)
+        hoverclick.move_to_element(driver.find_element_by_xpath(
+            '//*[@id="Customer_table"]//tr[1]'))
+        hoverclick.click(driver.find_element_by_xpath(
+            '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
+            '"Details")]')
+        )
+        hoverclick.perform()
     driver.find_element_by_link_text('Expand Groups').click()
     driver.execute_script(
         'arguments[0].scrollIntoView();',
@@ -79,18 +151,38 @@ def create_subscriber(driver):
     driver.find_element_by_xpath('//*[@id="save"]').click()
 
 
-def delete_subscriber(driver):
+def delete_subscriber(driver, customername=None):
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
-    hoverclick = ActionChains(driver)
-    hoverclick.move_to_element(driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]'))
-    hoverclick.click(driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
-        '"Details")]')
-    )
-    hoverclick.perform()
+    if customername:
+        Functions.fill_element(
+            driver, '//*[@id="Customer_table_filter"]//input',
+            'thisshouldnotexist')
+        driver.find_element_by_css_selector(
+            '#Customer_table tr > td.dataTables_empty')
+        Functions.fill_element(
+            driver, '//*[@id="Customer_table_filter"]//input', customername)
+        driver.find_element_by_xpath(
+            '//*[@id="Customer_table"]//tr[1]//td//a[contains'
+            '(text(), "Details")]')
+        hoverclick = ActionChains(driver)
+        hoverclick.move_to_element(driver.find_element_by_xpath(
+            '//*[@id="Customer_table"]//tr[1]'))
+        hoverclick.click(driver.find_element_by_xpath(
+            '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
+            '"Details")]')
+        )
+        hoverclick.perform()
+    else:
+        hoverclick = ActionChains(driver)
+        hoverclick.move_to_element(driver.find_element_by_xpath(
+            '//*[@id="Customer_table"]//tr[1]'))
+        hoverclick.click(driver.find_element_by_xpath(
+            '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
+            '"Details")]')
+        )
+        hoverclick.perform()
     driver.find_element_by_link_text('Expand Groups').click()
     driver.execute_script(
         'arguments[0].scrollIntoView();',
