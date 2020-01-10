@@ -13,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 domainname = "thistextwillbereplaced"
+customername = "thistextwillalsobereplaced"
 filename = 0
 
 
@@ -29,13 +30,15 @@ class testrun(unittest.TestCase):
         self.driver.set_page_load_timeout(10)
         self.longMessage = True
 
-    def test_a_create_subscriber(self):
+    def test_a_preparation(self):
         global domainname
+        global customername
         global filename
-        filename = "test_a_create_subscriber.png"
+        filename = "test_a_preparation.png"
         driver = self.driver
         Collections.login_panel(driver)
-        Collections.create_subscriber(self.driver)
+        customername = Collections.create_customer(driver)
+        Collections.create_subscriber(driver, customername)
         driver.find_element_by_link_text('Expand Groups').click()
         domainname = driver.find_element_by_xpath(
             '//*[@id="subscribers_table"]//tr[1]/td[3]').text
@@ -894,21 +897,19 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_z_delete_subscriber(self):
+    def test_z_cleanup(self):
         global domainname
+        global customername
         global filename
-        filename = "test_z_delete_subscriber.png"
+        filename = "test_z_cleanup.png"
         driver = self.driver
         Collections.login_panel(driver)
-        Collections.delete_subscriber(driver)
-        driver.find_element_by_link_text('Expand Groups').click()
-        driver.execute_script(
-            'arguments[0].scrollIntoView();',
-            driver.find_element_by_link_text('Subscribers')
-        )
+        Collections.delete_customer(driver, customername)
+        Functions.fill_element(
+            driver, '//*[@id="Customer_table_filter"]//input', customername)
         self.assertTrue(driver.find_element_by_css_selector(
-            '#subscribers_table tr > td.dataTables_empty').is_displayed(),
-            "Subscriber has not been deleted")
+            '#Customer_table tr > td.dataTables_empty').is_displayed(),
+            "Customer has not been deleted")
         filename = 0
 
     def tearDown(self):
