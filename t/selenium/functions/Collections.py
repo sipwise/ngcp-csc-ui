@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 
-def login(driver, name, pwd):
+def login_csc(driver, name, pwd):
     driver.get(os.environ['CATALYST_SERVER'])
     driver.find_element_by_xpath(
         '//*[@id="csc-login-form"]//div//input[@type="text"]'
@@ -19,7 +19,7 @@ def login(driver, name, pwd):
         '//*[@id="csc-login"]//div//button').click()
 
 
-def logout(driver):
+def logout_csc(driver):
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
         By.XPATH, '//*[@id="csc-header-toolbar"]/div[1]/button')))
     driver.find_element_by_xpath(
@@ -28,7 +28,7 @@ def logout(driver):
         '/html/body//div[contains(text(), "Logout")]').click()
 
 
-def create_subscriber(driver):
+def login_panel(driver):
     driver.get(os.environ['CATALYST_SERVER'] + ":1443/logout")
     driver.get(os.environ['CATALYST_SERVER'] + ":1443")
     driver.find_element_by_xpath(
@@ -36,6 +36,14 @@ def create_subscriber(driver):
     driver.find_element_by_xpath(
         '//*[@id="password"]').send_keys('administrator')
     driver.find_element_by_xpath('//*[@id="submit"]').click()
+
+
+def logout_panel(driver):
+    driver.find_element_by_xpath(
+        '//*[@id="top-nav"]/ul//a[contains(text(), "Logout")]').click()
+
+
+def create_subscriber(driver):
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
@@ -72,13 +80,6 @@ def create_subscriber(driver):
 
 
 def delete_subscriber(driver):
-    driver.get(os.environ['CATALYST_SERVER'] + ":1443/logout")
-    driver.get(os.environ['CATALYST_SERVER'] + ":1443")
-    driver.find_element_by_xpath(
-        '//*[@id="username"]').send_keys('administrator')
-    driver.find_element_by_xpath(
-        '//*[@id="password"]').send_keys('administrator')
-    driver.find_element_by_xpath('//*[@id="submit"]').click()
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
