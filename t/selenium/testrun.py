@@ -559,10 +559,301 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_e_conference_conversations(self):
+    def test_e_call_forward_company_hours(self):
         global domainname
         global filename
-        filename = "test_e_conference_conversations.png"
+        filename = "test_e_call_forward_company_hours.png"
+        driver = self.driver
+        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Call Forward")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Call Forward")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Company Hours")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Company Hours")]').click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-alert-actions row items-center"]'
+            '/span[contains(text(), "Add Company Hours")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="csc-add-time-form q-item q-item-'
+            'division relative-position"]//div[@class="q-item- row no-wrap"]'
+            '/div[2]').click()
+        driver.find_element_by_xpath(
+            '//div[contains(@class, "q-datetime-clock-circle")]'
+            '//div[contains(@class, "q-datetime-clock-pos-8")]').click()
+        driver.find_element_by_xpath(
+            '//div[contains(@class, "q-datetime-controls")]'
+            '/button[3]').click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="csc-add-time-form q-item q-item-'
+            'division relative-position"]//div[@class="q-item- row no-wrap"]'
+            '/div[3]').click()
+        driver.find_element_by_xpath(
+            '//div[contains(@class, "q-datetime-clock-circle")]'
+            '//div[contains(@class, "q-datetime-clock-pos-16")]').click()
+        driver.find_element_by_xpath(
+            '//div[contains(@class, "q-datetime-controls")]'
+            '/button[3]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-item-"]/button[2]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[1]/div'
+            '[@class="add-destination-form"]/button')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//'
+            'div[contains(text(), "Add Number")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Destination")]/..'
+            '/input').send_keys('testdestination')
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/'
+            '../input', "100")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="add-destination-form"]//button'
+            '/span[contains(text(), "Save")]').click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//div[contains(text(),'
+            ' "Add Voicemail")]').click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//div'
+            '[contains(text(), "Add Number")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Destination")]/..'
+            '/input').send_keys('testdestination')
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/'
+            '../input', "200")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="add-destination-form"]//button/'
+            'span[contains(text(), "Save")]').click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//div[contains(text(),'
+            ' "Add Voicemail")]').click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]'
+            '/div[@tabindex="0"]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(@class, "csc-destination '
+            'csc-own-phone")]/div[contains(@class, "dest-btns")]').click()
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
+            ')]/div[@class="q-option-inner relative-position '
+            'active"]').is_displayed(), "Option 'Ring own Phone' was not "
+            "enabled")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
+            ).text, 'first ring own phone for 15 secs', "Option 'first ring ' "
+            "own Phone for 15 secs' is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-'
+            'row"]').text, 'then ring testdestination for 100 secs', "Option "
+            "'Ring testdestination for 100 secs' is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-'
+            'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
+            "im online' is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfb"]/div[1]//div[@class="dest-'
+            'row"]').text, 'first ring testdestination for 200 secs', "Option "
+            "'Ring testdestination for 200 secs' is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfb"]/div[2]//div[@class="dest-'
+            'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
+            "im busy' is missing")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-tab column flex-center '
+            'relative-position icon-and-label"]//span[@class="q-tab-label"]'
+            ).click()
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/'
+            'div[1]//input', 'testsourceset')
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/'
+            'div[2]//input', 'testsource')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div'
+            '[@tabindex=0]').click()
+        driver.find_element_by_xpath(
+            '/html/body//div[@class="q-popover animate-scale column no-wrap"]'
+            '/div[2]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="q-item-"]/button').click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'
+            ).click()
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "testsource")]'
+            ).is_displayed(), "Source was not found")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="sources-section"]/button').click()
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[@class="add-source-form"]//input',
+            'newtestsource')
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="add-source-form"]/button[2]'
+            ).click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'
+            ).is_displayed(), "Second Source was not found")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]/../'
+            'div[2]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body//div[@class="modal-buttons row"]/'
+            'button[2]')))
+        driver.find_element_by_xpath(
+            '/html/body//div[@class="modal-buttons row"]/button[2]').click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//*[@id="q-app"]//div[@class="sources-section"]/div'
+            '[@class="q-list no-border q-list-striped-odd"]/div[2]')))
+        self.assertFalse(driver.find_elements_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'),
+            "Second Source was not deleted")
+        driver.implicitly_wait(10)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "testsource")]/../'
+            'div[2]').click()
+        self.assertTrue(driver.find_element_by_xpath(
+            '/html/body//div[@class="q-alert row no-wrap shadow-2 '
+            'bg-negative"]').is_displayed(), "Error Message 'Removing the "
+            "last source entry is not allowed' did not appear")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[1]/div'
+            '[@class="add-destination-form"]/button')))
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//'
+            'div[contains(text(), "Add Number")]').click()
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[contains(text(), "Destination")]/..'
+            '/input').send_keys('testdestination')
+        Functions.fill_element(
+            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/'
+            '../input', "100")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="add-destination-form"]//button'
+            '/span[contains(text(), "Save")]').click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
+            '/button').click()
+        driver.find_element_by_xpath(
+            '//div[@class="q-popover animate-scale"]//div[contains(text(),'
+            ' "Add Voicemail")]').click()
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
+            ).text, 'do not ring own phone', "Option 'do not ring own phone' "
+            "is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-'
+            'row"]').text, 'first ring testdestination for 100 secs', "Option "
+            "'Ring testdestination for 100 secs' is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-'
+            'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
+            "im online' is missing")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="sources-section"]/div/button'
+            '[@align="right"]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body//div[@class="modal-buttons row"]/'
+            'button[2]')))
+        driver.find_element_by_xpath(
+            '/html/body//div[@class="modal-buttons row"]/button[2]').click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        time.sleep(1)
+        self.assertFalse(driver.find_elements_by_xpath(
+            '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'),
+            "Second Source Set was not deleted")
+        driver.implicitly_wait(10)
+        Collections.logout_csc(driver)
+        self.assertEqual(
+            driver.current_url, os.environ['CATALYST_SERVER'] +
+            "/login/subscriber/#/login", "Logout failed")
+        filename = 0
+
+    def test_f_conference_conversations(self):
+        global domainname
+        global filename
+        filename = "test_f_conference_conversations.png"
         driver = self.driver
         Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -623,10 +914,10 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_f_reminder(self):
+    def test_g_reminder(self):
         global domainname
         global filename
-        filename = "test_f_reminder.png"
+        filename = "test_g_reminder.png"
         driver = self.driver
         Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -684,10 +975,10 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_g_settings(self):
+    def test_h_settings(self):
         global domainname
         global filename
-        filename = "test_g_settings.png"
+        filename = "test_h_settings.png"
         driver = self.driver
         Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         driver.find_element_by_xpath(
@@ -744,10 +1035,10 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_h_speed_dial(self):
+    def test_i_speed_dial(self):
         global domainname
         global filename
-        filename = "test_h_speed_dial.png"
+        filename = "test_i_speed_dial.png"
         driver = self.driver
         Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -828,10 +1119,10 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_i_voicebox(self):
+    def test_j_voicebox(self):
         global domainname
         global filename
-        filename = "test_i_voicebox.png"
+        filename = "test_j_voicebox.png"
         driver = self.driver
         Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
