@@ -280,9 +280,12 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Always")]').click()
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-            By.XPATH, '//*[@id="q-app"]//div[1]/div'
-            '[@class="add-destination-form"]/button')))
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
