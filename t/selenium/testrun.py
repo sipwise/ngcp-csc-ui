@@ -617,9 +617,12 @@ class testrun(unittest.TestCase):
             '/button[3]').click()
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item-"]/button[2]').click()
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-            By.XPATH, '//*[@id="q-app"]//div[1]/div'
-            '[@class="add-destination-form"]/button')))
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
@@ -1050,9 +1053,12 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Speed Dial")]').click()
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-            By.XPATH, '//*[@id="q-app"]//div//button[contains'
-            '(@class, "q-btn-rectangle")]')))
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div//button[contains'
             '(@class, "q-btn-rectangle")]').click()
