@@ -37,12 +37,9 @@ class testrun(unittest.TestCase):
         filename = "test_a_preparation.png"
         driver = self.driver
         Collections.login_panel(driver)
+        domainname = Collections.create_domain(driver)
         customername = Collections.create_customer(driver)
-        Collections.create_subscriber(driver, customername)
-        driver.find_element_by_link_text('Expand Groups').click()
-        domainname = driver.find_element_by_xpath(
-            '//*[@id="subscribers_table"]//tr[1]/td[3]').text
-        self.assertFalse(domainname == "", "Subscriber has not been created")
+        Collections.create_subscriber(driver, customername, domainname)
         filename = 0
 
     def test_b_login_logout(self):
@@ -1210,6 +1207,12 @@ class testrun(unittest.TestCase):
         self.assertTrue(driver.find_element_by_css_selector(
             '#Customer_table tr > td.dataTables_empty').is_displayed(),
             "Customer has not been deleted")
+        Collections.delete_domain(driver, domainname)
+        Functions.fill_element(
+            driver, '//*[@id="Domain_table_filter"]//input', domainname)
+        self.assertTrue(driver.find_element_by_css_selector(
+            '#Domain_table tr > td.dataTables_empty').is_displayed(),
+            "Domain has not been deleted")
         filename = 0
 
     def tearDown(self):

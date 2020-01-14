@@ -52,6 +52,8 @@ def create_customer(driver, name=None):
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
     driver.find_element_by_link_text('Create Customer').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="contactidtable"]//tr[1]//td/input')))
     driver.execute_script(
         "arguments[0].scrollIntoView();", driver.find_element_by_xpath(
             '//*[@id="contactidtable"]//tr[1]//td/input'))
@@ -82,8 +84,8 @@ def delete_customer(driver, name):
         '#Customer_table tr > td.dataTables_empty')
     Functions.fill_element(
         driver, '//*[@id="Customer_table_filter"]//input', name)
-    driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), "Details")]')
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="Customer_table"]//tr[1]')))
     hoverclick = ActionChains(driver)
     hoverclick.move_to_element(driver.find_element_by_xpath(
         '//*[@id="Customer_table"]//tr[1]'))
@@ -95,7 +97,7 @@ def delete_customer(driver, name):
     driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
 
 
-def create_subscriber(driver, customername):
+def create_subscriber(driver, customername, domainname):
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
@@ -125,11 +127,17 @@ def create_subscriber(driver, customername):
     driver.find_element_by_link_text("Create Subscriber").click()
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
         (By.XPATH, '//*[@id="domainidtable_paginate"]/a[4]')))
+    Functions.fill_element(
+        driver, '//*[@id="domainidtable_filter"]//input',
+        'thisshouldnotexist')
+    driver.find_element_by_css_selector(
+        '#domainidtable tr > td.dataTables_empty')
+    Functions.fill_element(
+        driver, '//*[@id="domainidtable_filter"]//input', domainname)
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="domainidtable_paginate"]/a[4]')))
     driver.find_element_by_xpath(
         '//*[@id="domainidtable_paginate"]/a[4]').click()
-    driver.find_element_by_xpath(
-        '//*[@id="domainidtable"]//tr[1]//td//input[@type="checkbox"]'
-    ).click()
     driver.find_element_by_xpath(
         '//*[@id="webusername"]').send_keys('testuser')
     driver.find_element_by_xpath(
@@ -152,6 +160,9 @@ def delete_subscriber(driver, customername):
         '#Customer_table tr > td.dataTables_empty')
     Functions.fill_element(
         driver, '//*[@id="Customer_table_filter"]//input', customername)
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="Customer_table"]//tr[1]//td//a[contains'
+        '(text(), "Details")]')))
     driver.find_element_by_xpath(
         '//*[@id="Customer_table"]//tr[1]//td//a[contains'
         '(text(), "Details")]')
@@ -175,6 +186,48 @@ def delete_subscriber(driver, customername):
     hoverclick.click(driver.find_element_by_xpath(
         '//*[@id="subscribers_table"]//tr[1]//td//a[contains(text(), '
         '"Terminate")]')
+    )
+    hoverclick.perform()
+    driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
+
+
+def create_domain(driver, name=None):
+    if not name:
+        name = 'domain' + str(random.randint(1, 100000)) + 'test'
+    driver.find_element_by_xpath(
+        '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
+    driver.find_element_by_link_text('Domains').click()
+    driver.find_element_by_link_text('Create Domain').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="reselleridtable"]//tr[1]/td[5]/input')))
+    driver.find_element_by_xpath(
+        '//*[@id="reselleridtable"]//tr[1]/td[5]/input').click()
+    Functions.fill_element(driver, '//*[@id="domain"]', name)
+    driver.find_element_by_xpath('//*[@id="save"]').click()
+    return name
+
+
+def delete_domain(driver, name):
+    driver.find_element_by_xpath(
+        '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
+    driver.find_element_by_link_text('Domains').click()
+    Functions.fill_element(
+        driver, '//*[@id="Domain_table_filter"]//input',
+        'thisshouldnotexist')
+    driver.find_element_by_css_selector(
+        '#Domain_table tr > td.dataTables_empty')
+    Functions.fill_element(
+        driver, '//*[@id="Domain_table_filter"]//input', name)
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="Domain_table"]//tr[1]')))
+    driver.find_element_by_xpath(
+        '//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Delete")]')
+    hoverclick = ActionChains(driver)
+    hoverclick.move_to_element(driver.find_element_by_xpath(
+        '//*[@id="Domain_table"]//tr[1]'))
+    hoverclick.click(driver.find_element_by_xpath(
+        '//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), '
+        '"Delete")]')
     )
     hoverclick.perform()
     driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
