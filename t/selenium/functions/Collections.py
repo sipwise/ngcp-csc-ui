@@ -95,38 +95,28 @@ def delete_customer(driver, name):
     driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
 
 
-def create_subscriber(driver, customername=None):
+def create_subscriber(driver, customername):
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
-    if customername:
-        Functions.fill_element(
-            driver, '//*[@id="Customer_table_filter"]//input',
-            'thisshouldnotexist')
-        driver.find_element_by_css_selector(
-            '#Customer_table tr > td.dataTables_empty')
-        Functions.fill_element(
-            driver, '//*[@id="Customer_table_filter"]//input', customername)
-        driver.find_element_by_xpath(
-            '//*[@id="Customer_table"]//tr[1]//td//a[contains'
-            '(text(), "Details")]')
-        hoverclick = ActionChains(driver)
-        hoverclick.move_to_element(driver.find_element_by_xpath(
-            '//*[@id="Customer_table"]//tr[1]'))
-        hoverclick.click(driver.find_element_by_xpath(
-            '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
-            '"Details")]')
-        )
-        hoverclick.perform()
-    else:
-        hoverclick = ActionChains(driver)
-        hoverclick.move_to_element(driver.find_element_by_xpath(
-            '//*[@id="Customer_table"]//tr[1]'))
-        hoverclick.click(driver.find_element_by_xpath(
-            '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
-            '"Details")]')
-        )
-        hoverclick.perform()
+    Functions.fill_element(
+        driver, '//*[@id="Customer_table_filter"]//input',
+        'thisshouldnotexist')
+    driver.find_element_by_css_selector(
+        '#Customer_table tr > td.dataTables_empty')
+    Functions.fill_element(
+        driver, '//*[@id="Customer_table_filter"]//input', customername)
+    driver.find_element_by_xpath(
+        '//*[@id="Customer_table"]//tr[1]//td//a[contains'
+        '(text(), "Details")]')
+    hoverclick = ActionChains(driver)
+    hoverclick.move_to_element(driver.find_element_by_xpath(
+        '//*[@id="Customer_table"]//tr[1]'))
+    hoverclick.click(driver.find_element_by_xpath(
+        '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
+        '"Details")]')
+    )
+    hoverclick.perform()
     driver.find_element_by_link_text('Expand Groups').click()
     driver.execute_script(
         'arguments[0].scrollIntoView();',
@@ -151,38 +141,28 @@ def create_subscriber(driver, customername=None):
     driver.find_element_by_xpath('//*[@id="save"]').click()
 
 
-def delete_subscriber(driver, customername=None):
+def delete_subscriber(driver, customername):
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
-    if customername:
-        Functions.fill_element(
-            driver, '//*[@id="Customer_table_filter"]//input',
-            'thisshouldnotexist')
-        driver.find_element_by_css_selector(
-            '#Customer_table tr > td.dataTables_empty')
-        Functions.fill_element(
-            driver, '//*[@id="Customer_table_filter"]//input', customername)
-        driver.find_element_by_xpath(
-            '//*[@id="Customer_table"]//tr[1]//td//a[contains'
-            '(text(), "Details")]')
-        hoverclick = ActionChains(driver)
-        hoverclick.move_to_element(driver.find_element_by_xpath(
-            '//*[@id="Customer_table"]//tr[1]'))
-        hoverclick.click(driver.find_element_by_xpath(
-            '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
-            '"Details")]')
-        )
-        hoverclick.perform()
-    else:
-        hoverclick = ActionChains(driver)
-        hoverclick.move_to_element(driver.find_element_by_xpath(
-            '//*[@id="Customer_table"]//tr[1]'))
-        hoverclick.click(driver.find_element_by_xpath(
-            '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
-            '"Details")]')
-        )
-        hoverclick.perform()
+    Functions.fill_element(
+        driver, '//*[@id="Customer_table_filter"]//input',
+        'thisshouldnotexist')
+    driver.find_element_by_css_selector(
+        '#Customer_table tr > td.dataTables_empty')
+    Functions.fill_element(
+        driver, '//*[@id="Customer_table_filter"]//input', customername)
+    driver.find_element_by_xpath(
+        '//*[@id="Customer_table"]//tr[1]//td//a[contains'
+        '(text(), "Details")]')
+    hoverclick = ActionChains(driver)
+    hoverclick.move_to_element(driver.find_element_by_xpath(
+        '//*[@id="Customer_table"]//tr[1]'))
+    hoverclick.click(driver.find_element_by_xpath(
+        '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
+        '"Details")]')
+    )
+    hoverclick.perform()
     driver.find_element_by_link_text('Expand Groups').click()
     driver.execute_script(
         'arguments[0].scrollIntoView();',
