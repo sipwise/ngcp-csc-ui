@@ -195,9 +195,9 @@ export default {
             state.joinState = RequestState.initiated;
             state.joinError = null;
             state.selectedParticipant = null;
-            state.remoteMediaStreams = {}
+            state.remoteMediaStreams = {};
             state.manualSelection = false;
-            state.participants = {};
+            state.participants = [];
             state.mutedState = {};
         },
         leaveFailed(state, error) {
@@ -425,10 +425,12 @@ export default {
                     context.commit('leaveRequesting');
                     await Vue.$conference.leaveConference();
                     context.commit('leaveSucceeded');
-                    context.commit('disposeLocalMedia');
                 }
                 catch (err) {
                     context.commit('leaveFailed', err.message);
+                }
+                finally {
+                    context.commit('disposeLocalMedia');
                 }
             }
         },
