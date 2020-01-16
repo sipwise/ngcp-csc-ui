@@ -1340,6 +1340,74 @@ class testrun(unittest.TestCase):
         filename = "test_i_settings.png"
         driver = self.driver
         Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Reminder")]')))
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-item q-item-division relative-position q-item-link"]'
+            )))
+        Functions.click_js(
+            driver, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-collapsible-sub-item relative-position"]/div[2]')
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Rappel")]').is_displayed(),
+            'Language was not changed to France')
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-item q-item-division relative-position q-item-link"]'
+            )))
+        Functions.click_js(
+            driver, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-collapsible-sub-item relative-position"]/div[3]')
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Promemoria")]').is_displayed(),
+            'Language was not changed to Italian')
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-item q-item-division relative-position q-item-link"]'
+            )))
+        Functions.click_js(
+            driver, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-collapsible-sub-item relative-position"]/div[4]')
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Recordatorio")]').is_displayed(),
+            'Language was not changed to Spanish')
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-item q-item-division relative-position q-item-link"]'
+            )))
+        Functions.click_js(
+            driver, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-collapsible-sub-item relative-position"]/div[5]')
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Erinnerung")]').is_displayed(),
+            'Language was not changed to German')
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-item q-item-division relative-position q-item-link"]'
+            )))
+        Functions.click_js(
+            driver, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-collapsible-sub-item relative-position"]/div[1]')
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="main-menu"]//div[@class="q-item-label"]'
+            '[contains(text(), "Reminder")]').is_displayed(),
+            'Language was not changed back to English')
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/div[1]/button').click()
         driver.find_element_by_xpath(
