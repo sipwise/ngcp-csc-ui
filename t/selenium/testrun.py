@@ -530,6 +530,27 @@ class testrun(unittest.TestCase):
             'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
             "im online' is missing")
         driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]/div[@class="q-item'
+            '-side q-item-side-right q-item-section dest-btns cursor-pointer"]'
+            ).click()
+        driver.find_element_by_xpath(
+            '/html/body/div[@class="q-popover animate-scale"]/div/div[1]'
+            ).click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
+            ).text, 'do not ring own phone', "Option 'do not ring own phone' "
+            "is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-'
+            'row"]').text, 'first ring Voicebox', "Options did not get swapped"
+            )
+        driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/div/button'
             '[@align="right"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -830,6 +851,27 @@ class testrun(unittest.TestCase):
             'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
             "im online' is missing")
         driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]/div[@class="q-item'
+            '-side q-item-side-right q-item-section dest-btns cursor-pointer"]'
+            ).click()
+        driver.find_element_by_xpath(
+            '/html/body/div[@class="q-popover animate-scale"]/div/div[1]'
+            ).click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
+            ).text, 'do not ring own phone', "Option 'do not ring own phone' "
+            "is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-'
+            'row"]').text, 'first ring Voicebox', "Options did not get swapped"
+            )
+        driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/div/button'
             '[@align="right"]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -1123,6 +1165,27 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-'
             'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
             "im online' is missing")
+        driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]/div[@class="q-item'
+            '-side q-item-side-right q-item-section dest-btns cursor-pointer"]'
+            ).click()
+        driver.find_element_by_xpath(
+            '/html/body/div[@class="q-popover animate-scale"]/div/div[1]'
+            ).click()
+        driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+        driver.implicitly_wait(10)
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
+            ).text, 'do not ring own phone', "Option 'do not ring own phone' "
+            "is missing")
+        self.assertEqual(driver.find_element_by_xpath(
+            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-'
+            'row"]').text, 'first ring Voicebox', "Options did not get swapped"
+            )
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/div/button'
             '[@align="right"]').click()
