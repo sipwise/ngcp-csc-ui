@@ -13,3 +13,11 @@ def fill_element(driver, element, text, pathtype=By.XPATH):
     elem.send_keys(Keys.CONTROL + "a")
     elem.send_keys(Keys.DELETE)
     elem.send_keys(text)
+
+
+def scroll_to_element(driver, element):
+    if element[:2] == "//":
+        webelem = driver.find_element_by_xpath(element)
+    else:
+        webelem = driver.find_element_by_link_text(element)
+    driver.execute_script("arguments[0].scrollIntoView();", webelem)

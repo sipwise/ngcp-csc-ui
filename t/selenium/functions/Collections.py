@@ -54,19 +54,16 @@ def create_customer(driver, name=None):
     driver.find_element_by_link_text('Create Customer').click()
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
         By.XPATH, '//*[@id="contactidtable"]//tr[1]//td/input')))
-    driver.execute_script(
-        "arguments[0].scrollIntoView();", driver.find_element_by_xpath(
-            '//*[@id="contactidtable"]//tr[1]//td/input'))
+    Functions.scroll_to_element(
+        driver, '//*[@id="contactidtable"]//tr[1]//td/input')
     driver.find_element_by_xpath(
         '//*[@id="contactidtable"]//tr[1]//td/input').click()
-    driver.execute_script(
-        "arguments[0].scrollIntoView();", driver.find_element_by_xpath(
-            '//*[@id="billing_profileidtable"]//tr[1]//td/input'))
+    Functions.scroll_to_element(
+        driver, '//*[@id="billing_profileidtable"]//tr[1]//td/input')
     driver.find_element_by_xpath(
         '//*[@id="billing_profileidtable"]//tr[1]//td/input').click()
-    driver.execute_script(
-        "arguments[0].scrollIntoView();", driver.find_element_by_xpath(
-            '//*[@id="external_id"]'))
+    Functions.scroll_to_element(
+        driver, '//*[@id="external_id"]')
     Functions.fill_element(
         driver, '//*[@id="external_id"]', name)
     driver.find_element_by_xpath('//*[@id="save"]').click()
@@ -120,10 +117,7 @@ def create_subscriber(driver, customername, domainname):
     )
     hoverclick.perform()
     driver.find_element_by_link_text('Expand Groups').click()
-    driver.execute_script(
-        'arguments[0].scrollIntoView();',
-        driver.find_element_by_link_text('Subscribers')
-    )
+    Functions.scroll_to_element(driver, 'Subscribers')
     driver.find_element_by_link_text("Create Subscriber").click()
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
         (By.XPATH, '//*[@id="domainidtable_paginate"]/a[4]')))
@@ -175,10 +169,7 @@ def delete_subscriber(driver, customername):
     )
     hoverclick.perform()
     driver.find_element_by_link_text('Expand Groups').click()
-    driver.execute_script(
-        'arguments[0].scrollIntoView();',
-        driver.find_element_by_link_text('Subscribers')
-    )
+    Functions.scroll_to_element(driver, 'Subscribers')
     WebDriverWait(driver, 1)
     hoverclick = ActionChains(driver)
     hoverclick.move_to_element(driver.find_element_by_xpath(
