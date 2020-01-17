@@ -13,3 +13,14 @@ def fill_element(driver, element, text, pathtype=By.XPATH):
     elem.send_keys(Keys.CONTROL + "a")
     elem.send_keys(Keys.DELETE)
     elem.send_keys(text)
+
+
+def move_and_click(driver, element, fallback=None):
+    hoverclick = ActionChains(driver)
+    if fallback:
+        hoverclick.move_to_element(
+            driver.find_element_by_xpath(fallback))
+    hoverclick.move_to_element(
+        driver.find_element_by_xpath(element))
+    hoverclick.click()
+    hoverclick.perform()
