@@ -21,3 +21,14 @@ def scroll_to_element(driver, element):
     else:
         webelem = driver.find_element_by_link_text(element)
     driver.execute_script("arguments[0].scrollIntoView();", webelem)
+
+
+def move_and_click(driver, element, fallback=None):
+    hoverclick = ActionChains(driver)
+    if fallback:
+        hoverclick.move_to_element(
+            driver.find_element_by_xpath(fallback))
+    hoverclick.move_to_element(
+        driver.find_element_by_xpath(element))
+    hoverclick.click()
+    hoverclick.perform()

@@ -83,14 +83,9 @@ def delete_customer(driver, name):
         driver, '//*[@id="Customer_table_filter"]//input', name)
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
         By.XPATH, '//*[@id="Customer_table"]//tr[1]')))
-    hoverclick = ActionChains(driver)
-    hoverclick.move_to_element(driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]'))
-    hoverclick.click(driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
-        '"Terminate")]')
-    )
-    hoverclick.perform()
+    Functions.move_and_click(
+        driver, '//*[@id="Customer_table"]//tr[1]//td//a'
+        '[contains(text(), "Terminate")]')
     driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
 
 
@@ -105,17 +100,9 @@ def create_subscriber(driver, customername, domainname):
         '#Customer_table tr > td.dataTables_empty')
     Functions.fill_element(
         driver, '//*[@id="Customer_table_filter"]//input', customername)
-    driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]//td//a[contains'
-        '(text(), "Details")]')
-    hoverclick = ActionChains(driver)
-    hoverclick.move_to_element(driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]'))
-    hoverclick.click(driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
-        '"Details")]')
-    )
-    hoverclick.perform()
+    Functions.move_and_click(
+        driver, '//*[@id="Customer_table"]//tr[1]//td//a'
+        '[contains(text(), "Details")]')
     driver.find_element_by_link_text('Expand Groups').click()
     Functions.scroll_to_element(driver, 'Subscribers')
     driver.find_element_by_link_text("Create Subscriber").click()
@@ -157,28 +144,15 @@ def delete_subscriber(driver, customername):
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
         By.XPATH, '//*[@id="Customer_table"]//tr[1]//td//a[contains'
         '(text(), "Details")]')))
-    driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]//td//a[contains'
+    Functions.move_and_click(
+        driver, '//*[@id="Customer_table"]//tr[1]//td//a[contains'
         '(text(), "Details")]')
-    hoverclick = ActionChains(driver)
-    hoverclick.move_to_element(driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]'))
-    hoverclick.click(driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), '
-        '"Details")]')
-    )
-    hoverclick.perform()
     driver.find_element_by_link_text('Expand Groups').click()
     Functions.scroll_to_element(driver, 'Subscribers')
     WebDriverWait(driver, 1)
-    hoverclick = ActionChains(driver)
-    hoverclick.move_to_element(driver.find_element_by_xpath(
-        '//*[@id="subscribers_table"]//tr[1]'))
-    hoverclick.click(driver.find_element_by_xpath(
-        '//*[@id="subscribers_table"]//tr[1]//td//a[contains(text(), '
-        '"Terminate")]')
-    )
-    hoverclick.perform()
+    Functions.move_and_click(
+        driver, '//*[@id="subscribers_table"]//tr[1]//td//a[contains'
+        '(text(), "Terminate")]')
     driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
 
 
@@ -210,15 +184,8 @@ def delete_domain(driver, name):
     Functions.fill_element(
         driver, '//*[@id="Domain_table_filter"]//input', name)
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-        By.XPATH, '//*[@id="Domain_table"]//tr[1]')))
-    driver.find_element_by_xpath(
-        '//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Delete")]')
-    hoverclick = ActionChains(driver)
-    hoverclick.move_to_element(driver.find_element_by_xpath(
-        '//*[@id="Domain_table"]//tr[1]'))
-    hoverclick.click(driver.find_element_by_xpath(
-        '//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), '
-        '"Delete")]')
-    )
-    hoverclick.perform()
+        By.XPATH, '//*[@id="Domain_table"]//tr[1]//td[3]')))
+    Functions.move_and_click(
+        driver, '//*[@id="Domain_table"]//tr[1]//td//a[contains'
+        '(text(), "Delete")]', '//*[@id="Domain_table"]//tr[1]')
     driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
