@@ -82,7 +82,8 @@ def delete_customer(driver, name):
     Functions.fill_element(
         driver, '//*[@id="Customer_table_filter"]//input', name)
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-        By.XPATH, '//*[@id="Customer_table"]//tr[1]')))
+        By.XPATH, '//*[@id="Customer_table"]//tr[1]//td'
+        '[text()="%s"]' % name)))
     hoverclick = ActionChains(driver)
     hoverclick.move_to_element(driver.find_element_by_xpath(
         '//*[@id="Customer_table"]//tr[1]'))
@@ -105,9 +106,9 @@ def create_subscriber(driver, customername, domainname):
         '#Customer_table tr > td.dataTables_empty')
     Functions.fill_element(
         driver, '//*[@id="Customer_table_filter"]//input', customername)
-    driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]//td//a[contains'
-        '(text(), "Details")]')
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="Customer_table"]//tr[1]//td'
+        '[text()="%s"]' % customername)))
     hoverclick = ActionChains(driver)
     hoverclick.move_to_element(driver.find_element_by_xpath(
         '//*[@id="Customer_table"]//tr[1]'))
@@ -155,11 +156,8 @@ def delete_subscriber(driver, customername):
     Functions.fill_element(
         driver, '//*[@id="Customer_table_filter"]//input', customername)
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-        By.XPATH, '//*[@id="Customer_table"]//tr[1]//td//a[contains'
-        '(text(), "Details")]')))
-    driver.find_element_by_xpath(
-        '//*[@id="Customer_table"]//tr[1]//td//a[contains'
-        '(text(), "Details")]')
+        By.XPATH, '//*[@id="Customer_table"]//tr[1]//td'
+        '[text()="%s"]' % customername)))
     hoverclick = ActionChains(driver)
     hoverclick.move_to_element(driver.find_element_by_xpath(
         '//*[@id="Customer_table"]//tr[1]'))
@@ -170,7 +168,6 @@ def delete_subscriber(driver, customername):
     hoverclick.perform()
     driver.find_element_by_link_text('Expand Groups').click()
     Functions.scroll_to_element(driver, 'Subscribers')
-    WebDriverWait(driver, 1)
     hoverclick = ActionChains(driver)
     hoverclick.move_to_element(driver.find_element_by_xpath(
         '//*[@id="subscribers_table"]//tr[1]'))
@@ -210,12 +207,10 @@ def delete_domain(driver, name):
     Functions.fill_element(
         driver, '//*[@id="Domain_table_filter"]//input', name)
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-        By.XPATH, '//*[@id="Domain_table"]//tr[1]')))
-    driver.find_element_by_xpath(
-        '//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), "Delete")]')
+        By.XPATH, '//*[@id="Domain_table"]//tr[1]//td[text()="%s"]' % name)))
     hoverclick = ActionChains(driver)
     hoverclick.move_to_element(driver.find_element_by_xpath(
-        '//*[@id="Domain_table"]//tr[1]'))
+        '//*[@id="Domain_table"]//tr[1]/td[3]'))
     hoverclick.click(driver.find_element_by_xpath(
         '//*[@id="Domain_table"]//tr[1]//td//a[contains(text(), '
         '"Delete")]')
