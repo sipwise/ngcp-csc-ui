@@ -16,7 +16,7 @@ def fill_element(driver, element, text, pathtype=By.XPATH):
 
 
 def scroll_to_element(driver, element):
-    if element[:2] == "//":
+    if element[:1] == "/":
         webelem = driver.find_element_by_xpath(element)
     else:
         webelem = driver.find_element_by_link_text(element)
@@ -36,7 +36,7 @@ def move_and_click(driver, element, clickelement=None):
 
 
 def click_js(driver, element):
-    if element[:2] == "//":
+    if element[:1] == "/":
         webelement = driver.find_element_by_xpath(element)
     else:
         webelement = driver.find_element_by_link_text(element)
