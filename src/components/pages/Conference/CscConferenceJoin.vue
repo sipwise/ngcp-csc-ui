@@ -6,6 +6,15 @@
             id="csc-conf-join-content"
             :class="contentClasses"
         >
+            <q-alert
+                v-if="!hasRtcEngineCapabilityEnabled"
+                class="csc-inline-alert csc-conf-alert"
+                appear
+                icon="info"
+                color="info"
+            >
+                {{ $t('call.rtcEngineNotEnabledConferencing') }}
+            </q-alert>
             <p
                 id="csc-conf-join-text"
             >{{ $t('conferencing.joinText') }}</p>
@@ -17,10 +26,10 @@
                 :placeholder="$t('conferencing.idPlaceholder')"
                 align="left"
                 @change="conferenceIdChanged"
-                :disable="isJoining"
+                :disable="isJoining || !hasRtcEngineCapabilityEnabled"
             >
                 <q-btn
-                    :disable="!hasConferenceId || isJoining"
+                    :disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnabled"
                     :color="shareButtonColor"
                     flat
                     icon="link"
@@ -30,7 +39,7 @@
             <q-btn
                 class="csc-button"
                 :color="joinButtonColor"
-                :disable="!hasConferenceId || isJoining"
+                :disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnableds"
                 icon="call"
                 round
                 @click="join"
@@ -53,7 +62,8 @@
     } from '../../../helpers/math-helper'
     import {
         QBtn,
-        QInput
+        QInput,
+        QAlert
     } from 'quasar-framework'
     import CscShareConferenceDialog from "./CscShareConferenceDialog";
     import CscObjectSpinner from "../../CscObjectSpinner";
@@ -73,14 +83,16 @@
             'isCameraEnabled',
             'isScreenEnabled',
             'isJoining',
-            'isJoined'
+            'isJoined',
+            'hasRtcEngineCapabilityEnabled'
         ],
         components: {
             CscObjectSpinner,
             CscShareConferenceDialog,
             QBtn,
             QInput,
-            CscMedia
+            CscMedia,
+            QAlert
         },
         mounted() {
             if(!this.conferenceId){
@@ -148,6 +160,8 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/app.common.styl'
+    .csc-conf-alert
+        margin-bottom $flex-gutter-md
     #csc-conf-link-input
         margin-bottom $flex-gutter-md
     #csc-conf-join-text

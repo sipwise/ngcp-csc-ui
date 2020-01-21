@@ -34,6 +34,7 @@
                 :is-media-enabled="isMediaEnabled"
                 :is-joining="isJoining"
                 :is-joined="isJoined"
+                :has-rtc-engine-capability-enabled="hasRtcEngineCapabilityEnabled"
                 @join="join"
             />
             <csc-conference-joined
@@ -86,7 +87,7 @@
                     icon="mic"
                     round
                     @click="toggleMicrophone()"
-                    :disable="!hasConferenceId || isJoining"
+                    :disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnabled"
                 />
                 <q-btn
                     class="csc-conf-button"
@@ -94,7 +95,7 @@
                     icon="videocam"
                     round
                     @click="toggleCamera()"
-                    :disable="!hasConferenceId || isJoining"
+                    :disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnabled"
                 />
                 <q-btn
                     class="csc-conf-button"
@@ -102,7 +103,7 @@
                     icon="computer"
                     round
                     @click="toggleScreen()"
-                    :disable="!hasConferenceId || isJoining"
+                    :disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnabled"
                 />
                 <q-btn
                     v-if="isJoined"
@@ -110,7 +111,7 @@
                     :color="screenButtonColor"
                     icon="more_vert"
                     round
-                    :disable="!hasConferenceId || isJoining"
+                    :disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnabled"
                 >
                     <q-popover
                         ref="popover"
@@ -163,7 +164,8 @@
         QPopover,
         QList,
         QItem,
-        QItemMain
+        QItemMain,
+        QAlert
     } from 'quasar-framework'
     import CscConfirmDialog from "../CscConfirmationDialog";
     export default {
@@ -191,9 +193,13 @@
             QPopover,
             QList,
             QItem,
-            QItemMain
+            QItemMain,
+            QAlert
         },
         computed: {
+            ...mapGetters('call', [
+                'hasRtcEngineCapabilityEnabled'
+            ]),
             ...mapState('conference',[
                 'selectedParticipant'
             ]),

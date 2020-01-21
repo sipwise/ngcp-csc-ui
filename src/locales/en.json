@@ -350,7 +350,8 @@
         "notificationFailed": "Could not enable incoming call notifications.",
         "notificationNotSupported": "Incoming call notifications are not supported.",
         "desktopSharingNotInstalled": "Desktop sharing extension for chrome is not installed.",
-        "rtcEngineNotEnabled": "You can neither make a call nor receive one because the RTC:engine is not active. If you operate a C5 CE then first upgrade to a C5 PRO to be able to use the RTC:engine."
+        "rtcEngineNotEnabled": "You can neither make a call nor receive one, since the RTC:engine is not active. If you operate a C5 CE then first upgrade to a C5 PRO to be able to use the RTC:engine.",
+        "rtcEngineNotEnabledConferencing": "You can not join a conference, since the RTC:engine is not active. If you operate a C5 CE then first upgrade to a C5 PRO to be able to use the RTC:engine."
     },
     "pbxConfig": {
         "seat": "Seat",
