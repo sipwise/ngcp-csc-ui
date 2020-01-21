@@ -281,6 +281,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-alert-actions row items-center"]'
@@ -318,6 +322,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
@@ -351,6 +359,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
@@ -372,6 +384,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
@@ -380,6 +396,10 @@ class testrun(unittest.TestCase):
             '//div[@class="q-popover animate-scale"]//div[contains(text(),'
             ' "Add Voicemail")]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -439,6 +459,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'
@@ -455,6 +479,10 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@class="add-source-form"]/button[2]'
             ).click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -509,6 +537,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
@@ -540,6 +572,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
@@ -558,6 +594,10 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '/html/body//div[@class="modal-buttons row"]/button[2]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -596,6 +636,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
@@ -629,6 +673,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
@@ -650,6 +698,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
@@ -658,6 +710,10 @@ class testrun(unittest.TestCase):
             '//div[@class="q-popover animate-scale"]//div[contains(text(),'
             ' "Add Voicemail")]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -685,6 +741,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[3]/div[@class="add-destination-form"]'
@@ -693,6 +753,10 @@ class testrun(unittest.TestCase):
             '//div[@class="q-popover animate-scale"]//div[contains(text(),'
             ' "Add Voicemail")]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -760,6 +824,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'
@@ -776,6 +844,10 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@class="add-source-form"]/button[2]'
             ).click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -830,6 +902,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
@@ -861,6 +937,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
@@ -879,6 +959,10 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '/html/body//div[@class="modal-buttons row"]/button[2]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -913,6 +997,10 @@ class testrun(unittest.TestCase):
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Company Hours")]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -954,6 +1042,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
@@ -987,6 +1079,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
@@ -1008,6 +1104,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
@@ -1016,6 +1116,10 @@ class testrun(unittest.TestCase):
             '//div[@class="q-popover animate-scale"]//div[contains(text(),'
             ' "Add Voicemail")]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -1075,6 +1179,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'
@@ -1091,6 +1199,10 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@class="add-source-form"]/button[2]'
             ).click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -1145,6 +1257,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
@@ -1176,6 +1292,10 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         driver.implicitly_wait(10)
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
@@ -1194,6 +1314,10 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '/html/body//div[@class="modal-buttons row"]/button[2]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -1407,6 +1531,10 @@ class testrun(unittest.TestCase):
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Speed Dial")]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
