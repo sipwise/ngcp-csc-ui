@@ -33,3 +33,11 @@ def move_and_click(driver, element, clickelement=None):
     else:
         hoverclick.click()
     hoverclick.perform()
+
+
+def click_js(driver, element):
+    if element[:2] == "//":
+        webelement = driver.find_element_by_xpath(element)
+    else:
+        webelement = driver.find_element_by_link_text(element)
+    driver.execute_script("arguments[0].click();", webelement)
