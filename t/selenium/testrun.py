@@ -1221,19 +1221,20 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Join conference")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="csc-conf-link-input"]/div/input').send_keys(
-                "testconference")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-conf-link-input"]/div/button[contains'
-            '(@class, "text-primary")]').click()
-        self.assertEqual(driver.current_url, driver.find_element_by_xpath(
-            '//div/input[@readonly="readonly"]').get_attribute('value'),
-            "Sharing URL is not correct")
-        driver.find_element_by_xpath('/html/body').send_keys(Keys.ESCAPE)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((
-            By.XPATH, '/html/body/div[@class="modal fullscreen row minimized'
-            ' flex-center"][@style="display: none;"]')))
+#        --------Disabled. Active RTC:Engine required for these tests--------
+#        driver.find_element_by_xpath(
+#            '//*[@id="csc-conf-link-input"]/div/input').send_keys(
+#                "testconference")
+#        driver.find_element_by_xpath(
+#            '//*[@id="csc-conf-link-input"]/div/button[contains'
+#            '(@class, "text-primary")]').click()
+#        self.assertEqual(driver.current_url, driver.find_element_by_xpath(
+#            '//div/input[@readonly="readonly"]').get_attribute('value'),
+#            "Sharing URL is not correct")
+#        driver.find_element_by_xpath('/html/body').send_keys(Keys.ESCAPE)
+#        WebDriverWait(driver, 10).until(EC.presence_of_element_located((
+#            By.XPATH, '/html/body/div[@class="modal fullscreen row minimized'
+#            ' flex-center"][@style="display: none;"]')))
         driver.find_element_by_xpath(
             '//*[@id="csc-conf-header"]/div/button').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
