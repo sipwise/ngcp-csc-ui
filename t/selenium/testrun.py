@@ -76,6 +76,71 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-item q-item-division relative-position q-item-link"]'
+            )))
+        Functions.click_js(
+            driver, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-collapsible-sub-item relative-position"]/div[2]')
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
+            '(text(), "Authentification de l’abonné")]').is_displayed(),
+            'Language was not changed to France')
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-item q-item-division relative-position q-item-link"]'
+            )))
+        Functions.click_js(
+            driver, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-collapsible-sub-item relative-position"]/div[3]')
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
+            '(text(), "Accedi come utente")]').is_displayed(),
+            'Language was not changed to Italian')
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-item q-item-division relative-position q-item-link"]'
+            )))
+        Functions.click_js(
+            driver, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-collapsible-sub-item relative-position"]/div[4]')
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
+            '(text(), "Iniciar sesión de suscriptor")]').is_displayed(),
+            'Language was not changed to Spanish')
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-item q-item-division relative-position q-item-link"]'
+            )))
+        Functions.click_js(
+            driver, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-collapsible-sub-item relative-position"]/div[5]')
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
+            '(text(), "Subscriber Log-in")]').is_displayed(),
+            'Language was not changed to German')
+        driver.find_element_by_xpath(
+            '//*[@id="csc-header-toolbar"]/button').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-item q-item-division relative-position q-item-link"]'
+            )))
+        Functions.click_js(
+            driver, '/html/body/div[@class="q-popover animate-scale"]//div'
+            '[@class="q-collapsible-sub-item relative-position"]/div[1]')
+        self.assertTrue(driver.find_element_by_xpath(
+            '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
+            '(text(), "Subscriber Sign In")]').is_displayed(),
+            'Language was not changed back to English')
         filename = 0
 
     def test_c_call_blocking(self):
