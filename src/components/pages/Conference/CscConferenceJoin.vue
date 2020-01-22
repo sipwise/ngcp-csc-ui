@@ -39,7 +39,7 @@
             <q-btn
                 class="csc-button"
                 :color="joinButtonColor"
-                :disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnableds"
+                :disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnabled"
                 icon="call"
                 round
                 @click="join"
