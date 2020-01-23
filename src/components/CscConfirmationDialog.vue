@@ -14,6 +14,7 @@
             slot="actions"
             icon="exit_to_app"
             color="primary"
+            id="dialog-confirm-btn"
             flat
             @click="confirm"
         >

@@ -12,6 +12,7 @@
                     class="csc-conf-button"
                     color="primary"
                     icon="clear"
+                    id="csc-conf-close-btn"
                     flat
                     round
                     @click="close()"
@@ -83,6 +84,7 @@
             >
                 <q-btn
                     class="csc-conf-button"
+                    id="csc-conference-mic-btn"
                     :color="microphoneButtonColor"
                     icon="mic"
                     round
@@ -91,6 +93,7 @@
                 />
                 <q-btn
                     class="csc-conf-button"
+                    id="csc-conference-video-btn"
                     :color="cameraButtonColor"
                     icon="videocam"
                     round

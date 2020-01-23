@@ -20,6 +20,7 @@
         <q-side-link
             item
             to="/conference"
+            id="csc-main-menu-conference"
         >
             <q-item-side
                 icon="videocam"
