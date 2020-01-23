@@ -38,6 +38,7 @@
             </q-input>
             <q-btn
                 class="csc-button"
+                id="csc-conference-join-btn"
                 :color="joinButtonColor"
                 :disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnabled"
                 icon="call"
