@@ -83,6 +83,7 @@
             >
                 <q-btn
                     class="csc-conf-button"
+                    id="csc-conference-mic-btn"
                     :color="microphoneButtonColor"
                     icon="mic"
                     round
@@ -91,6 +92,7 @@
                 />
                 <q-btn
                     class="csc-conf-button"
+                    id="csc-conference-video-btn"
                     :color="cameraButtonColor"
                     icon="videocam"
                     round

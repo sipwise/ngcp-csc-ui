@@ -10,6 +10,9 @@ cordova/plugins
 # Junit reports
 t/TESTS*
 
+# Nightwatch test_output
+t/nightwatch/tests_output
+
 # IntelliJ
 .idea
 *.iml
