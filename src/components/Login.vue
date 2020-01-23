@@ -51,6 +51,7 @@
                                     dark
                                     type="text"
                                     max-length="128"
+                                    id="csc-login-username"
                                     :float-label="$t('pages.login.username')"
                                     autofocus
                                     clearable
@@ -66,6 +67,7 @@
                                 <q-input
                                     dark
                                     type="password"
+                                    id="csc-login-password"
                                     max-length="32"
                                     :float-label="$t('pages.login.password')"
                                     clearable
@@ -102,6 +104,7 @@
                             icon="arrow_forward"
                             color="primary"
                             @click="login()"
+                            id="csc-login-submit-btn"
                         >
                             {{ $t('pages.login.button') }}
                         </q-btn>
