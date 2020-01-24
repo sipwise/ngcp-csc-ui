@@ -1,5 +1,6 @@
 import unittest
 import os
+import traceback
 import nose2
 import time
 import functions.Collections as Collections
@@ -13,38 +14,43 @@ from selenium.webdriver.common.by import By
 
 domainname = "thistextwillbereplaced"
 customername = "thistextwillalsobereplaced"
+password = "testpasswd"
 filename = 0
+
+
+def preparation():
+    global domainname
+    global customername
+    global filename
+    driver = Functions.create_driver()
+    Collections.login_panel(driver)
+    domainname = Collections.create_domain(driver)
+    customername = Collections.create_customer(driver)
+    Collections.create_subscriber(driver, customername, domainname)
+    driver.quit()
+
+
+def cleanup():
+    global domainname
+    global customername
+    global filename
+    driver = Functions.create_driver()
+    Collections.login_panel(driver)
+    Collections.delete_customer(driver, customername)
+    Collections.delete_domain(driver, domainname)
+    driver.quit()
 
 
 class testrun(unittest.TestCase):
 
     def setUp(self):
-        profile = webdriver.FirefoxProfile()
-        profile.accept_untrusted_certs = True
-        caps = DesiredCapabilities().FIREFOX
-        caps["pageLoadStrategy"] = "normal"
-        self.driver = webdriver.Firefox(
-            capabilities=caps, firefox_profile=profile, log_path='/dev/null')
-        self.driver.implicitly_wait(10)
-        self.driver.set_page_load_timeout(10)
+        self.driver = Functions.create_driver()
         self.longMessage = True
 
-    def test_a_preparation(self):
-        global domainname
-        global customername
-        global filename
-        filename = "test_a_preparation.png"
-        driver = self.driver
-        Collections.login_panel(driver)
-        domainname = Collections.create_domain(driver)
-        customername = Collections.create_customer(driver)
-        Collections.create_subscriber(driver, customername, domainname)
-        filename = 0
-
-    def test_b_login_logout(self):
+    def test_login_page(self):
         global domainname
         global filename
-        filename = "test_b_login_logout.png"
+        filename = "test_login_page.png"
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         driver.find_element_by_xpath(
@@ -143,12 +149,13 @@ class testrun(unittest.TestCase):
             'Language was not changed back to English')
         filename = 0
 
-    def test_c_call_blocking(self):
+    def test_call_blocking(self):
         global domainname
         global filename
-        filename = "test_c_call_blocking.png"
+        global password
+        filename = "test_call_blocking.png"
         driver = self.driver
-        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, password)
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Call Blocking")]')))
@@ -189,7 +196,7 @@ class testrun(unittest.TestCase):
             '"q-toggle")]/div[contains(@class, "active")]').is_displayed(),
             "Option 'All anonymous incoming calls are blocked' was not "
             "enabled")
-        self.assertEquals("12345", driver.find_element_by_xpath(
+        self.assertEqual("12345", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
             "Number is not correct")
@@ -212,7 +219,7 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.invisibility_of_element((
             By.XPATH, '//*[@id="q-app"]//div[@class="csc-spinner"]/svg')))
         driver.implicitly_wait(10)
-        self.assertEquals("54321", driver.find_element_by_xpath(
+        self.assertEqual("54321", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
             "Number is not correct")
@@ -255,7 +262,7 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="csc-form-actions row justify-center'
             '"]/button[2]').click()
-        self.assertEquals("12345", driver.find_element_by_xpath(
+        self.assertEqual("12345", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
             "Number is not correct")
@@ -278,7 +285,7 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.invisibility_of_element((
             By.XPATH, '//*[@id="q-app"]//div[@class="csc-spinner"]/svg')))
         driver.implicitly_wait(10)
-        self.assertEquals("54321", driver.find_element_by_xpath(
+        self.assertEqual("54321", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
             "Number is not correct")
@@ -323,12 +330,13 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_d_call_forward_after_hours(self):
+    def test_call_forward_after_hours(self):
         global domainname
         global filename
-        filename = "test_d_call_forward_after_hours.png"
+        global password
+        filename = "test_call_forward_after_hours.png"
         driver = self.driver
-        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, password)
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Call Forward")]')))
@@ -404,6 +412,10 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@class="add-destination-form"]//button'
             '/span[contains(text(), "Save")]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -499,14 +511,14 @@ class testrun(unittest.TestCase):
             "im busy' is missing")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-tab column flex-center '
-            'relative-position icon-and-label"]//span[@class="q-tab-label"]'
-            ).click()
+            'relative-position icon-and-label"]//span[contains'
+            '(text(), "Add new")]').click()
         Functions.fill_element(
             driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/'
-            'div[1]//input', 'testsourceset')
+            'div[1]//input', 'firsttestsourceset')
         Functions.fill_element(
             driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/'
-            'div[2]//input', 'testsource')
+            'div[2]//input', 'firsttestsource')
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div'
             '[@tabindex=0]').click()
@@ -526,10 +538,10 @@ class testrun(unittest.TestCase):
             'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'
-            ).click()
+            '//*[@id="q-app"]//div/span[contains'
+            '(text(), "firsttestsourceset")]').click()
         self.assertTrue(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "testsource")]'
+            '//*[@id="q-app"]//div[contains(text(), "firsttestsource")]'
             ).is_displayed(), "Source was not found")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/button').click()
@@ -569,7 +581,7 @@ class testrun(unittest.TestCase):
             "Second Source was not deleted")
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "testsource")]/../'
+            '//*[@id="q-app"]//div[contains(text(), "firsttestsource")]/../'
             'div[2]').click()
         self.assertTrue(driver.find_element_by_xpath(
             '/html/body//div[@class="q-alert row no-wrap shadow-2 '
@@ -665,7 +677,8 @@ class testrun(unittest.TestCase):
             'text-white"]')))
         time.sleep(1)
         self.assertFalse(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'),
+            '//*[@id="q-app"]//div/span[contains'
+            '(text(), "firsttestsourceset")]'),
             "Second Source Set was not deleted")
         driver.implicitly_wait(10)
         Collections.logout_csc(driver)
@@ -674,12 +687,13 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_e_call_forward_always(self):
+    def test_call_forward_always(self):
         global domainname
         global filename
-        filename = "test_e_call_forward_always.png"
+        global password
+        filename = "test_call_forward_always.png"
         driver = self.driver
-        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, password)
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Call Forward")]')))
@@ -718,6 +732,10 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@class="add-destination-form"]//button'
             '/span[contains(text(), "Save")]').click()
         driver.implicitly_wait(2)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//div[class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
@@ -864,14 +882,14 @@ class testrun(unittest.TestCase):
             "im offline' is missing")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-tab column flex-center '
-            'relative-position icon-and-label"]//span[@class="q-tab-label"]'
-            ).click()
+            'relative-position icon-and-label"]//span[contains'
+            '(text(), "Add new")]').click()
         Functions.fill_element(
             driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/'
-            'div[1]//input', 'testsourceset')
+            'div[1]//input', 'secondtestsourceset')
         Functions.fill_element(
             driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/'
-            'div[2]//input', 'testsource')
+            'div[2]//input', 'secondtestsource')
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div'
             '[@tabindex=0]').click()
@@ -891,10 +909,10 @@ class testrun(unittest.TestCase):
             'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'
-            ).click()
+            '//*[@id="q-app"]//div/span[contains'
+            '(text(), "secondtestsourceset")]').click()
         self.assertTrue(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "testsource")]'
+            '//*[@id="q-app"]//div[contains(text(), "secondtestsource")]'
             ).is_displayed(), "Source was not found")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/button').click()
@@ -934,7 +952,7 @@ class testrun(unittest.TestCase):
             "Second Source was not deleted")
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "testsource")]/../'
+            '//*[@id="q-app"]//div[contains(text(), "secondtestsource")]/../'
             'div[2]').click()
         self.assertTrue(driver.find_element_by_xpath(
             '/html/body//div[@class="q-alert row no-wrap shadow-2 '
@@ -1030,7 +1048,8 @@ class testrun(unittest.TestCase):
             'text-white"]')))
         time.sleep(1)
         self.assertFalse(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'),
+            '//*[@id="q-app"]//div/span[contains'
+            '(text(), "secondtestsourceset")]'),
             "Second Source Set was not deleted")
         driver.implicitly_wait(10)
         Collections.logout_csc(driver)
@@ -1039,12 +1058,13 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_f_call_forward_company_hours(self):
+    def test_call_forward_company_hours(self):
         global domainname
         global filename
-        filename = "test_f_call_forward_company_hours.png"
+        global password
+        filename = "test_call_forward_company_hours.png"
         driver = self.driver
-        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, password)
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Call Forward")]')))
@@ -1219,14 +1239,14 @@ class testrun(unittest.TestCase):
             "im busy' is missing")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-tab column flex-center '
-            'relative-position icon-and-label"]//span[@class="q-tab-label"]'
-            ).click()
+            'relative-position icon-and-label"]//span[contains'
+            '(text(), "Add new")]').click()
         Functions.fill_element(
             driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/'
-            'div[1]//input', 'testsourceset')
+            'div[1]//input', 'thirdtestsourceset')
         Functions.fill_element(
             driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/'
-            'div[2]//input', 'testsource')
+            'div[2]//input', 'thirdtestsource')
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div'
             '[@tabindex=0]').click()
@@ -1246,10 +1266,10 @@ class testrun(unittest.TestCase):
             'text-white"]')))
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'
-            ).click()
+            '//*[@id="q-app"]//div/span[contains'
+            '(text(), "thirdtestsourceset")]').click()
         self.assertTrue(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "testsource")]'
+            '//*[@id="q-app"]//div[contains(text(), "thirdtestsource")]'
             ).is_displayed(), "Source was not found")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/button').click()
@@ -1289,7 +1309,7 @@ class testrun(unittest.TestCase):
             "Second Source was not deleted")
         driver.implicitly_wait(10)
         driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "testsource")]/../'
+            '//*[@id="q-app"]//div[contains(text(), "thirdtestsource")]/../'
             'div[2]').click()
         self.assertTrue(driver.find_element_by_xpath(
             '/html/body//div[@class="q-alert row no-wrap shadow-2 '
@@ -1385,7 +1405,8 @@ class testrun(unittest.TestCase):
             'text-white"]')))
         time.sleep(1)
         self.assertFalse(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "testsourceset")]'),
+            '//*[@id="q-app"]//div/span[contains'
+            '(text(), "thirdtestsourceset")]'),
             "Second Source Set was not deleted")
         driver.implicitly_wait(10)
         Collections.logout_csc(driver)
@@ -1394,12 +1415,13 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_g_conference_conversations(self):
+    def test_conference_conversations(self):
         global domainname
         global filename
-        filename = "test_g_conference_conversations.png"
+        global password
+        filename = "test_conference_conversations.png"
         driver = self.driver
-        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, password)
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Join conference")]')))
@@ -1428,28 +1450,28 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Conversations")]').click()
-        self.assertEquals(driver.find_element_by_xpath(
+        self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Calls, '
             'Voicemails or Faxes found', "Section 'All' is not empty")
         driver.find_element_by_xpath(
             '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller '
             'row no-wrap"]//span[contains(text(), "Calls")]').click()
-        self.assertEquals(driver.find_element_by_xpath(
+        self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Calls found',
             "Section 'Calls' is notempty")
         driver.find_element_by_xpath(
             '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller '
             'row no-wrap"]//span[contains(text(), "Faxes")]').click()
-        self.assertEquals(driver.find_element_by_xpath(
+        self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Faxes found',
             "Section 'Faxes' is not empty")
         driver.find_element_by_xpath(
             '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller '
             'row no-wrap"]//span[contains(text(), "Voicemails")]').click()
-        self.assertEquals(driver.find_element_by_xpath(
+        self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Voicemails '
             'found', "Section 'Voicemails' is not empty")
@@ -1459,12 +1481,13 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_h_reminder(self):
+    def test_reminder(self):
         global domainname
         global filename
-        filename = "test_h_reminder.png"
+        global password
+        filename = "test_reminder.png"
         driver = self.driver
-        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, password)
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Reminder")]')))
@@ -1520,12 +1543,13 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_i_settings(self):
+    def test_settings(self):
         global domainname
         global filename
-        filename = "test_i_settings.png"
+        global password
+        filename = "test_settings.png"
         driver = self.driver
-        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, password)
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Reminder")]')))
@@ -1613,6 +1637,7 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '/html/body//div[@class="csc-dialog-actions row justify-end'
             ' no-wrap"]/button[2]').click()
+        password = "pass1234"
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="csc-login-form"]//div//input[@type="text"]')))
         self.assertEqual(
@@ -1641,6 +1666,7 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '/html/body//div[@class="csc-dialog-actions row justify-end'
             ' no-wrap"]/button[2]').click()
+        password = "testpasswd"
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="csc-login-form"]//div//input[@type="text"]')))
         self.assertEqual(
@@ -1648,12 +1674,13 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_j_speed_dial(self):
+    def test_speed_dial(self):
         global domainname
         global filename
-        filename = "test_j_speed_dial.png"
+        global password
+        filename = "test_speed_dial.png"
         driver = self.driver
-        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, password)
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Speed Dial")]')))
@@ -1735,12 +1762,13 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_k_voicebox(self):
+    def test_voicebox(self):
         global domainname
         global filename
-        filename = "test_k_voicebox.png"
+        global password
+        filename = "test_voicebox.png"
         driver = self.driver
-        Collections.login_csc(driver, "testuser@" + domainname, "testpasswd")
+        Collections.login_csc(driver, "testuser@" + domainname, password)
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Voicebox")]')))
@@ -1804,27 +1832,6 @@ class testrun(unittest.TestCase):
             "/login/subscriber/#/login", "Logout failed")
         filename = 0
 
-    def test_z_cleanup(self):
-        global domainname
-        global customername
-        global filename
-        filename = "test_z_cleanup.png"
-        driver = self.driver
-        Collections.login_panel(driver)
-        Collections.delete_customer(driver, customername)
-        Functions.fill_element(
-            driver, '//*[@id="Customer_table_filter"]//input', customername)
-        self.assertTrue(driver.find_element_by_css_selector(
-            '#Customer_table tr > td.dataTables_empty').is_displayed(),
-            "Customer has not been deleted")
-        Collections.delete_domain(driver, domainname)
-        Functions.fill_element(
-            driver, '//*[@id="Domain_table_filter"]//input', domainname)
-        self.assertTrue(driver.find_element_by_css_selector(
-            '#Domain_table tr > td.dataTables_empty').is_displayed(),
-            "Domain has not been deleted")
-        filename = 0
-
     def tearDown(self):
         global filename
         driver = self.driver
@@ -1832,8 +1839,23 @@ class testrun(unittest.TestCase):
         if filename:
             driver.save_screenshot('/results/' + filename)
             filename = 0
-        driver.close()
+        driver.quit()
 
 
 if __name__ == '__main__':
-    nose2.main()
+    print('Preparing Domain, Customer and Subscriber for NGCP CSC tests ...')
+    try:
+        preparation()
+    except Exception as e:
+        print('Preperation failed! See logs below for more details')
+        print('--------------------------------------------------------------')
+        traceback.print_exc()
+        print('--------------------------------------------------------------')
+        quit(1)
+    print('Preperation successful, running tests now ...')
+    nose2.main(exit=False)
+    try:
+        cleanup()
+    except Exception as e:
+        traceback.print_exc()
+        quit(1)
