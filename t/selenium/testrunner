@@ -44,9 +44,6 @@ firefox --version
 # ensure we don't leave any process behind causing problems with re-execution
 pkill -f 'geckodriver' || true
 DISPLAY=:99 ~/geckodriver -p 4444 --log fatal &
-#DISPLAY=:99 ~/geckodriver -p 5555 --log fatal &
-#DISPLAY=:99 ~/geckodriver -p 6666 --log fatal &
-#DISPLAY=:99 ~/geckodriver -p 7777 --log fatal &
 
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
@@ -58,13 +55,16 @@ RC=0
 export CATALYST_SERVER="https://${SERVER}"
 cd t/selenium
 
+#Change thread count here and in nose2 config files
+export THREADS=2
+
 if [ "${OUTPUT_TYPE:-}" = "junit" ] ; then
   export JENKINS=1
-  nose2 -v -c nose2cfg/jenkinstest.cfg | \
+  python3 testrun.py -v -c nose2cfg/jenkinstest.cfg | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
   RC="${PIPESTATUS[0]}"
 else
-  nose2 -v -c nose2cfg/localtest.cfg || RC=$?
+  python3 testrun.py -v -c nose2cfg/localtest.cfg|| RC=$?
 fi
 
 echo "Finished test execution, test execution returned with exit code ${RC}."

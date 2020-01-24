@@ -1,5 +1,6 @@
 import os
 import random
+import time
 from functions import Functions
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -119,9 +120,10 @@ def create_subscriber(driver, customername, domainname):
     Functions.fill_element(
         driver, '//*[@id="domainidtable_filter"]//input', domainname)
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
-        By.XPATH, '//*[@id="domainidtable_paginate"]/a[4]')))
-    driver.find_element_by_xpath(
-        '//*[@id="domainidtable_paginate"]/a[4]').click()
+        By.XPATH, '//*[@id="domainidtable"]//tr[1]//td'
+        '[text()="%s"]' % domainname)))
+    Functions.click_js(
+        driver, '//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input')
     driver.find_element_by_xpath(
         '//*[@id="webusername"]').send_keys('testuser')
     driver.find_element_by_xpath(

@@ -41,3 +41,16 @@ def click_js(driver, element):
     else:
         webelement = driver.find_element_by_link_text(element)
     driver.execute_script("arguments[0].click();", webelement)
+
+
+def create_driver():
+    profile = webdriver.FirefoxProfile()
+    profile.accept_untrusted_certs = True
+    caps = DesiredCapabilities().FIREFOX
+    caps["pageLoadStrategy"] = "normal"
+    driver = webdriver.Firefox(
+        capabilities=caps, firefox_profile=profile,
+        service_log_path='/dev/null', )
+    driver.implicitly_wait(10)
+    driver.set_page_load_timeout(10)
+    return driver
