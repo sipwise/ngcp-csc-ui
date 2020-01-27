@@ -1,3 +1,66 @@
+ngcp-csc-ui (8.3.0.0+0~mr8.3.0.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [113292a] TT#70901 selenium: more improvements to login test
+  * [0358602] TT#70901 selenium: add speed dial test
+  * [9721e1a] TT#70901 selenium: add reminder test
+  * [acb442d] TT#70901 selenium: speed up tests
+  * [9f7006d] TT#70901 selenium: small cleanups and fixes
+  * [211386c] TT#70901 selenium: add call blocking test
+  * [1ab39e4] TT#70901 selenium: more test fixes
+  * [413bc25] TT#70901 selenium: add conference and conversations test
+  * [65c33a2] TT#70901 selenium: add voicebox test
+  * [9d780e9] TT#70901 selenium: add settings test
+  * [9dde0ca] TT#70901 selenium: add test: call forward always
+  * [e77e735] TT#70901 selenium: add better error messages
+  * [130107b] TT#70901 selenium: add file Functions.py
+  * [98e07de] TT#70901 selenium: fix for crash in call_blocking
+  * [037b1fa] TT#70901 selenium: create a second speed dial entry
+  * [da9c026] TT#70901 selenium: add test: edit call blocking numbers once
+  * [ea14a25] TT#70901 selenium: take a screenshot if test crashes
+  * [667a70a] TT#70901 selenium: more minor fixes
+  * [12bf595] TT#70901 selenium: more tests and fixes for call_forward_always
+  * [499dbc0] TT#70901 selenium: add new login functions for ngcp panel
+  * [e3ff694] TT#70901 selenium: add create/delete_customer
+  * [033dae6] TT#70901 selenium: fix a wait condition in call_forward_always
+  * [224cd40] TT#70901 selenium: add new test call_forward_always
+  * [714f69e] TT#70901 selenium: more crash fixes
+  * [0ce1242] TT#70901 selenium: reqire a customer when creating a subscriber
+  * [0575189] TT#70901 selenium: add create_domain and delete_domain
+  * [21f413c] TT#70901 selenium: add new test call_forward_after_hours
+  * [3676eca] TT#70901 selenium: add tests: swap around call actions
+  * [7f9e659] TT#70901 selenium: add scroll_to_element
+  * [12679c0] TT#70901 selenium: improve waiting conditions in Collections.py functions
+  * [70e0c14] TT#70901 selenium: add move_and_click
+  * [cfffccc] TT#70901 selenium: add click_js
+  * [8e3efdf] TT#70901 selenium: fix "if element is xpath" check
+  * [df1943c] TT#70901 selenium: add test: change interface language
+  * [c4639db] TT#54658 Language selection on login page
+  * [c81c3af] TT#70901 selenium: disable "rename conference" and "copy conference link" test
+  * [52a48ee] TT#70901 selenium: workaround for failing wait statements
+  * [d5c9a74] TT#70901 selenium: add test: change language on the login screen
+
+  [ Carlo Venusino ]
+  * [5d9acff] TT#71331 Test conference store
+  * [7a1e6a6] TT#71852 Fix Callforward api tests
+  * [3a97514] TT#71853 Added localized labels to speedial and voicebox api tests
+  * [47186b3] TT#71854 Participants container css adjustments
+  * [8d94175] TT#47707 Conferencing: As a Customer, I want to mute/unmute all participants
+  * [f861e0e] TT#71911 Conference: fix wrong merge
+  * [c3899a5] TT#71912 Optimise muteState mutations
+  * [3683217] TT#72500 Main media stream selection issue
+  * [c2815c7] TT#71299 Conferencing: Improve the layout for mobile devices
+  * [f7758b7] TT#73000 Fix remote participant selection
+
+  [ Hans-Peter Herzog ]
+  * [a113b4c] TT#72166 Integrate conference ended event
+  * [df3f485] TT#72407 Additional refactoring of conference store
+  * [3194276] TT#71865 Issue in the join/leave mechanism
+  * [ab05c70] TT#74610 Conferencing: As a Customer, I want to see an info text whether the RTCEngine is disabled or not
+  * [88c4427] TT#74610 Fix disabled-condition for conference join button
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Jan 2020 12:22:36 +0100
+
 ngcp-csc-ui (8.2.0.0+0~mr8.2.0.0) unstable; urgency=medium
 
   [ Marco Capetta ]
