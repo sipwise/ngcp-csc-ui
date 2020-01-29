@@ -46,6 +46,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_b_login_logout.png"
         driver = self.driver
+        print("Logging in with invalid credentials...")
         driver.get(os.environ['CATALYST_SERVER'])
         driver.find_element_by_xpath(
             '//*[@id="csc-login-form"]//div//input[@type="text"]'
@@ -58,6 +59,8 @@ class testrun(unittest.TestCase):
         self.assertTrue(driver.find_element_by_xpath(
             '//div[contains(@class, "q-alert-container")]')
             .is_displayed(), "Error Message was not shown")
+        print("OK")
+        print("Logging in with valid credentials...")
         Functions.fill_element(
             driver, '//*[@id="csc-login-form"]//div//input[@type='
             '"text"]', "testuser@" + domainname)
@@ -69,6 +72,8 @@ class testrun(unittest.TestCase):
         self.assertEqual("testuser", driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]//div//span[contains(text(), '
             '"testuser")]').text, "Login failed")
+        print("OK")
+        print("Logging out...")
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/div[1]/button').click()
         driver.find_element_by_xpath(
@@ -76,6 +81,8 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
+        print("Change language on login screen...")
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -139,8 +146,9 @@ class testrun(unittest.TestCase):
             '[@class="q-collapsible-sub-item relative-position"]/div[1]')
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
-            '(text(), "Subscriber Sign In")]').is_displayed(),
+            '(text(), "Subscriber Sign Inn")]').is_displayed(),
             'Language was not changed back to English')
+        print("OK")
         filename = 0
 
     def test_c_call_blocking(self):
@@ -1830,6 +1838,7 @@ class testrun(unittest.TestCase):
         driver = self.driver
         driver.implicitly_wait(10)
         if filename:
+            print("FAIL")
             driver.save_screenshot('/results/' + filename)
             filename = 0
         driver.close()
