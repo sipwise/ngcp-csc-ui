@@ -27,7 +27,7 @@ Here are some ground rules to follow:
 
 ### Definition Of Done
 
-To consider a change to be done (internal procedure) or pull request to be ready for submission, these criterias need to be met:
+To consider a change to be done (internal procedure) or pull request to be ready for submission, these criteria need to be met:
 
 * All existing and new tests must pass. See our section on ["how to run tests"](#how-to-run-test) for details.
 * At least one test for each type of change implemented needs to be written and added. If the change does not include any new functionality (such as minor changes, grammar, formatting, clean up, etc) test are not needed. Examples: If you create a change that involves change of state in the store, you need to include a test that covers that change. If your change on the other hand both involves changes to the store, api and mutations, then several tests would be required to test the affected parts.

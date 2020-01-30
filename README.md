@@ -175,7 +175,7 @@ You need to first enable faxserver and activate it for the subscriber, to be abl
 1. Then go to "Preferences", and set "Fax2Mail and Sendfax" to active
 1. Repeat the two steps above, this time for the callee
 1. For the callee, you also need to add your internal sipwise email address as "Destination" under "Fax2Mail and Sendfax", and also under "Call Forwards" configure a "Call Forward Unconditional" to "Fax2Mail"
-1. Additionally, the visibility of the fax option in "action button menu" is reliant on store state "sendFax: true" in src/store/user.js. This means it can be toggled off in the code as well if neeeded
+1. Additionally, the visibility of the fax option in "action button menu" is reliant on store state "sendFax: true" in src/store/user.js. This means it can be toggled off in the code as well if needed
 
 ### How to add new npm package
 

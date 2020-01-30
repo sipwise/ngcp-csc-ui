@@ -91,7 +91,7 @@
                         color="primary"
                         stripe
                         animate
-                        heigth="24px"
+                        height="24px"
                     />
                 </div>
             </div>
@@ -265,7 +265,7 @@
     .csc-progress-col
         margin-top $flex-gutter-xs
         .q-progress
-            heigth 24px
+            height 24px
     .csc-pbx-sound-set-sound.csc-pbx-sound-set-sound-odd
         background-color $item-stripe-color
     .csc-pbx-sound-set-sound

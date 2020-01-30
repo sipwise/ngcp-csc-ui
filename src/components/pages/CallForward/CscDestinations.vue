@@ -440,7 +440,7 @@
             padding-top 8px
 
     .dest-row
-        color $wite
+        color $white
         white-space nowrap
         overflow hidden
         font-size 16px
