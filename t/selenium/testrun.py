@@ -58,6 +58,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_login_page.png"
         driver = self.driver
+        print("Try to log in with invalid credentials...", end="")
         driver.get(os.environ['CATALYST_SERVER'])
         driver.find_element_by_xpath(
             '//*[@id="csc-login-form"]//div//input[@type="text"]'
@@ -70,6 +71,8 @@ class testrun(unittest.TestCase):
         self.assertTrue(driver.find_element_by_xpath(
             '//div[contains(@class, "q-alert-container")]')
             .is_displayed(), "Error Message was not shown")
+        print("OK")
+        print("Try to log in with valid credentials...", end="")
         Functions.fill_element(
             driver, '//*[@id="csc-login-form"]//div//input[@type='
             '"text"]', "testuser@" + self.domainname)
@@ -81,6 +84,8 @@ class testrun(unittest.TestCase):
         self.assertEqual("testuser", driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]//div//span[contains(text(), '
             '"testuser")]').text, "Login failed")
+        print("OK")
+        print("Try to log out...", end="")
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/div[1]/button').click()
         driver.find_element_by_xpath(
@@ -88,6 +93,9 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
+        print(
+            "Change login page language to all avalible languages...", end="")
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -153,6 +161,7 @@ class testrun(unittest.TestCase):
             '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
             '(text(), "Subscriber Sign In")]').is_displayed(),
             'Language was not changed back to English')
+        print("OK")
         filename = 0
 
     def test_call_blocking(self):
@@ -160,8 +169,11 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_call_blocking.png"
         driver = self.driver
+        print("Try to log in with valid credentials...", end="")
         Collections.login_csc(
             driver, "testuser@" + self.domainname, 'testpasswd')
+        print("OK")
+        print("Go to 'Call Blocking' page...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Call Blocking")]')))
@@ -171,24 +183,34 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Incoming")]')))
+        print("OK")
+        print("Go to 'Incoming'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Incoming")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
             '"q-toggle")]')))
+        print("OK")
+        print("Enable 'All anonymous incoming calls are blocked'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
             '"q-toggle")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[@class="q-item-label"]'
             '[contains(text(), "Only incoming calls")]')))
+        print("OK")
+        print(
+            "Enable 'Only incoming calls from listed numbers are allowed'...",
+            end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item-label"]'
             '[contains(text(), "Only incoming calls")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div/button[contains(@class, '
             '"q-btn-flat")]/span[contains(@class, "q-btn-inner")]')))
+        print("OK")
+        print("Add a number to incoming call blocks...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/button[contains(@class, "q-btn-flat")]'
             '/span[contains(@class, "q-btn-inner")]').click()
@@ -197,6 +219,8 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="csc-form-actions row justify-center'
             '"]/button[2]').click()
+        print("OK")
+        print("Check if all settings were properly changed...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
             '"q-toggle")]/div[contains(@class, "active")]').is_displayed(),
@@ -209,6 +233,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]')))
+        print("OK")
+        print("Edit recently added number...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
@@ -225,6 +251,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.invisibility_of_element((
             By.XPATH, '//*[@id="q-app"]//div[@class="csc-spinner"]/svg')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if number was changed properly...", end="")
         self.assertEqual("54321", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
@@ -232,6 +260,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]')))
+        print("OK")
+        print("Delete number...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
@@ -248,18 +278,26 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Outgoing")]')))
+        print("OK")
+        print("Go to 'Outgoing'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Outgoing")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[@class="q-item-label"]'
             '[contains(text(), "Only outgoing calls")]')))
+        print("OK")
+        print(
+            "Enable 'Only outgoing calls from listed numbers are allowed'...",
+            end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item-label"]'
             '[contains(text(), "Only outgoing calls")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div/button[contains(@class, '
             '"q-btn-flat")]/span[contains(@class, "q-btn-inner")]')))
+        print("OK")
+        print("Add a number to outgoing call blocks...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/button[contains(@class, "q-btn-flat")]'
             '/span[contains(@class, "q-btn-inner")]').click()
@@ -268,6 +306,8 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="csc-form-actions row justify-center'
             '"]/button[2]').click()
+        print("OK")
+        print("Check if all settings were properly changed...", end="")
         self.assertEqual("12345", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
@@ -275,6 +315,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]')))
+        print("OK")
+        print("Edit recently added number...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
@@ -291,6 +333,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//*[@id="q-app"]//div[@class="csc-spinner"]/svg')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if number was changed properly...", end="")
         self.assertEqual("54321", driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number '
             'csc-list-item ")]//div[@class="q-item-label"]').text,
@@ -298,6 +342,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]')))
+        print("OK")
+        print("Delete number...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/'
             'div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
@@ -321,26 +367,35 @@ class testrun(unittest.TestCase):
             '[contains(text(), "Privacy")]/div[@class="q-inner-loading '
             'animate-fade absolute-full column flex-center"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Go to 'Privacy'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Privacy")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
             '"q-toggle")]')))
+        print("OK")
+        print("Enable 'Hide number to callee'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
             '"q-toggle")]').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
             '"q-toggle")]')))
+        print("OK")
+        print("Check if 'Hide number to callee' was enabled...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "q-toggle")]//span'
             '[contains(text(), "Your number is hidden")]').is_displayed(),
             "Option 'hide number' was not enabled")
+        print("OK")
+        print("Logout...", end="")
         Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
         filename = 0
 
     def test_call_forward_after_hours(self):
@@ -348,8 +403,11 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_call_forward_after_hours.png"
         driver = self.driver
+        print("Try to log in with valid credentials...", end="")
         Collections.login_csc(
             driver, "testuser@" + self.domainname, 'testpasswd')
+        print("OK")
+        print("Go to 'Call Forward' page...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Call Forward")]')))
@@ -359,6 +417,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "After Hours")]')))
+        print("OK")
+        print("Go to 'After Hours'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "After Hours")]').click()
@@ -368,6 +428,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add After Hours time set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-alert-actions row items-center"]'
             '/span[contains(text(), "Add After Hours")]').click()
@@ -409,6 +471,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add number to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
@@ -434,6 +498,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add voicemail to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
@@ -450,6 +516,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add number to 'When im busy'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
             '/button').click()
@@ -475,6 +543,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add voicemail to 'When im busy'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
             '/button').click()
@@ -491,6 +561,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Enable 'Ring own phone'...", end="")
         Functions.click_js(
             driver,
             '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]'
@@ -506,6 +578,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if all values are correct...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
             ')]/div[@class="q-option-inner relative-position '
@@ -531,6 +605,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfb"]/div[2]//div[@class="dest-'
             'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
             "im busy' is missing")
+        print("OK")
+        print("Add new source set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-tab column flex-center '
             'relative-position icon-and-label"]//span[contains'
@@ -559,12 +635,18 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Go to new source set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/span[contains'
             '(text(), "firsttestsourceset")]').click()
+        print("OK")
+        print("Check if source in source set is correct...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "firsttestsource")]'
             ).is_displayed(), "Source was not found")
+        print("OK")
+        print("Add a new source...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/button').click()
         Functions.fill_element(
@@ -583,9 +665,13 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if second source is created properly...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'
             ).is_displayed(), "Second Source was not found")
+        print("OK")
+        print("Delete second source...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]/../'
             'div[2]').click()
@@ -594,6 +680,8 @@ class testrun(unittest.TestCase):
             'button[2]')))
         driver.find_element_by_xpath(
             '/html/body//div[@class="modal-buttons row"]/button[2]').click()
+        print("OK")
+        print("Check if second source was deleted...", end="")
         driver.implicitly_wait(2)
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//*[@id="q-app"]//div[@class="sources-section"]/div'
@@ -602,6 +690,10 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'),
             "Second Source was not deleted")
         driver.implicitly_wait(10)
+        print("OK")
+        print(
+            "Try to delete first source and check if error message appears...",
+            end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "firsttestsource")]/../'
             'div[2]').click()
@@ -612,6 +704,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[1]/div'
             '[@class="add-destination-form"]/button')))
+        print("OK")
+        print("Add number to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
@@ -637,12 +731,16 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add voicemail to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
         driver.find_element_by_xpath(
             '//div[@class="q-popover animate-scale"]//div[contains(text(),'
             ' "Add Voicemail")]').click()
+        print("OK")
+        print("Check if everyting was added correctly...", end="")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
             ).text, 'do not ring own phone', "Option 'do not ring own phone' "
@@ -655,6 +753,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-'
             'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
             "im online' is missing")
+        print("OK")
+        print("Swap entries in 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]/div[@class="q-item'
             '-side q-item-side-right q-item-section dest-btns cursor-pointer"]'
@@ -672,6 +772,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if entries got swapped...", end="")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
             ).text, 'do not ring own phone', "Option 'do not ring own phone' "
@@ -680,6 +782,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-'
             'row"]').text, 'first ring Voicebox', "Options did not get swapped"
             )
+        print("OK")
+        print("Delete second source set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/div/button'
             '[@align="right"]').click()
@@ -698,15 +802,20 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         time.sleep(1)
+        print("OK")
+        print("Check if second source set was deleted...", end="")
         self.assertFalse(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div/span[contains'
             '(text(), "firsttestsourceset")]'),
             "Second Source Set was not deleted")
         driver.implicitly_wait(10)
+        print("OK")
+        print("Logout...", end="")
         Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
         filename = 0
 
     def test_call_forward_always(self):
@@ -714,8 +823,11 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_call_forward_always.png"
         driver = self.driver
+        print("Try to log in with valid credentials...", end="")
         Collections.login_csc(
             driver, "testuser@" + self.domainname, 'testpasswd')
+        print("OK")
+        print("Go to 'Call Forward' page...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Call Forward")]')))
@@ -725,6 +837,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Always")]')))
+        print("OK")
+        print("Go to 'Always'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Always")]').click()
@@ -738,6 +852,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add number to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
@@ -763,6 +879,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add voicemail to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
@@ -779,6 +897,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add number to 'When im busy'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
             '/button').click()
@@ -804,6 +924,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add voicemail to 'When im busy'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
             '/button').click()
@@ -820,6 +942,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add number to 'When im offline'...", end="")
         driver.execute_script(
             "window.scrollTo(0, document.body.scrollHeight);")
         driver.find_element_by_xpath(
@@ -847,6 +971,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add voicemail to 'When im offline'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[3]/div[@class="add-destination-form"]'
             '/button').click()
@@ -863,6 +989,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Enable 'Ring own phone'...", end="")
         Functions.click_js(
             driver,
             '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]'
@@ -878,6 +1006,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if all values are correct...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
             ')]/div[@class="q-option-inner relative-position '
@@ -911,6 +1041,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfna"]/div[2]//div[@class="dest'
             '-row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
             "im offline' is missing")
+        print("OK")
+        print("Add new source set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-tab column flex-center '
             'relative-position icon-and-label"]//span[contains'
@@ -939,12 +1071,18 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Go to new source set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/span[contains'
             '(text(), "secondtestsourceset")]').click()
+        print("OK")
+        print("Check if source in source set is correct...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "secondtestsource")]'
             ).is_displayed(), "Source was not found")
+        print("OK")
+        print("Add a new source...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/button').click()
         Functions.fill_element(
@@ -963,9 +1101,13 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if second source is created properly...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'
             ).is_displayed(), "Second Source was not found")
+        print("OK")
+        print("Delete second source...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]/../'
             'div[2]').click()
@@ -974,6 +1116,8 @@ class testrun(unittest.TestCase):
             'button[2]')))
         driver.find_element_by_xpath(
             '/html/body//div[@class="modal-buttons row"]/button[2]').click()
+        print("OK")
+        print("Check if second source was deleted...", end="")
         driver.implicitly_wait(2)
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//*[@id="q-app"]//div[@class="sources-section"]/div'
@@ -982,6 +1126,10 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'),
             "Second Source was not deleted")
         driver.implicitly_wait(10)
+        print("OK")
+        print(
+            "Try to delete first source and check if error message appears...",
+            end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "secondtestsource")]/../'
             'div[2]').click()
@@ -992,6 +1140,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[1]/div'
             '[@class="add-destination-form"]/button')))
+        print("OK")
+        print("Add number to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
@@ -1017,12 +1167,16 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add voicemail to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
         driver.find_element_by_xpath(
             '//div[@class="q-popover animate-scale"]//div[contains(text(),'
             ' "Add Voicemail")]').click()
+        print("OK")
+        print("Check if everyting was added correctly...", end="")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
             ).text, 'do not ring own phone', "Option 'do not ring own phone' "
@@ -1035,6 +1189,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-'
             'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
             "im online' is missing")
+        print("OK")
+        print("Swap entries in 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]/div[@class="q-item'
             '-side q-item-side-right q-item-section dest-btns cursor-pointer"]'
@@ -1052,6 +1208,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if entries got swapped...", end="")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
             ).text, 'do not ring own phone', "Option 'do not ring own phone' "
@@ -1060,6 +1218,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-'
             'row"]').text, 'first ring Voicebox', "Options did not get swapped"
             )
+        print("OK")
+        print("Delete second source set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/div/button'
             '[@align="right"]').click()
@@ -1078,15 +1238,20 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         time.sleep(1)
+        print("OK")
+        print("Check if second source set was deleted...", end="")
         self.assertFalse(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div/span[contains'
             '(text(), "secondtestsourceset")]'),
             "Second Source Set was not deleted")
         driver.implicitly_wait(10)
+        print("OK")
+        print("Logout...", end="")
         Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
         filename = 0
 
     def test_call_forward_company_hours(self):
@@ -1094,8 +1259,11 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_call_forward_company_hours.png"
         driver = self.driver
+        print("Try to log in with valid credentials...", end="")
         Collections.login_csc(
             driver, "testuser@" + self.domainname, 'testpasswd')
+        print("OK")
+        print("Go to 'Call Forward' page...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Call Forward")]')))
@@ -1105,6 +1273,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Company Hours")]')))
+        print("OK")
+        print("Go to 'Company Hours'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Company Hours")]').click()
@@ -1114,6 +1284,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add Company Hours time set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-alert-actions row items-center"]'
             '/span[contains(text(), "Add Company Hours")]').click()
@@ -1155,6 +1327,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add number to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
@@ -1180,6 +1354,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add voicemail to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
@@ -1196,6 +1372,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add number to 'When im busy'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
             '/button').click()
@@ -1221,6 +1399,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add voicemail to 'When im busy'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[2]/div[@class="add-destination-form"]'
             '/button').click()
@@ -1237,6 +1417,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Enable 'Ring own phone'...", end="")
         Functions.click_js(
             driver,
             '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]'
@@ -1252,6 +1434,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if all values are correct...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
             ')]/div[@class="q-option-inner relative-position '
@@ -1277,6 +1461,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfb"]/div[2]//div[@class="dest-'
             'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
             "im busy' is missing")
+        print("OK")
+        print("Add new source set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-tab column flex-center '
             'relative-position icon-and-label"]//span[contains'
@@ -1305,12 +1491,18 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Go to new source set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/span[contains'
             '(text(), "thirdtestsourceset")]').click()
+        print("OK")
+        print("Check if source in source set is correct...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "thirdtestsource")]'
             ).is_displayed(), "Source was not found")
+        print("OK")
+        print("Add a new source...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/button').click()
         Functions.fill_element(
@@ -1329,9 +1521,13 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if second source is created properly...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'
             ).is_displayed(), "Second Source was not found")
+        print("OK")
+        print("Delete second source...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]/../'
             'div[2]').click()
@@ -1340,6 +1536,8 @@ class testrun(unittest.TestCase):
             'button[2]')))
         driver.find_element_by_xpath(
             '/html/body//div[@class="modal-buttons row"]/button[2]').click()
+        print("OK")
+        print("Check if second source was deleted...", end="")
         driver.implicitly_wait(2)
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
             By.XPATH, '//*[@id="q-app"]//div[@class="sources-section"]/div'
@@ -1348,6 +1546,10 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'),
             "Second Source was not deleted")
         driver.implicitly_wait(10)
+        print("OK")
+        print(
+            "Try to delete first source and check if error message appears...",
+            end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "thirdtestsource")]/../'
             'div[2]').click()
@@ -1358,6 +1560,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[1]/div'
             '[@class="add-destination-form"]/button')))
+        print("OK")
+        print("Add number to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
@@ -1383,12 +1587,16 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add voicemail to 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[1]/div[@class="add-destination-form"]'
             '/button').click()
         driver.find_element_by_xpath(
             '//div[@class="q-popover animate-scale"]//div[contains(text(),'
             ' "Add Voicemail")]').click()
+        print("OK")
+        print("Check if everyting was added correctly...", end="")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
             ).text, 'do not ring own phone', "Option 'do not ring own phone' "
@@ -1401,6 +1609,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-'
             'row"]').text, 'then ring Voicebox', "Option 'Ring Voicebox when "
             "im online' is missing")
+        print("OK")
+        print("Swap entries in 'When im online'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]/div[@class="q-item'
             '-side q-item-side-right q-item-section dest-btns cursor-pointer"]'
@@ -1418,6 +1628,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Check if entries got swapped...", end="")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
             ).text, 'do not ring own phone', "Option 'do not ring own phone' "
@@ -1426,6 +1638,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-'
             'row"]').text, 'first ring Voicebox', "Options did not get swapped"
             )
+        print("OK")
+        print("Delete second source set...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="sources-section"]/div/button'
             '[@align="right"]').click()
@@ -1443,16 +1657,21 @@ class testrun(unittest.TestCase):
             By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
+        print("OK")
+        print("Check if second source set was deleted...", end="")
         time.sleep(1)
         self.assertFalse(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div/span[contains'
             '(text(), "thirdtestsourceset")]'),
             "Second Source Set was not deleted")
         driver.implicitly_wait(10)
+        print("OK")
+        print("Logout...", end="")
         Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
         filename = 0
 
     def test_conference_conversations(self):
@@ -1460,8 +1679,11 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_conference_conversations.png"
         driver = self.driver
+        print("Try to log in with valid credentials...", end="")
         Collections.login_csc(
             driver, "testuser@" + self.domainname, 'testpasswd')
+        print("OK")
+        print("Check out 'Join Conference' screen...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Join conference")]')))
@@ -1484,12 +1706,16 @@ class testrun(unittest.TestCase):
 #            ' flex-center"][@style="display: none;"]')))
         driver.find_element_by_xpath(
             '//*[@id="csc-conf-header"]/div/button').click()
+        print("OK")
+        print("Go to 'Conversations' page...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Conversations")]')))
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Conversations")]').click()
+        print("OK")
+        print("Check if all sections are empty...", end="")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Calls, '
@@ -1515,10 +1741,13 @@ class testrun(unittest.TestCase):
             '//*[@id="csc-conversation-content"]/div[@class="row justify-'
             'center csc-conversation-list-message"]').text, 'No Voicemails '
             'found', "Section 'Voicemails' is not empty")
+        print("OK")
+        print("Logout...", end="")
         Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
         filename = 0
 
     def test_reminder(self):
@@ -1526,8 +1755,11 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_reminder.png"
         driver = self.driver
+        print("Try to log in with valid credentials...", end="")
         Collections.login_csc(
             driver, "testuser@" + self.domainname, 'testpasswd')
+        print("OK")
+        print("Go to 'Reminder' page...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Reminder")]')))
@@ -1537,6 +1769,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
             '"q-toggle")]//span[contains(text(), "Reminder")]')))
+        print("OK")
+        print("Enable reminders...", end="")
         time.sleep(1)
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
@@ -1545,6 +1779,8 @@ class testrun(unittest.TestCase):
             By.XPATH, '//*[@id="q-app"]//div[contains(@class, '
             '"q-input-target justify-start")]')))
         time.sleep(1)
+        print("OK")
+        print("Set time for reminder...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains'
             '(@class, "q-input-target justify-start")]').click()
@@ -1561,9 +1797,13 @@ class testrun(unittest.TestCase):
             By.XPATH, '//*[@id="q-app"]//div[@tabindex="0"]/span'
             '[@class="q-option-label"][contains(text(), "Always")]')))
         time.sleep(1)
+        print("OK")
+        print("Set reminder to 'Always'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"]//span'
             '[contains(text(), "Always")]').click()
+        print("OK")
+        print("Check if reminder settings were applied correctly...", end="")
         self.assertEqual('Reminder is enabled', driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"]//'
             'span[contains(text(), "Reminder")]').text,
@@ -1577,10 +1817,13 @@ class testrun(unittest.TestCase):
             '[contains(@class, "active")]/../'
             'span[contains(text(), "Always")]').is_displayed(),
             "Option 'Always' was not selected")
+        print("OK")
+        print("Logout...", end="")
         Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
         filename = 0
 
     def test_settings(self):
@@ -1588,11 +1831,14 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_settings.png"
         driver = self.driver
+        print("Try to log in with valid credentials...", end="")
         Collections.login_csc(
             driver, "testuser@" + self.domainname, 'testpasswd')
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Reminder")]')))
+        print("OK")
+        print("Change home page language to all avalible languages...", end="")
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
@@ -1658,6 +1904,8 @@ class testrun(unittest.TestCase):
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Reminder")]').is_displayed(),
             'Language was not changed back to English')
+        print("OK")
+        print("Change user password...", end="")
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/div[1]/button').click()
         driver.find_element_by_xpath(
@@ -1682,11 +1930,15 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
+        print("Try to log in with new password...", end="")
         Collections.login_csc(
             driver, "testuser@" + self.domainname, 'pass1234')
         self.assertEqual("testuser", driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]//div//span[contains(text(), '
             '"testuser")]').text, "Login failed")
+        print("OK")
+        print("Change password back to old password...", end="")
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/div[1]/button').click()
         driver.find_element_by_xpath(
@@ -1711,6 +1963,7 @@ class testrun(unittest.TestCase):
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
         filename = 0
 
     def test_speed_dial(self):
@@ -1718,6 +1971,7 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_speed_dial.png"
         driver = self.driver
+        print("Try to log in with valid credentials...", end="")
         Collections.login_csc(
             driver, "testuser@" + self.domainname, 'testpasswd')
         WebDriverWait(driver, 10).until(EC.visibility_of_element_located((
@@ -1726,6 +1980,8 @@ class testrun(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Speed Dial")]')))
+        print("OK")
+        print("Go to 'Speed Dial'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Speed Dial")]').click()
@@ -1735,6 +1991,8 @@ class testrun(unittest.TestCase):
             'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
             'text-white"]')))
         driver.implicitly_wait(10)
+        print("OK")
+        print("Add a speed dial...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div//button[contains'
             '(@class, "q-btn-rectangle")]').click()
@@ -1748,6 +2006,8 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="row justify-center form-actions"]'
             '/button[contains(@class, "text-primary")]').click()
+        print("OK")
+        print("Check if speed dial details are correct...", end="")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item-label"]'
             '/span[contains(text(), "When")]')
@@ -1756,6 +2016,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@class="q-item-sublabel"]'
             '[contains(text(), "ring")]')
             .text, "ring testtext", "Speed dial is not correct")
+        print("OK")
+        print("Add a second speed dial...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div//button[contains'
             '(@class, "q-btn-rectangle")]')))
@@ -1772,6 +2034,8 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="row justify-center form-actions"]'
             '/button[contains(@class, "text-primary")]').click()
+        print("OK")
+        print("Check if second speed dial details are correct...", end="")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-item-label"]'
             '/span[contains(text(), "*2")]')
@@ -1780,6 +2044,8 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[@class="q-item-sublabel"]'
             '[contains(text(), "asdf")]')
             .text, "ring asdf", "Speed dial is not correct")
+        print("OK")
+        print("Delete all speed dials...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div/button[@slot="right"]').click()
         driver.find_element_by_xpath(
@@ -1795,13 +2061,18 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//div[@class="modal-buttons row"]//button[contains(@class, '
             '"text-negative")]').click()
+        print("OK")
+        print("Check if speed dials were deleted...", end="")
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "No speed dials found")]')
             .is_displayed(), "Speed dials was not deleted")
+        print("OK")
+        print("Logout...", end="")
         Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
         filename = 0
 
     def test_voicebox(self):
@@ -1809,14 +2080,19 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_voicebox.png"
         driver = self.driver
+        print("Try to log in with valid credentials...", end="")
         Collections.login_csc(
             driver, "testuser@" + self.domainname, 'testpasswd')
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Voicebox")]')))
+        print("OK")
+        print("Go to 'Voicebox'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
             '[contains(text(), "Voicebox")]').click()
+        print("OK")
+        print("Try to enter an invalid voicebox pin...", end="")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="q-app"]//div[contains(text(), "Change PIN")]'
             '/../input')))
@@ -1826,6 +2102,8 @@ class testrun(unittest.TestCase):
         self.assertTrue(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="q-field-error col"'
             ']').is_displayed, "Invalid PIN was not detected")
+        print("OK")
+        print("Enter valid voicebox pin...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../../'
             'i[1]').click()
@@ -1835,12 +2113,16 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../../'
             'i[1]').click()
+        print("OK")
+        print("Try to enter an invalid voicebox email...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../'
             'input').send_keys("invalid")
         self.assertTrue(driver.find_element_by_xpath(
                 '//*[@id="q-app"]//div[@class="q-field-error col"'
                 ']').is_displayed, "Invalid Email was not detected")
+        print("OK")
+        print("Enter valid voicebox email...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../../'
             'i[1]').click()
@@ -1850,9 +2132,13 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../../'
             'i[1]').click()
+        print("OK")
+        print("Enable 'Delete voicemail after notification'...", end="")
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "q-toggle")]/span[contains'
             '(text(), "Delete voicemail")]').click()
+        print("OK")
+        print("Check if voicebox settings are correct...", end="")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../input')
             .get_attribute('value'), "12345", "PIN is not correct")
@@ -1868,10 +2154,13 @@ class testrun(unittest.TestCase):
             '/span[contains(text(), "Delete voicemail")]').is_displayed(),
             "Option 'Delete voicemail after email notification is delivered' "
             "was not enabled")
+        print("OK")
+        print("Logout...", end="")
         Collections.logout_csc(driver)
         self.assertEqual(
             driver.current_url, os.environ['CATALYST_SERVER'] +
             "/login/subscriber/#/login", "Logout failed")
+        print("OK")
         filename = 0
 
     def tearDown(self):
@@ -1879,6 +2168,7 @@ class testrun(unittest.TestCase):
         global filename
         driver = self.driver
         if filename:
+            print("FAIL")
             driver.save_screenshot('/results/' + filename)
             filename = 0
         driver.quit()
