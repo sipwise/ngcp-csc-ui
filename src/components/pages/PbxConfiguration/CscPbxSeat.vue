@@ -77,12 +77,12 @@
                 <q-input
                     dark
                     v-model="changes.name"
-                    @keyup.enter="saveName"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasNameChanged"
-                        @click="saveName"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -99,12 +99,12 @@
                 <q-input
                     dark
                     v-model="changes.extension"
-                    @keyup.enter="saveExtension"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasExtensionChanged"
-                        @click="saveExtension"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -138,7 +138,7 @@
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasAliasNumbersChanged"
-                        @click="saveAliasNumbers"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -161,7 +161,7 @@
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasGroupsChanged"
-                        @click="saveGroups"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -183,7 +183,7 @@
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasSoundSetChanged"
-                        @click="saveSoundSet"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -335,58 +335,17 @@
                     this.$emit('expand');
                 }
             },
-            saveName() {
-                if(this.hasNameChanged) {
-                    this.$emit('save-name', {
-                        seatId: this.seat.id,
-                        seatName: this.changes.name
-                    });
-                }
-            },
             resetName() {
                 this.changes.name = this.seat.display_name;
-            },
-            saveExtension() {
-                if(this.hasExtensionChanged) {
-                    this.$emit('save-extension', {
-                        seatId: this.seat.id,
-                        seatExtension: this.changes.extension
-                    });
-                }
             },
             resetExtension() {
                 this.changes.extension = this.seat.pbx_extension;
             },
-            saveAliasNumbers() {
-                if(this.hasAliasNumbersChanged) {
-                    this.$emit('save-alias-numbers', {
-                        seatId: this.seat.id,
-                        assignedNumbers: _.difference(this.changes.aliasNumbers, this.getAliasNumberIds()),
-                        unassignedNumbers: _.difference(this.getAliasNumberIds(), this.changes.aliasNumbers)
-                    });
-                }
-            },
             resetAliasNumbers() {
                 this.changes.aliasNumbers = this.getAliasNumberIds();
             },
-            saveGroups() {
-                if(this.hasGroupsChanged) {
-                    this.$emit('save-groups', {
-                        seatId: this.seat.id,
-                        groupIds: this.changes.groups
-                    });
-                }
-            },
             resetGroups() {
                 this.changes.groups = this.getGroupIds();
-            },
-            saveSoundSet() {
-                if(this.hasSoundSetChanged) {
-                    this.$emit('save-sound-set', {
-                        seatId: this.seat.id,
-                        soundSetId: this.changes.soundSet
-                    });
-                }
             },
             resetSoundSet() {
                 this.changes.soundSet = this.getSoundSetId();
@@ -399,6 +358,40 @@
             },
             jumpToCallQueue() {
                 this.$emit('jump-to-call-queue', this.seat);
+            },
+            save(){
+                if(this.hasNameChanged) {
+                    this.$emit('save-name', {
+                        seatId: this.seat.id,
+                        seatName: this.changes.name
+                    });
+                }
+                if(this.hasExtensionChanged) {
+                    this.$emit('save-extension', {
+                        seatId: this.seat.id,
+                        seatExtension: this.changes.extension
+                    });
+                }
+                if(this.hasAliasNumbersChanged) {
+                    this.$emit('save-alias-numbers', {
+                        seatId: this.seat.id,
+                        assignedNumbers: _.difference(this.changes.aliasNumbers, this.getAliasNumberIds()),
+                        unassignedNumbers: _.difference(this.getAliasNumberIds(), this.changes.aliasNumbers)
+                    });
+                }
+                if(this.hasGroupsChanged) {
+                    this.$emit('save-groups', {
+                        seatId: this.seat.id,
+                        groupIds: this.changes.groups
+                    });
+                }
+                if(this.hasSoundSetChanged) {
+                    this.$emit('save-sound-set', {
+                        seatId: this.seat.id,
+                        soundSetId: this.changes.soundSet
+                    });
+                }
+
             }
         },
         watch: {

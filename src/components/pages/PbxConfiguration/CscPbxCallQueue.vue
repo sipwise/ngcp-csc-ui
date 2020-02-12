@@ -52,12 +52,12 @@
                     v-model="changes.max_queue_length"
                     :error="$v.changes.max_queue_length.$error"
                     @input="$v.changes.max_queue_length.$touch"
-                    @keyup.enter="saveMaxQueueLength"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasMaxQueueLengthChanged && !$v.changes.max_queue_length.$error"
-                        @click="saveMaxQueueLength"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -78,12 +78,12 @@
                     :suffix="$t('pbxConfig.seconds')"
                     :error="$v.changes.queue_wrap_up_time.$error"
                     @input="$v.changes.queue_wrap_up_time.$touch"
-                    @keyup.enter="saveQueueWrapUpTime"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasQueueWrapUpTimeChanged && !$v.changes.queue_wrap_up_time.$error"
-                        @click="saveQueueWrapUpTime"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -252,24 +252,8 @@
                     this.$emit('expand');
                 }
             },
-            saveMaxQueueLength() {
-                if(this.hasMaxQueueLengthChanged && !this.$v.changes.max_queue_length.$error) {
-                    this.$emit('save-max-queue-length', {
-                        callQueueId: this.callQueue.id,
-                        maxQueueLength: this.changes.max_queue_length
-                    });
-                }
-            },
             resetMaxQueueLength() {
                 this.changes.max_queue_length = this.getDefaultData().max_queue_length;
-            },
-            saveQueueWrapUpTime() {
-                if(this.hasQueueWrapUpTimeChanged && !this.$v.changes.queue_wrap_up_time.$error) {
-                    this.$emit('save-queue-wrap-up-time', {
-                        callQueueId: this.callQueue.id,
-                        queueWrapUpTime: this.changes.queue_wrap_up_time
-                    });
-                }
             },
             resetQueueWrapUpTime() {
                 this.changes.queue_wrap_up_time = this.getDefaultData().queue_wrap_up_time;
@@ -278,6 +262,20 @@
                 return {
                     max_queue_length: this.callQueue.max_queue_length || this.defaultMaxQueueLength,
                     queue_wrap_up_time: this.callQueue.queue_wrap_up_time || this.defaultQueueWrapUpTime
+                }
+            },
+            save(){
+                if(this.hasMaxQueueLengthChanged && !this.$v.changes.max_queue_length.$error) {
+                    this.$emit('save-max-queue-length', {
+                        callQueueId: this.callQueue.id,
+                        maxQueueLength: this.changes.max_queue_length
+                    });
+                }
+                if(this.hasQueueWrapUpTimeChanged && !this.$v.changes.queue_wrap_up_time.$error) {
+                    this.$emit('save-queue-wrap-up-time', {
+                        callQueueId: this.callQueue.id,
+                        queueWrapUpTime: this.changes.queue_wrap_up_time
+                    });
                 }
             }
         },

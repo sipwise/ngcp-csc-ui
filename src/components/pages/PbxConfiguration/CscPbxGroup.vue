@@ -69,12 +69,12 @@
                 <q-input
                     dark
                     v-model="changes.name"
-                    @keyup.enter="saveName"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasNameChanged"
-                        @click="saveName"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -91,12 +91,12 @@
                 <q-input
                     dark
                     v-model="changes.extension"
-                    @keyup.enter="saveExtension"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasExtensionChanged"
-                        @click="saveExtension"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -129,7 +129,7 @@
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasHuntPolicyChanged"
-                        @click="saveHuntPolicy"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -146,12 +146,12 @@
                 <q-input
                     dark
                     v-model="changes.huntTimeout"
-                    @keyup.enter="saveHuntTimeout"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasHuntTimeoutChanged"
-                        @click="saveHuntTimeout"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -174,7 +174,7 @@
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasAliasNumbersChanged"
-                        @click="saveAliasNumbers"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -197,7 +197,7 @@
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasSeatsChanged"
-                        @click="saveSeats"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -219,7 +219,7 @@
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasSoundSetChanged"
-                        @click="saveSoundSet"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -380,80 +380,23 @@
                     this.$emit('expand');
                 }
             },
-            saveName() {
-                if(this.hasNameChanged) {
-                    this.$emit('save-name', {
-                        groupId: this.group.id,
-                        groupName: this.changes.name
-                    });
-                }
-            },
             resetName() {
                 this.changes.name = this.group.display_name;
-            },
-            saveExtension() {
-                if(this.hasExtensionChanged) {
-                    this.$emit('save-extension', {
-                        groupId: this.group.id,
-                        groupExtension: this.changes.extension
-                    });
-                }
             },
             resetExtension() {
                 this.changes.extension = this.group.pbx_extension;
             },
-            saveHuntPolicy(){
-                if(this.hasHuntPolicyChanged) {
-                    this.$emit('save-hunt-policy', {
-                        groupId: this.group.id,
-                        groupHuntPolicy: this.changes.huntPolicy
-                    });
-                }
-            },
             resetHuntPolicy() {
                 this.changes.huntPolicy = this.group.pbx_hunt_policy;
-            },
-            saveHuntTimeout(){
-                if(this.hasHuntTimeoutChanged) {
-                    this.$emit('save-hunt-timeout', {
-                        groupId: this.group.id,
-                        groupHuntTimeout: this.changes.huntTimeout
-                    });
-                }
             },
             resetHuntTimeout() {
                 this.changes.huntTimeout = this.group.pbx_hunt_timeout;
             },
-            saveAliasNumbers() {
-                if(this.hasAliasNumbersChanged) {
-                    this.$emit('save-alias-numbers', {
-                        groupId: this.group.id,
-                        assignedNumbers: _.difference(this.changes.aliasNumbers, this.getAliasNumberIds()),
-                        unassignedNumbers: _.difference(this.getAliasNumberIds(), this.changes.aliasNumbers)
-                    });
-                }
-            },
             resetAliasNumbers() {
                 this.changes.aliasNumbers = this.getAliasNumberIds();
             },
-            saveSeats() {
-                if(this.hasSeatsChanged) {
-                    this.$emit('save-seats', {
-                        groupId: this.group.id,
-                        seatIds: this.changes.seats
-                    });
-                }
-            },
             resetSeats() {
                 this.changes.seats = this.getSeatIds();
-            },
-            saveSoundSet() {
-                if(this.hasSoundSetChanged) {
-                    this.$emit('save-sound-set', {
-                        groupId: this.group.id,
-                        soundSetId: this.changes.soundSet
-                    });
-                }
             },
             resetSoundSet() {
                 this.changes.soundSet = this.getSoundSetId();
@@ -466,6 +409,51 @@
             },
             jumpToCallQueue() {
                 this.$emit('jump-to-call-queue', this.group);
+            },
+            save(){
+                if(this.hasNameChanged) {
+                    this.$emit('save-name', {
+                        groupId: this.group.id,
+                        groupName: this.changes.name
+                    });
+                }
+                if(this.hasExtensionChanged) {
+                    this.$emit('save-extension', {
+                        groupId: this.group.id,
+                        groupExtension: this.changes.extension
+                    });
+                }
+                if(this.hasHuntPolicyChanged) {
+                    this.$emit('save-hunt-policy', {
+                        groupId: this.group.id,
+                        groupHuntPolicy: this.changes.huntPolicy
+                    });
+                }
+                if(this.hasHuntTimeoutChanged) {
+                    this.$emit('save-hunt-timeout', {
+                        groupId: this.group.id,
+                        groupHuntTimeout: this.changes.huntTimeout
+                    });
+                }
+                if(this.hasAliasNumbersChanged) {
+                    this.$emit('save-alias-numbers', {
+                        groupId: this.group.id,
+                        assignedNumbers: _.difference(this.changes.aliasNumbers, this.getAliasNumberIds()),
+                        unassignedNumbers: _.difference(this.getAliasNumberIds(), this.changes.aliasNumbers)
+                    });
+                }
+                if(this.hasSeatsChanged) {
+                    this.$emit('save-seats', {
+                        groupId: this.group.id,
+                        seatIds: this.changes.seats
+                    });
+                }
+                if(this.hasSoundSetChanged) {
+                    this.$emit('save-sound-set', {
+                        groupId: this.group.id,
+                        soundSetId: this.changes.soundSet
+                    });
+                }
             }
         },
         watch: {
