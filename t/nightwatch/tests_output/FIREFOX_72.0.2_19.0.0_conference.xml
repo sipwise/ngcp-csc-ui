@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="5">
+
+  <testsuite name="conference"
+    errors="0" failures="0" hostname="" id="" package="conference" skipped="0"
+    tests="5" time="17.73" timestamp="">
+  
+    <testcase name="1. login" classname="conference" time="8.511" assertions="2">
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="2. open conference module" classname="conference" time="0.9640" assertions="1">
+
+    
+    </testcase>
+  
+    <testcase name="3. join the conference" classname="conference" time="7.218" assertions="1">
+
+    
+    </testcase>
+  
+    <testcase name="4. interact with other participants" classname="conference" time="0.02100" assertions="1">
+
+    
+    </testcase>
+  
+    <testcase name="5. leave the conference" classname="conference" time="1.016" assertions="0">
+    </testcase>
+  
+
+  
+
+  
+  </testsuite>
+</testsuites>

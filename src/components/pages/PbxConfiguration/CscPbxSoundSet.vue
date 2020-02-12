@@ -46,12 +46,12 @@
                     v-model="changes.name"
                     :error="$v.changes.name.$error"
                     @input="$v.changes.name.$touch"
-                    @keyup.enter="saveName"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasNameChanged && !$v.changes.name.$error"
-                        @click="saveName"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -70,12 +70,12 @@
                     v-model="changes.description"
                     :error="$v.changes.description.$error"
                     @input="$v.changes.description.$touch"
-                    @keyup.enter="saveDescription"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasDescriptionChanged && !$v.changes.description.$error"
-                        @click="saveDescription"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -235,24 +235,8 @@
                     contract_default: this.soundSet.contract_default
                 }
             },
-            saveName() {
-                if(this.hasNameChanged) {
-                    this.$emit('save-name', {
-                        soundSetId: this.soundSet.id,
-                        name: this.changes.name
-                    });
-                }
-            },
             resetName() {
                 this.changes.name = this.getDefaultData().name;
-            },
-            saveDescription() {
-                if(this.hasDescriptionChanged) {
-                    this.$emit('save-description', {
-                        soundSetId: this.soundSet.id,
-                        description: this.changes.description
-                    });
-                }
             },
             resetDescription() {
                 this.changes.description = this.getDefaultData().description;
@@ -269,6 +253,20 @@
             },
             toggleLoopPlay(options) {
                 this.$emit('toggle-loop-play', options);
+            },
+            save(){
+                if(this.hasNameChanged) {
+                    this.$emit('save-name', {
+                        soundSetId: this.soundSet.id,
+                        name: this.changes.name
+                    });
+                }
+                if(this.hasDescriptionChanged) {
+                    this.$emit('save-description', {
+                        soundSetId: this.soundSet.id,
+                        description: this.changes.description
+                    });
+                }
             }
         },
         watch: {
