@@ -47,12 +47,12 @@
                 <q-input
                     dark
                     v-model="changes.stationName"
-                    @keyup.enter="saveStationName"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasStationNameChanged"
-                        @click="saveStationName"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -68,12 +68,12 @@
                 <q-input
                     dark
                     v-model="changes.identifier"
-                    @keyup.enter="saveIdentifier"
+                    @keyup.enter="save"
                 />
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasIdentifierChanged"
-                        @click="saveIdentifier"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -99,7 +99,7 @@
                 <csc-fade>
                     <csc-form-save-button
                         v-if="hasProfileChanged"
-                        @click="saveProfile"
+                        @click="save"
                     />
                 </csc-fade>
                 <csc-fade>
@@ -214,38 +214,14 @@
                     this.$emit('expand');
                 }
             },
-            saveStationName() {
-                this.$emit('save-station-name', {
-                    deviceId: this.device.id,
-                    stationName: this.changes.stationName
-                });
-            },
             resetStationName() {
                 this.changes.stationName = this.device.station_name;
-            },
-            saveIdentifier(){
-                this.$emit('save-identifier', {
-                    deviceId: this.device.id,
-                    identifier: this.changes.identifier
-                });
             },
             resetIdentifier() {
                 this.changes.identifier = this.device.identifier;
             },
-            saveProfile() {
-                this.$emit('save-profile', {
-                    deviceId: this.device.id,
-                    profileId: this.changes.profile
-                });
-            },
             resetProfile() {
                 this.changes.profile = this.device.profile_id;
-            },
-            saveKeys(keys) {
-                this.$emit('save-keys', {
-                    deviceId: this.device.id,
-                    keys: keys
-                });
             },
             selectedDeviceProfile(profileId) {
                 this.changes.profile = profileId;
@@ -255,6 +231,32 @@
                     this.$refs.listItem.closePopoverMenu();
                 }
                 this.$emit('remove');
+            },
+            saveKeys(keys) {
+                this.$emit('save-keys', {
+                    deviceId: this.device.id,
+                    keys: keys
+                });
+            },
+            save(){
+                if(this.hasStationNameChanged){
+                    this.$emit('save-station-name', {
+                        deviceId: this.device.id,
+                        stationName: this.changes.stationName
+                    });
+                }
+                if(this.hasIdentifierChanged){
+                    this.$emit('save-identifier', {
+                        deviceId: this.device.id,
+                        identifier: this.changes.identifier
+                    });
+                }
+                if(this.hasProfileChanged){
+                    this.$emit('save-profile', {
+                        deviceId: this.device.id,
+                        profileId: this.changes.profile
+                    });
+                }
             }
         },
         watch: {
