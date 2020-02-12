@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="1"
+            failures="0"
+            tests="0">
+
+  <testsuite name="conference"
+    errors="1" failures="0" hostname="" id="" package="conference" skipped="5"
+    tests="0" time="0.000" timestamp="">
+  
+
+  
+    <system-err>
+      [0;31m  Error: An error occurred while retrieving a new session: &#34;Invalid moz:firefoxOptions field pref&#34;[0m
+[0;90m       at endReadableNT (_stream_readable.js:1178:12)
+       at processTicksAndRejections (internal/process/task_queues.js:80:21)[0m
+    </system-err>
+  
+
+  
+    
+    <testcase
+      name="1. login" classname="conference">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="2. open conference module" classname="conference">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="3. join the conference" classname="conference">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="4. interact with other participants" classname="conference">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="5. leave the conference" classname="conference">
+      <skipped />
+    </testcase>
+    
+  
+  </testsuite>
+</testsuites>

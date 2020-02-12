@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="1"
+            tests="1">
+
+  <testsuite name="conference"
+    errors="0" failures="1" hostname="" id="" package="conference" skipped="4"
+    tests="1" time="9.965" timestamp="">
+  
+    <testcase name="1. login" classname="conference" time="9.965" assertions="2">
+
+      <failure message="Testing if the URL contains [0;33m&#39;user/home&#39;[0m in 5000ms - expected [0;32m&#34;contains &#39;user/home&#39;&#34;[0m but got: [0;31m&#34;http://localhost:8080/#/login&#34;[0m [0;90m(5493ms)[0m">    at DescribeInstance.&lt;anonymous&gt; (/Users/carlovenusino/Projects/ngcp-csc-ui/t/nightwatch/conference.js:17:12)
+    at processTicksAndRejections (internal/process/task_queues.js:93:5)</failure>
+
+    <failure message="    at DescribeInstance.&lt;anonymous&gt; (/Users/carlovenusino/Projects/ngcp-csc-ui/t/nightwatch/conference.js:17:12)">    at processTicksAndRejections (internal/process/task_queues.js:93:5)</failure>
+    </testcase>
+  
+
+  
+
+  
+    
+    <testcase
+      name="2. open conference module" classname="conference">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="3. join the conference" classname="conference">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="4. interact with other participants" classname="conference">
+      <skipped />
+    </testcase>
+    
+    <testcase
+      name="5. leave the conference" classname="conference">
+      <skipped />
+    </testcase>
+    
+  
+  </testsuite>
+</testsuites>
