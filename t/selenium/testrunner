@@ -55,15 +55,16 @@ RC=0
 export CATALYST_SERVER="https://${SERVER}"
 cd t/selenium
 
-#Change thread count here and in nose2 config files
-export THREADS=2
-
 if [ "${OUTPUT_TYPE:-}" = "junit" ] ; then
+  #Change thread count here and in nose2cfg/jenkinstest.cfg
+  export THREADS=2
   export JENKINS=1
   python3 testrun.py -v -c nose2cfg/jenkinstest.cfg | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
   RC="${PIPESTATUS[0]}"
 else
+  #Change thread count here and in nose2cfg/localtest.cfg
+  export THREADS=2
   python3 testrun.py -v -c nose2cfg/localtest.cfg|| RC=$?
 fi
 
