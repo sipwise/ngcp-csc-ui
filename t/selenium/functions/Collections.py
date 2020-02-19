@@ -85,8 +85,8 @@ def delete_customer(driver, name):
         By.XPATH, '//*[@id="Customer_table"]//tr[1]//td'
         '[text()="%s"]' % name)))
     Functions.move_and_click(
-        driver, '//*[@id="Customer_table"]//tr[1]', '//*[@id="Customer_table"]'
-        '//tr[1]//td//a[contains(text(), "Terminate")]')
+        driver, '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(),'
+        ' "Terminate")]')
     driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
 
 
@@ -105,8 +105,8 @@ def create_subscriber(driver, customername, domainname):
         By.XPATH, '//*[@id="Customer_table"]//tr[1]//td'
         '[text()="%s"]' % customername)))
     Functions.move_and_click(
-        driver, '//*[@id="Customer_table"]//tr[1]', '//*[@id="Customer_table"]'
-        '//tr[1]//td//a[contains(text(), "Details")]')
+        driver, '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(),'
+        ' "Details")]')
     driver.find_element_by_link_text('Expand Groups').click()
     Functions.scroll_to_element(driver, 'Subscribers')
     driver.find_element_by_link_text("Create Subscriber").click()
@@ -150,13 +150,12 @@ def delete_subscriber(driver, customername):
         By.XPATH, '//*[@id="Customer_table"]//tr[1]//td'
         '[text()="%s"]' % customername)))
     Functions.move_and_click(
-        driver, '//*[@id="Customer_table"]//tr[1]', '//*[@id="Customer_table"]'
-        '//tr[1]//td//a[contains(text(), "Details")]')
+        driver, '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(),'
+        ' "Details")]')
     driver.find_element_by_link_text('Expand Groups').click()
     Functions.scroll_to_element(driver, 'Subscribers')
     Functions.move_and_click(
-        driver, '//*[@id="subscribers_table"]//tr[1]',
-        '//*[@id="subscribers_table"]//tr[1]//td//a[contains(text(), '
+        driver, '//*[@id="subscribers_table"]//tr[1]//td//a[contains(text(), '
         '"Terminate")]')
     driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
 
@@ -191,6 +190,6 @@ def delete_domain(driver, name):
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
         By.XPATH, '//*[@id="Domain_table"]//tr[1]//td[text()="%s"]' % name)))
     Functions.move_and_click(
-        driver, '//*[@id="Domain_table"]//tr[1]', '//*[@id="Domain_table"]'
-        '//tr[1]//td//a[contains(text(), "Delete")]')
+        driver, '//*[@id="Domain_table"]//tr[1]//td//a[contains(text(),'
+        ' "Delete")]')
     driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
