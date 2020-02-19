@@ -50,5 +50,4 @@ def create_driver():
         capabilities=caps, firefox_profile=profile,
         service_log_path='/dev/null', )
     driver.implicitly_wait(10)
-    driver.set_page_load_timeout(10)
     return driver
