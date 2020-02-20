@@ -5,6 +5,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import CallBlockingModule from './call-blocking'
 import CallForwardModule from './call-forward'
+import NewCallForwardModule from './new-call-forward'
 import CallModule, {errorVisibilityTimeout} from './call'
 import ConversationsModule from './conversations'
 
@@ -39,6 +40,7 @@ export const store = new Vuex.Store({
     modules: {
         callBlocking: CallBlockingModule,
         callForward: CallForwardModule,
+        newCallForward: NewCallForwardModule,
         call: CallModule,
         conversations: ConversationsModule,
         reminder: ReminderModule,

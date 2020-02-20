@@ -209,6 +209,10 @@
             "timeChangedToast": "Reminder: Time changed to {time}",
             "recurrenceChangedToast": "Reminder: Recurrence changed to \"{recurrence}\""
         },
+        "newCallForward": {
+            "primarNumberEnabled": "All calls go to the primary number",
+            "primarNumberDisabled": "No call goes to"
+        },
         "callForward": {
             "titles": {
                 "always": "Always",
