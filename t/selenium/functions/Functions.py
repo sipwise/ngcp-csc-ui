@@ -23,16 +23,6 @@ def scroll_to_element(driver, element):
     driver.execute_script("arguments[0].scrollIntoView();", webelem)
 
 
-def move_and_click(driver, element):
-    webelement = driver.find_element_by_xpath(element)
-    hoverclick = ActionChains(driver)
-    hoverclick.move_to_element_with_offset(
-        driver.find_element_by_xpath('/html/body'), 100, 100)
-    hoverclick.move_to_element(webelement)
-    hoverclick.click()
-    hoverclick.perform()
-
-
 def click_js(driver, element):
     if element[:1] == "/":
         webelement = driver.find_element_by_xpath(element)
