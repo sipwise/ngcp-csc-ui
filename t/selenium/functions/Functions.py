@@ -29,8 +29,8 @@ def move_and_click(driver, element):
     hoverclick.move_to_element_with_offset(
         driver.find_element_by_xpath('/html/body'), 100, 100)
     hoverclick.move_to_element(webelement)
-    hoverclick.click()
     hoverclick.perform()
+    webelement.click()
 
 
 def click_js(driver, element):

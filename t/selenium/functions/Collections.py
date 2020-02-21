@@ -48,6 +48,8 @@ def logout_panel(driver):
 def create_customer(driver, name=None):
     if not name:
         name = 'customer' + str(random.randint(1, 100000)) + 'test'
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="main-nav"]//*[contains(text(),"Settings")]')))
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
@@ -71,6 +73,8 @@ def create_customer(driver, name=None):
 
 
 def delete_customer(driver, name):
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="main-nav"]//*[contains(text(),"Settings")]')))
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
@@ -91,6 +95,8 @@ def delete_customer(driver, name):
 
 
 def create_subscriber(driver, customername, domainname):
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="main-nav"]//*[contains(text(),"Settings")]')))
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
@@ -136,6 +142,8 @@ def create_subscriber(driver, customername, domainname):
 
 
 def delete_subscriber(driver, customername):
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="main-nav"]//*[contains(text(),"Settings")]')))
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Customers').click()
@@ -163,6 +171,8 @@ def delete_subscriber(driver, customername):
 def create_domain(driver, name=None):
     if not name:
         name = 'domain' + str(random.randint(1, 100000)) + 'test'
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="main-nav"]//*[contains(text(),"Settings")]')))
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Domains').click()
@@ -177,6 +187,8 @@ def create_domain(driver, name=None):
 
 
 def delete_domain(driver, name):
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, '//*[@id="main-nav"]//*[contains(text(),"Settings")]')))
     driver.find_element_by_xpath(
         '//*[@id="main-nav"]//*[contains(text(),"Settings")]').click()
     driver.find_element_by_link_text('Domains').click()
