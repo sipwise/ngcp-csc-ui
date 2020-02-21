@@ -193,3 +193,12 @@ def delete_domain(driver, name):
         driver, '//*[@id="Domain_table"]//tr[1]//td//a[contains(text(),'
         ' "Delete")]')
     driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
+
+
+def wait_for_loading_screen(driver, path):
+    time.sleep(1)
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, path)))
+    time.sleep(1)
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+        By.XPATH, path)))
