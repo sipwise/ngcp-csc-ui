@@ -96,8 +96,8 @@
         },
         methods: {
             async save() {
-                const destinationSetName = 'csc-unconditional'; // gonna be dynamic
-                const getDestinationSetByName = await this.$store.dispatch('newCallForward/getDestinationSetByName', destinationSetName);
+                const forwardGroupName = 'unconditional'; // gonna be dynamic
+                const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', forwardGroupName);
 
                 if (this.numberError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
@@ -105,22 +105,22 @@
                 else if(Number.isInteger(this.destinationIndex)){ // edit mode
                     this.$store.dispatch('newCallForward/editDestination',{
                         index: this.destinationIndex,
-                        destinationSetId: getDestinationSetByName.id,
+                        forwardGroupId: forwardGroup.id,
                         destination: this.number
                     });
                 }
                 else { // new destination
-                    let destinationSetId;
-                    if(!getDestinationSetByName){
-                        destinationSetId = await this.$store.dispatch('newCallForward/addDestinationSet', destinationSetName);
-                        await this.$store.dispatch('newCallForward/loadDestinationsets'); // keeps local data updated
+                    let forwardGroupId;
+                    if(!forwardGroup){
+                        forwardGroupId = await this.$store.dispatch('newCallForward/addForwardGroup', forwardGroupName);
+                        await this.$store.dispatch('newCallForward/loadForwardGroups'); // keeps local data updated
                     }
                     else{
-                        destinationSetId = getDestinationSetByName.id;
+                        forwardGroupId = forwardGroup.id;
                     }
 
                     this.$store.dispatch('newCallForward/addDestination', {
-                        destinationSetId: destinationSetId,
+                        forwardGroupId: forwardGroupId,
                         destination: this.number
                     });
                 }
