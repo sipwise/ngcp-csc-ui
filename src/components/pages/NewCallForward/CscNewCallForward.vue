@@ -3,113 +3,103 @@
         class="csc-simple-page"
     >
         <div
-            class="row"
+            class="csc-cf-row row"
         >
             <div
-                class="col col-xs-12 col-md-4"
+                class="col col-xs-12 col-md-4 text-right"
             >
-                {{toggleLabel}}
+                {{ toggleLabel }}
             </div>
             <div
-                class="col col-xs-12 col-md-2"
+                class="col col-xs-12 col-md-2 text-left csc-cf-self-number-cont"
             >
-                {{subscriberDisplayName}}
+                {{ primaryNumber | number }}
             </div>
 
             <div
                 class="col col-xs-12 col-md-6"
-            >
-                <q-field class="csc-cf-field-toggle">
-                    <q-toggle
-                        :value="primaryNumberEnabled"
-                        :left-label="true"
-                        @input="togglePrimaryNumber()"
-
-                    />
-                </q-field>
-            </div>
+            ></div>
         </div>
-        <div class="row">
+        <div class="csc-cf-row row">
             <div
-                class="col col-xs-12 col-md-4"
+                class="column col col-xs-12 col-md-4 items-end"
             >
-                <q-btn flat class="csc-cf-flat-btn">
-                    + {{ $t('pages.newCallForward.forwardBtnLabel') }}
-                </q-btn>
-                <q-popover
-                    ref="destinationType"
-                    anchor="center right"
+
+                <div
+                    class="csc-text-action"
+                    @click="addForward"
                 >
-                    <q-list
-                        link
-                        class="no-border"
-                    >
-                        <q-item>
-                            <q-item-main
-                                :label="this.$t('pages.newCallForward.numberLabel')"
-                                @click="showForm()"
-                            />
-                        </q-item>
-                        <q-item>
-                            <q-item-main
-                                :label="this.$t('pages.newCallForward.voiceMailLabel')"
-                                @click="addVoicemail()"
-                            />
-                        </q-item>
-                    </q-list>
-                </q-popover>
-            </div>
-        </div>
-        <div
-            class="row csc-cf-destinations-cont"
-        >
-            <div
-                class="col col-xs-12 col-md-12"
-            >
-                <csc-new-call-forward-destination
-                    v-for="(destination, index) in destinations"
-                    :key="index"
-                    :index="index"
-                    :destination="destination"
-                />
-            </div>
-        </div>
-        <div
-            class="row"
-        >
-            <div
-                class="col col-xs-12 col-md-6"
-            >
+                    <q-icon
+                        name="add"
+                        color="primary"
+                        size="24px"
+                    />
+                    {{ $t('pages.newCallForward.forwardBtnLabel') }}
 
-                <csc-new-call-forward-add-destination-form
-                    class="csc-list-form col-xs-12 col-md-4 col-lg-6"
-                    ref="addDestinationForm"
+                    <q-spinner-dots
+                        v-if="groupInCreation"
+                        color="primary"
+                        :size="24"
+                    />
+                </div>
+
+            </div>
+        </div>
+        <div
+            class="csc-cf-row row"
+            v-for="(forwardGroup, item) in forwardGroups"
+            :key="forwardGroup.id"
+        >
+            <csc-cf-group
+                :group="forwardGroup"
+            />
+        </div>
+
+        <div class="csc-cf-row row">
+            <div
+                class="column col col-xs-12 col-md-4"
+            >
+                <q-spinner-dots
+                    v-if="groupsLoading"
+                    class="csc-call-spinner"
+                    color="primary"
+                    :size="24"
                 />
             </div>
         </div>
+
     </csc-page>
 </template>
 
 
 <script>
-    import { mapState, mapGetters } from 'vuex'
     import {
+        // mapState,
+        mapGetters,
+        // mapMutations
+    } from 'vuex'
+    import {
+        QSpinnerDots,
         QField,
         QToggle,
         QBtn,
         QPopover,
         QList,
         QItem,
-        QItemMain
+        QItemMain,
+        QIcon
     } from 'quasar-framework'
     import CscPage from '../../CscPage'
     import CscNewCallForwardDestination from './CscNewCallForwardDestination'
     import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinationForm'
+    import CscCfGroup from "./CscCallForwardGroup";
     export default {
         components: {
+            CscCfGroup,
             CscPage,
             CscNewCallForwardDestination,
             CscNewCallForwardAddDestinationForm,
+            QSpinnerDots,
             QField,
             QToggle,
             QBtn,
@@ -117,23 +107,28 @@
             QList,
             QItem,
             QItemMain,
+            QIcon
         },
         data () {
-            return {};
+            return {
+                groupInCreation: false,
+                groupsLoading: false
+            };
         },
         async mounted(){
-            await this.$store.dispatch('newCallForward/loadDestinationsets');
-            const unconditionalDestSet = await this.$store.dispatch('newCallForward/getDestinationSetByName', 'csc-unconditional');
-            if(unconditionalDestSet){
-                this.$store.dispatch('newCallForward/loadDestinations', unconditionalDestSet.destinations);
-            }
+            this.groupsLoading = true;
+            await this.$store.dispatch('newCallForward/loadForwardGroups');
+            this.groupsLoading = false;
 
         },
         computed: {
-            ...mapState('newCallForward', []),
+            // ...mapState('newCallForward', [
+            //     'forwardGroups'
+            // ]),
             ...mapGetters('newCallForward', [
+                'primaryNumber',
                 'subscriberDisplayName',
-                'destinations'
+                'forwardGroups'
             ]),
             primaryNumberEnabled(){
                 return true;
@@ -143,12 +138,21 @@
             }
         },
         methods: {
+            async addForward(){
+                this.groupInCreation = true;
+                const unconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
+                if(!unconditionalFwdGroup){
+                    await this.$store.dispatch('newCallForward/addForwardGroup', 'unconditional');
+                    await this.$store.dispatch('newCallForward/loadForwardGroups');
+                }
+                this.groupInCreation = false;
+            },
             togglePrimaryNumber(){},
             showForm(){
                 this.$refs.destinationType.close();
                 this.$refs.addDestinationForm.add();
             },
-            addVoicemail(){}
+            addVoicemail(){},
         }
     }
 </script>
@@ -162,4 +166,13 @@
         margin-top 25px
     .csc-cf-field-toggle
         margin-top 0px;
+    .csc-call-spinner
+        margin-left auto
+    .csc-cf-self-number-cont
+        padding-left 30px
+        width 150px
+        white-space nowrap
+        overflow hidden
+        text-overflow ellipsis
+    
 </style>

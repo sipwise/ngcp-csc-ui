@@ -26,7 +26,9 @@
         QField,
         QInput
     } from 'quasar-framework'
-    import { isPhone } from '../../../helpers/validation'
+    import {
+        userInfoAndEmpty
+    } from '../../../helpers/validation'
     import {
         maxLength,
         required
@@ -41,7 +43,7 @@
         },
         mounted(){
             if(this.prefilled){
-                this.inputValue = this.prefilled;
+                this.inputValue = this.prefilled === " " ? "" : this.prefilled;
             }
 
         },
@@ -53,7 +55,7 @@
         },
         validations: {
             inputValue: {
-                isPhone,
+                userInfoAndEmpty,
                 maxLength: maxLength(64),
                 required
             }
@@ -75,7 +77,7 @@
                         maxLength: this.$v.inputValue.$params.maxLength.max
                     });
                 }
-                else if (!this.$v.inputValue.isPhone) {
+                else if (!this.$v.inputValue.userInfoAndEmpty) {
                     return this.$t('validationErrors.inputValidNumber');
                 }
             },
