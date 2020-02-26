@@ -6,7 +6,7 @@ import ConferenceLayout from './components/layouts/Conference'
 import DefaultLayout from './components/layouts/Default'
 import Home from './components/pages/Home'
 import Conversations from './components/pages/Conversations/Conversations'
-import NewCallForward from './components/pages/NewCallForward/NewCallForward'
+import CscNewCallForward from './components/pages/NewCallForward/CscNewCallForward'
 import CallForwardAlways from './components/pages/CallForward/Always'
 import CallForwardCompanyHours from './components/pages/CallForward/CompanyHours'
 import CallForwardAfterHours from './components/pages/CallForward/AfterHours'
@@ -48,7 +48,7 @@ export default [
             },
             {
                 path: 'new-call-forward',
-                component: NewCallForward
+                component: CscNewCallForward
             },
             {
                 path: 'call-forward/always',
