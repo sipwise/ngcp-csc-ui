@@ -16,3 +16,8 @@ export function userInfoAndEmpty(value) {
 export function customMacAddress (value) {
     return macAddressRegExp.test(value);
 }
+
+
+export function isPhone(value) {
+    return /^\+[0-9]?()[0-9](\s|\S)(\d[0-9]{9})$/.test(value);
+}
