@@ -319,6 +319,17 @@ export function addNewDestinationset() {
     });
 }
 
+export function addNewDestinationsetWithName(destinationsetName) {
+    return new Promise((resolve, reject) => {
+        Vue.http.post('api/cfdestinationsets/', { name: destinationsetName  })
+            .then((response) => {
+                resolve(_.last(_.split(response.headers.get('Location'), '/')));
+            }).catch((err) => {
+                reject(err);
+            });
+    });
+}
+
 export function addDestinationToExistingGroup(options) {
     return new Promise((resolve, reject)=> {
         Promise.resolve().then(() => {
