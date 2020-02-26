@@ -211,7 +211,12 @@
         },
         "newCallForward": {
             "primarNumberEnabled": "All calls go to the primary number",
-            "primarNumberDisabled": "No call goes to"
+            "primarNumberDisabled": "No call goes to",
+            "forwardBtnLabel": "Forward",
+            "numberLabel": "Number",
+            "voiceMailLabel": "Voicemail",
+            "destinationLabel": "Then after {timeout} seconds forwarded to {destination}"
+
         },
         "callForward": {
             "titles": {
