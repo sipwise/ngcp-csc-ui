@@ -216,7 +216,9 @@
             "numberLabel": "Number",
             "voiceMailLabel": "Voicemail",
             "destinationTimeoutLabel": "Then after ",
-            "destinationNumberLabel": "seconds forwarded to"
+            "destinationNumberLabel": "seconds forwarded to",
+            "addDestinationLabel": "Destination",
+            "allCallsForwardedTo": "All calls forwarded to"
         },
         "callForward": {
             "titles": {

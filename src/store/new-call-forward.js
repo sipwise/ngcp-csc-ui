@@ -4,6 +4,7 @@ import Vue from 'vue'
 // import _ from 'lodash';
 // import { RequestState } from './common'
 // import { i18n } from '../i18n';
+
 import {
     // getSourcesets,
     getDestinationsets,
@@ -31,13 +32,30 @@ import {
     // updateOwnPhoneTimeout
 } from '../api/call-forward';
 
+const ForwardGroup = {
+    unconditional: 'unconditional'
+};
+
 export default {
     namespaced: true,
     state: {
         destinationsets:[],
         destinations: [],
+        forwardGroups: [],
     },
     getters: {
+        primaryNumber(state, getters, rootState, rootGetters) {
+            let subscriber = rootGetters['user/getSubscriber'];
+
+            console.log(subscriber);
+
+            if(subscriber !== null) {
+                return subscriber.primary_number;
+            }
+            else {
+                return null;
+            }
+        },
         subscriberDisplayName(state, getters, rootState, rootGetters) {
             return rootGetters['user/getUsername'];
         },
@@ -68,6 +86,16 @@ export default {
         },
         loadDestinations(state, destinations){
             state.destinations = destinations;
+        },
+        addForward(state) {
+            let group = state.forwardGroups.find((group)=>{
+                return group.id === ForwardGroup.unconditional;
+            });
+            if(group === undefined) {
+                state.forwardGroups.push({
+                    id: ForwardGroup.unconditional
+                });
+            }
         }
     },
     actions: {
