@@ -41,3 +41,13 @@ def create_driver():
         service_log_path='/dev/null', )
     driver.implicitly_wait(10)
     return driver
+
+
+def wait_for_loading_screen(driver):
+    driver.implicitly_wait(1)
+    for i in range(1, 5):
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
+    driver.implicitly_wait(10)
