@@ -1,3 +1,29 @@
+ngcp-csc-ui (8.3.1.0+0~mr8.3.1.0) unstable; urgency=medium
+
+  [ Guillem Jover ]
+  * [ac5c696] TT#71950 Fix typos
+
+  [ Nico Schedel ]
+  * [8fa7c22] TT#70901 selenium: add multithreading to selenium tests
+  * [b1905c5] TT#70901 selenium: add log messages to selenium tests
+  * [0ba12d7] TT#70901 selenium: improve call forward tests
+  * [2988212] TT#70901 selenium: properly seperate threading settings
+  * [32d608b] TT#70901 selenium: reset cursor when launching move_and_click
+  * [e194844] TT#70901 selenium: remove page load timeout
+  * [a017a40] TT#70901 selenium: fix crashes when creating/deleting elements
+
+  [ Carlo Venusino ]
+  * [7e81564] TT#75407 Setup new call forward implementation
+  * [7ae7e49] TT#39942 PBXConfig: Saving a field after editing several fields result in only the last one saved
+  * [2082909] TT#75750 As a Customer, I want to see the subscriber's primary number
+  * [8a1adda] TT#75404 CF: As a Customer, I want to add phone numbers in order to forward calls to these numbers
+
+  [ Hans-Peter Herzog ]
+  * [24b0207] TT#76800 CF: Design UX flow for time based call forwarding
+  * [ad8cda2] TT#76800 CF: Office hours UX
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Mar 2020 11:14:41 +0100
+
 ngcp-csc-ui (8.3.0.0+0~mr8.3.0.0) unstable; urgency=medium
 
   [ Nico Schedel ]
