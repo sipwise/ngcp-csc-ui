@@ -510,6 +510,10 @@ class testrun(unittest.TestCase):
         Functions.wait_for_loading_screen(driver)
         print("OK")
         print("Enable 'Ring own phone'...", end="")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@class="q-field-content col-xs-12'
+            ' col-sm"]/div[@tabindex="0"]/div[@class="q-option-inner '
+            'relative-position"]')))
         Functions.click_js(
             driver,
             '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]'
@@ -797,6 +801,10 @@ class testrun(unittest.TestCase):
         Functions.wait_for_loading_screen(driver)
         print("OK")
         print("Enable 'Ring own phone'...", end="")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@class="q-field-content col-xs-12'
+            ' col-sm"]/div[@tabindex="0"]/div[@class="q-option-inner '
+            'relative-position"]')))
         Functions.click_js(
             driver,
             '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]'
@@ -1110,6 +1118,10 @@ class testrun(unittest.TestCase):
         Functions.wait_for_loading_screen(driver)
         print("OK")
         print("Enable 'Ring own phone'...", end="")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
+            By.XPATH, '//*[@id="q-app"]//div[@class="q-field-content col-xs-12'
+            ' col-sm"]/div[@tabindex="0"]/div[@class="q-option-inner '
+            'relative-position"]')))
         Functions.click_js(
             driver,
             '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]'
