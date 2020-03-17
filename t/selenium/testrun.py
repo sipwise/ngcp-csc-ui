@@ -68,9 +68,9 @@ class testrun(unittest.TestCase):
         ).send_keys('user')
         driver.find_element_by_xpath(
             '//*[@id="csc-login"]//div//button').click()
-        self.assertTrue(driver.find_element_by_xpath(
-            '//div[contains(@class, "q-alert-container")]')
-            .is_displayed(), "Error Message was not shown")
+        self.assertTrue(len(driver.find_elements_by_xpath(
+            '//div[contains(@class, "q-alert-container")]')) > 0,
+            "Error Message was not shown")
         print("OK")
         print("Try to log in with valid credentials...", end="")
         Functions.fill_element(
@@ -105,9 +105,9 @@ class testrun(unittest.TestCase):
         Functions.click_js(
             driver, '/html/body/div[@class="q-popover animate-scale"]//div'
             '[@class="q-collapsible-sub-item relative-position"]/div[2]')
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
-            '(text(), "Authentification de l’abonné")]').is_displayed(),
+            '(text(), "Authentification de l’abonné")]')) > 0,
             'Language was not changed to France')
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
@@ -118,9 +118,9 @@ class testrun(unittest.TestCase):
         Functions.click_js(
             driver, '/html/body/div[@class="q-popover animate-scale"]//div'
             '[@class="q-collapsible-sub-item relative-position"]/div[3]')
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
-            '(text(), "Accedi come utente")]').is_displayed(),
+            '(text(), "Accedi come utente")]')) > 0,
             'Language was not changed to Italian')
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
@@ -131,9 +131,9 @@ class testrun(unittest.TestCase):
         Functions.click_js(
             driver, '/html/body/div[@class="q-popover animate-scale"]//div'
             '[@class="q-collapsible-sub-item relative-position"]/div[4]')
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
-            '(text(), "Iniciar sesión de suscriptor")]').is_displayed(),
+            '(text(), "Iniciar sesión de suscriptor")]')) > 0,
             'Language was not changed to Spanish')
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
@@ -144,9 +144,9 @@ class testrun(unittest.TestCase):
         Functions.click_js(
             driver, '/html/body/div[@class="q-popover animate-scale"]//div'
             '[@class="q-collapsible-sub-item relative-position"]/div[5]')
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
-            '(text(), "Subscriber Log-in")]').is_displayed(),
+            '(text(), "Subscriber Log-in")]')) > 0,
             'Language was not changed to German')
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
@@ -157,9 +157,9 @@ class testrun(unittest.TestCase):
         Functions.click_js(
             driver, '/html/body/div[@class="q-popover animate-scale"]//div'
             '[@class="q-collapsible-sub-item relative-position"]/div[1]')
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="csc-login"]//div[@class="q-card-title"][contains'
-            '(text(), "Subscriber Sign In")]').is_displayed(),
+            '(text(), "Subscriber Sign In")]')) > 0,
             'Language was not changed back to English')
         print("OK")
         filename = 0
@@ -221,9 +221,9 @@ class testrun(unittest.TestCase):
             '"]/button[2]').click()
         print("OK")
         print("Check if all settings were properly changed...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, '
-            '"q-toggle")]/div[contains(@class, "active")]').is_displayed(),
+            '"q-toggle")]/div[contains(@class, "active")]')) > 0,
             "Option 'All anonymous incoming calls are blocked' was not "
             "enabled")
         self.assertEqual("12345", driver.find_element_by_xpath(
@@ -271,9 +271,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//div[contains(@class, "csc-dialog-actions")]/button[contains'
             '(@class, "text-negative")]').click()
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[@class="csc-list-message"]'
-            '[contains(text(), "No numbers found")]').is_displayed(),
+            '[contains(text(), "No numbers found")]')) > 0,
             "Number has not been deleted")
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
             By.XPATH, '//*[@id="main-menu"]//div[@class="q-item-label"]'
@@ -353,9 +353,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//div[contains(@class, "csc-dialog-actions")]/button[contains'
             '(@class, "text-negative")]').click()
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[@class="csc-list-message"]'
-            '[contains(text(), "No numbers found")]').is_displayed(),
+            '[contains(text(), "No numbers found")]')) > 0,
             "Number has not been deleted")
         driver.implicitly_wait(2)
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
@@ -385,9 +385,9 @@ class testrun(unittest.TestCase):
             '"q-toggle")]')))
         print("OK")
         print("Check if 'Hide number to callee' was enabled...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "q-toggle")]//span'
-            '[contains(text(), "Your number is hidden")]').is_displayed(),
+            '[contains(text(), "Your number is hidden")]')) > 0,
             "Option 'hide number' was not enabled")
         print("OK")
         print("Logout...", end="")
@@ -560,10 +560,10 @@ class testrun(unittest.TestCase):
             '[@class="add-destination-form"]/button')))
         print("OK")
         print("Check if all values are correct...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
             ')]/div[@class="q-option-inner relative-position '
-            'active"]').is_displayed(), "Option 'Ring own Phone' was not "
+            'active"]')) > 0, "Option 'Ring own Phone' was not "
             "enabled")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
@@ -620,9 +620,9 @@ class testrun(unittest.TestCase):
             '(text(), "firsttestsourceset")]').click()
         print("OK")
         print("Check if source in source set is correct...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "firsttestsource")]'
-            ).is_displayed(), "Source was not found")
+            )) > 0, "Source was not found")
         print("OK")
         print("Add a new source...", end="")
         driver.find_element_by_xpath(
@@ -643,9 +643,9 @@ class testrun(unittest.TestCase):
             '[@class="add-destination-form"]/button')))
         print("OK")
         print("Check if second source is created properly...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'
-            ).is_displayed(), "Second Source was not found")
+            )) > 0, "Second Source was not found")
         print("OK")
         print("Delete second source...", end="")
         driver.find_element_by_xpath(
@@ -676,9 +676,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "firsttestsource")]/../'
             'div[2]').click()
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '/html/body//div[@class="q-alert row no-wrap shadow-2 '
-            'bg-negative"]').is_displayed(), "Error Message 'Removing the "
+            'bg-negative"]')) > 0, "Error Message 'Removing the "
             "last source entry is not allowed' did not appear")
         print("OK")
         print("Add number to 'When im online'...", end="")
@@ -924,10 +924,10 @@ class testrun(unittest.TestCase):
             '[@class="add-destination-form"]/button')))
         print("OK")
         print("Check if all values are correct...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
             ')]/div[@class="q-option-inner relative-position '
-            'active"]').is_displayed(), "Option 'Ring own Phone' was not "
+            'active"]')) > 0, "Option 'Ring own Phone' was not "
             "enabled")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
@@ -984,9 +984,9 @@ class testrun(unittest.TestCase):
             '(text(), "secondtestsourceset")]').click()
         print("OK")
         print("Check if source in source set is correct...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "secondtestsource")]'
-            ).is_displayed(), "Source was not found")
+            )) > 0, "Source was not found")
         print("OK")
         print("Add a new source...", end="")
         driver.find_element_by_xpath(
@@ -1007,9 +1007,9 @@ class testrun(unittest.TestCase):
             '[@class="add-destination-form"]/button')))
         print("OK")
         print("Check if second source is created properly...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'
-            ).is_displayed(), "Second Source was not found")
+            )) > 0, "Second Source was not found")
         print("OK")
         print("Delete second source...", end="")
         driver.find_element_by_xpath(
@@ -1040,9 +1040,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "secondtestsource")]/../'
             'div[2]').click()
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '/html/body//div[@class="q-alert row no-wrap shadow-2 '
-            'bg-negative"]').is_displayed(), "Error Message 'Removing the "
+            'bg-negative"]')) > 0, "Error Message 'Removing the "
             "last source entry is not allowed' did not appear")
         print("OK")
         print("Add number to 'When im online'...", end="")
@@ -1321,10 +1321,10 @@ class testrun(unittest.TestCase):
             '[@class="add-destination-form"]/button')))
         print("OK")
         print("Check if all values are correct...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle"'
             ')]/div[@class="q-option-inner relative-position '
-            'active"]').is_displayed(), "Option 'Ring own Phone' was not "
+            'active"]')) > 0, "Option 'Ring own Phone' was not "
             "enabled")
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span'
@@ -1381,9 +1381,9 @@ class testrun(unittest.TestCase):
             '(text(), "thirdtestsourceset")]').click()
         print("OK")
         print("Check if source in source set is correct...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "thirdtestsource")]'
-            ).is_displayed(), "Source was not found")
+            )) > 0, "Source was not found")
         print("OK")
         print("Add a new source...", end="")
         driver.find_element_by_xpath(
@@ -1404,9 +1404,9 @@ class testrun(unittest.TestCase):
             '[@class="add-destination-form"]/button')))
         print("OK")
         print("Check if second source is created properly...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'
-            ).is_displayed(), "Second Source was not found")
+            )) > 0, "Second Source was not found")
         print("OK")
         print("Delete second source...", end="")
         driver.find_element_by_xpath(
@@ -1437,9 +1437,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "thirdtestsource")]/../'
             'div[2]').click()
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '/html/body//div[@class="q-alert row no-wrap shadow-2 '
-            'bg-negative"]').is_displayed(), "Error Message 'Removing the "
+            'bg-negative"]')) > 0, "Error Message 'Removing the "
             "last source entry is not allowed' did not appear")
         print("OK")
         print("Add number to 'When im online'...", end="")
@@ -1694,10 +1694,10 @@ class testrun(unittest.TestCase):
             '//*[@id="q-app"]//div[contains'
             '(@class, "q-input-target justify-start")]').text,
             "Time is not correct")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[@tabindex="0"]/div'
             '[contains(@class, "active")]/../'
-            'span[contains(text(), "Always")]').is_displayed(),
+            'span[contains(text(), "Always")]')) > 0,
             "Option 'Always' was not selected")
         print("OK")
         print("Logout...", end="")
@@ -1730,9 +1730,9 @@ class testrun(unittest.TestCase):
         Functions.click_js(
             driver, '/html/body/div[@class="q-popover animate-scale"]//div'
             '[@class="q-collapsible-sub-item relative-position"]/div[2]')
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
-            '[contains(text(), "Rappel")]').is_displayed(),
+            '[contains(text(), "Rappel")]')) > 0,
             'Language was not changed to France')
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
@@ -1743,9 +1743,9 @@ class testrun(unittest.TestCase):
         Functions.click_js(
             driver, '/html/body/div[@class="q-popover animate-scale"]//div'
             '[@class="q-collapsible-sub-item relative-position"]/div[3]')
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
-            '[contains(text(), "Promemoria")]').is_displayed(),
+            '[contains(text(), "Promemoria")]')) > 0,
             'Language was not changed to Italian')
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
@@ -1756,9 +1756,9 @@ class testrun(unittest.TestCase):
         Functions.click_js(
             driver, '/html/body/div[@class="q-popover animate-scale"]//div'
             '[@class="q-collapsible-sub-item relative-position"]/div[4]')
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
-            '[contains(text(), "Recordatorio")]').is_displayed(),
+            '[contains(text(), "Recordatorio")]')) > 0,
             'Language was not changed to Spanish')
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
@@ -1769,9 +1769,9 @@ class testrun(unittest.TestCase):
         Functions.click_js(
             driver, '/html/body/div[@class="q-popover animate-scale"]//div'
             '[@class="q-collapsible-sub-item relative-position"]/div[5]')
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
-            '[contains(text(), "Erinnerung")]').is_displayed(),
+            '[contains(text(), "Erinnerung")]')) > 0,
             'Language was not changed to German')
         driver.find_element_by_xpath(
             '//*[@id="csc-header-toolbar"]/button').click()
@@ -1782,9 +1782,9 @@ class testrun(unittest.TestCase):
         Functions.click_js(
             driver, '/html/body/div[@class="q-popover animate-scale"]//div'
             '[@class="q-collapsible-sub-item relative-position"]/div[1]')
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="main-menu"]//div[@class="q-item-label"]'
-            '[contains(text(), "Reminder")]').is_displayed(),
+            '[contains(text(), "Reminder")]')) > 0,
             'Language was not changed back to English')
         print("OK")
         print("Change user password...", end="")
@@ -1945,9 +1945,9 @@ class testrun(unittest.TestCase):
             '"text-negative")]').click()
         print("OK")
         print("Check if speed dials were deleted...", end="")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "No speed dials found")]')
-            .is_displayed(), "Speed dials was not deleted")
+            ) > 0, "Speed dials was not deleted")
         print("OK")
         print("Logout...", end="")
         Collections.logout_csc(driver)
@@ -1981,9 +1981,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../'
             'input').send_keys("invalid")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[@class="q-field-error col"'
-            ']').is_displayed, "Invalid PIN was not detected")
+            ']')) > 0, "Invalid PIN was not detected")
         print("OK")
         print("Enter valid voicebox pin...", end="")
         driver.find_element_by_xpath(
@@ -2000,9 +2000,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../'
             'input').send_keys("invalid")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
                 '//*[@id="q-app"]//div[@class="q-field-error col"'
-                ']').is_displayed, "Invalid Email was not detected")
+                ']')) > 0, "Invalid Email was not detected")
         print("OK")
         print("Enter valid voicebox email...", end="")
         driver.find_element_by_xpath(
@@ -2027,13 +2027,13 @@ class testrun(unittest.TestCase):
         self.assertEqual(driver.find_element_by_xpath(
             '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../input')
             .get_attribute('value'), "test@email.com", "Email is not correct")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-toggle-enabled")]'
-            '/span[contains(text(), "Attach voicemail")]').is_displayed(),
+            '/span[contains(text(), "Attach voicemail")]')) > 0,
             "Option 'Attach voicemail to email notification' was not enabled")
-        self.assertTrue(driver.find_element_by_xpath(
+        self.assertTrue(len(driver.find_elements_by_xpath(
             '//*[@id="q-app"]//div[contains(@class, "csc-toggle-enabled")]'
-            '/span[contains(text(), "Delete voicemail")]').is_displayed(),
+            '/span[contains(text(), "Delete voicemail")]')) > 0,
             "Option 'Delete voicemail after email notification is delivered' "
             "was not enabled")
         print("OK")
