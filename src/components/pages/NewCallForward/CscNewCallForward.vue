@@ -74,9 +74,7 @@
 
 <script>
     import {
-        // mapState,
         mapGetters,
-        // mapMutations
     } from 'vuex'
     import {
         QSpinnerDots,
@@ -122,9 +120,6 @@
 
         },
         computed: {
-            // ...mapState('newCallForward', [
-            //     'forwardGroups'
-            // ]),
             ...mapGetters('newCallForward', [
                 'primaryNumber',
                 'subscriberDisplayName',
@@ -174,5 +169,5 @@
         white-space nowrap
         overflow hidden
         text-overflow ellipsis
-    
+
 </style>

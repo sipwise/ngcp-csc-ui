@@ -17,6 +17,7 @@
                 :destination="destination"
                 :index="index"
                 :groupId="group.id"
+                :groupName="group.name"
             />
         </div>
 
@@ -174,8 +175,6 @@
         text-align right
     .csc-cf-destination-value
         text-align center
-    .csc-cf-destination-actions
-        text-align left
     .csc-cf-destination-add-destination
         padding-left 25px
         width 250px

@@ -219,7 +219,9 @@
             "destinationNumberLabel": "seconds forwarded to",
             "destinationLabel": "Destination",
             "addDestinationLabel": "Add destination",
-            "allCallsForwardedTo": "All calls forwarded to"
+            "allCallsForwardedTo": "All calls forwarded to",
+            "cancelDialogTitle": "Delete from {groupName} forwarding",
+            "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding"
         },
         "callForward": {
             "titles": {

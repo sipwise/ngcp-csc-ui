@@ -1,5 +1,8 @@
 <template>
-		<div class="row csc-cf-destination-cont">
+		<div
+			class="row csc-cf-destination-cont"
+			:class="removed"
+		>
 			<div class="col col-xs-12 col-md-4 text-right">
 				{{ $t('pages.newCallForward.destinationTimeoutLabel') }}
 				<span class='csc-cf-timeout'>
@@ -23,7 +26,7 @@
 				</span>
 				{{ $t('pages.newCallForward.destinationNumberLabel') }}
 			</div>
-			<div class="col text-left csc-cf-dest-number-cont">
+			<div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
 
 				<div class='csc-cf-destination'>
 					{{ !this.destinationNumber || this.destinationNumber.length < 2
@@ -43,8 +46,20 @@
 					</q-popover>
 				</div>
 			</div>
-			<div class="col col-xs-12 col-md-5 ">
-				<!-- TODO add remove btn -->
+			<div class="col col-xs-12 col-md-5 csc-cf-destination-actions">
+				<q-icon
+					name="delete"
+					color="negative"
+					size="24px"
+					@click="showConfirmDialog"
+				/>
+				<csc-confirm-dialog
+					ref="confirmDialog"
+					title-icon="delete"
+					:title="$t('pages.newCallForward.cancelDialogTitle', {groupName: this.groupName})"
+					:message="$t('pages.newCallForward.cancelDialogText', {groupName: this.groupName, destination: this.destination.simple_destination})"
+					@confirm="deleteDestination"
+				/>
 			</div>
 	</div>
 
@@ -52,8 +67,6 @@
 
 <script>
 	import {
-		// QField,
-		// QToggle,
 		QIcon,
 		QBtn,
 		QPopover,
@@ -62,7 +75,7 @@
 		QItem,
 		QItemMain
 	} from 'quasar-framework'
-	// import { mapGetters } from 'vuex'
+	import CscConfirmDialog from "../../CscConfirmationDialog";
 	import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinationForm'
     export default {
         name: 'csc-new-call-forward-destination',
@@ -74,10 +87,12 @@
 			QList,
 			QItem,
 			QItemMain,
+			CscConfirmDialog,
 			CscNewCallForwardAddDestinationForm
 		},
         props: [
 			'groupId',
+			'groupName',
             'destination',
 			'index'
         ],
@@ -88,7 +103,13 @@
 			return {
 				destinationTimeout: 0,
 				destinationNumber: null,
-				destinationIndex: null
+				destinationIndex: null,
+				isRemoved: false
+			}
+		},
+		computed: {
+			removed(){
+				return this.isRemoved ? "csc-cf-removed-destination" : "";
 			}
 		},
         methods: {
@@ -106,6 +127,19 @@
 					timeout: this.destinationTimeout,
 					forwardGroupId: this.groupId
 				});
+			},
+			showConfirmDialog(){
+				this.$refs.confirmDialog.open();
+			},
+			deleteDestination(){
+				this.isRemoved = true;
+				setTimeout(async ()=>{
+					await this.$store.dispatch('newCallForward/removeDestination', {
+						destination: this.destination,
+						forwardGroupId: this.groupId
+					});
+					await this.$store.dispatch('newCallForward/loadForwardGroups');
+				}, 1200);
 			}
 		}
     }
@@ -130,7 +164,11 @@
 		padding 0 20px 0 20px
 	.csc-cf-dest-number-cont
 		padding-left 30px
-
-
-
+	.csc-cf-destination-actions
+		text-align left
+		cursor pointer
+	.csc-cf-removed-destination
+		visibility hidden
+		opacity 0
+		transition visibility 0s 1s, opacity 1s linear
 </style>

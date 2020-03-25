@@ -86,15 +86,9 @@ export default {
             destination.timeout =  data.timeout;
             Vue.set(group.destinations, data.index, destination)
         },
-        // loadDestinationsets(state, destinationsets){
-        //     state.destinationsets = destinationsets;
-        // },
         loadForwardGroups(state, forwardGroups){
             state.forwardGroups = forwardGroups;
         },
-        // loadDestinations(state, destinations){
-        //     state.destinations = destinations;
-        // },
     },
     actions: {
         async loadForwardGroups(context) {
@@ -106,9 +100,6 @@ export default {
                 console.log(err)
             }
         },
-        // loadDestinations(context, destinations){
-        //     context.commit('loadDestinations', destinations);
-        // },
         async addForwardGroup(context, name) {
             try{
                 const destination = {
@@ -152,8 +143,25 @@ export default {
                     id: data.forwardGroupId,
                     data: [...group.destinations, destination]
                 });
+            }
+            catch(err){
+                console.log(err);
+            }
+        },
+        async removeDestination(context, data){
+            try{
 
-                // context.commit('addDestination', group.id, destination);
+                let group = context.state.forwardGroups.find((group)=>{
+                    return group.id === data.forwardGroupId;
+                });
+
+                group.destinations = group.destinations.filter(($destination) => {
+                    return $destination.destination !== data.destination.destination;
+                });
+                await addDestinationToDestinationset({
+                    id: group.id,
+                    data: group.destinations
+                });
             }
             catch(err){
                 console.log(err);
