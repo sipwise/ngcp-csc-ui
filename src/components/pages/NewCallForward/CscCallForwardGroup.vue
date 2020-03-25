@@ -8,7 +8,6 @@
         >
             {{ group.title }}
         </div>
-
         <div
             v-for="(destination, index) in group.destinations"
             :key="genKey()"
@@ -17,9 +16,9 @@
                 :destination="destination"
                 :index="index"
                 :groupId="group.id"
+                :groupName="group.name"
             />
         </div>
-
         <div class="row csc-cf-destination-cont">
                 <div class="col col-xs-12 col-md-4 text-right"></div>
                 <div
@@ -98,7 +97,6 @@
     </div>
 </template>
 
-
 <script>
 
     import {
@@ -174,8 +172,6 @@
         text-align right
     .csc-cf-destination-value
         text-align center
-    .csc-cf-destination-actions
-        text-align left
     .csc-cf-destination-add-destination
         padding-left 25px
         width 250px

@@ -12,7 +12,7 @@
         </div>
         <q-btn
             slot="actions"
-            icon="exit_to_app"
+            :icon="titleIcon"
             color="primary"
             flat
             @click="confirm"
