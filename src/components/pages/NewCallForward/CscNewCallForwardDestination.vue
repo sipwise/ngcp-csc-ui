@@ -4,8 +4,11 @@
 			:class="removed"
 		>
 			<div class="col col-xs-12 col-md-4 text-right">
-				{{ $t('pages.newCallForward.destinationTimeoutLabel') }}
-				<span class='csc-cf-timeout'>
+				{{ this.allCallsFwd  ? '' : $t('pages.newCallForward.destinationTimeoutLabel') }}
+				<span
+					v-if="!this.allCallsFwd"
+					class='csc-cf-timeout'
+				>
 					{{this.destinationTimeout}}
 					<q-popover
 						ref="timeoutForm"
@@ -18,13 +21,13 @@
 							label
 							label-always
 							:step="5"
-							:min="0"
+							:min="5"
 							:max="300"
 							snap
 						/>
 					</q-popover>
 				</span>
-				{{ $t('pages.newCallForward.destinationNumberLabel') }}
+				{{ this.allCallsFwd ?  $t('pages.newCallForward.allCallsForwardedTo') : $t('pages.newCallForward.destinationNumberLabel') }}
 			</div>
 			<div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
 
@@ -42,6 +45,7 @@
 							ref="addDestinationForm"
 							:index="this.destinationIndex"
 							:destination="this.destinationNumber"
+							:groupName="this.groupName"
 						/>
 					</q-popover>
 				</div>
@@ -52,6 +56,11 @@
 					color="negative"
 					size="24px"
 					@click="showConfirmDialog"
+				/>
+				<q-spinner-dots
+					v-if="showDots"
+					color="primary"
+					:size="24"
 				/>
 				<csc-confirm-dialog
 					ref="confirmDialog"
@@ -67,13 +76,17 @@
 
 <script>
 	import {
+		mapGetters,
+	} from 'vuex'
+	import {
 		QIcon,
 		QBtn,
 		QPopover,
 		QSlider,
 		QList,
 		QItem,
-		QItemMain
+		QItemMain,
+		QSpinnerDots
 	} from 'quasar-framework'
 	import CscConfirmDialog from "../../CscConfirmationDialog";
 	import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinationForm'
@@ -87,10 +100,12 @@
 			QList,
 			QItem,
 			QItemMain,
+			QSpinnerDots,
 			CscConfirmDialog,
 			CscNewCallForwardAddDestinationForm
 		},
         props: [
+			'allCallsFwd',
 			'groupId',
 			'groupName',
             'destination',
@@ -104,17 +119,20 @@
 				destinationTimeout: 0,
 				destinationNumber: null,
 				destinationIndex: null,
-				isRemoved: false
+				showDots: false
 			}
 		},
 		computed: {
+			...mapGetters('newCallForward', [
+				'getOwnPhoneTimeout'
+			]),
 			removed(){
-				return this.isRemoved ? "csc-cf-removed-destination" : "";
+				return this.showDots ? "csc-cf-removed-destination" : "";
 			}
 		},
         methods: {
 			updateValues(destination){
-				this.destinationTimeout = destination.timeout;
+				this.destinationTimeout = this.index === 0 && this.groupName === 'csc-timeout' ? this.getOwnPhoneTimeout : destination.timeout;
 				this.destinationNumber = destination.simple_destination;
 				this.destinationIndex = this.index;
 			},
@@ -131,15 +149,13 @@
 			showConfirmDialog(){
 				this.$refs.confirmDialog.open();
 			},
-			deleteDestination(){
-				this.isRemoved = true;
-				setTimeout(async ()=>{
-					await this.$store.dispatch('newCallForward/removeDestination', {
-						destination: this.destination,
-						forwardGroupId: this.groupId
-					});
-					await this.$store.dispatch('newCallForward/loadForwardGroups');
-				}, 1200);
+			async deleteDestination(){
+				this.showDots = true;
+				await this.$store.dispatch('newCallForward/removeDestination', {
+					destination: this.destination,
+					forwardGroupId: this.groupId
+				});
+				await this.$store.dispatch('newCallForward/loadForwardGroups');
 			}
 		}
     }
