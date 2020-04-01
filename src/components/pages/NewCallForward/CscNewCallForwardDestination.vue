@@ -148,7 +148,11 @@
 		},
         methods: {
 			updateValues(destination){
-				this.destinationTimeout = this.index === 0 && this.groupName === 'csc-timeout' ? this.getOwnPhoneTimeout : destination.timeout;
+				this.destinationTimeout = 	this.index === 0
+											&& this.groupName === 'csc-timeout'
+											&& isNaN(this.getOwnPhoneTimeout) === false
+												? this.getOwnPhoneTimeout
+												: destination.timeout;
 				this.destinationNumber = destination.simple_destination;
 				this.destinationIndex = this.index;
 			},

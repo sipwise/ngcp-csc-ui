@@ -99,11 +99,10 @@
             async save() {
                 const forwardGroupName = this.groupName;
                 const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', forwardGroupName);
-
                 if (this.numberError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
                 }
-                else if(Number.isInteger(this.destinationIndex)){ // edit mode
+                else if(Number.isInteger(this.destinationIndex) && Number.isInteger(forwardGroup.id)){ // edit mode
                     this.$store.dispatch('newCallForward/editDestination',{
                         index: this.destinationIndex,
                         forwardGroupId: forwardGroup.id,
@@ -112,20 +111,22 @@
                 }
                 else { // new destination
                     let forwardGroupId;
-                    if(!forwardGroup){
-                        forwardGroupId = await this.$store.dispatch('newCallForward/addForwardGroup', forwardGroupName);
+                    if(forwardGroup.id.toString().includes('temp-')){ // unexisting group
+                        forwardGroupId = await this.$store.dispatch('newCallForward/addForwardGroup', {
+                            name: forwardGroupName,
+                            destination: this.number
+                        });
                         await this.$store.dispatch('newCallForward/loadForwardGroups'); // keeps local data updated
                     }
                     else{
                         forwardGroupId = forwardGroup.id;
+                        this.$store.dispatch('newCallForward/addDestination', {
+                            forwardGroupId: forwardGroupId,
+                            destination: this.number
+                        });
+                        await this.$store.dispatch('newCallForward/loadForwardGroups');
                     }
-
-                    this.$store.dispatch('newCallForward/addDestination', {
-                        forwardGroupId: forwardGroupId,
-                        destination: this.number
-                    });
                 }
-
             },
             cancel() {
                 this.number = '';

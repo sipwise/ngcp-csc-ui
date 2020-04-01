@@ -25,8 +25,7 @@ export default {
     namespaced: true,
     state: {
         mappings: [],
-        forwardGroups: [],
-        showSwitcher: true
+        forwardGroups: []
     },
     getters: {
         primaryNumber(state, getters, rootState, rootGetters) {
@@ -48,8 +47,8 @@ export default {
         getOwnPhoneTimeout(state){
             return parseInt(state.mappings.cft_ringtimeout);
         },
-        showSwitcher(state){
-            return state.showSwitcher;
+        tempDestinations(state){
+            return state.tempDestinations;
         }
     },
     mutations: {
@@ -81,16 +80,6 @@ export default {
         },
         loadForwardGroups(state, forwardGroups){
             state.forwardGroups = forwardGroups;
-        },
-        setShowSwitcher(state){
-            const forwardGroups = state.forwardGroups;
-            const timeoutGroup = forwardGroups.find(($forwardGroup) => {
-                return $forwardGroup.name === 'csc-timeout';
-            });
-            const unconditionalGroup = forwardGroups.find(($forwardGroup) => {
-                return $forwardGroup.name === 'csc-unconditional';
-            });
-            state.showSwitcher = (timeoutGroup && timeoutGroup.destinations.length > 0) || (unconditionalGroup && unconditionalGroup.destinations.length > 0);
         }
     },
     actions: {
@@ -107,7 +96,6 @@ export default {
             try{
                 const forwardGroups = await getDestinationsets(localStorage.getItem('subscriberId'));
                 context.commit('loadForwardGroups', forwardGroups);
-                context.commit('setShowSwitcher');
                 return forwardGroups;
             }
             catch(err){
@@ -117,7 +105,7 @@ export default {
         async editMapping(context, data){
             try{
                 const subscriberId = localStorage.getItem('subscriberId');
-                const groupMappingId = ForwardGroup[data.name].mapping;
+                const groupMappingId = ForwardGroup[data.name] ? ForwardGroup[data.name].mapping : await context.dispatch('getMappingIdByGroupName', data.name);
                 const allMappings = await getMappings(subscriberId);
                 let groupMappings = allMappings[groupMappingId];
 
@@ -140,19 +128,32 @@ export default {
             }
 
         },
-        async addForwardGroup(context, name) {
+        createEmptyForwardGroup(context, groupName){
+            const destination = {
+                "announcement_id": null,
+                "simple_destination": " ",
+                "destination": " ",
+                "priority": 1,
+                "timeout": 5
+            };
+            context.state.tempForwardGroups.push({
+                name: groupName,
+                destinations:[destination]
+            });
+        },
+        async addForwardGroup(context, data) {
             try{
-                const newForwardGroupId = await addNewDestinationsetWithName(ForwardGroup[name].name);
+                const newForwardGroupId = await addNewDestinationsetWithName(ForwardGroup[data.name] ? ForwardGroup[data.name].name : data.name);
                 const destination = {
                     "announcement_id": null,
-                    "simple_destination": " ",
-                    "destination": " ",
+                    "simple_destination": data.destination || " ",
+                    "destination": data.destination || " ",
                     "priority": 1,
                     "timeout": 5
                 };
 
                 await context.dispatch('editMapping', {
-                    name: name,
+                    name: data.name,
                     groupId: newForwardGroupId
                 });
 
@@ -163,7 +164,7 @@ export default {
 
                 // setting cft_ringtimeout in case it is
                 // not set while creating timeout group
-                if(name === 'timeout' && !context.getters.getOwnPhoneTimeout){
+                if((data.name === 'timeout' || data.name === 'csc-timeout') && (!context.getters.getOwnPhoneTimeout || isNaN(context.getters.getOwnPhoneTimeout))){
                     await context.dispatch('editRingTimeout', 5);
                 }
 
@@ -196,10 +197,23 @@ export default {
             });
             return forwardGroups.length > 0 ? forwardGroups[0]  : null;
         },
+        addTempDestination(context, groupName){
+            context.state.forwardGroups.push({
+                id: "temp-" + ForwardGroup[groupName].name,
+                name: ForwardGroup[groupName].name,
+                destinations: [{
+                    "announcement_id": null,
+                    "simple_destination": " ",
+                    "destination": " ",
+                    "priority": 1,
+                    "timeout": 5
+                }]
+            });
+        },
         async addDestination(context, data){
             try{
                 let group = context.state.forwardGroups.find((group)=>{
-                    return group.id === data.forwardGroupId;
+                    return group.id === data.forwardGroupId || group.id.toString() === data.forwardGroupId;
                 });
                 const destination = {
                     "announcement_id": null,
@@ -312,13 +326,17 @@ export default {
                 let timeoutGroup = await context.dispatch('getForwardGroupByName', 'timeout');
 
                 if(!unconditionalGroup){
-                    await context.dispatch('addForwardGroup', 'unconditional');
+                    await context.dispatch('addForwardGroup', {
+                        name: 'unconditional'
+                    });
                     await context.dispatch('loadMappings');
                     await context.dispatch('loadForwardGroups');
                     unconditionalGroup = await context.dispatch('getForwardGroupByName', 'unconditional');
                 }
                 if(!timeoutGroup){
-                    await context.dispatch('addForwardGroup', 'timeout');
+                    await context.dispatch('addForwardGroup', {
+                        name: 'timeout'
+                    });
                     await context.dispatch('loadMappings');
                     await context.dispatch('loadForwardGroups');
                     timeoutGroup = await context.dispatch('getForwardGroupByName', 'timeout');
@@ -342,6 +360,45 @@ export default {
                 }
                 await context.dispatch('loadMappings');
                 await context.dispatch('loadForwardGroups');
+            }
+            catch(err){
+                console.log(err)
+            }
+        },
+        getMappingIdByGroupName(context, groupName){
+            let mappingId;
+            for(let key in ForwardGroup){
+                if(ForwardGroup[key].name == groupName){
+                    mappingId = ForwardGroup[key].mapping;
+                    break;
+                }
+            }
+            return mappingId;
+        },
+        async isGroupEnabled(context, groupName){
+            const mappingId =  await context.dispatch('getMappingIdByGroupName', groupName);
+            return mappingId
+                    && context.state.mappings[mappingId]
+                    && context.state.mappings[mappingId][0] // IMPROVE remove hardcoded [0]
+                        ? context.state.mappings[mappingId][0].enabled
+                        : true;
+        },
+        async enableGroup(context, data){
+            try{
+                if(!data.id.toString().includes('temp-')){
+                    const subscriberId = localStorage.getItem('subscriberId');
+                    const mappingId = await context.dispatch('getMappingIdByGroupName', data.groupName);
+                    let groupMappings = context.state.mappings[mappingId];
+                    groupMappings[0].enabled = data.enabled; // IMPROVE remove hardcoded [0]
+
+                    await addNewMapping({
+                        mappings: groupMappings,
+                        group: mappingId,
+                        subscriberId: subscriberId
+                    });
+                    context.dispatch('loadMappings');
+                }
+
             }
             catch(err){
                 console.log(err)
