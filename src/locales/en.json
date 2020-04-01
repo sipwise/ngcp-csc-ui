@@ -212,7 +212,7 @@
         },
         "newCallForward": {
             "primarNumberEnabled": "All calls go to the primary number",
-            "primarNumberDisabled": "No call goes to",
+            "primarNumberDisabled": "No call goes to primary number",
             "forwardBtnLabel": "Add forwarding",
             "numberLabel": "Number",
             "voiceMailLabel": "Voicemail",
