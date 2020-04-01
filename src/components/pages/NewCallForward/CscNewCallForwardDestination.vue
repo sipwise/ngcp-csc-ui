@@ -4,8 +4,11 @@
 			:class="removed"
 		>
 			<div class="col col-xs-12 col-md-4 text-right">
-				{{ $t('pages.newCallForward.destinationTimeoutLabel') }}
-				<span class='csc-cf-timeout'>
+				{{ this.allCallsFwd  ? '' : $t('pages.newCallForward.destinationTimeoutLabel') }}
+				<span
+					v-if="!this.allCallsFwd"
+					class='csc-cf-timeout'
+				>
 					{{this.destinationTimeout}}
 					<q-popover
 						ref="timeoutForm"
@@ -18,13 +21,13 @@
 							label
 							label-always
 							:step="5"
-							:min="0"
+							:min="5"
 							:max="300"
 							snap
 						/>
 					</q-popover>
 				</span>
-				{{ $t('pages.newCallForward.destinationNumberLabel') }}
+				{{ this.allCallsFwd ?  $t('pages.newCallForward.allCallsForwardedTo') : $t('pages.newCallForward.destinationNumberLabel') }}
 			</div>
 			<div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
 
@@ -42,6 +45,7 @@
 							ref="addDestinationForm"
 							:index="this.destinationIndex"
 							:destination="this.destinationNumber"
+							:groupName="this.groupName"
 						/>
 					</q-popover>
 				</div>
@@ -67,6 +71,9 @@
 
 <script>
 	import {
+		mapGetters,
+	} from 'vuex'
+	import {
 		QIcon,
 		QBtn,
 		QPopover,
@@ -91,6 +98,7 @@
 			CscNewCallForwardAddDestinationForm
 		},
         props: [
+			'allCallsFwd',
 			'groupId',
 			'groupName',
             'destination',
@@ -108,13 +116,16 @@
 			}
 		},
 		computed: {
+			...mapGetters('newCallForward', [
+				'getOwnPhoneTimeout'
+			]),
 			removed(){
 				return this.isRemoved ? "csc-cf-removed-destination" : "";
 			}
 		},
         methods: {
 			updateValues(destination){
-				this.destinationTimeout = destination.timeout;
+				this.destinationTimeout = this.index === 0 && this.groupName === 'csc-timeout' ? this.getOwnPhoneTimeout : destination.timeout;
 				this.destinationNumber = destination.simple_destination;
 				this.destinationIndex = this.index;
 			},
