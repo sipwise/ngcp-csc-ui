@@ -50,7 +50,6 @@
 						anchor="top right"
 						class="csc-cf-number-form"
 						v-bind:class="{ 'csc-cf-popover-hide': toggleNumberForm }"
-						v-if=""
 						@open="showNumberForm()"
 					>
 						<csc-new-call-forward-add-destination-form
@@ -148,7 +147,11 @@
 		},
         methods: {
 			updateValues(destination){
-				this.destinationTimeout = this.index === 0 && this.groupName === 'csc-timeout' ? this.getOwnPhoneTimeout : destination.timeout;
+				this.destinationTimeout = 	this.index === 0
+											&& this.groupName === 'csc-timeout'
+											&& isNaN(this.getOwnPhoneTimeout) === false
+												? this.getOwnPhoneTimeout
+												: destination.timeout;
 				this.destinationNumber = destination.simple_destination;
 				this.destinationIndex = this.index;
 			},
