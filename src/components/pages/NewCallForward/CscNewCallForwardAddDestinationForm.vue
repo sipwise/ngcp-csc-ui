@@ -78,6 +78,7 @@
             'index',
             'disable',
             'loading',
+            'groupName'
         ],
         validations: {
             number: {
@@ -96,7 +97,7 @@
         },
         methods: {
             async save() {
-                const forwardGroupName = 'unconditional'; // gonna be dynamic
+                const forwardGroupName = this.groupName;
                 const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', forwardGroupName);
 
                 if (this.numberError || this.saveDisabled) {

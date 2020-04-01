@@ -212,7 +212,7 @@
         },
         "newCallForward": {
             "primarNumberEnabled": "All calls go to the primary number",
-            "primarNumberDisabled": "No call goes to",
+            "primarNumberDisabled": "No call goes to primary number",
             "forwardBtnLabel": "Add forwarding",
             "numberLabel": "Number",
             "voiceMailLabel": "Voicemail",
@@ -222,7 +222,8 @@
             "addDestinationLabel": "Add destination",
             "allCallsForwardedTo": "All calls forwarded to",
             "cancelDialogTitle": "Delete from {groupName} forwarding",
-            "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding"
+            "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding",
+            "uncoditionalLabel": "Unconditional"
         },
         "callForward": {
             "titles": {

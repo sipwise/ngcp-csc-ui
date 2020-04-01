@@ -18,16 +18,23 @@
 
             <div
                 class="col col-xs-12 col-md-6"
-            ></div>
+
+            >
+                <q-toggle
+                    v-if="showSwitcher"
+                    v-model="toggleDefaultNumber"
+                    @change="toggleChange" />
+
+            </div>
         </div>
         <div class="csc-cf-row row">
             <div
                 class="column col col-xs-12 col-md-4 items-end"
             >
 
+
                 <div
                     class="csc-text-action"
-                    @click="addForward"
                 >
                     <q-icon
                         name="add"
@@ -41,7 +48,20 @@
                         color="primary"
                         :size="24"
                     />
+
+                    <q-popover
+                        ref="destsetTypeForm"
+                        anchor="top right"
+                        @close="addForwardGroup()"
+
+                    >
+                        <csc-new-call-forward-destinationset-type-select
+                            ref="destsetTypeForm"
+                        />
+                    </q-popover>
                 </div>
+
+
 
             </div>
         </div>
@@ -51,6 +71,7 @@
             :key="forwardGroup.id"
         >
             <csc-cf-group
+                v-if="!groupInCreation"
                 :group="forwardGroup"
             />
         </div>
@@ -90,6 +111,7 @@
     import CscPage from '../../CscPage'
     import CscNewCallForwardDestination from './CscNewCallForwardDestination'
     import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinationForm'
+    import CscNewCallForwardDestinationsetTypeSelect from './CscNewCallForwardDestinationsetTypeSelect'
     import CscCfGroup from "./CscCallForwardGroup";
     export default {
         components: {
@@ -97,6 +119,7 @@
             CscPage,
             CscNewCallForwardDestination,
             CscNewCallForwardAddDestinationForm,
+            CscNewCallForwardDestinationsetTypeSelect,
             QSpinnerDots,
             QField,
             QToggle,
@@ -110,12 +133,22 @@
         data () {
             return {
                 groupInCreation: false,
-                groupsLoading: false
+                groupsLoading: false,
+                toggleDefaultNumber: true
             };
         },
         async mounted(){
             this.groupsLoading = true;
-            await this.$store.dispatch('newCallForward/loadForwardGroups');
+            try{
+                await this.$store.dispatch('newCallForward/loadMappings');
+                await this.$store.dispatch('newCallForward/loadForwardGroups');
+                let unconditionalGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
+                this.toggleDefaultNumber = !unconditionalGroup || unconditionalGroup.destinations.length < 1;
+            }
+            catch(err){
+                console.log(err)
+            }
+
             this.groupsLoading = false;
 
         },
@@ -123,23 +156,34 @@
             ...mapGetters('newCallForward', [
                 'primaryNumber',
                 'subscriberDisplayName',
-                'forwardGroups'
+                'forwardGroups',
+                'showSwitcher'
             ]),
             primaryNumberEnabled(){
                 return true;
             },
             toggleLabel(){
-                return `${this.$t('pages.newCallForward.primarNumberEnabled')}`;
+                return this.toggleDefaultNumber ? `${this.$t('pages.newCallForward.primarNumberEnabled')}` : `${this.$t('pages.newCallForward.primarNumberDisabled')}`;
             }
         },
         methods: {
-            async addForward(){
+            async addForwardGroup(){
                 this.groupInCreation = true;
-                const unconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
-                if(!unconditionalFwdGroup){
-                    await this.$store.dispatch('newCallForward/addForwardGroup', 'unconditional');
-                    await this.$store.dispatch('newCallForward/loadForwardGroups');
+                if(this.toggleDefaultNumber){
+                    const timeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'timeout');
+                    if(!timeoutFwdGroup){
+                        await this.$store.dispatch('newCallForward/addForwardGroup', 'timeout');
+                        await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    }
                 }
+                else{
+                    const unconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
+                    if(!unconditionalFwdGroup){
+                        await this.$store.dispatch('newCallForward/addForwardGroup', 'unconditional');
+                        await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    }
+                }
+
                 this.groupInCreation = false;
             },
             togglePrimaryNumber(){},
@@ -147,7 +191,12 @@
                 this.$refs.destinationType.close();
                 this.$refs.addDestinationForm.add();
             },
-            addVoicemail(){},
+            async toggleChange(){
+                this.groupInCreation = true;
+                await this.$store.dispatch('newCallForward/forwardAllCalls', !this.toggleDefaultNumber);
+                this.groupInCreation = false;
+            },
+            addVoicemail(){}
         }
     }
 </script>
