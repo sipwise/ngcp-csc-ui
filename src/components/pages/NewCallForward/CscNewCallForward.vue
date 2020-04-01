@@ -21,18 +21,15 @@
 
             >
                 <q-toggle
-                    v-if="showSwitcher"
+                    v-if="forwardGroups.length > 0"
                     v-model="toggleDefaultNumber"
                     @change="toggleChange" />
-
             </div>
         </div>
         <div class="csc-cf-row row">
             <div
                 class="column col col-xs-12 col-md-4 items-end"
             >
-
-
                 <div
                     class="csc-text-action"
                 >
@@ -75,7 +72,6 @@
                 :group="forwardGroup"
             />
         </div>
-
         <div class="csc-cf-row row">
             <div
                 class="column col col-xs-12 col-md-4"
@@ -156,8 +152,7 @@
             ...mapGetters('newCallForward', [
                 'primaryNumber',
                 'subscriberDisplayName',
-                'forwardGroups',
-                'showSwitcher'
+                'forwardGroups'
             ]),
             primaryNumberEnabled(){
                 return true;
@@ -172,21 +167,22 @@
                 if(this.toggleDefaultNumber){
                     const timeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'timeout');
                     if(!timeoutFwdGroup){
-                        await this.$store.dispatch('newCallForward/addForwardGroup', 'timeout');
-                        await this.$store.dispatch('newCallForward/loadForwardGroups');
+                        //await this.$store.dispatch('newCallForward/addForwardGroup', 'timeout');
+                        await this.$store.dispatch('newCallForward/addTempDestination','timeout' );
+                        //await this.$store.dispatch('newCallForward/loadForwardGroups');
                     }
                 }
                 else{
                     const unconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
                     if(!unconditionalFwdGroup){
-                        await this.$store.dispatch('newCallForward/addForwardGroup', 'unconditional');
-                        await this.$store.dispatch('newCallForward/loadForwardGroups');
+                        //await this.$store.dispatch('newCallForward/addForwardGroup', 'unconditional');
+                        await this.$store.dispatch('newCallForward/addTempDestination','unconditional' );
+                        //await this.$store.dispatch('newCallForward/loadForwardGroups');
                     }
                 }
 
                 this.groupInCreation = false;
             },
-            togglePrimaryNumber(){},
             showForm(){
                 this.$refs.destinationType.close();
                 this.$refs.addDestinationForm.add();

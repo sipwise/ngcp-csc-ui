@@ -42,6 +42,9 @@
 </template>
 
 <script>
+    import {
+        mapGetters,
+    } from 'vuex'
     import CscNewCallForwardInput from './CscNewCallForwardInput'
     import CscSpinner from '../../CscSpinner'
     import {
@@ -91,6 +94,9 @@
             }
         },
         computed: {
+            ...mapGetters('newCallForward', [
+                'destinationInCreation'
+            ]),
             saveDisabled() {
                 return this.numberError|| this.disable || this.loading;
             }
@@ -99,33 +105,34 @@
             async save() {
                 const forwardGroupName = this.groupName;
                 const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', forwardGroupName);
-
                 if (this.numberError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
                 }
-                else if(Number.isInteger(this.destinationIndex)){ // edit mode
-                    this.$store.dispatch('newCallForward/editDestination',{
+                else if(Number.isInteger(this.destinationIndex) && Number.isInteger(forwardGroup.id)){ // edit mode
+                    await this.$store.dispatch('newCallForward/editDestination',{
                         index: this.destinationIndex,
                         forwardGroupId: forwardGroup.id,
                         destination: this.number
                     });
                 }
                 else { // new destination
-                    let forwardGroupId;
-                    if(!forwardGroup){
-                        forwardGroupId = await this.$store.dispatch('newCallForward/addForwardGroup', forwardGroupName);
-                        await this.$store.dispatch('newCallForward/loadForwardGroups'); // keeps local data updated
+                    if(forwardGroup.id.toString().includes('temp-')){ // unexisting group
+                        forwardGroup.destinations[0].simple_destination = this.number; // optimistic UI update :)
+                        await this.$store.dispatch('newCallForward/addForwardGroup', {
+                            name: forwardGroupName,
+                            destination: this.number
+                        });
                     }
-                    else{
-                        forwardGroupId = forwardGroup.id;
+                    else{ // existing group
+                        await this.$store.dispatch('newCallForward/setDestinationInCreation', true);
+                        await this.$store.dispatch('newCallForward/addDestination', {
+                            forwardGroupId: forwardGroup.id,
+                            destination: this.number
+                        });
                     }
-
-                    this.$store.dispatch('newCallForward/addDestination', {
-                        forwardGroupId: forwardGroupId,
-                        destination: this.number
-                    });
+                    await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    await this.$store.dispatch('newCallForward/setDestinationInCreation', false);
                 }
-
             },
             cancel() {
                 this.number = '';
