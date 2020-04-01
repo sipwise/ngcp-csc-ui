@@ -88,7 +88,13 @@ export function getDestinationsets(id) {
                 return Promise.resolve(result);
             }
         }).then((result) => {
-            resolve(getJsonBody(result.body)._embedded['ngcp:cfdestinationsets']);
+            if(getJsonBody(result.body)._embedded){
+                resolve(getJsonBody(result.body)._embedded['ngcp:cfdestinationsets']);
+            }
+            else{
+                resolve([]);
+            }
+
         }).catch((err) => {
             reject(err);
         });
