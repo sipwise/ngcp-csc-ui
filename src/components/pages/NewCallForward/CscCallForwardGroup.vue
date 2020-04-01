@@ -1,6 +1,7 @@
 <template>
     <div
         class="csc-cf-group"
+        v-if="group.destinations.length > 0"
     >
         <div
             v-if="group.id !== 'unconditional'"
@@ -8,18 +9,22 @@
         >
             {{ group.title }}
         </div>
+
         <div
             v-for="(destination, index) in group.destinations"
             :key="genKey()"
         >
             <csc-new-call-forward-destination
-                :destination="destination"
+                :destination="getDestination(index)"
                 :index="index"
                 :groupId="group.id"
                 :groupName="group.name"
+                :allCallsFwd="group.name == 'csc-timeout' && index === 0"
             />
         </div>
-        <div class="row csc-cf-destination-cont">
+        <div
+            class="row csc-cf-destination-cont"
+        >
                 <div class="col col-xs-12 col-md-4 text-right"></div>
                 <div
                     class="col col-xs-12 col-md-2 text-left"
@@ -47,58 +52,13 @@
                 </div>
                 <div class="col col-xs-12 col-md-6 "></div>
         </div>
-
-        <!-- <div
-            class="row"
-        >
-            <div
-                class="csc-cf-destination-label col col-4"
-            >
-                {{ $t('pages.newCallForward.allCallsForwardedTo') }}
-            </div>
-            <div
-                class="csc-cf-destination-value col col-2"
-            >
-                <span
-                    class="csc-text-action"
-                >
-                    {{ $t('pages.newCallForward.addDestinationLabel') }}
-                    <q-popover
-                        ref="groupMenu"
-                        :disable="true"
-                    >
-                        <q-list
-                            link
-                            no-border
-                        >
-                            <q-item
-                            >
-                                <q-item-side
-                                    icon="number"
-                                />
-                                <q-item-main>
-                                    Number
-                                </q-item-main>
-                            </q-item>
-                        </q-list>
-                    </q-popover>
-                </span>
-            </div>
-            <div
-                class="csc-cf-destination-actions col col-6"
-            >
-                <q-icon
-                    name="delete"
-                    color="negative"
-                    size="24px"
-                />
-            </div>
-        </div> -->
     </div>
 </template>
 
 <script>
-
+    import {
+        mapGetters,
+    } from 'vuex'
     import {
         QSpinnerDots,
         QIcon,
@@ -132,6 +92,9 @@
             };
         },
         computed: {
+            ...mapGetters('newCallForward', [
+                'getOwnPhoneTimeout'
+            ]),
             showAddDestBtn(){
                 const destinations = this.group.destinations;
                 for(let dest of destinations){
@@ -157,6 +120,16 @@
                 await this.$store.dispatch('newCallForward/loadForwardGroups');
                 this.destinationInCreation = false;
 
+            },
+            getDestination(index){
+                let destination = {...this.group.destinations[index]}
+                if(index === 0){
+                    destination.timeout = this.getOwnPhoneTimeout;
+                }
+                else {
+                    destination.timeout = this.group.destinations[index-1].timeout;
+                }
+                return destination;
             }
         }
     }
