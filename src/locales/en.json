@@ -190,7 +190,8 @@
             "to": "to",
             "from": "from",
             "call": "Call",
-            "callForwarded": "Call forwarded"
+            "callForwarded": "Call forwarded",
+            "callDuration": "Duration"
         },
         "reminder": {
             "toggleEnabled": "Reminder is enabled",
