@@ -23,6 +23,9 @@
                 </span>
             </q-item-tile>
             <q-item-tile sublabel>
+                {{ $t('pages.conversations.callDuration') }}: {{ call.duration }}
+            </q-item-tile>
+            <q-item-tile sublabel>
                 {{ call.start_time | smartTime }}
             </q-item-tile>
             <q-item-tile sublabel>
