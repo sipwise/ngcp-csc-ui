@@ -222,7 +222,8 @@
             "addDestinationLabel": "Add destination",
             "allCallsForwardedTo": "All calls forwarded to",
             "cancelDialogTitle": "Delete from {groupName} forwarding",
-            "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding"
+            "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding",
+            "timeoutGroupTitle" : "Else"
         },
         "callForward": {
             "titles": {
