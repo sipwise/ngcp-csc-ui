@@ -3,16 +3,20 @@
         class="csc-cf-group"
         v-if="group.destinations.length > 0"
     >
-
-    <!-- <csc-object-spinner
-    /> -->
         <div
-            v-if="group.id !== 'unconditional'"
-            class="csc-cf-group-title"
+            class="row csc-cf-destination-cont"
         >
-            {{ group.title }}
+                <div class="col col-xs-12 col-md-4 text-right csc-cf-group-title">
+                    {{ groupTitle }}
+                </div>
+                <div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
+                    <q-toggle
+                        v-model="isEnabled"
+                        @change="toggleGroupChange"
+                    />
+                </div>
+                <div class="col col-xs-12 col-md-5 "></div>
         </div>
-
         <div
             v-for="(destination, index) in group.destinations"
             :key="genKey()"
@@ -23,6 +27,8 @@
                 :groupId="group.id"
                 :groupName="group.name"
                 :allCallsFwd="group.name == 'csc-unconditional' && index === 0"
+                :class="{ 'cf-destination-disabled': !isEnabled }"
+
             />
         </div>
         <div
@@ -32,6 +38,7 @@
                 <div
                     class="col col-xs-12 col-md-2 text-left"
                     v-if="showAddDestBtn"
+                    :class="{ 'cf-destination-disabled': !isEnabled }"
                 >
                     <div
                         class='csc-cf-destination-add-destination'
@@ -64,6 +71,7 @@
     } from 'vuex'
     import {
         QSpinnerDots,
+        QToggle,
         QIcon,
         QPopover,
         QList,
@@ -81,6 +89,7 @@
         ],
         components: {
             QSpinnerDots,
+            QToggle,
             QIcon,
             QPopover,
             QList,
@@ -92,8 +101,19 @@
         },
         data () {
             return {
-                destinationInCreation: false
+                destinationInCreation: false,
+                toggleGroup: true,
+                isEnabled: true
             };
+        },
+        async mounted(){
+            try{
+                const isGroupEnabled =  await this.$store.dispatch('newCallForward/isGroupEnabled', this.group.name);
+                this.isEnabled = isGroupEnabled;
+            }
+            catch(err){
+                console.log(err)
+            }
         },
         computed: {
             ...mapGetters('newCallForward', [
@@ -108,6 +128,9 @@
                 }
                 return true;
 
+            },
+            groupTitle(){
+                return ["csc-unconditional", "csc-timeout"].includes(this.group.name) ? `${this.$t('pages.newCallForward.timeoutGroupTitle')}` : "";
             }
         },
         methods: {
@@ -134,6 +157,12 @@
                     destination.timeout = this.group.destinations[index-1].timeout;
                 }
                 return destination;
+            },
+            toggleGroupChange(){
+                this.$store.dispatch('newCallForward/enableGroup', {
+                    groupName: this.group.name,
+                    enabled: this.isEnabled
+                });
             }
         }
     }
@@ -143,6 +172,10 @@
     @import '../../../themes/app.common.styl'
     .csc-cf-group
         width 100%
+    .csc-cf-group-cont
+        position relative
+    .csc-cf-group-title
+        font-weight bold
     .csc-cf-group-title
         text-align right
     .csc-cf-destination-label
@@ -157,4 +190,16 @@
         text-overflow ellipsis
         color $primary
         cursor pointer
+    .cf-destination-disabled
+        color $cf-disabled-label
+        .csc-cf-timeout,
+        .csc-cf-destination
+            color $cf-disabled-link
+        .csc-cf-destination-actions
+            .q-icon
+                color $cf-disabled-btn !important
+        .csc-cf-destination-add-destination
+            color $cf-disabled-link
+            .q-icon
+                color $cf-disabled-link !important
 </style>

@@ -140,6 +140,7 @@ export default {
             }
 
         },
+
         async addForwardGroup(context, name) {
             try{
                 const newForwardGroupId = await addNewDestinationsetWithName(ForwardGroup[name].name);
@@ -342,6 +343,38 @@ export default {
                 }
                 await context.dispatch('loadMappings');
                 await context.dispatch('loadForwardGroups');
+            }
+            catch(err){
+                console.log(err)
+            }
+        },
+        getMappingIdByGroupName(context, groupName){
+            let mappingId;
+            for(let key in ForwardGroup){
+                if(ForwardGroup[key].name == groupName){
+                    mappingId = ForwardGroup[key].mapping;
+                    break;
+                }
+            }
+            return mappingId;
+        },
+        async isGroupEnabled(context, groupName){
+            const mappingId =  await context.dispatch('getMappingIdByGroupName', groupName);
+            return context.state.mappings[mappingId][0].enabled; // IMPROVE remove hardcoded [0]
+        },
+        async enableGroup(context, data){
+            try{
+                const subscriberId = localStorage.getItem('subscriberId');
+                const mappingId = await context.dispatch('getMappingIdByGroupName', data.groupName);
+                let groupMappings = context.state.mappings[mappingId];
+                groupMappings[0].enabled = data.enabled; // IMPROVE remove hardcoded [0]
+
+                await addNewMapping({
+                    mappings: groupMappings,
+                    group: mappingId,
+                    subscriberId: subscriberId
+                });
+                context.dispatch('loadMappings');
             }
             catch(err){
                 console.log(err)
