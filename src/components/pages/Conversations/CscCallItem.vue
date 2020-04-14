@@ -37,7 +37,7 @@
                 <span
                     class="csc-entity-subtitle"
                 >
-                    {{ call.customer_cost | wholeCurrency }}
+                    {{ call.total_customer_cost | wholeCurrency }}
                 </span>
                 <span
                     v-if="call.currency.length > 0"
