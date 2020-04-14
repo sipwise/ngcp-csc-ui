@@ -1,3 +1,10 @@
+ngcp-csc-ui (7.5.3.3+0~mr7.5.3.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [0a2ad42] TT#78467 use total_customer_cost to include VAT
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Apr 2020 14:31:57 +0200
+
 ngcp-csc-ui (7.5.3.2+0~mr7.5.3.2) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
