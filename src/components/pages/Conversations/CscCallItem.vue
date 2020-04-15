@@ -37,7 +37,7 @@
                 <span
                     class="csc-entity-subtitle"
                 >
-                    {{ call.total_customer_cost | wholeCurrency }}
+                    {{ totalCustomerCostRounded | wholeCurrency }}
                 </span>
                 <span
                     v-if="call.currency.length > 0"
@@ -166,6 +166,14 @@
                 else {
                     return this.call.caller;
                 }
+            },
+            totalCustomerCostRounded() {
+                const formatter = new Intl.NumberFormat('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
+
+                return formatter.format(this.call.total_customer_cost);
             },
             numberDialBack() {
                 if (_.isObject(this.call.relatedCall)) {
