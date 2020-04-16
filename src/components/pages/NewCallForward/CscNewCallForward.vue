@@ -48,7 +48,7 @@
 
                     <q-popover
                         ref="destsetTypeForm"
-                        anchor="top right"
+                        class="cf-popover-bottom"
                         @close="addForwardGroup()"
 
                     >
@@ -56,9 +56,9 @@
                             ref="destsetTypeForm"
                         />
                     </q-popover>
+
+
                 </div>
-
-
 
             </div>
         </div>
@@ -214,5 +214,8 @@
         white-space nowrap
         overflow hidden
         text-overflow ellipsis
+    .cf-popover-bottom
+        min-width 150px
+        margin-left 5px
 
 </style>

@@ -1,13 +1,13 @@
 <template>
 		<div
 			class="row csc-cf-destination-cont"
-			:class="removed"
+			v-bind:class="{ 'csc-cf-removed-destination': removeInProgress }"
 		>
 			<div class="col col-xs-12 col-md-4 text-right">
 				{{ this.allCallsFwd  ? '' : $t('pages.newCallForward.destinationTimeoutLabel') }}
 				<span
 					v-if="!this.allCallsFwd"
-					class='csc-cf-timeout'
+					class='csc-cf-timeout csc-cf-destination-link'
 				>
 					{{this.destinationTimeout}}
 					<q-popover
@@ -27,29 +27,40 @@
 						/>
 					</q-popover>
 				</span>
-				{{ this.allCallsFwd ?  $t('pages.newCallForward.allCallsForwardedTo') : $t('pages.newCallForward.destinationNumberLabel') }}
+				{{ this.allCallsFwd
+					? $t('pages.newCallForward.allCallsForwardedTo')
+					: isVoiceMail()
+						? $t('pages.newCallForward.destinationVoicemailLabel')
+						: $t('pages.newCallForward.destinationNumberLabel')
+				}}
 			</div>
 			<div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
 
-				<div class='csc-cf-destination'>
+				<div
+					v-bind:class="{ 'csc-cf-destination-link': !isVoiceMail() }"
+					class='csc-cf-destination'
+				>
 					{{ !this.destinationNumber || this.destinationNumber.length < 2
 							? $t('pages.newCallForward.destinationLabel')
 							: this.destinationNumber}}
 					<q-popover
 						ref="destTypeForm"
-						anchor="top right"
+						class="csc-cf-dest-popover-bottom"
+						v-if="!isVoiceMail()"
+						v-bind:class="{ 'csc-cf-popover-hide': disableDestType }"
 						@open="showDestTypeForm()"
-						@close="showNumberFormPopover()"
+						@close="showNext()"
 					>
 						<csc-new-call-forward-destination-type-form
 							ref="selectDestinationType"
 						/>
 					</q-popover>
+
 					<q-popover
 						ref="numberForm"
-						anchor="top right"
-						class="csc-cf-number-form"
-						v-bind:class="{ 'csc-cf-popover-hide': toggleNumberForm }"
+						class="csc-cf-number-form csc-cf-dest-popover-bottom"
+						v-if="!isVoiceMail()"
+						v-bind:class="{ 'csc-cf-popover-hide': disableNumberPopover }"
 						@open="showNumberForm()"
 					>
 						<csc-new-call-forward-add-destination-form
@@ -69,17 +80,12 @@
 					size="24px"
 					@click="showConfirmDialog"
 				/>
-				<q-spinner-dots
-					v-if="showDots"
-					color="primary"
-					:size="24"
-				/>
 				<csc-confirm-dialog
 					ref="confirmDialog"
 					title-icon="delete"
 					:title="$t('pages.newCallForward.cancelDialogTitle', {groupName: this.groupName})"
-					:message="$t('pages.newCallForward.cancelDialogText', {groupName: this.groupName, destination: this.destination.simple_destination})"
-					@confirm="deleteDestination"
+					:message="$t('pages.newCallForward.cancelDialogText', {groupName: this.groupName, destination: getDestName()})"
+					@confirm="confirmDeleteDest"
 				/>
 			</div>
 	</div>
@@ -133,7 +139,7 @@
 				destinationTimeout: 0,
 				destinationNumber: null,
 				destinationIndex: null,
-				showDots: false,
+				removeInProgress: false,
 				toggleNumberForm: true
 			}
 		},
@@ -141,8 +147,11 @@
 			...mapGetters('newCallForward', [
 				'getOwnPhoneTimeout'
 			]),
-			removed(){
-				return this.showDots ? "csc-cf-removed-destination" : "";
+			disableDestType(){
+				return !this.groupId.toString().includes('temp-')
+			},
+			disableNumberPopover(){
+				return !this.groupId.toString().includes('temp-') ? false : this.toggleNumberForm;
 			}
 		},
         methods: {
@@ -152,12 +161,30 @@
 											&& isNaN(this.getOwnPhoneTimeout) === false
 												? this.getOwnPhoneTimeout
 												: destination.timeout;
-				this.destinationNumber = destination.simple_destination;
+				this.destinationNumber = this.isVoiceMail() ? `${this.$t('pages.newCallForward.voiceMailLabel')}` : destination.simple_destination;
 				this.destinationIndex = this.index;
 			},
-			showNumberFormPopover(){ // temporarily called onClose
-				this.toggleNumberForm = false;
-				this.$refs.numberForm.open();
+			async showNext(){
+				switch(this.$refs.selectDestinationType.action){
+					case 'destination':
+						this.toggleNumberForm = false;
+						this.$refs.numberForm.open();
+					break;
+					case 'voicemail':
+						if(this.groupId.toString().includes('temp-')){ // unexisting group
+							this.$parent.toggleGroupInProgress = true;
+							await this.$store.dispatch('newCallForward/addForwardGroup', {
+								name: this.groupName,
+								destination: 'voicebox'
+							});
+							await this.$store.dispatch('newCallForward/loadForwardGroups');
+							this.$parent.toggleGroupInProgress = false;
+						}
+						else{
+							await this.$store.dispatch('newCallForward/addVoiceMail', this.groupId);
+						}
+					break;
+				}
 			},
 			showNumberForm(){
 				this.$refs.addDestinationForm.add();
@@ -167,22 +194,36 @@
 				this.$refs.selectDestinationType.add();
 			},
 			async saveTimeout(){
-				this.$store.dispatch('newCallForward/editTimeout', {
+				this.$parent.toggleGroupInProgress = true;
+				await this.$store.dispatch('newCallForward/editTimeout', {
 					index: this.destinationIndex,
 					timeout: this.destinationTimeout,
 					forwardGroupId: this.groupId
 				});
+				this.$parent.toggleGroupInProgress = false;
+
 			},
 			showConfirmDialog(){
 				this.$refs.confirmDialog.open();
 			},
-			async deleteDestination(){
-				this.showDots = true;
+			async confirmDeleteDest(){
+				this.removeInProgress = true;
 				await this.$store.dispatch('newCallForward/removeDestination', {
 					destination: this.destination,
 					forwardGroupId: this.groupId
 				});
 				await this.$store.dispatch('newCallForward/loadForwardGroups');
+				await this.$store.dispatch('newCallForward/loadMappings');
+			},
+			isVoiceMail(){
+				return this.destination.destination.includes('voicebox.local')
+			},
+			getDestName(){
+				return this.destination.simple_destination
+								? this.destination.simple_destination
+								: this.isVoiceMail()
+									? `${this.$t('pages.newCallForward.voiceMailLabel')}`
+									: "";
 			}
 		}
     }
@@ -199,6 +240,8 @@
 		white-space nowrap
 		overflow hidden
 		text-overflow ellipsis
+		font-weight bold
+	.csc-cf-destination-link
 		color $primary
 		cursor pointer
 	.csc-cf-timeout-form,
@@ -210,10 +253,12 @@
 	.csc-cf-destination-actions
 		text-align left
 		cursor pointer
+	.csc-cf-popover-hide
+		display none
+	.csc-cf-dest-popover-bottom
+        margin-left 0px
 	.csc-cf-removed-destination
 		visibility hidden
 		opacity 0
 		transition visibility 0s 1s, opacity 1s linear
-	.csc-cf-popover-hide
-		display none
 </style>
