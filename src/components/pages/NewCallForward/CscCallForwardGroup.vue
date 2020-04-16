@@ -63,7 +63,7 @@
                         ref="destTypeForm"
                         anchor="top right"
                         @open="showDestTypeForm()"
-                        @close="showNumberFormPopover()"
+                        @close="showNext()"
                     >
                         <csc-new-call-forward-destination-type-form
                             ref="selectDestinationType"
@@ -151,7 +151,7 @@
             showAddDestBtn(){
                 const destinations = this.group.destinations;
                 for(let dest of destinations){
-                    if(dest && dest.simple_destination && dest.simple_destination.length < 2){
+                    if(dest && (dest.simple_destination && dest.simple_destination.length < 2 || dest.destination.includes('voicebox.local'))){
                         return false;
                     }
                 }
@@ -170,9 +170,17 @@
             showNewDestNumber(){
                 this.$refs.addDestinationForm.add();
             },
-            showNumberFormPopover(){
-                this.toggleNumberForm = false;
-                this.$refs.numberForm.open();
+            async showNext(){
+                switch(this.$refs.selectDestinationType.action){
+                    case 'destination':
+                        this.toggleNumberForm = false;
+                        this.$refs.numberForm.open();
+                    break;
+                    case 'voicemail':
+                        await this.$store.dispatch('newCallForward/addVoiceMail', this.group.id);
+                        await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    break;
+                }
             },
             showDestTypeForm(){
                 this.toggleNumberForm = true;

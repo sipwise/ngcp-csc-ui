@@ -31,7 +31,6 @@ export default {
     getters: {
         primaryNumber(state, getters, rootState, rootGetters) {
             const subscriber = rootGetters['user/getSubscriber'];
-
             if(subscriber !== null) {
                 return subscriber.primary_number;
             }
@@ -231,6 +230,25 @@ export default {
                 };
                 await addDestinationToDestinationset({
                     id: data.forwardGroupId,
+                    data: [...group.destinations, destination]
+                });
+            }
+            catch(err){
+                console.log(err);
+            }
+        },
+        async addVoiceMail(context, groupId){
+            try{
+                let group = context.state.forwardGroups.find((group)=>{
+                    return group.id === groupId || group.id.toString() === groupId;
+                });
+                const destination = {
+                    "announcement_id": null,
+                    "destination": "voicebox",
+                    "priority": 1
+                };
+                await addDestinationToDestinationset({
+                    id: group.id,
                     data: [...group.destinations, destination]
                 });
             }
