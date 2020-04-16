@@ -218,6 +218,7 @@
             "voiceMailLabel": "Voicemail",
             "destinationTimeoutLabel": "Then after ",
             "destinationNumberLabel": "seconds forwarded to",
+            "destinationVoicemailLabel": "seconds finally forwarded to",
             "destinationLabel": "Destination",
             "addDestinationLabel": "Add destination",
             "allCallsForwardedTo": "All calls forwarded to",

@@ -8,6 +8,12 @@
         >
                 <div class="col col-xs-12 col-md-4 text-right csc-cf-group-title">
                     {{ groupTitle }}
+                    <q-spinner-dots
+                        v-if="toggleGroupInProgress"
+                        class="csc-call-spinner"
+                        color="primary"
+                        :size="24"
+                    />
                 </div>
                 <div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
                     <q-toggle
@@ -15,7 +21,8 @@
                         @change="toggleGroupChange"
                     />
                 </div>
-                <div class="col col-xs-12 col-md-5 "></div>
+                <div class="col col-xs-12 col-md-5 ">
+                </div>
         </div>
         <div
             v-for="(destination, index) in group.destinations"
@@ -61,9 +68,9 @@
                     </div>
                     <q-popover
                         ref="destTypeForm"
-                        anchor="top right"
                         @open="showDestTypeForm()"
-                        @close="showNumberFormPopover()"
+                        @close="showNext()"
+                        class="csc-cf-group-popover-bottom"
                     >
                         <csc-new-call-forward-destination-type-form
                             ref="selectDestinationType"
@@ -71,8 +78,7 @@
                     </q-popover>
                     <q-popover
                         ref="numberForm"
-                        anchor="top right"
-                        class="csc-cf-number-form"
+                        class="csc-cf-number-form csc-cf-group-popover-bottom"
                         v-bind:class="{ 'csc-cf-popover-hide': toggleNumberForm }"
 						@open="showNewDestNumber()"
                     >
@@ -128,7 +134,8 @@
             return {
                 toggleGroup: true,
                 isEnabled: true,
-                toggleNumberForm: true
+                toggleNumberForm: true,
+                toggleGroupInProgress: false
             };
         },
         async mounted(){
@@ -151,7 +158,7 @@
             showAddDestBtn(){
                 const destinations = this.group.destinations;
                 for(let dest of destinations){
-                    if(dest && dest.simple_destination && dest.simple_destination.length < 2){
+                    if(dest && (dest.simple_destination && dest.simple_destination.length < 2 || dest.destination.includes('voicebox.local'))){
                         return false;
                     }
                 }
@@ -170,9 +177,17 @@
             showNewDestNumber(){
                 this.$refs.addDestinationForm.add();
             },
-            showNumberFormPopover(){
-                this.toggleNumberForm = false;
-                this.$refs.numberForm.open();
+            async showNext(){
+                switch(this.$refs.selectDestinationType.action){
+                    case 'destination':
+                        this.toggleNumberForm = false;
+                        this.$refs.numberForm.open();
+                    break;
+                    case 'voicemail':
+                        await this.$store.dispatch('newCallForward/addVoiceMail', this.group.id);
+                        await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    break;
+                }
             },
             showDestTypeForm(){
                 this.toggleNumberForm = true;
@@ -188,12 +203,14 @@
                 }
                 return destination;
             },
-            toggleGroupChange(){
-                this.$store.dispatch('newCallForward/enableGroup', {
+            async toggleGroupChange(){
+                this.toggleGroupInProgress = true;
+                await this.$store.dispatch('newCallForward/enableGroup', {
                     groupName: this.group.name,
                     id: this.group.id,
                     enabled: this.isEnabled
                 });
+                this.toggleGroupInProgress = false;
             }
         }
     }
@@ -221,10 +238,11 @@
         text-overflow ellipsis
         color $primary
         cursor pointer
+    .csc-cf-group-popover-bottom
+        margin-left 30px
     .cf-destination-disabled
         color $cf-disabled-label
-        .csc-cf-timeout,
-        .csc-cf-destination
+        .csc-cf-destination-link
             color $cf-disabled-link
         .csc-cf-destination-actions
             .q-icon

@@ -31,7 +31,6 @@ export default {
     getters: {
         primaryNumber(state, getters, rootState, rootGetters) {
             const subscriber = rootGetters['user/getSubscriber'];
-
             if(subscriber !== null) {
                 return subscriber.primary_number;
             }
@@ -238,6 +237,25 @@ export default {
                 console.log(err);
             }
         },
+        async addVoiceMail(context, groupId){
+            try{
+                let group = context.state.forwardGroups.find((group)=>{
+                    return group.id === groupId || group.id.toString() === groupId;
+                });
+                const destination = {
+                    "announcement_id": null,
+                    "destination": "voicebox",
+                    "priority": 1
+                };
+                await addDestinationToDestinationset({
+                    id: group.id,
+                    data: [...group.destinations, destination]
+                });
+            }
+            catch(err){
+                console.log(err);
+            }
+        },
         async replaceDestinations(context, data){
             try{
                 let group = context.state.forwardGroups.find((group)=>{
@@ -267,7 +285,6 @@ export default {
                 if(destinations.length < 1){
                     context.dispatch('deleteForwardGroup', group);
                     context.dispatch('loadForwardGroups', group);
-                    context.dispatch('loadMappings', group);
                 }
             }
             catch(err){
@@ -305,68 +322,69 @@ export default {
             }
         },
         async editTimeout(context, data){
-            if(data.index === 0){ // first row -> change cft_ringtimeout
-                context.dispatch('editRingTimeout', data.timeout);
-            }
-            else{
-                const group = context.state.forwardGroups.find((group)=>{
-                    return group.id === data.forwardGroupId;
-                });
-                let destination = group.destinations.slice(data.index-1, data.index)[0];
-                destination.timeout =  data.timeout;
-                context.commit('editTimeout', data);
-                try{
+            try{
+                if(data.index === 0){ // first row -> change cft_ringtimeout
+                    await context.dispatch('editRingTimeout', data.timeout);
+                }
+                else{
+                    const group = context.state.forwardGroups.find((group)=>{
+                        return group.id === data.forwardGroupId;
+                    });
+                    let destination = group.destinations.slice(data.index-1, data.index)[0];
+                    destination.timeout =  data.timeout;
                     await addDestinationToDestinationset({
                         id: group.id,
                         data: group.destinations
                     });
-                }
-                catch(err){
-                    console.log(err)
+                    context.commit('editTimeout', data);
                 }
             }
-
+            catch(err){
+                console.log(err)
+            }
         },
         async forwardAllCalls(context, noSelfNumber){
             try{
                 let unconditionalGroup = await context.dispatch('getForwardGroupByName', 'unconditional')
                 let timeoutGroup = await context.dispatch('getForwardGroupByName', 'timeout');
-
-                if(!unconditionalGroup){
-                    await context.dispatch('addForwardGroup', {
-                        name: 'unconditional'
-                    });
-                    await context.dispatch('loadMappings');
-                    await context.dispatch('loadForwardGroups');
-                    unconditionalGroup = await context.dispatch('getForwardGroupByName', 'unconditional');
-                }
-                if(!timeoutGroup){
-                    await context.dispatch('addForwardGroup', {
-                        name: 'timeout'
-                    });
-                    await context.dispatch('loadMappings');
-                    await context.dispatch('loadForwardGroups');
-                    timeoutGroup = await context.dispatch('getForwardGroupByName', 'timeout');
-                }
-
                 if(noSelfNumber){
-                    await context.dispatch('replaceDestinations', {
-                        groupName: 'unconditional',
-                        destinations: timeoutGroup.destinations
-                    });
-                    await context.dispatch('deleteForwardGroup', timeoutGroup);
+                    if(timeoutGroup && !timeoutGroup.id.toString().includes('temp')){
+                        await context.dispatch('addForwardGroup', {
+                            name: 'unconditional'
+                        });
+                        await context.dispatch('loadMappings');
+                        await context.dispatch('loadForwardGroups');
+                        //unconditionalGroup = await context.dispatch('getForwardGroupByName', 'unconditional');
+                        await context.dispatch('replaceDestinations', {
+                            groupName: 'unconditional',
+                            destinations: timeoutGroup.destinations
+                        });
+                        await context.dispatch('deleteForwardGroup', timeoutGroup);
+
+                    }
+                    else {
+                        await context.dispatch('addTempDestination', 'temp-unconditional')
+                    }
+                    await context.dispatch('loadForwardGroups');
                 }
                 else{
-                    await context.dispatch('replaceDestinations', {
-                        groupName: 'timeout',
-                        destinations: unconditionalGroup.destinations
-                    });
-                    await context.dispatch('deleteForwardGroup', unconditionalGroup);
-
-
+                    if(unconditionalGroup && !unconditionalGroup.id.toString().includes('temp')){
+                        await context.dispatch('addForwardGroup', {
+                            name: 'timeout'
+                        });
+                        await context.dispatch('loadMappings');
+                        await context.dispatch('loadForwardGroups');
+                        await context.dispatch('replaceDestinations', {
+                            groupName: 'timeout',
+                            destinations: unconditionalGroup.destinations
+                        });
+                        await context.dispatch('deleteForwardGroup', unconditionalGroup);
+                    }
+                    else{
+                        await context.dispatch('addTempDestination', 'temp-timeout')
+                    }
+                    await context.dispatch('loadForwardGroups');
                 }
-                await context.dispatch('loadMappings');
-                await context.dispatch('loadForwardGroups');
             }
             catch(err){
                 console.log(err)

@@ -48,7 +48,7 @@
 
                     <q-popover
                         ref="destsetTypeForm"
-                        anchor="top right"
+                        class="cf-popover-bottom"
                         @close="addForwardGroup()"
 
                     >
@@ -56,9 +56,9 @@
                             ref="destsetTypeForm"
                         />
                     </q-popover>
+
+
                 </div>
-
-
 
             </div>
         </div>
@@ -167,17 +167,13 @@
                 if(this.toggleDefaultNumber){
                     const timeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'timeout');
                     if(!timeoutFwdGroup){
-                        //await this.$store.dispatch('newCallForward/addForwardGroup', 'timeout');
                         await this.$store.dispatch('newCallForward/addTempDestination','timeout' );
-                        //await this.$store.dispatch('newCallForward/loadForwardGroups');
                     }
                 }
                 else{
                     const unconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
                     if(!unconditionalFwdGroup){
-                        //await this.$store.dispatch('newCallForward/addForwardGroup', 'unconditional');
                         await this.$store.dispatch('newCallForward/addTempDestination','unconditional' );
-                        //await this.$store.dispatch('newCallForward/loadForwardGroups');
                     }
                 }
 
@@ -214,5 +210,8 @@
         white-space nowrap
         overflow hidden
         text-overflow ellipsis
+    .cf-popover-bottom
+        min-width 150px
+        margin-left 5px
 
 </style>
