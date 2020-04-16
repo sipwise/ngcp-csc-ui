@@ -52,6 +52,28 @@
                         />
 
                     </div>
+                    <q-popover
+                        ref="destTypeForm"
+                        anchor="top right"
+                        @open="showDestTypeForm()"
+                        @close="showNext()"
+                    >
+                        <csc-new-call-forward-destination-type-form
+                            ref="selectDestinationType"
+                        />
+                    </q-popover>
+                    <q-popover
+                        ref="numberForm"
+                        anchor="top right"
+                        class="csc-cf-number-form"
+                        v-bind:class="{ 'csc-cf-popover-hide': toggleNumberForm }"
+						@open="showNewDestNumber()"
+                    >
+                        <csc-new-call-forward-add-destination-form
+                            ref="addDestinationForm"
+                            :groupName="this.group.name"
+                        />
+                    </q-popover>
                 </div>
                 <div class="col col-xs-12 col-md-6 "></div>
         </div>
@@ -102,7 +124,7 @@
             showAddDestBtn(){
                 const destinations = this.group.destinations;
                 for(let dest of destinations){
-                    if(dest && dest.simple_destination && dest.simple_destination.length < 2){
+                    if(dest && (dest.simple_destination && dest.simple_destination.length < 2 || dest.destination.includes('voicebox.local'))){
                         return false;
                     }
                 }
@@ -115,15 +137,24 @@
             genKey(){
                 return Math.random();
             },
-            async addDestination(){
-                this.destinationInCreation = true;
-                await this.$store.dispatch('newCallForward/addDestination', {
-                    forwardGroupId: this.group.id,
-                    destination: " "
-                });
-                await this.$store.dispatch('newCallForward/loadForwardGroups');
-                this.destinationInCreation = false;
-
+            showNewDestNumber(){
+                this.$refs.addDestinationForm.add();
+            },
+            async showNext(){
+                switch(this.$refs.selectDestinationType.action){
+                    case 'destination':
+                        this.toggleNumberForm = false;
+                        this.$refs.numberForm.open();
+                    break;
+                    case 'voicemail':
+                        await this.$store.dispatch('newCallForward/addVoiceMail', this.group.id);
+                        await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    break;
+                }
+            },
+            showDestTypeForm(){
+                this.toggleNumberForm = true;
+                this.$refs.selectDestinationType.add();
             },
             getDestination(index){
                 let destination = {...this.group.destinations[index]}

@@ -10,6 +10,7 @@
         </div>
         <div
             class="csc-cf-dest-type"
+            @click="addVoiceMail()"
         >
             {{ $t('pages.newCallForward.voiceMailLabel') }}
         </div>
@@ -27,14 +28,19 @@
         },
         data () {
             return {
-                enabled: false
+                enabled: false,
+                action: null
             }
         },
-        props: [
-        ],
+        props: [],
         computed: {},
         methods: {
             showNumberForm(){
+                this.action = 'destination';
+                this.$parent.close()
+            },
+            addVoiceMail(){
+                this.action = 'voicemail';
                 this.$parent.close()
             },
             cancel() {

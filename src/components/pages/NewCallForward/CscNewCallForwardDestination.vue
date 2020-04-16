@@ -7,7 +7,7 @@
 				{{ this.allCallsFwd  ? '' : $t('pages.newCallForward.destinationTimeoutLabel') }}
 				<span
 					v-if="!this.allCallsFwd"
-					class='csc-cf-timeout'
+					class='csc-cf-timeout csc-cf-destination-link'
 				>
 					{{this.destinationTimeout}}
 					<q-popover
@@ -27,19 +27,28 @@
 						/>
 					</q-popover>
 				</span>
-				{{ this.allCallsFwd ?  $t('pages.newCallForward.allCallsForwardedTo') : $t('pages.newCallForward.destinationNumberLabel') }}
+				{{ this.allCallsFwd
+					? $t('pages.newCallForward.allCallsForwardedTo')
+					: isVoiceMail()
+						? $t('pages.newCallForward.destinationVoicemailLabel')
+						: $t('pages.newCallForward.destinationNumberLabel')
+				}}
 			</div>
 			<div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
 
-				<div class='csc-cf-destination'>
+				<div
+					v-bind:class="{ 'csc-cf-destination-link': !isVoiceMail() }"
+					class='csc-cf-destination'
+				>
 					{{ !this.destinationNumber || this.destinationNumber.length < 2
 							? $t('pages.newCallForward.destinationLabel')
 							: this.destinationNumber}}
 					<q-popover
 						ref="destTypeForm"
 						anchor="top right"
+						v-if="!isVoiceMail() && !groupId.toString().includes('temp-')"
 						@open="showDestTypeForm()"
-						@close="showNumberFormPopover()"
+						@close="showNext()"
 					>
 						<csc-new-call-forward-destination-type-form
 							ref="selectDestinationType"
@@ -49,6 +58,7 @@
 						ref="numberForm"
 						anchor="top right"
 						class="csc-cf-number-form"
+						v-if="!isVoiceMail()"
 						v-bind:class="{ 'csc-cf-popover-hide': toggleNumberForm }"
 						v-if=""
 						@open="showNumberForm()"
@@ -135,6 +145,7 @@
 				destinationNumber: null,
 				destinationIndex: null,
 				showDots: false,
+				removeInProgress: false,
 				toggleNumberForm: true
 			}
 		},
@@ -143,18 +154,40 @@
 				'getOwnPhoneTimeout'
 			]),
 			removed(){
-				return this.showDots ? "csc-cf-removed-destination" : "";
+				return this.removeInProgress ? "csc-cf-removed-destination" : "";
 			}
 		},
         methods: {
 			updateValues(destination){
-				this.destinationTimeout = this.index === 0 && this.groupName === 'csc-timeout' ? this.getOwnPhoneTimeout : destination.timeout;
-				this.destinationNumber = destination.simple_destination;
+				this.destinationTimeout = 	this.index === 0
+											&& this.groupName === 'csc-timeout'
+											&& isNaN(this.getOwnPhoneTimeout) === false
+												? this.getOwnPhoneTimeout
+												: destination.timeout;
+				this.destinationNumber = this.isVoiceMail() ? `${this.$t('pages.newCallForward.voiceMailLabel')}` : destination.simple_destination;
 				this.destinationIndex = this.index;
 			},
-			showNumberFormPopover(){ // temporarily called onClose
-				this.toggleNumberForm = false;
-				this.$refs.numberForm.open();
+			async showNext(){
+				switch(this.$refs.selectDestinationType.action){
+					case 'destination':
+						this.toggleNumberForm = false;
+						this.$refs.numberForm.open();
+					break;
+					case 'voicemail':
+						if(this.groupId.toString().includes('temp-')){ // unexisting group
+							this.showDots = true;
+							await this.$store.dispatch('newCallForward/addForwardGroup', {
+								name: this.groupName,
+								destination: 'voicebox'
+							});
+							await this.$store.dispatch('newCallForward/loadForwardGroups');
+							this.showDots = false;
+						}
+						else{
+							await this.$store.dispatch('newCallForward/addVoiceMail', this.groupId);
+						}
+					break;
+				}
 			},
 			showNumberForm(){
 				this.$refs.addDestinationForm.add();
@@ -175,11 +208,16 @@
 			},
 			async deleteDestination(){
 				this.showDots = true;
+				this.removeInProgress = true;
 				await this.$store.dispatch('newCallForward/removeDestination', {
 					destination: this.destination,
 					forwardGroupId: this.groupId
 				});
 				await this.$store.dispatch('newCallForward/loadForwardGroups');
+				await this.$store.dispatch('newCallForward/loadMappings');
+			},
+			isVoiceMail(){
+				return this.destination.destination.includes('voicebox.local')
 			}
 		}
     }
@@ -196,6 +234,8 @@
 		white-space nowrap
 		overflow hidden
 		text-overflow ellipsis
+		font-weight bold
+	.csc-cf-destination-link
 		color $primary
 		cursor pointer
 	.csc-cf-timeout-form,
