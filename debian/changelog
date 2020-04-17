@@ -1,3 +1,10 @@
+ngcp-csc-ui (7.5.3.4+0~mr7.5.3.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [735df73] TT#78467 enforce 2 fractional digits for total_customer_cost
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 17 Apr 2020 14:05:57 +0200
+
 ngcp-csc-ui (7.5.3.3+0~mr7.5.3.3) unstable; urgency=medium
 
   [ Rene Krenn ]
