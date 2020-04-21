@@ -187,8 +187,7 @@
                 this.groupInCreation = true;
                 await this.$store.dispatch('newCallForward/forwardAllCalls', !this.toggleDefaultNumber);
                 this.groupInCreation = false;
-            },
-            addVoicemail(){}
+            }
         }
     }
 </script>

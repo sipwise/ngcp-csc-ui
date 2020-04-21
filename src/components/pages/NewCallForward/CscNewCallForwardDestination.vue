@@ -165,6 +165,7 @@
 				this.destinationIndex = this.index;
 			},
 			async showNext(){
+				debugger
 				switch(this.$refs.selectDestinationType.action){
 					case 'destination':
 						this.toggleNumberForm = false;
@@ -184,6 +185,20 @@
 							await this.$store.dispatch('newCallForward/addVoiceMail', this.groupId);
 						}
 					break;
+					case 'conference':
+						if(this.groupId.toString().includes('temp-')){ // unexisting group
+							this.$parent.toggleGroupInProgress = true;
+							await this.$store.dispatch('newCallForward/addForwardGroup', {
+								name: this.groupName,
+								destination: 'conference'
+							});
+							await this.$store.dispatch('newCallForward/loadForwardGroups');
+							this.$parent.toggleGroupInProgress = false;
+						}
+						else{
+							await this.$store.dispatch('newCallForward/addConference', this.groupId);
+						}
+					break;
 				}
 			},
 			showNumberForm(){
@@ -201,7 +216,6 @@
 					forwardGroupId: this.groupId
 				});
 				this.$parent.toggleGroupInProgress = false;
-
 			},
 			showConfirmDialog(){
 				this.$refs.confirmDialog.open();

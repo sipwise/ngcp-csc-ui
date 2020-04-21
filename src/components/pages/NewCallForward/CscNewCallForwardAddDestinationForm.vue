@@ -81,7 +81,8 @@
             'index',
             'disable',
             'loading',
-            'groupName'
+            'groupName',
+            'destType'
         ],
         validations: {
             number: {
@@ -105,6 +106,8 @@
             async save() {
                 const forwardGroupName = this.groupName;
                 const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', forwardGroupName);
+                const destType = this.destType;
+                debugger
                 if (this.numberError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
                 }
@@ -112,7 +115,7 @@
                     await this.$store.dispatch('newCallForward/editDestination',{
                         index: this.destinationIndex,
                         forwardGroupId: forwardGroup.id,
-                        destination: this.number
+                        destination: destType == 'conference' ? 'conf=' + this.number : this.number
                     });
                 }
                 else { // new destination
@@ -120,14 +123,14 @@
                         forwardGroup.destinations[0].simple_destination = this.number; // optimistic UI update :)
                         await this.$store.dispatch('newCallForward/addForwardGroup', {
                             name: forwardGroupName,
-                            destination: this.number
+                            destination: destType == 'conference' ? 'conf=' + this.number : this.number
                         });
                     }
                     else{ // existing group
                         await this.$store.dispatch('newCallForward/setDestinationInCreation', true);
                         await this.$store.dispatch('newCallForward/addDestination', {
                             forwardGroupId: forwardGroup.id,
-                            destination: this.number
+                            destination: destType == 'conference' ? 'conf=' + this.number : this.number
                         });
                     }
                     await this.$store.dispatch('newCallForward/loadForwardGroups');
