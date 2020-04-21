@@ -256,6 +256,25 @@ export default {
                 console.log(err);
             }
         },
+        async addConference(context, groupId){
+            try{
+                let group = context.state.forwardGroups.find((group)=>{
+                    return group.id === groupId || group.id.toString() === groupId;
+                });
+                const destination = {
+                    "announcement_id": null,
+                    "destination": "conference",
+                    "priority": 1
+                };
+                await addDestinationToDestinationset({
+                    id: group.id,
+                    data: [...group.destinations, destination]
+                });
+            }
+            catch(err){
+                console.log(err);
+            }
+        },
         async replaceDestinations(context, data){
             try{
                 let group = context.state.forwardGroups.find((group)=>{
