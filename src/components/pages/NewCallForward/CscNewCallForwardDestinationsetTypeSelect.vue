@@ -4,9 +4,15 @@
     >
         <div
             class="csc-cf-dest-type"
-            @click="addDestination()"
+            @click="addDestinationsetUnconditional()"
         >
             {{ $t('pages.newCallForward.uncoditionalLabel') }}
+        </div>
+        <div
+            class="csc-cf-dest-type"
+            @click="addDestinationsetOffline()"
+        >
+            {{ $t('pages.newCallForward.offlinelLabel') }}
         </div>
     </div>
 </template>
@@ -26,7 +32,12 @@
             }
         },
         methods: {
-            addDestination(){
+            addDestinationsetUnconditional(){
+                this.$parent.selectedDestType = "unconditional";
+                this.$parent.close()
+            },
+            addDestinationsetOffline(){
+                this.$parent.selectedDestType = "offline";
                 this.$parent.close()
             },
             cancel() {

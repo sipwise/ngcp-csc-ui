@@ -225,7 +225,8 @@
             "cancelDialogTitle": "Delete from {groupName} forwarding",
             "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding",
             "timeoutGroupTitle" : "",
-            "uncoditionalLabel": "Unconditional"
+            "uncoditionalLabel": "Unconditional",
+            "offlinelLabel": "If offline"
         },
         "callForward": {
             "titles": {

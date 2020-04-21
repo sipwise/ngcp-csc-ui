@@ -130,7 +130,8 @@
             return {
                 groupInCreation: false,
                 groupsLoading: false,
-                toggleDefaultNumber: true
+                toggleDefaultNumber: true,
+                selectedDestType: null
             };
         },
         async mounted(){
@@ -163,6 +164,7 @@
         },
         methods: {
             async addForwardGroup(){
+                // TODO check this.selectedDestType and toggle proper logic
                 this.groupInCreation = true;
                 if(this.toggleDefaultNumber){
                     const timeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'timeout');
