@@ -81,6 +81,7 @@
                         <csc-new-call-forward-add-destination-form
                             ref="addDestinationForm"
                             :groupName="this.group.name"
+                            :destType="getDestType()"
                             :groupId="this.group.id"
                         />
                     </q-popover>
@@ -156,7 +157,9 @@
             showAddDestBtn(){
                 const destinations = this.group.destinations;
                 for(let dest of destinations){
-                    if(dest && (dest.simple_destination && dest.simple_destination.length < 2 || dest.destination.includes('voicebox.local'))){
+                    if(dest
+                        && (dest.simple_destination && dest.simple_destination.length < 2
+                            || dest.destination.includes('voicebox.local'))){
                         return false;
                     }
                 }
@@ -191,6 +194,7 @@
             async showNext(){
                 switch(this.$refs.selectDestinationType.action){
                     case 'destination':
+                    case 'conference':
                         this.toggleNumberForm = false;
                         this.$refs.numberForm.open();
                     break;
@@ -200,6 +204,10 @@
                         await this.$store.dispatch('newCallForward/loadForwardGroups');
                         await this.$store.dispatch('newCallForward/setDestinationInCreation', false);
                     break;
+                    // case 'conference':
+                    //     await this.$store.dispatch('newCallForward/addConference', this.group.id);
+                    //     await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    // break;
                 }
             },
             showDestTypeForm(){
@@ -224,6 +232,9 @@
                     enabled: this.isEnabled
                 });
                 this.toggleGroupInProgress = false;
+            },
+            getDestType(){
+                return this.$refs.selectDestinationType ? this.$refs.selectDestinationType.action : "";
             }
         }
     }

@@ -82,6 +82,7 @@
             'disable',
             'loading',
             'groupName',
+            'destType',
             'groupId'
         ],
         validations: {
@@ -106,6 +107,7 @@
             async save() {
                 const forwardGroupId = this.groupId;
                 const forwardGroupName = this.groupName;
+                const destType = this.destType;
                 const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', forwardGroupId);
                 if (this.numberError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
@@ -114,7 +116,7 @@
                     await this.$store.dispatch('newCallForward/editDestination',{
                         index: this.destinationIndex,
                         forwardGroupId: forwardGroup.id,
-                        destination: this.number
+                        destination: destType == 'conference' ? 'conf=' + this.number : this.number
                     });
                 }
                 else { // new group
@@ -123,14 +125,14 @@
                         forwardGroup.destinations[0].simple_destination = this.number; // optimistic UI update :)
                         await this.$store.dispatch('newCallForward/addForwardGroup', {
                             name: forwardGroupName,
-                            destination: this.number
+                            destination: destType == 'conference' ? 'conf=' + this.number : this.number
                         });
                     }
                     else{ // existing group
 
                         await this.$store.dispatch('newCallForward/addDestination', {
                             forwardGroupId: forwardGroup.id,
-                            destination: this.number
+                            destination: destType == 'conference' ? 'conf=' + this.number : this.number
                         });
                     }
                     await this.$store.dispatch('newCallForward/loadForwardGroups');

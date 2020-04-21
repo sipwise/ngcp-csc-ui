@@ -221,6 +221,7 @@
             "forwardBtnLabel": "Add forwarding",
             "numberLabel": "Number",
             "voiceMailLabel": "Voicemail",
+            "conferenceLabel": "Conference",
             "destinationTimeoutLabel": "Then after ",
             "destinationNumberLabel": "seconds forwarded to",
             "destinationVoicemailLabel": "seconds finally forwarded to",

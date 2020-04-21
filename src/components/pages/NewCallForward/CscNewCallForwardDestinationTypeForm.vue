@@ -14,6 +14,12 @@
         >
             {{ $t('pages.newCallForward.voiceMailLabel') }}
         </div>
+        <div
+            class="csc-cf-dest-type"
+            @click="addConference()"
+        >
+            {{ $t('pages.newCallForward.conferenceLabel') }}
+        </div>
     </div>
 </template>
 
@@ -41,6 +47,10 @@
             },
             addVoiceMail(){
                 this.action = 'voicemail';
+                this.$parent.close()
+            },
+            addConference(){
+                this.action = 'conference';
                 this.$parent.close()
             },
             cancel() {
