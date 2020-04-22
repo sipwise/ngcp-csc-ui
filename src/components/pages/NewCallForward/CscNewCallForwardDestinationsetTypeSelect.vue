@@ -32,12 +32,12 @@
             }
         },
         methods: {
-            addDestinationsetUnconditional(){
-                this.$parent.selectedDestType = "unconditional";
+            async addDestinationsetUnconditional(){
+                await this.$store.dispatch('newCallForward/setSelectedDestType', 'unconditional');
                 this.$parent.close()
             },
-            addDestinationsetOffline(){
-                this.$parent.selectedDestType = "offline";
+            async addDestinationsetOffline(){
+                await this.$store.dispatch('newCallForward/setSelectedDestType', 'offline');
                 this.$parent.close()
             },
             cancel() {
