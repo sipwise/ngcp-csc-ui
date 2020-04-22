@@ -18,6 +18,10 @@ const ForwardGroup = {
     timeout: {
         name: 'csc-timeout',
         mapping: 'cft'
+    },
+    offline: {
+        name: 'csc-offline',
+        mapping: 'cfo'
     }
 };
 
@@ -26,7 +30,8 @@ export default {
     state: {
         mappings: [],
         forwardGroups: [],
-        destinationInCreation: false
+        destinationInCreation: false,
+        selectedDestType: null
     },
     getters: {
         primaryNumber(state, getters, rootState, rootGetters) {
@@ -52,6 +57,9 @@ export default {
         },
         destinationInCreation(state){
             return state.destinationInCreation;
+        },
+        selectedDestType(state){
+            return state.selectedDestType;
         }
     },
     mutations: {
@@ -86,6 +94,9 @@ export default {
         },
         setDestinationInCreation(state, isInCreation){
             state.destinationInCreation = isInCreation;
+        },
+        setSelectedDestType(state, destType){
+            state.selectedDestType = destType;
         }
     },
     actions: {
@@ -431,6 +442,9 @@ export default {
         },
         setDestinationInCreation(context, isInCreation){
             context.commit('setDestinationInCreation', isInCreation);
+        },
+        setSelectedDestType(context, destType){
+            context.commit('setSelectedDestType', destType);
         }
     }
 };

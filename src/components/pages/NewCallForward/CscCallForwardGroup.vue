@@ -166,7 +166,17 @@
 
             },
             groupTitle(){
-                return ["csc-unconditional", "csc-timeout"].includes(this.group.name) ? `${this.$t('pages.newCallForward.timeoutGroupTitle')}` : "";
+                let title;
+                switch(this.group.name){
+                    case "csc-unconditional":
+                    case "csc-timeout":
+                         title = `${this.$t('pages.newCallForward.titles.timeoutGroup')}`;
+                    break;
+                    case "csc-offline":
+                        title = `${this.$t('pages.newCallForward.titles.offlineGroup')}`;
+                    break;
+                }
+                return title;
             }
         },
         methods: {

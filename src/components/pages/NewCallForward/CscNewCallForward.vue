@@ -130,8 +130,7 @@
             return {
                 groupInCreation: false,
                 groupsLoading: false,
-                toggleDefaultNumber: true,
-                selectedDestType: null
+                toggleDefaultNumber: true
             };
         },
         async mounted(){
@@ -153,7 +152,8 @@
             ...mapGetters('newCallForward', [
                 'primaryNumber',
                 'subscriberDisplayName',
-                'forwardGroups'
+                'forwardGroups',
+                'selectedDestType'
             ]),
             primaryNumberEnabled(){
                 return true;
@@ -164,19 +164,32 @@
         },
         methods: {
             async addForwardGroup(){
-                // TODO check this.selectedDestType and toggle proper logic
                 this.groupInCreation = true;
-                if(this.toggleDefaultNumber){
-                    const timeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'timeout');
-                    if(!timeoutFwdGroup){
-                        await this.$store.dispatch('newCallForward/addTempDestination','timeout' );
+                const selectedDestType = this.selectedDestType;
+                switch(selectedDestType){
+                    case "unconditional":{
+                        if(this.toggleDefaultNumber){
+                            const timeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'timeout');
+                            if(!timeoutFwdGroup){
+                                await this.$store.dispatch('newCallForward/addTempDestination','timeout' );
+                            }
+                        }
+                        else{
+                            const unconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
+                            if(!unconditionalFwdGroup){
+                                await this.$store.dispatch('newCallForward/addTempDestination','unconditional' );
+                            }
+                        }
                     }
-                }
-                else{
-                    const unconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
-                    if(!unconditionalFwdGroup){
-                        await this.$store.dispatch('newCallForward/addTempDestination','unconditional' );
+                    break;
+                    case "offline":{
+                        const offlineFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'offline');
+                        if(!offlineFwdGroup){
+                            await this.$store.dispatch('newCallForward/addTempDestination','offline' );
+                        }
                     }
+
+                    break;
                 }
 
                 this.groupInCreation = false;

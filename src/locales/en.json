@@ -211,6 +211,10 @@
             "recurrenceChangedToast": "Reminder: Recurrence changed to \"{recurrence}\""
         },
         "newCallForward": {
+            "titles": {
+                "timeoutGroup" : "",
+                "offlineGroup" : "If offline"
+            },
             "primarNumberEnabled": "All calls go to the primary number",
             "primarNumberDisabled": "No call goes to primary number",
             "forwardBtnLabel": "Add forwarding",
@@ -224,7 +228,6 @@
             "allCallsForwardedTo": "All calls forwarded to",
             "cancelDialogTitle": "Delete from {groupName} forwarding",
             "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding",
-            "timeoutGroupTitle" : "",
             "uncoditionalLabel": "Unconditional",
             "offlinelLabel": "If offline"
         },
