@@ -6,8 +6,10 @@
         <div
             class="row csc-cf-destination-cont"
         >
-                <div class="col col-xs-12 col-md-4 text-right csc-cf-group-title">
-                    {{ groupTitle }}
+                <div
+                    class="col col-xs-12 col-md-4 text-right csc-cf-group-title"
+                >
+                    {{ !(groupsCount < 2 && (group.name.includes('timeout') || group.name.includes('unconditional'))) ? groupTitle :"" }}
                     <q-spinner-dots
                         v-if="toggleGroupInProgress"
                         class="csc-call-spinner"
@@ -153,7 +155,8 @@
         computed: {
             ...mapGetters('newCallForward', [
                 'getOwnPhoneTimeout',
-                'destinationInCreation'
+                'destinationInCreation',
+                'groupsCount'
             ]),
             showAddDestBtn(){
                 const destinations = this.group.destinations;
@@ -166,7 +169,17 @@
 
             },
             groupTitle(){
-                return ["csc-unconditional", "csc-timeout"].includes(this.group.name) ? `${this.$t('pages.newCallForward.timeoutGroupTitle')}` : "";
+                let title;
+                switch(this.group.name){
+                    case "csc-unconditional":
+                    case "csc-timeout":
+                         title = `${this.$t('pages.newCallForward.titles.timeoutGroup')}`;
+                    break;
+                    case "csc-offline":
+                        title = `${this.$t('pages.newCallForward.titles.offlineGroup')}`;
+                    break;
+                }
+                return title;
             }
         },
         methods: {
