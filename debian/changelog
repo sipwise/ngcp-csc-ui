@@ -1,3 +1,11 @@
+ngcp-csc-ui (8.3.1.2+0~mr8.3.1.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f223bee] TT#78467 use total_customer_cost to include VAT
+  * [ef7c9a0] TT#78467 enforce 2 fractional digits for total_customer_cost
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 23 Apr 2020 10:59:57 +0200
+
 ngcp-csc-ui (8.3.1.1+0~mr8.3.1.1) unstable; urgency=medium
 
   [ Nico Schedel ]
