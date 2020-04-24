@@ -10,12 +10,7 @@
                     class="col col-xs-12 col-md-4 text-right csc-cf-group-title"
                 >
                     {{ !(groupsCount < 2 && (group.name.includes('timeout') || group.name.includes('unconditional'))) ? groupTitle :"" }}
-                    <q-spinner-dots
-                        v-if="toggleGroupInProgress"
-                        class="csc-call-spinner"
-                        color="primary"
-                        :size="24"
-                    />
+
                 </div>
                 <div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
                     <q-toggle
@@ -24,6 +19,12 @@
                     />
                 </div>
                 <div class="col col-xs-12 col-md-5 ">
+                    <q-spinner-dots
+                        v-if="toggleGroupInProgress || destinationInCreation"
+                        class="csc-call-spinner"
+                        color="primary"
+                        :size="24"
+                    />
                 </div>
         </div>
         <div
@@ -59,13 +60,6 @@
                         />
 
                         {{ $t('pages.newCallForward.addDestinationLabel') }}
-
-                        <q-spinner-dots
-                            v-if="destinationInCreation"
-                            class="csc-call-spinner"
-                            color="primary"
-                            :size="24"
-                        />
 
                     </div>
                     <q-popover
@@ -197,8 +191,10 @@
                         this.$refs.numberForm.open();
                     break;
                     case 'voicemail':
+                        await this.$store.dispatch('newCallForward/setDestinationInCreation', true);
                         await this.$store.dispatch('newCallForward/addVoiceMail', this.group.id);
                         await this.$store.dispatch('newCallForward/loadForwardGroups');
+                        await this.$store.dispatch('newCallForward/setDestinationInCreation', false);
                     break;
                 }
             },

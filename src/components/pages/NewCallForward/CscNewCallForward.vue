@@ -26,6 +26,28 @@
                     @change="toggleChange" />
             </div>
         </div>
+        <div
+            class="csc-cf-row row"
+            v-for="(forwardGroup, item) in forwardGroups"
+            :key="forwardGroup.id"
+        >
+            <csc-cf-group
+                v-if="!groupInCreation"
+                :group="forwardGroup"
+            />
+        </div>
+        <div class="csc-cf-row row">
+            <div
+                class="column col col-xs-12 col-md-4"
+            >
+                <q-spinner-dots
+                    v-if="groupsLoading"
+                    class="csc-call-spinner"
+                    color="primary"
+                    :size="24"
+                />
+            </div>
+        </div>
         <div class="csc-cf-row row">
             <div
                 class="column col col-xs-12 col-md-4 items-end"
@@ -62,29 +84,6 @@
 
             </div>
         </div>
-        <div
-            class="csc-cf-row row"
-            v-for="(forwardGroup, item) in forwardGroups"
-            :key="forwardGroup.id"
-        >
-            <csc-cf-group
-                v-if="!groupInCreation"
-                :group="forwardGroup"
-            />
-        </div>
-        <div class="csc-cf-row row">
-            <div
-                class="column col col-xs-12 col-md-4"
-            >
-                <q-spinner-dots
-                    v-if="groupsLoading"
-                    class="csc-call-spinner"
-                    color="primary"
-                    :size="24"
-                />
-            </div>
-        </div>
-
     </csc-page>
 </template>
 
@@ -183,10 +182,7 @@
                     }
                     break;
                     case "offline":{
-                        const offlineFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'offline');
-                        if(!offlineFwdGroup){
-                            await this.$store.dispatch('newCallForward/addTempGroup','offline' );
-                        }
+                        await this.$store.dispatch('newCallForward/addTempGroup','offline' );
                     }
 
                     break;

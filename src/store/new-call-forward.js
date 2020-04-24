@@ -93,8 +93,13 @@ export default {
             state.mappings = mappings;
         },
         loadForwardGroups(state, forwardGroups){
-            if(forwardGroups[0] && (forwardGroups[0].name.includes('unconditional') || forwardGroups[0].name.includes('timeout'))){
-                forwardGroups.push(forwardGroups.shift())
+
+            for (let i = 0; i < forwardGroups.length; i++) {
+                const group = forwardGroups[i];
+              if (!group.name.includes('unconditional') && !group.name.includes('timeout')){
+                  forwardGroups.splice(i, 1);
+                  forwardGroups.unshift(group);
+              }
             }
             state.forwardGroups = forwardGroups;
         },
