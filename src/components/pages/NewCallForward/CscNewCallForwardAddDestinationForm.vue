@@ -116,6 +116,7 @@
                     });
                 }
                 else { // new destination
+                    await this.$store.dispatch('newCallForward/setDestinationInCreation', true);
                     if(forwardGroup.id.toString().includes('temp-')){ // unexisting group
                         forwardGroup.destinations[0].simple_destination = this.number; // optimistic UI update :)
                         await this.$store.dispatch('newCallForward/addForwardGroup', {
@@ -124,7 +125,7 @@
                         });
                     }
                     else{ // existing group
-                        await this.$store.dispatch('newCallForward/setDestinationInCreation', true);
+
                         await this.$store.dispatch('newCallForward/addDestination', {
                             forwardGroupId: forwardGroup.id,
                             destination: this.number
