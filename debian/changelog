@@ -1,3 +1,10 @@
+ngcp-csc-ui (8.2.3.0+0~mr8.2.3.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [b01a7df] TT#78464 Ropa 28519 CSC -Subscriber: Call Duration to be display in Call History
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Apr 2020 21:27:58 +0200
+
 ngcp-csc-ui (8.2.2.0+0~mr8.2.2.0) unstable; urgency=medium
 
   * New release.
