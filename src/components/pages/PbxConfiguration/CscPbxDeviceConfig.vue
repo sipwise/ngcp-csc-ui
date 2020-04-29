@@ -494,7 +494,6 @@
         position relative
 
     .csc-pbx-device-config
-        background-color $white
         margin-top $flex-gutter-lg
         position relative
         .spot-modal-content
