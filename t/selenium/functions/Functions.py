@@ -1,7 +1,5 @@
-import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -44,10 +42,16 @@ def create_driver():
 
 
 def wait_for_loading_screen(driver):
+    xpath = '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]'
     driver.implicitly_wait(1)
     for i in range(1, 5):
-        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
-            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
-            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
-            'text-white"]')))
+        step(driver, xpath, inv=True)
     driver.implicitly_wait(10)
+
+
+def step(driver, xpath, wait=10, inv=False):
+    if inv:
+        ec = EC.invisibility_of_element_located
+    else:
+        ec = EC.element_to_be_clickable
+    WebDriverWait(driver, wait).until(ec((By.XPATH, xpath)))
