@@ -176,7 +176,6 @@
         width 32px
         height 32px
         overflow hidden
-        background-color white
         img
             position absolute
             width 32px
