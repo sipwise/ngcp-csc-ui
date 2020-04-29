@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7b9f706_c795491c",
+        "filename": "t/selenium/testrun.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2020-04-29T08:54:04Z",
+      "side": 1,
+      "message": "imo this should go into Functions.py",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 60
+      },
+      "revId": "ee79db533337463e42daafcb4907e2388c9aa164",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2f5390f2_06d5e9ef",
+        "filename": "t/selenium/testrun.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1171,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2020-04-29T08:54:04Z",
+      "side": 1,
+      "message": "xpath is missing beginning from here. prevents test from properly executing",
+      "range": {
+        "startLine": 1171,
+        "startChar": 8,
+        "endLine": 1171,
+        "endChar": 20
+      },
+      "revId": "ee79db533337463e42daafcb4907e2388c9aa164",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
