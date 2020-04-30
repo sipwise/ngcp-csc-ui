@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f67ae5de_2c8c5f6f",
+        "filename": "t/selenium/testrun.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2020-04-30T08:45:41Z",
+      "side": 1,
+      "message": "something is wrong here, jenkins complains about this import statement\n\n10:43:23 Traceback (most recent call last):\n10:43:23   File \"testrun.py\", line 7, in \u003cmodule\u003e\n10:43:23     from functions.Collections import Collections\n10:43:23 ImportError: cannot import name \u0027Collections\u0027 from \u0027functions.Collections\u0027 (/code/t/selenium/functions/Collections.py)\n\nhttps://jenkins.mgm.sipwise.com/view/NGCP%20projects/job/ngcp-csc-ui-test-selenium-docker/17007",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 45
+      },
+      "revId": "fa8d4c49e8d2db49cc518140c665518033e4f744",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
