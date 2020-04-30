@@ -22,6 +22,30 @@
       "revId": "30aa6cb980f113624f5c4834549d7a3e7dee5732",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "00d1733c_2dd2beb4",
+        "filename": "t/selenium/testrun.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2020-04-30T10:03:22Z",
+      "side": 1,
+      "message": "Thanks!",
+      "parentUuid": "2342c107_887427dc",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 47
+      },
+      "revId": "30aa6cb980f113624f5c4834549d7a3e7dee5732",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
