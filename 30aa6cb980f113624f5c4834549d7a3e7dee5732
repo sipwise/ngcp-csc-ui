@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2342c107_887427dc",
+        "filename": "t/selenium/testrun.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2020-04-30T09:18:09Z",
+      "side": 1,
+      "message": "delete_customer is missing here",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 47
+      },
+      "revId": "30aa6cb980f113624f5c4834549d7a3e7dee5732",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
