@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "86f4178c_3cdd93c1",
+        "filename": "t/selenium/testrun.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2020-04-30T08:27:20Z",
+      "side": 1,
+      "message": "Yes, indeed. Thanks",
+      "parentUuid": "c7b9f706_c795491c",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 60
+      },
+      "revId": "ee79db533337463e42daafcb4907e2388c9aa164",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2f5390f2_06d5e9ef",
         "filename": "t/selenium/testrun.py",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2020-04-29T08:54:04Z",
       "side": 1,
       "message": "xpath is missing beginning from here. prevents test from properly executing",
+      "range": {
+        "startLine": 1171,
+        "startChar": 8,
+        "endLine": 1171,
+        "endChar": 20
+      },
+      "revId": "ee79db533337463e42daafcb4907e2388c9aa164",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae530d60_8219bba2",
+        "filename": "t/selenium/testrun.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1171,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2020-04-30T08:27:20Z",
+      "side": 1,
+      "message": "Yes, my bad but I\u0027m curious why the test didn\u0027t fail? I was assuming If I was doing something wrong it was going to fail :-/",
+      "parentUuid": "2f5390f2_06d5e9ef",
       "range": {
         "startLine": 1171,
         "startChar": 8,
