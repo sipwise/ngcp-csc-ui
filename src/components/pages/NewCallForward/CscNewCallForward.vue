@@ -6,6 +6,27 @@
             class="csc-cf-row row"
         >
             <div
+                class="col col-xs-12 col-md-4 csc-cf-group-title"
+            >
+                {{ $t('pages.newCallForward.titles.timeoutGroup') }}
+            </div>
+            <div
+                class="col col-xs-12 col-md-2 text-left csc-cf-self-number-cont"
+            >
+                <q-toggle
+                    v-if="forwardGroups.length > 0"
+                    v-model="toggleDefaultNumber"
+                    @change="toggleChange" />
+            </div>
+            <div
+                class="col col-xs-12 col-md-6"
+            >
+            </div>
+        </div>
+        <div
+            class="csc-cf-row row"
+        >
+            <div
                 class="col col-xs-12 col-md-4 text-right"
             >
                 {{ toggleLabel }}
@@ -20,10 +41,6 @@
                 class="col col-xs-12 col-md-6"
 
             >
-                <q-toggle
-                    v-if="forwardGroups.length > 0"
-                    v-model="toggleDefaultNumber"
-                    @change="toggleChange" />
             </div>
         </div>
         <div
@@ -71,6 +88,7 @@
                     <q-popover
                         ref="destsetTypeForm"
                         class="cf-popover-bottom"
+                        @open="resetSelectFwdGroup()"
                         @close="addForwardGroup()"
 
                     >
@@ -137,8 +155,8 @@
             try{
                 await this.$store.dispatch('newCallForward/loadMappings');
                 await this.$store.dispatch('newCallForward/loadForwardGroups');
-                let unconditionalGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
-                this.toggleDefaultNumber = !unconditionalGroup || unconditionalGroup.destinations.length < 1;
+                let unconditionalGroups = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
+                this.toggleDefaultNumber = !unconditionalGroups; //|| unconditionalGroup.destinations.length < 1;
             }
             catch(err){
                 console.log(err)
@@ -168,14 +186,14 @@
                 switch(selectedDestType){
                     case "unconditional":{
                         if(this.toggleDefaultNumber){
-                            const timeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'timeout');
-                            if(!timeoutFwdGroup){
+                            const tempTimeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-timeout');
+                            if(!tempTimeoutFwdGroup){
                                 await this.$store.dispatch('newCallForward/addTempGroup','timeout' );
                             }
                         }
                         else{
-                            const unconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
-                            if(!unconditionalFwdGroup){
+                            const tempUnconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-unconditional');
+                            if(!tempUnconditionalFwdGroup){
                                 await this.$store.dispatch('newCallForward/addTempGroup','unconditional' );
                             }
                         }
@@ -184,7 +202,10 @@
                     case "offline":{
                         await this.$store.dispatch('newCallForward/addTempGroup','offline' );
                     }
-
+                    break;
+                    case "busy":{
+                        await this.$store.dispatch('newCallForward/addTempGroup','busy' );
+                    }
                     break;
                 }
 
@@ -198,6 +219,9 @@
                 this.groupInCreation = true;
                 await this.$store.dispatch('newCallForward/forwardAllCalls', !this.toggleDefaultNumber);
                 this.groupInCreation = false;
+            },
+            async resetSelectFwdGroup(){
+                await this.$store.dispatch('newCallForward/setSelectedDestType', null);
             }
         }
     }
@@ -208,6 +232,9 @@
     .csc-cf-flat-btn
         color $primary
         float right
+    .csc-cf-group-title
+        text-align right
+        font-weight bold
     .csc-cf-destinations-cont
         margin-top 25px
     .csc-cf-field-toggle
