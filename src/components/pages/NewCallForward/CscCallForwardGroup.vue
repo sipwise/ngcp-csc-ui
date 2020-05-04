@@ -36,7 +36,7 @@
                 :index="index"
                 :groupId="group.id"
                 :groupName="group.name"
-                :allCallsFwd="group.name == 'csc-unconditional' && index === 0"
+                :allCallsFwd="(['csc-unconditional', 'csc-busy', 'csc-offline'].includes(group.name) &&  index === 0)"
                 :class="{ 'cf-destination-disabled': !isEnabled }"
 
             />
@@ -81,6 +81,7 @@
                         <csc-new-call-forward-add-destination-form
                             ref="addDestinationForm"
                             :groupName="this.group.name"
+                            :groupId="this.group.id"
                         />
                     </q-popover>
                 </div>
@@ -171,6 +172,9 @@
                     break;
                     case "csc-offline":
                         title = `${this.$t('pages.newCallForward.titles.offlineGroup')}`;
+                    break;
+                    case "csc-busy":
+                        title = `${this.$t('pages.newCallForward.titles.busyGroup')}`;
                     break;
                 }
                 return title;

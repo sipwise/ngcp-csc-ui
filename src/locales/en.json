@@ -212,8 +212,9 @@
         },
         "newCallForward": {
             "titles": {
-                "timeoutGroup" : "Else",
-                "offlineGroup" : "If offline"
+                "timeoutGroup" : "If online",
+                "offlineGroup" : "If offline",
+                "busyGroup" : "If busy"
             },
             "primarNumberEnabled": "All calls go to the primary number",
             "primarNumberDisabled": "No call goes to primary number",
@@ -228,8 +229,9 @@
             "allCallsForwardedTo": "All calls forwarded to",
             "cancelDialogTitle": "Delete from {groupName} forwarding",
             "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding",
-            "uncoditionalLabel": "Unconditional",
-            "offlinelLabel": "If offline"
+            "unconditionalLabel": "If online",
+            "offlineLabel": "If offline",
+            "busyLabel": "If busy"
         },
         "callForward": {
             "titles": {

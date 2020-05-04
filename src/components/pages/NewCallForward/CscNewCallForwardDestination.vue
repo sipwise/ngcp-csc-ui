@@ -29,7 +29,7 @@
 				</span>
 				{{ this.allCallsFwd
 					? $t('pages.newCallForward.allCallsForwardedTo')
-					: isVoiceMail()
+					: isVoiceMail() || isOfflineGroup() || isBusyGroup()
 						? $t('pages.newCallForward.destinationVoicemailLabel')
 						: $t('pages.newCallForward.destinationNumberLabel')
 				}}
@@ -68,6 +68,7 @@
 							:index="this.destinationIndex"
 							:destination="this.destinationNumber"
 							:groupName="this.groupName"
+							:groupId="this.groupId"
 						/>
 					</q-popover>
 				</div>
@@ -216,6 +217,15 @@
 				await this.$store.dispatch('newCallForward/loadMappings');
 			},
 			isVoiceMail(){
+				return this.destination.destination.includes('voicebox.local')
+			},
+			isBusyGroup(){
+				return this.groupName.includes('busy');
+			},
+			isOfflineGroup(){
+				return this.groupName.includes('offline');
+			},
+			isNotTimeoutOrUnconditional(){
 				return this.destination.destination.includes('voicebox.local')
 			},
 			getDestName(){
