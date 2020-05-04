@@ -9,7 +9,7 @@
                 <div
                     class="col col-xs-12 col-md-4 text-right csc-cf-group-title"
                 >
-                    {{ !(groupsCount < 2 && (group.name.includes('timeout') || group.name.includes('unconditional'))) ? groupTitle :"" }}
+                    {{ groupTitle }}
 
                 </div>
                 <div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
@@ -36,7 +36,7 @@
                 :index="index"
                 :groupId="group.id"
                 :groupName="group.name"
-                :allCallsFwd="group.name == 'csc-unconditional' && index === 0"
+                :allCallsFwd="(['csc-unconditional', 'csc-busy', 'csc-offline'].includes(group.name) &&  index === 0)"
                 :class="{ 'cf-destination-disabled': !isEnabled }"
 
             />
@@ -81,6 +81,7 @@
                         <csc-new-call-forward-add-destination-form
                             ref="addDestinationForm"
                             :groupName="this.group.name"
+                            :groupId="this.group.id"
                         />
                     </q-popover>
                 </div>
@@ -137,7 +138,7 @@
         async mounted(){
             try{
                 if(!this.inCreation){
-                    const isGroupEnabled =  await this.$store.dispatch('newCallForward/isGroupEnabled', this.group.name);
+                    const isGroupEnabled =  await this.$store.dispatch('newCallForward/isGroupEnabled', {groupName: this.group.name, id: this.group.id});
                     this.isEnabled = isGroupEnabled;
                 }
 
@@ -171,6 +172,9 @@
                     break;
                     case "csc-offline":
                         title = `${this.$t('pages.newCallForward.titles.offlineGroup')}`;
+                    break;
+                    case "csc-busy":
+                        title = `${this.$t('pages.newCallForward.titles.busyGroup')}`;
                     break;
                 }
                 return title;
@@ -231,10 +235,6 @@
         width 100%
     .csc-cf-group-cont
         position relative
-    .csc-cf-group-title
-        font-weight bold
-    .csc-cf-group-title
-        text-align right
     .csc-cf-destination-label
         text-align right
     .csc-cf-destination-value

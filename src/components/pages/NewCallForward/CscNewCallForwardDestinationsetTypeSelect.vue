@@ -4,20 +4,32 @@
     >
         <div
             class="csc-cf-dest-type"
+            v-if="!unconditionalGroupExists && !timeoutGroupExists"
             @click="addDestinationsetUnconditional()"
         >
-            {{ $t('pages.newCallForward.uncoditionalLabel') }}
+            {{ $t('pages.newCallForward.unconditionalLabel') }}
         </div>
         <div
             class="csc-cf-dest-type"
+            v-if="!offlineGroupExists"
             @click="addDestinationsetOffline()"
         >
-            {{ $t('pages.newCallForward.offlinelLabel') }}
+            {{ $t('pages.newCallForward.offlineLabel') }}
+        </div>
+        <div
+            class="csc-cf-dest-type"
+            v-if="!busyGroupExists"
+            @click="addDestinationsetBusy()"
+        >
+            {{ $t('pages.newCallForward.busyLabel') }}
         </div>
     </div>
 </template>
 
 <script>
+    import {
+        mapGetters,
+    } from 'vuex'
     import CscSpinner from '../../CscSpinner'
     import { } from 'quasar-framework'
 
@@ -31,6 +43,14 @@
                 enabled: true
             }
         },
+        computed: {
+            ...mapGetters('newCallForward', [
+                'timeoutGroupExists',
+                'unconditionalGroupExists',
+                'offlineGroupExists',
+                'busyGroupExists'
+            ])
+        },
         methods: {
             async addDestinationsetUnconditional(){
                 await this.$store.dispatch('newCallForward/setSelectedDestType', 'unconditional');
@@ -40,6 +60,26 @@
                 await this.$store.dispatch('newCallForward/setSelectedDestType', 'offline');
                 this.$parent.close()
             },
+            async addDestinationsetBusy(){
+                await this.$store.dispatch('newCallForward/setSelectedDestType', 'busy');
+                this.$parent.close()
+            },
+            // async checkTimeoutExisting(){
+            //     const group = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'timeout');
+            //     this.timeoutExisting = !!group;
+            // },
+            // async checkUnconditionalExisting(){
+            //     const group = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
+            //     this.unconditionalExisting = !!group;
+            // },
+            // async checkOfflineExisting(){
+            //     const group = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'offline');
+            //     this.offlineExisting = !!group;
+            // },
+            // async checkBusyExisting(){
+            //     const group = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'busy');
+            //     this.busyExisting = !!group;
+            // },
             cancel() {
                 this.enabled = false;
             },
