@@ -81,6 +81,7 @@
                         <csc-new-call-forward-add-destination-form
                             ref="addDestinationForm"
                             :groupName="this.group.name"
+                            :groupId="this.groupId"
                         />
                     </q-popover>
                 </div>
@@ -171,6 +172,9 @@
                     break;
                     case "csc-offline":
                         title = `${this.$t('pages.newCallForward.titles.offlineGroup')}`;
+                    break;
+                    case "csc-busy":
+                        title = `${this.$t('pages.newCallForward.titles.busyGroup')}`;
                     break;
                 }
                 return title;

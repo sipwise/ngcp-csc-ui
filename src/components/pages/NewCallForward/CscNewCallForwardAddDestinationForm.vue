@@ -81,7 +81,8 @@
             'index',
             'disable',
             'loading',
-            'groupName'
+            'groupName',
+            'groupId'
         ],
         validations: {
             number: {
@@ -103,8 +104,10 @@
         },
         methods: {
             async save() {
+                const forwardGroupId = this.groupId;
                 const forwardGroupName = this.groupName;
-                const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupByName', forwardGroupName);
+                const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', forwardGroupId);
+                debugger
                 if (this.numberError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
                 }
@@ -115,7 +118,7 @@
                         destination: this.number
                     });
                 }
-                else { // new destination
+                else { // new group
                     await this.$store.dispatch('newCallForward/setDestinationInCreation', true);
                     if(forwardGroup.id.toString().includes('temp-')){ // unexisting group
                         forwardGroup.destinations[0].simple_destination = this.number; // optimistic UI update :)
