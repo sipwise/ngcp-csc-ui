@@ -22,6 +22,10 @@ const ForwardGroup = {
     offline: {
         name: 'csc-offline',
         mapping: 'cfo'
+    },
+    busy: {
+        name: 'csc-busy',
+        mapping: 'cfb'
     }
 };
 
@@ -96,7 +100,7 @@ export default {
 
             for (let i = 0; i < forwardGroups.length; i++) {
                 const group = forwardGroups[i];
-              if (!group.name.includes('unconditional') && !group.name.includes('timeout')){
+              if (group.name.includes('unconditional') || group.name.includes('timeout')){
                   forwardGroups.splice(i, 1);
                   forwardGroups.unshift(group);
               }
@@ -211,6 +215,13 @@ export default {
             forwardGroups = forwardGroups.filter(($forwardGroup) => {
                 return ForwardGroup[name] ? $forwardGroup.name === ForwardGroup[name].name : $forwardGroup.name === name;
             });
+            return forwardGroups.length > 0 ? forwardGroups  : null;
+        },
+        getForwardGroupById(context, id){
+            let forwardGroups = context.getters.forwardGroups;
+            forwardGroups = forwardGroups.filter(($forwardGroup) => {
+                return $forwardGroup.id === id ;
+            });
             return forwardGroups.length > 0 ? forwardGroups[0]  : null;
         },
         addTempGroup(context, groupName){
@@ -225,7 +236,7 @@ export default {
                     "timeout": 5
                 }]
             };
-            if(!groupName.includes('timeout') && !groupName.includes('unconditional')){
+            if(groupName.includes('timeout') || groupName.includes('unconditional')){
                 context.state.forwardGroups.unshift(data);
             }
             else{
@@ -365,51 +376,54 @@ export default {
         },
         async forwardAllCalls(context, noSelfNumber){
             try{
-                let unconditionalGroup = await context.dispatch('getForwardGroupByName', 'unconditional')
-                let timeoutGroup = await context.dispatch('getForwardGroupByName', 'timeout');
+                let unconditionalGroups = await context.dispatch('getForwardGroupByName', 'unconditional')
+                let timeoutGroups = await context.dispatch('getForwardGroupByName', 'timeout');
 
-                if(noSelfNumber){
-                    if(timeoutGroup && !timeoutGroup.id.toString().includes('temp')){
-                        const destinations = [...timeoutGroup.destinations]
-                        await context.dispatch('addForwardGroup', {
-                            name: 'unconditional'
-                        });
-                        await context.dispatch('loadMappings');
-                        await context.dispatch('loadForwardGroups');
-                        await context.dispatch('replaceDestinations', {
-                            groupName: 'unconditional',
-                            destinations: destinations
-                        });
-                        await context.dispatch('deleteForwardGroup', timeoutGroup);
-                        await context.dispatch('loadForwardGroups');
-                    }
-                    else {
-                        await context.dispatch('loadForwardGroups');
-                        await context.dispatch('addTempGroup', 'unconditional');
+                if(noSelfNumber && timeoutGroups){
+                    for(let timeoutGroup of timeoutGroups){
+                        if(timeoutGroup && !timeoutGroup.id.toString().includes('temp')){
+                            const destinations = [...timeoutGroup.destinations]
+                            await context.dispatch('addForwardGroup', {
+                                name: 'unconditional'
+                            });
+                            await context.dispatch('loadMappings');
+                            await context.dispatch('loadForwardGroups');
+                            await context.dispatch('replaceDestinations', {
+                                groupName: 'unconditional',
+                                destinations: destinations
+                            });
+                            await context.dispatch('deleteForwardGroup', timeoutGroup);
+                            await context.dispatch('loadForwardGroups');
+                        }
+                        else {
+                            await context.dispatch('loadForwardGroups');
+                            await context.dispatch('addTempGroup', 'unconditional');
+                        }
                     }
                 }
                 else{
-                    if(unconditionalGroup && !unconditionalGroup.id.toString().includes('temp')){
-                        const destinations = [...unconditionalGroup.destinations]
-                        await context.dispatch('addForwardGroup', {
-                            name: 'timeout'
-                        });
-                        await context.dispatch('loadMappings');
-                        await context.dispatch('loadForwardGroups');
-                        await context.dispatch('replaceDestinations', {
-                            groupName: 'timeout',
-                            destinations: destinations
-                        });
-                        await context.dispatch('deleteForwardGroup', unconditionalGroup);
-                        await context.dispatch('loadForwardGroups');
+                    if(unconditionalGroups ){
+                        for(let unconditionalGroup of unconditionalGroups){
+                            if(!unconditionalGroup.id.toString().includes('temp')){
+                                const destinations = [...unconditionalGroup.destinations]
+                                await context.dispatch('addForwardGroup', {
+                                    name: 'timeout'
+                                });
+                                await context.dispatch('loadMappings');
+                                await context.dispatch('loadForwardGroups');
+                                await context.dispatch('replaceDestinations', {
+                                    groupName: 'timeout',
+                                    destinations: destinations
+                                });
+                                await context.dispatch('deleteForwardGroup', unconditionalGroup);
+                                await context.dispatch('loadForwardGroups');
+                            }
+                            else{
+                                await context.dispatch('loadForwardGroups');
+                                await context.dispatch('addTempGroup', 'timeout');
+                            }
+                        }
                     }
-                    else{
-                        await context.dispatch('loadForwardGroups');
-                        await context.dispatch('addTempGroup', 'timeout');
-                    }
-
-
-
                 }
             }
             catch(err){
@@ -426,22 +440,27 @@ export default {
             }
             return mappingId;
         },
-        async isGroupEnabled(context, groupName){
-            const mappingId =  await context.dispatch('getMappingIdByGroupName', groupName);
-            return mappingId
-                    && context.state.mappings[mappingId]
-                    && context.state.mappings[mappingId][0] // IMPROVE remove hardcoded [0]
-                        ? context.state.mappings[mappingId][0].enabled
-                        : true;
+        async isGroupEnabled(context, data){
+            const mappingId =  await context.dispatch('getMappingIdByGroupName', data.groupName);
+            if(mappingId && context.state.mappings[mappingId]){
+                let groupProps = await context.state.mappings[mappingId].filter(($group)=>{
+                    return $group.destinationset_id === data.id;
+                });
+                return groupProps[0].enabled;
+            }
+            return true;
         },
         async enableGroup(context, data){
             try{
                 if(!data.id.toString().includes('temp-')){
                     const subscriberId = localStorage.getItem('subscriberId');
                     const mappingId = await context.dispatch('getMappingIdByGroupName', data.groupName);
-                    let groupMappings = context.state.mappings[mappingId];
-                    groupMappings[0].enabled = data.enabled; // IMPROVE remove hardcoded [0]
-
+                    const groupMappings = await context.state.mappings[mappingId];
+                    for(let group of groupMappings){
+                        if(group.destinationset_id === data.id){
+                            group.enabled = data.enabled;
+                        }
+                    }
                     await addNewMapping({
                         mappings: groupMappings,
                         group: mappingId,
