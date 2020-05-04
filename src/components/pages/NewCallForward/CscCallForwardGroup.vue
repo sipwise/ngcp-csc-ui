@@ -172,6 +172,9 @@
                     case "csc-offline":
                         title = `${this.$t('pages.newCallForward.titles.offlineGroup')}`;
                     break;
+                    case "csc-busy":
+                        title = `${this.$t('pages.newCallForward.titles.busyGroup')}`;
+                    break;
                 }
                 return title;
             }

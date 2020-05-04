@@ -22,6 +22,10 @@ const ForwardGroup = {
     offline: {
         name: 'csc-offline',
         mapping: 'cfo'
+    },
+    busy: {
+        name: 'csc-busy',
+        mapping: 'cfb'
     }
 };
 

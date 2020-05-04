@@ -184,7 +184,10 @@
                     case "offline":{
                         await this.$store.dispatch('newCallForward/addTempGroup','offline' );
                     }
-
+                    break;
+                    case "busy":{
+                        await this.$store.dispatch('newCallForward/addTempGroup','busy' );
+                    }
                     break;
                 }
 

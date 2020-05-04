@@ -12,7 +12,13 @@
             class="csc-cf-dest-type"
             @click="addDestinationsetOffline()"
         >
-            {{ $t('pages.newCallForward.offlinelLabel') }}
+            {{ $t('pages.newCallForward.offlineLabel') }}
+        </div>
+        <div
+            class="csc-cf-dest-type"
+            @click="addDestinationsetBusy()"
+        >
+            {{ $t('pages.newCallForward.busyLabel') }}
         </div>
     </div>
 </template>
@@ -38,6 +44,10 @@
             },
             async addDestinationsetOffline(){
                 await this.$store.dispatch('newCallForward/setSelectedDestType', 'offline');
+                this.$parent.close()
+            },
+            async addDestinationsetBusy(){
+                await this.$store.dispatch('newCallForward/setSelectedDestType', 'busy');
                 this.$parent.close()
             },
             cancel() {
