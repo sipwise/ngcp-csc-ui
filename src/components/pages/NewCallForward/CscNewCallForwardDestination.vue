@@ -213,8 +213,6 @@
 					destination: this.destination,
 					forwardGroupId: this.groupId
 				});
-				await this.$store.dispatch('newCallForward/loadForwardGroups');
-				await this.$store.dispatch('newCallForward/loadMappings');
 			},
 			isVoiceMail(){
 				return this.destination.destination.includes('voicebox.local')

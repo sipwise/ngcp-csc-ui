@@ -296,6 +296,21 @@ export function deleteDestinationsetById(id) {
     });
 }
 
+export function updateDestinationsetName(options) {
+    return new Promise((resolve, reject) => {
+        let headers = { 'Content-Type': 'application/json-patch+json' };
+        Vue.http.patch('api/cfdestinationsets/' + options.id, [{
+            op: 'replace',
+            path: '/name',
+            value: options.name
+        }], { headers: headers }).then((result) => {
+            resolve(result);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
 export function addDestinationToDestinationset(options) {
     let headers = {
         'Content-Type': 'application/json-patch+json'
