@@ -199,6 +199,21 @@
                         }
                     }
                     break;
+                    case "unconditional-from":{
+                        if(this.toggleDefaultNumber){
+                            const tempTimeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-timeout-from');
+                            if(!tempTimeoutFwdGroup){
+                                await this.$store.dispatch('newCallForward/addTempGroup','timeoutFrom' );
+                            }
+                        }
+                        else{
+                            const tempUnconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-unconditional-from');
+                            if(!tempUnconditionalFwdGroup){
+                                await this.$store.dispatch('newCallForward/addTempGroup','unconditionalFrom' );
+                            }
+                        }
+                    }
+                    break;
                     case "offline":{
                         await this.$store.dispatch('newCallForward/addTempGroup','offline' );
                     }
