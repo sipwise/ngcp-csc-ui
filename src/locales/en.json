@@ -213,6 +213,7 @@
         "newCallForward": {
             "titles": {
                 "timeoutGroup" : "If online",
+                "timeoutGroupFrom" : "If online and call from ...",
                 "offlineGroup" : "If offline",
                 "busyGroup" : "If busy"
             },

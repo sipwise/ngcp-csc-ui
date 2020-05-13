@@ -170,6 +170,10 @@
                     case "csc-timeout":
                          title = `${this.$t('pages.newCallForward.titles.timeoutGroup')}`;
                     break;
+                    case "csc-unconditional-from":
+                    case "csc-timeout-from":
+                         title = `${this.$t('pages.newCallForward.titles.timeoutGroupFrom')}`;
+                    break;
                     case "csc-offline":
                         title = `${this.$t('pages.newCallForward.titles.offlineGroup')}`;
                     break;
