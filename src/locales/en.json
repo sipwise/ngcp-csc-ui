@@ -230,6 +230,7 @@
             "cancelDialogTitle": "Delete from {groupName} forwarding",
             "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding",
             "unconditionalLabel": "If online",
+            "unconditionalFromLabel": "If online and call from ...",
             "offlineLabel": "If offline",
             "busyLabel": "If busy"
         },
