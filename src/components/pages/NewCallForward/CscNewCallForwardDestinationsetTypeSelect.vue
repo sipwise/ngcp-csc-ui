@@ -11,6 +11,13 @@
         </div>
         <div
             class="csc-cf-dest-type"
+            v-if="!unconditionalGroupExists && !timeoutFromGroupExists"
+            @click="addDestinationsetUnconditionalFrom()"
+        >
+            {{ $t('pages.newCallForward.unconditionalFromLabel') }}
+        </div>
+        <div
+            class="csc-cf-dest-type"
             v-if="!offlineGroupExists"
             @click="addDestinationsetOffline()"
         >
@@ -46,7 +53,9 @@
         computed: {
             ...mapGetters('newCallForward', [
                 'timeoutGroupExists',
+                'timeoutFromGroupExists',
                 'unconditionalGroupExists',
+                'unconditionalFromGroupExists',
                 'offlineGroupExists',
                 'busyGroupExists'
             ])
@@ -54,6 +63,10 @@
         methods: {
             async addDestinationsetUnconditional(){
                 await this.$store.dispatch('newCallForward/setSelectedDestType', 'unconditional');
+                this.$parent.close()
+            },
+            async addDestinationsetUnconditionalFrom(){
+                await this.$store.dispatch('newCallForward/setSelectedDestType', 'unconditional-from');
                 this.$parent.close()
             },
             async addDestinationsetOffline(){
@@ -64,22 +77,7 @@
                 await this.$store.dispatch('newCallForward/setSelectedDestType', 'busy');
                 this.$parent.close()
             },
-            // async checkTimeoutExisting(){
-            //     const group = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'timeout');
-            //     this.timeoutExisting = !!group;
-            // },
-            // async checkUnconditionalExisting(){
-            //     const group = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
-            //     this.unconditionalExisting = !!group;
-            // },
-            // async checkOfflineExisting(){
-            //     const group = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'offline');
-            //     this.offlineExisting = !!group;
-            // },
-            // async checkBusyExisting(){
-            //     const group = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'busy');
-            //     this.busyExisting = !!group;
-            // },
+
             cancel() {
                 this.enabled = false;
             },

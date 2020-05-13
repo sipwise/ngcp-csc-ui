@@ -16,8 +16,16 @@ const ForwardGroup = {
         name : 'csc-unconditional',
         mapping: 'cfu'
     },
+    unconditionalFrom: {
+        name: 'csc-unconditional-from',
+        mapping: 'cfu'
+    },
     timeout: {
         name: 'csc-timeout',
+        mapping: 'cft'
+    },
+    timeoutFrom: {
+        name: 'csc-timeout-from',
         mapping: 'cft'
     },
     offline: {
@@ -78,6 +86,18 @@ export default {
         unconditionalGroupExists(state){
             const group = state.forwardGroups.filter(($group)=>{
                 return $group.name === 'csc-unconditional'
+            });
+            return group && group.length > 0;
+        },
+        timeoutFromGroupExists(state){
+            const group = state.forwardGroups.filter(($group)=>{
+                return $group.name === 'csc-timeout-from'
+            });
+            return group && group.length > 0;
+        },
+        unconditionalFromGroupExists(state){
+            const group = state.forwardGroups.filter(($group)=>{
+                return $group.name === 'csc-unconditional-from'
             });
             return group && group.length > 0;
         },
