@@ -9,8 +9,37 @@
                 <div
                     class="col col-xs-12 col-md-4 text-right csc-cf-group-title"
                 >
-                    {{ groupTitle }}
-
+                    {{groupTitle}}
+                    <span
+                        v-if="isOnlineFromGroup"
+                        class="csc-cf-from-link"
+                        @click="showOnlineSourcesets"
+                    >
+                        {{$t('pages.newCallForward.titles.timeoutGroupFromPost')}}
+                        <q-popover
+                            ref="onlineSourcest"
+                            @open="createOnlineSourceset()"
+                        >
+                            TODO
+                            <!-- <csc-new-call-forward-destination-type-form
+                                ref="selectDestinationType"
+                            /> -->
+                        </q-popover>
+                    </span>
+                    <span
+                        v-if="isOfflineFromGroup"
+                        class="csc-cf-from-link"
+                        @click=""
+                    >
+                        {{$t('pages.newCallForward.titles.timeoutGroupFromPost')}}
+                    </span>
+                    <span
+                        v-if="isBusyFromGroup"
+                        class="csc-cf-from-link"
+                        @click=""
+                    >
+                        {{$t('pages.newCallForward.titles.timeoutGroupFromPost')}}
+                    </span>
                 </div>
                 <div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
                     <q-toggle
@@ -37,7 +66,7 @@
                 :groupId="group.id"
                 :groupName="group.name"
                 :allCallsFwd="(['csc-unconditional', 'csc-busy', 'csc-offline'].includes(group.name) &&  index === 0)"
-                :class="{ 'cf-destination-disabled': !isEnabled }"
+                :class="{ 'csc-cf-destination-disabled': !isEnabled }"
 
             />
         </div>
@@ -48,7 +77,7 @@
                 <div
                     class="col col-xs-12 col-md-2 text-left"
                     v-if="showAddDestBtn"
-                    :class="{ 'cf-destination-disabled': !isEnabled }"
+                    :class="{ 'csc-cf-destination-disabled': !isEnabled }"
                 >
                     <div
                         class='csc-cf-destination-add-destination'
@@ -172,7 +201,7 @@
                     break;
                     case "csc-unconditional-from":
                     case "csc-timeout-from":
-                         title = `${this.$t('pages.newCallForward.titles.timeoutGroupFrom')}`;
+                         title = `${this.$t('pages.newCallForward.titles.timeoutGroupFromPre')}`;
                     break;
                     case "csc-offline":
                         title = `${this.$t('pages.newCallForward.titles.offlineGroup')}`;
@@ -182,6 +211,15 @@
                     break;
                 }
                 return title;
+            },
+            isOnlineFromGroup(){
+                return this.group.name.includes('timeout-from') || this.group.name.includes('unconditional-from');
+            },
+            isOfflineFromGroup(){
+                return this.group.name.includes('offline-from');
+            },
+            isBusyFromGroup(){
+                return this.group.name.includes('offline-busy');
             }
         },
         methods: {
@@ -228,6 +266,9 @@
                     enabled: this.isEnabled
                 });
                 this.toggleGroupInProgress = false;
+            },
+            createOnlineSourceset(){
+
             }
         }
     }
@@ -253,7 +294,10 @@
         cursor pointer
     .csc-cf-group-popover-bottom
         margin-left 30px
-    .cf-destination-disabled
+    .csc-cf-from-link
+        color $primary
+        cursor pointer
+    .csc-cf-destination-disabled
         color $cf-disabled-label
         .csc-cf-destination-link
             color $cf-disabled-link
