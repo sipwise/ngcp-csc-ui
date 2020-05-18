@@ -8,7 +8,8 @@ import {
     addDestinationToDestinationset,
     addNewMapping,
     updateOwnPhoneTimeout,
-    updateDestinationsetName
+    updateDestinationsetName,
+    createSourcesetWithSource
 } from '../api/call-forward';
 
 const ForwardGroup = {
@@ -191,7 +192,7 @@ export default {
 
                 groupMappings.push({
                     "destinationset_id": data.groupId,
-                    "sourceset_id":null,
+                    "sourceset_id": data.sourceSetId || null,
                     "timeset_id":null
                 });
 
@@ -547,6 +548,22 @@ export default {
         },
         setSelectedDestType(context, destType){
             context.commit('setSelectedDestType', destType);
+        },
+        async createSourceSet(context, data){
+            const sourceSetId = await createSourcesetWithSource({
+                sourcesetName: data.name,
+                subscriberId: localStorage.getItem('subscriberId'),
+                mode: "whitelist", // TODO maybe get rid?
+                source: data.source
+            });
+            return sourceSetId;
+        },
+    async addSourcesetToGroup(context, data){
+            await context.dispatch('editMapping', {
+                name: data.name,
+                groupId: data.id,
+                sourceSetId: data.sourceSetId
+            });
         }
     }
 };

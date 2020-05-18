@@ -13,17 +13,19 @@
                     <span
                         v-if="isOnlineFromGroup"
                         class="csc-cf-from-link"
-                        @click="showOnlineSourcesets"
                     >
                         {{$t('pages.newCallForward.titles.timeoutGroupFromPost')}}
                         <q-popover
                             ref="onlineSourcest"
-                            @open="createOnlineSourceset()"
+                            class="csc-cf-number-form"
+                            @open="showSourcesetForm()"
                         >
-                            TODO
-                            <!-- <csc-new-call-forward-destination-type-form
-                                ref="selectDestinationType"
-                            /> -->
+                            <csc-new-call-forward-add-sourceset-form
+                                ref="addSourceSet"
+                                :enabled="true"
+                                :groupName="group.name"
+                                :groupId="group.id"
+                            />
                         </q-popover>
                     </span>
                     <span
@@ -136,6 +138,7 @@
     import CscObjectSpinner from "../../CscObjectSpinner";
     import CscNewCallForwardDestination from './CscNewCallForwardDestination'
     import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinationForm'
+    import CscNewCallForwardAddSourcesetForm from './CscNewCallForwardAddSourcesetForm'
     import CscNewCallForwardDestinationTypeForm from './CscNewCallForwardDestinationTypeForm'
     export default {
         name: 'csc-cf-group',
@@ -154,6 +157,7 @@
             CscObjectSpinner,
             CscNewCallForwardDestination,
             CscNewCallForwardAddDestinationForm,
+            CscNewCallForwardAddSourcesetForm,
             CscNewCallForwardDestinationTypeForm
         },
         data () {
@@ -267,8 +271,9 @@
                 });
                 this.toggleGroupInProgress = false;
             },
-            createOnlineSourceset(){
 
+            showSourcesetForm(){
+                this.$refs.addSourceSet.add();
             }
         }
     }
