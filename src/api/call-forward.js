@@ -856,8 +856,9 @@ export function createSourcesetWithSource(options) {
                 sources: [{
                     source: options.source
                 }]
-            }).then(() => {
-                resolve();
+            }).then((data) => {
+                let id = data.headers.map.location[0].split('cfsourcesets/')[1];
+                resolve(id);
             }).catch((err) => {
                 reject(err);
             });

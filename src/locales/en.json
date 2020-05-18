@@ -234,7 +234,8 @@
             "unconditionalLabel": "If online",
             "unconditionalFromLabel": "If online and call from ...",
             "offlineLabel": "If offline",
-            "busyLabel": "If busy"
+            "busyLabel": "If busy",
+            "sourcesetName": "List name"
         },
         "callForward": {
             "titles": {
