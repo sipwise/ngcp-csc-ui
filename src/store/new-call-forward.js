@@ -9,7 +9,9 @@ import {
     addNewMapping,
     updateOwnPhoneTimeout,
     updateDestinationsetName,
-    createSourcesetWithSource
+    createSourcesetWithSource,
+    getSourcesetById,
+    // getSourcesets
 } from '../api/call-forward';
 
 const ForwardGroup = {
@@ -190,12 +192,21 @@ export default {
                 const allMappings = context.getters.getMappings;
                 let groupMappings = allMappings[groupMappingId];
 
-                groupMappings.push({
-                    "destinationset_id": data.groupId,
-                    "sourceset_id": data.sourceSetId || null,
-                    "timeset_id":null
-                });
-
+                if(data.replaceMapping){
+                    for(let mapping of groupMappings){
+                        if(mapping.destinationset_id === data.groupId){
+                            mapping.sourceset_id = data.sourceSetId || null;
+                            break;
+                        }
+                    }
+                }
+                else{
+                    groupMappings.push({
+                        "destinationset_id": data.groupId,
+                        "sourceset_id": data.sourceSetId || null,
+                        "timeset_id":null
+                    });
+                }
                 await addNewMapping({
                     mappings: groupMappings,
                     group: groupMappingId,
@@ -558,12 +569,26 @@ export default {
             });
             return sourceSetId;
         },
-    async addSourcesetToGroup(context, data){
-            await context.dispatch('editMapping', {
-                name: data.name,
-                groupId: data.id,
-                sourceSetId: data.sourceSetId
-            });
+        async addSourcesetToGroup(context, data){
+            try{
+                await context.dispatch('editMapping', {
+                    name: data.name,
+                    groupId: data.id,
+                    sourceSetId: data.sourceSetId,
+                    replaceMapping: true
+                });
+            }
+            catch(err){
+                console.log(err)
+            }
+        },
+        // async getSourcesets(){
+        //     const sourceSets = await getSourcesets(localStorage.getItem('subscriberId'));
+        //     return sourceSet;
+        // },
+        async getSourcesetById(context, id){
+            const sourceSet = await getSourcesetById(id);
+            return sourceSet;
         }
     }
 };
