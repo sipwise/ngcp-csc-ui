@@ -1,3 +1,39 @@
+ngcp-csc-ui (8.5.0.0+0~mr8.5.0.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [2926cec] TT#70901 selenium: edit 'presence of element' checks
+  * [aa041c7] TT#70901 selenium: move loading screen waits into seperate function
+  * [6a6afec] TT#70901 selenium: check if 'ring own phone' is clickable before clicking it
+  * [baf1383] TT#70901 selenium: dont start geckodriver explicitly in testrunner script
+
+  [ Carlo Venusino ]
+  * [8554bf1] TT#75404 CF: As a Customer, I want to add phone numbers in order to forward calls to these numbers
+  * [5f3b320] TT#76155 CF: As a Customer, I want to remove phone numbers
+  * [fd123bd] TT#75405 CF: primary number rings before the call forward sequence is activated or not
+  * [477ddfc] TT#79302 CF on/off the basic call forward sequence switcher
+  * [e79b9c6] TT#79501 CF: As a Customer, I want to add "Voicemail" as destination
+  * [ff73ab6] TT#79755 CF: Implement menu item "If offline"
+  * [7065b35] TT#79758 CF Offline: Implement and integrate Vue components
+  * [581e682] TT#79757 CF Offline implement mutations, actions and Vue store related functions
+  * [9c3f1e6] TT#79307 CF Busy group
+  * [21a5040] TT#81162 CF: Change cfo to cfna in store
+  * [50e6e41] TT#81163 CF: Improve UX by reducing requests
+
+  [ Hans-Peter Herzog ]
+  * [6eddb6e] TT#78464 Ropa 28519 CSC -Subscriber: Call Duration to be display in Call History
+  * [cc7a224] TT#79500 Fix layout regression in page component
+  * [b2fb7e4] TT#80754 Remove white background from PBX device images
+
+  [ Rene Krenn ]
+  * [6acc93e] TT#78467 use total_customer_cost to include VAT
+  * [b1ada97] TT#78467 enforce 2 fractional digits for total_customer_cost
+
+  [ Victor Seva ]
+  * [0eb65cf] TT#79804 allow longer lines for pep8 check
+  * [220b59e] TT#79804 don't break lines on xpath
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 May 2020 11:09:34 +0200
+
 ngcp-csc-ui (8.4.0.0+0~mr8.4.0.0) unstable; urgency=medium
 
   [ Guillem Jover ]
