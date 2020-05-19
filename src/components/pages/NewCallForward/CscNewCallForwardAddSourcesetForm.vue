@@ -102,11 +102,6 @@
                 minLength: 1
             }
         },
-        updated(){
-            if(Number.isInteger(this.index)){
-                this.destinationIndex = this.index;
-            }
-        },
         computed: {
             ...mapGetters('newCallForward', [
                 'destinationInCreation'
@@ -121,21 +116,28 @@
                 const forwardGroupId = this.groupId;
                 const forwardGroupName = this.groupName;
                 const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', forwardGroupId);
+                
                 if (this.numberError || this.nameError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
                 }
                 switch(this.mode){
                     case 'create':
-                        // 1. create sourceset adding name , source and mode: "whitelist"
-                        sourceSetId = await this.$store.dispatch('newCallForward/createSourceSet', {
-                            name: this.name,
-                            source: this.number
-                        });
-                        await this.$store.dispatch('newCallForward/addSourcesetToGroup', {
-                            name:   forwardGroupName,
-                            id: forwardGroupId,
-                            sourceSetId: sourceSetId
-                        });
+                        try{
+                            sourceSetId = await this.$store.dispatch('newCallForward/createSourceSet', {
+                                name: this.name,
+                                source: this.number
+                            });
+                            await this.$store.dispatch('newCallForward/addSourcesetToGroup', {
+                                name:   forwardGroupName,
+                                id: forwardGroupId,
+                                sourceSetId: sourceSetId
+                            });
+                            await this.$store.dispatch('newCallForward/loadForwardGroups');
+                        }
+                        catch(err){
+                            console.log(err)
+                        }
+
 
                     break;
                     case 'edit':
@@ -145,10 +147,12 @@
             },
             cancel() {
                 this.number = '';
+                this.name = '';
                 this.enabled = false;
             },
             add() {
                 this.number = '';
+                this.name = '';
                 this.enabled = true;
             },
             close() {

@@ -804,6 +804,18 @@ export function appendTimeToTimeset(options) {
     });
 }
 
+
+export function getSourcesetById(id) {
+    return new Promise((resolve, reject)=>{
+        Vue.http.get('api/cfsourcesets/' + id).then((res)=>{
+            let sourceset = getJsonBody(res.body);
+            resolve(sourceset);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
 export function getSourcesBySourcesetId(id) {
     return new Promise((resolve, reject)=>{
         Vue.http.get('api/cfsourcesets/' + id).then((res)=>{

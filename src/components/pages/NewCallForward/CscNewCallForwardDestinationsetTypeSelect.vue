@@ -4,28 +4,24 @@
     >
         <div
             class="csc-cf-dest-type"
-            v-if="!unconditionalGroupExists && !timeoutGroupExists"
             @click="addDestinationsetUnconditional()"
         >
             {{ $t('pages.newCallForward.unconditionalLabel') }}
         </div>
-        <div
+        <!-- <div
             class="csc-cf-dest-type"
-            v-if="!unconditionalGroupExists && !timeoutFromGroupExists"
             @click="addDestinationsetUnconditionalFrom()"
         >
             {{ $t('pages.newCallForward.unconditionalFromLabel') }}
-        </div>
+        </div> -->
         <div
             class="csc-cf-dest-type"
-            v-if="!offlineGroupExists"
             @click="addDestinationsetOffline()"
         >
             {{ $t('pages.newCallForward.offlineLabel') }}
         </div>
         <div
             class="csc-cf-dest-type"
-            v-if="!busyGroupExists"
             @click="addDestinationsetBusy()"
         >
             {{ $t('pages.newCallForward.busyLabel') }}
