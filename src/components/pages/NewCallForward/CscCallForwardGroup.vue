@@ -9,16 +9,40 @@
                 <div
                     class="col col-xs-12 col-md-4 text-right csc-cf-group-title"
                 >
+
                     {{groupTitle}}
+
                     <span
-                        v-if="isOnlineFromGroup"
-                        class="csc-cf-from-link"
+                        class="csc-cf-destination-add-condition"
+                        v-if="!groupSourceset"
                     >
-                        {{$t('pages.newCallForward.titles.timeoutGroupFromPost')}}
+                        <q-icon
+                            name="add"
+                            color="primary"
+                            size="20px"
+                        />
+
+                        {{ $t('pages.newCallForward.conditionBtnLabel') }}
+
                         <q-popover
-                            ref="onlineSourcest"
+                            ref="conditions"
                             class="csc-cf-number-form"
+                            @open="showConditions()"
+                            @close="showConditionForm()"
+                        >
+                            <csc-new-call-forward-condition-type-select
+                                ref="addCondition"
+                                :enabled="true"
+                                :groupName="group.name"
+                                :groupId="group.id"
+                            />
+                        </q-popover>
+                        <q-popover
+                            ref="onlineSourceset"
+                            class="csc-cf-number-form"
+                            v-bind:class="{ 'csc-cf-popover-hide': toggleConditionFromForm }"
                             @open="showSourcesetForm()"
+                            @close="resetToggleCondition()"
                         >
                             <csc-new-call-forward-add-sourceset-form
                                 ref="addSourceSet"
@@ -28,19 +52,13 @@
                             />
                         </q-popover>
                     </span>
+
                     <span
-                        v-if="isOfflineFromGroup"
+                        v-if="groupSourceset"
                         class="csc-cf-from-link"
-                        @click=""
                     >
-                        {{$t('pages.newCallForward.titles.timeoutGroupFromPost')}}
-                    </span>
-                    <span
-                        v-if="isBusyFromGroup"
-                        class="csc-cf-from-link"
-                        @click=""
-                    >
-                        {{$t('pages.newCallForward.titles.timeoutGroupFromPost')}}
+                        {{ $t('pages.newCallForward.fromLabelShort') +'"'+ groupSourceset +'"'}}
+
                     </span>
                 </div>
                 <div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
@@ -139,6 +157,7 @@
     import CscNewCallForwardDestination from './CscNewCallForwardDestination'
     import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinationForm'
     import CscNewCallForwardAddSourcesetForm from './CscNewCallForwardAddSourcesetForm'
+    import CscNewCallForwardConditionTypeSelect from './CscNewCallForwardConditionTypeSelect'
     import CscNewCallForwardDestinationTypeForm from './CscNewCallForwardDestinationTypeForm'
     export default {
         name: 'csc-cf-group',
@@ -158,6 +177,7 @@
             CscNewCallForwardDestination,
             CscNewCallForwardAddDestinationForm,
             CscNewCallForwardAddSourcesetForm,
+            CscNewCallForwardConditionTypeSelect,
             CscNewCallForwardDestinationTypeForm
         },
         data () {
@@ -165,7 +185,9 @@
                 toggleGroup: true,
                 isEnabled: true,
                 toggleNumberForm: true,
-                toggleGroupInProgress: false
+                toggleConditionFromForm: true,
+                toggleGroupInProgress: false,
+                sourceSet: null
             };
         },
         async mounted(){
@@ -174,7 +196,7 @@
                     const isGroupEnabled =  await this.$store.dispatch('newCallForward/isGroupEnabled', {groupName: this.group.name, id: this.group.id});
                     this.isEnabled = isGroupEnabled;
                 }
-
+                this.updateSourcesetNames()
             }
             catch(err){
                 console.log(err)
@@ -184,7 +206,8 @@
             ...mapGetters('newCallForward', [
                 'getOwnPhoneTimeout',
                 'destinationInCreation',
-                'groupsCount'
+                'groupsCount',
+                'getMappings'
             ]),
             showAddDestBtn(){
                 const destinations = this.group.destinations;
@@ -216,15 +239,14 @@
                 }
                 return title;
             },
-            isOnlineFromGroup(){
-                return this.group.name.includes('timeout-from') || this.group.name.includes('unconditional-from');
-            },
-            isOfflineFromGroup(){
-                return this.group.name.includes('offline-from');
-            },
-            isBusyFromGroup(){
-                return this.group.name.includes('offline-busy');
+            groupSourceset(){
+                return this.sourceSet ? this.sourceSet.name : false;
             }
+        },
+        watch: {
+             group: function () {
+                 this.updateSourcesetNames();
+            },
         },
         methods: {
             // we need to generate key because destinations have no id
@@ -245,6 +267,14 @@
                         await this.$store.dispatch('newCallForward/addVoiceMail', this.group.id);
                         await this.$store.dispatch('newCallForward/loadForwardGroups');
                         await this.$store.dispatch('newCallForward/setDestinationInCreation', false);
+                    break;
+                }
+            },
+            async showConditionForm(){
+                switch(this.$refs.addCondition.action){
+                    case 'addFromCondition':
+                        this.toggleConditionFromForm = false;
+                        this.$refs.onlineSourceset.open();
                     break;
                 }
             },
@@ -271,9 +301,29 @@
                 });
                 this.toggleGroupInProgress = false;
             },
-
+            showConditions(){
+                this.$refs.addCondition.add();
+                this.$refs.addSourceSet.cancel();
+            },
             showSourcesetForm(){
                 this.$refs.addSourceSet.add();
+            },
+            resetToggleCondition(){
+                this.toggleConditionFromForm = true;
+            },
+            async updateSourcesetNames(){
+                const mappings = this.getMappings;
+                const groupMappingId = await this.$store.dispatch('newCallForward/getMappingIdByGroupName', this.group.name);
+                let groupMapping, sourceSet;
+                if(mappings[groupMappingId]){
+                    groupMapping =  mappings[groupMappingId].filter(($mapping)=>{
+                        return $mapping.destinationset_id == this.group.id;
+                    });
+                    sourceSet = groupMapping[0] ? await this.$store.dispatch('newCallForward/getSourcesetById', groupMapping[0].sourceset_id) :  null;
+                    if(sourceSet){
+                        this.sourceSet = sourceSet
+                    }
+                }
             }
         }
     }
@@ -289,6 +339,10 @@
         text-align right
     .csc-cf-destination-value
         text-align center
+    .csc-cf-destination-add-condition
+        color $primary
+        cursor pointer
+        font-size 16px
     .csc-cf-destination-add-destination
         padding-left 25px
         width 250px
