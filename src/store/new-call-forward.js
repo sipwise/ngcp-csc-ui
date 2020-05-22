@@ -384,6 +384,10 @@ export default {
                 console.log(err);
             }
         },
+        removeSourceFromSourceset(context, data){
+            // TODO
+            console.log(context, data)
+        },
         async editDestination(context, data){
             let group = context.state.forwardGroups.find((group)=>{
                 return group.id === data.forwardGroupId;

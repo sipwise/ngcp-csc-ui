@@ -37,7 +37,7 @@
                                 :groupId="group.id"
                             />
                         </q-popover>
-                        <q-popover
+                         <q-popover
                             ref="onlineSourceset"
                             class="csc-cf-number-form"
                             v-bind:class="{ 'csc-cf-popover-hide': toggleConditionFromForm }"
@@ -58,6 +58,20 @@
                         class="csc-cf-from-link"
                     >
                         {{ $t('pages.newCallForward.fromLabelShort') +'"'+ groupSourceset +'"'}}
+
+                        <q-popover
+                            ref="sourcesList"
+                            class="csc-cf-number-form"
+                            @open="showSources()"
+                        >
+                            <csc-new-call-forward-edit-sources
+                                ref="editSources"
+                                :sources="sources"
+                                :sourceSetName="groupSourceset"
+                                :groupName="group.name"
+                                :groupId="group.id"
+                            />
+                        </q-popover>
 
                     </span>
                 </div>
@@ -156,6 +170,7 @@
     import CscObjectSpinner from "../../CscObjectSpinner";
     import CscNewCallForwardDestination from './CscNewCallForwardDestination'
     import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinationForm'
+    import CscNewCallForwardEditSources from './CscNewCallForwardEditSources'
     import CscNewCallForwardAddSourcesetForm from './CscNewCallForwardAddSourcesetForm'
     import CscNewCallForwardConditionTypeSelect from './CscNewCallForwardConditionTypeSelect'
     import CscNewCallForwardDestinationTypeForm from './CscNewCallForwardDestinationTypeForm'
@@ -176,6 +191,7 @@
             CscObjectSpinner,
             CscNewCallForwardDestination,
             CscNewCallForwardAddDestinationForm,
+            CscNewCallForwardEditSources,
             CscNewCallForwardAddSourcesetForm,
             CscNewCallForwardConditionTypeSelect,
             CscNewCallForwardDestinationTypeForm
@@ -187,7 +203,8 @@
                 toggleNumberForm: true,
                 toggleConditionFromForm: true,
                 toggleGroupInProgress: false,
-                sourceSet: null
+                sourceSet: null,
+                sources: []
             };
         },
         async mounted(){
@@ -303,14 +320,17 @@
             },
             showConditions(){
                 this.$refs.addCondition.add();
-                this.$refs.addSourceSet.cancel();
             },
             showSourcesetForm(){
                 this.$refs.addSourceSet.add();
             },
+            showSources(){
+                this.$refs.editSources.add();
+            },
             resetToggleCondition(){
                 this.toggleConditionFromForm = true;
             },
+
             async updateSourcesetNames(){
                 const mappings = this.getMappings;
                 const groupMappingId = await this.$store.dispatch('newCallForward/getMappingIdByGroupName', this.group.name);
@@ -319,9 +339,10 @@
                     groupMapping =  mappings[groupMappingId].filter(($mapping)=>{
                         return $mapping.destinationset_id == this.group.id;
                     });
-                    sourceSet = groupMapping[0] ? await this.$store.dispatch('newCallForward/getSourcesetById', groupMapping[0].sourceset_id) :  null;
+                    sourceSet = groupMapping[0] && groupMapping[0].sourceset_id ? await this.$store.dispatch('newCallForward/getSourcesetById', groupMapping[0].sourceset_id) :  null;
                     if(sourceSet){
-                        this.sourceSet = sourceSet
+                        this.sourceSet = sourceSet;
+                        this.sources = this.sourceSet.sources;
                     }
                 }
             }
