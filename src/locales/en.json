@@ -221,7 +221,7 @@
             "primarNumberEnabled": "All calls go to the primary number",
             "primarNumberDisabled": "No call goes to primary number",
             "forwardBtnLabel": "Add forwarding",
-            "conditionBtnLabel": "add condition",
+            "conditionBtnLabel": "Add condition",
             "numberLabel": "Number",
             "voiceMailLabel": "Voicemail",
             "destinationTimeoutLabel": "Then after ",
