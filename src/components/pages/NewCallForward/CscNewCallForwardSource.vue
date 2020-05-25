@@ -3,16 +3,6 @@
 			class="row csc-cf-source-cont"
 			v-bind:class="{ 'csc-cf-removed-source': removeInProgress }"
 		>
-			<div class="col text-left col-xs-12 col-md-12 ">
-
-				<div
-					class='csc-cf-sourceset-name'
-				>
-					{{ sourceSetName }}
-
-				</div>
-
-			</div>
 			<div class="col text-left col-xs-12 col-md-6 ">
 
 				<div
@@ -28,14 +18,7 @@
 					name="delete"
 					color="negative"
 					size="24px"
-					@click="showConfirmDialog"
-				/>
-				<csc-confirm-dialog
-					ref="confirmDialog"
-					title-icon="delete"
-					:title="$t('pages.newCallForward.cancelDialogTitle', {sourceSetName: this.sourceSetName})"
-					:message="$t('pages.newCallForward.cancelDialogText', {sourceSetName: this.sourceSetName, source: this.source})"
-					@confirm="confirmDeleteSource"
+					@click="deleteSource"
 				/>
 			</div>
 	</div>
@@ -74,31 +57,36 @@
 			'groupId',
 			'groupName',
             'source',
-			'sourceSetName'
+			'sourceSetName',
+			'sourceSetId'
         ],
-        // mounted(){
-		// 	this.updateValues(this.destination)
-		// },
 		data(){
 			return {
 				removeInProgress: false,
-				toggleNumberForm: true
+				toggleNumberForm: true,
+                sources: []
 			}
 		},
 		computed: {
-			...mapGetters('newCallForward', []),
+			...mapGetters('newCallForward', [
+				'getSourcesesBySourcesetId'
+			]),
 		},
         methods: {
-			showConfirmDialog(){
-				this.$refs.confirmDialog.open();
-			},
-			async confirmDeleteSource(){
+			async deleteSource(){
 				this.removeInProgress = true;
-				await this.$store.dispatch('newCallForward/removeSourceFromSourceset', {
-					source: this.source,
-					forwardGroupId: this.groupId,
-					sourceSetId: this.sourceSetId
-				});
+				let sources = this.getSourcesesBySourcesetId(this.sourceSetId);
+				sources = sources.filter($source=> $source.source !== this.source);
+				try{
+					await this.$store.dispatch('newCallForward/removeSourceFromSourceset', {
+						id: this.sourceSetId,
+						sources: sources
+					});
+					await this.$store.dispatch('newCallForward/loadSourcesets');
+				}
+				catch(err){
+					console.log(err)
+				}
 				this.removeInProgress = false;
 			}
 		}
