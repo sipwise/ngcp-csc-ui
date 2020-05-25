@@ -221,7 +221,8 @@
             "primarNumberEnabled": "All calls go to the primary number",
             "primarNumberDisabled": "No call goes to primary number",
             "forwardBtnLabel": "Add forwarding",
-            "conditionBtnLabel": "add condition",
+            "conditionBtnLabelPrefix": " and",
+            "conditionBtnLabel": " condition",
             "numberLabel": "Number",
             "voiceMailLabel": "Voicemail",
             "destinationTimeoutLabel": "Then after ",
@@ -234,7 +235,7 @@
             "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding",
             "unconditionalLabel": "If online",
             "fromLabel": "If call from ...",
-            "fromLabelShort": " and call from ",
+            "fromLabelShort": " call from ",
             "offlineLabel": "If offline",
             "busyLabel": "If busy",
             "sourcesetName": "List name"

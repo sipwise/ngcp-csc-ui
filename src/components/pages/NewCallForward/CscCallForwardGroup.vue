@@ -14,19 +14,14 @@
 
                     <span
                         class="csc-cf-destination-add-condition"
-                        v-if="!groupSourceset"
+                        v-if="!groupSourceset && !isTempGroup"
                     >
-                        <q-icon
-                            name="add"
-                            color="primary"
-                            size="20px"
-                        />
-
-                        {{ $t('pages.newCallForward.conditionBtnLabel') }}
-
+                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+                        <span class="csc-cf-from-link">
+                            {{ $t('pages.newCallForward.conditionBtnLabel') }}
+                        </span>
                         <q-popover
                             ref="conditions"
-                            class="csc-cf-number-form"
                             @open="showConditions()"
                             @close="showConditionForm()"
                         >
@@ -55,10 +50,11 @@
 
                     <span
                         v-if="groupSourceset"
-                        class="csc-cf-from-link"
                     >
-                        {{ $t('pages.newCallForward.fromLabelShort') +'"'+ groupSourceset +'"'}}
-
+                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+                        <span class="csc-cf-from-link">
+                            {{ $t('pages.newCallForward.fromLabelShort') +'"'+ groupSourceset +'"'}}
+                        </span>
                         <q-popover
                             ref="sourcesList"
                             class="csc-cf-number-form"
@@ -66,8 +62,8 @@
                         >
                             <csc-new-call-forward-edit-sources
                                 ref="editSources"
-                                :sources="sources"
                                 :sourceSetName="groupSourceset"
+                                :sourceSetId="sourceSet.id"
                                 :groupName="group.name"
                                 :groupId="group.id"
                             />
@@ -213,7 +209,7 @@
                     const isGroupEnabled =  await this.$store.dispatch('newCallForward/isGroupEnabled', {groupName: this.group.name, id: this.group.id});
                     this.isEnabled = isGroupEnabled;
                 }
-                this.updateSourcesetNames()
+                await this.updateSourcesetNames()
             }
             catch(err){
                 console.log(err)
@@ -221,10 +217,12 @@
         },
         computed: {
             ...mapGetters('newCallForward', [
+                'getGroupsLoaders',
                 'getOwnPhoneTimeout',
                 'destinationInCreation',
                 'groupsCount',
-                'getMappings'
+                'getMappings',
+                'getSourcesets'
             ]),
             showAddDestBtn(){
                 const destinations = this.group.destinations;
@@ -258,12 +256,18 @@
             },
             groupSourceset(){
                 return this.sourceSet ? this.sourceSet.name : false;
+            },
+            isTempGroup(){
+                return this.group.id.toString().includes('temp-');
             }
         },
         watch: {
-             group: function () {
+             getSourcesets: function(){
                  this.updateSourcesetNames();
             },
+            getGroupsLoaders: async function(){
+                this.toggleGroupInProgress = await this.$store.dispatch('newCallForward/groupIsLoading', this.group.id);
+            }
         },
         methods: {
             // we need to generate key because destinations have no id
@@ -310,13 +314,13 @@
                 return destination;
             },
             async toggleGroupChange(){
-                this.toggleGroupInProgress = true;
+                await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
                 await this.$store.dispatch('newCallForward/enableGroup', {
                     groupName: this.group.name,
                     id: this.group.id,
                     enabled: this.isEnabled
                 });
-                this.toggleGroupInProgress = false;
+                await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
             },
             showConditions(){
                 this.$refs.addCondition.add();
@@ -361,8 +365,6 @@
     .csc-cf-destination-value
         text-align center
     .csc-cf-destination-add-condition
-        color $primary
-        cursor pointer
         font-size 16px
     .csc-cf-destination-add-destination
         padding-left 25px

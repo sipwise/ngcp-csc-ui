@@ -10,8 +10,8 @@ import {
     updateOwnPhoneTimeout,
     updateDestinationsetName,
     createSourcesetWithSource,
-    getSourcesetById,
-    // getSourcesets
+    getSourcesets,
+    addSourceToSourceset
 } from '../api/call-forward';
 
 const ForwardGroup = {
@@ -45,11 +45,16 @@ export default {
     namespaced: true,
     state: {
         mappings: [],
+        sourceSets: [],
         forwardGroups: [],
+        groupsLoaders: [],
         destinationInCreation: false,
         selectedDestType: null
     },
     getters: {
+        getGroupsLoaders(state){
+            return state.groupsLoaders;
+        },
         primaryNumber(state, getters, rootState, rootGetters) {
             const subscriber = rootGetters['user/getSubscriber'];
             if(subscriber !== null) {
@@ -118,6 +123,13 @@ export default {
         },
         getMappings(state){
             return state.mappings;
+        },
+        getSourcesets(state){
+            return state.sourceSets;
+        },
+        getSourcesesBySourcesetId: (state) => (sourceSetId) => {
+            const sourceSet = state.sourceSets.filter($sourceset => $sourceset.id == sourceSetId);
+            return sourceSet ? sourceSet[0].sources : null;
         }
     },
     mutations: {
@@ -163,9 +175,28 @@ export default {
         },
         setSelectedDestType(state, destType){
             state.selectedDestType = destType;
+        },
+        setSourceSets(state, sourceSets){
+            state.sourceSets = sourceSets;
+        },
+        addGroupLoader(state, groupId){
+            state.groupsLoaders.push(groupId)
+        },
+        removeGroupLoader(state, groupId){
+            state.groupsLoaders = state.groupsLoaders.filter($groupId => $groupId !== groupId);
         }
     },
     actions: {
+        groupIsLoading(context, groupId){
+            const loader = context.state.groupsLoaders.filter($groupId => $groupId == groupId);
+            return loader && loader.length > 0;
+        },
+        addGroupLoader(context, groupId){
+            context.commit('addGroupLoader', groupId);
+        },
+        removeGroupLoader(context, groupId){
+            context.commit('removeGroupLoader', groupId);
+        },
         async loadMappings(context) {
             try{
                 const mappings = await getMappings(localStorage.getItem('subscriberId'));
@@ -384,10 +415,6 @@ export default {
                 console.log(err);
             }
         },
-        removeSourceFromSourceset(context, data){
-            // TODO
-            console.log(context, data)
-        },
         async editDestination(context, data){
             let group = context.state.forwardGroups.find((group)=>{
                 return group.id === data.forwardGroupId;
@@ -564,6 +591,11 @@ export default {
         setSelectedDestType(context, destType){
             context.commit('setSelectedDestType', destType);
         },
+        async loadSourcesets(context){
+            const subscriberId = localStorage.getItem('subscriberId');
+            const sourceSets = await getSourcesets(subscriberId);
+            context.commit('setSourceSets', sourceSets);
+        },
         async createSourceSet(context, data){
             const sourceSetId = await createSourcesetWithSource({
                 sourcesetName: data.name,
@@ -586,13 +618,15 @@ export default {
                 console.log(err)
             }
         },
-        // async getSourcesets(){
-        //     const sourceSets = await getSourcesets(localStorage.getItem('subscriberId'));
-        //     return sourceSet;
-        // },
         async getSourcesetById(context, id){
-            const sourceSet = await getSourcesetById(id);
-            return sourceSet;
-        }
+            const sourceSet = context.state.sourceSets.filter($sourceset => $sourceset.id == id);
+            return sourceSet ? sourceSet[0] : [];
+        },
+        async addSourceToSourceset(context, data){
+            await addSourceToSourceset(data)
+        },
+        async removeSourceFromSourceset(context, data){
+            await addSourceToSourceset(data)
+        },
     }
 };
