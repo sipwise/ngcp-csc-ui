@@ -3,16 +3,6 @@
 			class="row csc-cf-source-cont"
 			v-bind:class="{ 'csc-cf-removed-source': removeInProgress }"
 		>
-			<div class="col text-left col-xs-12 col-md-12 ">
-
-				<div
-					class='csc-cf-sourceset-name'
-				>
-					{{ sourceSetName }}
-
-				</div>
-
-			</div>
 			<div class="col text-left col-xs-12 col-md-6 ">
 
 				<div

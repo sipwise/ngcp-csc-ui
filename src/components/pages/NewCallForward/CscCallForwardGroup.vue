@@ -68,6 +68,7 @@
                                 ref="editSources"
                                 :sources="sources"
                                 :sourceSetName="groupSourceset"
+                                :sourceSetId="sourceSet.id"
                                 :groupName="group.name"
                                 :groupId="group.id"
                             />
