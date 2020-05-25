@@ -7,6 +7,7 @@
             dark
             clearable
             type="text"
+            ref="inputField"
             :float-label="label"
             v-model="inputValue"
             @keyup.enter="submit"
@@ -44,6 +45,7 @@
         mounted(){
             if(this.prefilled){
                 this.inputValue = this.prefilled === " " ? "" : this.prefilled;
+                this.$v.$reset();
             }
 
         },
@@ -97,6 +99,10 @@
             blur() {
                 this.$v.inputValue.$touch();
                 this.error = this.$v.inputValue.$error;
+            },
+            reset(){
+                this.$refs.inputField.clear();
+                this.$v.$reset();
             }
         },
         watch: {

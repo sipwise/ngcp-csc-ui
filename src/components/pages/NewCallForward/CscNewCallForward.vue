@@ -154,9 +154,10 @@
             this.groupsLoading = true;
             try{
                 await this.$store.dispatch('newCallForward/loadMappings');
+                await this.$store.dispatch('newCallForward/loadSourcesets');
                 await this.$store.dispatch('newCallForward/loadForwardGroups');
                 let unconditionalGroups = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
-                this.toggleDefaultNumber = !unconditionalGroups; //|| unconditionalGroup.destinations.length < 1;
+                this.toggleDefaultNumber = !unconditionalGroups;
             }
             catch(err){
                 console.log(err)
