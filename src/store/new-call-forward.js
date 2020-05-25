@@ -11,7 +11,7 @@ import {
     updateDestinationsetName,
     createSourcesetWithSource,
     getSourcesetById,
-    // getSourcesets
+    addSourceToSourceset
 } from '../api/call-forward';
 
 const ForwardGroup = {
@@ -593,6 +593,9 @@ export default {
         async getSourcesetById(context, id){
             const sourceSet = await getSourcesetById(id);
             return sourceSet;
+        },
+        async addSourceToSourceset(context, data){
+            await addSourceToSourceset(data)
         }
     }
 };
