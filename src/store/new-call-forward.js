@@ -166,9 +166,6 @@ export default {
             }
             state.forwardGroups = forwardGroups;
         },
-        setDestinationInCreation(state, isInCreation){
-            state.destinationInCreation = isInCreation;
-        },
         setSelectedDestType(state, destType){
             state.selectedDestType = destType;
         },
@@ -580,9 +577,6 @@ export default {
             catch(err){
                 console.log(err)
             }
-        },
-        setDestinationInCreation(context, isInCreation){
-            context.commit('setDestinationInCreation', isInCreation);
         },
         setSelectedDestType(context, destType){
             context.commit('setSelectedDestType', destType);

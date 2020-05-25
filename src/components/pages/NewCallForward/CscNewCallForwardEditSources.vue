@@ -3,8 +3,17 @@
         v-if="enabled"
         class="csc-form"
     >
+        <div class="col text-left col-xs-12 col-md-12 ">
+
+            <div
+                class='csc-cf-sourceset-name'
+            >
+                {{ sourceSetName }}
+
+            </div>
+
+        </div>
         <div
-            class="csc-cf-row row"
             v-for="(source, item) in sources"
             :key="source + '_' + item"
         >
@@ -12,6 +21,7 @@
                 :groupId="groupId"
                 :groupName="groupName"
                 :source="source.source"
+                :sourceSetId="sourceSetId"
                 :sourceSetName="sourceSetName"
             />
         </div>
@@ -20,9 +30,10 @@
             class="csc-cf-row row"
         >
             <csc-new-call-forward-input
+                ref="sourceInputField"
                 :label="$t('callBlocking.number')"
                 v-model="number"
-                @submit="save"
+                @submit="save()"
                 @error="errorNumber"
             />
         </div>
@@ -43,7 +54,7 @@
                 flat
                 color="primary"
                 icon="done"
-                @click="save(); close()"
+                @click="save()"
                 :disable="saveDisabled"
             >
                 {{ $t('buttons.save') }}
@@ -94,14 +105,15 @@
                 enabled: false,
                 number: '',
                 numberError: false,
-                destinationIndex: null
+                destinationIndex: null,
+                sources: []
             }
         },
         props: [
             'groupName',
             'groupId',
             'sourceSetName',
-            'sources'
+            'sourceSetId'
         ],
         validations: {
             number: {
@@ -111,6 +123,7 @@
         },
         computed: {
             ...mapGetters('newCallForward', [
+                'destinationInCreation',
                 'getSourcesets',
                 'getSourcesesBySourcesetId'
             ]),
@@ -118,16 +131,45 @@
                 return this.number.length < 1  || this.numberError || this.disable || this.loading;
             }
         },
+        async mounted(){
+            try{
+                this.sources = await this.getSourcesesBySourcesetId(this.sourceSetId);
+            }
+            catch(err){
+                console.log(err)
+            }
+        },
+        watch:{
+            getSourcesets: function(){
+                this.sources = this.getSourcesesBySourcesetId(this.sourceSetId);
+           }
+        },
         methods: {
             async save() {
-                //const forwardGroupId = this.groupId;
-                // const forwardGroupName = this.groupName;
-                //const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', forwardGroupId);
+                const sources = this.sources;
 
                 if (this.numberError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
                 }
-                // TODO save source
+                sources.push({
+                    source: this.number
+                });
+                try{
+                    await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+                    this.$refs.sourceInputField.reset();
+                    await this.$store.dispatch('newCallForward/addSourceToSourceset', {
+                        id: this.sourceSetId,
+                        sources: sources
+                    });
+                    await this.$store.dispatch('newCallForward/loadSourcesets');
+
+                }
+                catch(err){
+                    console.log(err)
+                }
+                finally {
+                  await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+                }
             },
             cancel() {
                 this.number = '';
@@ -152,4 +194,6 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/app.common.styl'
+    .csc-cf-sourceset-name
+        margin-top 10px
 </style>

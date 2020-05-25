@@ -76,7 +76,6 @@
         },
         data () {
             return {
-                mode: 'create',
                 loading: false,
                 enabled: false,
                 number: '',
@@ -109,32 +108,28 @@
                 let sourceSetId;
                 const forwardGroupId = this.groupId;
                 const forwardGroupName = this.groupName;
-            
+
                 if (this.numberError || this.nameError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
+                    return;
                 }
-                switch(this.mode){
-                    case 'create':
-                        try{
-                            sourceSetId = await this.$store.dispatch('newCallForward/createSourceSet', {
-                                name: this.name,
-                                source: this.number
-                            });
-                            await this.$store.dispatch('newCallForward/addSourcesetToGroup', {
-                                name:   forwardGroupName,
-                                id: forwardGroupId,
-                                sourceSetId: sourceSetId
-                            });
-                            await this.$store.dispatch('newCallForward/loadForwardGroups');
-                        }
-                        catch(err){
-                            console.log(err)
-                        }
-
-
-                    break;
-                    case 'edit':
-                    break;
+                try{
+                    await this.$store.dispatch('newCallForward/addGroupLoader', forwardGroupId);
+                    sourceSetId = await this.$store.dispatch('newCallForward/createSourceSet', {
+                        name: this.name,
+                        source: this.number
+                    });
+                    await this.$store.dispatch('newCallForward/addSourcesetToGroup', {
+                        name:   forwardGroupName,
+                        id: forwardGroupId,
+                        sourceSetId: sourceSetId
+                    });
+                    await this.$store.dispatch('newCallForward/removeGroupLoader', forwardGroupId);
+                    await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    await this.$store.dispatch('newCallForward/loadSourcesets');
+                }
+                catch(err){
+                    console.log(err)
                 }
             },
             cancel() {
