@@ -36,13 +36,16 @@ filename = 0
 def preparation():
     global customers
     driver = create_driver()
-    login_panel(driver)
-    for i in range(0, int(os.environ['THREADS'])):
-        customers[create_customer(driver)] = create_domain(driver)
-    del i
-    for customer in customers.keys():
-        create_subscriber(driver, customer, customers[customer])
-    driver.quit()
+    try:
+        login_panel(driver)
+        for i in range(0, int(os.environ['THREADS'])):
+            customers[create_customer(driver)] = create_domain(driver)
+        del i
+        for customer in customers.keys():
+            create_subscriber(driver, customer, customers[customer])
+        driver.quit()
+    except Exception:
+        driver.save_screenshot('/results/preperation.png')
 
 
 def cleanup():
