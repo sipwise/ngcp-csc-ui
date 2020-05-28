@@ -111,7 +111,8 @@
         },
         computed: {
             ...mapGetters('newCallForward', [
-                'destinationInCreation'
+                'getSourcesets',
+                'getSourcesesBySourcesetId'
             ]),
             saveDisabled() {
                 return this.number.length < 1  || this.numberError || this.disable || this.loading;

@@ -81,9 +81,22 @@
                         @change="toggleGroupChange"
                     />
                 </div>
-                <div class="col col-xs-12 col-md-5 ">
+                <div class="col col-xs-12 col-md-5 csc-cf-group-actions">
+                    <q-icon
+                        name="delete"
+                        color="negative"
+                        size="24px"
+                        @click="showConfirmDialog"
+                    />
+                    <csc-confirm-dialog
+                        ref="confirmDialog"
+                        title-icon="delete"
+                        :title="$t('pages.newCallForward.cancelGroupDialogTitle', {groupName: this.group.name})"
+                        :message="$t('pages.newCallForward.cancelGroupDialogText', {groupName: this.group.name})"
+                        @confirm="confirmDeleteGroup"
+                    />
                     <q-spinner-dots
-                        v-if="toggleGroupInProgress || destinationInCreation"
+                        v-if="groupIsLoading"
                         class="csc-call-spinner"
                         color="primary"
                         :size="24"
@@ -168,6 +181,7 @@
         QItemSide
     } from 'quasar-framework'
     import CscObjectSpinner from "../../CscObjectSpinner";
+    import CscConfirmDialog from "../../CscConfirmationDialog";
     import CscNewCallForwardDestination from './CscNewCallForwardDestination'
     import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinationForm'
     import CscNewCallForwardEditSources from './CscNewCallForwardEditSources'
@@ -188,6 +202,7 @@
             QItem,
             QItemMain,
             QItemSide,
+            CscConfirmDialog,
             CscObjectSpinner,
             CscNewCallForwardDestination,
             CscNewCallForwardAddDestinationForm,
@@ -202,7 +217,7 @@
                 isEnabled: true,
                 toggleNumberForm: true,
                 toggleConditionFromForm: true,
-                toggleGroupInProgress: false,
+                groupIsLoading: false,
                 sourceSet: null,
                 sources: []
             };
@@ -222,9 +237,9 @@
         computed: {
             ...mapGetters('newCallForward', [
                 'getOwnPhoneTimeout',
-                'destinationInCreation',
                 'groupsCount',
-                'getMappings'
+                'getMappings',
+                'getGroupsLoaders'
             ]),
             showAddDestBtn(){
                 const destinations = this.group.destinations;
@@ -261,9 +276,13 @@
             }
         },
         watch: {
-             group: function () {
+            group: function () {
                  this.updateSourcesetNames();
             },
+            getGroupsLoaders: function(){
+                const groupLoaders = this.getGroupsLoaders;
+                this.groupIsLoading =  groupLoaders.includes(this.group.id);
+            }
         },
         methods: {
             // we need to generate key because destinations have no id
@@ -280,10 +299,10 @@
                         this.$refs.numberForm.open();
                     break;
                     case 'voicemail':
-                        await this.$store.dispatch('newCallForward/setDestinationInCreation', true);
+                        await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
                         await this.$store.dispatch('newCallForward/addVoiceMail', this.group.id);
                         await this.$store.dispatch('newCallForward/loadForwardGroups');
-                        await this.$store.dispatch('newCallForward/setDestinationInCreation', false);
+                        await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
                     break;
                 }
             },
@@ -310,13 +329,13 @@
                 return destination;
             },
             async toggleGroupChange(){
-                this.toggleGroupInProgress = true;
+                await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
                 await this.$store.dispatch('newCallForward/enableGroup', {
                     groupName: this.group.name,
                     id: this.group.id,
                     enabled: this.isEnabled
                 });
-                this.toggleGroupInProgress = false;
+                await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
             },
             showConditions(){
                 this.$refs.addCondition.add();
@@ -345,6 +364,15 @@
                         this.sources = this.sourceSet.sources;
                     }
                 }
+            },
+            showConfirmDialog(){
+                this.$refs.confirmDialog.open();
+            },
+            async confirmDeleteGroup(){
+                await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
+                await this.$store.dispatch('newCallForward/deleteForwardGroup', this.group);
+                await this.$store.dispatch('newCallForward/loadForwardGroups');
+                await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
             }
         }
     }
@@ -376,6 +404,8 @@
         margin-left 30px
     .csc-cf-from-link
         color $primary
+        cursor pointer
+	.csc-cf-group-actions
         cursor pointer
     .csc-cf-destination-disabled
         color $cf-disabled-label

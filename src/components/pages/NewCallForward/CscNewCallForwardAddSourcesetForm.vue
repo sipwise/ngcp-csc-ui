@@ -49,9 +49,6 @@
 </template>
 
 <script>
-    import {
-        mapGetters,
-    } from 'vuex'
     import CscNewCallForwardInput from './CscNewCallForwardInput'
     import CscNewCallForwardInputText from './CscNewCallForwardInputText'
     import CscSpinner from '../../CscSpinner'
@@ -103,9 +100,6 @@
             }
         },
         computed: {
-            ...mapGetters('newCallForward', [
-                'destinationInCreation'
-            ]),
             saveDisabled() {
                 return this.number.length < 1 || this.name.length < 1 || this.numberError|| this.nameError || this.disable || this.loading;
             }
@@ -115,8 +109,7 @@
                 let sourceSetId;
                 const forwardGroupId = this.groupId;
                 const forwardGroupName = this.groupName;
-                const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', forwardGroupId);
-                
+            
                 if (this.numberError || this.nameError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
                 }
@@ -143,7 +136,6 @@
                     case 'edit':
                     break;
                 }
-                console.log(forwardGroupId, forwardGroupName, forwardGroup)
             },
             cancel() {
                 this.number = '';

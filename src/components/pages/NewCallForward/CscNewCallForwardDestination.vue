@@ -172,18 +172,19 @@
 						this.$refs.numberForm.open();
 					break;
 					case 'voicemail':
+						await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
 						if(this.groupId.toString().includes('temp-')){ // unexisting group
-							this.$parent.toggleGroupInProgress = true;
 							await this.$store.dispatch('newCallForward/addForwardGroup', {
 								name: this.groupName,
 								destination: 'voicebox'
 							});
 							await this.$store.dispatch('newCallForward/loadForwardGroups');
-							this.$parent.toggleGroupInProgress = false;
+
 						}
 						else{
 							await this.$store.dispatch('newCallForward/addVoiceMail', this.groupId);
 						}
+						await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
 					break;
 				}
 			},
@@ -195,13 +196,13 @@
 				this.$refs.selectDestinationType.add();
 			},
 			async saveTimeout(){
-				this.$parent.toggleGroupInProgress = true;
+				await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
 				await this.$store.dispatch('newCallForward/editTimeout', {
 					index: this.destinationIndex,
 					timeout: this.destinationTimeout,
 					forwardGroupId: this.groupId
 				});
-				this.$parent.toggleGroupInProgress = false;
+				await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
 
 			},
 			showConfirmDialog(){
@@ -209,10 +210,12 @@
 			},
 			async confirmDeleteDest(){
 				this.removeInProgress = true;
+				await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
 				await this.$store.dispatch('newCallForward/removeDestination', {
 					destination: this.destination,
 					forwardGroupId: this.groupId
 				});
+				await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
 			},
 			isVoiceMail(){
 				return this.destination.destination.includes('voicebox.local')
@@ -266,7 +269,7 @@
 	.csc-cf-dest-popover-bottom
         margin-left 0px
 	.csc-cf-removed-destination
-		visibility hidden
+		visibility hidden 
 		opacity 0
-		transition visibility 0s 1s, opacity 1s linear
+		transition visibility 0s 2s, opacity 2s linear
 </style>

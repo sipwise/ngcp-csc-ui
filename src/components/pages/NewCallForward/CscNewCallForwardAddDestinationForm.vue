@@ -42,9 +42,6 @@
 </template>
 
 <script>
-    import {
-        mapGetters,
-    } from 'vuex'
     import CscNewCallForwardInput from './CscNewCallForwardInput'
     import CscSpinner from '../../CscSpinner'
     import {
@@ -95,9 +92,6 @@
             }
         },
         computed: {
-            ...mapGetters('newCallForward', [
-                'destinationInCreation'
-            ]),
             saveDisabled() {
                 return this.numberError|| this.disable || this.loading;
             }
@@ -107,6 +101,7 @@
                 const forwardGroupId = this.groupId;
                 const forwardGroupName = this.groupName;
                 const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', forwardGroupId);
+                await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
                 if (this.numberError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
                 }
@@ -118,7 +113,6 @@
                     });
                 }
                 else { // new group
-                    await this.$store.dispatch('newCallForward/setDestinationInCreation', true);
                     if(forwardGroup.id.toString().includes('temp-')){ // unexisting group
                         forwardGroup.destinations[0].simple_destination = this.number; // optimistic UI update :)
                         await this.$store.dispatch('newCallForward/addForwardGroup', {
@@ -134,8 +128,8 @@
                         });
                     }
                     await this.$store.dispatch('newCallForward/loadForwardGroups');
-                    await this.$store.dispatch('newCallForward/setDestinationInCreation', false);
                 }
+                await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
             },
             cancel() {
                 this.number = '';
