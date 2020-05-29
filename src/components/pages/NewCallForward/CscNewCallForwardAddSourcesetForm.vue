@@ -124,9 +124,11 @@
                         id: forwardGroupId,
                         sourceSetId: sourceSetId
                     });
-                    await this.$store.dispatch('newCallForward/removeGroupLoader', forwardGroupId);
-                    await this.$store.dispatch('newCallForward/loadForwardGroups');
                     await this.$store.dispatch('newCallForward/loadSourcesets');
+                    await this.$store.dispatch('newCallForward/loadMappings');
+                    await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    await this.$store.dispatch('newCallForward/removeGroupLoader', forwardGroupId);
+
                 }
                 catch(err){
                     console.log(err)

@@ -141,7 +141,8 @@
 				destinationNumber: null,
 				destinationIndex: null,
 				removeInProgress: false,
-				toggleNumberForm: true
+				toggleNumberForm: true,
+				firstDestinationInCreation: false
 			}
 		},
 		computed: {
@@ -174,11 +175,17 @@
 					case 'voicemail':
 						await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
 						if(this.groupId.toString().includes('temp-')){ // unexisting group
-							await this.$store.dispatch('newCallForward/addForwardGroup', {
+							const newGroupId = await this.$store.dispatch('newCallForward/addForwardGroup', {
 								name: this.groupName,
 								destination: 'voicebox'
 							});
+
 							await this.$store.dispatch('newCallForward/loadForwardGroups');
+
+							if(this.firstDestinationInCreation){
+								await this.$store.dispatch('newCallForward/setFirstDestinationInCreation', newGroupId);
+								this.firstDestinationInCreation = false;
+							}
 
 						}
 						else{
@@ -269,7 +276,7 @@
 	.csc-cf-dest-popover-bottom
         margin-left 0px
 	.csc-cf-removed-destination
-		visibility hidden 
+		visibility hidden
 		opacity 0
 		transition visibility 0s 2s, opacity 2s linear
 </style>
