@@ -240,7 +240,8 @@
             "fromLabelShort": " call from ",
             "offlineLabel": "If offline",
             "busyLabel": "If busy",
-            "sourcesetName": "List name"
+            "sourcesetName": "List name",
+            "mandatoryDestinationLabel": "Please add a destination to the group before adding conditions"
         },
         "callForward": {
             "titles": {
