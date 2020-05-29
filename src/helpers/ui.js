@@ -22,7 +22,7 @@ export function showGlobalError(message) {
     setTimeout(()=>{ alert.dismiss(); }, 2000);
 }
 
-export function showGlobalWarning(message) {
+export function showGlobalWarning(message, timeout) {
     const alert = Alert.create({
         html: message,
         position: 'top-center',
@@ -30,7 +30,7 @@ export function showGlobalWarning(message) {
         leave: 'fadeOut',
         color: 'warning'
     });
-    setTimeout(()=>{ alert.dismiss(); }, 2000);
+    setTimeout(()=>{ alert.dismiss(); }, timeout || 2000);
 }
 
 export function showPermanentGlobalWarning(message) {

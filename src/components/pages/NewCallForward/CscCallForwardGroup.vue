@@ -12,6 +12,29 @@
 
                     {{groupTitle}}
 
+
+                    <span
+                        class="csc-cf-destination-add-condition"
+                        v-if="isTempGroup"
+                    >
+                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+                        <span class="csc-cf-from-link">
+                            {{ $t('pages.newCallForward.conditionBtnLabel') }}
+                        </span>
+                        <q-popover
+                            ref="conditions"
+                            @open="showConditions()"
+                            @close="showFirstDestMenu()"
+                        >
+                            <csc-new-call-forward-condition-type-select
+                                ref="addCondition"
+                                :enabled="true"
+                                :groupName="group.name"
+                                :groupId="group.id"
+                            />
+                        </q-popover>
+                    </span>
+
                     <span
                         class="csc-cf-destination-add-condition"
                         v-if="!groupSourceset && !isTempGroup"
@@ -35,7 +58,7 @@
                          <q-popover
                             ref="onlineSourceset"
                             class="csc-cf-number-form"
-                            v-bind:class="{ 'csc-cf-popover-hide': toggleConditionFromForm }"
+                            v-bind:class="{ 'csc-cf-popover-hide': toggleConditionFromForm}"
                             @open="showSourcesetForm()"
                             @close="resetToggleCondition()"
                         >
@@ -105,6 +128,7 @@
         >
             <csc-new-call-forward-destination
                 :destination="getDestination(index)"
+                ref="destination"
                 :index="index"
                 :groupId="group.id"
                 :groupName="group.name"
@@ -167,6 +191,9 @@
         mapGetters,
     } from 'vuex'
     import {
+        showGlobalWarning
+    } from '../../../helpers/ui'
+    import {
         QSpinnerDots,
         QToggle,
         QIcon,
@@ -200,6 +227,7 @@
             QItemSide,
             CscConfirmDialog,
             CscObjectSpinner,
+            showGlobalWarning,
             CscNewCallForwardDestination,
             CscNewCallForwardAddDestinationForm,
             CscNewCallForwardEditSources,
@@ -215,7 +243,8 @@
                 toggleConditionFromForm: true,
                 groupIsLoading: false,
                 sourceSet: null,
-                sources: []
+                sources: [],
+                firstDestinationInCreation: false
             };
         },
         async mounted(){
@@ -236,7 +265,9 @@
                 'getOwnPhoneTimeout',
                 'groupsCount',
                 'getMappings',
-                'getGroupsLoaders'
+                'getGroupsLoaders',
+                'getSourcesets',
+                'getFirstDestinationInCreation'
             ]),
             showAddDestBtn(){
                 const destinations = this.group.destinations;
@@ -273,15 +304,24 @@
             },
             isTempGroup(){
                 return this.group.id.toString().includes('temp-');
+            },
+            isFirstDestInCreation(){
+                return this.group.id.toString() === this.getFirstDestinationInCreation;
             }
         },
         watch: {
-            group: function () {
+            getSourcesets: function () {
                  this.updateSourcesetNames();
             },
             getGroupsLoaders: function(){
                 const groupLoaders = this.getGroupsLoaders;
                 this.groupIsLoading =  groupLoaders.includes(this.group.id);
+            },
+            getFirstDestinationInCreation: function(){
+                if(this.getFirstDestinationInCreation === this.group.id.toString()){
+                    this.toggleConditionFromForm = false;
+                    this.$refs.onlineSourceset.open();
+                }
             }
         },
         methods: {
@@ -306,17 +346,23 @@
                     break;
                 }
             },
+            showFirstDestMenu(){
+                const firstDestinationCmp = this.$refs.destination[0];
+                firstDestinationCmp.firstDestinationInCreation = true;
+                firstDestinationCmp.$refs.destTypeForm.open();
+                showGlobalWarning(`${this.$t('pages.newCallForward.mandatoryDestinationLabel')}`, 5000)
+            },
             async showConditionForm(){
-                switch(this.$refs.addCondition.action){
-                    case 'addFromCondition':
-                        this.toggleConditionFromForm = false;
-                        this.$refs.onlineSourceset.open();
-                    break;
-                }
+                this.toggleConditionFromForm = false;
+                this.$refs.onlineSourceset.open();
+
             },
             showDestTypeForm(){
                 this.toggleNumberForm = true;
                 this.$refs.selectDestinationType.add();
+            },
+            getDestName(index){
+                return "destination" + index;
             },
             getDestination(index){
                 let destination = {...this.group.destinations[index]}
@@ -359,6 +405,7 @@
                         return $mapping.destinationset_id == this.group.id;
                     });
                     sourceSet = groupMapping[0] && groupMapping[0].sourceset_id ? await this.$store.dispatch('newCallForward/getSourcesetById', groupMapping[0].sourceset_id) :  null;
+
                     if(sourceSet){
                         this.sourceSet = sourceSet;
                         this.sources = this.sourceSet.sources;
@@ -369,10 +416,16 @@
                 this.$refs.confirmDialog.open();
             },
             async confirmDeleteGroup(){
-                await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
-                await this.$store.dispatch('newCallForward/deleteForwardGroup', this.group);
-                await this.$store.dispatch('newCallForward/loadForwardGroups');
-                await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
+                try{
+                    await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
+                    await this.$store.dispatch('newCallForward/deleteForwardGroup', this.group);
+                    await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
+                }
+                catch(e){
+                    console.log(e)
+                }
+
             }
         }
     }
