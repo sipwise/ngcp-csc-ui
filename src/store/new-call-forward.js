@@ -48,11 +48,15 @@ export default {
         sourceSets: [],
         forwardGroups: [],
         groupsLoaders: [],
-        selectedDestType: null
+        selectedDestType: null,
+        firstDestinationInCreation: null
     },
     getters: {
         getGroupsLoaders(state){
             return state.groupsLoaders;
+        },
+        getFirstDestinationInCreation(state){
+            return state.firstDestinationInCreation
         },
         primaryNumber(state, getters, rootState, rootGetters) {
             const subscriber = rootGetters['user/getSubscriber'];
@@ -177,6 +181,9 @@ export default {
         },
         removeGroupLoader(state, groupId){
             state.groupsLoaders = state.groupsLoaders.filter($groupId => $groupId !== groupId);
+        },
+        setFirstDestinationInCreation(state, groupId){
+            state.firstDestinationInCreation = groupId;
         }
     },
     actions: {
@@ -618,5 +625,8 @@ export default {
         async removeSourceFromSourceset(context, data){
             await addSourceToSourceset(data)
         },
+        setFirstDestinationInCreation(context, groupId){
+            context.commit('setFirstDestinationInCreation', groupId);
+        }
     }
 };

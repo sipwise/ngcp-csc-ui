@@ -126,6 +126,7 @@
                     });
                     await this.$store.dispatch('newCallForward/removeGroupLoader', forwardGroupId);
                     await this.$store.dispatch('newCallForward/loadForwardGroups');
+                    await this.$store.dispatch('newCallForward/loadMappings');
                     await this.$store.dispatch('newCallForward/loadSourcesets');
                 }
                 catch(err){
