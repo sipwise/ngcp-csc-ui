@@ -115,10 +115,17 @@
                 else { // new group
                     if(forwardGroup.id.toString().includes('temp-')){ // unexisting group
                         forwardGroup.destinations[0].simple_destination = this.number; // optimistic UI update :)
-                        await this.$store.dispatch('newCallForward/addForwardGroup', {
+                        const newGroupId = await this.$store.dispatch('newCallForward/addForwardGroup', {
                             name: forwardGroupName,
                             destination: this.number
                         });
+
+                        await this.$store.dispatch('newCallForward/loadForwardGroups');
+
+                        if(this.destinationIndex === 0
+                            await this.$store.dispatch('newCallForward/setFirstDestinationInCreation', newGroupId);
+                        }
+
                     }
                     else{ // existing group
 
