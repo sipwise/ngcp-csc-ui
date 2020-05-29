@@ -14,6 +14,28 @@
 
                     <span
                         class="csc-cf-destination-add-condition"
+                        v-if="isTempGroup"
+                    >
+                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+                        <span class="csc-cf-from-link">
+                            {{ $t('pages.newCallForward.conditionBtnLabel') }}
+                        </span>
+                        <q-popover
+                            ref="conditions"
+                            @open="showConditions()"
+                            @close="showFirstDestMenu()"
+                        >
+                            <csc-new-call-forward-condition-type-select
+                                ref="addCondition"
+                                :enabled="true"
+                                :groupName="group.name"
+                                :groupId="group.id"
+                            />
+                        </q-popover>
+                    </span>
+
+                    <span
+                        class="csc-cf-destination-add-condition"
                         v-if="!groupSourceset && !isTempGroup"
                     >
                         {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
@@ -91,6 +113,7 @@
             :key="genKey()"
         >
             <csc-new-call-forward-destination
+                ref="destination"
                 :destination="getDestination(index)"
                 :index="index"
                 :groupId="group.id"
@@ -199,6 +222,7 @@
                 toggleNumberForm: true,
                 toggleConditionFromForm: true,
                 toggleGroupInProgress: false,
+                firstDestinationInCreation: false,
                 sourceSet: null,
                 sources: []
             };
@@ -291,6 +315,12 @@
                     break;
                 }
             },
+            showFirstDestMenu(){
+                this.firstDestinationInCreation = true;
+                const firstDestinationCmp = this.$refs.destination[0];
+                firstDestinationCmp.$refs.destTypeForm.open();
+                firstDestinationCmp.showDestTypeForm();
+            },
             async showConditionForm(){
                 switch(this.$refs.addCondition.action){
                     case 'addFromCondition':
@@ -302,6 +332,9 @@
             showDestTypeForm(){
                 this.toggleNumberForm = true;
                 this.$refs.selectDestinationType.add();
+            },
+            getDestName(index){
+                return "destination" + index;
             },
             getDestination(index){
                 let destination = {...this.group.destinations[index]}
