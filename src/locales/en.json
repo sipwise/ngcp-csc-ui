@@ -212,10 +212,10 @@
         },
         "newCallForward": {
             "titles": {
-                "timeoutGroup" : "If online",
-                "timeoutGroupFromPre" : "If online and ",
+                "timeoutGroup" : "If available",
+                "timeoutGroupFromPre" : "If available and ",
                 "timeoutGroupFromPost" : "call from ...",
-                "offlineGroup" : "If offline",
+                "offlineGroup" : "If not available",
                 "busyGroup" : "If busy"
             },
             "primarNumberEnabled": "All calls go to the primary number",
@@ -235,10 +235,10 @@
             "cancelGroupDialogTitle": "Delete {groupName} forwarding group",
             "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding",
             "cancelGroupDialogText": "You are about to delete {groupName} call forwarding group",
-            "unconditionalLabel": "If online",
+            "unconditionalLabel": "If available",
             "fromLabel": "If call from ...",
             "fromLabelShort": " call from ",
-            "offlineLabel": "If offline",
+            "offlineLabel": "If not available",
             "busyLabel": "If busy",
             "sourcesetName": "List name",
             "mandatoryDestinationLabel": "Please add a destination to the group before adding conditions"
