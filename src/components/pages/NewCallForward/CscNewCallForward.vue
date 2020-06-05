@@ -8,7 +8,7 @@
             <div
                 class="col col-xs-12 col-md-4 csc-cf-group-title"
             >
-                {{ $t('pages.newCallForward.titles.timeoutGroup') }}
+                {{ $t('pages.newCallForward.titles.mainTitle') }}
             </div>
             <div
                 class="col col-xs-12 col-md-2 text-left csc-cf-self-number-cont"
@@ -25,32 +25,13 @@
         </div>
         <div
             class="csc-cf-row row"
-        >
-            <div
-                class="col col-xs-12 col-md-4 text-right"
-            >
-                {{ toggleLabel }}
-            </div>
-            <div
-                class="col col-xs-12 col-md-2 text-left csc-cf-self-number-cont"
-            >
-                {{ primaryNumber | number }}
-            </div>
-
-            <div
-                class="col col-xs-12 col-md-6"
-
-            >
-            </div>
-        </div>
-        <div
-            class="csc-cf-row row"
             v-for="(forwardGroup, item) in forwardGroups"
             :key="forwardGroup.id"
         >
             <csc-cf-group
                 v-if="!groupInCreation"
                 :group="forwardGroup"
+                :toggleDefaultNumber="toggleDefaultNumber"
             />
         </div>
         <div class="csc-cf-row row">
@@ -168,17 +149,10 @@
         },
         computed: {
             ...mapGetters('newCallForward', [
-                'primaryNumber',
                 'subscriberDisplayName',
                 'forwardGroups',
                 'selectedDestType'
-            ]),
-            primaryNumberEnabled(){
-                return true;
-            },
-            toggleLabel(){
-                return this.toggleDefaultNumber ? `${this.$t('pages.newCallForward.primarNumberEnabled')}` : `${this.$t('pages.newCallForward.primarNumberDisabled')}`;
-            }
+            ])
         },
         methods: {
             async addForwardGroup(){

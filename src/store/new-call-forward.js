@@ -59,6 +59,7 @@ export default {
             return state.firstDestinationInCreation
         },
         primaryNumber(state, getters, rootState, rootGetters) {
+            debugger
             const subscriber = rootGetters['user/getSubscriber'];
             if(subscriber !== null) {
                 return subscriber.primary_number;

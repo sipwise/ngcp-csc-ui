@@ -3,6 +3,7 @@
         class="csc-cf-group"
         v-if="group.destinations.length > 0"
     >
+
         <div
             class="row csc-cf-destination-cont"
         >
@@ -11,7 +12,6 @@
                 >
 
                     {{groupTitle}}
-
 
                     <span
                         class="csc-cf-destination-add-condition"
@@ -122,6 +122,29 @@
                     />
                 </div>
         </div>
+
+        <div
+            class="csc-cf-row row"
+            v-if="isTimeoutOrUnconditional"
+        >
+            <div
+                class="col col-xs-12 col-md-4 text-right"
+            >
+                {{ toggleLabel }}
+            </div>
+            <div
+                class="col col-xs-12 col-md-2 text-left csc-cf-self-number-cont"
+            >
+                {{ subscriberDisplayName }}
+            </div>
+
+            <div
+                class="col col-xs-12 col-md-6"
+
+            >
+            </div>
+        </div>
+
         <div
             v-for="(destination, index) in group.destinations"
             :key="genKey()"
@@ -214,7 +237,8 @@
     export default {
         name: 'csc-cf-group',
         props: [
-            'group'
+            'group',
+            'toggleDefaultNumber'
         ],
         components: {
             QSpinnerDots,
@@ -261,6 +285,7 @@
         },
         computed: {
             ...mapGetters('newCallForward', [
+                'subscriberDisplayName',
                 'getGroupsLoaders',
                 'getOwnPhoneTimeout',
                 'groupsCount',
@@ -307,6 +332,12 @@
             },
             isFirstDestInCreation(){
                 return this.group.id.toString() === this.getFirstDestinationInCreation;
+            },
+            toggleLabel(){
+                return this.toggleDefaultNumber ? `${this.$t('pages.newCallForward.primarNumberEnabled')}` : `${this.$t('pages.newCallForward.primarNumberDisabled')}`;
+            },
+            isTimeoutOrUnconditional(){
+                return this.group.name.includes( 'unconditional')  || this.group.name.includes('timeout');
             }
         },
         watch: {
