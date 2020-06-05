@@ -216,7 +216,8 @@
                 "timeoutGroupFromPre" : "If available and ",
                 "timeoutGroupFromPost" : "call from ...",
                 "offlineGroup" : "If not available",
-                "busyGroup" : "If busy"
+                "busyGroup" : "If busy",
+                "mainTitle": "Primary number rings before forwarded if the user is online"
             },
             "primarNumberEnabled": "All calls go to the primary number",
             "primarNumberDisabled": "No call goes to primary number",
