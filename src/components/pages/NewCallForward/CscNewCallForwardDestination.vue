@@ -69,6 +69,7 @@
 							:destination="this.destinationNumber"
 							:groupName="this.groupName"
 							:groupId="this.groupId"
+							:firstDestinationInCreation="this.firstDestinationInCreation"
 						/>
 					</q-popover>
 				</div>
