@@ -3,7 +3,7 @@
 			class="row csc-cf-source-cont"
 			v-bind:class="{ 'csc-cf-removed-source': removeInProgress }"
 		>
-			<div class="col text-left col-xs-12 col-md-6 ">
+			<div class="col text-left col-xs-12 col-md-10 ">
 
 				<div
 					class='csc-cf-source'
@@ -13,7 +13,7 @@
 				</div>
 
 			</div>
-			<div class="col col-xs-12 col-md-6 csc-cf-source-actions">
+			<div class="col col-xs-12 col-md-2 csc-cf-source-actions">
 				<q-icon
 					name="delete"
 					color="negative"
@@ -103,7 +103,6 @@
 		width 100%
 		padding 5px
 	.csc-cf-source
-		width 100px
 		white-space nowrap
 		overflow hidden
 		text-overflow ellipsis
@@ -113,6 +112,8 @@
 	.csc-cf-source-actions
 		text-align left
 		cursor pointer
+		.q-icon
+			margin-left 4px
 	.csc-cf-popover-hide
 		display none
 	.csc-cf-sourceset-name
