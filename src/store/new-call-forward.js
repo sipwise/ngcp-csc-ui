@@ -11,7 +11,8 @@ import {
     updateDestinationsetName,
     createSourcesetWithSource,
     getSourcesets,
-    addSourceToSourceset
+    addSourceToSourceset,
+    deleteSourcesetById
 } from '../api/call-forward';
 
 const ForwardGroup = {
@@ -129,7 +130,7 @@ export default {
         },
         getSourcesesBySourcesetId: (state) => (sourceSetId) => {
             const sourceSet = state.sourceSets.filter($sourceset => $sourceset.id == sourceSetId);
-            return sourceSet ? sourceSet[0].sources : null;
+            return sourceSet && sourceSet[0] ? sourceSet[0].sources : null;
         }
     },
     mutations: {
@@ -624,6 +625,9 @@ export default {
         },
         async removeSourceFromSourceset(context, data){
             await addSourceToSourceset(data)
+        },
+        async deleteSourcesetById(context, sourceSetId){
+            await deleteSourcesetById(sourceSetId)
         },
         setFirstDestinationInCreation(context, groupId){
             context.commit('setFirstDestinationInCreation', groupId);
