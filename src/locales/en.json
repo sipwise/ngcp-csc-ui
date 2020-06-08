@@ -235,6 +235,8 @@
             "cancelDialogTitle": "Delete from {groupName} forwarding",
             "cancelGroupDialogTitle": "Delete {groupName} forwarding group",
             "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding",
+            "cancelSourcesetDialogTitle": "Delete {name} sourceset",
+            "cancelSourcesetText": "You are about to delete  {name} sourceset",
             "cancelGroupDialogText": "You are about to delete {groupName} call forwarding group",
             "unconditionalLabel": "If available",
             "fromLabel": "If call from ...",

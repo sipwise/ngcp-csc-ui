@@ -441,6 +441,10 @@
                         this.sourceSet = sourceSet;
                         this.sources = this.sourceSet.sources;
                     }
+                    else{
+                        this.sourceSet = null;
+                        this.sources = [];
+                    }
                 }
             },
             showConfirmDialog(){

@@ -4,6 +4,7 @@
         :title="title"
         :titleIcon="titleIcon"
         :opened="opened"
+        @close="onClose()"
     >
         <div
             slot="content"
@@ -49,6 +50,9 @@
             },
             close() {
                 this.$refs.dialogComp.close();
+            },
+            onClose(){
+                this.$emit('closed');
             },
             cancel() {
                 this.close();
