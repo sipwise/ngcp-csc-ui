@@ -7,8 +7,15 @@
         >
             <div
                 class="col col-xs-12 col-md-4 csc-cf-group-title"
+                v-if="this.groupsCount > 0"
             >
-                {{ $t('pages.newCallForward.titles.mainTitle') }}
+                {{ $t('pages.newCallForward.titles.mainTitle', {number: this.subscriberDisplayName}) }}
+            </div>
+            <div
+                class="col col-xs-12 col-md-4 csc-cf-group-title"
+                v-else
+            >
+                {{$t('pages.newCallForward.primarNumberEnabled')}} {{ subscriberDisplayName }}
             </div>
             <div
                 class="col col-xs-12 col-md-2 text-left csc-cf-self-number-cont"
@@ -92,6 +99,9 @@
         mapGetters,
     } from 'vuex'
     import {
+        showGlobalWarning
+    } from '../../../helpers/ui'
+    import {
         QSpinnerDots,
         QField,
         QToggle,
@@ -114,6 +124,7 @@
             CscNewCallForwardDestination,
             CscNewCallForwardAddDestinationForm,
             CscNewCallForwardDestinationsetTypeSelect,
+            showGlobalWarning,
             QSpinnerDots,
             QField,
             QToggle,
@@ -152,53 +163,64 @@
                 'subscriberDisplayName',
                 'forwardGroups',
                 'selectedDestType'
-            ])
+            ]),
+            groupsCount(){
+                return this.forwardGroups.length;
+            }
         },
         methods: {
             async addForwardGroup(){
                 this.groupInCreation = true;
                 const selectedDestType = this.selectedDestType;
-                switch(selectedDestType){
-                    case "unconditional":{
-                        if(this.toggleDefaultNumber){
-                            const tempTimeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-timeout');
-                            if(!tempTimeoutFwdGroup){
-                                await this.$store.dispatch('newCallForward/addTempGroup','timeout' );
-                            }
-                        }
-                        else{
-                            const tempUnconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-unconditional');
-                            if(!tempUnconditionalFwdGroup){
-                                await this.$store.dispatch('newCallForward/addTempGroup','unconditional' );
-                            }
-                        }
-                    }
-                    break;
-                    case "unconditional-from":{
-                        if(this.toggleDefaultNumber){
-                            const tempTimeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-timeout-from');
-                            if(!tempTimeoutFwdGroup){
-                                await this.$store.dispatch('newCallForward/addTempGroup','timeoutFrom' );
-                            }
-                        }
-                        else{
-                            const tempUnconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-unconditional-from');
-                            if(!tempUnconditionalFwdGroup){
-                                await this.$store.dispatch('newCallForward/addTempGroup','unconditionalFrom' );
-                            }
-                        }
-                    }
-                    break;
-                    case "offline":{
-                        await this.$store.dispatch('newCallForward/addTempGroup','offline' );
-                    }
-                    break;
-                    case "busy":{
-                        await this.$store.dispatch('newCallForward/addTempGroup','busy' );
-                    }
-                    break;
-                }
+                let tempGroups = this.forwardGroups.filter(($group)=>{
+                    return $group.id.toString().indexOf('temp-') > -1;
+                });
 
+                if(tempGroups.length > 0){
+                    showGlobalWarning(`${this.$t('pages.newCallForward.addDestinationAlert')}`, 5000);
+                }
+                else{
+                    switch(selectedDestType){
+                        case "unconditional":{
+                            if(this.toggleDefaultNumber){
+                                const tempTimeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-timeout');
+                                if(!tempTimeoutFwdGroup){
+                                    await this.$store.dispatch('newCallForward/addTempGroup','timeout' );
+                                }
+                            }
+                            else{
+                                const tempUnconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-unconditional');
+                                if(!tempUnconditionalFwdGroup){
+                                    await this.$store.dispatch('newCallForward/addTempGroup','unconditional' );
+                                }
+                            }
+                        }
+                        break;
+                        case "unconditional-from":{
+                            if(this.toggleDefaultNumber){
+                                const tempTimeoutFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-timeout-from');
+                                if(!tempTimeoutFwdGroup){
+                                    await this.$store.dispatch('newCallForward/addTempGroup','timeoutFrom' );
+                                }
+                            }
+                            else{
+                                const tempUnconditionalFwdGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', 'temp-csc-unconditional-from');
+                                if(!tempUnconditionalFwdGroup){
+                                    await this.$store.dispatch('newCallForward/addTempGroup','unconditionalFrom' );
+                                }
+                            }
+                        }
+                        break;
+                        case "offline":{
+                            await this.$store.dispatch('newCallForward/addTempGroup','offline' );
+                        }
+                        break;
+                        case "busy":{
+                            await this.$store.dispatch('newCallForward/addTempGroup','busy' );
+                        }
+                        break;
+                    }
+                }
                 this.groupInCreation = false;
             },
             showForm(){
@@ -224,7 +246,6 @@
         float right
     .csc-cf-group-title
         text-align right
-        font-weight bold
     .csc-cf-destinations-cont
         margin-top 25px
     .csc-cf-field-toggle
