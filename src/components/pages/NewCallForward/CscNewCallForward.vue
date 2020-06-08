@@ -7,8 +7,15 @@
         >
             <div
                 class="col col-xs-12 col-md-4 csc-cf-group-title"
+                v-if="this.groupsCount > 0"
             >
-                {{ $t('pages.newCallForward.titles.mainTitle') }}
+                {{ $t('pages.newCallForward.titles.mainTitle', {number: this.subscriberDisplayName}) }}
+            </div>
+            <div
+                class="col col-xs-12 col-md-4 csc-cf-group-title"
+                v-else
+            >
+                {{$t('pages.newCallForward.primarNumberEnabled')}} {{ subscriberDisplayName }}
             </div>
             <div
                 class="col col-xs-12 col-md-2 text-left csc-cf-self-number-cont"
@@ -152,7 +159,10 @@
                 'subscriberDisplayName',
                 'forwardGroups',
                 'selectedDestType'
-            ])
+            ]),
+            groupsCount(){
+                return this.forwardGroups.length;
+            }
         },
         methods: {
             async addForwardGroup(){
@@ -224,7 +234,6 @@
         float right
     .csc-cf-group-title
         text-align right
-        font-weight bold
     .csc-cf-destinations-cont
         margin-top 25px
     .csc-cf-field-toggle
