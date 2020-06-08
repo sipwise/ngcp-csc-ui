@@ -217,7 +217,7 @@
                 "timeoutGroupFromPost" : "call from ...",
                 "offlineGroup" : "If not available",
                 "busyGroup" : "If busy",
-                "mainTitle": "Primary number rings before forwarded if the user is online"
+                "mainTitle": "Primary number {number} rings before forwarded if the user is available"
             },
             "primarNumberEnabled": "All calls go to the primary number",
             "primarNumberDisabled": "No call goes to primary number",
@@ -235,6 +235,8 @@
             "cancelDialogTitle": "Delete from {groupName} forwarding",
             "cancelGroupDialogTitle": "Delete {groupName} forwarding group",
             "cancelDialogText": "You are about to delete {destination} from {groupName} call forwarding",
+            "cancelSourcesetDialogTitle": "Delete {name} sourceset",
+            "cancelSourcesetText": "You are about to delete  {name} sourceset",
             "cancelGroupDialogText": "You are about to delete {groupName} call forwarding group",
             "unconditionalLabel": "If available",
             "fromLabel": "If call from ...",
@@ -242,7 +244,8 @@
             "offlineLabel": "If not available",
             "busyLabel": "If busy",
             "sourcesetName": "List name",
-            "mandatoryDestinationLabel": "Please add a destination to the group before adding conditions"
+            "mandatoryDestinationLabel": "Please add a destination to the group before adding conditions",
+            "addDestinationAlert": "You have to add a destination to the unsaved group"
         },
         "callForward": {
             "titles": {

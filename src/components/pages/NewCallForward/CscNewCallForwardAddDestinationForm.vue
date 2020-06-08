@@ -79,7 +79,8 @@
             'disable',
             'loading',
             'groupName',
-            'groupId'
+            'groupId',
+            'firstDestinationInCreation'
         ],
         validations: {
             number: {
@@ -122,7 +123,7 @@
 
                         await this.$store.dispatch('newCallForward/loadForwardGroups');
 
-                        if(this.destinationIndex === 0){
+                        if(this.destinationIndex === 0 && this.firstDestinationInCreation){
                             await this.$store.dispatch('newCallForward/setFirstDestinationInCreation', newGroupId);
                         }
 
