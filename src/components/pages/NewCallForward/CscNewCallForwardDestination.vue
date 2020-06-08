@@ -47,7 +47,7 @@
 						ref="destTypeForm"
 						class="csc-cf-dest-popover-bottom"
 						v-if="!isVoiceMail()"
-						v-bind:class="{ 'csc-cf-popover-hide': disableDestType }"
+						v-bind:class="{ 'csc-cf-popover-hide': disableDestType, 'csc-cf-popover-to-top': popoverToTop }"
 						@open="showDestTypeForm()"
 						@close="showNext()"
 					>
@@ -60,8 +60,9 @@
 						ref="numberForm"
 						class="csc-cf-number-form csc-cf-dest-popover-bottom"
 						v-if="!isVoiceMail()"
-						v-bind:class="{ 'csc-cf-popover-hide': disableNumberPopover }"
+						v-bind:class="{ 'csc-cf-popover-hide': disableNumberPopover, 'csc-cf-popover-to-top': popoverToTop  }"
 						@open="showNumberForm()"
+						@close="movePopoverToInitialPos()"
 					>
 						<csc-new-call-forward-add-destination-form
 							ref="addDestinationForm"
@@ -69,6 +70,7 @@
 							:destination="this.destinationNumber"
 							:groupName="this.groupName"
 							:groupId="this.groupId"
+							:firstDestinationInCreation="this.firstDestinationInCreation"
 						/>
 					</q-popover>
 				</div>
@@ -142,7 +144,8 @@
 				destinationIndex: null,
 				removeInProgress: false,
 				toggleNumberForm: true,
-				firstDestinationInCreation: false
+				firstDestinationInCreation: false,
+				popoverToTop: false
 			}
 		},
 		computed: {
@@ -192,6 +195,7 @@
 							await this.$store.dispatch('newCallForward/addVoiceMail', this.groupId);
 						}
 						await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+						this.popoverToTop = false;
 					break;
 				}
 			},
@@ -242,6 +246,12 @@
 								: this.isVoiceMail()
 									? `${this.$t('pages.newCallForward.voiceMailLabel')}`
 									: "";
+			},
+			movePopoverToTop(){
+				this.popoverToTop = true;
+			},
+			movePopoverToInitialPos(){
+				this.popoverToTop = false;
 			}
 		}
     }
@@ -279,4 +289,9 @@
 		visibility hidden
 		opacity 0
 		transition visibility 0s 2s, opacity 2s linear
+	.csc-cf-popover-to-top
+		position: fixed;
+		top: 0;
+		left: 0;
+		margin: -4vh 50px 20px -120px;
 </style>

@@ -2,6 +2,7 @@
     <div
         v-if="enabled"
         class="csc-form"
+        v-bind:class="{ 'csc-cf-popover-hide': toggleFormVisibility}"
     >
         <div class="col text-left col-xs-12 col-md-12 ">
 
@@ -9,8 +10,32 @@
                 class='csc-cf-sourceset-name'
             >
                 {{ sourceSetName }}
+                <span
+                    class="csc-cf-delete-sourceset-btn"
+                >
+                    <q-btn
+                        flat
+                        color="default"
+                        icon="clear"
+                        @mousedown.native="showRemoveDialog()"
+                    >
+                        {{ $t('buttons.cancel') }}
+                    </q-btn>
+
+                    <csc-confirm-dialog
+                        ref="confirmDialog"
+                        title-icon="delete"
+                        :title="$t('pages.newCallForward.cancelSourcesetDialogTitle', {name: this.sourceSetName})"
+                        :message="$t('pages.newCallForward.cancelSourcesetText', {name: this.sourceSetName})"
+                        @confirm="confirmDeleteSourceset"
+                        @closed="restorePopver"
+                    />
+
+                </span>
 
             </div>
+
+
 
         </div>
         <div
@@ -75,6 +100,7 @@
     } from 'vuex'
     import CscNewCallForwardInput from './CscNewCallForwardInput'
     import CscNewCallForwardSource from './CscNewCallForwardSource'
+    import CscConfirmDialog from "../../CscConfirmationDialog";
     import CscSpinner from '../../CscSpinner'
     import {
         showGlobalError
@@ -93,6 +119,7 @@
         components: {
             CscNewCallForwardInput,
             CscNewCallForwardSource,
+            CscConfirmDialog,
             CscSpinner,
             QField,
             QInput,
@@ -106,7 +133,8 @@
                 number: '',
                 numberError: false,
                 destinationIndex: null,
-                sources: []
+                sources: [],
+                toggleFormVisibility: false
             }
         },
         props: [
@@ -171,6 +199,22 @@
                   await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
                 }
             },
+            showRemoveDialog(){
+                this.$refs.confirmDialog.open();
+                this.toggleFormVisibility = true;
+            },
+            async confirmDeleteSourceset(){
+                await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+                await this.$store.dispatch('newCallForward/deleteSourcesetById', this.sourceSetId);
+                await this.$store.dispatch('newCallForward/loadMappings');
+                await this.$store.dispatch('newCallForward/loadSourcesets');
+                await this.$store.dispatch('newCallForward/loadForwardGroups');
+                await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+                this.restorePopver();
+            },
+            restorePopver(){
+                this.toggleFormVisibility = false;
+            },
             cancel() {
                 this.number = '';
                 this.enabled = false;
@@ -196,4 +240,11 @@
     @import '../../../themes/app.common.styl'
     .csc-cf-sourceset-name
         margin-top 10px
+    .csc-cf-popover-hide
+        display none
+    .csc-cf-delete-sourceset-btn
+        float right
+        margin-top -10px
+        margin-right -20px
+
 </style>

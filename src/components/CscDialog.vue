@@ -88,6 +88,7 @@
             },
             close() {
                 this.$refs.modal.close();
+                this.$emit('close');
             },
             cancel() {
                 this.close();
