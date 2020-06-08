@@ -2,6 +2,7 @@
     <div
         v-if="enabled"
         class="csc-form"
+        v-bind:class="{ 'csc-cf-popover-hide': toggleFormVisibility}"
     >
         <div class="col text-left col-xs-12 col-md-12 ">
 
@@ -9,8 +10,24 @@
                 class='csc-cf-sourceset-name'
             >
                 {{ sourceSetName }}
+                <span
+                    class="csc-cf-delete-sourceset-btn"
+                >
+
+                    <csc-confirm-dialog
+                        ref="confirmDialog"
+                        title-icon="delete"
+                        :title="$t('pages.newCallForward.cancelSourcesetDialogTitle', {name: this.sourceSetName})"
+                        :message="$t('pages.newCallForward.cancelSourcesetText', {name: this.sourceSetName})"
+                        @confirm="confirmDeleteSourceset"
+                        @closed="restorePopver"
+                    />
+
+                </span>
 
             </div>
+
+
 
         </div>
         <div
@@ -36,10 +53,20 @@
                 @submit="save()"
                 @error="errorNumber"
             />
+            <q-btn
+                v-if="!loading"
+                flat
+                color="primary"
+                icon="add"
+                @click="save()"
+                :disable="saveDisabled"
+                class="csc-cf-btn-reduced-size"
+            >
+            </q-btn>
         </div>
 
         <div
-            class="csc-form-actions row justify-center"
+            class="csc-form-actions row justify-center  csc-actions-cont"
         >
             <q-btn
                 flat
@@ -47,17 +74,15 @@
                 icon="clear"
                 @mousedown.native="cancel()"
             >
-                {{ $t('buttons.cancel') }}
+                {{ $t('buttons.close') }}
             </q-btn>
             <q-btn
-                v-if="!loading"
                 flat
-                color="primary"
-                icon="done"
-                @click="save()"
-                :disable="saveDisabled"
+                color="red"
+                icon="delete"
+                @mousedown.native="showRemoveDialog()"
             >
-                {{ $t('buttons.save') }}
+                {{ $t('buttons.remove') }}
             </q-btn>
             <div
                 v-if="loading"
@@ -75,6 +100,7 @@
     } from 'vuex'
     import CscNewCallForwardInput from './CscNewCallForwardInput'
     import CscNewCallForwardSource from './CscNewCallForwardSource'
+    import CscConfirmDialog from "../../CscConfirmationDialog";
     import CscSpinner from '../../CscSpinner'
     import {
         showGlobalError
@@ -93,6 +119,7 @@
         components: {
             CscNewCallForwardInput,
             CscNewCallForwardSource,
+            CscConfirmDialog,
             CscSpinner,
             QField,
             QInput,
@@ -106,7 +133,8 @@
                 number: '',
                 numberError: false,
                 destinationIndex: null,
-                sources: []
+                sources: [],
+                toggleFormVisibility: false
             }
         },
         props: [
@@ -171,6 +199,22 @@
                   await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
                 }
             },
+            showRemoveDialog(){
+                this.$refs.confirmDialog.open();
+                this.toggleFormVisibility = true;
+            },
+            async confirmDeleteSourceset(){
+                await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+                await this.$store.dispatch('newCallForward/deleteSourcesetById', this.sourceSetId);
+                await this.$store.dispatch('newCallForward/loadMappings');
+                await this.$store.dispatch('newCallForward/loadSourcesets');
+                await this.$store.dispatch('newCallForward/loadForwardGroups');
+                await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+                this.restorePopver();
+            },
+            restorePopver(){
+                this.toggleFormVisibility = false;
+            },
             cancel() {
                 this.number = '';
                 this.enabled = false;
@@ -196,4 +240,15 @@
     @import '../../../themes/app.common.styl'
     .csc-cf-sourceset-name
         margin-top 10px
+    .csc-cf-popover-hide
+        display none
+    .csc-cf-delete-sourceset-btn
+        float right
+        margin-top -10px
+        margin-right -20px
+    .csc-cf-btn-reduced-size
+        .on-left
+            margin-right 0px
+    .csc-actions-cont
+        margin-bottom 15px
 </style>

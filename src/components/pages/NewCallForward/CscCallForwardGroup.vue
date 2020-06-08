@@ -8,11 +8,9 @@
             class="row csc-cf-destination-cont"
         >
                 <div
-                    class="col col-xs-12 col-md-4 text-right csc-cf-group-title"
+                    class="col col-xs-12 col-md-4 text-right csc-cf-group-title-bold"
                 >
-
                     {{groupTitle}}
-
                     <span
                         class="csc-cf-destination-add-condition"
                         v-if="isTempGroup"
@@ -124,11 +122,12 @@
         </div>
 
         <div
-            class="csc-cf-row row"
+            class="csc-cf-destination-cont row"
             v-if="isTimeoutOrUnconditional"
         >
             <div
                 class="col col-xs-12 col-md-4 text-right"
+                :class="{ 'csc-cf-destination-disabled': !isEnabled }"
             >
                 {{ toggleLabel }}
             </div>
@@ -213,9 +212,7 @@
     import {
         mapGetters,
     } from 'vuex'
-    import {
-        showGlobalWarning
-    } from '../../../helpers/ui'
+
     import {
         QSpinnerDots,
         QToggle,
@@ -251,7 +248,6 @@
             QItemSide,
             CscConfirmDialog,
             CscObjectSpinner,
-            showGlobalWarning,
             CscNewCallForwardDestination,
             CscNewCallForwardAddDestinationForm,
             CscNewCallForwardEditSources,
@@ -380,8 +376,14 @@
             showFirstDestMenu(){
                 const firstDestinationCmp = this.$refs.destination[0];
                 firstDestinationCmp.firstDestinationInCreation = true;
+                if(this.group.name.includes('timeout') || this.group.name.includes('unconditional')){
+                    firstDestinationCmp.movePopoverTimeoutToTop();
+                }
+                else{
+                    firstDestinationCmp.movePopoverToTop();
+                }
+
                 firstDestinationCmp.$refs.destTypeForm.open();
-                showGlobalWarning(`${this.$t('pages.newCallForward.mandatoryDestinationLabel')}`, 5000)
             },
             async showConditionForm(){
                 this.toggleConditionFromForm = false;
@@ -441,6 +443,10 @@
                         this.sourceSet = sourceSet;
                         this.sources = this.sourceSet.sources;
                     }
+                    else{
+                        this.sourceSet = null;
+                        this.sources = [];
+                    }
                 }
             },
             showConfirmDialog(){
@@ -466,6 +472,9 @@
     @import '../../../themes/app.common.styl'
     .csc-cf-group
         width 100%
+    .csc-cf-group-title-bold
+        text-align right
+        font-weight bold
     .csc-cf-group-cont
         position relative
     .csc-cf-destination-label
