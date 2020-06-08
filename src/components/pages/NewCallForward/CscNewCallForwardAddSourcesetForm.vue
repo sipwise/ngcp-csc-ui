@@ -18,7 +18,7 @@
         />
 
         <div
-            class="csc-form-actions row justify-center"
+            class="csc-form-actions row justify-center csc-actions-cont"
         >
             <q-btn
                 flat
@@ -162,4 +162,6 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/app.common.styl'
+    .csc-actions-cont
+        margin-bottom 15px
 </style>
