@@ -26,49 +26,14 @@
                         >
                             <csc-new-call-forward-condition-type-select
                                 ref="addCondition"
+                                :disableSourcesetMenu="false"
+                                :disableTimesetMenu="false"
                                 :enabled="true"
                                 :groupName="group.name"
                                 :groupId="group.id"
                             />
                         </q-popover>
                     </span>
-
-                    <span
-                        class="csc-cf-destination-add-condition"
-                        v-if="!groupSourceset && !isTempGroup"
-                    >
-                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
-                        <span class="csc-cf-from-link">
-                            {{ $t('pages.newCallForward.conditionBtnLabel') }}
-                        </span>
-                        <q-popover
-                            ref="conditions"
-                            @open="showConditions()"
-                            @close="showConditionForm()"
-                        >
-                            <csc-new-call-forward-condition-type-select
-                                ref="addCondition"
-                                :enabled="true"
-                                :groupName="group.name"
-                                :groupId="group.id"
-                            />
-                        </q-popover>
-                         <q-popover
-                            ref="onlineSourceset"
-                            class="csc-cf-number-form"
-                            v-bind:class="{ 'csc-cf-popover-hide': toggleConditionFromForm}"
-                            @open="showSourcesetForm()"
-                            @close="resetToggleCondition()"
-                        >
-                            <csc-new-call-forward-add-sourceset-form
-                                ref="addSourceSet"
-                                :enabled="true"
-                                :groupName="group.name"
-                                :groupId="group.id"
-                            />
-                        </q-popover>
-                    </span>
-
                     <span
                         v-if="groupSourceset"
                     >
@@ -91,6 +56,72 @@
                         </q-popover>
 
                     </span>
+                    <span
+                        v-if="groupTimeset"
+                    >
+                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+                        <span class="csc-cf-from-link">
+                            {{ $t('pages.newCallForward.dateIsShort') + groupTimeset }}
+                        </span>
+                        <q-popover
+                            ref="day"
+                            @open="showQDate()"
+                        >
+                            <q-datetime
+                                ref="dayWidget"
+                                clear-label="REMOVE"
+                                class="csc-cf-day-widget"
+                                v-model="dayModel"
+                                :min="today"
+                                />
+                        </q-popover>
+                        <csc-confirm-dialog
+                            ref="confirmDeleteTimesetDialog"
+                            title-icon="delete"
+                            :title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: this.groupTimeset})"
+                            :message="$t('pages.newCallForward.cancelTimesetText', {name: this.groupTimeset})"
+                            @confirm="deleteTimeset"
+                        />
+
+                    </span>
+                    <span
+                        class="csc-cf-destination-add-condition"
+                        v-if="!isTempGroup && !(groupSourceset && groupTimeset)"
+                    >
+                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+                        <span class="csc-cf-from-link">
+                            {{ $t('pages.newCallForward.conditionBtnLabel') }}
+                        </span>
+                        <q-popover
+                            ref="conditions"
+                            @open="showConditions()"
+                            @close="showConditionForm()"
+                        >
+                            <csc-new-call-forward-condition-type-select
+                                ref="addCondition"
+                                :disableSourcesetMenu="!groupSourceset"
+                                :disableTimesetMenu="!groupTimeset"
+                                :enabled="true"
+                                :groupName="group.name"
+                                :groupId="group.id"
+                            />
+                        </q-popover>
+                         <q-popover
+                            ref="onlineSourceset"
+                            class="csc-cf-number-form"
+                            v-bind:class="{ 'csc-cf-popover-hide': toggleConditionFromForm}"
+                            @open="showSourcesetForm()"
+                            @close="resetToggleCondition()"
+                        >
+                            <csc-new-call-forward-add-sourceset-form
+                                ref="addSourceSet"
+                                :enabled="true"
+                                :groupName="group.name"
+                                :groupId="group.id"
+                            />
+                        </q-popover>
+                    </span>
+
                 </div>
                 <div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
                     <q-toggle
@@ -218,10 +249,12 @@
         QToggle,
         QIcon,
         QPopover,
+        QDatetime,
         QList,
         QItem,
         QItemMain,
-        QItemSide
+        QItemSide,
+        date
     } from 'quasar-framework'
     import CscObjectSpinner from "../../CscObjectSpinner";
     import CscConfirmDialog from "../../CscConfirmationDialog";
@@ -242,6 +275,7 @@
             QToggle,
             QIcon,
             QPopover,
+            QDatetime,
             QList,
             QItem,
             QItemMain,
@@ -264,6 +298,9 @@
                 groupIsLoading: false,
                 sourceSet: null,
                 sources: [],
+                timeSet: null,
+                times:[],
+                today: new Date(),
                 firstDestinationInCreation: false
             };
         },
@@ -273,7 +310,8 @@
                     const isGroupEnabled =  await this.$store.dispatch('newCallForward/isGroupEnabled', {groupName: this.group.name, id: this.group.id});
                     this.isEnabled = isGroupEnabled;
                 }
-                await this.updateSourcesetNames()
+                await this.updateSourcesetNames();
+                await this.updateTimeSetNames();
             }
             catch(err){
                 console.log(err)
@@ -288,6 +326,7 @@
                 'getMappings',
                 'getGroupsLoaders',
                 'getSourcesets',
+                'getTimesets',
                 'getFirstDestinationInCreation'
             ]),
             showAddDestBtn(){
@@ -323,6 +362,15 @@
             groupSourceset(){
                 return this.sourceSet ? this.sourceSet.name : false;
             },
+            groupTimeset(){
+                let retVal = false, dateN, time;
+                if(this.timeSet && this.timeSet.times && this.timeSet.times.length > 0){
+                    time = this.timeSet.times[0];
+                    dateN = new Date(parseInt(time.year), parseInt(time.month) - 1 , parseInt(time.mday), 0, 0, 0, 0);
+                    retVal = date.formatDate( dateN, 'ddd, MMM D YYYY')
+                }
+                return retVal;
+            },
             isTempGroup(){
                 return this.group.id.toString().includes('temp-');
             },
@@ -334,11 +382,29 @@
             },
             isTimeoutOrUnconditional(){
                 return this.group.name.includes( 'unconditional')  || this.group.name.includes('timeout');
+            },
+            dayModel: {
+                get() {
+                    let time = this.timeSet.times[0];
+                    let dateN = new Date(parseInt(time.year), parseInt(time.month) - 1 , parseInt(time.mday), 0, 0, 0, 0);
+                    return dateN;
+                },
+                 set(value) {
+                     if(value !== ""){
+                         this.addTimeset(value);
+                     }
+                     else{
+                         this.showConfirmDeleteTimesetDialog()
+                     }
+                }
             }
         },
         watch: {
             getSourcesets: function () {
                  this.updateSourcesetNames();
+            },
+            getTimesets: function () {
+                 this.updateTimeSetNames();
             },
             getGroupsLoaders: function(){
                 const groupLoaders = this.getGroupsLoaders;
@@ -347,7 +413,7 @@
             getFirstDestinationInCreation: function(){
                 if(this.getFirstDestinationInCreation === this.group.id.toString()){
                     this.toggleConditionFromForm = false;
-                    this.$refs.onlineSourceset.open();
+                    this.$refs.conditions.open();
                 }
             }
         },
@@ -385,9 +451,17 @@
 
                 firstDestinationCmp.$refs.destTypeForm.open();
             },
-            async showConditionForm(){
-                this.toggleConditionFromForm = false;
-                this.$refs.onlineSourceset.open();
+            showConditionForm(){
+                const action = this.$refs.addCondition.action;
+                switch(action){
+                    case "addFromCondition":
+                        this.toggleConditionFromForm = false;
+                        this.$refs.onlineSourceset.open();
+                    break;
+                    case "addDateIsCondition":
+                    break;
+                }
+
 
             },
             showDestTypeForm(){
@@ -449,6 +523,25 @@
                     }
                 }
             },
+            async updateTimeSetNames(){
+                const mappings = this.getMappings;
+                const groupMappingId = await this.$store.dispatch('newCallForward/getMappingIdByGroupName', this.group.name);
+                let groupMapping, timeSet;
+                if(mappings[groupMappingId]){
+                    groupMapping =  mappings[groupMappingId].filter(($mapping)=>{
+                        return $mapping.destinationset_id == this.group.id;
+                    });
+                    timeSet = groupMapping[0] && groupMapping[0].timeset_id ? await this.$store.dispatch('newCallForward/getTimesetById', groupMapping[0].timeset_id) :  null;
+                    if(timeSet){
+                        this.timeSet = timeSet;
+                        this.times = this.timeSet.times;
+                    }
+                    else{
+                        this.timeSet = null;
+                        this.times = [];
+                    }
+                }
+            },
             showConfirmDialog(){
                 this.$refs.confirmDialog.open();
             },
@@ -463,6 +556,44 @@
                     console.log(e)
                 }
 
+            },
+            showQDate(){
+                this.$refs.dayWidget.open()
+            },
+            showConfirmDeleteTimesetDialog(){
+                this.$refs.confirmDeleteTimesetDialog.open();
+            },
+            async deleteTimeset(){
+                try{
+                    await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
+                    await this.$store.dispatch('newCallForward/deleteTimesFromTimeset', this.timeSet.id);
+                    await this.$store.dispatch('newCallForward/loadTimesets');
+                    await this.$store.dispatch('newCallForward/loadMappings');
+                    await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
+                }
+                catch(e){
+                    console.log(e)
+                }
+            },
+            async addTimeset(time){
+                try{
+                    await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
+                    this.day = {
+                        "year": date.formatDate(time, 'YYYY'),
+                        "month": date.formatDate(time, 'M'),
+                        "mday": date.formatDate(time, 'D')
+                    }
+                    await this.$store.dispatch('newCallForward/addTimeToTimeset', {
+                        id: this.timeSet.id,
+                        time: this.day
+                    });
+                    await this.$store.dispatch('newCallForward/loadTimesets');
+                    await this.$store.dispatch('newCallForward/loadMappings');
+                    await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
+                }
+                catch(e){
+                    console.log(e)
+                }
             }
         }
     }
@@ -509,4 +640,13 @@
             color $cf-disabled-link
             .q-icon
                 color $cf-disabled-link !important
+    .row.q-datetime-controls.modal-buttons-top
+        button:first-child
+            color red !important
+            &:before
+                font-family: "Material Icons"
+                content: "\e872"
+                font-size 24px
+                margin-right 10px
+
 </style>
