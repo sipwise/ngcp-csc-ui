@@ -8,6 +8,12 @@
         >
             {{ $t('pages.newCallForward.fromLabel') }}
         </div>
+        <div
+            class="csc-cf-dest-type"
+            @click="addDateIsCondition()"
+        >
+            {{ $t('pages.newCallForward.dateIsLabel') }}
+        </div>
     </div>
 </template>
 
@@ -34,12 +40,14 @@
             ])
         },
         methods: {
-
-            async addFromCondition(){
+            addFromCondition(){
                 this.action = "addFromCondition";
                 this.$parent.close()
             },
-
+            addDateIsCondition(){
+                this.action = "addDateIsCondition";
+                this.$parent.close()
+            },
             cancel() {
                 this.action = null;
                 this.enabled = false;
