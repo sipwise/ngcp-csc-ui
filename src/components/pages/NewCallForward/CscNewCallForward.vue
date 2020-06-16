@@ -136,6 +136,7 @@
             try{
                 await this.$store.dispatch('newCallForward/loadMappings');
                 await this.$store.dispatch('newCallForward/loadSourcesets');
+                await this.$store.dispatch('newCallForward/loadTimesets');
                 await this.$store.dispatch('newCallForward/loadForwardGroups');
                 let unconditionalGroups = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional');
                 this.toggleDefaultNumber = !unconditionalGroups;

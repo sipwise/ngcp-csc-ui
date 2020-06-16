@@ -292,6 +292,7 @@
                 'getMappings',
                 'getGroupsLoaders',
                 'getSourcesets',
+                'getTimesets',
                 'getFirstDestinationInCreation'
             ]),
             showAddDestBtn(){
@@ -381,11 +382,19 @@
                 const firstDestinationCmp = this.$refs.destination[0];
                 firstDestinationCmp.firstDestinationInCreation = true;
                 firstDestinationCmp.$refs.destTypeForm.open();
-                showGlobalWarning(`${this.$t('pages.newCallForward.mandatoryDestinationLabel')}`, 5000)
+                showGlobalWarning(`${this.$t('pages.newCallForward.mandatoryDestinationLabel')}`, 5000);
             },
-            async showConditionForm(){
-                this.toggleConditionFromForm = false;
-                this.$refs.onlineSourceset.open();
+            showConditionForm(){
+                const action = this.$refs.addCondition.action;
+                switch(action){
+                    case "addFromCondition":
+                        this.toggleConditionFromForm = false;
+                        this.$refs.onlineSourceset.open();
+                    break;
+                    case "addDateIsCondition":
+                    break;
+                }
+
 
             },
             showDestTypeForm(){
