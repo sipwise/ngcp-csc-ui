@@ -5,7 +5,6 @@
         v-bind:class="{ 'csc-cf-popover-hide': toggleFormVisibility}"
     >
         <div class="col text-left col-xs-12 col-md-12 ">
-
             <div
                 class='csc-cf-sourceset-name'
             >
@@ -26,9 +25,6 @@
                 </span>
 
             </div>
-
-
-
         </div>
         <div
             v-for="(source, item) in sources"
