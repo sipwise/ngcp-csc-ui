@@ -12,7 +12,11 @@ import {
     createSourcesetWithSource,
     getSourcesets,
     addSourceToSourceset,
-    deleteSourcesetById
+    deleteSourcesetById,
+    getTimesets,
+    addNewTimeset,
+    addTimeToTimeset,
+    deleteTimeFromTimeset
 } from '../api/call-forward';
 
 const ForwardGroup = {
@@ -47,6 +51,7 @@ export default {
     state: {
         mappings: [],
         sourceSets: [],
+        timeSets: [],
         forwardGroups: [],
         groupsLoaders: [],
         selectedDestType: null,
@@ -131,6 +136,9 @@ export default {
         getSourcesesBySourcesetId: (state) => (sourceSetId) => {
             const sourceSet = state.sourceSets.filter($sourceset => $sourceset.id == sourceSetId);
             return sourceSet && sourceSet[0] ? sourceSet[0].sources : null;
+        },
+        getTimesets(state){
+            return state.timeSets;
         }
     },
     mutations: {
@@ -161,7 +169,6 @@ export default {
             state.mappings = mappings;
         },
         loadForwardGroups(state, forwardGroups){
-
             for (let i = 0; i < forwardGroups.length; i++) {
                 const group = forwardGroups[i];
               if (group.name.includes('unconditional') || group.name.includes('timeout')){
@@ -176,6 +183,9 @@ export default {
         },
         setSourceSets(state, sourceSets){
             state.sourceSets = sourceSets;
+        },
+        setTimeSets(state, timeSets){
+            state.timeSets = timeSets;
         },
         addGroupLoader(state, groupId){
             state.groupsLoaders.push(groupId)
@@ -223,11 +233,12 @@ export default {
                 const groupMappingId = ForwardGroup[data.name] ? ForwardGroup[data.name].mapping : await context.dispatch('getMappingIdByGroupName', data.name);
                 const allMappings = context.getters.getMappings;
                 let groupMappings = allMappings[groupMappingId];
-
                 if(data.replaceMapping){
                     for(let mapping of groupMappings){
                         if(mapping.destinationset_id === data.groupId){
+
                             mapping.sourceset_id = data.sourceSetId || null;
+                            mapping.timeset_id = data.timeSetId || null;
                             break;
                         }
                     }
@@ -236,7 +247,7 @@ export default {
                     groupMappings.push({
                         "destinationset_id": data.groupId,
                         "sourceset_id": data.sourceSetId || null,
-                        "timeset_id":null
+                        "timeset_id": data.timeSetId || null
                     });
                 }
                 await addNewMapping({
@@ -594,6 +605,11 @@ export default {
             const sourceSets = await getSourcesets(subscriberId);
             context.commit('setSourceSets', sourceSets);
         },
+        async loadTimesets(context){
+            const subscriberId = localStorage.getItem('subscriberId');
+            const timeSets = await getTimesets(subscriberId);
+            context.commit('setTimeSets', timeSets);
+        },
         async createSourceSet(context, data){
             const sourceSetId = await createSourcesetWithSource({
                 sourcesetName: data.name,
@@ -620,6 +636,10 @@ export default {
             const sourceSet = context.state.sourceSets.filter($sourceset => $sourceset.id == id);
             return sourceSet ? sourceSet[0] : [];
         },
+        async getTimesetById(context, id){
+            const timeSet = context.state.timeSets.filter($timeset => $timeset.id == id);
+            return timeSet ? timeSet[0] : [];
+        },
         async addSourceToSourceset(context, data){
             await addSourceToSourceset(data)
         },
@@ -631,6 +651,51 @@ export default {
         },
         setFirstDestinationInCreation(context, groupId){
             context.commit('setFirstDestinationInCreation', groupId);
+        },
+        async createTimeSet(context, timesetName){
+            try{
+                // const subscriberId = localStorage.getItem('subscriberId');
+                const timesetId = await addNewTimeset(timesetName);
+                return timesetId;
+            }
+            catch(err){
+                console.log(err)
+            }
+        },
+        async addTimesetToGroup(context, data){
+            try{
+                await context.dispatch('editMapping', {
+                    name: data.name,
+                    groupId: data.groupId,
+                    timeSetId: data.timeSetId,
+                    replaceMapping: true
+                });
+            }
+            catch(err){
+                console.log(err)
+            }
+        },
+        async addTimeToTimeset(context, data){
+            try{
+                await addTimeToTimeset({
+                    id: data.id,
+                    times: [data.time]
+                });
+            }
+            catch(err){
+                console.log(err)
+            }
+        },
+        async deleteTimesFromTimeset(context, timesetId){
+            try{
+                await deleteTimeFromTimeset({
+                    timesetId: timesetId,
+                    times: []
+                });
+            }
+            catch(err){
+                console.log(err)
+            }
         }
     }
 };
