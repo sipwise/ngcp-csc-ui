@@ -288,6 +288,7 @@
                 'getMappings',
                 'getGroupsLoaders',
                 'getSourcesets',
+                'getTimesets',
                 'getFirstDestinationInCreation'
             ]),
             showAddDestBtn(){
@@ -385,9 +386,17 @@
 
                 firstDestinationCmp.$refs.destTypeForm.open();
             },
-            async showConditionForm(){
-                this.toggleConditionFromForm = false;
-                this.$refs.onlineSourceset.open();
+            showConditionForm(){
+                const action = this.$refs.addCondition.action;
+                switch(action){
+                    case "addFromCondition":
+                        this.toggleConditionFromForm = false;
+                        this.$refs.onlineSourceset.open();
+                    break;
+                    case "addDateIsCondition":
+                    break;
+                }
+
 
             },
             showDestTypeForm(){
