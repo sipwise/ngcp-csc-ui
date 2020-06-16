@@ -26,49 +26,14 @@
                         >
                             <csc-new-call-forward-condition-type-select
                                 ref="addCondition"
+                                :disableSourcesetMenu="false"
+                                :disableTimesetMenu="false"
                                 :enabled="true"
                                 :groupName="group.name"
                                 :groupId="group.id"
                             />
                         </q-popover>
                     </span>
-
-                    <span
-                        class="csc-cf-destination-add-condition"
-                        v-if="!groupSourceset && !isTempGroup"
-                    >
-                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
-                        <span class="csc-cf-from-link">
-                            {{ $t('pages.newCallForward.conditionBtnLabel') }}
-                        </span>
-                        <q-popover
-                            ref="conditions"
-                            @open="showConditions()"
-                            @close="showConditionForm()"
-                        >
-                            <csc-new-call-forward-condition-type-select
-                                ref="addCondition"
-                                :enabled="true"
-                                :groupName="group.name"
-                                :groupId="group.id"
-                            />
-                        </q-popover>
-                         <q-popover
-                            ref="onlineSourceset"
-                            class="csc-cf-number-form"
-                            v-bind:class="{ 'csc-cf-popover-hide': toggleConditionFromForm}"
-                            @open="showSourcesetForm()"
-                            @close="resetToggleCondition()"
-                        >
-                            <csc-new-call-forward-add-sourceset-form
-                                ref="addSourceSet"
-                                :enabled="true"
-                                :groupName="group.name"
-                                :groupId="group.id"
-                            />
-                        </q-popover>
-                    </span>
-
                     <span
                         v-if="groupSourceset"
                     >
@@ -91,6 +56,66 @@
                         </q-popover>
 
                     </span>
+                    <span
+                        v-if="groupTimeset"
+                    >
+                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+                        <span class="csc-cf-from-link">
+                            {{ $t('pages.newCallForward.dateIsShort') + groupTimeset }}
+                        </span>
+                        <!-- <q-popover
+                            ref="sourcesList"
+                            class="csc-cf-number-form"
+                            @open="showSources()"
+                        >
+                            <csc-new-call-forward-edit-sources
+                                ref="editSources"
+                                :sourceSetName="groupSourceset"
+                                :sourceSetId="sourceSet.id"
+                                :groupName="group.name"
+                                :groupId="group.id"
+                            />
+                        </q-popover> -->
+
+                    </span>
+                    <span
+                        class="csc-cf-destination-add-condition"
+                        v-if="!isTempGroup && !(groupSourceset && groupTimeset)"
+                    >
+                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+                        <span class="csc-cf-from-link">
+                            {{ $t('pages.newCallForward.conditionBtnLabel') }}
+                        </span>
+                        <q-popover
+                            ref="conditions"
+                            @open="showConditions()"
+                            @close="showConditionForm()"
+                        >
+                            <csc-new-call-forward-condition-type-select
+                                ref="addCondition"
+                                :disableSourcesetMenu="!groupSourceset"
+                                :disableTimesetMenu="!groupTimeset"
+                                :enabled="true"
+                                :groupName="group.name"
+                                :groupId="group.id"
+                            />
+                        </q-popover>
+                         <q-popover
+                            ref="onlineSourceset"
+                            class="csc-cf-number-form"
+                            v-bind:class="{ 'csc-cf-popover-hide': toggleConditionFromForm}"
+                            @open="showSourcesetForm()"
+                            @close="resetToggleCondition()"
+                        >
+                            <csc-new-call-forward-add-sourceset-form
+                                ref="addSourceSet"
+                                :enabled="true"
+                                :groupName="group.name"
+                                :groupId="group.id"
+                            />
+                        </q-popover>
+                    </span>
+
                 </div>
                 <div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
                     <q-toggle
@@ -221,7 +246,8 @@
         QList,
         QItem,
         QItemMain,
-        QItemSide
+        QItemSide,
+        date
     } from 'quasar-framework'
     import CscObjectSpinner from "../../CscObjectSpinner";
     import CscConfirmDialog from "../../CscConfirmationDialog";
@@ -264,6 +290,8 @@
                 groupIsLoading: false,
                 sourceSet: null,
                 sources: [],
+                timeSet: null,
+                times:[],
                 firstDestinationInCreation: false
             };
         },
@@ -273,7 +301,8 @@
                     const isGroupEnabled =  await this.$store.dispatch('newCallForward/isGroupEnabled', {groupName: this.group.name, id: this.group.id});
                     this.isEnabled = isGroupEnabled;
                 }
-                await this.updateSourcesetNames()
+                await this.updateSourcesetNames();
+                await this.updateTimeSetNames();
             }
             catch(err){
                 console.log(err)
@@ -288,6 +317,7 @@
                 'getMappings',
                 'getGroupsLoaders',
                 'getSourcesets',
+                'getTimesets',
                 'getFirstDestinationInCreation'
             ]),
             showAddDestBtn(){
@@ -323,6 +353,15 @@
             groupSourceset(){
                 return this.sourceSet ? this.sourceSet.name : false;
             },
+            groupTimeset(){
+                let retVal = false, dateN, time;
+                if(this.timeSet && this.timeSet.times && this.timeSet.times.length > 0){
+                    time = this.timeSet.times[0];
+                    dateN = new Date(parseInt(time.year), parseInt(time.month) - 1 , parseInt(time.mday), 0, 0, 0, 0);
+                    retVal = date.formatDate( dateN, 'ddd, MMM D YYYY')
+                }
+                return retVal;
+            },
             isTempGroup(){
                 return this.group.id.toString().includes('temp-');
             },
@@ -339,6 +378,9 @@
         watch: {
             getSourcesets: function () {
                  this.updateSourcesetNames();
+            },
+            getTimesets: function () {
+                 this.updateTimeSetNames();
             },
             getGroupsLoaders: function(){
                 const groupLoaders = this.getGroupsLoaders;
@@ -385,9 +427,17 @@
 
                 firstDestinationCmp.$refs.destTypeForm.open();
             },
-            async showConditionForm(){
-                this.toggleConditionFromForm = false;
-                this.$refs.onlineSourceset.open();
+            showConditionForm(){
+                const action = this.$refs.addCondition.action;
+                switch(action){
+                    case "addFromCondition":
+                        this.toggleConditionFromForm = false;
+                        this.$refs.onlineSourceset.open();
+                    break;
+                    case "addDateIsCondition":
+                    break;
+                }
+
 
             },
             showDestTypeForm(){
@@ -446,6 +496,25 @@
                     else{
                         this.sourceSet = null;
                         this.sources = [];
+                    }
+                }
+            },
+            async updateTimeSetNames(){
+                const mappings = this.getMappings;
+                const groupMappingId = await this.$store.dispatch('newCallForward/getMappingIdByGroupName', this.group.name);
+                let groupMapping, timeSet;
+                if(mappings[groupMappingId]){
+                    groupMapping =  mappings[groupMappingId].filter(($mapping)=>{
+                        return $mapping.destinationset_id == this.group.id;
+                    });
+                    timeSet = groupMapping[0] && groupMapping[0].timeset_id ? await this.$store.dispatch('newCallForward/getTimesetById', groupMapping[0].timeset_id) :  null;
+                    if(timeSet){
+                        this.timeSet = timeSet;
+                        this.times = this.timeSet.times;
+                    }
+                    else{
+                        this.timeSet = null;
+                        this.times = [];
                     }
                 }
             },
