@@ -242,6 +242,7 @@
             "unconditionalLabel": "If available",
             "fromLabel": "If call from ...",
             "fromLabelShort": " call from ",
+            "dateIsLabel": "If date is ...",
             "offlineLabel": "If not available",
             "busyLabel": "If busy",
             "sourcesetName": "List name",
