@@ -72,6 +72,25 @@
         <template slot="body">
             <q-field
                 :labelWidth="labelWidth"
+                label=" "
+            >
+                <q-btn
+                    icon="vpn_key"
+                    flat
+                    color="primary"
+                    v-if="expanded"
+                    @click="showPasswordDialog"
+                >
+                    {{ $t('pbxConfig.editPassword') }}
+                </q-btn>
+            </q-field>
+            <csc-change-password-dialog
+                ref="changePasswordDialog"
+                :loading="false"
+    			@change-password="changeWebPassword({ password: $event.password })"
+    		/>
+            <q-field
+                :labelWidth="labelWidth"
                 :label="$t('pbxConfig.name')"
             >
                 <q-input
@@ -114,6 +133,28 @@
                     />
                 </csc-fade>
             </q-field>
+            <!-- <q-field
+                :labelWidth="labelWidth"
+                :label="$t('pbxConfig.webPassword')"
+            >
+                <q-input
+                    dark
+                    v-model="changes.webPassword"
+                    @keyup.enter="save"
+                />
+                <csc-fade>
+                    <csc-form-save-button
+                        v-if="hasWebPasswordChanged"
+                        @click="save"
+                    />
+                </csc-fade>
+                <csc-fade>
+                    <csc-form-reset-button
+                        v-if="hasWebPasswordChanged"
+                        @click="resetWebPassword"
+                    />
+                </csc-fade>
+            </q-field> -->
             <q-field
                 :labelWidth="labelWidth"
                 :label="$t('pbxConfig.primaryNumber')"
@@ -237,6 +278,7 @@
     import CscListMenuItem from "../../CscListMenuItem";
     import CscFormSaveButton from "../../form/CscFormSaveButton"
     import CscFormResetButton from "../../form/CscFormResetButton"
+    import CscChangePasswordDialog from "../../CscChangePasswordDialog"
     import numberFilter from '../../../filters/number'
     export default {
         name: 'csc-pbx-seat',
@@ -279,7 +321,8 @@
             QTransition,
             QList,
             CscFormSaveButton,
-            CscFormResetButton
+            CscFormResetButton,
+            CscChangePasswordDialog
         },
         computed: {
             getPrimaryNumber() {
@@ -290,6 +333,9 @@
             },
             hasExtensionChanged() {
                 return this.changes.extension !== this.seat.pbx_extension;
+            },
+            hasWebPasswordChanged() {
+                return this.changes.webPassword !== this.seat.webpassword;
             },
             hasAliasNumbersChanged() {
                 return !_.isEqual(this.changes.aliasNumbers.sort(), this.getAliasNumberIds().sort());
@@ -323,6 +369,7 @@
                     name: this.seat.display_name,
                     extension: this.seat.pbx_extension,
                     aliasNumbers: this.getAliasNumberIds(),
+                    webPassword: this.seat.webpassword,
                     groups: this.getGroupIds(),
                     soundSet: this.getSoundSetId()
                 };
@@ -340,6 +387,9 @@
             },
             resetExtension() {
                 this.changes.extension = this.seat.pbx_extension;
+            },
+            resetWebPassword() {
+                    this.changes.webPassword = this.seat.webpassword;
             },
             resetAliasNumbers() {
                 this.changes.aliasNumbers = this.getAliasNumberIds();
@@ -372,6 +422,12 @@
                         seatExtension: this.changes.extension
                     });
                 }
+                if(this.hasWebPasswordChanged) {
+                    this.$emit('save-webpassword', {
+                        seatId: this.seat.id,
+                        seatWebPassword: this.changes.webpassword
+                    });
+                }
                 if(this.hasAliasNumbersChanged) {
                     this.$emit('save-alias-numbers', {
                         seatId: this.seat.id,
@@ -392,6 +448,16 @@
                     });
                 }
 
+            },
+            showPasswordDialog(){
+                this.$refs.changePasswordDialog.open();
+            },
+            async changeWebPassword(data){
+                await this.$store.dispatch('pbxSeats/setSeatWebPassword', {
+                    seatId: this.seat.id,
+                    seatWebPassword: data.password
+                });
+                this.$refs.changePasswordDialog.close();
             }
         },
         watch: {

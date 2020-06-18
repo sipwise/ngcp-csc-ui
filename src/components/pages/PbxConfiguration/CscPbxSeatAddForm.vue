@@ -28,6 +28,18 @@
                 @input="$v.data.extension.$touch"
             />
         </q-field>
+        <q-field :error-label="webPasswordErrorMessage">
+            <q-input
+                dark
+                clearable
+                v-model="data.webPassword"
+                :error="$v.data.webPassword.$error"
+                :disable="loading"
+                :readonly="loading"
+                :float-label="$t('pbxConfig.webPassword')"
+                @input="$v.data.webPassword.$touch"
+            />
+        </q-field>
         <q-field>
             <q-select
                 dark
@@ -139,6 +151,9 @@
                     required,
                     numeric,
                     maxLength: maxLength(64)
+                },
+                webPassword: {
+                    maxLength: maxLength(64)
                 }
             }
         },
@@ -184,10 +199,24 @@
                     });
                 }
             },
+            webPasswordErrorMessage() {
+                if (!this.$v.data.webPassword.required) {
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.webPassword')
+                    });
+                }
+                else if (!this.$v.data.webPassword.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('pbxConfig.webPassword'),
+                        maxLength: this.$v.data.webPassword.$params.maxLength.max
+                    });
+                }
+            },
             seatModel() {
                 return {
                     name: this.data.name,
                     extension: this.data.extension,
+                    webPassword: this.data.webPassword,
                     aliasNumbers: this.data.aliasNumbers,
                     groups: this.data.groups,
                     soundSet: this.data.soundSet
@@ -199,6 +228,7 @@
                 return {
                     name: '',
                     extension: '',
+                    webPassword: '',
                     aliasNumbers: [],
                     groups: [],
                     soundSet: null

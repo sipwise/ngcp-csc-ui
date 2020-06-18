@@ -11,7 +11,7 @@ export function stopLoading() {
     Loading.hide();
 }
 
-export function showGlobalError(message) {
+export function showGlobalError(message, timeout) {
     const alert = Alert.create({
         html: message,
         position: 'top-center',
@@ -19,7 +19,7 @@ export function showGlobalError(message) {
         leave: 'fadeOut',
         color: 'negative'
     });
-    setTimeout(()=>{ alert.dismiss(); }, 2000);
+    setTimeout(()=>{ alert.dismiss(); }, timeout || 2000);
 }
 
 export function showGlobalWarning(message, timeout) {
