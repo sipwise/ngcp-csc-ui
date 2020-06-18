@@ -5,6 +5,7 @@ import {
     getSubscriberAndPreferences, getSubscribers,
     setDisplayName,
     setPbxExtension,
+    setPbxWebPassword,
     setPbxGroupIds,
     setSubscriberNumbers
 } from "./subscriber";
@@ -112,6 +113,7 @@ export function createSeat(seat) {
                 username: _.kebabCase(seat.name),
                 password: createId(),
                 display_name: seat.name,
+                webpassword: seat.webPassword,
                 is_pbx_group: false,
                 pbx_extension: seat.extension,
                 pbx_group_ids: seat.groups
@@ -175,6 +177,28 @@ export function setSeatExtension(options) {
     return new Promise((resolve, reject)=>{
         Promise.resolve().then(()=>{
             return setPbxExtension(options.seatId, options.seatExtension);
+        }).then(()=>{
+            return getSubscriberAndPreferences(options.seatId);
+        }).then((result)=>{
+            resolve({
+                seat: result.subscriber,
+                preferences: result.preferences
+            });
+        }).catch((err)=>{
+            reject(err);
+        });
+    });
+}
+
+/**
+ * @param options
+ * @param options.seatId
+ * @param options.seatWebPassword
+ */
+export function setSeatWebPassword(options) {
+    return new Promise((resolve, reject)=>{
+        Promise.resolve().then(()=>{
+            return setPbxWebPassword(options.seatId, options.seatWebPassword);
         }).then(()=>{
             return getSubscriberAndPreferences(options.seatId);
         }).then((result)=>{
