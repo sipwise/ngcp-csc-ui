@@ -17,7 +17,8 @@ import {
     setSeatExtension,
     setSeatGroups,
     setSeatNumbers,
-    setSeatSoundSet
+    setSeatSoundSet,
+    setSeatWebPassword
 } from "../api/pbx-seats";
 
 export default {
@@ -314,6 +315,20 @@ export default {
             setSeatExtension({
                 seatId: options.seatId,
                 seatExtension: options.seatExtension
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result);
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message);
+            });
+        },
+        setSeatWebPassword(context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.t('pbxConfig.webPassword')
+            });
+            setSeatWebPassword({
+                seatId: options.seatId,
+                seatWebPassword: options.seatWebPassword
             }).then((result) => {
                 context.commit('seatUpdateSucceeded', result);
             }).catch((err) => {

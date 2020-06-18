@@ -263,7 +263,7 @@
                     showToast(this.getSeatUpdateToastMessage);
                 }
                 else if(state === RequestState.failed) {
-                    showGlobalError(this.seatUpdateError);
+                    showGlobalError(this.seatUpdateError, 5000);
                 }
             },
             seatRemovalState(state) {
