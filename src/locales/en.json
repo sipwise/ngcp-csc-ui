@@ -397,6 +397,7 @@
         "group": "Group",
         "groups": "Groups",
         "extension": "Extension",
+        "webPassword": "Password",
         "groupName": "Group Name",
         "huntPolicy": "Hunt Policy",
         "huntTimeout": "Hunt Timeout",
