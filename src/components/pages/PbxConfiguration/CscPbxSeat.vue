@@ -116,6 +116,28 @@
             </q-field>
             <q-field
                 :labelWidth="labelWidth"
+                :label="$t('pbxConfig.webPassword')"
+            >
+                <q-input
+                    dark
+                    v-model="changes.webPassword"
+                    @keyup.enter="save"
+                />
+                <csc-fade>
+                    <csc-form-save-button
+                        v-if="hasWebPasswordChanged"
+                        @click="save"
+                    />
+                </csc-fade>
+                <csc-fade>
+                    <csc-form-reset-button
+                        v-if="hasWebPasswordChanged"
+                        @click="resetWebPassword"
+                    />
+                </csc-fade>
+            </q-field>
+            <q-field
+                :labelWidth="labelWidth"
                 :label="$t('pbxConfig.primaryNumber')"
             >
                 <q-input
@@ -291,6 +313,9 @@
             hasExtensionChanged() {
                 return this.changes.extension !== this.seat.pbx_extension;
             },
+            hasWebPasswordChanged() {
+                return this.changes.webPassword !== this.seat.webpassword;
+            },
             hasAliasNumbersChanged() {
                 return !_.isEqual(this.changes.aliasNumbers.sort(), this.getAliasNumberIds().sort());
             },
@@ -323,6 +348,7 @@
                     name: this.seat.display_name,
                     extension: this.seat.pbx_extension,
                     aliasNumbers: this.getAliasNumberIds(),
+                    webPassword: this.seat.webpassword,
                     groups: this.getGroupIds(),
                     soundSet: this.getSoundSetId()
                 };
@@ -340,6 +366,9 @@
             },
             resetExtension() {
                 this.changes.extension = this.seat.pbx_extension;
+            },
+            resetWebPassword() {
+                    this.changes.webPassword = this.seat.webpassword;
             },
             resetAliasNumbers() {
                 this.changes.aliasNumbers = this.getAliasNumberIds();
@@ -370,6 +399,12 @@
                     this.$emit('save-extension', {
                         seatId: this.seat.id,
                         seatExtension: this.changes.extension
+                    });
+                }
+                if(this.hasWebPasswordChanged) {
+                    this.$emit('save-webpassword', {
+                        seatId: this.seat.id,
+                        seatWebPassword: this.changes.webpassword
                     });
                 }
                 if(this.hasAliasNumbersChanged) {
