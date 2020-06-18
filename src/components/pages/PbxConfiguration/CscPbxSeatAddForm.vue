@@ -28,6 +28,11 @@
                 @input="$v.data.extension.$touch"
             />
         </q-field>
+        <csc-change-password-form
+            ref="changePasswordForm"
+            :noSubmit="true"
+            @validation-succeeded="webPassValidationSucceeded"
+        />
         <q-field>
             <q-select
                 dark
@@ -110,6 +115,7 @@
         QTooltip
     } from 'quasar-framework'
     import CscObjectSpinner from "../../CscObjectSpinner";
+    import CscChangePasswordForm from "../../form/CscChangePasswordForm"
     export default {
         name: 'csc-pbx-seat-add-form',
         props: [
@@ -120,6 +126,7 @@
         ],
         components: {
             CscObjectSpinner,
+            CscChangePasswordForm,
             QBtn,
             QInnerLoading,
             QSpinnerDots,
@@ -138,6 +145,9 @@
                 extension: {
                     required,
                     numeric,
+                    maxLength: maxLength(64)
+                },
+                webPassword: {
                     maxLength: maxLength(64)
                 }
             }
@@ -184,10 +194,24 @@
                     });
                 }
             },
+            webPasswordErrorMessage() {
+                if (!this.$v.data.webPassword.required) {
+                    return this.$t('validationErrors.fieldRequired', {
+                        field: this.$t('pbxConfig.webPassword')
+                    });
+                }
+                else if (!this.$v.data.webPassword.maxLength) {
+                    return this.$t('validationErrors.maxLength', {
+                        field: this.$t('pbxConfig.webPassword'),
+                        maxLength: this.$v.data.webPassword.$params.maxLength.max
+                    });
+                }
+            },
             seatModel() {
                 return {
                     name: this.data.name,
                     extension: this.data.extension,
+                    webPassword: this.data.webPassword,
                     aliasNumbers: this.data.aliasNumbers,
                     groups: this.data.groups,
                     soundSet: this.data.soundSet
@@ -199,6 +223,7 @@
                 return {
                     name: '',
                     extension: '',
+                    webPassword: '',
                     aliasNumbers: [],
                     groups: [],
                     soundSet: null
@@ -209,10 +234,14 @@
             },
             save() {
                 this.$emit('save', this.seatModel);
+                this.$refs.changePasswordForm.resetForm();
             },
             reset() {
                 this.data = this.getDefaults();
                 this.$v.$reset();
+            },
+            webPassValidationSucceeded(data){
+                this.data.webPassword = data.password;
             }
         }
     }
@@ -220,4 +249,11 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import '../../../themes/app.common.styl';
+            .Password__strength-meter
+                margin-top 20px !important
+			.Password__strength-meter:after,
+            .Password__strength-meter:before
+				border-color #3b3440 !important
+			.Password
+				max-width 100%
 </style>
