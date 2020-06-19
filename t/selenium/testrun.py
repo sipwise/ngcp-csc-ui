@@ -74,14 +74,30 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_login_page.png"
         driver = self.driver
-        print("Try to log in with invalid credentials...", end="")
+        print("Try to log in with no credentials", end="")
         driver.get(os.environ['CATALYST_SERVER'])
         driver.find_element_by_xpath(
-            '//*[@id="csc-login-form"]//div//input[@type="text"]'
-        ).send_keys('invalid')
+            '//*[@id="csc-login"]//div//button').click()
+        self.assertTrue(len(driver.find_elements_by_xpath(
+            '//div[contains(@class, "q-alert-container")]')) > 0,
+            "Error Message was not shown")
+        print("Try to log in with invalid credentials...", end="")
+        driver.get(os.environ['CATALYST_SERVER'])
+        fill_element(
+            driver, '//*[@id="csc-login-form"]//div//input[@type="text"]', "invaliduser")
+        fill_element(
+            driver, '//*[@id="csc-login-form"]//div//input[@type="password"]', "invalidpass")
         driver.find_element_by_xpath(
-            '//*[@id="csc-login-form"]//div//input[@type="password"]'
-        ).send_keys('user')
+            '//*[@id="csc-login"]//div//button').click()
+        self.assertTrue(len(driver.find_elements_by_xpath(
+            '//div[contains(@class, "q-alert-container")]')) > 0,
+            "Error Message was not shown")
+        print("Try to log in with invalid password...", end="")
+        driver.get(os.environ['CATALYST_SERVER'])
+        fill_element(
+            driver, '//*[@id="csc-login-form"]//div//input[@type="text"]', "testuser@" + self.domainname)
+        fill_element(
+            driver, '//*[@id="csc-login-form"]//div//input[@type="password"]', "invalidpass")
         driver.find_element_by_xpath(
             '//*[@id="csc-login"]//div//button').click()
         self.assertTrue(len(driver.find_elements_by_xpath(
@@ -90,15 +106,9 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to log in with valid credentials...", end="")
         fill_element(
-            driver,
-            '//*[@id="csc-login-form"]//div//input[@type="text"]',
-            "testuser@" + self.domainname
-        )
+            driver, '//*[@id="csc-login-form"]//div//input[@type="text"]', "testuser@" + self.domainname)
         fill_element(
-            driver,
-            '//*[@id="csc-login-form"]//div//input[@type="password"]',
-            "testpasswd"
-        )
+            driver, '//*[@id="csc-login-form"]//div//input[@type="password"]', "testpasswd")
         driver.find_element_by_xpath(
             '//*[@id="csc-login"]//div//button').click()
         self.assertEqual(
