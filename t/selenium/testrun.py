@@ -46,6 +46,8 @@ def preparation():
         driver.quit()
     except Exception:
         driver.save_screenshot('/results/preperation.png')
+        driver.quit()
+        raise Exception
 
 
 def cleanup():
