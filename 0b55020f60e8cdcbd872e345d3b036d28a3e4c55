@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5bf8a5fa_97a6042a",
+        "filename": "t/selenium/functions/Collections.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-06-19T13:43:54Z",
+      "side": 1,
+      "message": "As discussed in personal, every time we are guessing in tests it always have to be changed in the future.\nThe testrunner here can request parameter and force it to be specified.\nThe code should belongs to the specified parameters:\n\n\u003e testrunner pbx\u003dyes\nor\n\u003e testrunner pbx\u003dno\n\nIt opens possibility to control it on Jenkins level:\n\u003e if [ $(ngcpcfg get \u0027pbx.enable\u0027) \u003d\u003d \u0027yes\u0027 ] ; then testrunner pbx\u003dyes ; fi\n\nSo we can even set it and run with pbx test\nand unset it and run without pbx tests.",
+      "revId": "0b55020f60e8cdcbd872e345d3b036d28a3e4c55",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
