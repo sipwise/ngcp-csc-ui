@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8330b958_ea025cae",
+        "filename": "debian/rules",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-06-19T13:03:16Z",
+      "side": 1,
+      "message": "TABs have to be used in a debian/rules file",
+      "revId": "0337c543ecb361e744d7161c0e8ef484975e291c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
