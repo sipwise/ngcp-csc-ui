@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "14ea1a9e_0c326a29",
+        "filename": "t/selenium/testrun.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-06-19T09:44:26Z",
+      "side": 1,
+      "message": "please add one more case: correct username + empty password",
+      "range": {
+        "startLine": 95,
+        "startChar": 15,
+        "endLine": 95,
+        "endChar": 52
+      },
+      "revId": "e52158343d11c072d291972781f1f69071e0dd62",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
