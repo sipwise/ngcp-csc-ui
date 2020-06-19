@@ -1,5 +1,6 @@
 import os
 import random
+import time
 from functions import Functions
 
 
@@ -41,6 +42,10 @@ def logout_panel(driver):
 def create_customer(driver, name=None):
     if not name:
         name = 'customer' + str(random.randint(1, 100000)) + 'test'
+    driver.find_element_by_xpath('//*[@id="main-nav"]//*[contains(text(), "Documentation")]').click()
+    driver.find_element_by_link_text("Handbook").click()
+    TRUNKTYPE = driver.find_element_by_xpath('//*[@id="header"]/div/div/h2').text
+    driver.get(os.environ['CATALYST_SERVER'] + ":1443")
     Functions.step(
         driver, '//*[@id="main-nav"]//*[contains(text(),"Settings")]')
     driver.find_element_by_xpath(
@@ -52,6 +57,14 @@ def create_customer(driver, name=None):
         driver, '//*[@id="contactidtable"]//tr[1]//td/input')
     driver.find_element_by_xpath(
         '//*[@id="contactidtable"]//tr[1]//td/input').click()
+    if TRUNKTYPE == 'PRO/CARRIER':
+        try:
+            Functions.fill_element(driver, '#productidtable_filter input', 'thisshouldnotexist')
+            driver.find_elements_by_css_selector(driver, '#productidtable tr > td.dataTables_empty')
+            Functions.fill_element(driver, '#productidtable_filter input', 'Basic')
+            driver.find_elements_by_xpath('//*[@id="productidtable"]//tr[1]//td/input').click()
+        except Exception as e:
+            del e
     Functions.scroll_to_element(
         driver, '//*[@id="billing_profileidtable"]//tr[1]//td/input')
     driver.find_element_by_xpath(
