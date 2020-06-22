@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -e
+
+echo "Jumping into /code source storage"
+cd /code
+
+echo "Checking NGCP environment configuration"
+ngcp_address="$1"
+if [ -z "${ngcp_address}" ] ; then
+  echo "ERROR: Missing NGCP address, please check the script parameters. Aborting."
+  exit 1
+fi
+echo "Found NGCP address '${ngcp_address}', processing further..."
+
+app_config="src/config.js"
+default_app_config="src/config.template.js"
+if [ ! -f "${app_config}" ]; then
+  if [ ! -f "${default_app_config}" ]; then
+    echo "ERROR: missing default quasar config '${default_app_config}'. Aborting."
+    exit 1
+  fi
+
+  echo "Missing '${app_config}', copying default quasar config '${default_app_config}'"
+  cp "${default_app_config}" "${app_config}"
+fi
+
+echo "Found quasar config '${app_config}', checking content..."
+if ! grep -q "${ngcp_address}" "${app_config}" >/dev/null 2>&1; then
+  echo "NGCP address '${ngcp_address}' is missing in '${app_config}', regenerating from default config..."
+  cp -a "${default_app_config}" "${app_config}"
+  sed -i -e "s|baseHttpUrl:.*|baseHttpUrl: 'https://${ngcp_address}:1443',|" "${app_config}"
+  sed -i -e "s|baseWsUrl:.*|baseWsUrl: 'wss://${ngcp_address}:1443'|" "${app_config}"
+fi
+echo "App config '${app_config}' is OK."
+
+echo "JFYI, important components versions:"
+echo -n "node --version : " && node --version
+echo -n "npm  --version : " && npm --version
+
+echo "Configuring Vue.js/Quasar dev environment, running 'npm ci'..."
+if ! npm ci ; then
+  echo "ERROR: cannot install all npm dependencies. Aborting."
+  exit 1
+fi
+
+echo "Starting Quasar dev environment, running 'npm run dev'..."
+if ! npm run dev; then
+  echo "ERROR: cannot run quasar dev environment. Aborting."
+  exit 1
+fi
+
