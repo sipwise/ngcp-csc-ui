@@ -39,10 +39,10 @@ export function getUserData(id) {
             getCapabilities(id),
             getFaxServerSettingsById(id)
         ]).then((results)=>{
+            results[1].faxactive = results[2]
             resolve({
                 subscriber: results[0],
-                capabilities: results[1],
-                faxactive: results[2]
+                capabilities: results[1]
             });
         }).catch((err)=>{
             reject(err);
@@ -75,6 +75,8 @@ export function getCapabilities() {
                     capabilities[capability.name] = capability.enabled;
                 });
             }
+            // Todo: Remove if capability is available in the API
+            capabilities.csc_rtcengine_ui = false
             resolve(capabilities);
         }).catch((err)=>{
             reject(err);
