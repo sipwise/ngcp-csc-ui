@@ -10,7 +10,8 @@
     "build": "node build/script.build.js mat",
     "dev-build": "CSC_SOURCE_MAP=1 CSC_WATCH=1 node build/script.build.js mat",
     "test": "karma start ./karma.js --single-run",
-    "dev-test": "karma start ./karma.js"
+    "dev-test": "karma start ./karma.js",
+    "dev-docker": "docker pull docker.mgm.sipwise.com/ngcp-csc-ui-env-buster; docker run --rm -p 8080:8080 -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-csc-ui-env-buster:latest env/run_csc_ui $1"
   },
   "dependencies": {
     "babel-runtime": "^6.25.0",
