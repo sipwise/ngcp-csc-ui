@@ -6,6 +6,7 @@
         inset-delimiter
     >
         <q-side-link
+            v-if="isRtcEngineUiVisible"
             item
             to="/user/home"
         >
@@ -18,6 +19,7 @@
             />
         </q-side-link>
         <q-side-link
+            v-if="isRtcEngineUiVisible"
             item
             to="/conference"
         >
@@ -231,6 +233,9 @@
 
 <script>
     import {
+        mapGetters
+    } from 'vuex'
+    import {
         QList,
         QSideLink,
         QItemSide,
@@ -256,7 +261,12 @@
             'isCallBlocking',
             'isPbxAdmin',
             'isPbxConfiguration'
-        ]
+        ],
+        computed: {
+            ...mapGetters('user', [
+                'isRtcEngineUiVisible'
+            ])
+        }
     }
 </script>
 

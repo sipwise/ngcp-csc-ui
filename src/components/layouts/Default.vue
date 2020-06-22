@@ -191,7 +191,8 @@
         enableIncomingCallNotifications
     } from '../../helpers/ui'
     import {
-        mapGetters
+        mapGetters,
+        mapActions
     } from 'vuex'
     import CscCall from '../call/CscCall'
     import CscSendFax from '../CscSendFax'
@@ -315,7 +316,8 @@
                 'userDataSucceeded',
                 'changeSessionLocaleState',
                 'locale',
-                'languageLabels'
+                'languageLabels',
+                'isRtcEngineUiVisible'
             ]),
             ...mapGetters('communication', [
                 'createFaxState',
@@ -374,6 +376,9 @@
             }
         },
         methods: {
+            ...mapActions('user', [
+                'forwardHome'
+            ]),
             showSendFax() {
                 this.$refs.sendFax.showModal();
             },
@@ -480,13 +485,8 @@
                 }
             },
             isCallEnabled(value) {
-                if(value) {
+                if(value && this.isRtcEngineUiVisible) {
                     showToast(this.$i18n.t('toasts.callAvailable'));
-                }
-            },
-            isConferencingEnabled(value) {
-                if(value) {
-                    // showToast(this.$i18n.t('toasts.conferencingAvailable'));
                 }
             },
             createFaxState(state) {
@@ -503,7 +503,7 @@
                     this.hideSendFax();
                 }
             },
-            $route () {
+            $route (route) {
                 if(!this.isHome) {
                     this.$store.commit('call/minimize');
                 }
@@ -513,6 +513,9 @@
                     });
                 }
                 window.scrollTo(0, 0);
+                if (route.path === '/user/home') {
+                    this.forwardHome()
+                }
             },
             changeSessionLocaleState(state) {
                 if (state === 'succeeded') {
