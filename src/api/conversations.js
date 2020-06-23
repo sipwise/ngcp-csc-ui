@@ -1,12 +1,16 @@
 
 import _ from 'lodash'
-import { saveAs } from 'file-saver'
+import {
+    saveAs
+} from 'file-saver'
 import Vue from 'vue'
 import {
     getIncomingCallBlocking,
     getOutgoingCallBlocking
 } from './call-blocking'
-import { getList } from './common'
+import {
+    getList
+} from './common'
 
 export function getConversations(options) {
     return new Promise((resolve, reject) => {
@@ -94,5 +98,10 @@ export function getOutgoingBlocked(id) {
             reject(err);
         });
     });
+}
+
+export async function deleteVoicemail(id) {
+    const res = await Vue.http.delete('api/voicemails/' + id)
+    return res.status >= 200
 }
 

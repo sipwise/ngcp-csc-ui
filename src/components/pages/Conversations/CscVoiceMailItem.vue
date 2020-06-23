@@ -121,6 +121,17 @@
                                     :label="blockBothLabel"
                                 />
                             </q-item>
+                            <q-item
+                                @click="deleteVoicemail(voiceMail)"
+                            >
+                                <q-item-side
+                                    icon="delete"
+                                    color="negative"
+                                />
+                                <q-item-main
+                                    :label="$t('conversations.deleteVoicemailTitle')"
+                                />
+                            </q-item>
                         </q-list>
                     </q-popover>
                 </q-btn>
@@ -221,6 +232,10 @@
             },
             toggleBlockBoth() {
                 this.$emit('toggle-block-both');
+            },
+            deleteVoicemail(voiceMail) {
+                this.$refs.callPopover.close();
+                this.$emit('delete-voicemail', voiceMail)
             }
         }
     }

@@ -167,7 +167,8 @@
                 "blockOutgoing": "Block Outgoing",
                 "unblockOutgoing": "Unblock Outgoing",
                 "blockBoth": "Block Incoming/Outgoing",
-                "unblockBoth": "Unblock Incoming/Outgoing"
+                "unblockBoth": "Unblock Incoming/Outgoing",
+                "deleteVoicemail": "Remove voicemail"
             },
             "downloadVoiceMailSuccessMessage": "Voicemail downloaded successfully",
             "downloadVoiceMailErrorMessage": "Downloading of voicemail failed",
@@ -653,5 +654,10 @@
     "userMenu": {
         "logout": "Logout",
         "settings": "Settings"
+    },
+    "conversations": {
+        "deleteVoicemailButton": "Remove Voicemail",
+        "deleteVoicemailTitle": "Remove Voicemail",
+        "deleteVoicemailText": "You are about to remove this Voicemail"
     }
 }

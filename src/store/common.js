@@ -1,6 +1,7 @@
 'use strict';
 
 export const RequestState = {
+    button: 'button',
     initiated: 'initiated',
     requesting: 'requesting',
     succeeded: 'succeeded',
