@@ -75,8 +75,6 @@ export function getCapabilities() {
                     capabilities[capability.name] = capability.enabled;
                 });
             }
-            // Todo: Remove if capability is available in the API
-            capabilities.csc_rtcengine_ui = true
             resolve(capabilities);
         }).catch((err)=>{
             reject(err);
