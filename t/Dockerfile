@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-buster:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2019-06-27
+ENV REFRESHED_AT 2020-06-24
 ENV DEBIAN_FRONTEND noninteractive
 ENV DISPLAY=:0
 
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install --assume-yes \
     gtk2-engines-pixbuf \
     libgconf-2-4 \
     net-tools \
-    npm \
+    yarnpkg \
     nodejs \
     wget \
     xterm \
@@ -33,10 +33,10 @@ RUN echo "cd /code && ./t/testrunner" >/root/.bash_history
 
 # we cannot use /code/ here otherwise it will be 'mounted over' with following 'docker run'
 ADD package.json /tmp/
-ADD package-lock.json /tmp/
+ADD yarn.lock /tmp/
 ADD README.md /tmp/
 WORKDIR /tmp
-RUN npm install /tmp
+RUN yarnpkg install /tmp
 
 WORKDIR /code
 
