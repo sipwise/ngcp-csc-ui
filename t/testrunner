@@ -20,7 +20,7 @@ cd /tmp/code/
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
 
-npm test
+yarnpkg test
 
 echo "### Moving JUnit XML files to /results"
 mv /tmp/code/t/*.xml /results
