@@ -65,6 +65,7 @@
                     @toggle-block-incoming="toggleBlockIncoming"
                     @toggle-block-outgoing="toggleBlockOutgoing"
                     @toggle-block-both="toggleBlockBoth"
+                    @delete-voicemail="$refs.confirmDeletionDialog.open();deletionId=$event.id"
                 />
             </q-list>
             <div
@@ -94,13 +95,22 @@
         >
             <q-icon name="keyboard_arrow_up" />
         </q-btn>
+        <csc-remove-dialog
+            ref="confirmDeletionDialog"
+            title-icon="delete"
+            :title="$t('conversations.deleteVoicemailTitle')"
+            :message="$t('conversations.deleteVoicemailText')"
+            @remove="deleteVoicemail({id:deletionId, tab: selectedTab})"
+            @cancel="deletionId=null"
+        />
     </csc-page>
 </template>
 
 <script>
     import platformMixin from '../../../mixins/platform'
     import {
-        mapGetters
+        mapGetters,
+        mapActions
     } from 'vuex'
     import CscPage from '../../CscPage'
     import CscConversationItem from './CscConversationItem'
@@ -123,10 +133,12 @@
         QBtn,
         QIcon
     } from 'quasar-framework'
+    import CscRemoveDialog from "../../CscRemoveDialog";
     const offset = dom.offset;
     export default {
         data () {
             return {
+                deletionId: null,
                 scrollEventEmitted: false,
                 selectedTab: 'call-fax-voicemail',
                 tabs: [
@@ -153,6 +165,7 @@
             platformMixin
         ],
         components: {
+            CscRemoveDialog,
             CscPage,
             CscConversationItem,
             QScrollObservable,
@@ -259,6 +272,9 @@
             }
         },
         methods: {
+            ...mapActions('conversations', [
+                'deleteVoicemail'
+            ]),
             scroll(data) {
                 if(!this.isNextPageRequesting && !this.scrollEventEmitted && data.direction === 'down' &&
                     data.position > scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight - 90) {

@@ -1,7 +1,7 @@
 
 'use strict';
 
-import ConversationsModule  from '../../src/store/conversations';
+import ConversationsModule  from '../../src/store/conversations/conversations';
 import { assert } from 'chai';
 
 describe('Conversations', function(){

@@ -8,18 +8,6 @@
             <div
                 class="col col-xs-12 col-md-6 col-lg-4"
             >
-                <div
-                    v-if="hasFax"
-                    class="csc-communication-actions row justify-center"
-                >
-                    <q-btn
-                        v-if="hasFax"
-                        icon="fa-fax"
-                        round
-                        color="primary"
-                        @click="sendFax()"
-                    />
-                </div>
                 <q-alert
                     v-if="!isCallInitializing && desktopSharingInstall"
                     v-model="desktopSharingInstall"
@@ -104,14 +92,10 @@
             QBtn
         },
         props: [
-            'hasFax'
         ],
         methods: {
             numberInputChanged(number) {
                 this.$store.commit('call/numberInputChanged', number);
-            },
-            sendFax() {
-                this.$emit('send-fax');
             },
             dialpadClick(value) {
                 let number = this.callNumberInput + value;

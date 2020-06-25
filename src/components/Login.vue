@@ -135,7 +135,9 @@
         Platform,
         QSpinnerDots,
         QToolbar,
-        QPopover
+        QPopover,
+        QFabAction,
+        QFab
     } from 'quasar-framework'
     import {
         getLanguageLabel
@@ -158,7 +160,9 @@
             QSpinnerDots,
             QToolbar,
             QPopover,
-            CscLanguageMenu
+            CscLanguageMenu,
+            QFabAction,
+            QFab
         },
         data () {
             return {

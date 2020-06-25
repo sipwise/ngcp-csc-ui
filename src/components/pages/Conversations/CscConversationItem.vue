@@ -1,6 +1,6 @@
 <template>
     <csc-call-item
-        v-if="item.type == 'call'"
+        v-if="item.type === 'call'"
         :call="item"
         :call-available="callAvailable"
         :block-incoming-label="blockIncomingLabel"
@@ -13,14 +13,14 @@
         @toggle-block-both="toggleBlockBoth"
     />
     <csc-fax-item
-        v-else-if="item.type == 'fax'"
+        v-else-if="item.type === 'fax'"
         :fax="item"
         :call-available="callAvailable"
         @download-fax="downloadFax"
         @start-call="startCall"
     />
     <csc-voice-mail-item
-        v-else-if="item.type == 'voicemail'"
+        v-else-if="item.type === 'voicemail'"
         :voice-mail="item"
         :call-available="callAvailable"
         :block-incoming-label="blockIncomingLabel"
@@ -33,6 +33,7 @@
         @toggle-block-incoming="toggleBlockIncoming"
         @toggle-block-outgoing="toggleBlockOutgoing"
         @toggle-block-both="toggleBlockBoth"
+        @delete-voicemail="$emit('delete-voicemail', $event)"
     />
 </template>
 

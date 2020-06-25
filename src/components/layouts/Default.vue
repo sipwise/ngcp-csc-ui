@@ -13,6 +13,7 @@
                 slot="header"
             >
                 <q-btn
+                    class="csc-user-menu-button"
                     v-if="isMobile"
                     flat
                     color="white"
@@ -21,6 +22,39 @@
                     <q-icon
                         name="menu"
                     />
+                </q-btn>
+                <q-btn
+                    v-if="hasFaxCapability && hasSendFaxFeature"
+                    class="csc-user-menu-button bg-primary text-dark"
+                    flat
+                    color="primary"
+                    round
+                    small
+                >
+                    <q-icon
+                        name="apps"
+                    />
+                    <q-popover
+                        ref="appPopover"
+                    >
+                        <q-list
+                            class="no-padding"
+                            no-border
+                        >
+                            <q-item
+                                link
+                                @click="showSendFax();$refs.appPopover.close()"
+                            >
+                                <q-item-side
+                                    icon="fa-fax"
+                                    color="primary"
+                                />
+                                <q-item-main
+                                    :label="$t('communication.sendFax')"
+                                />
+                            </q-item>
+                        </q-list>
+                    </q-popover>
                 </q-btn>
                 <q-btn
                     class="csc-user-menu-button no-shadow"
@@ -109,10 +143,7 @@
             :is-pbx-admin="isPbxAdmin"
             :is-pbx-configuration="isPbxConfiguration"
         />
-        <router-view
-            :has-fax="hasFaxCapability && hasSendFaxFeature"
-            @send-fax="showSendFax()"
-        />
+        <router-view />
         <csc-send-fax
             ref="sendFax"
         />
@@ -160,7 +191,8 @@
         enableIncomingCallNotifications
     } from '../../helpers/ui'
     import {
-        mapGetters
+        mapGetters,
+        mapActions
     } from 'vuex'
     import CscCall from '../call/CscCall'
     import CscSendFax from '../CscSendFax'
@@ -179,7 +211,9 @@
         QItemTile,
         QPopover,
         QSideLink,
-        QCollapsible
+        QCollapsible,
+        QFabAction,
+        QFab
     } from 'quasar-framework'
     import CscMainMenu from "./MainMenu"
     import CscLanguageMenu from "./CscLanguageMenu"
@@ -232,7 +266,9 @@
             CscCall,
             CscSendFax,
             CscLogo,
-            CscUserMenu
+            CscUserMenu,
+            QFabAction,
+            QFab
         },
         computed: {
             ...mapGetters([
@@ -280,7 +316,8 @@
                 'userDataSucceeded',
                 'changeSessionLocaleState',
                 'locale',
-                'languageLabels'
+                'languageLabels',
+                'isRtcEngineUiVisible'
             ]),
             ...mapGetters('communication', [
                 'createFaxState',
@@ -339,6 +376,9 @@
             }
         },
         methods: {
+            ...mapActions('user', [
+                'forwardHome'
+            ]),
             showSendFax() {
                 this.$refs.sendFax.showModal();
             },
@@ -445,13 +485,8 @@
                 }
             },
             isCallEnabled(value) {
-                if(value) {
+                if(value && this.isRtcEngineUiVisible) {
                     showToast(this.$i18n.t('toasts.callAvailable'));
-                }
-            },
-            isConferencingEnabled(value) {
-                if(value) {
-                    // showToast(this.$i18n.t('toasts.conferencingAvailable'));
                 }
             },
             createFaxState(state) {
@@ -468,7 +503,7 @@
                     this.hideSendFax();
                 }
             },
-            $route () {
+            $route (route) {
                 if(!this.isHome) {
                     this.$store.commit('call/minimize');
                 }
@@ -478,6 +513,9 @@
                     });
                 }
                 window.scrollTo(0, 0);
+                if (route.path === '/user/home') {
+                    this.forwardHome()
+                }
             },
             changeSessionLocaleState(state) {
                 if (state === 'succeeded') {
@@ -499,7 +537,8 @@
         top 4px
         position absolute
     .csc-user-menu-button
-        margin 0 0.2rem
+        margin-left 0
+        margin-right 0.2rem
         padding 0.2rem
         .on-left
             margin 0
