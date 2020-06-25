@@ -52,6 +52,17 @@ def create_customer(driver, name=None):
         driver, '//*[@id="contactidtable"]//tr[1]//td/input')
     driver.find_element_by_xpath(
         '//*[@id="contactidtable"]//tr[1]//td/input').click()
+    try:
+        driver.implicitly_wait(2)
+        Functions.scroll_to_element(driver, '//*[@id="productidtable_filter"]/label/input')
+        Functions.fill_element(driver, '//*[@id="productidtable_filter"]/label/input', 'thisshouldnotexist')
+        driver.find_element_by_css_selector('#productidtable tr > td.dataTables_empty')
+        Functions.fill_element(driver, '//*[@id="productidtable_filter"]/label/input', 'Basic')
+        driver.find_element_by_xpath('//*[@id="productidtable"]//tr[1]//td/input').click()
+        driver.implicitly_wait(10)
+    except Exception as e:
+        driver.implicitly_wait(10)
+        del e
     Functions.scroll_to_element(
         driver, '//*[@id="billing_profileidtable"]//tr[1]//td/input')
     driver.find_element_by_xpath(
