@@ -1,5 +1,6 @@
 'use strict';
 
+import router from '../router'
 import Vue from 'vue';
 import {
     i18n
@@ -87,6 +88,9 @@ export default {
         },
         hasRtcEngineCapabilityEnabled(state, getters) {
             return getters.hasRtcEngineCapability && state.capabilities.rtcengine === true;
+        },
+        isRtcEngineUiVisible(state) {
+            return (state.capabilities !== null && state.capabilities.csc_rtcengine_ui === true);
         },
         getSubscriberId(state) {
             return state.subscriberId;
@@ -253,37 +257,38 @@ export default {
             localStorage.removeItem('subscriberId');
             document.location.href = document.location.pathname;
         },
-        initUser(context) {
+        async initUser(context) {
             if(!context.getters.userDataSucceeded) {
-                context.commit('userDataRequesting');
-                getUserData(localStorage.getItem('subscriberId')).then((result) => {
-                    let capabilities = Object.assign({
-                            faxactive: result.faxactive
-                        },
-                        result.capabilities
-                    );
-                    context.commit('userDataSucceeded', {
-                        subscriber: result.subscriber,
-                        capabilities: capabilities
-                    });
+                try {
+                    context.commit('userDataRequesting');
+                    const userData = await getUserData(localStorage.getItem('subscriberId'))
+                    context.commit('userDataSucceeded', userData);
                     if(_.isNumber(context.getters.jwtTTL)) {
                         setTimeout(()=>{
                             context.dispatch('logout');
                         }, context.getters.jwtTTL * 1000);
                     }
-                    if(context.getters.hasRtcEngineCapabilityEnabled) {
+                    if(context.getters.hasRtcEngineCapabilityEnabled && context.getters.isRtcEngineUiVisible) {
                         context.commit('rtcEngineInitRequesting');
                         Vue.$rtcEngine.setNgcpApiJwt(localStorage.getItem('jwt'));
-                        Vue.$rtcEngine.initialize().then(()=>{
+                        try {
+                            await Vue.$rtcEngine.initialize()
                             context.commit('rtcEngineInitSucceeded');
-                        }).catch((err)=>{
+                        }
+                        catch (err) {
+                            console.debug(err);
                             context.commit('rtcEngineInitFailed', err.message);
-                        });
+                        }
                     }
-                }).catch((err)=>{
+                    await context.dispatch('forwardHome')
+                }
+                catch(err) {
                     console.debug(err);
-                    context.dispatch('logout');
-                });
+                    await context.dispatch('logout');
+                }
+            }
+            else {
+                await context.dispatch('forwardHome')
             }
         },
         changeSessionLanguage(context, locale) {
@@ -306,6 +311,11 @@ export default {
             }).catch((err)=>{
                 context.commit('userPasswordFailed', err.message);
             });
+        },
+        async forwardHome(context) {
+            if (context.rootState.route.path === '/user/home' && !context.getters.isRtcEngineUiVisible) {
+                await router.push({path:'/user/conversations'})
+            }
         }
     }
 };

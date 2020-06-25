@@ -1,5 +1,6 @@
 <template>
     <q-list
+        class="no-padding"
         no-border
         link
     >

@@ -3,7 +3,7 @@
         no-border
         link
         highlight
-        class="csc-language-selection csc-toolbar-btn-popover"
+        class="csc-language-selection csc-toolbar-btn-popover no-padding"
     >
         <q-collapsible
             ref="languageCollapsible"
