@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7bc2853b_41dd06e2",
+        "filename": "package.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2020-06-26T09:03:05Z",
+      "side": 1,
+      "message": "LGTM. Maybe we should add -env to Dockerfile in ngcp-admin-ui too? To be in sync.",
+      "range": {
+        "startLine": 14,
+        "startChar": 65,
+        "endLine": 14,
+        "endChar": 69
+      },
+      "revId": "df2868d435294e130743c95f2ee34dda36edca1c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
