@@ -7,7 +7,7 @@
         <div
             class="row csc-cf-destination-cont"
         >
-                <div
+                <div 
                     class="col col-xs-12 col-md-4 text-right csc-cf-group-title-bold"
                 >
                     {{groupTitle}}
