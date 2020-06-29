@@ -1,4 +1,4 @@
-<template>
+<template> 
     <div
         class="csc-form csc-pbx-seat-add-form"
     >
