@@ -90,7 +90,7 @@ export default {
             return getters.hasRtcEngineCapability && state.capabilities.rtcengine === true;
         },
         isRtcEngineUiVisible(state) {
-            return (state.capabilities !== null && state.capabilities.csc_rtcengine_ui === true);
+            return (state.capabilities !== null && state.capabilities.csc_show_rtcengine_features === true);
         },
         getSubscriberId(state) {
             return state.subscriberId;
