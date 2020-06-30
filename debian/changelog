@@ -1,3 +1,14 @@
+ngcp-csc-ui (8.3.3.0+0~mr8.3.3.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [e534730] TT#78464 Ropa 28519 CSC -Subscriber: Call Duration to be display in Call History
+
+  [ Rene Krenn ]
+  * [545e506] TT#78467 use total_customer_cost to include VAT
+  * [00b6bd9] TT#78467 enforce 2 fractional digits for total_customer_cost
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 30 Jun 2020 15:29:09 +0200
+
 ngcp-csc-ui (8.3.2.0+0~mr8.3.2.0) unstable; urgency=medium
 
   [ Nico Schedel ]
