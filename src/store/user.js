@@ -149,6 +149,18 @@ export default {
         },
         isPasswordChanging(state) {
             return state.changePasswordState === RequestState.requesting;
+        },
+        primaryNumber(state) {
+            if (state.subscriber === null) {
+                return null
+            }
+            return state.subscriber.primaryNumber;
+        },
+        aliasNumbers(state) {
+            if (state.subscriber === null) {
+                return []
+            }
+            return state.subscriber.aliasNumbers;
         }
     },
     mutations: {

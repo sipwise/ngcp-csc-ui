@@ -11,6 +11,7 @@
     "notFound" : "404 Not Found",
     "language": "Language ({language})",
     "languageLabel": "English",
+    "numbers": "Numbers",
     "buttons": {
         "cancel": "Cancel",
         "save": "Save",
