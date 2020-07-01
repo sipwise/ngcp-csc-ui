@@ -37,14 +37,20 @@ export function getDeviceList(options) {
             order_by: PBX_CONFIG_ORDER_BY,
             order_by_direction: PBX_CONFIG_ORDER_DIRECTION
         };
-        if (params.profile_id === null) {
+        if (params.profile_id === null || params.profile_id === undefined || params.profile_id === "") {
             delete params['profile_id'];
         }
-        if (params.identifier === null) {
+        if (params.identifier === null || params.identifier === undefined || params.identifier === "") {
             delete params['identifier'];
         }
-        if (params.station_name === null) {
+        else {
+            params.identifier = "*" + params.identifier + "*"
+        }
+        if (params.station_name === null || params.station_name === undefined || params.station_name === "") {
             delete params['station_name'];
+        }
+        else {
+            params.station_name = "*" + params.station_name + "*"
         }
         getDevices({
             params: params
