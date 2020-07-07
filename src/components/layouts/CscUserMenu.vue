@@ -1,6 +1,7 @@
 <template>
     <div>
         <q-list
+            v-if="hasNumbers"
             no-border
             dense
         >
@@ -108,8 +109,11 @@
             QIcon
         },
         computed: {
+            hasNumbers() {
+                return this.subscriber.primary_number || this.subscriber.alias_numbers
+            },
             primaryNumberFormatted() {
-                if(this.subscriber) {
+                if(this.subscriber && this.subscriber.primary_number) {
                     return numberFilter(this.subscriber.primary_number)
                 }
                 else {
@@ -118,7 +122,7 @@
             },
             aliasNumbersFormatted() {
                 const numbers = []
-                if(this.subscriber) {
+                if(this.subscriber && this.subscriber.alias_numbers) {
                     this.subscriber.alias_numbers.forEach((number)=>{
                         numbers.push(numberFilter(number))
                     })
