@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e512770e_b6bd79b6",
+        "filename": "src/components/layouts/CscUserMenu.vue",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000052
+      },
+      "writtenOn": "2020-07-07T10:53:16Z",
+      "side": 1,
+      "message": "is this supposed to be written with 2 s, or is it a typo?",
+      "range": {
+        "startLine": 113,
+        "startChar": 73,
+        "endLine": 113,
+        "endChar": 87
+      },
+      "revId": "7cf3b0846ba06771027b037be8b41d86d825ec60",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": true
+    }
+  ]
+}
