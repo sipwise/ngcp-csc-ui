@@ -1,3 +1,42 @@
+ngcp-csc-ui (8.6.0.0+0~mr8.6.0.0) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [a252fe2] TT#81165 CF: Can click a new type of forwarding group under "Add forwarding"
+  * [a34a8b0] TT#81166 CF: As a Customer, I want to add new forwarding groups "If call from ..."
+  * [7911024] TT#81172 CF: Can see a popup after clicking "call from ..."
+  * [0d7427f] TT#81173 CF: Can input a name to identify the source list, add a first number and save it
+  * [7cf5a51] TT#81174 CF: Can see the title "If online and call from nameOfTheSourceList" after saving the new source list initially
+  * [7e93882] TT#81171 CF: Can see the list of sources by clicking the highlighted part in the title "call from ..."
+  * [a063d1a] TT#81502 CF: As a Customer, I want to delete entire forwarding groups
+  * [4f6f3f2] TT#81164 CF: As a Customer, I want to add new forwarding groups "If call from ..."
+  * [a21a007] TT#82501 As a Customer, I want to be forced to input a initial number/destination in order to add conditions afterwards
+  * [3aa3c31] TT#82511 CF: Replace availability related terms
+  * [a1a74e4] TT#82510 CF: As a Customer, I want have a separate toggle button which allows the user to enable/disable cft
+  * [092e6bd] TT#82509 CF: As a Customer, I want to remove the condition "call from ..."
+  * [06624d5] TT#81403 Admin Subscriber should be able to set seats password
+  * [c0c77e6] TT#82506 CF: As a Customer, I want to add condition "... and date is" to forwarding groups
+
+  [ Nico Schedel ]
+  * [9966fbb] TT#70901 selenium: take screenshot if preperation fails
+  * [bbe96a8] TT#70901 selenium: add new login tests
+  * [f65b85b] TT#70901 selenium: fix customer creation on pro machines with cloudpbx enabled
+  * [6894b5c] TT#70901 selenium: more post-80-column-change cleanups
+
+  [ Hans-Peter Herzog ]
+  * [3885a6a] TT#84202 As a Customer, I want to see the Send Fax button in a new location together with the other media functions
+  * [4f77980] TT#83201 As a Customer, I want to see the RTCEngine related features if capability is enabled
+  * [4c3f090] TT#84208 As a Customer, I want to delete Voicemails from Conversations
+  * [eb1782e] TT#83201 Enable capability csc_show_rtcengine_features
+  * [ca09f7f] TT#84214 As a Developer, I want to run the dev environment in Docker
+  * [4c2d52b] TT#84210 As a Customer, I want to see my assigned numbers
+  * [3c147c1] TT#84229 Partial search results for station name and mac address
+  * [e9e1ea3] TT#85100 Can't open menu for logout on csc panel if subscriber doesn't have a number assigned
+
+  [ Michael Prokop ]
+  * [f599028] TT#85156 Apply consistent language labels style
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Jul 2020 11:52:51 +0200
+
 ngcp-csc-ui (8.5.0.0+0~mr8.5.0.0) unstable; urgency=medium
 
   [ Nico Schedel ]
