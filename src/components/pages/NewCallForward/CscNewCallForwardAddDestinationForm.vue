@@ -102,7 +102,7 @@
                 const forwardGroupId = this.groupId;
                 const forwardGroupName = this.groupName;
                 const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', forwardGroupId);
-                await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+                this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
                 if (this.numberError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
                 }
@@ -137,7 +137,7 @@
                     }
                     await this.$store.dispatch('newCallForward/loadForwardGroups');
                 }
-                await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+                this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
             },
             cancel() {
                 this.number = '';
