@@ -102,7 +102,7 @@
                 const forwardGroupId = this.groupId;
                 const forwardGroupName = this.groupName;
                 const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', forwardGroupId);
-                await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+                this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
                 if (this.numberError || this.saveDisabled) {
                     showGlobalError(this.$t('validationErrors.generic'));
                 }
@@ -113,7 +113,7 @@
                         destination: this.number
                     });
                 }
-                else { // new group
+                else {
                     if(forwardGroup.id.toString().includes('temp-')){ // unexisting group
                         forwardGroup.destinations[0].simple_destination = this.number; // optimistic UI update :)
                         const newGroupId = await this.$store.dispatch('newCallForward/addForwardGroup', {
@@ -126,18 +126,17 @@
                         if(this.destinationIndex === 0 && this.firstDestinationInCreation){
                             await this.$store.dispatch('newCallForward/setFirstDestinationInCreation', newGroupId);
                         }
-
                     }
                     else{ // existing group
-
                         await this.$store.dispatch('newCallForward/addDestination', {
                             forwardGroupId: forwardGroup.id,
                             destination: this.number
                         });
+                        await this.$store.dispatch('newCallForward/loadForwardGroups');
                     }
-                    await this.$store.dispatch('newCallForward/loadForwardGroups');
+
                 }
-                await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+                this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
             },
             cancel() {
                 this.number = '';
