@@ -179,7 +179,7 @@
                     source: this.number
                 });
                 try{
-                    await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+                    this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
                     this.$refs.sourceInputField.reset();
                     await this.$store.dispatch('newCallForward/addSourceToSourceset', {
                         id: this.sourceSetId,
@@ -192,7 +192,7 @@
                     console.log(err)
                 }
                 finally {
-                  await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+                  this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
                 }
             },
             showRemoveDialog(){
@@ -200,12 +200,12 @@
                 this.toggleFormVisibility = true;
             },
             async confirmDeleteSourceset(){
-                await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+                this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
                 await this.$store.dispatch('newCallForward/deleteSourcesetById', this.sourceSetId);
-                await this.$store.dispatch('newCallForward/loadMappings');
-                await this.$store.dispatch('newCallForward/loadSourcesets');
-                await this.$store.dispatch('newCallForward/loadForwardGroups');
-                await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+                this.$store.dispatch('newCallForward/loadMappings');
+                this.$store.dispatch('newCallForward/loadSourcesets');
+                this.$store.dispatch('newCallForward/loadForwardGroups');
+                this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
                 this.restorePopver();
             },
             restorePopver(){

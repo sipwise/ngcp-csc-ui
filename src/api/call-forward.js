@@ -298,13 +298,16 @@ export function deleteDestinationsetById(id) {
 
 export function updateDestinationsetName(options) {
     return new Promise((resolve, reject) => {
-        let headers = { 'Content-Type': 'application/json-patch+json' };
+        let headers = {
+            'Content-Type': 'application/json-patch+json',
+            'Prefer': 'return=representation'
+        };
         Vue.http.patch('api/cfdestinationsets/' + options.id, [{
             op: 'replace',
             path: '/name',
             value: options.name
         }], { headers: headers }).then((result) => {
-            resolve(result);
+            resolve(getJsonBody(result.body));
         }).catch((err) => {
             reject(err);
         });
@@ -313,7 +316,8 @@ export function updateDestinationsetName(options) {
 
 export function addDestinationToDestinationset(options) {
     let headers = {
-        'Content-Type': 'application/json-patch+json'
+        'Content-Type': 'application/json-patch+json',
+        'Prefer': 'return=representation'
     };
     return new Promise((resolve, reject) => {
         Vue.http.patch('api/cfdestinationsets/' + options.id, [{
@@ -321,7 +325,7 @@ export function addDestinationToDestinationset(options) {
             path: '/destinations',
             value: options.data
         }], { headers: headers }).then((result) => {
-                resolve(result);
+                resolve(getJsonBody(result.body));
         }).catch((err) => {
             reject(err);
         });
@@ -403,13 +407,31 @@ export function addDestinationToEmptyGroup(options) {
 
 export function addNewMapping(options) {
     return new Promise((resolve, reject) => {
-        let headers = { 'Content-Type': 'application/json-patch+json' };
+        let headers = {
+            'Content-Type': 'application/json-patch+json',
+            'Prefer': 'return=representation'
+        };
         Vue.http.patch('api/cfmappings/' + options.subscriberId, [{
             op: 'replace',
             path: '/' + options.group,
             value: options.mappings
         }], { headers: headers }).then((result) => {
-            resolve(result);
+            resolve(getJsonBody(result.body));
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+export function addMultipleNewMappings(options) {
+    return new Promise((resolve, reject) => {
+        let headers = {
+            'Content-Type': 'application/json-patch+json',
+            'Prefer': 'return=representation'
+        };
+        Vue.http.patch('api/cfmappings/' + options.subscriberId, options.mappings
+        , { headers: headers }).then((result) => {
+            resolve(getJsonBody(result.body));
         }).catch((err) => {
             reject(err);
         });
@@ -978,14 +1000,15 @@ export function getOwnPhoneTimeout(id) {
 export function updateOwnPhoneTimeout(options) {
     return new Promise((resolve, reject)=>{
         let headers = {
-            'Content-Type': 'application/json-patch+json'
+            'Content-Type': 'application/json-patch+json',
+            'Prefer': 'return=representation'
         };
         Vue.http.patch('api/cfmappings/' + options.subscriberId, [{
             op: 'replace',
             path: '/cft_ringtimeout',
             value: options.timeout
-        }], { headers: headers }).then(() => {
-            resolve();
+        }], { headers: headers }).then((result) => {
+            resolve(getJsonBody(result.body));
         }).catch((err) => {
             reject(err);
         });
