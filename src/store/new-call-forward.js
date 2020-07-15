@@ -1,4 +1,5 @@
 'use strict';
+import _ from 'lodash';
 import Vue from 'vue'
 import {
     getMappings,
@@ -7,6 +8,7 @@ import {
     deleteDestinationsetById,
     addDestinationToDestinationset,
     addNewMapping,
+    addMultipleNewMappings,
     updateOwnPhoneTimeout,
     updateDestinationsetName,
     createSourcesetWithSource,
@@ -165,9 +167,6 @@ export default {
             destination.timeout =  data.timeout;
             Vue.set(group.destinations, data.index-1, destination)
         },
-        loadMappings(state, mappings){
-            state.mappings = mappings;
-        },
         loadForwardGroups(state, forwardGroups){
             for (let i = 0; i < forwardGroups.length; i++) {
                 const group = forwardGroups[i];
@@ -178,6 +177,21 @@ export default {
             }
             state.forwardGroups = forwardGroups;
         },
+        setDestinationSet(state, data){
+            let forwardGroup = state.forwardGroups.find((group)=>{
+                return group.id === data.id;
+            });
+            Object.assign(forwardGroup, data);
+        },
+        setDestinations(state, data){
+            let group = state.forwardGroups.find((group)=>{
+                return group.id === data.groupId;
+            });
+            group.destinations = data.destinations;
+        },
+        setMappings(state, mappings){
+            state.mappings = mappings;
+        },
         setSelectedDestType(state, destType){
             state.selectedDestType = destType;
         },
@@ -187,6 +201,12 @@ export default {
         setTimeSets(state, timeSets){
             state.timeSets = timeSets;
         },
+        editTimes(state, timeSet){
+            let timeSetToUpdate = state.timeSets.find(($timeset)=>{
+                return $timeset.id === timeSet.id;
+            });
+            timeSetToUpdate.times = timeSet.times;
+        },
         addGroupLoader(state, groupId){
             state.groupsLoaders.push(groupId)
         },
@@ -195,6 +215,10 @@ export default {
         },
         setFirstDestinationInCreation(state, groupId){
             state.firstDestinationInCreation = groupId;
+        },
+        setOwnPhoneTimeout(state, cft_ringtimeout){
+            const mappings = state.mappings;
+            mappings.cft_ringtimeout = cft_ringtimeout
         }
     },
     actions: {
@@ -211,7 +235,7 @@ export default {
         async loadMappings(context) {
             try{
                 const mappings = await getMappings(localStorage.getItem('subscriberId'));
-                context.commit('loadMappings', mappings);
+                context.commit('setMappings', mappings);
             }
             catch(err){
                 console.log(err)
@@ -236,7 +260,6 @@ export default {
                 if(data.replaceMapping){
                     for(let mapping of groupMappings){
                         if(mapping.destinationset_id === data.groupId){
-
                             mapping.sourceset_id = data.sourceSetId || null;
                             mapping.timeset_id = data.timeSetId || null;
                             break;
@@ -250,12 +273,12 @@ export default {
                         "timeset_id": data.timeSetId || null
                     });
                 }
-                await addNewMapping({
+                const updatedMappings = await addNewMapping({
                     mappings: groupMappings,
                     group: groupMappingId,
                     subscriberId: subscriberId
                 });
-                context.dispatch('loadMappings');
+                context.commit('setMappings', updatedMappings);
             }
             catch(err){
                 console.log(err)
@@ -273,12 +296,12 @@ export default {
                     "priority": 1,
                     "timeout": 5
                 };
-                await context.dispatch('editMapping', {
+                context.dispatch('editMapping', {
                     name: data.name,
                     groupId: newForwardGroupId
                 });
 
-                await addDestinationToDestinationset({
+                addDestinationToDestinationset({
                     id: newForwardGroupId,
                     data: [destination]
                 });
@@ -286,7 +309,7 @@ export default {
                 // setting cft_ringtimeout in case it is
                 // not set while creating timeout group
                 if((data.name === 'timeout' || data.name === 'csc-timeout') && (!context.getters.getOwnPhoneTimeout || isNaN(context.getters.getOwnPhoneTimeout))){
-                    await context.dispatch('editRingTimeout', 5);
+                    context.dispatch('editRingTimeout', 5);
                 }
 
                 return newForwardGroupId;
@@ -297,14 +320,7 @@ export default {
         },
         async deleteForwardGroup(context, group) {
             try{
-                const subscriberId = localStorage.getItem('subscriberId');
-                const groupMappingId = await context.dispatch('getMappingIdByGroupName', group.name);
                 await deleteDestinationsetById(group.id);
-                await addNewMapping({
-                    mappings: [],
-                    group: groupMappingId,
-                    subscriberId: subscriberId
-                });
                 context.dispatch('loadMappings');
             }
             catch(err){
@@ -405,22 +421,24 @@ export default {
                 let destinations, group = context.state.forwardGroups.find((group)=>{
                     return group.id === data.forwardGroupId;
                 });
-
                 destinations = group.destinations.filter(($destination) => {
                     return $destination.destination !== data.destination.destination;
                 });
-
                 if(destinations.length < 1){
                     await context.dispatch('deleteForwardGroup', group);
+                    context.dispatch('loadForwardGroups');
                 }
                 else{
-                    await addDestinationToDestinationset({
+                    const updatedGroup = await addDestinationToDestinationset({
                         id: group.id,
                         data: destinations
                     });
-                    await context.dispatch('loadMappings');
+                    context.commit('setDestinations', {
+                        groupId: updatedGroup.id,
+                        destinations: updatedGroup.destinations
+                    });
                 }
-                await context.dispatch('loadForwardGroups');
+
 
             }
             catch(err){
@@ -428,17 +446,22 @@ export default {
             }
         },
         async editDestination(context, data){
-            let group = context.state.forwardGroups.find((group)=>{
+            const group = context.state.forwardGroups.find((group)=>{
                 return group.id === data.forwardGroupId;
             });
-            let destination = group.destinations.slice(data.index, data.index+1)[0];
+            const groupClone = _.cloneDeep(group);
+            let destination = groupClone.destinations.slice(data.index, data.index+1)[0];
             destination.simple_destination =  data.destination;
             destination.destination =  data.destination;
-            context.commit('editDestination', data);
+
             try{
-                await addDestinationToDestinationset({
+                const result = await addDestinationToDestinationset({
                     id: data.forwardGroupId,
-                    data: group.destinations
+                    data: groupClone.destinations
+                });
+                context.commit('setDestinations', {
+                    groupId: data.forwardGroupId,
+                    destinations: result.destinations
                 });
             }
             catch(err){
@@ -447,11 +470,11 @@ export default {
         },
         async editRingTimeout(context, timeout){
             try{
-                await updateOwnPhoneTimeout({
+                const data = await updateOwnPhoneTimeout({
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeout: timeout
                 });
-                await context.dispatch('loadMappings');
+                context.commit('setOwnPhoneTimeout', data.cft_ringtimeout)
             }
             catch(err){
                 console.log(err)
@@ -459,6 +482,7 @@ export default {
         },
         async editTimeout(context, data){
             try{
+
                 if(data.index === 0){ // first row -> change cft_ringtimeout
                     await context.dispatch('editRingTimeout', data.timeout);
                 }
@@ -466,13 +490,17 @@ export default {
                     const group = context.state.forwardGroups.find((group)=>{
                         return group.id === data.forwardGroupId;
                     });
-                    let destination = group.destinations.slice(data.index-1, data.index)[0];
+                    const groupClone = _.cloneDeep(group);
+                    let destination = groupClone.destinations.slice(data.index-1, data.index)[0];
                     destination.timeout =  data.timeout;
-                    await addDestinationToDestinationset({
-                        id: group.id,
-                        data: group.destinations
+                    const result = await addDestinationToDestinationset({
+                        id: groupClone.id,
+                        data: groupClone.destinations
                     });
-                    context.commit('editTimeout', data);
+                    context.commit('setDestinations', {
+                        groupId: group.id,
+                        destinations: result.destinations
+                    });
                 }
             }
             catch(err){
@@ -487,63 +515,68 @@ export default {
                 let timeoutGroups = await context.dispatch('getForwardGroupByName', 'timeout');
 
                 if(noSelfNumber && timeoutGroups){
-                    for(let timeoutGroup of timeoutGroups){ // TODO multiple logic
+                    for(let timeoutGroup of timeoutGroups){
                         if(timeoutGroup && !timeoutGroup.id.toString().includes('temp')){
-
-                            await updateDestinationsetName({
+                            context.dispatch('addGroupLoader', timeoutGroup.id);
+                            const updatedDestinationset = await updateDestinationsetName({
                                 id: timeoutGroup.id,
                                 name: 'csc-unconditional'
                             });
-
-                            await addNewMapping({
-                                mappings: [],
-                                group: 'cft',
-                                subscriberId: subscriberId
-                            });
-
-                            await addNewMapping({
-                                mappings: mappings['cft'],
-                                group: 'cfu',
-                                subscriberId: subscriberId
-                            });
-
+                            context.commit('setDestinationSet', updatedDestinationset);
+                            context.dispatch('removeGroupLoader', timeoutGroup.id);
                         }
                         else {
-                            await context.dispatch('addTempGroup', 'unconditional');
+                            context.dispatch('addTempGroup', 'unconditional');
                         }
-                        await context.dispatch('loadMappings');
-                        await context.dispatch('loadForwardGroups');
                     }
+                    const updatedMappings = await addMultipleNewMappings({
+                        subscriberId: subscriberId,
+                        mappings: [
+                            {
+                                op: 'replace',
+                                value: [],
+                                path: '/cft'
+                            },
+                            {
+                                op: 'replace',
+                                value: mappings['cft'],
+                                path: '/cfu'
+                            }
+                        ]
+                    });
+                    context.commit('setMappings', updatedMappings);
                 }
                 else{
                     if(unconditionalGroups ){
-                        for(let unconditionalGroup of unconditionalGroups){ // TODO multiple logic
+                        for(let unconditionalGroup of unconditionalGroups){
                             if(!unconditionalGroup.id.toString().includes('temp')){
-
-                                await updateDestinationsetName({
+                                context.dispatch('addGroupLoader', unconditionalGroup.id);
+                                const updatedDestinationset  = await updateDestinationsetName({
                                     id: unconditionalGroup.id,
                                     name: 'csc-timeout'
                                 });
-
-                                await addNewMapping({
-                                    mappings: [],
-                                    group: 'cfu',
-                                    subscriberId: subscriberId
-                                });
-
-                                await addNewMapping({
-                                    mappings: mappings['cfu'],
-                                    group: 'cft',
-                                    subscriberId: subscriberId
-                                });
-
+                                context.commit('setDestinationSet', updatedDestinationset);
+                                context.dispatch('removeGroupLoader', unconditionalGroup.id);
                             }
                             else{
-                                await context.dispatch('addTempGroup', 'timeout');
+                                 context.dispatch('addTempGroup', 'timeout');
                             }
-                            await context.dispatch('loadMappings');
-                            await context.dispatch('loadForwardGroups');
                         }
+
+                        const updatedMappings = await addMultipleNewMappings({
+                            subscriberId: subscriberId,
+                            mappings: [{
+                                op: 'replace',
+                                value: [],
+                                path: '/cfu'
+                            },
+                            {
+                                op: 'replace',
+                                value: mappings['cfu'],
+                                path: '/cft'
+                            }]
+                        });
+                        context.commit('setMappings', updatedMappings);
                     }
                 }
             }
@@ -584,12 +617,12 @@ export default {
                             group.enabled = data.enabled;
                         }
                     }
-                    await addNewMapping({
+                    const updatedMappings = await addNewMapping({
                         mappings: groupMappings,
                         group: mappingId,
                         subscriberId: subscriberId
                     });
-                    context.dispatch('loadMappings');
+                    context.commit('setMappings', updatedMappings);
                 }
 
             }
@@ -609,6 +642,9 @@ export default {
             const subscriberId = localStorage.getItem('subscriberId');
             const timeSets = await getTimesets(subscriberId);
             context.commit('setTimeSets', timeSets);
+        },
+        editTimes(context, timeSet){
+            context.commit('editTimes', timeSet);
         },
         async createSourceSet(context, data){
             const sourceSetId = await createSourcesetWithSource({
@@ -677,10 +713,11 @@ export default {
         },
         async addTimeToTimeset(context, data){
             try{
-                await addTimeToTimeset({
+                const timeset = await addTimeToTimeset({
                     id: data.id,
                     times: [data.time]
                 });
+                return timeset;
             }
             catch(err){
                 console.log(err)

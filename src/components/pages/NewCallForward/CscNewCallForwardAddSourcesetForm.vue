@@ -114,7 +114,7 @@
                     return;
                 }
                 try{
-                    await this.$store.dispatch('newCallForward/addGroupLoader', forwardGroupId);
+                    this.$store.dispatch('newCallForward/addGroupLoader', forwardGroupId);
                     sourceSetId = await this.$store.dispatch('newCallForward/createSourceSet', {
                         name: this.name,
                         source: this.number
@@ -124,10 +124,8 @@
                         id: forwardGroupId,
                         sourceSetId: sourceSetId
                     });
-                    await this.$store.dispatch('newCallForward/loadSourcesets');
-                    await this.$store.dispatch('newCallForward/loadMappings');
-                    await this.$store.dispatch('newCallForward/loadForwardGroups');
-                    await this.$store.dispatch('newCallForward/removeGroupLoader', forwardGroupId);
+                    this.$store.dispatch('newCallForward/loadSourcesets');
+                    this.$store.dispatch('newCallForward/removeGroupLoader', forwardGroupId);
 
                 }
                 catch(err){
