@@ -236,7 +236,6 @@ export default {
                 if(data.replaceMapping){
                     for(let mapping of groupMappings){
                         if(mapping.destinationset_id === data.groupId){
-
                             mapping.sourceset_id = data.sourceSetId || null;
                             mapping.timeset_id = data.timeSetId || null;
                             break;
@@ -273,12 +272,12 @@ export default {
                     "priority": 1,
                     "timeout": 5
                 };
-                await context.dispatch('editMapping', {
+                context.dispatch('editMapping', {
                     name: data.name,
                     groupId: newForwardGroupId
                 });
 
-                await addDestinationToDestinationset({
+                addDestinationToDestinationset({
                     id: newForwardGroupId,
                     data: [destination]
                 });
@@ -286,7 +285,7 @@ export default {
                 // setting cft_ringtimeout in case it is
                 // not set while creating timeout group
                 if((data.name === 'timeout' || data.name === 'csc-timeout') && (!context.getters.getOwnPhoneTimeout || isNaN(context.getters.getOwnPhoneTimeout))){
-                    await context.dispatch('editRingTimeout', 5);
+                    context.dispatch('editRingTimeout', 5);
                 }
 
                 return newForwardGroupId;
@@ -297,14 +296,7 @@ export default {
         },
         async deleteForwardGroup(context, group) {
             try{
-                const subscriberId = localStorage.getItem('subscriberId');
-                const groupMappingId = await context.dispatch('getMappingIdByGroupName', group.name);
                 await deleteDestinationsetById(group.id);
-                await addNewMapping({
-                    mappings: [],
-                    group: groupMappingId,
-                    subscriberId: subscriberId
-                });
                 context.dispatch('loadMappings');
             }
             catch(err){
@@ -405,11 +397,9 @@ export default {
                 let destinations, group = context.state.forwardGroups.find((group)=>{
                     return group.id === data.forwardGroupId;
                 });
-
                 destinations = group.destinations.filter(($destination) => {
                     return $destination.destination !== data.destination.destination;
                 });
-
                 if(destinations.length < 1){
                     await context.dispatch('deleteForwardGroup', group);
                 }
@@ -418,9 +408,9 @@ export default {
                         id: group.id,
                         data: destinations
                     });
-                    await context.dispatch('loadMappings');
+                    context.dispatch('loadMappings');
                 }
-                await context.dispatch('loadForwardGroups');
+                context.dispatch('loadForwardGroups');
 
             }
             catch(err){
@@ -451,7 +441,7 @@ export default {
                     subscriberId: localStorage.getItem('subscriberId'),
                     timeout: timeout
                 });
-                await context.dispatch('loadMappings');
+                context.dispatch('loadMappings');
             }
             catch(err){
                 console.log(err)
@@ -487,10 +477,10 @@ export default {
                 let timeoutGroups = await context.dispatch('getForwardGroupByName', 'timeout');
 
                 if(noSelfNumber && timeoutGroups){
-                    for(let timeoutGroup of timeoutGroups){ // TODO multiple logic
+                    for(let timeoutGroup of timeoutGroups){
                         if(timeoutGroup && !timeoutGroup.id.toString().includes('temp')){
-
-                            await updateDestinationsetName({
+                            context.dispatch('addGroupLoader', timeoutGroup.id);
+                            updateDestinationsetName({
                                 id: timeoutGroup.id,
                                 name: 'csc-unconditional'
                             });
@@ -506,21 +496,21 @@ export default {
                                 group: 'cfu',
                                 subscriberId: subscriberId
                             });
-
+                            context.dispatch('removeGroupLoader', timeoutGroup.id);
                         }
                         else {
-                            await context.dispatch('addTempGroup', 'unconditional');
+                            context.dispatch('addTempGroup', 'unconditional');
                         }
-                        await context.dispatch('loadMappings');
-                        await context.dispatch('loadForwardGroups');
+                        context.dispatch('loadMappings');
+                        context.dispatch('loadForwardGroups');
                     }
                 }
                 else{
                     if(unconditionalGroups ){
                         for(let unconditionalGroup of unconditionalGroups){ // TODO multiple logic
                             if(!unconditionalGroup.id.toString().includes('temp')){
-
-                                await updateDestinationsetName({
+                                context.dispatch('addGroupLoader', unconditionalGroup.id);
+                                updateDestinationsetName({
                                     id: unconditionalGroup.id,
                                     name: 'csc-timeout'
                                 });
@@ -536,13 +526,13 @@ export default {
                                     group: 'cft',
                                     subscriberId: subscriberId
                                 });
-
+                                context.dispatch('removeGroupLoader', unconditionalGroup.id);
                             }
                             else{
-                                await context.dispatch('addTempGroup', 'timeout');
+                                 context.dispatch('addTempGroup', 'timeout');
                             }
-                            await context.dispatch('loadMappings');
-                            await context.dispatch('loadForwardGroups');
+                            context.dispatch('loadMappings');
+                            context.dispatch('loadForwardGroups');
                         }
                     }
                 }
