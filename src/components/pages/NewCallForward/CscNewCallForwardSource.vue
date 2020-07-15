@@ -78,7 +78,7 @@
 				let sources = this.getSourcesesBySourcesetId(this.sourceSetId);
 				sources = sources.filter($source=> $source.source !== this.source);
 				try{
-					await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+					this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
 					await this.$store.dispatch('newCallForward/removeSourceFromSourceset', {
 						id: this.sourceSetId,
 						sources: sources
@@ -89,7 +89,7 @@
 					console.log(err)
 				}
 				finally{
-					await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+					this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
 				}
 				this.removeInProgress = false;
 			}
