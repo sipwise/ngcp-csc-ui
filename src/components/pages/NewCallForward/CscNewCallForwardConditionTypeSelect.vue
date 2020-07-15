@@ -76,25 +76,24 @@
                 },
                 async set(value) {
                     try{
-                        await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+                        this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
                         const timeSetId = await this.$store.dispatch('newCallForward/createTimeSet', this.timesetName);
-                        await this.$store.dispatch('newCallForward/addTimesetToGroup', {
-                            name: this.groupName,
-                            groupId: this.groupId,
-                            timeSetId: timeSetId
-                        });
                         this.day = {
                             "year": date.formatDate(value, 'YYYY'),
                             "month": date.formatDate(value, 'M'),
                             "mday": date.formatDate(value, 'D')
                         }
+                        this.$store.dispatch('newCallForward/addTimesetToGroup', {
+                            name: this.groupName,
+                            groupId: this.groupId,
+                            timeSetId: timeSetId
+                        });
                         await this.$store.dispatch('newCallForward/addTimeToTimeset', {
                             id: timeSetId,
                             time: this.day
                         });
-                        await this.$store.dispatch('newCallForward/loadMappings');
                         await this.$store.dispatch('newCallForward/loadTimesets');
-                        await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+                        this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
 
                     }
                     catch(err){

@@ -4,7 +4,7 @@ import Vue from 'vue';
 import { i18n } from '../i18n';
 import { getJsonBody } from './utils';
 import { normalizeDestination } from '../filters/number-format';
-import { LIST_ALL_ROWS } from './common';
+import { LIST_ALL_ROWS, patchReplaceFull } from './common';
 
 export function getMappings(id) {
     return new Promise((resolve, reject) => {
@@ -297,34 +297,19 @@ export function deleteDestinationsetById(id) {
 }
 
 export function updateDestinationsetName(options) {
-    return new Promise((resolve, reject) => {
-        let headers = { 'Content-Type': 'application/json-patch+json' };
-        Vue.http.patch('api/cfdestinationsets/' + options.id, [{
-            op: 'replace',
-            path: '/name',
-            value: options.name
-        }], { headers: headers }).then((result) => {
-            resolve(result);
-        }).catch((err) => {
-            reject(err);
-        });
+    return patchReplaceFull({
+        path: 'api/cfdestinationsets/' + options.id,
+        fieldPath: 'name',
+        value: options.name
     });
 }
 
 export function addDestinationToDestinationset(options) {
-    let headers = {
-        'Content-Type': 'application/json-patch+json'
-    };
-    return new Promise((resolve, reject) => {
-        Vue.http.patch('api/cfdestinationsets/' + options.id, [{
-            op: 'replace',
-            path: '/destinations',
-            value: options.data
-        }], { headers: headers }).then((result) => {
-                resolve(result);
-        }).catch((err) => {
-            reject(err);
-        });
+
+    return patchReplaceFull({
+        path: 'api/cfdestinationsets/' + options.id,
+        fieldPath: 'destinations',
+        value: options.data
     });
 }
 
@@ -402,14 +387,22 @@ export function addDestinationToEmptyGroup(options) {
 }
 
 export function addNewMapping(options) {
+    return patchReplaceFull({
+        path: 'api/cfmappings/' + options.subscriberId,
+        fieldPath: options.group,
+        value: options.mappings
+    });
+}
+
+export function addMultipleNewMappings(options) {
     return new Promise((resolve, reject) => {
-        let headers = { 'Content-Type': 'application/json-patch+json' };
-        Vue.http.patch('api/cfmappings/' + options.subscriberId, [{
-            op: 'replace',
-            path: '/' + options.group,
-            value: options.mappings
-        }], { headers: headers }).then((result) => {
-            resolve(result);
+        let headers = {
+            'Content-Type': 'application/json-patch+json',
+            'Prefer': 'return=representation'
+        };
+        Vue.http.patch('api/cfmappings/' + options.subscriberId, options.mappings
+        , { headers: headers }).then((result) => {
+            resolve(getJsonBody(result.body));
         }).catch((err) => {
             reject(err);
         });
@@ -678,19 +671,10 @@ export function resetTimesetByName(options) {
 }
 
 export function addTimeToTimeset(options) {
-    return new Promise((resolve, reject) => {
-        let headers = {
-            'Content-Type': 'application/json-patch+json'
-        };
-        Vue.http.patch('api/cftimesets/' + options.id, [{
-            op: 'replace',
-            path: '/times',
-            value: options.times
-        }], { headers: headers }).then(() => {
-            resolve();
-        }).catch((err) => {
-            reject(err);
-        });
+    return patchReplaceFull({
+        path: 'api/cftimesets/' + options.id,
+        fieldPath: 'times',
+        value: options.times
     });
 }
 
@@ -976,18 +960,9 @@ export function getOwnPhoneTimeout(id) {
 }
 
 export function updateOwnPhoneTimeout(options) {
-    return new Promise((resolve, reject)=>{
-        let headers = {
-            'Content-Type': 'application/json-patch+json'
-        };
-        Vue.http.patch('api/cfmappings/' + options.subscriberId, [{
-            op: 'replace',
-            path: '/cft_ringtimeout',
-            value: options.timeout
-        }], { headers: headers }).then(() => {
-            resolve();
-        }).catch((err) => {
-            reject(err);
-        });
+    return patchReplaceFull({
+        path: 'api/cfmappings/' + options.subscriberId,
+        fieldPath: 'cft_ringtimeout',
+        value: options.timeout
     });
 }
