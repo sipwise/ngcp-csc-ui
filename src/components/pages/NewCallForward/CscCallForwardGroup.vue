@@ -310,8 +310,8 @@
                     const isGroupEnabled =  await this.$store.dispatch('newCallForward/isGroupEnabled', {groupName: this.group.name, id: this.group.id});
                     this.isEnabled = isGroupEnabled;
                 }
-                await this.updateSourcesetNames();
-                await this.updateTimeSetNames();
+                this.updateSourcesetNames();
+                this.updateTimeSetNames();
             }
             catch(err){
                 console.log(err)
@@ -432,10 +432,10 @@
                         this.$refs.numberForm.open();
                     break;
                     case 'voicemail':
-                        await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
+                        this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
                         await this.$store.dispatch('newCallForward/addVoiceMail', this.group.id);
                         await this.$store.dispatch('newCallForward/loadForwardGroups');
-                        await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
+                        this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
                     break;
                 }
             },
@@ -482,13 +482,13 @@
                 return destination;
             },
             async toggleGroupChange(){
-                await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
+                this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
                 await this.$store.dispatch('newCallForward/enableGroup', {
                     groupName: this.group.name,
                     id: this.group.id,
                     enabled: this.isEnabled
                 });
-                await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
+                this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
             },
             showConditions(){
                 this.$refs.addCondition.add();
@@ -547,10 +547,10 @@
             },
             async confirmDeleteGroup(){
                 try{
-                    await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
+                    this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
                     await this.$store.dispatch('newCallForward/deleteForwardGroup', this.group);
                     await this.$store.dispatch('newCallForward/loadForwardGroups');
-                    await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
+                    this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
                 }
                 catch(e){
                     console.log(e)
@@ -565,11 +565,11 @@
             },
             async deleteTimeset(){
                 try{
-                    await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
+                    this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
                     await this.$store.dispatch('newCallForward/deleteTimesFromTimeset', this.timeSet.id);
                     await this.$store.dispatch('newCallForward/loadTimesets');
                     await this.$store.dispatch('newCallForward/loadMappings');
-                    await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
+                    this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
                 }
                 catch(e){
                     console.log(e)
@@ -577,7 +577,7 @@
             },
             async addTimeset(time){
                 try{
-                    await this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
+                    this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
                     this.day = {
                         "year": date.formatDate(time, 'YYYY'),
                         "month": date.formatDate(time, 'M'),
@@ -589,7 +589,7 @@
                     });
                     await this.$store.dispatch('newCallForward/loadTimesets');
                     await this.$store.dispatch('newCallForward/loadMappings');
-                    await this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
+                    this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
                 }
                 catch(e){
                     console.log(e)

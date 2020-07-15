@@ -184,7 +184,7 @@
 						this.$refs.numberForm.open();
 					break;
 					case 'voicemail':
-						await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+						this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
 						if(this.groupId.toString().includes('temp-')){ // unexisting group
 							const newGroupId = await this.$store.dispatch('newCallForward/addForwardGroup', {
 								name: this.groupName,
@@ -202,7 +202,7 @@
 						else{
 							await this.$store.dispatch('newCallForward/addVoiceMail', this.groupId);
 						}
-						await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+						this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
 						this.popoverToTop = false;
 						this.popoverTimeoutToTop = false;
 					break;
@@ -219,13 +219,13 @@
 				this.$refs.selectDestinationType.add();
 			},
 			async saveTimeout(){
-				await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+				this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
 				await this.$store.dispatch('newCallForward/editTimeout', {
 					index: this.destinationIndex,
 					timeout: this.destinationTimeout,
 					forwardGroupId: this.groupId
 				});
-				await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+				this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
 
 			},
 			showConfirmDialog(){
@@ -233,12 +233,12 @@
 			},
 			async confirmDeleteDest(){
 				this.removeInProgress = true;
-				await this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
+				this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
 				await this.$store.dispatch('newCallForward/removeDestination', {
 					destination: this.destination,
 					forwardGroupId: this.groupId
 				});
-				await this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
+				this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
 			},
 			isVoiceMail(){
 				return this.destination.destination.includes('voicebox.local')
