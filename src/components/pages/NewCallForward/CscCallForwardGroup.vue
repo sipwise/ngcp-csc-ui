@@ -1,4 +1,5 @@
-<template>
+<template
+>
     <div
         class="csc-cf-group"
         v-if="group.destinations.length > 0"
@@ -11,30 +12,6 @@
                     class="col col-xs-12 col-md-4 text-right csc-cf-group-title-bold"
                 >
                     {{groupTitle}}
-                    <span
-                        class="csc-cf-destination-add-condition"
-                        v-if="isTempGroup"
-                    >
-                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
-                        <span class="csc-cf-from-link">
-                            {{ $t('pages.newCallForward.conditionBtnLabel') }}
-                        </span>
-                        <q-popover
-                            ref="conditions"
-                            @open="showConditions()"
-                            @close="showFirstDestMenu()"
-                        >
-                            <csc-new-call-forward-condition-type-select
-                                ref="addCondition"
-                                :disableSourcesetMenu="false"
-                                :disableTimesetMenu="false"
-                                :disableDateRangeMenu="false"
-                                :enabled="true"
-                                :groupName="group.name"
-                                :groupId="group.id"
-                            />
-                        </q-popover>
-                    </span>
                     <span
                         v-if="groupSourceset"
                     >
@@ -65,15 +42,16 @@
                             {{ $t('pages.newCallForward.dateIsShort') + groupTimeset }}
                         </span>
                         <q-popover
-                            ref="day"
-                            @open="showQDate()"
+                          ref="day"
+                          class="csc-cf-popover-top-valign"
+                          @open="showQDate()"
                         >
-                            <q-datetime
-                                ref="dayWidget"
-                                clear-label="REMOVE"
-                                v-model="dayModel"
-                                :min="today"
-                                />
+                          <q-datetime
+                              ref="dayWidget"
+                              clear-label="REMOVE"
+                              v-model="dayModel"
+                              :min="today"
+                              />
                         </q-popover>
                         <csc-confirm-dialog
                             ref="confirmDeleteTimesetDialog"
@@ -92,92 +70,53 @@
                             {{ $t('pages.newCallForward.dateRangeShort') + groupTimeRange }}
                         </span>
                         <q-popover
-                            ref="daterange"
-                            class="csc-cf-calendar-day"
-                            enabled="enabled"
+                         ref="daterange"
+                         class="csc-cf-calendar-day"
+                         @open="showDateRange()"
+
                         >
-                            <q-field
-                                label="Date range"
-                                :labelWidth="11"
-                                class="csc-cf-popover-daterange-title"
-                            />
-                            <q-field
-                              dark
-                              :helper="$t('pages.newCallForward.dateRangeDateHelper')"
-                            >
-                                <q-datetime-range
-                                    ref="dayRangeWidget"
-                                    type="date"
-                                    no-clear
-                                    v-model="rangeDateModel"
-                                    :min="today"
-                                    @change="rangeDateChanged()"
-                                    format="DD/MM/YYYY"
-                                    :after="[
-                                        {
-                                          icon: 'today'
-                                        }
-                                      ]"
-                                    />
-                            </q-field>
-                            <q-field
-                              dark
-                              :helper="$t('pages.newCallForward.dateRangeTimeHelper')"
-                            >
-                                <q-datetime-range
-                                    ref="dayRangeWidget"
-                                    type="time"
-                                    no-clear
-                                    v-model="rangeTimeModel"
-                                    @change="rangeTimeChanged()"
-                                    :after="[
-                                        {
-                                          icon: 'access_time'
-                                        }
-                                      ]"
-                                    />
-                            </q-field>
-                            <div
-                                class="csc-cf-daterange-btn-cont"
-                            >
-                                <q-btn
-                                    flat
-                                    color="red"
-                                    icon="delete"
-                                    @mousedown.native="showRemoveDateRangeDialog()"
-                                >
-                                    {{ $t('buttons.remove') }}
-                                    <csc-confirm-dialog
-                                        ref="confirmDeleteTimesetDialog"
-                                        title-icon="delete"
-                                        :title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: this.groupTimeRange})"
-                                        :message="$t('pages.newCallForward.cancelTimesetText', {name: this.groupTimeRange})"
-                                        @confirm="deleteTimeset"
-                                    />
-                                </q-btn>
-                                <q-btn
-                                    flat
-                                    color="default"
-                                    icon="clear"
-                                    @mousedown.native="cancelTimerange()"
-                                >
-                                    {{ $t('buttons.cancel') }}
-                                </q-btn>
-                                <q-btn
-                                    flat
-                                    color="primary"
-                                    icon="done"
-                                    @click="saveDateRange();"
-                                    :disable="!allFieldsFilled"
-                                >
-                                    {{ $t('buttons.save') }}
-                                </q-btn>
-                            </div>
+                         <csc-new-call-forward-date-range
+                             ref="dateRangePopover"
+                             :groupName="group.name"
+                             :groupId="group.id"
+                             :groupTimeRange="groupTimeRangeObj"
+                             @open-daterange-popover="rangeChanged()"
+                             @confirm-delete="showConfirmDeleteTimesetDialog()"
+                         />
+                         <csc-confirm-dialog
+                             ref="confirmDeleteTimesetDialog"
+                             title-icon="delete"
+                             :title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: this.groupTimeRange})"
+                             :message="$t('pages.newCallForward.cancelTimesetText', {name: this.groupTimeRange})"
+                             @confirm="deleteTimeset"
+                         />
                         </q-popover>
                     </span>
                     <span
+                        v-if="isWeekdays"
+                    >
+                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+                        <span class="csc-cf-from-link" ref="isWeekdayLink">
+                            {{ weekdaysLabelShort + groupWeekdays }}
+                        </span>
+                        <q-popover
+                           ref="weekdayEditPanel"
+                           class="csc-cf-number-form"
+                           @open="showWeekdayEditForm()"
+                       >
+                           <csc-new-call-forward-add-weekday-form
+                               ref="weekdayEditForm"
+                               :days="times"
+                               :id="timeSet.id"
+                               :enabled="true"
+                               :groupName="group.name"
+                               :groupId="group.id"
+                           />
+                       </q-popover>
+                    </span>
+                    <span
                         class="csc-cf-destination-add-condition"
-                        v-if="!isTempGroup && !(groupSourceset && groupTimeset)"
+                        v-if="isTempGroup || (!isTempGroup && !(groupSourceset && groupTimeset || groupSourceset && isWeekdays || groupTimeset && isWeekdays ))"
                     >
                         {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
                         <span class="csc-cf-from-link">
@@ -190,30 +129,82 @@
                         >
                             <csc-new-call-forward-condition-type-select
                                 ref="addCondition"
-                                :disableSourcesetMenu="!groupSourceset"
-                                :disableTimesetMenu="!groupTimeset"
-                                :disableDateRangeMenu="!groupTimeset"
+                                :disableSourcesetMenu="isTempGroup || !groupSourceset"
+                                :disableTimesetMenu="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
+                                :disableDateRangeMenu="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
+                                :disableWeekdaysMenu="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
                                 :enabled="true"
                                 :groupName="group.name"
                                 :groupId="group.id"
                             />
                         </q-popover>
-                         <q-popover
-                            ref="onlineSourceset"
-                            class="csc-cf-number-form"
-                            v-bind:class="{ 'csc-cf-popover-hide': toggleConditionFromForm}"
-                            @open="showSourcesetForm()"
-                            @close="resetToggleCondition()"
-                        >
-                            <csc-new-call-forward-add-sourceset-form
-                                ref="addSourceSet"
-                                :enabled="true"
-                                :groupName="group.name"
-                                :groupId="group.id"
-                            />
-                        </q-popover>
+                        <span>
+                            <q-popover
+                                ref="onlineSourceset"
+                                class="csc-cf-number-form csc-cf-popover-left-align"
+                                v-bind:class="{ 'csc-cf-popover-hide': toggleConditionFromForm}"
+                                @open="showSourcesetForm()"
+                                @close="resetToggleCondition(); resetAction()"
+                            >
+                               <csc-new-call-forward-add-sourceset-form
+                            	   ref="addSourceSet"
+                            	   :enabled="true"
+                            	   :groupName="group.name"
+                            	   :groupId="group.id"
+                               />
+                            </q-popover>
+                        </span>
+                        <span>
+                            <q-popover
+                              ref="day"
+                              class="csc-cf-popover-left-align csc-cf-popover-top-valign"
+                              @open="showQDate()"
+                              @close="resetAction()"
+                              v-bind:class="{ 'csc-cf-popover-hide': toggleIsDatePanel}"
+                            >
+                              <q-datetime
+                            	  ref="dayWidget"
+                                  anchor="bottom right"
+                            	  no-clear
+                            	  v-model="dayModel"
+                            	  :min="today"
+                            	  />
+                            </q-popover>
+                        </span>
+                        <span>
+                            <q-popover
+                             ref="daterange"
+                             class="csc-cf-popover-left-align csc-cf-calendar-day"
+                             v-bind:class="{ 'csc-cf-popover-hide': toggleIsRangePanel}"
+                             @open="showDateRange()"
+                             @close="resetAction()"
+                            >
+                             <csc-new-call-forward-date-range
+                            	 ref="dateRangePopover"
+                            	 :groupName="group.name"
+                            	 :groupId="group.id"
+                                 :noClear="true"
+                            	 @open-daterange-popover="rangeChanged()"
+                             />
+                            </q-popover>
+                        </span>
+                        <span>
+                            <q-popover
+                              ref="weekdayPanel"
+                              class="csc-cf-number-form csc-cf-popover-left-align"
+                              v-bind:class="{ 'csc-cf-popover-hide': toggleWeekdayPanel}"
+                              @open="showWeekdayPanel()"
+                              @close="resetWeekdayCondition(); resetAction()"
+                            >
+                              <csc-new-call-forward-add-weekday-form
+                                  ref="weekdayForm"
+                                  :enabled="true"
+                                  :groupName="group.name"
+                                  :groupId="group.id"
+                              />
+                            </q-popover>
+                        </span>
                     </span>
-
                 </div>
                 <div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
                     <q-toggle
@@ -333,6 +324,8 @@
 
 <script>
 
+    // import _ from 'lodash'
+
     import moment from 'moment'
 
     import {
@@ -360,8 +353,10 @@
     import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinationForm'
     import CscNewCallForwardEditSources from './CscNewCallForwardEditSources'
     import CscNewCallForwardAddSourcesetForm from './CscNewCallForwardAddSourcesetForm'
+    import CscNewCallForwardAddWeekdayForm from './CscNewCallForwardAddWeekdayForm'
     import CscNewCallForwardConditionTypeSelect from './CscNewCallForwardConditionTypeSelect'
     import CscNewCallForwardDestinationTypeForm from './CscNewCallForwardDestinationTypeForm'
+    import CscNewCallForwardDateRange from './CscNewCallForwardDateRange'
     export default {
         name: 'csc-cf-group',
         props: [
@@ -387,15 +382,21 @@
             CscNewCallForwardAddDestinationForm,
             CscNewCallForwardEditSources,
             CscNewCallForwardAddSourcesetForm,
+            CscNewCallForwardAddWeekdayForm,
             CscNewCallForwardConditionTypeSelect,
-            CscNewCallForwardDestinationTypeForm
+            CscNewCallForwardDestinationTypeForm,
+            CscNewCallForwardDateRange
         },
         data () {
             return {
+                firstDestinationInCreation: false,
                 toggleGroup: true,
                 isEnabled: true,
                 toggleNumberForm: true,
                 toggleConditionFromForm: true,
+                toggleWeekdayPanel: true,
+                toggleIsDatePanel: true,
+                toggleIsRangePanel: true,
                 groupIsLoading: false,
                 sourceSet: null,
                 sources: [],
@@ -404,16 +405,7 @@
                 action: null,
                 enabled: false,
                 day: null,
-                rangeDateModel: {
-                    from: null,
-                    to: null
-                },
-                rangeTimeModel: {
-                    from: null,
-                    to: null
-                },
-                today: new Date(),
-                firstDestinationInCreation: false
+                today: new Date()
             };
         },
         async mounted(){
@@ -441,12 +433,6 @@
                 'getTimesets',
                 'getFirstDestinationInCreation'
             ]),
-            allFieldsFilled(){
-                return this.rangeDateModel.from !== null &&
-                       this.rangeDateModel.to !== null &&
-                       this.rangeTimeModel.from !== null &&
-                       this.rangeTimeModel.to !== null;
-            },
             showAddDestBtn(){
                 const destinations = this.group.destinations;
                 for(let dest of destinations){
@@ -484,8 +470,10 @@
                 let retVal = false, dateN, time;
                 if(this.timeSet && this.timeSet.times && this.timeSet.times.length > 0){
                     time = this.timeSet.times[0];
-                    dateN = new Date(parseInt(time.year), parseInt(time.month) - 1 , parseInt(time.mday), 0, 0, 0, 0);
-                    retVal = date.formatDate( dateN, 'ddd, MMM D YYYY')
+                    if(time.year && time.month && time.mday){
+                        dateN = new Date(parseInt(time.year), parseInt(time.month) - 1 , parseInt(time.mday), 0, 0, 0, 0);
+                        retVal = date.formatDate( dateN, 'ddd, MMM D YYYY')
+                    }
                 }
                 return retVal;
             },
@@ -499,6 +487,23 @@
                 }
                 return retVal;
             },
+            groupTimeRangeObj(){
+                let retVal = false, time;
+                if(this.timeSet && this.timeSet.times && this.timeSet.times.length > 0){
+                    time = this.timeSet.times[0];
+
+                    // this.rangeDateModel.from = moment(new Date(parseInt(time.year.split('-')[0]),parseInt(time.month.split('-')[0])-1,parseInt(time.mday.split('-')[0]),parseInt(time.hour.split('-')[0]),parseInt(time.minute.split('-')[0]),0,0)).format();
+                    // this.rangeDateModel.to = moment(new Date(parseInt(time.year.split('-')[1]),parseInt(time.month.split('-')[1])-1,parseInt(time.mday.split('-')[1]),parseInt(time.hour.split('-')[1]),parseInt(time.minute.split('-')[1]),0,0)).format();
+                    // this.rangeTimeModel.from = moment(new Date(parseInt(time.year.split('-')[0]),parseInt(time.month.split('-')[0])-1,parseInt(time.mday.split('-')[0]),parseInt(time.hour.split('-')[0]),parseInt(time.minute.split('-')[0]),0,0)).format();
+                    // this.rangeTimeModel.to = moment(new Date(parseInt(time.year.split('-')[1]),parseInt(time.month.split('-')[1])-1,parseInt(time.mday.split('-')[1]),parseInt(time.hour.split('-')[1]),parseInt(time.minute.split('-')[1]),0,0)).format();
+
+                    retVal = {
+                        dateFrom: moment(new Date(parseInt(time.year.split('-')[0]),parseInt(time.month.split('-')[0])-1,parseInt(time.mday.split('-')[0]),parseInt(time.hour.split('-')[0]),parseInt(time.minute.split('-')[0]),0,0)).format(),
+                        dateTo:  moment(new Date(parseInt(time.year.split('-')[1]),parseInt(time.month.split('-')[1])-1,parseInt(time.mday.split('-')[1]),parseInt(time.hour.split('-')[1]),parseInt(time.minute.split('-')[1]),0,0)).format(),
+                    }
+                }
+                return retVal;
+            },
             isRange(){
                 const isRange = this.timeSet
                         && this.timeSet.times
@@ -506,6 +511,51 @@
                         && this.timeSet.times[0].year
                         && this.timeSet.times[0].year.includes('-');
                 return isRange;
+            },
+            weekdaysLabelShort(){
+                return this.timeSet.times.length > 1
+                    ? `${this.$t('pages.newCallForward.weekdaysLabelShort')}`
+                    : `${this.$t('pages.newCallForward.weekdayLabelShort')}`;
+
+            },
+            groupWeekdays(){
+                let retVal = '', times = this.timeSet.times.sort((a,b) => (parseInt(a.wday) > parseInt(b.wday)) ? 1 : ((parseInt(b.wday) > parseInt(a.wday)) ? -1 : 0));
+                times.forEach((time, index) => {
+                    const separator = (index === times.length - 1) ? '': ', ';
+                    switch(time.wday){
+                        case '2':
+                            retVal += `${this.$t('pages.callForward.times.monday')}`
+                        break;
+                        case '3':
+                            retVal += `${this.$t('pages.callForward.times.tuesday')}`
+                        break;
+                        case '4':
+                            retVal += `${this.$t('pages.callForward.times.wednesday')}`
+                        break;
+                        case '5':
+                            retVal += `${this.$t('pages.callForward.times.thursday')}`
+                        break;
+                        case '6':
+                            retVal += `${this.$t('pages.callForward.times.friday')}`
+                        break;
+                        case '7':
+                            retVal += `${this.$t('pages.callForward.times.saturday')}`
+                        break;
+                        case '1':
+                            retVal += `${this.$t('pages.callForward.times.sunday')}`
+                        break;
+                    }
+                    retVal += separator;
+                })
+                return retVal;
+            },
+            isWeekdays(){
+                const isWeekdays = this.timeSet
+                        && this.timeSet.times
+                        && this.timeSet.times.length > 0
+                        && this.timeSet.times[0].wday
+                        && this.timeSet.times[0].wday > 0;
+                return isWeekdays;
             },
             isTempGroup(){
                 return this.group.id.toString().includes('temp-');
@@ -521,6 +571,9 @@
             },
             dayModel: {
                 get() {
+                    if(!this.timeSet){
+                        return;
+                    }
                     let time = this.timeSet.times[0];
                     let dateN = new Date(parseInt(time.year), parseInt(time.month) - 1 , parseInt(time.mday), 0, 0, 0, 0);
                     return dateN;
@@ -547,8 +600,7 @@
                 this.groupIsLoading =  groupLoaders.includes(this.group.id);
             },
             getFirstDestinationInCreation: function(){
-                if(this.getFirstDestinationInCreation === this.group.id.toString()){
-                    this.toggleConditionFromForm = false;
+                if(this.getFirstDestinationInCreation === this.group.id.toString() && this.$refs.conditions){
                     this.$refs.conditions.open();
                 }
             }
@@ -588,6 +640,10 @@
                 firstDestinationCmp.$refs.destTypeForm.open();
             },
             showConditionForm(){
+                if(this.isTempGroup){
+                    this.showFirstDestMenu();
+                    return;
+                }
                 const action = this.$refs.addCondition.action;
                 switch(action){
                     case "addFromCondition":
@@ -595,14 +651,25 @@
                         this.$refs.onlineSourceset.open();
                     break;
                     case "addDateIsCondition":
+                        this.toggleIsDatePanel = false;
+                        this.$refs.day.open();
+                    break;
+                    case "addDateRangeCondition":
+                        this.toggleIsRangePanel = false;
+                        this.$refs.daterange.open();
+                    break;
+                    case "addWeekdayCondition":
+                        this.toggleWeekdayPanel = false;
+                        this.$refs.weekdayPanel.open();
                     break;
                 }
-
-
             },
             showDestTypeForm(){
                 this.toggleNumberForm = true;
                 this.$refs.selectDestinationType.add();
+            },
+            showWeekdayEditForm(){
+                this.$refs.weekdayEditForm.add();
             },
             getDestName(index){
                 return "destination" + index;
@@ -626,11 +693,17 @@
                 });
                 this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
             },
+            openConditionsPopover(){
+                this.$refs.conditions.open();
+            },
             showConditions(){
                 this.$refs.addCondition.add();
             },
             showSourcesetForm(){
                 this.$refs.addSourceSet.add();
+            },
+            showWeekdayPanel(){
+                this.$refs.weekdayForm.add();
             },
             showSources(){
                 this.$refs.editSources.add();
@@ -638,7 +711,12 @@
             resetToggleCondition(){
                 this.toggleConditionFromForm = true;
             },
-
+            resetAction(){
+                this.$refs.addCondition.action = null;
+            },
+            resetWeekdayCondition(){
+                this.toggleWeekdayPanel = true;
+            },
             async updateSourcesetNames(){
                 const mappings = this.getMappings;
                 const groupMappingId = await this.$store.dispatch('newCallForward/getMappingIdByGroupName', this.group.name);
@@ -671,13 +749,6 @@
                     if(timeSet){
                         this.timeSet = timeSet;
                         this.times = this.timeSet.times;
-                        if(this.times[0] && this.times[0].year && this.times[0].year.includes('-')){
-                            const time = this.times[0];
-                            this.rangeDateModel.from = moment(new Date(parseInt(time.year.split('-')[0]),parseInt(time.month.split('-')[0])-1,parseInt(time.mday.split('-')[0]),parseInt(time.hour.split('-')[0]),parseInt(time.minute.split('-')[0]),0,0)).format();
-                            this.rangeDateModel.to = moment(new Date(parseInt(time.year.split('-')[1]),parseInt(time.month.split('-')[1])-1,parseInt(time.mday.split('-')[1]),parseInt(time.hour.split('-')[1]),parseInt(time.minute.split('-')[1]),0,0)).format();
-                            this.rangeTimeModel.from = moment(new Date(parseInt(time.year.split('-')[0]),parseInt(time.month.split('-')[0])-1,parseInt(time.mday.split('-')[0]),parseInt(time.hour.split('-')[0]),parseInt(time.minute.split('-')[0]),0,0)).format();
-                            this.rangeTimeModel.to = moment(new Date(parseInt(time.year.split('-')[1]),parseInt(time.month.split('-')[1])-1,parseInt(time.mday.split('-')[1]),parseInt(time.hour.split('-')[1]),parseInt(time.minute.split('-')[1]),0,0)).format();
-                        }
                     }
                     else{
                         this.timeSet = null;
@@ -700,8 +771,15 @@
                 }
 
             },
+            showQDateContainer(){
+                this.toggleIsDatePanel = false;
+                this.$refs.day.open()
+            },
             showQDate(){
                 this.$refs.dayWidget.open()
+            },
+            showDateRange(){
+                this.$refs.dateRangePopover.add()
             },
             showConfirmDeleteTimesetDialog(){
                 this.$refs.confirmDeleteTimesetDialog.open();
@@ -709,8 +787,7 @@
             async deleteTimeset(){
                 try{
                     this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
-                    await this.$store.dispatch('newCallForward/deleteTimesFromTimeset', this.timeSet.id);
-                    await this.$store.dispatch('newCallForward/loadTimesets');
+                    await this.$store.dispatch('newCallForward/deleteTimeset', this.timeSet.id);
                     this.$store.dispatch('newCallForward/loadMappings');
                     this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
                 }
@@ -720,6 +797,13 @@
             },
             async addTimeToExistingTimeset(time){
                 try{
+                    let timseSetId;
+                    if(!this.timeSet){
+                        timseSetId = await this.$store.dispatch('newCallForward/createTimeSet', this.timesetName = 'timeset-'+this.group.id);
+                    }
+                    else{
+                        timseSetId = this.timeSet.id
+                    }
                     this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
                     this.day = {
                         "year": date.formatDate(time, 'YYYY'),
@@ -728,76 +812,26 @@
                     }
 
                     const updatedTimeset = await this.$store.dispatch('newCallForward/addTimeToTimeset', {
-                        id: this.timeSet.id,
+                        id: timseSetId,
                         time: this.day
                     });
-                    this.$store.dispatch('newCallForward/editTimes', updatedTimeset);
+
+                    if(!this.timeSet){
+                        this.$store.dispatch('newCallForward/addTimesetToGroup', {
+                            name: this.group.name,
+                            groupId: this.group.id,
+                            timeSetId: timseSetId
+                        });
+                    }
+                    this.$store.dispatch('newCallForward/setTimeset', updatedTimeset);
                     this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
                 }
                 catch(e){
                     console.log(e)
                 }
             },
-            rangeDateChanged(){
-                this.$refs.isRangeLink.click();
-            },
-            rangeTimeChanged(){
-                this.$refs.isRangeLink.click();
-            },
-            resetTimeRange(){
-                this.rangeDateModel = {
-                    from: null,
-                    to: null
-                };
-                this.rangeTimeModel = {
-                    from: null,
-                    to: null
-                };
-            },
-            cancelTimerange() {
-                this.action = null;
-                this.enabled = false;
-                this.$refs.daterange.close();
-
-            },
-            formatRange(startDate, endDate, startTime, endTime){
-                const startDateOnly = startDate.split('T')[0];
-                const endDateOnly = endDate.split('T')[0];
-                const startTimeOnly = startTime.split('T')[1];
-                const endTimeOnly = endTime.split('T')[1];
-                const getDateObj = date => (([year, month, day ]) => ({ day, year, month }))(date.split('-'));
-                const getTimeObj = time => (([hour, minute, second]) => ({ hour, minute, second }))(time.split(':'));
-                const startDateObj = getDateObj(startDateOnly);
-                const endDateObj = getDateObj(endDateOnly);
-                const startTimeObj = getTimeObj(startTimeOnly);
-                const endTimeObj = getTimeObj(endTimeOnly);
-                return [
-                            {
-                                year: startDateObj.year +'-'+endDateObj.year,
-                                month: startDateObj.month +'-'+endDateObj.month,
-                                mday: startDateObj.day +'-'+endDateObj.day,
-                                hour: startTimeObj.hour +'-'+endTimeObj.hour,
-                                minute:  startTimeObj.minute +'-'+endTimeObj.minute
-                            }
-                        ]
-            },
-            async saveDateRange(){
-                const days = this.rangeDateModel;
-                const time = this.rangeTimeModel;
-
-                const datesTimesInRange = this.formatRange(days.from, days.to, time.from, time.to);
-                this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
-                const updatedTimeset = await this.$store.dispatch('newCallForward/addRangeToTimeset', {
-                    id: this.timeSet.id,
-                    times: datesTimesInRange
-                });
-                this.$refs.daterange.close();
-                this.$store.dispatch('newCallForward/setTimeset', updatedTimeset);
-                this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
-            },
-            showRemoveDateRangeDialog(){
-                this.$refs.daterange.close();
-                this.showConfirmDeleteTimesetDialog();
+            rangeChanged(){
+                this.$refs.daterange.open();
             }
         }
     }
@@ -828,6 +862,10 @@
         cursor pointer
     .csc-cf-group-popover-bottom
         margin-left 30px
+    .csc-cf-popover-left-align
+        margin-left -120px
+    .csc-cf-popover-top-valign
+        margin-top -40px
     .csc-cf-from-link
         color $primary
         cursor pointer

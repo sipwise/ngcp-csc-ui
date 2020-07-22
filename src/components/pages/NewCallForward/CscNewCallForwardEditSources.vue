@@ -12,7 +12,6 @@
                 <span
                     class="csc-cf-delete-sourceset-btn"
                 >
-
                     <csc-confirm-dialog
                         ref="confirmDialog"
                         title-icon="delete"
@@ -213,6 +212,7 @@
             cancel() {
                 this.number = '';
                 this.enabled = false;
+                this.$parent.close();
             },
             add() {
                 this.number = '';
@@ -220,6 +220,7 @@
             },
             close() {
                 this.enabled = false;
+                this.$parent.close();
             },
             reset() {
                 this.cancel();

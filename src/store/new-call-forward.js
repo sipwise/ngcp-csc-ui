@@ -18,7 +18,7 @@ import {
     getTimesets,
     addNewTimeset,
     addTimeToTimeset,
-    deleteTimeFromTimeset
+    deleteTimesetById
 } from '../api/call-forward';
 
 const ForwardGroup = {
@@ -219,6 +219,9 @@ export default {
         setOwnPhoneTimeout(state, cft_ringtimeout){
             const mappings = state.mappings;
             mappings.cft_ringtimeout = cft_ringtimeout
+        },
+        removeTimeset(state, timesSetId){
+            state.timeSets = state.timeSets.filter($timeset => $timeset.id !== timesSetId);
         }
     },
     actions: {
@@ -301,7 +304,7 @@ export default {
                     groupId: newForwardGroupId
                 });
 
-                addDestinationToDestinationset({
+                await addDestinationToDestinationset({
                     id: newForwardGroupId,
                     data: [destination]
                 });
@@ -719,7 +722,7 @@ export default {
             try{
                 const timeset = await addTimeToTimeset({
                     id: data.id,
-                    times: [data.time]
+                    times: _.isArray(data.time) ? data.time : [data.time]
                 });
                 return timeset;
             }
@@ -739,12 +742,10 @@ export default {
                 console.log(err)
             }
         },
-        async deleteTimesFromTimeset(context, timesetId){
+        async deleteTimeset(context, timesetId){
             try{
-                await deleteTimeFromTimeset({
-                    timesetId: timesetId,
-                    times: []
-                });
+                await deleteTimesetById(timesetId);
+                context.commit('removeTimeset', timesetId);
             }
             catch(err){
                 console.log(err)

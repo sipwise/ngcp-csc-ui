@@ -114,6 +114,7 @@
                     return;
                 }
                 try{
+                    this.close();
                     this.$store.dispatch('newCallForward/addGroupLoader', forwardGroupId);
                     sourceSetId = await this.$store.dispatch('newCallForward/createSourceSet', {
                         name: this.name,
@@ -136,6 +137,7 @@
                 this.number = '';
                 this.name = '';
                 this.enabled = false;
+                this.$parent.close();
             },
             add() {
                 this.number = '';
@@ -144,6 +146,7 @@
             },
             close() {
                 this.enabled = false;
+                this.$parent.close();
             },
             reset() {
                 this.cancel();

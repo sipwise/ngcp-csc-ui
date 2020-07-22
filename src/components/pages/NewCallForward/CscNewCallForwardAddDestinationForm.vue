@@ -141,6 +141,7 @@
             cancel() {
                 this.number = '';
                 this.enabled = false;
+                this.$parent.close();
             },
             add() {
                 this.number = '';
@@ -148,6 +149,7 @@
             },
             close() {
                 this.enabled = false;
+                this.$parent.close();
             },
             reset() {
                 this.cancel();

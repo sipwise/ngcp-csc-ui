@@ -197,7 +197,6 @@
 								await this.$store.dispatch('newCallForward/setFirstDestinationInCreation', newGroupId);
 								this.firstDestinationInCreation = false;
 							}
-
 						}
 						else{
 							await this.$store.dispatch('newCallForward/addVoiceMail', this.groupId);

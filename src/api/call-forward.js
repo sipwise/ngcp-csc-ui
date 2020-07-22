@@ -305,7 +305,6 @@ export function updateDestinationsetName(options) {
 }
 
 export function addDestinationToDestinationset(options) {
-
     return patchReplaceFull({
         path: 'api/cfdestinationsets/' + options.id,
         fieldPath: 'destinations',
