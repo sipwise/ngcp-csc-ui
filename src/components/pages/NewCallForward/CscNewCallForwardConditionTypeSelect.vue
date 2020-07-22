@@ -23,10 +23,61 @@
                 <q-datetime
                     ref="dayWidget"
                     no-clear
-                    class="csc-cf-day-widget"
                     v-model="dayModel"
                     :min="today"
                     />
+            </q-popover>
+        </div>
+        <div
+            class="csc-cf-dest-type"
+            v-if="disableDateRangeMenu"
+            @click="addDateRangeCondition()"
+        >
+            {{ $t('pages.newCallForward.dateRangeLabel') }}
+            <q-popover
+                ref="day"
+                class="csc-cf-calendar-day"
+            >
+                <q-field
+                    label="Date range"
+                    labelWidth="12"
+                    class="csc-cf-popover-daterange-title"
+                />
+                <q-field
+                  dark
+                  helper="Pick start and end date"
+                >
+                    <q-datetime-range
+                        ref="dayRangeWidget"
+                        type="date"
+                        no-clear
+                        v-model="rangeDateModel"
+                        :min="today"
+                        @change="rangeDateChanged()"
+                        :after="[
+                            {
+                              icon: 'today'
+                            }
+                          ]"
+                        />
+                </q-field>
+                <q-field
+                  dark
+                  helper="Pick start and end time"
+                >
+                    <q-datetime-range
+                        ref="dayRangeWidget"
+                        type="time"
+                        no-clear
+                        v-model="rangeTimeModel"
+                        @change="rangeTimeChanged()"
+                        :after="[
+                            {
+                              icon: 'access_time'
+                            }
+                          ]"
+                        />
+                </q-field>
             </q-popover>
         </div>
     </div>
@@ -39,7 +90,9 @@
     import CscSpinner from '../../CscSpinner'
     import {
         QDatetime,
+        QDatetimeRange,
         QPopover,
+        QField,
         date
     } from 'quasar-framework'
 
@@ -49,12 +102,15 @@
             'groupId',
             'groupName',
             'disableSourcesetMenu',
-            'disableTimesetMenu'
+            'disableTimesetMenu',
+            'disableDateRangeMenu'
         ],
         components: {
             CscSpinner,
+            QDatetimeRange,
             QDatetime,
-            QPopover
+            QPopover,
+            QField
         },
         data () {
             return {
@@ -62,6 +118,14 @@
                 action: null,
                 timesetName: null,
                 day: null,
+                rangeDateModel: {
+                    from: null,
+                    to: null
+                },
+                rangeTimeModel: {
+                    from: null,
+                    to: null
+                },
                 today: new Date()
             }
         },
@@ -113,6 +177,10 @@
                 this.action = "addDateIsCondition";
                 this.$parent.close()
             },
+            addDateRangeCondition(){
+                this.action = "addDateRangeCondition";
+                this.$parent.close()
+            },
             cancel() {
                 this.action = null;
                 this.enabled = false;
@@ -126,6 +194,12 @@
             },
             showQDate(){
                 this.$refs.dayWidget.open()
+            },
+            rangeDateChanged(){
+                console.log(this.rangeDateModel)
+            },
+            rangeTimeChanged(){
+                console.log(this.rangeTimeModel)
             }
         }
     }
@@ -141,9 +215,28 @@
         background $main-menu-item-hover-background
     .csc-cf-calendar-day
         margin-top -100px !important
+        padding 20px
+        min-width 400px
+    .csc-cf-popover-daterange-title
+        text-align center
+        .q-field-label-inner
+            color $white
+            margin-top -25px
+            margin-bottom 10px
+            font-weight bold
+            span
+                width 100%
+                text-align center
     .q-datetime-weekdays
         color $tertiary
     .q-datetime-days div:not(.q-datetime-day-active),
-    .q-datetime-dark
-        color $white
+    .q-datetime-dark,
+    .q-datetime-range .q-datetime-input .q-input-target,
+    .q-datetime-range .q-icon,
+    .q-datetime-range .q-if:before,
+    .q-item-icon
+        color $white !important
+    .q-datetime-range.row .q-datetime-range-right,
+    .q-datetime-range.row .q-datetime-range-left
+        padding-left 20px
 </style>
