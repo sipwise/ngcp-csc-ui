@@ -246,6 +246,7 @@
             "fromLabel": "If call from ...",
             "fromLabelShort": " call from ",
             "dateIsLabel": "If date is ...",
+            "dateRangeLabel": "If date range is ...",
             "dateIsShort": " date is ",
             "offlineLabel": "If not available",
             "busyLabel": "If busy",

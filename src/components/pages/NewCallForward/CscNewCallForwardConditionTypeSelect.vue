@@ -29,6 +29,26 @@
                     />
             </q-popover>
         </div>
+        <div
+            class="csc-cf-dest-type"
+            v-if="disableDateRangeMenu"
+            @click="addDateRangeCondition()"
+        >
+            {{ $t('pages.newCallForward.dateRangeLabel') }}
+            <q-popover
+                ref="day"
+                @open="showQDateRange()"
+                class="csc-cf-calendar-day"
+            >
+                <q-datetime
+                    ref="dayRangeWidget"
+                    no-clear
+                    class="csc-cf-day-widget"
+                    v-model="dayRangeModel"
+                    :min="today"
+                    />
+            </q-popover>
+        </div>
     </div>
 </template>
 
@@ -39,6 +59,7 @@
     import CscSpinner from '../../CscSpinner'
     import {
         QDatetime,
+        QDatetimeRange,
         QPopover,
         date
     } from 'quasar-framework'
@@ -49,10 +70,12 @@
             'groupId',
             'groupName',
             'disableSourcesetMenu',
-            'disableTimesetMenu'
+            'disableTimesetMenu',
+            'disableDateRangeMenu'
         ],
         components: {
             CscSpinner,
+            QDatetimeRange,
             QDatetime,
             QPopover
         },
@@ -62,6 +85,7 @@
                 action: null,
                 timesetName: null,
                 day: null,
+                dayRange: null,
                 today: new Date()
             }
         },
@@ -102,6 +126,20 @@
                     }
 
                 }
+            },
+            dayRangeModel: {
+                get() {
+                    return this.dayRange;
+                },
+                async set(value) {
+                    try{
+                        console.log(value)
+                    }
+                    catch(err){
+                        console.log(err)
+                    }
+
+                }
             }
         },
         methods: {
@@ -111,6 +149,10 @@
             },
             addDateIsCondition(){
                 this.action = "addDateIsCondition";
+                this.$parent.close()
+            },
+            addDateRangeCondition(){
+                this.action = "addDateRangeCondition";
                 this.$parent.close()
             },
             cancel() {
@@ -126,6 +168,9 @@
             },
             showQDate(){
                 this.$refs.dayWidget.open()
+            },
+            showQDateRange(){
+                this.$refs.dayRangeWidget.open()
             }
         }
     }
