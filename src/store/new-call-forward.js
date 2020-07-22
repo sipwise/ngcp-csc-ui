@@ -643,6 +643,10 @@ export default {
             const timeSets = await getTimesets(subscriberId);
             context.commit('setTimeSets', timeSets);
         },
+        setTimeset(context, timeSet){
+            const timeSets = context.state.timeSets.filter($timeset => $timeset.id !== timeSet.id);
+            context.commit('setTimeSets', [...timeSets, timeSet]);
+        },
         editTimes(context, timeSet){
             context.commit('editTimes', timeSet);
         },
@@ -718,6 +722,18 @@ export default {
                     times: [data.time]
                 });
                 return timeset;
+            }
+            catch(err){
+                console.log(err)
+            }
+        },
+        async addRangeToTimeset(context, data){
+            try{
+                const result = await addTimeToTimeset({
+                    id: data.id,
+                    times: data.times
+                });
+                return result;
             }
             catch(err){
                 console.log(err)

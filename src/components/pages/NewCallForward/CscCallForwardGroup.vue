@@ -28,6 +28,7 @@
                                 ref="addCondition"
                                 :disableSourcesetMenu="false"
                                 :disableTimesetMenu="false"
+                                :disableDateRangeMenu="false"
                                 :enabled="true"
                                 :groupName="group.name"
                                 :groupId="group.id"
@@ -57,7 +58,7 @@
 
                     </span>
                     <span
-                        v-if="groupTimeset"
+                        v-if="groupTimeset && !isRange"
                     >
                         {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
                         <span class="csc-cf-from-link">
@@ -70,7 +71,6 @@
                             <q-datetime
                                 ref="dayWidget"
                                 clear-label="REMOVE"
-                                class="csc-cf-day-widget"
                                 v-model="dayModel"
                                 :min="today"
                                 />
@@ -83,6 +83,97 @@
                             @confirm="deleteTimeset"
                         />
 
+                    </span>
+                    <span
+                        v-if="groupTimeset && isRange"
+                    >
+                        {{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+                        <span class="csc-cf-from-link" ref="isRangeLink">
+                            {{ $t('pages.newCallForward.dateRangeShort') + groupTimeRange }}
+                        </span>
+                        <q-popover
+                            ref="daterange"
+                            class="csc-cf-calendar-day"
+                            enabled="enabled"
+                        >
+                            <q-field
+                                label="Date range"
+                                :labelWidth="11"
+                                class="csc-cf-popover-daterange-title"
+                            />
+                            <q-field
+                              dark
+                              :helper="$t('pages.newCallForward.dateRangeDateHelper')"
+                            >
+                                <q-datetime-range
+                                    ref="dayRangeWidget"
+                                    type="date"
+                                    no-clear
+                                    v-model="rangeDateModel"
+                                    :min="today"
+                                    @change="rangeDateChanged()"
+                                    format="DD/MM/YYYY"
+                                    :after="[
+                                        {
+                                          icon: 'today'
+                                        }
+                                      ]"
+                                    />
+                            </q-field>
+                            <q-field
+                              dark
+                              :helper="$t('pages.newCallForward.dateRangeTimeHelper')"
+                            >
+                                <q-datetime-range
+                                    ref="dayRangeWidget"
+                                    type="time"
+                                    no-clear
+                                    v-model="rangeTimeModel"
+                                    @change="rangeTimeChanged()"
+                                    :after="[
+                                        {
+                                          icon: 'access_time'
+                                        }
+                                      ]"
+                                    />
+                            </q-field>
+                            <div
+                                class="csc-cf-daterange-btn-cont"
+                            >
+                                <q-btn
+                                    flat
+                                    color="red"
+                                    icon="delete"
+                                    @mousedown.native="showRemoveDateRangeDialog()"
+                                >
+                                    {{ $t('buttons.remove') }}
+                                    <csc-confirm-dialog
+                                        ref="confirmDeleteTimesetDialog"
+                                        title-icon="delete"
+                                        :title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: this.groupTimeRange})"
+                                        :message="$t('pages.newCallForward.cancelTimesetText', {name: this.groupTimeRange})"
+                                        @confirm="deleteTimeset"
+                                    />
+                                </q-btn>
+                                <q-btn
+                                    flat
+                                    color="default"
+                                    icon="clear"
+                                    @mousedown.native="cancelTimerange()"
+                                >
+                                    {{ $t('buttons.cancel') }}
+                                </q-btn>
+                                <q-btn
+                                    flat
+                                    color="primary"
+                                    icon="done"
+                                    @click="saveDateRange();"
+                                    :disable="!allFieldsFilled"
+                                >
+                                    {{ $t('buttons.save') }}
+                                </q-btn>
+                            </div>
+                        </q-popover>
                     </span>
                     <span
                         class="csc-cf-destination-add-condition"
@@ -101,6 +192,7 @@
                                 ref="addCondition"
                                 :disableSourcesetMenu="!groupSourceset"
                                 :disableTimesetMenu="!groupTimeset"
+                                :disableDateRangeMenu="!groupTimeset"
                                 :enabled="true"
                                 :groupName="group.name"
                                 :groupId="group.id"
@@ -240,6 +332,9 @@
 </template>
 
 <script>
+
+    import moment from 'moment'
+
     import {
         mapGetters,
     } from 'vuex'
@@ -248,8 +343,11 @@
         QSpinnerDots,
         QToggle,
         QIcon,
-        QPopover,
         QDatetime,
+        QDatetimeRange,
+        QPopover,
+        QField,
+        QBtn,
         QList,
         QItem,
         QItemMain,
@@ -274,8 +372,11 @@
             QSpinnerDots,
             QToggle,
             QIcon,
-            QPopover,
             QDatetime,
+            QDatetimeRange,
+            QPopover,
+            QField,
+            QBtn,
             QList,
             QItem,
             QItemMain,
@@ -300,6 +401,17 @@
                 sources: [],
                 timeSet: null,
                 times:[],
+                action: null,
+                enabled: false,
+                day: null,
+                rangeDateModel: {
+                    from: null,
+                    to: null
+                },
+                rangeTimeModel: {
+                    from: null,
+                    to: null
+                },
                 today: new Date(),
                 firstDestinationInCreation: false
             };
@@ -329,6 +441,12 @@
                 'getTimesets',
                 'getFirstDestinationInCreation'
             ]),
+            allFieldsFilled(){
+                return this.rangeDateModel.from !== null &&
+                       this.rangeDateModel.to !== null &&
+                       this.rangeTimeModel.from !== null &&
+                       this.rangeTimeModel.to !== null;
+            },
             showAddDestBtn(){
                 const destinations = this.group.destinations;
                 for(let dest of destinations){
@@ -370,6 +488,24 @@
                     retVal = date.formatDate( dateN, 'ddd, MMM D YYYY')
                 }
                 return retVal;
+            },
+            groupTimeRange(){
+                let retVal = false, startDateN, endDateN, time;
+                if(this.timeSet && this.timeSet.times && this.timeSet.times.length > 0){
+                    time = this.timeSet.times[0];
+                    startDateN = new Date(parseInt(time.year.split('-')[0]), parseInt(time.month.split('-')[0]) - 1 , parseInt(time.mday.split('-')[0]), 0, 0, 0, 0);
+                    endDateN = new Date(parseInt(time.year.split('-')[1]), parseInt(time.month.split('-')[1]) - 1 , parseInt(time.mday.split('-')[1]), 0, 0, 0, 0);
+                    retVal = date.formatDate( startDateN, 'ddd, MMM D YYYY') +' - '+ date.formatDate( endDateN, 'ddd, MMM D YYYY')
+                }
+                return retVal;
+            },
+            isRange(){
+                const isRange = this.timeSet
+                        && this.timeSet.times
+                        && this.timeSet.times.length > 0
+                        && this.timeSet.times[0].year
+                        && this.timeSet.times[0].year.includes('-');
+                return isRange;
             },
             isTempGroup(){
                 return this.group.id.toString().includes('temp-');
@@ -535,6 +671,13 @@
                     if(timeSet){
                         this.timeSet = timeSet;
                         this.times = this.timeSet.times;
+                        if(this.times[0] && this.times[0].year && this.times[0].year.includes('-')){
+                            const time = this.times[0];
+                            this.rangeDateModel.from = moment(new Date(parseInt(time.year.split('-')[0]),parseInt(time.month.split('-')[0])-1,parseInt(time.mday.split('-')[0]),parseInt(time.hour.split('-')[0]),parseInt(time.minute.split('-')[0]),0,0)).format();
+                            this.rangeDateModel.to = moment(new Date(parseInt(time.year.split('-')[1]),parseInt(time.month.split('-')[1])-1,parseInt(time.mday.split('-')[1]),parseInt(time.hour.split('-')[1]),parseInt(time.minute.split('-')[1]),0,0)).format();
+                            this.rangeTimeModel.from = moment(new Date(parseInt(time.year.split('-')[0]),parseInt(time.month.split('-')[0])-1,parseInt(time.mday.split('-')[0]),parseInt(time.hour.split('-')[0]),parseInt(time.minute.split('-')[0]),0,0)).format();
+                            this.rangeTimeModel.to = moment(new Date(parseInt(time.year.split('-')[1]),parseInt(time.month.split('-')[1])-1,parseInt(time.mday.split('-')[1]),parseInt(time.hour.split('-')[1]),parseInt(time.minute.split('-')[1]),0,0)).format();
+                        }
                     }
                     else{
                         this.timeSet = null;
@@ -594,6 +737,67 @@
                 catch(e){
                     console.log(e)
                 }
+            },
+            rangeDateChanged(){
+                this.$refs.isRangeLink.click();
+            },
+            rangeTimeChanged(){
+                this.$refs.isRangeLink.click();
+            },
+            resetTimeRange(){
+                this.rangeDateModel = {
+                    from: null,
+                    to: null
+                };
+                this.rangeTimeModel = {
+                    from: null,
+                    to: null
+                };
+            },
+            cancelTimerange() {
+                this.action = null;
+                this.enabled = false;
+                this.$refs.daterange.close();
+
+            },
+            formatRange(startDate, endDate, startTime, endTime){
+                const startDateOnly = startDate.split('T')[0];
+                const endDateOnly = endDate.split('T')[0];
+                const startTimeOnly = startTime.split('T')[1];
+                const endTimeOnly = endTime.split('T')[1];
+                const getDateObj = date => (([year, month, day ]) => ({ day, year, month }))(date.split('-'));
+                const getTimeObj = time => (([hour, minute, second]) => ({ hour, minute, second }))(time.split(':'));
+                const startDateObj = getDateObj(startDateOnly);
+                const endDateObj = getDateObj(endDateOnly);
+                const startTimeObj = getTimeObj(startTimeOnly);
+                const endTimeObj = getTimeObj(endTimeOnly);
+                return [
+                            {
+                                year: startDateObj.year +'-'+endDateObj.year,
+                                month: startDateObj.month +'-'+endDateObj.month,
+                                mday: startDateObj.day +'-'+endDateObj.day,
+                                hour: startTimeObj.hour +'-'+endTimeObj.hour,
+                                minute:  startTimeObj.minute +'-'+endTimeObj.minute
+                            }
+                        ]
+            },
+            async saveDateRange(){
+                const days = this.rangeDateModel;
+                const time = this.rangeTimeModel;
+
+                const datesTimesInRange = this.formatRange(days.from, days.to, time.from, time.to);
+                this.$store.dispatch('newCallForward/addGroupLoader', this.group.id);
+                const updatedTimeset = await this.$store.dispatch('newCallForward/addRangeToTimeset', {
+                    id: this.timeSet.id,
+                    times: datesTimesInRange
+                });
+                this.$refs.daterange.close();
+                this.$store.dispatch('newCallForward/setTimeset', updatedTimeset);
+                this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id);
+            },
+            showRemoveDateRangeDialog(){
+                this.$refs.daterange.close();
+                this.showConfirmDeleteTimesetDialog();
             }
         }
     }
