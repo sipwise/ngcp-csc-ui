@@ -28,6 +28,7 @@
                                 ref="addCondition"
                                 :disableSourcesetMenu="false"
                                 :disableTimesetMenu="false"
+                                :disableDateRangeMenu="false"
                                 :enabled="true"
                                 :groupName="group.name"
                                 :groupId="group.id"
@@ -70,7 +71,6 @@
                             <q-datetime
                                 ref="dayWidget"
                                 clear-label="REMOVE"
-                                class="csc-cf-day-widget"
                                 v-model="dayModel"
                                 :min="today"
                                 />
@@ -101,6 +101,7 @@
                                 ref="addCondition"
                                 :disableSourcesetMenu="!groupSourceset"
                                 :disableTimesetMenu="!groupTimeset"
+                                :disableDateRangeMenu="!groupTimeset"
                                 :enabled="true"
                                 :groupName="group.name"
                                 :groupId="group.id"
