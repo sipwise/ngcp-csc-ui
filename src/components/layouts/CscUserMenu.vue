@@ -110,7 +110,7 @@
         },
         computed: {
             hasNumbers() {
-                return this.subscriber.primary_number || this.subscriber.alias_numbers
+                return this.subscriber && (this.subscriber.primary_number || this.subscriber.alias_numbers)
             },
             primaryNumberFormatted() {
                 if(this.subscriber && this.subscriber.primary_number) {
