@@ -40,9 +40,67 @@
                 @click="filterByType('voicemail')"
             />
         </q-tabs>
+
+        <div class="csc-conversations-filter-container">
+            <div
+                class="csc-conversations-filters-title"
+            >
+                    <q-btn
+                        flat
+                        icon="fa-filter"
+                        color="primary"
+                        v-if="showDaterangeFilter"
+                        @click="toggleDaterangeFilter()"
+                    >
+                        {{$t('pages.conversations.filterByTimeRange')}}
+                    </q-btn>
+            </div>
+            <div
+                class="csc-conversations-filter-fields-container"
+                v-if="!showDaterangeFilter"
+            >
+                <div>
+                    <q-field
+                      dark
+                      class="csc-conversations-daterange-container"
+                      :helper="$t('pages.conversations.filterByTimeRangeHelper')"
+                    >
+                        <q-datetime-range
+                            dark
+                            ref="filterTimeRange"
+                            type="datetime"
+                            v-model="dateFilterRange"
+                            format="DD/MM/YYYY - hh:mm"
+                            @change="filterByDaterange()"
+                        />
+
+                    </q-field>
+                </div>
+                <div class="csc-conversations-filter-buttons">
+                    <q-btn
+                        flat
+                        icon="clear"
+                        color="white"
+                        @click="resetDaterangeFilters"
+                    >
+                        {{ $t('pages.conversations.closeDaterangeFilters') }}
+                    </q-btn>
+                    <q-btn
+                        flat
+                        icon="fa-filter"
+                        color="red"
+                        @click="emptyDaterangeFilters"
+                    >
+                        {{$t('pages.conversations.resetFilterByTimerange')}}
+                    </q-btn>
+                </div>
+            </div>
+        </div>
+
         <div
             id="csc-conversation-content"
         >
+
             <q-list
                 v-if="items.length > 0"
                 no-border
@@ -75,7 +133,7 @@
                 {{ noResultsMessage }}
             </div>
             <div
-                v-if="isNextPageRequesting"
+                v-if="isNextPageRequesting || startFiltering"
                 class="row justify-center"
             >
                 <q-spinner-dots
@@ -121,6 +179,8 @@
         showToast
     } from '../../../helpers/ui'
     import {
+        QDatetimeRange,
+        QField,
         QScrollObservable,
         scroll,
         QList,
@@ -141,6 +201,12 @@
                 deletionId: null,
                 scrollEventEmitted: false,
                 selectedTab: 'call-fax-voicemail',
+                dateFilterRange: {
+                    from: null,
+                    to: null
+                },
+                showDaterangeFilter: true,
+                startFiltering: false,
                 tabs: [
                     {
                         label: this.$t('pages.conversations.tabLabelAll'),
@@ -165,6 +231,8 @@
             platformMixin
         ],
         components: {
+            QDatetimeRange,
+            QField,
             CscRemoveDialog,
             CscPage,
             CscConversationItem,
@@ -269,6 +337,9 @@
                     classes.push('csc-back-to-top-calling');
                 }
                 return classes;
+            },
+            openFilter(){
+                this.$refs.filterTimeRange.open();
             }
         },
         methods: {
@@ -279,7 +350,11 @@
                 if(!this.isNextPageRequesting && !this.scrollEventEmitted && data.direction === 'down' &&
                     data.position > scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight - 90) {
                     this.scrollEventEmitted = true;
-                    this.nextPage(this.selectedTab);
+                    this.nextPage({
+                        type: this.selectedTab,
+                        from: this.dateFilterRange.from,
+                        to: this.dateFilterRange.to
+                    });
                 }
                 else if(data.position <= scroll.getScrollHeight(this.$refs.page.$el) - window.innerHeight - 90) {
                     this.scrollEventEmitted = false;
@@ -289,7 +364,11 @@
                 if(type === 'call-fax-voicemail') {
                     type = null;
                 }
-                this.$store.dispatch('conversations/nextPage', type);
+                this.$store.dispatch('conversations/nextPage', {
+                    type: type,
+                    from: this.dateFilterRange.from,
+                    to: this.dateFilterRange.to
+                });
             },
             startCall(number) {
                 this.$store.commit('call/numberInputChanged', number);
@@ -314,14 +393,38 @@
                 }
                 this.$store.dispatch('conversations/reloadItems', {
                     retryCount: 1,
-                    type: type
+                    type: type,
+                    from: this.dateFilterRange.from,
+                    to: this.dateFilterRange.to
                 });
             },
             filterByType(type) {
                 if(type !== this.selectedTab) {
                     this.$store.commit('conversations/resetList');
-                    this.$store.dispatch('conversations/nextPage', type);
+                    this.$store.dispatch('conversations/nextPage', {
+                        type: type,
+                        from: this.dateFilterRange.from,
+                        to: this.dateFilterRange.to
+                    });
                 }
+            },
+            filterByDaterange(){
+                this.$store.commit('conversations/resetList');
+                this.nextPage({
+                    filterByDaterange: true,
+                    type: this.selectedTab,
+                    from: this.dateFilterRange.from,
+                    to: this.dateFilterRange.to
+                });
+            },
+            resetDaterangeFilters(){
+                this.emptyDaterangeFilters();
+                this.toggleDaterangeFilter();
+            },
+            emptyDaterangeFilters(){
+                this.dateFilterRange.from = null;
+                this.dateFilterRange.to = null;
+                this.filterByDaterange();
             },
             toggleBlockIncoming(options) {
                 this.$store.dispatch('conversations/toggleBlockIncoming', options);
@@ -348,6 +451,9 @@
                 else {
                     return this.isNumberOutgoingBlocked(item.caller);
                 }
+            },
+            toggleDaterangeFilter(){
+                this.showDaterangeFilter = !this.showDaterangeFilter;
             }
         },
         watch: {
@@ -436,4 +542,41 @@
         bottom $call-footer-height-big + 15px
     .csc-conversation-list-item
         padding $flex-gutter-sm
+    .csc-conversations-filter-container
+        text-align center
+        color $secondary
+    .csc-conversations-filter-fields-container
+        margin-top -15px
+    .csc-conversations-daterange-container
+        width 450px
+        display inline-block
+    .csc-conversations-filter-buttons
+        margin-top 15px
+    .csc-conversations-filters-title
+        margin-top 50px
+        display inline-block
+        .q-field-label-inner
+            color $primary
+            font-weight bold
+            span
+                width 100%
+                text-align left
+                min-width 150px
+    .csc-conversations-clear-btn
+        cursor pointer
+        font-size 20px
+        margin-left 10px
+    .q-datetime-range-left
+        margin-right 10px
+    .q-datetime-weekdays
+        color $tertiary
+    .q-datetime-days div:not(.q-datetime-day-active),
+    .q-datetime-dark
+        color $white !important
+    .q-datetime-range .q-icon,
+    .q-datetime-range .q-item-icon
+        color $primary !important
+    .q-datetime-range.row .q-datetime-range-right,
+    .q-datetime-range.row .q-datetime-range-left
+        padding-left 20px
 </style>

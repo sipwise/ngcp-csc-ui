@@ -196,7 +196,11 @@
             "from": "from",
             "call": "Call",
             "callForwarded": "Call forwarded",
-            "callDuration": "Duration"
+            "callDuration": "Duration",
+            "filterByTimeRange": "Filter by daterange",
+            "filterByTimeRangeHelper": "Pick start and / or end date",
+            "resetFilterByTimerange": "Reset filters",
+            "closeDaterangeFilters": "Close filters"
         },
         "reminder": {
             "toggleEnabled": "Reminder is enabled",

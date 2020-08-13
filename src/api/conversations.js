@@ -15,6 +15,8 @@ import {
 export function getConversations(options) {
     return new Promise((resolve, reject) => {
         let type = _.get(options, 'type', null);
+        let from = _.get(options, 'from', null);
+        let to = _.get(options, 'to', null);
         let params ={
             subscriber_id: _.get(options, 'subscriberId'),
             order_by: _.get(options, 'order_by', 'timestamp'),
@@ -26,6 +28,12 @@ export function getConversations(options) {
         };
         if (type !== null) {
             params.type = type;
+        }
+        if (from !== null){
+            params.from = from;
+        }
+        if (to !== null){
+            params.to = to;
         }
         getList({
             path: 'api/conversations/',
@@ -104,4 +112,3 @@ export async function deleteVoicemail(id) {
     const res = await Vue.http.delete('api/voicemails/' + id)
     return res.status >= 200
 }
-

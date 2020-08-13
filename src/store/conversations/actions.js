@@ -34,7 +34,9 @@ export default {
                 subscriberId: context.getters.getSubscriberId,
                 page: 1,
                 rows: rows,
-                type: options.type
+                type: options.type,
+                from: options.from || null,
+                to: options.to || null
             }).then((result) => {
                 let firstResultItemTimestamp = result.items[0] ?
                     result.items[0].start_time : null;
@@ -42,7 +44,9 @@ export default {
                     setTimeout(() => {
                         context.dispatch('reloadItems', {
                             retryCount: ++options.retryCount,
-                            type: options.type
+                            type: options.type,
+                            from: options.from || null,
+                            to: options.to || null
                         });
                     }, ReloadConfig.retryDelay);
                 }
@@ -81,14 +85,16 @@ export default {
             context.commit('playVoiceMailFailed', options.id, err.mesage);
         });
     },
-    nextPage(context, type) {
-        if (!context.getters.isLastPage) {
+    nextPage(context, data) {
+        if (!context.getters.isLastPage || data.filterByDaterange) {
             context.commit('nextPageRequesting');
             getConversations({
                 subscriberId: context.getters.getSubscriberId,
                 page: context.getters.currentPage + 1,
                 rows: ROWS_PER_PAGE,
-                type: type
+                type: data.type,
+                from: data.from || null,
+                to: data.to || null
             }).then((result) => {
                 context.commit('nextPageSucceeded', result);
             }).catch((err)=>{
