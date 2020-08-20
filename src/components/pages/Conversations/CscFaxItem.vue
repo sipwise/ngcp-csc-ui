@@ -1,152 +1,107 @@
 <template>
-    <q-item class="csc-entity csc-fax-item">
-        <q-item-side
-            icon="description"
-            :color="color"
-        />
-        <q-item-main>
-            <q-item-tile
-                label
-            >
-                <span class="gt-sm csc-entity-title">
-                    {{ $t('pages.conversations.fax') }}
-                </span>
-                <span class="gt-sm csc-entity-title">
-                    {{ direction }}
-                </span>
-                <span class="csc-entity-title csc-phone-number">
-                    {{ fax.caller | numberFormat }}
-                </span>
-            </q-item-tile>
-            <q-item-tile
-                sublabel
-            >
-                {{ fax.start_time | smartTime }}
-            </q-item-tile>
-            <q-item-tile
-                v-if="fax.pages === 0"
-                sublabel
-            >
-                No pages
-            </q-item-tile>
-            <q-item-tile
-                v-else-if="fax.pages === 1"
-                sublabel
-            >
-                {{ fax.pages }} {{ $t('pages.conversations.page') }}
-            </q-item-tile>
-            <q-item-tile
-                v-else
-                sublabel
-            >
-                {{ fax.pages }} {{ $t('pages.conversations.pages') }}
-            </q-item-tile>
-        </q-item-main>
-        <q-item-side
-            right
-            class="csc-item-buttons"
-        >
-            <q-item-tile>
-                <q-btn
-                    icon="more_vert"
-                    color="primary"
-                    slot="right"
-                    flat
-                >
-                    <q-popover
-                        ref="callPopover"
-                        anchor="bottom right"
-                        self="top right"
-                    >
-                        <q-list
-                            link
-                            no-border
-                            class="csc-toolbar-btn-popover"
-                        >
-                            <q-item
-                                @click="downloadFax"
-                            >
-                                <q-item-side
-                                    icon="file_download"
-                                    color="primary"
-                                />
-                                <q-item-main
-                                    :label="$t('pages.conversations.buttons.downloadFax')"
-                                />
-                            </q-item>
-                            <q-item
-                                v-if="callAvailable"
-                                @click="startCall"
-                            >
-                                <q-item-side
-                                    icon="call"
-                                    color="primary"
-                                />
-                                <q-item-main
-                                    :label="$t('pages.conversations.buttons.call')"
-                                />
-                            </q-item>
-                        </q-list>
-                    </q-popover>
-                </q-btn>
-            </q-item-tile>
-        </q-item-side>
-    </q-item>
+	<q-item>
+		<q-item-section
+			side
+			top
+		>
+			<q-icon
+				name="description"
+				:color="color"
+			/>
+		</q-item-section>
+		<q-item-section>
+			<q-item-label
+				class="text-subtitle1"
+			>
+				{{ $t('pages.conversations.fax') }}
+				{{ direction }}
+				{{ fax.caller | numberFormat }}
+			</q-item-label>
+			<q-item-label
+				caption
+			>
+				{{ fax.start_time | smartTime }}
+			</q-item-label>
+			<q-item-label
+				v-if="fax.pages === 0"
+				caption
+			>
+				No pages
+			</q-item-label>
+			<q-item-label
+				v-else-if="fax.pages === 1"
+				caption
+			>
+				{{ fax.pages }} {{ $t('pages.conversations.page') }}
+			</q-item-label>
+			<q-item-label
+				v-else
+				caption
+			>
+				{{ fax.pages }} {{ $t('pages.conversations.pages') }}
+			</q-item-label>
+		</q-item-section>
+		<q-item-section
+			side
+		>
+			<csc-more-menu>
+				<csc-popup-menu-item
+					icon="file_download"
+					color="primary"
+					:label="$t('pages.conversations.buttons.downloadFax')"
+					@click="downloadFax"
+				/>
+				<csc-popup-menu-item-start-call
+					v-if="callAvailable"
+					@click="startCall"
+				/>
+			</csc-more-menu>
+		</q-item-section>
+	</q-item>
 </template>
 
 <script>
-    import CscCallOptionList from './CscCallOptionList'
-    import {
-        QList,
-        QItem,
-        QItemSide,
-        QItemMain,
-        QItemTile,
-        QPopover,
-        QBtn
-    } from 'quasar-framework'
-    export default {
-        name: 'csc-fax-item',
-        props: [
-            'fax',
-            'callAvailable'
-        ],
-        components: {
-            QList,
-            QItem,
-            QItemSide,
-            QItemMain,
-            QItemTile,
-            QPopover,
-            QBtn,
-            CscCallOptionList
-        },
-        data () {
-            return {}
-        },
-        computed: {
-            color() {
-                return this.fax.status === 'FAILED' ? 'negative' : 'primary';
-            },
-            direction() {
-                if(this.fax.direction === 'out') {
-                    return 'to';
-                }
-                else {
-                    return 'from';
-                }
-            }
-        },
-        methods: {
-            downloadFax() {
-                this.$emit('download-fax', this.fax);
-            },
-            startCall() {
-                this.$refs.callPopover.close();
-                this.$emit('start-call', this.fax.caller);
-            }
-        }
-    }
+import CscMoreMenu from 'components/CscMoreMenu'
+import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
+export default {
+	name: 'CscFaxItem',
+	components: { CscPopupMenuItemStartCall, CscPopupMenuItem, CscMoreMenu },
+	props: {
+		fax: {
+			type: Object,
+			default: null
+		},
+		callAvailable: {
+			type: Boolean,
+			default: false
+		}
+	},
+	data () {
+		return {}
+	},
+	computed: {
+		color () {
+			return this.fax.status === 'FAILED' ? 'negative' : 'primary'
+		},
+		direction () {
+			if (this.fax.direction === 'out') {
+				return 'to'
+			} else {
+				return 'from'
+			}
+		}
+	},
+	methods: {
+		downloadFax () {
+			this.$emit('download-fax', this.fax)
+		},
+		startCall () {
+			this.$refs.callPopover.close()
+			this.$emit('start-call', this.fax.caller)
+		}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

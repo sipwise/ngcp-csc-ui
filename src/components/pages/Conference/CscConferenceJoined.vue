@@ -1,14 +1,14 @@
 <template>
-    <div></div>
+	<div />
 </template>
 
 <script>
-    export default {
-        name: 'csc-conference-joined',
-        data () {
-            return {}
-        }
-    }
+export default {
+	name: 'CscConferenceJoined',
+	data () {
+		return {}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

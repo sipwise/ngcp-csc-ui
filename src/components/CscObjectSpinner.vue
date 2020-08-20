@@ -1,35 +1,26 @@
 <template>
-    <q-inner-loading
-        :visible="loading"
-        :style="{zIndex: 12}"
-    >
-        <q-spinner-dots
-            size="32px"
-            color="primary"
-        />
-    </q-inner-loading>
+	<q-inner-loading
+		:visible="loading"
+		:style="{zIndex: 12}"
+	>
+		<q-spinner-dots
+			size="32px"
+			color="primary"
+		/>
+	</q-inner-loading>
 </template>
 
 <script>
-    import {
-        QSpinnerDots,
-        QInnerLoading
-    } from 'quasar-framework'
-    export default {
-        name: 'csc-object-spinner',
-        data () {
-            return {}
-        },
-        components: {
-            QSpinnerDots,
-            QInnerLoading
-        },
-        props: [
-            'loading'
-        ]
-    }
+export default {
+	name: 'CscObjectSpinner',
+	props: {
+		loading: {
+			type: Boolean,
+			default: false
+		}
+	},
+	data () {
+		return {}
+	}
+}
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    @import '../themes/quasar.variables.styl'
-</style>

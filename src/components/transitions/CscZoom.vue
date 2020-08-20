@@ -1,30 +1,26 @@
 <template>
-    <transition
-        appear
-        enter-active-class="animated zoomIn faster"
-        leave-active-class="animated zoomOut faster"
-    >
-        <slot />
-    </transition>
+	<transition
+		appear
+		enter-active-class="animated zoomIn faster"
+		leave-active-class="animated zoomOut faster"
+	>
+		<slot />
+	</transition>
 </template>
 
 <script>
-    export default {
-        name: 'csc-zoom',
-        data () {
-            return {}
-        },
-        components: {
-        },
-        computed: {
-        },
-        methods: {
-        },
-        watch: {
-        }
-    }
+export default {
+	name: 'CscZoom',
+	components: {
+	},
+	data () {
+		return {}
+	},
+	computed: {
+	},
+	watch: {
+	},
+	methods: {
+	}
+}
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    @import '../../themes/app.common.styl';
-</style>

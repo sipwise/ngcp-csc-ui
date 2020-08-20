@@ -1,5 +1,19 @@
 {
-  "presets": [["es2015", {"modules": false}], "stage-2"],
-  "plugins": ["transform-runtime"],
-  "comments": false
+  "plugins": ["@babel/plugin-syntax-dynamic-import"],
+  "env": {
+    "test": {
+      "plugins": ["dynamic-import-node"],
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "modules": "commonjs",
+            "targets": {
+              "node": "current"
+            }
+          }
+        ]
+      ]
+    }
+  }
 }

@@ -1,20 +1,16 @@
 <template>
-    <csc-page>
-        <csc-call-forward-timeset
-            timesetName="Company Hours"
-        />
-    </csc-page>
+	<csc-call-forward-timeset
+		timeset-name="Company Hours"
+	/>
 </template>
 
 <script>
-    import CscPage from '../../CscPage'
-    import CscCallForwardTimeset from './CscCallForwardTimeset'
-    export default {
-        components: {
-            CscPage,
-            CscCallForwardTimeset
-        }
-    }
+import CscCallForwardTimeset from './CscCallForwardTimeset'
+export default {
+	components: {
+		CscCallForwardTimeset
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

@@ -1,111 +1,107 @@
 <template>
-    <div class="csc-dialpad row justify-center">
-        <div
-            class="column"
-        >
-            <div
-                v-if="showBackspaceButton || showClearButton"
-                class="csc-dialpad-btn-group csc-dialpad-btn-group-special"
-            >
-                <div
-                    v-if="showBackspaceButton"
-                    class="csc-dialpad-btn"
-                >
-                    <q-btn
-                        color="primary"
-                        round
-                        small
-                        @click="remove()"
-                        icon="backspace"
-                    />
-                </div>
-                <div
-                    v-if="showClearButton"
-                    class="csc-dialpad-btn"
-                >
-                    <q-btn
-                        color="primary"
-                        round
-                        small
-                        @click="removeAll()"
-                        icon="cancel"
-                    />
-                </div>
-            </div>
-            <div
-                class="csc-dialpad-btn-group"
-                v-for="(keyRow, rowIndex) in keys"
-                :key="rowIndex"
-            >
-                <div
-                    class="csc-dialpad-btn csc-dialpad-btn-main"
-                    v-for="(key, keyIndex) in keyRow"
-                    :key="rowIndex + ':' + keyIndex"
-                >
-                    <q-btn
-                        color="default"
-                        round
-                        small
-                        @click="click(key)"
-                    >
-                        {{ key }}
-                    </q-btn>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="csc-dialpad row justify-center">
+		<div
+			class="column"
+		>
+			<div
+				v-if="showBackspaceButton || showClearButton"
+				class="csc-dialpad-btn-group csc-dialpad-btn-group-special"
+			>
+				<div
+					v-if="showBackspaceButton"
+					class="csc-dialpad-btn"
+				>
+					<q-btn
+						color="primary"
+						round
+						small
+						icon="backspace"
+						@click="remove()"
+					/>
+				</div>
+				<div
+					v-if="showClearButton"
+					class="csc-dialpad-btn"
+				>
+					<q-btn
+						color="primary"
+						round
+						small
+						icon="cancel"
+						@click="removeAll()"
+					/>
+				</div>
+			</div>
+			<div
+				v-for="(keyRow, rowIndex) in keys"
+				:key="rowIndex"
+				class="csc-dialpad-btn-group"
+			>
+				<div
+					v-for="(key, keyIndex) in keyRow"
+					:key="rowIndex + ':' + keyIndex"
+					class="csc-dialpad-btn csc-dialpad-btn-main"
+				>
+					<q-btn
+						color="default"
+						round
+						small
+						@click="click(key)"
+					>
+						{{ key }}
+					</q-btn>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
-    import platformMixin from '../mixins/platform'
-    import {
-        QBtn,
-        QIcon
-    } from 'quasar-framework'
-    export default {
-        name: 'csc-call-dialpad',
-        data () {
-            return {}
-        },
-        props: [
-            'showBackspaceButton',
-            'showClearButton'
-        ],
-        components: {
-            QBtn,
-            QIcon
-        },
-        mixins: [
-            platformMixin
-        ],
-        computed: {
-            keys() {
-                return [
-                    ['1','2','3'],
-                    ['4','5','6'],
-                    ['7','8','9'],
-                    ['*','0','#'],
-                    ['+']
-                ];
-            }
-        },
-        methods: {
-            click(value) {
-                this.$emit('click', value);
-            },
-            remove() {
-                this.$emit('remove');
-            },
-            removeAll() {
-                this.$emit('remove-all');
-            }
-        }
-    }
+import platformMixin from '../mixins/platform'
+export default {
+	name: 'CscCallDialpad',
+	mixins: [
+		platformMixin
+	],
+	props: {
+		showBackspaceButton: {
+			type: Boolean,
+			default: false
+		},
+		showClearButton: {
+			type: Boolean,
+			default: false
+		}
+	},
+	data () {
+		return {}
+	},
+	computed: {
+		keys () {
+			return [
+				['1', '2', '3'],
+				['4', '5', '6'],
+				['7', '8', '9'],
+				['*', '0', '#'],
+				['+']
+			]
+		}
+	},
+	methods: {
+		click (value) {
+			this.$emit('click', value)
+		},
+		remove () {
+			this.$emit('remove')
+		},
+		removeAll () {
+			this.$emit('remove-all')
+		}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../themes/quasar.variables.styl'
-
     .csc-dialpad
         padding 16px
         padding-bottom 0

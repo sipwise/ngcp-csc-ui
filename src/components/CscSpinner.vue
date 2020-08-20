@@ -1,33 +1,16 @@
 <template>
-    <div
-        class="csc-spinner"
-    >
-        <q-spinner-dots
-            size="32px"
-            color="primary"
-        />
-    </div>
+	<q-spinner-dots
+		v-bind="$attrs"
+		size="24px"
+		color="primary"
+	/>
 </template>
 
 <script>
-    import {
-        QSpinnerDots
-    } from 'quasar-framework'
-    export default {
-        name: 'csc-spinner',
-        data () {
-            return {}
-        },
-        components: {
-            QSpinnerDots
-        }
-    }
+export default {
+	name: 'CscSpinner',
+	data () {
+		return {}
+	}
+}
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    @import '../themes/quasar.variables.styl'
-    .csc-spinner
-        display inline-block
-        padding-left $flex-gutter-sm
-        padding-right $flex-gutter-sm
-</style>

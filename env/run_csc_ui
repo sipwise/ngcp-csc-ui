@@ -36,16 +36,16 @@ echo "App config '${app_config}' is OK."
 
 echo "JFYI, important components versions:"
 echo -n "node --version : " && node --version
-echo -n "npm  --version : " && npm --version
+echo -n "yarn  --version : " && yarnpkg --version
 
 echo "Configuring Vue.js/Quasar dev environment, running 'npm ci'..."
-if ! npm ci ; then
+if ! yarnpkg install ; then
   echo "ERROR: cannot install all npm dependencies. Aborting."
   exit 1
 fi
 
 echo "Starting Quasar dev environment, running 'npm run dev'..."
-if ! npm run dev; then
+if ! yarnpkg run dev ; then
   echo "ERROR: cannot run quasar dev environment. Aborting."
   exit 1
 fi

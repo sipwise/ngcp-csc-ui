@@ -1,168 +1,163 @@
 <template>
-    <div
-        v-if="enabled"
-        class="csc-form"
-    >
-        <csc-new-call-forward-input-text
-            :label="$t('pages.newCallForward.sourcesetName')"
-            v-model="name"
-            @submit="save"
-            @error="errorName"
-        />
+	<div
+		v-if="enabled"
+		class="csc-form"
+	>
+		<csc-new-call-forward-input-text
+			v-model="name"
+			:label="$t('pages.newCallForward.sourcesetName')"
+			@submit="save"
+			@error="errorName"
+		/>
 
-        <csc-new-call-forward-input
-            :label="$t('callBlocking.number')"
-            v-model="number"
-            @submit="save"
-            @error="errorNumber"
-        />
+		<csc-new-call-forward-input
+			v-model="number"
+			:label="$t('callBlocking.number')"
+			@submit="save"
+			@error="errorNumber"
+		/>
 
-        <div
-            class="csc-form-actions row justify-center csc-actions-cont"
-        >
-            <q-btn
-                flat
-                color="default"
-                icon="clear"
-                @mousedown.native="cancel()"
-            >
-                {{ $t('buttons.cancel') }}
-            </q-btn>
-            <q-btn
-                v-if="!loading"
-                flat
-                color="primary"
-                icon="done"
-                @click="save(); close()"
-                :disable="saveDisabled"
-            >
-                {{ $t('buttons.save') }}
-            </q-btn>
-            <div
-                v-if="loading"
-                class="csc-form-actions-spinner"
-            >
-                <csc-spinner />
-            </div>
-        </div>
-    </div>
+		<div
+			class="csc-form-actions row justify-center csc-actions-cont"
+		>
+			<q-btn
+				flat
+				color="default"
+				icon="clear"
+				@mousedown.native="cancel()"
+			>
+				{{ $t('buttons.cancel') }}
+			</q-btn>
+			<q-btn
+				v-if="!loading"
+				flat
+				color="primary"
+				icon="done"
+				:disable="saveDisabled"
+				@click="save(); close()"
+			>
+				{{ $t('buttons.save') }}
+			</q-btn>
+			<div
+				v-if="loading"
+				class="csc-form-actions-spinner"
+			>
+				<csc-spinner />
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
-    import CscNewCallForwardInput from './CscNewCallForwardInput'
-    import CscNewCallForwardInputText from './CscNewCallForwardInputText'
-    import CscSpinner from '../../CscSpinner'
-    import {
-        showGlobalError
-    } from '../../../helpers/ui'
-    import {
-        maxLength
-    } from 'vuelidate/lib/validators'
-    import {
-        QField,
-        QInput,
-        QBtn
-    } from 'quasar-framework'
+import CscNewCallForwardInput from './CscNewCallForwardInput'
+import CscNewCallForwardInputText from './CscNewCallForwardInputText'
+import CscSpinner from '../../CscSpinner'
+import {
+	showGlobalError
+} from 'src/helpers/ui'
+import {
+	maxLength
+} from 'vuelidate/lib/validators'
 
-    export default {
-        name: 'csc-new-call-forward-add-sourceset-form',
-        components: {
-            CscNewCallForwardInput,
-            CscNewCallForwardInputText,
-            CscSpinner,
-            QField,
-            QInput,
-            QBtn
-        },
-        data () {
-            return {
-                loading: false,
-                enabled: false,
-                number: '',
-                name: '',
-                nameError: false,
-                numberError: false,
-                destinationIndex: null
-            }
-        },
-        props: [
-            'groupName',
-            'groupId'
-        ],
-        validations: {
-            number: {
-                minLength: 1,
-                maxLength: maxLength(64)
-            },
-            name: {
-                minLength: 1
-            }
-        },
-        computed: {
-            saveDisabled() {
-                return this.number.length < 1 || this.name.length < 1 || this.numberError|| this.nameError || this.disable || this.loading;
-            }
-        },
-        methods: {
-            async save() {
-                let sourceSetId;
-                const forwardGroupId = this.groupId;
-                const forwardGroupName = this.groupName;
+export default {
+	name: 'CscNewCallForwardAddSourcesetForm',
+	components: {
+		CscNewCallForwardInput,
+		CscNewCallForwardInputText,
+		CscSpinner
+	},
+	props: {
+		groupName: {
+			type: String,
+			default: ''
+		},
+		groupId: {
+			type: String,
+			default: null
+		}
+	},
+	data () {
+		return {
+			loading: false,
+			enabled: false,
+			number: '',
+			name: '',
+			nameError: false,
+			numberError: false,
+			destinationIndex: null
+		}
+	},
+	validations: {
+		number: {
+			minLength: 1,
+			maxLength: maxLength(64)
+		},
+		name: {
+			minLength: 1
+		}
+	},
+	computed: {
+		saveDisabled () {
+			return this.number.length < 1 || this.name.length < 1 || this.numberError || this.nameError || this.disable || this.loading
+		}
+	},
+	methods: {
+		async save () {
+			let sourceSetId
+			const forwardGroupId = this.groupId
+			const forwardGroupName = this.groupName
 
-                if (this.numberError || this.nameError || this.saveDisabled) {
-                    showGlobalError(this.$t('validationErrors.generic'));
-                    return;
-                }
-                try{
-                    this.close();
-                    this.$store.dispatch('newCallForward/addGroupLoader', forwardGroupId);
-                    sourceSetId = await this.$store.dispatch('newCallForward/createSourceSet', {
-                        name: this.name,
-                        source: this.number
-                    });
-                    await this.$store.dispatch('newCallForward/addSourcesetToGroup', {
-                        name:   forwardGroupName,
-                        id: forwardGroupId,
-                        sourceSetId: sourceSetId
-                    });
-                    this.$store.dispatch('newCallForward/loadSourcesets');
-                    this.$store.dispatch('newCallForward/removeGroupLoader', forwardGroupId);
-
-                }
-                catch(err){
-                    console.log(err)
-                }
-            },
-            cancel() {
-                this.number = '';
-                this.name = '';
-                this.enabled = false;
-                this.$parent.close();
-            },
-            add() {
-                this.number = '';
-                this.name = '';
-                this.enabled = true;
-            },
-            close() {
-                this.enabled = false;
-                this.$parent.close();
-            },
-            reset() {
-                this.cancel();
-            },
-            errorName(state) {
-                this.nameError = state;
-            },
-            errorNumber(state) {
-                this.numberError = state;
-            }
-        }
-    }
+			if (this.numberError || this.nameError || this.saveDisabled) {
+				showGlobalError(this.$t('validationErrors.generic'))
+				return
+			}
+			try {
+				this.close()
+				this.$store.dispatch('newCallForward/addGroupLoader', forwardGroupId)
+				sourceSetId = await this.$store.dispatch('newCallForward/createSourceSet', {
+					name: this.name,
+					source: this.number
+				})
+				await this.$store.dispatch('newCallForward/addSourcesetToGroup', {
+					name: forwardGroupName,
+					id: forwardGroupId,
+					sourceSetId: sourceSetId
+				})
+				this.$store.dispatch('newCallForward/loadSourcesets')
+				this.$store.dispatch('newCallForward/removeGroupLoader', forwardGroupId)
+			} catch (err) {
+				console.log(err)
+			}
+		},
+		cancel () {
+			this.number = ''
+			this.name = ''
+			this.enabled = false
+			this.$parent.close()
+		},
+		add () {
+			this.number = ''
+			this.name = ''
+			this.enabled = true
+		},
+		close () {
+			this.enabled = false
+			this.$parent.close()
+		},
+		reset () {
+			this.cancel()
+		},
+		errorName (state) {
+			this.nameError = state
+		},
+		errorNumber (state) {
+			this.numberError = state
+		}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/app.common.styl'
     .csc-actions-cont
         margin-bottom 15px
 </style>

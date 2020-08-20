@@ -8,10 +8,6 @@ fi
 set -e
 set -u
 
-echo "### Starting display server"
-Xvfb -ac :0 -screen 0 1280x1024x16 &
-trap 'killall -9 Xvfb' EXIT
-
 echo "### Copying and moving files"
 cp -Rf . /tmp/code
 ln -s /tmp/node_modules /tmp/code/node_modules
@@ -20,10 +16,10 @@ cd /tmp/code/
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
 
-npm test
+yarnpkg test:unit
 
 echo "### Moving JUnit XML files to /results"
-mv /tmp/code/t/*.xml /results
+cp /tmp/code/junit.xml /results/
 
 echo "Finished test execution, test execution returned with exit code."
 echo "################################################################################"

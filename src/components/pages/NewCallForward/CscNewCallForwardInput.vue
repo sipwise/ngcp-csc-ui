@@ -1,116 +1,118 @@
 
 <template>
-    <q-field
-        :error-label="errorMessage"
-    >
-        <q-input
-            dark
-            clearable
-            type="text"
-            ref="inputField"
-            :float-label="label"
-            v-model="inputValue"
-            @keyup.enter="submit"
-            @keypress.space.prevent
-            @keydown.space.prevent
-            @keyup.space.prevent
-            @input="input"
-            @blur="blur"
-            :error="$v.inputValue.$error"
-            :before="beforeButtons"
-        />
-    </q-field>
+	<q-field
+		:error-label="errorMessage"
+	>
+		<q-input
+			ref="inputField"
+			v-model="inputValue"
+			dark
+			clearable
+			type="text"
+			:float-label="label"
+			:error="$v.inputValue.$error"
+			:before="beforeButtons"
+			@keyup.enter="submit"
+			@keypress.space.prevent
+			@keydown.space.prevent
+			@keyup.space.prevent
+			@input="input"
+			@blur="blur"
+		/>
+	</q-field>
 </template>
 
 <script>
-    import {
-        QField,
-        QInput
-    } from 'quasar-framework'
-    import {
-        userInfoAndEmpty
-    } from '../../../helpers/validation'
-    import {
-        maxLength,
-        required
-    } from 'vuelidate/lib/validators'
+import {
+	userInfoAndEmpty
+} from 'src/helpers/validation'
+import {
+	maxLength,
+	required
+} from 'vuelidate/lib/validators'
 
-    export default {
-        name: 'csc-new-call-forward-input',
-        props: {
-            label: String,
-            prefilled: String,
-            before: Array
-        },
-        mounted(){
-            if(this.prefilled){
-                this.inputValue = this.prefilled === " " ? "" : this.prefilled;
-                this.$v.$reset();
-            }
-
-        },
-        data () {
-            return {
-                inputValue: '',
-                error: ''
-            }
-        },
-        validations: {
-            inputValue: {
-                userInfoAndEmpty,
-                maxLength: maxLength(64),
-                required
-            }
-        },
-        components: {
-            QField,
-            QInput
-        },
-        computed: {
-            errorMessage() {
-                if (!this.$v.inputValue.required) {
-                    return this.$t('validationErrors.fieldRequired', {
-                        field: this.label
-                    });
-                }
-                else if (!this.$v.inputValue.maxLength) {
-                    return this.$t('validationErrors.maxLength', {
-                        field: this.label,
-                        maxLength: this.$v.inputValue.$params.maxLength.max
-                    });
-                }
-                else if (!this.$v.inputValue.userInfoAndEmpty) {
-                    return this.$t('validationErrors.inputValidNumber');
-                }
-            },
-            beforeButtons() {
-                return this.before ? this.before : [];
-            }
-        },
-        methods: {
-            submit() {
-                this.$emit('submit');
-            },
-            input() {
-                this.$v.inputValue.$touch();
-                this.error = this.$v.inputValue.$error;
-                this.$emit('input', this.inputValue);
-            },
-            blur() {
-                this.$v.inputValue.$touch();
-                this.error = this.$v.inputValue.$error;
-            },
-            reset(){
-                this.$refs.inputField.clear();
-                this.$v.$reset();
-            }
-        },
-        watch: {
-            error(state) {
-                this.$emit('error', state);
-            }
-        }
-    }
+export default {
+	name: 'CscNewCallForwardInput',
+	props: {
+		label: {
+			type: String,
+			default: ''
+		},
+		prefilled: {
+			type: String,
+			default: ''
+		},
+		before: {
+			type: Array,
+			default () {
+				return []
+			}
+		}
+	},
+	data () {
+		return {
+			inputValue: '',
+			error: ''
+		}
+	},
+	validations: {
+		inputValue: {
+			userInfoAndEmpty,
+			maxLength: maxLength(64),
+			required
+		}
+	},
+	computed: {
+		errorMessage () {
+			if (!this.$v.inputValue.required) {
+				return this.$t('validationErrors.fieldRequired', {
+					field: this.label
+				})
+			} else if (!this.$v.inputValue.maxLength) {
+				return this.$t('validationErrors.maxLength', {
+					field: this.label,
+					maxLength: this.$v.inputValue.$params.maxLength.max
+				})
+			} else if (!this.$v.inputValue.userInfoAndEmpty) {
+				return this.$t('validationErrors.inputValidNumber')
+			} else {
+				return ''
+			}
+		},
+		beforeButtons () {
+			return this.before ? this.before : []
+		}
+	},
+	watch: {
+		error (state) {
+			this.$emit('error', state)
+		}
+	},
+	mounted () {
+		if (this.prefilled) {
+			this.inputValue = this.prefilled === ' ' ? '' : this.prefilled
+			this.$v.$reset()
+		}
+	},
+	methods: {
+		submit () {
+			this.$emit('submit')
+		},
+		input () {
+			this.$v.inputValue.$touch()
+			this.error = this.$v.inputValue.$error
+			this.$emit('input', this.inputValue)
+		},
+		blur () {
+			this.$v.inputValue.$touch()
+			this.error = this.$v.inputValue.$error
+		},
+		reset () {
+			this.$refs.inputField.clear()
+			this.$v.$reset()
+		}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

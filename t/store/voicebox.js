@@ -2,7 +2,7 @@
 'use strict';
 
 import VoiceboxModule from '../../src/store/voicebox';
-import localeEn from '../../src/locales/en'
+import localeEn from 'src/i18n/en.json'
 import { i18n } from '../../src/i18n';
 import { assert } from 'chai';
 

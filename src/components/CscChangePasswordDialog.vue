@@ -1,12 +1,12 @@
 <template>
 	<csc-dialog
+		ref="dialog"
 		:value="value"
 		:loading="loading"
 		title-icon="vpn_key"
 		title="Change password"
-		ref="dialog"
-		@input="$emit('input')"
 		class="csc-pbx-password-dialog"
+		@input="$emit('input')"
 	>
 		<div
 			slot="content"
@@ -34,17 +34,14 @@
 	</csc-dialog>
 </template>
 <script>
-import {
-	QBtn
-} from 'quasar-framework'
 import CscChangePasswordForm from './form/CscChangePasswordForm'
 import CscDialog from './CscDialog'
+
 export default {
-	name: 'csc-change-password-dialog',
+	name: 'CscChangePasswordDialog',
 	components: {
 		CscDialog,
-		CscChangePasswordForm,
-		QBtn
+		CscChangePasswordForm
 	},
 	props: {
 		value: {
@@ -60,12 +57,12 @@ export default {
 		validationSucceeded (payload) {
 			this.$emit('change-password', payload)
 		},
-		open(){
-			this.$refs.dialog.open();
-			this.$refs.changePasswordForm.resetForm();
+		open () {
+			this.$refs.dialog.open()
+			this.$refs.changePasswordForm.resetForm()
 		},
-		close(){
-			this.$refs.dialog.close();
+		close () {
+			this.$refs.dialog.close()
 		}
 	}
 }

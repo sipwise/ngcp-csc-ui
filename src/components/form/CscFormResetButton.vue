@@ -1,32 +1,26 @@
 <template>
-    <q-btn
-        flat
-        icon="undo"
-        color="white"
-        @click="click"
-    >
-        {{ $t('buttons.reset') }}
-    </q-btn>
+	<q-btn
+		flat
+		icon="undo"
+		color="white"
+		@click="click"
+	>
+		{{ $t('buttons.reset') }}
+	</q-btn>
 </template>
 
 <script>
-    import {
-        QBtn
-    } from 'quasar-framework'
-    export default {
-        name: 'csc-form-reset-button',
-        data () {
-            return {}
-        },
-        components: {
-            QBtn
-        },
-        methods: {
-            click() {
-                this.$emit('click');
-            }
-        }
-    }
+export default {
+	name: 'CscFormResetButton',
+	data () {
+		return {}
+	},
+	methods: {
+		click () {
+			this.$emit('click')
+		}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

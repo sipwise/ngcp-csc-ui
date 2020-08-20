@@ -1,193 +1,144 @@
 <template>
-    <q-item class="csc-add-time-form">
-        <q-item-main>
-            <q-item-tile class="row no-wrap">
-                <q-select
-                    dark
-                    class="col"
-                    v-model="selectedWeekday"
-                    :options="selectOptions" />
-                <q-datetime
-                    dark
-                    class="col"
-                    color="primary"
-                    v-model="timeFromConverted"
-                    align="right"
-                    type="time"
-                    format24h />
-                <q-datetime
-                    dark
-                    class="col"
-                    color="primary"
-                    v-model="timeToConverted"
-                    align="right"
-                    type="time"
-                    format24h />
-            </q-item-tile>
-            <q-item-tile>
-                <q-btn
-                    flat
-                    icon="clear"
-                    @click="disableForm()"
-                    color="default"
-                >
-                    {{ $t('buttons.cancel') }}
-                </q-btn>
-                <q-btn
-                    flat
-                    icon="check"
-                    color="primary"
-                    @click="addTime()"
-                >
-                    {{ $t('buttons.save') }}
-                </q-btn>
-            </q-item-tile>
-        </q-item-main>
-    </q-item>
+	<div>
+		<div
+			class="row q-col-gutter-md q-mb-sm"
+		>
+			<div
+				class="col-12 col-md"
+			>
+				<q-select
+					v-model="selectedWeekday"
+					options-dense
+					emit-value
+					map-options
+					:options="selectOptions"
+				/>
+			</div>
+			<div
+				class="col-12 col-md"
+			>
+				<csc-input-time
+					v-model="timeFrom"
+				/>
+			</div>
+			<div
+				class="col-12 col-md"
+			>
+				<csc-input-time
+					v-model="timeTo"
+					class="col-2"
+				/>
+			</div>
+		</div>
+		<div
+			class="row q-col-gutter-md"
+		>
+			<div
+				class="col-auto"
+			>
+				<q-btn
+					flat
+					icon="clear"
+					color="default"
+					@click="disableForm()"
+				>
+					{{ $t('buttons.cancel') }}
+				</q-btn>
+			</div>
+			<div
+				class="col-auto"
+			>
+				<q-btn
+					flat
+					icon="check"
+					color="primary"
+					@click="addTime()"
+				>
+					{{ $t('buttons.save') }}
+				</q-btn>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
-    import { mapState } from 'vuex'
-    import { showGlobalError } from '../../../helpers/ui'
-    import {
-        QField,
-        QSelect,
-        QDatetime,
-        QList,
-        QItem,
-        QItemMain,
-        QItemTile,
-        QBtn,
-        date
-    } from 'quasar-framework'
+import { mapState } from 'vuex'
+import { showGlobalError } from 'src/helpers/ui'
+import CscInputTime from 'components/form/CscInputTime'
 
-    export default {
-        name: 'csc-add-time-form',
-        props: [
-            'type',
-            'timeset'
-        ],
-        data () {
-            return {
-                selectOptions: [
-                    { label: this.$t('pages.callForward.times.sunday'), value: 1 },
-                    { label: this.$t('pages.callForward.times.monday'), value: 2 },
-                    { label: this.$t('pages.callForward.times.tuesday'), value: 3 },
-                    { label: this.$t('pages.callForward.times.wednesday'), value: 4 },
-                    { label: this.$t('pages.callForward.times.thursday'), value: 5 },
-                    { label: this.$t('pages.callForward.times.friday'), value: 6 },
-                    { label: this.$t('pages.callForward.times.saturday'), value: 7 }
-                ],
-                selectedWeekday: 1,
-                timeTo: '0:00',
-                timeFrom: '0:00'
-            }
-        },
-        components: {
-            QField,
-            QSelect,
-            QDatetime,
-            QList,
-            QItem,
-            QItemMain,
-            QItemTile,
-            QBtn
-        },
-        computed: {
-            ...mapState('callForward', [
-                'addTimeState'
-            ]),
-            typeIsNew() {
-                return this.type === 'new';
-            },
-            timeFromConverted: {
-                get() {
-                    return date.buildDate({
-                        hours: this.timeFrom.split(':')[0],
-                        minutes: this.timeFrom.split(':')[1]
-                    });
-                },
-                set(value) {
-                    this.timeFrom = date.formatDate(value, 'HH:mm');
-                }
-            },
-            timeToConverted: {
-                get() {
-                    return date.buildDate({
-                        hours: this.timeTo.split(':')[0],
-                        minutes: this.timeTo.split(':')[1]
-                    });
-                },
-                set(value) {
-                    this.timeTo = date.formatDate(value, 'HH:mm');
-                }
-            },
-            timeHasError() {
-                let timeToHour = parseInt(this.timeTo.split(':')[0]);
-                let timeFromHour = parseInt(this.timeFrom.split(':')[0]);
-                let timeToMinute = parseInt(this.timeTo.split(':')[1]);
-                let timeFromMinute = parseInt(this.timeFrom.split(':')[1]);
-                let hoursReverse = timeToHour < timeFromHour || (timeToMinute < timeFromMinute && timeToHour === timeFromHour);
-                let sameTime = this.timeTo === this.timeFrom;
-                return hoursReverse || sameTime;
-            }
-        },
-        methods: {
-            resetTimes() {
-                this.timeTo = '0:00';
-                this.timeFrom = '0:00';
-                this.selectedWeekday = 1;
-            },
-            disableForm() {
-                this.resetTimes();
-                this.$store.commit('callForward/setActiveTimeForm', false);
-            },
-            addTime() {
-                if (this.type === "new" && !this.timeHasError) {
-                    this.$store.dispatch('callForward/createTimesetWithTime', {
-                        time: [{ from: this.timeFrom, to: this.timeTo}],
-                        weekday: this.selectedWeekday,
-                        name: this.timeset
-                    });
-                }
-                else if (this.type === "existing" && !this.timeHasError) {
-                    this.$store.dispatch('callForward/appendTimeToTimeset', {
-                        time: [{ from: this.timeFrom, to: this.timeTo}],
-                        weekday: this.selectedWeekday,
-                        name: this.timeset
-                    })
-                }
-                else {
-                    showGlobalError(this.$t('pages.callForward.times.selectValidTime'));
-                }
-            }
-        }
-    }
+export default {
+	name: 'CscAddTimeForm',
+	components: { CscInputTime },
+	props: {
+		type: {
+			type: String,
+			default: ''
+		},
+		timeset: {
+			type: String,
+			default: null
+		}
+	},
+	data () {
+		return {
+			selectOptions: [
+				{ label: this.$t('pages.callForward.times.sunday'), value: 1 },
+				{ label: this.$t('pages.callForward.times.monday'), value: 2 },
+				{ label: this.$t('pages.callForward.times.tuesday'), value: 3 },
+				{ label: this.$t('pages.callForward.times.wednesday'), value: 4 },
+				{ label: this.$t('pages.callForward.times.thursday'), value: 5 },
+				{ label: this.$t('pages.callForward.times.friday'), value: 6 },
+				{ label: this.$t('pages.callForward.times.saturday'), value: 7 }
+			],
+			selectedWeekday: 1,
+			timeTo: '0:00',
+			timeFrom: '0:00'
+		}
+	},
+	computed: {
+		...mapState('callForward', [
+			'addTimeState'
+		]),
+		typeIsNew () {
+			return this.type === 'new'
+		},
+		timeHasError () {
+			const timeToHour = parseInt(this.timeTo.split(':')[0])
+			const timeFromHour = parseInt(this.timeFrom.split(':')[0])
+			const timeToMinute = parseInt(this.timeTo.split(':')[1])
+			const timeFromMinute = parseInt(this.timeFrom.split(':')[1])
+			const hoursReverse = timeToHour < timeFromHour || (timeToMinute < timeFromMinute && timeToHour === timeFromHour)
+			const sameTime = this.timeTo === this.timeFrom
+			return hoursReverse || sameTime
+		}
+	},
+	methods: {
+		resetTimes () {
+			this.timeTo = '0:00'
+			this.timeFrom = '0:00'
+			this.selectedWeekday = 1
+		},
+		disableForm () {
+			this.resetTimes()
+			this.$store.commit('callForward/setActiveTimeForm', false)
+		},
+		addTime () {
+			if (this.type === 'new' && !this.timeHasError) {
+				this.$store.dispatch('callForward/createTimesetWithTime', {
+					time: [{ from: this.timeFrom, to: this.timeTo }],
+					weekday: this.selectedWeekday,
+					name: this.timeset
+				})
+			} else if (this.type === 'existing' && !this.timeHasError) {
+				this.$store.dispatch('callForward/appendTimeToTimeset', {
+					time: [{ from: this.timeFrom, to: this.timeTo }],
+					weekday: this.selectedWeekday,
+					name: this.timeset
+				})
+			} else {
+				showGlobalError(this.$t('pages.callForward.times.selectValidTime'))
+			}
+		}
+	}
+}
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/quasar.variables.styl'
-
-    .csc-add-time-form
-        padding 0
-        width calc(100% - 56px)
-
-    @media only screen and (min-width: 320px) {
-        .csc-add-time-form {
-            width calc(100% - 43px)
-        }
-    }
-
-    @media only screen and (min-width: 360px) {
-        .csc-add-time-form {
-            width calc(100% - 50.09px)
-        }
-    }
-
-    @media only screen and (min-width: 411px) {
-        .csc-add-time-form {
-            width calc(100% - 56px)
-        }
-    }
-
-</style>

@@ -1,293 +1,290 @@
 <template>
-    <div
-        class="csc-form csc-pbx-seat-add-form"
-    >
-        <q-field
-            :error-label="groupNameErrorMessage"
-        >
-            <q-input
-                dark
-                clearable
-                autofocus
-                v-model="data.name"
-                :error="$v.data.name.$error"
-                :disable="loading"
-                :readonly="loading"
-                :float-label="$t('pbxConfig.groupName')"
-                @input="$v.data.name.$touch"
-            />
-        </q-field>
-        <q-field
-            :error-label="extensionErrorMessage"
-        >
-            <q-input
-                dark
-                clearable
-                v-model="data.extension"
-                :error="$v.data.extension.$error"
-                :disable="loading"
-                :readonly="loading"
-                :float-label="$t('pbxConfig.extension')"
-                @input="$v.data.extension.$touch"
-            />
-        </q-field>
-        <q-field>
-            <q-select
-                dark
-                radio
-                v-model="data.huntPolicy"
-                :disable="loading"
-                :readonly="loading"
-                :float-label="$t('pbxConfig.huntPolicy')"
-                :options="huntPolicyOptions"
-            />
-        </q-field>
-        <q-field
-            :error-label="huntTimeoutErrorMessage"
-        >
-            <q-input
-                dark
-                clearable
-                v-model="data.huntTimeout"
-                :error="$v.data.huntTimeout.$error"
-                :disable="loading"
-                :readonly="loading"
-                :float-label="$t('pbxConfig.huntTimeout')"
-                :suffix="$t('pbxConfig.seconds')"
-                :min="1"
-                :max="3600"
-                @input="$v.data.huntTimeout.$touch"
-            />
-        </q-field>
-        <q-field>
-            <q-select
-                dark
-                multiple
-                chips
-                clearable
-                v-model="data.aliasNumbers"
-                :disable="loading"
-                :readonly="loading"
-                :float-label="$t('pbxConfig.aliasNumbers')"
-                :options="aliasNumberOptions"
-            />
-        </q-field>
-        <q-field>
-            <q-select
-                dark
-                multiple
-                chips
-                clearable
-                v-model="data.seats"
-                :disable="loading"
-                :readonly="loading"
-                :float-label="$t('pbxConfig.seats')"
-                :options="seatOptions"
-            />
-        </q-field>
-        <q-field>
-            <q-select
-                dark
-                radio
-                v-model="data.soundSet"
-                :disable="loading"
-                :readonly="loading"
-                :stack-label="$t('pbxConfig.soundSet')"
-                :options="soundSetOptions"
-            />
-        </q-field>
-        <div class="csc-form-actions row justify-center">
-            <q-btn
-                flat
-                v-if="!loading"
-                color="default"
-                icon="clear"
-                @mousedown.native="cancel()"
-            >
-                {{ $t('buttons.cancel') }}
-            </q-btn>
-            <q-btn
-                flat
-                v-if="!loading"
-                color="primary"
-                icon="group"
-                :disable="$v.data.$invalid"
-                @click="save()"
-            >
-                {{ $t('pbxConfig.createGroup') }}
-            </q-btn>
-        </div>
-        <csc-object-spinner
-            v-if="loading"
-            :loading="loading"
-        />
-    </div>
+	<div>
+		<div
+			class="row justify-center q-gutter-lg q-mb-md"
+		>
+			<div
+				class="col-3"
+			>
+				<q-input
+					v-model="data.name"
+					clearable
+					autofocus
+					hide-bottom-space
+					:error="$v.data.name.$error"
+					:error-message="groupNameErrorMessage"
+					:disable="loading"
+					:readonly="loading"
+					:label="$t('pbxConfig.groupName')"
+					@input="$v.data.name.$touch"
+				/>
+				<q-input
+					v-model="data.extension"
+					clearable
+					hide-bottom-space
+					:error="$v.data.extension.$error"
+					:error-message="extensionErrorMessage"
+					:disable="loading"
+					:readonly="loading"
+					:label="$t('pbxConfig.extension')"
+					@input="$v.data.extension.$touch"
+				/>
+				<q-select
+					v-model="data.huntPolicy"
+					radio
+					emit-value
+					map-options
+					hide-bottom-space
+					:disable="loading"
+					:readonly="loading"
+					:label="$t('pbxConfig.huntPolicy')"
+					:options="huntPolicyOptions"
+				/>
+				<q-input
+					v-model="data.huntTimeout"
+					clearable
+					hide-bottom-space
+					:error="$v.data.huntTimeout.$error"
+					:error-message="huntTimeoutErrorMessage"
+					:disable="loading"
+					:readonly="loading"
+					:label="$t('pbxConfig.huntTimeout')"
+					:suffix="$t('pbxConfig.seconds')"
+					:min="1"
+					:max="3600"
+					@input="$v.data.huntTimeout.$touch"
+				/>
+			</div>
+			<div
+				class="col-3"
+			>
+				<q-select
+					v-model="data.aliasNumbers"
+					multiple
+					use-chips
+					clearable
+					emit-value
+					map-options
+					hide-bottom-space
+					:disable="loading"
+					:readonly="loading"
+					:label="$t('pbxConfig.aliasNumbers')"
+					:options="aliasNumberOptions"
+				/>
+				<q-select
+					v-model="data.seats"
+					multiple
+					use-chips
+					clearable
+					emit-value
+					map-options
+					hide-bottom-space
+					:disable="loading"
+					:readonly="loading"
+					:label="$t('pbxConfig.seats')"
+					:options="seatOptions"
+				/>
+				<q-select
+					v-model="data.soundSet"
+					radio
+					emit-value
+					map-options
+					hide-bottom-space
+					:disable="loading"
+					:readonly="loading"
+					:label="$t('pbxConfig.soundSet')"
+					:options="soundSetOptions"
+				/>
+			</div>
+		</div>
+		<div class="csc-form-actions row justify-center">
+			<q-btn
+				v-if="!loading"
+				flat
+				color="default"
+				icon="clear"
+				@mousedown.native="cancel()"
+			>
+				{{ $t('buttons.cancel') }}
+			</q-btn>
+			<q-btn
+				v-if="!loading"
+				flat
+				color="primary"
+				icon="group"
+				:disable="$v.data.$invalid"
+				@click="save()"
+			>
+				{{ $t('pbxConfig.createGroup') }}
+			</q-btn>
+		</div>
+		<csc-object-spinner
+			v-if="loading"
+			:loading="loading"
+		/>
+	</div>
 </template>
 
 <script>
-    import {
-        required,
-        minValue,
-        maxValue,
-        maxLength,
-        numeric
-    } from 'vuelidate/lib/validators'
-    import {
-        QBtn,
-        QInnerLoading,
-        QSpinnerDots,
-        QField,
-        QInput,
-        QSelect,
-        QIcon,
-        QTooltip
-    } from 'quasar-framework'
-    import CscObjectSpinner from "../../CscObjectSpinner";
-    export default {
-        name: 'csc-pbx-group-add-form',
-        props: [
-            'huntPolicyOptions',
-            'aliasNumberOptions',
-            'seatOptions',
-            'soundSetOptions',
-            'loading'
-        ],
-        components: {
-            CscObjectSpinner,
-            QBtn,
-            QInnerLoading,
-            QSpinnerDots,
-            QField,
-            QInput,
-            QSelect,
-            QIcon,
-            QTooltip
-        },
-        validations: {
-            data: {
-                name: {
-                    required,
-                    maxLength: maxLength(64)
-                },
-                extension: {
-                    required,
-                    maxLength: maxLength(64),
-                    numeric
-                },
-                huntTimeout: {
-                    required,
-                    numeric,
-                    minValue: minValue(1),
-                    maxValue: maxValue(3600)
-                }
-            }
-        },
-        data () {
-            return {
-                data: this.getDefaults()
-            }
-        },
-        created() {
-            if (this.defaultSoundSet) {
-                this.soundSet = this.defaultSoundSet;
-            }
-        },
-        computed: {
-            groupNameErrorMessage() {
-                if (!this.$v.data.name.required) {
-                    return this.$t('validationErrors.fieldRequired', {
-                        field: this.$t('pbxConfig.groupName')
-                    });
-                }
-                else if (!this.$v.data.name.maxLength) {
-                    return this.$t('validationErrors.maxLength', {
-                        field: this.$t('pbxConfig.groupName'),
-                        maxLength: this.$v.data.name.$params.maxLength.max
-                    });
-                }
-            },
-            extensionErrorMessage() {
-                if (!this.$v.data.extension.required) {
-                    return this.$t('validationErrors.fieldRequired', {
-                        field: this.$t('pbxConfig.extension')
-                    });
-                }
-                else if (!this.$v.data.extension.maxLength) {
-                    return this.$t('validationErrors.maxLength', {
-                        field: this.$t('pbxConfig.extension'),
-                        maxLength: this.$v.data.extension.$params.maxLength.max
-                    });
-                }
-                else if (!this.$v.data.extension.numeric) {
-                    return this.$t('validationErrors.numeric', {
-                        field: this.$t('pbxConfig.extension'),
-                    });
-                }
-            },
-            huntTimeoutErrorMessage() {
-                if (!this.$v.data.huntTimeout.required) {
-                    return this.$t('validationErrors.fieldRequired', {
-                        field: this.$t('pbxConfig.huntTimeoutSentence')
-                    });
-                }
-                else if (!this.$v.data.huntTimeout.numeric) {
-                    return this.$t('validationErrors.numeric', {
-                        field: this.$t('pbxConfig.huntTimeoutSentence'),
-                    });
-                }
-                else if (!this.$v.data.huntTimeout.minValue) {
-                    return this.$t('validationErrors.minValueSecond', {
-                        field: this.$t('pbxConfig.huntTimeoutSentence'),
-                        minValue: this.$v.data.huntTimeout.$params.minValue.min
-                    });
-                }
-                else if (!this.$v.data.huntTimeout.maxValue) {
-                    return this.$t('validationErrors.maxValueSecond', {
-                        field: this.$t('pbxConfig.huntTimeoutSentence'),
-                        maxValue: this.$v.data.huntTimeout.$params.maxValue.max
-                    });
-                }
-            },
-            groupModel() {
-                return {
-                    name: this.data.name,
-                    extension: this.data.extension,
-                    huntPolicy: this.data.huntPolicy,
-                    huntTimeout: this.data.huntTimeout,
-                    aliasNumbers: this.data.aliasNumbers,
-                    seats: this.data.seats,
-                    soundSet: this.data.soundSet
-                }
-            }
-        },
-        methods: {
-            getDefaults() {
-                return {
-                    name: '',
-                    extension: '',
-                    huntPolicy: 'serial',
-                    huntTimeout: 10,
-                    aliasNumbers: [],
-                    seats: [],
-                    soundSet: null
-                }
-            },
-            cancel() {
-                this.$emit('cancel');
-            },
-            save() {
-                this.$emit('save', this.groupModel);
-            },
-            reset() {
-                this.data = this.getDefaults();
-                this.$v.$reset();
-            }
-        }
-    }
+import {
+	required,
+	minValue,
+	maxValue,
+	maxLength,
+	numeric
+} from 'vuelidate/lib/validators'
+import CscObjectSpinner from '../../CscObjectSpinner'
+export default {
+	name: 'CscPbxGroupAddForm',
+	components: {
+		CscObjectSpinner
+	},
+	props: {
+		huntPolicyOptions: {
+			type: Array,
+			default: () => []
+		},
+		aliasNumberOptions: {
+			type: Array,
+			default: () => []
+		},
+		seatOptions: {
+			type: Array,
+			default: () => []
+		},
+		soundSetOptions: {
+			type: Array,
+			default: () => []
+		},
+		loading: {
+			type: Boolean,
+			default: false
+		}
+	},
+	validations: {
+		data: {
+			name: {
+				required,
+				maxLength: maxLength(64)
+			},
+			extension: {
+				required,
+				maxLength: maxLength(64),
+				numeric
+			},
+			huntTimeout: {
+				required,
+				numeric,
+				minValue: minValue(1),
+				maxValue: maxValue(3600)
+			}
+		}
+	},
+	data () {
+		return {
+			data: this.getDefaults()
+		}
+	},
+	computed: {
+		groupNameErrorMessage () {
+			if (!this.$v.data.name.required) {
+				return this.$t('validationErrors.fieldRequired', {
+					field: this.$t('pbxConfig.groupName')
+				})
+			} else if (!this.$v.data.name.maxLength) {
+				return this.$t('validationErrors.maxLength', {
+					field: this.$t('pbxConfig.groupName'),
+					maxLength: this.$v.data.name.$params.maxLength.max
+				})
+			} else {
+				return ''
+			}
+		},
+		extensionErrorMessage () {
+			if (!this.$v.data.extension.required) {
+				return this.$t('validationErrors.fieldRequired', {
+					field: this.$t('pbxConfig.extension')
+				})
+			} else if (!this.$v.data.extension.maxLength) {
+				return this.$t('validationErrors.maxLength', {
+					field: this.$t('pbxConfig.extension'),
+					maxLength: this.$v.data.extension.$params.maxLength.max
+				})
+			} else if (!this.$v.data.extension.numeric) {
+				return this.$t('validationErrors.numeric', {
+					field: this.$t('pbxConfig.extension')
+				})
+			} else {
+				return ''
+			}
+		},
+		huntTimeoutErrorMessage () {
+			if (!this.$v.data.huntTimeout.required) {
+				return this.$t('validationErrors.fieldRequired', {
+					field: this.$t('pbxConfig.huntTimeoutSentence')
+				})
+			} else if (!this.$v.data.huntTimeout.numeric) {
+				return this.$t('validationErrors.numeric', {
+					field: this.$t('pbxConfig.huntTimeoutSentence')
+				})
+			} else if (!this.$v.data.huntTimeout.minValue) {
+				return this.$t('validationErrors.minValueSecond', {
+					field: this.$t('pbxConfig.huntTimeoutSentence'),
+					minValue: this.$v.data.huntTimeout.$params.minValue.min
+				})
+			} else if (!this.$v.data.huntTimeout.maxValue) {
+				return this.$t('validationErrors.maxValueSecond', {
+					field: this.$t('pbxConfig.huntTimeoutSentence'),
+					maxValue: this.$v.data.huntTimeout.$params.maxValue.max
+				})
+			} else {
+				return ''
+			}
+		},
+		groupModel () {
+			return {
+				name: this.data.name,
+				extension: this.data.extension,
+				huntPolicy: this.data.huntPolicy,
+				huntTimeout: this.data.huntTimeout,
+				aliasNumbers: this.data.aliasNumbers,
+				seats: this.data.seats,
+				soundSet: this.data.soundSet
+			}
+		}
+	},
+	created () {
+		if (this.defaultSoundSet) {
+			this.soundSet = this.defaultSoundSet
+		}
+	},
+	methods: {
+		getDefaults () {
+			return {
+				name: '',
+				extension: '',
+				huntPolicy: 'serial',
+				huntTimeout: 10,
+				aliasNumbers: [],
+				seats: [],
+				soundSet: null
+			}
+		},
+		cancel () {
+			this.$emit('cancel')
+		},
+		save () {
+			this.$emit('save', this.groupModel)
+		},
+		reset () {
+			this.data = this.getDefaults()
+			this.$v.$reset()
+		}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/quasar.variables.styl';
     .csc-pbx-group-add-form
         position: relative
     .csc-pbx-group-add-form

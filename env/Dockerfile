@@ -5,16 +5,16 @@ FROM docker.mgm.sipwise.com/sipwise-buster:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2020-06-17
+ENV REFRESHED_AT 2020-08-27
 
 # files that get-code generates
 COPY env/sources.list.d/builddeps.list /etc/apt/sources.list.d/
 COPY env/sources.list.d/preferences /etc/apt/preferences.d/
 
 RUN apt-get update && \
-    apt-get install --assume-yes \
-        npm \
+    apt-get install --assume-yes --no-install-recommends \
         nodejs \
+        yarnpkg \
         && \
     apt-get clean
 

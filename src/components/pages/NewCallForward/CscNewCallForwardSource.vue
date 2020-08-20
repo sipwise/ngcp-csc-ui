@@ -1,104 +1,90 @@
 <template>
-		<div
-			class="row csc-cf-source-cont"
-			v-bind:class="{ 'csc-cf-removed-source': removeInProgress }"
-		>
-			<div class="col text-left col-xs-12 col-md-10 ">
-
-				<div
-					class='csc-cf-source'
-				>
-					{{ source }}
-
-				</div>
-
+	<div
+		class="row csc-cf-source-cont"
+		:class="{ 'csc-cf-removed-source': removeInProgress }"
+	>
+		<div class="col text-left col-xs-12 col-md-10 ">
+			<div
+				class="csc-cf-source"
+			>
+				{{ source }}
 			</div>
-			<div class="col col-xs-12 col-md-2 csc-cf-source-actions">
-				<q-icon
-					name="delete"
-					color="negative"
-					size="24px"
-					@click="deleteSource"
-				/>
-			</div>
+		</div>
+		<div class="col col-xs-12 col-md-2 csc-cf-source-actions">
+			<q-icon
+				name="delete"
+				color="negative"
+				size="24px"
+				@click="deleteSource"
+			/>
+		</div>
 	</div>
-
 </template>
 
 <script>
-	import {
-		mapGetters,
-	} from 'vuex'
-	import {
-		QIcon,
-		QBtn,
-		QPopover,
-		QSlider,
-		QList,
-		QItem,
-		QItemMain,
-		QSpinnerDots
-	} from 'quasar-framework'
-	import CscConfirmDialog from "../../CscConfirmationDialog";
-    export default {
-        name: 'csc-new-call-forward-source',
-        components: {
-			QIcon,
-			QBtn,
-			QPopover,
-			QSlider,
-			QList,
-			QItem,
-			QItemMain,
-			QSpinnerDots,
-			CscConfirmDialog
+import {
+	mapGetters
+} from 'vuex'
+export default {
+	name: 'CscNewCallForwardSource',
+	props: {
+		groupId: {
+			type: String,
+			default: null
 		},
-        props: [
-			'groupId',
-			'groupName',
-            'source',
-			'sourceSetName',
-			'sourceSetId'
-        ],
-		data(){
-			return {
-				removeInProgress: false,
-				toggleNumberForm: true,
-                sources: []
-			}
+		groupName: {
+			type: String,
+			default: ''
 		},
-		computed: {
-			...mapGetters('newCallForward', [
-				'getSourcesesBySourcesetId'
-			]),
+		source: {
+			type: String,
+			default: ''
 		},
-        methods: {
-			async deleteSource(){
-				this.removeInProgress = true;
-				let sources = this.getSourcesesBySourcesetId(this.sourceSetId);
-				sources = sources.filter($source=> $source.source !== this.source);
-				try{
-					this.$store.dispatch('newCallForward/addGroupLoader', this.groupId);
-					await this.$store.dispatch('newCallForward/removeSourceFromSourceset', {
-						id: this.sourceSetId,
-						sources: sources
-					});
-					await this.$store.dispatch('newCallForward/loadSourcesets');
-				}
-				catch(err){
-					console.log(err)
-				}
-				finally{
-					this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId);
-				}
-				this.removeInProgress = false;
-			}
+		sourceSetName: {
+			type: String,
+			default: ''
+		},
+		sourceSetId: {
+			type: String,
+			default: null
 		}
-    }
+	},
+	data () {
+		return {
+			removeInProgress: false,
+			toggleNumberForm: true,
+			sources: []
+		}
+	},
+	computed: {
+		...mapGetters('newCallForward', [
+			'getSourcesesBySourcesetId'
+		])
+	},
+	methods: {
+		async deleteSource () {
+			this.removeInProgress = true
+			let sources = this.getSourcesesBySourcesetId(this.sourceSetId)
+			sources = sources.filter($source => $source.source !== this.source)
+			try {
+				this.$store.dispatch('newCallForward/addGroupLoader', this.groupId)
+				await this.$store.dispatch('newCallForward/removeSourceFromSourceset', {
+					id: this.sourceSetId,
+					sources: sources
+				})
+				await this.$store.dispatch('newCallForward/loadSourcesets')
+			} catch (err) {
+				console.log(err)
+			} finally {
+				this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId)
+			}
+			this.removeInProgress = false
+		}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/app.common.styl'
 	.csc-cf-source-cont
 		width 100%
 		padding 5px

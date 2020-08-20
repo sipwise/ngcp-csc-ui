@@ -1,565 +1,466 @@
 
-'use strict';
-
-import { RequestState } from './common'
+import _ from 'lodash'
 import {
-    getVoiceboxSettings, setVoiceboxDelete,
-    setVoiceboxAttach,
-    setVoiceboxPin,
-    setVoiceboxEmail,
-    uploadGreeting,
-    abortPreviousRequest,
-    getVoiceboxGreetingByType,
-    deleteVoiceboxGreetingById,
-    playGreeting
-} from '../api/voicebox';
-import { i18n } from '../i18n';
+	RequestState
+} from './common'
+import {
+	getVoiceboxSettings,
+	setVoiceboxDelete,
+	setVoiceboxAttach,
+	setVoiceboxPin,
+	setVoiceboxEmail,
+	uploadGreeting,
+	abortPreviousRequest,
+	getVoiceboxGreetingByType,
+	deleteVoiceboxGreetingById,
+	playGreeting
+} from '../api/voicebox'
+import {
+	i18n
+} from 'src/boot/i18n'
+
+const setVoiceboxSettings = {
+	pin: setVoiceboxPin,
+	email: setVoiceboxEmail,
+	attach: setVoiceboxAttach,
+	delete: setVoiceboxDelete
+}
 
 export default {
-    namespaced: true,
-    state: {
-        voiceboxSettingDelete: false,
-        voiceboxSettingAttach: false,
-        voiceboxSettingPin: '',
-        voiceboxSettingEmail: '',
-        loadSettingsState: RequestState.initial,
-        loadSettingsError: null,
-        toggleDeleteState: RequestState.initial,
-        toggleDeleteError: null,
-        toggleAttachState: RequestState.initial,
-        toggleAttachError: null,
-        updatePinState: RequestState.initial,
-        updatePinError: null,
-        updateEmailState: RequestState.initial,
-        updateEmailError: null,
-        uploadBusyGreetingState: RequestState.initial,
-        uploadBusyGreetingError: null,
-        uploadUnavailGreetingState: RequestState.initial,
-        uploadUnavailGreetingError: null,
-        uploadBusyProgress: 0,
-        uploadUnavailProgress: 0,
-        busyGreetingId: null,
-        unavailGreetingId: null,
-        loadBusyGreetingState: RequestState.initial,
-        loadBusyGreetingError: null,
-        loadUnavailGreetingState: RequestState.initial,
-        loadUnavailGreetingError: null,
-        deleteGreetingState: RequestState.initial,
-        deleteGreetingError: null,
-        playBusyGreetingUrl: null,
-        playBusyGreetingState: RequestState.initial,
-        playBusyGreetingError: null,
-        playUnavailGreetingUrl: null,
-        playUnavailGreetingState: RequestState.initial,
-        playUnavailGreetingError: null
-    },
-    getters: {
-        subscriberId(state, getters, rootState, rootGetters) {
-            return parseInt(rootGetters['user/getSubscriberId']);
-        },
-        isSettingsLoaded(state) {
-            return state.loadSettingsState === 'succeeded';
-        },
-        isDeleteRequesting(state) {
-            return state.loadSettingsState === 'requesting' ||
-                state.toggleDeleteState === 'requesting';
-        },
-        isAttachRequesting(state) {
-            return state.loadSettingsState === 'requesting' ||
-                state.toggleAttachState === 'requesting';
-        },
-        isPinRequesting(state) {
-            return state.loadSettingsState === 'requesting' ||
-                state.updatePinState === 'requesting';
-        },
-        isEmailRequesting(state) {
-            return state.loadSettingsState === 'requesting' ||
-                state.updateEmailState === 'requesting';
-        },
-        loadSettingsState(state) {
-            return state.loadSettingsState;
-        },
-        loadSettingsError(state) {
-            return state.loadSettingsError ||
-                i18n.t('voicebox.loadSettingsErrorMessage');
-        },
-        voiceboxDelete(state) {
-            return state.voiceboxSettingDelete;
-        },
-        voiceboxAttach(state) {
-            return state.voiceboxSettingAttach;
-        },
-        voiceboxPin(state) {
-            return state.voiceboxSettingPin;
-        },
-        voiceboxEmail(state) {
-            return state.voiceboxSettingEmail;
-        },
-        deleteLabel(state, getters) {
-            return getters.voiceboxDelete ?
-                i18n.t('voicebox.label.deletionEnabled') :
-                i18n.t('voicebox.label.deletionDisabled');
-        },
-        attachLabel(state, getters) {
-            return  getters.voiceboxAttach ?
-                i18n.t('voicebox.label.attachmentEnabled') :
-                i18n.t('voicebox.label.attachmentDisabled');
-        },
-        voiceboxSettings(state) {
-            return state.voiceboxSettings;
-        },
-        toggleDeleteState(state) {
-            return state.toggleDeleteState;
-        },
-        toggleDeleteError(state) {
-            return state.toggleDeleteError ||
-                i18n.t('voicebox.toggleDeleteErrorMessage');
-        },
-        toggleAttachState(state) {
-            return state.toggleAttachState;
-        },
-        toggleAttachError(state) {
-            return state.toggleAttachError ||
-                i18n.t('voicebox.toggleAttachErrorMessage');
-        },
-        updatePinState(state) {
-            return state.updatePinState;
-        },
-        updatePinError(state) {
-            return state.updatePinError ||
-                i18n.t('voicebox.updatePinErrorMessage');
-        },
-        updateEmailState(state) {
-            return state.updateEmailState;
-        },
-        updateEmailError(state) {
-            return state.updateEmailError ||
-                i18n.t('voicebox.updateEmailErrorMessage');
-        },
-        uploadBusyGreetingState(state) {
-            return state.uploadBusyGreetingState;
-        },
-        uploadBusyGreetingError(state) {
-            return state.uploadBusyGreetingError ||
-                i18n.t('voicebox.uploadGreetingErrorMessage');
-        },
-        uploadUnavailGreetingState(state) {
-            return state.uploadUnavailGreetingState;
-        },
-        uploadUnavailGreetingError(state) {
-            return state.uploadUnavailGreetingError ||
-                i18n.t('voicebox.uploadGreetingErrorMessage');
-        },
-        uploadBusyProgress(state) {
-            return state.uploadBusyProgress;
-        },
-        uploadUnavailProgress(state) {
-            return state.uploadUnavailProgress;
-        },
-        uploadBusyGreetingRequesting(state) {
-            return state.uploadBusyGreetingState === 'requesting';
-        },
-        uploadUnavailGreetingRequesting(state) {
-            return state.uploadUnavailGreetingState === 'requesting';
-        },
-        busyGreetingId(state) {
-            return state.busyGreetingId;
-        },
-        unavailGreetingId(state) {
-            return state.unavailGreetingId;
-        },
-        deleteGreetingState(state) {
-            return state.deleteGreetingState;
-        },
-        deleteGreetingError(state) {
-            return state.deleteGreetingError ||
-                i18n.t('voicebox.deleteGreetingErrorMessage');
-        },
-        busyGreetingLabel(state) {
-            return state.busyGreetingId ? i18n.t('voicebox.label.customSoundActive') :
-                i18n.t('voicebox.label.defaultSoundActive');
-        },
-        unavailGreetingLabel(state) {
-            return state.unavailGreetingId ? i18n.t('voicebox.label.customSoundActive') :
-                i18n.t('voicebox.label.defaultSoundActive')
-        },
-        playBusyGreetingLoaded(state) {
-            return state.playBusyGreetingState === 'succeeded';
-        },
-        playBusyGreetingUrl(state) {
-            return state.playBusyGreetingUrl;
-        },
-        playUnavailGreetingLoaded(state) {
-            return state.playUnavailGreetingState === 'succeeded';
-        },
-        playUnavailGreetingUrl(state) {
-            return state.playUnavailGreetingUrl;
-        }
-    },
-    mutations: {
-        loadedSettings(state, settings) {
-            state.voiceboxSettingDelete = settings.delete;
-            state.voiceboxSettingAttach = settings.attach;
-            state.voiceboxSettingPin = settings.pin;
-            state.voiceboxSettingEmail = settings.email;
-            state.loadSettingsError = null;
-        },
-        loadSettingsRequesting(state) {
-            state.loadSettingsState = RequestState.requesting;
-            state.loadSettingsError = null;
-        },
-        loadSettingsSucceeded(state, settings) {
-            state.loadSettingsState = RequestState.succeeded;
-            state.loadSettingsError = null;
-            state.voiceboxSettingDelete = settings.delete;
-            state.voiceboxSettingAttach = settings.attach;
-            state.voiceboxSettingPin = settings.pin;
-            state.voiceboxSettingEmail = settings.email;
-        },
-        loadSettingsFailed(state, error) {
-            state.loadSettingsState = RequestState.succeeded;
-            state.loadSettingsError = error;
-        },
-        toggleDeleteRequesting(state) {
-            state.toggleDeleteState = RequestState.requesting;
-            state.toggleDeleteError = null;
-        },
-        toggleDeleteSucceeded(state) {
-            state.toggleDeleteState = RequestState.succeeded;
-            state.toggleDeleteError = null;
-        },
-        toggleDeleteFailed(state, error) {
-            state.toggleDeleteState = RequestState.failed;
-            state.toggleDeleteError = error;
-        },
-        toggleAttachRequesting(state) {
-            state.toggleAttachState = RequestState.requesting;
-            state.toggleAttachError = null;
-        },
-        toggleAttachSucceeded(state) {
-            state.toggleAttachState = RequestState.succeeded;
-            state.toggleAttachError = null;
-        },
-        toggleAttachFailed(state, error) {
-            state.toggleAttachState = RequestState.failed;
-            state.toggleAttachError = error;
-        },
-        updatePinRequesting(state) {
-            state.updatePinState = RequestState.requesting;
-            state.updatePinError = null;
-        },
-        updatePinSucceeded(state) {
-            state.updatePinState = RequestState.succeeded;
-            state.updatePinError = null;
-        },
-        updatePinFailed(state, error) {
-            state.updatePinState = RequestState.failed;
-            state.updatePinError = error;
-        },
-        updateEmailRequesting(state) {
-            state.updateEmailState = RequestState.requesting;
-            state.updateEmailError = null;
-        },
-        updateEmailSucceeded(state) {
-            state.updateEmailState = RequestState.succeeded;
-            state.updateEmailError = null;
-        },
-        updateEmailFailed(state, error) {
-            state.updateEmailState = RequestState.failed;
-            state.updateEmailError = error;
-        },
-        uploadUnavailGreetingRequesting(state) {
-            state.uploadUnavailGreetingState = RequestState.requesting;
-            state.uploadUnavailGreetingError = null;
-        },
-        uploadUnavailGreetingSucceeded(state) {
-            state.uploadUnavailGreetingState = RequestState.succeeded;
-            state.uploadUnavailGreetingError = null;
-        },
-        uploadUnavailGreetingFailed(state, error) {
-            state.uploadUnavailGreetingState = RequestState.failed;
-            state.uploadUnavailGreetingError = error;
-        },
-        uploadBusyGreetingRequesting(state) {
-            state.uploadBusyGreetingState = RequestState.requesting;
-            state.uploadBusyGreetingError = null;
-        },
-        uploadBusyGreetingSucceeded(state) {
-            state.uploadBusyGreetingState = RequestState.succeeded;
-            state.uploadBusyGreetingError = null;
-        },
-        uploadBusyGreetingFailed(state, error) {
-            state.uploadBusyGreetingState = RequestState.failed;
-            state.uploadBusyGreetingError = error;
-        },
-        uploadBusyProgress(state, progress) {
-            state.uploadBusyProgress = progress;
-        },
-        uploadUnavailProgress(state, progress) {
-            state.uploadUnavailProgress = progress;
-        },
-        resetBusyProgress(state) {
-            state.uploadBusyProgress = 0;
-        },
-        resetUnavailProgress(state) {
-            state.uploadUnavailProgress = 0;
-        },
-        loadBusyGreetingRequesting(state) {
-            state.busyGreetingId = null,
-            state.loadBusyGreetingState = RequestState.requesting;
-            state.loadBusyGreetingError = null;
-        },
-        loadBusyGreetingSucceeded(state, greetings) {
-            state.playBusyGreetingState = RequestState.initial;
-            if (greetings.length > 0) {
-                state.busyGreetingId = greetings[0].id;
-            }
-            state.loadBusyGreetingState = RequestState.succeeded;
-            state.loadBusyGreetingError = null;
-        },
-        loadBusyGreetingFailed(state, error) {
-            state.loadBusyGreetingState = RequestState.failed;
-            state.loadBusyGreetingError = error;
-        },
-        loadUnavailGreetingRequesting(state) {
-            state.unavailGreetingId = null,
-            state.loadUnavailGreetingState = RequestState.requesting;
-            state.loadUnavailGreetingError = null;
-        },
-        loadUnavailGreetingSucceeded(state, greetings) {
-            state.playUnavailGreetingState = RequestState.initial;
-            if (greetings.length > 0) {
-                state.unavailGreetingId = greetings[0].id;
-            }
-            state.loadUnavailGreetingState = RequestState.succeeded;
-            state.loadUnavailGreetingError = null;
-        },
-        loadUnavailGreetingFailed(state, error) {
-            state.loadUnavailGreetingState = RequestState.failed;
-            state.loadUnavailGreetingError = error;
-        },
-        deleteGreetingRequesting(state) {
-            state.deleteGreetingState = RequestState.requesting;
-            state.deleteGreetingError = null;
-        },
-        deleteGreetingSucceeded(state) {
-            state.deleteGreetingState = RequestState.succeeded;
-            state.deleteGreetingError = null;
-        },
-        deleteGreetingFailed(state, error) {
-            state.deleteGreetingState = RequestState.failed;
-            state.deleteGreetingError = error;
-        },
-        playBusyGreetingRequesting(state) {
-            state.playBusyGreetingState = RequestState.requesting;
-            state.playBusyGreetingError = null;
-        },
-        playBusyGreetingSucceeded(state, url) {
-            state.playBusyGreetingUrl = url;
-            state.playBusyGreetingState = RequestState.succeeded;
-            state.playBusyGreetingError = null;
-        },
-        playBusyGreetingFailed(state, err) {
-            state.playBusyGreetingUrl = null;
-            state.playBusyGreetingState = RequestState.failed;
-            state.playBusyGreetingError = err;
-        },
-        playUnavailGreetingRequesting(state) {
-            state.playUnavailGreetingState = RequestState.requesting;
-            state.playUnavailGreetingError = null;
-        },
-        playUnavailGreetingSucceeded(state, url) {
-            state.playUnavailGreetingUrl = url;
-            state.playUnavailGreetingState = RequestState.succeeded;
-            state.playUnavailGreetingError = null;
-        },
-        playUnavailGreetingFailed(state, err) {
-            state.playUnavailGreetingUrl = null;
-            state.playUnavailGreetingState = RequestState.failed;
-            state.playUnavailGreetingError = err;
-        }
-    },
-    actions: {
-        getVoiceboxSettings(context) {
-            context.commit('loadSettingsRequesting');
-            getVoiceboxSettings(context.getters.subscriberId).then((settings) => {
-                context.commit('loadSettingsSucceeded', settings);
-            }).catch((err) => {
-                context.commit('loadSettingsFailed', err.message);
-            });
-        },
-        toggleDelete(context) {
-            context.commit('toggleDeleteRequesting');
-            setVoiceboxDelete({
-                subscriberId: context.getters.subscriberId,
-                value: !context.getters.voiceboxDelete
-            }).then(() => {
-                return getVoiceboxSettings(context.getters.subscriberId);
-            }).then((settings)=>{
-                context.commit('loadedSettings', settings);
-                context.commit('toggleDeleteSucceeded');
-            }).catch((err) => {
-                context.commit('toggleDeleteFailed', err.message);
-                context.dispatch('getVoiceboxSettings');
-            });
-        },
-        toggleAttach(context) {
-            context.commit('toggleAttachRequesting');
-            setVoiceboxAttach({
-                subscriberId: context.getters.subscriberId,
-                value: !context.getters.voiceboxAttach
-            }).then(() => {
-                return getVoiceboxSettings(context.getters.subscriberId);
-            }).then((settings)=>{
-                context.commit('loadedSettings', settings);
-                context.commit('toggleAttachSucceeded');
-            }).catch((err) => {
-                context.commit('toggleAttachFailed', err.message);
-                context.dispatch('getVoiceboxSettings');
-            });
-        },
-        updatePin(context, value) {
-            context.commit('updatePinRequesting');
-            setVoiceboxPin({
-                subscriberId: context.getters.subscriberId,
-                value: value
-            }).then(() => {
-                return getVoiceboxSettings(context.getters.subscriberId);
-            }).then((settings)=>{
-                context.commit('loadedSettings', settings);
-                context.commit('updatePinSucceeded');
-            }).catch((err) => {
-                context.commit('updatePinFailed', err.message);
-            });
-        },
-        updateEmail(context, value) {
-            context.commit('updateEmailRequesting');
-            setVoiceboxEmail({
-                subscriberId: context.getters.subscriberId,
-                value: value
-            }).then(() => {
-                return getVoiceboxSettings(context.getters.subscriberId);
-            }).then((settings)=>{
-                context.commit('loadedSettings', settings);
-                context.commit('updateEmailSucceeded');
-            }).catch((err) => {
-                context.commit('updateEmailFailed', err.message);
-            });
-        },
-        uploadBusyGreeting(context, $options) {
-            let options = Object.assign($options, {
-                subscriber_id: context.getters.subscriberId,
-                dir: 'busy'
-            });
-            context.commit('uploadBusyGreetingRequesting');
-            uploadGreeting({
-                data: options,
-                onProgress: (progress) => { context.commit('uploadBusyProgress', progress) }
-            }).then(() => {
-                context.commit('loadBusyGreetingRequesting');
-                return getVoiceboxGreetingByType({
-                    id: context.getters.subscriberId,
-                    type: 'busy'
-                })
-            }).then((greetings) => {
-                context.commit('loadBusyGreetingSucceeded', greetings.items);
-                context.commit('uploadBusyGreetingSucceeded');
-            }).catch((err) => {
-                context.commit('uploadBusyGreetingFailed', err.message);
-            });
-        },
-        uploadUnavailGreeting(context, $options) {
-            let options = Object.assign($options, {
-                subscriber_id: context.getters.subscriberId,
-                dir: 'unavail'
-            });
-            context.commit('uploadUnavailGreetingRequesting');
-            uploadGreeting({
-                data: options,
-                onProgress: (progress) => { context.commit('uploadUnavailProgress', progress) }
-            }).then(() => {
-                context.commit('loadUnavailGreetingRequesting');
-                return getVoiceboxGreetingByType({
-                    id: context.getters.subscriberId,
-                    type: 'unavail'
-                })
-            }).then((greetings) => {
-                context.commit('loadUnavailGreetingSucceeded', greetings.items);
-                context.commit('uploadUnavailGreetingSucceeded');
-            }).catch((err) => {
-                context.commit('uploadUnavailGreetingFailed', err.message);
-            });
-        },
-        abortPreviousRequest(context, name) {
-            abortPreviousRequest(name);
-        },
-        loadBusyGreeting(context) {
-            context.commit('loadBusyGreetingRequesting');
-            getVoiceboxGreetingByType({
-                id: context.getters.subscriberId,
-                type: 'busy'
-            }).then((greetings) => {
-                context.commit('loadBusyGreetingSucceeded', greetings.items);
-            }).catch((err) => {
-                context.commit('loadBusyGreetingFailed', err.message);
-            });
-        },
-        loadUnavailGreeting(context) {
-            context.commit('loadUnavailGreetingRequesting');
-            getVoiceboxGreetingByType({
-                id: context.getters.subscriberId,
-                type: 'unavail'
-            }).then((greetings) => {
-                context.commit('loadUnavailGreetingSucceeded', greetings.items);
-            }).catch((err) => {
-                context.commit('loadUnavailGreetingFailed', err.message);
-            });
-        },
-        deleteGreeting(context, options) {
-            context.commit('deleteGreetingRequesting');
-            deleteVoiceboxGreetingById(options.id).then(() => {
-                context.commit('deleteGreetingSucceeded');
-                if (options.type === 'busy') {
-                    context.dispatch('loadBusyGreeting');
-                }
-                else if (options.type === 'unavail') {
-                    context.dispatch('loadUnavailGreeting');
-                }
-            }).catch((err) => {
-                context.commit('deleteGreetingFailed', err.message);
-            });
-        },
-        playBusyGreeting(context, format) {
-            context.commit('playBusyGreetingRequesting');
-            playGreeting({
-                id: context.getters.busyGreetingId,
-                format: format
-            }).then((url) => {
-                context.commit('playBusyGreetingSucceeded', url);
-            }).catch((err) => {
-                context.commit('playBusyGreetingFailed', err.message);
-            });
-        },
-        playUnavailGreeting(context, format) {
-            context.commit('playUnavailGreetingRequesting');
-            playGreeting({
-                id: context.getters.unavailGreetingId,
-                format: format
-            }).then((url) => {
-                context.commit('playUnavailGreetingSucceeded', url);
-            }).catch((err) => {
-                context.commit('playUnavailGreetingFailed', err.message);
-            });
-        },
-        abortUploadBusyGreeting(context) {
-            abortPreviousRequest('busy').then(() => {
-                context.dispatch('loadBusyGreeting');
-            });
-        },
-        abortUploadUnavailGreeting(context) {
-            abortPreviousRequest('unavail').then(() => {
-                context.dispatch('loadUnavailGreeting');
-            });
-        }
-    }
-};
+	namespaced: true,
+	state: {
+		settingsLoadState: RequestState.initial,
+
+		pinValue: '',
+		pinUpdateState: RequestState.initiated,
+		pinUpdateError: null,
+
+		emailValue: '',
+		emailUpdateState: RequestState.initiated,
+		emailUpdateError: null,
+
+		attachValue: false,
+		attachUpdateState: RequestState.initiated,
+		attachUpdateError: null,
+
+		deleteValue: false,
+		deleteUpdateState: RequestState.initiated,
+		deleteUpdateError: null,
+
+		busyGreetingId: null,
+		busyGreetingUrl: null,
+		busyGreetingLoadState: RequestState.initiated,
+		busyGreetingUploadState: RequestState.initiated,
+		busyGreetingUploadError: null,
+		busyGreetingUploadProgress: 0,
+		busyGreetingDeletionState: RequestState.initiated,
+		busyGreetingDeletionError: null,
+
+		unavailableGreetingId: null,
+		unavailableGreetingUrl: null,
+		unavailableGreetingLoadState: RequestState.initiated,
+		unavailableGreetingUploadState: RequestState.initiated,
+		unavailableGreetingUploadError: null,
+		unavailableGreetingUploadProgress: 0,
+		unavailableGreetingDeletionState: RequestState.initiated,
+		unavailableGreetingDeletionError: null
+	},
+	getters: {
+		subscriberId (state, getters, rootState, rootGetters) {
+			return parseInt(rootGetters['user/getSubscriberId'])
+		},
+		settingsLoading (state) {
+			return state.settingsLoadState === RequestState.requesting
+		},
+
+		pinLoading (state, getters) {
+			return getters.settingsLoading || state.pinUpdateState === RequestState.requesting
+		},
+		pinUpdateSucceeded (state) {
+			return state.pinUpdateState === RequestState.succeeded
+		},
+		pinUpdateFailed (state) {
+			return state.pinUpdateState === RequestState.failed
+		},
+
+		emailLoading (state, getters) {
+			return getters.settingsLoading || state.emailUpdateState === RequestState.requesting
+		},
+		emailUpdateSucceeded (state) {
+			return state.emailUpdateState === RequestState.succeeded
+		},
+		emailUpdateFailed (state) {
+			return state.emailUpdateState === RequestState.failed
+		},
+
+		attachLoading (state, getters) {
+			return getters.settingsLoading || state.attachUpdateState === RequestState.requesting
+		},
+		attachLabel (state, getters) {
+			return state.attachValue
+				? i18n.t('voicebox.label.attachmentEnabled')
+				: i18n.t('voicebox.label.attachmentDisabled')
+		},
+
+		deleteLoading (state, getters) {
+			return getters.settingsLoading || state.deleteUpdateState === RequestState.requesting
+		},
+		deleteLabel (state, getters) {
+			return state.deleteValue
+				? i18n.t('voicebox.label.deletionEnabled')
+				: i18n.t('voicebox.label.deletionDisabled')
+		},
+
+		busyGreetingUploading (state) {
+			return state.busyGreetingUploadState === RequestState.requesting
+		},
+		busyGreetingFileLoaded (state) {
+			return state.busyGreetingLoadState === RequestState.succeeded
+		},
+		busyGreetingLabel (state) {
+			return state.busyGreetingId ? i18n.t('voicebox.label.customSoundActive')
+				: i18n.t('voicebox.label.defaultSoundActive')
+		},
+		busyGreetingDeleting (state) {
+			return state.busyGreetingDeletionState === RequestState.requesting
+		},
+
+		unavailableGreetingUploading (state) {
+			return state.unavailableGreetingUploadState === RequestState.requesting
+		},
+		unavailableGreetingFileLoaded (state) {
+			return state.unavailableGreetingLoadState === RequestState.succeeded
+		},
+		unavailableGreetingLabel (state) {
+			return state.unavailableGreetingId ? i18n.t('voicebox.label.customSoundActive')
+				: i18n.t('voicebox.label.defaultSoundActive')
+		},
+		unavailableGreetingDeleting (state) {
+			return state.unavailableGreetingDeletionState === RequestState.requesting
+		}
+	},
+	mutations: {
+		settingsRequesting (state) {
+			state.settingsLoadState = RequestState.requesting
+		},
+		settingsSucceeded (state, res) {
+			state.settingsLoadState = RequestState.succeeded
+			if (_.has(res, 'settings')) {
+				state.pinValue = res.settings.pin
+				state.emailValue = res.settings.email
+				state.attachValue = res.settings.attach
+				state.deleteValue = res.settings.delete
+			}
+			if (_.has(res, 'busyGreetingId') && res.busyGreetingId !== null) {
+				state.busyGreetingId = res.busyGreetingId
+			}
+			if (_.has(res, 'unavailableGreetingId') && res.unavailableGreetingId !== null) {
+				state.unavailableGreetingId = res.unavailableGreetingId
+			}
+		},
+
+		pinInitialize (state) {
+			state.pinUpdateState = RequestState.initiated
+			state.pinUpdateError = null
+		},
+		pinUpdateRequesting (state) {
+			state.pinUpdateState = RequestState.requesting
+			state.pinUpdateError = null
+		},
+		pinUpdateSucceeded (state) {
+			state.pinUpdateState = RequestState.succeeded
+			state.pinUpdateError = null
+		},
+		pinUpdateFailed (state, err) {
+			state.pinUpdateState = RequestState.failed
+			state.pinUpdateError = err
+		},
+
+		emailInitialize (state) {
+			state.emailUpdateState = RequestState.initiated
+			state.emailUpdateError = null
+		},
+		emailUpdateRequesting (state) {
+			state.emailUpdateState = RequestState.requesting
+			state.emailUpdateError = null
+		},
+		emailUpdateSucceeded (state) {
+			state.emailUpdateState = RequestState.succeeded
+			state.emailUpdateError = null
+		},
+		emailUpdateFailed (state, err) {
+			state.emailUpdateState = RequestState.failed
+			state.emailUpdateError = err
+		},
+
+		attachUpdateRequesting (state) {
+			state.attachUpdateState = RequestState.requesting
+			state.attachUpdateError = null
+		},
+		attachUpdateSucceeded (state) {
+			state.attachUpdateState = RequestState.succeeded
+			state.attachUpdateError = null
+		},
+		attachUpdateFailed (state, err) {
+			state.attachUpdateState = RequestState.failed
+			state.attachUpdateError = err
+		},
+
+		deleteUpdateRequesting (state) {
+			state.deleteUpdateState = RequestState.requesting
+			state.deleteUpdateError = null
+		},
+		deleteUpdateSucceeded (state) {
+			state.deleteUpdateState = RequestState.succeeded
+			state.deleteUpdateError = null
+		},
+		deleteUpdateFailed (state, err) {
+			state.deleteUpdateState = RequestState.failed
+			state.deleteUpdateError = err
+		},
+
+		busyGreetingUploadRequesting (state) {
+			state.busyGreetingUploadState = RequestState.requesting
+			state.busyGreetingUploadError = null
+			state.busyGreetingUploadProgress = 0
+		},
+		busyGreetingUploadProgress (state, progress) {
+			state.busyGreetingUploadProgress = progress
+		},
+		busyGreetingUploadSucceeded (state, id) {
+			state.busyGreetingUploadState = RequestState.succeeded
+			state.busyGreetingUploadError = null
+			state.busyGreetingId = id
+		},
+		busyGreetingUploadFailed (state, error) {
+			state.busyGreetingUploadState = RequestState.failed
+			state.busyGreetingUploadError = error
+			state.busyGreetingUploadProgress = 0
+		},
+		busyGreetingPlayRequesting (state) {
+			state.busyGreetingLoadState = RequestState.requesting
+			state.busyGreetingUrl = null
+		},
+		busyGreetingPlaySucceeded (state, url) {
+			state.busyGreetingLoadState = RequestState.succeeded
+			state.busyGreetingUrl = url
+		},
+		busyGreetingPlayFailed (state) {
+			state.busyGreetingLoadState = RequestState.failed
+			state.busyGreetingUrl = null
+		},
+		busyGreetingDeletionRequesting (state) {
+			state.busyGreetingDeletionState = RequestState.requesting
+			state.busyGreetingDeletionError = null
+		},
+		busyGreetingDeletionSucceeded (state) {
+			state.busyGreetingDeletionState = RequestState.succeeded
+			state.busyGreetingDeletionError = null
+			state.busyGreetingId = null
+			state.busyGreetingLoadState = RequestState.initiated
+			state.busyGreetingUrl = null
+		},
+		busyGreetingDeletionFailed (state, error) {
+			state.busyGreetingDeletionState = RequestState.failed
+			state.busyGreetingDeletionError = error
+		},
+
+		unavailableGreetingUploadRequesting (state) {
+			state.unavailableGreetingUploadState = RequestState.requesting
+			state.unavailableGreetingUploadError = null
+			state.unavailableGreetingUploadProgress = 0
+		},
+		unavailableGreetingUploadProgress (state, progress) {
+			state.unavailableGreetingUploadProgress = progress
+		},
+		unavailableGreetingUploadSucceeded (state, id) {
+			state.unavailableGreetingUploadState = RequestState.succeeded
+			state.unavailableGreetingUploadError = null
+			state.unavailableGreetingId = id
+		},
+		unavailableGreetingUploadFailed (state, error) {
+			state.unavailableGreetingUploadState = RequestState.failed
+			state.unavailableGreetingUploadError = error
+			state.unavailableGreetingUploadProgress = 0
+		},
+		unavailableGreetingPlayRequesting (state) {
+			state.unavailableGreetingLoadState = RequestState.requesting
+			state.unavailableGreetingUrl = null
+		},
+		unavailableGreetingPlaySucceeded (state, url) {
+			state.unavailableGreetingLoadState = RequestState.succeeded
+			state.unavailableGreetingUrl = url
+		},
+		unavailableGreetingPlayFailed (state) {
+			state.unavailableGreetingLoadState = RequestState.failed
+			state.unavailableGreetingUrl = null
+		},
+		unavailableGreetingDeletionRequesting (state) {
+			state.unavailableGreetingDeletionState = RequestState.requesting
+			state.unavailableGreetingDeletionError = null
+		},
+		unavailableGreetingDeletionSucceeded (state) {
+			state.unavailableGreetingDeletionState = RequestState.succeeded
+			state.unavailableGreetingDeletionError = null
+			state.unavailableGreetingId = null
+			state.unavailableGreetingLoadState = RequestState.initiated
+			state.unavailableGreetingUrl = null
+		},
+		unavailableGreetingDeletionFailed (state, error) {
+			state.unavailableGreetingDeletionState = RequestState.failed
+			state.unavailableGreetingDeletionError = error
+		}
+	},
+	actions: {
+		async settingsLoadAction (context) {
+			context.commit('settingsRequesting')
+			const res = await Promise.all([
+				getVoiceboxSettings(context.getters.subscriberId),
+				getVoiceboxGreetingByType({
+					id: context.getters.subscriberId,
+					type: 'busy'
+				}),
+				getVoiceboxGreetingByType({
+					id: context.getters.subscriberId,
+					type: 'unavail'
+				})
+			])
+			context.commit('settingsSucceeded', {
+				settings: res[0],
+				busyGreetingId: _.get(res, '1.items.0.id', null),
+				unavailableGreetingId: _.get(res, '2.items.0.id', null)
+			})
+		},
+		async updateAction (context, options) {
+			try {
+				context.commit(options.property + 'UpdateRequesting')
+				await setVoiceboxSettings[options.property]({
+					subscriberId: context.getters.subscriberId,
+					value: options.value
+				})
+				context.commit('settingsSucceeded', {
+					settings: await getVoiceboxSettings(context.getters.subscriberId)
+				})
+				context.commit(options.property + 'UpdateSucceeded')
+			} catch (err) {
+				context.commit(options.property + 'UpdateFailed', err.message)
+			}
+		},
+		async pinUpdateAction (context, pin) {
+			await context.dispatch('updateAction', {
+				property: 'pin',
+				value: pin
+			})
+		},
+		async emailUpdateAction (context, email) {
+			await context.dispatch('updateAction', {
+				property: 'email',
+				value: email
+			})
+		},
+		async attachToggleAction (context, attachValue) {
+			await context.dispatch('updateAction', {
+				property: 'attach',
+				value: attachValue
+			})
+		},
+		async deleteToggleAction (context, deleteValue) {
+			await context.dispatch('updateAction', {
+				property: 'delete',
+				value: deleteValue
+			})
+		},
+		async greetingUpload (context, options) {
+			try {
+				context.commit(options.type + 'GreetingUploadRequesting')
+				await uploadGreeting({
+					data: {
+						subscriber_id: context.getters.subscriberId,
+						dir: options.greeting,
+						file: options.file
+					},
+					onProgress: (progress) => {
+						context.commit(options.type + 'GreetingUploadProgress', progress)
+					}
+				})
+				const greetings = await getVoiceboxGreetingByType({
+					id: context.getters.subscriberId,
+					type: options.greeting
+				})
+				context.commit(options.type + 'GreetingUploadSucceeded', greetings.items[0].id)
+			} catch (err) {
+				context.commit(options.type + 'GreetingUploadFailed', err.message)
+			}
+		},
+		async greetingUploadAbort (context, greeting) {
+			await abortPreviousRequest(greeting)
+		},
+		async greetingPlay (context, options) {
+			try {
+				context.commit(options.type + 'GreetingPlayRequesting')
+				const greetingUrl = await playGreeting({
+					id: options.id,
+					format: options.format
+				})
+				context.commit(options.type + 'GreetingPlaySucceeded', greetingUrl)
+			} catch (err) {
+				context.commit(options.type + 'GreetingPlayFailed', err.message)
+			}
+		},
+		async greetingDelete (context, options) {
+			try {
+				context.commit(options.type + 'GreetingDeletionRequesting')
+				await deleteVoiceboxGreetingById(options.id)
+				context.commit(options.type + 'GreetingDeletionSucceeded')
+			} catch (err) {
+				context.commit(options.type + 'GreetingDeletionFailed', err.message)
+			}
+		},
+		async busyGreetingUpload (context, file) {
+			await context.dispatch('greetingUpload', {
+				type: 'busy',
+				greeting: 'busy',
+				file: file
+			})
+		},
+		async busyGreetingUploadAbort (context) {
+			await context.dispatch('greetingUploadAbort', 'busy')
+		},
+		async busyGreetingPlay (context, format) {
+			await context.dispatch('greetingPlay', {
+				type: 'busy',
+				id: context.state.busyGreetingId,
+				format: format
+			})
+		},
+		async busyGreetingDelete (context) {
+			await context.dispatch('greetingDelete', {
+				type: 'busy',
+				id: context.state.busyGreetingId
+			})
+		},
+		async unavailableGreetingUpload (context, file) {
+			await context.dispatch('greetingUpload', {
+				type: 'unavailable',
+				greeting: 'unavail',
+				file: file
+			})
+		},
+		async unavailableGreetingUploadAbort (context) {
+			await context.dispatch('greetingUploadAbort', 'unavail')
+		},
+		async unavailableGreetingPlay (context, format) {
+			await context.dispatch('greetingPlay', {
+				type: 'unavailable',
+				id: context.state.unavailableGreetingId,
+				format: format
+			})
+		},
+		async unavailableGreetingDelete (context) {
+			await context.dispatch('greetingDelete', {
+				type: 'unavailable',
+				id: context.state.unavailableGreetingId
+			})
+		}
+	}
+}

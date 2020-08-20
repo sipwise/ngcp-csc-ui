@@ -1,4 +1,4 @@
 
-export default function(cost) {
-    return cost / 100;
+export default function (cost) {
+	return cost / 100
 }

@@ -1,273 +1,279 @@
 <template>
-    <div>
-        <q-field
-            class="csc-upload-field"
-            :icon="icon"
-            :label="label"
-        >
-            <div
-                v-if="label"
-                class="row items-end"
-            >
-                <slot
-                    class="col-auto"
-                    name="additional"
-                >
-                </slot>
-                <q-input
-                    class="col-xl col-sm-12"
-                    :disable="isPlaying"
-                    dark
-                    readonly
-                    :value="inputValue"
-                    :after="inputButtons"
-                >
-                </q-input>
-            </div>
-            <q-input
-                v-if="floatLabel"
-                :disable="isPlaying"
-                dark
-                readonly
-                :float-label="floatLabel"
-                :value="inputValue"
-                :after="inputButtons"
-            />
-            <input
-                v-show="false"
-                :accept="fileTypes"
-                ref="fileUpload"
-                type="file"
-                @change="inputChange"
-            />
-            <div
-                v-show="uploading"
-                class="row no-wrap csc-upload-progress-field"
-            >
-                <q-chip
-                    square
-                    color="primary"
-                    class="upload-chip"
-                >
-                    {{ `${progress}%` }}
-                </q-chip>
-                <q-progress
-                    stripe
-                    animate
-                    color="primary"
-                    :percentage="progress"
-                    class="upload-progress"
-                />
-            </div>
-            <csc-audio-player
-                ref="audioPlayer"
-                class="csc-greeting-player"
-                :file-url="fileUrl"
-                :loaded="loaded"
-                :disable="disablePlayer"
-                @load="init"
-                @playing="audioPlayerPlaying"
-                @stopped="audioPlayerStopped"
-            />
-            <div
-                class="csc-file-upload-actions"
-            >
-                <q-btn
-                    v-if="selectedFile != null"
-                    flat
-                    color="default"
-                    icon="clear"
-                    @click="cancel"
-                >
-                    {{ $t('buttons.cancel') }}
-                </q-btn>
-                <q-btn
-                    flat
-                    v-if="selectedFile != null && !uploading"
-                    color="primary"
-                    icon="cloud_upload"
-                    @click="upload"
-                >
-                    {{ $t('buttons.upload') }}
-                </q-btn>
-                <q-btn
-                    :disable="isPlaying"
-                    flat
-                    v-if="uploaded && selectedFile == null"
-                    color="primary"
-                    :icon="removeIcon"
-                    @click="remove"
-                >
-                    {{ removeLabel }}
-                </q-btn>
-            </div>
-        </q-field>
-        <q-inner-loading
-            :visible="updating"
-        >
-            <q-spinner-dots
-                v-if="updating"
-                color="primary"
-                :size="40"
-            />
-        </q-inner-loading>
-    </div>
+	<q-list>
+		<q-item
+			class="no-padding"
+		>
+			<q-item-section>
+				<q-input
+					readonly
+					:value="inputValue"
+					:loading="uploading || updating"
+					:label="label || floatLabel"
+				>
+					<template
+						v-slot:loading
+					>
+						<q-spinner-dots
+							color="primary"
+						/>
+					</template>
+					<template
+						v-slot:prepend
+					>
+						<q-icon
+							:name="icon"
+						/>
+					</template>
+					<template
+						v-slot:append
+					>
+						<q-btn
+							v-if="!uploaded && selectedFile === null"
+							icon="folder"
+							color="primary"
+							flat
+							dense
+							:label="$t('buttons.select')"
+							:disable="isPlaying"
+							@click="$refs.fileUpload.click()"
+						/>
+						<q-btn
+							v-if="uploaded"
+							icon="delete"
+							color="negative"
+							flat
+							dense
+							:label="$t('buttons.remove')"
+							:disable="isPlaying"
+							@click="remove"
+						/>
+						<q-btn
+							v-if="selectedFile !== null && !uploading && !uploaded"
+							icon="undo"
+							color="primary"
+							flat
+							dense
+							:label="$t('buttons.reset')"
+							:disable="isPlaying"
+							@click="cancel"
+						/>
+						<q-btn
+							v-if="selectedFile !== null && !uploading && !uploaded"
+							icon="cloud_upload"
+							color="primary"
+							flat
+							dense
+							:label="$t('buttons.upload')"
+							:disable="isPlaying"
+							@click="upload"
+						/>
+					</template>
+				</q-input>
+				<input
+					v-show="false"
+					ref="fileUpload"
+					:accept="fileTypes"
+					type="file"
+					@change="inputChange"
+				>
+			</q-item-section>
+		</q-item>
+		<q-item
+			v-show="uploading"
+			class="no-padding"
+		>
+			<q-linear-progress
+				stripe
+				animate
+				color="primary"
+				size="24px"
+				:value="progress"
+			>
+				<div
+					class="absolute-full flex flex-center"
+				>
+					<q-badge
+						color="primary"
+						text-color="accent"
+						:label="progress + '%'"
+					/>
+				</div>
+			</q-linear-progress>
+		</q-item>
+		<q-item
+			v-show="uploaded"
+			class="no-padding"
+		>
+			<q-item-section>
+				<csc-audio-player
+					ref="audioPlayer"
+					:file-url="fileUrl"
+					:loaded="loaded"
+					:disable="disablePlayer"
+					@load="init"
+					@playing="audioPlayerPlaying"
+					@stopped="audioPlayerStopped"
+				/>
+			</q-item-section>
+		</q-item>
+	</q-list>
 </template>
 
 <script>
-    import CscAudioPlayer from '../CscAudioPlayer'
-    import {
-        QInput,
-        QField,
-        QBtn,
-        QChip,
-        QProgress,
-        QInnerLoading,
-        QSpinnerDots
-    } from 'quasar-framework'
-    export default {
-        name: 'csc-sound-file-upload',
-        components: {
-            CscAudioPlayer,
-            QInput,
-            QField,
-            QBtn,
-            QChip,
-            QProgress,
-            QInnerLoading,
-            QSpinnerDots
-        },
-        props: [
-            'icon',
-            'label',
-            'value',
-            'uploading',
-            'uploaded',
-            'progress',
-            'fileTypes',
-            'fileUrl',
-            'loaded',
-            'disable',
-            'floatLabel',
-            'deleteTerm',
-            'updating',
-            'stopAll'
-        ],
-        data () {
-            return {
-                selectedFile: null,
-                isPlaying: false
-            }
-        },
-        computed: {
-            disablePlayer() {
-                return (this.selectedFile ? true : false) || !this.uploaded;
-            },
-            inputValue() {
-                if (this.selectedFile === null) {
-                    return this.value;
-                }
-                else {
-                    return this.selectedFile.name;
-                }
-            },
-            inputButtons() {
-                let buttons = [];
-                let self = this;
-                if (this.isPlaying && !this.disable) {
-                    buttons.push({
-                            icon: 'folder',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                            }
-                        }
-                    );
-                }
-                else if (!this.disable) {
-                    buttons.push({
-                            icon: 'folder',
-                            error: false,
-                            handler (event) {
-                                event.stopPropagation();
-                                self.$refs.fileUpload.click();
-                            }
-                        }
-                    );
-                }
-                return buttons;
-            },
-            removeLabel() {
-                if (this.deleteTerm === 'remove') {
-                    return this.$t('buttons.removeFile');
-                }
-                else {
-                    return this.$t('buttons.resetDefaults');
-                }
-            },
-            removeIcon() {
-                if (this.deleteTerm === 'remove') {
-                    return 'delete';
-                }
-                else {
-                    return 'undo';
-                }
-            }
-        },
-        methods: {
-            setPlayingTrue() {
-                this.$refs.audioPlayer.setPlayingTrue();
-                this.isPlaying = true;
-            },
-            setPausedFalse() {
-                this.$refs.audioPlayer.setPausedFalse();
-            },
-            audioPlayerPlaying() {
-                this.isPlaying = true;
-            },
-            audioPlayerStopped() {
-                this.isPlaying = false;
-            },
-            inputChange(event) {
-                this.selectedFile = event.target.files[0];
-            },
-            cancel() {
-                this.selectedFile = null;
-                this.$refs.fileUpload.value = null;
-                if (this.uploading) {
-                    this.abort();
-                }
-            },
-            upload() {
-                this.$emit('upload', this.selectedFile);
-            },
-            abort() {
-                this.$emit('abort');
-            },
-            reset() {
-                this.cancel();
-            },
-            remove() {
-                this.$emit('remove');
-            },
-            init() {
-                this.$emit('init');
-            }
-        },
-        watch: {
-            stopAll(state) {
-                if (state && this.$refs.audioPlayer) {
-                    this.$refs.audioPlayer.stop();
-                    this.audioPlayerStopped();
-                }
-            }
-        }
-    }
+import CscAudioPlayer from '../CscAudioPlayer'
+export default {
+	name: 'CscSoundFileUpload',
+	components: {
+		CscAudioPlayer
+	},
+	props: {
+		icon: {
+			type: String,
+			default: ''
+		},
+		label: {
+			type: String,
+			default: ''
+		},
+		value: {
+			type: String,
+			default: ''
+		},
+		uploading: {
+			type: Boolean,
+			default: false
+		},
+		uploaded: {
+			type: Boolean,
+			default: false
+		},
+		progress: {
+			type: Number,
+			default: 0
+		},
+		fileTypes: {
+			type: String,
+			default: ''
+		},
+		fileUrl: {
+			type: String,
+			default: null
+		},
+		loaded: {
+			type: Boolean,
+			default: false
+		},
+		disable: {
+			type: Boolean,
+			default: false
+		},
+		floatLabel: {
+			type: String,
+			default: ''
+		},
+		deleteTerm: {
+			type: String,
+			default: ''
+		},
+		updating: {
+			type: Boolean,
+			default: false
+		},
+		stopAll: {
+			type: Boolean,
+			default: false
+		}
+	},
+	data () {
+		return {
+			selectedFile: null,
+			isPlaying: false
+		}
+	},
+	computed: {
+		disablePlayer () {
+			return (!!this.selectedFile) || !this.uploaded
+		},
+		inputValue () {
+			if (this.selectedFile === null) {
+				return this.value
+			} else {
+				return this.selectedFile.name
+			}
+		},
+		removeLabel () {
+			if (this.deleteTerm === 'remove') {
+				return this.$t('buttons.removeFile')
+			} else {
+				return this.$t('buttons.resetDefaults')
+			}
+		},
+		removeIcon () {
+			if (this.deleteTerm === 'remove') {
+				return 'delete'
+			} else {
+				return 'undo'
+			}
+		}
+	},
+	watch: {
+		stopAll (state) {
+			if (state && this.$refs.audioPlayer) {
+				this.$refs.audioPlayer.stop()
+				this.audioPlayerStopped()
+			}
+		},
+		uploaded (uploaded) {
+			if (uploaded) {
+				this.reset()
+			}
+		}
+	},
+	methods: {
+		setPlayingTrue () {
+			this.$refs.audioPlayer.setPlayingTrue()
+			this.isPlaying = true
+		},
+		setPausedFalse () {
+			this.$refs.audioPlayer.setPausedFalse()
+		},
+		audioPlayerPlaying () {
+			this.isPlaying = true
+		},
+		audioPlayerStopped () {
+			this.isPlaying = false
+		},
+		inputChange (event) {
+			this.selectedFile = event.target.files[0]
+		},
+		cancel () {
+			this.selectedFile = null
+			this.$refs.fileUpload.value = null
+			if (this.uploading) {
+				this.abort()
+			}
+		},
+		upload () {
+			this.$emit('upload', this.selectedFile)
+		},
+		abort () {
+			this.$emit('abort')
+		},
+		reset () {
+			this.cancel()
+		},
+		remove () {
+			console.log('remove')
+			this.$emit('remove')
+		},
+		init () {
+			this.$emit('init')
+		}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    @import '../../themes/quasar.variables';
-
     .csc-upload-field
         margin-bottom 40px
 

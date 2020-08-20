@@ -1,101 +1,86 @@
-
+s
 <template>
-    <q-field
-        :error-label="errorMessage"
-    >
-        <q-input
-            dark
-            clearable
-            type="text"
-            :float-label="label"
-            v-model="inputValue"
-            @keyup.enter="submit"
-            @keypress.space.prevent
-            @keydown.space.prevent
-            @keyup.space.prevent
-            @input="input"
-            @blur="blur"
-            :error="$v.inputValue.$error"
-            :before="beforeButtons"
-        />
-    </q-field>
+	<q-input
+		v-bind="$attrs"
+		:value="value"
+		:error="$v.inputValue.$error"
+		:error-message="errorMessage"
+		v-on="$listeners"
+		@input="$emit('input', $event)"
+	/>
 </template>
 
 <script>
-    import {
-        QField,
-        QInput
-    } from 'quasar-framework'
-    import { userInfo } from '../../helpers/validation'
-    import {
-        maxLength,
-        required
-    } from 'vuelidate/lib/validators'
+import {
+	userInfo
+} from 'src/helpers/validation'
+import {
+	maxLength,
+	required
+} from 'vuelidate/lib/validators'
 
-    export default {
-        name: 'csc-call-input',
-        props: {
-            label: String,
-            before: Array
-        },
-        data () {
-            return {
-                inputValue: '',
-                error: ''
-            }
-        },
-        validations: {
-            inputValue: {
-                userInfo,
-                maxLength: maxLength(64),
-                required
-            }
-        },
-        components: {
-            QField,
-            QInput
-        },
-        computed: {
-            errorMessage() {
-                if (!this.$v.inputValue.required) {
-                    return this.$t('validationErrors.fieldRequired', {
-                        field: this.label
-                    });
-                }
-                else if (!this.$v.inputValue.maxLength) {
-                    return this.$t('validationErrors.maxLength', {
-                        field: this.label,
-                        maxLength: this.$v.inputValue.$params.maxLength.max
-                    });
-                }
-                else if (!this.$v.inputValue.userInfo) {
-                    return this.$t('validationErrors.inputValidNumber');
-                }
-            },
-            beforeButtons() {
-                return this.before ? this.before : [];
-            }
-        },
-        methods: {
-            submit() {
-                this.$emit('submit');
-            },
-            input() {
-                this.$v.inputValue.$touch();
-                this.error = this.$v.inputValue.$error;
-                this.$emit('input', this.inputValue);
-            },
-            blur() {
-                this.$v.inputValue.$touch();
-                this.error = this.$v.inputValue.$error;
-            }
-        },
-        watch: {
-            error(state) {
-                this.$emit('error', state);
-            }
-        }
-    }
+export default {
+	name: 'CscCallInput',
+	props: {
+		value: {
+			type: String,
+			required: true
+		}
+	},
+	data () {
+		return {
+			inputValue: '',
+			error: ''
+		}
+	},
+	validations: {
+		inputValue: {
+			userInfo,
+			maxLength: maxLength(64),
+			required
+		}
+	},
+	computed: {
+		errorMessage () {
+			if (!this.$v.inputValue.required) {
+				return this.$t('validationErrors.fieldRequired', {
+					field: this.label
+				})
+			} else if (!this.$v.inputValue.maxLength) {
+				return this.$t('validationErrors.maxLength', {
+					field: this.label,
+					maxLength: this.$v.inputValue.$params.maxLength.max
+				})
+			} else if (!this.$v.inputValue.userInfo) {
+				return this.$t('validationErrors.inputValidNumber')
+			} else {
+				return ''
+			}
+		},
+		beforeButtons () {
+			return this.before ? this.before : []
+		}
+	},
+	watch: {
+		error (state) {
+			this.$emit('error', state)
+		}
+	},
+	methods: {
+		submit () {
+			this.$emit('submit')
+		},
+		input () {
+			this.$v.inputValue.$touch()
+			this.error = this.$v.inputValue.$error
+			this.$emit('input', this.inputValue)
+		},
+		blur () {
+			this.$v.inputValue.$touch()
+			this.error = this.$v.inputValue.$error
+		}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

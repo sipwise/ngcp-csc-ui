@@ -1,35 +1,38 @@
 <template>
-    <q-toggle
-        :label="label"
-        @input="toggle()"
-        v-model="toggleState" />
+	<q-toggle
+		v-model="toggleState"
+		:label="label"
+		@input="toggle()"
+	/>
 </template>
 
 <script>
-    import { QToggle } from 'quasar-framework'
-    export default {
-        name: 'csc-toggle',
-        props: [
-            'enabled',
-            'label'
-        ],
-        data () {
-            return {
-                toggleState: this.enabled,
-            }
-        },
-        updated() {
-            this.toggleState = this.enabled;
-        },
-        components: {
-            QToggle
-        },
-        methods: {
-            toggle() {
-                this.$emit('change', this.toggleState);
-            }
-        }
-    }
+export default {
+	name: 'CscToggle',
+	props: {
+		enabled: {
+			type: Boolean,
+			default: false
+		},
+		label: {
+			type: String,
+			default: ''
+		}
+	},
+	data () {
+		return {
+			toggleState: this.enabled
+		}
+	},
+	updated () {
+		this.toggleState = this.enabled
+	},
+	methods: {
+		toggle () {
+			this.$emit('change', this.toggleState)
+		}
+	}
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

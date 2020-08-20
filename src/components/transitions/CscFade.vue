@@ -1,30 +1,26 @@
 <template>
-    <transition
-        appear
-        enter-active-class="animated fadeIn faster"
-        leave-active-class="animated fadeOut faster"
-    >
-        <slot />
-    </transition>
+	<transition
+		appear
+		enter-active-class="animated fadeIn faster"
+		leave-active-class="animated fadeOut faster"
+	>
+		<slot />
+	</transition>
 </template>
 
 <script>
-    export default {
-        name: 'csc-fade',
-        data () {
-            return {}
-        },
-        components: {
-        },
-        computed: {
-        },
-        methods: {
-        },
-        watch: {
-        }
-    }
+export default {
+	name: 'CscFade',
+	components: {
+	},
+	data () {
+		return {}
+	},
+	computed: {
+	},
+	watch: {
+	},
+	methods: {
+	}
+}
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    @import '../../themes/app.common.styl';
-</style>

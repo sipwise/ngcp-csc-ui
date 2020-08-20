@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-buster:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2019-06-27
+ENV REFRESHED_AT 2020-09-16
 ENV DEBIAN_FRONTEND noninteractive
 ENV DISPLAY=:0
 
@@ -13,30 +13,18 @@ ENV DISPLAY=:0
 COPY t/sources.list.d/builddeps.list /etc/apt/sources.list.d/
 COPY t/sources.list.d/preferences /etc/apt/preferences.d/
 
-RUN apt-get update && apt-get install --assume-yes \
-    devscripts \
-    firefox-esr \
-    gtk2-engines-pixbuf \
-    libgconf-2-4 \
-    net-tools \
-    npm \
+RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
     nodejs \
-    wget \
-    xterm \
-    xvfb
-
-RUN wget -q https://deb.sipwise.com/files/google-chrome-stable_59.0.3071.115-1_amd64.deb
-RUN dpkg --force-depends -i google-chrome-stable_59.0.3071.115-1_amd64.deb || true
-RUN apt-get --assume-yes -f install
+    yarnpkg
 
 RUN echo "cd /code && ./t/testrunner" >/root/.bash_history
 
 # we cannot use /code/ here otherwise it will be 'mounted over' with following 'docker run'
 ADD package.json /tmp/
-ADD package-lock.json /tmp/
+ADD yarn.lock /tmp/
 ADD README.md /tmp/
 WORKDIR /tmp
-RUN npm install /tmp
+RUN yarnpkg install
 
 WORKDIR /code
 
