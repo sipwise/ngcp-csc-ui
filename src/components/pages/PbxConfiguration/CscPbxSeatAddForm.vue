@@ -70,6 +70,14 @@
                 :options="soundSetOptions"
             />
         </q-field>
+        <q-field>
+            <q-toggle
+                v-model="data.clirIntrapbx"
+                dense
+                :label="$t('pbxConfig.toggleIntraPbx')"
+                :disable="loading"
+            />
+        </q-field>
         <div class="csc-form-actions row justify-center">
             <q-btn
                 flat
@@ -111,6 +119,7 @@
         QField,
         QInput,
         QSelect,
+        QToggle,
         QIcon,
         QTooltip
     } from 'quasar-framework'
@@ -133,6 +142,7 @@
             QField,
             QInput,
             QSelect,
+            QToggle,
             QIcon,
             QTooltip
         },
@@ -214,7 +224,8 @@
                     webPassword: this.data.webPassword,
                     aliasNumbers: this.data.aliasNumbers,
                     groups: this.data.groups,
-                    soundSet: this.data.soundSet
+                    soundSet: this.data.soundSet,
+                    clirIntrapbx: this.data.clirIntrapbx
                 }
             }
         },
@@ -226,7 +237,8 @@
                     webPassword: '',
                     aliasNumbers: [],
                     groups: [],
-                    soundSet: null
+                    soundSet: null,
+                    clirIntrapbx: false
                 }
             },
             cancel() {

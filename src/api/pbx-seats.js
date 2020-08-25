@@ -7,7 +7,8 @@ import {
     setPbxExtension,
     setPbxWebPassword,
     setPbxGroupIds,
-    setSubscriberNumbers
+    setSubscriberNumbers,
+    setPreferenceIntraPbx
 } from "./subscriber";
 import _ from "lodash";
 import {
@@ -120,6 +121,7 @@ export function createSeat(seat) {
             });
         }).then(($subscriberId)=>{
             subscriberId = $subscriberId;
+            setSeatIntraPbx(subscriberId, seat.clirIntrapbx);
             if(seat.soundSet !== null && seat.soundSet !== void(0)) {
                 return getSoundSet(seat.soundSet);
             }
@@ -210,6 +212,14 @@ export function setSeatWebPassword(options) {
             reject(err);
         });
     });
+}
+
+/**
+ * @param seatId
+ * @param clirIntrapbx
+ */
+export function setSeatIntraPbx(seatId, clirIntrapbx) {
+    return setPreferenceIntraPbx(seatId, clirIntrapbx);
 }
 
 /**

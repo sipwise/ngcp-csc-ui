@@ -310,6 +310,10 @@ export function setPbxGroupIds(id, ids) {
     return setField(id, 'pbx_group_ids', ids);
 }
 
+export function setPreferenceIntraPbx(id, value) {
+    return setPreference(id, 'clir_intrapbx', value);
+}
+
 export function getSubscribers(options) {
     return new Promise((resolve, reject)=>{
         options = options || {};

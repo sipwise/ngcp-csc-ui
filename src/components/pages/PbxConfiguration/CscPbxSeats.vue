@@ -57,6 +57,7 @@
                     :key="seat.id"
                     :odd="(index % 2) === 0"
                     :seat="seat"
+                    :intra-pbx="getIntraPbx(seat.id)"
                     :groups="groupMapById"
                     :expanded="isSeatExpanded(seat.id)"
                     :loading="isSeatLoading(seat.id)"
@@ -74,6 +75,7 @@
                     @save-alias-numbers="setSeatNumbers"
                     @save-groups="setSeatGroups"
                     @save-sound-set="setSeatSoundSet"
+                    @save-intra-pbx="setIntraPbx"
                     @jump-to-call-queue="jumpToCallQueue"
                 />
             </csc-fade>
@@ -193,6 +195,7 @@
                 'isSeatRemoving',
                 'isSeatExpanded',
                 'isSeatLoading',
+                'getIntraPbx',
                 'getSoundSetBySeatId',
                 'getSeatCreatingName',
                 'getSeatUpdatingField',
@@ -213,7 +216,8 @@
                 'setSeatExtension',
                 'setSeatGroups',
                 'setSeatNumbers',
-                'setSeatSoundSet'
+                'setSeatSoundSet',
+                'setIntraPbx'
             ]),
             ...mapMutations('pbxSeats', [
                 'enableSeatAddForm',

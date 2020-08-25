@@ -18,6 +18,7 @@ import {
     setSeatGroups,
     setSeatNumbers,
     setSeatSoundSet,
+    setSeatIntraPbx,
     setSeatWebPassword
 } from "../api/pbx-seats";
 
@@ -88,6 +89,12 @@ export default {
                 }
                 return null;
             }
+        },
+        getIntraPbx(state) {
+            return (id)=>{
+                const seatPreferences = state.preferenceMapById[id];
+                return seatPreferences && seatPreferences.clir_intrapbx ? state.preferenceMapById[id].clir_intrapbx : false;
+            };
         },
         getSeatCreatingName(state) {
             return _.get(state, 'seatCreating.name', '');
@@ -387,6 +394,19 @@ export default {
             }).catch((err)=>{
                 context.commit('seatUpdateFailed', err.message);
             });
+        },
+        async setIntraPbx(context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.t('pbxConfig.intraPbx')
+            });
+            try{
+                const result = await setSeatIntraPbx(options.seatId, options.intraPbx);
+                context.commit('seatUpdateSucceeded', result);
+            }
+            catch(err){
+                context.commit('seatUpdateFailed', err.message);
+            }
         }
     }
 };

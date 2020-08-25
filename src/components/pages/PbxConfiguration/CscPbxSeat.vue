@@ -235,6 +235,16 @@
                 </csc-fade>
             </q-field>
             <q-field
+                :labelWidth="labelWidth"
+                :label="$t('pbxConfig.toggleIntraPbx')"
+                dark
+            >
+                <q-toggle
+                    v-model="changes.clirIntrapbx"
+                    @change="changeIntraPbx"
+                />
+            </q-field>
+            <q-field
                 v-if="hasCallQueue"
                 :labelWidth="labelWidth"
                 label=" "
@@ -268,7 +278,8 @@
         QItemTile,
         QTransition,
         QList,
-        QSlideTransition
+        QSlideTransition,
+        QToggle
     } from 'quasar-framework'
     import CscListItem from "../../CscListItem";
     import CscListItemTitle from "../../CscListItemTitle";
@@ -284,6 +295,7 @@
         name: 'csc-pbx-seat',
         props: [
             'seat',
+            'intraPbx',
             'groups',
             'soundSet',
             'expanded',
@@ -320,6 +332,7 @@
             QItemTile,
             QTransition,
             QList,
+            QToggle,
             CscFormSaveButton,
             CscFormResetButton,
             CscChangePasswordDialog
@@ -370,6 +383,7 @@
                     extension: this.seat.pbx_extension,
                     aliasNumbers: this.getAliasNumberIds(),
                     webPassword: this.seat.webpassword,
+                    clirIntrapbx: this.intraPbx,
                     groups: this.getGroupIds(),
                     soundSet: this.getSoundSetId()
                 };
@@ -458,6 +472,12 @@
                     seatWebPassword: data.password
                 });
                 this.$refs.changePasswordDialog.close();
+            },
+            changeIntraPbx(){
+                this.$emit('save-intra-pbx', {
+                    seatId: this.seat.id,
+                    intraPbx: this.changes.clirIntrapbx
+                });
             }
         },
         watch: {

@@ -577,7 +577,9 @@
         "msConfigCreationToast": "Created manager secretary config for {msConfig} successfully",
         "msConfigUpdateToast": "Updated {field} for manager secretary config {msConfig} successfully",
         "msConfigRemovalToast": "Removed manager secretary config for {msConfig} successfully",
-        "noMsConfigs": "No manager secretary configuration created yet"
+        "noMsConfigs": "No manager secretary configuration created yet",
+        "toggleIntraPbx": "Hide number within own PBX",
+        "intraPbx": "the visibility of the number within own PBX"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",
