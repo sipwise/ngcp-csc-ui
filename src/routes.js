@@ -21,6 +21,7 @@ import PbxConfigurationDevices from './components/pages/PbxConfiguration/CscPbxD
 import PbxConfigurationCallQueues from './components/pages/PbxConfiguration/CscPbxCallQueues'
 import PbxConfigurationSoundSets from './components/pages/PbxConfiguration/CscPbxSoundSets'
 import PbxConfigurationMsConfigs from './components/pages/PbxConfiguration/CscPbxMsConfigs'
+import PbxSettings from './components/pages/PbxSettings/CscPbxSettings'
 import Voicebox from './components/pages/Voicebox/Voicebox';
 import Login from './components/Login'
 import CscUserSettings from './components/pages/CscUserSettings'
@@ -160,6 +161,14 @@ export default [
                 meta: {
                     title: i18n.t('navigation.pbxConfiguration.title'),
                     subtitle: i18n.t('navigation.pbxConfiguration.msConfigs')
+                }
+            },
+            {
+                path: 'pbx-settings',
+                component: PbxSettings,
+                meta: {
+                    title: i18n.t('navigation.pbxSettings.title'),
+                    subtitle: i18n.t('navigation.pbxSettings.subTitle')
                 }
             },
             {

@@ -141,6 +141,7 @@
             :is-call-forward="isCallForward"
             :is-call-blocking="isCallBlocking"
             :is-pbx-admin="isPbxAdmin"
+            :is-pbx-enabled="isPbxEnabled"
             :is-pbx-configuration="isPbxConfiguration"
         />
         <router-view />
@@ -308,6 +309,7 @@
                 'hasUser',
                 'getUsername',
                 'isPbxAdmin',
+                'isPbxEnabled',
                 'hasSmsCapability',
                 'hasFaxCapability',
                 'hasSendSmsFeature',

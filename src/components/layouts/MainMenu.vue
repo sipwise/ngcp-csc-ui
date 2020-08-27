@@ -228,6 +228,18 @@
                 />
             </q-side-link>
         </q-collapsible>
+        <q-side-link
+            item
+            to="/user/pbx-settings"
+            v-if="isPbxEnabled"
+        >
+            <q-item-side
+                icon="build"
+            />
+            <q-item-main
+                :label="$t('navigation.pbxSettings.title')"
+            />
+        </q-side-link>
     </q-list>
 </template>
 
@@ -260,6 +272,7 @@
             'isCallForward',
             'isCallBlocking',
             'isPbxAdmin',
+            'isPbxEnabled',
             'isPbxConfiguration'
         ],
         computed: {

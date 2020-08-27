@@ -109,6 +109,10 @@
             "soundSets": "Sound Sets",
             "msConfigs": "Manager Secretary"
         },
+        "pbxSettings": {
+            "title": "PBX Settings",
+            "subTitle": "Set your PBX settings"
+        },
         "voicebox": {
             "title": "Voicebox",
             "subTitle": "Set your voicebox settings"
@@ -579,6 +583,8 @@
         "msConfigRemovalToast": "Removed manager secretary config for {msConfig} successfully",
         "noMsConfigs": "No manager secretary configuration created yet",
         "toggleIntraPbx": "Hide number within own PBX",
+        "selfPbxVisible": "Your number is visible to the callee within own PBX",
+        "selfPbxHidden": "Your number is hidden to the callee within own PBX",
         "intraPbx": "the visibility of the number within own PBX"
     },
     "callBlocking": {

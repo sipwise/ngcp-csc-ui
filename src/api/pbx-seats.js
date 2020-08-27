@@ -8,7 +8,8 @@ import {
     setPbxWebPassword,
     setPbxGroupIds,
     setSubscriberNumbers,
-    setPreferenceIntraPbx
+    setPreferenceIntraPbx,
+    getPreferences
 } from "./subscriber";
 import _ from "lodash";
 import {
@@ -295,4 +296,16 @@ export function setSeatSoundSet(options) {
             reject(err);
         });
     });
+}
+
+/**
+ * @param seatId
+ */
+export async function getSeatPreferences(seatId) {
+    try {
+        return await getPreferences(seatId);
+    }
+    catch(err){
+        return err;
+    }
 }

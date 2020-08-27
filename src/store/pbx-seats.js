@@ -19,7 +19,8 @@ import {
     setSeatNumbers,
     setSeatSoundSet,
     setSeatIntraPbx,
-    setSeatWebPassword
+    setSeatWebPassword,
+    getSeatPreferences
 } from "../api/pbx-seats";
 
 export default {
@@ -248,6 +249,9 @@ export default {
         }
     },
     actions: {
+        loadPreferences(context, seatId){
+            return getSeatPreferences(seatId);
+        },
         loadSeatListItems(context, options) {
             return new Promise((resolve, reject)=>{
                 let page = _.get(options, 'page', context.state.seatListCurrentPage);
@@ -398,7 +402,7 @@ export default {
         async setIntraPbx(context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('pbxConfig.intraPbx')
+                seatField: options.message || i18n.t('pbxConfig.intraPbx')
             });
             try{
                 const result = await setSeatIntraPbx(options.seatId, options.intraPbx);

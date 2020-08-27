@@ -68,6 +68,9 @@ export default {
         isPbxAdmin(state, getters) {
             return getters.isAdmin && state.capabilities !== null && state.capabilities.cloudpbx;
         },
+        isPbxEnabled(state) {
+            return state.capabilities !== null && state.capabilities.cloudpbx;
+        },
         hasSmsCapability(state) {
             return state.capabilities !== null &&
                 state.capabilities.sms  === true;
