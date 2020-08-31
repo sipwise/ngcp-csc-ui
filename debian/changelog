@@ -1,3 +1,18 @@
+ngcp-csc-ui (9.1.0.0+0~mr9.1.0.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [0646d1c] TT#87464 Fix data availability issue in CscUserMenu component
+
+  [ Carlo Venusino ]
+  * [9c62496] TT#86201 CF: Further requests optimisation
+  * [04b4660] TT#85808 CF: As a Customer, I want to add condition "... and date range is" to forwarding groups
+  * [8a0527d] TT#82507 CF: As a Customer, I want to add condition "... and weekdays are" to forwarding groups
+  * [e5b8339] TT#84209 CSC: As a Customer, I want to filter Conversations by time range
+  * [38e158e] TT#88205 CSC: As a PbxAdmin, I want to toggle visibility of the number towards the callee for each PbxSeat
+  * [86b5147] TT#88206 CSC: As a PbxAdmin, I want to toggle visibility of the number towards the callee for myself
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 31 Aug 2020 21:54:24 +0200
+
 ngcp-csc-ui (9.0.0.0+0~mr9.0.0.0) unstable; urgency=medium
 
   * New release.
