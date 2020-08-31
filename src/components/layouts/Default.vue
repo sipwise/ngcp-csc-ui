@@ -144,6 +144,10 @@
             :is-pbx-enabled="isPbxEnabled"
             :is-pbx-configuration="isPbxConfiguration"
         />
+        <csc-new-features-menu
+            slot="left"
+            :menu-minimized="menuMinimized"
+        />
         <router-view />
         <csc-send-fax
             ref="sendFax"
@@ -217,6 +221,7 @@
         QFab
     } from 'quasar-framework'
     import CscMainMenu from "./MainMenu"
+    import CscNewFeaturesMenu from "./NewFeaturesMenu"
     import CscLanguageMenu from "./CscLanguageMenu"
     import CscUserMenu from "./CscUserMenu"
     import {
@@ -249,6 +254,7 @@
         ],
         components: {
             CscMainMenu,
+            CscNewFeaturesMenu,
             CscLanguageMenu,
             QLayout,
             QToolbar,
@@ -551,6 +557,7 @@
     .page.page-call-active
         padding-bottom 120px
     #main-menu
+    #new-features-menu
         padding 0
         .q-item
             padding-top $flex-gutter-xs * 1.4

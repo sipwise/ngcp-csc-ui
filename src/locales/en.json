@@ -119,6 +119,14 @@
         },
         "conference": {
             "title": "Join conference"
+        },
+        "newFeatures": {
+            "header": {
+                "title": "New features"
+            },
+            "callForward": {
+                "title": "Call Forward"
+            }
         }
     },
     "pages": {

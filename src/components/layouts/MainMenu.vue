@@ -254,6 +254,7 @@
         QItemMain,
         QCollapsible
     } from 'quasar-framework'
+    import router from '../../router'
     export default {
         name: 'csc-main-menu',
         data () {
@@ -279,6 +280,11 @@
             ...mapGetters('user', [
                 'isRtcEngineUiVisible'
             ])
+        },
+        methods: {
+            openNewCallForward () {
+                router.push({path:'/user/new-call-forward'})
+            }
         }
     }
 </script>
