@@ -12,6 +12,17 @@
                 :disable="isSeatListRequesting"
                 @click="enableSeatAddForm"
             />
+            <csc-list-action-button
+                v-if="!showFilters"
+                slot="slot2"
+                icon="fa-filter"
+                color="primary"
+                :label="$t('pbxConfig.seatsFilters')"
+                :disable="isSeatListRequesting"
+                @click="toggleFilters()"
+            >
+                {{$t('pbxConfig.seatsFilters')}}
+            </csc-list-action-button>
         </csc-list-actions>
         <q-slide-transition>
             <div
@@ -29,6 +40,86 @@
                     @cancel="disableSeatAddForm"
                 />
             </div>
+
+            <!-- filters -->
+            <div class="csc-pbx-filters-container row justify-center">
+                <div
+                    class="csc-pbx-filter-fields-container"
+                    v-if="showFilters"
+                >
+                    <div>
+                        <q-field
+                          dark
+                          class="csc-pbx-filters-field"
+                        >
+                            <q-select
+                                dark
+                                v-model="filterType"
+                                :options="filterTypes"
+                                :float-label="$t('pbxConfig.seatsFiltersFilterByLabel')"
+                            />
+
+                        </q-field>
+                        <q-field
+                          v-if="filterType"
+                          dark
+                          class="csc-pbx-filters-field"
+                        >
+                            <q-input
+                                dark
+                                ref="inputFilter"
+                                :clearable="false"
+                                type="text"
+                                :value="typedFilter"
+                                :float-label="$t('pbxConfig.seatsFilterInputLabel')"
+                                @input="inputFilter"
+                                :after="[
+                                    {
+                                        icon: 'search',
+                                        color: 'primary',
+                                        handler () {
+                                          triggerFilter()
+                                        }
+                                    }
+                                ]"
+                            />
+                        </q-field>
+                    </div>
+                    <div
+                      v-if="filterType"
+                      class="csc-pbx-chips-container"
+                      v-for="(filter, item) in filters"
+                      dark
+                    >
+                        <q-chip
+                            closable
+                            @close="removeFilter(filter)"
+                        >
+                            {{ filterType === 'name' ? 'Name: ' + filter : filter }}
+                        </q-chip>
+                    </div>
+                    <div class="csc-pbx-filter-buttons">
+                        <q-btn
+                            flat
+                            icon="clear"
+                            color="white"
+                            @click="closeFilters"
+                        >
+                            {{ $t('pbxConfig.seatsFiltersClose') }}
+                        </q-btn>
+                        <q-btn
+                            flat
+                            icon="fa-filter"
+                            color="red"
+                            @click="emptyFilters"
+                        >
+                            {{$t('pbxConfig.seatsFiltersReset')}}
+                        </q-btn>
+                    </div>
+                </div>
+            </div>
+            <!--  -->
+
         </q-slide-transition>
         <div
             v-if="isSeatListPaginationActive"
@@ -116,9 +207,13 @@
     import {
         QList,
         QBtn,
+        QField,
         QPagination,
         QTransition,
-        QSlideTransition
+        QSlideTransition,
+        QSelect,
+        QInput,
+        QChip
     } from 'quasar-framework'
     import CscSpinner from "../../CscSpinner";
     import {
@@ -142,7 +237,15 @@
             this.loadSeatListItems();
         },
         data () {
-            return {}
+            return {
+                showFilters: false,
+                filterType: null,
+                filterTypes: [
+                    { label: this.$t('pbxConfig.seatsFiltersTypes.name'), value: 'name' },
+                ],
+                typedFilter: null,
+                filters: []
+            }
         },
         components: {
             CscFadeDown,
@@ -151,9 +254,13 @@
             CscFade,
             QList,
             QBtn,
+            QField,
             QPagination,
             QTransition,
             QSlideTransition,
+            QSelect,
+            QInput,
+            QChip,
             CscSpinner,
             CscPage,
             CscPbxSeat,
@@ -249,6 +356,41 @@
                 this.loadSeatListItems({
                     page: page
                 });
+            },
+            toggleFilters() {
+                this.showFilters = !this.showFilters
+            },
+            inputFilter(input) {
+                this.typedFilter = input
+            },
+            closeFilters() {
+                this.showFilters = false
+            },
+            emptyFilters () {
+                this.filterType = null
+                this.typedFilter = null
+                this.filters = []
+                this.$scrollTo(this.$parent.$el)
+                this.loadSeatListItems({
+                    page: 1
+                })
+            },
+            triggerFilter() {
+                this.$scrollTo(this.$parent.$el)
+                this.loadSeatListItems({
+                    page: 1,
+                    display_name: this.typedFilter
+                });
+                this.filters = []
+                this.filters.push(this.typedFilter)
+                this.typedFilter = null
+            },
+            removeFilter(filter){
+                this.filters = this.filters.filter( $filter => $filter !== filter )
+                if(this.filters.length < 1){
+                    this.emptyFilters()
+                }
+
             }
         },
         watch: {
@@ -291,4 +433,20 @@
     .fade-enter, .fade-leave-to {
         opacity: 0;
     }
+    .csc-pbx-filters-container
+        color $secondary
+        margin-bottom 20px
+    .csc-pbx-chips-container
+        margin 20px auto 20px auto
+        text-align center
+    .csc-pbx-filters-field
+        width 250px
+        display inline-block
+        margin-left 10px
+
+    .csc-pbx-filter-fields-container
+        margin-top -15px
+    .csc-pbx-filter-buttons
+        margin-top 15px
+        text-align center
 </style>

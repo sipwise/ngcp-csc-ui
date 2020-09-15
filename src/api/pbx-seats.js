@@ -79,13 +79,17 @@ export function getSeatsOnly(options) {
 export function getSeatList(options) {
     return new Promise((resolve, reject)=>{
         let page = _.get(options, 'page', 1);
+        let display_name = _.get(options, 'display_name', null);
+        let params = {
+            page: page,
+            order_by: PBX_CONFIG_ORDER_BY,
+            order_by_direction: PBX_CONFIG_ORDER_DIRECTION
+        }
         Promise.all([
             getSeats({
-                params: {
-                    page: page,
-                    order_by: PBX_CONFIG_ORDER_BY,
-                    order_by_direction: PBX_CONFIG_ORDER_DIRECTION
-                }
+                params: display_name ? _.merge({
+                    display_name: display_name
+                }, params) : params
             }),
             getGroupsOnly({
                 all: true

@@ -593,7 +593,16 @@
         "toggleIntraPbx": "Hide number within own PBX",
         "selfPbxVisible": "Your number is visible to the callee within own PBX",
         "selfPbxHidden": "Your number is hidden to the callee within own PBX",
-        "intraPbx": "the visibility of the number within own PBX"
+        "intraPbx": "the visibility of the number within own PBX",
+        "seatsFilters": "Filter",
+        "seatsFiltersFilterByLabel": "Filter by",
+        "seatsFiltersTypes": {
+            "name": "Name"
+        },
+        "seatsFiltersSearch": "Search",
+        "seatsFiltersClose": "Close",
+        "seatsFiltersReset": "Reset Filters",
+        "seatsFilterInputLabel": "Type something"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

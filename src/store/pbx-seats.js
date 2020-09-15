@@ -256,11 +256,13 @@ export default {
             return new Promise((resolve, reject)=>{
                 let page = _.get(options, 'page', context.state.seatListCurrentPage);
                 let clearList = _.get(options, 'clearList', true);
+                let display_name = _.get(options, 'display_name', null);
                 context.commit('seatListItemsRequesting', {
                     clearList: clearList
                 });
                 getSeatList({
-                    page: page
+                    page: page,
+                    display_name: display_name
                 }).then((seatList)=>{
                     context.commit('pbx/pilotSucceeded', seatList.pilot, {root:true});
                     context.commit('pbx/numbersSucceeded', seatList.numbers, {root:true});
