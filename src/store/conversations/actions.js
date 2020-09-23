@@ -81,7 +81,7 @@ export default {
 		})
 	},
 	async nextPage (context, options) {
-		let res = { items: [] }
+		let res
 		try {
 			context.commit('nextPageRequesting')
 			res = await getConversations({
@@ -94,7 +94,12 @@ export default {
 		} catch (err) {
 			context.commit('nextPageFailed', err.message)
 		} finally {
-			options.done(res.items.length === 0)
+			console.log(res)
+			if (options.done !== undefined && res.items && res.items.length === 0) {
+				options.done(true)
+			} else if (options.done !== undefined) {
+				options.done()
+			}
 		}
 	},
 	getBlockedNumbersIncoming (context) {

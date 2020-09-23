@@ -64,7 +64,6 @@ export default {
 	},
 	methods: {
 		fileInput (fileList) {
-			console.log(fileList)
 			this.selectedFile = fileList[0]
 		}
 	}

@@ -77,20 +77,16 @@ export default {
 	},
 	resetList (state) {
 		state.items = []
-		state.currentPage = 0
-		state.reachedLastPage = false
 	},
 	nextPageRequesting (state) {
 		state.nextPageState = RequestState.requesting
 		state.nextPageError = null
 	},
-	nextPageSucceeded (state, items) {
+	nextPageSucceeded (state, res) {
 		state.nextPageState = RequestState.succeeded
 		state.nextPageError = null
-		state.items = state.items.concat(items.items)
-		state.reachedLastPage = items.items.length === 0
-		state.currentPage = state.currentPage + 1
-		linkCallsWithSameId(state)
+		state.items = state.items.concat(res.items)
+		state.reachedLastPage = res.items.length === 0
 	},
 	nextPageFailed (state, error) {
 		state.nextPageState = RequestState.failed

@@ -680,12 +680,10 @@ export default {
 			}
 		},
 		loadTimesetTimes (context, options) {
-			console.log(options)
 			loadTimesetTimes({
 				timeset: options.timeset,
 				subscriberId: context.getters.subscriberId
 			}).then((result) => {
-				console.log(result)
 				context.commit('loadTimesSucceeded', result)
 			})
 		},

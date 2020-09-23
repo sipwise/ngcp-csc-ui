@@ -263,7 +263,6 @@ export default {
 			this.cancel()
 		},
 		remove () {
-			console.log('remove')
 			this.$emit('remove')
 		},
 		init () {

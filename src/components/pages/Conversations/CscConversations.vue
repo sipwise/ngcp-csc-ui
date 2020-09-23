@@ -31,6 +31,7 @@
 		</q-page-sticky>
 		<q-infinite-scroll
 			ref="infiniteScroll"
+			:offset="500"
 			@load="loadNextPage"
 		>
 			<template
@@ -48,26 +49,23 @@
 					class="col-sm-12 col-md-8"
 					no-border
 				>
-					<template
+					<csc-conversation-item
 						v-for="(item, index) in items"
-					>
-						<csc-conversation-item
-							:key="item.type + '-' + item.id"
-							:item="item"
-							:class="'q-pa-md csc-item-' + ((index % 2 === 0)?'odd':'even')"
-							:call-available="isCallEnabled"
-							:blocked-incoming="blockedIncoming(item)"
-							:blocked-outgoing="blockedOutgoing(item)"
-							@start-call="startCall"
-							@download-fax="downloadFax"
-							@download-voice-mail="downloadVoiceMail"
-							@play-voice-mail="playVoiceMail"
-							@toggle-block-incoming="toggleBlockIncoming"
-							@toggle-block-outgoing="toggleBlockOutgoing"
-							@toggle-block-both="toggleBlockBoth"
-							@delete-voicemail="$refs.confirmDeletionDialog.open();deletionId=$event.id"
-						/>
-					</template>
+						:key="item.type + '-' + item.id"
+						:item="item"
+						:class="'q-pa-md csc-item-' + ((index % 2 === 0)?'odd':'even')"
+						:call-available="isCallEnabled"
+						:blocked-incoming="blockedIncoming(item)"
+						:blocked-outgoing="blockedOutgoing(item)"
+						@start-call="startCall"
+						@download-fax="downloadFax"
+						@download-voice-mail="downloadVoiceMail"
+						@play-voice-mail="playVoiceMail"
+						@toggle-block-incoming="toggleBlockIncoming"
+						@toggle-block-outgoing="toggleBlockOutgoing"
+						@toggle-block-both="toggleBlockBoth"
+						@delete-voicemail="$refs.confirmDeletionDialog.open();deletionId=$event.id"
+					/>
 				</q-list>
 				<div
 					v-else-if="!isNextPageRequesting && items.length === 0"
@@ -193,7 +191,8 @@
 import platformMixin from '../../../mixins/platform'
 import {
 	mapGetters,
-	mapActions
+	mapActions,
+	mapState
 } from 'vuex'
 import CscPage from '../../CscPage'
 import CscConversationItem from './CscConversationItem'
@@ -242,6 +241,9 @@ export default {
 				}
 			]
 		},
+		...mapState('conversations', [
+			'reachedLastPage'
+		]),
 		...mapGetters('conversations', [
 			'items',
 			'isNextPageRequesting',
@@ -382,10 +384,11 @@ export default {
 		// 	}
 		// }
 	},
-	mounted () {
+	async mounted () {
 		this.topMargin = this.$refs.pageSticky.$el.offsetHeight
-		this.$store.dispatch('conversations/getBlockedNumbers')
-		this.reload()
+		this.$store.commit('conversations/resetList')
+		await this.$store.dispatch('conversations/getBlockedNumbers')
+		this.$refs.infiniteScroll.poll()
 	},
 	methods: {
 		loadNextPage (index, done) {
@@ -400,11 +403,17 @@ export default {
 			})
 		},
 		async selectTab (tabName) {
-			this.selectedTab = tabName
-			this.$store.commit('conversations/resetList')
-			this.$refs.infiniteScroll.reset()
-			this.$refs.infiniteScroll.resume()
-			this.$refs.infiniteScroll.trigger()
+			if (this.selectedTab !== tabName) {
+				this.selectedTab = tabName
+				this.$store.commit('conversations/resetList')
+				this.$refs.infiniteScroll.reset()
+				if (this.reachedLastPage) {
+					this.$refs.infiniteScroll.resume()
+					this.$refs.infiniteScroll.trigger()
+				} else {
+					this.$refs.infiniteScroll.poll()
+				}
+			}
 		},
 		async reload () {
 			this.$store.commit('conversations/resetList')

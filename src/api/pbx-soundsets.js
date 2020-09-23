@@ -214,7 +214,6 @@ export function uploadSoundFile (options) {
 
 export function setLoopPlay (options) {
 	return new Promise((resolve, reject) => {
-		console.log(options)
 		patchReplaceFull({
 			path: 'api/soundfiles/' + options.soundFileId,
 			fieldPath: 'loopplay',
