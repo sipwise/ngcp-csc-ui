@@ -69,7 +69,7 @@
 			<q-pagination
 				:value="deviceListCurrentPage"
 				:max="deviceListLastPage"
-				@change="loadDeviceListItemsFiltered"
+				@input="loadDeviceListItemsFiltered"
 			/>
 		</div>
 		<csc-list-spinner

@@ -25,7 +25,7 @@
 						ref="fileUpload"
 						accept=".wav,.mp3,.ogg"
 						type="file"
-						@change="selectFile"
+						@input="selectFile"
 					>
 					<q-icon
 						v-if="soundFile || selectedFile"

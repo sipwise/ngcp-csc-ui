@@ -23,7 +23,7 @@
 				<q-toggle
 					v-if="forwardGroups.length > 0"
 					v-model="toggleDefaultNumber"
-					@change="toggleChange"
+					@input="toggleChange"
 				/>
 			</div>
 			<div

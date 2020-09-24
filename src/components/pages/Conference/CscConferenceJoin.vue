@@ -19,7 +19,7 @@
 			:value="conferenceIdInput"
 			:placeholder="$t('conferencing.idPlaceholder')"
 			:disable="isJoining || !hasRtcEngineCapabilityEnabled"
-			@change="conferenceIdChanged"
+			@input="conferenceIdChanged"
 		>
 			<template
 				v-slot:prepend

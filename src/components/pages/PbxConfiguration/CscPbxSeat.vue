@@ -201,7 +201,7 @@
 				class="q-pa-sm"
 				:label="$t('pbxConfig.toggleIntraPbx')"
 				:disable="loading"
-				@change="changeIntraPbx"
+				@input="changeIntraPbx"
 			/>
 			<q-btn
 				v-if="hasCallQueue"

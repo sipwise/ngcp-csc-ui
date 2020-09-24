@@ -1,31 +1,32 @@
 
 <template>
 	<csc-page
-		class="csc-simple-page"
+		class="q-pa-lg"
 	>
-		<div
-			class="row"
-		>
-			<div
-				class="col col-xs-12 col-md-12"
-			>
-				<q-toggle
-					v-model="clirIntrapbx"
-					:disabled="isLoading"
-					class="csc-pbx-settings-toggle"
-					:label="clirIntrapbx ? $t('pbxConfig.selfPbxHidden') : $t('pbxConfig.selfPbxVisible')"
-					checked-icon="visibility_off"
-					unchecked-icon="visibility"
-					@change="changeIntraPbx"
-				/>
-				<q-spinner-dots
-					v-if="isLoading"
-					class="csc-pbx-settings-spinner"
-					color="primary"
-					:size="24"
-				/>
-			</div>
-		</div>
+		<q-list>
+			<q-item>
+				<q-item-section
+					side
+				>
+					<q-toggle
+						v-model="clirIntrapbx"
+						:disabled="isLoading"
+						class="csc-pbx-settings-toggle"
+						:label="clirIntrapbx ? $t('pbxConfig.selfPbxHidden') : $t('pbxConfig.selfPbxVisible')"
+						checked-icon="visibility_off"
+						unchecked-icon="visibility"
+						@input="changeIntraPbx"
+					/>
+				</q-item-section>
+				<q-item-section
+					class="text-right"
+				>
+					<csc-spinner
+						v-if="isLoading"
+					/>
+				</q-item-section>
+			</q-item>
+		</q-list>
 	</csc-page>
 </template>
 
@@ -39,8 +40,11 @@ import {
 import {
 	RequestState
 } from 'src/store/common'
+import CscSpinner from 'components/CscSpinner'
+import { getSubscriberId } from 'src/auth'
 export default {
 	components: {
+		CscSpinner,
 		CscPage
 	},
 	data () {
@@ -51,8 +55,7 @@ export default {
 	},
 	async mounted () {
 		this.requestInProgress(true)
-		const subscriberId = localStorage.getItem('subscriberId')
-		const preferences = await this.loadPreferences(subscriberId)
+		const preferences = await this.loadPreferences(getSubscriberId())
 		this.clirIntrapbx = preferences.clir_intrapbx
 		this.requestInProgress(false)
 	},
@@ -90,7 +93,7 @@ export default {
 		changeIntraPbx () {
 			const msg = this.clirIntrapbx ? this.$t('pbxConfig.selfPbxHidden') : this.$t('pbxConfig.selfPbxVisible')
 			this.setIntraPbx({
-				seatId: localStorage.getItem('subscriberId'),
+				seatId: getSubscriberId(),
 				intraPbx: this.clirIntrapbx,
 				message: msg
 			})
@@ -101,12 +104,3 @@ export default {
 	}
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    @import '../../../themes/quasar.variables';
-    .csc-pbx-settings-toggle
-        margin-top 18px
-    .csc-pbx-settings-spinner
-        margin-left 10px
-        padding-top 18px
-</style>

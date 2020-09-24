@@ -79,7 +79,7 @@
 			<q-checkbox
 				:label="$t('pbxConfig.soundSetDefault')"
 				:value="soundSet.contract_default"
-				@change="saveAsDefault"
+				@input="saveAsDefault"
 			/>
 			<csc-list-spinner
 				v-if="soundHandlesLoading || soundFilesLoading"

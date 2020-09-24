@@ -18,6 +18,7 @@ import PbxConfigurationDevices from 'src/components/pages/PbxConfiguration/CscPb
 import PbxConfigurationCallQueues from 'src/components/pages/PbxConfiguration/CscPbxCallQueues'
 import PbxConfigurationSoundSets from 'src/components/pages/PbxConfiguration/CscPbxSoundSets'
 import PbxConfigurationMsConfigs from 'src/components/pages/PbxConfiguration/CscPbxMsConfigs'
+import CscPbxSettings from 'src/components/pages/PbxSettings/CscPbxSettings'
 import Voicebox from 'src/components/pages/Voicebox/CscPageVoicebox'
 import Login from 'src/components/CscPageLogin'
 import CscUserSettings from 'src/components/pages/CscUserSettings'
@@ -176,6 +177,14 @@ export default function routes (app) {
 						title: i18n.t('navigation.userSettings.title'),
 						subtitle: i18n.t('navigation.userSettings.subTitle')
 					}
+				},
+				{
+					path: 'pbx-settings',
+					component: CscPbxSettings,
+					meta: {
+						title: i18n.t('navigation.pbxSettings.title'),
+						subtitle: i18n.t('navigation.pbxSettings.subTitle')
+					}
 				}
 			]
 		},
@@ -221,7 +230,6 @@ export default function routes (app) {
 // 			{ path: '', component: () => import('pages/Index.vue') }
 // 		]
 // 	},
-//
 // 	// Always leave this as last one,
 // 	// but you can also remove it
 // 	{
@@ -229,5 +237,5 @@ export default function routes (app) {
 // 		component: () => import('pages/Error404.vue')
 // 	}
 // ]
-
+//
 // export default routes

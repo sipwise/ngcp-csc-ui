@@ -45,7 +45,8 @@ export default {
 	},
 	computed: {
 		...mapGetters('user', [
-			'isRtcEngineUiVisible'
+			'isRtcEngineUiVisible',
+			'isPbxEnabled'
 		]),
 		items () {
 			return [
@@ -182,6 +183,12 @@ export default {
 							visible: true
 						}
 					]
+				},
+				{
+					to: '/user/pbx-settings',
+					icon: 'settings',
+					label: this.$t('navigation.pbxSettings.title'),
+					visible: this.isPbxEnabled
 				}
 			]
 		}

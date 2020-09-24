@@ -212,7 +212,7 @@
 			<div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
 				<q-toggle
 					v-model="isEnabled"
-					@change="toggleGroupChange"
+					@input="toggleGroupChange"
 				/>
 			</div>
 			<div class="col col-xs-12 col-md-5 csc-cf-group-actions">

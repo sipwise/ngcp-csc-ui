@@ -113,7 +113,7 @@
 			<q-pagination
 				:value="seatListCurrentPage"
 				:max="seatListLastPage"
-				@change="loadSeatListItemsPaginated"
+				@input="loadSeatListItemsPaginated"
 			/>
 		</div>
 		<div

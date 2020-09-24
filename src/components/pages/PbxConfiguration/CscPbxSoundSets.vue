@@ -34,7 +34,7 @@
 			<q-pagination
 				:value="soundSetListCurrentPage"
 				:max="soundSetListLastPage"
-				@change="loadSoundSetListPaginated"
+				@input="loadSoundSetListPaginated"
 			/>
 		</div>
 		<csc-list-spinner

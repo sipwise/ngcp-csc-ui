@@ -40,7 +40,7 @@
 			<q-pagination
 				:value="groupListCurrentPage"
 				:max="groupListLastPage"
-				@change="loadGroupListItemsPaginated"
+				@input="loadGroupListItemsPaginated"
 			/>
 		</div>
 		<csc-list-spinner
