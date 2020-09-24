@@ -14,24 +14,22 @@
 				@click="enableMsConfigAddForm"
 			/>
 		</csc-list-actions>
-		<q-slide-transition>
-			<div
-				v-if="isMsConfigAddFormEnabled"
-				class="row justify-center"
-			>
-				<csc-pbx-ms-config-add-form
-					class="csc-list-form col-xs-12 col-md-6"
-					:loading="isMsConfigCreating"
-					:subscriber-options="getSubscriberOptions"
-					:subscriber-options-loading="isSubscribersRequesting"
-					:number-options="getFullNumberOptions"
-					:numbers-options-loading="isNumbersRequesting"
-					@cancel="disableMsConfigAddForm"
-					@submit="createMsConfig"
-					@ready="addFormReady"
-				/>
-			</div>
-		</q-slide-transition>
+		<div
+			v-if="isMsConfigAddFormEnabled"
+			class="row justify-center q-mb-lg"
+		>
+			<csc-pbx-ms-config-add-form
+				class="csc-list-form col-xs-12 col-md-6"
+				:loading="isMsConfigCreating"
+				:subscriber-options="getSubscriberOptions"
+				:subscriber-options-loading="isSubscribersRequesting"
+				:number-options="getFullNumberOptions"
+				:numbers-options-loading="isNumbersRequesting"
+				@cancel="disableMsConfigAddForm"
+				@submit="createMsConfig"
+				@ready="addFormReady"
+			/>
+		</div>
 		<csc-list-spinner
 			v-if="isMsConfigListRequesting && !msConfigListVisible"
 		/>

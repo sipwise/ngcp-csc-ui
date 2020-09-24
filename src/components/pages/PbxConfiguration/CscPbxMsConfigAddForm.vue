@@ -1,32 +1,26 @@
 <template>
-	<div
-		class="csc-form csc-pbx-ms-config-add-form"
-	>
-		<q-field>
-			<q-select
-				v-model="data.subscriberId"
-				emit-value
-				map-options
-				:disable="loading || subscriberOptionsLoading"
-				:readonly="loading"
-				:stack-label="$t('pbxConfig.msConfigSubscriberSelectionLabel')"
-				:options="subscriberOptions"
-			/>
-		</q-field>
-		<q-field>
-			<q-select
-				v-model="data.secretaryNumbers"
-				multiple
-				chips
-				clearable
-				emit-value
-				map-options
-				:disable="loading || numberOptionsLoading"
-				:readonly="loading"
-				:float-label="$t('pbxConfig.msConfigNumberSelectionLabel')"
-				:options="numberOptions"
-			/>
-		</q-field>
+	<div>
+		<q-select
+			v-model="data.subscriberId"
+			emit-value
+			map-options
+			:disable="loading || subscriberOptionsLoading"
+			:readonly="loading"
+			:label="$t('pbxConfig.msConfigSubscriberSelectionLabel')"
+			:options="subscriberOptions"
+		/>
+		<q-select
+			v-model="data.secretaryNumbers"
+			multiple
+			chips
+			clearable
+			emit-value
+			map-options
+			:disable="loading || numberOptionsLoading"
+			:readonly="loading"
+			:label="$t('pbxConfig.msConfigNumberSelectionLabel')"
+			:options="numberOptions"
+		/>
 		<div
 			class="csc-form-actions row justify-center"
 		>

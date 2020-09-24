@@ -6,10 +6,9 @@
 		<q-header
 			v-model="header"
 			reveal
+			class="bg-secondary"
 		>
-			<q-toolbar
-				class="bg-secondary"
-			>
+			<q-toolbar>
 				<q-btn
 					v-if="isMobile"
 					flat
@@ -71,24 +70,28 @@
 					color="light"
 				/>
 			</q-toolbar>
-			<q-item
-				v-if="!isHome"
-				class="bg-secondary"
+			<q-toolbar
+				v-if="menuMinimized"
+				inset
 			>
-				<q-item-section>
-					<q-item-label
-						class="text-h6"
-					>
-						{{ route.meta.title }}
-					</q-item-label>
-					<q-item-label
-						v-if="route.meta.subtitle"
-						class="text-subtitle2"
-					>
-						{{ route.meta.subtitle }}
-					</q-item-label>
-				</q-item-section>
-			</q-item>
+				<q-item
+					class="bg-secondary q-pa-none"
+				>
+					<q-item-section>
+						<q-item-label
+							class="text-h6"
+						>
+							{{ route.meta.title }}
+						</q-item-label>
+						<q-item-label
+							v-if="route.meta.subtitle"
+							class="text-subtitle2"
+						>
+							{{ route.meta.subtitle }}
+						</q-item-label>
+					</q-item-section>
+				</q-item>
+			</q-toolbar>
 		</q-header>
 		<q-drawer
 			ref="mainMenu"

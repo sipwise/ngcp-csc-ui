@@ -4,7 +4,7 @@
 	>
 		<q-page-sticky
 			ref="pageSticky"
-			class="bg-secondary q-pt-lg"
+			class="bg-secondary q-pt-md"
 			style="z-index: 10"
 			expand
 			position="top"
