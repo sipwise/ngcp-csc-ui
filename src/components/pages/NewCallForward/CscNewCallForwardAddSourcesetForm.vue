@@ -3,14 +3,14 @@
 		v-if="enabled"
 		class="csc-form"
 	>
-		<csc-new-call-forward-input-text
+		<csc-input
 			v-model="name"
 			:label="$t('pages.newCallForward.sourcesetName')"
 			@submit="save"
 			@error="errorName"
 		/>
 
-		<csc-new-call-forward-input
+		<csc-call-input
 			v-model="number"
 			:label="$t('callBlocking.number')"
 			@submit="save"
@@ -18,7 +18,7 @@
 		/>
 
 		<div
-			class="csc-form-actions row justify-center csc-actions-cont"
+			class="row justify-center csc-actions-cont"
 		>
 			<q-btn
 				flat
@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import CscNewCallForwardInput from './CscNewCallForwardInput'
-import CscNewCallForwardInputText from './CscNewCallForwardInputText'
+import CscCallInput from '../../form/CscCallInput'
+import CscInput from '../../form/CscInput'
 import CscSpinner from '../../CscSpinner'
 import {
 	showGlobalError
@@ -62,8 +62,8 @@ import {
 export default {
 	name: 'CscNewCallForwardAddSourcesetForm',
 	components: {
-		CscNewCallForwardInput,
-		CscNewCallForwardInputText,
+		CscCallInput,
+		CscInput,
 		CscSpinner
 	},
 	props: {
@@ -72,7 +72,7 @@ export default {
 			default: ''
 		},
 		groupId: {
-			type: String,
+			type: [String, Number],
 			default: null
 		}
 	},
@@ -112,7 +112,7 @@ export default {
 				return
 			}
 			try {
-				this.close()
+				this.$emit('close')
 				this.$store.dispatch('newCallForward/addGroupLoader', forwardGroupId)
 				sourceSetId = await this.$store.dispatch('newCallForward/createSourceSet', {
 					name: this.name,
@@ -133,7 +133,7 @@ export default {
 			this.number = ''
 			this.name = ''
 			this.enabled = false
-			this.$parent.close()
+			this.$emit('close')
 		},
 		add () {
 			this.number = ''
@@ -142,7 +142,7 @@ export default {
 		},
 		close () {
 			this.enabled = false
-			this.$parent.close()
+			this.$emit('close')
 		},
 		reset () {
 			this.cancel()
@@ -158,6 +158,4 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    .csc-actions-cont
-        margin-bottom 15px
 </style>

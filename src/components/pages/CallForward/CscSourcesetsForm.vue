@@ -33,7 +33,7 @@ export default {
 	name: 'CscSourcesetsForm',
 	props: {
 		sourcesetId: {
-			type: Number,
+			type: [Number, String],
 			default: null
 		}
 	},

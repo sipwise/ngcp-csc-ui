@@ -1,39 +1,39 @@
 <template>
 	<csc-page
-		class="csc-simple-page"
+		class="q-pa-lg"
 	>
 		<div
-			class="csc-cf-row row"
+			class="row q-mb-lg"
 		>
 			<div
 				v-if="groupsCount > 0"
-				class="col col-xs-12 col-md-4 csc-cf-group-title"
+				class="col-xs-4 col-md-4 text-right"
 			>
 				{{ $t('pages.newCallForward.titles.mainTitle', {number: subscriberDisplayName}) }}
 			</div>
 			<div
 				v-else
-				class="col col-xs-12 col-md-4 csc-cf-group-title"
+				class="col-xs-4 col-md-4 text-right"
 			>
 				{{ $t('pages.newCallForward.primarNumberEnabled') }} {{ subscriberDisplayName }}
 			</div>
 			<div
-				class="col col-xs-12 col-md-2 text-left csc-cf-self-number-cont"
+				class="col-xs-2 col-md-2 text-left csc-cf-self-number-cont"
 			>
 				<q-toggle
-					v-if="forwardGroups.length > 0"
+					v-if="groups.length > 0"
 					v-model="toggleDefaultNumber"
 					@input="toggleChange"
 				/>
 			</div>
 			<div
-				class="col col-xs-12 col-md-6"
+				class="col-xs-6 col-md-6"
 			/>
 		</div>
 		<div
-			v-for="forwardGroup in forwardGroups"
+			v-for="forwardGroup in groups"
 			:key="forwardGroup.id"
-			class="csc-cf-row row"
+			class="row q-mb-lg"
 		>
 			<csc-cf-group
 				v-if="!groupInCreation"
@@ -41,49 +41,53 @@
 				:toggle-default-number="toggleDefaultNumber"
 			/>
 		</div>
-		<div class="csc-cf-row row">
+		<div class="row q-mb-md">
 			<div
-				class="column col col-xs-12 col-md-4"
+				class="col-xs-4 col-md-4 text-right"
 			>
 				<q-spinner-dots
 					v-if="groupsLoading"
-					class="csc-call-spinner"
+					class="q-ml-auto"
 					color="primary"
 					:size="24"
 				/>
 			</div>
 		</div>
-		<div class="csc-cf-row row">
+		<div
+			v-if="!groupsLoading"
+			class="row q-mb-lg"
+		>
 			<div
-				class="column col col-xs-12 col-md-4 items-end"
+				v-if="!groupsLoading"
+				class="col-xs-4 col-md-4"
 			>
-				<div
-					class="csc-text-action"
+				<q-btn
+					flat
+					color="primary"
+					class="csc-cf-add-forwarding-btn"
 				>
 					<q-icon
 						name="add"
-						color="primary"
 						size="24px"
 					/>
 					{{ $t('pages.newCallForward.forwardBtnLabel') }}
-
-					<q-spinner-dots
-						v-if="groupInCreation"
-						color="primary"
-						:size="24"
-					/>
-
 					<q-menu
 						ref="destsetTypeForm"
+						:auto-close="true"
 						class="cf-popover-bottom"
-						@open="resetSelectFwdGroup()"
-						@close="addForwardGroup()"
+						@show="resetSelectFwdGroup()"
+						@hide="addForwardGroup()"
 					>
 						<csc-new-call-forward-destinationset-type-select
 							ref="destsetTypeForm"
 						/>
 					</q-menu>
-				</div>
+				</q-btn>
+				<q-spinner-dots
+					v-if="groupInCreation"
+					color="primary"
+					:size="24"
+				/>
 			</div>
 		</div>
 	</csc-page>
@@ -107,8 +111,11 @@ export default {
 	},
 	data () {
 		return {
+			groups: [],
+			// TODO move to store
 			groupInCreation: false,
 			groupsLoading: false,
+			//
 			toggleDefaultNumber: true
 		}
 	},
@@ -119,13 +126,18 @@ export default {
 			'selectedDestType'
 		]),
 		groupsCount () {
-			return this.forwardGroups.length
+			return this.groups.length
+		}
+	},
+	watch: {
+		forwardGroups () {
+			this.groups = this.forwardGroups
 		}
 	},
 	async mounted () {
 		this.groupsLoading = true
 		this.$store.dispatch('newCallForward/loadMappings')
-		// here we need to wait for the groups to be available in client
+		// waits for the groups to be available
 		await this.$store.dispatch('newCallForward/loadForwardGroups')
 		const unconditionalGroups = await this.$store.dispatch('newCallForward/getForwardGroupByName', 'unconditional')
 		this.toggleDefaultNumber = !unconditionalGroups
@@ -137,10 +149,9 @@ export default {
 		async addForwardGroup () {
 			this.groupInCreation = true
 			const selectedDestType = this.selectedDestType
-			const tempGroups = this.forwardGroups.filter(($group) => {
+			const tempGroups = this.groups.filter(($group) => {
 				return $group.id.toString().indexOf('temp-') > -1
 			})
-
 			if (tempGroups.length > 0) {
 				showGlobalWarning(`${this.$t('pages.newCallForward.addDestinationAlert')}`, 5000)
 			} else {
@@ -181,10 +192,6 @@ export default {
 			}
 			this.groupInCreation = false
 		},
-		showForm () {
-			this.$refs.destinationType.close()
-			this.$refs.addDestinationForm.add()
-		},
 		toggleChange () {
 			this.groupInCreation = true
 			this.$store.dispatch('newCallForward/forwardAllCalls', !this.toggleDefaultNumber)
@@ -198,17 +205,8 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    .csc-cf-flat-btn
-        color $primary
-        float right
-    .csc-cf-group-title
-        text-align right
-    .csc-cf-destinations-cont
-        margin-top 25px
-    .csc-cf-field-toggle
-        margin-top 0px
-    .csc-call-spinner
-        margin-left auto
+		.csc-cf-add-forwarding-btn
+				float right
     .csc-cf-self-number-cont
         padding-left 30px
         width 150px
@@ -218,5 +216,7 @@ export default {
     .cf-popover-bottom
         min-width 150px
         margin-left 5px
+		.csc-actions-cont
+				margin-top 10px
 
 </style>

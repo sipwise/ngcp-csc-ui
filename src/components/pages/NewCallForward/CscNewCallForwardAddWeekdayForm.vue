@@ -16,7 +16,7 @@
 			/>
 		</div>
 		<div
-			class="csc-form-actions row justify-center csc-actions-cont"
+			class="row justify-center csc-actions-cont"
 		>
 			<q-btn
 				class="day-btn"
@@ -76,7 +76,7 @@
 			</q-btn>
 		</div>
 		<div
-			class="csc-form-actions row justify-center csc-actions-cont"
+			class="row justify-center csc-actions-cont"
 		>
 			<q-btn
 				:disabled="weekdays.length < 1"
@@ -130,7 +130,7 @@ export default {
 			default: ''
 		},
 		groupId: {
-			type: String,
+			type: [String, Number],
 			default: null
 		},
 		id: {
@@ -180,7 +180,7 @@ export default {
 						this.timeSetId = await this.$store.dispatch('newCallForward/createTimeSet', this.timesetName)
 					}
 
-					this.$store.dispatch('newCallForward/addTimesetToGroup', {
+					await this.$store.dispatch('newCallForward/addTimesetToGroup', {
 						name: this.groupName,
 						groupId: this.groupId,
 						timeSetId: this.timeSetId
@@ -208,7 +208,7 @@ export default {
 			this.close()
 		},
 		close () {
-			this.$parent.close()
+			this.$emit('close')
 			this.enabled = false
 		},
 		add () {
@@ -237,14 +237,12 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    .csc-actions-cont
-        margin-bottom 15px
-        .day-btn
-            margin 5px
-            background rgba(37,51,85,0.8)
-            width 35px
-        .day-selected-btn
-            background $primary
+    .day-btn
+        margin 5px
+        background rgba(37,51,85,0.8)
+        width 35px
+    .day-selected-btn
+        background $primary
     .csc-cf-delete-weekdays-btn
         float right
         margin-top -10px

@@ -21,7 +21,9 @@ import {
 	deleteTimesetById
 } from '../api/call-forward'
 import { getSubscriberId } from 'src/auth'
-
+import {
+	randInRange
+} from 'src/helpers/math-helper'
 const ForwardGroup = {
 	unconditional: {
 		name: 'csc-unconditional',
@@ -58,7 +60,8 @@ export default {
 		forwardGroups: [],
 		groupsLoaders: [],
 		selectedDestType: null,
-		firstDestinationInCreation: null
+		firstDestinationInCreation: null,
+		selectedDestinationType: null
 	},
 	getters: {
 		getGroupsLoaders (state) {
@@ -141,9 +144,21 @@ export default {
 		},
 		getTimesets (state) {
 			return state.timeSets
+		},
+		getSelectedDestType (state) {
+			return state.selectedDestType
+		},
+		getSelectedDestinationType (state) {
+			return state.selectedDestinationType
 		}
 	},
 	mutations: {
+		addGroup (state, data) {
+			state.forwardGroups.push(data)
+		},
+		addFirstGroup (state, data) {
+			state.forwardGroups.unshift(data)
+		},
 		addDestination (state, forwardGroupId, destination) {
 			const group = state.forwardGroups.find((group) => {
 				return group.id === forwardGroupId
@@ -188,12 +203,18 @@ export default {
 				return group.id === data.groupId
 			})
 			group.destinations = data.destinations
+			for (const destination of group.destinations) {
+				destination.display_id = randInRange(100000, 999999)
+			}
 		},
 		setMappings (state, mappings) {
 			state.mappings = mappings
 		},
 		setSelectedDestType (state, destType) {
 			state.selectedDestType = destType
+		},
+		setSelectedDestinationType (state, type) {
+			state.selectedDestinationType = type
 		},
 		setSourceSets (state, sourceSets) {
 			state.sourceSets = sourceSets
@@ -257,7 +278,7 @@ export default {
 				const subscriberId = getSubscriberId()
 				const groupMappingId = ForwardGroup[data.name] ? ForwardGroup[data.name].mapping : await context.dispatch('getMappingIdByGroupName', data.name)
 				const allMappings = context.getters.getMappings
-				const groupMappings = allMappings[groupMappingId]
+				const groupMappings = _.cloneDeep(allMappings[groupMappingId])
 				if (data.replaceMapping) {
 					for (const mapping of groupMappings) {
 						if (mapping.destinationset_id === data.groupId) {
@@ -286,7 +307,6 @@ export default {
 		async addForwardGroup (context, data) {
 			try {
 				const newForwardGroupId = await addNewDestinationsetWithName(ForwardGroup[data.name] ? ForwardGroup[data.name].name : data.name)
-
 				const destination = {
 					announcement_id: null,
 					simple_destination: data.destination || ' ',
@@ -298,7 +318,6 @@ export default {
 					name: data.name,
 					groupId: newForwardGroupId
 				})
-
 				await addDestinationToDestinationset({
 					id: newForwardGroupId,
 					data: [destination]
@@ -350,9 +369,9 @@ export default {
 				}]
 			}
 			if (groupName.includes('timeout') || groupName.includes('unconditional')) {
-				context.state.forwardGroups.unshift(data)
+				context.commit('addFirstGroup', data)
 			} else {
-				context.state.forwardGroups.push(data)
+				context.commit('addGroup', data)
 			}
 		},
 		async addDestination (context, data) {
@@ -589,13 +608,14 @@ export default {
 					const subscriberId = getSubscriberId()
 					const mappingId = await context.dispatch('getMappingIdByGroupName', data.groupName)
 					const groupMappings = await context.state.mappings[mappingId]
-					for (const group of groupMappings) {
+					const clonedGroupMappings = _.cloneDeep(groupMappings)
+					for (const group of clonedGroupMappings) {
 						if (group.destinationset_id === data.id) {
 							group.enabled = data.enabled
 						}
 					}
 					const updatedMappings = await addNewMapping({
-						mappings: groupMappings,
+						mappings: clonedGroupMappings,
 						group: mappingId,
 						subscriberId: subscriberId
 					})
@@ -668,7 +688,6 @@ export default {
 		},
 		async createTimeSet (context, timesetName) {
 			try {
-				// const subscriberId = getSubscriberId();
 				const timesetId = await addNewTimeset(timesetName)
 				return timesetId
 			} catch (err) {
@@ -716,6 +735,9 @@ export default {
 			} catch (err) {
 				console.log(err)
 			}
+		},
+		setSelectedDestinationType (context, type) {
+			context.commit('setSelectedDestinationType', type)
 		}
 	}
 }

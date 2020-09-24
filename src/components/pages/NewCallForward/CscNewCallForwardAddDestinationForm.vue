@@ -3,15 +3,14 @@
 		v-if="enabled"
 		class="csc-form"
 	>
-		<csc-new-call-forward-input
+		<csc-input
 			v-model="number"
 			:label="$t('callBlocking.number')"
-			:prefilled="destination"
 			@submit="save"
 			@error="error"
 		/>
 		<div
-			class="csc-form-actions row justify-center csc-actions-cont"
+			class="row justify-center csc-actions-cont"
 		>
 			<q-btn
 				flat
@@ -42,7 +41,7 @@
 </template>
 
 <script>
-import CscNewCallForwardInput from './CscNewCallForwardInput'
+import CscInput from '../../form/CscInput'
 import CscSpinner from '../../CscSpinner'
 import {
 	showGlobalError
@@ -54,12 +53,12 @@ import {
 export default {
 	name: 'CscNewCallForwardAddDestinationForm',
 	components: {
-		CscNewCallForwardInput,
+		CscInput,
 		CscSpinner
 	},
 	props: {
 		destination: {
-			type: Object,
+			type: String,
 			default: null
 		},
 		index: {
@@ -79,7 +78,7 @@ export default {
 			default: ''
 		},
 		groupId: {
-			type: String,
+			type: [String, Number],
 			default: null
 		},
 		firstDestinationInCreation: {
@@ -105,6 +104,9 @@ export default {
 			return this.numberError || this.disable || this.loading
 		}
 	},
+	mounted () {
+		this.number = this.destination
+	},
 	updated () {
 		if (Number.isInteger(this.index)) {
 			this.destinationIndex = this.index
@@ -126,14 +128,11 @@ export default {
 				})
 			} else {
 				if (forwardGroup.id.toString().includes('temp-')) { // unexisting group
-					forwardGroup.destinations[0].simple_destination = this.number // optimistic UI update :)
 					const newGroupId = await this.$store.dispatch('newCallForward/addForwardGroup', {
 						name: forwardGroupName,
 						destination: this.number
 					})
-
 					await this.$store.dispatch('newCallForward/loadForwardGroups')
-
 					if (this.destinationIndex === 0 && this.firstDestinationInCreation) {
 						await this.$store.dispatch('newCallForward/setFirstDestinationInCreation', newGroupId)
 					}
@@ -148,17 +147,13 @@ export default {
 			this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId)
 		},
 		cancel () {
-			this.number = ''
 			this.enabled = false
-			this.$parent.close()
 		},
 		add () {
-			this.number = ''
 			this.enabled = true
 		},
 		close () {
 			this.enabled = false
-			this.$parent.close()
 		},
 		reset () {
 			this.cancel()
@@ -171,6 +166,4 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    .csc-actions-cont
-        margin-bottom 15px
 </style>

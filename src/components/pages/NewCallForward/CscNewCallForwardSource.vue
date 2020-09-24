@@ -3,14 +3,14 @@
 		class="row csc-cf-source-cont"
 		:class="{ 'csc-cf-removed-source': removeInProgress }"
 	>
-		<div class="col text-left col-xs-12 col-md-10 ">
+		<div class="col text-left col-xs-10 col-md-10 ">
 			<div
 				class="csc-cf-source"
 			>
 				{{ source }}
 			</div>
 		</div>
-		<div class="col col-xs-12 col-md-2 csc-cf-source-actions">
+		<div class="col col-xs-2 col-md-2 csc-cf-source-actions">
 			<q-icon
 				name="delete"
 				color="negative"
@@ -29,7 +29,7 @@ export default {
 	name: 'CscNewCallForwardSource',
 	props: {
 		groupId: {
-			type: String,
+			type: [String, Number],
 			default: null
 		},
 		groupName: {
@@ -45,7 +45,7 @@ export default {
 			default: ''
 		},
 		sourceSetId: {
-			type: String,
+			type: [String, Number],
 			default: null
 		}
 	},
@@ -92,9 +92,6 @@ export default {
 		white-space nowrap
 		overflow hidden
 		text-overflow ellipsis
-	.csc-cf-number-form
-		padding 0 20px 0 20px
-		min-width 120px
 	.csc-cf-source-actions
 		text-align left
 		cursor pointer

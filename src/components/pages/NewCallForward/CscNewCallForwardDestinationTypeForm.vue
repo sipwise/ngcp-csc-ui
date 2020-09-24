@@ -4,13 +4,13 @@
 	>
 		<div
 			class="csc-cf-dest-type"
-			@click="showNumberForm()"
+			@click="setSelectedDestinationType('destination')"
 		>
 			{{ $t('pages.newCallForward.numberLabel') }}
 		</div>
 		<div
 			class="csc-cf-dest-type"
-			@click="addVoiceMail()"
+			@click="setSelectedDestinationType('voicemail')"
 		>
 			{{ $t('pages.newCallForward.voiceMailLabel') }}
 		</div>
@@ -18,23 +18,23 @@
 </template>
 
 <script>
+import {
+	mapActions
+} from 'vuex'
 export default {
 	name: 'CscNewCallForwardDestinationTypeForm',
 	data () {
 		return {
-			enabled: false,
-			action: null
+			enabled: false
 		}
 	},
+	mounted () {
+		this.setSelectedDestinationType(null)
+	},
 	methods: {
-		showNumberForm () {
-			this.action = 'destination'
-			this.$parent.close()
-		},
-		addVoiceMail () {
-			this.action = 'voicemail'
-			this.$parent.close()
-		},
+		...mapActions('newCallForward', [
+			'setSelectedDestinationType'
+		]),
 		cancel () {
 			this.enabled = false
 		},

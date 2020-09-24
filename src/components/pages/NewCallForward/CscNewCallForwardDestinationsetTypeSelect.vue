@@ -47,19 +47,15 @@ export default {
 	methods: {
 		async addDestinationsetUnconditional () {
 			await this.$store.dispatch('newCallForward/setSelectedDestType', 'unconditional')
-			this.$parent.close()
 		},
 		async addDestinationsetUnconditionalFrom () {
 			await this.$store.dispatch('newCallForward/setSelectedDestType', 'unconditional-from')
-			this.$parent.close()
 		},
 		async addDestinationsetOffline () {
 			await this.$store.dispatch('newCallForward/setSelectedDestType', 'offline')
-			this.$parent.close()
 		},
 		async addDestinationsetBusy () {
 			await this.$store.dispatch('newCallForward/setSelectedDestType', 'busy')
-			this.$parent.close()
 		},
 
 		cancel () {

@@ -4,10 +4,10 @@
 		class="csc-cf-group"
 	>
 		<div
-			class="row csc-cf-destination-cont"
+			class="row csc-cf-destination-cont csc-cf-group-header"
 		>
 			<div
-				class="col col-xs-12 col-md-4 text-right csc-cf-group-title-bold"
+				class="col-xs-4 col-md-4 text-right csc-cf-group-title-bold"
 			>
 				{{ groupTitle }}
 				<span
@@ -17,19 +17,21 @@
 					<span class="csc-cf-from-link">
 						{{ $t('pages.newCallForward.fromLabelShort') +'"'+ groupSourceset +'"' }}
 					</span>
-					<q-popover
+					<q-menu
 						ref="sourcesList"
-						class="csc-cf-number-form"
-						@open="showSources()"
+						:target="$refs.target"
+						@show="showSources()"
 					>
 						<csc-new-call-forward-edit-sources
 							ref="editSources"
+							class="q-pa-md"
 							:source-set-name="groupSourceset"
 							:source-set-id="sourceSet.id"
 							:group-name="group.name"
 							:group-id="group.id"
+							@close="()=>{this.$refs.sourcesList.hide}"
 						/>
-					</q-popover>
+					</q-menu>
 
 				</span>
 				<span
@@ -39,18 +41,35 @@
 					<span class="csc-cf-from-link">
 						{{ $t('pages.newCallForward.dateIsShort') + groupTimeset }}
 					</span>
-					<q-popover
-						ref="day"
-						class="csc-cf-popover-top-valign"
-						@open="showQDate()"
+					<q-menu
+						ref="dayWidget"
 					>
-						<q-datetime
-							ref="dayWidget"
+						<q-date
 							v-model="dayModel"
-							clear-label="REMOVE"
-							:min="today"
-						/>
-					</q-popover>
+							:options="minDate"
+							:no-unset="true"
+						>
+							<div class="row items-center justify-end q-gutter-sm">
+								<q-btn
+									v-close-popup
+									flat
+									color="primary"
+									icon="clear"
+								>
+									{{ $t('buttons.close') }}
+								</q-btn>
+								<q-btn
+									v-close-popup
+									flat
+									color="red"
+									icon="delete"
+									@click="showConfirmDeleteTimesetDialog"
+								>
+									{{ $t('buttons.remove') }}
+								</q-btn>
+							</div>
+						</q-date>
+					</q-menu>
 					<csc-confirm-dialog
 						ref="confirmDeleteTimesetDialog"
 						title-icon="delete"
@@ -69,28 +88,28 @@
 						class="csc-cf-from-link"
 					>
 						{{ $t('pages.newCallForward.dateRangeShort') + groupTimeRange }}
+						<q-menu
+							ref="daterange"
+							@hide="resetAction()"
+						>
+							<csc-new-call-forward-date-range
+								ref="dateRangePopover"
+								class="q-pa-md"
+								:group-name="group.name"
+								:group-id="group.id"
+								:group-time-range="groupTimeRangeObj"
+								@confirm-delete="showConfirmDeleteTimesetDialog()"
+								@close="() => {this.$refs.daterange.hide()}"
+							/>
+							<csc-confirm-dialog
+								ref="confirmDeleteTimesetDialog"
+								title-icon="delete"
+								:title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: groupTimeRange})"
+								:message="$t('pages.newCallForward.cancelTimesetText', {name: groupTimeRange})"
+								@confirm="deleteTimeset"
+							/>
+						</q-menu>
 					</span>
-					<q-popover
-						ref="daterange"
-						class="csc-cf-calendar-day"
-						@open="showDateRange()"
-					>
-						<csc-new-call-forward-date-range
-							ref="dateRangePopover"
-							:group-name="group.name"
-							:group-id="group.id"
-							:group-time-range="groupTimeRangeObj"
-							@open-daterange-popover="rangeChanged()"
-							@confirm-delete="showConfirmDeleteTimesetDialog()"
-						/>
-						<csc-confirm-dialog
-							ref="confirmDeleteTimesetDialog"
-							title-icon="delete"
-							:title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: groupTimeRange})"
-							:message="$t('pages.newCallForward.cancelTimesetText', {name: groupTimeRange})"
-							@confirm="deleteTimeset"
-						/>
-					</q-popover>
 				</span>
 				<span
 					v-if="isWeekdays"
@@ -102,20 +121,20 @@
 					>
 						{{ weekdaysLabelShort + groupWeekdays }}
 					</span>
-					<q-popover
+					<q-menu
 						ref="weekdayEditPanel"
-						class="csc-cf-number-form"
-						@open="showWeekdayEditForm()"
+						@show="showWeekdayEditForm()"
 					>
 						<csc-new-call-forward-add-weekday-form
 							:id="timeSet.id"
 							ref="weekdayEditForm"
+							class="q-pa-md"
 							:days="times"
 							:enabled="true"
 							:group-name="group.name"
 							:group-id="group.id"
 						/>
-					</q-popover>
+					</q-menu>
 				</span>
 				<span
 					v-if="isTempGroup || (!isTempGroup && !(groupSourceset && groupTimeset || groupSourceset && isWeekdays || groupTimeset && isWeekdays ))"
@@ -125,97 +144,134 @@
 					<span class="csc-cf-from-link">
 						{{ $t('pages.newCallForward.conditionBtnLabel') }}
 					</span>
-					<q-popover
+					<q-menu
 						ref="conditions"
-						@open="showConditions()"
-						@close="showConditionForm()"
+						:auto-close="true"
+						@hide="showConditionForm()"
 					>
-						<csc-new-call-forward-condition-type-select
-							ref="addCondition"
-							:disable-sourceset-menu="isTempGroup || !groupSourceset"
-							:disable-timeset-menu="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
-							:disable-date-range-menu="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
-							:disable-weekdays-menu="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
-							:enabled="true"
-							:group-name="group.name"
-							:group-id="group.id"
-						/>
-					</q-popover>
+						<q-list>
+							<q-item
+								v-if="isTempGroup || !groupSourceset"
+								ref="addFromConditionItem"
+								v-close-popup
+								clickable
+								@click="()=>{action = 'addFromCondition'}"
+							>
+								<q-item-section>{{ $t('pages.newCallForward.fromLabel') }}</q-item-section>
+							</q-item>
+							<q-item
+								v-if="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
+								v-close-popup
+								clickable
+								@click="()=>{action = 'addDateIsCondition'}"
+							>
+								<q-item-section>{{ $t('pages.newCallForward.dateIsLabel') }}</q-item-section>
+							</q-item>
+							<q-item
+								v-if="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
+								v-close-popup
+								clickable
+								@click="()=>{action = 'addDateRangeCondition'}"
+							>
+								<q-item-section>{{ $t('pages.newCallForward.dateRangeLabel') }}</q-item-section>
+							</q-item>
+							<q-item
+								v-if="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
+								v-close-popup
+								clickable
+								@click="()=>{action = 'addWeekdayCondition'}"
+							>
+								<q-item-section>{{ $t('pages.newCallForward.weekdaysLabel') }}</q-item-section>
+							</q-item>
+						</q-list>
+					</q-menu>
 					<span>
-						<q-popover
+						<q-menu
 							ref="onlineSourceset"
-							class="csc-cf-number-form csc-cf-popover-left-align"
-							:class="{ 'csc-cf-popover-hide': toggleConditionFromForm}"
-							@open="showSourcesetForm()"
-							@close="resetToggleCondition(); resetAction()"
+							@show="showSourcesetForm()"
+							@hide="resetToggleCondition(); resetAction()"
 						>
 							<csc-new-call-forward-add-sourceset-form
 								ref="addSourceSet"
+								class="q-pa-md"
 								:enabled="true"
 								:group-name="group.name"
 								:group-id="group.id"
+								@close="()=>{this.$refs.onlineSourceset.hide()}"
 							/>
-						</q-popover>
+						</q-menu>
 					</span>
 					<span>
-						<q-popover
-							ref="day"
-							class="csc-cf-popover-left-align csc-cf-popover-top-valign"
-							:class="{ 'csc-cf-popover-hide': toggleIsDatePanel}"
-							@open="showQDate()"
-							@close="resetAction()"
+						<q-menu
+							ref="dayWidgetFromMenu"
+							@hide="resetAction()"
 						>
-							<q-datetime
-								ref="dayWidget"
+							<q-date
 								v-model="dayModel"
-								anchor="bottom right"
-								no-clear
-								:min="today"
-							/>
-						</q-popover>
+								:options="minDate"
+								:no-unset="true"
+							>
+								<div class="row items-center justify-end q-gutter-sm">
+									<q-btn
+										v-close-popup
+										flat
+										color="primary"
+										icon="clear"
+									>
+										{{ $t('buttons.close') }}
+									</q-btn>
+									<q-btn
+										v-close-popup
+										flat
+										color="red"
+										icon="delete"
+										@click="showConfirmDeleteTimesetDialog"
+									>
+										{{ $t('buttons.remove') }}
+									</q-btn>
+								</div>
+							</q-date>
+						</q-menu>
 					</span>
 					<span>
-						<q-popover
-							ref="daterange"
-							class="csc-cf-popover-left-align csc-cf-calendar-day"
-							:class="{ 'csc-cf-popover-hide': toggleIsRangePanel}"
-							@open="showDateRange()"
-							@close="resetAction()"
+						<q-menu
+							ref="daterangeFromMenu"
+							@hide="resetAction()"
 						>
 							<csc-new-call-forward-date-range
 								ref="dateRangePopover"
+								class="q-pa-md"
 								:group-name="group.name"
 								:group-id="group.id"
 								:no-clear="true"
-								@open-daterange-popover="rangeChanged()"
+								@close="() => {this.$refs.daterangeFromMenu.hide()}"
 							/>
-						</q-popover>
+						</q-menu>
 					</span>
 					<span>
-						<q-popover
+						<q-menu
 							ref="weekdayPanel"
-							class="csc-cf-number-form csc-cf-popover-left-align"
-							:class="{ 'csc-cf-popover-hide': toggleWeekdayPanel}"
-							@open="showWeekdayPanel()"
-							@close="resetWeekdayCondition(); resetAction()"
+							@show="showWeekdayPanel()"
+							@hide="resetWeekdayCondition(); resetAction()"
 						>
 							<csc-new-call-forward-add-weekday-form
 								ref="weekdayForm"
+								class="q-pa-md"
 								:enabled="true"
 								:group-name="group.name"
 								:group-id="group.id"
 							/>
-						</q-popover>
+						</q-menu>
 					</span>
 				</span>
 			</div>
-			<div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
+			<div class="text-left col-xs-2 col-md-2 csc-cf-dest-number-cont csc-cf-toggle-group">
 				<q-toggle
 					v-model="isEnabled"
 					@input="toggleGroupChange"
 				/>
 			</div>
-			<div class="col col-xs-12 col-md-5 csc-cf-group-actions">
+			<div class="col-xs-5 col-md-5 csc-cf-group-actions">
 				<q-icon
 					name="delete"
 					color="negative"
@@ -231,7 +287,7 @@
 				/>
 				<q-spinner-dots
 					v-if="groupIsLoading"
-					class="csc-call-spinner"
+					class="q-ml-auto"
 					color="primary"
 					:size="24"
 				/>
@@ -241,27 +297,27 @@
 		<div
 			v-if="isTimeoutOrUnconditional"
 			class="csc-cf-destination-cont row"
+			:class="{ 'csc-cf-destination-disabled': !isEnabled }"
 		>
 			<div
-				class="col col-xs-12 col-md-4 text-right"
-				:class="{ 'csc-cf-destination-disabled': !isEnabled }"
+				class="col-xs-4 col-md-4 text-right"
 			>
 				{{ toggleLabel }}
 			</div>
 			<div
-				class="col col-xs-12 col-md-2 text-left csc-cf-self-number-cont"
+				class="text-left col-xs-2 col-md-2 csc-cf-dest-number-cont"
 			>
 				{{ subscriberDisplayName }}
 			</div>
 
 			<div
-				class="col col-xs-12 col-md-6"
+				class="col-xs-6 col-md-6"
 			/>
 		</div>
 
 		<div
 			v-for="(destination, index) in group.destinations"
-			:key="index"
+			:key="destination.display_id"
 		>
 			<csc-new-call-forward-destination
 				ref="destination"
@@ -276,47 +332,54 @@
 		<div
 			class="row csc-cf-destination-cont"
 		>
-			<div class="col col-xs-12 col-md-4 text-right" />
+			<div class="col-xs-4 col-md-4 text-right" />
 			<div
 				v-if="showAddDestBtn"
-				class="col col-xs-12 col-md-2 text-left"
+				class="col-xs-2 col-md-2 text-left"
 				:class="{ 'csc-cf-destination-disabled': !isEnabled }"
 			>
 				<div
 					class="csc-cf-destination-add-destination"
 				>
-					<q-icon
-						name="add"
+					<q-btn
+						flat
 						color="primary"
-						size="24px"
-					/>
-
-					{{ $t('pages.newCallForward.addDestinationLabel') }}
+						class=""
+					>
+						<q-icon
+							name="add"
+							color="primary"
+							size="24px"
+						/>
+						{{ $t('pages.newCallForward.addDestinationLabel') }}
+						<q-menu
+							ref="destTypeForm"
+							:auto-close="true"
+							@show="showDestTypeForm()"
+							@hide="showNext()"
+						>
+							<csc-new-call-forward-destination-type-form
+								ref="selectDestinationType"
+							/>
+						</q-menu>
+					</q-btn>
 				</div>
-				<q-popover
-					ref="destTypeForm"
-					class="csc-cf-group-popover-bottom"
-					@open="showDestTypeForm()"
-					@close="showNext()"
-				>
-					<csc-new-call-forward-destination-type-form
-						ref="selectDestinationType"
-					/>
-				</q-popover>
-				<q-popover
+				<q-menu
 					ref="numberForm"
-					class="csc-cf-number-form csc-cf-group-popover-bottom"
+					:no-parent-event="true"
 					:class="{ 'csc-cf-popover-hide': toggleNumberForm }"
-					@open="showNewDestNumber()"
+					@show="showNewDestNumber()"
 				>
 					<csc-new-call-forward-add-destination-form
 						ref="addDestinationForm"
+						class="q-pa-md"
+						:enabled="true"
 						:group-name="group.name"
 						:group-id="group.id"
 					/>
-				</q-popover>
+				</q-menu>
 			</div>
-			<div class="col col-xs-12 col-md-6 " />
+			<div class="col-xs-6 col-md-6 " />
 		</div>
 	</div>
 </template>
@@ -336,7 +399,6 @@ import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinati
 import CscNewCallForwardEditSources from './CscNewCallForwardEditSources'
 import CscNewCallForwardAddSourcesetForm from './CscNewCallForwardAddSourcesetForm'
 import CscNewCallForwardAddWeekdayForm from './CscNewCallForwardAddWeekdayForm'
-import CscNewCallForwardConditionTypeSelect from './CscNewCallForwardConditionTypeSelect'
 import CscNewCallForwardDestinationTypeForm from './CscNewCallForwardDestinationTypeForm'
 import CscNewCallForwardDateRange from './CscNewCallForwardDateRange'
 export default {
@@ -348,7 +410,6 @@ export default {
 		CscNewCallForwardEditSources,
 		CscNewCallForwardAddSourcesetForm,
 		CscNewCallForwardAddWeekdayForm,
-		CscNewCallForwardConditionTypeSelect,
 		CscNewCallForwardDestinationTypeForm,
 		CscNewCallForwardDateRange
 	},
@@ -380,7 +441,7 @@ export default {
 			action: null,
 			enabled: false,
 			day: null,
-			today: new Date()
+			today: new Date().toString()
 		}
 	},
 	computed: {
@@ -393,9 +454,13 @@ export default {
 			'getGroupsLoaders',
 			'getSourcesets',
 			'getTimesets',
-			'getFirstDestinationInCreation'
+			'getFirstDestinationInCreation',
+			'getSelectedDestinationType'
 		]),
 		showAddDestBtn () {
+			if (this.isTempGroup) {
+				return false
+			}
 			for (const destination of this.group.destinations) {
 				const dest = _.get(destination, 'destination', '')
 				if (_.endsWith(dest, 'voicebox.local')) {
@@ -449,12 +514,24 @@ export default {
 			return retVal
 		},
 		groupTimeRangeObj () {
-			let retVal = false, time
+			let retVal = false, time, fromYear, fromMonth, fromDay, fromHour, fromMinute, toYear, toMonth, toDay, toHour, toMinute, dateFrom, dateTo
 			if (this.timeSet && this.timeSet.times && this.timeSet.times.length > 0) {
 				time = this.timeSet.times[0]
+				fromYear = parseInt(time.year.split('-')[0])
+				fromMonth = parseInt(time.month.split('-')[0]) - 1
+				fromDay = parseInt(time.mday.split('-')[0])
+				fromHour = time.hour && time.hour.includes('-') ? parseInt(time.hour.split('-')[0]) : null
+				fromMinute = time.minute && time.minute.includes('-') ? parseInt(time.minute.split('-')[0]) : null
+				toYear = parseInt(time.year.split('-')[1])
+				toMonth = parseInt(time.month.split('-')[1]) - 1
+				toDay = parseInt(time.mday.split('-')[1])
+				toHour = time.hour && time.hour.includes('-') ? parseInt(time.hour.split('-')[1]) : null
+				toMinute = time.minute && time.minute.includes('-') ? parseInt(time.minute.split('-')[1]) : null
+				dateFrom = moment(new Date(fromYear, fromMonth, fromDay, fromHour, fromMinute), 0, 0)
+				dateTo = moment(new Date(toYear, toMonth, toDay, toHour, toMinute), 0, 0)
 				retVal = {
-					dateFrom: moment(new Date(parseInt(time.year.split('-')[0]), parseInt(time.month.split('-')[0]) - 1, parseInt(time.mday.split('-')[0]), parseInt(time.hour.split('-')[0]), parseInt(time.minute.split('-')[0]), 0, 0)).format(),
-					dateTo: moment(new Date(parseInt(time.year.split('-')[1]), parseInt(time.month.split('-')[1]) - 1, parseInt(time.mday.split('-')[1]), parseInt(time.hour.split('-')[1]), parseInt(time.minute.split('-')[1]), 0, 0)).format()
+					dateFrom: fromHour ? dateFrom.format() : dateFrom.format('YYYY-MM-DD'),
+					dateTo: toHour ? dateTo.format() : dateTo.format('YYYY-MM-DD')
 				}
 			}
 			return retVal
@@ -474,7 +551,7 @@ export default {
 		},
 		groupWeekdays () {
 			let retVal = ''
-			let times = _.get(this.timeSet, 'times', [])
+			let times = _.cloneDeep(_.get(this.timeSet, 'times', []))
 			times = times.sort((a, b) => (parseInt(a.wday) > parseInt(b.wday)) ? 1 : ((parseInt(b.wday) > parseInt(a.wday)) ? -1 : 0))
 			times.forEach((time, index) => {
 				const separator = (index === times.length - 1) ? '' : ', '
@@ -528,11 +605,11 @@ export default {
 		dayModel: {
 			get () {
 				if (!this.timeSet) {
-					return
+					return ''
 				}
 				const time = this.timeSet.times[0]
 				const dateN = new Date(parseInt(time.year), parseInt(time.month) - 1, parseInt(time.mday), 0, 0, 0, 0)
-				return dateN
+				return date.formatDate(dateN, 'YYYY/MM/DD')
 			},
 			set (value) {
 				if (value !== '') {
@@ -556,7 +633,7 @@ export default {
 		},
 		getFirstDestinationInCreation: function () {
 			if (this.getFirstDestinationInCreation === this.group.id.toString() && this.$refs.conditions) {
-				this.$refs.conditions.open()
+				this.$refs.conditions.show()
 			}
 		}
 	},
@@ -565,8 +642,10 @@ export default {
 			if (!this.firstDestinationInCreation) {
 				this.isEnabled = await this.$store.dispatch('newCallForward/isGroupEnabled', { groupName: this.group.name, id: this.group.id })
 			}
+			this.$store.dispatch('newCallForward/addGroupLoader', this.group.id)
 			await this.updateSourcesetNames()
 			await this.updateTimeSetNames()
+			this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id)
 		} catch (err) {
 			console.log(err)
 		}
@@ -580,10 +659,10 @@ export default {
 			this.$refs.addDestinationForm.add()
 		},
 		async showNext () {
-			switch (this.$refs.selectDestinationType.action) {
+			switch (this.getSelectedDestinationType) {
 			case 'destination':
 				this.toggleNumberForm = false
-				this.$refs.numberForm.open()
+				this.$refs.numberForm.show()
 				break
 			case 'voicemail':
 				this.$store.dispatch('newCallForward/addGroupLoader', this.group.id)
@@ -602,30 +681,34 @@ export default {
 				firstDestinationCmp.movePopoverToTop()
 			}
 
-			firstDestinationCmp.$refs.destTypeForm.open()
+			firstDestinationCmp.$refs.destTypeForm.show()
+		},
+		setCondition (action) {
+			this.action = action
+			this.$refs.conditions.hide()
 		},
 		showConditionForm () {
 			if (this.isTempGroup) {
 				this.showFirstDestMenu()
 				return
 			}
-			const action = this.$refs.addCondition.action
+			const action = this.action
 			switch (action) {
 			case 'addFromCondition':
 				this.toggleConditionFromForm = false
-				this.$refs.onlineSourceset.open()
+				this.$refs.onlineSourceset.show()
 				break
 			case 'addDateIsCondition':
 				this.toggleIsDatePanel = false
-				this.$refs.day.open()
+				this.$refs.dayWidgetFromMenu.show()
 				break
 			case 'addDateRangeCondition':
 				this.toggleIsRangePanel = false
-				this.$refs.daterange.open()
+				this.$refs.daterangeFromMenu.show()
 				break
 			case 'addWeekdayCondition':
 				this.toggleWeekdayPanel = false
-				this.$refs.weekdayPanel.open()
+				this.$refs.weekdayPanel.show()
 				break
 			}
 		},
@@ -658,7 +741,7 @@ export default {
 			this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id)
 		},
 		openConditionsPopover () {
-			this.$refs.conditions.open()
+			this.$refs.conditions.show()
 		},
 		showConditions () {
 			this.$refs.addCondition.add()
@@ -676,7 +759,7 @@ export default {
 			this.toggleConditionFromForm = true
 		},
 		resetAction () {
-			this.$refs.addCondition.action = null
+			this.action = null
 		},
 		resetWeekdayCondition () {
 			this.toggleWeekdayPanel = true
@@ -731,16 +814,6 @@ export default {
 				console.log(e)
 			}
 		},
-		showQDateContainer () {
-			this.toggleIsDatePanel = false
-			this.$refs.day.open()
-		},
-		showQDate () {
-			this.$refs.dayWidget.open()
-		},
-		showDateRange () {
-			this.$refs.dateRangePopover.add()
-		},
 		showConfirmDeleteTimesetDialog () {
 			this.$refs.confirmDeleteTimesetDialog.open()
 		},
@@ -775,7 +848,7 @@ export default {
 				})
 
 				if (!this.timeSet) {
-					this.$store.dispatch('newCallForward/addTimesetToGroup', {
+					await this.$store.dispatch('newCallForward/addTimesetToGroup', {
 						name: this.group.name,
 						groupId: this.group.id,
 						timeSetId: timseSetId
@@ -788,7 +861,10 @@ export default {
 			}
 		},
 		rangeChanged () {
-			this.$refs.daterange.open()
+			this.$refs.daterange.show()
+		},
+		minDate (day) {
+			return day >= date.formatDate(new Date(), 'YYYY/MM/DD')
 		}
 	}
 }
@@ -797,8 +873,12 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus">
     .csc-cf-group
         width 100%
+		.csc-cf-toggle-group
+					height 25px !important
+		.csc-cf-destination-cont
+				width 100%
+				margin-bottom 4px
     .csc-cf-group-title-bold
-        text-align right
         font-weight bold
     .csc-cf-group-cont
         position relative
@@ -807,21 +887,14 @@ export default {
     .csc-cf-destination-value
         text-align center
     .csc-cf-destination-add-condition
-        font-size 16px
+        font-size 14px
     .csc-cf-destination-add-destination
-        padding-left 25px
         width 250px
         white-space nowrap
         overflow hidden
         text-overflow ellipsis
         color $primary
         cursor pointer
-    .csc-cf-group-popover-bottom
-        margin-left 30px
-    .csc-cf-popover-left-align
-        margin-left -120px
-    .csc-cf-popover-top-valign
-        margin-top -40px
     .csc-cf-from-link
         color $primary
         cursor pointer

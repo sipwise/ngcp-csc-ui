@@ -1,120 +1,161 @@
 <template>
 	<div
-		v-if="enabled"
 		class="csc-form"
 	>
 		<div
 			class="csc-cf-daterange-popovers-container"
 		>
-			<q-datetime
-				ref="dayFrom"
-				v-model="dayFrom"
+			<q-popup-proxy
+				ref="dayFromProxy"
 				class="csc-cf-datetime"
-				type="date"
-				format="DD/MM/YYYY"
-				:min="today"
-				@blur="openParent()"
-			/>
-			<q-datetime
-				ref="dayTo"
-				v-model="dayTo"
+			>
+				<q-date
+					ref="dayFrom"
+					v-model="dayFrom"
+					mask="YYYY/MM/DD"
+					:options="minDateFrom"
+					:no-unset="true"
+				>
+					<div class="row items-center justify-end q-gutter-sm">
+						<q-btn
+							v-close-popup
+							flat
+							color="primary"
+							icon="done"
+						>
+							{{ $t('buttons.confirm') }}
+						</q-btn>
+					</div>
+				</q-date>
+			</q-popup-proxy>
+			<q-popup-proxy
+				ref="dayToProxy"
 				class="csc-cf-datetime"
-				type="date"
-				format="DD/MM/YYYY"
-				:min="dayFrom"
-				@blur="openParent()"
-			/>
-			<q-datetime
-				ref="hourFrom"
-				v-model="hourFrom"
+			>
+				<q-date
+					ref="dayTo"
+					v-model="dayTo"
+					mask="YYYY/MM/DD"
+					:options="minDateTo"
+					:no-unset="true"
+				>
+					<div class="row items-center justify-end q-gutter-sm">
+						<q-btn
+							v-close-popup
+							flat
+							color="primary"
+							icon="done"
+						>
+							{{ $t('buttons.confirm') }}
+						</q-btn>
+					</div>
+				</q-date>
+			</q-popup-proxy>
+			<q-popup-proxy
+				ref="hourFromProxy"
 				class="csc-cf-datetime"
-				type="time"
-				format="HH:MM"
-				@blur="openParent()"
-			/>
-			<q-datetime
-				ref="hourTo"
-				v-model="hourTo"
+			>
+				<q-time
+					ref="hourFrom"
+					v-model="hourFrom"
+					:no-unset="true"
+				>
+					<div class="row items-center justify-end q-gutter-sm">
+						<q-btn
+							v-close-popup
+							flat
+							color="primary"
+							icon="done"
+						>
+							{{ $t('buttons.confirm') }}
+						</q-btn>
+					</div>
+				</q-time>
+			</q-popup-proxy>
+			<q-popup-proxy
+				ref="hourToProxy"
 				class="csc-cf-datetime"
-				type="time"
-				format="HH:MM"
-				:min="hourFrom"
-				@blur="openParent()"
-			/>
+			>
+				<q-time
+					ref="hourTo"
+					v-model="hourTo"
+					:no-unset="true"
+				>
+					<div class="row items-center justify-end q-gutter-sm">
+						<q-btn
+							v-close-popup
+							flat
+							color="primary"
+							icon="done"
+						>
+							{{ $t('buttons.confirm') }}
+						</q-btn>
+					</div>
+				</q-time>
+			</q-popup-proxy>
 		</div>
 		<div
-			class="csc-cf-daterange-fields-cont csc-form-actions row justify-center csc-actions-cont"
-		>
-			<q-field
-				dark
-				label="Date range"
-				:label-width="11"
-				class="csc-cf-popover-daterange-title"
-			/>
-		</div>
-		<div
-			class="csc-cf-daterange-fields-cont csc-form-actions row justify-center csc-actions-cont"
+			class="csc-actions-cont row justify-center"
 		>
 			<q-input
 				v-model="dayFromFormatted"
 				dark
 				:placeholder="$t('pages.newCallForward.dateRangeStartDate')"
-				:after="[
-					{
-						icon: 'today',
-						handler () {
-							openDayFrom();
-						}
-					}
-				]"
 				@click="openDayFrom()"
-			/>
+			>
+				<template v-slot:append>
+					<q-icon
+						name="today"
+						@click="openDayFrom()"
+					/>
+				</template>
+			</q-input>
 			<q-input
 				v-model="dayToFormatted"
+				:disable="!dayFrom"
 				dark
 				:placeholder="$t('pages.newCallForward.dateRangeEndDate')"
-				:after="[
-					{
-						icon: 'today',
-						handler () {
-							openDayTo();
-						}
-					}
-				]"
 				@click="openDayTo()"
-			/>
+			>
+				<template v-slot:append>
+					<q-icon
+						name="today"
+						@click="openDayTo()"
+					/>
+				</template>
+			</q-input>
 		</div>
 		<div
-			class="csc-form-actions row justify-center csc-actions-cont"
+			class="csc-actions-cont row justify-center"
 		>
 			<q-input
 				v-model="hourFromFormatted"
 				dark
+				:disable="!dayFrom"
 				:placeholder="$t('pages.newCallForward.dateRangeStartTime')"
-				:after="[
-					{
-						icon: 'access_time',
-						handler () {
-							openHourFrom();
-						}
-					}
-				]"
 				@click="openHourFrom()"
-			/>
+			>
+				<template v-slot:append>
+					<q-icon
+						name="access_time"
+						@click="openHourFrom()"
+					/>
+				</template>
+			</q-input>
 			<q-input
 				v-model="hourToFormatted"
 				dark
 				:placeholder="$t('pages.newCallForward.dateRangeEndTime')"
-				:after="[
-					{
-						icon: 'access_time',
-						handler () {
-							openHourTo();
-						}
-					}
-				]"
+				:disable="!dayTo"
 				@click="openHourTo()"
-			/>
+			>
+				<template v-slot:append>
+					<q-icon
+						name="access_time"
+						@click="openHourTo()"
+					/>
+				</template>
+			</q-input>
 		</div>
 		<div
 			class="csc-cf-daterange-btn-cont"
@@ -139,7 +180,7 @@
 				flat
 				color="default"
 				icon="clear"
-				@click="cancelTimerange(); resetTimeRange()"
+				@click="resetTimeRange(); close()"
 			>
 				{{ $t('buttons.cancel') }}
 			</q-btn>
@@ -147,7 +188,7 @@
 				flat
 				color="primary"
 				icon="done"
-				:disable="!allFieldsFilled"
+				:disable="!isDateReadyForSubmit"
 				@click="save();"
 			>
 				{{ $t('buttons.save') }}
@@ -172,7 +213,7 @@ export default {
 			default: ''
 		},
 		groupId: {
-			type: String,
+			type: [String, Number],
 			default: null
 		},
 		groupTimeRange: {
@@ -190,14 +231,13 @@ export default {
 	},
 	data () {
 		return {
-			enabled: false,
 			timesetId: null,
 			timesetName: null,
-			dayFrom: null,
-			dayTo: null,
-			hourFrom: null,
-			hourTo: null,
 			today: new Date(),
+			dayFrom: '',
+			dayTo: '',
+			hourFrom: '',
+			hourTo: '',
 			dayRegExp: /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i,
 			timeRegExp: /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
 		}
@@ -219,6 +259,9 @@ export default {
 		},
 		hourFromFormatted () {
 			let time = this.hourFrom ? this.hourFrom : ''
+			if (!time.toString().includes(':')) {
+				return ''
+			}
 			if (time.toString().length > 0 && !time.match(this.timeRegExp)) {
 				time = date.formatDate(time, 'hh:mm')
 			}
@@ -226,67 +269,60 @@ export default {
 		},
 		hourToFormatted () {
 			let time = this.hourTo ? this.hourTo : ''
+			if (!time.toString().includes(':')) {
+				return ''
+			}
 			if (time.toString().length > 0 && !time.match(this.timeRegExp)) {
 				time = date.formatDate(time, 'hh:mm')
 			}
 			return time
 		},
-		allFieldsFilled () {
-			return this.dayFrom !== null &&
-				this.dayTo !== null &&
-				this.hourFrom !== null &&
-				this.hourTo !== null
+		isDateReadyForSubmit () {
+			if (this.dayFrom !== '' && this.dayTo !== '') {
+				const ret = (this.hourFrom !== '' && this.hourTo !== '') || (this.hourFrom === '' && this.hourTo === '')
+				return ret
+			}
+			return false
 		}
 	},
 	mounted () {
 		this.setDaysAndTimes()
 	},
 	methods: {
-		openParent () {
-			this.$emit('open-daterange-popover')
-		},
 		openDayFrom () {
-			this.$refs.dayFrom.open()
+			const splitDate = this.dayFromFormatted.split('/')
+			this.dayFrom = [splitDate[2], splitDate[1], splitDate[0]].join('/')
+			this.$refs.dayFromProxy.show()
 		},
 		openDayTo () {
-			this.$refs.dayTo.open()
+			const splitDate = this.dayToFormatted.split('/')
+			this.dayTo = [splitDate[2], splitDate[1], splitDate[0]].join('/')
+			this.$refs.dayToProxy.show()
 		},
 		openHourFrom () {
-			this.$refs.hourFrom.open()
+			this.hourFrom = this.hourFromFormatted
+			this.$refs.hourFromProxy.show()
 		},
 		openHourTo () {
-			this.$refs.hourTo.open()
-		},
-		cancel () {
-			this.close()
-		},
-		close () {
-			this.$parent.close()
-			this.enabled = false
-		},
-		add () {
-			this.enabled = true
-		},
-		showRemoveDialog () {
+			this.hourTo = this.hourToFormatted
+			this.$refs.hourToProxy.show()
 		},
 		formatRange (startDate, endDate, startTime, endTime) {
-			const startDateOnly = startDate.toString().split('T')[0]
-			const endDateOnly = endDate.toString().split('T')[0]
-			const startTimeOnly = startTime.toString().split('T')[1]
-			const endTimeOnly = endTime.toString().split('T')[1]
-			const getDateObj = date => (([year, month, day]) => ({ day, year, month }))(date.split('-'))
+			startTime = startTime.includes('T') ? date.formatDate(startTime, 'hh:mm') : startTime
+			endTime = endTime.includes('T') ? date.formatDate(endTime, 'hh:mm') : endTime
+			const getDateObj = date => (([year, month, day]) => ({ day, year, month }))(date.includes('T') ? date.split('T')[0].split('-') : date.includes('/') ? date.split('/') : date.split('-'))
 			const getTimeObj = time => (([hour, minute, second]) => ({ hour, minute, second }))(time.split(':'))
-			const startDateObj = getDateObj(startDateOnly)
-			const endDateObj = getDateObj(endDateOnly)
-			const startTimeObj = getTimeObj(startTimeOnly)
-			const endTimeObj = getTimeObj(endTimeOnly)
+			const startDateObj = getDateObj(startDate)
+			const endDateObj = getDateObj(endDate)
+			const startTimeObj = getTimeObj(startTime)
+			const endTimeObj = getTimeObj(endTime)
 			return [
 				{
 					year: startDateObj.year + '-' + endDateObj.year,
 					month: startDateObj.month + '-' + endDateObj.month,
 					mday: startDateObj.day + '-' + endDateObj.day,
-					hour: startTimeObj.hour + '-' + endTimeObj.hour,
-					minute: startTimeObj.minute + '-' + endTimeObj.minute
+					hour: startTimeObj.hour && endTimeObj.hour ? startTimeObj.hour + '-' + endTimeObj.hour : null,
+					minute: startTimeObj.minute && endTimeObj.minute ? startTimeObj.minute + '-' + endTimeObj.minute : null
 				}
 			]
 		},
@@ -298,7 +334,7 @@ export default {
 			}
 			const timeSetId = await this.$store.dispatch('newCallForward/createTimeSet', this.timesetName)
 
-			this.$store.dispatch('newCallForward/addTimesetToGroup', {
+			await this.$store.dispatch('newCallForward/addTimesetToGroup', {
 				name: this.groupName,
 				groupId: this.groupId,
 				timeSetId: timeSetId
@@ -309,7 +345,7 @@ export default {
 			})
 			this.$store.dispatch('newCallForward/setTimeset', updatedTimeset)
 			this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId)
-			this.cancelTimerange()
+			this.close()
 		},
 		async deleteTimeset () {
 			try {
@@ -322,79 +358,58 @@ export default {
 			}
 		},
 		resetTimeRange () {
-			this.dayFrom = null
-			this.dayTo = null
-			this.hourFrom = null
-			this.hourTo = null
-		},
-		cancelTimerange () {
-			this.$parent.close()
-			this.action = null
-			this.enabled = false
+			this.dayFrom = ''
+			this.dayTo = ''
+			this.hourFrom = ''
+			this.hourTo = ''
 		},
 		setDaysAndTimes () {
 			if (this.groupTimeRange) {
 				this.dayFrom = this.groupTimeRange.dateFrom
 				this.dayTo = this.groupTimeRange.dateTo
-				this.hourFrom = this.groupTimeRange.dateFrom
-				this.hourTo = this.groupTimeRange.dateTo
+				this.hourFrom = this.groupTimeRange.dateFrom.includes('T') ? this.groupTimeRange.dateFrom : ''
+				this.hourTo = this.groupTimeRange.dateTo.includes('T') ? this.groupTimeRange.dateTo : ''
 			} else {
 				this.resetTimeRange()
 			}
 		},
 		showRemoveDateRangeDialog () {
-			this.$parent.close()
 			this.$emit('confirm-delete')
+		},
+		minDateFrom (day) {
+			return day >= date.formatDate(new Date(), 'YYYY/MM/DD')
+		},
+		minDateTo (day) {
+			return date.getDateDiff(day, this.dayFrom) > 0
+		},
+		close () {
+			this.$emit('close')
 		}
 	}
 }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    .csc-cf-popover-daterange-title
-        text-align center
-        width 100%
-        margin-left 40px
-        margin-top 50px
-        margin-bottom -60px
-        .q-field-label-inner
-            color $white
-            margin-top -25px
-            margin-bottom 10px
-            font-weight bold
-            span
-                width 100%
-                text-align center
-    .csc-actions-cont
-        margin-bottom 15px
-        .q-input
-            margin-left 10px
-            margin-right 20px
-            max-width 160px
-    .csc-cf-daterange-fields-cont
-        margin-top 73px !important
-    .csc-cf-daterange-popovers-container
-        width   100%
-        height  1px !important
-        margin-top -70px !important
-        margin-bottom -30px !important
-        position relative
-    .csc-cf-datetime
-        position absolute
-        top 0
-        left 0
-    .csc-cf-daterange-btn-cont
-        width 100%
-        text-align center
-    .q-datetime-days div:not(.q-datetime-day-active),
-    .q-datetime-dark,
-    .q-datetime-range .q-datetime-input .q-input-target,
-    .q-datetime-range .q-icon,
-    .q-datetime-range .q-if:before,
-    .q-item-icon
-        color $white !important
-    .q-datetime-range.row .q-datetime-range-right,
-    .q-datetime-range.row .q-datetime-range-left
-        padding-left 20px
+		.csc-cf-daterange-btn-cont
+			margin-top 10px
+			width 100%
+			text-align center
+		.q-menu
+			min-width auto !important
+		.q-datetime-days div:not(.q-datetime-day-active),
+		.q-datetime-dark,
+		.q-datetime-range .q-datetime-input .q-input-target,
+		.q-datetime-range .q-icon,
+		.q-datetime-range .q-if:before,
+		.q-item-icon
+			color $white !important
+		.q-datetime-range.row .q-datetime-range-right,
+		.q-datetime-range.row .q-datetime-range-left
+			padding-left 20px
+		.csc-actions-cont
+			.q-input
+				margin-left 10px
+				margin-right 20px
+				max-width 160px
 
 </style>

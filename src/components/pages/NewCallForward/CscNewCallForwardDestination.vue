@@ -3,46 +3,54 @@
 		class="row csc-cf-destination-cont"
 		:class="{ 'csc-cf-removed-destination': removeInProgress }"
 	>
-		<div class="col col-xs-12 col-md-4 text-right">
+		<div class="col-xs-4 col-md-4 text-right">
 			{{ labelTimeout }}
 			<span
 				v-if="!allCallsFwd"
 				class="csc-cf-timeout csc-cf-destination-link"
 			>
 				{{ destinationTimeout }}
-				<q-popover
+				<q-menu
 					ref="timeoutForm"
-					self="top left"
-					class="csc-cf-timeout-form"
-					@close="saveTimeout()"
+					class="csc-cf-timeout-menu"
+					@hide="saveTimeout()"
 				>
-					<q-slider
-						v-model="destinationTimeout"
-						label
-						label-always
-						:step="5"
-						:min="5"
-						:max="60"
-						markers
-						snap
-					/>
-				</q-popover>
+					<q-item
+						class="csc-cf-timeout-item"
+					>
+						<q-slider
+							ref="timeout"
+							v-model="destinationTimeout"
+							label
+							label-always
+							:step="5"
+							:min="5"
+							:max="60"
+							label-text-color="secondary"
+							markers
+							snap
+						/>
+					</q-item>
+				</q-menu>
 			</span>
 			{{ labelFront }}
 		</div>
-		<div class="col text-left col-xs-12 col-md-2 csc-cf-dest-number-cont">
+		<div class="text-left col-xs-2 col-md-2 csc-cf-dest-number-cont">
 			<div
 				:class="{ 'csc-cf-destination-link': !isVoiceMail() }"
 				class="csc-cf-destination"
+				@click="toggleDestMenu()"
 			>
 				{{ labelNumber }}
-				<q-popover
+				<q-menu
 					v-if="!isVoiceMail()"
 					ref="destTypeForm"
 					class="csc-cf-dest-popover-bottom"
 					:class="{ 'csc-cf-popover-hide': disableDestType, 'csc-cf-popover-to-top': popoverToTop, 'csc-cf-popover-timeout-to-top': popoverTimeoutToTop }"
-					@open="showDestTypeForm()"
-					@close="showNext()"
+					:auto-close="true"
+					:no-parent-event="true"
+					@show="showDestTypeForm()"
+					@hide="showNext()"
 				>
 					<div
 						v-if="firstDestinationInCreation && (popoverToTop || popoverTimeoutToTop)"
@@ -53,27 +61,29 @@
 					<csc-new-call-forward-destination-type-form
 						ref="selectDestinationType"
 					/>
-				</q-popover>
-				<q-popover
+				</q-menu>
+				<q-menu
 					v-if="!isVoiceMail()"
 					ref="numberForm"
-					class="csc-cf-number-form csc-cf-dest-popover-bottom"
+					:no-parent-event="true"
+					class="csc-cf-dest-popover-bottom"
 					:class="{ 'csc-cf-popover-hide': disableNumberPopover, 'csc-cf-popover-to-top': popoverToTop, 'csc-cf-popover-timeout-to-top': popoverTimeoutToTop }"
-					@open="showNumberForm()"
-					@close="movePopoverToInitialPos(); movePopoverTimeoutToInitialPos()"
+					@show="showNumberForm()"
+					@hide="movePopoverToInitialPos(); movePopoverTimeoutToInitialPos()"
 				>
 					<csc-new-call-forward-add-destination-form
 						ref="addDestinationForm"
+						class="q-pa-md"
 						:index="destinationIndex"
 						:destination="destinationNumber"
 						:group-name="groupName"
 						:group-id="groupId"
 						:first-destination-in-creation="firstDestinationInCreation"
 					/>
-				</q-popover>
+				</q-menu>
 			</div>
 		</div>
-		<div class="col col-xs-12 col-md-5 csc-cf-destination-actions">
+		<div class="col col-xs-5 col-md-5 csc-cf-destination-actions">
 			<q-icon
 				name="delete"
 				color="negative"
@@ -111,7 +121,7 @@ export default {
 			default: false
 		},
 		groupId: {
-			type: String,
+			type: [String, Number],
 			default: null
 		},
 		groupName: {
@@ -141,6 +151,7 @@ export default {
 	},
 	computed: {
 		...mapGetters('newCallForward', [
+			'getSelectedDestinationType',
 			'getOwnPhoneTimeout'
 		]),
 		disableDestType () {
@@ -187,10 +198,10 @@ export default {
 			this.destinationIndex = this.index
 		},
 		async showNext () {
-			switch (this.$refs.selectDestinationType.action) {
+			switch (this.getSelectedDestinationType) {
 			case 'destination':
 				this.toggleNumberForm = false
-				this.$refs.numberForm.open()
+				this.$refs.numberForm.show()
 				break
 			case 'voicemail':
 				this.$store.dispatch('newCallForward/addGroupLoader', this.groupId)
@@ -216,6 +227,16 @@ export default {
 			default:
 				this.popoverToTop = false
 				this.popoverTimeoutToTop = false
+			}
+		},
+		toggleDestMenu () {
+			if (this.destinationNumber === 'Voicemail') {
+				return
+			}
+			if (this.destinationNumber && this.destinationNumber !== ' ') {
+				this.$refs.numberForm.show()
+			} else {
+				this.$refs.destTypeForm.show()
 			}
 		},
 		showNumberForm () {
@@ -282,9 +303,6 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-	.csc-cf-destination-cont
-		width 100%
-		padding 5px
 	.csc-cf-timeout,
 	.csc-cf-destination
 		width 100px
@@ -295,13 +313,15 @@ export default {
 	.csc-cf-destination-link
 		color $primary
 		cursor pointer
-	.csc-cf-timeout-form
+	.csc-cf-timeout-menu
+		height 40px
+	.csc-cf-timeout-item
 		min-width 200px
-		padding 0 20px 20px 20px
-	.csc-cf-number-form
-		padding 0 20px 0 20px
+		padding 30px 20px 20px 20px
 	.csc-cf-dest-number-cont
 		padding-left 30px
+		.q-toggle__inner
+			top -8px
 	.csc-cf-destination-actions
 		text-align left
 		cursor pointer

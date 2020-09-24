@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-if="enabled"
-		class="csc-form"
+		class="csc-form q-pa-lg"
 		:class="{ 'csc-cf-popover-hide': toggleFormVisibility}"
 	>
 		<div class="col text-left col-xs-12 col-md-12 ">
@@ -40,7 +40,7 @@
 		<div
 			class="csc-cf-row row"
 		>
-			<csc-new-call-forward-input
+			<csc-input
 				ref="sourceInputField"
 				v-model="number"
 				:label="$t('callBlocking.number')"
@@ -59,7 +59,7 @@
 		</div>
 
 		<div
-			class="csc-form-actions row justify-center  csc-actions-cont"
+			class="row justify-center  csc-actions-cont"
 		>
 			<q-btn
 				flat
@@ -91,7 +91,7 @@
 import {
 	mapGetters
 } from 'vuex'
-import CscNewCallForwardInput from './CscNewCallForwardInput'
+import CscInput from '../../form/CscInput'
 import CscNewCallForwardSource from './CscNewCallForwardSource'
 import CscConfirmDialog from '../../CscConfirmationDialog'
 import CscSpinner from '../../CscSpinner'
@@ -105,7 +105,7 @@ import {
 export default {
 	name: 'CscNewCallForwardEditSources',
 	components: {
-		CscNewCallForwardInput,
+		CscInput,
 		CscNewCallForwardSource,
 		CscConfirmDialog,
 		CscSpinner
@@ -116,7 +116,7 @@ export default {
 			default: ''
 		},
 		groupId: {
-			type: String,
+			type: [String, Number],
 			default: ''
 		},
 		sourceSetName: {
@@ -124,7 +124,7 @@ export default {
 			default: ''
 		},
 		sourceSetId: {
-			type: String,
+			type: [String, Number],
 			default: ''
 		}
 	},
@@ -170,21 +170,18 @@ export default {
 	},
 	methods: {
 		async save () {
-			const sources = this.sources
-
 			if (this.numberError || this.saveDisabled) {
 				showGlobalError(this.$t('validationErrors.generic'))
 			}
-			sources.push({
-				source: this.number
-			})
 			try {
 				this.$store.dispatch('newCallForward/addGroupLoader', this.groupId)
-				this.$refs.sourceInputField.reset()
 				await this.$store.dispatch('newCallForward/addSourceToSourceset', {
 					id: this.sourceSetId,
-					sources: sources
+					sources: [...this.sources, {
+						source: this.number
+					}]
 				})
+				this.$refs.sourceInputField.clear()
 				await this.$store.dispatch('newCallForward/loadSourcesets')
 			} catch (err) {
 				console.log(err)
@@ -210,7 +207,7 @@ export default {
 		cancel () {
 			this.number = ''
 			this.enabled = false
-			this.$parent.close()
+			this.$emit('close')
 		},
 		add () {
 			this.number = ''
@@ -218,7 +215,7 @@ export default {
 		},
 		close () {
 			this.enabled = false
-			this.$parent.close()
+			this.$emit('close')
 		},
 		reset () {
 			this.cancel()
@@ -242,6 +239,4 @@ export default {
     .csc-cf-btn-reduced-size
         .on-left
             margin-right 0px
-    .csc-actions-cont
-        margin-bottom 15px
 </style>

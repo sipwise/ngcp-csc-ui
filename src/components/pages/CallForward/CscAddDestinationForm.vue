@@ -119,7 +119,7 @@ export default {
 			default: null
 		},
 		sourcesetId: {
-			type: Number,
+			type: [Number, String],
 			default: null
 		}
 	},
