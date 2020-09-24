@@ -95,11 +95,11 @@
 				>
 					<csc-input-button-save
 						v-if="hasNameChanged"
-						@click="save"
+						@click.stop="save"
 					/>
 					<csc-input-button-reset
 						v-if="hasNameChanged"
-						@click="resetName"
+						@click.stop="resetName"
 					/>
 				</template>
 			</q-input>
@@ -114,11 +114,11 @@
 				>
 					<csc-input-button-save
 						v-if="hasExtensionChanged"
-						@click="save"
+						@click.stop="save"
 					/>
 					<csc-input-button-reset
 						v-if="hasExtensionChanged"
-						@click="resetExtension"
+						@click.stop="resetExtension"
 					/>
 				</template>
 			</q-input>
@@ -134,7 +134,6 @@
 				multiple
 				emit-value
 				map-options
-				behavior="dialog"
 				:options="aliasNumberOptions"
 				:label="$t('pbxConfig.aliasNumbers')"
 				:disable="loading"
@@ -144,11 +143,11 @@
 				>
 					<csc-input-button-save
 						v-if="hasAliasNumbersChanged"
-						@click="save"
+						@click.stop="save"
 					/>
 					<csc-input-button-reset
 						v-if="hasAliasNumbersChanged"
-						@click="resetAliasNumbers"
+						@click.stop="resetAliasNumbers"
 					/>
 				</template>
 			</q-select>
@@ -158,7 +157,6 @@
 				multiple
 				emit-value
 				map-options
-				behavior="dialog"
 				:options="groupOptions"
 				:label="$t('pbxConfig.groups')"
 				:disable="loading"
@@ -168,11 +166,11 @@
 				>
 					<csc-input-button-save
 						v-if="hasGroupsChanged"
-						@click="save"
+						@click.stop="save"
 					/>
 					<csc-input-button-reset
 						v-if="hasGroupsChanged"
-						@click="resetGroups"
+						@click.stop="resetGroups"
 					/>
 				</template>
 			</q-select>
@@ -190,11 +188,11 @@
 				>
 					<csc-input-button-save
 						v-if="hasSoundSetChanged"
-						@click="save"
+						@click.stop="save"
 					/>
 					<csc-input-button-reset
 						v-if="hasSoundSetChanged"
-						@click="resetSoundSet"
+						@click.stop="resetSoundSet"
 					/>
 				</template>
 			</q-select>

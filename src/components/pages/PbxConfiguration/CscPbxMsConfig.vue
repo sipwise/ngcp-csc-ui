@@ -62,56 +62,46 @@
 		<template
 			slot="body"
 		>
-			<q-field
-				:label="$t('pbxConfig.msConfigNumbersLabel')"
+			<q-select
+				v-model="changes.secretaryNumbers"
+				emit-value
+				map-options
+				multiple
+				chips
+				:disable="loading || numberOptionsLoading"
+				:readonly="loading"
+				:float-label="$t('pbxConfig.msConfigNumberSelectionLabel')"
+				:options="numberOptions"
 			>
-				<q-select
-					v-model="changes.secretaryNumbers"
-					emit-value
-					map-options
-					multiple
-					chips
-					:disable="loading || numberOptionsLoading"
-					:readonly="loading"
-					:float-label="$t('pbxConfig.msConfigNumberSelectionLabel')"
-					:options="numberOptions"
-				/>
-				<csc-fade>
-					<csc-form-save-button
-						v-if="hasSecretaryNumbersChanged"
-						@click="saveSecretaryNumbers"
+				<template
+					v-if="hasSecretaryNumbersChanged"
+					v-slot:append
+				>
+					<csc-input-button-save
+						@click.stop="saveSecretaryNumbers"
 					/>
-				</csc-fade>
-				<csc-fade>
-					<csc-form-reset-button
-						v-if="hasSecretaryNumbersChanged"
-						@click="resetSecretaryNumbers"
+					<csc-input-button-reset
+						@click.stop="resetSecretaryNumbers"
 					/>
-				</csc-fade>
-			</q-field>
+				</template>
+			</q-select>
 		</template>
 	</csc-list-item>
 </template>
 
 <script>
 import _ from 'lodash'
-import CscFade from '../../transitions/CscFade'
 import CscListItem from '../../CscListItem'
 import CscListItemTitle from '../../CscListItemTitle'
 import CscListItemSubtitle from '../../CscListItemSubtitle'
 import CscListMenuItem from '../../CscListMenuItem'
-import CscFormSaveButton from '../../form/CscFormSaveButton'
-import CscFormResetButton from '../../form/CscFormResetButton'
 export default {
 	name: 'CscPbxCallQueue',
 	components: {
-		CscFormResetButton,
-		CscFormSaveButton,
 		CscListItem,
 		CscListItemTitle,
 		CscListItemSubtitle,
-		CscListMenuItem,
-		CscFade
+		CscListMenuItem
 	},
 	props: {
 		odd: {
