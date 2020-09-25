@@ -10,4 +10,4 @@ override_dh_auto_install:
 	yarnpkg install
 	cp src/config.template.js src/config.js
 	yarnpkg run build
-	mv dist csc
+	mv dist/spa csc
