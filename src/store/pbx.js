@@ -3,7 +3,7 @@ import Vue from 'vue'
 import numberFilter from '../filters/number'
 import _ from 'lodash'
 import {
-	getAllProfiles
+	getAllProfiles, getModel, getModelFrontImage, getModelFrontThumbnailImage
 } from '../api/pbx-config'
 import {
 	getSubscribers
@@ -11,9 +11,9 @@ import {
 import {
 	RequestState
 } from './common'
-import {
-	loadDeviceModel
-} from '../api/pbx-devices'
+// import {
+// 	loadDeviceModel
+// } from '../api/pbx-devices'
 import { getNumbers } from '../api/user'
 import {
 	i18n
@@ -37,6 +37,7 @@ export default {
 		deviceModelList: [],
 		deviceModelMap: {},
 		deviceModelImageMap: {},
+		deviceModelImageSmallMap: {},
 		subscriberList: [],
 		subscriberListState: RequestState.initiated,
 		subscriberMap: {}
@@ -193,16 +194,21 @@ export default {
 		deviceModelSucceeded (state, deviceModel) {
 			const model = _.get(deviceModel, 'model', null)
 			const modelImage = _.get(deviceModel, 'modelImage', null)
+			const modelImageThumbnail = _.get(deviceModel, 'modelImageThumbnail', null)
 			if (model !== null) {
-				Vue.set(state.deviceModelMap, deviceModel.model.id, deviceModel.model)
+				Vue.set(state.deviceModelMap, model.id, model)
 			}
 			if (modelImage !== null) {
-				Vue.set(state.deviceModelImageMap, deviceModel.modelImage.id, deviceModel.modelImage)
+				Vue.set(state.deviceModelImageMap, modelImage.id, modelImage)
+			}
+			if (modelImageThumbnail !== null) {
+				Vue.set(state.deviceModelImageSmallMap, modelImageThumbnail.id, modelImageThumbnail)
 			}
 		},
 		deviceModelFailed (state, deviceModelId) {
 			Vue.delete(state.deviceModelMap, deviceModelId)
 			Vue.delete(state.deviceModelImageMap, deviceModelId)
+			Vue.delete(state.deviceModelImageSmallMap, deviceModelId)
 		},
 		subscribersRequesting (state) {
 			state.subcriberListState = RequestState.requesting
@@ -232,19 +238,69 @@ export default {
 				}
 			})
 		},
-		loadDeviceModel (context, deviceModelId) {
-			if (!context.state.deviceModelMap[deviceModelId]) {
-				loadDeviceModel(deviceModelId).then((deviceModel) => {
-					context.commit('deviceModelSucceeded', deviceModel)
-				}).catch(() => {
-					context.commit('deviceModelFailed', deviceModelId)
-				})
+		async loadDeviceModel (context, payload) {
+			try {
+				const isFrontCached = context.state.deviceModelImageMap[payload.deviceId] !== undefined
+				const isFrontThumbnailCached = context.state.deviceModelImageSmallMap[payload.deviceId] !== undefined
+				const isModelCached = context.state.deviceModelMap[payload.deviceId] !== undefined
+				const deviceModel = {
+					modelImage: null,
+					modelImageThumbnail: null,
+					model: null
+				}
+				const requests = []
+				let isFrontImageRequested = false
+				if (!isFrontCached && (payload.type === 'front' || payload.type === 'all')) {
+					requests.push(getModelFrontImage(payload.deviceId))
+					isFrontImageRequested = true
+				}
+				let isFrontThumbnailImageRequested = false
+				if (!isFrontThumbnailCached && (payload.type === 'front_thumb' || payload.type === 'all')) {
+					requests.push(getModelFrontThumbnailImage(payload.deviceId))
+					isFrontThumbnailImageRequested = true
+				}
+				let isModelRequested = false
+				if (!isModelCached) {
+					requests.push(getModel(payload.deviceId))
+					isModelRequested = true
+				}
+				if (requests.length > 0) {
+					const res = await Promise.all(requests)
+					if (res.length === 1 && isModelRequested) {
+						deviceModel.model = res[0]
+					} else if (res.length === 1 && isFrontImageRequested) {
+						deviceModel.modelImage = res[0]
+					} else if (res.length === 1 && isFrontThumbnailImageRequested) {
+						deviceModel.modelImageThumbnail = res[0]
+					} else if (res.length === 2 && isModelRequested && isFrontImageRequested) {
+						deviceModel.modelImage = res[0]
+						deviceModel.model = res[1]
+					} else if (res.length === 2 && isModelRequested && isFrontThumbnailImageRequested) {
+						deviceModel.modelImageThumbnail = res[0]
+						deviceModel.model = res[1]
+					} else if (res.length === 2 && isFrontImageRequested && isFrontThumbnailImageRequested) {
+						deviceModel.modelImage = res[0]
+						deviceModel.modelImageThumbnail = res[1]
+					} else if (res.length === 3) {
+						deviceModel.modelImage = res[0]
+						deviceModel.modelImageThumbnail = res[1]
+						deviceModel.model = res[2]
+					}
+				}
+				context.commit('deviceModelSucceeded', deviceModel)
+			} catch (err) {
+				context.commit('deviceModelFailed', payload.deviceId)
 			}
 		},
-		loadDeviceModels (context) {
-			context.state.deviceProfileList.forEach((profile) => {
-				context.dispatch('loadDeviceModel', profile.device_id)
-			})
+		async loadDeviceModels (context, imageType) {
+			const requests = []
+			for (let i = 0; i < context.state.deviceProfileList.length; i++) {
+				requests.push(context.dispatch('loadDeviceModel', {
+					deviceId: context.state.deviceProfileList[i].device_id,
+					type: imageType
+				}))
+			}
+			await Promise.all(requests)
 		},
 		loadSubscribers (context) {
 			if (context.state.subscriberList.length === 0 &&

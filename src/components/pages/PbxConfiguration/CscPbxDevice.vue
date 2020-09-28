@@ -1,6 +1,6 @@
 <template>
 	<csc-list-item
-		icon="fa-fax"
+		icon="fas fa-fax"
 		:image="imageUrl"
 		:odd="odd"
 		:expanded="expanded"
@@ -102,23 +102,6 @@
 					/>
 				</template>
 			</csc-pbx-model-select>
-			<!--			<q-field-->
-			<!--				-->
-			<!--			>-->
-
-			<!--				<csc-fade>-->
-			<!--					<csc-form-save-button-->
-			<!--						v-if="hasProfileChanged"-->
-			<!--						@click="save"-->
-			<!--					/>-->
-			<!--				</csc-fade>-->
-			<!--				<csc-fade>-->
-			<!--					<csc-form-reset-button-->
-			<!--						v-if="hasProfileChanged"-->
-			<!--						@click="resetProfile"-->
-			<!--					/>-->
-			<!--				</csc-fade>-->
-			<!--			</q-field>-->
 			<csc-pbx-device-config
 				v-if="modelImage"
 				:device="device"
@@ -254,6 +237,9 @@ export default {
 			if (expanded) {
 				this.$emit('expanded')
 			}
+		},
+		profile () {
+			this.$emit('load-model')
 		}
 	},
 	mounted () {

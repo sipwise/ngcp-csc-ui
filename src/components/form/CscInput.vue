@@ -1,7 +1,7 @@
 <template>
 	<q-input
-		ref="input"
 		:value="value"
+		:clearable="false"
 		v-bind="$attrs"
 		@input="$emit('input', $event)"
 		v-on="$listeners"
@@ -24,16 +24,18 @@
 		<template
 			v-slot:append
 		>
+			<slot
+				name="append"
+			/>
 			<q-btn
-				v-if="value !== ''"
+				v-if="$attrs.clearable !== undefined && value !== ''"
 				icon="clear"
 				color="white"
 				flat
 				dense
-				@click="$emit('clear', $event)"
-			/>
-			<slot
-				name="append"
+				tabindex="-1"
+				:disable="$attrs.disable"
+				@click="clear"
 			/>
 		</template>
 	</q-input>
@@ -42,6 +44,7 @@
 <script>
 import CscSpinner from 'components/CscSpinner'
 export default {
+	name: 'CscInput',
 	components: {
 		CscSpinner
 	},
@@ -52,9 +55,17 @@ export default {
 		}
 	},
 	date () {
-		return {}
+		return {
+
+		}
 	},
 	mounted () {
+	},
+	methods: {
+		clear () {
+			this.$emit('input', '')
+			this.$emit('clear')
+		}
 	}
 }
 </script>

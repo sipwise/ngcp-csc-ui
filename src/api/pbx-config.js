@@ -73,27 +73,34 @@ export function getModel (id) {
 	})
 }
 
-export function getModelFrontImage (id) {
-	return new Promise((resolve) => {
-		Vue.http.get('api/pbxdevicemodelimages/' + id, {
+export async function getModelImage (id, type) {
+	try {
+		const res = await Vue.http.get('api/pbxdevicemodelimages/' + id, {
 			responseType: 'blob',
 			params: {
-				type: 'front'
+				type: type
 			}
-		}).then((res) => {
-			resolve({
-				id: id,
-				url: URL.createObjectURL(res.body),
-				blob: res.body
-			})
-		}).catch(() => {
-			resolve({
-				id: id,
-				url: null,
-				blob: null
-			})
 		})
-	})
+		return {
+			id: id,
+			url: URL.createObjectURL(res.body),
+			blob: res.body
+		}
+	} catch (err) {
+		return {
+			id: id,
+			url: null,
+			blob: null
+		}
+	}
+}
+
+export async function getModelFrontImage (id) {
+	return getModelImage(id, 'front')
+}
+
+export async function getModelFrontThumbnailImage (id) {
+	return getModelImage(id, 'front_thumb')
 }
 
 export function getAllSoundSets (options) {

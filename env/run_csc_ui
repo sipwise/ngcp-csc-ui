@@ -38,13 +38,13 @@ echo "JFYI, important components versions:"
 echo -n "node --version : " && node --version
 echo -n "yarn  --version : " && yarnpkg --version
 
-echo "Configuring Vue.js/Quasar dev environment, running 'npm ci'..."
+echo "Configuring Vue.js/Quasar dev environment, running 'yarnpkg install'..."
 if ! yarnpkg install ; then
   echo "ERROR: cannot install all npm dependencies. Aborting."
   exit 1
 fi
 
-echo "Starting Quasar dev environment, running 'npm run dev'..."
+echo "Starting Quasar dev environment, running 'yarnpkg run dev'..."
 if ! yarnpkg run dev ; then
   echo "ERROR: cannot run quasar dev environment. Aborting."
   exit 1

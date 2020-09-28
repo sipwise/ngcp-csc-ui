@@ -1,15 +1,16 @@
 <template>
 	<div>
 		<div
-			class="row justify-center q-gutter-lg q-mb-md"
+			class="row justify-center q-gutter-x-sm q-pt-sm"
 		>
 			<div
 				class="col col-3"
 			>
-				<q-input
+				<csc-input
 					v-model="data.name"
 					clearable
 					autofocus
+					dense
 					hide-bottom-space
 					:error="$v.data.name.$error"
 					:error-message="seatNameErrorMessage"
@@ -17,10 +18,19 @@
 					:readonly="loading"
 					:label="$t('pbxConfig.name')"
 					@input="$v.data.name.$touch"
-				/>
-				<q-input
+				>
+					<template
+						v-slot:prepend
+					>
+						<q-icon
+							name="person"
+						/>
+					</template>
+				</csc-input>
+				<csc-input
 					v-model="data.extension"
 					clearable
+					dense
 					hide-bottom-space
 					:error="$v.data.extension.$error"
 					:error-message="extensionErrorMessage"
@@ -28,11 +38,19 @@
 					:readonly="loading"
 					:label="$t('pbxConfig.extension')"
 					@input="$v.data.extension.$touch"
-				/>
-				<csc-change-password-form
-					ref="changePasswordForm"
-					:no-submit="true"
-					@validation-succeeded="webPassValidationSucceeded"
+				>
+					<template
+						v-slot:prepend
+					>
+						<q-icon
+							name="call"
+						/>
+					</template>
+				</csc-input>
+				<csc-input-password-retype
+					v-model="data.password"
+					:disable="loading"
+					dense
 				/>
 			</div>
 			<div
@@ -41,6 +59,7 @@
 				<q-select
 					v-model="data.aliasNumbers"
 					clearable
+					dense
 					multiple
 					use-chips
 					emit-value
@@ -53,6 +72,7 @@
 				<q-select
 					v-model="data.groups"
 					clearable
+					dense
 					multiple
 					use-chips
 					emit-value
@@ -61,53 +81,63 @@
 					:readonly="loading"
 					:label="$t('pbxConfig.groups')"
 					:options="groupOptions"
-				/>
+				>
+					<template
+						v-slot:prepend
+					>
+						<q-icon
+							name="group"
+						/>
+					</template>
+				</q-select>
 				<q-select
 					v-model="data.soundSet"
 					radio
+					dense
 					emit-value
 					map-options
 					:disable="loading"
 					:readonly="loading"
 					:label="$t('pbxConfig.soundSet')"
 					:options="soundSetOptions"
-				/>
+				>
+					<template
+						v-slot:prepend
+					>
+						<q-icon
+							name="queue_music"
+						/>
+					</template>
+				</q-select>
 				<q-toggle
 					v-model="data.clirIntrapbx"
 					:label="$t('pbxConfig.toggleIntraPbx')"
 					:disable="loading"
 					class="q-pa-md"
+					dense
 				/>
 			</div>
 		</div>
 		<div
 			class="row justify-center"
 		>
-			<div
-				class="col col-4"
-			>
-				<q-btn
-					v-if="!loading"
-					flat
-					color="default"
-					icon="clear"
-					:label="$t('buttons.cancel')"
-					@click="cancel()"
-				/>
-				<q-btn
-					v-if="!loading"
-					flat
-					color="primary"
-					icon="person"
-					:disable="$v.data.$invalid"
-					:label="$t('pbxConfig.createSeat')"
-					@click="save()"
-				/>
-				<csc-object-spinner
-					v-if="loading"
-					:loading="loading"
-				/>
-			</div>
+			<q-btn
+				flat
+				color="default"
+				icon="clear"
+				:disable="loading"
+				:label="$t('buttons.cancel')"
+				@click="cancel()"
+			/>
+			<q-btn
+				flat
+				color="primary"
+				icon="person"
+				:loading="loading"
+				:disable="$v.data.$invalid || loading"
+				:label="$t('pbxConfig.createSeat')"
+				@click="save()"
+			/>
 		</div>
 	</div>
 </template>
@@ -118,13 +148,13 @@ import {
 	maxLength,
 	numeric
 } from 'vuelidate/lib/validators'
-import CscObjectSpinner from '../../CscObjectSpinner'
-import CscChangePasswordForm from '../../form/CscChangePasswordForm'
+import CscInput from 'components/form/CscInput'
+import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
 export default {
 	name: 'CscPbxSeatAddForm',
 	components: {
-		CscObjectSpinner,
-		CscChangePasswordForm
+		CscInputPasswordRetype,
+		CscInput
 	},
 	props: {
 		loading: {
@@ -153,9 +183,6 @@ export default {
 			extension: {
 				required,
 				numeric,
-				maxLength: maxLength(64)
-			},
-			webPassword: {
 				maxLength: maxLength(64)
 			}
 		}
@@ -211,17 +238,6 @@ export default {
 			} else {
 				return ''
 			}
-		},
-		seatModel () {
-			return {
-				name: this.data.name,
-				extension: this.data.extension,
-				webPassword: this.data.webPassword,
-				aliasNumbers: this.data.aliasNumbers,
-				groups: this.data.groups,
-				soundSet: this.data.soundSet,
-				clirIntrapbx: this.data.clirIntrapbx
-			}
 		}
 	},
 	created () {
@@ -234,7 +250,10 @@ export default {
 			return {
 				name: '',
 				extension: '',
-				webPassword: '',
+				password: {
+					password: '',
+					passwordRetype: ''
+				},
 				aliasNumbers: [],
 				groups: [],
 				soundSet: null,
@@ -245,15 +264,19 @@ export default {
 			this.$emit('cancel')
 		},
 		save () {
-			this.$emit('save', this.seatModel)
-			this.$refs.changePasswordForm.resetForm()
+			this.$emit('save', {
+				name: this.data.name,
+				extension: this.data.extension,
+				webPassword: this.data.password.password,
+				aliasNumbers: this.data.aliasNumbers,
+				groups: this.data.groups,
+				soundSet: this.data.soundSet,
+				clirIntrapbx: this.data.clirIntrapbx
+			})
 		},
 		reset () {
 			this.data = this.getDefaults()
 			this.$v.$reset()
-		},
-		webPassValidationSucceeded (data) {
-			this.data.webPassword = data.password
 		}
 	}
 }

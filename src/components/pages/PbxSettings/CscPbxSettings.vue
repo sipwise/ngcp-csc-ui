@@ -53,12 +53,6 @@ export default {
 			isLoading: false
 		}
 	},
-	async mounted () {
-		this.requestInProgress(true)
-		const preferences = await this.loadPreferences(getSubscriberId())
-		this.clirIntrapbx = preferences.clir_intrapbx
-		this.requestInProgress(false)
-	},
 	computed: {
 		...mapGetters('pbxSeats', [
 			'getIntraPbx'
@@ -84,6 +78,12 @@ export default {
 				break
 			}
 		}
+	},
+	async mounted () {
+		this.requestInProgress(true)
+		const preferences = await this.loadPreferences(getSubscriberId())
+		this.clirIntrapbx = preferences.clir_intrapbx
+		this.requestInProgress(false)
 	},
 	methods: {
 		...mapActions('pbxSeats', [

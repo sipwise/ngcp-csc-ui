@@ -37,7 +37,7 @@
 					:model-image-map="deviceModelImageMap"
 					@cancel="disableDeviceAddForm"
 					@submit="createDevice"
-					@model-select-opened="loadDeviceModels"
+					@model-select-opened="loadDeviceModels('front_thumb')"
 				/>
 			</div>
 		</q-slide-transition>
@@ -59,7 +59,7 @@
 				@reset-profile="resetProfileFilter"
 				@close-filters="closeFilters"
 				@reset-filters="resetFilters"
-				@model-select-opened="loadDeviceModels"
+				@model-select-opened="loadDeviceModels('front_thumb')"
 			/>
 		</q-slide-transition>
 		<div
@@ -98,7 +98,10 @@
 					:subscriber-map="subscriberMap"
 					:subscribers-loading="isSubscribersRequesting"
 					:subscriber-options="getSubscriberOptions"
-					@load-model="loadDeviceModel(deviceProfileMap[device.profile_id].device_id)"
+					@load-model="loadDeviceModel({
+						type: 'all',
+						deviceId: deviceProfileMap[device.profile_id].device_id
+					})"
 					@expand="expandDevice(device.id)"
 					@collapse="collapseDevice"
 					@expanded="deviceExpanded"
@@ -107,7 +110,7 @@
 					@save-identifier="setDeviceIdentifier"
 					@save-profile="setDeviceProfile"
 					@save-keys="setDeviceKeys"
-					@model-select-opened="loadDeviceModels"
+					@model-select-opened="loadDeviceModels('front_thumb')"
 				/>
 			</csc-fade>
 		</csc-list>

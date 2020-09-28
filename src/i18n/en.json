@@ -602,12 +602,16 @@
         "seatsFilters": "Filter",
         "seatsFiltersFilterByLabel": "Filter by",
         "seatsFiltersTypes": {
-            "name": "Name"
+            "display_name": "Name",
+			"pbx_extension": "Extension",
+			"primary_number": "Primary Number",
+			"alias_number": "Alias Number"
         },
         "seatsFiltersSearch": "Search",
         "seatsFiltersClose": "Close",
         "seatsFiltersReset": "Reset Filters",
-        "seatsFilterInputLabel": "Type something"
+        "seatsFilterInputLabel": "Type something",
+		"webusername": "Login"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

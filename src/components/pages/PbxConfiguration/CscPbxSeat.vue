@@ -10,6 +10,7 @@
 			<q-item-section
 				side
 				top
+				no-wrap
 			>
 				<q-icon
 					name="person"
@@ -25,7 +26,12 @@
 				<q-item-label
 					caption
 				>
-					{{ $t('pbxConfig.extension') }}: {{ seat.pbx_extension }}
+					{{ $t('pbxConfig.webusername') }}: <strong>{{ seat.webusername }}</strong>
+				</q-item-label>
+				<q-item-label
+					caption
+				>
+					{{ $t('pbxConfig.extension') }}: <strong>{{ seat.pbx_extension }}</strong>
 				</q-item-label>
 				<q-item-label
 					caption
@@ -63,22 +69,35 @@
 				side
 			>
 				<csc-more-menu>
+					<csc-popup-menu-item
+						icon="vpn_key"
+						color="primary"
+						:label="$t('pbxConfig.editPassword')"
+						@click="showPasswordDialog"
+					/>
 					<csc-popup-menu-item-delete
 						@click="deleteSeat"
 					/>
+					<q-separator />
+					<q-item
+						class="no-padding"
+					>
+						<q-item-section>
+							<q-toggle
+								v-model="changes.clirIntrapbx"
+								class="q-pa-sm"
+								:label="$t('pbxConfig.toggleIntraPbx')"
+								:disable="loading"
+								@input="changeIntraPbx"
+							/>
+						</q-item-section>
+					</q-item>
 				</csc-more-menu>
 			</q-item-section>
 		</template>
 		<div
 			class="q-pa-md"
 		>
-			<q-btn
-				icon="vpn_key"
-				flat
-				color="primary"
-				:label="$t('pbxConfig.editPassword')"
-				@click="showPasswordDialog"
-			/>
 			<csc-change-password-dialog
 				ref="changePasswordDialog"
 				:loading="false"
@@ -224,9 +243,11 @@ import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
+import CscPopupMenuItem from 'components/CscPopupMenuItem'
 export default {
 	name: 'CscPbxSeat',
 	components: {
+		CscPopupMenuItem,
 		CscPopupMenuItemDelete,
 		CscMoreMenu,
 		CscInputButtonReset,

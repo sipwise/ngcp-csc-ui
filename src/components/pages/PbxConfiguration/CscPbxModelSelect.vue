@@ -36,7 +36,7 @@
 				v-on="scope.itemEvents"
 			>
 				<q-item-section
-					v-if="!modelImageMap[scope.opt.model]"
+					v-if="!deviceModelImageSmallMap[scope.opt.model]"
 					side
 				>
 					<q-icon
@@ -52,7 +52,7 @@
 						square
 					>
 						<img
-							:src="modelImageMap[scope.opt.model].url"
+							:src="deviceModelImageSmallMap[scope.opt.model].url"
 						>
 					</q-avatar>
 				</q-item-section>
@@ -160,6 +160,9 @@
 
 <script>
 import _ from 'lodash'
+import {
+	mapState
+} from 'vuex'
 export default {
 	name: 'CscPbxModelSelect',
 	props: {
@@ -198,12 +201,15 @@ export default {
 		}
 	},
 	computed: {
+		...mapState('pbx', [
+			'deviceModelImageSmallMap'
+		]),
 		selectedProfileName () {
 			return _.get(this.selectedProfile, 'name', '')
 		},
 		selectedProfileImageUrl () {
 			const deviceModelId = _.get(this.selectedProfile, 'device_id', null)
-			return _.get(this.modelImageMap, deviceModelId + '.url', null)
+			return _.get(this.deviceModelImageSmallMap, deviceModelId + '.url', null)
 		},
 		options () {
 			const options = []

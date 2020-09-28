@@ -1,111 +1,53 @@
 <template>
-	<csc-page
-		class="q-pa-lg"
-	>
-		<csc-list-actions
-			class="row justify-center q-mb-lg"
+	<csc-page-sticky>
+		<template
+			v-slot:header
 		>
-			<csc-list-action-button
-				v-if="isSeatAddFormDisabled"
-				slot="slot1"
+			<q-btn
 				icon="add"
 				color="primary"
+				flat
 				:label="$t('pbxConfig.addSeat')"
-				:disable="isSeatListRequesting"
-				@click="enableSeatAddForm"
+				:disable="!isSeatAddFormDisabled"
+				@click="openAddForm"
 			/>
-			<csc-list-action-button
+			<q-btn
 				v-if="!showFilters"
-				slot="slot2"
 				icon="filter_alt"
 				color="primary"
+				flat
 				:label="$t('pbxConfig.seatsFilters')"
-				:disable="isSeatListRequesting"
-				@click="toggleFilters()"
-			>
-				{{ $t('pbxConfig.seatsFilters') }}
-			</csc-list-action-button>
-		</csc-list-actions>
-		<csc-pbx-seat-add-form
-			v-if="!isSeatAddFormDisabled"
-			ref="addForm"
-			class="q-mb-lg"
-			:loading="isSeatCreating"
-			:group-options="getGroupOptions"
-			:alias-number-options="getNumberOptions"
-			:sound-set-options="getSoundSetOptions"
-			@save="createSeat"
-			@cancel="disableSeatAddForm"
-		/>
-		<div
-			v-if="showFilters"
-			class="row justify-center q-mb-lg"
+				@click="openFilters"
+			/>
+			<q-btn
+				v-if="showFilters"
+				icon="clear"
+				color="negative"
+				flat
+				:label="$t('pbxConfig.closeFilters')"
+				@click="closeFilters"
+			/>
+		</template>
+		<template
+			v-slot:toolbar
 		>
-			<div
-				class="col col-6"
-			>
-				<q-select
-					v-model="filterType"
-					emit-value
-					map-options
-					:options="filterTypes"
-					:label="$t('pbxConfig.seatsFiltersFilterByLabel')"
-				/>
-				<q-input
-					v-if="filterType"
-					ref="inputFilter"
-					type="text"
-					:value="typedFilter"
-					:label="$t('pbxConfig.seatsFilterInputLabel')"
-					@input="inputFilter"
-				>
-					<template
-						v-slot:append
-					>
-						<q-btn
-							icon="search"
-							color="primary"
-							dense
-							flat
-						/>
-					</template>
-				</q-input>
-				<div
-					class="q-mb-md"
-				>
-					<template
-						v-for="(filter, index) in filters"
-					>
-						<q-chip
-							v-if="filterType"
-							:key="index"
-							:label="filterType === 'name' ? 'Name: ' + filter : filter"
-							closables
-							@close="removeFilter(filter)"
-						/>
-					</template>
-				</div>
-				<div
-					class="row justify-center"
-				>
-					<q-btn
-						class="q-mr-sm"
-						flat
-						icon="clear"
-						color="white"
-						:label="$t('pbxConfig.seatsFiltersClose')"
-						@click="closeFilters"
-					/>
-					<q-btn
-						flat
-						icon="undo"
-						color="white"
-						:label="$t('pbxConfig.seatsFiltersReset')"
-						@click="emptyFilters"
-					/>
-				</div>
-			</div>
-		</div>
+			<csc-pbx-seat-filters
+				v-if="showFilters"
+				ref="filters"
+				@filter="filterEvent"
+			/>
+			<csc-pbx-seat-add-form
+				v-if="!isSeatAddFormDisabled"
+				ref="addForm"
+				class="q-mb-lg"
+				:loading="isSeatCreating"
+				:group-options="getGroupOptions"
+				:alias-number-options="getNumberOptions"
+				:sound-set-options="getSoundSetOptions"
+				@save="createSeat"
+				@cancel="disableSeatAddForm"
+			/>
+		</template>
 		<div
 			v-if="isSeatListPaginationActive"
 			class="row justify-center"
@@ -166,16 +108,14 @@
 			@remove="removeSeat({seatId:seatRemoving.id})"
 			@cancel="closeSeatRemovalDialog"
 		/>
-	</csc-page>
+	</csc-page-sticky>
 </template>
 
 <script>
-import CscPage from '../../CscPage'
+import _ from 'lodash'
 import CscPbxSeatAddForm from './CscPbxSeatAddForm'
 import CscPbxSeat from './CscPbxSeat'
 import CscRemoveDialog from '../../CscRemoveDialog'
-import CscListActions from '../../CscListActions'
-import CscListActionButton from '../../CscListActionButton'
 import {
 	mapState,
 	mapGetters,
@@ -193,17 +133,20 @@ import {
 } from 'src/store/common'
 import platform from '../../../mixins/platform'
 import CscList from '../../CscList'
+import CscPageSticky from 'components/CscPageSticky'
+import CscPbxSeatFilters from 'components/pages/PbxConfiguration/CscPbxSeatFilters'
 
 export default {
 	components: {
+		CscPbxSeatFilters,
+		CscPageSticky,
 		CscSpinner,
-		CscPage,
 		CscPbxSeat,
 		CscPbxSeatAddForm,
 		CscRemoveDialog,
-		CscList,
-		CscListActions,
-		CscListActionButton
+		CscList
+		// CscListActions,
+		// CscListActionButton
 	},
 	mixins: [
 		platform
@@ -211,12 +154,7 @@ export default {
 	data () {
 		return {
 			showFilters: false,
-			filterType: null,
-			filterTypes: [
-				{ label: this.$t('pbxConfig.seatsFiltersTypes.name'), value: 'name' }
-			],
-			typedFilter: null,
-			filters: []
+			filters: null
 		}
 	},
 	computed: {
@@ -337,65 +275,30 @@ export default {
 				page: page
 			})
 		},
-		toggleFilters () {
-			this.showFilters = !this.showFilters
+		openAddForm () {
+			this.enableSeatAddForm()
+			this.closeFilters()
+		},
+		openFilters () {
+			this.showFilters = true
+			this.disableSeatAddForm()
 		},
 		inputFilter (input) {
 			this.typedFilter = input
 		},
 		closeFilters () {
+			if (this.$refs.filters) {
+				this.$refs.filters.removeFilters()
+			}
 			this.showFilters = false
 		},
-		emptyFilters () {
-			this.filterType = null
-			this.typedFilter = null
-			this.filters = []
+		filterEvent (filters) {
 			this.$scrollTo(this.$parent.$el)
-			this.loadSeatListItems({
-				page: 1
-			})
-		},
-		triggerFilter () {
-			this.$scrollTo(this.$parent.$el)
-			this.loadSeatListItems({
-				page: 1,
-				display_name: this.typedFilter
-			})
-			this.filters = []
-			this.filters.push(this.typedFilter)
-			this.typedFilter = null
-		},
-		removeFilter (filter) {
-			this.filters = this.filters.filter($filter => $filter !== filter)
-			if (this.filters.length < 1) {
-				this.emptyFilters()
-			}
+			this.filters = filters
+			const payload = _.cloneDeep(filters)
+			payload.page = 1
+			this.loadSeatListItems(payload)
 		}
 	}
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    .fade-enter-active, .fade-leave-active {
-        transition: opacity .5s;
-    }
-    .fade-enter, .fade-leave-to {
-        opacity: 0;
-    }
-    .csc-pbx-filters-container
-        color $secondary
-        margin-bottom 20px
-    .csc-pbx-chips-container
-        margin 20px auto 20px auto
-        text-align center
-    .csc-pbx-filters-field
-        width 250px
-        display inline-block
-        margin-left 10px
-
-    .csc-pbx-filter-fields-container
-        margin-top -15px
-    .csc-pbx-filter-buttons
-        margin-top 15px
-        text-align center
-</style>

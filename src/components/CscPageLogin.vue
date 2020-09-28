@@ -39,12 +39,11 @@
 					</q-card-section>
 					<q-card-section>
 						<form>
-							<q-input
+							<csc-input
 								v-model="username"
 								class="q-mb-sm"
 								type="text"
 								max-length="128"
-								flat
 								:label="$t('pages.login.username')"
 								:disable="loginRequesting"
 								autofocus
@@ -58,26 +57,34 @@
 										name="person"
 									/>
 								</template>
-							</q-input>
-							<q-input
+							</csc-input>
+							<csc-input-password
 								v-model="password"
-								class="q-mb-sm"
-								type="password"
 								max-length="32"
-								flat
 								:label="$t('pages.login.password')"
 								:disable="loginRequesting"
 								clearable
-								@keyup.enter="login()"
-							>
-								<template
-									slot="prepend"
-								>
-									<q-icon
-										name="lock"
-									/>
-								</template>
-							</q-input>
+								@keypress.enter="login()"
+							/>
+							<!--							<q-input-->
+							<!--								v-model="password"-->
+							<!--								class="q-mb-sm"-->
+							<!--								type="password"-->
+							<!--								max-length="32"-->
+							<!--								flat-->
+							<!--								:label="$t('pages.login.password')"-->
+							<!--								:disable="loginRequesting"-->
+							<!--								clearable-->
+							<!--								@keyup.enter="login()"-->
+							<!--							>-->
+							<!--								<template-->
+							<!--									slot="prepend"-->
+							<!--								>-->
+							<!--									<q-icon-->
+							<!--										name="lock"-->
+							<!--									/>-->
+							<!--								</template>-->
+							<!--							</q-input>-->
 						</form>
 					</q-card-section>
 					<q-card-actions
@@ -120,9 +127,13 @@ import {
 } from '../i18n'
 import CscLanguageMenu from './CscLanguageMenu'
 import CscSpinner from 'components/CscSpinner'
+import CscInputPassword from 'components/form/CscInputPassword'
+import CscInput from 'components/form/CscInput'
 export default {
 	name: 'Login',
 	components: {
+		CscInput,
+		CscInputPassword,
 		CscSpinner,
 		CscLanguageMenu
 	},

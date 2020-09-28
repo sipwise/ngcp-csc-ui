@@ -2,7 +2,7 @@
 	<div
 		class="csc-form"
 	>
-		<q-input
+		<csc-input-password
 			ref="passwordInput"
 			v-model.trim="password"
 			clearable
@@ -13,15 +13,7 @@
 			:error="$v.password.$error"
 			:error-message="errorMessagePass"
 			@blur="$v.password.$touch()"
-		>
-			<template
-				v-slot:prepend
-			>
-				<q-icon
-					name="lock"
-				/>
-			</template>
-		</q-input>
+		/>
 		<password-strength-meter
 			v-model="passwordScored"
 			class="full-width"
@@ -29,7 +21,7 @@
 			:strength-meter-only="true"
 			@score="strengthMeterScoreUpdate"
 		/>
-		<q-input
+		<csc-input-password
 			ref="passwordRetypeInput"
 			v-model.trim="passwordRetype"
 			clearable
@@ -40,15 +32,7 @@
 			:error="$v.passwordRetype.$error"
 			:error-message="errorMessagePassRetype"
 			@blur="$v.passwordRetype.$touch();onRetypeBlur()"
-		>
-			<template
-				v-slot:prepend
-			>
-				<q-icon
-					name="lock"
-				/>
-			</template>
-		</q-input>
+		/>
 	</div>
 </template>
 
@@ -57,9 +41,11 @@ import PasswordStrengthMeter from 'vue-password-strength-meter'
 import {
 	required
 } from 'vuelidate/lib/validators'
+import CscInputPassword from 'components/form/CscInputPassword'
 export default {
 	name: 'CscChangePasswordForm',
 	components: {
+		CscInputPassword,
 		PasswordStrengthMeter
 	},
 	props: {

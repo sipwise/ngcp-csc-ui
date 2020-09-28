@@ -256,12 +256,18 @@ export default {
 				const page = _.get(options, 'page', context.state.seatListCurrentPage)
 				const clearList = _.get(options, 'clearList', true)
 				const displayName = _.get(options, 'display_name', null)
+				const pbxExtension = _.get(options, 'pbx_extension', null)
+				const primaryNumber = _.get(options, 'primary_number', null)
+				const aliasNumber = _.get(options, 'alias_number', null)
 				context.commit('seatListItemsRequesting', {
 					clearList: clearList
 				})
 				getSeatList({
 					page: page,
-					display_name: displayName
+					display_name: displayName,
+					pbx_extension: pbxExtension,
+					primary_number: primaryNumber,
+					alias_number: aliasNumber
 				}).then((seatList) => {
 					context.commit('pbx/pilotSucceeded', seatList.pilot, { root: true })
 					context.commit('pbx/numbersSucceeded', seatList.numbers, { root: true })

@@ -80,16 +80,29 @@ export function getSeatList (options) {
 	return new Promise((resolve, reject) => {
 		const page = _.get(options, 'page', 1)
 		const displayName = _.get(options, 'display_name', null)
+		const pbxExtension = _.get(options, 'pbx_extension', null)
+		const primaryNumber = _.get(options, 'primary_number', null)
+		const aliasNumber = _.get(options, 'alias_number', null)
 		const params = {
 			page: page,
 			order_by: PBX_CONFIG_ORDER_BY,
 			order_by_direction: PBX_CONFIG_ORDER_DIRECTION
 		}
+		if (displayName) {
+			params.display_name = displayName
+		}
+		if (pbxExtension) {
+			params.pbx_extension = pbxExtension
+		}
+		if (primaryNumber) {
+			params.primary_number = primaryNumber
+		}
+		if (aliasNumber) {
+			params.alias_number = aliasNumber
+		}
 		Promise.all([
 			getSeats({
-				params: displayName ? _.merge({
-					display_name: displayName
-				}, params) : params
+				params: params
 			}),
 			getGroupsOnly({
 				all: true

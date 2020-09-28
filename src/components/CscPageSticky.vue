@@ -9,21 +9,19 @@
 			expand
 			position="top"
 		>
-			<q-tabs
-				:value="value"
-				align="justify"
-				inline-label
-				active-color="primary"
-				dense
-				@input="input"
+			<slot
+				name="header"
+			/>
+			<q-separator />
+			<div
+				class="col-12"
 			>
 				<slot
-					name="tabs"
+					name="toolbar"
 				/>
-			</q-tabs>
-			<q-separator />
-			<slot
-				name="toolbar"
+			</div>
+			<q-resize-observer
+				@resize="computeTopMargin"
 			/>
 		</q-page-sticky>
 		<slot />
@@ -32,20 +30,13 @@
 <script>
 import CscPage from 'components/CscPage'
 export default {
-	name: 'QPageStickyTabs',
+	name: 'CscPageSticky',
 	components: {
 		CscPage
 	},
-	props: {
-		value: {
-			type: String,
-			default: ''
-		}
-	},
 	data () {
 		return {
-			topMargin: 0,
-			currentTab: ''
+			topMargin: 0
 		}
 	},
 	computed: {
@@ -67,7 +58,7 @@ export default {
 			})
 		},
 		computeTopMargin () {
-			this.topMargin = this.$refs.pageSticky.$el.offsetHeight
+			this.topMargin = this.$refs.pageSticky.$el.offsetHeight + 36
 		}
 	}
 }

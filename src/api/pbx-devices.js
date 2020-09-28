@@ -162,7 +162,7 @@ export function setDeviceKeys (deviceId, keys) {
 	})
 }
 
-export function loadDeviceModel (modelId) {
+export async function loadDeviceModel (modelId) {
 	return new Promise((resolve, reject) => {
 		Promise.all([
 			getModel(modelId),
