@@ -1,10 +1,10 @@
 <template>
 	<div>
 		<div
-			class="row justify-center full-width q-gutter-x-sm q-pt-sm"
+			class="row justify-center full-width q-gutter-x-sm"
 		>
 			<div
-				class="col-md-2"
+				class="col-xs-12 col-md-2"
 			>
 				<q-select
 					v-model="filterType"
@@ -16,7 +16,7 @@
 				/>
 			</div>
 			<div
-				class="col-md-2"
+				class="col-xs-12 col-md-2"
 			>
 				<q-input
 					v-model="typedFilter"
@@ -41,10 +41,10 @@
 			</div>
 		</div>
 		<div
-			class="row justify-center full-width q-gutter-x-sm q-pt-sm"
+			class="row justify-center full-width q-gutter-x-sm"
 		>
 			<div
-				class="col-md-4"
+				class="col-xs-12 col-md-4"
 			>
 				<q-chip
 					v-for="(filterItem, index) in filters"

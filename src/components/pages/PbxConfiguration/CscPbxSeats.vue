@@ -34,12 +34,13 @@
 			<csc-pbx-seat-filters
 				v-if="showFilters"
 				ref="filters"
+				class="q-mb-md q-pa-md"
 				@filter="filterEvent"
 			/>
 			<csc-pbx-seat-add-form
 				v-if="!isSeatAddFormDisabled"
 				ref="addForm"
-				class="q-mb-lg"
+				class="q-mb-md q-pa-md"
 				:loading="isSeatCreating"
 				:group-options="getGroupOptions"
 				:alias-number-options="getNumberOptions"
@@ -64,14 +65,14 @@
 		>
 			<csc-spinner />
 		</div>
-		<csc-list
+		<q-list
 			v-if="!isSeatListEmpty && seatListVisibility === 'visible'"
-			class="row justify-center"
+			class="row justify-start"
 		>
 			<csc-pbx-seat
 				v-for="(seat, index) in seatListItems"
 				:key="seat.id"
-				:class="'col-xs-12 col-md-10 col-lg-8 csc-item-' + ((index % 2 === 0)?'odd':'even')"
+				:class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
 				:seat="seat"
 				:intra-pbx="getIntraPbx(seat.id)"
 				:groups="groupMapById"
@@ -94,7 +95,7 @@
 				@save-intra-pbx="setIntraPbx"
 				@jump-to-call-queue="jumpToCallQueue"
 			/>
-		</csc-list>
+		</q-list>
 		<div
 			v-if="!isSeatListRequesting && isSeatListEmpty"
 			class="row justify-center csc-no-entities"
@@ -132,7 +133,7 @@ import {
 	RequestState
 } from 'src/store/common'
 import platform from '../../../mixins/platform'
-import CscList from '../../CscList'
+// import CscList from '../../CscList'
 import CscPageSticky from 'components/CscPageSticky'
 import CscPbxSeatFilters from 'components/pages/PbxConfiguration/CscPbxSeatFilters'
 
@@ -143,8 +144,8 @@ export default {
 		CscSpinner,
 		CscPbxSeat,
 		CscPbxSeatAddForm,
-		CscRemoveDialog,
-		CscList
+		CscRemoveDialog
+		// CscList
 		// CscListActions,
 		// CscListActionButton
 	},

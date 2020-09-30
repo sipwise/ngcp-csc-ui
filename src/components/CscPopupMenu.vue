@@ -2,6 +2,7 @@
 	<q-popup-proxy>
 		<q-list
 			v-bind="$attrs"
+			class="bg-main-menu"
 			v-on="$listeners"
 		>
 			<slot />

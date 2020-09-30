@@ -1,10 +1,10 @@
 <template>
 	<div>
 		<div
-			class="row justify-center q-gutter-x-sm q-pt-sm"
+			class="row justify-center q-gutter-x-sm"
 		>
 			<div
-				class="col col-3"
+				class="col-xs-12 col-lg-3"
 			>
 				<csc-input
 					v-model="data.name"
@@ -54,7 +54,7 @@
 				/>
 			</div>
 			<div
-				class="col col-3"
+				class="col-xs-12 col-lg-3"
 			>
 				<q-select
 					v-model="data.aliasNumbers"

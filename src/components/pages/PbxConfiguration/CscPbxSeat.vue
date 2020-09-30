@@ -1,8 +1,9 @@
 <template>
 	<q-expansion-item
 		group="seats"
-		header-class="q-pa-md"
+		header-class="q-pa-sm"
 		active-class="csc-item-odd"
+		dense-toggle
 	>
 		<template
 			slot="header"
@@ -57,9 +58,8 @@
 					>
 						<q-icon
 							class="self-center"
-							name="info"
-							color="info"
-							size="24px"
+							name="group"
+							size="16px"
 						/>
 						{{ $t('pbxConfig.noGroupAssigned') }}
 					</span>
@@ -67,6 +67,7 @@
 			</q-item-section>
 			<q-item-section
 				side
+				top
 			>
 				<csc-more-menu>
 					<csc-popup-menu-item
@@ -232,6 +233,10 @@
 				@click="jumpToCallQueue"
 			/>
 		</div>
+		<csc-dialog-change-password
+			ref="dialogChangePassword"
+			@confirmed="changeWebPassword"
+		/>
 	</q-expansion-item>
 </template>
 
@@ -244,9 +249,11 @@ import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscDialogChangePassword from 'components/CscDialogChangePassword'
 export default {
 	name: 'CscPbxSeat',
 	components: {
+		CscDialogChangePassword,
 		CscPopupMenuItem,
 		CscPopupMenuItemDelete,
 		CscMoreMenu,
@@ -439,14 +446,14 @@ export default {
 			}
 		},
 		showPasswordDialog () {
-			this.$refs.changePasswordDialog.open()
+			this.$refs.dialogChangePassword.show()
 		},
-		async changeWebPassword (data) {
+		async changeWebPassword (password) {
 			await this.$store.dispatch('pbxSeats/setSeatWebPassword', {
 				seatId: this.seat.id,
-				seatWebPassword: data.password
+				seatWebPassword: password
 			})
-			this.$refs.changePasswordDialog.close()
+			this.$refs.dialogChangePassword.hide()
 		},
 		changeIntraPbx () {
 			this.$emit('save-intra-pbx', {

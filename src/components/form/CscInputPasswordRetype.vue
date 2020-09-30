@@ -3,6 +3,7 @@
 		class="csc-input-password-retype"
 	>
 		<csc-input-password
+			ref="password"
 			v-model="password"
 			v-bind="$attrs"
 			generate
@@ -10,7 +11,7 @@
 			:label="$t('pbxConfig.typePassword')"
 			@input="inputPassword"
 			@generated="passwordGenerated"
-			@clear="$refs.passwordRetype.clear()"
+			@clear="passwordClear"
 		/>
 		<password-strength-meter
 			v-show="false"
@@ -33,7 +34,7 @@
 			clearable
 			:disable="passwordScore < 2 || $attrs.disable"
 			@clear="$v.passwordRetype.$reset"
-			@blur="blur"
+			@blur="passwordRetypeBlur"
 			@input="inputRetypePassword"
 		/>
 	</div>
@@ -56,6 +57,7 @@ export default {
 			required
 		},
 		passwordRetype: {
+			required,
 			sameAsPassword: sameAs('password')
 		}
 	},
@@ -105,7 +107,18 @@ export default {
 		value (value) {
 			this.password = value.password
 			this.passwordRetype = value.passwordRetype
+		},
+		passwordScore (score) {
+			if (score < 2) {
+				this.$refs.passwordRetype.clear()
+				this.$v.$reset()
+			}
 		}
+	},
+	mounted () {
+		this.$v.$reset()
+		this.$refs.passwordRetype.clear()
+		this.$refs.password.clear()
 	},
 	methods: {
 		strengthMeterScoreUpdate (score) {
@@ -119,7 +132,7 @@ export default {
 			})
 		},
 		inputRetypePassword () {
-			this.$v.passwordRetype.$reset()
+			this.validate()
 			this.inputPassword()
 		},
 		passwordGenerated (password) {
@@ -127,9 +140,25 @@ export default {
 				password: password,
 				passwordRetype: password
 			})
+			this.$nextTick(() => {
+				this.validate()
+			})
 		},
-		blur () {
-			this.$v.passwordRetype.$touch()
+		passwordClear () {
+			this.$refs.passwordRetype.clear()
+			this.validate()
+			this.$v.$reset()
+		},
+		passwordRetypeBlur () {
+			this.validate()
+		},
+		validate () {
+			this.$v.$touch()
+			if (!this.$v.$invalid) {
+				this.$emit('validation-succeeded')
+			} else {
+				this.$emit('validation-failed')
+			}
 		}
 	}
 }

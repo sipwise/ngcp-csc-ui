@@ -58,7 +58,7 @@ export default {
 			})
 		},
 		computeTopMargin () {
-			this.topMargin = this.$refs.pageSticky.$el.offsetHeight + 36
+			this.topMargin = this.$refs.pageSticky.$el.offsetHeight
 		}
 	}
 }
