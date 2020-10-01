@@ -9,13 +9,35 @@ export const LIST_DEFAULT_PAGE = 1
 export const LIST_DEFAULT_ROWS = 25
 export const LIST_ALL_ROWS = 1000
 
+export const ContentType = {
+	json: 'application/json',
+	jsonPatch: 'application/json-patch+json'
+}
+
+export const Prefer = {
+	minimal: 'return=minimal',
+	representation: 'return=representation'
+}
+
 const PATCH_HEADERS = {
-	'Content-Type': 'application/json-patch+json',
-	Prefer: 'return=minimal'
+	'Content-Type': ContentType.jsonPatch,
+	Prefer: Prefer.minimal
 }
 
 const GET_HEADERS = {
-	Accept: 'application/json'
+	Accept: ContentType.json
+}
+
+const POST_HEADERS = {
+	Accept: ContentType.json,
+	'Content-Type': ContentType.json,
+	Prefer: Prefer.representation
+}
+
+const PUT_HEADERS = {
+	Accept: ContentType.json,
+	'Content-Type': ContentType.json,
+	Prefer: 'return=representation'
 }
 
 export class ApiResponseError extends Error {
@@ -82,6 +104,16 @@ export async function getList (options) {
 	}
 }
 
+function handleResponseError (err) {
+	const code = _.get(err, 'body.code', null)
+	const message = _.get(err, 'body.message', null)
+	if (code !== null && message !== null) {
+		throw new ApiResponseError(err.body.code, err.body.message)
+	} else {
+		throw err
+	}
+}
+
 export async function get (options) {
 	options = options || {}
 	options = _.merge({
@@ -108,13 +140,7 @@ export async function get (options) {
 		}
 		return body
 	} catch (err) {
-		const code = _.get(err, 'body.code', null)
-		const message = _.get(err, 'body.message', null)
-		if (code !== null && message !== null) {
-			throw new ApiResponseError(err.body.code, err.body.message)
-		} else {
-			throw err
-		}
+		handleResponseError(err)
 	}
 }
 
@@ -139,13 +165,7 @@ export async function patch (operation, options) {
 			headers: options.headers
 		})
 	} catch (err) {
-		const code = _.get(err, 'body.code', null)
-		const message = _.get(err, 'body.message', null)
-		if (code !== null && message !== null) {
-			throw new ApiResponseError(err.body.code, err.body.message)
-		} else {
-			throw err
-		}
+		handleResponseError(err)
 	}
 }
 
@@ -184,6 +204,72 @@ export function patchRemoveFull (options) {
 	return patchFull('remove', options)
 }
 
+export async function post (options) {
+	options = options || {}
+	options = _.merge({
+		headers: POST_HEADERS
+	}, options)
+	let path = options.path
+	if (options.resource !== undefined) {
+		path = 'api/' + options.resource + '/'
+	}
+	try {
+		const res = await Vue.http.post(path, options.body, {
+			headers: options.headers
+		})
+		if (options.headers.Prefer === Prefer.representation) {
+			return normalizeEntity(getJsonBody(res.body))
+		} else {
+			return null
+		}
+	} catch (err) {
+		handleResponseError(err)
+	}
+}
+
+export async function postMinimal (options) {
+	options = options || {}
+	options = _.merge(options, {
+		headers: {
+			Prefer: 'return=representation'
+		}
+	})
+	await post(options)
+}
+
+export async function put (options) {
+	options = options || {}
+	options = _.merge({
+		headers: PUT_HEADERS
+	}, options)
+	let path = options.path
+	if (options.resource !== undefined && options.resourceId !== undefined) {
+		path = 'api/' + options.resource + '/' + options.resourceId
+	}
+	try {
+		const res = await Vue.http.put(path, options.body, {
+			headers: options.headers
+		})
+		if (options.headers.Prefer === Prefer.representation) {
+			return normalizeEntity(getJsonBody(res.body))
+		} else {
+			return null
+		}
+	} catch (err) {
+		handleResponseError(err)
+	}
+}
+
+export async function putMinimal (options) {
+	options = options || {}
+	options = _.merge(options, {
+		headers: {
+			Prefer: 'return=representation'
+		}
+	})
+	await put(options)
+}
+
 export async function del (options) {
 	options = options || {}
 	options = _.merge({
@@ -200,13 +286,7 @@ export async function del (options) {
 	try {
 		await Vue.http.delete(path, requestOptions)
 	} catch (err) {
-		const code = _.get(err, 'body.code', null)
-		const message = _.get(err, 'body.message', null)
-		if (code !== null && message !== null) {
-			throw new ApiResponseError(err.body.code, err.body.message)
-		} else {
-			throw err
-		}
+		handleResponseError(err)
 	}
 }
 
