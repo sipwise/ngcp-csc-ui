@@ -135,7 +135,7 @@ export default {
                 i18n.t('pages.callForward.times.resetErrorMessage')
 		},
 		showDefinedAlert (state) {
-			return !state.timesetExists && !state.activeTimeForm && state.addTimeState !== 'succeeded'
+			return !state.timesetExists && !state.activeTimeForm
 		},
 		destinationsLoaded (state) {
 			return state.destinations.length > 0
@@ -347,7 +347,7 @@ export default {
 			state.removeTimeState = RequestState.requesting
 			state.removeTimeError = null
 		},
-		removeTimeSucceeded (state) {
+		removeTimeSucceeded (state, updatedTimeset) {
 			state.removeTimeState = RequestState.succeeded
 			state.removeTimeError = null
 		},
@@ -687,26 +687,38 @@ export default {
 				context.commit('loadTimesSucceeded', result)
 			})
 		},
-		deleteTimeFromTimeset (context, options) {
+		async appendTimeToTimeset (context, options) {
+			try {
+				context.commit('addTimeRequesting')
+				const fromParts = options.time[0].from.split(':')
+				const toParts = options.time[0].to.split(':')
+				const updatedTimes = await appendTimeToTimeset({
+					timesetId: context.getters.getTimesetId,
+					time: {
+						minute: fromParts[1] + '-' + toParts[1],
+						hour: fromParts[0] + '-' + toParts[0],
+						wday: options.weekday
+					}
+				})
+				context.commit('addTimeSucceeded')
+				context.commit('loadTimesSucceeded', updatedTimes)
+			} catch (err) {
+				console.log(err)
+				context.commit('addTimeFailed', err.message)
+			}
+		},
+		async deleteTimeFromTimeset (context, options) {
 			context.commit('removeTimeRequesting')
-			const clonedTimes = _.cloneDeep(context.getters.getTimesetTimes)
-			const indexInt = parseInt(options.index)
-			clonedTimes.splice(indexInt, 1)
-			clonedTimes.forEach((time) => {
-				delete time.weekday
-				delete time.from
-				delete time.to
-			})
-			deleteTimeFromTimeset({
-				subscriberId: context.getters.subscriberId,
-				timesetId: context.getters.getTimesetId,
-				times: clonedTimes
-			}).then(() => {
-				context.commit('setLastRemovedDay', options.removedDay)
+			try {
+				const updatedTimes = await deleteTimeFromTimeset({
+					timesetId: context.getters.getTimesetId,
+					timeId: options.index
+				})
 				context.commit('removeTimeSucceeded')
-			}).catch((err) => {
+				context.commit('loadTimesSucceeded', updatedTimes)
+			} catch (err) {
 				context.commit('removeTimeFailed', err.message)
-			})
+			}
 		},
 		deleteTimesetById (context) {
 			context.commit('removeTimeRequesting')
@@ -737,18 +749,6 @@ export default {
 				weekday: options.weekday,
 				name: options.name,
 				subscriberId: context.getters.subscriberId
-			}).then(() => {
-				context.commit('addTimeSucceeded')
-			}).catch((err) => {
-				context.commit('addTimeFailed', err.message)
-			})
-		},
-		appendTimeToTimeset (context, options) {
-			context.commit('addTimeRequesting')
-			appendTimeToTimeset({
-				time: options.time,
-				weekday: options.weekday,
-				id: context.getters.getTimesetId
 			}).then(() => {
 				context.commit('addTimeSucceeded')
 			}).catch((err) => {

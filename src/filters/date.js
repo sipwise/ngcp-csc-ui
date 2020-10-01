@@ -6,7 +6,7 @@ import { i18n } from 'src/boot/i18n'
 const { formatDate } = date
 
 export default function (value) {
-	var timeStamp = new Date(value)
+	const timeStamp = new Date(value)
 	return `${formatDate(timeStamp, 'MMMM D, YYYY')} at ${formatDate(timeStamp, 'h:mm a')}`
 }
 
@@ -48,4 +48,24 @@ export function smartTime ($date) {
 	} else {
 		return momentDate.format('LLL')
 	}
+}
+
+export const WeekdayMap = {
+	sunday: 1,
+	monday: 2,
+	tuesday: 3,
+	wednesday: 4,
+	thursday: 5,
+	friday: 6,
+	saturday: 7
+}
+
+export function weekday (weekdayNumber) {
+	let weekdayString = ''
+	Object.keys(WeekdayMap).forEach((weekday) => {
+		if (WeekdayMap[weekday] === weekdayNumber) {
+			weekdayString = i18n.t('pages.callForward.times.' + weekday)
+		}
+	})
+	return weekdayString
 }

@@ -11,8 +11,7 @@
 				:class="'csc-item-' + ((index % 2 === 0)?'odd':'even')"
 				:time="time"
 				:index="index"
-				@delete-time="deleteTime"
-				@delete-last-time="deleteLastTime"
+				@delete-time="deleteTime(index)"
 			/>
 		</q-list>
 		<div
@@ -79,11 +78,8 @@ export default {
 		enableAddForm () {
 			this.$emit('enable-add-form')
 		},
-		deleteTime (data) {
-			this.$emit('delete-time', data)
-		},
-		deleteLastTime (data) {
-			this.$emit('delete-last-time', data)
+		deleteTime (index) {
+			this.$emit('delete-time', index)
 		}
 	}
 }

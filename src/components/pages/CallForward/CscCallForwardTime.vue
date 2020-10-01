@@ -1,7 +1,7 @@
 <template>
 	<q-item>
 		<q-item-section>
-			{{ weekday }}, {{ from | time }} - {{ to | time }}
+			{{ time.weekday | weekday }}, {{ time.from }} - {{ time.to }}
 		</q-item-section>
 		<q-item-section
 			side
@@ -12,7 +12,7 @@
 					color="negative"
 					icon="delete"
 					:label="$t('buttons.remove')"
-					@click="deleteTime(index)"
+					@click="deleteTime"
 				/>
 			</csc-more-menu>
 		</q-item-section>
@@ -23,9 +23,6 @@
 import {
 	mapGetters
 } from 'vuex'
-import {
-	date
-} from 'quasar'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 
@@ -36,10 +33,6 @@ export default {
 		time: {
 			type: Object,
 			default: null
-		},
-		index: {
-			type: Number,
-			default: null
 		}
 	},
 	data () {
@@ -49,48 +42,12 @@ export default {
 	computed: {
 		...mapGetters('callForward', {
 			timesLength: 'getTimesetTimesLength'
-		}),
-		weekday () {
-			return this.time.weekday
-		},
-		from () {
-			return date.buildDate({
-				hours: this.time.from.split(':')[0],
-				minutes: this.time.from.split(':')[1]
-			})
-		},
-		to () {
-			return date.buildDate({
-				hours: this.time.to.split(':')[0],
-				minutes: this.time.to.split(':')[1]
-			})
-		}
+		})
 	},
 	methods: {
-		deleteTime (index) {
-			if (this.timesLength <= 1) {
-				this.$emit('delete-last-time', index)
-			} else {
-				this.$emit('delete-time', {
-					index: index,
-					removedDay: this.weekday
-				})
-			}
+		deleteTime () {
+			this.$emit('delete-time')
 		}
 	}
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    .q-item-side.csc-call-forward-time-btn-container
-        margin-left 0
-        .q-btn.csc-call-forward-time-btn
-            .q-icon
-                margin-right 0
-
-    .csc-time
-        .q-if-disabled::before
-            background-image none
-            background-color currentColor
-
-</style>

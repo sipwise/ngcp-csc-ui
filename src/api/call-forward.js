@@ -4,7 +4,7 @@ import Vue from 'vue'
 import { i18n } from 'src/boot/i18n'
 import { getJsonBody } from './utils'
 import { normalizeDestination } from '../filters/number-format'
-import { LIST_ALL_ROWS, patchReplaceFull, get, getList } from './common'
+import { LIST_ALL_ROWS, patchReplaceFull, get, getList, del } from './common'
 
 export function getMappings (id) {
 	return new Promise((resolve, reject) => {
@@ -613,36 +613,157 @@ export function convertTimesetToWeekdays (options) {
 	}
 }
 
-export function loadTimesetTimes (options) {
-	return new Promise((resolve, reject) => {
-		Promise.resolve().then(() => {
-			return getTimesets(options.subscriberId)
-		}).then((timesets) => {
-			const times = convertTimesetToWeekdays({ timesets: timesets, timesetName: options.timeset })
-			return times
-		}).then((times) => {
-			resolve(times)
-		}).catch((err) => {
-			reject(err)
-		})
-	})
+function convertToTimes (times) {
+	return times.reduce((timesConverted, time) => {
+		const hourParts = time.hour.split('-')
+		let minuteParts = null
+		if (time.minute !== null && time.minute !== '') {
+			minuteParts = time.minute.split('-')
+		}
+		if (hourParts.length === 1 && minuteParts === null) {
+			timesConverted.push({
+				from: normalizeTimePart(hourParts[0]) + ':00',
+				to: normalizeTimePart(hourParts[0]) + ':00',
+				weekday: parseInt(time.wday)
+			})
+		} else if (hourParts.length === 1 && minuteParts !== null && minuteParts.length === 1) {
+			timesConverted.push({
+				from: normalizeTimePart(hourParts[0]) + ':' + normalizeTimePart(minuteParts[0]),
+				to: normalizeTimePart(hourParts[0]) + ':' + normalizeTimePart(minuteParts[0]),
+				weekday: parseInt(time.wday)
+			})
+		} else if (hourParts.length === 1 && minuteParts !== null && minuteParts.length === 2) {
+			timesConverted.push({
+				from: normalizeTimePart(hourParts[0]) + ':' + normalizeTimePart(minuteParts[0]),
+				to: normalizeTimePart(hourParts[0]) + ':' + normalizeTimePart(minuteParts[1]),
+				weekday: parseInt(time.wday)
+			})
+		} else if (hourParts.length === 2 && minuteParts === null) {
+			timesConverted.push({
+				from: normalizeTimePart(hourParts[0]) + ':00',
+				to: normalizeTimePart(hourParts[1]) + ':00',
+				weekday: parseInt(time.wday)
+			})
+		} else if (hourParts.length === 2 && minuteParts !== null && minuteParts.length === 1) {
+			timesConverted.push({
+				from: normalizeTimePart(hourParts[0]) + ':' + normalizeTimePart(minuteParts[0]),
+				to: normalizeTimePart(hourParts[1]) + ':' + normalizeTimePart(minuteParts[0]),
+				weekday: parseInt(time.wday)
+			})
+		} else if (hourParts.length === 2 && minuteParts !== null && minuteParts.length === 2) {
+			timesConverted.push({
+				from: normalizeTimePart(hourParts[0]) + ':' + normalizeTimePart(minuteParts[0]),
+				to: normalizeTimePart(hourParts[1]) + ':' + normalizeTimePart(minuteParts[1]),
+				weekday: parseInt(time.wday)
+			})
+		} else if (hourParts.length === 2 && minuteParts !== null && minuteParts.length === 2) {
+			timesConverted.push({
+				from: normalizeTimePart(hourParts[0]) + ':' + normalizeTimePart(minuteParts[0]),
+				to: normalizeTimePart(hourParts[1]) + ':' + normalizeTimePart(minuteParts[1]),
+				weekday: parseInt(time.wday)
+			})
+		}
+		return timesConverted
+	}, [])
 }
 
-export function deleteTimeFromTimeset (options) {
-	const headers = {
-		'Content-Type': 'application/json-patch+json'
+function normalizeTimePart (part) {
+	if (part.length === 1) {
+		return '0' + part
+	} else {
+		return part
 	}
-	return new Promise((resolve, reject) => {
-		Vue.http.patch('api/cftimesets/' + options.timesetId, [{
-			op: 'replace',
-			path: '/times',
-			value: options.times
-		}], { headers: headers }).then((result) => {
-			resolve(result)
-		}).catch((err) => {
-			reject(err)
-		})
+}
+
+export async function loadTimesetTimes (options) {
+	const timesets = await getTimesets(options.subscriberId)
+	const filteredTimesets = timesets.filter(timeset => timeset.name === options.timeset)
+	if (filteredTimesets.length === 1) {
+		return {
+			times: convertToTimes(filteredTimesets[0].times),
+			timesetIsCompatible: true,
+			timesetExists: filteredTimesets.length === 1,
+			timesetHasReverse: false,
+			timesetHasDuplicate: filteredTimesets.length > 1,
+			timesetId: filteredTimesets[0].id
+		}
+	} else {
+		return {
+			times: [],
+			timesetIsCompatible: true,
+			timesetExists: false,
+			timesetHasReverse: false,
+			timesetHasDuplicate: false,
+			timesetId: null
+		}
+	}
+}
+
+export async function appendTimeToTimeset (options) {
+	const timeset = await get({
+		resource: 'cftimesets',
+		resourceId: options.timesetId
 	})
+	const times = _.cloneDeep(timeset.times)
+	times.push(options.time)
+	const updatedTimeset = await patchReplaceFull({
+		resource: 'cftimesets',
+		resourceId: options.timesetId,
+		fieldPath: 'times',
+		value: times
+	})
+	return {
+		times: convertToTimes(updatedTimeset.times),
+		timesetIsCompatible: true,
+		timesetExists: true,
+		timesetHasReverse: false,
+		timesetHasDuplicate: false,
+		timesetId: updatedTimeset.id
+	}
+}
+
+/**
+ * Removes a specific time from a given timeset
+ * @param options
+ * @param options.timesetId
+ * @param options.timeId
+ * @returns {Promise<void>}
+ */
+export async function deleteTimeFromTimeset (options) {
+	const timeset = await get({
+		resource: 'cftimesets',
+		resourceId: options.timesetId
+	})
+	const updatedTimes = timeset.times.filter((time, index) => index !== options.timeId)
+	if (updatedTimes.length === 0) {
+		await del({
+			resource: 'cftimesets',
+			resourceId: options.timesetId
+		})
+		return {
+			times: null,
+			timesetIsCompatible: true,
+			timesetExists: false,
+			timesetHasReverse: false,
+			timesetHasDuplicate: false,
+			timesetId: null
+		}
+	} else {
+		const updatedTimeset = await patchReplaceFull({
+			resource: 'cftimesets',
+			resourceId: options.timesetId,
+			fieldPath: 'times',
+			value: updatedTimes
+		})
+		return {
+			times: convertToTimes(updatedTimeset.times),
+			timesetIsCompatible: true,
+			timesetExists: true,
+			timesetHasReverse: false,
+			timesetHasDuplicate: false,
+			timesetId: updatedTimeset.id
+		}
+	}
 }
 
 export function deleteTimesetById (id) {
@@ -761,22 +882,6 @@ export function getTimesByTimesetId (id) {
 			const timeset = getJsonBody(res.body)
 			delete timeset._links
 			resolve(timeset.times)
-		}).catch((err) => {
-			reject(err)
-		})
-	})
-}
-
-export function appendTimeToTimeset (options) {
-	return new Promise((resolve, reject) => {
-		const convertedTime = convertAddTime({ time: options.time[0], weekday: options.weekday })
-		Promise.resolve().then(() => {
-			return getTimesByTimesetId(options.id)
-		}).then((times) => {
-			const concatTimes = times.concat(convertedTime)
-			return addTimeToTimeset({ id: options.id, times: concatTimes })
-		}).then(() => {
-			resolve()
 		}).catch((err) => {
 			reject(err)
 		})

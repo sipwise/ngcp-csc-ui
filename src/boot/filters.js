@@ -6,7 +6,8 @@ import NumberFormatFilter, {
 } from 'src/filters/number-format'
 import DateFilter, {
 	smartTime,
-	time
+	time,
+	weekday
 } from 'src/filters/date'
 import {
 	startCase
@@ -28,4 +29,5 @@ export default () => {
 	Vue.filter('groupName', displayName)
 	Vue.filter('displayName', displayName)
 	Vue.filter('time', time)
+	Vue.filter('weekday', weekday)
 }

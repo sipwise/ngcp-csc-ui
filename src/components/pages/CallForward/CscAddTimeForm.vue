@@ -11,6 +11,7 @@
 					options-dense
 					emit-value
 					map-options
+					dense
 					:options="selectOptions"
 				/>
 			</div>
@@ -19,6 +20,7 @@
 			>
 				<csc-input-time
 					v-model="timeFrom"
+					dense
 				/>
 			</div>
 			<div
@@ -26,6 +28,7 @@
 			>
 				<csc-input-time
 					v-model="timeTo"
+					dense
 					class="col-2"
 				/>
 			</div>

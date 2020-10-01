@@ -5,17 +5,7 @@
 		:sourcesets="sourcesets"
 		:destinations="destinations"
 		:timeset-name="timesetName"
-		:loading="loadDestinationState === 'requesting' ||
-			addSourcesetState === 'requesting' ||
-			updateOwnPhoneToggleState === 'requesting' ||
-			addDestinationState === 'requesting' ||
-			removeDestinationState === 'requesting' ||
-			changeDestinationState === 'requesting' ||
-			addTimeState === 'requesting' ||
-			resetTimeState === 'requesting' ||
-			removeTimeState === 'requesting' ||
-			addSourceState === 'requesting' ||
-			removeSourceState === 'requesting'"
+		:loading="timesetLoading"
 	>
 		<div
 			v-if="showSections"
@@ -30,7 +20,6 @@
 				:timeset-times-loaded="timesetTimesLoaded"
 				@enable-add-form="enableTimesAddForm"
 				@delete-time="deleteTimeDialog"
-				@delete-last-time="deleteLastTimeDialog"
 			/>
 		</div>
 		<div
@@ -45,10 +34,10 @@
 			/>
 		</div>
 		<div
-			v-if="timesetHasDuplicate ||
+			v-if="!timesetLoading && (timesetHasDuplicate ||
 				!timesetIsCompatible ||
 				timesetHasReverse ||
-				showDefinedAlert"
+				showDefinedAlert)"
 			class="row justify-center q-pa-md q-pt-xl"
 		>
 			<div
@@ -204,6 +193,19 @@ export default {
 			'addSourcesetError',
 			'timesetTimesLoaded'
 		]),
+		timesetLoading () {
+			return this.loadDestinationState === 'requesting' ||
+				this.addSourcesetState === 'requesting' ||
+				this.updateOwnPhoneToggleState === 'requesting' ||
+				this.addDestinationState === 'requesting' ||
+				this.removeDestinationState === 'requesting' ||
+				this.changeDestinationState === 'requesting' ||
+				this.addTimeState === 'requesting' ||
+				this.resetTimeState === 'requesting' ||
+				this.removeTimeState === 'requesting' ||
+				this.addSourceState === 'requesting' ||
+				this.removeSourceState === 'requesting'
+		},
 		labelReset () {
 			return this.$t('pages.callForward.times.resetTimeset', {
 				timeset: this.timesetName
@@ -325,8 +327,7 @@ export default {
 		enableTimesAddForm () {
 			this.$store.commit('callForward/setActiveTimeForm', true)
 		},
-		deleteTimeDialog (data) {
-			this.deleteTimeData = data
+		deleteTimeDialog (index) {
 			this.$q.dialog({
 				title: this.$t('pages.callForward.times.removeDialogTitle'),
 				message: this.deleteTimeMessage,
@@ -334,26 +335,13 @@ export default {
 				cancel: true,
 				persistent: true
 			}).onOk(data => {
-				this.deleteTime()
+				this.deleteTime(index)
 			})
 		},
-		deleteTime () {
-			this.$store.dispatch('callForward/deleteTimeFromTimeset', this.deleteTimeData)
-			this.deleteTimeData = null
-		},
-		deleteLastTimeDialog () {
-			this.$q.dialog({
-				title: this.$t('pages.callForward.times.removeDialogTitle'),
-				message: this.$t('pages.callForward.times.removeLastDialogText'),
-				color: 'negative',
-				cancel: true,
-				persistent: true
-			}).onOk(data => {
-				this.deleteLastTime()
+		deleteTime (index) {
+			this.$store.dispatch('callForward/deleteTimeFromTimeset', {
+				index: index
 			})
-		},
-		deleteLastTime () {
-			this.$store.dispatch('callForward/deleteTimesetById')
 		}
 	}
 }
