@@ -3,10 +3,30 @@
 ## Development Quick Start for internal developers
 
 * Check if [internal development server](https://dev-web-trunk.mgm.sipwise.com/) is running
-* [Install yarn](https://yarnpkg.com/getting-started/install) on your system
-* Run development environment
+* Clone GIT repo ngcp-csc-ui
 
-    `yarn run dev:docker dev-web-trunk.mgm.sipwise.com`
+    `git clone ssh://hostname:port/ngcp-csc-ui`
+
+* [Install Docker](https://docs.docker.com/get-docker)
+* [Install yarn](https://yarnpkg.com/getting-started/install)
+
+### Run development environment in Docker
+
+This is the preferred way to work with.
+If you have any problems with Docker,
+you can fallback to the method described
+in the next chapter.
+
+```shell script
+yarn run dev:docker dev-web-trunk.mgm.sipwise.com
+```
+
+### Run development environment in your system of choice
+
+```shell script
+yarn run config dev-web-trunk.mgm.sipwise.com
+yarn run dev
+```
 
 ## Technology
 
@@ -29,6 +49,8 @@ In addition, we also recommend the following Quasar Framework tutorials:
 * [Quasar Video Tutorials](https://quasar.dev/video-tutorials)
 
 ## Project Guide
+
+* [Reusable Vue.js Components](doc/COMPONENTS.md)
 
 ### Add a new page
 
