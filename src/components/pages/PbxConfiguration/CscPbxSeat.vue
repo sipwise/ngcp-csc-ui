@@ -233,10 +233,6 @@
 				@click="jumpToCallQueue"
 			/>
 		</div>
-		<csc-dialog-change-password
-			ref="dialogChangePassword"
-			@confirmed="changeWebPassword"
-		/>
 	</q-expansion-item>
 </template>
 
@@ -253,7 +249,6 @@ import CscDialogChangePassword from 'components/CscDialogChangePassword'
 export default {
 	name: 'CscPbxSeat',
 	components: {
-		CscDialogChangePassword,
 		CscPopupMenuItem,
 		CscPopupMenuItemDelete,
 		CscMoreMenu,
@@ -446,14 +441,18 @@ export default {
 			}
 		},
 		showPasswordDialog () {
-			this.$refs.dialogChangePassword.show()
+			this.$q.dialog({
+				component: CscDialogChangePassword,
+				parent: this
+			}).onOk((password) => {
+				this.changeWebPassword(password)
+			})
 		},
 		async changeWebPassword (password) {
 			await this.$store.dispatch('pbxSeats/setSeatWebPassword', {
 				seatId: this.seat.id,
 				seatWebPassword: password
 			})
-			this.$refs.dialogChangePassword.hide()
 		},
 		changeIntraPbx () {
 			this.$emit('save-intra-pbx', {

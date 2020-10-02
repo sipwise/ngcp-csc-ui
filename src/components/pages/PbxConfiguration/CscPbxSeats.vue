@@ -67,7 +67,7 @@
 		</div>
 		<q-list
 			v-if="!isSeatListEmpty && seatListVisibility === 'visible'"
-			class="row justify-start"
+			class="row justify-start items-start"
 		>
 			<csc-pbx-seat
 				v-for="(seat, index) in seatListItems"

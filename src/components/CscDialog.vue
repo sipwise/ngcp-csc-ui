@@ -1,46 +1,58 @@
 <template>
 	<q-dialog
-		ref="modal"
-		minimized
+		ref="dialog"
+		v-bind="$attrs"
+		v-on="$listeners"
 	>
-		<div
-			class="csc-dialog csc-share-dialog"
+		<q-card
+			class="bg-dark q-dialog-plugin"
 		>
-			<div
-				class="csc-dialog-title"
+			<q-card-section
+				class="no-padding"
 			>
-				<q-icon
-					v-if="titleIcon"
-					:name="titleIcon"
-					size="24px"
-				/>
-				<span
-					class="csc-dialog-title-text"
-				>{{ title }}</span>
-			</div>
-			<div
-				class="csc-dialog-content"
-			>
+				<q-item>
+					<q-item-section
+						v-if="titleIcon !== undefined && titleIcon !== null && titleIcon !== ''"
+						side
+						no-wrap
+					>
+						<q-icon
+							:name="titleIcon"
+							:color="titleIconColor"
+						/>
+					</q-item-section>
+					<q-item-section
+						class="text-subtitle1"
+						no-wrap
+					>
+						{{ title }}
+					</q-item-section>
+				</q-item>
+			</q-card-section>
+			<q-separator />
+			<q-card-section>
 				<slot
 					name="content"
 				/>
-			</div>
-			<div
-				class="csc-dialog-actions row justify-end no-wrap"
+				<slot
+					name="default"
+				/>
+			</q-card-section>
+			<q-card-actions
+				align="right"
 			>
 				<q-btn
 					icon="clear"
-					color="default"
+					color="white"
 					flat
+					:label="$t('buttons.cancel')"
 					@click="cancel"
-				>
-					{{ $t('buttons.cancel') }}
-				</q-btn>
+				/>
 				<slot
 					name="actions"
 				/>
-			</div>
-		</div>
+			</q-card-actions>
+		</q-card>
 	</q-dialog>
 </template>
 
@@ -50,25 +62,25 @@ export default {
 	props: {
 		title: {
 			type: String,
-			default: ''
+			default: undefined,
+			required: true
 		},
 		titleIcon: {
 			type: String,
-			default: ''
+			default: undefined
+		},
+		titleIconColor: {
+			type: String,
+			default: 'primary'
 		},
 		opened: {
 			type: Boolean,
 			default: false
 		}
 	},
-	data () {
-		return {
-
-		}
-	},
 	watch: {
 		opened (opened) {
-			if (opened) {
+			if (opened === true) {
 				this.open()
 			} else {
 				this.close()
@@ -82,11 +94,19 @@ export default {
 	},
 	methods: {
 		open () {
-			this.$refs.modal.show()
+			this.show()
+		},
+		show () {
+			this.$refs.dialog.show()
+			this.$emit('show')
 		},
 		close () {
-			this.$refs.modal.hide()
+			this.hide()
 			this.$emit('close')
+		},
+		hide () {
+			this.$refs.dialog.hide()
+			this.$emit('hide')
 		},
 		cancel () {
 			this.close()
@@ -95,24 +115,3 @@ export default {
 	}
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-dialog
-        max-width 480px
-        background-color $body-background
-        .csc-dialog-title
-            text-transform uppercase
-            font-size 14px
-            line-height 14px
-            padding $flex-gutter-sm
-            background-color $item-highlight-color
-            .csc-dialog-title-text
-                vertical-align middle
-            i
-                margin-right $flex-gutter-xs
-                vertical-align middle
-        .csc-dialog-content
-            padding $flex-gutter-md
-        .csc-dialog-actions
-            padding $flex-gutter-sm
-</style>

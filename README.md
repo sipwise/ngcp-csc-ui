@@ -67,6 +67,30 @@ In order to add a new page you need to go along the following steps:
 }
 ```
 
+### Dialogs
+
+![Example dialog](doc/images/dialog.png)
+
+The basic dialog component is `src/components/CscDialog.vue`.
+
+#### How to create a new custom dialog
+
+Check the example implementation in `src/components/CscDialogChangePassword.vue`.
+
+#### How to call custom dialogs from within a Vue.js Component method
+
+To reduce the boilerplate code of dialog components, we call Dialogs
+via [Quasar Dialog Plugin](https://quasar.dev/quasar-plugins/dialog).
+
+```javascript
+this.$q.dialog({
+    component: CscDialogChangePassword,
+    parent: this
+}).onOk((password) => {
+    this.changeWebPassword(password)
+})
+```
+
 ### NGCP API
 
 All API functions are located in `src/api`. The file `src/api/common.js`

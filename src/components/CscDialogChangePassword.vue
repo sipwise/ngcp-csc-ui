@@ -1,18 +1,21 @@
 <template>
-	<csc-dialog-base
+	<csc-dialog
 		ref="dialog"
-		icon="vpn_key"
-		title="Change Password"
-		:ready="ready"
-		v-bind="$attrs"
-		v-on="$listeners"
-		@hide="$emit('hide', $event)"
-		@ok="ok"
+		title-icon="vpn_key"
+		:title="$t('userSettings.changePasswordDialogTitle')"
 	>
 		<template
-			v-slot:title
+			v-slot:actions
 		>
-			Change Password
+			<q-btn
+				icon="check"
+				:label="$t('buttons.confirm')"
+				:disable="!ready"
+				unelevated
+				text-color="dark"
+				color="primary"
+				@click="okEvent"
+			/>
 		</template>
 		<csc-input-password-retype
 			v-model="passwordRetype"
@@ -20,16 +23,16 @@
 			@validation-failed="ready=false"
 			@validation-succeeded="ready=true"
 		/>
-	</csc-dialog-base>
+	</csc-dialog>
 </template>
 
 <script>
 import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
-import CscDialogBase from 'components/CscDialogBase'
+import CscDialog from 'components/CscDialog'
 export default {
 	name: 'CscDialogChangePassword',
 	components: {
-		CscDialogBase,
+		CscDialog,
 		CscInputPasswordRetype
 	},
 	data () {
@@ -48,9 +51,10 @@ export default {
 		hide () {
 			this.$refs.dialog.hide()
 		},
-		ok () {
+		okEvent () {
 			if (this.ready) {
-				this.$emit('confirmed', this.passwordRetype.password)
+				this.$emit('ok', this.passwordRetype.password)
+				this.hide()
 			}
 		}
 	}
