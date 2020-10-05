@@ -94,7 +94,7 @@ import {
 	mapGetters,
 	mapActions
 } from 'vuex'
-import CscPage from '../CscPage'
+import CscPage from 'components/CscPage'
 import {
 	showToast
 } from 'src/helpers/ui'

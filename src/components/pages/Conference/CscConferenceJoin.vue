@@ -50,6 +50,7 @@
 				:color="joinButtonColor"
 				:disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnabled"
 				icon="login"
+				text-color="dark"
 				unelevated
 				round
 				size="large"

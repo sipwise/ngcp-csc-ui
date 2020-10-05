@@ -1,46 +1,47 @@
 
-import ConferenceLayout from 'src/layouts/CscConferenceLayout'
-import DefaultLayout from 'src/layouts/CscMainLayout'
-import Home from 'src/components/pages/CscPageHome'
-import Conversations from 'src/components/pages/Conversations/CscConversations'
-import CscNewCallForward from 'src/components/pages/NewCallForward/CscNewCallForward'
-import CallForwardAlways from 'src/components/pages/CallForward/Always'
-import CallForwardCompanyHours from 'src/components/pages/CallForward/CompanyHours'
-import CallForwardAfterHours from 'src/components/pages/CallForward/AfterHours'
-import CallBlockingIncoming from 'src/components/pages/CallBlocking/Incoming'
-import CallBlockingOutgoing from 'src/components/pages/CallBlocking/Outgoing'
-import CallBlockingPrivacy from 'src/components/pages/CallBlocking/Privacy'
-import Reminder from 'src/components/pages/CscPageReminder'
-import SpeedDial from 'src/components/pages/SpeedDial/CscPageSpeedDial'
-import PbxConfigurationGroups from 'src/components/pages/PbxConfiguration/CscPbxGroups'
-import PbxConfigurationSeats from 'src/components/pages/PbxConfiguration/CscPbxSeats'
-import PbxConfigurationDevices from 'src/components/pages/PbxConfiguration/CscPbxDevices'
-import PbxConfigurationCallQueues from 'src/components/pages/PbxConfiguration/CscPbxCallQueues'
-import PbxConfigurationSoundSets from 'src/components/pages/PbxConfiguration/CscPbxSoundSets'
-import PbxConfigurationMsConfigs from 'src/components/pages/PbxConfiguration/CscPbxMsConfigs'
-import CscPbxSettings from 'src/components/pages/PbxSettings/CscPbxSettings'
-import Voicebox from 'src/components/pages/Voicebox/CscPageVoicebox'
-import Login from 'src/components/CscPageLogin'
-import CscUserSettings from 'src/components/pages/CscUserSettings'
-import Error404 from 'src/components/Error404'
+import CscLayoutConference from 'src/layouts/CscLayoutConference'
+import CscLayoutMain from 'src/layouts/CscLayoutMain'
+
+import CscPageLogin from 'src/pages/CscPageLogin'
+import CscPageHome from 'src/pages/CscPageHome'
+import CscPageConversations from 'src/pages/CscPageConversations'
+import CscPageNewCallForward from 'src/pages/CscPageNewCallForward'
+import CscPageCallForwardAlways from 'src/pages/CscPageCallForwardAlways'
+import CscPageCallForwardCompanyHours from 'src/pages/CscPageCallForwardCompanyHours'
+import CscPageCallForwardAfterHours from 'src/pages/CscPageCallForwardAfterHours'
+import CscPageCallBlockingIncoming from 'src/pages/CscPageCallBlockingIncoming'
+import CscPageCallBlockingOutgoing from 'src/pages/CscPageCallBlockingOutgoing'
+import CscPageCallBlockingPrivacy from 'src/pages/CscPageCallBlockingPrivacy'
+import CscPageReminder from 'src/pages/CscPageReminder'
+import CscPageSpeedDial from 'src/pages/CscPageSpeedDial'
+import CscPagePbxGroups from 'src/pages/CscPagePbxGroups'
+import CscPagePbxSeats from 'src/pages/CscPagePbxSeats'
+import CscPagePbxDevices from 'src/pages/CscPagePbxDevices'
+import CscPagePbxCallQueues from 'src/pages/CscPagePbxCallQueues'
+import CscPagePbxSoundSets from 'src/pages/CscPagePbxSoundSets'
+import CscPagePbxMsConfigs from 'src/pages/CscPagePbxMsConfigs'
+import CscPagePbxSettings from 'src/pages/CscPagePbxSettings'
+import CscPageVoicebox from 'src/pages/CscPageVoicebox'
+import CscPageUserSettings from 'src/pages/CscPageUserSettings'
+import CscPageError404 from 'src/pages/CscPageError404'
 
 export default function routes (app) {
 	const i18n = app.i18n
 	return [
 		{
 			path: '/user',
-			component: DefaultLayout,
+			component: CscLayoutMain,
 			children: [
 				{
 					path: 'home',
-					component: Home,
+					component: CscPageHome,
 					meta: {
 						title: i18n.t('call.inputShort')
 					}
 				},
 				{
 					path: 'conversations',
-					component: Conversations,
+					component: CscPageConversations,
 					meta: {
 						title: i18n.t('navigation.conversations.title'),
 						subtitle: i18n.t('navigation.conversations.subTitle')
@@ -48,11 +49,11 @@ export default function routes (app) {
 				},
 				{
 					path: 'new-call-forward',
-					component: CscNewCallForward
+					component: CscPageNewCallForward
 				},
 				{
 					path: 'call-forward/always',
-					component: CallForwardAlways,
+					component: CscPageCallForwardAlways,
 					meta: {
 						title: i18n.t('navigation.callForward.title'),
 						subtitle: i18n.t('navigation.callForward.always')
@@ -60,7 +61,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'call-forward/company-hours',
-					component: CallForwardCompanyHours,
+					component: CscPageCallForwardCompanyHours,
 					meta: {
 						title: i18n.t('navigation.callForward.title'),
 						subtitle: i18n.t('navigation.callForward.companyHours')
@@ -68,7 +69,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'call-forward/after-hours',
-					component: CallForwardAfterHours,
+					component: CscPageCallForwardAfterHours,
 					meta: {
 						title: i18n.t('navigation.callForward.title'),
 						subtitle: i18n.t('navigation.callForward.afterHours')
@@ -76,7 +77,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'call-blocking/incoming',
-					component: CallBlockingIncoming,
+					component: CscPageCallBlockingIncoming,
 					meta: {
 						title: i18n.t('navigation.callBlocking.title'),
 						subtitle: i18n.t('navigation.callBlocking.incoming')
@@ -84,7 +85,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'call-blocking/outgoing',
-					component: CallBlockingOutgoing,
+					component: CscPageCallBlockingOutgoing,
 					meta: {
 						title: i18n.t('navigation.callBlocking.title'),
 						subtitle: i18n.t('navigation.callBlocking.outgoing')
@@ -92,7 +93,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'call-blocking/privacy',
-					component: CallBlockingPrivacy,
+					component: CscPageCallBlockingPrivacy,
 					meta: {
 						title: i18n.t('navigation.callBlocking.title'),
 						subtitle: i18n.t('navigation.callBlocking.privacy')
@@ -100,7 +101,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'reminder',
-					component: Reminder,
+					component: CscPageReminder,
 					meta: {
 						title: i18n.t('navigation.reminder.title'),
 						subtitle: i18n.t('navigation.reminder.subTitle')
@@ -108,7 +109,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'speeddial',
-					component: SpeedDial,
+					component: CscPageSpeedDial,
 					meta: {
 						title: i18n.t('navigation.speeddial.title'),
 						subtitle: i18n.t('navigation.speeddial.subTitle')
@@ -116,7 +117,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'pbx-configuration/groups',
-					component: PbxConfigurationGroups,
+					component: CscPagePbxGroups,
 					meta: {
 						title: i18n.t('navigation.pbxConfiguration.title'),
 						subtitle: i18n.t('navigation.pbxConfiguration.groups')
@@ -124,7 +125,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'pbx-configuration/seats',
-					component: PbxConfigurationSeats,
+					component: CscPagePbxSeats,
 					meta: {
 						title: i18n.t('navigation.pbxConfiguration.title'),
 						subtitle: i18n.t('navigation.pbxConfiguration.seats')
@@ -132,7 +133,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'pbx-configuration/devices',
-					component: PbxConfigurationDevices,
+					component: CscPagePbxDevices,
 					meta: {
 						title: i18n.t('navigation.pbxConfiguration.title'),
 						subtitle: i18n.t('navigation.pbxConfiguration.devices')
@@ -140,7 +141,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'pbx-configuration/call-queues',
-					component: PbxConfigurationCallQueues,
+					component: CscPagePbxCallQueues,
 					meta: {
 						title: i18n.t('navigation.pbxConfiguration.title'),
 						subtitle: i18n.t('navigation.pbxConfiguration.callQueues')
@@ -148,7 +149,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'pbx-configuration/sound-sets',
-					component: PbxConfigurationSoundSets,
+					component: CscPagePbxSoundSets,
 					meta: {
 						title: i18n.t('navigation.pbxConfiguration.title'),
 						subtitle: i18n.t('navigation.pbxConfiguration.soundSets')
@@ -156,7 +157,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'pbx-configuration/ms-configs',
-					component: PbxConfigurationMsConfigs,
+					component: CscPagePbxMsConfigs,
 					meta: {
 						title: i18n.t('navigation.pbxConfiguration.title'),
 						subtitle: i18n.t('navigation.pbxConfiguration.msConfigs')
@@ -164,7 +165,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'voicebox',
-					component: Voicebox,
+					component: CscPageVoicebox,
 					meta: {
 						title: i18n.t('navigation.voicebox.title'),
 						subtitle: i18n.t('navigation.voicebox.subTitle')
@@ -172,7 +173,7 @@ export default function routes (app) {
 				},
 				{
 					path: 'settings',
-					component: CscUserSettings,
+					component: CscPageUserSettings,
 					meta: {
 						title: i18n.t('navigation.userSettings.title'),
 						subtitle: i18n.t('navigation.userSettings.subTitle')
@@ -180,31 +181,35 @@ export default function routes (app) {
 				},
 				{
 					path: 'pbx-settings',
-					component: CscPbxSettings,
+					component: CscPagePbxSettings,
 					meta: {
 						title: i18n.t('navigation.pbxSettings.title'),
 						subtitle: i18n.t('navigation.pbxSettings.subTitle')
 					}
+				},
+				{
+					path: '*',
+					component: CscPageError404
 				}
 			]
 		},
 		{
 			path: '/login',
-			component: Login,
+			component: CscPageLogin,
 			meta: {
 				title: i18n.t('pages.login.title')
 			}
 		},
 		{
 			path: '/conference',
-			component: ConferenceLayout,
+			component: CscLayoutConference,
 			meta: {
 				title: 'Conference'
 			}
 		},
 		{
 			path: '/conference/:id',
-			component: ConferenceLayout,
+			component: CscLayoutConference,
 			meta: {
 				title: 'Conference'
 			}
@@ -217,7 +222,7 @@ export default function routes (app) {
 		},
 		{
 			path: '*',
-			component: Error404
+			component: CscPageError404
 		}
 	]
 }

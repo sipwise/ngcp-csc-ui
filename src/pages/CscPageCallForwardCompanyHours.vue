@@ -5,13 +5,10 @@
 </template>
 
 <script>
-import CscCallForwardTimeset from './CscCallForwardTimeset'
+import CscCallForwardTimeset from 'components/pages/CallForward/CscCallForwardTimeset'
 export default {
 	components: {
 		CscCallForwardTimeset
 	}
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-</style>

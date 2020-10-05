@@ -98,12 +98,12 @@
 </template>
 
 <script>
-import CscPage from '../../CscPage'
-import CscPbxGroupAddForm from './CscPbxGroupAddForm'
-import CscPbxGroup from './CscPbxGroup'
-import CscRemoveDialog from '../../CscRemoveDialog'
-import CscListActions from '../../CscListActions'
-import CscListActionButton from '../../CscListActionButton'
+import CscPage from 'components/CscPage'
+import CscPbxGroupAddForm from 'components/pages/PbxConfiguration/CscPbxGroupAddForm'
+import CscPbxGroup from 'components/pages/PbxConfiguration/CscPbxGroup'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscListActions from 'components/CscListActions'
+import CscListActionButton from 'components/CscListActionButton'
 import {
 	mapState,
 	mapGetters,
@@ -118,10 +118,10 @@ import {
 	CreationState,
 	RequestState
 } from 'src/store/common'
-import platform from '../../../mixins/platform'
-import CscFade from '../../transitions/CscFade'
-import CscList from '../../CscList'
-import CscListSpinner from '../../CscListSpinner'
+import platform from 'src/mixins/platform'
+import CscFade from 'components/transitions/CscFade'
+import CscList from 'components/CscList'
+import CscListSpinner from 'components/CscListSpinner'
 
 export default {
 	components: {

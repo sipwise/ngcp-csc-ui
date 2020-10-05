@@ -143,16 +143,16 @@ import {
 	mapGetters,
 	mapMutations
 } from 'vuex'
-import CscPage from '../../CscPage'
-import CscList from '../../CscList'
-import CscPbxDevice from './CscPbxDevice'
-import CscFade from '../../transitions/CscFade'
-import CscListSpinner from '../../CscListSpinner'
-import CscListActions from '../../CscListActions'
-import CscListActionButton from '../../CscListActionButton'
-import CscPbxDeviceFilters from './CscPbxDeviceFilters'
-import CscPbxDeviceAddForm from './CscPbxDeviceAddForm'
-import CscRemoveDialog from '../../CscRemoveDialog'
+import CscPage from 'components/CscPage'
+import CscList from 'components/CscList'
+import CscPbxDevice from 'components/pages/PbxConfiguration/CscPbxDevice'
+import CscFade from 'components/transitions/CscFade'
+import CscListSpinner from 'components/CscListSpinner'
+import CscListActions from 'components/CscListActions'
+import CscListActionButton from 'components/CscListActionButton'
+import CscPbxDeviceFilters from 'components/pages/PbxConfiguration/CscPbxDeviceFilters'
+import CscPbxDeviceAddForm from 'components/pages/PbxConfiguration/CscPbxDeviceAddForm'
+import CscRemoveDialog from 'components/CscRemoveDialog'
 import {
 	showGlobalError,
 	showToast

@@ -28,8 +28,8 @@ import {
 	mapGetters,
 	mapActions
 } from 'vuex'
-import CscPage from '../CscPage'
-import CscChangePassword from './UserSettings/CscChangePassword'
+import CscPage from 'components/CscPage'
+import CscChangePassword from 'components/pages/UserSettings/CscChangePassword'
 
 export default {
 	name: 'CscPageUserSettings',

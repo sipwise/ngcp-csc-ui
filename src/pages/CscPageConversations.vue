@@ -78,104 +78,6 @@
 				/>
 			</div>
 		</q-infinite-scroll>
-		<!--		<q-tabs-->
-		<!--			id="csc-conversations-tabs"-->
-		<!--			v-model="selectedTab"-->
-		<!--			inverted-->
-		<!--			color="primary"-->
-		<!--			align="justify"-->
-		<!--		>-->
-		<!--			<q-tab-->
-		<!--				slot="title"-->
-		<!--				default-->
-		<!--				name="call-fax-voicemail"-->
-		<!--				icon="inbox"-->
-		<!--				:label="labelAll"-->
-		<!--				@click="filterByType('call-fax-voicemail')"-->
-		<!--			/>-->
-		<!--			<q-tab-->
-		<!--				slot="title"-->
-		<!--				name="call"-->
-		<!--				icon="call"-->
-		<!--				:label="labelCalls"-->
-		<!--				@click="filterByType('call')"-->
-		<!--			/>-->
-		<!--			<q-tab-->
-		<!--				slot="title"-->
-		<!--				name="fax"-->
-		<!--				icon="description"-->
-		<!--				:label="labelFaxes"-->
-		<!--				@click="filterByType('fax')"-->
-		<!--			/>-->
-		<!--			<q-tab-->
-		<!--				slot="title"-->
-		<!--				name="voicemail"-->
-		<!--				icon="voicemail"-->
-		<!--				:label="labelVoicemails"-->
-		<!--				@click="filterByType('voicemail')"-->
-		<!--			/>-->
-		<!--		</q-tabs>-->
-		<!--		<div-->
-		<!--			id="csc-conversation-content"-->
-		<!--		>-->
-		<!--			<q-list-->
-		<!--				v-if="items.length > 0"-->
-		<!--				id="csc-conversation-list"-->
-		<!--				no-border-->
-		<!--				striped-odd-->
-		<!--				multiline-->
-		<!--			>-->
-		<!--				<csc-conversation-item-->
-		<!--					v-for="item in items"-->
-		<!--					:key="item._id"-->
-		<!--					class="csc-list-item csc-conversation-list-item"-->
-		<!--					:item="item"-->
-		<!--					:call-available="isCallEnabled"-->
-		<!--					:blocked-incoming="blockedIncoming(item)"-->
-		<!--					:blocked-outgoing="blockedOutgoing(item)"-->
-		<!--					@start-call="startCall"-->
-		<!--					@download-fax="downloadFax"-->
-		<!--					@download-voice-mail="downloadVoiceMail"-->
-		<!--					@play-voice-mail="playVoiceMail"-->
-		<!--					@toggle-block-incoming="toggleBlockIncoming"-->
-		<!--					@toggle-block-outgoing="toggleBlockOutgoing"-->
-		<!--					@toggle-block-both="toggleBlockBoth"-->
-		<!--					@delete-voicemail="$refs.confirmDeletionDialog.open();deletionId=$event.id"-->
-		<!--				/>-->
-		<!--			</q-list>-->
-		<!--			<div-->
-		<!--				v-else-if="!isNextPageRequesting && items.length === 0"-->
-		<!--				class="row justify-center csc-conversation-list-message"-->
-		<!--			>-->
-		<!--				{{ noResultsMessage }}-->
-		<!--			</div>-->
-		<!--			<div-->
-		<!--				v-if="isNextPageRequesting"-->
-		<!--				class="row justify-center"-->
-		<!--			>-->
-		<!--				<q-spinner-dots-->
-		<!--					color="primary"-->
-		<!--					:size="40"-->
-		<!--				/>-->
-		<!--			</div>-->
-		<!--		</div>-->
-		<!--		&lt;!&ndash;		<q-scroll-observable&ndash;&gt;-->
-		<!--		&lt;!&ndash;			@scroll="scroll"&ndash;&gt;-->
-		<!--		&lt;!&ndash;		/>&ndash;&gt;-->
-		<!--		<q-page-scroller-->
-		<!--			position="bottom-right"-->
-		<!--			:scroll-offset="100"-->
-		<!--		>-->
-		<!--			<q-btn-->
-		<!--				round-->
-		<!--				color="primary"-->
-		<!--				:class="backToTopClasses"-->
-		<!--			>-->
-		<!--				<q-icon-->
-		<!--					name="keyboard_arrow_up"-->
-		<!--				/>-->
-		<!--			</q-btn>-->
-		<!--		</q-page-scroller>-->
 		<csc-remove-dialog
 			ref="confirmDeletionDialog"
 			title-icon="delete"
@@ -188,15 +90,15 @@
 </template>
 
 <script>
-import platformMixin from '../../../mixins/platform'
+import platformMixin from 'src/mixins/platform'
 import {
 	mapGetters,
 	mapActions,
 	mapState
 } from 'vuex'
-import CscPage from '../../CscPage'
-import CscConversationItem from './CscConversationItem'
-import CscRemoveDialog from '../../CscRemoveDialog'
+import CscPage from 'components/CscPage'
+import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
+import CscRemoveDialog from 'components/CscRemoveDialog'
 import CscListSpinner from 'components/CscListSpinner'
 export default {
 	name: 'CscConversations',
@@ -308,81 +210,6 @@ export default {
 				return this.$t('pages.conversations.tabLabelVoicemails')
 			}
 		}
-		// isCalling () {
-		// 	return this.callState === 'initiating' ||
-		// 		this.callState === 'ringing' ||
-		// 		this.callState === 'established' ||
-		// 		this.callState === 'incoming'
-		// },
-		// backToTopClasses () {
-		// 	const classes = [
-		// 		'fixed-bottom-right',
-		// 		'animate-pop',
-		// 		'csc-back-to-top',
-		// 		'transition-generic'
-		// 	]
-		// 	if (this.isCalling) {
-		// 		classes.push('csc-back-to-top-calling')
-		// 	}
-		// 	return classes
-		// }
-	},
-	watch: {
-		// downloadVoiceMailState (state) {
-		// 	if (state === 'requesting') {
-		// 		startLoading()
-		// 	} else if (state === 'failed') {
-		// 		stopLoading()
-		// 		showGlobalError(this.downloadVoiceMailError || this.$t('pages.conversations.downloadVoiceMailErrorMessage'))
-		// 	} else if (state === 'succeeded') {
-		// 		stopLoading()
-		// 		showToast(this.$t('pages.conversations.downloadVoiceMailSuccessMessage'))
-		// 	}
-		// },
-		// downloadFaxState (state) {
-		// 	if (state === 'requesting') {
-		// 		startLoading()
-		// 	} else if (state === 'failed') {
-		// 		stopLoading()
-		// 		showGlobalError(this.downloadFaxError || this.$t('pages.conversations.downloadFaxErrorMessage'))
-		// 	} else if (state === 'succeeded') {
-		// 		stopLoading()
-		// 		showToast(this.$t('pages.conversations.downloadFaxSuccessMessage'))
-		// 	}
-		// },
-		// reloadItemsState (state) {
-		// 	if (state === 'failed') {
-		// 		showGlobalError(this.reloadItemsError)
-		// 	}
-		// },
-		// callState (newState, oldState) {
-		// 	const endedA = newState === 'ended'
-		// 	const endedB = oldState === 'established' && newState === 'input'
-		// 	const endedC = oldState === 'ringing' && newState === 'input'
-		// 	const endedD = oldState === 'incoming' && newState === 'input'
-		// 	const isCallTab = this.selectedTab === 'call' || this.selectedTab === 'call-fax-voicemail'
-		// 	if (isCallTab && (endedA || endedB || endedC || endedD)) {
-		// 		this.reloadItems()
-		// 	}
-		// },
-		// itemsReloaded (state) {
-		// 	const offsetTop = offset(this.$el).top
-		// 	if (state && offsetTop < -15) {
-		// 		window.scrollTo(0, 0)
-		// 	}
-		// },
-		// toggleBlockedState (state) {
-		// 	if (state === 'requesting') {
-		// 		startLoading()
-		// 	} else if (state === 'failed') {
-		// 		stopLoading()
-		// 	} else if (state === 'succeeded') {
-		// 		stopLoading()
-		// 		showToast(this.$t('pages.conversations.toggledSuccessMessage', {
-		// 			type: this.lastToggledType
-		// 		}))
-		// 	}
-		// }
 	},
 	async mounted () {
 		this.topMargin = this.$refs.pageSticky.$el.offsetHeight

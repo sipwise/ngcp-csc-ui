@@ -88,15 +88,15 @@ import {
 	showGlobalError,
 	showToast
 } from 'src/helpers/ui'
-import CscPage from '../../CscPage'
-import CscPbxMsConfig from './CscPbxMsConfig'
-import CscPbxMsConfigAddForm from './CscPbxMsConfigAddForm'
-import CscRemoveDialog from '../../CscRemoveDialog'
-import CscListSpinner from '../../CscListSpinner'
-import CscListActions from '../../CscListActions'
-import CscList from '../../CscList'
-import CscFade from '../../transitions/CscFade'
-import CscListActionButton from '../../CscListActionButton'
+import CscPage from 'components/CscPage'
+import CscPbxMsConfig from 'components/pages/PbxConfiguration/CscPbxMsConfig'
+import CscPbxMsConfigAddForm from 'components/pages/PbxConfiguration/CscPbxMsConfigAddForm'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscListSpinner from 'components/CscListSpinner'
+import CscListActions from 'components/CscListActions'
+import CscList from 'components/CscList'
+import CscFade from 'components/transitions/CscFade'
+import CscListActionButton from 'components/CscListActionButton'
 
 export default {
 	components: {

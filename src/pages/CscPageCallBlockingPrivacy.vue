@@ -38,9 +38,10 @@ import {
 import {
 	showToast
 } from 'src/helpers/ui'
-import CscPage from '../../CscPage'
+import CscPage from 'components/CscPage'
 import CscSpinner from 'components/CscSpinner'
 export default {
+	name: 'CscPageCallBlockingPrivacy',
 	components: {
 		CscSpinner,
 		CscPage
@@ -93,8 +94,3 @@ export default {
 	}
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-privacy
-        position relative
-</style>

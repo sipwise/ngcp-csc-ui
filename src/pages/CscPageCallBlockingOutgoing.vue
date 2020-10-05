@@ -5,16 +5,11 @@
 </template>
 
 <script>
-import CscCallBlocking from './CscCallBlocking'
+import CscCallBlocking from 'components/pages/CallBlocking/CscCallBlocking'
 export default {
+	name: 'CscPageCallBlockingOutgoing',
 	components: {
 		CscCallBlocking
-	},
-	data () {
-		return {}
 	}
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-</style>

@@ -66,25 +66,6 @@
 								clearable
 								@keypress.enter="login()"
 							/>
-							<!--							<q-input-->
-							<!--								v-model="password"-->
-							<!--								class="q-mb-sm"-->
-							<!--								type="password"-->
-							<!--								max-length="32"-->
-							<!--								flat-->
-							<!--								:label="$t('pages.login.password')"-->
-							<!--								:disable="loginRequesting"-->
-							<!--								clearable-->
-							<!--								@keyup.enter="login()"-->
-							<!--							>-->
-							<!--								<template-->
-							<!--									slot="prepend"-->
-							<!--								>-->
-							<!--									<q-icon-->
-							<!--										name="lock"-->
-							<!--									/>-->
-							<!--								</template>-->
-							<!--							</q-input>-->
 						</form>
 					</q-card-section>
 					<q-card-actions
@@ -125,7 +106,7 @@ import {
 import {
 	getLanguageLabel
 } from '../i18n'
-import CscLanguageMenu from './CscLanguageMenu'
+import CscLanguageMenu from 'components/CscLanguageMenu'
 import CscSpinner from 'components/CscSpinner'
 import CscInputPassword from 'components/form/CscInputPassword'
 import CscInput from 'components/form/CscInput'

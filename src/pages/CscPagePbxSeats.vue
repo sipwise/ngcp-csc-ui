@@ -114,9 +114,9 @@
 
 <script>
 import _ from 'lodash'
-import CscPbxSeatAddForm from './CscPbxSeatAddForm'
-import CscPbxSeat from './CscPbxSeat'
-import CscRemoveDialog from '../../CscRemoveDialog'
+import CscPbxSeatAddForm from 'components/pages/PbxConfiguration/CscPbxSeatAddForm'
+import CscPbxSeat from 'components/pages/PbxConfiguration/CscPbxSeat'
+import CscRemoveDialog from 'components/CscRemoveDialog'
 import {
 	mapState,
 	mapGetters,
@@ -127,13 +127,12 @@ import {
 	showGlobalError,
 	showToast
 } from 'src/helpers/ui'
-import CscSpinner from '../../CscSpinner'
+import CscSpinner from 'components/CscSpinner'
 import {
 	CreationState,
 	RequestState
 } from 'src/store/common'
-import platform from '../../../mixins/platform'
-// import CscList from '../../CscList'
+import platform from 'src/mixins/platform'
 import CscPageSticky from 'components/CscPageSticky'
 import CscPbxSeatFilters from 'components/pages/PbxConfiguration/CscPbxSeatFilters'
 
@@ -145,9 +144,6 @@ export default {
 		CscPbxSeat,
 		CscPbxSeatAddForm,
 		CscRemoveDialog
-		// CscList
-		// CscListActions,
-		// CscListActionButton
 	},
 	mixins: [
 		platform

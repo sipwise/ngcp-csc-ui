@@ -91,8 +91,8 @@
 import {
 	mapGetters
 } from 'vuex'
-import CscPage from '../../CscPage'
-import CscSpeedDialAddForm from './CscSpeedDialAddForm'
+import CscPage from 'components/CscPage'
+import CscSpeedDialAddForm from 'components/pages/SpeedDial/CscSpeedDialAddForm'
 import {
 	showToast,
 	showGlobalError

@@ -32,7 +32,7 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
-import CscPage from '../../CscPage'
+import CscPage from 'components/CscPage'
 import {
 	showGlobalError,
 	showToast

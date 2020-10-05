@@ -76,12 +76,12 @@
 </template>
 
 <script>
-import CscPage from '../../CscPage'
-import CscPbxCallQueue from './CscPbxCallQueue'
-import CscPbxCallQueueAddForm from './CscPbxCallQueueAddForm'
-import CscRemoveDialog from '../../CscRemoveDialog'
-import CscListSpinner from '../../CscListSpinner'
-import CscListActions from '../../CscListActions'
+import CscPage from 'components/CscPage'
+import CscPbxCallQueue from 'components/pages/PbxConfiguration/CscPbxCallQueue'
+import CscPbxCallQueueAddForm from 'components/pages/PbxConfiguration/CscPbxCallQueueAddForm'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscListSpinner from 'components/CscListSpinner'
+import CscListActions from 'components/CscListActions'
 import {
 	mapState,
 	mapActions,
@@ -96,9 +96,9 @@ import {
 	showGlobalError,
 	showToast
 } from 'src/helpers/ui'
-import CscList from '../../CscList'
-import CscFade from '../../transitions/CscFade'
-import CscListActionButton from '../../CscListActionButton'
+import CscList from 'components/CscList'
+import CscFade from 'components/transitions/CscFade'
+import CscListActionButton from 'components/CscListActionButton'
 
 export default {
 	components: {

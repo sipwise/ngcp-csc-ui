@@ -96,9 +96,9 @@ import {
 import {
 	showGlobalWarning
 } from 'src/helpers/ui'
-import CscPage from '../../CscPage'
-import CscNewCallForwardDestinationsetTypeSelect from './CscNewCallForwardDestinationsetTypeSelect'
-import CscCfGroup from './CscCallForwardGroup'
+import CscPage from 'components/CscPage'
+import CscNewCallForwardDestinationsetTypeSelect from 'components/pages/NewCallForward/CscNewCallForwardDestinationsetTypeSelect'
+import CscCfGroup from 'components/pages/NewCallForward/CscCallForwardGroup'
 export default {
 	components: {
 		CscCfGroup,

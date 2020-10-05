@@ -24,7 +24,7 @@ import {
 	showToast,
 	showGlobalError
 } from 'src/helpers/ui'
-import CscSourcesets from './CscSourcesets'
+import CscSourcesets from 'components/pages/CallForward/CscSourcesets'
 export default {
 	components: {
 		CscSourcesets

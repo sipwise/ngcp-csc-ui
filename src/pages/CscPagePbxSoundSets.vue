@@ -105,15 +105,15 @@ import {
 	mapState,
 	mapGetters
 } from 'vuex'
-import CscPage from '../../CscPage'
-import CscList from '../../CscList'
-import CscFade from '../../transitions/CscFade'
-import CscListActions from '../../CscListActions'
-import CscListActionButton from '../../CscListActionButton'
-import CscPbxSoundSet from './CscPbxSoundSet'
-import CscListSpinner from '../../CscListSpinner'
-import CscPbxSoundSetAddForm from './CscPbxSoundSetAddForm'
-import CscRemoveDialog from '../../CscRemoveDialog'
+import CscPage from 'components/CscPage'
+import CscList from 'components/CscList'
+import CscFade from 'components/transitions/CscFade'
+import CscListActions from 'components/CscListActions'
+import CscListActionButton from 'components/CscListActionButton'
+import CscPbxSoundSet from 'components/pages/PbxConfiguration/CscPbxSoundSet'
+import CscListSpinner from 'components/CscListSpinner'
+import CscPbxSoundSetAddForm from 'components/pages/PbxConfiguration/CscPbxSoundSetAddForm'
+import CscRemoveDialog from 'components/CscRemoveDialog'
 
 export default {
 	components: {

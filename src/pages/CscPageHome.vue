@@ -11,7 +11,7 @@
 			>
 				{{ $t('call.rtcEngineNotEnabled') }}
 			</csc-inline-alert-info>
-			<q-input
+			<csc-input
 				:label="$t('call.number')"
 				:value="callNumberInput"
 				:readonly="dialpadOpened"
@@ -31,7 +31,7 @@
 						size="24px"
 					/>
 				</template>
-			</q-input>
+			</csc-input>
 			<csc-call-dialpad
 				v-if="dialpadOpened && isCallEnabled"
 				:show-backspace-button="true"
@@ -45,16 +45,18 @@
 </template>
 
 <script>
-import platformMixin from '../../mixins/platform'
+import platformMixin from 'src/mixins/platform'
 import {
 	mapGetters
 } from 'vuex'
-import CscCallDialpad from '../CscCallDialpad'
+import CscCallDialpad from 'components/CscCallDialpad'
 import CscPage from 'components/CscPage'
 import CscInlineAlertInfo from 'components/CscInlineAlertInfo'
+import CscInput from 'components/form/CscInput'
 
 export default {
 	components: {
+		CscInput,
 		CscInlineAlertInfo,
 		CscPage,
 		CscCallDialpad
