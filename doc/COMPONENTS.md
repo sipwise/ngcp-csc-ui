@@ -10,14 +10,36 @@
 
 ### Sticky Page
 
+The `CscStickyPage` provides a sticky header.
+
 ```vue
-<csc-page />
+<csc-page-sticky>
+  <template v-slot:header>
+  </template>
+  <template v-slot:toolbar>
+  </template>
+  <template v-slot:default>
+  </template>
+</csc-page-sticky>
 ```
 
 ### Sticky Tabs
 
+This page consists of a sticky header, which contains `QTabs`.
+It is used e.g. `src/pages/CscPageConversations`
+
 ```vue
-<csc-page />
+<csc-page-sticky-tabs>
+  <template v-slot:tabs>
+    <q-tab />
+    <q-tab />
+    <q-tab />
+  </template>
+  <template v-slot:toolbar>
+  </template>
+  <template v-slot:default>
+  </template>
+</csc-page-sticky-tabs>
 ```
 
 ## Forms
