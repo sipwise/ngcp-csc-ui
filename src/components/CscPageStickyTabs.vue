@@ -9,18 +9,24 @@
 			expand
 			position="top"
 		>
-			<q-tabs
-				:value="value"
-				align="justify"
-				inline-label
-				active-color="primary"
-				dense
-				@input="input"
+			<div
+				class="full-width"
 			>
-				<slot
-					name="tabs"
-				/>
-			</q-tabs>
+				<q-tabs
+					:value="value"
+					style="z-index: 11"
+					align="center"
+					inline-label
+					active-color="primary"
+					dense
+					mobile-arrows
+					@input="input"
+				>
+					<slot
+						name="tabs"
+					/>
+				</q-tabs>
+			</div>
 			<q-separator />
 			<slot
 				name="toolbar"

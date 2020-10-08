@@ -44,7 +44,7 @@
 			>
 				<q-list
 					v-if="items.length > 0"
-					class="col-sm-12 col-md-8"
+					class="col-xs-12 col-md-8"
 					no-border
 				>
 					<csc-conversation-item
@@ -301,22 +301,3 @@ export default {
 	}
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    #csc-conversations-tabs
-        position sticky
-        top $header-height
-        z-index 12
-        background-color $secondary
-        .q-tab
-            .q-tab-icon
-                font-size 24px
-    #csc-conversation-content
-        padding-top $flex-gutter-lg
-    .csc-back-to-top
-        margin 0 15px 15px 0
-    .csc-back-to-top.csc-back-to-top-calling
-        bottom $call-footer-height-big + 15px
-    .csc-conversation-list-item
-        padding $flex-gutter-sm
-</style>
