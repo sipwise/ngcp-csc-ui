@@ -97,7 +97,6 @@ export default {
 			this.$emit('download-fax', this.fax)
 		},
 		startCall () {
-			this.$refs.callPopover.close()
 			this.$emit('start-call', this.fax.caller)
 		}
 	}

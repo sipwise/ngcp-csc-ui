@@ -1,34 +1,32 @@
 <template>
-	<csc-page
-		:style="pageStyle"
+	<csc-page-sticky-tabs
+		ref="pageSticky"
+		:value="selectedTab"
 	>
-		<q-page-sticky
-			ref="pageSticky"
-			class="bg-secondary q-pt-lg"
-			style="z-index: 10"
-			expand
-			position="top"
+		<template
+			v-slot:tabs
 		>
-			<q-tabs
-				:value="selectedTab"
-				class="col-sm-12 col-md-8"
-				align="justify"
-				inline-label
-				active-color="primary"
-				dense
-			>
-				<q-tab
-					v-for="tab in tabs"
-					:key="tab.value"
-					:name="tab.value"
-					:icon="tab.icon"
-					:label="tab.label"
-					:default="tab.value === selectedTab"
-					@click="selectTab(tab.value)"
-				/>
-			</q-tabs>
-			<q-separator />
-		</q-page-sticky>
+			<q-tab
+				v-for="tab in tabs"
+				:key="tab.value"
+				:name="tab.value"
+				:icon="tab.icon"
+				:label="tab.label"
+				:default="tab.value === selectedTab"
+				@click="selectTab(tab.value)"
+			/>
+		</template>
+		<template
+			v-slot:toolbar
+		>
+			<csc-conversations-filter
+				v-model="filter"
+				class="q-pb-sm"
+				:loading="isNextPageRequesting"
+				:disable="isNextPageRequesting"
+				@input="filterTab(selectedTab)"
+			/>
+		</template>
 		<q-infinite-scroll
 			ref="infiniteScroll"
 			:offset="500"
@@ -81,12 +79,13 @@
 		<csc-remove-dialog
 			ref="confirmDeletionDialog"
 			title-icon="delete"
+			title-icon-color="negative"
 			:title="$t('conversations.deleteVoicemailTitle')"
 			:message="$t('conversations.deleteVoicemailText')"
 			@remove="deleteVoicemail({id:deletionId, tab: selectedTab})"
 			@cancel="deletionId=null"
 		/>
-	</csc-page>
+	</csc-page-sticky-tabs>
 </template>
 
 <script>
@@ -96,23 +95,26 @@ import {
 	mapActions,
 	mapState
 } from 'vuex'
-import CscPage from 'components/CscPage'
-import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
-import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscListSpinner from 'components/CscListSpinner'
+import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
+import CscConversationsFilter from 'components/pages/Conversations/CscConversationsFilter'
+import CscRemoveDialog from 'components/CscRemoveDialog'
 export default {
 	name: 'CscConversations',
 	components: {
-		CscListSpinner,
 		CscRemoveDialog,
-		CscPage,
-		CscConversationItem
+		CscConversationsFilter,
+		CscConversationItem,
+		CscListSpinner,
+		CscPageStickyTabs
 	},
 	mixins: [
 		platformMixin
 	],
 	data () {
 		return {
+			filter: undefined,
 			topMargin: 0,
 			deletionId: null,
 			selectedTab: 'call-fax-voicemail'
@@ -226,21 +228,28 @@ export default {
 			this.$store.dispatch('conversations/nextPage', {
 				type: type,
 				index: index,
+				filter: this.filter,
 				done: done
 			})
 		},
-		async selectTab (tabName) {
+		selectTab (tabName) {
 			if (this.selectedTab !== tabName) {
-				this.selectedTab = tabName
-				this.$store.commit('conversations/resetList')
-				this.$refs.infiniteScroll.reset()
-				if (this.reachedLastPage) {
-					this.$refs.infiniteScroll.resume()
-					this.$refs.infiniteScroll.trigger()
-				} else {
-					this.$refs.infiniteScroll.poll()
-				}
+				this.forceTabReload(tabName)
 			}
+		},
+		forceTabReload (tabName) {
+			this.selectedTab = tabName
+			this.$store.commit('conversations/resetList')
+			this.$refs.infiniteScroll.reset()
+			if (this.reachedLastPage) {
+				this.$refs.infiniteScroll.resume()
+				this.$refs.infiniteScroll.trigger()
+			} else {
+				this.$refs.infiniteScroll.poll()
+			}
+		},
+		filterTab (tabName) {
+			this.forceTabReload(tabName)
 		},
 		async reload () {
 			this.$store.commit('conversations/resetList')
@@ -263,22 +272,6 @@ export default {
 				id: voiceMail.id,
 				format: voiceMail.format
 			})
-		},
-		reloadItems () {
-			let type = this.selectedTab
-			if (type === 'call-fax-voicemail') {
-				type = null
-			}
-			this.$store.dispatch('conversations/reloadItems', {
-				retryCount: 1,
-				type: type
-			})
-		},
-		filterByType (type) {
-			if (type !== this.selectedTab) {
-				this.$store.commit('conversations/resetList')
-				this.$store.dispatch('conversations/nextPage', type)
-			}
 		},
 		toggleBlockIncoming (options) {
 			this.$store.dispatch('conversations/toggleBlockIncoming', options).finally(() => {

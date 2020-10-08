@@ -88,14 +88,17 @@ export default {
 				subscriberId: context.getters.getSubscriberId,
 				page: options.index,
 				rows: ROWS_PER_PAGE,
-				type: options.type
+				type: options.type,
+				from: _.get(options, 'filter.from', ''),
+				to: _.get(options, 'filter.to', '')
 			})
 			context.commit('nextPageSucceeded', res)
 		} catch (err) {
 			context.commit('nextPageFailed', err.message)
 		} finally {
-			console.log(res)
-			if (options.done !== undefined && res.items && res.items.length === 0) {
+			if (options.done !== undefined && (res === undefined || res.items === undefined)) {
+				options.done(true)
+			} else if (options.done !== undefined && res.items && res.items.length === 0) {
 				options.done(true)
 			} else if (options.done !== undefined) {
 				options.done()

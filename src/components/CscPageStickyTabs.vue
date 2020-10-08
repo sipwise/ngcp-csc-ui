@@ -32,7 +32,7 @@
 <script>
 import CscPage from 'components/CscPage'
 export default {
-	name: 'QPageStickyTabs',
+	name: 'CscPageStickyTabs',
 	components: {
 		CscPage
 	},

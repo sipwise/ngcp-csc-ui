@@ -15,6 +15,8 @@ import {
 export function getConversations (options) {
 	return new Promise((resolve, reject) => {
 		const type = _.get(options, 'type', null)
+		const from = _.get(options, 'from', '')
+		const to = _.get(options, 'to', '')
 		const params = {
 			subscriber_id: _.get(options, 'subscriberId'),
 			order_by: _.get(options, 'order_by', 'timestamp'),
@@ -26,6 +28,12 @@ export function getConversations (options) {
 		}
 		if (type !== null) {
 			params.type = type
+		}
+		if (from !== '') {
+			params.from = from
+		}
+		if (to !== '') {
+			params.to = to
 		}
 		getList({
 			path: 'api/conversations/',

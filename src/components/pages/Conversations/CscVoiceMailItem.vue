@@ -165,7 +165,6 @@ export default {
 			this.$refs.voicemailPlayer.setPausedFalse()
 		},
 		startCall () {
-			this.$refs.callPopover.close()
 			this.$emit('start-call', this.voiceMail.callee)
 		},
 		toggleBlockIncoming () {
@@ -178,7 +177,6 @@ export default {
 			this.$emit('toggle-block-both')
 		},
 		deleteVoicemail (voiceMail) {
-			this.$refs.callPopover.close()
 			this.$emit('delete-voicemail', voiceMail)
 		}
 	}
