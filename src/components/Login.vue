@@ -54,22 +54,18 @@
                                     :float-label="$t('pages.login.username')"
                                     autofocus
                                     clearable
-                                    dark
                                     v-model="username"
                                     @keyup.enter="login()"
                                 />
                             </q-field>
                             <q-field
                                 icon="lock"
-                                :helper="$t('pages.login.password_helper')"
-                                :count="32">
+                                :helper="$t('pages.login.password_helper')">
                                 <q-input
                                     dark
                                     type="password"
-                                    max-length="32"
                                     :float-label="$t('pages.login.password')"
                                     clearable
-                                    dark
                                     v-model="password"
                                     @keyup.enter="login()"
                                 />
