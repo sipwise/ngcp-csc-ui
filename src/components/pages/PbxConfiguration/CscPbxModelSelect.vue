@@ -170,19 +170,11 @@ export default {
 			type: Number,
 			default: undefined
 		},
-		profile: {
-			type: Number,
-			default: undefined
-		},
 		profiles: {
 			type: Array,
 			default: () => []
 		},
 		profileMap: {
-			type: Object,
-			default: null
-		},
-		modelImageMap: {
 			type: Object,
 			default: null
 		},
@@ -197,7 +189,7 @@ export default {
 	},
 	data () {
 		return {
-			selectedProfile: this.getProfileById(this.profile)
+			selectedProfile: this.getProfileById(this.value)
 		}
 	},
 	computed: {
@@ -224,8 +216,8 @@ export default {
 		}
 	},
 	watch: {
-		profile (id) {
-			this.selectedProfile = this.getProfileById(id)
+		value () {
+			this.selectedProfile = this.getProfileById(this.value)
 		}
 	},
 	methods: {

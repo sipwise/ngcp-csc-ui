@@ -4,7 +4,7 @@
 			v-model="source"
 			dark
 			autofocus
-			:float-label="$t('pages.callForward.sources.source')"
+			:label="$t('pages.callForward.sources.source')"
 			color="primary"
 			@keyup.enter="addSource()"
 		/>

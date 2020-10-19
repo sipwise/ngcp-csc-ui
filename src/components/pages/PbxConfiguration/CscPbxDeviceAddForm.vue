@@ -23,13 +23,11 @@
 		/>
 		<csc-pbx-model-select
 			v-model="formData.profile"
-			:profile="formData.profile"
 			:profiles="profiles"
 			:profile-map="profileMap"
-			:model-image-map="modelImageMap"
 			:has-reset-button="true"
 			@opened="$emit('model-select-opened')"
-			@selected="selectedProfile"
+			@input="selectedProfile"
 			@reset="resetProfile"
 		/>
 		<div

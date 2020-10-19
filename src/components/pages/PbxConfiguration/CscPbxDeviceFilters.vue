@@ -20,13 +20,12 @@
 				@reset="resetIdentifier"
 			/>
 			<csc-pbx-model-select
-				:profile="profileFilter"
+				:value="profileFilter"
 				:profiles="profiles"
 				:profile-map="profileMap"
-				:model-image-map="modelImageMap"
 				:has-reset-button="true"
 				@opened="$emit('model-select-opened')"
-				@selected="filterProfile"
+				@input="filterProfile"
 				@reset="resetProfile"
 			/>
 		</div>
@@ -73,8 +72,8 @@ export default {
 			default: ''
 		},
 		profileFilter: {
-			type: String,
-			default: ''
+			type: Number,
+			default: null
 		},
 		profiles: {
 			type: Array,
@@ -117,7 +116,7 @@ export default {
 			this.$emit('reset-identifier')
 		},
 		filterProfile (profile) {
-			this.$emit('filter-profile', profile)
+			this.$emit('filter-profile', Number(profile))
 		},
 		resetProfile () {
 			this.$emit('reset-profile')

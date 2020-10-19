@@ -70,7 +70,7 @@
 				chips
 				:disable="loading || numberOptionsLoading"
 				:readonly="loading"
-				:float-label="$t('pbxConfig.msConfigNumberSelectionLabel')"
+				:label="$t('pbxConfig.msConfigNumberSelectionLabel')"
 				:options="numberOptions"
 			>
 				<template

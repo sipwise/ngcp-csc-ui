@@ -39,6 +39,8 @@ export function getDeviceList (options) {
 		}
 		if (params.profile_id === null || params.profile_id === undefined || params.profile_id === '') {
 			delete params.profile_id
+		} else {
+			params.profile_id = String(params.profile_id)
 		}
 		if (params.identifier === null || params.identifier === undefined || params.identifier === '') {
 			delete params.identifier

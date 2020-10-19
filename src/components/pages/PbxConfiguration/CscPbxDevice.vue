@@ -82,13 +82,11 @@
 			</q-field>
 			<csc-pbx-model-select
 				v-model="changes.profile"
-				:label="$t('pbxConfig.deviceModel')"
-				:profile="changes.profile"
 				:profiles="profiles"
 				:profile-map="profileMap"
-				:model-image-map="modelImageMap"
 				:has-reset-button="false"
 				@opened="$emit('model-select-opened')"
+				@input="selectedProfile"
 			>
 				<template
 					v-if="hasProfileChanged"
@@ -265,6 +263,9 @@ export default {
 		},
 		resetIdentifier () {
 			this.changes.identifier = this.device.identifier
+		},
+		selectedProfile (profileId) {
+			this.changes.profile = profileId
 		},
 		resetProfile () {
 			this.changes.profile = this.device.profile_id

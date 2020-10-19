@@ -45,7 +45,7 @@
 			radio
 			:disable="loading || !data.copy_from_default"
 			:readonly="loading"
-			:float-label="$t('pbxConfig.language')"
+			:label="$t('pbxConfig.language')"
 			:options="languageOptions"
 		/>
 		<div
