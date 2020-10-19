@@ -1,3 +1,13 @@
+ngcp-csc-ui (8.5.2.1+0~mr8.5.2.1) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [6899f31] TT#87464 Fix data availability issue in CscUserMenu component
+
+  [ Sergii Leonenko ]
+  * [0e17973] TT#96800 CSC: Remove character limitations from input fields of type password.
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 19 Oct 2020 14:28:22 +0200
+
 ngcp-csc-ui (8.5.2.0+0~mr8.5.2.0) unstable; urgency=medium
 
   * New release.
