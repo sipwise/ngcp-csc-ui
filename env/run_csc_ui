@@ -29,8 +29,8 @@ echo "Found quasar config '${app_config}', checking content..."
 if ! grep -q "${ngcp_address}" "${app_config}" >/dev/null 2>&1; then
   echo "NGCP address '${ngcp_address}' is missing in '${app_config}', regenerating from default config..."
   cp -a "${default_app_config}" "${app_config}"
-  sed -i -e "s|baseHttpUrl:.*|baseHttpUrl: 'https://${ngcp_address}:1443',|" "${app_config}"
-  sed -i -e "s|baseWsUrl:.*|baseWsUrl: 'wss://${ngcp_address}:1443'|" "${app_config}"
+  sed -i -e "s|baseHttpUrl:.*|baseHttpUrl: 'https://${ngcp_address}',|" "${app_config}"
+  sed -i -e "s|baseWsUrl:.*|baseWsUrl: 'wss://${ngcp_address}'|" "${app_config}"
 fi
 echo "App config '${app_config}' is OK."
 
@@ -49,4 +49,3 @@ if ! yarnpkg run dev ; then
   echo "ERROR: cannot run quasar dev environment. Aborting."
   exit 1
 fi
-
