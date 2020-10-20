@@ -81,17 +81,13 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-    #csc-conf-participants-cont
-        float right
-        padding 10px
-        display inline-block
-        height calc(100vh - 150px)
-        overflow hidden
-        @media (max-width: $breakpoint-sm)
-            font-size 73px
-            left: -18px;
-            top: -2px;
-    #csc-conf-remote-participants-cont
-        overflow auto
-        height 100%
+  #csc-conf-participants-cont
+    padding 0px 20px 10px 20px
+    display list-item
+    height calc(100vh - 150px)
+    overflow hidden
+    @media (max-width: $breakpoint-sm)
+      font-size 73px
+      left -18px
+      top -2px
 </style>

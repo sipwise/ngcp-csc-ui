@@ -92,7 +92,7 @@ export default {
 		},
 		remoteMediaStream: () => (participantId) => {
 			const participant = Vue.$conference.getRemoteParticipant(participantId)
-			if (participant !== null) {
+			if (participant) {
 				return participant.mediaStream ? participant.mediaStream.getStream() : null
 			}
 			return null
@@ -108,7 +108,7 @@ export default {
 		},
 		hasRemoteVideo: () => (participantId) => {
 			const participant = Vue.$conference.getRemoteParticipant(participantId)
-			if (participant !== null) {
+			if (participant) {
 				return participant.mediaStream ? participant.mediaStream.hasVideo() : false
 			}
 			return false

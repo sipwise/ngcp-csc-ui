@@ -3,18 +3,15 @@
 		class="bg-transparent"
 		flat
 	>
-		<q-btn
-			class="absolute-top-right"
-			icon="clear"
-			size="xs"
-			label="sdfsdf"
-		/>
 		<q-card-section
 			v-if="!localMediaStream || localMediaStream && (!isCameraEnabled && !isScreenEnabled)"
 			class="bg-black text-center"
 			style="height: 100px"
 		>
-			<q-avatar>
+			<q-avatar
+				class="absolute-center"
+				style="top: 40px"
+			>
 				<q-icon
 					name="person"
 					size="32px"
@@ -56,7 +53,11 @@ export default {
 	props: {
 		localParticipant: {
 			type: Object,
-			default: null
+			default: () => {
+				return {
+					displayName: ''
+				}
+			}
 		},
 		localMediaStream: {
 			type: MediaStream,

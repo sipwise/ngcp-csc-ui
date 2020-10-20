@@ -1,6 +1,6 @@
 <template>
 	<q-layout
-		view="hHr lpR fFr"
+		view="lHh lpR lFf"
 	>
 		<q-header
 			class="bg-transparent"
@@ -89,23 +89,14 @@
 			:value="isJoined"
 			:width="150"
 			:mini-width="50"
-			content-class="bg-main-menu"
 		>
-			<csc-conference-local-participant
-				ref="localParticipant"
+			<csc-conference-participants
+				ref="confParticipants"
 				class="no-margin q-mb-lg"
-				:local-participant="localParticipant"
-				:local-media-stream="localMediaStream"
-				:is-microphone-enabled="isMicrophoneEnabled"
-				:is-camera-enabled="isCameraEnabled"
-				:is-screen-enabled="isScreenEnabled"
 			/>
-			<!--			<csc-conference-participants-->
-			<!--				ref="confParticipants"-->
-			<!--			/>-->
 		</q-drawer>
 		<q-footer
-			class="bg-main-menu"
+			class="bg-footer"
 		>
 			<q-toolbar>
 				<q-space />
@@ -150,6 +141,7 @@
 				>
 					<q-menu
 						ref="popover"
+						:auto-close="true"
 						:disable="conferenceHasParticipants"
 					>
 						<q-list
@@ -157,10 +149,11 @@
 							class="no-border"
 						>
 							<q-item
-								@click="toggleMuteAll"
+								class="cursor-pointer"
 							>
 								<q-item-main
 									:label="muteLabel()"
+									@click="toggleMuteAll()"
 								/>
 							</q-item>
 						</q-list>
@@ -183,12 +176,14 @@ import CscConferenceJoin from 'components/pages/Conference/CscConferenceJoin'
 import CscConferenceJoined from 'components/pages/Conference/CscConferenceJoined'
 import CscMedia from 'components/CscMedia'
 import CscConfirmDialog from 'components/CscConfirmationDialog'
-import CscConferenceLocalParticipant from 'components/pages/Conference/CscConferenceLocalParticipant'
+// import CscConferenceLocalParticipant from 'components/pages/Conference/CscConferenceLocalParticipant'
+import CscConferenceParticipants from 'components/pages/Conference/CscConferenceParticipants'
 
 export default {
 	name: 'CscConferenceLayout',
 	components: {
-		CscConferenceLocalParticipant,
+		// CscConferenceLocalParticipant,
+		CscConferenceParticipants,
 		CscConfirmDialog,
 		CscMedia,
 		CscConferenceJoin,
@@ -319,7 +314,6 @@ export default {
 			}
 		},
 		toggleMuteAll () {
-			this.$refs.popover.close()
 			if (_.isEmpty(this.mutedState)) {
 				this.$store.dispatch('conference/muteAll')
 			} else {
@@ -349,7 +343,7 @@ export default {
 				default:
 					this.selectedMediaStream = this.remoteMediaStream(participant)
 					this.$refs.localMedia.assignStream(this.selectedMediaStream)
-					this.selectedParticipantName = this.remoteParticipant(participant).displayName
+					this.selectedParticipantName = this.remoteParticipant(participant) ? this.remoteParticipant(participant).displayName : ''
 					break
 				}
 			}

@@ -1,65 +1,72 @@
 <template>
 	<q-card
-		v-touch-hold="showMenu"
-		class="csc-conf-participant-cont"
+		class="bg-transparent"
+		flat
 	>
-		<div class="csc-conf-audio-icons-cont">
+		<q-card-section
+			class="relative-position bg-black text-center full-width no-padding"
+			style="height: 100px"
+		>
 			<q-icon
+				v-ripple
 				name="more_vert"
-				class="csc-conf-toggle-audio-menu-icon"
+				class="absolute-left"
+				style="z-index: 1; padding-top: 3px;"
 			>
-				<q-popover
-					ref="popover"
-					class="csc-conf-toggle-audio-popover"
-				>
-					<q-list
-						link
-						class="no-border csc-conf-toggle-audio-menu-item"
-					>
-						<q-item
-							@click="toggleAudio"
-						>
-							<q-item-main
-								:label="audioLabel()"
-							/>
-						</q-item>
-					</q-list>
-				</q-popover>
+				<csc-popup-menu>
+					<csc-popup-menu-item
+						color="primary"
+						dense
+						:label="audioLabel()"
+						@click="toggleAudio()"
+					/>
+				</csc-popup-menu>
 			</q-icon>
 			<q-icon
-				v-if="isAudioMuted"
-				class="csc-conf-toggle-audio-icon"
+				v-show="isAudioMuted"
+				v-ripple
 				name="volume_off"
+				class="absolute-right"
+				:style="audioIconStyle"
 			/>
 			<q-icon
-				v-if="!isAudioMuted"
-				class="csc-conf-toggle-audio-icon"
+				v-show="!isAudioMuted"
+				v-ripple
 				name="volume_up"
+				class="absolute-right"
+				:style="audioIconStyle"
 			/>
-		</div>
-		<q-icon
-			v-if="!hasRemoteVideo"
-			name="person"
-			class="csc-conf-avatar"
-		/>
-		<csc-media
-			v-show="hasRemoteVideo"
-			ref="cscMedia"
-			class="csc-media-cont"
-			:muted="false"
-			:preview="true"
-		/>
-		<q-card-title
-			class="csc-conf-participants-item-title"
+			<q-avatar
+				v-show="!hasRemoteVideo"
+				class="absolute-center"
+				style="top: 40px"
+			>
+				<q-icon
+					name="person"
+					size="32px"
+				/>
+			</q-avatar>
+			<csc-media
+				v-show="hasRemoteVideo"
+				ref="cscMedia"
+				class="csc-media-cont"
+				:preview="false"
+				:muted="true"
+			/>
+		</q-card-section>
+		<div
+			class="absolute-bottom text-center bg-main-menu q-pa-xs"
 		>
 			{{ remoteParticipant.displayName }}
-		</q-card-title>
+		</div>
 	</q-card>
 </template>
 
 <script>
 import _ from 'lodash'
 import CscMedia from '../../CscMedia'
+import CscPopupMenu from 'components/CscPopupMenu'
+import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import {
 	TouchHold
 } from 'quasar'
@@ -73,19 +80,25 @@ export default {
 		TouchHold
 	},
 	components: {
-		CscMedia
+		CscMedia,
+		CscPopupMenu,
+		CscPopupMenuItem
 	},
 	props: {
 		remoteParticipant: {
 			type: Object,
-			default: null
+			default: () => {
+				return {
+					displayName: ''
+				}
+			}
 		},
 		remoteMediaStream: {
-			type: Object,
+			type: Function,
 			default: null
 		},
 		remoteMediaStreams: {
-			type: Array,
+			type: Object,
 			default () {
 				return []
 			}
@@ -108,7 +121,10 @@ export default {
 		...mapGetters('conference', [
 			'selectedParticipant',
 			'mutedState'
-		])
+		]),
+		audioIconStyle () {
+			return 'z-index: 1; padding-top: 3px; padding-right: 3px;'
+		}
 	},
 	watch: {
 		remoteMediaStreams () {
@@ -121,7 +137,7 @@ export default {
 	},
 	mounted () {
 		this.assignStream()
-		if (!this.manualSelection) {
+		if (!this.manualSelection && this.remoteParticipant) {
 			this.$store.commit('conference/setSelectedParticipant', this.remoteParticipant.id)
 		}
 	},
@@ -139,11 +155,9 @@ export default {
 			}
 		},
 		toggleAudio () {
-			this.$refs.popover.close(() => {
-				this.isAudioMuted
-					? this.$store.commit('conference/removeMutedState', this.remoteParticipant.id)
-					: this.$store.commit('conference/addMutedState', this.remoteParticipant.id)
-			})
+			this.isAudioMuted
+				? this.$store.commit('conference/removeMutedState', this.remoteParticipant.id)
+				: this.$store.commit('conference/addMutedState', this.remoteParticipant.id)
 		},
 		audioLabel () {
 			return this.isAudioMuted
@@ -156,36 +170,3 @@ export default {
 	}
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-conf-audio-icons-cont
-        position relative
-        width 100%
-    .csc-conf-toggle-audio-menu-icon
-        position absolute
-        padding-top 5px
-        z-index 10
-        @media (max-width: $breakpoint-sm)
-            font-size 0px
-    .csc-conf-toggle-audio-icon
-        @extend .csc-conf-toggle-audio-menu-icon
-        right 5px
-        cursor default
-        @media (max-width: $breakpoint-sm)
-            font-size 10px
-            right 2px
-            top -3px
-    .csc-conf-toggle-audio-popover
-        width 115px
-        @media (max-width: $breakpoint-sm)
-            width 90px
-    .csc-conf-toggle-audio-menu-item
-        @media (max-width: $breakpoint-sm)
-            height: 32px !important;
-            padding-top: 0px !important;
-        .q-item
-            font-size 14px
-            @media (max-width: $breakpoint-sm)
-                font-size 12px
-                padding-top 0px
-</style>
