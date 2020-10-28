@@ -3,7 +3,7 @@
 		class="q-pa-lg"
 	>
 		<csc-list-actions
-			class="row justify-center q-mb-lg"
+			class="row justify-center q-mb-xs"
 		>
 			<csc-list-action-button
 				v-if="isDeviceAddFormDisabled"
@@ -23,7 +23,17 @@
 				:disable="isDeviceListRequesting || isDeviceCreating || isDeviceRemoving || isDeviceUpdating"
 				@click="enableFilters"
 			/>
+			<csc-list-action-button
+				v-if="filtersEnabled"
+				slot="slot2"
+				icon="clear"
+				color="negative"
+				:label="$t('pbxConfig.closeFilters')"
+				:disable="isDeviceListRequesting || isDeviceCreating || isDeviceRemoving || isDeviceUpdating"
+				@click="closeFilters"
+			/>
 		</csc-list-actions>
+		<q-separator class="q-mb-xs" />
 		<q-slide-transition>
 			<div
 				v-if="!isDeviceAddFormDisabled"
@@ -45,20 +55,8 @@
 			<csc-pbx-device-filters
 				v-if="hasFilters || filtersEnabled"
 				:loading="isDeviceListRequesting"
-				:profiles="deviceProfileList"
-				:profile-map="deviceProfileMap"
-				:model-image-map="deviceModelImageMap"
-				:station-name-filter="stationNameFilter"
-				:identifier-filter="identifierFilter"
-				:profile-filter="profileFilter"
-				@filter-station-name="filterByStationName"
-				@filter-identifier="filterByIdentifier"
-				@filter-profile="filterByProfile"
-				@reset-station-name="resetStationNameFilter"
-				@reset-identifier="resetIdentifierFilter"
-				@reset-profile="resetProfileFilter"
-				@close-filters="closeFilters"
-				@reset-filters="resetFilters"
+				class="q-pb-md"
+				@filter="applyFilter"
 				@model-select-opened="loadDeviceModels('front_thumb')"
 			/>
 		</q-slide-transition>
@@ -296,28 +294,10 @@ export default {
 			this.filtersEnabled = true
 			this.disableDeviceAddForm()
 		},
-		filterByStationName (stationName) {
-			this.stationNameFilter = stationName
-			this.loadDeviceListItemsFiltered()
-		},
-		filterByIdentifier (identifier) {
-			this.identifierFilter = identifier
-			this.loadDeviceListItemsFiltered()
-		},
-		filterByProfile (profile) {
-			this.profileFilter = profile
-			this.loadDeviceListItemsFiltered()
-		},
-		resetStationNameFilter () {
-			this.stationNameFilter = null
-			this.loadDeviceListItemsFiltered()
-		},
-		resetIdentifierFilter () {
-			this.identifierFilter = null
-			this.loadDeviceListItemsFiltered()
-		},
-		resetProfileFilter () {
-			this.profileFilter = null
+		applyFilter (filterData) {
+			this.stationNameFilter = filterData.stationNameFilter
+			this.identifierFilter = filterData.identifierFilter
+			this.profileFilter = filterData.profileFilter ? Number(filterData.profileFilter) : null
 			this.loadDeviceListItemsFiltered()
 		},
 		closeFilters () {
