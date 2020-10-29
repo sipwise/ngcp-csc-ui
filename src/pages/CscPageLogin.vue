@@ -76,8 +76,15 @@
 						</form>
 					</q-card-section>
 					<q-card-actions
-						class="justify-end"
+						class="justify-between"
 					>
+						<q-btn
+							color="primary"
+							unelevated
+							flat
+							:label="$t('pages.login.forgotPassword')"
+							@click="showRetrievePasswordDialog"
+						/>
 						<q-btn
 							icon="arrow_forward"
 							color="primary"
@@ -93,6 +100,10 @@
 							</template>
 						</q-btn>
 					</q-card-actions>
+					<csc-retrieve-password-dialog
+						v-model="showDialog"
+						@close="showDialog=false"
+					/>
 				</q-card>
 			</q-page>
 		</q-page-container>
@@ -117,18 +128,21 @@ import CscLanguageMenu from 'components/CscLanguageMenu'
 import CscSpinner from 'components/CscSpinner'
 import CscInputPassword from 'components/form/CscInputPassword'
 import CscInput from 'components/form/CscInput'
+import CscRetrievePasswordDialog from 'components/CscRetrievePasswordDialog'
 export default {
 	name: 'Login',
 	components: {
 		CscInput,
 		CscInputPassword,
 		CscSpinner,
-		CscLanguageMenu
+		CscLanguageMenu,
+		CscRetrievePasswordDialog
 	},
 	data () {
 		return {
 			username: '',
-			password: ''
+			password: '',
+			showDialog: false
 		}
 	},
 	computed: {
@@ -176,6 +190,9 @@ export default {
 		},
 		changeLanguage (language) {
 			this.$store.dispatch('user/changeSessionLanguage', language)
+		},
+		showRetrievePasswordDialog () {
+			this.showDialog = true
 		}
 	}
 }

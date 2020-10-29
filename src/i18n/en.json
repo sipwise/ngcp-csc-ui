@@ -42,7 +42,10 @@
         "callAvailable": "You are now able to start and receive calls",
         "callNotAvailable": "Could not initialize call functionality properly",
         "conferencingAvailable": "You are now able to create WebRTC multiparty conferences",
-        "changeSessionLanguageSuccessMessage": "Session language successfully changed"
+        "changeSessionLanguageSuccessMessage": "Session language successfully changed",
+				"passwordChangedSuccessfully": "Password changed successfully",
+				"errorPasswordReset": "There was an error, please retry later",
+				"send": "Send"
     },
     "validationErrors": {
         "generic": "You have invalid form input. Please check and try again.",
@@ -142,7 +145,10 @@
             "username": "Username",
             "username_helper": "Input username or username@domain",
             "password": "Password",
-            "password_helper": ""
+            "password_helper": "",
+						"forgotPassword": "Forgot password?",
+						"recoverPassword": "Recover password",
+						"changePassword": "Change password"
         },
         "callBlockingIncoming": {
             "title": "Block/Allow incoming calls",

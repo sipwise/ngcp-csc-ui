@@ -13,7 +13,7 @@ import {
 	login,
 	getUserData
 } from '../api/user'
-import { changePassword } from '../api/subscriber'
+import { changePassword, resetPassword, recoverPassword } from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import { setSession } from 'src/storage'
 
@@ -41,7 +41,8 @@ export default {
 		changeSessionLocaleError: null,
 		languageLabels: [],
 		changePasswordState: RequestState.initiated,
-		changePasswordError: null
+		changePasswordError: null,
+		newPasswordRequesting: false
 	},
 	getters: {
 		isLogged (state) {
@@ -243,8 +244,11 @@ export default {
 			state.changePasswordError = null
 		},
 		userPasswordFailed (state, error) {
-			state.changePasswordState = RequestState.failed
 			state.changePasswordError = error
+			state.changePasswordState = RequestState.failed
+		},
+		newPasswordRequesting (state, isRequesting) {
+			state.newPasswordRequesting = isRequesting
 		}
 	},
 	actions: {
@@ -316,6 +320,25 @@ export default {
 			}).catch((err) => {
 				context.commit('userPasswordFailed', err.message)
 			})
+		},
+		async resetPassword ({ commit }, data) {
+			commit('newPasswordRequesting', true)
+			const response = await resetPassword(data)
+			commit('newPasswordRequesting', false)
+			return response
+		},
+		async recoverPassword ({ commit, dispatch, state, rootGetters }, data) {
+			commit('userPasswordRequesting')
+			try {
+				const res = await recoverPassword(data)
+				if (res.status === 200 || res.status === 201) {
+					commit('userPasswordSucceeded')
+				} else {
+					commit('userPasswordFailed')
+				}
+			} catch (err) {
+				commit('userPasswordFailed', err.message)
+			}
 		},
 		async forwardHome (context) {
 			if (context.rootState.route.path === '/user/home' && !context.getters.isRtcEngineUiVisible) {

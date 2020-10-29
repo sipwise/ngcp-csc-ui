@@ -517,3 +517,20 @@ export function changePassword (subscriber, newPassword) {
 		})
 	})
 }
+
+export async function resetPassword (userName) {
+	const payLoad = {
+		domain: Vue.$config.baseHttpUrl.replace(/(^\w+:|^)\/\//, ''),
+		type: 'subscriber',
+		username: userName
+	}
+	return await Vue.http.post('api/passwordreset/', payLoad)
+}
+
+export async function recoverPassword (data) {
+	const payLoad = {
+		new_password: data.password,
+		token: data.token
+	}
+	return await Vue.http.post('api/passwordrecovery/', payLoad)
+}

@@ -11,22 +11,35 @@ import {
 
 export default ({ app, router, store }) => {
 	router.beforeEach((to, from, next) => {
-		if (!hasJwt() && to.path !== '/login') {
-			next({
-				path: '/login'
-			})
-		} else if (hasJwt() && to.path === '/login') {
-			next({
-				path: '/'
-			})
-		} else if (hasJwt() && to.path === '/conference') {
-			next({
-				path: '/conference/room123'
-			})
+		const publicUrls = ['/login', '/recoverpassword']
+		//	not authorized user
+		if (!hasJwt()) {
+			if (!publicUrls.includes(to.path)) {
+				next({
+					path: '/login'
+				})
+			} else {
+				next()
+			}
 		} else {
-			next()
+			//	already authorized user
+			switch (to.path) {
+			case '/login':
+				next({
+					path: '/'
+				})
+				break
+			case '/conference':
+				next({
+					path: '/conference/room123'
+				})
+				break
+			default:
+				next()
+			}
 		}
 	})
+
 	router.afterEach((to, from) => {
 		const mainTitle = app.i18n.t('title')
 		let title = _.get(to, 'meta.title', '')

@@ -4,9 +4,10 @@
 		:value="value"
 		:loading="loading"
 		title-icon="vpn_key"
-		title="Change password"
+		:title="$t('pages.login.changePassword')"
 		class="csc-pbx-password-dialog"
 		@input="$emit('input')"
+		@hide="$emit('dialog-closed')"
 	>
 		<div
 			slot="content"

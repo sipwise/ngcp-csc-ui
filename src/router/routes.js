@@ -1,6 +1,7 @@
 
 import CscLayoutConference from 'src/layouts/CscLayoutConference'
 import CscLayoutMain from 'src/layouts/CscLayoutMain'
+import CscLayoutLogin from 'src/layouts/CscLayoutLogin'
 
 import CscPageLogin from 'src/pages/CscPageLogin'
 import CscPageHome from 'src/pages/CscPageHome'
@@ -24,6 +25,13 @@ import CscPagePbxSettings from 'src/pages/CscPagePbxSettings'
 import CscPageVoicebox from 'src/pages/CscPageVoicebox'
 import CscPageUserSettings from 'src/pages/CscPageUserSettings'
 import CscPageError404 from 'src/pages/CscPageError404'
+import CscRecoverPassword from 'src/pages/CscRecoverPassword'
+
+const getToken = (route) => {
+	return {
+		token: route.query.token
+	}
+}
 
 export default function routes (app) {
 	const i18n = app.i18n
@@ -215,6 +223,21 @@ export default function routes (app) {
 			}
 		},
 		{
+			path: '/recoverpassword',
+			component: CscLayoutLogin,
+			children: [
+				{
+					path: '',
+					component: CscRecoverPassword,
+					props: getToken,
+					meta: {
+						title: 'Reset Password',
+						permission: 'public'
+					}
+				}
+			]
+		},
+		{
 			path: '/',
 			redirect: {
 				path: '/user/home'
@@ -226,21 +249,3 @@ export default function routes (app) {
 		}
 	]
 }
-
-// const routes = [
-// 	{
-// 		path: '/',
-// 		component: () => import('layouts/MainLayout.vue'),
-// 		children: [
-// 			{ path: '', component: () => import('pages/Index.vue') }
-// 		]
-// 	},
-// 	// Always leave this as last one,
-// 	// but you can also remove it
-// 	{
-// 		path: '*',
-// 		component: () => import('pages/Error404.vue')
-// 	}
-// ]
-//
-// export default routes
