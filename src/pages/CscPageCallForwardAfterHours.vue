@@ -1,5 +1,6 @@
 <template>
 	<csc-call-forward-timeset
+		id="csc-page-call-forward-after-hours"
 		timeset-name="After Hours"
 	/>
 </template>

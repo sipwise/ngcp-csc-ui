@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-pbx-call-queues"
 		class="q-pa-lg"
 	>
 		<csc-list-actions

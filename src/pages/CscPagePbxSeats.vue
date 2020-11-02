@@ -1,5 +1,7 @@
 <template>
-	<csc-page-sticky>
+	<csc-page-sticky
+		id="csc-page-pbx-seats"
+	>
 		<template
 			v-slot:header
 		>

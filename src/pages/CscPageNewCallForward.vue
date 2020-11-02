@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-new-call-forward"
 		class="q-pa-lg"
 	>
 		<div

@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-speed-dial"
 		class="q-pa-lg"
 	>
 		<div

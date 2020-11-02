@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-error-404"
 		class="flex flex-center"
 	>
 		<q-card

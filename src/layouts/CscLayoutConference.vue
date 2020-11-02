@@ -1,11 +1,14 @@
 <template>
 	<q-layout
+		id="csc-layout-conference"
 		view="lHh lpR lFf"
 	>
 		<q-header
+			id="csc-header-conference"
 			class="bg-transparent"
 		>
 			<q-toolbar
+				id="csc-header-toolbar-conference"
 				class="bg-transparent"
 			>
 				<div
@@ -39,7 +42,9 @@
 				/>
 			</q-toolbar>
 		</q-header>
-		<q-page-container>
+		<q-page-container
+			id="csc-page-conference"
+		>
 			<q-page
 				class="full-width row wrap justify-center items-start content-center"
 			>
@@ -85,6 +90,7 @@
 			</q-page>
 		</q-page-container>
 		<q-drawer
+			id="csc-conference-participants"
 			side="right"
 			:value="isJoined"
 			:width="150"
@@ -96,6 +102,7 @@
 			/>
 		</q-drawer>
 		<q-footer
+			id="csc-footer-conference"
 			class="bg-footer"
 		>
 			<q-toolbar>

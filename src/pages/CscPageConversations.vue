@@ -1,5 +1,6 @@
 <template>
 	<csc-page-sticky-tabs
+		id="csc-page-conversations"
 		ref="pageSticky"
 		:value="selectedTab"
 	>
@@ -20,6 +21,7 @@
 			v-slot:toolbar
 		>
 			<csc-conversations-filter
+				id="csc-conversations-filter"
 				v-model="filter"
 				class="q-pb-sm"
 				:loading="isNextPageRequesting"

@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-user-settings"
 		class="q-pa-lg row"
 	>
 		<div

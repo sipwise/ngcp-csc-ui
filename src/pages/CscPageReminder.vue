@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-reminder"
 		class="q-pa-lg row"
 	>
 		<q-list

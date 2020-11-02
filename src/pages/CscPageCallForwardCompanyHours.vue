@@ -1,5 +1,6 @@
 <template>
 	<csc-call-forward-timeset
+		id="csc-page-call-forward-company-hours"
 		timeset-name="Company Hours"
 	/>
 </template>

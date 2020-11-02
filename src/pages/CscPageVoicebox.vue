@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-voicebox"
 		class="row q-pa-lg"
 	>
 		<q-list

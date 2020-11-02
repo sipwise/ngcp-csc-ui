@@ -1,14 +1,18 @@
 <template>
 	<q-layout
+		id="csc-layout-main"
 		view="lHh LpR lFf"
 		@resize="layoutResized"
 	>
 		<q-header
+			id="csc-header-main"
 			v-model="header"
 			reveal
 			class="bg-secondary"
 		>
-			<q-toolbar>
+			<q-toolbar
+				id="csc-header-toolbar-main"
+			>
 				<q-btn
 					v-if="isMobile"
 					flat
@@ -45,6 +49,8 @@
 				>
 					<q-menu>
 						<csc-language-menu
+							id="csc-language-menu-main"
+							class="csc-language-menu"
 							:language-label="languageLabel"
 							:language-labels="languageLabels"
 						/>
@@ -94,6 +100,7 @@
 			</q-toolbar>
 		</q-header>
 		<q-drawer
+			id="csc-drawer-left"
 			ref="mainMenu"
 			v-model="menuClosed"
 			:mini="menuMinimized"
@@ -125,10 +132,13 @@
 			</div>
 			<csc-language-menu
 				v-if="$q.platform.is.mobile"
+				id="csc-language-menu-main-mobile"
+				class="csc-language-menu"
 				:language-label="languageLabel"
 				:language-labels="languageLabels"
 			/>
 			<csc-main-menu-top
+				id="csc-main-menu-top"
 				class="csc-main-menu no-margin"
 				:call-state-title="callStateTitle"
 				:call-state-subtitle="callStateSubtitle"
@@ -138,6 +148,7 @@
 				:is-pbx-configuration="isPbxConfiguration"
 			/>
 			<csc-main-menu-new-features
+				id="csc-main-menu-features"
 				class="csc-main-menu"
 				:call-state-title="callStateTitle"
 				:call-state-subtitle="callStateSubtitle"
@@ -148,13 +159,16 @@
 				:menu-minimized="menuMinimized"
 			/>
 		</q-drawer>
-		<q-page-container>
+		<q-page-container
+			id="csc-page-main"
+		>
 			<router-view />
 		</q-page-container>
 		<csc-send-fax
 			v-model="faxDialog"
 		/>
 		<csc-call
+			id="csc-call"
 			ref="call"
 			:call-state="callState"
 			:call-number="callNumber"

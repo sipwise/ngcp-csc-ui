@@ -1,12 +1,16 @@
 <template>
 	<q-layout
+		id="csc-layout-login"
 		view="lHh lpR lFf"
 		class="bg-page"
 	>
 		<q-header
+			id="csc-header-login"
 			class="bg-transparent"
 		>
-			<q-toolbar>
+			<q-toolbar
+				id="csc-header-toolbar-login"
+			>
 				<q-btn
 					icon="language"
 					color="primary"
@@ -16,6 +20,8 @@
 				>
 					<q-menu>
 						<csc-language-menu
+							id="csc-language-menu-login"
+							class="csc-language-menu"
 							:language-label="languageLabel"
 							:language-labels="languageLabels"
 							@change-language="changeLanguage"
@@ -26,6 +32,7 @@
 		</q-header>
 		<q-page-container>
 			<q-page
+				id="csc-page-login"
 				class="flex flex-center row"
 			>
 				<q-card

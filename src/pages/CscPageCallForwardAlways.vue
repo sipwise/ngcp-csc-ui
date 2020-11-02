@@ -1,5 +1,6 @@
 <template>
 	<csc-sourcesets
+		id="csc-page-call-forward-always"
 		ref="sourcesets"
 		:sourcesets="sourcesets"
 		:destinations="destinations"

@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-home"
 		class="full-width row wrap justify-center items-start content-center"
 	>
 		<div
@@ -12,6 +13,7 @@
 				{{ $t('call.rtcEngineNotEnabled') }}
 			</csc-inline-alert-info>
 			<csc-input
+				id="csc-call-number-input"
 				:label="$t('call.number')"
 				:value="callNumberInput"
 				:readonly="dialpadOpened"

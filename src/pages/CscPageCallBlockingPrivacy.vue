@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-call-blocking-privacy"
 		class="q-pa-lg row"
 	>
 		<q-list

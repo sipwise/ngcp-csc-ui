@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-pbx-devices"
 		class="q-pa-lg"
 	>
 		<csc-list-actions

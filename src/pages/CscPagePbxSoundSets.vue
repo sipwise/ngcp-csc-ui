@@ -1,5 +1,6 @@
 <template>
 	<csc-page
+		id="csc-page-pbx-sound-sets"
 		class="q-pa-lg"
 	>
 		<csc-list-actions

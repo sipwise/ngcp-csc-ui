@@ -1,6 +1,7 @@
 
 <template>
 	<csc-page
+		id="csc-page-pbx-settings"
 		class="q-pa-lg"
 	>
 		<q-list>
