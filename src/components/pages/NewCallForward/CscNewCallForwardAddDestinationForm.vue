@@ -1,6 +1,5 @@
 <template>
 	<div
-		v-if="enabled"
 		class="csc-form"
 	>
 		<csc-input
@@ -88,7 +87,6 @@ export default {
 	},
 	data () {
 		return {
-			enabled: false,
 			number: '',
 			numberError: false,
 			destinationIndex: null
@@ -147,16 +145,13 @@ export default {
 			this.$store.dispatch('newCallForward/removeGroupLoader', this.groupId)
 		},
 		cancel () {
-			this.enabled = false
-		},
-		add () {
-			this.enabled = true
+			this.close()
 		},
 		close () {
-			this.enabled = false
+			this.$emit('close')
 		},
 		reset () {
-			this.cancel()
+			this.close()
 		},
 		error (state) {
 			this.numberError = state

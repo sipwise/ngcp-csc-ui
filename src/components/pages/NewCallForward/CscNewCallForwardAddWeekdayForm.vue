@@ -1,8 +1,6 @@
 <template>
 	<div
-		v-if="enabled"
 		class="csc-form"
-		:class="{ 'csc-cf-popover-hide': toggleFormVisibility}"
 	>
 		<div
 			class="csc-cf-delete-weekdays-btn"
@@ -134,11 +132,11 @@ export default {
 			default: null
 		},
 		id: {
-			type: String,
+			type: [String, Number],
 			default: null
 		},
 		days: {
-			type: Object,
+			type: Array,
 			default: null
 		}
 	},
@@ -146,9 +144,7 @@ export default {
 		return {
 			timesetId: null,
 			timesetName: null,
-			toggleFormVisibility: false,
 			loading: false,
-			enabled: false,
 			weekdays: []
 		}
 	},
@@ -209,14 +205,8 @@ export default {
 		},
 		close () {
 			this.$emit('close')
-			this.enabled = false
-		},
-		add () {
-			this.toggleFormVisibility = false
-			this.enabled = true
 		},
 		showRemoveDialog () {
-			this.toggleFormVisibility = true
 			this.$refs.confirmDeleteTimesetDialog.open()
 		},
 		toggleWeekday (weekday) {

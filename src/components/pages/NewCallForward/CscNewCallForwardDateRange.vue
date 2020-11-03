@@ -58,6 +58,7 @@
 				<q-time
 					ref="hourFrom"
 					v-model="hourFrom"
+					format24h
 					:no-unset="true"
 				>
 					<div class="row items-center justify-end q-gutter-sm">
@@ -79,6 +80,7 @@
 				<q-time
 					ref="hourTo"
 					v-model="hourTo"
+					format24h
 					:no-unset="true"
 				>
 					<div class="row items-center justify-end q-gutter-sm">

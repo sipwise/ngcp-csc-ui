@@ -60,6 +60,7 @@
 					</div>
 					<csc-new-call-forward-destination-type-form
 						ref="selectDestinationType"
+						@close="()=>{this.$refs.destTypeMenu.hide()}"
 					/>
 				</q-menu>
 				<q-menu
@@ -68,7 +69,6 @@
 					:no-parent-event="true"
 					class="csc-cf-dest-popover-bottom"
 					:class="{ 'csc-cf-popover-hide': disableNumberPopover, 'csc-cf-popover-to-top': popoverToTop, 'csc-cf-popover-timeout-to-top': popoverTimeoutToTop }"
-					@show="showNumberForm()"
 					@hide="movePopoverToInitialPos(); movePopoverTimeoutToInitialPos()"
 				>
 					<csc-new-call-forward-add-destination-form
@@ -79,6 +79,7 @@
 						:group-name="groupName"
 						:group-id="groupId"
 						:first-destination-in-creation="firstDestinationInCreation"
+						@close="()=>{this.$refs.numberForm.hide()}"
 					/>
 				</q-menu>
 			</div>
@@ -239,12 +240,8 @@ export default {
 				this.$refs.destTypeForm.show()
 			}
 		},
-		showNumberForm () {
-			this.$refs.addDestinationForm.add()
-		},
 		showDestTypeForm () {
 			this.toggleNumberForm = true
-			this.$refs.selectDestinationType.add()
 		},
 		async saveTimeout () {
 			this.$store.dispatch('newCallForward/addGroupLoader', this.groupId)

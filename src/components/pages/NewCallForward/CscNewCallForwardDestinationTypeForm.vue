@@ -1,7 +1,5 @@
 <template>
-	<div
-		v-if="enabled"
-	>
+	<div>
 		<div
 			class="csc-cf-dest-type"
 			@click="setSelectedDestinationType('destination')"
@@ -23,11 +21,6 @@ import {
 } from 'vuex'
 export default {
 	name: 'CscNewCallForwardDestinationTypeForm',
-	data () {
-		return {
-			enabled: false
-		}
-	},
 	mounted () {
 		this.setSelectedDestinationType(null)
 	},
@@ -36,13 +29,10 @@ export default {
 			'setSelectedDestinationType'
 		]),
 		cancel () {
-			this.enabled = false
-		},
-		add () {
-			this.enabled = true
+			this.close = false
 		},
 		close () {
-			this.enabled = false
+			this.$emit('close')
 		}
 	}
 }

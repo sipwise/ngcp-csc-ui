@@ -16,23 +16,20 @@
 					{{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
 					<span class="csc-cf-from-link">
 						{{ $t('pages.newCallForward.fromLabelShort') +'"'+ groupSourceset +'"' }}
+						<q-menu
+							ref="sourcesListEditMenu"
+						>
+							<csc-new-call-forward-edit-sources
+								ref="editSources"
+								class="q-pa-md"
+								:source-set-name="groupSourceset"
+								:source-set-id="sourceSet.id"
+								:group-name="group.name"
+								:group-id="group.id"
+								@close="()=>{this.$refs.sourcesListEditMenu.hide()}"
+							/>
+						</q-menu>
 					</span>
-					<q-menu
-						ref="sourcesList"
-						:target="$refs.target"
-						@show="showSources()"
-					>
-						<csc-new-call-forward-edit-sources
-							ref="editSources"
-							class="q-pa-md"
-							:source-set-name="groupSourceset"
-							:source-set-id="sourceSet.id"
-							:group-name="group.name"
-							:group-id="group.id"
-							@close="()=>{this.$refs.sourcesList.hide}"
-						/>
-					</q-menu>
-
 				</span>
 				<span
 					v-if="groupTimeset && !isRange"
@@ -89,7 +86,7 @@
 					>
 						{{ $t('pages.newCallForward.dateRangeShort') + groupTimeRange }}
 						<q-menu
-							ref="daterange"
+							ref="editDateRangeMenu"
 							@hide="resetAction()"
 						>
 							<csc-new-call-forward-date-range
@@ -99,7 +96,7 @@
 								:group-id="group.id"
 								:group-time-range="groupTimeRangeObj"
 								@confirm-delete="showConfirmDeleteTimesetDialog()"
-								@close="() => {this.$refs.daterange.hide()}"
+								@close="() => {this.$refs.editDateRangeMenu.hide()}"
 							/>
 							<csc-confirm-dialog
 								ref="confirmDeleteTimesetDialog"
@@ -112,7 +109,7 @@
 					</span>
 				</span>
 				<span
-					v-if="isWeekdays"
+					v-if="isWeekdays && !isOfficeHours"
 				>
 					{{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
 					<span
@@ -122,22 +119,47 @@
 						{{ weekdaysLabelShort + groupWeekdays }}
 					</span>
 					<q-menu
-						ref="weekdayEditPanel"
-						@show="showWeekdayEditForm()"
+						ref="addWeekdayMenu"
 					>
 						<csc-new-call-forward-add-weekday-form
 							:id="timeSet.id"
 							ref="weekdayEditForm"
 							class="q-pa-md"
 							:days="times"
-							:enabled="true"
 							:group-name="group.name"
 							:group-id="group.id"
+							@close="() => {this.$refs.addWeekdayMenu.hide()}"
 						/>
 					</q-menu>
 				</span>
 				<span
-					v-if="isTempGroup || (!isTempGroup && !(groupSourceset && groupTimeset || groupSourceset && isWeekdays || groupTimeset && isWeekdays ))"
+					v-if="isOfficeHours"
+				>
+					{{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+					<span
+						ref="isOfficeHoursLink"
+						class="csc-cf-from-link"
+					>
+						{{ officeHoursLabelShort +' '+ readableOfficeHours }}
+					</span>
+					<q-menu
+						ref="addOfficeHoursMenu"
+						persistent
+					>
+						<csc-new-call-forward-add-office-hours-form
+							:id="timeSet.id"
+							ref="officeHoursEditForm"
+							class="q-pa-md"
+							:times="cloneTimes(times)"
+							:same-office-hours-for-all-days="sameOfficeHoursForAllDays"
+							:group-name="group.name"
+							:group-id="group.id"
+							@close="() => {this.$refs.addOfficeHoursMenu.hide()}"
+						/>
+					</q-menu>
+				</span>
+				<span
+					v-if="isTempGroup || !(groupSourceset && groupTimeset || groupSourceset && isWeekdays || groupTimeset && isWeekdays )"
 					class="csc-cf-destination-add-condition"
 				>
 					{{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
@@ -160,7 +182,7 @@
 								<q-item-section>{{ $t('pages.newCallForward.fromLabel') }}</q-item-section>
 							</q-item>
 							<q-item
-								v-if="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
+								v-if="isTempGroup || !hasTimeset"
 								v-close-popup
 								clickable
 								@click="()=>{action = 'addDateIsCondition'}"
@@ -168,7 +190,7 @@
 								<q-item-section>{{ $t('pages.newCallForward.dateIsLabel') }}</q-item-section>
 							</q-item>
 							<q-item
-								v-if="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
+								v-if="isTempGroup || !hasTimeset"
 								v-close-popup
 								clickable
 								@click="()=>{action = 'addDateRangeCondition'}"
@@ -176,34 +198,40 @@
 								<q-item-section>{{ $t('pages.newCallForward.dateRangeLabel') }}</q-item-section>
 							</q-item>
 							<q-item
-								v-if="isTempGroup || !groupTimeset && !isRange && !isWeekdays"
+								v-if="isTempGroup || !hasTimeset"
 								v-close-popup
 								clickable
 								@click="()=>{action = 'addWeekdayCondition'}"
 							>
 								<q-item-section>{{ $t('pages.newCallForward.weekdaysLabel') }}</q-item-section>
 							</q-item>
+							<q-item
+								v-if="isTempGroup || !hasTimeset"
+								v-close-popup
+								clickable
+								@click="()=>{action = 'addOfficeHoursCondition'}"
+							>
+								<q-item-section>{{ $t('pages.newCallForward.officeHoursLabel') }}</q-item-section>
+							</q-item>
 						</q-list>
 					</q-menu>
 					<span>
 						<q-menu
-							ref="onlineSourceset"
-							@show="showSourcesetForm()"
-							@hide="resetToggleCondition(); resetAction()"
+							ref="addSourcesetMenu"
+							@hide="resetAction()"
 						>
 							<csc-new-call-forward-add-sourceset-form
 								ref="addSourceSet"
 								class="q-pa-md"
-								:enabled="true"
 								:group-name="group.name"
 								:group-id="group.id"
-								@close="()=>{this.$refs.onlineSourceset.hide()}"
+								@close="()=>{this.$refs.addSourcesetMenu.hide()}"
 							/>
 						</q-menu>
 					</span>
 					<span>
 						<q-menu
-							ref="dayWidgetFromMenu"
+							ref="addDateFromMenu"
 							@hide="resetAction()"
 						>
 							<q-date
@@ -235,7 +263,7 @@
 					</span>
 					<span>
 						<q-menu
-							ref="daterangeFromMenu"
+							ref="addDateRangeMenu"
 							@hide="resetAction()"
 						>
 							<csc-new-call-forward-date-range
@@ -244,22 +272,35 @@
 								:group-name="group.name"
 								:group-id="group.id"
 								:no-clear="true"
-								@close="() => {this.$refs.daterangeFromMenu.hide()}"
+								@close="() => {this.$refs.addDateRangeMenu.hide()}"
 							/>
 						</q-menu>
 					</span>
 					<span>
 						<q-menu
-							ref="weekdayPanel"
-							@show="showWeekdayPanel()"
-							@hide="resetWeekdayCondition(); resetAction()"
+							ref="addWeekdayMenu"
+							@hide="resetAction()"
 						>
 							<csc-new-call-forward-add-weekday-form
 								ref="weekdayForm"
 								class="q-pa-md"
-								:enabled="true"
 								:group-name="group.name"
 								:group-id="group.id"
+								@close="() => {this.$refs.addWeekdayMenu.hide()}"
+							/>
+						</q-menu>
+					</span>
+					<span>
+						<q-menu
+							ref="officeHoursPanel"
+							persistent
+						>
+							<csc-new-call-forward-add-office-hours-form
+								ref="weekdayForm"
+								class="q-pa-md"
+								:group-name="group.name"
+								:group-id="group.id"
+								@close="() => {this.$refs.officeHoursPanel.hide()}"
 							/>
 						</q-menu>
 					</span>
@@ -344,7 +385,6 @@
 					<q-btn
 						flat
 						color="primary"
-						class=""
 					>
 						<q-icon
 							name="add"
@@ -353,13 +393,13 @@
 						/>
 						{{ $t('pages.newCallForward.addDestinationLabel') }}
 						<q-menu
-							ref="destTypeForm"
+							ref="destTypeMenu"
 							:auto-close="true"
-							@show="showDestTypeForm()"
 							@hide="showNext()"
 						>
 							<csc-new-call-forward-destination-type-form
 								ref="selectDestinationType"
+								@close="()=>{this.$refs.destTypeMenu.hide()}"
 							/>
 						</q-menu>
 					</q-btn>
@@ -368,18 +408,17 @@
 					ref="numberForm"
 					:no-parent-event="true"
 					:class="{ 'csc-cf-popover-hide': toggleNumberForm }"
-					@show="showNewDestNumber()"
 				>
 					<csc-new-call-forward-add-destination-form
 						ref="addDestinationForm"
 						class="q-pa-md"
-						:enabled="true"
 						:group-name="group.name"
 						:group-id="group.id"
+						@close="()=>{this.$refs.numberForm.hide()}"
 					/>
 				</q-menu>
 			</div>
-			<div class="col-xs-6 col-md-6 " />
+			<div class="col-xs-6 col-md-6" />
 		</div>
 	</div>
 </template>
@@ -399,6 +438,7 @@ import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinati
 import CscNewCallForwardEditSources from './CscNewCallForwardEditSources'
 import CscNewCallForwardAddSourcesetForm from './CscNewCallForwardAddSourcesetForm'
 import CscNewCallForwardAddWeekdayForm from './CscNewCallForwardAddWeekdayForm'
+import CscNewCallForwardAddOfficeHoursForm from './CscNewCallForwardAddOfficeHoursForm'
 import CscNewCallForwardDestinationTypeForm from './CscNewCallForwardDestinationTypeForm'
 import CscNewCallForwardDateRange from './CscNewCallForwardDateRange'
 export default {
@@ -410,6 +450,7 @@ export default {
 		CscNewCallForwardEditSources,
 		CscNewCallForwardAddSourcesetForm,
 		CscNewCallForwardAddWeekdayForm,
+		CscNewCallForwardAddOfficeHoursForm,
 		CscNewCallForwardDestinationTypeForm,
 		CscNewCallForwardDateRange
 	},
@@ -426,13 +467,8 @@ export default {
 	data () {
 		return {
 			firstDestinationInCreation: false,
-			toggleGroup: true,
 			isEnabled: true,
 			toggleNumberForm: true,
-			toggleConditionFromForm: true,
-			toggleWeekdayPanel: true,
-			toggleIsDatePanel: true,
-			toggleIsRangePanel: true,
 			groupIsLoading: false,
 			sourceSet: null,
 			sources: [],
@@ -441,7 +477,8 @@ export default {
 			action: null,
 			enabled: false,
 			day: null,
-			today: new Date().toString()
+			today: new Date().toString(),
+			sameOfficeHoursForAllDays: false
 		}
 	},
 	computed: {
@@ -549,52 +586,53 @@ export default {
 				? `${this.$t('pages.newCallForward.weekdaysLabelShort')}`
 				: `${this.$t('pages.newCallForward.weekdayLabelShort')}`
 		},
+		officeHoursLabelShort () {
+			return this.$tc('pages.newCallForward.officeHoursLabelShort', this.timeSet.times.length)
+		},
 		groupWeekdays () {
-			let retVal = ''
 			let times = _.cloneDeep(_.get(this.timeSet, 'times', []))
 			times = times.sort((a, b) => (parseInt(a.wday) > parseInt(b.wday)) ? 1 : ((parseInt(b.wday) > parseInt(a.wday)) ? -1 : 0))
-			times.forEach((time, index) => {
-				const separator = (index === times.length - 1) ? '' : ', '
-				switch (time.wday) {
-				case '2':
-					retVal += `${this.$t('pages.callForward.times.monday')}`
-					break
-				case '3':
-					retVal += `${this.$t('pages.callForward.times.tuesday')}`
-					break
-				case '4':
-					retVal += `${this.$t('pages.callForward.times.wednesday')}`
-					break
-				case '5':
-					retVal += `${this.$t('pages.callForward.times.thursday')}`
-					break
-				case '6':
-					retVal += `${this.$t('pages.callForward.times.friday')}`
-					break
-				case '7':
-					retVal += `${this.$t('pages.callForward.times.saturday')}`
-					break
-				case '1':
-					retVal += `${this.$t('pages.callForward.times.sunday')}`
-					break
+			return this.parseWeekDays(times)
+		},
+		readableOfficeHours () {
+			// TODO improve
+			// The goal here is to transform the timeranges from the endpoint format
+			// to a human readable format like:
+			//
+			// - Tuesday 12:30 - 14:30, Wednesday 19:12 - 12:45 in case of different
+			//   timeranges in different days
+			// - Monday, Tuesday, Friday 13:39 - 14:45 in case of same timeranges in
+			//   different days
+
+			const times = _.cloneDeep(_.get(this.timeSet, 'times', []))
+			let days = []
+			for (const time of times) {
+				if (days[time.wday]) {
+					continue
 				}
-				retVal += separator
-			})
-			return retVal
+				days[time.wday] = times.filter(($time) => {
+					return $time.wday === time.wday
+				}).map(item => ' ' + item.hour.split('-')[0] + ':' + item.minute.split('-')[0] + '-' + item.hour.split('-')[1] + ':' + item.minute.split('-')[1])
+			}
+			days = Object.keys(days).map((key) => { return { wday: key, times: days[key] } })
+			this.checkOfficeHoursForAllDays(days.map(day => day.times))
+			if (this.sameOfficeHoursForAllDays) {
+				return this.parseWeekDays(days) + ' ' + days[0].times
+			} else {
+				return days.map(day => this.parseWeekDays([day]) + day.times).join(', ')
+			}
 		},
 		isWeekdays () {
-			const isWeekdays = this.timeSet &&
-				this.timeSet.times &&
-				this.timeSet.times.length > 0 &&
-				this.timeSet.times[0].wday &&
-				this.timeSet.times[0].wday > 0
-			return isWeekdays
+			return this.timeSet && this.timeSet.times && this.timeSet.times.length > 0 && this.timeSet.times[0].wday !== null
+		},
+		isOfficeHours () {
+			return this.isWeekdays && this.timeSet.times[0].hour !== null && this.timeSet.times[0].minute !== null
 		},
 		isTempGroup () {
 			return this.group.id.toString().includes('temp-')
 		},
-		isFirstDestInCreation () {
-			return this.group.id.toString() === this.getFirstDestinationInCreation
+		hasTimeset () {
+			return this.groupTimeset || this.isRange || this.isWeekdays
 		},
 		toggleLabel () {
 			return this.toggleDefaultNumber ? `${this.$t('pages.newCallForward.primarNumberEnabled')}` : `${this.$t('pages.newCallForward.primarNumberDisabled')}`
@@ -651,13 +689,6 @@ export default {
 		}
 	},
 	methods: {
-		// we need to generate key because destinations have no id
-		genKey () {
-			return Math.random()
-		},
-		showNewDestNumber () {
-			this.$refs.addDestinationForm.add()
-		},
 		async showNext () {
 			switch (this.getSelectedDestinationType) {
 			case 'destination':
@@ -680,12 +711,7 @@ export default {
 			} else {
 				firstDestinationCmp.movePopoverToTop()
 			}
-
 			firstDestinationCmp.$refs.destTypeForm.show()
-		},
-		setCondition (action) {
-			this.action = action
-			this.$refs.conditions.hide()
 		},
 		showConditionForm () {
 			if (this.isTempGroup) {
@@ -695,32 +721,21 @@ export default {
 			const action = this.action
 			switch (action) {
 			case 'addFromCondition':
-				this.toggleConditionFromForm = false
-				this.$refs.onlineSourceset.show()
+				this.$refs.addSourcesetMenu.show()
 				break
 			case 'addDateIsCondition':
-				this.toggleIsDatePanel = false
-				this.$refs.dayWidgetFromMenu.show()
+				this.$refs.addDateFromMenu.show()
 				break
 			case 'addDateRangeCondition':
-				this.toggleIsRangePanel = false
-				this.$refs.daterangeFromMenu.show()
+				this.$refs.addDateRangeMenu.show()
 				break
 			case 'addWeekdayCondition':
-				this.toggleWeekdayPanel = false
-				this.$refs.weekdayPanel.show()
+				this.$refs.addWeekdayMenu.show()
+				break
+			case 'addOfficeHoursCondition':
+				this.$refs.officeHoursPanel.show()
 				break
 			}
-		},
-		showDestTypeForm () {
-			this.toggleNumberForm = true
-			this.$refs.selectDestinationType.add()
-		},
-		showWeekdayEditForm () {
-			this.$refs.weekdayEditForm.add()
-		},
-		getDestName (index) {
-			return 'destination' + index
 		},
 		getDestination (index) {
 			const destination = { ...this.group.destinations[index] }
@@ -740,29 +755,8 @@ export default {
 			})
 			this.$store.dispatch('newCallForward/removeGroupLoader', this.group.id)
 		},
-		openConditionsPopover () {
-			this.$refs.conditions.show()
-		},
-		showConditions () {
-			this.$refs.addCondition.add()
-		},
-		showSourcesetForm () {
-			this.$refs.addSourceSet.add()
-		},
-		showWeekdayPanel () {
-			this.$refs.weekdayForm.add()
-		},
-		showSources () {
-			this.$refs.editSources.add()
-		},
-		resetToggleCondition () {
-			this.toggleConditionFromForm = true
-		},
 		resetAction () {
 			this.action = null
-		},
-		resetWeekdayCondition () {
-			this.toggleWeekdayPanel = true
 		},
 		async updateSourcesetNames () {
 			const mappings = this.getMappings
@@ -860,11 +854,21 @@ export default {
 				console.log(e)
 			}
 		},
-		rangeChanged () {
-			this.$refs.daterange.show()
-		},
 		minDate (day) {
 			return day >= date.formatDate(new Date(), 'YYYY/MM/DD')
+		},
+		parseWeekDays (times) {
+			const weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+			return times
+				.map(time => this.$t('pages.callForward.times.' + weekDays[Number(time.wday) - 1]))
+				.join(', ')
+		},
+		checkOfficeHoursForAllDays (times) {
+			const weekdaysObj = _.groupBy(_.cloneDeep(this.times), 'wday')
+			this.sameOfficeHoursForAllDays = Object.keys(weekdaysObj).length > 1 && times.every(array => array.join() === times[0].join())
+		},
+		cloneTimes (times) {
+			return _.cloneDeep(times)
 		}
 	}
 }

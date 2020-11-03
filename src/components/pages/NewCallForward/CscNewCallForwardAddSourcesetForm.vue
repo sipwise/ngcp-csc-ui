@@ -1,6 +1,5 @@
 <template>
 	<div
-		v-if="enabled"
 		class="csc-form"
 	>
 		<csc-input
@@ -79,7 +78,6 @@ export default {
 	data () {
 		return {
 			loading: false,
-			enabled: false,
 			number: '',
 			name: '',
 			nameError: false,
@@ -132,16 +130,13 @@ export default {
 		cancel () {
 			this.number = ''
 			this.name = ''
-			this.enabled = false
 			this.$emit('close')
 		},
 		add () {
 			this.number = ''
 			this.name = ''
-			this.enabled = true
 		},
 		close () {
-			this.enabled = false
 			this.$emit('close')
 		},
 		reset () {

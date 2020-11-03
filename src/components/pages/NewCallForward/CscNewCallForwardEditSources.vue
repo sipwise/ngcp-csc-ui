@@ -1,6 +1,5 @@
 <template>
 	<div
-		v-if="enabled"
 		class="csc-form q-pa-lg"
 		:class="{ 'csc-cf-popover-hide': toggleFormVisibility}"
 	>
@@ -132,7 +131,6 @@ export default {
 		return {
 			mode: 'create',
 			loading: false,
-			enabled: false,
 			number: '',
 			numberError: false,
 			destinationIndex: null,
@@ -206,15 +204,12 @@ export default {
 		},
 		cancel () {
 			this.number = ''
-			this.enabled = false
-			this.$emit('close')
+			this.close()
 		},
 		add () {
 			this.number = ''
-			this.enabled = true
 		},
 		close () {
-			this.enabled = false
 			this.$emit('close')
 		},
 		reset () {

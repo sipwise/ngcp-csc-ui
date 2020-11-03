@@ -1,7 +1,5 @@
 <template>
-	<div
-		v-if="enabled"
-	>
+	<div>
 		<div
 			class="csc-cf-dest-type"
 			@click="addDestinationsetUnconditional()"
@@ -29,11 +27,6 @@ import {
 } from 'vuex'
 export default {
 	name: 'CscNewCallForwardDestinationsetTypeSelect',
-	data () {
-		return {
-			enabled: true
-		}
-	},
 	computed: {
 		...mapGetters('newCallForward', [
 			'timeoutGroupExists',
@@ -57,15 +50,11 @@ export default {
 		async addDestinationsetBusy () {
 			await this.$store.dispatch('newCallForward/setSelectedDestType', 'busy')
 		},
-
 		cancel () {
-			this.enabled = false
-		},
-		add () {
-			this.enabled = true
+			this.close()
 		},
 		close () {
-			this.enabled = false
+			this.$emit('close')
 		}
 	}
 }
