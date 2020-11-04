@@ -263,12 +263,14 @@ export default {
 		loadGroupListItems (context, options) {
 			return new Promise((resolve, reject) => {
 				const page = _.get(options, 'page', context.state.groupListCurrentPage)
+				const filters = _.get(options, 'filters', {})
 				const clearList = _.get(options, 'clearList', true)
 				context.commit('groupListItemsRequesting', {
 					clearList: clearList
 				})
 				getGroupList({
-					page: page
+					page,
+					filters
 				}).then((groupList) => {
 					context.commit('pbx/pilotSucceeded', groupList.pilot, { root: true })
 					context.commit('pbx/numbersSucceeded', groupList.numbers, { root: true })

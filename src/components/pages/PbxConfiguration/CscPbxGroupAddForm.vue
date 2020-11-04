@@ -16,6 +16,7 @@
 					:disable="loading"
 					:readonly="loading"
 					:label="$t('pbxConfig.groupName')"
+					data-cy="group-name"
 					@input="$v.data.name.$touch"
 				/>
 				<q-input
@@ -27,6 +28,7 @@
 					:disable="loading"
 					:readonly="loading"
 					:label="$t('pbxConfig.extension')"
+					data-cy="group-extension"
 					@input="$v.data.extension.$touch"
 				/>
 				<q-select
@@ -39,6 +41,7 @@
 					:readonly="loading"
 					:label="$t('pbxConfig.huntPolicy')"
 					:options="huntPolicyOptions"
+					data-cy="group-hunt-policy"
 				/>
 				<q-input
 					v-model="data.huntTimeout"
@@ -52,6 +55,7 @@
 					:suffix="$t('pbxConfig.seconds')"
 					:min="1"
 					:max="3600"
+					data-cy="group-hunt-timeout"
 					@input="$v.data.huntTimeout.$touch"
 				/>
 			</div>
@@ -70,6 +74,7 @@
 					:readonly="loading"
 					:label="$t('pbxConfig.aliasNumbers')"
 					:options="aliasNumberOptions"
+					data-cy="group-alias-numbers"
 				/>
 				<q-select
 					v-model="data.seats"
@@ -83,6 +88,7 @@
 					:readonly="loading"
 					:label="$t('pbxConfig.seats')"
 					:options="seatOptions"
+					data-cy="group-seats"
 				/>
 				<q-select
 					v-model="data.soundSet"
@@ -94,6 +100,7 @@
 					:readonly="loading"
 					:label="$t('pbxConfig.soundSet')"
 					:options="soundSetOptions"
+					data-cy="group-sound-set"
 				/>
 			</div>
 		</div>
@@ -103,6 +110,7 @@
 				flat
 				color="default"
 				icon="clear"
+				data-cy="group-btn-clear"
 				@mousedown.native="cancel()"
 			>
 				{{ $t('buttons.cancel') }}
@@ -113,6 +121,7 @@
 				color="primary"
 				icon="group"
 				:disable="$v.data.$invalid"
+				data-cy="group-btn-save"
 				@click="save()"
 			>
 				{{ $t('pbxConfig.createGroup') }}

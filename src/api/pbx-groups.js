@@ -85,10 +85,12 @@ export function getGroupsOnly (options) {
 export function getGroupList (options) {
 	return new Promise((resolve, reject) => {
 		const page = _.get(options, 'page', 1)
+		const filters = _.get(options, 'filters', {})
 		Promise.all([
 			getGroups({
 				params: {
 					page: page,
+					...filters,
 					order_by: PBX_CONFIG_ORDER_BY,
 					order_by_direction: PBX_CONFIG_ORDER_DIRECTION
 				}

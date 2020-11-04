@@ -4,7 +4,7 @@
 		class="q-pa-lg"
 	>
 		<csc-list-actions
-			class="row justify-center q-mb-lg"
+			class="row justify-center q-mb-xs"
 		>
 			<csc-list-action-button
 				v-if="isGroupAddFormDisabled"
@@ -13,9 +13,29 @@
 				color="primary"
 				:label="$t('pbxConfig.addGroup')"
 				:disable="isGroupListRequesting"
-				@click="enableGroupAddForm"
+				data-cy="groups-add-new"
+				@click="enableAddForm"
+			/>
+			<csc-list-action-button
+				v-if="!filtersEnabled"
+				slot="slot2"
+				icon="filter_alt"
+				color="primary"
+				:label="$t('pbxConfig.filterGroups')"
+				data-cy="groups-filter-open"
+				@click="enableFilters"
+			/>
+			<csc-list-action-button
+				v-if="filtersEnabled"
+				slot="slot2"
+				icon="clear"
+				color="negative"
+				:label="$t('pbxConfig.closeFilters')"
+				data-cy="groups-filter-close"
+				@click="closeFilters"
 			/>
 		</csc-list-actions>
+		<q-separator class="q-mb-xs" />
 		<q-slide-transition>
 			<div
 				v-if="!isGroupAddFormDisabled"
@@ -33,6 +53,14 @@
 					@cancel="disableGroupAddForm"
 				/>
 			</div>
+		</q-slide-transition>
+		<q-slide-transition>
+			<CscPbxGroupFilters
+				v-if="hasFilters || filtersEnabled"
+				:loading="isGroupListRequesting"
+				class="q-pb-md"
+				@filter="applyFilter"
+			/>
 		</q-slide-transition>
 		<div
 			v-if="isGroupListPaginationActive"
@@ -83,7 +111,13 @@
 			</csc-fade>
 		</csc-list>
 		<div
-			v-if="isGroupListEmpty && !isGroupListRequesting"
+			v-if="isGroupListEmpty && !isGroupListRequesting && hasFilters"
+			class="row justify-center csc-no-entities"
+		>
+			{{ $t('pbxConfig.noGroupsFound') }}
+		</div>
+		<div
+			v-else-if="isGroupListEmpty && !isGroupListRequesting"
 			class="row justify-center csc-no-entities"
 		>
 			{{ $t('pbxConfig.noGroups') }}
@@ -100,6 +134,7 @@
 
 <script>
 import CscPage from 'components/CscPage'
+import CscPbxGroupFilters from 'components/pages/PbxConfiguration/CscPbxGroupFilters'
 import CscPbxGroupAddForm from 'components/pages/PbxConfiguration/CscPbxGroupAddForm'
 import CscPbxGroup from 'components/pages/PbxConfiguration/CscPbxGroup'
 import CscRemoveDialog from 'components/CscRemoveDialog'
@@ -130,6 +165,7 @@ export default {
 		CscFade,
 		CscPage,
 		CscPbxGroup,
+		CscPbxGroupFilters,
 		CscPbxGroupAddForm,
 		CscRemoveDialog,
 		CscList,
@@ -140,7 +176,10 @@ export default {
 		platform
 	],
 	data () {
-		return {}
+		return {
+			filters: {},
+			filtersEnabled: false
+		}
 	},
 	computed: {
 		...mapState('pbx', [
@@ -187,7 +226,10 @@ export default {
 			'getGroupRemovalToastMessage',
 			'getHuntPolicyOptions',
 			'hasCallQueue'
-		])
+		]),
+		hasFilters () {
+			return Object.keys(this.filters).length > 0
+		}
 	},
 
 	watch: {
@@ -219,7 +261,7 @@ export default {
 	mounted () {
 		this.$scrollTo(this.$parent.$el)
 		this.disableGroupAddForm()
-		this.loadGroupListItems()
+		this.loadGroups()
 	},
 	methods: {
 		...mapActions('pbxGroups', [
@@ -245,11 +287,40 @@ export default {
 		...mapActions('pbxCallQueues', [
 			'jumpToCallQueue'
 		]),
+		loadGroups (page) {
+			this.loadGroupListItems({
+				page: page,
+				filters: this.filters
+			})
+		},
 		resetGroupAddForm () {
 			if (this.$refs.addForm) {
 				this.$refs.addForm.reset()
 			}
 		},
+		enableAddForm () {
+			this.closeFilters()
+			this.enableGroupAddForm()
+		},
+		enableFilters () {
+			this.filtersEnabled = true
+			this.disableGroupAddForm()
+		},
+		applyFilter (filterData) {
+			this.filters = filterData
+			this.loadGroups(1)
+		},
+		resetFilters () {
+			if (this.hasFilters) {
+				this.filters = []
+				this.loadGroups(1)
+			}
+		},
+		closeFilters () {
+			this.filtersEnabled = false
+			this.resetFilters()
+		},
+
 		openGroupRemovalDialog (groupId) {
 			if (this.$refs.removeDialog) {
 				this.groupRemovalRequesting(groupId)
@@ -261,9 +332,7 @@ export default {
 		},
 		loadGroupListItemsPaginated (page) {
 			this.$scrollTo(this.$parent.$el)
-			this.loadGroupListItems({
-				page: page
-			})
+			this.loadGroups(page)
 		}
 	}
 }
