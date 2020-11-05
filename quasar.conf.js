@@ -28,7 +28,8 @@ module.exports = function (/* ctx */) {
 			'routes',
 			'components',
 			'vue-scrollto',
-			'constants'
+			'constants',
+			'vue-wait'
 		],
 
 		// https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
