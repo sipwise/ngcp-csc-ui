@@ -9,6 +9,8 @@
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"See package.json => scripts for available tests.\" && exit 0",
     "config": "sh ./bin/config-create.sh",
+    "upgrade": "quasar upgrade",
+    "upgrade:conduct": "quasar upgrade -i",
     "build": "quasar build",
     "dev": "quasar dev",
     "dev:docker": "sh ./bin/run-docker.sh",
@@ -22,7 +24,7 @@
     "concurrently:dev:jest": "concurrently \"quasar dev\" \"jest --watch\""
   },
   "dependencies": {
-    "@quasar/extras": "^1.9.7",
+    "@quasar/extras": "^1.9.10",
     "axios": "^0.18.1",
     "core-js": "^3.6.5",
     "file-saver": "^2.0.2",
@@ -31,7 +33,7 @@
     "load-script": "^1.0.0",
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
-    "quasar": "^1.14.1",
+    "quasar": "^1.14.3",
     "vue-i18n": "^8.0.0",
     "vue-password-strength-meter": "^1.7.2",
     "vue-resource": "^1.5.1",
@@ -40,7 +42,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@quasar/app": "^2.1.1",
+    "@quasar/app": "^2.1.6",
     "@quasar/cli": "^1.1.2",
     "@quasar/quasar-app-extension-testing": "^1.0.0",
     "@quasar/quasar-app-extension-testing-unit-jest": "^1.0.1",

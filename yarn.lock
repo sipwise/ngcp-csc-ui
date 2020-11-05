@@ -1135,10 +1135,10 @@
   resolved "https://npm-registry.sipwise.com/@positron/stack-trace/-/stack-trace-1.0.0.tgz#14fcc712a530038ef9be1ce6952315a839f466a8"
   integrity sha1-FPzHEqUwA475vhzmlSMVqDn0Zqg=
 
-"@quasar/app@^2.1.1":
-  version "2.1.1"
-  resolved "https://npm-registry.sipwise.com/@quasar/app/-/app-2.1.1.tgz#09c9fccdd703b4ddf5a69f613cefc34f171d43dc"
-  integrity sha512-Hv1thu3rsJzjvLSfphs9Q8mMkFteqyH8dz12PmD43Vsszr/5+HMSZazgYRPi7JEr9FWodUYRpA9fzrkWBsUiog==
+"@quasar/app@^2.1.6":
+  version "2.1.6"
+  resolved "https://npm-registry.sipwise.com/@quasar/app/-/app-2.1.6.tgz#4cefaaa7f46ffd436a6c077b9d601bb98b0b697f"
+  integrity sha512-d7BykD1e2OMMSGlw/b+ddC/s3L5p4nb5mMIwcIKBzRC2l6TqMA1e3FAWLcshfpo4Ciim3hWUmCjJ67sJQT0nYg==
   dependencies:
     "@quasar/babel-preset-app" "2.0.1"
     "@quasar/fastclick" "1.1.4"
@@ -1278,10 +1278,10 @@
     user-home "2.0.0"
     validate-npm-package-name "3.0.0"
 
-"@quasar/extras@^1.9.7":
-  version "1.9.7"
-  resolved "https://npm-registry.sipwise.com/@quasar/extras/-/extras-1.9.7.tgz#143c77fcea9b1ca742031087b5a90d20c42eff37"
-  integrity sha512-LvcY8ILYrW6SV49xH+XeXKPnxFjDRQIX1Uaa10XDarW9y99pL+lUNFUI7wFzO6SwoMP18BlpEnC3BEqnSZ7OAA==
+"@quasar/extras@^1.9.10":
+  version "1.9.10"
+  resolved "https://npm-registry.sipwise.com/@quasar/extras/-/extras-1.9.10.tgz#e0d8f98a7234d8bd996a7afbdba9763d4e331788"
+  integrity sha512-pVM2lLiX2vHhibL4VUCjAfYhhYtQLDLYccq/ee6PdpyJ394lJQSkFnnGntcmpQk4QPcgIQ8GZSVpsUd1qgabaw==
 
 "@quasar/fastclick@1.1.4":
   version "1.1.4"
@@ -9614,10 +9614,10 @@ qs@~6.5.2:
   resolved "https://npm-registry.sipwise.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
 
-quasar@^1.14.1:
-  version "1.14.1"
-  resolved "https://npm-registry.sipwise.com/quasar/-/quasar-1.14.1.tgz#3393f41e347c3768e31aeee5d9ec73489294cc89"
-  integrity sha512-SRv5VbFd/rhKiZjS/jm3yPpe8rYlccin+rI7hyzz7caIBV1nn8+Y20Wf3elm7GjShq5Fj8qmRaGcWmEWXOS+mA==
+quasar@^1.14.3:
+  version "1.14.3"
+  resolved "https://npm-registry.sipwise.com/quasar/-/quasar-1.14.3.tgz#a9e011232734eb26a419e32fbb564eb5499ec9f4"
+  integrity sha512-0baTygeaRhrOK9e+mtc32i6+xOnPKXaplgELJJdGWeoQBCwwfUX0tah0fgUmrdOEft3XmwhYW0a9yv/TAPUz7A==
 
 query-string@^4.1.0:
   version "4.3.4"
