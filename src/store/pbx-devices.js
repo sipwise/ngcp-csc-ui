@@ -204,9 +204,7 @@ export default {
 			return new Promise((resolve, reject) => {
 				const page = _.get(options, 'page', context.state.deviceListCurrentPage)
 				const clearList = _.get(options, 'clearList', true)
-				const stationNameFilter = _.get(options, 'stationNameFilter', null)
-				const identifierFilter = _.get(options, 'identifierFilter', null)
-				const profileFilter = _.get(options, 'profileFilter', null)
+				const filters = _.get(options, 'filters', {})
 				context.commit('deviceListItemsRequesting', {
 					clearList: clearList
 				})
@@ -215,9 +213,7 @@ export default {
 				}).then(() => {
 					return getDeviceList({
 						page: page,
-						station_name: stationNameFilter,
-						identifier: identifierFilter,
-						profile_id: profileFilter
+						filters
 					})
 				}).then((devices) => {
 					context.commit('deviceListItemsSucceeded', {

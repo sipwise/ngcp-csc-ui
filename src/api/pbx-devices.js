@@ -29,28 +29,31 @@ export function getDevices (options) {
 
 export function getDeviceList (options) {
 	return new Promise((resolve, reject) => {
+		const filters = options.filters || {}
+		// normalize filters
+		Object.keys(filters).forEach(key => {
+			let value = filters[key]
+			if (value === null || value === undefined || value === '') {
+				delete filters[key]
+			} else {
+				switch (key) {
+				case 'profile_id':
+					value = String(value)
+					break
+				case 'identifier':
+				case 'station_name':
+					value = '*' + value + '*'
+					break
+				}
+				filters[key] = value
+			}
+		})
+
 		const params = {
 			page: options.page,
-			profile_id: options.profile_id,
-			identifier: options.identifier,
-			station_name: options.station_name,
+			...filters,
 			order_by: PBX_CONFIG_ORDER_BY,
 			order_by_direction: PBX_CONFIG_ORDER_DIRECTION
-		}
-		if (params.profile_id === null || params.profile_id === undefined || params.profile_id === '') {
-			delete params.profile_id
-		} else {
-			params.profile_id = String(params.profile_id)
-		}
-		if (params.identifier === null || params.identifier === undefined || params.identifier === '') {
-			delete params.identifier
-		} else {
-			params.identifier = '*' + params.identifier + '*'
-		}
-		if (params.station_name === null || params.station_name === undefined || params.station_name === '') {
-			delete params.station_name
-		} else {
-			params.station_name = '*' + params.station_name + '*'
 		}
 		getDevices({
 			params: params

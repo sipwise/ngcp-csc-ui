@@ -176,9 +176,7 @@ export default {
 	},
 	data () {
 		return {
-			stationNameFilter: null,
-			identifierFilter: null,
-			profileFilter: null,
+			filters: {},
 			filtersEnabled: false
 		}
 	},
@@ -222,9 +220,7 @@ export default {
 			'getDeviceRemovalToastMessage'
 		]),
 		hasFilters () {
-			return this.stationNameFilter !== null ||
-				this.identifierFilter !== null ||
-				this.profileFilter !== null
+			return Object.keys(this.filters).length > 0
 		}
 	},
 	watch: {
@@ -282,9 +278,7 @@ export default {
 		loadDeviceListItemsFiltered (page) {
 			this.loadDeviceListItems({
 				page: page || 1,
-				stationNameFilter: this.stationNameFilter,
-				identifierFilter: this.identifierFilter,
-				profileFilter: this.profileFilter
+				filters: this.filters
 			})
 		},
 		enableAddForm () {
@@ -296,9 +290,7 @@ export default {
 			this.disableDeviceAddForm()
 		},
 		applyFilter (filterData) {
-			this.stationNameFilter = filterData.stationNameFilter
-			this.identifierFilter = filterData.identifierFilter
-			this.profileFilter = filterData.profileFilter ? Number(filterData.profileFilter) : null
+			this.filters = filterData
 			this.loadDeviceListItemsFiltered()
 		},
 		closeFilters () {
@@ -306,12 +298,8 @@ export default {
 			this.resetFilters()
 		},
 		resetFilters () {
-			if (this.stationNameFilter !== null ||
-				this.identifierFilter !== null ||
-				this.profileFilter !== null) {
-				this.stationNameFilter = null
-				this.identifierFilter = null
-				this.profileFilter = null
+			if (this.hasFilters) {
+				this.filters = {}
 				this.loadDeviceListItemsFiltered()
 			}
 		},

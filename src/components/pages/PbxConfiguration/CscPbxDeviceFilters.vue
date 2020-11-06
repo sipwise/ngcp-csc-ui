@@ -18,7 +18,7 @@
 				class="col-xs-12 col-md-2"
 			>
 				<q-input
-					v-if="filterType !== 'profileFilter'"
+					v-if="filterType !== 'profile_id'"
 					v-model="typedFilter"
 					type="text"
 					dense
@@ -40,7 +40,7 @@
 					</template>
 				</q-input>
 				<csc-pbx-model-select
-					v-if="filterType === 'profileFilter'"
+					v-if="filterType === 'profile_id'"
 					v-model="typedFilter"
 					:profiles="deviceProfileList"
 					:profile-map="deviceProfileMap"
@@ -109,22 +109,30 @@ export default {
 			return [
 				{
 					label: this.$t('pbxConfig.deviceStationName'),
-					value: 'stationNameFilter'
+					value: 'station_name'
 				},
 				{
 					label: this.$t('pbxConfig.deviceIdentifier'),
-					value: 'identifierFilter'
+					value: 'identifier'
 				},
 				{
 					label: this.$t('pbxConfig.deviceModel'),
-					value: 'profileFilter'
+					value: 'profile_id'
+				},
+				{
+					label: this.$t('pbxConfig.extension'),
+					value: 'pbx_extension'
+				},
+				{
+					label: this.$t('pbxConfig.queueExtensionName'),
+					value: 'display_name'
 				}
 			]
 		},
 		filtersList () {
 			return this.filters.map((filterItem) => {
 				let filterDisplayValue = filterItem.value
-				if (filterItem.name === 'profileFilter') {
+				if (filterItem.name === 'profile_id') {
 					filterDisplayValue = this.deviceProfileMap[filterItem.value].name
 				}
 				return {
@@ -171,6 +179,12 @@ export default {
 			this.filters.forEach(filter => {
 				params[filter.name] = filter.value
 			})
+
+			// a special fix because of q-select behaviour. it stores 0 for empty selection
+			if (!params.profile_id) {
+				delete params.profile_id
+			}
+
 			this.$emit('filter', params)
 		}
 	}
