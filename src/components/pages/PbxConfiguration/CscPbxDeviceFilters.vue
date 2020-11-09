@@ -18,7 +18,7 @@
 				class="col-xs-12 col-md-2"
 			>
 				<q-input
-					v-if="filterType !== 'profile_id'"
+					v-if="!filterTypeModel || filterTypeModel.control === 'input'"
 					v-model="typedFilter"
 					type="text"
 					dense
@@ -49,6 +49,17 @@
 					@opened="$emit('model-select-opened')"
 					@input="triggerFilter"
 				/>
+				<csc-pbx-attendant-selection
+					v-if="filterType === 'display_name'"
+					use-input
+					dense
+					:show-selected-item-icon="false"
+					:value="typedFilter"
+					:options="subscribersOptionsFiltered"
+					:disable="loading"
+					@filter="filterSubscriberOptions"
+					@input="triggerFilter"
+				/>
 			</div>
 		</div>
 		<div
@@ -77,12 +88,14 @@
 <script>
 import _ from 'lodash'
 import CscPbxModelSelect from '../PbxConfiguration/CscPbxModelSelect'
-import { mapState } from 'vuex'
+import CscPbxAttendantSelection from '../PbxConfiguration/CscPbxAttendantSelection'
+import { mapActions, mapState } from 'vuex'
 
 export default {
 	name: 'CscPbxDeviceFilters',
 	components: {
-		CscPbxModelSelect
+		CscPbxModelSelect,
+		CscPbxAttendantSelection
 	},
 	props: {
 		loading: {
@@ -94,14 +107,41 @@ export default {
 		return {
 			filterTypeModel: null,
 			typedFilter: null,
-			filters: []
+			filters: [],
+			subscribersFilter: ''
 		}
 	},
 	computed: {
 		...mapState('pbx', [
 			'deviceProfileMap',
-			'deviceProfileList'
+			'deviceProfileList',
+			'subscriberList'
 		]),
+		subscribersOptions () {
+			const options = []
+			this.subscriberList.forEach((subscriber) => {
+				let icon = 'person'
+				let subscriberTypeTitle = this.$t('pbxConfig.keySeatLabel')
+				if (subscriber.is_pbx_group) {
+					icon = 'group'
+					subscriberTypeTitle = this.$t('pbxConfig.keyGroupLabel')
+				} else if (subscriber.is_pbx_pilot) {
+					icon = 'person_outline'
+					subscriberTypeTitle = this.$t('pbxConfig.keyPilotLabel')
+				}
+				options.push({
+					label: subscriber.display_name || subscriber.webusername,
+					icon: icon,
+					value: subscriber.display_name,
+					disable: !subscriber.display_name,
+					subscriberTypeTitle
+				})
+			})
+			return options
+		},
+		subscribersOptionsFiltered () {
+			return this.subscribersOptions.filter(option => option.label.toLowerCase().indexOf(this.subscribersFilter) > -1)
+		},
 		filterType () {
 			return this.filterTypeModel && this.filterTypeModel.value
 		},
@@ -109,35 +149,40 @@ export default {
 			return [
 				{
 					label: this.$t('pbxConfig.deviceStationName'),
-					value: 'station_name'
+					value: 'station_name',
+					control: 'input'
 				},
 				{
 					label: this.$t('pbxConfig.deviceIdentifier'),
-					value: 'identifier'
+					value: 'identifier',
+					control: 'input'
 				},
 				{
 					label: this.$t('pbxConfig.deviceModel'),
-					value: 'profile_id'
+					value: 'profile_id',
+					control: 'select'
 				},
 				{
 					label: this.$t('pbxConfig.extension'),
-					value: 'pbx_extension'
+					value: 'pbx_extension',
+					control: 'input'
 				},
 				{
 					label: this.$t('pbxConfig.queueExtensionName'),
-					value: 'display_name'
+					value: 'display_name',
+					control: 'select'
 				}
 			]
 		},
 		filtersList () {
 			return this.filters.map((filterItem) => {
 				let filterDisplayValue = filterItem.value
-				if (filterItem.name === 'profile_id') {
+				if (filterItem.id === 'profile_id') {
 					filterDisplayValue = this.deviceProfileMap[filterItem.value].name
 				}
 				return {
-					id: filterItem.name,
-					filterInfo: this.filterTypeOptions.find(option => option.value === filterItem.name).label + ': ' + filterDisplayValue
+					id: filterItem.id,
+					filterInfo: filterItem.title + ': ' + filterDisplayValue
 				}
 			})
 		}
@@ -147,12 +192,31 @@ export default {
 			this.typedFilter = null
 		}
 	},
+	mounted () {
+		this.loadSubscribers()
+	},
 	methods: {
-		triggerFilter (data) {
-			this.addFilter(this.filterTypeModel?.value, this.typedFilter)
+		...mapActions('pbx', [
+			'loadSubscribers'
+		]),
+		filterSubscriberOptions (val, update, abort) {
+			update(() => {
+				this.subscribersFilter = val.toLowerCase()
+			})
 		},
-		removeFilter (name) {
-			this.filters = this.filters.filter(item => item.name !== name)
+		triggerFilter (data) {
+			const filterId = this.filterTypeModel?.value
+			let filterTitle = this.filterTypeOptions.find(option => option.value === filterId).label
+			let filterValue = this.typedFilter
+
+			if (this.filterType === 'display_name') {
+				filterTitle = data.subscriberTypeTitle
+				filterValue = data.value
+			}
+			this.addFilter(filterId, filterTitle, filterValue)
+		},
+		removeFilter (id) {
+			this.filters = this.filters.filter(item => item.id !== id)
 			this.filter()
 		},
 		removeFilters () {
@@ -161,13 +225,14 @@ export default {
 				this.filter()
 			}
 		},
-		addFilter (name, value) {
+		addFilter (id, title, value) {
 			const valueTrimmed = _.trim(value)
 			if (valueTrimmed) {
 				this.typedFilter = null
-				this.filters = this.filters.filter(item => item.name !== name)
+				this.filters = this.filters.filter(item => item.id !== id)
 				const filter = {
-					name: name,
+					id,
+					title,
 					value: valueTrimmed
 				}
 				this.filters.push(filter)
@@ -177,7 +242,7 @@ export default {
 		filter () {
 			const params = {}
 			this.filters.forEach(filter => {
-				params[filter.name] = filter.value
+				params[filter.id] = filter.value
 			})
 
 			// a special fix because of q-select behaviour. it stores 0 for empty selection

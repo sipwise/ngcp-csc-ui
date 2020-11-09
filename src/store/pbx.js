@@ -120,19 +120,24 @@ export default {
 			options.push({
 				label: i18n.t('pbxConfig.keyEmptyLabel'),
 				icon: 'clear',
-				value: null
+				value: null,
+				type: null
 			})
 			state.subscriberList.forEach((subscriber) => {
 				let icon = 'person'
+				let type = 'seat'
 				if (subscriber.is_pbx_group) {
 					icon = 'group'
+					type = 'group'
 				} else if (subscriber.is_pbx_pilot) {
 					icon = 'person_outline'
+					type = 'pilot'
 				}
 				options.push({
 					label: subscriber.display_name || subscriber.webusername,
 					icon: icon,
-					value: subscriber.id
+					value: subscriber.id,
+					type
 				})
 			})
 			return options

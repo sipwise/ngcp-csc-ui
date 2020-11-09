@@ -51,44 +51,13 @@
 					</div>
 				</div>
 			</div>
-			<q-select
-				ref="selectSubscriber"
-				emit-value
-				map-options
-				:label="selectedKeyLabel"
+			<csc-pbx-attendant-selection
 				:value="selectedKeySubscriber"
 				:options="subscriberOptions"
 				@input="keySubscriberChanged"
-			>
-				<template
-					v-slot:prepend
-				>
-					<q-icon
-						:name="selectedKeyIcon"
-					/>
-				</template>
-				<template v-slot:option="scope">
-					<q-item
-						v-bind="scope.itemProps"
-						v-on="scope.itemEvents"
-					>
-						<q-item-section
-							side
-						>
-							<q-icon
-								:name="scope.opt.icon"
-							/>
-						</q-item-section>
-						<q-item-section>
-							<q-item-label>
-								{{ scope.opt.label }}
-							</q-item-label>
-						</q-item-section>
-					</q-item>
-				</template>
-			</q-select>
+			/>
 			<q-select
-				v-show="selectedKeySubscriber !== null"
+				v-show="selectedKeySubscriber !== null && selectedKeySubscriber.value !== null"
 				ref="selectType"
 				v-model="selectedKeyType"
 				emit-value
@@ -137,9 +106,13 @@ import {
 import {
 	BoundingBox2D
 } from 'src/helpers/graphics'
+import CscPbxAttendantSelection from './CscPbxAttendantSelection'
 
 export default {
 	name: 'CscPbxDeviceConfig',
+	components: {
+		CscPbxAttendantSelection
+	},
 	props: {
 		device: {
 			type: Object,
@@ -199,26 +172,13 @@ export default {
 			}
 			return ''
 		},
-		selectedKeyLabel () {
-			if (this.selectedLine !== null) {
-				const subscriber = this.subscriberMap[this.selectedLine.subscriber_id]
-				if (subscriber !== null && subscriber.is_pbx_pilot === true) {
-					return this.$t('pbxConfig.keyPilotLabel')
-				} else if (subscriber !== null && subscriber.is_pbx_group === true) {
-					return this.$t('pbxConfig.keyGroupLabel')
-				} else if (subscriber !== null) {
-					return this.$t('pbxConfig.keySeatLabel')
-				} else {
-					return this.$t('pbxConfig.keyBothLabel')
-				}
-			}
-			return this.$t('pbxConfig.keyBothLabel')
-		},
 		selectedKeySubscriber () {
+			const unassignedItem = this.subscriberOptions[0]
 			if (this.selectedLine !== null) {
-				return this.selectedLine.subscriber_id
+				const selectedOption = this.subscriberOptions.find(opt => opt.value === this.selectedLine.subscriber_id)
+				return selectedOption || unassignedItem
 			}
-			return null
+			return unassignedItem
 		},
 		selectedKeyType: {
 			get () {
@@ -432,7 +392,7 @@ export default {
 		loadGroupsAndSeats () {
 			this.$emit('loadGroupsAndSeats')
 		},
-		keySubscriberChanged (subscriberId) {
+		keySubscriberChanged ({ value: subscriberId }) {
 			const newLines = []
 			const lines = _.clone(this.lines)
 			const line = this.getLineByKey(this.selectedKey)
