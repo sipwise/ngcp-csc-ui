@@ -1,3 +1,48 @@
+ngcp-csc-ui (9.2.0.0+0~mr9.2.0.0) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [d3591a2] TT#91101 CSC: As a Customer, I want to add new CF implementation to main menu
+  * [08b813d] TT#92003 CSC: As a Customer, I want to filter PBXSeats by Name (display_name)
+  * [3aabf8c] TT#94101 CSC: Upgrade new Call Forwarding to latest Quasar
+  * [eccc51c] TT#97850 CSC: Fix dev env script
+  * [497a17d] TT#94601 CSC: Migrate conferencing to latest Quasar
+  * [cd9c2a8] TT#84211 CSC: As a Customer, I want to recover/reset my password
+
+  [ Guillem Jover ]
+  * [d93f586] TT#91650 Add a .mailmap file to correct author information
+
+  [ Hans-Peter Herzog ]
+  * [235f0ff] TT#88909 Migrate Quasar to version 1.14.0
+  * [598084b] TT#94606 Fix conversation infinite scroll
+  * [3ac8d92] TT#94800 Fix input fields for Manager Secretary
+  * [77e67e5] TT#94800 Fix Manager Secretary Config input fields
+  * [dd191ff] TT#94801 Fix intra pbx flag in PBXConfig
+  * [b038c53] TT#94803 Fix wrong path in debian package
+  * [075452c] TT#80753 Use a smaller preview version of each PBX device image in order to save bandwidth and improve render performance
+  * [6f52bb2] TT#95204 PBXSeats improvements
+  * [e24a029] TT#95600 Improve api methods
+  * [1759423] TT#95604 Update developer guide
+  * [b47c7e6] TT#95950 Introduce a basic pattern to create and handle Dialogs
+  * [db22ffe] TT#96150 Improve developer guide
+  * [ba5252c] TT#96152 Consolidate page components
+  * [beef3b3] TT#96253 Upgrade to Quasar 1.14.1
+  * [2dd8cce] TT#96365 Fix registry in yarn.lock
+  * [88b6646] TT#96500 Fix date range filter for Conversations
+  * [86e2acf] TT#96504 Fix sticky tabs arrows
+  * [b3d668c] TT#99552 Provide unique ids to simplify end to end testing
+  * [1cd9ff1] TT#99554 Fix vulnerabilities in dependencies
+  * [2617778] TT#99555 Upgrade Quasar to new patch version 1.14.3
+  * [e0832ea] TT#96818 Introduce vue-wait to reduce boilerplate code for request states
+
+  [ Sergii Leonenko ]
+  * [96c6ac4] TT#97200 CSC: Fix issues in "yarn run" scripts for Win platform
+  * [9639b34] TT#96810 CSC: Fix PBX Model selection while filtering by Device Model
+  * [213f52b] TT#96811 CSC: Refactor PBXDevice filtering
+  * [61f635b] TT#96802 CSC: As a Customer, I want to filter PBXGroups
+  * [307252d] TT#92007 and #96801 CSC: As a Customer, I want to filter PBXDevice by Extension and Username (Seat assigned as Private Line)
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Nov 2020 16:25:07 +0100
+
 ngcp-csc-ui (9.1.0.0+0~mr9.1.0.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
