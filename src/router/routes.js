@@ -27,6 +27,7 @@ import CscPageFaxSettings from 'src/pages/CscPageFaxSettings'
 import CscPageUserSettings from 'src/pages/CscPageUserSettings'
 import CscPageError404 from 'src/pages/CscPageError404'
 import CscRecoverPassword from 'src/pages/CscRecoverPassword'
+import CscPageCf from 'pages/CscPageCf'
 
 const getToken = (route) => {
 	return {
@@ -59,6 +60,13 @@ export default function routes (app) {
 				{
 					path: 'new-call-forward',
 					component: CscPageNewCallForward
+				},
+				{
+					path: 'call-forwarding',
+					component: CscPageCf,
+					meta: {
+						title: i18n.t('Call Forwarding')
+					}
 				},
 				{
 					path: 'call-forward/always',

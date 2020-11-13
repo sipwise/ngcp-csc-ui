@@ -29,7 +29,7 @@
 			/>
 			<q-btn
 				v-if="$attrs.clearable !== undefined && value !== ''"
-				icon="clear"
+				icon="backspace"
 				color="white"
 				flat
 				dense
@@ -50,7 +50,7 @@ export default {
 	},
 	props: {
 		value: {
-			type: String,
+			type: [String, Number],
 			default: undefined
 		}
 	},

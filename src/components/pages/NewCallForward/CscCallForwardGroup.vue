@@ -442,7 +442,7 @@ import CscNewCallForwardAddOfficeHoursForm from './CscNewCallForwardAddOfficeHou
 import CscNewCallForwardDestinationTypeForm from './CscNewCallForwardDestinationTypeForm'
 import CscNewCallForwardDateRange from './CscNewCallForwardDateRange'
 export default {
-	name: 'CscCfGroup',
+	name: 'CscCallForwardGroup',
 	components: {
 		CscConfirmDialog,
 		CscNewCallForwardDestination,

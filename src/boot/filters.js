@@ -16,6 +16,12 @@ import WholeCurrency from 'src/filters/currency'
 import {
 	displayName
 } from 'src/filters/subscriber'
+import {
+	timeSetDateExact,
+	timeSetDateRange, timeSetOfficeHoursSameTime,
+	timeSetTimes,
+	timeSetWeekdays
+} from 'src/filters/time-set'
 
 export default () => {
 	Vue.filter('number', NumberFilter)
@@ -30,4 +36,9 @@ export default () => {
 	Vue.filter('displayName', displayName)
 	Vue.filter('time', time)
 	Vue.filter('weekday', weekday)
+	Vue.filter('timeSetDateExact', timeSetDateExact)
+	Vue.filter('timeSetWeekdays', timeSetWeekdays)
+	Vue.filter('timeSetDateRange', timeSetDateRange)
+	Vue.filter('timeSetOfficeHoursSameTime', timeSetOfficeHoursSameTime)
+	Vue.filter('timeSetTimes', timeSetTimes)
 }

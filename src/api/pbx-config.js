@@ -4,7 +4,9 @@ import Vue from 'vue'
 import {
 	getSubscribers
 } from './subscriber'
-import uuid from 'uuid'
+import {
+	v4
+} from 'uuid'
 import {
 	getList,
 	get,
@@ -12,7 +14,7 @@ import {
 	patchRemove
 } from './common'
 
-export const createId = uuid.v4
+export const createId = v4
 export const PBX_CONFIG_ORDER_BY = 'create_timestamp'
 export const PBX_CONFIG_ORDER_DIRECTION = 'desc'
 

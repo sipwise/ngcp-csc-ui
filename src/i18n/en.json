@@ -82,7 +82,7 @@
             "subTitle": "Calls, Faxes, VoiceMails"
         },
         "callForward": {
-            "title": "Call Forward",
+            "title": "Call Forwarding",
             "subTitle": "Control your calls",
             "always": "Always",
             "companyHours": "Company Hours",
@@ -133,7 +133,7 @@
                 "title": "New features"
             },
             "callForward": {
-                "title": "Call Forward"
+                "title": "Call Forwarding"
             }
         },
 		"userSettings": {

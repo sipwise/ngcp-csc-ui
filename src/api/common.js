@@ -63,7 +63,7 @@ export async function getList (options) {
 		options.params.rows = LIST_ALL_ROWS
 	}
 	if (options.resource !== undefined) {
-		options.path = 'api/' + options.resource
+		options.path = 'api/' + options.resource + '/'
 		options.root = '_embedded.ngcp:' + options.resource
 	}
 	const firstRes = await Vue.http.get(options.path, {
@@ -217,8 +217,11 @@ export async function post (options) {
 		const res = await Vue.http.post(path, options.body, {
 			headers: options.headers
 		})
-		if (options.headers.Prefer === Prefer.representation) {
+		const hasBody = res.body !== undefined && res.body !== null && res.body !== ''
+		if (hasBody) {
 			return normalizeEntity(getJsonBody(res.body))
+		} else if (!hasBody && res.headers.has('Location')) {
+			return _.last(res.headers.get('Location').split('/'))
 		} else {
 			return null
 		}

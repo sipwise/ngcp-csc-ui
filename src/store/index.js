@@ -7,6 +7,7 @@ import _ from 'lodash'
 
 import CallBlockingModule from './call-blocking'
 import CallForwardModule from './call-forward'
+import CallForwardingModule from './call-forwarding'
 import NewCallForwardModule from './new-call-forward'
 import CallModule, { errorVisibilityTimeout } from './call'
 import ConversationsModule from './conversations'
@@ -70,7 +71,8 @@ export default function (/* { ssrContext } */) {
 			pbxDevices: PbxDevicesModule,
 			pbxCallQueues: PbxCallQueuesModule,
 			pbxSoundSets: PbxSoundSetsModule,
-			pbxMsConfigs: PbxMsConfigsModule
+			pbxMsConfigs: PbxMsConfigsModule,
+			callForwarding: CallForwardingModule
 
 		},
 		state: {

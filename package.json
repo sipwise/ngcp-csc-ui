@@ -21,7 +21,8 @@
     "test:unit:watch": "jest --watch",
     "test:unit:watchAll": "jest --watchAll",
     "serve:test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788",
-    "concurrently:dev:jest": "concurrently \"quasar dev\" \"jest --watch\""
+    "concurrently:dev:jest": "concurrently \"quasar dev\" \"jest --watch\"",
+    "new:store": "quasar new store"
   },
   "dependencies": {
     "@quasar/extras": "^1.9.10",
@@ -57,6 +58,7 @@
     "eslint-plugin-vue": "^6.1.2",
     "generate-password": "^1.5.1",
     "parseuri": "^0.0.6",
+    "uuid": "8.3.1",
     "vue-wait": "1.4.8"
   },
   "browserslist": [

@@ -153,13 +153,13 @@ export default {
 			if (state.subscriber === null) {
 				return null
 			}
-			return state.subscriber.primaryNumber
+			return state.subscriber.primary_number
 		},
 		aliasNumbers (state) {
 			if (state.subscriber === null) {
 				return []
 			}
-			return state.subscriber.aliasNumbers
+			return state.subscriber.alias_numbers
 		}
 	},
 	mutations: {

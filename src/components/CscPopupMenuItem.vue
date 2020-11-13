@@ -1,6 +1,6 @@
 <template>
 	<q-item
-		v-close-popup
+		v-close-popup="closePopup"
 		clickable
 		v-bind="$attrs"
 		v-on="$listeners"
@@ -41,6 +41,10 @@ export default {
 		sublabel: {
 			type: String,
 			default: ''
+		},
+		closePopup: {
+			type: Boolean,
+			default: true
 		}
 	}
 }

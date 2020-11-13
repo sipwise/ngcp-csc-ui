@@ -71,30 +71,10 @@ export default {
 					visible: true
 				},
 				{
+					to: '/user/call-forwarding',
 					icon: 'phone_forwarded',
 					label: this.$t('navigation.callForward.title'),
-					opened: this.isCallForward,
-					visible: true,
-					children: [
-						{
-							to: '/user/call-forward/always',
-							icon: 'check_circle',
-							label: this.$t('navigation.callForward.always'),
-							visible: true
-						},
-						{
-							to: '/user/call-forward/company-hours',
-							icon: 'schedule',
-							label: this.$t('navigation.callForward.companyHours'),
-							visible: true
-						},
-						{
-							to: '/user/call-forward/after-hours',
-							icon: 'watch_later',
-							label: this.$t('navigation.callForward.afterHours'),
-							visible: true
-						}
-					]
+					visible: true
 				},
 				{
 					icon: 'block',
