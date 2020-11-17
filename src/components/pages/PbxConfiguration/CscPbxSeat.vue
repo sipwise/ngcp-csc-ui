@@ -125,9 +125,14 @@
 			</q-input>
 			<q-input
 				v-model="changes.extension"
+				hide-hint
+				:error="$v.changes.extension.$error"
+				:error-message="extensionErrorMessage"
 				:label="$t('pbxConfig.extension')"
 				:disable="loading"
+				:hint="getExtensionHint"
 				@keyup.enter="save"
+				@input="$v.changes.extension.$touch"
 			>
 				<template
 					v-slot:append
@@ -238,6 +243,9 @@
 
 <script>
 import _ from 'lodash'
+import { mapGetters } from 'vuex'
+import { between } from 'vuelidate/lib/validators'
+import { inRange } from 'src/helpers/validation'
 import CscChangePasswordDialog from '../../CscChangePasswordDialog'
 import numberFilter from '../../../filters/number'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
@@ -311,7 +319,21 @@ export default {
 			changes: this.getSeatData()
 		}
 	},
+	validations: {
+		changes: {
+			extension: {
+				isInRange: function (value) {
+					return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
+				}
+			}
+		}
+	},
 	computed: {
+		...mapGetters('pbx', [
+			'getExtensionHint',
+			'getMinAllowedExtension',
+			'getMaxAllowedExtension'
+		]),
 		getPrimaryNumber () {
 			return numberFilter(this.seat.primary_number)
 		},
@@ -332,6 +354,13 @@ export default {
 		},
 		hasSoundSetChanged () {
 			return this.changes.soundSet !== this.getSoundSetId()
+		},
+		extensionErrorMessage () {
+			if (!this.$v.changes.extension.isInRange) {
+				return this.getExtensionHint
+			} else {
+				return ''
+			}
 		}
 	},
 	watch: {

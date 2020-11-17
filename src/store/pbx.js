@@ -147,6 +147,34 @@ export default {
 		},
 		isNumbersRequesting (state) {
 			return state.numberListState === RequestState.requesting
+		},
+		getMinAllowedExtension (state, getters, rootState, rootGetters) {
+			const subscriber = rootGetters['user/getSubscriber']
+			return subscriber.ext_range_min
+		},
+		getMaxAllowedExtension (state, getters, rootState, rootGetters) {
+			const subscriber = rootGetters['user/getSubscriber']
+			return subscriber.ext_range_max
+		},
+		getExtensionHint (state, getters, rootState, rootGetters) {
+			const min = getters.getMinAllowedExtension
+			const max = getters.getMaxAllowedExtension
+			if (min && max == null) {
+				return i18n.t('pbxConfig.pbxExtensionMinOnlyHint', {
+					min: min
+				})
+			} else if (min == null && max) {
+				return i18n.t('pbxConfig.pbxExtensionMaxOnlyHint', {
+					max: max
+				})
+			} else if (min && max) {
+				return i18n.t('pbxConfig.pbxExtensionHint', {
+					min: min,
+					max: max
+				})
+			} else {
+				return null
+			}
 		}
 	},
 	mutations: {

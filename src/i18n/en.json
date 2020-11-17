@@ -630,7 +630,10 @@
         "seatsFiltersClose": "Close",
         "seatsFiltersReset": "Reset Filters",
         "seatsFilterInputLabel": "Type something",
-		"webusername": "Login"
+		"webusername": "Login",
+		"pbxExtensionHint": "Allowed extensions are between {min} and {max}",
+		"pbxExtensionMinOnlyHint": "Minimum allowed extension is {min}",
+		"pbxExtensionMaxOnlyHint": "Maximum allowed extension is {max}"
     },
     "callBlocking": {
         "privacyEnabledToast": "Your number is hidden to the callee",

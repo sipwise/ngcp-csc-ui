@@ -28,6 +28,7 @@
 					:disable="loading"
 					:readonly="loading"
 					:label="$t('pbxConfig.extension')"
+					:hint="getExtensionHint"
 					data-cy="group-extension"
 					@input="$v.data.extension.$touch"
 				/>
@@ -135,13 +136,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
 	required,
 	minValue,
 	maxValue,
 	maxLength,
-	numeric
+	numeric,
+	between
 } from 'vuelidate/lib/validators'
+import { inRange } from 'src/helpers/validation'
 import CscObjectSpinner from '../../CscObjectSpinner'
 export default {
 	name: 'CscPbxGroupAddForm',
@@ -179,7 +183,10 @@ export default {
 			extension: {
 				required,
 				maxLength: maxLength(64),
-				numeric
+				numeric,
+				isInRange: function (value) {
+					return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
+				}
 			},
 			huntTimeout: {
 				required,
@@ -195,6 +202,11 @@ export default {
 		}
 	},
 	computed: {
+		...mapGetters('pbx', [
+			'getExtensionHint',
+			'getMinAllowedExtension',
+			'getMaxAllowedExtension'
+		]),
 		groupNameErrorMessage () {
 			if (!this.$v.data.name.required) {
 				return this.$t('validationErrors.fieldRequired', {
@@ -223,6 +235,8 @@ export default {
 				return this.$t('validationErrors.numeric', {
 					field: this.$t('pbxConfig.extension')
 				})
+			} else if (!this.$v.data.extension.isInRange) {
+				return this.getExtensionHint
 			} else {
 				return ''
 			}

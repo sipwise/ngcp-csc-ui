@@ -32,11 +32,13 @@
 					clearable
 					dense
 					hide-bottom-space
+					hide-hint
 					:error="$v.data.extension.$error"
 					:error-message="extensionErrorMessage"
 					:disable="loading"
 					:readonly="loading"
 					:label="$t('pbxConfig.extension')"
+					:hint="getExtensionHint"
 					@input="$v.data.extension.$touch"
 				>
 					<template
@@ -144,10 +146,15 @@
 
 <script>
 import {
+	mapGetters
+} from 'vuex'
+import {
 	required,
 	maxLength,
-	numeric
+	numeric,
+	between
 } from 'vuelidate/lib/validators'
+import { inRange } from 'src/helpers/validation'
 import CscInput from 'components/form/CscInput'
 import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
 export default {
@@ -183,7 +190,10 @@ export default {
 			extension: {
 				required,
 				numeric,
-				maxLength: maxLength(64)
+				maxLength: maxLength(64),
+				isInRange: function (value) {
+					return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
+				}
 			}
 		}
 	},
@@ -193,6 +203,11 @@ export default {
 		}
 	},
 	computed: {
+		...mapGetters('pbx', [
+			'getExtensionHint',
+			'getMinAllowedExtension',
+			'getMaxAllowedExtension'
+		]),
 		seatNameErrorMessage () {
 			if (!this.$v.data.name.required) {
 				return this.$t('validationErrors.fieldRequired', {
@@ -221,6 +236,8 @@ export default {
 				return this.$t('validationErrors.numeric', {
 					field: this.$t('pbxConfig.extension')
 				})
+			} else if (!this.$v.data.extension.isInRange) {
+				return this.getExtensionHint
 			} else {
 				return ''
 			}

@@ -20,3 +20,16 @@ export function customMacAddress (value) {
 export function isPhone (value) {
 	return /^\+[0-9]?()[0-9](\s|\S)(\d[0-9]{9})$/.test(value)
 }
+
+export function inRange (value, min, max, between) {
+	value = Number(value)
+	if (min && max == null) {
+		return min <= value
+	} else if (min == null && max) {
+		return max >= value
+	} else if (min && max) {
+		return between(min, max)(value)
+	} else {
+		return true
+	}
+}
