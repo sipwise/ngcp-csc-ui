@@ -2,6 +2,7 @@
 	<q-item
 		v-close-popup
 		clickable
+		v-bind="$attrs"
 		@click="click"
 	>
 		<q-item-section

@@ -121,6 +121,10 @@
             "title": "Voicebox",
             "subTitle": "Set your voicebox settings"
         },
+		"faxSettings": {
+			"title": "Fax Settings",
+			"subTitle": "Set your fax settings"
+		},
         "conference": {
             "title": "Join conference"
         },
@@ -736,5 +740,23 @@
         "deleteVoicemailButton": "Remove Voicemail",
         "deleteVoicemailTitle": "Remove Voicemail",
         "deleteVoicemailText": "You are about to remove this Voicemail"
-    }
+    },
+	"faxSettings": {
+		"active": "Active",
+		"sendfaxHeaderName": "Name in Fax Header for Sendfax",
+		"T38": "T38",
+		"ECM": "ECM",
+		"noDestinationsCreatedYet": "No destinations created yet",
+		"addDestination": "Add destination",
+		"createDestination": "Create destination",
+		"destinationEmail": "Destination Email",
+		"fileType": "File Type",
+		"deliverIncomingFaxes": "Deliver Incoming Faxes",
+		"deliverOutgoingFaxes": "Deliver Outgoing Faxes",
+		"receiveReports": "Receive Reports",
+		"deleteDestinationTitle": "Remove Destination",
+		"deleteDestinationText": "You are about to remove destination {destination}",
+		"destinationEmailExists": "The Destination Email is already used",
+		"destinationItemTitle": "<{destination}> as {filetype}"
+	}
 }

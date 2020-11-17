@@ -141,6 +141,12 @@ export default {
 					visible: true
 				},
 				{
+					to: '/user/fax-settings',
+					icon: 'fas fa-fax',
+					label: this.$t('navigation.faxSettings.title'),
+					visible: true
+				},
+				{
 					icon: 'miscellaneous_services',
 					label: this.$t('navigation.pbxConfiguration.title'),
 					visible: this.isPbxAdmin,

@@ -23,6 +23,7 @@ import CscPagePbxSoundSets from 'src/pages/CscPagePbxSoundSets'
 import CscPagePbxMsConfigs from 'src/pages/CscPagePbxMsConfigs'
 import CscPagePbxSettings from 'src/pages/CscPagePbxSettings'
 import CscPageVoicebox from 'src/pages/CscPageVoicebox'
+import CscPageFaxSettings from 'src/pages/CscPageFaxSettings'
 import CscPageUserSettings from 'src/pages/CscPageUserSettings'
 import CscPageError404 from 'src/pages/CscPageError404'
 import CscRecoverPassword from 'src/pages/CscRecoverPassword'
@@ -177,6 +178,14 @@ export default function routes (app) {
 					meta: {
 						title: i18n.t('navigation.voicebox.title'),
 						subtitle: i18n.t('navigation.voicebox.subTitle')
+					}
+				},
+				{
+					path: 'fax-settings',
+					component: CscPageFaxSettings,
+					meta: {
+						title: i18n.t('navigation.faxSettings.title'),
+						subtitle: i18n.t('navigation.faxSettings.subTitle')
 					}
 				},
 				{

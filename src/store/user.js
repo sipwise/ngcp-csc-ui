@@ -249,6 +249,9 @@ export default {
 		},
 		newPasswordRequesting (state, isRequesting) {
 			state.newPasswordRequesting = isRequesting
+		},
+		updateFaxActiveCapabilityState (state, value) {
+			state.capabilities.faxactive = value
 		}
 	},
 	actions: {

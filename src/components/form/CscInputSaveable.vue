@@ -2,7 +2,7 @@
 	<q-input
 		v-bind="$attrs"
 		:value="value"
-		:disable="$attrs.loading"
+		:disable="disable === true || $attrs.loading"
 		v-on="$listeners"
 		@input="$emit('input', $event)"
 		@keyup.enter="$emit('save', $event)"
@@ -69,6 +69,10 @@ export default {
 		value: {
 			type: String,
 			default: ''
+		},
+		disable: {
+			type: Boolean,
+			default: null
 		}
 	},
 	data () {

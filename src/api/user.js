@@ -6,6 +6,7 @@ import {
 	getList,
 	patchReplace
 } from './common'
+import { getFaxServerSettings } from 'src/api/fax'
 
 export function login (username, password) {
 	return new Promise((resolve, reject) => {
@@ -36,9 +37,9 @@ export function getUserData (id) {
 		return Promise.all([
 			getSubscriberById(id),
 			getCapabilities(id),
-			getFaxServerSettingsById(id)
+			getFaxServerSettings(id)
 		]).then((results) => {
-			results[1].faxactive = results[2]
+			results[1].faxactive = results[2].active
 			resolve({
 				subscriber: results[0],
 				capabilities: results[1]
@@ -121,18 +122,6 @@ export function getNumbers () {
 			all: true
 		}).then((numberList) => {
 			resolve(numberList)
-		}).catch((err) => {
-			reject(err)
-		})
-	})
-}
-
-export function getFaxServerSettingsById (id) {
-	return new Promise((resolve, reject) => {
-		get({
-			path: 'api/faxserversettings/' + id
-		}).then((body) => {
-			resolve(body.active)
 		}).catch((err) => {
 			reject(err)
 		})

@@ -53,6 +53,9 @@ export default {
 		}
 	},
 	methods: {
+		show () {
+			this.open()
+		},
 		open () {
 			this.$refs.dialogComp.open()
 		},
@@ -62,6 +65,7 @@ export default {
 		remove () {
 			this.close()
 			this.$emit('remove')
+			this.$emit('ok')
 		},
 		cancel () {
 			this.$emit('cancel')

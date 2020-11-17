@@ -23,6 +23,7 @@ import ReminderModule from './reminder'
 import SpeedDialModule from './speed-dial'
 import UserModule from './user'
 import CommunicationModule from './communication'
+import FaxModule from './fax'
 import VoiceboxModule from './voicebox'
 import ConferenceModule from './conference'
 
@@ -60,6 +61,7 @@ export default function (/* { ssrContext } */) {
 			speedDial: SpeedDialModule,
 			user: UserModule,
 			communication: CommunicationModule,
+			fax: FaxModule,
 			voicebox: VoiceboxModule,
 			conference: ConferenceModule,
 			pbx: PbxModule,
