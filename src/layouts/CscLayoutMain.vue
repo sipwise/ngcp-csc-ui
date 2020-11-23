@@ -72,8 +72,14 @@
 				</q-btn>
 				<q-space />
 				<csc-logo
-					style="height: 48px"
+					v-if="isLogoRequested && !customLogo"
+					id="csc-default-logo"
 					color="light"
+				/>
+				<csc-custom-logo
+					v-else-if="isLogoRequested && customLogo"
+					id="csc-custom-logo"
+					:logo-data="customLogo"
 				/>
 			</q-toolbar>
 			<q-toolbar
@@ -208,6 +214,7 @@ import {
 import CscCall from 'components/call/CscCall'
 import CscSendFax from 'components/CscSendFax'
 import CscLogo from 'components/CscLogo'
+import CscCustomLogo from 'components/CscCustomLogo'
 import CscLanguageMenu from 'components/CscLanguageMenu'
 import CscUserMenu from 'components/CscUserMenu'
 import {
@@ -227,6 +234,7 @@ export default {
 		CscCall,
 		CscSendFax,
 		CscLogo,
+		CscCustomLogo,
 		CscUserMenu
 	},
 	mixins: [
@@ -243,7 +251,8 @@ export default {
 				right: false
 			},
 			mobileMenu: null,
-			faxDialog: false
+			faxDialog: false,
+			customLogo: null
 		}
 	},
 	computed: {
@@ -296,7 +305,9 @@ export default {
 			'changeSessionLocaleState',
 			'locale',
 			'languageLabels',
-			'isRtcEngineUiVisible'
+			'isRtcEngineUiVisible',
+			'isLogoRequesting',
+			'isLogoRequested'
 		]),
 		...mapGetters('communication', [
 			'createFaxState',
@@ -437,7 +448,7 @@ export default {
 			}
 		}
 	},
-	mounted () {
+	async mounted () {
 		this.$store.dispatch('user/initUser')
 		window.addEventListener('orientationchange', () => {
 			this.$root.$emit('orientation-changed')
@@ -445,6 +456,7 @@ export default {
 		window.addEventListener('resize', () => {
 			this.$root.$emit('window-resized')
 		})
+		this.customLogo = await this.$store.dispatch('user/getCustomLogo')
 	},
 	methods: {
 		...mapActions('user', [
@@ -683,4 +695,10 @@ export default {
     .csc-collapsible-menu
         .q-icon
             display none
+		#csc-default-logo
+				height 48px
+		#csc-custom-logo
+				min-width $logo-min-width
+				max-width $logo-max-width
+				max-height $logo-max-height
 </style>

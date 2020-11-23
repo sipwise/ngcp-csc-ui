@@ -13,7 +13,7 @@ import {
 	login,
 	getUserData
 } from '../api/user'
-import { changePassword, resetPassword, recoverPassword } from '../api/subscriber'
+import { changePassword, resetPassword, recoverPassword, getBrandingLogo } from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import { setSession } from 'src/storage'
 
@@ -42,7 +42,10 @@ export default {
 		languageLabels: [],
 		changePasswordState: RequestState.initiated,
 		changePasswordError: null,
-		newPasswordRequesting: false
+		newPasswordRequesting: false,
+		logo: null,
+		logoRequesting: false,
+		logoRequested: false
 	},
 	getters: {
 		isLogged (state) {
@@ -160,6 +163,12 @@ export default {
 				return []
 			}
 			return state.subscriber.alias_numbers
+		},
+		isLogoRequesting (state) {
+			return state.logoRequesting
+		},
+		isLogoRequested (state) {
+			return state.logoRequested
 		}
 	},
 	mutations: {
@@ -250,8 +259,15 @@ export default {
 		newPasswordRequesting (state, isRequesting) {
 			state.newPasswordRequesting = isRequesting
 		},
+		updateLogo (state, value) {
+			state.logo = value
+		},
 		updateFaxActiveCapabilityState (state, value) {
 			state.capabilities.faxactive = value
+		},
+		updateLogoRequestState (state, isRequesting) {
+			state.logoRequesting = isRequesting
+			state.logoRequested = !isRequesting
 		}
 	},
 	actions: {
@@ -347,6 +363,14 @@ export default {
 			if (context.rootState.route.path === '/user/home' && !context.getters.isRtcEngineUiVisible) {
 				await router.push({ path: '/user/conversations' })
 			}
+		},
+		async getCustomLogo (context) {
+			if (!context.state.logo) {
+				context.commit('updateLogoRequestState', true)
+				context.commit('updateLogo', await getBrandingLogo(context.state.subscriberId))
+				context.commit('updateLogoRequestState', false)
+			}
+			return context.state.logo
 		}
 	}
 }

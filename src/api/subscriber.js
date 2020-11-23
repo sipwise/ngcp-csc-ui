@@ -547,3 +547,15 @@ export async function recoverPassword (data) {
 	}
 	return await Vue.http.post('api/passwordrecovery/', payLoad)
 }
+
+export async function getBrandingLogo (subscriberId) {
+	const url = 'api/resellerbrandinglogos/?subscriber_id=' + subscriberId
+	try {
+		const res = await Vue.http.get(url, {
+			responseType: 'blob'
+		})
+		return URL.createObjectURL(res.body)
+	} catch (err) {
+		return null
+	}
+}

@@ -123,9 +123,6 @@ export default {
 			default: 'light'
 		}
 	},
-	data () {
-		return {}
-	},
 	computed: {
 		componentClasses () {
 			const classes = ['csc-logo']
