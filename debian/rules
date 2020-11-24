@@ -3,11 +3,14 @@
 # Uncomment this to turn on verbose mode.
 # export DH_VERBOSE=1
 
+# if yarnpkg is available use it, otherwise fall back to yarn
+YARN_BIN := $(shell which yarnpkg || echo yarn)
+
 %:
 	dh "$@"
 
 override_dh_auto_install:
-	yarnpkg install
+	$(YARN_BIN) install
 	cp src/config.template.js src/config.js
-	yarnpkg run build
+	$(YARN_BIN) run build
 	mv dist/spa csc
