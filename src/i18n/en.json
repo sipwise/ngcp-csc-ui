@@ -95,6 +95,10 @@
             "outgoing": "Outgoing",
             "privacy": "Privacy"
         },
+        "callSettings": {
+            "title": "Call Settings",
+            "subTitle": "Call Settings"
+        },
         "reminder": {
             "title": "Reminder",
             "subTitle": "Set your personal alarm"
@@ -761,5 +765,9 @@
 		"deleteDestinationText": "You are about to remove destination {destination}",
 		"destinationEmailExists": "The Destination Email is already used",
 		"destinationItemTitle": "<{destination}> as {filetype}"
+	},
+	"callSettings": {
+		"musicOnHold": "Music on Hold",
+		"musicOnHoldHint": "\"Music on Hold\" - if set to true and a music on hold file is provided, a calling party gets that file played when put on hold"
 	}
 }

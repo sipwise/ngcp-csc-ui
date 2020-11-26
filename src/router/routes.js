@@ -28,6 +28,7 @@ import CscPageUserSettings from 'src/pages/CscPageUserSettings'
 import CscPageError404 from 'src/pages/CscPageError404'
 import CscRecoverPassword from 'src/pages/CscRecoverPassword'
 import CscPageCf from 'pages/CscPageCf'
+import CscPageCallSettings from 'pages/CscPageCallSettings'
 
 const getToken = (route) => {
 	return {
@@ -202,6 +203,14 @@ export default function routes (app) {
 					meta: {
 						title: i18n.t('navigation.userSettings.title'),
 						subtitle: i18n.t('navigation.userSettings.subTitle')
+					}
+				},
+				{
+					path: 'call-settings',
+					component: CscPageCallSettings,
+					meta: {
+						title: i18n.t('navigation.callSettings.title'),
+						subtitle: i18n.t('navigation.callSettings.subTitle')
 					}
 				},
 				{

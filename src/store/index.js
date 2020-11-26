@@ -10,6 +10,7 @@ import CallForwardModule from './call-forward'
 import CallForwardingModule from './call-forwarding'
 import NewCallForwardModule from './new-call-forward'
 import CallModule, { errorVisibilityTimeout } from './call'
+import CallSettingsModule from './call-settings'
 import ConversationsModule from './conversations'
 
 import PbxModule from './pbx'
@@ -57,6 +58,7 @@ export default function (/* { ssrContext } */) {
 			callForward: CallForwardModule,
 			newCallForward: NewCallForwardModule,
 			call: CallModule,
+			callSettings: CallSettingsModule,
 			conversations: ConversationsModule,
 			reminder: ReminderModule,
 			speedDial: SpeedDialModule,

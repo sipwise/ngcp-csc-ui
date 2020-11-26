@@ -71,6 +71,12 @@ export default {
 					visible: true
 				},
 				{
+					to: '/user/call-settings',
+					icon: 'fas fa-cogs',
+					label: this.$t('navigation.callSettings.title'),
+					visible: true
+				},
+				{
 					to: '/user/call-forwarding',
 					icon: 'phone_forwarded',
 					label: this.$t('navigation.callForward.title'),
