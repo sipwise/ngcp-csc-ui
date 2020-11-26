@@ -6,6 +6,7 @@ import {
 import {
 	v4
 } from 'uuid'
+import _ from 'lodash'
 
 export async function cfLoadMappings (subscriberId) {
 	return get({
@@ -72,7 +73,7 @@ export async function cfCreateSourceSet (id, payload) {
 			source: number
 		})
 	})
-	return post({
+	const res = await post({
 		resource: 'cfsourcesets',
 		body: {
 			name: payload.name,
@@ -82,6 +83,11 @@ export async function cfCreateSourceSet (id, payload) {
 			mode: payload.mode
 		}
 	})
+	if (!_.isString(res)) {
+		return res.id + ''
+	} else {
+		return res
+	}
 }
 
 export async function cfUpdateSourceSet (id, payload) {
