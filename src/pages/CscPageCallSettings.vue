@@ -27,6 +27,29 @@
 					/>
 				</q-item-section>
 			</q-item>
+			<q-item>
+				<q-item-section>
+					<q-select
+						v-model="language"
+						dense
+						emit-value
+						map-options
+						:disable="dataLoading"
+						:readonly="dataLoading"
+						:label="$t('callSettings.language')"
+						:title="$t('callSettings.languageHint')"
+						:options="languages"
+					/>
+				</q-item-section>
+				<q-item-section
+					side
+				>
+					<csc-spinner
+						v-if="dataLoading"
+						class="self-center"
+					/>
+				</q-item-section>
+			</q-item>
 		</q-list>
 	</csc-page>
 </template>
@@ -53,6 +76,12 @@ export default {
 	},
 	data () {
 		return {
+			languages: [
+				{
+					value: 0,
+					label: 'Domain default'
+				}
+			]
 		}
 	},
 	computed: {
@@ -60,7 +89,8 @@ export default {
 			'subscriberPreferencesInitialized'
 		]),
 		...mapGetters('callSettings', [
-			'musicOnHold'
+			'musicOnHold',
+			'language'
 		]),
 		...mapWaitingGetters({
 			processingSubscriberPreferences: 'processing subscriberPreferences'
@@ -79,7 +109,8 @@ export default {
 	methods: {
 		...mapWaitingActions('callSettings', {
 			loadSubscriberPreferencesAction: 'processing subscriberPreferences',
-			setMusicOnHold: 'processing subscriberPreferences'
+			setMusicOnHold: 'processing subscriberPreferences',
+			setLanguage: 'processing subscriberPreferences'
 		}),
 		async toggleMusicOnHold () {
 			try {

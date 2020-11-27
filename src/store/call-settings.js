@@ -15,6 +15,9 @@ export default {
 		},
 		musicOnHold (state) {
 			return state.subscriberPreferences.music_on_hold
+		},
+		language (state, context) {
+			return state.subscriberPreferences.language || state.$defaultVoicePromptLanguage
 		}
 	},
 	mutations: {
