@@ -9,6 +9,7 @@ import {
 	get,
 	patchAdd,
 	patchReplace,
+	patchRemove,
 	patchReplaceFull,
 	patchAddFull
 
@@ -27,6 +28,11 @@ export function getPreferences (id) {
 	})
 }
 
+export async function getPreferencesDefs (id) {
+	const result = await Vue.http.get('api/subscriberpreferencedefs/')
+	return getJsonBody(result.body)
+}
+
 export async function setPreference (id, field, value) {
 	try {
 		await replacePreference(id, field, value)
@@ -41,6 +47,13 @@ export async function setPreference (id, field, value) {
 			}
 		}
 	}
+}
+
+export async function removePreference (id, field) {
+	return await patchRemove({
+		path: 'api/subscriberpreferences/' + id,
+		fieldPath: field
+	})
 }
 
 export function addPreference (id, field, value) {

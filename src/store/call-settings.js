@@ -1,6 +1,8 @@
 import {
 	getPreferences,
-	setPreference
+	getPreferencesDefs,
+	setPreference,
+	removePreference
 } from '../api/subscriber'
 
 export default {
@@ -16,8 +18,19 @@ export default {
 		musicOnHold (state) {
 			return state.subscriberPreferences.music_on_hold
 		},
-		language (state, context) {
-			return state.subscriberPreferences.language || state.$defaultVoicePromptLanguage
+		language (state) {
+			return state.subscriberPreferences.language
+		},
+		async defaultLanguage (state, getters) {
+			const languages = await getters.languages
+			return languages.find(lang => lang.default_val).label
+		},
+		async languages (state) {
+			const preferencesDefs = await getPreferencesDefs()
+			return preferencesDefs
+				.language
+				.enum_values
+				.map((lang) => { return { value: lang.value, label: lang.label, default_val: lang.default_val } })
 		}
 	},
 	mutations: {
@@ -43,6 +56,22 @@ export default {
 		},
 		async setMusicOnHold (context, value) {
 			await context.dispatch('fieldUpdateAction', { field: 'music_on_hold', value })
+		},
+		async setLanguage (context, value) {
+			const subscriberId = context.getters.subscriberId
+			if (value) {
+				await setPreference(subscriberId, 'language', value)
+				context.commit('subscriberPreferencesUpdate', {
+					field: 'language',
+					value: value
+				})
+			} else {
+				await removePreference(subscriberId, 'language')
+				context.commit('subscriberPreferencesUpdate', {
+					field: 'language',
+					value: null
+				})
+			}
 		}
 	}
 }

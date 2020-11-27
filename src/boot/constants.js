@@ -6,5 +6,4 @@ export default ({ Vue, app }) => {
 		{ label: app.i18n.t('communication.quality.super'), value: 'super' }
 	]
 	Vue.prototype.$faxQualityOptionsDefault = Vue.prototype.$faxQualityOptions[0]
-	Vue.prototype.$defaultVoicePromptLanguage = 'use domain default'
 }

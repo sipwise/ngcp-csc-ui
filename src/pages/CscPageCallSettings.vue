@@ -30,7 +30,7 @@
 			<q-item>
 				<q-item-section>
 					<q-select
-						v-model="language"
+						v-model="selectedOption"
 						dense
 						emit-value
 						map-options
@@ -38,7 +38,8 @@
 						:readonly="dataLoading"
 						:label="$t('callSettings.language')"
 						:title="$t('callSettings.languageHint')"
-						:options="languages"
+						:options="options"
+						@input="languageSelected()"
 					/>
 				</q-item-section>
 				<q-item-section
@@ -76,12 +77,8 @@ export default {
 	},
 	data () {
 		return {
-			languages: [
-				{
-					value: 0,
-					label: 'Domain default'
-				}
-			]
+			selectedOption: this.$defaultVoicePromptLanguage,
+			options: []
 		}
 	},
 	computed: {
@@ -90,7 +87,9 @@ export default {
 		]),
 		...mapGetters('callSettings', [
 			'musicOnHold',
-			'language'
+			'language',
+			'defaultLanguage',
+			'languages'
 		]),
 		...mapWaitingGetters({
 			processingSubscriberPreferences: 'processing subscriberPreferences'
@@ -99,9 +98,11 @@ export default {
 			return !this.subscriberPreferencesInitialized || this.processingSubscriberPreferences
 		}
 	},
-	mounted () {
+	async mounted () {
 		try {
-			this.loadSubscriberPreferencesAction()
+			await this.loadSubscriberPreferencesAction()
+			this.options = await this.languages
+			this.selectedOption = this.language || await this.defaultLanguage
 		} catch (err) {
 			showGlobalError(err?.message)
 		}
@@ -115,6 +116,13 @@ export default {
 		async toggleMusicOnHold () {
 			try {
 				await this.setMusicOnHold(!this.musicOnHold)
+			} catch (err) {
+				showGlobalError(err?.message)
+			}
+		},
+		async languageSelected () {
+			try {
+				await this.setLanguage(this.selectedOption)
 			} catch (err) {
 				showGlobalError(err?.message)
 			}
