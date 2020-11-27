@@ -29,7 +29,8 @@ module.exports = function (/* ctx */) {
 			'components',
 			'vue-scrollto',
 			'constants',
-			'vue-wait'
+			'vue-wait',
+			'e2e-testing'
 		],
 
 		// https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
