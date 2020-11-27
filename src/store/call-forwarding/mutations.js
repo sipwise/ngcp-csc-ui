@@ -27,3 +27,7 @@ export function dataSucceeded (state, res) {
 		state.mappings = res.mappings
 	}
 }
+
+export function popupShow (state, popupId) {
+	state.popupCurrent = popupId
+}

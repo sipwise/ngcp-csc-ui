@@ -1,10 +1,6 @@
 <template>
-	<q-popup-proxy
+	<csc-cf-condition-popup
 		ref="popup"
-		persistent
-		anchor="bottom middle"
-		self="top middle"
-		@before-show="beforeShow"
 	>
 		<csc-cf-group-condition-menu
 			v-if="internalStep === 'menu'"
@@ -111,11 +107,10 @@
 			:destination-set="destinationSet"
 			:source-set="sourceSet"
 			:time-set="timeSet"
-			@navigate="navigate"
 			@back="internalStep='menu'"
 			@close="closePopup"
 		/>
-	</q-popup-proxy>
+	</csc-cf-condition-popup>
 </template>
 
 <script>
@@ -126,9 +121,11 @@ import CscCfGroupConditionDate from 'components/call-forwarding/CscCfGroupCondit
 import CscCfGroupConditionDateRange from 'components/call-forwarding/CscCfGroupConditionDateRange'
 import CscCfGroupConditionWeekdays from 'components/call-forwarding/CscCfGroupConditionWeekdays'
 import CscCfGroupConditionOfficeHours from 'components/call-forwarding/CscCfGroupConditionOfficeHours'
+import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
 export default {
 	name: 'CscCfConditionPopupAll',
 	components: {
+		CscCfConditionPopup,
 		CscCfGroupConditionOfficeHours,
 		CscCfGroupConditionWeekdays,
 		CscCfGroupConditionDateRange,
@@ -161,41 +158,18 @@ export default {
 	},
 	data () {
 		return {
-			closed: false,
-			internalStep: this.step,
-			selectedSourceSet: null
+			internalStep: this.step
 		}
 	},
 	watch: {
 		internalStep () {
-			if (!this.closed) {
-				this.$refs.popup.hide()
-				this.$nextTick(() => {
-					this.$refs.popup.show()
-				})
-			}
+			this.$refs.popup.reOpen()
 		}
 	},
 	methods: {
-		beforeShow () {
-			this.closed = false
-		},
 		closePopup () {
-			this.closed = true
 			this.internalStep = 'menu'
-			this.$refs.popup.hide()
-		},
-		openPopup () {
-			if (!this.closed) {
-				this.$refs.popup.hide()
-				this.$nextTick(() => {
-					this.$refs.popup.show()
-				})
-			}
-		},
-		navigate (step) {
-			this.internalStep = step
-			this.openPopup()
+			this.$refs.popup.close()
 		}
 	}
 }

@@ -1,5 +1,7 @@
 <template>
-	<q-popup-proxy>
+	<q-popup-proxy
+		@before-show="$store.commit('callForwarding/popupShow', null)"
+	>
 		<q-list
 			v-bind="$attrs"
 			class="bg-dark"

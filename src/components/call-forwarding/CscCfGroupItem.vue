@@ -32,6 +32,7 @@
 						<q-popup-edit
 							v-model="changedDestinationTimeout"
 							buttons
+							@before-show="$store.commit('callForwarding/popupShow', null)"
 							@save="updateRingTimeoutEvent()"
 						>
 							<csc-input
@@ -67,6 +68,7 @@
 						<q-popup-edit
 							v-model="changedDestinationTimeout"
 							buttons
+							@before-show="$store.commit('callForwarding/popupShow', null)"
 							@save="updateDestinationTimeoutEvent({
 								destinationTimeout: changedDestinationTimeout,
 								destinationIndex: destinationIndex - 1,
@@ -152,6 +154,7 @@
 					<q-popup-edit
 						v-model="changedDestination"
 						buttons
+						@before-show="$store.commit('callForwarding/popupShow', null)"
 						@save="updateDestinationEvent({
 							destination: changedDestination,
 							destinationIndex: destinationIndex,

@@ -1,10 +1,6 @@
 <template>
-	<q-popup-proxy
+	<csc-cf-condition-popup
 		ref="popup"
-		persistent
-		anchor="bottom middle"
-		self="top middle"
-		@before-show="beforeShow"
 	>
 		<csc-cf-group-condition-source-set-create
 			v-if="internalStep === 'call-not-from'"
@@ -36,15 +32,17 @@
 			@create="internalStep='call-not-from'"
 			@close="closePopup"
 		/>
-	</q-popup-proxy>
+	</csc-cf-condition-popup>
 </template>
 
 <script>
 import CscCfGroupConditionSourceSetCreate from 'components/call-forwarding/CscCfGroupConditionSourceSetCreate'
 import CscCfGroupConditionSourceSetSelect from 'components/call-forwarding/CscCfGroupConditionSourceSetSelect'
+import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
 export default {
 	name: 'CscCfConditionPopupCallNotFrom',
 	components: {
+		CscCfConditionPopup,
 		CscCfGroupConditionSourceSetSelect,
 		CscCfGroupConditionSourceSetCreate
 	},
@@ -74,22 +72,13 @@ export default {
 	},
 	watch: {
 		internalStep () {
-			if (!this.closed) {
-				this.$refs.popup.hide()
-				this.$nextTick(() => {
-					this.$refs.popup.show()
-				})
-			}
+			this.$refs.popup.reOpen()
 		}
 	},
 	methods: {
-		beforeShow () {
-			this.closed = false
-		},
 		closePopup () {
-			this.closed = true
 			this.internalStep = 'call-not-from'
-			this.$refs.popup.hide()
+			this.$refs.popup.close()
 		}
 	}
 }

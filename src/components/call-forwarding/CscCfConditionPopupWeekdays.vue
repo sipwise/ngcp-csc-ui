@@ -1,10 +1,6 @@
 <template>
-	<q-popup-proxy
+	<csc-cf-condition-popup
 		ref="popup"
-		persistent
-		anchor="bottom middle"
-		self="top middle"
-		@before-show="beforeShow"
 	>
 		<csc-cf-group-condition-weekdays
 			:mapping="mapping"
@@ -14,14 +10,16 @@
 			:delete-button="true"
 			@close="closePopup"
 		/>
-	</q-popup-proxy>
+	</csc-cf-condition-popup>
 </template>
 
 <script>
 import CscCfGroupConditionWeekdays from 'components/call-forwarding/CscCfGroupConditionWeekdays'
+import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
 export default {
 	name: 'CscCfConditionPopupWeekdays',
 	components: {
+		CscCfConditionPopup,
 		CscCfGroupConditionWeekdays
 	},
 	props: {
@@ -43,12 +41,8 @@ export default {
 		}
 	},
 	methods: {
-		beforeShow () {
-			this.closed = false
-		},
 		closePopup () {
-			this.closed = true
-			this.$refs.popup.hide()
+			this.$refs.popup.close()
 		}
 	}
 }
