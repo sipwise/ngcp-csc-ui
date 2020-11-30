@@ -42,16 +42,16 @@ def create_driver():
 
 
 def wait_for_loading_screen(driver):
-    xpath = '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]'
     driver.implicitly_wait(1)
     for i in range(1, 5):
-        step(driver, xpath, inv=True)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((
+            By.XPATH, '//div[@class="q-loading animate-fade fullscreen column '
+            'flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat '
+            'text-white"]')))
     driver.implicitly_wait(10)
 
 
-def step(driver, xpath, wait=10, inv=False):
-    if inv:
-        ec = EC.invisibility_of_element_located
-    else:
-        ec = EC.element_to_be_clickable
-    WebDriverWait(driver, wait).until(ec((By.XPATH, xpath)))
+def wait_for_invisibility(driver, xpath):
+    driver.implicitly_wait(2)
+    WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.XPATH, xpath)))
+    driver.implicitly_wait(10)
