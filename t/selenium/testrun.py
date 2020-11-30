@@ -17,9 +17,9 @@ from functions.Collections import logout_csc
 from functions.Functions import click_js
 from functions.Functions import create_driver
 from functions.Functions import fill_element
-from functions.Functions import step
+from functions.Functions import scroll_to_element
 from functions.Functions import wait_for_loading_screen
-
+from functions.Functions import wait_for_invisibility
 import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -27,6 +27,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from datetime import datetime
 
 execs = Value('i', 0)
 customers = {}
@@ -71,1007 +72,347 @@ class testrun(unittest.TestCase):
         key = list(customers.keys())[execs.value % int(os.environ['THREADS'])]
         self.domainname = customers[key]
 
-    def test_login_page(self):
-        global customers
-        global filename
-        filename = "test_login_page.png"
-        driver = self.driver
-        print("Try to log in with no credentials...", end="")
-        driver.get(os.environ['CATALYST_SERVER'])
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login"]//div//button').click()
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//div[contains(@class, "q-alert-container")]')) > 0,
-            "Error Message was not shown")
-        print("OK")
-        print("Try to log in with invalid credentials...", end="")
-        driver.get(os.environ['CATALYST_SERVER'])
-        fill_element(
-            driver, '//*[@id="csc-login-form"]//div//input[@type="text"]', "invaliduser")
-        fill_element(
-            driver, '//*[@id="csc-login-form"]//div//input[@type="password"]', "invalidpass")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login"]//div//button').click()
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//div[contains(@class, "q-alert-container")]')) > 0,
-            "Error Message was not shown")
-        print("OK")
-        print("Try to log in with invalid password...", end="")
-        driver.get(os.environ['CATALYST_SERVER'])
-        fill_element(
-            driver, '//*[@id="csc-login-form"]//div//input[@type="text"]', "testuser@" + self.domainname)
-        fill_element(
-            driver, '//*[@id="csc-login-form"]//div//input[@type="password"]', "invalidpass")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login"]//div//button').click()
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//div[contains(@class, "q-alert-container")]')) > 0,
-            "Error Message was not shown")
-        print("OK")
-        print("Try to log in with empty password...", end="")
-        driver.get(os.environ['CATALYST_SERVER'])
-        fill_element(
-            driver, '//*[@id="csc-login-form"]//div//input[@type="text"]', "testuser@" + self.domainname)
-        driver.find_element_by_xpath('//*[@id="csc-login-form"]//div//input[@type="password"]').clear()
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login"]//div//button').click()
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//div[contains(@class, "q-alert-container")]')) > 0, "Error Message was not shown")
-        print("OK")
-        print("Try to log in with valid credentials...", end="")
-        fill_element(
-            driver, '//*[@id="csc-login-form"]//div//input[@type="text"]', "testuser@" + self.domainname)
-        fill_element(
-            driver, '//*[@id="csc-login-form"]//div//input[@type="password"]', "testpasswd")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-login"]//div//button').click()
-        self.assertEqual(
-            "testuser", driver.find_element_by_xpath('//*[@id="csc-header-toolbar"]//div//span[contains(text(), "testuser")]').text,
-            "Login failed")
-        print("OK")
-        print("Try to log out...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/div[1]/button').click()
-        driver.find_element_by_xpath(
-            '//div[contains(text(), "Logout")]').click()
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] + "/login/subscriber/#/login", "Logout failed")
-        print("OK")
-        print("Change login page language to all avalible languages...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/button').click()
-        xp = '/html/body/div[@class="q-popover animate-scale"]//div[@class="q-item q-item-division relative-position q-item-link"]'
-        step(driver, xp)
-        click_js(
-            driver, '/html/body/div[@class="q-popover animate-scale"]//div[@class="q-collapsible-sub-item relative-position"]/div[2]')
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="csc-login"]//div[@class="q-card-title"][contains(text(), "Authentification de l’abonné")]')) > 0,
-            'Language was not changed to France')
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/button').click()
-        step(driver, xp)
-        click_js(
-            driver, '/html/body/div[@class="q-popover animate-scale"]//div[@class="q-collapsible-sub-item relative-position"]/div[3]')
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="csc-login"]//div[@class="q-card-title"][contains(text(), "Accedi come utente")]')) > 0,
-            'Language was not changed to Italian')
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/button').click()
-        step(driver, xp)
-        click_js(
-            driver, '/html/body/div[@class="q-popover animate-scale"]//div[@class="q-collapsible-sub-item relative-position"]/div[4]')
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="csc-login"]//div[@class="q-card-title"][contains(text(), "Iniciar sesión de suscriptor")]')) > 0,
-            'Language was not changed to Spanish')
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/button').click()
-        step(driver, xp)
-        click_js(
-            driver, '/html/body/div[@class="q-popover animate-scale"]//div[@class="q-collapsible-sub-item relative-position"]/div[5]')
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="csc-login"]//div[@class="q-card-title"][contains(text(), "Subscriber Log-in")]')) > 0,
-            'Language was not changed to German')
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/button').click()
-        step(driver, xp)
-        click_js(
-            driver, '/html/body/div[@class="q-popover animate-scale"]//div[@class="q-collapsible-sub-item relative-position"]/div[1]')
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="csc-login"]//div[@class="q-card-title"][contains(text(), "Subscriber Sign In")]')) > 0,
-            'Language was not changed back to English')
-        print("OK")
-        filename = 0
-
     def test_call_blocking(self):
         global customers
         global filename
         filename = "test_call_blocking.png"
         driver = self.driver
+        driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
         login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
-        print("Go to 'Call Blocking' page...", end="")
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Call Blocking")]')
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Call Blocking")]').click()
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Incoming")]')
+        print("Go to 'Block Incoming' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Block incoming")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-incoming"]')) > 0, "'Block Incoming' page wasnt opened")
         print("OK")
-        print("Go to 'Incoming'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Incoming")]').click()
-        step(driver, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]')
+        print("Try to block all incoming anonymous Calls...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-blocking-incoming"]//div[@tabindex="0"]/div[1]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-incoming"]/div[1]/div/div[@aria-checked="true"]')) > 0,
+            "Incoming Anonymous Calls were not disabled")
         print("OK")
-        print("Enable 'All anonymous incoming calls are blocked'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]').click()
-        step(driver, '//*[@id="q-app"]//div[@class="q-item-label"][contains(text(), "Only incoming calls")]')
+        print("Try to enable option 'Only allow incoming calls from listed numbers'...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-blocking-incoming"]//div[contains(., "Only incoming calls")]/../div[1]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-incoming"]//div[contains(@class, "q-radio__inner--truthy")]')) > 0,
+            "Option 'Only incoming calls from listed numbers are allowed' was not enabled")
         print("OK")
-        print("Enable 'Only incoming calls from listed numbers are allowed'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-label"][contains(text(), "Only incoming calls")]').click()
-        step(driver, '//*[@id="q-app"]//div/button[contains(@class, "q-btn-flat")]/span[contains(@class, "q-btn-inner")]')
+        """
+        print("Trying to add a number to the incoming calls list...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-blocking-incoming"]//div/button[contains(., "Add number")]').click()
+        click_js(driver, '//*[@id="csc-page-call-blocking-incoming"]//div/input')
+        fill_element(driver, '//*[@id="csc-page-call-blocking-incoming"]//div/input', "Testnumber")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-blocking-incoming"]//div/button[2]')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-incoming"]//div[@data-cy="csc-blocked-number"]/div[contains(., "Testnumber")]')) > 0,
+            "Number was not added")
         print("OK")
-        print("Add a number to incoming call blocks...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/button[contains(@class, "q-btn-flat")]/span[contains(@class, "q-btn-inner")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/input[@type="text"]').send_keys('12345')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="csc-form-actions row justify-center"]/button[2]').click()
+        print("Trying to delete a number to the incoming calls list...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-blocking-incoming"]//div/button[@data-cy="csc-more-menu"]').click()
+        driver.find_element_by_xpath('/html/body//div[contains(., "Remove")]').click()
+        driver.find_element_by_xpath('/html/body//div/button[contains(., "OK")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-incoming"]/div[contains(., "No numbers found")]')) > 0,
+            "Number was not deleted")
+        """
+        print("Go to 'Block Outgoing' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Block outgoing")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-outgoing"]')) > 0, "'Block Outgoing' page wasnt opened")
         print("OK")
-        print("Check if all settings were properly changed...", end="")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]/div[contains(@class, "active")]')) > 0,
-            "Option 'All anonymous incoming calls are blocked' was not "
-            "enabled")
-        self.assertEqual("12345", driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number csc-list-item ")]//div[@class="q-item-label"]').text,
-            "Number is not correct")
-        step(driver, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/div[@class="q-item-"]/button[contains(@class, "q-btn")]')
-        print("OK")
-        print("Edit recently added number...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
-        driver.find_element_by_xpath(
-            '//div[@class="csc-item-buttons-menu q-list no-border"]/div[1]').click()
-        fill_element(
-            driver, '//*[@id="q-app"]//div/input[@class="col q-input-target text-left"]', '54321')
-        elem = driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div//i[text()="check"]')
-        driver.execute_script("arguments[0].click();", elem)
-        driver.implicitly_wait(2)
-        step(driver, '//*[@id="q-app"]//div[@class="csc-spinner"]/svg', inv=True)
-        driver.implicitly_wait(10)
-        print("OK")
-        print("Check if number was changed properly...", end="")
-        self.assertEqual("54321", driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number csc-list-item ")]//div[@class="q-item-label"]').text,
-            "Number is not correct")
-        step(driver, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/div[@class="q-item-"]/button[contains(@class, "q-btn")]')
-        print("OK")
-        print("Delete number...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
-        driver.find_element_by_xpath(
-            '//div[@class="csc-item-buttons-menu q-list no-border"]/div[2]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "csc-dialog-actions")]/button[contains(@class, "text-negative")]').click()
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[@class="csc-list-message"][contains(text(), "No numbers found")]')) > 0,
-            "Number has not been deleted")
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Outgoing")]')
-        print("OK")
-        print("Go to 'Outgoing'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Outgoing")]').click()
-        step(driver, '//*[@id="q-app"]//div[@class="q-item-label"][contains(text(), "Only outgoing calls")]')
-        print("OK")
-        print("Enable 'Only outgoing calls from listed numbers are allowed'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-label"][contains(text(), "Only outgoing calls")]').click()
-        step(driver, '//*[@id="q-app"]//div/button[contains(@class, "q-btn-flat")]/span[contains(@class, "q-btn-inner")]')
-        print("OK")
-        print("Add a number to outgoing call blocks...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/button[contains(@class, "q-btn-flat")]/span[contains(@class, "q-btn-inner")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/input[@type="text"]').send_keys('12345')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="csc-form-actions row justify-center"]/button[2]').click()
-        print("OK")
-        print("Check if all settings were properly changed...", end="")
-        self.assertEqual("12345", driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number csc-list-item ")]//div[@class="q-item-label"]').text,
-            "Number is not correct")
-        step(driver, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/div[@class="q-item-"]/button[contains(@class, "q-btn")]')
-        print("OK")
-        print("Edit recently added number...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
-        driver.find_element_by_xpath(
-            '//div[@class="csc-item-buttons-menu q-list no-border"]/div[1]').click()
-        fill_element(
-            driver, '//*[@id="q-app"]//div/input[@class="col q-input-target text-left"]', '54321')
-        click_js(driver, '//*[@id="q-app"]//div//i[text()="check"]')
-        driver.implicitly_wait(2)
-        step(driver, '//*[@id="q-app"]//div[@class="csc-spinner"]/svg', inv=True)
-        driver.implicitly_wait(10)
-        print("OK")
-        print("Check if number was changed properly...", end="")
-        self.assertEqual("54321", driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "csc-blocked-number csc-list-item ")]//div[@class="q-item-label"]').text,
-            "Number is not correct")
-        step(driver, '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/div[@class="q-item-"]/button[contains(@class, "q-btn")]')
-        print("OK")
-        print("Delete number...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "q-item-side")]/div[@class="q-item-"]/button[contains(@class, "q-btn")]').click()
-        driver.find_element_by_xpath(
-            '//div[@class="csc-item-buttons-menu q-list no-border"]/div[2]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "csc-dialog-actions")]/button[contains(@class, "text-negative")]').click()
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[@class="csc-list-message"][contains(text(), "No numbers found")]')) > 0,
-            "Number has not been deleted")
-        driver.implicitly_wait(2)
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Privacy")]/div[@class="q-inner-loading animate-fade absolute-full column flex-center"]', inv=True)
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Privacy")]/div[@class="q-inner-loading animate-fade absolute-full column flex-center"]', inv=True)
-        driver.implicitly_wait(10)
-        print("OK")
-        print("Go to 'Privacy'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Privacy")]').click()
-        step(driver, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]')
-        print("OK")
-        print("Enable 'Hide number to callee'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]').click()
-        step(driver, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]')
-        print("OK")
-        print("Check if 'Hide number to callee' was enabled...", end="")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "q-toggle")]//span[contains(text(), "Your number is hidden")]')) > 0,
-            "Option 'hide number' was not enabled")
-        print("OK")
-        print("Logout...", end="")
-        logout_csc(driver)
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] +
-            "/login/subscriber/#/login", "Logout failed")
-        print("OK")
+        print("Try to enable option 'Only allow incoming calls from listed numbers'...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-blocking-outgoing"]/div[1]/div/div[2]/div[1]/div/div[1]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-outgoing"]/div[1]/div/div[2]/div[1]/div[@aria-checked="true"]')) > 0,
+            "Option 'Only outgoing calls from listed numbers are allowed' was not enabled")
         filename = 0
 
-    def test_call_forward_after_hours(self):
+    def test_call_forwarding(self):
         global customers
         global filename
-        filename = "test_call_forward_after_hours.png"
+        filename = "test_call_forwarding.png"
         driver = self.driver
+        driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
         login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
-        print("Go to 'Call Forward' page...", end="")
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Call Forward")]')
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Call Forward")]').click()
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "After Hours")]')
+        print("Go to 'Call Forwarding' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Forwarding")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-forwarding"]')) > 0, "Conference page wasnt opened")
         print("OK")
-        print("Go to 'After Hours'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "After Hours")]').click()
+        print("Create a call forwarding 'if available'...", end="")
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"')
         time.sleep(1)
-        step(driver, '//*[@id="q-app"]//div[@class="q-alert-actions row items-center"]/span[contains(text(), "Add After Hours")]')
+        click_js(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button[contains(., "Add forwarding")]')
+        click_js(driver, '/html/body/div[3]/div/div[3]')
         print("OK")
-        print("Add After Hours time set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-alert-actions row items-center"]/span[contains(text(), "Add After Hours")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="csc-add-time-form q-item q-item-division relative-position"]//div[@class="q-item- row no-wrap"]/div[2]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-clock-circle")]//div[contains(@class, "q-datetime-clock-pos-8")]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-controls")]/button[3]').click()
-        step(driver, '//*[@id="q-app"]//div[@class="csc-add-time-form q-item q-item-division relative-position"]//div[@class="q-item- row no-wrap"]/div[3]')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="csc-add-time-form q-item q-item-division relative-position"]//div[@class="q-item- row no-wrap"]/div[3]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-clock-circle")]//div[contains(@class, "q-datetime-clock-pos-16")]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-controls")]/button[3]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-"]/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add number to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Destination")]/../input').send_keys('testdestination')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../input', "100")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-destination-form"]/div/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add voicemail to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add number to 'When im busy'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[2]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Destination")]/../input').send_keys('testdestination')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../input', "200")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-destination-form"]/div/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add voicemail to 'When im busy'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[2]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Enable 'Ring own phone'...", end="")
-        step(driver, '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]/div[@tabindex="0"]/div[@class="q-option-inner relative-position"]')
-        click_js(
-            driver,
-            '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]/div[@tabindex="0"]/div[@class="q-option-inner relative-position"]')
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Check if all values are correct...", end="")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]/div[@class="q-option-inner relative-position active"]')) > 0,
-            "Option 'Ring own Phone' was not enabled")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span').text, 'first ring own phone for 15 secs',
-            "Option 'first ring own Phone for 15 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-row"]').text, 'then ring testdestination for 100 secs',
-            "Option 'Ring testdestination for 100 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-row"]').text, 'then ring Voicebox',
-            "Option 'Ring Voicebox when im online' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfb"]/div[1]//div[@class="dest-row"]').text, 'first ring testdestination for 200 secs',
-            "Option 'Ring testdestination for 200 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfb"]/div[2]//div[@class="dest-row"]').text, 'then ring Voicebox',
-            "Option 'Ring Voicebox when im busy' is missing")
-        print("OK")
-        print("Add new source set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-tab column flex-center relative-position icon-and-label"]//span[contains(text(), "Add new")]').click()
-        fill_element(
-            driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div[1]//input', 'firsttestsourceset')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div[2]//input', 'firsttestsource')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div[@tabindex=0]').click()
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="q-popover animate-scale column no-wrap"]/div[2]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-"]/button').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Go to new source set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "firsttestsourceset")]').click()
-        print("OK")
-        print("Check if source in source set is correct...", end="")
+        print("Try to add a condition 'call from...' to the call forwarding...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "condition")]').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/div/div[1]').click()
+        fill_element(driver, '/html/body//div[1]/div/label//div//input', 'TestUser')
+        fill_element(driver, '/html/body//div[2]/div/label//div//input', '1234')
+        driver.find_element_by_xpath('/html/body//button[contains(., "Add number")]').click()
+        fill_element(driver, '/html/body/div[3]//div[3]//label//div//input', '5678')
+        driver.find_element_by_xpath('/html/body//button[contains(., "Save")]').click()
+        wait_for_invisibility(driver, '/html/body/div[3]')
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]//div[contains(text(), "firsttestsource")]')) > 0, "Source was not found")
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "TestUser")]')) > 0,
+            "Condition 'call from...' was not added")
         print("OK")
-        print("Add a new source...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="sources-section"]/button').click()
-        fill_element(
-            driver, '//*[@id="q-app"]//div[@class="add-source-form"]//input',
-            'newtestsource')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-source-form"]/button[2]'
-            ).click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Check if second source is created properly...", end="")
+        print("Try to edit 'forwared to...' number...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "Number")]').click()
+        fill_element(driver, "/html/body//label//div//input", 'TestNumber')
+        driver.find_element_by_xpath('/html/body//div/button[contains(., "Set")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="q-app"]//div[contains(text(), "newtestsource")]')) > 0, "Second Source was not found")
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div[contains(., "TestNumber")]')) > 0,
+            "'forward to...' number was not changed")
         print("OK")
-        print("Delete second source...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]/../div[2]').click()
-        step(driver, '/html/body//div[@class="modal-buttons row"]/button[2]')
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="modal-buttons row"]/button[2]').click()
-        print("OK")
-        print("Check if second source was deleted...", end="")
-        wait_for_loading_screen(driver)
-        self.assertFalse(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'), "Second Source was not deleted")
-        print("OK")
-        print("Try to delete first source and check if error message appears...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "firsttestsource")]/../div[2]').click()
+        print("Try to add a second condition 'office hours are...'...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "condition")]').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/div/div[6]').click()
+        fill_element(driver, '/html/body//div[1]/label//div//input[@aria-label="Start time"]', '1200')
+        fill_element(driver, '/html/body//div[2]/label//div//input[@aria-label="End time"]', '1800')
+        driver.find_element_by_xpath('/html/body//div//button[contains(., "Save")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         self.assertTrue(
-            len(driver.find_elements_by_xpath('/html/body//div[@class="q-alert row no-wrap shadow-2 bg-negative"]')) > 0,
-            "Error Message 'Removing the last source entry is not allowed' did not appear")
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "Monday, Tuesday, Wednesday, Thursday, Friday")]')) > 0,
+            "'Office hours are...' condition is not correct")
         print("OK")
-        print("Add number to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Destination")]/../input').send_keys('testdestination')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../input', "100")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-destination-form"]/div/button[2]').click()
-        wait_for_loading_screen(driver)
+        print("Try to delete second condition...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "Monday")]').click()
+        driver.find_element_by_xpath('/html/body//div//button[contains(., "Delete")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "condition")]')) > 0,
+            "Second condition was not deleted")
         print("OK")
-        print("Add voicemail to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[2]').click()
-        wait_for_loading_screen(driver)
+        print("Try to add second condition 'date is...'...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "condition")]').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/div/div[3]/div[3]').click()
+        driver.find_element_by_xpath('/html/body//div/button[contains(., 15)]').click()
+        driver.find_element_by_xpath('/html/body//div//button[contains(., "Save")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "' + datetime.today().strftime('%Y/%m') + '/15' + '")]')) > 0,
+            "'Office hours are...' condition is not correct")
         print("OK")
-        print("Check if everyting was added correctly...", end="")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span').text, 'do not ring own phone',
-            "Option 'do not ring own phone' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-row"]').text, 'first ring testdestination for 100 secs',
-            "Option 'Ring testdestination for 100 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-row"]').text, 'then ring Voicebox',
-            "Option 'Ring Voicebox when im online' is missing")
+        print("Try to delete second condition...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "' + datetime.today().strftime('%Y/%m') + '/15' + '")]').click()
+        driver.find_element_by_xpath('/html/body//div//button[contains(., "Delete")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "condition")]')) > 0,
+            "Second condition was not deleted")
         print("OK")
-        print("Swap entries in 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]/div[@class="q-item-side q-item-side-right q-item-section dest-btns cursor-pointer"]').click()
-        driver.find_element_by_xpath(
-            '/html/body/div[@class="q-popover animate-scale"]/div/div[1]').click()
-        wait_for_loading_screen(driver)
+        print("Try to delete first condition...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "TestUser")]').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div/div[3]/button[1]').click()
+        wait_for_invisibility(driver, '/html/body/div[3]/div/div[4]/svg')
         print("OK")
-        print("Check if entries got swapped...", end="")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span').text, 'do not ring own phone',
-            "Option 'do not ring own phone' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-row"]').text, 'first ring Voicebox',
-            "Options did not get swapped")
+        print("Try to add another foward...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div/div[2]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[3]/svg')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div[contains(., "Voicebox")]')) > 0, "Voicebox forwarding was not added")
         print("OK")
-        print("Delete second source set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="sources-section"]/div/button[@align="right"]').click()
-        step(driver, '/html/body//div[@class="modal-buttons row"]/button[2]')
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="modal-buttons row"]/button[2]').click()
-        driver.implicitly_wait(2)
-        step(driver, '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]', inv=True)
-        step(driver, '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]', inv=True)
-        driver.implicitly_wait(10)
+        print("Try to change the amount of time before it switches to the next forward...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[3]/div[2]/div/span[contains(., "seconds")]').click()
+        fill_element(driver, '/html/body/div[3]/label/div/div/div[2]/input', "30")
+        driver.find_element_by_xpath('/html/body/div[3]/div/button[2]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[4]/svg')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[3]/div[2]/div/span[contains(., "30")]')) > 0,
+            "Voicebox forwarding time was not changed")
         print("OK")
-        print("Check if second source set was deleted...", end="")
-        self.assertFalse(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "firsttestsourceset")]'), "Second Source Set was not deleted")
+        print("Try to disable a call forward...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div//div[contains(., "Disable")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[4]/svg')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[contains(@class, "disabled")]')) > 0,
+            "Call forward was not disabled")
         print("OK")
-        print("Logout...", end="")
-        logout_csc(driver)
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] + "/login/subscriber/#/login", "Logout failed")
+        print("Try to enable a call forward...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div//div[contains(., "Enable")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[4]/svg')
         print("OK")
+        print("Try to delete call forwarding...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div//div[contains(., "Remove")]').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div[2]/div/div[3]/button[2]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
+        self.assertTrue(
+            driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div/div').text == "Always", "Call forward was not deleted")
         filename = 0
 
-    def test_call_forward_always(self):
+    def test_login_page(self):
         global customers
         global filename
-        filename = "test_call_forward_always.png"
+        filename = "test_login_page.png"
         driver = self.driver
-        print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
-        print("OK")
-        print("Go to 'Call Forward' page...", end="")
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Call Forward")]')
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Call Forward")]').click()
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Always")]')
-        print("OK")
-        print("Go to 'Always'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Always")]').click()
-        driver.implicitly_wait(2)
-        step(driver, '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]', inv=True)
-        step(driver, '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]', inv=True)
-        driver.implicitly_wait(10)
-        print("OK")
-        print("Add number to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Destination")]/../input').send_keys('testdestination')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../input', "100")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-destination-form"]/div/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add voicemail to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add number to 'When im busy'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[2]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Destination")]/../input').send_keys('testdestination')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../input', "200")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-destination-form"]/div/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add voicemail to 'When im busy'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[2]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Enable 'Ring own phone'...", end="")
-        step(driver, '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]/div[@tabindex="0"]/div[@class="q-option-inner relative-position"]')
-        click_js(
-            driver, '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]/div[@tabindex="0"]/div[@class="q-option-inner relative-position"]')
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Check if all values are correct...", end="")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]/div[@class="q-option-inner relative-position active"]')) > 0,
-            "Option 'Ring own Phone' was not enabled")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span').text, 'first ring own phone for 15 secs',
-            "Option 'first ring own Phone for 15 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-row"]').text, 'then ring testdestination for 100 secs',
-            "Option 'Ring testdestination for 100 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-row"]').text, 'then ring Voicebox',
-            "Option 'Ring Voicebox when im online' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfb"]/div[1]//div[@class="dest-row"]').text, 'first ring testdestination for 200 secs',
-            "Option 'Ring testdestination for 200 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfb"]/div[2]//div[@class="dest-row"]').text, 'then ring Voicebox',
-            "Option 'Ring Voicebox when im busy' is missing")
-        print("OK")
-        print("Add new source set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-tab column flex-center relative-position icon-and-label"]//span[contains(text(), "Add new")]').click()
-        fill_element(
-            driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div[1]//input', 'secondtestsourceset')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div[2]//input', 'secondtestsource')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div[@tabindex=0]').click()
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="q-popover animate-scale column no-wrap"]/div[2]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-"]/button').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Go to new source set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "secondtestsourceset")]').click()
-        print("OK")
-        print("Check if source in source set is correct...", end="")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "secondtestsource")]'
-            )) > 0, "Source was not found")
-        print("OK")
-        print("Add a new source...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="sources-section"]/button').click()
-        fill_element(
-            driver, '//*[@id="q-app"]//div[@class="add-source-form"]//input', 'newtestsource')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-source-form"]/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Check if second source is created properly...", end="")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]')) > 0, "Second Source was not found")
-        print("OK")
-        print("Delete second source...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]/../div[2]').click()
-        step(driver, '/html/body//div[@class="modal-buttons row"]/button[2]')
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="modal-buttons row"]/button[2]').click()
-        print("OK")
-        print("Check if second source was deleted...", end="")
-        wait_for_loading_screen(driver)
-        self.assertFalse(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'), "Second Source was not deleted")
-        print("OK")
-        print("Try to delete first source and check if error message appears...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "secondtestsource")]/../div[2]').click()
+        driver.get(os.environ['CATALYST_SERVER'])
+        print("Try to log in with no credentials...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-login-card"]//button[contains(., "Sign In")]').click()
         self.assertTrue(
-            len(driver.find_elements_by_xpath('/html/body//div[@class="q-alert row no-wrap shadow-2 bg-negative"]')) > 0,
-            "Error Message 'Removing the last source entry is not allowed' did not appear")
+            len(driver.find_elements_by_xpath('/html/body//div[@role="alert"]')) > 0, "Error Message was not shown")
         print("OK")
-        print("Add number to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Destination")]/../input').send_keys('testdestination')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../input', "100")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-destination-form"]/div/button[2]').click()
-        wait_for_loading_screen(driver)
+        print("Try to log in with invalid credentials...", end="")
+        driver.get(os.environ['CATALYST_SERVER'])
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="text"]', "invaliduser")
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="password"]', "invalidpass")
+        driver.find_element_by_xpath('//*[@id="csc-login-card"]//button[contains(., "Sign In")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('/html/body//div[@role="alert"]')) > 0, "Error Message was not shown")
         print("OK")
-        print("Add voicemail to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[2]').click()
-        wait_for_loading_screen(driver)
+        print("Try to log in with invalid password...", end="")
+        driver.get(os.environ['CATALYST_SERVER'])
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="text"]', "testuser@" + self.domainname)
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="password"]', "invalidpass")
+        driver.find_element_by_xpath('//*[@id="csc-login-card"]//button[contains(., "Sign In")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('/html/body//div[@role="alert"]')) > 0, "Error Message was not shown")
         print("OK")
-        print("Check if everyting was added correctly...", end="")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span').text, 'do not ring own phone',
-            "Option 'do not ring own phone' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-row"]').text, 'first ring testdestination for 100 secs',
-            "Option 'Ring testdestination for 100 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-row"]').text, 'then ring Voicebox',
-            "Option 'Ring Voicebox when im online' is missing")
+        print("Try to log in with empty password...", end="")
+        driver.get(os.environ['CATALYST_SERVER'])
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="text"]', "testuser@" + self.domainname)
+        driver.find_element_by_xpath('//*[@id="csc-login-card"]//button[contains(., "Sign In")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('/html/body//div[@role="alert"]')) > 0, "Error Message was not shown")
         print("OK")
-        print("Swap entries in 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]/div[@class="q-item-side q-item-side-right q-item-section dest-btns cursor-pointer"]').click()
-        driver.find_element_by_xpath(
-            '/html/body/div[@class="q-popover animate-scale"]/div/div[1]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Check if entries got swapped...", end="")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span').text, 'do not ring own phone',
-            "Option 'do not ring own phone' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-row"]').text, 'first ring Voicebox',
-            "Options did not get swapped")
-        print("OK")
-        print("Delete second source set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="sources-section"]/div/button[@align="right"]').click()
-        step(driver, '/html/body//div[@class="modal-buttons row"]/button[2]')
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="modal-buttons row"]/button[2]').click()
-        driver.implicitly_wait(2)
-        step(driver, '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]', inv=True)
-        step(driver, '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]', inv=True)
-        driver.implicitly_wait(10)
-        print("OK")
-        print("Check if second source set was deleted...", end="")
-        self.assertFalse(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "secondtestsourceset")]'), "Second Source Set was not deleted")
-        print("OK")
-        print("Logout...", end="")
-        logout_csc(driver)
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] + "/login/subscriber/#/login", "Logout failed")
-        print("OK")
-        filename = 0
-
-    def test_call_forward_company_hours(self):
-        global customers
-        global filename
-        filename = "test_call_forward_company_hours.png"
-        driver = self.driver
         print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="text"]', "testuser@" + self.domainname)
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="password"]', "testpasswd")
+        driver.find_element_by_xpath('//*[@id="csc-login-card"]//button[contains(., "Sign In")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
-        print("Go to 'Call Forward' page...", end="")
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Call Forward")]')
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Call Forward")]').click()
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Company Hours")]')
+        print("Try to log out...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-header-toolbar-main"]/button[contains(., "testuser")]').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div/div').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-login"]')) > 0,
+            "Logout wasnt successful")
         print("OK")
-        print("Go to 'Company Hours'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Company Hours")]').click()
+        print("Trying to change to every available language...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
+        click_js(driver, '//*[@id="csc-language-menu-login"]//div[@tabindex="-1"]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[2]')
+        wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
-        step(driver, '//*[@id="q-app"]//div[@class="q-alert-actions row items-center"]/span[contains(text(), "Add Company Hours")]')
-        print("OK")
-        print("Add Company Hours time set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-alert-actions row items-center"]/span[contains(text(), "Add Company Hours")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="csc-add-time-form q-item q-item-division relative-position"]//div[@class="q-item- row no-wrap"]/div[2]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-clock-circle")]//div[contains(@class, "q-datetime-clock-pos-8")]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-controls")]/button[3]').click()
-        step(driver, '//*[@id="q-app"]//div[@class="csc-add-time-form q-item q-item-division relative-position"]//div[@class="q-item- row no-wrap"]/div[3]')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="csc-add-time-form q-item q-item-division relative-position"]//div[@class="q-item- row no-wrap"]/div[3]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-clock-circle")]//div[contains(@class, "q-datetime-clock-pos-16")]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-controls")]/button[3]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-"]/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add number to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Destination")]/../input').send_keys('testdestination')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../input', "100")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-destination-form"]/div/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add voicemail to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add number to 'When im busy'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[2]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Destination")]/../input').send_keys('testdestination')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../input', "200")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-destination-form"]/div/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add voicemail to 'When im busy'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[2]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Enable 'Ring own phone'...", end="")
-        step(driver, '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]/div[@tabindex="0"]/div[@class="q-option-inner relative-position"]')
-        click_js(
-            driver, '//*[@id="q-app"]//div[@class="q-field-content col-xs-12 col-sm"]/div[@tabindex="0"]/div[@class="q-option-inner relative-position"]')
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Check if all values are correct...", end="")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]/div[@class="q-option-inner relative-position active"]')) > 0,
-            "Option 'Ring own Phone' was not enabled")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span').text, 'first ring own phone for 15 secs',
-            "Option 'first ring own Phone for 15 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-row"]').text, 'then ring testdestination for 100 secs',
-            "Option 'Ring testdestination for 100 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-row"]').text, 'then ring Voicebox',
-            "Option 'Ring Voicebox when im online' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfb"]/div[1]//div[@class="dest-row"]').text, 'first ring testdestination for 200 secs',
-            "Option 'Ring testdestination for 200 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfb"]/div[2]//div[@class="dest-row"]').text, 'then ring Voicebox',
-            "Option 'Ring Voicebox when im busy' is missing")
-        print("OK")
-        print("Add new source set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-tab column flex-center relative-position icon-and-label"]//span[contains(text(), "Add new")]').click()
-        fill_element(
-            driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div[1]//input', 'thirdtestsourceset')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div[2]//input', 'thirdtestsource')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item- row no-wrap"]/div[@tabindex=0]').click()
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="q-popover animate-scale column no-wrap"]/div[2]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-"]/button').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Go to new source set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "thirdtestsourceset")]').click()
-        print("OK")
-        print("Check if source in source set is correct...", end="")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "thirdtestsource")]')) > 0, "Source was not found")
-        print("OK")
-        print("Add a new source...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="sources-section"]/button').click()
-        fill_element(
-            driver, '//*[@id="q-app"]//div[@class="add-source-form"]//input', 'newtestsource')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-source-form"]/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Check if second source is created properly...", end="")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]')) > 0, "Second Source was not found")
-        print("OK")
-        print("Delete second source...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]/../div[2]').click()
-        step(driver, '/html/body//div[@class="modal-buttons row"]/button[2]')
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="modal-buttons row"]/button[2]').click()
-        print("OK")
-        print("Check if second source was deleted...", end="")
-        wait_for_loading_screen(driver)
-        self.assertFalse(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "newtestsource")]'), "Second Source was not deleted")
-        print("OK")
-        print("Try to delete first source and check if error message appears...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "thirdtestsource")]/../div[2]').click()
         self.assertTrue(
-            len(driver.find_elements_by_xpath('/html/body//div[@class="q-alert row no-wrap shadow-2 bg-negative"]')) > 0,
-            "Error Message 'Removing the last source entry is not allowed' did not appear")
-        print("OK")
-        print("Add number to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[1]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Destination")]/../input').send_keys('testdestination')
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Timeout")]/../input', "100")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="add-destination-form"]/div/button[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Add voicemail to 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-card"]/div[1]/div[@class="add-destination-form"]/button').click()
-        driver.find_element_by_xpath(
-            '//div[@class="q-popover animate-scale"]/div/div[2]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Check if everyting was added correctly...", end="")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span').text, 'do not ring own phone',
-            "Option 'do not ring own phone' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-row"]').text, 'first ring testdestination for 100 secs',
-            "Option 'Ring testdestination for 100 secs' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[2]//div[@class="dest-row"]').text, 'then ring Voicebox',
-            "Option 'Ring Voicebox when im online' is missing")
-        print("OK")
-        print("Swap entries in 'When im online'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]/div[@class="q-item-side q-item-side-right q-item-section dest-btns cursor-pointer"]').click()
-        driver.find_element_by_xpath(
-            '/html/body/div[@class="q-popover animate-scale"]/div/div[1]').click()
-        wait_for_loading_screen(driver)
-        print("OK")
-        print("Check if entries got swapped...", end="")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="dest-row own-phone-desktop"]/span').text, 'do not ring own phone',
-            "Option 'do not ring own phone' is missing")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@groupname="cfu"]/div[1]//div[@class="dest-row"]').text, 'first ring Voicebox', "Options did not get swapped")
-        print("OK")
-        print("Delete second source set...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="sources-section"]/div/button[@align="right"]').click()
-        step(driver, '/html/body//div[@class="modal-buttons row"]/button[2]')
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="modal-buttons row"]/button[2]').click()
-        driver.implicitly_wait(2)
-        step(driver, '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]', inv=True)
-        step(driver, '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]', inv=True)
-        driver.implicitly_wait(10)
-        print("OK")
-        print("Check if second source set was deleted...", end="")
-        self.assertFalse(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div/span[contains(text(), "thirdtestsourceset")]'), "Second Source Set was not deleted")
-        print("OK")
-        print("Logout...", end="")
-        logout_csc(driver)
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] + "/login/subscriber/#/login", "Logout failed")
+            len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Authentification de l’abonné")]')) > 0,
+            "Language wasnt changed to French")
+        driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
+        click_js(driver, '//*[@id="csc-language-menu-login"]//div[@tabindex="-1"]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[3]')
+        wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
+        time.sleep(1)
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Accedi come utente")]')) > 0,
+            "Language wasnt changed to Italian")
+        driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
+        click_js(driver, '//*[@id="csc-language-menu-login"]//div[@tabindex="-1"]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[4]')
+        wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
+        time.sleep(1)
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Iniciar sesión de suscriptor")]')) > 0,
+            "Language wasnt changed to Spanish")
+        driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
+        click_js(driver, '//*[@id="csc-language-menu-login"]//div[@tabindex="-1"]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[5]')
+        wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
+        time.sleep(1)
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Subscriber Log-in")]')) > 0,
+            "Language wasnt changed to German")
+        driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
+        click_js(driver, '//*[@id="csc-language-menu-login"]//div[@tabindex="-1"]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[1]')
+        wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
+        time.sleep(1)
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Subscriber Sign In")]')) > 0,
+            "Language wasnt changed to English")
         print("OK")
         filename = 0
 
-    def test_conference_conversations(self):
+    def test_other(self):
         global customers
         global filename
-        filename = "test_conference_conversations.png"
+        filename = "test_other.png"
         driver = self.driver
+        driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="text"]', "testuser@" + self.domainname)
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="password"]', "testpasswd")
+        driver.find_element_by_xpath('//*[@id="csc-login-card"]//button[contains(., "Sign In")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
-        print("Check out 'Join Conference' screen...", end="")
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Join conference")]')
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Join conference")]').click()
-#        --------Disabled. Active RTC:Engine required for these tests--------
-#        driver.find_element_by_xpath(
-#            '//*[@id="csc-conf-link-input"]/div/input').send_keys(
-#                "testconference")
-#        driver.find_element_by_xpath(
-#            '//*[@id="csc-conf-link-input"]/div/button[contains'
-#            '(@class, "text-primary")]').click()
-#        self.assertEqual(driver.current_url, driver.find_element_by_xpath(
-#            '//div/input[@readonly="readonly"]').get_attribute('value'),
-#            "Sharing URL is not correct")
-#        driver.find_element_by_xpath('/html/body').send_keys(Keys.ESCAPE)
-#        WebDriverWait(driver, 10).until(EC.presence_of_element_located((
-#            By.XPATH, '/html/body/div[@class="modal fullscreen row minimized'
-#            ' flex-center"][@style="display: none;"]')))
-        driver.find_element_by_xpath(
-            '//*[@id="csc-conf-header"]/div/button').click()
+        print("Go to 'Join Conference' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]/a[contains(., "Join conference")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-conference"]')) > 0, "Conference page wasnt opened")
+        driver.find_element_by_xpath('//*[@id="csc-header-toolbar-conference"]/button').click()
         print("OK")
         print("Go to 'Conversations' page...", end="")
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Conversations")]')
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Conversations")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]/a[contains(., "Conversations")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-conversations"]')) > 0, "Conversations page wasnt opened")
         print("OK")
-        print("Check if all sections are empty...", end="")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="csc-conversation-content"]/div[@class="row justify-center csc-conversation-list-message"]').text, 'No Calls, Voicemails or Faxes found',
-            "Section 'All' is not empty")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller row no-wrap"]//span[contains(text(), "Calls")]').click()
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="csc-conversation-content"]/div[@class="row justify-center csc-conversation-list-message"]').text, 'No Calls found',
-            "Section 'Calls' is not empty")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller row no-wrap"]//span[contains(text(), "Faxes")]').click()
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="csc-conversation-content"]/div[@class="row justify-center csc-conversation-list-message"]').text, 'No Faxes found',
-            "Section 'Faxes' is not empty")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-conversations-tabs"]//div[@class="q-tabs-scroller row no-wrap"]//span[contains(text(), "Voicemails")]').click()
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="csc-conversation-content"]/div[@class="row justify-center csc-conversation-list-message"]').text, 'No Voicemails found',
-            "Section 'Voicemails' is not empty")
+        print("Trying to go through every subpage...", end="")
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-conversations"]//div[contains(., "No Calls, Voicemails or Faxes found")]')) > 0,
+            "Sub page 'All' wasnt opened")
+        driver.find_element_by_xpath('//*[@id="csc-page-conversations"]/div[1]/div[1]/div/div/div[2]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-conversations"]//div[contains(., "No Calls found")]')) > 0,
+            "Sub page 'Calls' wasnt opened")
+        driver.find_element_by_xpath('//*[@id="csc-page-conversations"]/div[1]/div[1]/div/div/div[3]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-conversations"]//div[contains(., "No Voicemails found")]')) > 0,
+            "Sub page 'Voicemails' wasnt opened")
+        driver.find_element_by_xpath('//*[@id="csc-page-conversations"]/div[1]/div[1]/div/div/div[4]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-conversations"]//div[contains(., "No Faxes found")]')) > 0,
+            "Sub page 'Faxes' wasnt opened")
         print("OK")
-        print("Logout...", end="")
-        logout_csc(driver)
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] + "/login/subscriber/#/login", "Logout failed")
+        print("Go to 'General'...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "General")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-voicebox"]//div[contains(., "Music on Hold")]')) > 0,
+            "General page wasnt opened")
         print("OK")
+        print("Try to enable 'Music on Hold'...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]//div[@aria-label="Music on Hold"]/div[1]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-voicebox"]//div[@aria-checked="true"]')) > 0,
+            "Music on Hold was not enabled")
+        print("OK")
+        print("Go to 'Privacy' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Privacy")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-privacy"]')) > 0, "Privacy page wasnt opened")
+        print("OK")
+        print("Try to enable privacy setting...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-blocking-privacy"]/div/div/div[1]/div/div[1]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-privacy"]//div[contains(., "Your number is hidden to the callee")]')) > 0,
+            "Privacy setting wasnt enabled")
         filename = 0
 
     def test_reminder(self):
@@ -1079,285 +420,139 @@ class testrun(unittest.TestCase):
         global filename
         filename = "test_reminder.png"
         driver = self.driver
+        driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
         login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
         print("Go to 'Reminder' page...", end="")
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Reminder")]')
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Reminder")]').click()
-        step(driver, '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]//span[contains(text(), "Reminder")]')
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Reminder")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-reminder"]')) > 0, "Reminder page wasnt opened")
         print("OK")
-        print("Enable reminders...", end="")
-        time.sleep(1)
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"][contains(@class, "q-toggle")]//span[contains(text(), "Reminder")]').click()
-        step(driver, '//*[@id="q-app"]//div[contains(@class, "q-input-target justify-start")]')
-        time.sleep(1)
+        print("Try to enable reminders...", end="")
+        click_js(driver, '//*[@id="csc-page-reminder"]//div[@aria-label="Reminder is disabled"]//input')
+        wait_for_invisibility(driver, '//*[@id="csc-page-reminder"]//div[@aria-label="Reminder is disabled"]')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-reminder"]//div[@aria-label="Reminder is enabled"]')) > 0,
+            "Reminder has not been enabled")
         print("OK")
-        print("Set time for reminder...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "q-input-target justify-start")]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-clock-circle")]//div[contains(@class, "q-datetime-clock-pos-13")]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-clock-circle")]//div[contains(@class, "q-datetime-clock-pos-7")]').click()
-        driver.find_element_by_xpath(
-            '//div[contains(@class, "q-datetime-controls")]/button[2]').click()
-        step(driver, '//*[@id="q-app"]//div[@tabindex="0"]/span[@class="q-option-label"][contains(text(), "Always")]')
-        time.sleep(1)
+        print("Try to change reminder recurrance to 'Always'...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-reminder"]//div[@aria-label="Always"]').click()
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body//div[@role="alert"]')))
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-reminder"]//div[@aria-label="Always"][@aria-checked="true"]')) > 0,
+            "Reminder has not been enabled")
         print("OK")
-        print("Set reminder to 'Always'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"]//span[contains(text(), "Always")]').click()
-        print("OK")
-        print("Check if reminder settings were applied correctly...", end="")
-        self.assertEqual('Reminder is enabled', driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"]//span[contains(text(), "Reminder")]').text, "Reminder is not enabled")
-        self.assertEqual('13:35', driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "q-input-target justify-start")]').text, "Time is not correct")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"]/div[contains(@class, "active")]/../span[contains(text(), "Always")]')) > 0,
-            "Option 'Always' was not selected")
-        print("OK")
-        print("Logout...", end="")
-        logout_csc(driver)
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] + "/login/subscriber/#/login", "Logout failed")
-        print("OK")
-        filename = 0
-
-    def test_settings(self):
-        global customers
-        global filename
-        filename = "test_settings.png"
-        driver = self.driver
-        print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Reminder")]')
-        print("OK")
-        print("Change home page language to all avalible languages...", end="")
-        driver.find_element_by_xpath('//*[@id="csc-header-toolbar"]/button').click()
-        xp = '/html/body/div[@class="q-popover animate-scale"]//div[@class="q-item q-item-division relative-position q-item-link"]'
-        click_div = '/html/body/div[@class="q-popover animate-scale"]//div[@class="q-collapsible-sub-item relative-position"]/div[{}]'
-        step(driver, xp)
-        click_js(driver, click_div.format(2))
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Rappel")]')) > 0, 'Language was not changed to France')
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/button').click()
-        step(driver, xp)
-        click_js(driver, click_div.format(3))
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Promemoria")]')) > 0, 'Language was not changed to Italian')
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/button').click()
-        step(driver, xp)
-        click_js(driver, click_div.format(4))
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Recordatorio")]')) > 0, 'Language was not changed to Spanish')
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/button').click()
-        step(driver, xp)
-        click_js(driver, click_div.format(5))
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Erinnerung")]')) > 0, 'Language was not changed to German')
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/button').click()
-        step(driver, xp)
-        click_js(driver, click_div.format(1))
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Reminder")]')) > 0, 'Language was not changed back to English')
-        print("OK")
-        print("Change user password...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/div[1]/button').click()
-        driver.find_element_by_xpath(
-            '/html/body//div[contains(text(), "Settings")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/button[contains(@class, "q-btn-rectangle")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[text() = "New password"]/../input').send_keys('pass1234')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[text() = "New password retyped"]/../input').send_keys('pass1234')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="row justify-center"]/button[2]').click()
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="csc-dialog-actions row justify-end no-wrap"]/button[2]').click()
-        step(driver, '//*[@id="csc-login-form"]//div//input[@type="text"]')
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] + "/login/subscriber/#/login", "Logout failed")
-        print("OK")
-        print("Try to log in with new password...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'pass1234')
-        self.assertEqual("testuser", driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]//div//span[contains(text(), "testuser")]').text, "Login failed")
-        print("OK")
-        print("Change password back to old password...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="csc-header-toolbar"]/div[1]/button').click()
-        driver.find_element_by_xpath(
-            '/html/body//div[contains(text(), "Settings")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/button[contains(@class, "q-btn-rectangle")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[text() = "New password"]/../input').send_keys('testpasswd')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[text() = "New password retyped"]/../input').send_keys('testpasswd')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="row justify-center"]/button[2]').click()
-        driver.find_element_by_xpath(
-            '/html/body//div[@class="csc-dialog-actions row justify-end no-wrap"]/button[2]').click()
-        step(driver, '//*[@id="csc-login-form"]//div//input[@type="text"]')
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] + "/login/subscriber/#/login", "Logout failed")
-        print("OK")
+        print("Try to change time to 12:00...")
+        driver.find_element_by_xpath('//*[@id="csc-page-reminder"]/div/div[3]/div/label/div/div/div[2]/input').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-reminder"]/div/div[3]/div/label/div/div/div[2]/input').click()
+        fill_element(driver, '//*[@id="csc-page-reminder"]/div/div[3]/div/label/div/div/div[2]/input', '1200')
+        print(driver.find_element_by_xpath('//*[@id="csc-page-reminder"]//div[@aria-label="Always"][@aria-checked="true"]').get_attribute("value"))
+        self.assertTrue(
+            driver.find_element_by_xpath('//*[@id="csc-page-reminder"]/div//label//div//input').get_attribute("value") == '12:00',
+            "Time has not been changed")
         filename = 0
 
     def test_speed_dial(self):
         global customers
         global filename
-        filename = "test_speed_dial.png"
+        filename = "test_speeddial.png"
         driver = self.driver
+        driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
         login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Speed Dial")]')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
-        print("Go to 'Speed Dial'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Speed Dial")]').click()
-        driver.implicitly_wait(2)
-        step(driver, '//div[@class="q-loading animate-fade fullscreen column flex-center z-maxundefined"]/svg[@class="q-spinner q-spinner-mat text-white"]', inv=True)
-        driver.implicitly_wait(10)
+        print("Go to 'Call Forwarding' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Speed Dial")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-speed-dial"]')) > 0, "Speed dial page wasnt opened")
         print("OK")
-        print("Add a speed dial...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div//button[contains(@class, "q-btn-rectangle")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"]').click()
-        driver.find_element_by_xpath(
-            '//*[@class="no-border scroll q-list q-list-link"]/div[2]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/input[@class="col q-input-target text-left"]').send_keys("testtext")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="row justify-center form-actions"]/button[contains(@class, "text-primary")]').click()
+        print("Try to create a new Speed Dial...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-speed-dial"]//div/button').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-speed-dial"]//div/label').click()
+        driver.find_element_by_xpath('/html/body//*[contains(., "*5")]').click()
+        fill_element(driver, '//*[@id="csc-page-speed-dial"]//div/label[2]//div/input[@aria-label="Destination"]', "testination")
+        driver.find_element_by_xpath('//*[@id="csc-page-speed-dial"]//button[contains(., "Save")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-speed-dial"]//div[contains(., "When I dial *5")]')) > 0,
+            "Speed dial button is not correct")
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-speed-dial"]//div[contains(., "testination")]')) > 0,
+            "Speed dial destination is not correct")
         print("OK")
-        print("Check if speed dial details are correct...", end="")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-label"]/span[contains(text(), "When")]').text, "When I dial *1 ...",
-            "Speed dial has not been created")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-sublabel"][contains(text(), "ring")]').text, "ring testtext",
-            "Speed dial is not correct")
-        print("OK")
-        print("Add a second speed dial...", end="")
-        step(driver, '//*[@id="q-app"]//div//button[contains(@class, "q-btn-rectangle")]')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div//button[contains(@class, "q-btn-rectangle")]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@tabindex="0"]').click()
-        driver.find_element_by_xpath(
-            '//*[@class="no-border scroll q-list q-list-link"]/div[2]').click()
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/input[@class="col q-input-target text-left"]').send_keys("asdf")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="row justify-center form-actions"]/button[contains(@class, "text-primary")]').click()
-        print("OK")
-        print("Check if second speed dial details are correct...", end="")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-label"]/span[contains(text(), "*2")]').text, "When I dial *2 ...",
-            "Speed dial has not been created")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-item-sublabel"][contains(text(), "asdf")]').text, "ring asdf",
-            "Speed dial is not correct")
-        print("OK")
-        print("Delete all speed dials...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/button[@slot="right"]').click()
-        driver.find_element_by_xpath(
-            '//div[@class="modal-buttons row"]//button[contains(@class, "text-negative")]').click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((
-            By.XPATH, '//div[@class="q-toast-container active"]//div[contains(text(), "Unassigned slot *1")]')))
-        step(driver, '//*[@id="q-app"]//div/button[@slot="right"]')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div/button[@slot="right"]').click()
-        driver.find_element_by_xpath(
-            '//div[@class="modal-buttons row"]//button[contains(@class, "text-negative")]').click()
-        print("OK")
-        print("Check if speed dials were deleted...", end="")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "No speed dials found")]')) > 0, "Speed dials was not deleted")
-        print("OK")
-        print("Logout...", end="")
-        logout_csc(driver)
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] + "/login/subscriber/#/login", "Logout failed")
-        print("OK")
-        filename = 0
+        print("Try to delete the speed dial...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-speed-dial"]/div[2]/div/div/div[3]/button').click()
+        driver.find_element_by_xpath('/html/body/div[contains(., "Remove")]').click()
+        driver.find_element_by_xpath('/html/body//div//button[contains(., "OK")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-speed-dial"]/div[2]/div[contains(., "No speed dials found")]')) > 0,
+            "Speed dial was not deleted")
 
     def test_voicebox(self):
         global customers
         global filename
         filename = "test_voicebox.png"
         driver = self.driver
+        driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
         login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
-        step(driver, '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Voicebox")]')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
-        print("Go to 'Voicebox'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="main-menu"]//div[@class="q-item-label"][contains(text(), "Voicebox")]').click()
+        print("Go to 'Call Forwarding' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Voicebox")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-voicebox"]')) > 0, "Conference page wasnt opened")
         print("OK")
-        print("Try to enter an invalid voicebox pin...", end="")
-        step(driver, '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../input')
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../input').send_keys("invalid")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[@class="q-field-error col"]')) > 0, "Invalid PIN was not detected")
+        print("Try to enter invalid PIN...", end="")
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change PIN"]')))
+        fill_element(driver, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change PIN"]', "asdf")
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-voicebox"]//div/i[contains(., "error")]')) > 0,
+            "Wrong PIN has not been detected")
         print("OK")
-        print("Enter valid voicebox pin...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../../i[1]').click()
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../input', "12345")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../../i[1]').click()
+        print("Try to enter valid PIN...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]//div/button[contains(., "Undo")]').click()
+        fill_element(driver, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change PIN"]', "12345")
+        driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]//div//button[contains(., "Save")]').click()
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[5]/div')))
+        self.assertTrue(
+            driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change PIN"]').get_attribute("value") == "12345",
+            "Changed PIN is not correct")
         print("OK")
-        print("Try to enter an invalid voicebox email...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../input').send_keys("invalid")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-                '//*[@id="q-app"]//div[@class="q-field-error col"]')) > 0, "Invalid Email was not detected")
+        print("Try to enter an invalid Email...", end="")
+        fill_element(driver, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change Email"]', "test")
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-voicebox"]//div/i[contains(., "error")]')) > 0,
+            "Wrong Email has not been detected")
+        driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]//div/button[contains(., "Undo")]').click()
+        fill_element(driver, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change Email"]', "test@test")
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-voicebox"]//div/i[contains(., "error")]')) > 0,
+            "Wrong Email has not been detected")
         print("OK")
-        print("Enter valid voicebox email...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../../i[1]').click()
-        fill_element(
-            driver, '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../input', "test@email.com")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../../i[1]').click()
+        print("Try to enter a valid Email...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]//div/button[contains(., "Undo")]').click()
+        fill_element(driver, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change Email"]', "test@test.com")
+        driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]//div//button[contains(., "Save")]').click()
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[5]/div')))
+        self.assertTrue(
+            driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change Email"]').get_attribute("value") == "test@test.com",
+            "Changed Email is not correct")
         print("OK")
-        print("Enable 'Delete voicemail after notification'...", end="")
-        driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "q-toggle")]/span[contains(text(), "Delete voicemail")]').click()
-        print("OK")
-        print("Check if voicebox settings are correct...", end="")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change PIN")]/../input').get_attribute('value'), "12345", "PIN is not correct")
-        self.assertEqual(driver.find_element_by_xpath(
-            '//*[@id="q-app"]//div[contains(text(), "Change Email")]/../input').get_attribute('value'), "test@email.com", "Email is not correct")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "csc-toggle-enabled")]/span[contains(text(), "Attach voicemail")]')) > 0,
-            "Option 'Attach voicemail to email notification' was not enabled")
-        self.assertTrue(len(driver.find_elements_by_xpath(
-            '//*[@id="q-app"]//div[contains(@class, "csc-toggle-enabled")]/span[contains(text(), "Delete voicemail")]')) > 0,
-            "Option 'Delete voicemail after email notification is delivered' was not enabled")
-        print("OK")
-        print("Logout...", end="")
-        logout_csc(driver)
-        self.assertEqual(
-            driver.current_url, os.environ['CATALYST_SERVER'] + "/login/subscriber/#/login", "Logout failed")
-        print("OK")
+        print("Try to disable 'Attach voicemail to email' setting...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]/div/div[3]/div[1]/div/div[1]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-page-voicebox"]/div/div[3]/div[2]/svg')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-voicebox"]/div/div[4]/div[1]/div[@aria-disabled="true"]')) > 0,
+            "Setting was not disabled")
         filename = 0
 
     def tearDown(self):
