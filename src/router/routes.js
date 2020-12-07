@@ -195,6 +195,14 @@ export default function routes (app) {
 					meta: {
 						title: i18n.t('navigation.faxSettings.title'),
 						subtitle: i18n.t('navigation.faxSettings.subTitle')
+					},
+					async beforeEnter (routeTo, routeFrom, next) {
+						await app.store.dispatch('user/initUser')
+						if (app.store.getters['user/hasFaxCapability']) {
+							next()
+						} else {
+							next('/')
+						}
 					}
 				},
 				{

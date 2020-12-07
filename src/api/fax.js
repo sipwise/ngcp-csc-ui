@@ -32,3 +32,30 @@ export async function setFaxServerField (options) {
 		value: options.value
 	})
 }
+
+export async function getMailToFaxSettings (subscriberId) {
+	const result = await get({
+		path: `api/mailtofaxsettings/${subscriberId}`
+	})
+	const settings = _.clone(result)
+	delete settings._links
+	return settings
+}
+
+export async function setMailToFaxSettingField (options) {
+	if (!['active', 'secret_key', 'secret_key_renew', 'secret_renew_notify', 'acl'].includes(options.field)) {
+		throw Error(`setMailToFaxSettingField: unknown field name ${options.field}`)
+	}
+	if (options.field === 'secret_renew_notify') {
+		// searching for duplicates
+		const destinationsIds = options.value.map(d => d.destination)
+		if ((new Set(destinationsIds)).size !== destinationsIds.length) {
+			throw Error(i18n.t('faxSettings.notifyEmailExists'))
+		}
+	}
+	return patchReplaceFull({
+		path: `api/mailtofaxsettings/${options.subscriberId}`,
+		fieldPath: options.field,
+		value: options.value
+	})
+}

@@ -7,6 +7,7 @@
 		@input="$emit('input', $event)"
 		@keyup.enter="$emit('save', $event)"
 	>
+		<slot />
 		<template
 			v-if="icon !== undefined && icon !== null"
 			v-slot:prepend

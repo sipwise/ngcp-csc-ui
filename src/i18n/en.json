@@ -764,7 +764,20 @@
 		"deleteDestinationTitle": "Remove Destination",
 		"deleteDestinationText": "You are about to remove destination {destination}",
 		"destinationEmailExists": "The Destination Email is already used",
-		"destinationItemTitle": "<{destination}> as {filetype}"
+		"destinationItemTitle": "<{destination}> as {filetype}",
+		"notifyEmailExists": "The Notify Email is already used",
+		"featureIsNotActive": "Mail To Fax feature is not active",
+		"destinations": "Destinations",
+		"secretKeyField": "Secret Key (empty=disabled)",
+		"lastModifyTime": "Last Modify Time",
+		"notModifiedYet": "Not modified yet",
+		"secretKeyRenew": "Secret Key Renew",
+		"secretKeyRenewNotify": "Secret Key Renew Notify",
+		"addEmail": "Add email",
+		"deleteRenewNotifyEmailTitle": "Remove secret key renew notify email",
+		"deleteRenewNotifyEmailText": "You are about to remove secret key renew notify email: {email}",
+		"ACL": "ACL",
+		"addACL": "Add ACL"
 	},
 	"callSettings": {
 		"musicOnHold": "Music on Hold",

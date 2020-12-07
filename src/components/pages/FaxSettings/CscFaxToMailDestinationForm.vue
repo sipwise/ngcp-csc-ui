@@ -70,7 +70,7 @@
 			<q-btn
 				flat
 				color="primary"
-				icon="person"
+				icon="done"
 				:loading="loading"
 				:disable="$v.data.$invalid || loading"
 				:label="$t('faxSettings.createDestination')"
@@ -85,7 +85,7 @@ import { email, required } from 'vuelidate/lib/validators'
 import CscInputSaveable from 'components/form/CscInputSaveable'
 
 export default {
-	name: 'CscFax2MailDestinationForm',
+	name: 'CscFaxToMailDestinationForm',
 	components: {
 		CscInputSaveable
 	},

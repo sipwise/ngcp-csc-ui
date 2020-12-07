@@ -107,18 +107,22 @@ export class RtcEnginePlugin {
 				})
 				this.client.onConnect(() => {
 					this.events.emit('connected')
-					const conferenceNetwork = this.client.getNetworkByTag('conference')
-					conferenceNetwork.onConnect(() => {
-						this.events.emit('conference-network-connected', conferenceNetwork)
-					}).onDisconnect(() => {
-						this.events.emit('conference-network-disconnected', conferenceNetwork)
-					})
-					const sipNetwork = this.client.getNetworkByTag('sip')
-					sipNetwork.onConnect(() => {
-						this.events.emit('sip-network-connected', sipNetwork)
-					}).onDisconnect(() => {
-						this.events.emit('sip-network-disconnected', sipNetwork)
-					})
+					try {
+						const conferenceNetwork = this.client.getNetworkByTag('conference')
+						conferenceNetwork.onConnect(() => {
+							this.events.emit('conference-network-connected', conferenceNetwork)
+						}).onDisconnect(() => {
+							this.events.emit('conference-network-disconnected', conferenceNetwork)
+						})
+						const sipNetwork = this.client.getNetworkByTag('sip')
+						sipNetwork.onConnect(() => {
+							this.events.emit('sip-network-connected', sipNetwork)
+						}).onDisconnect(() => {
+							this.events.emit('sip-network-disconnected', sipNetwork)
+						})
+					} catch (e) {
+						reject(new Error('Unable to connect to a specific network by RTCEngine client'))
+					}
 					resolve()
 				})
 				this.client.onDisconnect(() => {

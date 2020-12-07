@@ -84,6 +84,10 @@ export default {
 		},
 		hasFaxCapability (state) {
 			return state.capabilities !== null &&
+				state.capabilities.faxserver
+		},
+		hasFaxCapabilityAndFaxActive (state) {
+			return state.capabilities !== null &&
                 state.capabilities.faxserver &&
                 state.capabilities.faxactive
 		},
@@ -360,7 +364,7 @@ export default {
 			}
 		},
 		async forwardHome (context) {
-			if (context.rootState.route.path === '/user/home' && !context.getters.isRtcEngineUiVisible) {
+			if (context.rootState.route?.path === '/user/home' && !context.getters.isRtcEngineUiVisible) {
 				await router.push({ path: '/user/conversations' })
 			}
 		},

@@ -27,3 +27,9 @@ body.body--dark
 
 .csc-opt-center
 	margin-top ($header-height * -2)
+
+.striped-list
+	> :nth-of-type(2n+1)
+		background-color $item-stripe-color
+	> :nth-of-type(2n)
+		background-color alpha($main-menu-background, 0.2)

@@ -17,6 +17,7 @@ export const defaultLocale = 'en-US'
 export const i18n = new VueI18n({
 	locale: defaultLocale,
 	fallbackLocale: defaultLocale,
+	formatFallbackMessages: true,
 	messages
 })
 

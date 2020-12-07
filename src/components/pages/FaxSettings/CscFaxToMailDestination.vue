@@ -43,7 +43,7 @@
 			</csc-list-menu-item>
 		</template>
 		<template slot="body">
-			<csc-fax2-mail-destination-form
+			<csc-fax-to-mail-destination-form
 				:is-add-new-mode="false"
 				:initial-data="destination"
 				:loading="loading"
@@ -58,12 +58,12 @@ import CscListItem from 'components/CscListItem'
 import CscListItemTitle from 'components/CscListItemTitle'
 import CscListMenuItem from 'components/CscListMenuItem'
 import CscListItemSubtitle from 'components/CscListItemSubtitle'
-import CscFax2MailDestinationForm from 'components/pages/FaxSettings/CscFax2MailDestinationForm'
+import CscFaxToMailDestinationForm from 'components/pages/FaxSettings/CscFaxToMailDestinationForm'
 
 export default {
-	name: 'CscFax2MailDestination',
+	name: 'CscFaxToMailDestination',
 	components: {
-		CscFax2MailDestinationForm,
+		CscFaxToMailDestinationForm,
 		CscListItemSubtitle,
 		CscListMenuItem,
 		CscListItemTitle,

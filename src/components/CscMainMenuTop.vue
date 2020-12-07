@@ -46,7 +46,8 @@ export default {
 	computed: {
 		...mapGetters('user', [
 			'isRtcEngineUiVisible',
-			'isPbxEnabled'
+			'isPbxEnabled',
+			'hasFaxCapability'
 		]),
 		items () {
 			return [
@@ -129,7 +130,7 @@ export default {
 					to: '/user/fax-settings',
 					icon: 'fas fa-fax',
 					label: this.$t('navigation.faxSettings.title'),
-					visible: true
+					visible: this.hasFaxCapability
 				},
 				{
 					icon: 'miscellaneous_services',

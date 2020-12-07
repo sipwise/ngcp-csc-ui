@@ -21,7 +21,7 @@
 					@click="$refs.mainMenu.show()"
 				/>
 				<q-btn
-					v-if="hasFaxCapability && hasSendFaxFeature"
+					v-if="hasFaxCapabilityAndFaxActive && hasSendFaxFeature"
 					class="q-mr-sm"
 					flat
 					dense
@@ -297,7 +297,7 @@ export default {
 			'getUsername',
 			'isPbxAdmin',
 			'hasSmsCapability',
-			'hasFaxCapability',
+			'hasFaxCapabilityAndFaxActive',
 			'hasSendSmsFeature',
 			'hasSendFaxFeature',
 			'userDataRequesting',
@@ -315,7 +315,7 @@ export default {
 		]),
 		hasCommunicationCapabilities () {
 			return (this.hasSmsCapability && this.hasSendSmsFeature) ||
-				(this.hasFaxCapability && this.hasSendFaxFeature)
+				(this.hasFaxCapabilityAndFaxActive && this.hasSendFaxFeature)
 		},
 		isMenuClosed () {
 			return !this.sideStates.left

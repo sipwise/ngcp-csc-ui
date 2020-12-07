@@ -99,8 +99,8 @@ export default {
 		updateOwnPhoneTimeoutError: null
 	},
 	getters: {
-		hasFaxCapability (state, getters, rootState, rootGetters) {
-			return rootGetters['user/hasFaxCapability']
+		hasFaxCapabilityAndFaxActive (state, getters, rootState, rootGetters) {
+			return rootGetters['user/hasFaxCapabilityAndFaxActive']
 		},
 		subscriberId (state, getters, rootState, rootGetters) {
 			return rootGetters['user/getSubscriberId']

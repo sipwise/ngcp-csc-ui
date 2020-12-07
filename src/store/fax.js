@@ -1,14 +1,19 @@
 import _ from 'lodash'
 import {
 	getFaxServerSettings,
-	setFaxServerField
+	setFaxServerField,
+	getMailToFaxSettings,
+	setMailToFaxSettingField
 } from '../api/fax'
 
 export default {
 	namespaced: true,
 	state: {
 		faxServerSettingsInitialized: false,
-		faxServerSettings: {}
+		faxServerSettings: {},
+
+		mailToFaxSettingsInitialized: false,
+		mailToFaxSettings: {}
 	},
 	getters: {
 		subscriberId (state, getters, rootState, rootGetters) {
@@ -21,6 +26,11 @@ export default {
 				state.faxServerSettings = res.faxServerSettings
 				state.faxServerSettingsInitialized = true
 			}
+
+			if (_.has(res, 'mailToFaxSettings')) {
+				state.mailToFaxSettings = res.mailToFaxSettings
+				state.mailToFaxSettingsInitialized = true
+			}
 		}
 	},
 	actions: {
@@ -30,7 +40,7 @@ export default {
 				faxServerSettings
 			})
 		},
-		async fieldUpdateAction (context, options) {
+		async faxServerSettingsUpdateAction (context, options) {
 			const faxServerSettings = await setFaxServerField({
 				subscriberId: context.getters.subscriberId,
 				field: options.field,
@@ -40,6 +50,23 @@ export default {
 				faxServerSettings
 			})
 			context.commit('user/updateFaxActiveCapabilityState', faxServerSettings.active, { root: true })
+		},
+
+		async loadMailToFaxSettingsAction (context) {
+			const mailToFaxSettings = await getMailToFaxSettings(context.getters.subscriberId)
+			context.commit('settingsSucceeded', {
+				mailToFaxSettings
+			})
+		},
+		async mailToFaxSettingsUpdateAction (context, options) {
+			const mailToFaxSettings = await setMailToFaxSettingField({
+				subscriberId: context.getters.subscriberId,
+				field: options.field,
+				value: options.value
+			})
+			context.commit('settingsSucceeded', {
+				mailToFaxSettings
+			})
 		}
 	}
 }

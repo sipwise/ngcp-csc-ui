@@ -18,7 +18,7 @@
 					@click="addDestinationByType('voicebox')"
 				/>
 				<csc-popup-menu-item
-					v-if="hasFaxCapability && hasSendFaxFeature"
+					v-if="hasFaxCapabilityAndFaxActive && hasSendFaxFeature"
 					:label="$t('pages.callForward.buttons.addFax2Mail')"
 					@click="addDestinationByType('fax2mail')"
 				/>
@@ -150,7 +150,7 @@ export default {
 		]),
 		...mapGetters('user', [
 			'hasSendFaxFeature',
-			'hasFaxCapability'
+			'hasFaxCapabilityAndFaxActive'
 		]),
 		timeoutInputError () {
 			if (!this.$v.destinationForm.timeout.required) {
