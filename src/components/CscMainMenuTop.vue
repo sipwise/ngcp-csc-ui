@@ -71,33 +71,38 @@ export default {
 					visible: true
 				},
 				{
-					to: '/user/call-settings',
-					icon: 'fas fa-cogs',
-					label: this.$t('navigation.callSettings.title'),
-					visible: true
-				},
-				{
-					to: '/user/call-forwarding',
-					icon: 'phone_forwarded',
-					label: this.$t('navigation.callForward.title'),
-					visible: true
-				},
-				{
-					icon: 'block',
-					label: this.$t('navigation.callBlocking.title'),
-					opened: this.isCallBlocking,
+					icon: 'settings_phone',
+					label: this.$t('Call Settings'),
 					visible: true,
 					children: [
 						{
+							to: '/user/call-settings',
+							icon: 'settings',
+							label: this.$t('General'),
+							visible: true
+						},
+						{
+							to: '/user/voicebox',
+							icon: 'voicemail',
+							label: this.$t('navigation.voicebox.title'),
+							visible: true
+						},
+						{
+							to: '/user/call-forwarding',
+							icon: 'phone_forwarded',
+							label: this.$t('Forwarding'),
+							visible: true
+						},
+						{
 							to: '/user/call-blocking/incoming',
 							icon: 'call_received',
-							label: this.$t('navigation.callBlocking.incoming'),
+							label: this.$t('Block incoming'),
 							visible: true
 						},
 						{
 							to: '/user/call-blocking/outgoing',
 							icon: 'call_made',
-							label: this.$t('navigation.callBlocking.outgoing'),
+							label: this.$t('Block outgoing'),
 							visible: true
 						},
 						{
@@ -105,26 +110,20 @@ export default {
 							icon: 'fas fa-user-secret',
 							label: this.$t('navigation.callBlocking.privacy'),
 							visible: true
+						},
+						{
+							to: '/user/speeddial',
+							icon: 'touch_app',
+							label: this.$t('navigation.speeddial.title'),
+							visible: true
+						},
+						{
+							to: '/user/reminder',
+							icon: 'notification_important',
+							label: this.$t('navigation.reminder.title'),
+							visible: true
 						}
 					]
-				},
-				{
-					to: '/user/reminder',
-					icon: 'notification_important',
-					label: this.$t('navigation.reminder.title'),
-					visible: true
-				},
-				{
-					to: '/user/speeddial',
-					icon: 'touch_app',
-					label: this.$t('navigation.speeddial.title'),
-					visible: true
-				},
-				{
-					to: '/user/voicebox',
-					icon: 'voicemail',
-					label: this.$t('navigation.voicebox.title'),
-					visible: true
 				},
 				{
 					to: '/user/fax-settings',
