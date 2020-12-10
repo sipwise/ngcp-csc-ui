@@ -45,6 +45,8 @@ export async function setPreference (id, field, value) {
 			} catch (innerErr) {
 				throw innerErr
 			}
+		} else {
+			throw err
 		}
 	}
 }

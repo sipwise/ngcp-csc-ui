@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import {
 	getPreferences,
 	getPreferencesDefs,
@@ -39,7 +40,7 @@ export default {
 			state.subscriberPreferencesInitialized = true
 		},
 		subscriberPreferencesUpdate (state, { field, value }) {
-			state.subscriberPreferences[field] = value
+			Vue.set(state.subscriberPreferences, field, value)
 		}
 	},
 	actions: {

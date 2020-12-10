@@ -104,7 +104,7 @@ export default {
 			this.options = await this.languages
 			this.selectedOption = this.language || await this.defaultLanguage
 		} catch (err) {
-			showGlobalError(err?.message)
+			showGlobalError(err?.message || this.$t('Unknown error'))
 		}
 	},
 	methods: {
@@ -117,14 +117,14 @@ export default {
 			try {
 				await this.setMusicOnHold(!this.musicOnHold)
 			} catch (err) {
-				showGlobalError(err?.message)
+				showGlobalError(err?.message || this.$t('Unknown error'))
 			}
 		},
 		async languageSelected () {
 			try {
 				await this.setLanguage(this.selectedOption)
 			} catch (err) {
-				showGlobalError(err?.message)
+				showGlobalError(err?.message || this.$t('Unknown error'))
 			}
 		}
 	}
