@@ -156,7 +156,6 @@
 						buttons
 						@before-show="$store.commit('callForwarding/popupShow', null)"
 						@save="updateDestinationEvent({
-							destination: changedDestination,
 							destinationIndex: destinationIndex,
 							destinationSetId: destinationSet.id
 						})"
@@ -208,6 +207,9 @@ import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscInput from 'components/form/CscInput'
 import CscSpinner from 'components/CscSpinner'
+import {
+	showGlobalError
+} from 'src/helpers/ui'
 export default {
 	name: 'CscCfGroupItem',
 	components: { CscSpinner, CscInput, CscPopupMenuItemDelete, CscMoreMenu },
@@ -259,6 +261,11 @@ export default {
 			return 'csc-cf-group-item-' + this.destinationSet.id + '-' + this.destinationIndex
 		}
 	},
+	watch: {
+		destination () {
+			this.changedDestination = this.destination.simple_destination
+		}
+	},
 	mounted () {
 		if (this.mapping.type === 'cft' && this.destinationIndex === 0) {
 			this.changedDestinationTimeout = this.ringTimeout
@@ -271,12 +278,19 @@ export default {
 			'updateDestination',
 			'removeDestination',
 			'updateDestinationTimeout',
-			'updateRingTimeout'
+			'updateRingTimeout',
+			'rewriteDestination'
 		]),
 		async updateDestinationEvent (payload) {
 			this.$wait.start(this.waitIdentifier)
-			await this.updateDestination(payload)
-			this.$wait.end(this.waitIdentifier)
+			try {
+				const validatedDest = await this.rewriteDestination(this.changedDestination)
+				await this.updateDestination({ ...payload, destination: validatedDest })
+			} catch (err) {
+				showGlobalError(err.message)
+			} finally {
+				this.$wait.end(this.waitIdentifier)
+			}
 		},
 		async removeDestinationEvent (payload) {
 			this.$q.dialog({

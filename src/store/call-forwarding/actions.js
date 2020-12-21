@@ -162,6 +162,22 @@ export async function addDestination ({ dispatch, commit, state, rootGetters }, 
 	dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
 }
 
+export async function rewriteDestination ({ dispatch, commit, state, rootGetters }, destination) {
+	try {
+		const req = await post({
+			resource: 'applyrewrites',
+			body: {
+				direction: 'callee_in',
+				subscriber_id: rootGetters['user/getSubscriberId'],
+				numbers: [destination]
+			}
+		})
+		return req.result
+	} catch (err) {
+		return destination
+	}
+}
+
 export async function removeDestination ({ dispatch, commit, state, rootGetters }, payload) {
 	dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
 	const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
