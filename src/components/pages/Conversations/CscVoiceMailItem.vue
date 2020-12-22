@@ -13,7 +13,7 @@
 			<q-item-label
 				class="text-subtitle1"
 			>
-				{{ $t('pages.conversations.voicemail') }}
+				{{ $t('Voicemail') }}
 				{{ direction }}
 				{{ voiceMail.caller | destinationFormat }}
 			</q-item-label>
@@ -25,9 +25,9 @@
 			<q-item-label
 				caption
 			>
-				{{ $t('pages.conversations.duration') }}
+				{{ $t('Duration') }}
 				{{ voiceMail.duration }}
-				{{ $t('pages.conversations.seconds') }}
+				{{ $t('seconds') }}
 			</q-item-label>
 			<csc-audio-player
 				ref="voicemailPlayer"
@@ -44,7 +44,7 @@
 				<csc-popup-menu-item
 					icon="file_download"
 					color="primary"
-					:label="$t('pages.conversations.buttons.downloadVoicemail')"
+					:label="$t('Download voicemail')"
 					@click="downloadVoiceMail"
 				/>
 				<csc-popup-menu-item-start-call

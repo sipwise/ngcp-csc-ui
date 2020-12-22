@@ -18,7 +18,7 @@
 			flat
 			@click="confirm"
 		>
-			{{ $t('buttons.confirm') }}
+			{{ $t('Confirm') }}
 		</q-btn>
 	</csc-dialog>
 </template>

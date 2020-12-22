@@ -32,7 +32,7 @@
 						<csc-popup-menu-item
 							icon="description"
 							color="primary"
-							:label="$t('communication.sendFax')"
+							:label="$t('Send Fax')"
 							@click="showSendFax()"
 						/>
 					</csc-popup-menu>
@@ -358,7 +358,7 @@ export default {
 			return classes
 		},
 		languageLabel () {
-			return this.$t('language', {
+			return this.$t('Language ({language})', {
 				language: getLanguageLabel(this.locale)
 			})
 		},
@@ -413,7 +413,7 @@ export default {
 		},
 		isCallEnabled (value) {
 			if (value && this.isRtcEngineUiVisible) {
-				showToast(this.$i18n.t('toasts.callAvailable'))
+				showToast(this.$i18n.t('You are now able to start and receive calls'))
 			}
 		},
 		createFaxState (state) {
@@ -424,7 +424,7 @@ export default {
 				showGlobalError(this.createFaxError)
 			} else if (state === 'succeeded') {
 				stopLoading()
-				showToast(this.$t('communication.createFaxSuccessMessage'))
+				showToast(this.$t('Sending fax completed successfully.'))
 				this.hideSendFax()
 			}
 		},
@@ -444,7 +444,7 @@ export default {
 		},
 		changeSessionLocaleState (state) {
 			if (state === 'succeeded') {
-				showToast(this.$t('toasts.changeSessionLanguageSuccessMessage'))
+				showToast(this.$t('Session language successfully changed'))
 			}
 		}
 	},

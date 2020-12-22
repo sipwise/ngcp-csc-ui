@@ -4,7 +4,7 @@
 		color="primary"
 		flat
 		dense
-		:label="$t('buttons.save')"
+		:label="$t('Save')"
 		:disable="$attrs.loading"
 		v-bind="$attrs"
 		v-on="$listeners"

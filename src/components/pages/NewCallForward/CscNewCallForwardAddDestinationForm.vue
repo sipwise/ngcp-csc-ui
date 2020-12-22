@@ -4,7 +4,7 @@
 	>
 		<csc-input
 			v-model="number"
-			:label="$t('callBlocking.number')"
+			:label="$t('Number')"
 			@submit="save"
 			@error="error"
 		/>
@@ -17,7 +17,7 @@
 				icon="clear"
 				@mousedown.native="cancel()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				v-if="!loading"
@@ -27,7 +27,7 @@
 				:disable="saveDisabled"
 				@click="save(); close()"
 			>
-				{{ $t('buttons.save') }}
+				{{ $t('Save') }}
 			</q-btn>
 			<div
 				v-if="loading"
@@ -117,7 +117,7 @@ export default {
 			const forwardGroup = await this.$store.dispatch('newCallForward/getForwardGroupById', forwardGroupId)
 			this.$store.dispatch('newCallForward/addGroupLoader', this.groupId)
 			if (this.numberError || this.saveDisabled) {
-				showGlobalError(this.$t('validationErrors.generic'))
+				showGlobalError(this.$t('You have invalid form input. Please check and try again.'))
 			} else if (Number.isInteger(this.destinationIndex) && Number.isInteger(forwardGroup.id)) { // edit mode
 				await this.$store.dispatch('newCallForward/editDestination', {
 					index: this.destinationIndex,

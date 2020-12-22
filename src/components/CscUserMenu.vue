@@ -15,7 +15,7 @@
 			</q-item-section>
 			<q-item-section>
 				<q-item-label>
-					{{ $t('numbers') }}
+					{{ $t('Numbers') }}
 				</q-item-label>
 				<q-item-label
 					caption
@@ -50,7 +50,7 @@
 				/>
 			</q-item-section>
 			<q-item-section>
-				<q-item-label>{{ $t('userMenu.settings') }}</q-item-label>
+				<q-item-label>{{ $t('Settings') }}</q-item-label>
 			</q-item-section>
 		</q-item>
 		<q-item
@@ -67,7 +67,7 @@
 				/>
 			</q-item-section>
 			<q-item-section>
-				<q-item-label>{{ $t('userMenu.logout') }}</q-item-label>
+				<q-item-label>{{ $t('Logout') }}</q-item-label>
 			</q-item-section>
 		</q-item>
 	</q-list>

@@ -10,13 +10,13 @@
 				v-if="groupsCount > 0"
 				class="col-xs-4 col-md-4 text-right"
 			>
-				{{ $t('pages.newCallForward.titles.mainTitle', {number: subscriberDisplayName}) }}
+				{{ $t('Primary number {number} rings before forwarded if the user is available', {number: subscriberDisplayName}) }}
 			</div>
 			<div
 				v-else
 				class="col-xs-4 col-md-4 text-right"
 			>
-				{{ $t('pages.newCallForward.primarNumberEnabled') }} {{ subscriberDisplayName }}
+				{{ $t('All calls go to the primary number') }} {{ subscriberDisplayName }}
 			</div>
 			<div
 				class="col-xs-2 col-md-2 text-left csc-cf-self-number-cont"
@@ -71,7 +71,7 @@
 						name="add"
 						size="24px"
 					/>
-					{{ $t('pages.newCallForward.forwardBtnLabel') }}
+					{{ $t('Add forwarding') }}
 					<q-menu
 						ref="destsetTypeForm"
 						:auto-close="true"
@@ -154,7 +154,7 @@ export default {
 				return $group.id.toString().indexOf('temp-') > -1
 			})
 			if (tempGroups.length > 0) {
-				showGlobalWarning(`${this.$t('pages.newCallForward.addDestinationAlert')}`, 5000)
+				showGlobalWarning(`${this.$t('You have to add a destination to the unsaved group')}`, 5000)
 			} else {
 				switch (selectedDestType) {
 				case 'unconditional':

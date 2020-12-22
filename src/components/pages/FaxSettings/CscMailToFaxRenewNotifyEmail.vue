@@ -83,11 +83,11 @@ export default {
 		},
 		newEmailErrorMessage () {
 			if (!this.$v.newEmail.required) {
-				return this.$t('validationErrors.fieldRequired', {
+				return this.$t('{field} is required', {
 					field: this.$t('Renew Notify Email')
 				})
 			} else if (!this.$v.newEmail.email) {
-				return this.$t('validationErrors.email')
+				return this.$t('Input a valid email address')
 			} else {
 				return ''
 			}
@@ -138,8 +138,8 @@ export default {
 		},
 		remove () {
 			this.$q.dialog({
-				title: this.$t('faxSettings.deleteRenewNotifyEmailTitle'),
-				message: this.$t('faxSettings.deleteRenewNotifyEmailText', { email: this.value }),
+				title: this.$t('Remove secret key renew notify email'),
+				message: this.$t('You are about to remove secret key renew notify email: {email}', { email: this.value }),
 				color: 'primary',
 				cancel: true,
 				persistent: true

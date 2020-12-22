@@ -53,9 +53,9 @@ export default {
 	computed: {
 		privacyLabel () {
 			if (this.privacy) {
-				return this.$t('callBlocking.privacyEnabledLabel')
+				return this.$t('Your number is hidden to the callee')
 			} else {
-				return this.$t('callBlocking.privacyDisabledLabel')
+				return this.$t('Your number is visible to the callee')
 			}
 		},
 		fieldIcon () {
@@ -79,9 +79,9 @@ export default {
 	watch: {
 		privacyUpdated (updated) {
 			if (updated && this.privacy) {
-				showToast(this.$t('callBlocking.privacyEnabledToast'))
+				showToast(this.$t('Your number is hidden to the callee'))
 			} else if (updated && !this.privacy) {
-				showToast(this.$t('callBlocking.privacyDisabledToast'))
+				showToast(this.$t('Your number is visible to the callee'))
 			}
 		}
 	},

@@ -11,7 +11,7 @@
 				slot="slot1"
 				icon="add"
 				color="primary"
-				:label="$t('pbxConfig.addCallQueue')"
+				:label="$t('Add call queue')"
 				@click="enableCallQueueAddForm"
 			/>
 		</csc-list-actions>
@@ -64,11 +64,11 @@
 			v-if="isCallQueueListEmpty && !isCallQueueListRequesting"
 			class="row justify-center csc-no-entities"
 		>
-			{{ $t('pbxConfig.noCallQueues') }}
+			{{ $t('No call queues created yet') }}
 		</div>
 		<csc-remove-dialog
 			ref="removeDialog"
-			:title="$t('pbxConfig.callQueueRemovalDialogTitle')"
+			:title="$t('Remove call queue')"
 			:message="getCallQueueRemoveDialogMessage"
 			@remove="removeCallQueue"
 			@cancel="closeCallQueueRemovalDialog"

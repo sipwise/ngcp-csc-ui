@@ -21,27 +21,27 @@ export function smartTime ($date) {
 	const diffMinutes = Math.floor(diffSeconds / 60)
 	const momentDate = moment(date)
 
-	let seconds = i18n.t('filters.second')
+	let seconds = i18n.t('second')
 	if (diffSeconds > 1) {
-		seconds = i18n.t('filters.seconds')
+		seconds = i18n.t('seconds')
 	}
 
 	let minutes = 'minute'
 	if (diffSeconds > 120) {
-		minutes = i18n.t('filters.minutes')
+		minutes = i18n.t('minutes')
 	}
 
 	if (diffSeconds < 60) {
-		const descriptor = i18n.t('filters.ago')
+		const descriptor = i18n.t('ago')
 		return `${diffSeconds} ${seconds} ${descriptor}`
 	} else if (diffSeconds < 3600) {
-		const descriptor = i18n.t('filters.ago')
+		const descriptor = i18n.t('ago')
 		return `${diffMinutes} ${minutes} ${descriptor}`
 	} else if (isToday(date)) {
-		const descriptor = i18n.t('filters.today')
+		const descriptor = i18n.t('Today')
 		return `${descriptor}, ${momentDate.format('HH:mm')}`
 	} else if (isYesterday(date)) {
-		const descriptor = i18n.t('filters.yesterday')
+		const descriptor = i18n.t('Yesterday')
 		return `${descriptor}, ${momentDate.format('HH:mm')}`
 	} else if (isWithinLastWeek(date)) {
 		return momentDate.format('dddd, HH:mm')
@@ -60,11 +60,21 @@ export const WeekdayMap = {
 	saturday: 7
 }
 
+export const WeekdayTranslationMap = {
+	sunday: i18n.t('Sunday'),
+	monday: i18n.t('Monday'),
+	tuesday: i18n.t('Tuesday'),
+	wednesday: i18n.t('Wednesday'),
+	thursday: i18n.t('Thursday'),
+	friday: i18n.t('Friday'),
+	saturday: i18n.t('Saturday')
+}
+
 export function weekday (weekdayNumber) {
 	let weekdayString = ''
 	Object.keys(WeekdayMap).forEach((weekday) => {
 		if (WeekdayMap[weekday] === weekdayNumber) {
-			weekdayString = i18n.t('pages.callForward.times.' + weekday)
+			weekdayString = WeekdayTranslationMap[weekday]
 		}
 	})
 	return weekdayString

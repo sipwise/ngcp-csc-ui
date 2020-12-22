@@ -8,8 +8,8 @@
 			<csc-confirm-dialog
 				ref="confirmDeleteTimesetDialog"
 				title-icon="delete"
-				:title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: 'weekdays'})"
-				:message="$t('pages.newCallForward.cancelTimesetText', {name: 'this'})"
+				:title="$t('Delete {name} timeset', {name: 'weekdays'})"
+				:message="$t('You are about to delete  {name} timeset', {name: 'this'})"
 				@confirm="deleteTimeset"
 			/>
 		</div>
@@ -83,7 +83,7 @@
 				icon="delete"
 				@mousedown.native="showRemoveDialog()"
 			>
-				{{ $t('buttons.remove') }}
+				{{ $t('Remove') }}
 			</q-btn>
 			<q-btn
 				flat
@@ -91,7 +91,7 @@
 				icon="clear"
 				@mousedown.native="cancel()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				v-if="!loading"
@@ -100,7 +100,7 @@
 				icon="done"
 				@click="save(); close()"
 			>
-				{{ $t('buttons.save') }}
+				{{ $t('Save') }}
 			</q-btn>
 			<div
 				v-if="loading"

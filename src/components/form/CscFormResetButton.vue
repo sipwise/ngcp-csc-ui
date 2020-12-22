@@ -5,7 +5,7 @@
 		color="white"
 		@click="click"
 	>
-		{{ $t('buttons.reset') }}
+		{{ $t('Reset') }}
 	</q-btn>
 </template>
 

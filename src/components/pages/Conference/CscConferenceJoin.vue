@@ -6,18 +6,18 @@
 			v-if="!hasRtcEngineCapabilityEnabled"
 			class="q-mb-lg"
 		>
-			{{ $t('call.rtcEngineNotEnabledConferencing') }}
+			{{ $t('You can not join a conference, since the RTC:engine is not active. If you operate a C5 CE then first upgrade to a C5 PRO to be able to use the RTC:engine.') }}
 		</csc-inline-alert-info>
 		<div
 			class="text-h6 text-center q-mb-lg"
 		>
-			{{ $t('conferencing.joinText') }}
+			{{ $t('Join conference with name') }}
 		</div>
 		<q-input
 			ref="conferenceName"
 			class="q-mb-lg"
 			:value="conferenceIdInput"
-			:placeholder="$t('conferencing.idPlaceholder')"
+			:placeholder="$t('Conference name')"
 			:disable="isJoining || !hasRtcEngineCapabilityEnabled"
 			@input="conferenceIdChanged"
 		>
@@ -35,7 +35,7 @@
 				<q-btn
 					:disable="!hasConferenceId || isJoining || !hasRtcEngineCapabilityEnabled"
 					:color="shareButtonColor"
-					:label="$t('conferencing.shareButtonLabel')"
+					:label="$t('Share')"
 					flat
 					dense
 					icon="link"

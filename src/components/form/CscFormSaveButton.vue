@@ -5,7 +5,7 @@
 		color="primary"
 		@click="click"
 	>
-		{{ $t('buttons.save') }}
+		{{ $t('Save') }}
 	</q-btn>
 </template>
 

@@ -11,7 +11,7 @@
 				slot="slot1"
 				icon="add"
 				color="primary"
-				:label="$t('pbxConfig.addGroup')"
+				:label="$t('Add Group')"
 				:disable="isGroupListRequesting"
 				data-cy="groups-add-new"
 				@click="enableAddForm"
@@ -21,7 +21,7 @@
 				slot="slot2"
 				icon="filter_alt"
 				color="primary"
-				:label="$t('pbxConfig.filterGroups')"
+				:label="$t('Filter groups')"
 				data-cy="groups-filter-open"
 				@click="enableFilters"
 			/>
@@ -30,7 +30,7 @@
 				slot="slot2"
 				icon="clear"
 				color="negative"
-				:label="$t('pbxConfig.closeFilters')"
+				:label="$t('Close filters')"
 				data-cy="groups-filter-close"
 				@click="closeFilters"
 			/>
@@ -114,17 +114,17 @@
 			v-if="isGroupListEmpty && !isGroupListRequesting && hasFilters"
 			class="row justify-center csc-no-entities"
 		>
-			{{ $t('pbxConfig.noGroupsFound') }}
+			{{ $t('Could not find any group matching any of the filter criteria') }}
 		</div>
 		<div
 			v-else-if="isGroupListEmpty && !isGroupListRequesting"
 			class="row justify-center csc-no-entities"
 		>
-			{{ $t('pbxConfig.noGroups') }}
+			{{ $t('No groups created yet') }}
 		</div>
 		<csc-remove-dialog
 			ref="removeDialog"
-			:title="$t('pbxConfig.removeGroupTitle')"
+			:title="$t('Remove group')"
 			:message="getGroupRemoveDialogMessage"
 			@remove="removeGroup({groupId:groupRemoving.id})"
 			@cancel="closeGroupRemovalDialog"

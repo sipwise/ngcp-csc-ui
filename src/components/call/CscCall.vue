@@ -47,15 +47,15 @@
 							<span
 								v-if="isInitiating"
 							>
-								{{ $t('call.initiating', {number: callNumberFormatted}) }}</span>
+								{{ $t('Calling {number}...', {number: callNumberFormatted}) }}</span>
 							<span
 								v-else-if="isRinging"
 							>
-								{{ $t('call.ringing', {number: callNumberFormatted}) }}</span>
+								{{ $t('Ringing at {number}...', {number: callNumberFormatted}) }}</span>
 							<span
 								v-else-if="isIncoming"
 							>
-								{{ $t('call.incoming', {number: callNumberFormatted}) }}</span>
+								{{ $t('Incoming call from {number}...', {number: callNumberFormatted}) }}</span>
 						</div>
 						<div
 							v-else-if="isEnded"
@@ -86,7 +86,7 @@
 						size="24px"
 					/>
 					<div>
-						{{ $t('call.established', {number: callNumberFormatted}) }}
+						{{ $t('In call with {number}', {number: callNumberFormatted}) }}
 					</div>
 					<q-btn
 						v-if="!dialpadOpened"
@@ -287,7 +287,7 @@
 						<div
 							class="csc-call-info-phrase"
 						>
-							{{ $t('call.' + callState + 'Short') }}
+							{{ callStateTitle }}
 						</div>
 						<div
 							class="csc-call-info-number"
@@ -343,6 +343,7 @@ import {
 } from 'src/helpers/ui'
 import CscMedia from '../CscMedia'
 import CscCallDialpad from '../CscCallDialpad'
+import { CallStateTitle } from 'src/store/call'
 export default {
 	name: 'CscCall',
 	components: {
@@ -523,6 +524,9 @@ export default {
 			} else {
 				return 'faded'
 			}
+		},
+		callStateTitle () {
+			return CallStateTitle[this.callState]
 		}
 	},
 	watch: {

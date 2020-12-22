@@ -6,7 +6,7 @@
 			:error-message="nameErrorMessage"
 			:disable="loading"
 			:readonly="loading"
-			:label="$t('pbxConfig.name')"
+			:label="$t('Name')"
 			hide-bottom-space
 			@input="$v.data.name.$touch"
 		/>
@@ -16,7 +16,7 @@
 			:error-message="descriptionErrorMessage"
 			:disable="loading"
 			:readonly="loading"
-			:label="$t('pbxConfig.description')"
+			:label="$t('Description')"
 			hide-bottom-space
 			@input="$v.data.description.$touch"
 		/>
@@ -26,14 +26,14 @@
 			<q-checkbox
 				v-model="data.contract_default"
 				:disable="loading"
-				:label="$t('pbxConfig.soundSetUseAsDefault')"
+				:label="$t('Use as default for all seats and groups')"
 			/>
 		</div>
 		<div>
 			<q-checkbox
 				v-model="data.copy_from_default"
 				:disable="loading"
-				:label="$t('pbxConfig.soundSetUseLanguagePreset')"
+				:label="$t('Use language specific preset')"
 				@input="toggleLoadFiles"
 			/>
 		</div>
@@ -45,7 +45,7 @@
 			radio
 			:disable="loading || !data.copy_from_default"
 			:readonly="loading"
-			:label="$t('pbxConfig.language')"
+			:label="$t('Language')"
 			:options="languageOptions"
 		/>
 		<div
@@ -56,7 +56,7 @@
 				v-model="data.loopplay"
 				class="col-auto"
 				:disable="loading || !data.copy_from_default"
-				:label="$t('pbxConfig.soundSetPlayAllLoop')"
+				:label="$t('Play all files in loop')"
 			/>
 		</div>
 		<div
@@ -69,7 +69,7 @@
 				icon="clear"
 				@click="cancel()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				v-if="!loading"
@@ -79,7 +79,7 @@
 				:disable="$v.data.$invalid || !data.language"
 				@click="save()"
 			>
-				{{ $t('pbxConfig.createSoundSet') }}
+				{{ $t('Create sound set') }}
 			</q-btn>
 		</div>
 		<csc-object-spinner
@@ -153,12 +153,12 @@ export default {
 	computed: {
 		nameErrorMessage () {
 			if (!this.$v.data.name.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pbxConfig.name')
+				return this.$t('{field} is required', {
+					field: this.$t('Name')
 				})
 			} else if (!this.$v.data.name.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('pbxConfig.name'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('Name'),
 					maxLength: this.$v.data.name.$params.maxLength.max
 				})
 			} else {
@@ -167,12 +167,12 @@ export default {
 		},
 		descriptionErrorMessage () {
 			if (!this.$v.data.description.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pbxConfig.description')
+				return this.$t('{field} is required', {
+					field: this.$t('Description')
 				})
 			} else if (!this.$v.data.description.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('pbxConfig.description'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('Description'),
 					maxLength: this.$v.data.description.$params.maxLength.max
 				})
 			} else {

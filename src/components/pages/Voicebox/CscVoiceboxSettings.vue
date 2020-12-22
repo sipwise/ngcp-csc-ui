@@ -7,7 +7,7 @@
 					v-model="changes.pin"
 					:loading="pinRequesting"
 					:disable="pinRequesting"
-					:label="$t('voicebox.label.changePin')"
+					:label="$t('Change PIN')"
 					:error="$v.changes.pin.$error"
 					:error-message="pinErrorMessage"
 					@keyup.enter="updatePin"
@@ -44,7 +44,7 @@
 					v-model="changes.email"
 					:loading="emailRequesting"
 					:disable="emailRequesting"
-					:label="$t('voicebox.label.changeEmail')"
+					:label="$t('Change Email')"
 					:error="$v.changes.email.$error"
 					:error-message="emailErrorMessage"
 					@keyup.enter="updateEmail"
@@ -179,20 +179,20 @@ export default {
 	computed: {
 		pinErrorMessage () {
 			if (!this.$v.changes.pin.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('voicebox.pin'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('PIN'),
 					maxLength: this.$v.changes.pin.$params.maxLength.max
 				})
 			} else if (!this.$v.changes.pin.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('voicebox.pin')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('PIN')
 				})
 			} else {
 				return ''
 			}
 		},
 		emailErrorMessage () {
-			return this.$t('validationErrors.email')
+			return this.$t('Input a valid email address')
 		},
 		canToggleDelete () {
 			return this.attach
@@ -324,14 +324,14 @@ export default {
 			if (this.pinHasChanged && !this.$v.changes.pin.$error) {
 				this.$store.dispatch('voicebox/updatePin', this.changes.pin)
 			} else {
-				showGlobalError(this.$t('validationErrors.pin'))
+				showGlobalError(this.$t('Input a valid PIN'))
 			}
 		},
 		updateEmail () {
 			if (this.emailHasChanged && !this.$v.changes.email.$error) {
 				this.$store.dispatch('voicebox/updateEmail', this.changes.email)
 			} else {
-				showGlobalError(this.$t('validationErrors.email'))
+				showGlobalError(this.$t('Input a valid email address'))
 			}
 		}
 	}

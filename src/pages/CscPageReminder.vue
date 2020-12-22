@@ -128,40 +128,40 @@ export default {
 		recurrenceOptions () {
 			return [
 				{
-					label: this.$t('pages.reminder.recurrence.once'),
+					label: this.$t('Only once'),
 					value: 'never',
 					icon: 'looks_one'
 				},
 				{
-					label: this.$t('pages.reminder.recurrence.weekdays'),
+					label: this.$t('On weekdays'),
 					value: 'weekdays'
 				},
 				{
-					label: this.$t('pages.reminder.recurrence.always'),
+					label: this.$t('Always'),
 					value: 'always'
 				}
 			]
 		},
 		toggleLabel () {
 			if (this.isReminderActive) {
-				return this.$t('pages.reminder.toggleEnabled')
+				return this.$t('Reminder is enabled')
 			} else {
-				return this.$t('pages.reminder.toggleDisabled')
+				return this.$t('Reminder is disabled')
 			}
 		}
 	},
 	watch: {
 		reminderUpdated (updated) {
 			if (updated && this.reminderUpdating === 'active' && this.isReminderActive) {
-				showToast(this.$t('pages.reminder.enabledToast'))
+				showToast(this.$t('Reminder: Enabled successfully'))
 			} else if (updated && this.reminderUpdating === 'active') {
-				showToast(this.$t('pages.reminder.disabledToast'))
+				showToast(this.$t('Reminder: Disabled successfully'))
 			} else if (updated && this.reminderUpdating === 'time') {
-				showToast(this.$t('pages.reminder.timeChangedToast', {
+				showToast(this.$t('Reminder: Time changed to {time}', {
 					time: this.reminderTime
 				}))
 			} else if (updated && this.reminderUpdating === 'recurrence') {
-				showToast(this.$t('pages.reminder.recurrenceChangedToast', {
+				showToast(this.$t('Reminder: Recurrence changed to "{recurrence}"', {
 					recurrence: this.mapRecurrence(this.reminderRecurrence)
 				}))
 			}
@@ -184,11 +184,11 @@ export default {
 		mapRecurrence (recurrence) {
 			switch (recurrence) {
 			case 'never':
-				return this.$t('pages.reminder.recurrence.once')
+				return this.$t('Only once')
 			case 'weekdays':
-				return this.$t('pages.reminder.recurrence.weekdays')
+				return this.$t('On weekdays')
 			case 'always':
-				return this.$t('pages.reminder.recurrence.always')
+				return this.$t('Always')
 			}
 		},
 		dateFormat (dateTime, format) {

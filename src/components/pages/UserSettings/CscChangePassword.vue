@@ -8,7 +8,7 @@
 					icon="lock"
 					flat
 					color="primary"
-					:label="$t('userSettings.changePassword')"
+					:label="$t('Change password')"
 					@click="enableInput"
 				/>
 			</div>
@@ -24,7 +24,7 @@
 						v-model.trim="newPassword"
 						type="password"
 						clearable
-						:label="$t('userSettings.newPasswordLabel')"
+						:label="$t('New password')"
 					>
 						<template
 							v-slot:prepend
@@ -38,7 +38,7 @@
 						v-model.trim="newPasswordRetyped"
 						type="password"
 						clearable
-						:label="$t('userSettings.newPasswordRetypedLabel')"
+						:label="$t('New password retyped')"
 					>
 						<template
 							v-slot:prepend
@@ -58,7 +58,7 @@
 						icon="clear"
 						@click="cancel"
 					>
-						{{ $t('buttons.cancel') }}
+						{{ $t('Cancel') }}
 					</q-btn>
 					<q-btn
 						flat
@@ -67,7 +67,7 @@
 						:disable="!isValid"
 						@click="openConfirmDialog"
 					>
-						{{ $t('userSettings.saveNewPassword') }}
+						{{ $t('Save new password') }}
 					</q-btn>
 				</div>
 			</div>
@@ -131,8 +131,8 @@ export default {
 		},
 		openConfirmDialog () {
 			this.$q.dialog({
-				title: this.$t('userSettings.changePasswordDialogTitle'),
-				message: this.$t('userSettings.changePasswordDialogText'),
+				title: this.$t('Change login password'),
+				message: this.$t('You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password. '),
 				color: 'primary',
 				cancel: true,
 				persistent: true

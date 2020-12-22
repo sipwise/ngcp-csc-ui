@@ -4,14 +4,14 @@
 	>
 		<csc-input
 			v-model="name"
-			:label="$t('pages.newCallForward.sourcesetName')"
+			:label="$t('List name')"
 			@submit="save"
 			@error="errorName"
 		/>
 
 		<csc-call-input
 			v-model="number"
-			:label="$t('callBlocking.number')"
+			:label="$t('Number')"
 			@submit="save"
 			@error="errorNumber"
 		/>
@@ -25,7 +25,7 @@
 				icon="clear"
 				@mousedown.native="cancel()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				v-if="!loading"
@@ -35,7 +35,7 @@
 				:disable="saveDisabled"
 				@click="save(); close()"
 			>
-				{{ $t('buttons.save') }}
+				{{ $t('Save') }}
 			</q-btn>
 			<div
 				v-if="loading"
@@ -106,7 +106,7 @@ export default {
 			const forwardGroupName = this.groupName
 
 			if (this.numberError || this.nameError || this.saveDisabled) {
-				showGlobalError(this.$t('validationErrors.generic'))
+				showGlobalError(this.$t('You have invalid form input. Please check and try again.'))
 				return
 			}
 			try {

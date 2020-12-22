@@ -76,7 +76,7 @@ export default {
 				showGlobalError(this.addSourcesetError)
 			} else if (state === 'succeeded') {
 				this.$refs.sourcesets.resetForm()
-				showToast(this.$t('pages.callForward.sources.addSuccessMessage', {
+				showToast(this.$t('Created sourceset {sourceset}', {
 					sourceset: this.lastAddedSourceset
 				}))
 				this.$store.dispatch('callForward/loadDestinations', {

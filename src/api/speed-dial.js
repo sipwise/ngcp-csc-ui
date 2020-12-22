@@ -30,7 +30,7 @@ export function getUnassignedSlots (id) {
 			const slotOptions = []
 			unassignedSlots.forEach((slot) => {
 				slotOptions.push({
-					label: `${i18n.t('speedDial.slot')} ${slot}`,
+					label: `${i18n.t('Slot')} ${slot}`,
 					value: slot
 				})
 			})

@@ -35,13 +35,13 @@
 				<csc-popup-menu-item
 					icon="edit"
 					color="primary"
-					:label="$t('buttons.edit')"
+					:label="$t('Edit')"
 					@click="edit"
 				/>
 				<csc-popup-menu-item
 					icon="delete"
 					color="negative"
-					:label="$t('buttons.remove')"
+					:label="$t('Remove')"
 					@click="remove"
 				/>
 			</csc-more-menu>

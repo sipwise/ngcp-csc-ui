@@ -63,14 +63,14 @@ export function askForNotificationPermission () {
 		if (_.isObject(Notification)) {
 			Notification.requestPermission().then((perms) => {
 				if (perms === 'denied' || perms === 'default') {
-					showPermanentGlobalWarning(i18n.t('call.notificationBlocked'))
+					showPermanentGlobalWarning(i18n.t('You have blocked incoming call notifications.'))
 				}
 				resolve()
 			}).catch((err) => {
 				reject(err)
 			})
 		} else {
-			showPermanentGlobalWarning(i18n.t('call.notificationNotSupported'))
+			showPermanentGlobalWarning(i18n.t('Incoming call notifications are not supported.'))
 			resolve()
 		}
 	})
@@ -83,7 +83,7 @@ export function enableIncomingCallNotifications () {
 			if (navigator.serviceWorker) {
 				return navigator.serviceWorker.register(serviceWorkerPath)
 			} else {
-				showPermanentGlobalWarning(i18n.t('call.notificationNotSupported'))
+				showPermanentGlobalWarning(i18n.t('Incoming call notifications are not supported.'))
 				resolve()
 			}
 		}).then(() => {
@@ -92,7 +92,7 @@ export function enableIncomingCallNotifications () {
 			resolve()
 		}).catch((err) => {
 			console.debug(err)
-			showPermanentGlobalWarning(i18n.t('call.notificationFailed'))
+			showPermanentGlobalWarning(i18n.t('Could not enable incoming call notifications.'))
 		})
 	})
 }
@@ -101,7 +101,7 @@ export function showCallNotification (number) {
 	if (navigator.serviceWorker) {
 		navigator.serviceWorker.getRegistration(serviceWorkerPath).then((registration) => {
 			if (registration && registration.showNotification) {
-				registration.showNotification(i18n.t('call.notificationTitle', {
+				registration.showNotification(i18n.t('Incoming call from {number}', {
 					number: number
 				}), {
 					requireInteraction: true,

@@ -9,12 +9,12 @@
 				map-options
 				:disable="loading"
 				:readonly="loading"
-				:label="$t('speedDial.slot')"
+				:label="$t('Slot')"
 				:options="slotOptions"
 			/>
 			<csc-call-input
 				v-model="destination"
-				:label="$t('speedDial.destination')"
+				:label="$t('Destination')"
 				@submit="save"
 				@error="error"
 			/>
@@ -28,7 +28,7 @@
 					icon="clear"
 					@mousedown.native="cancel()"
 				>
-					{{ $t('buttons.cancel') }}
+					{{ $t('Cancel') }}
 				</q-btn>
 				<q-btn
 					v-if="!loading"
@@ -38,7 +38,7 @@
 					:disable="destinationError"
 					@click="save()"
 				>
-					{{ $t('buttons.save') }}
+					{{ $t('Save') }}
 				</q-btn>
 			</div>
 		</div>
@@ -52,7 +52,7 @@
 				flat
 				@click="enableForm()"
 			>
-				{{ $t('speedDial.addSpeedDial') }}
+				{{ $t('Add Speed Dial') }}
 			</q-btn>
 		</div>
 		<q-inner-loading
@@ -109,7 +109,7 @@ export default {
 					enter: 'bounceInRight',
 					leave: 'bounceOutRight',
 					position: 'top-center',
-					html: this.$t('speedDial.addNoSlotsDialogText'),
+					html: this.$t('All available speed dial slots have already been assigned. Please delete one first.'),
 					icon: 'warning',
 					dismissible: true
 				})
@@ -120,7 +120,7 @@ export default {
 		},
 		save () {
 			if (this.destinationError) {
-				showGlobalError(this.$t('validationErrors.generic'))
+				showGlobalError(this.$t('You have invalid form input. Please check and try again.'))
 			} else {
 				this.$emit('save', {
 					destination: this.destination,

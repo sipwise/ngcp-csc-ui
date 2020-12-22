@@ -45,7 +45,7 @@
 					color="default"
 					@click="disableForm()"
 				>
-					{{ $t('buttons.cancel') }}
+					{{ $t('Cancel') }}
 				</q-btn>
 			</div>
 			<div
@@ -57,7 +57,7 @@
 					color="primary"
 					@click="addTime()"
 				>
-					{{ $t('buttons.save') }}
+					{{ $t('Save') }}
 				</q-btn>
 			</div>
 		</div>
@@ -85,13 +85,13 @@ export default {
 	data () {
 		return {
 			selectOptions: [
-				{ label: this.$t('pages.callForward.times.sunday'), value: 1 },
-				{ label: this.$t('pages.callForward.times.monday'), value: 2 },
-				{ label: this.$t('pages.callForward.times.tuesday'), value: 3 },
-				{ label: this.$t('pages.callForward.times.wednesday'), value: 4 },
-				{ label: this.$t('pages.callForward.times.thursday'), value: 5 },
-				{ label: this.$t('pages.callForward.times.friday'), value: 6 },
-				{ label: this.$t('pages.callForward.times.saturday'), value: 7 }
+				{ label: this.$t('Sunday'), value: 1 },
+				{ label: this.$t('Monday'), value: 2 },
+				{ label: this.$t('Tuesday'), value: 3 },
+				{ label: this.$t('Wednesday'), value: 4 },
+				{ label: this.$t('Thursday'), value: 5 },
+				{ label: this.$t('Friday'), value: 6 },
+				{ label: this.$t('Saturday'), value: 7 }
 			],
 			selectedWeekday: 1,
 			timeTo: '0:00',
@@ -139,7 +139,7 @@ export default {
 					name: this.timeset
 				})
 			} else {
-				showGlobalError(this.$t('pages.callForward.times.selectValidTime'))
+				showGlobalError(this.$t('Select valid time'))
 			}
 		}
 	}

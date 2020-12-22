@@ -1,6 +1,6 @@
 <template>
 	<csc-cf-group-condition
-		:title="$t('')"
+		title=" "
 		v-on="$listeners"
 	>
 		<q-list

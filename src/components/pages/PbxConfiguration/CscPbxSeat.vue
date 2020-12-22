@@ -27,12 +27,12 @@
 				<q-item-label
 					caption
 				>
-					{{ $t('pbxConfig.webusername') }}: <strong>{{ seat.webusername }}</strong>
+					{{ $t('Login') }}: <strong>{{ seat.webusername }}</strong>
 				</q-item-label>
 				<q-item-label
 					caption
 				>
-					{{ $t('pbxConfig.extension') }}: <strong>{{ seat.pbx_extension }}</strong>
+					{{ $t('Extension') }}: <strong>{{ seat.pbx_extension }}</strong>
 				</q-item-label>
 				<q-item-label
 					caption
@@ -40,7 +40,7 @@
 					<span
 						v-if="seat.pbx_group_ids.length > 0"
 					>
-						{{ $t('pbxConfig.groups') }}:
+						{{ $t('Groups') }}:
 						<span
 							v-for="groupId in seat.pbx_group_ids"
 							:key="groupId"
@@ -61,7 +61,7 @@
 							name="group"
 							size="16px"
 						/>
-						{{ $t('pbxConfig.noGroupAssigned') }}
+						{{ $t('No groups') }}
 					</span>
 				</q-item-label>
 			</q-item-section>
@@ -73,7 +73,7 @@
 					<csc-popup-menu-item
 						icon="vpn_key"
 						color="primary"
-						:label="$t('pbxConfig.editPassword')"
+						:label="$t('Change Password')"
 						@click="showPasswordDialog"
 					/>
 					<csc-popup-menu-item-delete
@@ -87,7 +87,7 @@
 							<q-toggle
 								v-model="changes.clirIntrapbx"
 								class="q-pa-sm"
-								:label="$t('pbxConfig.toggleIntraPbx')"
+								:label="$t('Hide number within own PBX')"
 								:disable="loading"
 								@input="changeIntraPbx"
 							/>
@@ -106,7 +106,7 @@
 			/>
 			<q-input
 				v-model="changes.name"
-				:label="$t('pbxConfig.name')"
+				:label="$t('Name')"
 				:disable="loading"
 				@keyup.enter="save"
 			>
@@ -128,7 +128,7 @@
 				hide-hint
 				:error="$v.changes.extension.$error"
 				:error-message="extensionErrorMessage"
-				:label="$t('pbxConfig.extension')"
+				:label="$t('Extension')"
 				:disable="loading"
 				:hint="getExtensionHint"
 				@keyup.enter="save"
@@ -150,7 +150,7 @@
 			<q-input
 				readonly
 				disable
-				:label="$t('pbxConfig.primaryNumber')"
+				:label="$t('Primary Number')"
 				:value="getPrimaryNumber"
 			/>
 			<q-select
@@ -160,7 +160,7 @@
 				emit-value
 				map-options
 				:options="aliasNumberOptions"
-				:label="$t('pbxConfig.aliasNumbers')"
+				:label="$t('Alias Numbers')"
 				:disable="loading"
 			>
 				<template
@@ -183,7 +183,7 @@
 				emit-value
 				map-options
 				:options="groupOptions"
-				:label="$t('pbxConfig.groups')"
+				:label="$t('Groups')"
 				:disable="loading"
 			>
 				<template
@@ -205,7 +205,7 @@
 				emit-value
 				map-options
 				:options="soundSetOptions"
-				:label="$t('pbxConfig.soundSet')"
+				:label="$t('Sound Set')"
 				:disable="loading"
 			>
 				<template
@@ -224,7 +224,7 @@
 			<q-toggle
 				v-model="changes.clirIntrapbx"
 				class="q-pa-sm"
-				:label="$t('pbxConfig.toggleIntraPbx')"
+				:label="$t('Hide number within own PBX')"
 				:disable="loading"
 				@input="changeIntraPbx"
 			/>
@@ -233,7 +233,7 @@
 				icon="filter_none"
 				flat
 				color="primary"
-				:label="$t('pbxConfig.callQueue')"
+				:label="$t('Call Queue')"
 				:disable="loading"
 				@click="jumpToCallQueue"
 			/>

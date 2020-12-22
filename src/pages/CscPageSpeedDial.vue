@@ -27,7 +27,7 @@
 			<div
 				class="col col-xs-12 col-md-8 text-center"
 			>
-				{{ $t('speedDial.noResultsMessage') }}
+				{{ $t('No speed dials found') }}
 			</div>
 		</div>
 		<div
@@ -54,12 +54,12 @@
 						<q-item-label
 							class="text-subtitle1"
 						>
-							{{ $t('speedDial.whenIDial', { slot: assigned.slot }) }}
+							{{ $t('When I dial {slot} ...', { slot: assigned.slot }) }}
 						</q-item-label>
 						<q-item-label
 							class="text-subtitle2"
 						>
-							{{ $t('speedDial.ring') }}
+							{{ $t('ring') }}
 							{{ assigned.destination | destinationFormat }}
 						</q-item-label>
 					</q-item-section>
@@ -76,7 +76,7 @@
 								<csc-popup-menu-item
 									icon="delete"
 									color="negative"
-									:label="$t('buttons.remove')"
+									:label="$t('Remove')"
 									@click="unassignSlot(assigned)"
 								/>
 							</csc-popup-menu>
@@ -149,7 +149,7 @@ export default {
 		// 		showGlobalError(this.unassignSlotError)
 		// 	} else if (state === 'succeeded') {
 		// 		stopLoading()
-		// 		showToast(this.$t('speedDial.unassignSlotSuccessMessage', {
+		// 		showToast(this.$t('Unassigned slot {slot}', {
 		// 			slot: this.lastUnassignedSlot
 		// 		}))
 		// 	}
@@ -159,7 +159,7 @@ export default {
 				showGlobalError(this.assignSlotError)
 			} else if (state === 'succeeded') {
 				this.$refs.addForm.cancel()
-				showToast(this.$t('speedDial.assignSlotSuccessMessage', {
+				showToast(this.$t('Assigned slot {slot}', {
 					slot: this.lastAssignedSlot
 				}))
 			}
@@ -174,8 +174,8 @@ export default {
 		},
 		unassignSlot (unassigned) {
 			this.$q.dialog({
-				title: this.$t('speedDial.removeDialogTitle'),
-				message: this.$t('speedDial.removeDialogText', {
+				title: this.$t('Remove speed dial'),
+				message: this.$t('You are about to remove the speed dial {slot}', {
 					slot: unassigned.slot
 				}),
 				color: 'primary',

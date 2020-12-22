@@ -93,10 +93,10 @@ export default {
 		},
 		getSoundSetOptions (state) {
 			const options = []
-			let defaultLabel = i18n.t('pbxConfig.defaultSoundSetName')
+			let defaultLabel = i18n.t('Default')
 			state.soundSetList.forEach((soundSet) => {
 				if (soundSet.contract_default) {
-					defaultLabel = i18n.t('pbxConfig.defaultSoundSetName') + ' (' + soundSet.name + ')'
+					defaultLabel = i18n.t('Default') + ' (' + soundSet.name + ')'
 				} else {
 					options.push({
 						label: soundSet.name,
@@ -118,7 +118,7 @@ export default {
 		getSubscriberOptions (state) {
 			const options = []
 			options.push({
-				label: i18n.t('pbxConfig.keyEmptyLabel'),
+				label: i18n.t('Unassigned'),
 				icon: 'clear',
 				value: null,
 				type: null
@@ -160,15 +160,15 @@ export default {
 			const min = getters.getMinAllowedExtension
 			const max = getters.getMaxAllowedExtension
 			if (min && max == null) {
-				return i18n.t('pbxConfig.pbxExtensionMinOnlyHint', {
+				return i18n.t('Minimum allowed extension is {min}', {
 					min: min
 				})
 			} else if (min == null && max) {
-				return i18n.t('pbxConfig.pbxExtensionMaxOnlyHint', {
+				return i18n.t('Maximum allowed extension is {max}', {
 					max: max
 				})
 			} else if (min && max) {
-				return i18n.t('pbxConfig.pbxExtensionHint', {
+				return i18n.t('Allowed extensions are between {min} and {max}', {
 					min: min,
 					max: max
 				})

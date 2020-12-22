@@ -70,7 +70,7 @@ export default {
 		},
 		getMsConfigRemoveDialogMessage (state) {
 			if (state.msConfigRemoving !== null) {
-				return i18n.t('pbxConfig.msConfigRemovalDialogText', {
+				return i18n.t('You are about to remove config for {msConfig}', {
 					msConfig: state.subscriberMap[state.msConfigRemoving.id].display_name
 				})
 			}
@@ -91,27 +91,19 @@ export default {
 		getMsConfigUpdatingField (state) {
 			return state.msConfigUpdatingField
 		},
-		getMsConfigRemovalDialogMessage (state, getters) {
-			if (getters.isMsConfigRemoving) {
-				return i18n.t('pbxConfig.msConfigRemovalDialogMessage', {
-					msConfig: getters.getMsConfigRemovingName
-				})
-			}
-			return ''
-		},
 		getMsConfigCreationToastMessage (state, getters) {
-			return i18n.t('pbxConfig.msConfigCreationToast', {
+			return i18n.t('Created manager secretary config for {msConfig} successfully', {
 				msConfig: getters.getMsConfigCreatingName
 			})
 		},
 		getMsConfigUpdateToastMessage (state, getters) {
-			return i18n.t('pbxConfig.msConfigUpdateToast', {
+			return i18n.t('Updated {field} for manager secretary config {msConfig} successfully', {
 				msConfig: getters.getMsConfigUpdatingName,
 				field: getters.getMsConfigUpdatingField
 			})
 		},
 		getMsConfigRemovalToastMessage (state, getters) {
-			return i18n.t('pbxConfig.msConfigRemovalToast', {
+			return i18n.t('Removed manager secretary config for {msConfig} successfully', {
 				msConfig: getters.getMsConfigRemovingName
 			})
 		}
@@ -250,7 +242,7 @@ export default {
 		setSecretaryNumbers (context, options) {
 			context.commit('msConfigUpdateRequesting', {
 				msConfigId: options.msConfigId,
-				field: i18n.t('pbxConfig.msConfigNumbersLabel')
+				field: i18n.t('Secretary numbers')
 			})
 			setSecretaryNumber(options).then((preferences) => {
 				context.commit('msConfigUpdateSucceeded', preferences)

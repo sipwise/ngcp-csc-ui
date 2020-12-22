@@ -31,7 +31,7 @@
 				class="add-time"
 				@click="enableAddForm()"
 			>
-				{{ $t('pages.callForward.times.addTimeButton') }}
+				{{ $t('Add Time') }}
 			</q-btn>
 		</div>
 	</div>

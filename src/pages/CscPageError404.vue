@@ -18,7 +18,7 @@
 				<div
 					class="text-h4"
 				>
-					{{ $t('notFound') }}
+					{{ $t('404 Not Found') }}
 				</div>
 			</q-card-section>
 			<q-card-actions

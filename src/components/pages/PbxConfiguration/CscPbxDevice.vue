@@ -17,14 +17,14 @@
 				<csc-list-item-subtitle
 					v-if="!expanded"
 				>
-					{{ $t('pbxConfig.deviceIdentifier') }}: {{ device.identifier }}
+					{{ $t('MAC address') }}: {{ device.identifier }}
 				</csc-list-item-subtitle>
 			</q-slide-transition>
 			<q-slide-transition>
 				<csc-list-item-subtitle
 					v-if="!expanded"
 				>
-					{{ $t('pbxConfig.deviceModel') }}: {{ profile.name }}
+					{{ $t('Phone model') }}: {{ profile.name }}
 				</csc-list-item-subtitle>
 			</q-slide-transition>
 		</template>
@@ -36,7 +36,7 @@
 				icon-color="negative"
 				@click="deleteDevice"
 			>
-				{{ $t('buttons.remove') }}
+				{{ $t('Remove') }}
 			</csc-list-menu-item>
 		</template>
 		<template
@@ -44,7 +44,7 @@
 		>
 			<q-input
 				v-model="changes.stationName"
-				:label="$t('pbxConfig.deviceStationName')"
+				:label="$t('Station name')"
 				@keyup.enter="save"
 			>
 				<template
@@ -60,7 +60,7 @@
 				</template>
 			</q-input>
 			<q-field
-				:label="$t('pbxConfig.deviceIdentifier')"
+				:label="$t('MAC address')"
 			>
 				<q-input
 					v-model="changes.identifier"

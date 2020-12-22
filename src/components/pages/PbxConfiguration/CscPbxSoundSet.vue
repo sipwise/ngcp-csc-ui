@@ -26,7 +26,7 @@
 				>
 					<q-checkbox
 						:value="soundSet.contract_default"
-						:label="$t('pbxConfig.soundSetContractDefault')"
+						:label="$t('Default')"
 						:left-label="true"
 						@input="saveAsDefault"
 					/>
@@ -39,7 +39,7 @@
 			<q-input
 				v-model="changes.name"
 				:error="$v.changes.name.$error"
-				:label="$t('pbxConfig.soundSetName')"
+				:label="$t('Name')"
 				@input="$v.changes.name.$touch"
 				@keyup.enter="save"
 			>
@@ -59,7 +59,7 @@
 			<q-input
 				v-model="changes.description"
 				:error="$v.changes.description.$error"
-				:label="$t('pbxConfig.soundSetDescription')"
+				:label="$t('Description')"
 				@input="$v.changes.description.$touch"
 				@keyup.enter="save"
 			>
@@ -77,7 +77,7 @@
 				</template>
 			</q-input>
 			<q-checkbox
-				:label="$t('pbxConfig.soundSetDefault')"
+				:label="$t('Default sound set for all seats and groups')"
 				:value="soundSet.contract_default"
 				@input="saveAsDefault"
 			/>
@@ -110,7 +110,7 @@
 				icon-color="negative"
 				@click="remove"
 			>
-				{{ $t('buttons.remove') }}
+				{{ $t('Remove') }}
 			</csc-list-menu-item>
 		</template>
 	</csc-list-item>

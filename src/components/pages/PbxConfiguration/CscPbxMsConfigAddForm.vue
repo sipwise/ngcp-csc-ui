@@ -6,7 +6,7 @@
 			map-options
 			:disable="loading || subscriberOptionsLoading"
 			:readonly="loading"
-			:label="$t('pbxConfig.msConfigSubscriberSelectionLabel')"
+			:label="$t('Select a manager')"
 			:options="subscriberOptions"
 		/>
 		<q-select
@@ -18,7 +18,7 @@
 			map-options
 			:disable="loading || numberOptionsLoading"
 			:readonly="loading"
-			:label="$t('pbxConfig.msConfigNumberSelectionLabel')"
+			:label="$t('Select secretary numbers')"
 			:options="numberOptions"
 		/>
 		<div
@@ -31,7 +31,7 @@
 				icon="clear"
 				@click="cancel()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				v-if="!loading"
@@ -41,7 +41,7 @@
 				icon="arrow_forward"
 				@click="save()"
 			>
-				{{ $t('pbxConfig.msConfigCreationLabel') }}
+				{{ $t('Create Config') }}
 			</q-btn>
 		</div>
 		<csc-object-spinner

@@ -2,7 +2,7 @@
 	<div class="dest-card">
 		<csc-destinations
 			ref="online"
-			:title="$t('pages.callForward.whenOnline')"
+			:title="$t('When I am online ...')"
 			:group="destinations.online"
 			group-name="cfu"
 			:timeset="timeset"
@@ -14,7 +14,7 @@
 			class="q-mb-lg"
 		/>
 		<csc-destinations
-			:title="$t('pages.callForward.whenBusy')"
+			:title="$t('When I am busy ...')"
 			:group="destinations.busy"
 			group-name="cfb"
 			:timeset="timeset"
@@ -23,7 +23,7 @@
 			class="q-mb-lg"
 		/>
 		<csc-destinations
-			:title="$t('pages.callForward.whenOffline')"
+			:title="$t('When I am offline ...')"
 			:group="destinations.offline"
 			group-name="cfna"
 			:timeset="timeset"
@@ -93,7 +93,7 @@ export default {
 				showGlobalError(this.removeDestinationError)
 			} else if (state === 'succeeded') {
 				// stopLoading()
-				showToast(this.$t('pages.callForward.removeSuccessMessage', {
+				showToast(this.$t('Removed destination {destination}', {
 					destination: this.lastRemovedDestination
 				}))
 				this.reloadDestinations(this.timeset)
@@ -107,7 +107,7 @@ export default {
 				showGlobalError(this.addDestinationError)
 			} else if (state === 'succeeded') {
 				// stopLoading()
-				showToast(this.$t('pages.callForward.addDestinationSuccessMessage', {
+				showToast(this.$t('Added destination {destination}', {
 					destination: this.lastAddedDestination
 				}))
 				this.reloadDestinations(this.timeset)
@@ -136,7 +136,7 @@ export default {
 				showGlobalError(this.updateOwnPhoneToggleError)
 			} else if (state === 'succeeded') {
 				this.reloadDestinations(this.timeset)
-				showToast(this.$t('pages.callForward.updateOwnPhoneToggleSuccessMessage', {
+				showToast(this.$t('Own phone is {toggle}', {
 					toggle: this.lastOwnPhoneToggle
 				}))
 			}
@@ -147,7 +147,7 @@ export default {
 			} else if (state === 'succeeded') {
 				this.$refs.online.hideModal()
 				this.reloadDestinations(this.timeset)
-				showToast(this.$t('pages.callForward.updateOwnPhoneTimeoutSuccessMessage', {
+				showToast(this.$t('Own phone timeout set to {timeout}', {
 					timeout: this.lastOwnPhoneTimeout
 				}))
 			}

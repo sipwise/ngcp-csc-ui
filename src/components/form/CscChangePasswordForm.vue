@@ -8,7 +8,7 @@
 			clearable
 			type="password"
 			hide-bottom-space
-			:label="$t('pbxConfig.typePassword')"
+			:label="$t('Password')"
 			:disable="loading"
 			:error="$v.password.$error"
 			:error-message="errorMessagePass"
@@ -27,7 +27,7 @@
 			clearable
 			type="password"
 			hide-bottom-space
-			:label="$t('pbxConfig.retypePassword')"
+			:label="$t('Password Retype')"
 			:disable="loading"
 			:error="$v.passwordRetype.$error"
 			:error-message="errorMessagePassRetype"
@@ -83,14 +83,14 @@ export default {
 	computed: {
 		errorMessagePass () {
 			if (!this.$v.password.passwordStrength) {
-				return this.$t('pbxConfig.errorPasswordStrength')
+				return this.$t('Password is not strong enough')
 			} else {
 				return ''
 			}
 		},
 		errorMessagePassRetype () {
 			if (!this.$v.passwordRetype.sameAsPassword) {
-				return this.$t('pbxConfig.errorPasswordNotEqual')
+				return this.$t('Passwords must be equal')
 			} else {
 				return ''
 			}

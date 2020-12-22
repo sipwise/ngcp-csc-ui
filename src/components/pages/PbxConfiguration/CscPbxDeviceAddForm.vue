@@ -6,7 +6,7 @@
 			hide-bottom-space
 			:disable="loading"
 			:readonly="loading"
-			:label="$t('pbxConfig.deviceStationName')"
+			:label="$t('Station name')"
 			:error="$v.formData.stationName.$error"
 			:error-message="stationNameErrorMessage"
 			@input="$v.formData.stationName.$touch"
@@ -16,7 +16,7 @@
 			hide-bottom-space
 			:disable="loading"
 			:readonly="loading"
-			:label="$t('pbxConfig.deviceIdentifier')"
+			:label="$t('MAC address')"
 			:error="$v.formData.identifier.$error"
 			:error-message="identifierErrorMessage"
 			@input="$v.formData.identifier.$touch"
@@ -40,7 +40,7 @@
 				:disable="loading"
 				@click="cancel"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				flat
@@ -49,7 +49,7 @@
 				:disable="$v.formData.$invalid || formData.profile === null || loading"
 				@click="submit"
 			>
-				{{ $t('pbxConfig.createDevice') }}
+				{{ $t('Create device') }}
 			</q-btn>
 		</div>
 		<csc-object-spinner
@@ -113,12 +113,12 @@ export default {
 	computed: {
 		stationNameErrorMessage () {
 			if (!this.$v.formData.stationName.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pbxConfig.deviceStationName')
+				return this.$t('{field} is required', {
+					field: this.$t('Station name')
 				})
 			} else if (!this.$v.formData.stationName.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('pbxConfig.deviceStationName'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('Station name'),
 					maxLength: this.$v.formData.stationName.$params.maxLength.max
 				})
 			} else {
@@ -127,11 +127,11 @@ export default {
 		},
 		identifierErrorMessage () {
 			if (!this.$v.formData.identifier.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pbxConfig.deviceIdentifier')
+				return this.$t('{field} is required', {
+					field: this.$t('MAC address')
 				})
 			} else if (!this.$v.formData.identifier.customMacAddress) {
-				return this.$t('validationErrors.macAddress')
+				return this.$t('Input a valid mac address')
 			} else {
 				return ''
 			}

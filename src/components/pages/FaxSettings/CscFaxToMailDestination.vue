@@ -9,7 +9,7 @@
 			slot="title"
 		>
 			<csc-list-item-title>
-				{{ $t('faxSettings.destinationItemTitle', {destination: destination.destination, filetype: destination.filetype}) }}
+				{{ $t('&lt;{destination}&gt; as {filetype}', {destination: destination.destination, filetype: destination.filetype}) }}
 			</csc-list-item-title>
 			<q-slide-transition>
 				<csc-list-item-subtitle
@@ -39,7 +39,7 @@
 				icon-color="negative"
 				@click="deleteDestination"
 			>
-				{{ $t('buttons.remove') }}
+				{{ $t('Remove') }}
 			</csc-list-menu-item>
 		</template>
 		<template slot="body">

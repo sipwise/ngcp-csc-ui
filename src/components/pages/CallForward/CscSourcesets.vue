@@ -11,12 +11,12 @@
 				:default="index === 0"
 				:count="destinationsCount(sourceset.destinationGroups)"
 				:name="sourceset.sourcesetName || 'always'"
-				:label="sourceset.sourcesetName || $t('pages.callForward.everyCaller')"
+				:label="sourceset.sourcesetName || $t('Every caller')"
 				icon="people"
 				@click="currentSourceSet = sourceset"
 			/>
 			<q-tab
-				:label="$t('buttons.addNew')"
+				:label="$t('Add new')"
 				name="addnew"
 				icon="add"
 			/>
@@ -77,7 +77,7 @@
 										header
 										class="text-uppercase"
 									>
-										{{ $t('pages.callForward.sources.sourcesTitleMode', {
+										{{ $t('{mode} of sources', {
 											mode: capitalizedMode(sourceset.sourcesetMode)}) }}
 									</q-item-label>
 								</q-item-section>
@@ -97,7 +97,7 @@
 										<csc-popup-menu-item
 											color="negative"
 											icon="delete"
-											:label="$t('buttons.remove')"
+											:label="$t('Remove')"
 											@click="removeSource(sourceset, sourceItem.source, index)"
 										/>
 									</csc-more-menu>
@@ -119,7 +119,7 @@
 								icon="add"
 								@click="openForm()"
 							>
-								{{ $t('pages.callForward.sources.addSourceButton') }}
+								{{ $t('Add source') }}
 							</q-btn>
 							<csc-sourcesets-form
 								v-if="sourcesetsFormEnabled"
@@ -156,7 +156,7 @@
 								<q-input
 									v-model="sourcesetName"
 									autofocus
-									:label="$t('pages.callForward.sources.sourceset')"
+									:label="$t('Sourceset')"
 									color="primary"
 									dense
 									@keyup.enter="addSourceset()"
@@ -165,7 +165,7 @@
 							<q-item-section>
 								<q-input
 									v-model="source"
-									:label="$t('pages.callForward.sources.source')"
+									:label="$t('Source')"
 									color="primary"
 									dense
 									@keyup.enter="addSourceset()"
@@ -193,7 +193,7 @@
 									class="sourceset-add-button"
 									@click="addSourceset()"
 								>
-									{{ $t('buttons.save') }}
+									{{ $t('Save') }}
 								</q-btn>
 							</q-item-section>
 						</q-item>
@@ -258,11 +258,11 @@ export default {
 			mode: 'whitelist',
 			modes: [
 				{
-					label: this.$t('pages.callForward.whitelist'),
+					label: this.$t('Whitelist'),
 					value: 'whitelist'
 				},
 				{
-					label: this.$t('pages.callForward.blacklist'),
+					label: this.$t('Blacklist'),
 					value: 'blacklist'
 				}
 			],
@@ -288,7 +288,7 @@ export default {
 		},
 		deleteSourcesetLabel () {
 			return this.$q.platform.is.mobile ? ''
-				: this.$t('pages.callForward.sources.removeSourcesetButton')
+				: this.$t('Delete sourceset')
 		}
 	},
 	watch: {
@@ -297,7 +297,7 @@ export default {
 			} else if (state === 'failed') {
 				showGlobalError(this.addSourceError)
 			} else if (state === 'succeeded') {
-				showToast(this.$t('pages.callForward.sources.addSourceSuccessMessage', {
+				showToast(this.$t('Added new source {source}', {
 					source: this.lastAddedSource
 				}))
 				this.$store.dispatch('callForward/loadSourcesets')
@@ -310,7 +310,7 @@ export default {
 			} else if (state === 'failed') {
 				showGlobalError(this.removeSourcesetError)
 			} else if (state === 'succeeded') {
-				showToast(this.$t('pages.callForward.sources.removeSourcesetSuccessMessage', {
+				showToast(this.$t('Removed sourceset {sourceset}', {
 					sourceset: this.lastRemovedSourceset
 				}))
 				this.loadAll()
@@ -323,7 +323,7 @@ export default {
 			} else if (state === 'failed') {
 				showGlobalError(this.removeSourceError)
 			} else if (state === 'succeeded') {
-				showToast(this.$t('pages.callForward.sources.removeSourceSuccessMessage', {
+				showToast(this.$t('Removed source {source}', {
 					source: this.lastRemovedSource
 				}))
 				this.loadAll()
@@ -338,8 +338,8 @@ export default {
 				this.alertDeleteLastSource()
 			} else {
 				this.$q.dialog({
-					title: this.$t('pages.callForward.sources.removeSourceDialogTitle'),
-					message: this.$t('pages.callForward.sources.removeSourceDialogText', {
+					title: this.$t('Remove call forward source'),
+					message: this.$t('You are about to remove the source entry for {source}', {
 						source: source
 					}),
 					color: 'negative',
@@ -359,7 +359,7 @@ export default {
 				enter: 'bounceInRight',
 				leave: 'bounceOutRight',
 				position: 'top-center',
-				html: this.$t('pages.callForward.sources.removeLastSourceDialogText'),
+				html: this.$t('Removing the last source entry is not allowed.'),
 				icon: 'warning',
 				dismissible: true
 			})
@@ -414,7 +414,7 @@ export default {
 					timeset: this.timesetName
 				})
 			} else {
-				showGlobalError(this.$t('pages.callForward.sources.fieldMissing'))
+				showGlobalError(this.$t('Both sourceset name and source is required. Please provide both and try again.'))
 			}
 		},
 		openForm () {
@@ -429,8 +429,8 @@ export default {
 		},
 		removeSourceset (sourceset) {
 			this.$q.dialog({
-				title: this.$t('pages.callForward.sources.removeSourcesetDialogTitle'),
-				message: this.$t('pages.callForward.sources.removeSourcesetDialogText', {
+				title: this.$t('Remove call forward sourceset'),
+				message: this.$t('You are about to remove the sourceset {sourceset}', {
 					sourceset: sourceset.sourcesetName
 				}),
 				color: 'negative',

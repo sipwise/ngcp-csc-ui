@@ -10,11 +10,11 @@
 				v-if="!isCallInitializing && !hasRtcEngineCapabilityEnabled"
 				class="q-mb-lg"
 			>
-				{{ $t('call.rtcEngineNotEnabled') }}
+				{{ $t('You can neither make a call nor receive one, since the RTC:engine is not active. If you operate a C5 CE then first upgrade to a C5 PRO to be able to use the RTC:engine.') }}
 			</csc-inline-alert-info>
 			<csc-input
 				id="csc-call-number-input"
-				:label="$t('call.number')"
+				:label="$t('Phone number')"
 				:value="callNumberInput"
 				:readonly="dialpadOpened"
 				:disable="!isCallEnabled"

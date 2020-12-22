@@ -8,7 +8,7 @@
 			class="self-center"
 		/>
 		<div v-else>
-			{{ $t('faxSettings.featureIsNotActive') }}
+			{{ $t('Mail To Fax feature is not active') }}
 		</div>
 	</div>
 	<div v-else>
@@ -20,7 +20,7 @@
 				<q-item-section>
 					<q-toggle
 						:value="mailToFaxSettingsModel.active"
-						:label="$t('faxSettings.active')"
+						:label="$t('Active')"
 						:disable="true"
 					/>
 				</q-item-section>
@@ -58,7 +58,7 @@
 						map-options
 						:disable="!dataLoaded"
 						:readonly="!dataLoaded"
-						:label="$t('faxSettings.secretKeyRenew')"
+						:label="$t('Secret Key Renew')"
 						:options="secretKeyRenewOptions"
 						@input="setChangedData('secret_key_renew', mailToFaxSettingsModel.secret_key_renew)"
 					>
@@ -81,7 +81,7 @@
 			<div class="col q-py-md q-pl-md">
 				<div class="row q-pb-xs">
 					<div class="col vertical-bottom">
-						<span class="vertical-middle">{{ $t('faxSettings.secretKeyRenewNotify') }}:</span>
+						<span class="vertical-middle">{{ $t('Secret Key Renew Notify') }}:</span>
 					</div>
 					<div class="col text-right">
 						<q-btn
@@ -91,7 +91,7 @@
 							:disable="!dataLoaded || showAddNewRenewEmail"
 							@click="openAddNewRenewEmail"
 						>
-							{{ $t('faxSettings.addEmail') }}
+							{{ $t('Add email') }}
 						</q-btn>
 					</div>
 				</div>
@@ -143,7 +143,7 @@
 			<div class="col q-pa-md">
 				<div class="row q-pb-xs">
 					<div class="col">
-						{{ $t('faxSettings.ACL') }}:
+						{{ $t('ACL') }}:
 					</div>
 					<div class="col text-right">
 						<q-btn
@@ -153,7 +153,7 @@
 							:disable="!dataLoaded || showAddNewACL"
 							@click="openAddNewACL"
 						>
-							{{ $t('faxSettings.addACL') }}
+							{{ $t('Add ACL') }}
 						</q-btn>
 					</div>
 				</div>
@@ -253,12 +253,12 @@ export default {
 			return this.mailToFaxSettingsInitialized && !this.loadingMail2FaxSettings
 		},
 		secretKeyFieldLabel () {
-			let label = this.$t('faxSettings.secretKeyField')
-			label += ' (' + this.$t('faxSettings.lastModifyTime') + ': '
+			let label = this.$t('Secret Key (empty=disabled)')
+			label += ' (' + this.$t('Last Modify Time') + ': '
 			if (this.mailToFaxSettings.last_secret_key_modify) {
 				label += this.mailToFaxSettings.last_secret_key_modify + ')'
 			} else {
-				label += this.$t('faxSettings.notModifiedYet') + ')'
+				label += this.$t('Not modified yet') + ')'
 			}
 			return label
 		},

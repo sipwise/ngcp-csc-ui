@@ -82,8 +82,8 @@
 			ref="confirmDeletionDialog"
 			title-icon="delete"
 			title-icon-color="negative"
-			:title="$t('conversations.deleteVoicemailTitle')"
-			:message="$t('conversations.deleteVoicemailText')"
+			:title="$t('Remove Voicemail')"
+			:message="$t('You are about to remove this Voicemail')"
 			@remove="deleteVoicemail({id:deletionId, tab: selectedTab})"
 			@cancel="deletionId=null"
 		/>
@@ -126,22 +126,22 @@ export default {
 		tabs () {
 			return [
 				{
-					label: this.$t('pages.conversations.tabLabelAll'),
+					label: this.$t('All'),
 					value: 'call-fax-voicemail',
 					icon: 'inbox'
 				},
 				{
-					label: this.$t('pages.conversations.tabLabelCalls'),
+					label: this.$t('Calls'),
 					value: 'call',
 					icon: 'call'
 				},
 				{
-					label: this.$t('pages.conversations.tabLabelVoicemails'),
+					label: this.$t('Voicemails'),
 					value: 'voicemail',
 					icon: 'voicemail'
 				},
 				{
-					label: this.$t('pages.conversations.tabLabelFaxes'),
+					label: this.$t('Faxes'),
 					value: 'fax',
 					icon: 'description'
 				}
@@ -175,13 +175,13 @@ export default {
 		},
 		noResultsMessage () {
 			if (this.selectedTab === 'call-fax-voicemail') {
-				return this.$t('pages.conversations.emptyListMessage')
+				return this.$t('No Calls, Voicemails or Faxes found')
 			} else if (this.selectedTab === 'call') {
-				return this.$t('pages.conversations.noCallsMessage')
+				return this.$t('No Calls found')
 			} else if (this.selectedTab === 'fax') {
-				return this.$t('pages.conversations.noFaxesMessage')
+				return this.$t('No Faxes found')
 			} else if (this.selectedTab === 'voicemail') {
-				return this.$t('pages.conversations.noVoicemailsMessage')
+				return this.$t('No Voicemails found')
 			} else {
 				return ''
 			}
@@ -190,28 +190,28 @@ export default {
 			if (this.isMobile) {
 				return ''
 			} else {
-				return this.$t('pages.conversations.tabLabelAll')
+				return this.$t('All')
 			}
 		},
 		labelCalls () {
 			if (this.isMobile) {
 				return ''
 			} else {
-				return this.$t('pages.conversations.tabLabelCalls')
+				return this.$t('Calls')
 			}
 		},
 		labelFaxes () {
 			if (this.isMobile) {
 				return ''
 			} else {
-				return this.$t('pages.conversations.tabLabelFaxes')
+				return this.$t('Faxes')
 			}
 		},
 		labelVoicemails () {
 			if (this.isMobile) {
 				return ''
 			} else {
-				return this.$t('pages.conversations.tabLabelVoicemails')
+				return this.$t('Voicemails')
 			}
 		}
 	},

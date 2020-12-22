@@ -111,7 +111,7 @@ export default function (/* { ssrContext } */) {
 				return _.get(state, 'route.path', '') === '/user/home'
 			},
 			title () {
-				return i18n.t('title')
+				return i18n.t('CSC')
 			}
 		},
 		mutations: {

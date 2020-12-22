@@ -16,7 +16,7 @@
 					:error-message="seatNameErrorMessage"
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.name')"
+					:label="$t('Name')"
 					@input="$v.data.name.$touch"
 				>
 					<template
@@ -37,7 +37,7 @@
 					:error-message="extensionErrorMessage"
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.extension')"
+					:label="$t('Extension')"
 					:hint="getExtensionHint"
 					@input="$v.data.extension.$touch"
 				>
@@ -68,7 +68,7 @@
 					map-options
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.aliasNumbers')"
+					:label="$t('Alias Numbers')"
 					:options="aliasNumberOptions"
 				/>
 				<q-select
@@ -81,7 +81,7 @@
 					map-options
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.groups')"
+					:label="$t('Groups')"
 					:options="groupOptions"
 				>
 					<template
@@ -100,7 +100,7 @@
 					map-options
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.soundSet')"
+					:label="$t('Sound Set')"
 					:options="soundSetOptions"
 				>
 					<template
@@ -113,7 +113,7 @@
 				</q-select>
 				<q-toggle
 					v-model="data.clirIntrapbx"
-					:label="$t('pbxConfig.toggleIntraPbx')"
+					:label="$t('Hide number within own PBX')"
 					:disable="loading"
 					class="q-pa-md"
 					dense
@@ -128,7 +128,7 @@
 				color="default"
 				icon="clear"
 				:disable="loading"
-				:label="$t('buttons.cancel')"
+				:label="$t('Cancel')"
 				@click="cancel()"
 			/>
 			<q-btn
@@ -137,7 +137,7 @@
 				icon="person"
 				:loading="loading"
 				:disable="$v.data.$invalid || loading"
-				:label="$t('pbxConfig.createSeat')"
+				:label="$t('Create seat')"
 				@click="save()"
 			/>
 		</div>
@@ -210,12 +210,12 @@ export default {
 		]),
 		seatNameErrorMessage () {
 			if (!this.$v.data.name.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pbxConfig.seatName')
+				return this.$t('{field} is required', {
+					field: this.$t('Seat name')
 				})
 			} else if (!this.$v.data.name.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('pbxConfig.seatName'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('Seat name'),
 					maxLength: this.$v.data.name.$params.maxLength.max
 				})
 			} else {
@@ -224,17 +224,17 @@ export default {
 		},
 		extensionErrorMessage () {
 			if (!this.$v.data.extension.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pbxConfig.extension')
+				return this.$t('{field} is required', {
+					field: this.$t('Extension')
 				})
 			} else if (!this.$v.data.extension.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('pbxConfig.extension'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('Extension'),
 					maxLength: this.$v.data.extension.$params.maxLength.max
 				})
 			} else if (!this.$v.data.extension.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('pbxConfig.extension')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('Extension')
 				})
 			} else if (!this.$v.data.extension.isInRange) {
 				return this.getExtensionHint
@@ -244,12 +244,12 @@ export default {
 		},
 		webPasswordErrorMessage () {
 			if (!this.$v.data.webPassword.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pbxConfig.webPassword')
+				return this.$t('{field} is required', {
+					field: this.$t('Password')
 				})
 			} else if (!this.$v.data.webPassword.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('pbxConfig.webPassword'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('Password'),
 					maxLength: this.$v.data.webPassword.$params.maxLength.max
 				})
 			} else {

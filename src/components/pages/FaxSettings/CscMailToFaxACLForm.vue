@@ -79,7 +79,7 @@
 				color="default"
 				icon="clear"
 				:disable="loading"
-				:label="$t('buttons.cancel')"
+				:label="$t('Cancel')"
 				@click="cancel()"
 			/>
 			<q-btn
@@ -144,7 +144,7 @@ export default {
 	computed: {
 		fromEmailErrorMessage () {
 			if (!this.$v.data.from_email.email) {
-				return this.$t('validationErrors.email')
+				return this.$t('Input a valid email address')
 			} else {
 				return ''
 			}

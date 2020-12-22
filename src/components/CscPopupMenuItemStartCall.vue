@@ -2,7 +2,7 @@
 	<csc-popup-menu-item
 		icon="call"
 		color="primary"
-		:label="$t('pages.conversations.buttons.call')"
+		:label="$t('Call back')"
 		@click="$emit('click', $event)"
 	/>
 </template>

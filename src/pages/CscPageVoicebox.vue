@@ -11,7 +11,7 @@
 					<csc-input-saveable
 						v-model="formData.pin"
 						icon="lock"
-						:label="$t('voicebox.label.changePin')"
+						:label="$t('Change PIN')"
 						:loading="pinLoading"
 						:value-changed="pinHasChanged"
 						:error="pinHasError"
@@ -30,7 +30,7 @@
 					<csc-input-saveable
 						v-model="formData.email"
 						icon="email"
-						:label="$t('voicebox.label.changeEmail')"
+						:label="$t('Change Email')"
 						:loading="emailLoading"
 						:value-changed="emailHasChanged"
 						:error="emailHasError"
@@ -92,7 +92,7 @@
 						ref="uploadBusy"
 						:icon="soundFileIcon"
 						:file-types="soundFileTypes"
-						:float-label="$t('voicebox.label.busyGreeting')"
+						:float-label="$t('Busy Greeting')"
 						:value="busyGreetingLabel"
 						:progress="busyGreetingUploadProgress"
 						:uploading="busyGreetingUploading"
@@ -114,7 +114,7 @@
 						ref="uploadUnavail"
 						:icon="soundFileIcon"
 						:file-types="soundFileTypes"
-						:float-label="$t('voicebox.label.unavailGreeting')"
+						:float-label="$t('Unavailable Greeting')"
 						:value="unavailableGreetingLabel"
 						:progress="unavailableGreetingUploadProgress"
 						:uploading="unavailableGreetingUploading"
@@ -235,13 +235,13 @@ export default {
 		},
 		pinErrorMessage () {
 			if (!this.$v.formData.pin.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('voicebox.pin'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('PIN'),
 					maxLength: this.$v.formData.pin.$params.maxLength.max
 				})
 			} else if (!this.$v.formData.pin.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('voicebox.pin')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('PIN')
 				})
 			} else if (this.pinUpdateFailed) {
 				return this.pinUpdateError
@@ -257,7 +257,7 @@ export default {
 		},
 		emailErrorMessage () {
 			if (!this.$v.formData.email.email) {
-				return this.$t('validationErrors.email')
+				return this.$t('Input a valid email address')
 			} else if (this.emailUpdateFailed) {
 				return this.emailUpdateError
 			} else {
@@ -271,7 +271,7 @@ export default {
 		},
 		pinUpdateSucceeded (succeeded) {
 			if (succeeded) {
-				showToast(this.$t('voicebox.updatePinSuccessMessage'))
+				showToast(this.$t('Changed PIN successfully.'))
 			}
 		},
 		emailValue (value) {
@@ -279,7 +279,7 @@ export default {
 		},
 		emailUpdateSucceeded (succeeded) {
 			if (succeeded) {
-				showToast(this.$t('voicebox.updateEmailSuccessMessage'))
+				showToast(this.$t('Changed email successfully'))
 			}
 		},
 		attachValue (value) {
@@ -351,9 +351,9 @@ export default {
 		},
 		busyGreetingDeletionConfirmation () {
 			this.$q.dialog({
-				title: this.$t('voicebox.deleteCustomDialogTitle'),
-				message: this.$t('voicebox.deleteCustomDialogText', {
-					type: this.$t('voicebox.busy')
+				title: this.$t('Reset greeting sound'),
+				message: this.$t('You are about to reset the custom {type} greeting sound to defaults', {
+					type: this.$t('busy')
 				}),
 				color: 'primary',
 				cancel: true,
@@ -369,9 +369,9 @@ export default {
 		},
 		unavailableGreetingDeletionConfirmation () {
 			this.$q.dialog({
-				title: this.$t('voicebox.deleteCustomDialogTitle'),
-				message: this.$t('voicebox.deleteCustomDialogText', {
-					type: this.$t('voicebox.unavailable')
+				title: this.$t('Reset greeting sound'),
+				message: this.$t('You are about to reset the custom {type} greeting sound to defaults', {
+					type: this.$t('unavailable')
 				}),
 				color: 'primary',
 				cancel: true,

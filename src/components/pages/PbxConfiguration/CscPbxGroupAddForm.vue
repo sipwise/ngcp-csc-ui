@@ -15,7 +15,7 @@
 					:error-message="groupNameErrorMessage"
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.groupName')"
+					:label="$t('Group Name')"
 					data-cy="group-name"
 					@input="$v.data.name.$touch"
 				/>
@@ -27,7 +27,7 @@
 					:error-message="extensionErrorMessage"
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.extension')"
+					:label="$t('Extension')"
 					:hint="getExtensionHint"
 					data-cy="group-extension"
 					@input="$v.data.extension.$touch"
@@ -40,7 +40,7 @@
 					hide-bottom-space
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.huntPolicy')"
+					:label="$t('Hunt Policy')"
 					:options="huntPolicyOptions"
 					data-cy="group-hunt-policy"
 				/>
@@ -52,8 +52,8 @@
 					:error-message="huntTimeoutErrorMessage"
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.huntTimeout')"
-					:suffix="$t('pbxConfig.seconds')"
+					:label="$t('Hunt Timeout')"
+					:suffix="$t('seconds')"
 					:min="1"
 					:max="3600"
 					data-cy="group-hunt-timeout"
@@ -73,7 +73,7 @@
 					hide-bottom-space
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.aliasNumbers')"
+					:label="$t('Alias Numbers')"
 					:options="aliasNumberOptions"
 					data-cy="group-alias-numbers"
 				/>
@@ -87,7 +87,7 @@
 					hide-bottom-space
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.seats')"
+					:label="$t('Seats')"
 					:options="seatOptions"
 					data-cy="group-seats"
 				/>
@@ -99,7 +99,7 @@
 					hide-bottom-space
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('pbxConfig.soundSet')"
+					:label="$t('Sound Set')"
 					:options="soundSetOptions"
 					data-cy="group-sound-set"
 				/>
@@ -114,7 +114,7 @@
 				data-cy="group-btn-clear"
 				@mousedown.native="cancel()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				v-if="!loading"
@@ -125,7 +125,7 @@
 				data-cy="group-btn-save"
 				@click="save()"
 			>
-				{{ $t('pbxConfig.createGroup') }}
+				{{ $t('Create group') }}
 			</q-btn>
 		</div>
 		<csc-object-spinner
@@ -209,12 +209,12 @@ export default {
 		]),
 		groupNameErrorMessage () {
 			if (!this.$v.data.name.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pbxConfig.groupName')
+				return this.$t('{field} is required', {
+					field: this.$t('Group Name')
 				})
 			} else if (!this.$v.data.name.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('pbxConfig.groupName'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('Group Name'),
 					maxLength: this.$v.data.name.$params.maxLength.max
 				})
 			} else {
@@ -223,17 +223,17 @@ export default {
 		},
 		extensionErrorMessage () {
 			if (!this.$v.data.extension.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pbxConfig.extension')
+				return this.$t('{field} is required', {
+					field: this.$t('Extension')
 				})
 			} else if (!this.$v.data.extension.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('pbxConfig.extension'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('Extension'),
 					maxLength: this.$v.data.extension.$params.maxLength.max
 				})
 			} else if (!this.$v.data.extension.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('pbxConfig.extension')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('Extension')
 				})
 			} else if (!this.$v.data.extension.isInRange) {
 				return this.getExtensionHint
@@ -243,21 +243,21 @@ export default {
 		},
 		huntTimeoutErrorMessage () {
 			if (!this.$v.data.huntTimeout.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pbxConfig.huntTimeoutSentence')
+				return this.$t('{field} is required', {
+					field: this.$t('Hunt timeout')
 				})
 			} else if (!this.$v.data.huntTimeout.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('pbxConfig.huntTimeoutSentence')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('Hunt timeout')
 				})
 			} else if (!this.$v.data.huntTimeout.minValue) {
-				return this.$t('validationErrors.minValueSecond', {
-					field: this.$t('pbxConfig.huntTimeoutSentence'),
+				return this.$t('{field} must be at least {minValue} second', {
+					field: this.$t('Hunt timeout'),
 					minValue: this.$v.data.huntTimeout.$params.minValue.min
 				})
 			} else if (!this.$v.data.huntTimeout.maxValue) {
-				return this.$t('validationErrors.maxValueSecond', {
-					field: this.$t('pbxConfig.huntTimeoutSentence'),
+				return this.$t('{field} must be maximum of {maxValue} seconds', {
+					field: this.$t('Hunt timeout'),
 					maxValue: this.$v.data.huntTimeout.$params.maxValue.max
 				})
 			} else {

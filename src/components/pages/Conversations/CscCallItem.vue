@@ -25,13 +25,13 @@
 			<q-item-label
 				caption
 			>
-				{{ $t('pages.conversations.callDuration') }}: {{ call.duration }}
+				{{ $t('Duration') }}: {{ call.duration }}
 			</q-item-label>
 			<q-item-label
 				caption
 			>
 				<span>
-					{{ $t('pages.conversations.cost') }}
+					{{ $t('Cost') }}
 				</span>
 				<span>
 					{{ totalCustomerCostRounded | wholeCurrency }}
@@ -141,16 +141,16 @@ export default {
 		},
 		direction () {
 			if (this.call.direction === 'out') {
-				return this.$t('pages.conversations.to')
+				return this.$t('to')
 			} else {
-				return this.$t('pages.conversations.from')
+				return this.$t('from')
 			}
 		},
 		typeTerm () {
 			if (this.call.call_type === 'call') {
-				return this.$t('pages.conversations.call')
+				return this.$t('Call')
 			} else {
-				return this.$t('pages.conversations.callForwarded')
+				return this.$t('Call forwarded')
 			}
 		},
 		icon () {

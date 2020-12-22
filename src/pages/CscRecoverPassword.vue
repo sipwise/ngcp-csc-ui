@@ -4,7 +4,7 @@
 	>
 		<csc-change-password-dialog
 			v-model="showDialog"
-			:title="$t('pages.login.recoverPassword')"
+			:title="$t('Recover password')"
 			:loading="isPasswordChanging"
 			@change-password="recoverPassword({ password: $event.password, token: token })"
 			@dialog-closed="redirectToLogin()"
@@ -54,7 +54,7 @@ export default {
 					position: 'top',
 					color: 'positive',
 					icon: 'check',
-					message: this.$t('toasts.passwordChangedSuccessfully')
+					message: this.$t('Password changed successfully')
 				})
 				this.redirectToLogin()
 			} else if (state === RequestState.failed) {
@@ -62,7 +62,7 @@ export default {
 					position: 'top',
 					color: 'negative',
 					icon: 'error',
-					message: this.changePasswordError || this.$t('toasts.errorPasswordReset')
+					message: this.changePasswordError || this.$t('There was an error, please retry later')
 				})
 			}
 		}

@@ -10,7 +10,7 @@
 			dark
 			dense
 			no-error-icon
-			:placeholder="$t('pages.newCallForward.dateRangeStartTime')"
+			:placeholder="$t('Start time')"
 			class="q-pa-sm"
 			@click="$refs.timeFromPopup.show()"
 		>
@@ -36,7 +36,7 @@
 							>
 								<q-btn
 									v-close-popup
-									:label="$t('buttons.close')"
+									:label="$t('Close')"
 									color="primary"
 									flat
 								/>
@@ -54,7 +54,7 @@
 			dark
 			dense
 			no-error-icon
-			:placeholder="$t('pages.newCallForward.dateRangeEndTime')"
+			:placeholder="$t('End time')"
 			class="q-pa-sm"
 			@click="$refs.timeToPopup.show()"
 		>
@@ -80,7 +80,7 @@
 							>
 								<q-btn
 									v-close-popup
-									:label="$t('buttons.close')"
+									:label="$t('Close')"
 									color="primary"
 									flat
 								/>
@@ -145,7 +145,7 @@ export default {
 					}
 				} else {
 					this.timeTo = null
-					showGlobalError(this.$t('pages.newCallForward.officeHoursInvalidTimerange'))
+					showGlobalError(this.$t('Please select a valid timerange'))
 				}
 			}
 		},

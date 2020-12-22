@@ -19,14 +19,14 @@
 				<csc-list-item-subtitle
 					v-if="!expanded"
 				>
-					{{ $t('pbxConfig.callQueueMaxLength') }}: {{ getDefaultData().max_queue_length }}
+					{{ $t('Maximum calls in queue') }}: {{ getDefaultData().max_queue_length }}
 				</csc-list-item-subtitle>
 			</q-slide-transition>
 			<q-slide-transition>
 				<csc-list-item-subtitle
 					v-if="!expanded"
 				>
-					{{ $t('pbxConfig.callQueueWrapUpTime') }}: {{ getDefaultData().queue_wrap_up_time }}
+					{{ $t('Wrap up time') }}: {{ getDefaultData().queue_wrap_up_time }}
 				</csc-list-item-subtitle>
 			</q-slide-transition>
 		</template>
@@ -36,7 +36,7 @@
 				icon-color="negative"
 				@click="remove"
 			>
-				{{ $t('buttons.remove') }}
+				{{ $t('Remove') }}
 			</csc-list-menu-item>
 		</template>
 		<template
@@ -44,7 +44,7 @@
 		>
 			<q-input
 				v-model="changes.max_queue_length"
-				:label="$t('pbxConfig.callQueueMaxLength')"
+				:label="$t('Maximum calls in queue')"
 				:error="$v.changes.max_queue_length.$error"
 				:error-message="queueMaxLengthErrorMessage"
 				@input="$v.changes.max_queue_length.$touch"
@@ -65,8 +65,8 @@
 			</q-input>
 			<q-input
 				v-model="changes.queue_wrap_up_time"
-				:suffix="$t('pbxConfig.seconds')"
-				:label="$t('pbxConfig.callQueueWrapUpTime')"
+				:suffix="$t('seconds')"
+				:label="$t('Wrap up time')"
 				:error="$v.changes.queue_wrap_up_time.$error"
 				:error-message="queueWrapUpTimeErrorMessage"
 				@input="$v.changes.queue_wrap_up_time.$touch"
@@ -178,17 +178,17 @@ export default {
 		},
 		queueMaxLengthErrorMessage () {
 			if (!this.$v.changes.max_queue_length.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('pbxConfig.queueLength')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('Queue Length')
 				})
 			} else if (!this.$v.changes.max_queue_length.minValue) {
-				return this.$t('validationErrors.minValueSecond', {
-					field: this.$t('pbxConfig.queueLength'),
+				return this.$t('{field} must be at least {minValue} second', {
+					field: this.$t('Queue Length'),
 					minValue: this.$v.changes.max_queue_length.$params.minValue.min
 				})
 			} else if (!this.$v.changes.max_queue_length.maxValue) {
-				return this.$t('validationErrors.maxValueSecond', {
-					field: this.$t('pbxConfig.queueLength'),
+				return this.$t('{field} must be maximum of {maxValue} seconds', {
+					field: this.$t('Queue Length'),
 					maxValue: this.$v.changes.max_queue_length.$params.maxValue.max
 				})
 			} else {
@@ -197,17 +197,17 @@ export default {
 		},
 		queueWrapUpTimeErrorMessage () {
 			if (!this.$v.changes.queue_wrap_up_time.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('pbxConfig.wrapUpTime')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('Wrap Up Time')
 				})
 			} else if (!this.$v.changes.queue_wrap_up_time.minValue) {
-				return this.$t('validationErrors.minValueSecond', {
-					field: this.$t('pbxConfig.wrapUpTime'),
+				return this.$t('{field} must be at least {minValue} second', {
+					field: this.$t('Wrap Up Time'),
 					minValue: this.$v.changes.queue_wrap_up_time.$params.minValue.min
 				})
 			} else if (!this.$v.changes.queue_wrap_up_time.maxValue) {
-				return this.$t('validationErrors.maxValueSecond', {
-					field: this.$t('pbxConfig.wrapUpTime'),
+				return this.$t('{field} must be maximum of {maxValue} seconds', {
+					field: this.$t('Wrap Up Time'),
 					maxValue: this.$v.changes.queue_wrap_up_time.$params.maxValue.max
 				})
 			} else {

@@ -6,7 +6,7 @@
 			map-options
 			:disable="loading || subscriberOptionsLoading"
 			:readonly="loading"
-			:label="$t('pbxConfig.queueExtensionName')"
+			:label="$t('Group/Seat/Pilot')"
 			:options="options"
 		/>
 		<q-input
@@ -15,7 +15,7 @@
 			:error-message="maxQueueLengthErrorMessage"
 			:disable="loading"
 			:readonly="loading"
-			:label="$t('pbxConfig.queueLength')"
+			:label="$t('Queue Length')"
 			default="3"
 			@input="$v.data.max_queue_length.$touch"
 		/>
@@ -25,8 +25,8 @@
 			:error-message="wrapUpTimeErrorMessage"
 			:disable="loading"
 			:readonly="loading"
-			:label="$t('pbxConfig.wrapUpTime')"
-			:suffix="$t('pbxConfig.seconds')"
+			:label="$t('Wrap Up Time')"
+			:suffix="$t('seconds')"
 			@input="$v.data.queue_wrap_up_time.$touch"
 		/>
 		<div
@@ -39,7 +39,7 @@
 				icon="clear"
 				@click="cancel()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				v-if="!loading"
@@ -49,7 +49,7 @@
 				icon="filter_none"
 				@click="save()"
 			>
-				{{ $t('pbxConfig.createConfig') }}
+				{{ $t('Create Call Queue') }}
 			</q-btn>
 		</div>
 		<csc-object-spinner
@@ -122,17 +122,17 @@ export default {
 	computed: {
 		maxQueueLengthErrorMessage () {
 			if (!this.$v.data.max_queue_length.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('pbxConfig.queueLength')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('Queue Length')
 				})
 			} else if (!this.$v.data.max_queue_length.minValue) {
-				return this.$t('validationErrors.minValueSecond', {
-					field: this.$t('pbxConfig.queueLength'),
+				return this.$t('{field} must be at least {minValue} second', {
+					field: this.$t('Queue Length'),
 					minValue: this.$v.data.max_queue_length.$params.minValue.min
 				})
 			} else if (!this.$v.data.max_queue_length.maxValue) {
-				return this.$t('validationErrors.maxValueSecond', {
-					field: this.$t('pbxConfig.queueLength'),
+				return this.$t('{field} must be maximum of {maxValue} seconds', {
+					field: this.$t('Queue Length'),
 					maxValue: this.$v.data.max_queue_length.$params.maxValue.max
 				})
 			} else {
@@ -141,17 +141,17 @@ export default {
 		},
 		wrapUpTimeErrorMessage () {
 			if (!this.$v.data.queue_wrap_up_time.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('pbxConfig.wrapUpTime')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('Wrap Up Time')
 				})
 			} else if (!this.$v.data.queue_wrap_up_time.minValue) {
-				return this.$t('validationErrors.minValueSecond', {
-					field: this.$t('pbxConfig.wrapUpTime'),
+				return this.$t('{field} must be at least {minValue} second', {
+					field: this.$t('Wrap Up Time'),
 					minValue: this.$v.data.queue_wrap_up_time.$params.minValue.min
 				})
 			} else if (!this.$v.data.queue_wrap_up_time.maxValue) {
-				return this.$t('validationErrors.maxValueSecond', {
-					field: this.$t('pbxConfig.wrapUpTime'),
+				return this.$t('{field} must be maximum of {maxValue} seconds', {
+					field: this.$t('Wrap Up Time'),
 					maxValue: this.$v.data.queue_wrap_up_time.$params.maxValue.max
 				})
 			} else {

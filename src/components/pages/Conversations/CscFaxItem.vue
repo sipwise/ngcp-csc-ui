@@ -13,7 +13,7 @@
 			<q-item-label
 				class="text-subtitle1"
 			>
-				{{ $t('pages.conversations.fax') }}
+				{{ $t('Fax') }}
 				{{ direction }}
 				{{ fax.caller | numberFormat }}
 			</q-item-label>
@@ -32,13 +32,13 @@
 				v-else-if="fax.pages === 1"
 				caption
 			>
-				{{ fax.pages }} {{ $t('pages.conversations.page') }}
+				{{ fax.pages }} {{ $t('page') }}
 			</q-item-label>
 			<q-item-label
 				v-else
 				caption
 			>
-				{{ fax.pages }} {{ $t('pages.conversations.pages') }}
+				{{ fax.pages }} {{ $t('pages') }}
 			</q-item-label>
 		</q-item-section>
 		<q-item-section
@@ -48,7 +48,7 @@
 				<csc-popup-menu-item
 					icon="file_download"
 					color="primary"
-					:label="$t('pages.conversations.buttons.downloadFax')"
+					:label="$t('Download fax')"
 					@click="downloadFax"
 				/>
 				<csc-popup-menu-item-start-call

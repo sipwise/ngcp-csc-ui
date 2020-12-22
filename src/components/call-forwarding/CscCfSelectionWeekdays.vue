@@ -7,7 +7,7 @@
 			<q-btn
 				v-for="(day, index) in days"
 				:key="day.value"
-				:label="$t(day.label)"
+				:label="day.label"
 				:class="(index > 0)?'q-ml-sm':''"
 				round
 				no-caps
@@ -31,7 +31,7 @@
 					v-for="(day) in days"
 					:key="day.value"
 					:name="'tab-' + day.value"
-					:label="$t(day.label)"
+					:label="day.label"
 					class="text-primary no-padding"
 					inline-label
 					outside-arrows

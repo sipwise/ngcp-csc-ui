@@ -8,7 +8,7 @@
 				<q-item-section>
 					<q-toggle
 						v-model="faxToMailSettings.active"
-						:label="$t('faxSettings.active')"
+						:label="$t('Active')"
 						:disable="!dataLoaded"
 						@input="setChangedData('active', !faxServerSettings.active)"
 					/>
@@ -26,7 +26,7 @@
 				<q-item-section>
 					<csc-input-saveable
 						v-model.trim="faxToMailSettings.name"
-						:label="$t('faxSettings.sendfaxHeaderName')"
+						:label="$t('Name in Fax Header for Sendfax')"
 						:disable="!dataLoaded"
 						:loading="loadingFaxServerSettings"
 						:value-changed="nameChanged"
@@ -39,7 +39,7 @@
 				<q-item-section>
 					<q-toggle
 						v-model="faxToMailSettings.t38"
-						:label="$t('faxSettings.T38')"
+						:label="$t('T38')"
 						:disable="!dataLoaded"
 						@input="setChangedData('t38', !faxServerSettings.t38)"
 					/>
@@ -57,7 +57,7 @@
 				<q-item-section>
 					<q-toggle
 						v-model="faxToMailSettings.ecm"
-						:label="$t('faxSettings.ECM')"
+						:label="$t('ECM')"
 						:disable="!dataLoaded"
 						@input="setChangedData('ecm', !faxServerSettings.ecm)"
 					/>
@@ -73,7 +73,7 @@
 			</q-item>
 			<q-item class="row">
 				<div class="col">
-					<span class="text-h6">{{ $t('faxSettings.destinations') }}:</span>
+					<span class="text-h6">{{ $t('Destinations') }}:</span>
 				</div>
 				<div class="col text-center">
 					<csc-spinner
@@ -88,7 +88,7 @@
 						:disable="!dataLoaded || showAddNewDestination"
 						@click="openAddNewDestination"
 					>
-						{{ $t('faxSettings.addDestination') }}
+						{{ $t('Add destination') }}
 					</q-btn>
 				</div>
 			</q-item>
@@ -117,7 +117,7 @@
 					v-if="!hasDestinations"
 					class="row justify-center"
 				>
-					{{ $t('faxSettings.noDestinationsCreatedYet') }}
+					{{ $t('No destinations created yet') }}
 				</q-item>
 				<csc-fax-to-mail-destination
 					v-for="(destinationItem, index) in faxToMailSettings.destinations"
@@ -252,8 +252,8 @@ export default {
 			this.$q.dialog({
 				component: CscRemoveDialog,
 				parent: this,
-				title: this.$t('faxSettings.deleteDestinationTitle'),
-				message: this.$t('faxSettings.deleteDestinationText', { destination: destinationId })
+				title: this.$t('Remove Destination'),
+				message: this.$t('You are about to remove destination {destination}', { destination: destinationId })
 			}).onOk(() => {
 				this.deleteDestination(destinationId)
 			})

@@ -11,7 +11,7 @@
 				slot="slot1"
 				icon="add"
 				color="primary"
-				:label="$t('pbxConfig.addSoundSet')"
+				:label="$t('Add Sound Set')"
 				@click="enableSoundSetAddForm"
 			/>
 		</csc-list-actions>
@@ -79,11 +79,11 @@
 			v-if="isSoundSetListEmpty && !isSoundSetListRequesting"
 			class="row justify-center csc-no-entities"
 		>
-			{{ $t('pbxConfig.noSoundSets') }}
+			{{ $t('No sound sets created yet') }}
 		</div>
 		<csc-remove-dialog
 			ref="removeDialog"
-			:title="$t('pbxConfig.soundSetRemovalDialogTitle')"
+			:title="$t('Remove sound set')"
 			:message="getSoundSetRemoveDialogMessage"
 			@remove="removeSoundSet"
 			@cancel="closeSoundSetRemovalDialog"

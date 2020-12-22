@@ -13,7 +13,7 @@
 						v-model="clirIntrapbx"
 						:disabled="isLoading"
 						class="csc-pbx-settings-toggle"
-						:label="clirIntrapbx ? $t('pbxConfig.selfPbxHidden') : $t('pbxConfig.selfPbxVisible')"
+						:label="clirIntrapbx ? $t('Your number is hidden to the callee within own PBX') : $t('Your number is visible to the callee within own PBX')"
 						checked-icon="visibility_off"
 						unchecked-icon="visibility"
 						@input="changeIntraPbx"
@@ -70,7 +70,7 @@ export default {
 				this.requestInProgress(true)
 				break
 			case RequestState.succeeded :
-				showToast(this.clirIntrapbx ? this.$t('pbxConfig.selfPbxHidden') : this.$t('pbxConfig.selfPbxVisible'))
+				showToast(this.clirIntrapbx ? this.$t('Your number is hidden to the callee within own PBX') : this.$t('Your number is visible to the callee within own PBX'))
 				this.requestInProgress(false)
 				break
 			case RequestState.failed :
@@ -92,7 +92,7 @@ export default {
 			'loadPreferences'
 		]),
 		changeIntraPbx () {
-			const msg = this.clirIntrapbx ? this.$t('pbxConfig.selfPbxHidden') : this.$t('pbxConfig.selfPbxVisible')
+			const msg = this.clirIntrapbx ? this.$t('Your number is hidden to the callee within own PBX') : this.$t('Your number is visible to the callee within own PBX')
 			this.setIntraPbx({
 				seatId: getSubscriberId(),
 				intraPbx: this.clirIntrapbx,

@@ -83,8 +83,8 @@
 				<csc-confirm-dialog
 					ref="confirmDialog"
 					title-icon="exit_to_app"
-					:title="$t('conferencing.exitDialogTitle')"
-					:message="$t('conferencing.exitDialogText')"
+					:title="$t('Leave conference')"
+					:message="$t('Leave current conference now!')"
 					@confirm="leave"
 				/>
 			</q-page>
@@ -329,8 +329,8 @@ export default {
 		},
 		muteLabel () {
 			return _.isEmpty(this.mutedState)
-				? this.$t('conferencing.muteAll')
-				: this.$t('conferencing.unmuteAll')
+				? this.$t('Mute all')
+				: this.$t('Unmute all')
 		},
 		async join (conferenceId) {
 			if (this.hasConferenceId) {

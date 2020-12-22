@@ -22,7 +22,7 @@
 					<template
 						v-if="currentSecretaryNumbers.length > 0"
 					>
-						{{ $t('pbxConfig.msConfigNumbersLabel') }}:
+						{{ $t('Secretary numbers') }}:
 						<span
 							v-for="number in currentSecretaryNumbers"
 							:key="number"
@@ -44,7 +44,7 @@
 								color="info"
 								size="24px"
 							/>
-							{{ $t('pbxConfig.msConfigNoSecretaryNumbers') }}
+							{{ $t('No numbers assigned') }}
 						</span>
 					</template>
 				</csc-list-item-subtitle>
@@ -56,7 +56,7 @@
 				icon-color="negative"
 				@click="remove"
 			>
-				{{ $t('buttons.remove') }}
+				{{ $t('Remove') }}
 			</csc-list-menu-item>
 		</template>
 		<template
@@ -70,7 +70,7 @@
 				chips
 				:disable="loading || numberOptionsLoading"
 				:readonly="loading"
-				:label="$t('pbxConfig.msConfigNumberSelectionLabel')"
+				:label="$t('Select secretary numbers')"
 				:options="numberOptions"
 			>
 				<template

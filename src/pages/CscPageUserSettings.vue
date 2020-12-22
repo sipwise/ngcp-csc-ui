@@ -55,7 +55,7 @@ export default {
 	watch: {
 		changePasswordState (state) {
 			if (state === RequestState.succeeded) {
-				showToast(this.$t('changePasswordToast'))
+				showToast(this.$t('Your password has been changed successfully'))
 			} else if (state === RequestState.failed) {
 				showGlobalError(this.changePasswordError)
 			}

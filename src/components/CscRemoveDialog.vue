@@ -18,7 +18,7 @@
 			flat
 			@click="remove"
 		>
-			{{ $t('buttons.remove') }}
+			{{ $t('Remove') }}
 		</q-btn>
 	</csc-dialog>
 </template>

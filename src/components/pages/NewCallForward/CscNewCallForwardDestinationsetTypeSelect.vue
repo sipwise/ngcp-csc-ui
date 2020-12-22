@@ -4,19 +4,19 @@
 			class="csc-cf-dest-type"
 			@click="addDestinationsetUnconditional()"
 		>
-			{{ $t('pages.newCallForward.unconditionalLabel') }}
+			{{ $t('If available') }}
 		</div>
 		<div
 			class="csc-cf-dest-type"
 			@click="addDestinationsetOffline()"
 		>
-			{{ $t('pages.newCallForward.offlineLabel') }}
+			{{ $t('If not available') }}
 		</div>
 		<div
 			class="csc-cf-dest-type"
 			@click="addDestinationsetBusy()"
 		>
-			{{ $t('pages.newCallForward.busyLabel') }}
+			{{ $t('If busy') }}
 		</div>
 	</div>
 </template>

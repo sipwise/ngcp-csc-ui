@@ -9,21 +9,21 @@
 				icon="mic"
 				color="primary"
 			/>
-			<q-item-main :label="$t('startAudioCall')" />
+			<q-item-main :label="$t('Audio Only')" />
 		</q-item>
 		<q-item @click="initCall('audioVideo')">
 			<q-item-side
 				icon="videocam"
 				color="primary"
 			/>
-			<q-item-main :label="$t('startVideoCall')" />
+			<q-item-main :label="$t('Audio + Video')" />
 		</q-item>
 		<q-item @click="initCall('audioScreen')">
 			<q-item-side
 				icon="computer"
 				color="primary"
 			/>
-			<q-item-main :label="$t('startScreenSharing')" />
+			<q-item-main :label="$t('Audio + Screen')" />
 		</q-item>
 	</q-list>
 </template>

@@ -45,7 +45,7 @@
 					icon="clear"
 					color="white"
 					flat
-					:label="$t('buttons.cancel')"
+					:label="$t('Cancel')"
 					@click="cancel"
 				/>
 				<slot

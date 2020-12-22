@@ -20,7 +20,7 @@ export default {
 		},
 		createFaxError (state) {
 			return state.createFaxError ||
-                i18n.t('communication.createFaxErrorMessage')
+                i18n.t('An error occured while trying to send the fax. Please try again')
 		}
 	},
 	mutations: {

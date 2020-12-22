@@ -13,9 +13,9 @@
 				<span
 					v-if="groupSourceset"
 				>
-					{{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+					{{ $t(' and') }}
 					<span class="csc-cf-from-link">
-						{{ $t('pages.newCallForward.fromLabelShort') +'"'+ groupSourceset +'"' }}
+						{{ $t(' call from ') +'"'+ groupSourceset +'"' }}
 						<q-menu
 							ref="sourcesListEditMenu"
 						>
@@ -34,9 +34,9 @@
 				<span
 					v-if="groupTimeset && !isRange"
 				>
-					{{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+					{{ $t(' and') }}
 					<span class="csc-cf-from-link">
-						{{ $t('pages.newCallForward.dateIsShort') + groupTimeset }}
+						{{ $t(' date is ') + groupTimeset }}
 					</span>
 					<q-menu
 						ref="dayWidget"
@@ -53,7 +53,7 @@
 									color="primary"
 									icon="clear"
 								>
-									{{ $t('buttons.close') }}
+									{{ $t('Close') }}
 								</q-btn>
 								<q-btn
 									v-close-popup
@@ -62,7 +62,7 @@
 									icon="delete"
 									@click="showConfirmDeleteTimesetDialog"
 								>
-									{{ $t('buttons.remove') }}
+									{{ $t('Remove') }}
 								</q-btn>
 							</div>
 						</q-date>
@@ -70,8 +70,8 @@
 					<csc-confirm-dialog
 						ref="confirmDeleteTimesetDialog"
 						title-icon="delete"
-						:title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: groupTimeset})"
-						:message="$t('pages.newCallForward.cancelTimesetText', {name: groupTimeset})"
+						:title="$t('Delete {name} timeset', {name: groupTimeset})"
+						:message="$t('You are about to delete  {name} timeset', {name: groupTimeset})"
 						@confirm="deleteTimeset"
 					/>
 
@@ -79,12 +79,12 @@
 				<span
 					v-if="groupTimeset && isRange"
 				>
-					{{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+					{{ $t(' and') }}
 					<span
 						ref="isRangeLink"
 						class="csc-cf-from-link"
 					>
-						{{ $t('pages.newCallForward.dateRangeShort') + groupTimeRange }}
+						{{ $t(' date range is ') + groupTimeRange }}
 						<q-menu
 							ref="editDateRangeMenu"
 							@hide="resetAction()"
@@ -101,8 +101,8 @@
 							<csc-confirm-dialog
 								ref="confirmDeleteTimesetDialog"
 								title-icon="delete"
-								:title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: groupTimeRange})"
-								:message="$t('pages.newCallForward.cancelTimesetText', {name: groupTimeRange})"
+								:title="$t('Delete {name} timeset', {name: groupTimeRange})"
+								:message="$t('You are about to delete  {name} timeset', {name: groupTimeRange})"
 								@confirm="deleteTimeset"
 							/>
 						</q-menu>
@@ -111,7 +111,7 @@
 				<span
 					v-if="isWeekdays && !isOfficeHours"
 				>
-					{{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+					{{ $t(' and') }}
 					<span
 						ref="isWeekdayLink"
 						class="csc-cf-from-link"
@@ -135,7 +135,7 @@
 				<span
 					v-if="isOfficeHours"
 				>
-					{{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+					{{ $t(' and') }}
 					<span
 						ref="isOfficeHoursLink"
 						class="csc-cf-from-link"
@@ -162,9 +162,9 @@
 					v-if="isTempGroup || !(groupSourceset && groupTimeset || groupSourceset && isWeekdays || groupTimeset && isWeekdays )"
 					class="csc-cf-destination-add-condition"
 				>
-					{{ $t('pages.newCallForward.conditionBtnLabelPrefix') }}
+					{{ $t(' and') }}
 					<span class="csc-cf-from-link">
-						{{ $t('pages.newCallForward.conditionBtnLabel') }}
+						{{ $t(' condition') }}
 					</span>
 					<q-menu
 						ref="conditions"
@@ -179,7 +179,7 @@
 								clickable
 								@click="()=>{action = 'addFromCondition'}"
 							>
-								<q-item-section>{{ $t('pages.newCallForward.fromLabel') }}</q-item-section>
+								<q-item-section>{{ $t('If call from ...') }}</q-item-section>
 							</q-item>
 							<q-item
 								v-if="isTempGroup || !hasTimeset"
@@ -187,7 +187,7 @@
 								clickable
 								@click="()=>{action = 'addDateIsCondition'}"
 							>
-								<q-item-section>{{ $t('pages.newCallForward.dateIsLabel') }}</q-item-section>
+								<q-item-section>{{ $t('If date is ...') }}</q-item-section>
 							</q-item>
 							<q-item
 								v-if="isTempGroup || !hasTimeset"
@@ -195,7 +195,7 @@
 								clickable
 								@click="()=>{action = 'addDateRangeCondition'}"
 							>
-								<q-item-section>{{ $t('pages.newCallForward.dateRangeLabel') }}</q-item-section>
+								<q-item-section>{{ $t('If date range is ...') }}</q-item-section>
 							</q-item>
 							<q-item
 								v-if="isTempGroup || !hasTimeset"
@@ -203,7 +203,7 @@
 								clickable
 								@click="()=>{action = 'addWeekdayCondition'}"
 							>
-								<q-item-section>{{ $t('pages.newCallForward.weekdaysLabel') }}</q-item-section>
+								<q-item-section>{{ $t('If weekdays are ...') }}</q-item-section>
 							</q-item>
 							<q-item
 								v-if="isTempGroup || !hasTimeset"
@@ -211,7 +211,7 @@
 								clickable
 								@click="()=>{action = 'addOfficeHoursCondition'}"
 							>
-								<q-item-section>{{ $t('pages.newCallForward.officeHoursLabel') }}</q-item-section>
+								<q-item-section>{{ $t('If office hours are ...') }}</q-item-section>
 							</q-item>
 						</q-list>
 					</q-menu>
@@ -246,7 +246,7 @@
 										color="primary"
 										icon="clear"
 									>
-										{{ $t('buttons.close') }}
+										{{ $t('Close') }}
 									</q-btn>
 									<q-btn
 										v-close-popup
@@ -255,7 +255,7 @@
 										icon="delete"
 										@click="showConfirmDeleteTimesetDialog"
 									>
-										{{ $t('buttons.remove') }}
+										{{ $t('Remove') }}
 									</q-btn>
 								</div>
 							</q-date>
@@ -322,8 +322,8 @@
 				<csc-confirm-dialog
 					ref="confirmDialog"
 					title-icon="delete"
-					:title="$t('pages.newCallForward.cancelGroupDialogTitle', {groupName: group.name})"
-					:message="$t('pages.newCallForward.cancelGroupDialogText', {groupName: group.name})"
+					:title="$t('Delete {groupName} forwarding group', {groupName: group.name})"
+					:message="$t('You are about to delete {groupName} call forwarding group', {groupName: group.name})"
 					@confirm="confirmDeleteGroup"
 				/>
 				<q-spinner-dots
@@ -391,7 +391,7 @@
 							color="primary"
 							size="24px"
 						/>
-						{{ $t('pages.newCallForward.addDestinationLabel') }}
+						{{ $t('Add destination') }}
 						<q-menu
 							ref="destTypeMenu"
 							:auto-close="true"
@@ -432,6 +432,7 @@ import {
 import {
 	date
 } from 'quasar'
+import { WeekdayTranslationMap } from 'src/filters/date'
 import CscConfirmDialog from '../../CscConfirmationDialog'
 import CscNewCallForwardDestination from './CscNewCallForwardDestination'
 import CscNewCallForwardAddDestinationForm from './CscNewCallForwardAddDestinationForm'
@@ -511,17 +512,17 @@ export default {
 			switch (this.group.name) {
 			case 'csc-unconditional':
 			case 'csc-timeout':
-				title = `${this.$t('pages.newCallForward.titles.timeoutGroup')}`
+				title = `${this.$t('If available')}`
 				break
 			case 'csc-unconditional-from':
 			case 'csc-timeout-from':
-				title = `${this.$t('pages.newCallForward.titles.timeoutGroupFromPre')}`
+				title = `${this.$t('If available and ')}`
 				break
 			case 'csc-offline':
-				title = `${this.$t('pages.newCallForward.titles.offlineGroup')}`
+				title = `${this.$t('If not available')}`
 				break
 			case 'csc-busy':
-				title = `${this.$t('pages.newCallForward.titles.busyGroup')}`
+				title = `${this.$t('If busy')}`
 				break
 			}
 			return title
@@ -583,11 +584,11 @@ export default {
 		},
 		weekdaysLabelShort () {
 			return this.timeSet.times.length > 1
-				? `${this.$t('pages.newCallForward.weekdaysLabelShort')}`
-				: `${this.$t('pages.newCallForward.weekdayLabelShort')}`
+				? `${this.$t(' weekdays are ')}`
+				: `${this.$t(' weekday is ')}`
 		},
 		officeHoursLabelShort () {
-			return this.$tc('pages.newCallForward.officeHoursLabelShort', this.timeSet.times.length)
+			return this.$tc(' office hour is | office hours are', this.timeSet.times.length)
 		},
 		groupWeekdays () {
 			let times = _.cloneDeep(_.get(this.timeSet, 'times', []))
@@ -635,7 +636,7 @@ export default {
 			return this.groupTimeset || this.isRange || this.isWeekdays
 		},
 		toggleLabel () {
-			return this.toggleDefaultNumber ? `${this.$t('pages.newCallForward.primarNumberEnabled')}` : `${this.$t('pages.newCallForward.primarNumberDisabled')}`
+			return this.toggleDefaultNumber ? `${this.$t('All calls go to the primary number')}` : `${this.$t('No call goes to primary number')}`
 		},
 		isTimeoutOrUnconditional () {
 			return this.group.name.includes('unconditional') || this.group.name.includes('timeout')
@@ -860,7 +861,7 @@ export default {
 		parseWeekDays (times) {
 			const weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 			return times
-				.map(time => this.$t('pages.callForward.times.' + weekDays[Number(time.wday) - 1]))
+				.map(time => WeekdayTranslationMap[weekDays[Number(time.wday) - 1]])
 				.join(', ')
 		},
 		checkOfficeHoursForAllDays (times) {

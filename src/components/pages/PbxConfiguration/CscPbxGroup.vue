@@ -17,7 +17,7 @@
 				<csc-list-item-subtitle
 					v-if="!expanded"
 				>
-					{{ $t('pbxConfig.extension') }}: {{ group.pbx_extension }}
+					{{ $t('Extension') }}: {{ group.pbx_extension }}
 				</csc-list-item-subtitle>
 			</q-slide-transition>
 			<q-slide-transition>
@@ -27,7 +27,7 @@
 					<span
 						v-if="group.pbx_groupmember_ids.length > 0"
 					>
-						{{ $t('pbxConfig.seats') }}:
+						{{ $t('Seats') }}:
 						<span
 							v-for="seatId in group.pbx_groupmember_ids"
 							:key="seatId"
@@ -48,7 +48,7 @@
 							color="info"
 							size="24px"
 						/>
-						{{ $t('pbxConfig.noSeatAssigned') }}
+						{{ $t('No seats') }}
 					</span>
 				</csc-list-item-subtitle>
 			</q-slide-transition>
@@ -61,13 +61,13 @@
 				icon-color="negative"
 				@click="deleteSeat"
 			>
-				{{ $t('buttons.remove') }}
+				{{ $t('Remove') }}
 			</csc-list-menu-item>
 		</template>
 		<template slot="body">
 			<q-input
 				v-model="changes.name"
-				:label="$t('pbxConfig.name')"
+				:label="$t('Name')"
 				@keyup.enter="save"
 			>
 				<template
@@ -87,7 +87,7 @@
 				hide-hint
 				:error="$v.changes.extension.$error"
 				:error-message="extensionErrorMessage"
-				:label="$t('pbxConfig.extension')"
+				:label="$t('Extension')"
 				:hint="getExtensionHint"
 				@keyup.enter="save"
 				@input="$v.changes.extension.$touch"
@@ -108,14 +108,14 @@
 				readonly
 				disable
 				:value="getPrimaryNumber"
-				:label="$t('pbxConfig.primaryNumber')"
+				:label="$t('Primary Number')"
 			/>
 			<q-select
 				v-model="changes.huntPolicy"
 				emit-value
 				map-options
 				radio
-				:label="$t('pbxConfig.huntPolicy')"
+				:label="$t('Hunt Policy')"
 				:options="huntPolicyOptions"
 			>
 				<template
@@ -132,7 +132,7 @@
 			</q-select>
 			<q-input
 				v-model="changes.huntTimeout"
-				:label="$t('pbxConfig.huntTimeout')"
+				:label="$t('Hunt Timeout')"
 				@keyup.enter="save"
 			>
 				<template
@@ -153,7 +153,7 @@
 				map-options
 				use-chips
 				multiple
-				:label="$t('pbxConfig.aliasNumbers')"
+				:label="$t('Alias Numbers')"
 				:options="aliasNumberOptions"
 			>
 				<template
@@ -174,7 +174,7 @@
 				map-options
 				use-chips
 				multiple
-				:label="$t('pbxConfig.seats')"
+				:label="$t('Seats')"
 				:options="seatOptions"
 			>
 				<template
@@ -194,7 +194,7 @@
 				emit-value
 				map-options
 				radio
-				:label="$t('pbxConfig.soundSet')"
+				:label="$t('Sound Set')"
 				:options="soundSetOptions"
 			>
 				<template
@@ -214,7 +214,7 @@
 				icon="filter_none"
 				flat
 				color="primary"
-				:label="$t('pbxConfig.callQueue')"
+				:label="$t('Call Queue')"
 				@click="jumpToCallQueue"
 			/>
 		</template>

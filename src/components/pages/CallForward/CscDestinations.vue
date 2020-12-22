@@ -34,43 +34,43 @@
 						overline
 						class="text-uppercase"
 					>
-						{{ $t('pages.callForward.firstRing') }} {{ $t('pages.callForward.ownPhone') }}
+						{{ $t('first ring') }} {{ $t('own phone') }}
 					</q-item-label>
 					<q-item-label
 						v-if="ownPhone"
 						class="text-subtitle2"
 					>
-						{{ $t('pages.callForward.for') }} {{ ownPhoneTimeout || 0 }} {{ $t('pages.callForward.secs') }}
+						{{ $t('for') }} {{ ownPhoneTimeout || 0 }} {{ $t('secs') }}
 					</q-item-label>
 					<q-item-label
 						v-if="!ownPhone"
 						overline
 						class="text-uppercase"
 					>
-						{{ $t('pages.callForward.ownPhoneDisabled') }}
+						{{ $t('do not ring own phone') }}
 					</q-item-label>
 					<!--					<div-->
 					<!--						v-if="!isMobile"-->
 					<!--					>-->
 					<!--						<span v-if="ownPhone">-->
 					<!--							<span>-->
-					<!--								{{ $t('pages.callForward.firstRing') }}-->
+					<!--								{{ $t('first ring') }}-->
 					<!--							</span>-->
 					<!--							<span>-->
-					<!--								{{ $t('pages.callForward.ownPhone') }}-->
+					<!--								{{ $t('own phone') }}-->
 					<!--							</span>-->
 					<!--							<span>-->
-					<!--								{{ $t('pages.callForward.for') }}-->
+					<!--								{{ $t('for') }}-->
 					<!--							</span>-->
 					<!--							<span>-->
 					<!--								{{ ownPhoneTimeout || 0 }}-->
 					<!--							</span>-->
 					<!--							<span>-->
-					<!--								{{ $t('pages.callForward.secs') }}-->
+					<!--								{{ $t('secs') }}-->
 					<!--							</span>-->
 					<!--						</span>-->
 					<!--						<span v-else>-->
-					<!--							{{ $t('pages.callForward.ownPhoneDisabled') }}-->
+					<!--							{{ $t('do not ring own phone') }}-->
 					<!--						</span>-->
 					<!--					</div>-->
 
@@ -80,32 +80,32 @@
 					<!--						<div-->
 					<!--							v-if="ownPhone"-->
 					<!--						>-->
-					<!--							{{ $t('pages.callForward.ownPhone') }}-->
+					<!--							{{ $t('own phone') }}-->
 					<!--						</div>-->
 					<!--						<div-->
 					<!--							v-else-->
 					<!--						>-->
-					<!--							{{ $t('pages.callForward.ownPhoneDisabled') }}-->
+					<!--							{{ $t('do not ring own phone') }}-->
 					<!--						</div>-->
 					<!--						<div-->
 					<!--							v-if="ownPhone"-->
 					<!--						>-->
 					<!--							<span v-if="ownPhone">-->
 					<!--								<span>-->
-					<!--									{{ $t('pages.callForward.firstRing') }}-->
+					<!--									{{ $t('first ring') }}-->
 					<!--								</span>-->
 					<!--								<span>-->
-					<!--									{{ $t('pages.callForward.for') }}-->
+					<!--									{{ $t('for') }}-->
 					<!--								</span>-->
 					<!--								<span class="dest-values">-->
 					<!--									{{ ownPhoneTimeout || 0 }}-->
 					<!--								</span>-->
 					<!--								<span>-->
-					<!--									{{ $t('pages.callForward.secs') }}-->
+					<!--									{{ $t('secs') }}-->
 					<!--								</span>-->
 					<!--							</span>-->
 					<!--							<span v-else>-->
-					<!--								{{ $t('pages.callForward.ownPhoneDisabled') }}-->
+					<!--								{{ $t('do not ring own phone') }}-->
 					<!--							</span>-->
 					<!--						</div>-->
 					<!--					</div>-->
@@ -135,7 +135,7 @@
 						/>
 						<csc-popup-menu-item
 							icon="edit"
-							:label="$t('pages.callForward.editTimeout')"
+							:label="$t('Edit timeout')"
 							@click="showModal()"
 						/>
 					</csc-more-menu>
@@ -160,7 +160,7 @@
 					<!--								/>-->
 					<!--							</q-item>-->
 					<!--							<q-item @click="showModal();$refs.popover.close()">-->
-					<!--								<q-item-main :label="$t('pages.callForward.editTimeout')" />-->
+					<!--								<q-item-main :label="$t('Edit timeout')" />-->
 					<!--								<q-item-side-->
 					<!--									icon="fa-edit"-->
 					<!--									color="secondary"-->
@@ -179,7 +179,7 @@
 						class="text-uppercase"
 						overline
 					>
-						{{ $t('pages.callForward.forwardToNowhere') }}
+						{{ $t('forward to nowhere') }}
 					</q-item-label>
 				</q-item-section>
 			</q-item>
@@ -211,15 +211,15 @@
 			<q-card>
 				<q-card-section>
 					<div class="title">
-						{{ $t('pages.callForward.editTimeout') }}
+						{{ $t('Edit timeout') }}
 					</div>
 				</q-card-section>
 				<q-card-section>
 					<q-input
 						v-if="ownPhone"
 						v-model="editTimeout"
-						:suffix="$t('pages.callForward.seconds')"
-						:label="$t('pages.callForward.timeout')"
+						:suffix="$t('seconds')"
+						:label="$t('Timeout')"
 						:error="$v.editTimeout.$error"
 						:error-message="errorMessage"
 						@input="$v.editTimeout.$touch"
@@ -233,7 +233,7 @@
 						color="default"
 						@click="hideModal"
 					>
-						{{ $t('buttons.cancel') }}
+						{{ $t('Cancel') }}
 					</q-btn>
 					<q-btn
 						flat
@@ -241,7 +241,7 @@
 						color="negative"
 						@click="resetTimeout"
 					>
-						{{ $t('buttons.reset') }}
+						{{ $t('Reset') }}
 					</q-btn>
 					<q-btn
 						flat
@@ -250,7 +250,7 @@
 						:disable="$v.editTimeout.$error"
 						@click="updateTimeout"
 					>
-						{{ $t('buttons.save') }}
+						{{ $t('Save') }}
 					</q-btn>
 				</q-card-actions>
 			</q-card>
@@ -339,16 +339,16 @@ export default {
 		},
 		errorMessage () {
 			if (!this.$v.editTimeout.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pages.callForward.timeout')
+				return this.$t('{field} is required', {
+					field: this.$t('Timeout')
 				})
 			} else if (!this.$v.editTimeout.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('pages.callForward.timeout')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('Timeout')
 				})
 			} else if (!this.$v.editTimeout.minValue) {
-				return this.$t('validationErrors.minValueSecond', {
-					field: this.$t('pages.callForward.timeout'),
+				return this.$t('{field} must be at least {minValue} second', {
+					field: this.$t('Timeout'),
 					minValue: this.$v.editTimeout.$params.minValue.min
 				})
 			} else {
@@ -393,9 +393,9 @@ export default {
 		},
 		toggleTimeoutLabel () {
 			const mode = this.ownPhone
-				? this.$t('pages.callForward.disable')
-				: this.$t('pages.callForward.enable')
-			return this.$t('pages.callForward.toggleTimeout', {
+				? this.$t('Disable')
+				: this.$t('Enable')
+			return this.$t('{mode} own phone', {
 				mode: mode
 			})
 		}

@@ -108,24 +108,24 @@ export default {
 		},
 		getSeatRemoveDialogMessage (state, getters) {
 			if (state.seatRemoving !== null) {
-				return i18n.t('pbxConfig.removeSeatText', {
+				return i18n.t('You are about to remove seat {seat}', {
 					seat: getters.getSeatRemovingName
 				})
 			}
 			return ''
 		},
 		getSeatCreationToastMessage (state, getters) {
-			return i18n.t('pbxConfig.toasts.addedSeatToast', {
+			return i18n.t('Added seat {seat}', {
 				seat: getters.getSeatCreatingName
 			})
 		},
 		getSeatUpdateToastMessage (state, getters) {
-			return i18n.t('pbxConfig.toasts.changedFieldToast', {
+			return i18n.t('Changed {field} successfully', {
 				field: getters.getSeatUpdatingField
 			})
 		},
 		getSeatRemovalToastMessage (state, getters) {
-			return i18n.t('pbxConfig.toasts.removedSeatToast', {
+			return i18n.t('Removed seat {seat}', {
 				seat: getters.getSeatRemovingName
 			})
 		},
@@ -314,7 +314,7 @@ export default {
 		setSeatName (context, options) {
 			context.commit('seatUpdateRequesting', {
 				seatId: options.seatId,
-				seatField: i18n.t('pbxConfig.seatName')
+				seatField: i18n.t('Seat name')
 			})
 			setSeatName({
 				seatId: options.seatId,
@@ -328,7 +328,7 @@ export default {
 		setSeatExtension (context, options) {
 			context.commit('seatUpdateRequesting', {
 				seatId: options.seatId,
-				seatField: i18n.t('pbxConfig.extension')
+				seatField: i18n.t('Extension')
 			})
 			setSeatExtension({
 				seatId: options.seatId,
@@ -342,7 +342,7 @@ export default {
 		setSeatWebPassword (context, options) {
 			context.commit('seatUpdateRequesting', {
 				seatId: options.seatId,
-				seatField: i18n.t('pbxConfig.webPassword')
+				seatField: i18n.t('Password')
 			})
 			setSeatWebPassword({
 				seatId: options.seatId,
@@ -356,7 +356,7 @@ export default {
 		setSeatGroups (context, options) {
 			context.commit('seatUpdateRequesting', {
 				seatId: options.seatId,
-				seatField: i18n.t('pbxConfig.groups')
+				seatField: i18n.t('Groups')
 			})
 			setSeatGroups({
 				seatId: options.seatId,
@@ -370,7 +370,7 @@ export default {
 		setSeatNumbers (context, options) {
 			context.commit('seatUpdateRequesting', {
 				seatId: options.seatId,
-				seatField: i18n.t('pbxConfig.aliasNumbers')
+				seatField: i18n.t('Alias Numbers')
 			})
 			setSeatNumbers({
 				seatId: options.seatId,
@@ -394,7 +394,7 @@ export default {
 		setSeatSoundSet (context, options) {
 			context.commit('seatUpdateRequesting', {
 				seatId: options.seatId,
-				seatField: i18n.t('pbxConfig.soundSet')
+				seatField: i18n.t('Sound Set')
 			})
 			setSeatSoundSet({
 				seatId: options.seatId,
@@ -408,7 +408,7 @@ export default {
 		async setIntraPbx (context, options) {
 			context.commit('seatUpdateRequesting', {
 				seatId: options.seatId,
-				seatField: options.message || i18n.t('pbxConfig.intraPbx')
+				seatField: options.message || i18n.t('the visibility of the number within own PBX')
 			})
 			try {
 				const result = await setSeatIntraPbx(options.seatId, options.intraPbx)

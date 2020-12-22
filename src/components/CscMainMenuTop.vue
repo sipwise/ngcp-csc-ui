@@ -61,14 +61,14 @@ export default {
 				{
 					to: '/conference',
 					icon: 'videocam',
-					label: this.$t('navigation.conference.title'),
+					label: this.$t('Join conference'),
 					visible: this.isRtcEngineUiVisible
 				},
 				{
 					to: '/user/conversations',
 					icon: 'question_answer',
-					label: this.$t('navigation.conversations.title'),
-					sublabel: this.$t('navigation.conversations.subTitle'),
+					label: this.$t('Conversations'),
+					sublabel: this.$t('Calls, Faxes, VoiceMails'),
 					visible: true
 				},
 				{
@@ -85,7 +85,7 @@ export default {
 						{
 							to: '/user/voicebox',
 							icon: 'voicemail',
-							label: this.$t('navigation.voicebox.title'),
+							label: this.$t('Voicebox'),
 							visible: true
 						},
 						{
@@ -109,19 +109,19 @@ export default {
 						{
 							to: '/user/call-blocking/privacy',
 							icon: 'fas fa-user-secret',
-							label: this.$t('navigation.callBlocking.privacy'),
+							label: this.$t('Privacy'),
 							visible: true
 						},
 						{
 							to: '/user/speeddial',
 							icon: 'touch_app',
-							label: this.$t('navigation.speeddial.title'),
+							label: this.$t('Speed Dial'),
 							visible: true
 						},
 						{
 							to: '/user/reminder',
 							icon: 'notification_important',
-							label: this.$t('navigation.reminder.title'),
+							label: this.$t('Reminder'),
 							visible: true
 						}
 					]
@@ -129,49 +129,49 @@ export default {
 				{
 					to: '/user/fax-settings',
 					icon: 'fas fa-fax',
-					label: this.$t('navigation.faxSettings.title'),
+					label: this.$t('Fax Settings'),
 					visible: this.hasFaxCapability
 				},
 				{
 					icon: 'miscellaneous_services',
-					label: this.$t('navigation.pbxConfiguration.title'),
+					label: this.$t('PBX Configuration'),
 					visible: this.isPbxAdmin,
 					opened: this.isPbxConfiguration,
 					children: [
 						{
 							to: '/user/pbx-configuration/seats',
 							icon: 'person',
-							label: this.$t('navigation.pbxConfiguration.seats'),
+							label: this.$t('Seats'),
 							visible: true
 						},
 						{
 							to: '/user/pbx-configuration/groups',
 							icon: 'group',
-							label: this.$t('navigation.pbxConfiguration.groups'),
+							label: this.$t('Groups'),
 							visible: true
 						},
 						{
 							to: '/user/pbx-configuration/devices',
 							icon: 'fas fa-fax',
-							label: this.$t('navigation.pbxConfiguration.devices'),
+							label: this.$t('Devices'),
 							visible: true
 						},
 						{
 							to: '/user/pbx-configuration/call-queues',
 							icon: 'filter_none',
-							label: this.$t('navigation.pbxConfiguration.callQueues'),
+							label: this.$t('Call Queues'),
 							visible: true
 						},
 						{
 							to: '/user/pbx-configuration/sound-sets',
 							icon: 'queue_music',
-							label: this.$t('navigation.pbxConfiguration.soundSets'),
+							label: this.$t('Sound Sets'),
 							visible: true
 						},
 						{
 							to: '/user/pbx-configuration/ms-configs',
 							icon: 'arrow_forward',
-							label: this.$t('navigation.pbxConfiguration.msConfigs'),
+							label: this.$t('Manager Secretary'),
 							visible: true
 						}
 					]
@@ -179,7 +179,7 @@ export default {
 				{
 					to: '/user/pbx-settings',
 					icon: 'settings',
-					label: this.$t('navigation.pbxSettings.title'),
+					label: this.$t('PBX Settings'),
 					visible: this.isPbxEnabled
 				}
 			]

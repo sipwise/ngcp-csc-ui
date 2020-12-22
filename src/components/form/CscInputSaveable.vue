@@ -33,7 +33,7 @@
 				color="primary"
 				flat
 				dense
-				:label="$t('buttons.undo')"
+				:label="$t('Undo')"
 				:disable="$attrs.loading"
 				@click="$emit('undo', $event)"
 			/>
@@ -43,7 +43,7 @@
 				color="primary"
 				flat
 				dense
-				:label="$t('buttons.save')"
+				:label="$t('Save')"
 				:disable="$attrs.loading"
 				@click="$emit('save', $event)"
 			/>

@@ -7,7 +7,7 @@ export default ({ Vue, app }) => {
 		let message = null
 		_.forEach(def.$params, (param, paramName) => {
 			if (def[paramName] === false) {
-				message = app.i18n.t('validators.' + paramName)
+				message = app.i18n.t('validators.' + paramName) // TODO: does it work? we should recheck translations
 			}
 		})
 		return message

@@ -501,13 +501,13 @@ export function getDaysFromRange (options) {
 	let fromDay = options.fromDay
 	const toDay = options.toDay + 1
 	const wdayMap = {
-		1: i18n.t('pages.callForward.times.sunday'),
-		2: i18n.t('pages.callForward.times.monday'),
-		3: i18n.t('pages.callForward.times.tuesday'),
-		4: i18n.t('pages.callForward.times.wednesday'),
-		5: i18n.t('pages.callForward.times.thursday'),
-		6: i18n.t('pages.callForward.times.friday'),
-		7: i18n.t('pages.callForward.times.saturday')
+		1: i18n.t('Sunday'),
+		2: i18n.t('Monday'),
+		3: i18n.t('Tuesday'),
+		4: i18n.t('Wednesday'),
+		5: i18n.t('Thursday'),
+		6: i18n.t('Friday'),
+		7: i18n.t('Saturday')
 	}
 	const days = []
 	while (fromDay < toDay) {

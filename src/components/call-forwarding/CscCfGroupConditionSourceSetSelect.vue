@@ -1,6 +1,6 @@
 <template>
 	<csc-cf-group-condition
-		:title="$t(title)"
+		:title="title"
 		:loading="$wait.is('csc-cf-source-set-create')"
 		v-bind="$attrs"
 		v-on="$listeners"

@@ -46,12 +46,12 @@ export default {
 	computed: {
 		selectedKeyLabel () {
 			const selectedValue = this.$attrs.value || { type: null }
-			let label = this.$t('pbxConfig.keyBothLabel')
+			let label = this.$t('Group/Seat/Pilot')
 			if (selectedValue.type !== null) {
 				label = ({
-					pilot: this.$t('pbxConfig.keyPilotLabel'),
-					seat: this.$t('pbxConfig.keySeatLabel'),
-					group: this.$t('pbxConfig.keyGroupLabel')
+					pilot: this.$t('Pilot'),
+					seat: this.$t('Seat'),
+					group: this.$t('Group')
 				})[selectedValue.type]
 			}
 			return label

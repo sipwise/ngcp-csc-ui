@@ -147,31 +147,31 @@ describe('SpeedDial', function () {
 
 		const slotOptions = [
 			{
-				label: i18n.t('speedDial.slot').concat(' *1'),
+				label: i18n.t('Slot').concat(' *1'),
 				value: '*1'
 			},
 			{
-				label: i18n.t('speedDial.slot').concat(' *2'),
+				label: i18n.t('Slot').concat(' *2'),
 				value: '*2'
 			},
 			{
-				label: i18n.t('speedDial.slot').concat(' *4'),
+				label: i18n.t('Slot').concat(' *4'),
 				value: '*4'
 			},
 			{
-				label: i18n.t('speedDial.slot').concat(' *5'),
+				label: i18n.t('Slot').concat(' *5'),
 				value: '*5'
 			},
 			{
-				label: i18n.t('speedDial.slot').concat(' *6'),
+				label: i18n.t('Slot').concat(' *6'),
 				value: '*6'
 			},
 			{
-				label: i18n.t('speedDial.slot').concat(' *7'),
+				label: i18n.t('Slot').concat(' *7'),
 				value: '*7'
 			},
 			{
-				label: i18n.t('speedDial.slot').concat(' *8'),
+				label: i18n.t('Slot').concat(' *8'),
 				value: '*8'
 			}
 		]

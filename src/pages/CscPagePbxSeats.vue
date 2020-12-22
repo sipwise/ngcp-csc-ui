@@ -9,7 +9,7 @@
 				icon="add"
 				color="primary"
 				flat
-				:label="$t('pbxConfig.addSeat')"
+				:label="$t('Add Seat')"
 				:disable="!isSeatAddFormDisabled"
 				@click="openAddForm"
 			/>
@@ -18,7 +18,7 @@
 				icon="filter_alt"
 				color="primary"
 				flat
-				:label="$t('pbxConfig.seatsFilters')"
+				:label="$t('Filter')"
 				@click="openFilters"
 			/>
 			<q-btn
@@ -26,7 +26,7 @@
 				icon="clear"
 				color="negative"
 				flat
-				:label="$t('pbxConfig.closeFilters')"
+				:label="$t('Close filters')"
 				@click="closeFilters"
 			/>
 		</template>
@@ -102,11 +102,11 @@
 			v-if="!isSeatListRequesting && isSeatListEmpty"
 			class="row justify-center csc-no-entities"
 		>
-			{{ $t('pbxConfig.noSeats') }}
+			{{ $t('No seats created yet') }}
 		</div>
 		<csc-remove-dialog
 			ref="removeDialog"
-			:title="$t('pbxConfig.removeSeatTitle')"
+			:title="$t('Remove seat')"
 			:message="getSeatRemoveDialogMessage"
 			@remove="removeSeat({seatId:seatRemoving.id})"
 			@cancel="closeSeatRemovalDialog"

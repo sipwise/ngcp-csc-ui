@@ -394,7 +394,7 @@ describe('CallForward', function () {
 			timesetId: 3,
 			times: {
 				weekday: '1',
-				wday: i18n.t('pages.callForward.times.monday'),
+				wday: i18n.t('Monday'),
 				hour: '8-16',
 				from: '8',
 				to: '16'
@@ -440,7 +440,7 @@ describe('CallForward', function () {
 					minute: null,
 					to: '9:00',
 					wday: '1',
-					weekday: i18n.t('pages.callForward.times.sunday')
+					weekday: i18n.t('Sunday')
 				},
 				{
 					from: '6:00',
@@ -448,7 +448,7 @@ describe('CallForward', function () {
 					minute: null,
 					to: '9:00',
 					wday: '2',
-					weekday: i18n.t('pages.callForward.times.monday')
+					weekday: i18n.t('Monday')
 				}
 			],
 			timesetIsCompatible: true,
@@ -486,7 +486,7 @@ describe('CallForward', function () {
 					minute: '0-30',
 					to: '6:31',
 					wday: '1',
-					weekday: i18n.t('pages.callForward.times.sunday')
+					weekday: i18n.t('Sunday')
 				},
 				{
 					from: '7:0',
@@ -494,7 +494,7 @@ describe('CallForward', function () {
 					minute: '0-30',
 					to: '7:31',
 					wday: '1',
-					weekday: i18n.t('pages.callForward.times.sunday')
+					weekday: i18n.t('Sunday')
 				},
 				{
 					from: '8:0',
@@ -502,7 +502,7 @@ describe('CallForward', function () {
 					minute: '0-30',
 					to: '8:31',
 					wday: '1',
-					weekday: i18n.t('pages.callForward.times.sunday')
+					weekday: i18n.t('Sunday')
 				},
 				{
 					from: '6:0',
@@ -510,7 +510,7 @@ describe('CallForward', function () {
 					minute: '0-30',
 					to: '6:31',
 					wday: '2',
-					weekday: i18n.t('pages.callForward.times.monday')
+					weekday: i18n.t('Monday')
 				},
 				{
 					from: '7:0',
@@ -518,7 +518,7 @@ describe('CallForward', function () {
 					minute: '0-30',
 					to: '7:31',
 					wday: '2',
-					weekday: i18n.t('pages.callForward.times.monday')
+					weekday: i18n.t('Monday')
 				},
 				{
 					from: '8:0',
@@ -526,7 +526,7 @@ describe('CallForward', function () {
 					minute: '0-30',
 					to: '8:31',
 					wday: '2',
-					weekday: i18n.t('pages.callForward.times.monday')
+					weekday: i18n.t('Monday')
 				}
 			],
 			timesetIsCompatible: true,
@@ -564,7 +564,7 @@ describe('CallForward', function () {
 					minute: '0',
 					to: '6:1',
 					wday: '1',
-					weekday: i18n.t('pages.callForward.times.sunday')
+					weekday: i18n.t('Sunday')
 				}
 			],
 			timesetExists: true,

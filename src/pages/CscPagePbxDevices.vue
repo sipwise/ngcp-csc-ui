@@ -11,7 +11,7 @@
 				slot="slot1"
 				icon="add"
 				color="primary"
-				:label="$t('pbxConfig.addDevice')"
+				:label="$t('Add device')"
 				:disable="isDeviceListRequesting || isDeviceRemoving || isDeviceUpdating"
 				@click="enableAddForm"
 			/>
@@ -20,7 +20,7 @@
 				slot="slot2"
 				icon="filter_alt"
 				color="primary"
-				:label="$t('pbxConfig.filterDevices')"
+				:label="$t('Filter devices')"
 				:disable="isDeviceListRequesting || isDeviceCreating || isDeviceRemoving || isDeviceUpdating"
 				@click="enableFilters"
 			/>
@@ -29,7 +29,7 @@
 				slot="slot2"
 				icon="clear"
 				color="negative"
-				:label="$t('pbxConfig.closeFilters')"
+				:label="$t('Close filters')"
 				:disable="isDeviceListRequesting || isDeviceCreating || isDeviceRemoving || isDeviceUpdating"
 				@click="closeFilters"
 			/>
@@ -117,17 +117,17 @@
 			v-if="isDeviceListEmpty && !isDeviceListRequesting && hasFilters"
 			class="row justify-center csc-no-entities"
 		>
-			{{ $t('pbxConfig.noDevicesFound') }}
+			{{ $t('Could not find any device matching any of the filter criteria') }}
 		</div>
 		<div
 			v-else-if="isDeviceListEmpty && !isDeviceListRequesting"
 			class="row justify-center csc-no-entities"
 		>
-			{{ $t('pbxConfig.noDevicesCreated') }}
+			{{ $t('No devices created yet') }}
 		</div>
 		<csc-remove-dialog
 			ref="removeDialog"
-			:title="$t('pbxConfig.removeDeviceTitle')"
+			:title="$t('Remove device')"
 			:message="getDeviceRemoveDialogMessage"
 			@remove="removeDevice(deviceRemoving.id)"
 			@cancel="closeDeviceRemovalDialog"

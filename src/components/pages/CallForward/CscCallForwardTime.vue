@@ -11,7 +11,7 @@
 				<csc-popup-menu-item
 					color="negative"
 					icon="delete"
-					:label="$t('buttons.remove')"
+					:label="$t('Remove')"
 					@click="deleteTime"
 				/>
 			</csc-more-menu>

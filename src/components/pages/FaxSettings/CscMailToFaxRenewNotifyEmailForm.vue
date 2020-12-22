@@ -92,11 +92,11 @@ export default {
 	computed: {
 		destinationErrorMessage () {
 			if (!this.$v.data.destination.required) {
-				return this.$t('validationErrors.fieldRequired', {
+				return this.$t('{field} is required', {
 					field: this.$t('Email')
 				})
 			} else if (!this.$v.data.destination.email) {
-				return this.$t('validationErrors.email')
+				return this.$t('Input a valid email address')
 			} else {
 				return ''
 			}

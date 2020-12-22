@@ -4,7 +4,7 @@
 		color="white"
 		flat
 		dense
-		:label="$t('buttons.reset')"
+		:label="$t('Reset')"
 		:disable="$attrs.loading"
 		v-bind="$attrs"
 		v-on="$listeners"

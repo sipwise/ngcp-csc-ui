@@ -2,7 +2,7 @@
 	<csc-popup-menu-item
 		icon="delete"
 		color="negative"
-		:label="$t('buttons.remove')"
+		:label="$t('Remove')"
 		@click="$emit('click', $event)"
 	/>
 </template>

@@ -85,23 +85,23 @@ export default {
 		},
 		blockIncomingLabel () {
 			if (this.blockedIncoming) {
-				return this.$t('pages.conversations.buttons.unblockIncoming')
+				return this.$t('Unblock Incoming')
 			} else {
-				return this.$t('pages.conversations.buttons.blockIncoming')
+				return this.$t('Block Incoming')
 			}
 		},
 		blockOutgoingLabel () {
 			if (this.blockedOutgoing) {
-				return this.$t('pages.conversations.buttons.unblockOutgoing')
+				return this.$t('Unblock Outgoing')
 			} else {
-				return this.$t('pages.conversations.buttons.blockOutgoing')
+				return this.$t('Block Outgoing')
 			}
 		},
 		blockBothLabel () {
 			if (this.blockedBoth) {
-				return this.$t('pages.conversations.buttons.unblockBoth')
+				return this.$t('Unblock Incoming/Outgoing')
 			} else if (this.unblockedBoth) {
-				return this.$t('pages.conversations.buttons.blockBoth')
+				return this.$t('Block Incoming/Outgoing')
 			} else {
 				return ''
 			}

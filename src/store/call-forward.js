@@ -128,11 +128,11 @@ export default {
 		},
 		addTimeError (state) {
 			return state.addTimeError ||
-                i18n.t('pages.callForward.times.addTimeErrorMessage')
+                i18n.t('An error occured while trying to create the timeset. Please try again')
 		},
 		resetTimeError (state) {
 			return state.resetTimeError ||
-                i18n.t('pages.callForward.times.resetErrorMessage')
+                i18n.t('An error occured while trying to reset the timesets. Please try again')
 		},
 		showDefinedAlert (state) {
 			return !state.timesetExists && !state.activeTimeForm
@@ -148,15 +148,15 @@ export default {
 		},
 		loadDestinationError (state) {
 			return state.loadDestinationError ||
-                i18n.t('pages.callForward.times.loadDestinationErrorMessage')
+                i18n.t('An error occured while trying to load the destinations. Please try again')
 		},
 		addSourcesetError (state) {
 			return state.addSourcesetError ||
-                i18n.t('pages.callForward.sources.addSourcesetErrorMessage')
+                i18n.t('An error occured while trying to create the sourceset. Please try again')
 		},
 		addSourceError (state) {
 			return state.addSourceError ||
-                i18n.t('pages.callForward.sources.addSourceErrorMessage')
+                i18n.t('An error occured while trying to add the source. Please try again')
 		},
 		addSourceState (state) {
 			return state.addSourceState
@@ -172,7 +172,7 @@ export default {
 		},
 		removeSourcesetError (state) {
 			return state.removeSourcesetError ||
-                i18n.t('pages.callForward.sources.removeSourcesetErrorMessage')
+                i18n.t('An error occured while trying to delete the sourceset. Please try again')
 		},
 		lastRemovedSourceset (state) {
 			return state.lastRemovedSourceset
@@ -182,7 +182,7 @@ export default {
 		},
 		removeSourceError (state) {
 			return state.removeSourceError ||
-                i18n.t('pages.callForward.sources.removeSourceErrorMessage')
+                i18n.t('An error occured while trying to remove the source. Please try again')
 		},
 		lastRemovedSource (state) {
 			return state.lastRemovedSource
@@ -234,7 +234,7 @@ export default {
 		},
 		updateOwnPhoneToggleError (state) {
 			return state.updateOwnPhoneToggleError ||
-                i18n.t('pages.callForward.updateOwnPhoneToggleErrorMessage')
+                i18n.t('An error occured while trying to update own phone. Please try again')
 		},
 		isUpdating (state) {
 			return state.updateOwnPhoneToggleState === RequestState.requesting
@@ -250,16 +250,16 @@ export default {
 		},
 		updateOwnPhoneTimeoutError (state) {
 			return state.updateOwnPhoneTimeoutError ||
-                i18n.t('pages.callForward.updateOwnPhoneTimeoutErrorMessage')
+                i18n.t('An error occured while trying to update own phone timeout. Please try again')
 		},
 		lastOwnPhoneTimeout (state) {
 			return state.lastOwnPhoneTimeout
 		},
 		addDestinationError (state) {
-			return state.addDestinationError || i18n.t('pages.callForward.addErrorMessage')
+			return state.addDestinationError || i18n.t('An error occured while trying to add the destination. Please try again')
 		},
 		removeTimeError (state) {
-			return state.removeTimeError || i18n.t('pages.callForward.times.removeErrorMessage')
+			return state.removeTimeError || i18n.t('An error occured while trying to delete the time entry. Please try again')
 		}
 	},
 	mutations: {
@@ -490,8 +490,8 @@ export default {
 		},
 		updateOwnPhoneSucceeded (state, type) {
 			const toggle = type === 'cft'
-				? i18n.t('pages.callForward.enabled')
-				: i18n.t('pages.callForward.disabled')
+				? i18n.t('enabled')
+				: i18n.t('disabled')
 			state.lastOwnPhoneToggle = toggle
 			state.updateOwnPhoneToggleState = RequestState.succeeded
 			state.updateOwnPhoneToggleError = null

@@ -10,12 +10,12 @@
 				<template
 					v-if="index === 0 && !ownPhoneEnabled"
 				>
-					{{ $t('pages.callForward.firstRing') }}
+					{{ $t('first ring') }}
 				</template>
 				<template
 					v-else
 				>
-					{{ $t('pages.callForward.thenRing') }}
+					{{ $t('then ring') }}
 				</template>
 			</q-item-label>
 			<q-item-label
@@ -25,7 +25,7 @@
 				<template
 					v-if="isNonTerminating(destinationObject.destination)"
 				>
-					{{ $t('pages.callForward.for') }} {{ destinationObject.timeout }} {{ $t('pages.callForward.secs') }}
+					{{ $t('for') }} {{ destinationObject.timeout }} {{ $t('secs') }}
 				</template>
 			</q-item-label>
 		</q-item-section>
@@ -35,10 +35,10 @@
 		<!--			no-wrap-->
 		<!--		>-->
 		<!--			<span v-if="index === 0 && !ownPhoneEnabled">-->
-		<!--				{{ $t('pages.callForward.firstRing') }}-->
+		<!--				{{ $t('first ring') }}-->
 		<!--			</span>-->
 		<!--			<span v-else>-->
-		<!--				{{ $t('pages.callForward.thenRing') }}-->
+		<!--				{{ $t('then ring') }}-->
 		<!--			</span>-->
 		<!--			-->
 		<!--			<span>-->
@@ -46,18 +46,18 @@
 		<!--			</span>-->
 		<!--			<span v-if="isNonTerminating(destinationObject.destination)">-->
 		<!--				<span>-->
-		<!--					{{ $t('pages.callForward.for') }}-->
+		<!--					{{ $t('for') }}-->
 		<!--				</span>-->
 		<!--				<span>-->
 		<!--					{{ destinationObject.timeout }}-->
 		<!--				</span>-->
 		<!--				<span>-->
-		<!--					{{ $t('pages.callForward.secs') }}-->
+		<!--					{{ $t('secs') }}-->
 		<!--				</span>-->
 		<!--			</span>-->
 		<!--			-->
 		<!--			<q-tooltip v-if="destinationObject.terminated">-->
-		<!--				{{ $t('pages.callForward.terminatedTooltip') }}-->
+		<!--				{{ $t('This destination comes after a terminating destinations, and is therefore inactive.') }}-->
 		<!--			</q-tooltip>-->
 		<!--			-->
 		<!--		</q-item-section>-->
@@ -69,35 +69,35 @@
 		<!--			<div>-->
 		<!--				<span v-if="!isNonTerminating(destinationObject.destination)">-->
 		<!--					<span v-if="index === 0 && !ownPhoneEnabled">-->
-		<!--						{{ $t('pages.callForward.firstRing') }}-->
+		<!--						{{ $t('first ring') }}-->
 		<!--					</span>-->
 		<!--					<span v-else>-->
-		<!--						{{ $t('pages.callForward.thenRing') }}-->
+		<!--						{{ $t('then ring') }}-->
 		<!--					</span>-->
 		<!--				</span>-->
 		<!--				{{ destination.destination | destinationFormat }}-->
 		<!--			</div>-->
 		<!--			<div>-->
 		<!--				<span v-if="index === 0 && isNonTerminating(destinationObject.destination) && !ownPhoneEnabled">-->
-		<!--					{{ $t('pages.callForward.firstRing') }}-->
+		<!--					{{ $t('first ring') }}-->
 		<!--				</span>-->
 		<!--				<span v-else>-->
-		<!--					{{ $t('pages.callForward.thenRing') }}-->
+		<!--					{{ $t('then ring') }}-->
 		<!--				</span>-->
 		<!--				<span v-if="isNonTerminating(destinationObject.destination)">-->
 		<!--					<span>-->
-		<!--						{{ $t('pages.callForward.for') }}-->
+		<!--						{{ $t('for') }}-->
 		<!--					</span>-->
 		<!--					<span class="dest-values">-->
 		<!--						{{ destination.timeout }}-->
 		<!--					</span>-->
 		<!--					<span>-->
-		<!--						{{ $t('pages.callForward.secs') }}-->
+		<!--						{{ $t('secs') }}-->
 		<!--					</span>-->
 		<!--				</span>-->
 		<!--			</div>-->
 		<!--			<q-tooltip v-if="destinationObject.terminated">-->
-		<!--				{{ $t('pages.callForward.terminatedTooltip') }}-->
+		<!--				{{ $t('This destination comes after a terminating destinations, and is therefore inactive.') }}-->
 		<!--			</q-tooltip>-->
 		<!--		</q-item-section>-->
 		<q-item-section
@@ -108,20 +108,20 @@
 					v-if="destinations.length > 1 && !hasNoUpOption(index)"
 					icon="keyboard_arrow_up"
 					color="primary"
-					:label="$t('buttons.moveUp')"
+					:label="$t('Move up')"
 					@click="moveDestination('up', index)"
 				/>
 				<csc-popup-menu-item
 					v-if="destinations.length > 1 && !hasNoDownOption(index)"
 					icon="keyboard_arrow_down"
 					color="primary"
-					:label="$t('buttons.moveDown')"
+					:label="$t('Move down')"
 					@click="moveDestination('down', index)"
 				/>
 				<csc-popup-menu-item
 					icon="delete"
 					color="negative"
-					:label="$t('buttons.remove')"
+					:label="$t('Remove')"
 					@click="deleteDestination(index)"
 				/>
 			</csc-more-menu>
@@ -134,7 +134,7 @@
 			<!--							v-if="destinations.length > 1 && !hasNoUpOption(index)"-->
 			<!--							@click="moveDestination('up', index), $refs.popover[index].close()"-->
 			<!--						>-->
-			<!--							<q-item-main :label="$t('buttons.moveUp')" />-->
+			<!--							<q-item-main :label="$t('Move up')" />-->
 			<!--							<q-item-side-->
 			<!--								icon="keyboard_arrow_up"-->
 			<!--								color="white"-->
@@ -144,14 +144,14 @@
 			<!--							v-if="destinations.length > 1 && !hasNoDownOption(index)"-->
 			<!--							@click="moveDestination('down', index), $refs.popover[index].close()"-->
 			<!--						>-->
-			<!--							<q-item-main :label="$t('buttons.moveDown')" />-->
+			<!--							<q-item-main :label="$t('Move down')" />-->
 			<!--							<q-item-side-->
 			<!--								icon="keyboard_arrow_down"-->
 			<!--								color="white"-->
 			<!--							/>-->
 			<!--						</q-item>-->
 			<!--						<q-item @click="deleteDestination(index), $refs.popover[index].close()">-->
-			<!--							<q-item-main :label="$t('buttons.remove')" />-->
+			<!--							<q-item-main :label="$t('Remove')" />-->
 			<!--							<q-item-side-->
 			<!--								icon="delete"-->
 			<!--								color="negative"-->
@@ -272,8 +272,8 @@ export default {
 			const isLastDestination = this.destinations.length === 1
 			clonedDestinations.splice(indexInt, 1)
 			this.$q.dialog({
-				title: this.$t('pages.callForward.removeDialogTitle'),
-				message: this.$t('pages.callForward.removeDialogText', {
+				title: this.$t('Remove call forward destination'),
+				message: this.$t('You are about to remove the destination {destination}', {
 					destination: removeDestination
 				}),
 				color: 'primary',

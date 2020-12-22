@@ -11,8 +11,8 @@
 					<q-toggle
 						:value="musicOnHold"
 						:disable="dataLoading"
-						:label="$t('callSettings.musicOnHold')"
-						:title="$t('callSettings.musicOnHoldHint')"
+						:label="$t('Music on Hold')"
+						:title="$t('&quot;Music on Hold&quot; - if set to true and a music on hold file is provided, a calling party gets that file played when put on hold')"
 						checked-icon="audiotrack"
 						unchecked-icon="audiotrack"
 						@input="toggleMusicOnHold"
@@ -36,8 +36,8 @@
 						map-options
 						:disable="dataLoading"
 						:readonly="dataLoading"
-						:label="$t('callSettings.language')"
-						:title="$t('callSettings.languageHint')"
+						:label="$t('Language for voicemail and app server')"
+						:title="$t('Voice prompts language for voicemail, conference and application server')"
 						:options="options"
 						@input="languageSelected()"
 					/>

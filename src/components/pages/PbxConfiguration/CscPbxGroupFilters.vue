@@ -10,7 +10,7 @@
 					v-model="filterTypeModel"
 					dense
 					:options="filterTypeOptions"
-					:label="$t('pbxConfig.seatsFiltersFilterByLabel')"
+					:label="$t('Filter by')"
 					:disable="loading"
 					data-cy="filter-type"
 				/>
@@ -23,7 +23,7 @@
 					type="text"
 					dense
 					:disable="loading || filterType === null"
-					:label="(filterType === null) ? $t('pbxConfig.seatsFilterInputLabel') : filterTypeModel.label"
+					:label="(filterType === null) ? $t('Type something') : filterTypeModel.label"
 					data-cy="filter-value"
 					@keypress.enter="triggerFilter"
 				>
@@ -91,19 +91,19 @@ export default {
 		filterTypeOptions () {
 			return [
 				{
-					label: this.$t('pbxConfig.groupName'),
+					label: this.$t('Group Name'),
 					value: 'display_name'
 				},
 				{
-					label: this.$t('pbxConfig.extension'),
+					label: this.$t('Extension'),
 					value: 'pbx_extension'
 				},
 				{
-					label: this.$t('pbxConfig.primaryNumber'),
+					label: this.$t('Primary Number'),
 					value: 'primary_number'
 				},
 				{
-					label: this.$t('pbxConfig.aliasNumbers'),
+					label: this.$t('Alias Numbers'),
 					value: 'alias'
 				}
 			]

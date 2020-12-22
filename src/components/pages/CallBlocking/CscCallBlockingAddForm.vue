@@ -5,7 +5,7 @@
 	>
 		<csc-call-input
 			v-model="number"
-			:label="$t('callBlocking.number')"
+			:label="$t('Number')"
 			@submit="save"
 			@error="error"
 		/>
@@ -18,7 +18,7 @@
 				icon="clear"
 				@mousedown.native="cancel()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				v-if="!loading"
@@ -28,7 +28,7 @@
 				:disable="saveDisabled"
 				@click="save()"
 			>
-				{{ $t('buttons.save') }}
+				{{ $t('Save') }}
 			</q-btn>
 			<div
 				v-if="loading"
@@ -48,7 +48,7 @@
 			icon="add"
 			@click="add()"
 		>
-			{{ $t('pages.callBlockingIncoming.addNumberButton') }}
+			{{ $t('Add number') }}
 		</q-btn>
 	</div>
 </template>
@@ -90,7 +90,7 @@ export default {
 	methods: {
 		save () {
 			if (this.numberError || this.saveDisabled) {
-				showGlobalError(this.$t('validationErrors.generic'))
+				showGlobalError(this.$t('You have invalid form input. Please check and try again.'))
 			} else {
 				this.$emit('save', this.number)
 			}

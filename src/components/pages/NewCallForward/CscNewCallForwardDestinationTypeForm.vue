@@ -4,13 +4,13 @@
 			class="csc-cf-dest-type"
 			@click="setSelectedDestinationType('destination')"
 		>
-			{{ $t('pages.newCallForward.numberLabel') }}
+			{{ $t('Number') }}
 		</div>
 		<div
 			class="csc-cf-dest-type"
 			@click="setSelectedDestinationType('voicemail')"
 		>
-			{{ $t('pages.newCallForward.voiceMailLabel') }}
+			{{ $t('Voicemail') }}
 		</div>
 	</div>
 </template>

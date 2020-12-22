@@ -7,7 +7,7 @@
 				<csc-input-saveable
 					v-model="data.destination"
 					icon="email"
-					:label="$t('faxSettings.destinationEmail')"
+					:label="$t('Destination Email')"
 					:disable="disabled"
 					:readonly="loading"
 					:error="$v.data.destination.$error"
@@ -27,7 +27,7 @@
 					map-options
 					:disable="loading"
 					:readonly="loading"
-					:label="$t('faxSettings.fileType')"
+					:label="$t('File Type')"
 					:options="fileTypeOptions"
 					@input="updatePropertyData('filetype')"
 				/>
@@ -37,19 +37,19 @@
 			>
 				<q-toggle
 					v-model="data.incoming"
-					:label="$t('faxSettings.deliverIncomingFaxes')"
+					:label="$t('Deliver Incoming Faxes')"
 					:disable="loading"
 					@input="updatePropertyData('incoming')"
 				/>
 				<q-toggle
 					v-model="data.outgoing"
-					:label="$t('faxSettings.deliverOutgoingFaxes')"
+					:label="$t('Deliver Outgoing Faxes')"
 					:disable="loading"
 					@input="updatePropertyData('outgoing')"
 				/>
 				<q-toggle
 					v-model="data.status"
-					:label="$t('faxSettings.receiveReports')"
+					:label="$t('Receive Reports')"
 					:disable="loading"
 					@input="updatePropertyData('status')"
 				/>
@@ -64,7 +64,7 @@
 				color="default"
 				icon="clear"
 				:disable="loading"
-				:label="$t('buttons.cancel')"
+				:label="$t('Cancel')"
 				@click="cancel()"
 			/>
 			<q-btn
@@ -73,7 +73,7 @@
 				icon="done"
 				:loading="loading"
 				:disable="$v.data.$invalid || loading"
-				:label="$t('faxSettings.createDestination')"
+				:label="$t('Create destination')"
 				@click="save()"
 			/>
 		</div>
@@ -129,11 +129,11 @@ export default {
 	computed: {
 		destinationErrorMessage () {
 			if (!this.$v.data.destination.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('faxSettings.destinationEmail')
+				return this.$t('{field} is required', {
+					field: this.$t('Destination Email')
 				})
 			} else if (!this.$v.data.destination.email) {
-				return this.$t('validationErrors.email')
+				return this.$t('Input a valid email address')
 			} else {
 				return ''
 			}

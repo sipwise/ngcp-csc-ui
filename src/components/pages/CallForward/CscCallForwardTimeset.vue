@@ -47,7 +47,7 @@
 					v-if="timesetHasDuplicate"
 				>
 					<csc-inline-alert-alert>
-						{{ $t('pages.callForward.times.timesetDuplicate', { timeset: timesetName }) }}
+						{{ $t('More than one {timeset} timeset exists. You can resolve this by resetting the {timeset} timesets.', { timeset: timesetName }) }}
 						<template
 							v-slot:action
 						>
@@ -64,7 +64,7 @@
 					v-else-if="!timesetIsCompatible"
 				>
 					<csc-inline-alert-alert>
-						{{ $t('pages.callForward.times.timesetIncompatible', { timeset: timesetName }) }}
+						{{ $t('The {timeset} timeset contains incompatible values. You can resolve this by resetting the {timeset} timeset.', { timeset: timesetName }) }}
 						<template
 							v-slot:action
 						>
@@ -81,7 +81,7 @@
 					v-else-if="timesetHasReverse"
 				>
 					<csc-inline-alert-alert>
-						{{ $t('pages.callForward.times.timesetReverse', { timeset: timesetName }) }}
+						{{ $t('The {timeset} timeset contain reverse order of values. You can resolve this by resetting the {timeset} timeset.', { timeset: timesetName }) }}
 						<template
 							v-slot:action
 						>
@@ -98,7 +98,7 @@
 					v-show="showDefinedAlert"
 				>
 					<csc-inline-alert-warning>
-						{{ $t('pages.callForward.times.timesetNotDefined', { timeset: timesetName }) }}
+						{{ $t('The {timeset} timeset is not defined. You need to create one to be able to define call forward destinations.', { timeset: timesetName }) }}
 						<template
 							v-slot:action
 						>
@@ -207,12 +207,12 @@ export default {
 				this.removeSourceState === 'requesting'
 		},
 		labelReset () {
-			return this.$t('pages.callForward.times.resetTimeset', {
+			return this.$t('Reset {timeset}', {
 				timeset: this.timesetName
 			})
 		},
 		labelAdd () {
-			return this.$t('pages.callForward.times.addTimeset', {
+			return this.$t('Add {timeset}', {
 				timeset: this.timesetName
 			})
 		},
@@ -224,7 +224,7 @@ export default {
 		},
 		deleteTimeMessage () {
 			if (this.deleteTimeData !== null) {
-				return this.$t('pages.callForward.times.removeDialogText', {
+				return this.$t('You are about to remove the time entry for {day}', {
 					day: this.deleteTimeData.removedDay
 				})
 			} else {
@@ -241,7 +241,7 @@ export default {
 			} else if (state === 'failed') {
 				showGlobalError(this.resetTimeError)
 			} else if (state === 'succeeded') {
-				showToast(this.$t('pages.callForward.times.resetSuccessMessage'))
+				showToast(this.$t('Reset of timesets completed'))
 				this.loadTimes()
 			}
 		},
@@ -259,7 +259,7 @@ export default {
 				}
 				this.loadTimes()
 				this.loadDestinations()
-				showToast(this.$t('pages.callForward.times.addTimeSuccessMessage'))
+				showToast(this.$t('Created new timeset'))
 			}
 		},
 		activeTimeForm (state) {
@@ -280,7 +280,7 @@ export default {
 				showGlobalError(this.addSourcesetError)
 			} else if (state === 'succeeded') {
 				this.$refs.sourcesets.resetForm()
-				showToast(this.$t('pages.callForward.sources.addSuccessMessage', {
+				showToast(this.$t('Created sourceset {sourceset}', {
 					sourceset: this.lastAddedSourceset
 				}))
 				this.loadDestinations()
@@ -329,7 +329,7 @@ export default {
 		},
 		deleteTimeDialog (index) {
 			this.$q.dialog({
-				title: this.$t('pages.callForward.times.removeDialogTitle'),
+				title: this.$t('Remove call forward time'),
 				message: this.deleteTimeMessage,
 				color: 'negative',
 				cancel: true,

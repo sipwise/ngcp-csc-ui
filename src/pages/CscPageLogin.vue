@@ -42,7 +42,7 @@
 					<q-card-section
 						class="text-h5"
 					>
-						{{ $t('pages.login.title') }}
+						{{ $t('Subscriber Sign In') }}
 					</q-card-section>
 					<q-card-section>
 						<form>
@@ -51,7 +51,7 @@
 								class="q-mb-sm"
 								type="text"
 								max-length="128"
-								:label="$t('pages.login.username')"
+								:label="$t('Username')"
 								:disable="loginRequesting"
 								autofocus
 								clearable
@@ -68,7 +68,7 @@
 							<csc-input-password
 								v-model="password"
 								max-length="32"
-								:label="$t('pages.login.password')"
+								:label="$t('Password')"
 								:disable="loginRequesting"
 								clearable
 								@keypress.enter="login()"
@@ -82,13 +82,13 @@
 							color="primary"
 							unelevated
 							flat
-							:label="$t('pages.login.forgotPassword')"
+							:label="$t('Forgot password?')"
 							@click="showRetrievePasswordDialog"
 						/>
 						<q-btn
 							icon="arrow_forward"
 							color="primary"
-							:label="$t('pages.login.button')"
+							:label="$t('Sign In')"
 							:loading="loginRequesting"
 							flat
 							@click="login()"
@@ -164,7 +164,7 @@ export default {
 			'languageLabels'
 		]),
 		languageLabel () {
-			return this.$t('language', {
+			return this.$t('Language ({language})', {
 				language: getLanguageLabel(this.locale)
 			})
 		}
@@ -177,7 +177,7 @@ export default {
 		},
 		loginError (error) {
 			if (error) {
-				showGlobalError(this.$i18n.t('pages.login.error'))
+				showGlobalError(this.$i18n.t('Wrong username or password'))
 			}
 		}
 	},

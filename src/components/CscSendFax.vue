@@ -10,13 +10,13 @@
 			<q-card-section
 				class="text-h6"
 			>
-				{{ $t('communication.sendFax') }}
+				{{ $t('Send Fax') }}
 			</q-card-section>
 			<q-card-section>
 				<csc-call-input
 					v-if="value"
 					v-model="form.destination"
-					:label="$t('communication.label.destination')"
+					:label="$t('Destination Number')"
 					@submit="sendFax"
 					@error="error"
 				/>
@@ -25,13 +25,13 @@
 					emit-value
 					map-options
 					:options="$faxQualityOptions"
-					:label="$t('communication.label.quality')"
+					:label="$t('Quality')"
 				/>
 				<q-input
 					v-model="form.pageHeader"
 					clearable
 					type="text"
-					:label="$t('communication.label.pageHeader')"
+					:label="$t('Page Header')"
 					:error="$v.form.pageHeader.$error"
 					:error-message="pageHeaderErrorMessage"
 					@input="$v.form.pageHeader.$touch"
@@ -43,7 +43,7 @@
 					type="textarea"
 					:max-height="100"
 					:min-rows="10"
-					:label="$t('communication.label.content')"
+					:label="$t('Content')"
 					:error="$v.form.data.$error"
 					:error-message="dataErrorMessage"
 					@input="$v.form.data.$touch"
@@ -59,14 +59,14 @@
 					flat
 					icon="clear"
 					color="default"
-					:label="$t('communication.cancel')"
+					:label="$t('Cancel')"
 				/>
 				<q-btn
 					flat
 					color="primary"
 					icon="send"
 					:disable="formDisabled"
-					:label="$t('communication.send')"
+					:label="$t('Send')"
 					@click="sendFax"
 				/>
 			</q-card-actions>
@@ -78,7 +78,7 @@
 		<!--				class="upload-label"-->
 		<!--			>-->
 		<!--				<div class="upload-label">-->
-		<!--					{{ $t('communication.label.faxFile') }}-->
+		<!--					{{ $t('Fax File') }}-->
 		<!--				</div>-->
 		<!--				<q-btn-->
 		<!--					flat-->
@@ -87,7 +87,7 @@
 		<!--					class="upload-button"-->
 		<!--					@click="$refs.faxUpload.click()"-->
 		<!--				>-->
-		<!--					{{ $t('buttons.select') }}-->
+		<!--					{{ $t('Select') }}-->
 		<!--				</q-btn>-->
 		<!--				<span class="upload-filename">-->
 		<!--					{{ selectedFile }}-->
@@ -124,7 +124,7 @@
 		<!--			color="default"-->
 		<!--			@mousedown.native="hideModal"-->
 		<!--		>-->
-		<!--			{{ $t('communication.cancel') }}-->
+		<!--			{{ $t('Cancel') }}-->
 		<!--		</q-btn>-->
 		<!--		<q-btn-->
 		<!--			flat-->
@@ -133,7 +133,7 @@
 		<!--			:disable="formDisabled"-->
 		<!--			@click="sendFax"-->
 		<!--		>-->
-		<!--			{{ $t('communication.send') }}-->
+		<!--			{{ $t('Send') }}-->
 		<!--		</q-btn>-->
 	</q-dialog>
 </template>
@@ -204,20 +204,20 @@ export default {
 				!this.hasContentToSend
 		},
 		pageHeaderErrorMessage () {
-			return this.$t('validationErrors.maxLength', {
-				field: this.$t('communication.label.pageHeader'),
+			return this.$t('{field} must have at most {maxLength} letters', {
+				field: this.$t('Page Header'),
 				maxLength: this.$v.form.pageHeader.$params.maxLength.max
 			})
 		},
 		dataErrorMessage () {
 			if (!this.$v.form.data.required) {
-				return this.$t('validationErrors.fieldRequiredXor', {
-					fieldOne: this.$t('communication.label.content'),
-					fieldTwo: this.$t('communication.label.file')
+				return this.$t('{fieldOne} or {fieldTwo} is required', {
+					fieldOne: this.$t('Content'),
+					fieldTwo: this.$t('File')
 				})
 			} else if (!this.$v.form.data.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('communication.label.content'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('Content'),
 					maxLength: this.$v.form.data.$params.maxLength.max
 				})
 			} else {
@@ -225,9 +225,9 @@ export default {
 			}
 		},
 		fileErrorMessage () {
-			return this.$t('validationErrors.fieldRequiredXor', {
-				fieldOne: this.$t('communication.label.file'),
-				fieldTwo: this.$t('communication.label.content')
+			return this.$t('{fieldOne} or {fieldTwo} is required', {
+				fieldOne: this.$t('File'),
+				fieldTwo: this.$t('Content')
 			})
 		}
 	},
@@ -253,7 +253,7 @@ export default {
 		sendFax () {
 			if (this.$v.form.$error ||
 				this.destinationError) {
-				showGlobalError(this.$t('validationErrors.generic'))
+				showGlobalError(this.$t('You have invalid form input. Please check and try again.'))
 			} else {
 				this.$store.dispatch('communication/createFax', this.form)
 			}

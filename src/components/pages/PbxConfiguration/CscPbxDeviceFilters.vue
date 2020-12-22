@@ -10,7 +10,7 @@
 					v-model="filterTypeModel"
 					dense
 					:options="filterTypeOptions"
-					:label="$t('pbxConfig.seatsFiltersFilterByLabel')"
+					:label="$t('Filter by')"
 					:disable="loading"
 				/>
 			</div>
@@ -23,7 +23,7 @@
 					type="text"
 					dense
 					:disable="loading || filterType === null"
-					:label="(filterType === null) ? $t('pbxConfig.seatsFilterInputLabel') : filterTypeModel.label"
+					:label="(filterType === null) ? $t('Type something') : filterTypeModel.label"
 					@keypress.enter="triggerFilter"
 				>
 					<template
@@ -121,13 +121,13 @@ export default {
 			const options = []
 			this.subscriberList.forEach((subscriber) => {
 				let icon = 'person'
-				let subscriberTypeTitle = this.$t('pbxConfig.keySeatLabel')
+				let subscriberTypeTitle = this.$t('Seat')
 				if (subscriber.is_pbx_group) {
 					icon = 'group'
-					subscriberTypeTitle = this.$t('pbxConfig.keyGroupLabel')
+					subscriberTypeTitle = this.$t('Group')
 				} else if (subscriber.is_pbx_pilot) {
 					icon = 'person_outline'
-					subscriberTypeTitle = this.$t('pbxConfig.keyPilotLabel')
+					subscriberTypeTitle = this.$t('Pilot')
 				}
 				options.push({
 					label: subscriber.display_name || subscriber.webusername,
@@ -148,27 +148,27 @@ export default {
 		filterTypeOptions () {
 			return [
 				{
-					label: this.$t('pbxConfig.deviceStationName'),
+					label: this.$t('Station name'),
 					value: 'station_name',
 					control: 'input'
 				},
 				{
-					label: this.$t('pbxConfig.deviceIdentifier'),
+					label: this.$t('MAC address'),
 					value: 'identifier',
 					control: 'input'
 				},
 				{
-					label: this.$t('pbxConfig.deviceModel'),
+					label: this.$t('Phone model'),
 					value: 'profile_id',
 					control: 'select'
 				},
 				{
-					label: this.$t('pbxConfig.extension'),
+					label: this.$t('Extension'),
 					value: 'pbx_extension',
 					control: 'input'
 				},
 				{
-					label: this.$t('pbxConfig.queueExtensionName'),
+					label: this.$t('Group/Seat/Pilot'),
 					value: 'display_name',
 					control: 'select'
 				}

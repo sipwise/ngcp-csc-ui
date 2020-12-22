@@ -43,16 +43,16 @@ export default {
 	computed: {
 		errorMessage () {
 			if (!this.$v.inputValue.required) {
-				return this.$t('validationErrors.fieldRequired', {
+				return this.$t('{field} is required', {
 					field: this.label
 				})
 			} else if (!this.$v.inputValue.maxLength) {
-				return this.$t('validationErrors.maxLength', {
+				return this.$t('{field} must have at most {maxLength} letters', {
 					field: this.label,
 					maxLength: this.$v.inputValue.$params.maxLength.max
 				})
 			} else if (!this.$v.inputValue.userInfo) {
-				return this.$t('validationErrors.inputValidNumber')
+				return this.$t('Input a valid phone number')
 			} else {
 				return ''
 			}

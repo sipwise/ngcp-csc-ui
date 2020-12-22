@@ -69,8 +69,8 @@ In order to add a new page you need to go along the following steps:
     path: '/user/new-feature',
     component: CscPageNewFeature,
     meta: {
-        title: i18n.t('pages.newFeature.title'),
-        subtitle: i18n.t('navigation.newFeature.subTitle')
+        title: i18n.t('New features'),
+        subtitle: i18n.t('New features sub-title')
     }
 }
 ```
@@ -83,8 +83,8 @@ In order to add a new page you need to go along the following steps:
 {
     to: '/user/new-feature',
     icon: 'fancy_icon',
-    label: this.$t('navigation.newFeature.title'),
-    sublabel: this.$t('navigation.newFeature.subTitle'),
+    label: this.$t('New features'),
+    sublabel: this.$t('New features sub-title'),
     visible: true
 }
 ```

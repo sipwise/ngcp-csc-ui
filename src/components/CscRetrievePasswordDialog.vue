@@ -2,7 +2,7 @@
 	<csc-dialog
 		:value="value"
 		title-icon="vpn_key"
-		:title="$t('pages.login.forgotPassword')"
+		:title="$t('Forgot password?')"
 		@input="$emit('input')"
 		@hide="resetForm()"
 	>
@@ -16,7 +16,7 @@
 							v-model.trim="username"
 							clearable
 							dense
-							:label="$t('pages.login.username')"
+							:label="$t('Username')"
 							type="text"
 							:error="$v.username.$error"
 							:error-message="$errorMessage($v.username)"
@@ -41,7 +41,7 @@
 				icon="check"
 				unelevated
 				color="primary"
-				:label="$t('toasts.send')"
+				:label="$t('Send')"
 				:loading="newPasswordRequesting"
 				:disable="!username || username.length < 1 || newPasswordRequesting"
 				@click="submit()"
@@ -105,7 +105,7 @@ export default {
 						position: 'top',
 						color: 'negative',
 						icon: 'error',
-						message: this.$t('toasts.errorPasswordReset')
+						message: this.$t('There was an error, please retry later')
 					})
 				} finally {
 					this.$emit('close')

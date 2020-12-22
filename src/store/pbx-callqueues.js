@@ -73,7 +73,7 @@ export default {
 		},
 		getCallQueueRemoveDialogMessage (state) {
 			if (state.callQueueRemoving !== null) {
-				return i18n.t('pbxConfig.callQueueRemovalDialogText', {
+				return i18n.t('You are about to remove call queue for {subscriber}', {
 					subscriber: state.subscriberMap[state.callQueueRemoving.id].display_name
 				})
 			}
@@ -94,27 +94,19 @@ export default {
 		getCallQueueUpdatingField (state) {
 			return state.callQueueUpdatingField
 		},
-		getCallQueueRemovalDialogMessage (state, getters) {
-			if (getters.isCallQueueRemoving) {
-				return i18n.t('pbxConfig.callQueueRemovalDialogMessage', {
-					callQueue: getters.getCallQueueRemovingName
-				})
-			}
-			return ''
-		},
 		getCallQueueCreationToastMessage (state, getters) {
-			return i18n.t('pbxConfig.callQueueCreationToast', {
+			return i18n.t('Created call queue for {callQueue} successfully', {
 				callQueue: getters.getCallQueueCreatingName
 			})
 		},
 		getCallQueueUpdateToastMessage (state, getters) {
-			return i18n.t('pbxConfig.callQueueUpdateToast', {
+			return i18n.t('Updated {field} for call queue {callQueue} successfully', {
 				callQueue: getters.getCallQueueUpdatingName,
 				field: getters.getCallQueueUpdatingField
 			})
 		},
 		getCallQueueRemovalToastMessage (state, getters) {
-			return i18n.t('pbxConfig.callQueueRemovalToast', {
+			return i18n.t('Removed call queue for {callQueue} successfully', {
 				callQueue: getters.getCallQueueRemovingName
 			})
 		}

@@ -4,7 +4,7 @@
 		:value="value"
 		:loading="loading"
 		title-icon="vpn_key"
-		:title="$t('pages.login.changePassword')"
+		:title="$t('Change password')"
 		class="csc-pbx-password-dialog"
 		@input="$emit('input')"
 		@hide="$emit('dialog-closed')"
@@ -29,7 +29,7 @@
 				:loading="loading"
 				@click="$refs.changePasswordForm.submit()"
 			>
-				{{ $t('buttons.save') }}
+				{{ $t('Save') }}
 			</q-btn>
 		</div>
 	</csc-dialog>

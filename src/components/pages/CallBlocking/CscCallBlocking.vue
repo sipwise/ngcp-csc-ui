@@ -8,7 +8,7 @@
 		>
 			<q-item>
 				<q-toggle
-					:label="$t('callBlocking.anonymousBlocked')"
+					:label="$t('All anonymous incoming calls are blocked')"
 					:value="isAnonymousBlocked"
 					:disable="isAnonymousBlockRequesting"
 					checked-icon="block"
@@ -32,7 +32,7 @@
 					<q-item-section>
 						<q-radio
 							:value="listMode"
-							:label="$t('pages.callBlocking' + suffix + '.toggleDisableLabel')"
+							:label="getTranslation('toggleDisableLabel')"
 							val="blacklist"
 							color="primary"
 							@input="updateListMode"
@@ -50,7 +50,7 @@
 					<q-item-section>
 						<q-radio
 							:value="listMode"
-							:label="$t('pages.callBlocking' + suffix + '.toggleEnableLabel')"
+							:label="getTranslation('toggleEnableLabel')"
 							val="whitelist"
 							color="primary"
 							@input="updateListMode"
@@ -109,7 +109,7 @@
 			v-else
 			class="row justify-center"
 		>
-			{{ $t('callBlocking.listEmptyMessage') }}
+			{{ $t('No numbers found') }}
 		</div>
 	</csc-page>
 </template>
@@ -162,16 +162,16 @@ export default {
 		]),
 		toggleButtonLabel () {
 			if (!this.enabled) {
-				return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleEnableLabel')
+				return this.getTranslation('toggleEnableLabel')
 			} else {
-				return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleDisableLabel')
+				return this.getTranslation('toggleDisableLabel')
 			}
 		},
 		toggleToastMessage () {
 			if (this.mode) {
-				return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleEnabledToast')
+				return this.getTranslation('toggleEnabledToast')
 			} else {
-				return this.$i18n.t('pages.callBlocking' + this.suffix + '.toggleDisabledToast')
+				return this.getTranslation('toggleDisabledToast')
 			}
 		},
 		suffix () {
@@ -179,7 +179,7 @@ export default {
 		},
 		removeDialogMessage () {
 			if (this.currentRemovingIndex !== null) {
-				return this.$t('pages.callBlocking' + this.suffix + '.removeDialogText', {
+				return this.getTranslation('removeDialogText', {
 					number: this.numbers[this.currentRemovingIndex]
 				})
 			} else {
@@ -229,7 +229,7 @@ export default {
 		numberDeletionConfirm (index) {
 			this.currentRemovingIndex = index
 			this.$q.dialog({
-				title: this.$t('pages.callBlocking' + this.suffix + '.removeDialogTitle'),
+				title: this.getTranslation('removeDialogTitle'),
 				message: this.removeDialogMessage,
 				color: 'primary',
 				cancel: true,
@@ -237,6 +237,32 @@ export default {
 			}).onOk(data => {
 				this.removeNumber()
 			})
+		},
+		getTranslation (key, params) {
+			let translationsMap
+			switch (this.suffix) {
+			case 'Incoming':
+				translationsMap = {
+					toggleEnableLabel: this.$t('Only incoming calls from listed numbers are allowed'),
+					toggleDisableLabel: this.$t('All incoming calls from listed numbers are blocked'),
+					toggleEnabledToast: this.$t('All listed numbers are allowed'),
+					toggleDisabledToast: this.$t('All listed numbers are blocked'),
+					removeDialogTitle: this.$t('Remove number'),
+					removeDialogText: this.$t('You are about to remove the number {number}', params)
+				}
+				break
+			case 'Outgoing':
+				translationsMap = {
+					toggleEnableLabel: this.$t('Only outgoing calls to listed numbers are allowed'),
+					toggleDisableLabel: this.$t('All outgoing calls to listed numbers are blocked'),
+					toggleEnabledToast: this.$t('All listed numbers are allowed'),
+					toggleDisabledToast: this.$t('All listed numbers are blocked'),
+					removeDialogTitle: this.$t('Remove number'),
+					removeDialogText: this.$t('You are about to remove the number {number}', params)
+				}
+				break
+			}
+			return translationsMap[key]
 		}
 	}
 }

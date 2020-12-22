@@ -6,20 +6,20 @@
 			dense
 			color="primary"
 			icon="add"
-			:label="$t('pages.callForward.addDestinationButton')"
+			:label="$t('Add destination')"
 		>
 			<csc-popup-menu>
 				<csc-popup-menu-item
-					:label="$t('pages.callForward.buttons.addNumber')"
+					:label="$t('Add Number')"
 					@click="addDestinationByType('number')"
 				/>
 				<csc-popup-menu-item
-					:label="$t('pages.callForward.buttons.addVoicemail')"
+					:label="$t('Add Voicemail')"
 					@click="addDestinationByType('voicebox')"
 				/>
 				<csc-popup-menu-item
 					v-if="hasFaxCapabilityAndFaxActive && hasSendFaxFeature"
-					:label="$t('pages.callForward.buttons.addFax2Mail')"
+					:label="$t('Add Fax2Mail')"
 					@click="addDestinationByType('fax2mail')"
 				/>
 			</csc-popup-menu>
@@ -27,7 +27,7 @@
 		<div v-if="isFormEnabled">
 			<csc-call-input
 				v-model="destinationForm.destination"
-				:label="$t('pages.callForward.destination')"
+				:label="$t('Destination')"
 				:before="beforeIconDestination"
 				dense
 				@submit="addDestination"
@@ -37,8 +37,8 @@
 				v-model="destinationForm.timeout"
 				clearable
 				dense
-				:label="$t('pages.callForward.timeout')"
-				:suffix="$t('pages.callForward.seconds')"
+				:label="$t('Timeout')"
+				:suffix="$t('seconds')"
 				:error="$v.destinationForm.timeout.$error"
 				@input="$v.destinationForm.timeout.$touch"
 				@blur="$v.destinationForm.timeout.$touch"
@@ -49,7 +49,7 @@
 				color="default"
 				@click="disableForm()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				flat
@@ -58,7 +58,7 @@
 				:disable="$v.destinationForm.timeout.$error || destinationError"
 				@click="addDestination()"
 			>
-				{{ $t('buttons.save') }}
+				{{ $t('Save') }}
 			</q-btn>
 		</div>
 	</div>
@@ -154,16 +154,16 @@ export default {
 		]),
 		timeoutInputError () {
 			if (!this.$v.destinationForm.timeout.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('pages.callForward.timeout')
+				return this.$t('{field} is required', {
+					field: this.$t('Timeout')
 				})
 			} else if (!this.$v.destinationForm.timeout.numeric) {
-				return this.$t('validationErrors.numeric', {
-					field: this.$t('pages.callForward.timeout')
+				return this.$t('{field} must consist of numeric characters only', {
+					field: this.$t('Timeout')
 				})
 			} else if (!this.$v.destinationForm.timeout.minValue) {
-				return this.$t('validationErrors.minValueSecond', {
-					field: this.$t('pages.callForward.timeout'),
+				return this.$t('{field} must be at least {minValue} second', {
+					field: this.$t('Timeout'),
 					minValue: this.$v.destinationForm.timeout.$params.minValue.min
 				})
 			} else {
@@ -225,7 +225,7 @@ export default {
 		addDestination () {
 			if (this.$v.destinationForm.timeout.$error ||
 				this.destinationError) {
-				showGlobalError(this.$t('validationErrors.generic'))
+				showGlobalError(this.$t('You have invalid form input. Please check and try again.'))
 			} else {
 				this.$store.dispatch('callForward/addDestination', {
 					form: this.destinationForm,

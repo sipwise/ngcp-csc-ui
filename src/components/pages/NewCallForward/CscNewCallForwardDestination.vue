@@ -56,7 +56,7 @@
 						v-if="firstDestinationInCreation && (popoverToTop || popoverTimeoutToTop)"
 						class="csc-cf-popver-alert"
 					>
-						{{ $t('pages.newCallForward.mandatoryDestinationLabel') }}
+						{{ $t('Please add a destination to the group before adding conditions') }}
 					</div>
 					<csc-new-call-forward-destination-type-form
 						ref="selectDestinationType"
@@ -94,8 +94,8 @@
 			<csc-confirm-dialog
 				ref="confirmDialog"
 				title-icon="delete"
-				:title="$t('pages.newCallForward.cancelDialogTitle', {groupName: groupName})"
-				:message="$t('pages.newCallForward.cancelDialogText', {groupName: groupName, destination: getDestName()})"
+				:title="$t('Delete from {groupName} forwarding', {groupName: groupName})"
+				:message="$t('You are about to delete {destination} from {groupName} call forwarding', {groupName: groupName, destination: getDestName()})"
 				@confirm="confirmDeleteDest"
 			/>
 		</div>
@@ -165,21 +165,21 @@ export default {
 			if (this.allCallsFwd) {
 				return ''
 			} else {
-				return this.$t('pages.newCallForward.destinationTimeoutLabel')
+				return this.$t('Then after ')
 			}
 		},
 		labelFront () {
 			if (this.allCallsFwd) {
-				return this.$t('pages.newCallForward.allCallsForwardedTo')
+				return this.$t('All calls forwarded to')
 			} else if (this.isVoiceMail() || this.isOfflineGroup() || this.isBusyGroup()) {
-				return this.$t('pages.newCallForward.destinationVoicemailLabel')
+				return this.$t('seconds finally forwarded to')
 			} else {
-				return this.$t('pages.newCallForward.destinationNumberLabel')
+				return this.$t('seconds forwarded to')
 			}
 		},
 		labelNumber () {
 			if (!this.destinationNumber || this.destinationNumber.length < 2) {
-				return this.$t('pages.newCallForward.destinationLabel')
+				return this.$t('Destination')
 			} else {
 				return this.destinationNumber
 			}
@@ -195,7 +195,7 @@ export default {
 				isNaN(this.getOwnPhoneTimeout) === false
 				? this.getOwnPhoneTimeout
 				: destination.timeout
-			this.destinationNumber = this.isVoiceMail() ? `${this.$t('pages.newCallForward.voiceMailLabel')}` : destination.simple_destination
+			this.destinationNumber = this.isVoiceMail() ? `${this.$t('Voicemail')}` : destination.simple_destination
 			this.destinationIndex = this.index
 		},
 		async showNext () {
@@ -280,7 +280,7 @@ export default {
 			return this.destination.simple_destination
 				? this.destination.simple_destination
 				: this.isVoiceMail()
-					? `${this.$t('pages.newCallForward.voiceMailLabel')}`
+					? `${this.$t('Voicemail')}`
 					: ''
 		},
 		movePopoverToTop () {

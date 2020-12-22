@@ -4,7 +4,7 @@
 			v-model="source"
 			dark
 			autofocus
-			:label="$t('pages.callForward.sources.source')"
+			:label="$t('Source')"
 			color="primary"
 			@keyup.enter="addSource()"
 		/>
@@ -14,7 +14,7 @@
 			color="default"
 			@click="disableForm()"
 		>
-			{{ $t('buttons.cancel') }}
+			{{ $t('Cancel') }}
 		</q-btn>
 		<q-btn
 			flat
@@ -23,7 +23,7 @@
 			:disable="!isValid"
 			@click="addSource()"
 		>
-			{{ $t('buttons.save') }}
+			{{ $t('Save') }}
 		</q-btn>
 	</div>
 </template>

@@ -47,15 +47,15 @@ export default function routes (app) {
 					path: 'home',
 					component: CscPageHome,
 					meta: {
-						title: i18n.t('call.inputShort')
+						title: i18n.t('Start new call')
 					}
 				},
 				{
 					path: 'conversations',
 					component: CscPageConversations,
 					meta: {
-						title: i18n.t('navigation.conversations.title'),
-						subtitle: i18n.t('navigation.conversations.subTitle')
+						title: i18n.t('Conversations'),
+						subtitle: i18n.t('Calls, Faxes, VoiceMails')
 					}
 				},
 				{
@@ -73,128 +73,128 @@ export default function routes (app) {
 					path: 'call-forward/always',
 					component: CscPageCallForwardAlways,
 					meta: {
-						title: i18n.t('navigation.callForward.title'),
-						subtitle: i18n.t('navigation.callForward.always')
+						title: i18n.t('Call Forwarding'),
+						subtitle: i18n.t('Always')
 					}
 				},
 				{
 					path: 'call-forward/company-hours',
 					component: CscPageCallForwardCompanyHours,
 					meta: {
-						title: i18n.t('navigation.callForward.title'),
-						subtitle: i18n.t('navigation.callForward.companyHours')
+						title: i18n.t('Call Forwarding'),
+						subtitle: i18n.t('Company Hours')
 					}
 				},
 				{
 					path: 'call-forward/after-hours',
 					component: CscPageCallForwardAfterHours,
 					meta: {
-						title: i18n.t('navigation.callForward.title'),
-						subtitle: i18n.t('navigation.callForward.afterHours')
+						title: i18n.t('Call Forwarding'),
+						subtitle: i18n.t('After Hours')
 					}
 				},
 				{
 					path: 'call-blocking/incoming',
 					component: CscPageCallBlockingIncoming,
 					meta: {
-						title: i18n.t('navigation.callBlocking.title'),
-						subtitle: i18n.t('navigation.callBlocking.incoming')
+						title: i18n.t('Call Blocking'),
+						subtitle: i18n.t('Incoming')
 					}
 				},
 				{
 					path: 'call-blocking/outgoing',
 					component: CscPageCallBlockingOutgoing,
 					meta: {
-						title: i18n.t('navigation.callBlocking.title'),
-						subtitle: i18n.t('navigation.callBlocking.outgoing')
+						title: i18n.t('Call Blocking'),
+						subtitle: i18n.t('Outgoing')
 					}
 				},
 				{
 					path: 'call-blocking/privacy',
 					component: CscPageCallBlockingPrivacy,
 					meta: {
-						title: i18n.t('navigation.callBlocking.title'),
-						subtitle: i18n.t('navigation.callBlocking.privacy')
+						title: i18n.t('Call Blocking'),
+						subtitle: i18n.t('Privacy')
 					}
 				},
 				{
 					path: 'reminder',
 					component: CscPageReminder,
 					meta: {
-						title: i18n.t('navigation.reminder.title'),
-						subtitle: i18n.t('navigation.reminder.subTitle')
+						title: i18n.t('Reminder'),
+						subtitle: i18n.t('Set your personal alarm')
 					}
 				},
 				{
 					path: 'speeddial',
 					component: CscPageSpeedDial,
 					meta: {
-						title: i18n.t('navigation.speeddial.title'),
-						subtitle: i18n.t('navigation.speeddial.subTitle')
+						title: i18n.t('Speed Dial'),
+						subtitle: i18n.t('Set your speed dials')
 					}
 				},
 				{
 					path: 'pbx-configuration/groups',
 					component: CscPagePbxGroups,
 					meta: {
-						title: i18n.t('navigation.pbxConfiguration.title'),
-						subtitle: i18n.t('navigation.pbxConfiguration.groups')
+						title: i18n.t('PBX Configuration'),
+						subtitle: i18n.t('Groups')
 					}
 				},
 				{
 					path: 'pbx-configuration/seats',
 					component: CscPagePbxSeats,
 					meta: {
-						title: i18n.t('navigation.pbxConfiguration.title'),
-						subtitle: i18n.t('navigation.pbxConfiguration.seats')
+						title: i18n.t('PBX Configuration'),
+						subtitle: i18n.t('Seats')
 					}
 				},
 				{
 					path: 'pbx-configuration/devices',
 					component: CscPagePbxDevices,
 					meta: {
-						title: i18n.t('navigation.pbxConfiguration.title'),
-						subtitle: i18n.t('navigation.pbxConfiguration.devices')
+						title: i18n.t('PBX Configuration'),
+						subtitle: i18n.t('Devices')
 					}
 				},
 				{
 					path: 'pbx-configuration/call-queues',
 					component: CscPagePbxCallQueues,
 					meta: {
-						title: i18n.t('navigation.pbxConfiguration.title'),
-						subtitle: i18n.t('navigation.pbxConfiguration.callQueues')
+						title: i18n.t('PBX Configuration'),
+						subtitle: i18n.t('Call Queues')
 					}
 				},
 				{
 					path: 'pbx-configuration/sound-sets',
 					component: CscPagePbxSoundSets,
 					meta: {
-						title: i18n.t('navigation.pbxConfiguration.title'),
-						subtitle: i18n.t('navigation.pbxConfiguration.soundSets')
+						title: i18n.t('PBX Configuration'),
+						subtitle: i18n.t('Sound Sets')
 					}
 				},
 				{
 					path: 'pbx-configuration/ms-configs',
 					component: CscPagePbxMsConfigs,
 					meta: {
-						title: i18n.t('navigation.pbxConfiguration.title'),
-						subtitle: i18n.t('navigation.pbxConfiguration.msConfigs')
+						title: i18n.t('PBX Configuration'),
+						subtitle: i18n.t('Manager Secretary')
 					}
 				},
 				{
 					path: 'voicebox',
 					component: CscPageVoicebox,
 					meta: {
-						title: i18n.t('navigation.voicebox.title'),
-						subtitle: i18n.t('navigation.voicebox.subTitle')
+						title: i18n.t('Voicebox'),
+						subtitle: i18n.t('Set your voicebox settings')
 					}
 				},
 				{
 					path: 'fax-settings',
 					component: CscPageFaxSettings,
 					meta: {
-						title: i18n.t('navigation.faxSettings.title'),
-						subtitle: i18n.t('navigation.faxSettings.subTitle')
+						title: i18n.t('Fax Settings'),
+						subtitle: i18n.t('Set your fax settings')
 					},
 					async beforeEnter (routeTo, routeFrom, next) {
 						await app.store.dispatch('user/initUser')
@@ -209,24 +209,24 @@ export default function routes (app) {
 					path: 'settings',
 					component: CscPageUserSettings,
 					meta: {
-						title: i18n.t('navigation.userSettings.title'),
-						subtitle: i18n.t('navigation.userSettings.subTitle')
+						title: i18n.t('User settings'),
+						subtitle: i18n.t('Change password')
 					}
 				},
 				{
 					path: 'call-settings',
 					component: CscPageCallSettings,
 					meta: {
-						title: i18n.t('navigation.callSettings.title'),
-						subtitle: i18n.t('navigation.callSettings.subTitle')
+						title: i18n.t('Call Settings'),
+						subtitle: i18n.t('Call Settings')
 					}
 				},
 				{
 					path: 'pbx-settings',
 					component: CscPagePbxSettings,
 					meta: {
-						title: i18n.t('navigation.pbxSettings.title'),
-						subtitle: i18n.t('navigation.pbxSettings.subTitle')
+						title: i18n.t('PBX Settings'),
+						subtitle: i18n.t('Set your PBX settings')
 					}
 				},
 				{
@@ -239,7 +239,7 @@ export default function routes (app) {
 			path: '/login',
 			component: CscPageLogin,
 			meta: {
-				title: i18n.t('pages.login.title')
+				title: i18n.t('Subscriber Sign In')
 			}
 		},
 		{

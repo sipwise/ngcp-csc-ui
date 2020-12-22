@@ -23,7 +23,7 @@
 							color="primary"
 							icon="done"
 						>
-							{{ $t('buttons.confirm') }}
+							{{ $t('Confirm') }}
 						</q-btn>
 					</div>
 				</q-date>
@@ -46,7 +46,7 @@
 							color="primary"
 							icon="done"
 						>
-							{{ $t('buttons.confirm') }}
+							{{ $t('Confirm') }}
 						</q-btn>
 					</div>
 				</q-date>
@@ -68,7 +68,7 @@
 							color="primary"
 							icon="done"
 						>
-							{{ $t('buttons.confirm') }}
+							{{ $t('Confirm') }}
 						</q-btn>
 					</div>
 				</q-time>
@@ -90,7 +90,7 @@
 							color="primary"
 							icon="done"
 						>
-							{{ $t('buttons.confirm') }}
+							{{ $t('Confirm') }}
 						</q-btn>
 					</div>
 				</q-time>
@@ -102,7 +102,7 @@
 			<q-input
 				v-model="dayFromFormatted"
 				dark
-				:placeholder="$t('pages.newCallForward.dateRangeStartDate')"
+				:placeholder="$t('Start date')"
 				@click="openDayFrom()"
 			>
 				<template v-slot:append>
@@ -116,7 +116,7 @@
 				v-model="dayToFormatted"
 				:disable="!dayFrom"
 				dark
-				:placeholder="$t('pages.newCallForward.dateRangeEndDate')"
+				:placeholder="$t('End date')"
 				@click="openDayTo()"
 			>
 				<template v-slot:append>
@@ -134,7 +134,7 @@
 				v-model="hourFromFormatted"
 				dark
 				:disable="!dayFrom"
-				:placeholder="$t('pages.newCallForward.dateRangeStartTime')"
+				:placeholder="$t('Start time')"
 				@click="openHourFrom()"
 			>
 				<template v-slot:append>
@@ -147,7 +147,7 @@
 			<q-input
 				v-model="hourToFormatted"
 				dark
-				:placeholder="$t('pages.newCallForward.dateRangeEndTime')"
+				:placeholder="$t('End time')"
 				:disable="!dayTo"
 				@click="openHourTo()"
 			>
@@ -169,12 +169,12 @@
 				icon="delete"
 				@mousedown.native="showRemoveDateRangeDialog()"
 			>
-				{{ $t('buttons.remove') }}
+				{{ $t('Remove') }}
 				<csc-confirm-dialog
 					ref="confirmDeleteTimesetDialog"
 					title-icon="delete"
-					:title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: groupTimeRange})"
-					:message="$t('pages.newCallForward.cancelTimesetText', {name: groupTimeRange})"
+					:title="$t('Delete {name} timeset', {name: groupTimeRange})"
+					:message="$t('You are about to delete  {name} timeset', {name: groupTimeRange})"
 					@confirm="deleteTimeset"
 				/>
 			</q-btn>
@@ -184,7 +184,7 @@
 				icon="clear"
 				@click="resetTimeRange(); close()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				flat
@@ -193,7 +193,7 @@
 				:disable="!isDateReadyForSubmit"
 				@click="save();"
 			>
-				{{ $t('buttons.save') }}
+				{{ $t('Save') }}
 			</q-btn>
 		</div>
 	</div>

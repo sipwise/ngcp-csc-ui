@@ -12,7 +12,7 @@
 					map-options
 					dense
 					:options="filterTypeOptions"
-					:label="$t('pbxConfig.seatsFiltersFilterByLabel')"
+					:label="$t('Filter by')"
 				/>
 			</div>
 			<div
@@ -23,7 +23,7 @@
 					type="text"
 					dense
 					:disable="filterType === null"
-					:label="$t('pbxConfig.seatsFilterInputLabel')"
+					:label="$t('Type something')"
 					@keypress.enter="triggerFilter"
 				>
 					<template
@@ -49,7 +49,7 @@
 				<q-chip
 					v-for="(filterItem, index) in filters"
 					:key="index"
-					:label="$t('pbxConfig.seatsFiltersTypes.' + filterItem.name) + ': ' + filterItem.value"
+					:label="getFilterLabel(filterItem)"
 					:disable="false"
 					icon="filter_alt"
 					removable
@@ -78,22 +78,32 @@ export default {
 		filterTypeOptions () {
 			return [
 				{
-					label: this.$t('pbxConfig.seatsFiltersTypes.display_name'),
+					label: this.$t('Name'),
 					value: 'display_name'
 				},
 				{
-					label: this.$t('pbxConfig.seatsFiltersTypes.pbx_extension'),
+					label: this.$t('Extension'),
 					value: 'pbx_extension'
 				},
 				{
-					label: this.$t('pbxConfig.seatsFiltersTypes.primary_number'),
+					label: this.$t('Primary Number'),
 					value: 'primary_number'
 				},
 				{
-					label: this.$t('pbxConfig.seatsFiltersTypes.alias_number'),
+					label: this.$t('Alias Number'),
 					value: 'alias_number'
 				}
 			]
+		},
+		getFilterLabel (filterItem) {
+			const filterNameTranslation = {
+				display_name: this.$t('Name'),
+				pbx_extension: this.$t('Extension'),
+				primary_number: this.$t('Primary Number'),
+				alias_number: this.$t('Alias Number')
+			}
+			const filterNameTitle = filterNameTranslation[filterItem.name] || this.$t('Unknown name')
+			return filterNameTitle + ': ' + filterItem.value
 		}
 	},
 	methods: {

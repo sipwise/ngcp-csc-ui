@@ -3,7 +3,7 @@
 		ref="inputField"
 		clearable
 		type="text"
-		:label="$t('call.number')"
+		:label="$t('Phone number')"
 		:value="value"
 		:disable="!enabled"
 		:error="$v.phoneNumber.$error"
@@ -65,22 +65,22 @@ export default {
 	computed: {
 		errorMessage () {
 			if (!this.$v.phoneNumber.required) {
-				return this.$t('validationErrors.fieldRequired', {
-					field: this.$t('call.number')
+				return this.$t('{field} is required', {
+					field: this.$t('Phone number')
 				})
 			} else if (!this.$v.phoneNumber.maxLength) {
-				return this.$t('validationErrors.maxLength', {
-					field: this.$t('call.number'),
+				return this.$t('{field} must have at most {maxLength} letters', {
+					field: this.$t('Phone number'),
 					maxLength: this.$v.phoneNumber.$params.maxLength.max
 				})
 			} else if (!this.$v.phoneNumber.userInfo) {
-				return this.$t('validationErrors.inputValidNumber')
+				return this.$t('Input a valid phone number')
 			} else {
 				return ''
 			}
 		},
 		helperMessage () {
-			return this.$t('validationErrors.inputNumber')
+			return this.$t('Input a phone number')
 		}
 	},
 	watch: {

@@ -2,14 +2,14 @@
 	<csc-dialog
 		ref="dialog"
 		title-icon="vpn_key"
-		:title="$t('userSettings.changePasswordDialogTitle')"
+		:title="$t('Change login password')"
 	>
 		<template
 			v-slot:actions
 		>
 			<q-btn
 				icon="check"
-				:label="$t('buttons.confirm')"
+				:label="$t('Confirm')"
 				:disable="!ready"
 				unelevated
 				text-color="dark"

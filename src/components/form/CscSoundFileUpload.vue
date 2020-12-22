@@ -33,7 +33,7 @@
 							color="primary"
 							flat
 							dense
-							:label="$t('buttons.select')"
+							:label="$t('Select')"
 							:disable="isPlaying"
 							@click="$refs.fileUpload.click()"
 						/>
@@ -43,7 +43,7 @@
 							color="negative"
 							flat
 							dense
-							:label="$t('buttons.remove')"
+							:label="$t('Remove')"
 							:disable="isPlaying"
 							@click="remove"
 						/>
@@ -53,7 +53,7 @@
 							color="primary"
 							flat
 							dense
-							:label="$t('buttons.reset')"
+							:label="$t('Reset')"
 							:disable="isPlaying"
 							@click="cancel"
 						/>
@@ -63,7 +63,7 @@
 							color="primary"
 							flat
 							dense
-							:label="$t('buttons.upload')"
+							:label="$t('Upload')"
 							:disable="isPlaying"
 							@click="upload"
 						/>
@@ -203,9 +203,9 @@ export default {
 		},
 		removeLabel () {
 			if (this.deleteTerm === 'remove') {
-				return this.$t('buttons.removeFile')
+				return this.$t('Remove file')
 			} else {
-				return this.$t('buttons.resetDefaults')
+				return this.$t('Reset to defaults')
 			}
 		},
 		removeIcon () {

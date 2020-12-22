@@ -11,7 +11,7 @@
 				slot="slot1"
 				icon="add"
 				color="primary"
-				:label="$t('pbxConfig.msConfigCreationIndicationLabel')"
+				:label="$t('Add Config')"
 				@click="enableMsConfigAddForm"
 			/>
 		</csc-list-actions>
@@ -62,11 +62,11 @@
 			v-if="isMsConfigListEmpty && !isMsConfigListRequesting"
 			class="row justify-center csc-no-entities"
 		>
-			{{ $t('pbxConfig.noMsConfigs') }}
+			{{ $t('No manager secretary configuration created yet') }}
 		</div>
 		<csc-remove-dialog
 			ref="removeDialog"
-			:title="$t('pbxConfig.msConfigRemovalDialogTitle')"
+			:title="$t('Remove manager secretary config')"
 			:message="getMsConfigRemoveDialogMessage"
 			@remove="removeMsConfig"
 			@cancel="closeMsConfigRemovalDialog"

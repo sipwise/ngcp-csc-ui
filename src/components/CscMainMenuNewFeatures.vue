@@ -4,7 +4,7 @@
 			v-if="!menuMinimized"
 			class="q-pr-md q-pl-md q-pt-xs q-pb-xs text-subtitle2"
 		>
-			{{ $t('navigation.newFeatures.header.title') }}
+			{{ $t('New features') }}
 		</div>
 		<csc-main-menu
 			:items="items"
@@ -64,7 +64,7 @@ export default {
 				{
 					to: '/user/new-call-forward',
 					icon: 'phone_forwarded',
-					label: this.$t('navigation.callForward.title'),
+					label: this.$t('Call Forwarding'),
 					visible: true
 				}
 			]

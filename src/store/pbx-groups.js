@@ -100,24 +100,24 @@ export default {
 		},
 		getGroupRemoveDialogMessage (state, getters) {
 			if (getters.isGroupRemoving) {
-				return i18n.t('pbxConfig.removeGroupText', {
+				return i18n.t('You are about to remove group {group}', {
 					group: getters.getGroupRemovingName
 				})
 			}
 			return ''
 		},
 		getGroupCreationToastMessage (state, getters) {
-			return i18n.t('pbxConfig.toasts.addedGroupToast', {
+			return i18n.t('Added group {group}', {
 				group: getters.getGroupCreatingName
 			})
 		},
 		getGroupUpdateToastMessage (state, getters) {
-			return i18n.t('pbxConfig.toasts.changedFieldToast', {
+			return i18n.t('Changed {field} successfully', {
 				field: getters.getGroupUpdatingField
 			})
 		},
 		getGroupRemovalToastMessage (state, getters) {
-			return i18n.t('pbxConfig.toasts.removedGroupToast', {
+			return i18n.t('Removed group {group}', {
 				group: getters.getGroupRemovingName
 			})
 		},
@@ -134,19 +134,19 @@ export default {
 		getHuntPolicyOptions () {
 			return [
 				{
-					label: i18n.t('pbxConfig.serialRinging'),
+					label: i18n.t('Serial Ringing'),
 					value: 'serial'
 				},
 				{
-					label: i18n.t('pbxConfig.parallelRinging'),
+					label: i18n.t('Parallel Ringing'),
 					value: 'parallel'
 				},
 				{
-					label: i18n.t('pbxConfig.randomRinging'),
+					label: i18n.t('Random Ringing'),
 					value: 'random'
 				},
 				{
-					label: i18n.t('pbxConfig.circularRinging'),
+					label: i18n.t('Circular Ringing'),
 					value: 'circular'
 				}
 			]
@@ -317,7 +317,7 @@ export default {
 		setGroupName (context, options) {
 			context.commit('groupUpdateRequesting', {
 				groupId: options.groupId,
-				groupField: i18n.t('pbxConfig.groupName')
+				groupField: i18n.t('Group Name')
 			})
 			setGroupName({
 				groupId: options.groupId,
@@ -331,7 +331,7 @@ export default {
 		setGroupExtension (context, options) {
 			context.commit('groupUpdateRequesting', {
 				groupId: options.groupId,
-				groupField: i18n.t('pbxConfig.extension')
+				groupField: i18n.t('Extension')
 			})
 			setGroupExtension({
 				groupId: options.groupId,
@@ -345,7 +345,7 @@ export default {
 		setGroupHuntPolicy (context, options) {
 			context.commit('groupUpdateRequesting', {
 				groupId: options.groupId,
-				groupField: i18n.t('pbxConfig.huntPolicy')
+				groupField: i18n.t('Hunt Policy')
 			})
 			setGroupHuntPolicy({
 				groupId: options.groupId,
@@ -359,7 +359,7 @@ export default {
 		setGroupHuntTimeout (context, options) {
 			context.commit('groupUpdateRequesting', {
 				groupId: options.groupId,
-				groupField: i18n.t('pbxConfig.huntPolicy')
+				groupField: i18n.t('Hunt Policy')
 			})
 			setGroupHuntTimeout({
 				groupId: options.groupId,
@@ -373,7 +373,7 @@ export default {
 		setGroupNumbers (context, options) {
 			context.commit('groupUpdateRequesting', {
 				groupId: options.groupId,
-				groupField: i18n.t('pbxConfig.aliasNumbers')
+				groupField: i18n.t('Alias Numbers')
 			})
 			setGroupNumbers({
 				groupId: options.groupId,
@@ -397,7 +397,7 @@ export default {
 		setGroupSeats (context, options) {
 			context.commit('groupUpdateRequesting', {
 				groupId: options.groupId,
-				groupField: i18n.t('pbxConfig.seats')
+				groupField: i18n.t('Seats')
 			})
 			setGroupSeats({
 				groupId: options.groupId,
@@ -411,7 +411,7 @@ export default {
 		setGroupSoundSet (context, options) {
 			context.commit('groupUpdateRequesting', {
 				groupId: options.groupId,
-				groupField: i18n.t('pbxConfig.soundSet')
+				groupField: i18n.t('Sound Set')
 			})
 			setGroupSoundSet({
 				groupId: options.groupId,

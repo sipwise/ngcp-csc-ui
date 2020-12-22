@@ -8,7 +8,7 @@
 			v-bind="$attrs"
 			generate
 			clearable
-			:label="$t('pbxConfig.typePassword')"
+			:label="$t('Password')"
 			@input="inputPassword"
 			@generated="passwordGenerated"
 			@clear="passwordClear"
@@ -28,7 +28,7 @@
 			ref="passwordRetype"
 			v-model="passwordRetype"
 			v-bind="$attrs"
-			:label="$t('pbxConfig.retypePassword')"
+			:label="$t('Password Retype')"
 			:error="$v.passwordRetype.$error"
 			:error-message="errorMessagePasswordRetype"
 			clearable
@@ -82,7 +82,7 @@ export default {
 	computed: {
 		errorMessagePasswordRetype () {
 			if (!this.$v.passwordRetype.sameAsPassword) {
-				return this.$t('pbxConfig.errorPasswordNotEqual')
+				return this.$t('Passwords must be equal')
 			} else {
 				return ''
 			}

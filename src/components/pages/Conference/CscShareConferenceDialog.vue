@@ -1,7 +1,7 @@
 <template>
 	<csc-dialog
 		ref="dialogComp"
-		:title="$t('conferencing.shareDialogTitle')"
+		:title="$t('Share conference')"
 		:title-icon="'link'"
 	>
 		<div
@@ -21,7 +21,7 @@
 			icon="link"
 			@click="copy"
 		>
-			{{ $t('conferencing.copyLinkButtonLabel') }}
+			{{ $t('Copy link') }}
 		</q-btn>
 	</csc-dialog>
 </template>

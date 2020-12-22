@@ -103,7 +103,7 @@ export default {
 		getSoundSetRemoveDialogMessage (state) {
 			if (state.soundSetRemoving !== null) {
 				const id = _.get(state, 'soundSetRemoving.id', null)
-				return i18n.t('pbxConfig.soundSetRemovalDialogText', {
+				return i18n.t('You are about to remove sound set {soundSetName}', {
 					soundSetName: _.get(state, 'soundSetMap.' + id + '.name', null)
 				})
 			}
@@ -122,18 +122,18 @@ export default {
 			return state.soundSetUpdatingField
 		},
 		getSoundSetCreationToastMessage (state, getters) {
-			return i18n.t('pbxConfig.soundSetCreationToast', {
+			return i18n.t('Created sound set {soundSet} successfully', {
 				soundSet: getters.getSoundSetCreatingName
 			})
 		},
 		getSoundSetUpdateToastMessage (state, getters) {
-			return i18n.t('pbxConfig.soundSetUpdateToast', {
+			return i18n.t('Updated {field} for sound set {soundSet} successfully', {
 				soundSet: getters.getSoundSetUpdatingName,
 				field: getters.getSoundSetUpdatingField
 			})
 		},
 		getSoundSetRemovalToastMessage (state, getters) {
-			return i18n.t('pbxConfig.soundSetRemovalToast', {
+			return i18n.t('Removed sound set {soundSet} successfully', {
 				soundSet: getters.getSoundSetRemovingName
 			})
 		},
@@ -364,7 +364,7 @@ export default {
 		setAsDefaultSoundSet (context, options) {
 			context.commit('soundSetUpdateRequesting', {
 				soundSetId: options.soundSetId,
-				field: i18n.t('pbxConfig.soundSetDefaultLabel')
+				field: i18n.t('default option')
 			})
 			let func = setAsDefault
 			if (options.contractDefault !== true) {
@@ -384,7 +384,7 @@ export default {
 		setSoundSetName (context, options) {
 			context.commit('soundSetUpdateRequesting', {
 				soundSetId: options.soundSetId,
-				field: i18n.t('pbxConfig.soundSetNameLabel')
+				field: i18n.t('name')
 			})
 			setSoundSetName(options.soundSetId, options.name).then(() => {
 				return context.dispatch('loadSoundSetList', {
@@ -400,7 +400,7 @@ export default {
 		setSoundSetDescription (context, options) {
 			context.commit('soundSetUpdateRequesting', {
 				soundSetId: options.soundSetId,
-				field: i18n.t('pbxConfig.soundSetDescriptionLabel')
+				field: i18n.t('description')
 			})
 			setSoundSetDescription(options.soundSetId, options.description).then(() => {
 				return context.dispatch('loadSoundSetList', {

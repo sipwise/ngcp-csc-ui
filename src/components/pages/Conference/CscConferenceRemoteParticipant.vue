@@ -161,8 +161,8 @@ export default {
 		},
 		audioLabel () {
 			return this.isAudioMuted
-				? this.$t('conferencing.unmuteMicrophone')
-				: this.$t('conferencing.muteMicrophone')
+				? this.$t('Unmute')
+				: this.$t('Mute')
 		},
 		showMenu () {
 			this.$refs.popover.open()

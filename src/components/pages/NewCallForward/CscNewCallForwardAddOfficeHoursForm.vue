@@ -6,7 +6,7 @@
 			<q-item
 				class="justify-center text-bold"
 			>
-				{{ $t('pages.newCallForward.officeHoursTitle') }}
+				{{ $t('Office hours') }}
 			</q-item>
 			<q-item
 				class="justify-center"
@@ -14,7 +14,7 @@
 				<q-checkbox
 					v-model="checkOfficeHoursForAllDays"
 					:value="sameOfficeHoursForAllDays"
-					:label="$t('pages.newCallForward.sameOfficeHoursForAllDays')"
+					:label="$t('Same time for all selected days')"
 					@input="toggleAllDaysSameOfficeHours"
 				/>
 			</q-item>
@@ -28,7 +28,7 @@
 					dense
 				>
 					<q-tab
-						v-for="(dayLetter, index) in $t('pages.newCallForward.daysOfTheWeekShort').split(',')"
+						v-for="(dayLetter, index) in $t('M,T,W,T,F,S,S').split(',')"
 						:key="index"
 						:alert="hasOfficeHours(getDayNumber(index))"
 						:name="getDayNumber(index)"
@@ -49,7 +49,7 @@
 				class="justify-center"
 			>
 				<q-btn
-					v-for="(dayLetter, index) in $t('pages.newCallForward.daysOfTheWeekShort').split(',')"
+					v-for="(dayLetter, index) in $t('M,T,W,T,F,S,S').split(',')"
 					:key="index"
 					class="weekday-btn q-ma-sm"
 					:class="{ 'day-selected-btn': weekdays.includes(getDayNumber(index))}"
@@ -100,7 +100,7 @@
 						color="primary"
 						size="24px"
 					/>
-					{{ $t('pages.newCallForward.officeHoursAddBtnLabel') }}
+					{{ $t('Add time range') }}
 				</q-btn>
 			</q-item>
 		</q-list>
@@ -114,14 +114,14 @@
 				icon="delete"
 				@click="showRemoveDialog()"
 			>
-				{{ $t('buttons.remove') }}
+				{{ $t('Remove') }}
 			</q-btn>
 			<csc-confirm-dialog
 				ref="confirmDeleteTimesetDialog"
 				title-icon="delete"
 				class="csc-cf-delete-weekdays-btn"
-				:title="$t('pages.newCallForward.cancelTimesetDialogTitle', {name: 'office hours'})"
-				:message="$t('pages.newCallForward.cancelTimesetText', {name: 'this'})"
+				:title="$t('Delete {name} timeset', {name: 'office hours'})"
+				:message="$t('You are about to delete  {name} timeset', {name: 'this'})"
 				@confirm="deleteTimeset"
 			/>
 			<q-btn
@@ -130,7 +130,7 @@
 				icon="clear"
 				@click="cancel()"
 			>
-				{{ $t('buttons.cancel') }}
+				{{ $t('Cancel') }}
 			</q-btn>
 			<q-btn
 				flat
@@ -139,7 +139,7 @@
 				:disabled="timeRanges.length < 1"
 				@click="save()"
 			>
-				{{ $t('buttons.save') }}
+				{{ $t('Save') }}
 			</q-btn>
 		</q-item>
 	</q-list>

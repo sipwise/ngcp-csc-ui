@@ -20,7 +20,7 @@
 					text-color="dark"
 					size="sm"
 					unelevated
-					:label="$t('buttons.select')"
+					:label="$t('Select')"
 					@click="$refs.fileInput.$el.click()"
 				/>
 				<q-btn
@@ -31,7 +31,7 @@
 					text-color="dark"
 					size="sm"
 					unelevated
-					:label="$t('buttons.reset')"
+					:label="$t('Reset')"
 					@click="selectedFile = null; $refs.fileInput.$el.value = null"
 				/>
 			</template>

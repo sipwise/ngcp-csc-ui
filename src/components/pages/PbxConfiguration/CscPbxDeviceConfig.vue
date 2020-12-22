@@ -47,7 +47,7 @@
 					<div
 						class="csc-device-key-title-main"
 					>
-						{{ selectedKeySetName }}: {{ $t('pbxConfig.deviceKeyType') }} {{ selectedKeyNumber }}
+						{{ selectedKeySetName }}: {{ $t('Lamp/Key') }} {{ selectedKeyNumber }}
 					</div>
 				</div>
 			</div>
@@ -62,7 +62,7 @@
 				v-model="selectedKeyType"
 				emit-value
 				map-options
-				:label="$t('pbxConfig.deviceKeyType')"
+				:label="$t('Lamp/Key')"
 				:options="typeOptions"
 				@input="keyTypeChanged"
 			>
@@ -87,7 +87,7 @@
 						:big="isMobile"
 						@click="closeKeyOverlay()"
 					>
-						{{ $t('buttons.close') }}
+						{{ $t('Close') }}
 					</q-btn>
 				</div>
 			</div>
@@ -207,19 +207,19 @@ export default {
 			const options = []
 			if (this.selectedKey !== null && this.selectedKey.keySet.can_blf) {
 				options.push({
-					label: this.$t('pbxConfig.keyTypeBLF'),
+					label: this.$t('Busy Lamp Field'),
 					value: 'blf'
 				})
 			}
 			if (this.selectedKey !== null && this.selectedKey.keySet.can_private) {
 				options.push({
-					label: this.$t('pbxConfig.keyTypePrivate'),
+					label: this.$t('Private'),
 					value: 'private'
 				})
 			}
 			if (this.selectedKey !== null && this.selectedKey.keySet.can_shared) {
 				options.push({
-					label: this.$t('pbxConfig.keyTypeShared'),
+					label: this.$t('Shared'),
 					value: 'shared'
 				})
 			}

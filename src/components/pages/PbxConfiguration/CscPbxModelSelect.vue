@@ -2,7 +2,7 @@
 	<q-select
 		:value="value"
 		:options="options"
-		:label="$t('pbxConfig.deviceModel')"
+		:label="$t('Phone model')"
 		emit-value
 		map-options
 		v-bind="$attrs"

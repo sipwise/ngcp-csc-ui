@@ -6,7 +6,7 @@
 		>
 			<div class="column col-lg-4 col-xl-4 col-md-3 gt-sm" />
 			<div class="column col-12 col-md-6 col-lg-4 col-xl-4">
-				{{ $t('notFound') }}
+				{{ $t('404 Not Found') }}
 			</div>
 			<div class="column col-lg-4 col-xl-4 col-md-3 gt-sm" />
 		</div>

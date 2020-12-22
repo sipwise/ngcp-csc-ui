@@ -14,8 +14,8 @@
 					<csc-confirm-dialog
 						ref="confirmDialog"
 						title-icon="delete"
-						:title="$t('pages.newCallForward.cancelSourcesetDialogTitle', {name: sourceSetName})"
-						:message="$t('pages.newCallForward.cancelSourcesetText', {name: sourceSetName})"
+						:title="$t('Delete {name} sourceset', {name: sourceSetName})"
+						:message="$t('You are about to delete  {name} sourceset', {name: sourceSetName})"
 						@confirm="confirmDeleteSourceset"
 						@closed="restorePopver"
 					/>
@@ -42,7 +42,7 @@
 			<csc-input
 				ref="sourceInputField"
 				v-model="number"
-				:label="$t('callBlocking.number')"
+				:label="$t('Number')"
 				@submit="save()"
 				@error="errorNumber"
 			/>
@@ -66,7 +66,7 @@
 				icon="clear"
 				@mousedown.native="cancel()"
 			>
-				{{ $t('buttons.close') }}
+				{{ $t('Close') }}
 			</q-btn>
 			<q-btn
 				flat
@@ -74,7 +74,7 @@
 				icon="delete"
 				@mousedown.native="showRemoveDialog()"
 			>
-				{{ $t('buttons.remove') }}
+				{{ $t('Remove') }}
 			</q-btn>
 			<div
 				v-if="loading"
@@ -169,7 +169,7 @@ export default {
 	methods: {
 		async save () {
 			if (this.numberError || this.saveDisabled) {
-				showGlobalError(this.$t('validationErrors.generic'))
+				showGlobalError(this.$t('You have invalid form input. Please check and try again.'))
 			}
 			try {
 				this.$store.dispatch('newCallForward/addGroupLoader', this.groupId)

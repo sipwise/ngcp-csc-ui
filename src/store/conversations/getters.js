@@ -15,7 +15,7 @@ export default {
 	},
 	reloadItemsError (state) {
 		return state.reloadItemsError ||
-            i18n.t('pages.conversations.reloadItemsErrorMessage')
+            i18n.t('Reloading conversation items failed')
 	},
 	playVoiceMailState (state) {
 		return (id) => {

@@ -98,8 +98,8 @@ export default {
 		},
 		attachLabel (state, getters) {
 			return state.attachValue
-				? i18n.t('voicebox.label.attachmentEnabled')
-				: i18n.t('voicebox.label.attachmentDisabled')
+				? i18n.t('Attach voicemail to email notification')
+				: i18n.t('Attach voicemail to email notification')
 		},
 
 		deleteLoading (state, getters) {
@@ -107,8 +107,8 @@ export default {
 		},
 		deleteLabel (state, getters) {
 			return state.deleteValue
-				? i18n.t('voicebox.label.deletionEnabled')
-				: i18n.t('voicebox.label.deletionDisabled')
+				? i18n.t('Delete voicemail after email notification is delivered')
+				: i18n.t('Delete voicemail after email notification is delivered')
 		},
 
 		busyGreetingUploading (state) {
@@ -118,8 +118,8 @@ export default {
 			return state.busyGreetingLoadState === RequestState.succeeded
 		},
 		busyGreetingLabel (state) {
-			return state.busyGreetingId ? i18n.t('voicebox.label.customSoundActive')
-				: i18n.t('voicebox.label.defaultSoundActive')
+			return state.busyGreetingId ? i18n.t('Custom sound')
+				: i18n.t('Default sound')
 		},
 		busyGreetingDeleting (state) {
 			return state.busyGreetingDeletionState === RequestState.requesting
@@ -132,8 +132,8 @@ export default {
 			return state.unavailableGreetingLoadState === RequestState.succeeded
 		},
 		unavailableGreetingLabel (state) {
-			return state.unavailableGreetingId ? i18n.t('voicebox.label.customSoundActive')
-				: i18n.t('voicebox.label.defaultSoundActive')
+			return state.unavailableGreetingId ? i18n.t('Custom sound')
+				: i18n.t('Default sound')
 		},
 		unavailableGreetingDeleting (state) {
 			return state.unavailableGreetingDeletionState === RequestState.requesting
