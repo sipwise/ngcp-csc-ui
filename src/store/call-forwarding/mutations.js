@@ -31,3 +31,7 @@ export function dataSucceeded (state, res) {
 export function popupShow (state, popupId) {
 	state.popupCurrent = popupId
 }
+
+export function setAnnouncements (state, announcements) {
+	state.announcements = announcements
+}

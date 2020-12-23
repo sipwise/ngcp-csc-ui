@@ -242,6 +242,15 @@
 					})"
 				/>
 				<csc-popup-menu-item
+					icon="announcement"
+					:label="$t('Custom Announcement')"
+					:disable="hasTermination"
+					@click="addDestinationEvent({
+						destination: 'customhours',
+						destinationSetId: destinationSet.id
+					})"
+				/>
+				<csc-popup-menu-item
 					:icon="(mapping.enabled)?'toggle_on':'toggle_off'"
 					:label="(mapping.enabled)?$t('Disable'):$t('Enable')"
 					@click="toggleMappingEvent(mapping)"

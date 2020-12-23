@@ -133,6 +133,32 @@
 					{{ $t('Conference') }}
 				</span>
 				<span
+					v-else-if="destination.announcement_id"
+					class="q-pl-xs text-primary text-weight-bold cursor-pointer"
+					style="white-space: nowrap"
+				>
+					<q-icon
+						name="app"
+					/>
+					{{ announcement }}
+					<q-popup-edit
+						v-model="announcement"
+						buttons
+						@before-show="$store.commit('callForwarding/popupShow', null)"
+						@save="updateAnnouncementEvent({
+							destinationIndex: destinationIndex,
+							destinationSetId: destinationSet.id
+						})">
+						<q-select
+							v-model="announcement"
+							:clearable="false"
+							:options="announcements"
+							:label="$t('Custom Announcements')"
+							:disable="loading"
+						/>
+					</q-popup-edit>
+				</span>
+				<span
 					v-else-if="destination.destination.endsWith('app.local')"
 					class="q-pl-xs text-weight-bold"
 					style="white-space: nowrap"
@@ -250,12 +276,14 @@ export default {
 	data () {
 		return {
 			changedDestination: this.destination.simple_destination,
-			changedDestinationTimeout: 0
+			changedDestinationTimeout: 0,
+			announcement: null
 		}
 	},
 	computed: {
 		...mapGetters('callForwarding', [
-			'ringTimeout'
+			'ringTimeout',
+			'announcements'
 		]),
 		waitIdentifier () {
 			return 'csc-cf-group-item-' + this.destinationSet.id + '-' + this.destinationIndex
@@ -265,12 +293,16 @@ export default {
 		destination () {
 			this.changedDestination = this.destination.simple_destination
 		}
+
 	},
-	mounted () {
+	async mounted () {
 		if (this.mapping.type === 'cft' && this.destinationIndex === 0) {
 			this.changedDestinationTimeout = this.ringTimeout
 		} else if (this.destinationPrevious) {
 			this.changedDestinationTimeout = this.destinationPrevious.timeout
+		}
+		if (this.destination.announcement_id) {
+			this.announcement = await this.getAnnouncementById(this.destination.announcement_id)
 		}
 	},
 	methods: {
@@ -279,7 +311,9 @@ export default {
 			'removeDestination',
 			'updateDestinationTimeout',
 			'updateRingTimeout',
-			'rewriteDestination'
+			'rewriteDestination',
+			'getAnnouncementById',
+			'updateAnnouncement'
 		]),
 		async updateDestinationEvent (payload) {
 			this.$wait.start(this.waitIdentifier)
@@ -318,6 +352,16 @@ export default {
 			this.$wait.start('csc-cf-mappings-full')
 			await this.updateRingTimeout(this.changedDestinationTimeout)
 			this.$wait.end('csc-cf-mappings-full')
+		},
+		async updateAnnouncementEvent (payload) {
+			this.$wait.start(this.waitIdentifier)
+			try {
+				await this.updateAnnouncement({ ...payload, announcementId: this.announcement })
+			} catch (err) {
+				showGlobalError(err.message)
+			} finally {
+				this.$wait.end(this.waitIdentifier)
+			}
 		}
 	}
 }

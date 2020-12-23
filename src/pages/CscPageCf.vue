@@ -115,11 +115,13 @@ export default {
 	},
 	mounted () {
 		this.loadMappingsFull()
+		this.loadAnnouncements()
 	},
 	methods: {
 		...mapActions('callForwarding', [
 			'loadMappingsFull',
-			'createMapping'
+			'createMapping',
+			'loadAnnouncements'
 		])
 	}
 }

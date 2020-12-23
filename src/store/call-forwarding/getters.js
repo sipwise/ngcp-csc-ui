@@ -17,3 +17,7 @@ export function groups (state) {
 export function ringTimeout (state) {
 	return state.mappings.cft_ringtimeout
 }
+
+export function announcements (state) {
+	return state.announcements
+}

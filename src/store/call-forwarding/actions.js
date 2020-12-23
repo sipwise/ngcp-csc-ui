@@ -22,24 +22,25 @@ import {
 import {
 	patchReplace,
 	patchReplaceFull,
-	post, put
+	post, put, get, getList
 } from 'src/api/common'
 import _ from 'lodash'
 
 const DEFAULT_RING_TIMEOUT = 60
 const DEFAULT_PRIORITY = 0
 const WAIT_IDENTIFIER = 'csc-cf-mappings-full'
+const DEFAULT_CUSTOM_ANNOUNCEMENT_ID = 255 // TODO get from endpoint
 
 function createDefaultDestination (destination) {
-	let finalDestination = 'Number'
-	if (destination) {
-		finalDestination = destination
-	}
-	return {
-		destination: finalDestination,
+	const payload = {
+		destination: destination || 'Number',
 		priority: DEFAULT_PRIORITY,
 		timeout: DEFAULT_RING_TIMEOUT
 	}
+	if (destination === 'customhours') {
+		payload.announcement_id = DEFAULT_CUSTOM_ANNOUNCEMENT_ID
+	}
+	return payload
 }
 
 export async function loadMappingsFull ({ dispatch, commit, rootGetters }) {
@@ -538,4 +539,37 @@ export async function updateOfficeHoursSameTimes ({ dispatch, commit, rootGetter
 		timeSets: timeSets.items
 	})
 	dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
+}
+
+export async function loadAnnouncements ({ dispatch, commit }) {
+	try {
+		const announcements = await getList({
+			resource: 'soundhandles',
+			all: true,
+			params: {
+				group: 'custom_announcements'
+			}
+		})
+		commit('setAnnouncements', announcements.items.length > 0 ? announcements.items.map(item => item.handle) : ['custom_announcement_0', 'custom_announcement_1', 'custom_announcement_2']) // TODO remove dummy data
+	} catch (err) {
+		commit('setAnnouncements', {
+			announcements: []
+		})
+	}
+}
+
+export async function getAnnouncementById ({ dispatch, commit, rootGetters, state }, announcementId) {
+	try {
+		const announcement = await get({
+			resource: 'soundhandles',
+			resourceId: announcementId
+		})
+		return announcement.handle
+	} catch (err) {
+		return 'custom_announcement_0' // TODO remove
+	}
+}
+
+export async function updateAnnouncement ({ dispatch, commit, rootGetters, state }, announcementId) {
+	// TODO
 }

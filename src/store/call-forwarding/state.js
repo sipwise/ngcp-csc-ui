@@ -16,6 +16,7 @@ export default function () {
 		sourceSetMap: {},
 		timeSets: null,
 		timeSetMap: {},
-		popupCurrent: null
+		popupCurrent: null,
+		announcements: []
 	}
 }
