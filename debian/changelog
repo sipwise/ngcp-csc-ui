@@ -1,3 +1,32 @@
+ngcp-csc-ui (9.3.0.0+0~mr9.3.0.0) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [63347a0] TT#100551 CSC: As Customer, I want to search PBXDevices by Username using a selection with autocompletion
+  * [e86d06d] TT#96350 CSC: As Customer, I want to set my own Fax2Mail/Sendfax settings
+  * [e4c421e] TT#96354 CSC: As a Customer, I want to toggle Music-on-hold
+  * [2499e74] TT#104801 CSC: Fix initial state of MusicOnHold under CallSettings->General
+  * [6df2d69] TT#96352 - CSC: As a Customer, I want change my Mail2Fax settings
+
+  [ Carlo Venusino ]
+  * [efd518f] TT#99204 CSC: As a Customer, I want to manage "Office Hours" as call forwarding type
+  * [1c839a7] TT#99563 CSC: As a PBXAdmin, I want to see the allowed PBXExtension range near the PBXExtension input TT#99564 CSC: As a Customer, I want to be the PBXExtension validated according to the defined range
+  * [507f9ee] TT#102700 CSC: Language options in "Call Settings" page
+  * [b5cec06] TT#102703 CSC: Can select/persist/reset the preferred language
+  * [564c294] TT#101107 CSC: As Customer, I want to see the custom Logo in the CSC header
+  * [1c4f5dd] TT#100761 As a Customer, I want to see the number destination in call forwarding automatically rewritten
+
+  [ Michael Prokop ]
+  * [49956d7] TT#101060 Build-Depend on either yarnpkg or yarn + use according binary
+
+  [ Hans-Peter Herzog ]
+  * [c3a278f] TT#102400 Rework current state of CallForwarding
+  * [cd736c1] TT#103253 Fix SourceSet creation in CallForwarding due to the new behaviour of the POST endpoint
+  * [239466f] TT#103201 Close call forwarding condition popups if opening other popups or menus
+  * [75fe9e8] TT#99753 Add identifiers to Vue.js components to improve selection in E2E tests
+  * [5970573] TT#104154 Consolidate main menu
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 Jan 2021 15:31:46 +0100
+
 ngcp-csc-ui (9.2.0.0+0~mr9.2.0.0) unstable; urgency=medium
 
   [ Carlo Venusino ]
