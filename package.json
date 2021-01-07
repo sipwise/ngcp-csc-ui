@@ -22,7 +22,9 @@
     "test:unit:watchAll": "jest --watchAll",
     "serve:test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788",
     "concurrently:dev:jest": "concurrently \"quasar dev\" \"jest --watch\"",
-    "new:store": "quasar new store"
+    "new:store": "quasar new store",
+    "i18n:extract": "sh ./bin/vue-i18n-extract/extract.sh",
+    "i18n:extract-report": "sh ./bin/vue-i18n-extract/extract.sh report"
   },
   "dependencies": {
     "@quasar/extras": "^1.9.10",
@@ -48,6 +50,8 @@
     "@quasar/quasar-app-extension-testing": "^1.0.0",
     "@quasar/quasar-app-extension-testing-unit-jest": "^1.0.1",
     "babel-eslint": "^10.0.1",
+    "commander": "6.2.1",
+    "dot-object": "2.1.4",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-loader": "^3.0.3",
@@ -57,6 +61,9 @@
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.1.2",
     "generate-password": "^1.5.1",
+    "glob": "7.1.6",
+    "is-valid-glob": "1.0.0",
+    "js-yaml": "3.14.1",
     "parseuri": "^0.0.6",
     "uuid": "8.3.1",
     "vue-wait": "1.4.8"

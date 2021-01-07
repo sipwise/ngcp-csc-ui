@@ -52,6 +52,50 @@ In addition, we also recommend the following Quasar Framework tutorials:
 
 * [Reusable Vue.js Components](doc/COMPONENTS.md)
 
+### Translations
+To keep translation files consistent and updated please run **i18n:extract** command before each commit to the GIT repo.
+
+    yarn run i18n:extract
+
+That CLI command will collect all new translation keys from the JS source code, and will place those keys into all translation files in a proper format.
+
+Example of the JS code with translations:
+
+```javascript
+const someOptions = {
+    label: this.$t('Remove message'),
+    message: this.$t('The {email} will be removed. Are you sure?', { email: this.email })
+}
+```
+**Important**: We are trying to avoid usage of the dynamic keys (example below) because it's very difficult to detect and collect automatically.
+
+Example (anti-pattern):
+```javascript
+function getTranslatedMessage (weatherState) {
+    return this.$t('Tooday is ' + weatherState)
+}
+```
+Try to avoid such code and use text messages with substitution variables (like `email` in example above) or if there are only a couple similar messages, you can use a map object to convert some exact state to exact translation message.
+But if it's really impossible to do, and you have to use dynamic keys, you should place such keys to the English translation file manually and execute `i18n:extract` which will do all the rest.
+
+For example, for the code above, you would need to place next lines into `en.json`:
+```JSON
+{
+    ...
+    "Today is sunny": "",
+    "Today is windy": "",
+    "Today is cloudy": ""
+}
+```
+
+**Note**: if you want to see information about missed or possible unused translation keys you could run **i18n:extract-report** command. It will just display detailed report without any modifications in the language files.
+
+Keep in mind that some of "Unused translations" keys might be dynamic translation keys which cannot be detected in source code automatically and were added manually.
+
+    yarn run i18n:extract-report
+
+
+
 ### Add a new page
 
 In order to add a new page you need to go along the following steps:

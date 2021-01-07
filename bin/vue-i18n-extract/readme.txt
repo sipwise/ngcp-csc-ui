@@ -1,0 +1,1 @@
+Codebase of the tool is vue-i18n-extract:v1.1.11 package
