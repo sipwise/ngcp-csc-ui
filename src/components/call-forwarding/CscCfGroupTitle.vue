@@ -242,7 +242,7 @@
 					})"
 				/>
 				<csc-popup-menu-item
-					icon="announcement"
+					icon="music_note"
 					:label="$t('Custom Announcement')"
 					:disable="hasTermination"
 					@click="addDestinationEvent({
@@ -326,7 +326,7 @@ export default {
 				_.endsWith(_.last(this.destinationSet.destinations).destination, 'fax2mail.local') ||
 				_.endsWith(_.last(this.destinationSet.destinations).destination, 'managersecretary.local') ||
 				_.endsWith(_.last(this.destinationSet.destinations).destination, 'conference.local') ||
-				_.endsWith(_.last(this.destinationSet.destinations).destination, 'app.local')
+				(_.endsWith(_.last(this.destinationSet.destinations).destination, 'app.local') && !_.last(this.destinationSet.destinations).announcement_id)
 		}
 	},
 	methods: {

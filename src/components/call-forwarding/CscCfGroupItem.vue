@@ -138,12 +138,13 @@
 					style="white-space: nowrap"
 				>
 					<q-icon
-						name="app"
+						name="music_note"
 					/>
-					{{ announcement }}
+					{{ announcement ? announcement.label : '' }}
 					<q-popup-edit
 						v-model="announcement"
 						buttons
+						anchor="top left"
 						@before-show="$store.commit('callForwarding/popupShow', null)"
 						@save="updateAnnouncementEvent({
 							destinationIndex: destinationIndex,
@@ -151,7 +152,9 @@
 						})">
 						<q-select
 							v-model="announcement"
-							:clearable="false"
+							emit-value
+							map-options
+							:rules="[ checkAnnouncement ]"
 							:options="announcements"
 							:label="$t('Custom Announcements')"
 							:disable="loading"
@@ -225,6 +228,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import {
 	mapActions,
 	mapGetters
@@ -293,16 +297,17 @@ export default {
 		destination () {
 			this.changedDestination = this.destination.simple_destination
 		}
-
+	},
+	beforeMount () {
+		if (this.destination.announcement_id) {
+			this.setAnnouncement()
+		}
 	},
 	async mounted () {
 		if (this.mapping.type === 'cft' && this.destinationIndex === 0) {
 			this.changedDestinationTimeout = this.ringTimeout
 		} else if (this.destinationPrevious) {
 			this.changedDestinationTimeout = this.destinationPrevious.timeout
-		}
-		if (this.destination.announcement_id) {
-			this.announcement = await this.getAnnouncementById(this.destination.announcement_id)
 		}
 	},
 	methods: {
@@ -337,6 +342,7 @@ export default {
 				this.$wait.start(this.waitIdentifier)
 				if (this.destinationSet.destinations.length > 1) {
 					await this.removeDestination(payload)
+					this.setAnnouncement()
 				} else {
 					this.$emit('delete-last', payload)
 				}
@@ -353,15 +359,26 @@ export default {
 			await this.updateRingTimeout(this.changedDestinationTimeout)
 			this.$wait.end('csc-cf-mappings-full')
 		},
+		setAnnouncement () {
+			this.announcement = _.first(this.announcements.filter(announcement => announcement.value === this.destination.announcement_id))
+		},
 		async updateAnnouncementEvent (payload) {
 			this.$wait.start(this.waitIdentifier)
 			try {
 				await this.updateAnnouncement({ ...payload, announcementId: this.announcement })
+				this.setAnnouncement()
 			} catch (err) {
 				showGlobalError(err.message)
 			} finally {
 				this.$wait.end(this.waitIdentifier)
 			}
+		},
+		checkAnnouncement () {
+			const fieldFilled = this.announcement > 0
+			if (!fieldFilled) {
+				showGlobalError(this.$t('Please select an option'))
+			}
+			return fieldFilled
 		}
 	}
 }

@@ -550,7 +550,7 @@ export async function loadAnnouncements ({ dispatch, commit }) {
 				group: 'custom_announcements'
 			}
 		})
-		commit('setAnnouncements', announcements.items.length > 0 ? announcements.items.map(item => item.handle) : ['custom_announcement_0', 'custom_announcement_1', 'custom_announcement_2']) // TODO remove dummy data
+		commit('setAnnouncements', announcements.items.map((item) => { return { label: item.handle, value: item.id } }))
 	} catch (err) {
 		commit('setAnnouncements', {
 			announcements: []
@@ -559,17 +559,27 @@ export async function loadAnnouncements ({ dispatch, commit }) {
 }
 
 export async function getAnnouncementById ({ dispatch, commit, rootGetters, state }, announcementId) {
-	try {
-		const announcement = await get({
-			resource: 'soundhandles',
-			resourceId: announcementId
-		})
-		return announcement.handle
-	} catch (err) {
-		return 'custom_announcement_0' // TODO remove
+	const announcement = await get({
+		resource: 'soundhandles',
+		resourceId: announcementId
+	})
+	return {
+		value: announcement.id,
+		label: announcement.handle
 	}
 }
 
-export async function updateAnnouncement ({ dispatch, commit, rootGetters, state }, announcementId) {
-	// TODO
+export async function updateAnnouncement ({ dispatch, commit, rootGetters, state }, payload) {
+	const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
+	destinations[payload.destinationIndex].announcement_id = payload.announcementId
+	await patchReplace({
+		resource: 'cfdestinationsets',
+		resourceId: payload.destinationSetId,
+		fieldPath: 'destinations',
+		value: destinations
+	})
+	const destinationSets = await cfLoadDestinationSets(rootGetters['user/getSubscriberId'])
+	commit('dataSucceeded', {
+		destinationSets: destinationSets.items
+	})
 }

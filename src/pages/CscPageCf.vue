@@ -113,9 +113,9 @@ export default {
 			'groups'
 		])
 	},
-	mounted () {
+	async mounted () {
+		await this.loadAnnouncements()
 		this.loadMappingsFull()
-		this.loadAnnouncements()
 	},
 	methods: {
 		...mapActions('callForwarding', [
