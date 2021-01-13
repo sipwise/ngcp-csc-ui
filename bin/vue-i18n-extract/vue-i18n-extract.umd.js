@@ -132,7 +132,7 @@
 
     return targetFiles.map(f => {
       const langPath = path.resolve(process.cwd(), f);
-      const extension = langPath.substring(langPath.lastIndexOf('.')).toLowerCase();
+      const extension = path.extname(langPath).toLowerCase();
       const isJSON = extension === '.json';
       const isYAML = extension === '.yaml' || extension === '.yml';
       let langObj;
@@ -148,7 +148,7 @@
       const fileName = f.replace(process.cwd(), '');
       return {
         fileName,
-        path: f,
+        path: langPath,
         content: JSON.stringify(langObj)
       };
     });
@@ -203,16 +203,16 @@
           }
         }
       });
-      const fileExtension = languageFile.fileName.substring(languageFile.fileName.lastIndexOf('.') + 1);
-      const filePath = path.resolve(process.cwd(), languageFile.fileName);
+      const fileExtension = path.extname(languageFile.fileName).toLowerCase();
+      const filePath = languageFile.path;
       const stringifiedContent = outputOptions.sortKeys ? sortedJSONStringify(languageFileContent, outputOptions.indentationString) : JSON.stringify(languageFileContent, null, outputOptions.indentationString || 2);
 
-      if (fileExtension === 'json') {
+      if (fileExtension === '.json') {
         fs.writeFileSync(filePath, stringifiedContent);
-      } else if (fileExtension === 'js') {
+      } else if (fileExtension === '.js') {
         const jsFile = `export default ${stringifiedContent}; \n`;
         fs.writeFileSync(filePath, jsFile);
-      } else if (fileExtension === 'yaml' || fileExtension === 'yml') {
+      } else if (fileExtension === '.yaml' || fileExtension === '.yml') {
         const yamlFile = yaml.safeDump(languageFileContent);
         fs.writeFileSync(filePath, yamlFile);
       }
@@ -343,6 +343,14 @@
     });
   }
 
+  if (!Array.prototype.flatMap) {
+    function flatMap(f, ctx) {
+      // @ts-ignore
+      return this.reduce((r, x, i, a) => r.concat(f.call(ctx, x, i, a)), []);
+    }
+
+    Array.prototype.flatMap = flatMap;
+  }
   function createI18NReport(vueFiles, languageFiles, command, missingKeysOptions) {
     const resolvedVueFiles = path.resolve(process.cwd(), vueFiles);
     const resolvedLanguageFiles = path.resolve(process.cwd(), languageFiles);
@@ -408,9 +416,15 @@
     const report = createI18NReport(vueFiles, languageFiles, command, missingKeysOptions);
 
     if (detailedReport) {
-      if (report.missingKeys) console.info('missing keys: '), console.table(report.missingKeys);
-      if (report.unusedKeys) console.info('unused keys: '), console.table(report.unusedKeys);
-      if (report.dynamicKeys && dynamic && dynamic > 1) console.info('dynamic detected keys: '), console.table(report.dynamicKeys);
+      const normalizeKeysInfo = keyInfo => {
+        delete keyInfo.translated;
+        if (keyInfo.file) keyInfo.file = path.relative(process.cwd(), keyInfo.file).replace(/\\/g, '/');
+        return keyInfo;
+      };
+
+      if (report.missingKeys) console.info('missing keys: '), console.table([...report.missingKeys].map(normalizeKeysInfo));
+      if (report.unusedKeys) console.info('unused keys: '), console.table([...report.unusedKeys].map(normalizeKeysInfo));
+      if (report.dynamicKeys && dynamic && dynamic > 1) console.info('dynamic detected keys: '), console.table([...report.dynamicKeys].map(normalizeKeysInfo));
     }
 
     if (output) {
