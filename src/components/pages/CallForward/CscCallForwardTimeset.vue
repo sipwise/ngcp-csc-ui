@@ -2,7 +2,7 @@
     <div>
         <div v-if="showSections">
             <csc-call-forward-times
-                :times="timesetTimes"
+                :times="timesetTimesTranslatedWeekday"
                 :timesetName="timesetName"
                 ref="times"
             />
@@ -113,7 +113,7 @@
         computed: {
             ...mapGetters('callForward', [
                 'destinations',
-                'timesetTimes',
+                'timesetTimesTranslatedWeekday',
                 'resetTimeState',
                 'addTimeState',
                 'timesetHasDuplicate',
