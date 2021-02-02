@@ -29,6 +29,7 @@ import {
     getOwnPhoneTimeout,
     updateOwnPhoneTimeout
 } from '../api/call-forward';
+import { humanTimesetToKamailio } from '../helpers/kamailio-timesets-converter'
 
 export default {
     namespaced: true,
@@ -192,6 +193,22 @@ export default {
         },
         timesetTimes(state) {
             return state.timesetTimes;
+        },
+        timesetTimesTranslatedWeekday(state) {
+            const weekdayMap = {
+                1: i18n.t('pages.callForward.times.sunday'),
+                2: i18n.t('pages.callForward.times.monday'),
+                3: i18n.t('pages.callForward.times.tuesday'),
+                4: i18n.t('pages.callForward.times.wednesday'),
+                5: i18n.t('pages.callForward.times.thursday'),
+                6: i18n.t('pages.callForward.times.friday'),
+                7: i18n.t('pages.callForward.times.saturday')
+            };
+            const timesetTimesClone = _.cloneDeep(state.timesetTimes);
+            timesetTimesClone.forEach(timeItem => {
+                timeItem.weekday = weekdayMap[timeItem.weekday];
+            })
+            return timesetTimesClone;
         },
         resetTimeState(state) {
             return state.resetTimeState;
@@ -669,11 +686,7 @@ export default {
             let clonedTimes = _.cloneDeep(context.getters.getTimesetTimes);
             let indexInt = parseInt(options.index);
             clonedTimes.splice(indexInt, 1);
-            clonedTimes.forEach((time) => {
-                delete time.weekday;
-                delete time.from;
-                delete time.to;
-            });
+            clonedTimes = humanTimesetToKamailio(clonedTimes);
             deleteTimeFromTimeset({
                 subscriberId: context.getters.subscriberId,
                 timesetId: context.getters.getTimesetId,
