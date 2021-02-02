@@ -1,10 +1,10 @@
 
 import _ from 'lodash';
 import Vue from 'vue';
-import { i18n } from '../i18n';
 import { getJsonBody } from './utils';
 import { normalizeDestination } from '../filters/number-format';
 import { LIST_ALL_ROWS } from './common';
+import { humanTimesetToKamailio, kamailioTimesetToHuman } from '../helpers/kamailio-timesets-converter'
 
 export function getMappings(id) {
     return new Promise((resolve, reject) => {
@@ -499,51 +499,6 @@ export function moveDestinationDown(options) {
     });
 }
 
-export function getDaysFromRange(options) {
-    let fromDay = options.fromDay;
-    let toDay = options.toDay + 1;
-    let wdayMap = {
-        1: i18n.t('pages.callForward.times.sunday'),
-        2: i18n.t('pages.callForward.times.monday'),
-        3: i18n.t('pages.callForward.times.tuesday'),
-        4: i18n.t('pages.callForward.times.wednesday'),
-        5: i18n.t('pages.callForward.times.thursday'),
-        6: i18n.t('pages.callForward.times.friday'),
-        7: i18n.t('pages.callForward.times.saturday')
-    };
-    let days = [];
-    while (fromDay < toDay) {
-        days.push({ name: wdayMap[fromDay], number: fromDay.toString() });
-        fromDay++;
-    }
-    return days;
-}
-
-export function getHoursFromRange(options) {
-    let toHour = options.toHour + 1;
-    let fromMinute = options.hasMinute ? options.fromMinute : '00';
-    let toMinute = options.hasMinute ? options.toMinute + 1 : '00';
-    toMinute = !toMinute ? fromMinute + 1 : toMinute;
-    let hours = [];
-    if (options.hasMinute) {
-        while (options.fromHour < toHour) {
-            hours.push({
-                from: `${options.fromHour}:${fromMinute}`,
-                to: `${options.fromHour}:${toMinute}`,
-                hour: options.fromHour.toString()
-            });
-            options.fromHour++;
-        }
-    }
-    else {
-        hours.push({
-            from: `${options.fromHour}:${fromMinute}`,
-            to: `${toHour}:${toMinute}`
-        });
-    }
-    return hours;
-}
-
 export function convertTimesetToWeekdays(options) {
     let times = [];
     let counter = 0;
@@ -555,50 +510,17 @@ export function convertTimesetToWeekdays(options) {
     options.timesets.forEach((timeset) => {
         let timesetNameMatches = timeset.name === options.timesetName;
         if (counter === 0 && timesetNameMatches) {
-            timeset.times.forEach((time) => {
-                let isIncompatible = time.mday || time.month || time.year || !time.wday || !time.hour;
-                if (isIncompatible) {
-                    timesetIsCompatible = false;
-                    return;
+            try {
+                times = kamailioTimesetToHuman(timeset.times);
+                timesetId = timeset.id;
+                timesetIsCompatible = true;
+            }
+            catch (e) {
+                if (String(e.message).includes('reverse')) {
+                    timesetHasReverse = true;
                 }
-                else  {
-                    let days = [];
-                    let hours = [];
-                    let fromDay = parseInt(time.wday.split('-')[0]);
-                    let toDay = time.wday.split('-')[1] ? parseInt(time.wday.split('-')[1]) : fromDay;
-                    let fromHour = parseInt(time.hour.split('-')[0]);
-                    let toHour = time.hour.split('-')[1] ? parseInt(time.hour.split('-')[1]) : fromHour;
-                    let fromMinute = time.minute ? parseInt(time.minute.split('-')[0]) : undefined;
-                    let toMinute = (time.minute && time.minute.split('-')[1]) ? parseInt(time.minute.split('-')[1]) : undefined;
-                    let isReverse = fromDay > toDay || fromHour > toHour || fromMinute > toMinute;
-                    let timesHour;
-                    if (isReverse) {
-                        timesetHasReverse = true;
-                        return;
-                    }
-                    else {
-                        hours = getHoursFromRange({ hasMinute: !!time.minute,
-                            fromHour: fromHour, toHour: toHour,
-                            fromMinute: fromMinute, toMinute: toMinute });
-                        days = getDaysFromRange({ fromDay: fromDay, toDay: toDay });
-                        days.forEach(day => {
-                            hours.forEach(hour => {
-                                timesHour = time.minute ? hour.hour : time.hour;
-                                times.push({
-                                    weekday: day.name,
-                                    from: hour.from,
-                                    to: hour.to,
-                                    wday: day.number,
-                                    hour: timesHour,
-                                    minute: time.minute
-                                });
-                            });
-                        });
-                        timesetId = timeset.id;
-                        timesetIsCompatible = true;
-                    }
-                }
-            });
+                timesetIsCompatible = false;
+            }
             timesetExists = true;
             counter++;
         }
@@ -705,65 +627,9 @@ export function addNewTimeset(timesetName) {
     });
 }
 
-export function convertAddTime(options) {
-    let time = options.time;
-    let weekday = options.weekday;
-    let convertedTime = [];
-    let fromHour = time.from.split(':')[0];
-    let toHour = time.to.split(':')[0];
-    let fromMinute = time.from.split(':')[1];
-    let toMinute = time.to.split(':')[1];
-    let bothHasFullHour = fromMinute  === '00' && toMinute  === '00';
-    let bothHasSameHour = fromHour  === toHour;
-    let fromMinuteNotZero = time.from.split(':')[1] !== '00';
-    let toMinuteNotZero = time.to.split(':')[1] !== '00';
-    let bothMinutesNotZeroAndNextHourPlusOne = fromMinuteNotZero && toMinuteNotZero && parseInt(toHour) === parseInt(fromHour) + 1;
-    let bothMinutesNotZero = time.from.split(':')[1] !== '00' &&
-        time.to.split(':')[1] !== '00';
-    let startNotZeroAndEndNextFullHour =
-        (parseInt(fromHour) === (parseInt(toHour) - 1) && toMinute === '00');
-    if (bothHasFullHour) {
-        convertedTime.push({ wday: weekday, hour: `${parseInt(fromHour)}-${parseInt(toHour)-1}` });
-    }
-    else if (bothHasSameHour) {
-        convertedTime.push({ wday: weekday, hour: `${parseInt(fromHour)}`, minute: `${parseInt(fromMinute)}-${parseInt(toMinute)-1}`});
-    }
-    else if (startNotZeroAndEndNextFullHour) {
-        convertedTime.push({ wday: weekday, hour: `${parseInt(fromHour)}`, minute: `${parseInt(fromMinute)}-59` });
-    }
-    else if (bothMinutesNotZeroAndNextHourPlusOne) {
-        convertedTime.push(
-            { wday: weekday, hour: `${parseInt(fromHour)}`, minute: `${parseInt(fromMinute)}-59` },
-            { wday: weekday, hour: `${parseInt(toHour)}`, minute: `0-${parseInt(toMinute)-1}` }
-        );
-    }
-    else if (bothMinutesNotZero) {
-        convertedTime.push(
-            { wday: weekday, hour: `${parseInt(fromHour)}`, minute: `${parseInt(fromMinute)}-59` },
-            { wday: weekday, hour: `${parseInt(fromHour)+1}-${parseInt(toHour)-1}` },
-            { wday: weekday, hour: `${parseInt(toHour)}`, minute: `0-${parseInt(toMinute)-1}` }
-        );
-    }
-    // From minute not zero and to minute zero
-    else if (fromMinuteNotZero) {
-        convertedTime.push(
-            { wday: weekday, hour: `${parseInt(fromHour)}`, minute: `${parseInt(fromMinute)}-59` },
-            { wday: weekday, hour: `${parseInt(fromHour)+1}-${parseInt(toHour)-1}` }
-        );
-    }
-    // From minute zero and to minute not zero
-    else if (toMinuteNotZero) {
-        convertedTime.push(
-            { wday: weekday, hour: `${parseInt(fromHour)+1}-${parseInt(toHour)-1}` },
-            { wday: weekday, hour: `${parseInt(toHour)}`, minute: `0-${parseInt(toMinute)-1}` }
-        );
-    }
-    return convertedTime;
-}
-
 export function createTimesetWithTime(options) {
     return new Promise((resolve, reject)=> {
-        let convertedTime = convertAddTime({ time: options.time[0], weekday: options.weekday });
+        let convertedTime = humanTimesetToKamailio([{ weekday: options.weekday, from: options.time[0].from, to: options.time[0].to }]);
         Promise.resolve().then(() => {
             return addNewTimeset(options.name);
         }).then((timesetId) => {
@@ -790,11 +656,19 @@ export function getTimesByTimesetId(id) {
 
 export function appendTimeToTimeset(options) {
     return new Promise((resolve, reject)=> {
-        let convertedTime = convertAddTime({ time: options.time[0], weekday: options.weekday });
         Promise.resolve().then(() => {
             return getTimesByTimesetId(options.id);
         }).then((times) => {
-            let concatTimes = times.concat(convertedTime);
+            let backendTimesHuman;
+            try {
+                backendTimesHuman = kamailioTimesetToHuman(times)
+            }
+            catch (e) {
+                throw Error('Backend data is invalid')
+            }
+            const newTime = [{ weekday: options.weekday, from: options.time[0].from, to: options.time[0].to }];
+            let concatTimes = backendTimesHuman.concat(newTime);
+            concatTimes = humanTimesetToKamailio(concatTimes);
             return addTimeToTimeset({ id: options.id, times: concatTimes });
         }).then(() => {
             resolve();
