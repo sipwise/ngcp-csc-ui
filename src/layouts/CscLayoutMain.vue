@@ -147,17 +147,6 @@
 				:is-pbx-admin="isPbxAdmin"
 				:is-pbx-configuration="isPbxConfiguration"
 			/>
-			<csc-main-menu-new-features
-				id="csc-main-menu-features"
-				class="csc-main-menu"
-				:call-state-title="callStateTitle"
-				:call-state-subtitle="callStateSubtitle"
-				:is-call-forward="isCallForward"
-				:is-call-blocking="isCallBlocking"
-				:is-pbx-admin="isPbxAdmin"
-				:is-pbx-configuration="isPbxConfiguration"
-				:menu-minimized="menuMinimized"
-			/>
 		</q-drawer>
 		<q-page-container
 			id="csc-page-main"
@@ -225,7 +214,6 @@ import {
 	getLanguageLabel
 } from 'src/i18n'
 import CscMainMenuTop from 'components/CscMainMenuTop'
-import CscMainMenuNewFeatures from 'components/CscMainMenuNewFeatures'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 
@@ -234,7 +222,6 @@ export default {
 	components: {
 		CscPopupMenuItem,
 		CscPopupMenu,
-		CscMainMenuNewFeatures,
 		CscMainMenuTop,
 		CscLanguageMenu,
 		CscCall,
