@@ -1,3 +1,10 @@
+ngcp-csc-ui (8.5.3.2+0~mr8.5.3.2) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [e055294] TT#99754 Fix OfficeHours in the old CallForwarding implementation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 10 Feb 2021 14:04:48 +0100
+
 ngcp-csc-ui (8.5.3.1+0~mr8.5.3.1) unstable; urgency=medium
 
   * New release.
