@@ -27,7 +27,7 @@
     "i18n:extract-report": "sh ./bin/vue-i18n-extract/extract.sh report"
   },
   "dependencies": {
-    "@quasar/extras": "^1.9.13",
+    "@quasar/extras": "^1.9.16",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "file-saver": "^2.0.2",
@@ -36,7 +36,7 @@
     "load-script": "^1.0.0",
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
-    "quasar": "^1.15.0",
+    "quasar": "^1.15.2",
     "vue-i18n": "^8.0.0",
     "vue-password-strength-meter": "^1.7.2",
     "vue-resource": "^1.5.1",

@@ -1278,10 +1278,10 @@
     user-home "2.0.0"
     validate-npm-package-name "3.0.0"
 
-"@quasar/extras@^1.9.13":
-  version "1.9.13"
-  resolved "https://npm-registry.sipwise.com/@quasar/extras/-/extras-1.9.13.tgz#7452ff0b47fd0b2b2d10c6ebad6969c5ac7c071b"
-  integrity sha512-9ptRGMjBqfgxzLmH4MOlzSzmkwg7JAkWaB+EqDuZmjHyqkAGjGkuZj2LK4qbJdgveR94mlsJHb5fKojKzGkt0w==
+"@quasar/extras@^1.9.16":
+  version "1.9.16"
+  resolved "https://npm-registry.sipwise.com/@quasar/extras/-/extras-1.9.16.tgz#015c6bea60e42c2e4fb6cd6892567190f78c4c91"
+  integrity sha512-qr2Odjc3y3s71yAfhcHYc+LnHVEQR/4ibdpB7TRSL9+Sn7tHxx7p5kkogzrs4/GzpZGlBNvbj4KaFRNyMFv0aQ==
 
 "@quasar/fastclick@1.1.4":
   version "1.1.4"
@@ -9512,10 +9512,10 @@ qs@~6.5.2:
   resolved "https://npm-registry.sipwise.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
 
-quasar@^1.15.0:
-  version "1.15.0"
-  resolved "https://npm-registry.sipwise.com/quasar/-/quasar-1.15.0.tgz#aa4896e3dab46342986a79617e26c2da0db8ea4d"
-  integrity sha512-GTIz/8AgzpHKPsbrQfO32dPPEGjDSFDWRE4dvt3AHh2LtRRAE5QJwPMqCy11GYGhyLMeZaRl76AuCUVb0BYTzA==
+quasar@^1.15.2:
+  version "1.15.2"
+  resolved "https://npm-registry.sipwise.com/quasar/-/quasar-1.15.2.tgz#21ce2ac2910c79d5785b249435d5fcfe5a09577f"
+  integrity sha512-1cbe4iNj6BaZ5BIXjRXnMrqyuOEwd2SoIyQQmRqZNxIlXd4B/4L9+IUgeYhc80x8JvkKivNTogH6ltcMghDvUw==
 
 query-string@^4.1.0:
   version "4.3.4"
