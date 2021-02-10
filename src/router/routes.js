@@ -6,7 +6,6 @@ import CscLayoutLogin from 'src/layouts/CscLayoutLogin'
 import CscPageLogin from 'src/pages/CscPageLogin'
 import CscPageHome from 'src/pages/CscPageHome'
 import CscPageConversations from 'src/pages/CscPageConversations'
-import CscPageNewCallForward from 'src/pages/CscPageNewCallForward'
 import CscPageCallForwardAlways from 'src/pages/CscPageCallForwardAlways'
 import CscPageCallForwardCompanyHours from 'src/pages/CscPageCallForwardCompanyHours'
 import CscPageCallForwardAfterHours from 'src/pages/CscPageCallForwardAfterHours'
@@ -57,10 +56,6 @@ export default function routes (app) {
 						title: i18n.t('navigation.conversations.title'),
 						subtitle: i18n.t('navigation.conversations.subTitle')
 					}
-				},
-				{
-					path: 'new-call-forward',
-					component: CscPageNewCallForward
 				},
 				{
 					path: 'call-forwarding',
