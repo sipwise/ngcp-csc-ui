@@ -1,3 +1,22 @@
+ngcp-csc-ui (9.4.0.0+0~mr9.4.0.0) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [d02f82e] TT#105551 Convert key based i18n translations to gettext based ones
+  * [9f1b25c] TT#106254 AUI/CSC: As a Developer, I want to add a new translation by executing a script
+  * [57c16b9] TT#107100 fix path issue in i18n:extract tool
+  * [5c79fc7] TT#108902 As a Developer, I want to transform between human readable time periods and Perl library Time::Period based time periods back and forth
+
+  [ Hans-Peter Herzog ]
+  * [953c582] TT#108150 Fix vulnerabilities with NPM
+  * [4d8821c] TT#109761 Upgrade Quasar to 1.15.2
+
+  [ Carlo Venusino ]
+  * [4994821] TT#108154 Upgrade Quasar to 1.15.0
+  * [4387646] TT#104197 CF Custom Announcement basic functionalities
+  * [42dd486] TT#106252 CF Custom Announcement actions
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Feb 2021 17:53:00 +0100
+
 ngcp-csc-ui (9.3.0.0+0~mr9.3.0.0) unstable; urgency=medium
 
   [ Sergii Leonenko ]
