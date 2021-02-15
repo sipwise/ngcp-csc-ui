@@ -1,5 +1,5 @@
 import {
-	cfCreateOfficeHours, cfCreateOfficeHoursSameTimes,
+	cfCreateOfficeHours,
 	cfCreateSourceSet,
 	cfCreateTimeSetDate,
 	cfCreateTimeSetDateRange,
@@ -10,7 +10,7 @@ import {
 	cfLoadDestinationSets,
 	cfLoadMappingsFull,
 	cfLoadSourceSets,
-	cfLoadTimeSets, cfUpdateOfficeHours, cfUpdateOfficeHoursSameTimes,
+	cfLoadTimeSets, cfUpdateOfficeHours,
 	cfUpdateSourceSet,
 	cfUpdateTimeSetDate,
 	cfUpdateTimeSetDateRange,
@@ -497,42 +497,6 @@ export async function createOfficeHours ({ dispatch, commit, rootGetters, state 
 export async function updateOfficeHours ({ dispatch, commit, rootGetters, state }, payload) {
 	dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
 	await cfUpdateOfficeHours(payload.id, payload.times)
-	const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
-	commit('dataSucceeded', {
-		timeSets: timeSets.items
-	})
-	dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
-}
-
-export async function createOfficeHoursSameTimes ({ dispatch, commit, rootGetters, state }, payload) {
-	dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
-	const timeSetId = await cfCreateOfficeHoursSameTimes(
-		rootGetters['user/getSubscriberId'],
-		payload.times,
-		payload.weekdays
-	)
-	const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-	updatedMapping[payload.mapping.index].timeset_id = timeSetId
-	const updatedMappings = await patchReplaceFull({
-		resource: 'cfmappings',
-		resourceId: rootGetters['user/getSubscriberId'],
-		fieldPath: payload.mapping.type,
-		value: updatedMapping
-	})
-	if (payload.id) {
-		await cfDeleteTimeSet(payload.id)
-	}
-	const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
-	commit('dataSucceeded', {
-		mappings: updatedMappings,
-		timeSets: timeSets.items
-	})
-	dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
-}
-
-export async function updateOfficeHoursSameTimes ({ dispatch, commit, rootGetters, state }, payload) {
-	dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
-	await cfUpdateOfficeHoursSameTimes(payload.id, payload.times, payload.weekdays)
 	const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
 	commit('dataSucceeded', {
 		timeSets: timeSets.items

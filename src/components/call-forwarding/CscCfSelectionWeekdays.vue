@@ -1,5 +1,7 @@
 <template>
-	<div>
+	<div
+		class="weekdays-selection-component"
+	>
 		<div
 			v-if="!tabs"
 			class="row justify-around"
@@ -7,13 +9,14 @@
 			<q-btn
 				v-for="(day, index) in days"
 				:key="day.value"
-				:label="$t(day.label)"
+				:label="day.label"
 				:class="(index > 0)?'q-ml-sm':''"
 				round
 				no-caps
 				unelevated
 				:color="(isSelected(day))?'primary':'dark'"
 				:text-color="(isSelected(day))?'dark':'primary'"
+				:disable="disable"
 				@click="toggle(day)"
 			/>
 		</div>
@@ -31,12 +34,13 @@
 					v-for="(day) in days"
 					:key="day.value"
 					:name="'tab-' + day.value"
-					:label="$t(day.label)"
+					:label="day.label"
 					class="text-primary no-padding"
 					inline-label
 					outside-arrows
 					mobile-arrows
 					no-caps
+					:disable="disable"
 				/>
 			</q-tabs>
 			<q-separator
@@ -49,7 +53,7 @@
 <script>
 import {
 	DAY_MAP,
-	DAY_NAME_MAP
+	getDayNameByNumber
 } from 'src/filters/time-set'
 
 export default {
@@ -60,6 +64,10 @@ export default {
 			default: () => [DAY_MAP[0]]
 		},
 		tabs: {
+			type: Boolean,
+			default: false
+		},
+		disable: {
 			type: Boolean,
 			default: false
 		}
@@ -75,14 +83,14 @@ export default {
 				return 'tab-' + this.selectedWeekdays[0]
 			},
 			set (tab) {
-				this.selectedWeekdays = [parseInt(tab.replace('tab-', ''))]
+				this.selectedWeekdays = [Number(tab.replace('tab-', ''))]
 			}
 		},
 		days () {
 			const options = []
 			DAY_MAP.forEach((day, index) => {
 				options.push({
-					label: DAY_NAME_MAP[index].substr(0, 2),
+					label: getDayNameByNumber(index, true),
 					value: day
 				})
 			})
@@ -111,3 +119,10 @@ export default {
 	}
 }
 </script>
+
+<style lang="stylus" rel="stylesheet/stylus" scoped>
+	.weekdays-selection-component
+		// Note: the magic number for height is the max component height in buttons mode.
+		// It makes the height of our component stable in any mode (tab \ buttons)
+		min-height 42px
+</style>
