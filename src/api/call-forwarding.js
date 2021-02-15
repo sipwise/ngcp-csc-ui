@@ -242,88 +242,22 @@ export async function cfUpdateTimeSetWeekdays (timeSetId, weekdays) {
 	})
 }
 
-function cfNormaliseOfficeHours (timesPerWeekday) {
-	const normalisedTimes = []
-	timesPerWeekday.forEach((times, index) => {
-		times.forEach((time) => {
-			if (time.from !== '' && time.to !== '') {
-				const fromParts = time.from.split(':')
-				const toParts = time.to.split(':')
-				if (fromParts[0] !== '__' && fromParts[1] !== '__' && toParts[0] !== '__' && toParts[1] !== '__') {
-					normalisedTimes.push({
-						minute: fromParts[1] + '-' + toParts[1],
-						month: null,
-						hour: fromParts[0] + '-' + toParts[0],
-						mday: null,
-						year: null,
-						wday: (index + 1)
-					})
-				}
-			}
-		})
-	})
-	return normalisedTimes
-}
-
-export async function cfCreateOfficeHours (subscriberId, timesPerWeekday) {
+export async function cfCreateOfficeHours (subscriberId, times) {
 	return post({
 		resource: 'cftimesets',
 		body: {
 			subscriber_id: subscriberId,
 			name: 'csc-office-hours-' + v4(),
-			times: cfNormaliseOfficeHours(timesPerWeekday)
+			times: times
 		}
 	})
 }
 
-export async function cfUpdateOfficeHours (timeSetId, timesPerWeekday) {
+export async function cfUpdateOfficeHours (timeSetId, times) {
 	return patchReplace({
 		resource: 'cftimesets',
 		resourceId: timeSetId,
 		fieldPath: 'times',
-		value: cfNormaliseOfficeHours(timesPerWeekday)
-	})
-}
-
-function cfNormaliseOfficeHoursSameTimes (times, weekdays) {
-	const normalisedTimes = []
-	weekdays.forEach((weekday) => {
-		times.forEach((time) => {
-			if (time.from !== '' && time.to !== '') {
-				const fromParts = time.from.split(':')
-				const toParts = time.to.split(':')
-				if (fromParts[0] !== '__' && fromParts[1] !== '__' && toParts[0] !== '__' && toParts[1] !== '__') {
-					normalisedTimes.push({
-						minute: fromParts[1] + '-' + toParts[1],
-						month: null,
-						hour: fromParts[0] + '-' + toParts[0],
-						mday: null,
-						year: null,
-						wday: weekday
-					})
-				}
-			}
-		})
-	})
-	return normalisedTimes
-}
-
-export async function cfCreateOfficeHoursSameTimes (subscriberId, times, weekdays) {
-	return post({
-		resource: 'cftimesets',
-		body: {
-			subscriber_id: subscriberId,
-			name: 'csc-office-hours-same-times-' + v4(),
-			times: cfNormaliseOfficeHoursSameTimes(times, weekdays)
-		}
-	})
-}
-
-export async function cfUpdateOfficeHoursSameTimes (timeSetId, times, weekdays) {
-	return patchReplace({
-		resource: 'cftimesets',
-		resourceId: timeSetId,
-		fieldPath: 'times',
-		value: cfNormaliseOfficeHoursSameTimes(times, weekdays)
+		value: times
 	})
 }

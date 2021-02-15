@@ -149,7 +149,8 @@
 						@save="updateAnnouncementEvent({
 							destinationIndex: destinationIndex,
 							destinationSetId: destinationSet.id
-						})">
+						})"
+					>
 						<q-select
 							v-model="announcement"
 							emit-value

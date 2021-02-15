@@ -19,13 +19,24 @@ export function stopLoading () {
 	Loading.hide()
 }
 
-export function showGlobalError (message, timeout) {
-	Alert.create({
-		html: message,
-		position: 'top-center',
+export function showGlobalError (messageOrException, timeout = 3000) {
+	let errorMessage = messageOrException
+	if (typeof messageOrException === 'object') {
+		// trying to get error message from the Axios response otherwise from the error itself
+		errorMessage = messageOrException?.response?.data?.message || messageOrException?.message
+	}
+	if (errorMessage === '' || errorMessage === undefined || errorMessage === null) {
+		errorMessage = i18n.t('Unknown error')
+	}
+	return Notify.create({
+		message: errorMessage,
+		position: 'top',
+		type: 'negative',
+		icon: 'error',
+		textColor: 'dark',
 		enter: 'bounceIn',
 		leave: 'fadeOut',
-		color: 'negative'
+		timeout
 	})
 }
 
