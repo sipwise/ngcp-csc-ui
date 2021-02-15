@@ -7,129 +7,152 @@
 		@back="back"
 		@close="$emit('close')"
 	>
-		<div
-			class="row justify-center q-pt-md"
+		<template
+			v-if="invalidTimeset"
 		>
-			<q-checkbox
-				v-model="sameTimes"
-				:label="$t('Same time for selected days')"
-			/>
-		</div>
-		<q-list
-			dense
+			<q-banner
+				rounded
+				dense
+				class="bg-red-8 text-white q-pt-md q-ma-md half-screen-width"
+			>
+				<template v-slot:avatar>
+					<q-icon name="date_range" />
+				</template>
+				{{ $t('The "{timeset}" timeset contains incompatible values. You can resolve this by deleting it and recreating from the scratch.', { timeset: timeSet.name }) }}
+			</q-banner>
+		</template>
+		<template
+			v-else
 		>
-			<q-item
-				class="q-mb-md q-mt-md"
+			<div
+				class="row justify-center q-pt-md"
+			>
+				<q-checkbox
+					v-model="sameTimes"
+					:label="$t('Same time for selected days')"
+					:disable="$v.$invalid"
+				/>
+			</div>
+			<div
+				class="row q-ma-md"
 			>
 				<q-item-section>
 					<csc-cf-selection-weekdays
 						v-model="weekdays"
 						:tabs="!sameTimes"
+						:disable="$v.$invalid"
 					/>
 				</q-item-section>
-			</q-item>
-			<q-item
-				v-for="(time, index) in times"
-				:key="index"
+			</div>
+			<q-list
+				dense
+				class="scroll time-range-list-height"
 			>
-				<q-item-section>
-					<csc-input
-						v-model="times[index].from"
-						dense
-						:label="$t('Start time')"
-						mask="##:##"
-						fill-mask
-						:disable="disabled"
-					>
-						<template
-							v-slot:append
-						>
-							<q-btn
-								icon="access_time"
-								dense
-								flat
-								color="primary"
-							>
-								<q-popup-proxy
-									ref="startTimePopup"
-								>
-									<q-time
-										v-model="times[index].from"
-										flat
-										now-btn
-										square
-										format24h
-										text-color="dark"
-										color="primary"
-										@input="$refs.startTimePopup[index].hide()"
-									/>
-								</q-popup-proxy>
-							</q-btn>
-						</template>
-					</csc-input>
-				</q-item-section>
-				<q-item-section>
-					<csc-input
-						v-model="times[index].to"
-						dense
-						:label="$t('End time')"
-						mask="##:##"
-						fill-mask
-						:disable="disabled"
-					>
-						<template
-							v-slot:append
-						>
-							<q-btn
-								icon="access_time"
-								dense
-								flat
-								color="primary"
-							>
-								<q-popup-proxy
-									ref="endTimePopup"
-								>
-									<q-time
-										v-model="times[index].to"
-										flat
-										now-btn
-										square
-										format24h
-										text-color="dark"
-										color="primary"
-										@input="$refs.endTimePopup[index].hide()"
-									/>
-								</q-popup-proxy>
-							</q-btn>
-						</template>
-					</csc-input>
-				</q-item-section>
-				<q-item-section
-					side
+				<q-item
+					v-for="(v, index) in $v.currentDayTimeRanges.$each.$iter"
+					:key="index"
 				>
-					<q-btn
-						flat
-						dense
-						color="negative"
-						icon="delete"
-						:disable="index === 0 || disabled"
-						@click="removeTime(index)"
-					/>
-				</q-item-section>
-			</q-item>
-			<q-item>
-				<q-item-section>
-					<q-btn
-						color="primary"
-						icon="add"
-						flat
-						:label="$t('Add time')"
-						:disable="disabled"
-						@click="addTime"
-					/>
-				</q-item-section>
-			</q-item>
-		</q-list>
+					<q-item-section>
+						<csc-input
+							v-model="v.from.$model"
+							dense
+							:label="$t('Start time')"
+							mask="##:##"
+							fill-mask
+							:disable="disabled"
+							:error="v.from.$invalid"
+							:error-message="timeValidationErrMsg(v.from)"
+						>
+							<template
+								v-slot:append
+							>
+								<q-btn
+									icon="access_time"
+									dense
+									flat
+									color="primary"
+								>
+									<q-popup-proxy
+										ref="startTimePopup"
+									>
+										<q-time
+											v-model="v.from.$model"
+											flat
+											now-btn
+											square
+											format24h
+											text-color="dark"
+											color="primary"
+											@input="$refs.startTimePopup[index].hide()"
+										/>
+									</q-popup-proxy>
+								</q-btn>
+							</template>
+						</csc-input>
+					</q-item-section>
+					<q-item-section>
+						<csc-input
+							v-model="v.to.$model"
+							dense
+							:label="$t('End time')"
+							mask="##:##"
+							fill-mask
+							:disable="disabled"
+							:error="v.to.$invalid"
+							:error-message="timeValidationErrMsg(v.to)"
+						>
+							<template
+								v-slot:append
+							>
+								<q-btn
+									icon="access_time"
+									dense
+									flat
+									color="primary"
+								>
+									<q-popup-proxy
+										ref="endTimePopup"
+									>
+										<q-time
+											v-model="v.to.$model"
+											flat
+											now-btn
+											square
+											format24h
+											text-color="dark"
+											color="primary"
+											@input="$refs.endTimePopup[index].hide()"
+										/>
+									</q-popup-proxy>
+								</q-btn>
+							</template>
+						</csc-input>
+					</q-item-section>
+					<q-item-section
+						side
+					>
+						<q-btn
+							flat
+							dense
+							color="negative"
+							icon="delete"
+							:disable="currentDayTimeRanges.length < 2 || disabled"
+							@click="removeTimeRangeDialog(index)"
+						/>
+					</q-item-section>
+				</q-item>
+			</q-list>
+			<div class="row justify-center">
+				<q-btn
+					color="primary"
+					icon="add"
+					flat
+					:label="$t('Add time range')"
+					:disable="disabled"
+					@click="addTimeRange"
+				/>
+			</div>
+		</template>
 		<template
 			v-slot:actions
 		>
@@ -143,11 +166,12 @@
 				@click="deleteTimeSetEvent"
 			/>
 			<q-btn
+				v-if="!invalidTimeset"
 				:label="$t('Save')"
 				flat
 				color="primary"
 				icon="check"
-				:disable="disabled"
+				:disable="disabled || $v.$invalid"
 				@click="createTimeSetOfficeHoursEvent"
 			/>
 		</template>
@@ -155,11 +179,23 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
 import CscInput from 'components/form/CscInput'
 import CscCfSelectionWeekdays from 'components/call-forwarding/CscCfSelectionWeekdays'
-import { DAY_MAP, DEFAULT_WEEKDAYS } from 'src/filters/time-set'
+import { DEFAULT_WEEKDAYS } from 'src/filters/time-set'
 import { mapActions } from 'vuex'
+import {
+	humanTimesetToKamailio, isTimeStrValid,
+	kamailioTimesetToHuman, timeStrToMinutes
+} from 'src/helpers/kamailio-timesets-converter'
+import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
+import { or } from 'vuelidate/lib/validators'
+
+function isTimeStrEmpty (val) {
+	return val === '' || val === '__:__'
+}
+
 export default {
 	name: 'CscCfGroupConditionOfficeHours',
 	components: {
@@ -191,51 +227,37 @@ export default {
 	},
 	data () {
 		return {
-			sameTimes: this.isSameTimes(),
+			invalidTimeset: false,
+			sameTimes: true,
 			weekdays: DEFAULT_WEEKDAYS,
-			timesAll: [{
-				from: '',
-				to: ''
-			}],
-			timesDay1: [{
-				from: '',
-				to: ''
-			}],
-			timesDay2: [{
-				from: '',
-				to: ''
-			}],
-			timesDay3: [{
-				from: '',
-				to: ''
-			}],
-			timesDay4: [{
-				from: '',
-				to: ''
-			}],
-			timesDay5: [{
-				from: '',
-				to: ''
-			}],
-			timesDay6: [{
-				from: '',
-				to: ''
-			}],
-			timesDay7: [{
-				from: '',
-				to: ''
-			}]
+			timeRangesByDay: this.getInitialTimeRanges(),
+			timeRangesForAll: [this.getEmptyTimeRange()]
+		}
+	},
+	validations: {
+		currentDayTimeRanges: {
+			$each: {
+				from: {
+					validTime: or(isTimeStrEmpty, isTimeStrValid),
+					bothFilled: (val, vm) => (isTimeStrEmpty(val) && isTimeStrEmpty(vm.to)) || (!isTimeStrEmpty(val) && !isTimeStrEmpty(vm.to))
+				},
+				to: {
+					validTime: or(isTimeStrEmpty, isTimeStrValid),
+					notInversed: (val, vm) => isTimeStrEmpty(vm.from) || !isTimeStrValid(vm.from) || isTimeStrEmpty(vm.to) || (isTimeStrValid(vm.to) && timeStrToMinutes(vm.from) <= timeStrToMinutes(vm.to))
+				}
+			}
 		}
 	},
 	computed: {
 		disabled () {
-			return this.sameTimes && this.weekdays.length === 0
+			return this.weekdays.length === 0
 		},
-		times () {
+		currentDayTimeRanges () {
 			if (this.sameTimes) {
-				return this.timesAll
+				return this.timeRangesForAll
 			} else {
-				return this['timesDay' + this.weekdays[0]]
+				const currentDay = this.weekdays[0]
+				return this.timeRangesByDay[currentDay]
 			}
 		}
 	},
@@ -243,8 +265,10 @@ export default {
 		timeSet () {
 			this.transformTimeSet()
 		},
-		sameTimes (sameTimes) {
-			this.transformTimeSet()
+		sameTimes () {
+			if (this.weekdays.length === 0) {
+				this.weekdays = DEFAULT_WEEKDAYS
+			}
 		}
 	},
 	mounted () {
@@ -252,8 +276,6 @@ export default {
 	},
 	methods: {
 		...mapActions('callForwarding', [
-			'createOfficeHoursSameTimes',
-			'updateOfficeHoursSameTimes',
 			'createOfficeHours',
 			'updateOfficeHours',
 			'deleteTimeSet'
@@ -261,128 +283,195 @@ export default {
 		back () {
 			this.$emit('back')
 		},
-		isSameTimes () {
-			if (this.timeSet) {
-				return this.timeSet.name.startsWith('csc-office-hours-same-times')
+		getEmptyTimeRange () {
+			return { from: '', to: '' }
+		},
+		getInitialTimeRanges () {
+			const result = {}
+			for (let day = 1; day <= 7; day++) {
+				result[day] = [
+					this.getEmptyTimeRange()
+				]
 			}
-			return true
+			return result
+		},
+		reset () {
+			this.sameTimes = true
+			this.weekdays = DEFAULT_WEEKDAYS
+			this.timeRangesByDay = this.getInitialTimeRanges()
+			this.timeRangesForAll = [this.getEmptyTimeRange()]
 		},
 		transformTimeSet () {
-			if (this.timeSet && this.timeSet.name.startsWith('csc-office-hours-same-times')) {
-				const weekdays = new Set()
-				const times = new Set()
-				this.timeSet.times.forEach((time) => {
-					if (time.wday !== null && time.hour !== null && time.minute !== null) {
-						weekdays.add(parseInt(time.wday))
-						times.add(time.hour + ':' + time.minute)
-					}
-				})
-				this.weekdays = Array.from(weekdays)
-				const timesAll = []
-				Array.from(times).forEach((time) => {
-					const timeParts = time.split(':')
-					const hourParts = timeParts[0].split('-')
-					const minuteParts = timeParts[1].split('-')
-					timesAll.push({
-						from: hourParts[0] + ':' + minuteParts[0],
-						to: hourParts[1] + ':' + minuteParts[1]
-					})
-				})
-				this.timesAll = timesAll
-			} else if (this.timeSet && this.timeSet.name.startsWith('csc-office-hours')) {
-				DAY_MAP.forEach((day) => {
-					this['timesDay' + day] = []
-				})
-				this.timeSet.times.forEach((time) => {
-					if (time.wday !== null && time.hour !== null && time.minute !== null) {
-						const hourParts = time.hour.split('-')
-						const minuteParts = time.minute.split('-')
-						this['timesDay' + time.wday].push({
-							from: hourParts[0] + ':' + minuteParts[0],
-							to: hourParts[1] + ':' + minuteParts[1]
+			let humanTimeRanges = []
+			try {
+				humanTimeRanges = kamailioTimesetToHuman(this.timeSet?.times)
+			} catch (e) {
+				this.reset()
+				this.invalidTimeset = true
+				console.info(e)
+				return
+			}
+
+			if (humanTimeRanges.length === 0) {
+				this.reset()
+			} else {
+				this.timeRangesByDay = humanTimeRanges.reduce(
+					(acc, hTimeRangeItem) => {
+						let dayTimeRanges = acc[hTimeRangeItem.weekday]
+						if (dayTimeRanges === undefined) {
+							dayTimeRanges = []
+							acc[hTimeRangeItem.weekday] = dayTimeRanges
+						} else if (dayTimeRanges[0]?.from === '' && dayTimeRanges[0]?.to === '') {
+							dayTimeRanges.shift()
+						}
+						dayTimeRanges.push({
+							from: hTimeRangeItem.from.padStart(5, '0'),
+							to: hTimeRangeItem.to.padStart(5, '0')
 						})
+						return acc
+					},
+					this.getInitialTimeRanges()
+				)
+
+				// trying to detect equal set of time ranges for different weekdays.
+				const timeRangesMap = {}
+				humanTimeRanges.forEach(({ weekday, from, to }) => {
+					const rangeStr = `${from} - ${to}`
+					let mapItem = timeRangesMap[rangeStr]
+					if (!mapItem) {
+						mapItem = new Set()
+						timeRangesMap[rangeStr] = mapItem
 					}
+					mapItem.add(weekday)
 				})
-				DAY_MAP.forEach((day) => {
-					if (this['timesDay' + day].length === 0) {
-						this['timesDay' + day] = [{
-							from: '',
-							to: ''
-						}]
-					}
+				const weekdaysListWithTheSameTimeRanges = [...Object.values(timeRangesMap).reduce((acc, weekdaysSet) => {
+						const weekdaysStr = [...weekdaysSet.keys()].sort().join()
+						acc.add(weekdaysStr)
+						return acc
+					},
+					new Set()
+				)]
+
+				// So, if we have only one weekdays list it means we can set mark "sameTimes" to True
+				if (weekdaysListWithTheSameTimeRanges.length === 1) {
+					this.sameTimes = true
+					this.weekdays = weekdaysListWithTheSameTimeRanges[0].split(',').map(day => Number(day))
+					this.timeRangesForAll = _.cloneDeep(this.timeRangesByDay[this.weekdays[0]])
+				} else {
+					this.sameTimes = false
+					this.weekdays = humanTimeRanges[0] ? [humanTimeRanges[0].weekday] : DEFAULT_WEEKDAYS
+				}
+			}
+		},
+		addTimeRange () {
+			this.currentDayTimeRanges.push(this.getEmptyTimeRange())
+		},
+		removeTimeRangeDialog (index) {
+			const timeRange = this.currentDayTimeRanges[index]
+			if (isTimeStrEmpty(timeRange.from) && isTimeStrEmpty(timeRange.to)) {
+				this.removeTimeRange(index)
+			} else {
+				this.$q.dialog({
+					title: this.$t('Remove time range'),
+					message: this.$t('You are about to delete time range "{from} - {to}"', timeRange),
+					color: 'negative',
+					cancel: true,
+					persistent: true
+				}).onOk(data => {
+					this.removeTimeRange(index)
 				})
 			}
 		},
-		addTime () {
-			if (!this.sameTimes) {
-				this['timesDay' + this.weekdays[0]].push({
-					from: '',
-					to: ''
+		removeTimeRange (index) {
+			this.currentDayTimeRanges.splice(index, 1)
+		},
+		timeValidationErrMsg (field) {
+			if (!field.validTime) {
+				return this.$t('Time is invalid')
+			}
+			if (field.bothFilled === false) {
+				return this.$t('Start and End time should be set')
+			}
+			if (field.notInversed === false) {
+				return this.$t('Start time should be less than End time')
+			}
+		},
+		getDataAsHumanReadableTimeSets () {
+			function isTimeRangeFilled ({ from, to }) {
+				return typeof from === 'string' && typeof to === 'string' &&
+					isTimeStrValid(from) && isTimeStrValid(to)
+			}
+
+			function processTimeRanges (timeRanges, dayNum) {
+				return timeRanges
+					.filter(isTimeRangeFilled)
+					.map(timeRange => {
+						return {
+							weekday: dayNum,
+							from: timeRange.from,
+							to: timeRange.to
+						}
+					})
+			}
+
+			let hTimeSets = []
+			if (this.sameTimes) {
+				// duplicating time ranges for each selected day
+				hTimeSets = this.weekdays.flatMap(dayNum => {
+					return processTimeRanges(this.timeRangesForAll, dayNum)
 				})
 			} else {
-				this.timesAll.push({
-					from: '',
-					to: ''
+				hTimeSets = Object.entries(this.timeRangesByDay).flatMap(([day, timeRanges]) => {
+					const dayNum = Number(day)
+					return processTimeRanges(timeRanges, dayNum)
 				})
 			}
-		},
-		removeTime (index) {
-			if (!this.sameTimes) {
-				this['timesDay' + this.weekdays[0]] = this['timesDay' + this.weekdays[0]].filter((time, timeIndex) => timeIndex !== index)
-			} else {
-				this.timesAll = this.timesAll.filter((time, timeIndex) => timeIndex !== index)
-			}
-		},
-		resetTimesPerDay () {
-			DAY_MAP.forEach((day) => {
-				this['timesDay' + day] = [{
-					from: '',
-					to: ''
-				}]
-			})
+			return hTimeSets
 		},
 		async createTimeSetOfficeHoursEvent () {
-			const payload = {
-				mapping: this.mapping
+			try {
+				const payload = {
+					mapping: this.mapping
+				}
+				if (this.timeSet) {
+					payload.id = this.timeSet.id
+				}
+				payload.times = humanTimesetToKamailio(this.getDataAsHumanReadableTimeSets())
+				if (payload.times.length > 0) {
+					if (this.timeSet) {
+						await this.updateOfficeHours(payload)
+					} else {
+						await this.createOfficeHours(payload)
+					}
+
+					this.$emit('close')
+				} else {
+					showGlobalWarning(this.$t('No data to save. Please provide at least one time range.'))
+				}
+			} catch (e) {
+				showGlobalError(e)
 			}
-			if (this.timeSet) {
-				payload.id = this.timeSet.id
-			}
-			if (!this.sameTimes) {
-				payload.times = [
-					this.timesDay1,
-					this.timesDay2,
-					this.timesDay3,
-					this.timesDay4,
-					this.timesDay5,
-					this.timesDay6,
-					this.timesDay7
-				]
-			} else {
-				payload.times = this.timesAll
-				payload.weekdays = this.weekdays
-			}
-			if (this.timeSet && this.timeSet.name.startsWith('csc-office-hours-same-times') && this.sameTimes) {
-				await this.updateOfficeHoursSameTimes(payload)
-			} else if (this.timeSet && this.timeSet.name.startsWith('csc-office-hours-same-times') && !this.sameTimes) {
-				await this.createOfficeHours(payload)
-			} else if (this.timeSet && this.timeSet.name.startsWith('csc-office-hours') && this.sameTimes) {
-				await this.createOfficeHoursSameTimes(payload)
-			} else if (this.timeSet && this.timeSet.name.startsWith('csc-office-hours') && !this.sameTimes) {
-				await this.updateOfficeHours(payload)
-			} else if (!this.timeSet && this.sameTimes) {
-				await this.createOfficeHoursSameTimes(payload)
-			} else {
-				await this.createOfficeHours(payload)
-			}
-			this.$emit('close')
 		},
 		async deleteTimeSetEvent () {
-			await this.deleteTimeSet({
-				mapping: this.mapping,
-				id: this.timeSet.id
-			})
+			try {
+				await this.deleteTimeSet({
+					mapping: this.mapping,
+					id: this.timeSet.id
+				})
+			} catch (e) {
+				showGlobalError(e)
+			}
 		}
 	}
 }
 </script>
+
+<style lang="stylus" rel="stylesheet/stylus" scoped>
+	.half-screen-width
+		width 50vw
+
+	.time-range-list-height
+		// NOTE: 65vh is a default max-height for q-dialog. Other magic numbers are sum of another elements heights, like headers, buttons etc
+		max-height calc(65vh - 250px)
+
+</style>
