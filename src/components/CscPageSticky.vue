@@ -9,17 +9,22 @@
 			expand
 			position="top"
 		>
-			<slot
-				name="header"
-			/>
-			<q-separator />
-			<div
-				class="col-12"
-			>
-				<slot
-					name="toolbar"
-				/>
+			<div class="column full-width">
+				<div class="row justify-center">
+					<slot
+						name="header"
+					/>
+				</div>
+				<q-separator />
+				<div
+					class="col-12"
+				>
+					<slot
+						name="toolbar"
+					/>
+				</div>
 			</div>
+
 			<q-resize-observer
 				@resize="computeTopMargin"
 			/>

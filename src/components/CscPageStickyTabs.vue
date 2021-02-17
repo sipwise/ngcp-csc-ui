@@ -9,28 +9,30 @@
 			expand
 			position="top"
 		>
-			<div
-				class="full-width"
-			>
-				<q-tabs
-					:value="value"
-					style="z-index: 11"
-					align="center"
-					inline-label
-					active-color="primary"
-					dense
-					mobile-arrows
-					@input="input"
+			<div class="column full-width">
+				<div
+					class="full-width"
 				>
-					<slot
-						name="tabs"
-					/>
-				</q-tabs>
+					<q-tabs
+						:value="value"
+						style="z-index: 11"
+						align="center"
+						inline-label
+						active-color="primary"
+						dense
+						mobile-arrows
+						@input="input"
+					>
+						<slot
+							name="tabs"
+						/>
+					</q-tabs>
+				</div>
+				<q-separator />
+				<slot
+					name="toolbar"
+				/>
 			</div>
-			<q-separator />
-			<slot
-				name="toolbar"
-			/>
 		</q-page-sticky>
 		<slot />
 	</csc-page>
