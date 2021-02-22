@@ -151,7 +151,7 @@ class testrun(unittest.TestCase):
         print("Create a call forwarding 'if available'...", end="")
         wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"')
         time.sleep(1)
-        click_js(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button[contains(., "Add forwarding")]')
+        click_js(driver, '//*[@id="csc-page-call-forwarding"]//div//button[contains(., "Add forwarding")]')
         click_js(driver, '/html/body/div[3]/div/div[3]')
         print("OK")
         print("Try to add a condition 'call from...' to the call forwarding...", end="")
@@ -376,15 +376,15 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-page-conversations"]//div[contains(., "No Calls, Voicemails or Faxes found")]')) > 0,
             "Sub page 'All' wasnt opened")
-        driver.find_element_by_xpath('//*[@id="csc-page-conversations"]/div[1]/div[1]/div/div/div[2]').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-conversations"]//div[@role="tablist"]/div/div[2]').click()
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-page-conversations"]//div[contains(., "No Calls found")]')) > 0,
             "Sub page 'Calls' wasnt opened")
-        driver.find_element_by_xpath('//*[@id="csc-page-conversations"]/div[1]/div[1]/div/div/div[3]').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-conversations"]//div[@role="tablist"]/div/div[3]').click()
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-page-conversations"]//div[contains(., "No Voicemails found")]')) > 0,
             "Sub page 'Voicemails' wasnt opened")
-        driver.find_element_by_xpath('//*[@id="csc-page-conversations"]/div[1]/div[1]/div/div/div[4]').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-conversations"]//div[@role="tablist"]/div/div[4]').click()
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-page-conversations"]//div[contains(., "No Faxes found")]')) > 0,
             "Sub page 'Faxes' wasnt opened")
