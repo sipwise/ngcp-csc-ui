@@ -162,41 +162,23 @@ export async function cfDeleteTimeSet (timesetId) {
 	})
 }
 
-export async function cfCreateTimeSetDateRange (subscriberId, date) {
+export async function cfCreateTimeSetDateRange (subscriberId, times) {
 	return post({
 		resource: 'cftimesets',
 		body: {
 			subscriber_id: subscriberId,
 			name: 'csc-date-range-' + v4(),
-			times: [
-				{
-					minute: null,
-					month: date.from.month + '-' + date.to.month,
-					hour: null,
-					mday: date.from.date + '-' + date.to.date,
-					year: date.from.year + '-' + date.to.year,
-					wday: null
-				}
-			]
+			times: times
 		}
 	})
 }
 
-export async function cfUpdateTimeSetDateRange (timeSetId, date) {
+export async function cfUpdateTimeSetDateRange (timeSetId, times) {
 	return patchReplace({
 		resource: 'cftimesets',
 		resourceId: timeSetId,
 		fieldPath: 'times',
-		value: [
-			{
-				minute: null,
-				month: date.from.month + '-' + date.to.month,
-				hour: null,
-				mday: date.from.date + '-' + date.to.date,
-				year: date.from.year + '-' + date.to.year,
-				wday: null
-			}
-		]
+		value: times
 	})
 }
 

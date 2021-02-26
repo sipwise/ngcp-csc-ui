@@ -1,6 +1,6 @@
 
 import { i18n } from 'boot/i18n'
-import { getKamailioRangeElements } from 'src/helpers/kamailio-timesets-converter'
+import { getKamailioRangeElements, kamailioDatesetToHuman } from 'src/helpers/kamailio-timesets-converter'
 
 export const DAY_MAP = [2, 3, 4, 5, 6, 7, 1]
 export const DEFAULT_WEEKDAYS = [
@@ -39,11 +39,14 @@ export function timeSetDateExact (times) {
 }
 
 export function timeSetDateRange (times) {
-	const years = times[0].year.split('-')
-	const months = times[0].month.split('-')
-	const dates = times[0].mday.split('-')
-	return years[0] + '/' + months[0] + '/' + dates[0] + '-' +
-		years[1] + '/' + months[1] + '/' + dates[1]
+	try {
+		const hDateset = kamailioDatesetToHuman(times)
+		return (hDateset.length === 0)
+			? i18n.t('empty')
+			: hDateset.map(d => (d.from === d.to) ? d.from : d.from + '-' + d.to).join(', ')
+	} catch (e) {
+		return i18n.t('data error')
+	}
 }
 
 export function timeSetWeekdays (times) {

@@ -467,8 +467,6 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-	.half-screen-width
-		width 50vw
 
 	.time-range-list-height
 		// NOTE: 65vh is a default max-height for q-dialog. Other magic numbers are sum of another elements heights, like headers, buttons etc

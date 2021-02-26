@@ -6,14 +6,32 @@
 		v-bind="$attrs"
 		v-on="$listeners"
 	>
-		<q-date
-			v-model="selectedDate"
-			class="no-margin no-padding"
-			flat
-			square
-			minimal
-			range
-		/>
+		<template
+			v-if="invalidDateset"
+		>
+			<q-banner
+				rounded
+				dense
+				class="bg-red-8 text-white q-pt-md q-ma-md half-screen-width"
+			>
+				<template v-slot:avatar>
+					<q-icon name="date_range" />
+				</template>
+				{{ $t('The "{timeset}" timeset contains incompatible values. You can resolve this by deleting it and recreating from the scratch.', { timeset: timeSet.name }) }}
+			</q-banner>
+		</template>
+		<template
+			v-else
+		>
+			<q-date
+				v-model="selectedDate"
+				class="no-margin no-padding"
+				flat
+				square
+				minimal
+				range
+			/>
+		</template>
 		<template
 			v-slot:actions
 		>
@@ -26,6 +44,7 @@
 				@click="deleteSourceSetEvent"
 			/>
 			<q-btn
+				v-if="!invalidDateset"
 				:label="$t('Save')"
 				flat
 				color="primary"
@@ -39,7 +58,7 @@
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
 import { mapActions } from 'vuex'
-import { timeSetDateRange } from 'src/filters/time-set'
+import { humanDatesetToKamailio, kamailioDatesetToHuman } from 'src/helpers/kamailio-timesets-converter'
 export default {
 	name: 'CscCfGroupConditionDateRange',
 	components: {
@@ -69,30 +88,12 @@ export default {
 	},
 	data () {
 		return {
-			selectedDate: this.transformedDate
-		}
-	},
-	computed: {
-		formattedDate () {
-			if (this.timeSet) {
-				return timeSetDateRange(this.timeSet.times)
-			}
-			return null
-		},
-		transformedDate () {
-			if (this.timeSet) {
-				const dateRangeParts = timeSetDateRange(this.timeSet.times).split('-')
-				return {
-					from: dateRangeParts[0],
-					to: dateRangeParts[1]
-				}
-			} else {
-				return null
-			}
+			invalidDateset: false,
+			selectedDate: null
 		}
 	},
 	mounted () {
-		this.selectedDate = this.transformedDate
+		this.transformDateset()
 	},
 	methods: {
 		...mapActions('callForwarding', [
@@ -100,23 +101,32 @@ export default {
 			'updateTimeSetDateRange',
 			'deleteTimeSet'
 		]),
+		transformDateset () {
+			if (this.timeSet) {
+				let hDateset
+				try {
+					hDateset = kamailioDatesetToHuman(this.timeSet.times)
+				} catch (e) {
+					this.invalidDateset = true
+					console.info(e)
+					return
+				}
+				if (hDateset.length === 0) {
+					this.selectedDate = null
+				} else {
+					this.selectedDate = (hDateset[0].from === hDateset[0].to) ? hDateset[0].from : hDateset[0]
+				}
+			} else {
+				this.selectedDate = null
+			}
+		},
 		async createTimeSetEvent () {
-			const datePartsFrom = this.selectedDate.from.split('/')
-			const datePartsTo = this.selectedDate.to.split('/')
+			const dateFrom = this.selectedDate.from ? this.selectedDate.from : this.selectedDate
+			const dateTo = this.selectedDate.to ? this.selectedDate.to : this.selectedDate
+			const kamilioTimesets = humanDatesetToKamailio([{ from: dateFrom, to: dateTo }])
 			const payload = {
 				mapping: this.mapping,
-				date: {
-					from: {
-						date: datePartsFrom[2],
-						month: datePartsFrom[1],
-						year: datePartsFrom[0]
-					},
-					to: {
-						date: datePartsTo[2],
-						month: datePartsTo[1],
-						year: datePartsTo[0]
-					}
-				}
+				date: kamilioTimesets
 			}
 			if (this.timeSet) {
 				payload.id = this.timeSet.id
