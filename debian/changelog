@@ -1,3 +1,11 @@
+ngcp-csc-ui (9.3.2.0+0~mr9.3.2.0) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [730d8a6] TT#109763 Fix OfficeHours in the new CallForwarding implementation
+  * [2d2bec8] TT#110924 Fix q-separator regression from Quasar Upgrade
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 02 Mar 2021 12:07:27 +0100
+
 ngcp-csc-ui (9.3.1.0+0~mr9.3.1.0) unstable; urgency=medium
 
   [ Sergii Leonenko ]
