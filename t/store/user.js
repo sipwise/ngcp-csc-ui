@@ -4,13 +4,13 @@ import UserModule from '../../src/store/user'
 import { assert } from 'chai'
 
 describe('UserModule', () => {
-	it('should login', () => {
-		var state = {}
-		UserModule.mutations.loginSucceeded(state, {
-			jwt: 'abc123',
-			subscriberId: 123
-		})
-		assert.equal(state.jwt, 'abc123')
-		assert.equal(state.subscriberId, '123')
-	})
+    it('should login', () => {
+        var state = {}
+        UserModule.mutations.loginSucceeded(state, {
+            jwt: 'abc123',
+            subscriberId: 123
+        })
+        assert.equal(state.jwt, 'abc123')
+        assert.equal(state.subscriberId, '123')
+    })
 })

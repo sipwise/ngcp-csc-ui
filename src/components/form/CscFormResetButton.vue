@@ -1,25 +1,25 @@
 <template>
-	<q-btn
-		flat
-		icon="undo"
-		color="white"
-		@click="click"
-	>
-		{{ $t('Reset') }}
-	</q-btn>
+    <q-btn
+        flat
+        icon="undo"
+        color="white"
+        @click="click"
+    >
+        {{ $t('Reset') }}
+    </q-btn>
 </template>
 
 <script>
 export default {
-	name: 'CscFormResetButton',
-	data () {
-		return {}
-	},
-	methods: {
-		click () {
-			this.$emit('click')
-		}
-	}
+    name: 'CscFormResetButton',
+    data () {
+        return {}
+    },
+    methods: {
+        click () {
+            this.$emit('click')
+        }
+    }
 }
 </script>
 

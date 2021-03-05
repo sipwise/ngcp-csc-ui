@@ -1,40 +1,40 @@
 <template>
-	<div>
-		<div
-			class="csc-cf-dest-type"
-			@click="setSelectedDestinationType('destination')"
-		>
-			{{ $t('Number') }}
-		</div>
-		<div
-			class="csc-cf-dest-type"
-			@click="setSelectedDestinationType('voicemail')"
-		>
-			{{ $t('Voicemail') }}
-		</div>
-	</div>
+    <div>
+        <div
+            class="csc-cf-dest-type"
+            @click="setSelectedDestinationType('destination')"
+        >
+            {{ $t('Number') }}
+        </div>
+        <div
+            class="csc-cf-dest-type"
+            @click="setSelectedDestinationType('voicemail')"
+        >
+            {{ $t('Voicemail') }}
+        </div>
+    </div>
 </template>
 
 <script>
 import {
-	mapActions
+    mapActions
 } from 'vuex'
 export default {
-	name: 'CscNewCallForwardDestinationTypeForm',
-	mounted () {
-		this.setSelectedDestinationType(null)
-	},
-	methods: {
-		...mapActions('newCallForward', [
-			'setSelectedDestinationType'
-		]),
-		cancel () {
-			this.close = false
-		},
-		close () {
-			this.$emit('close')
-		}
-	}
+    name: 'CscNewCallForwardDestinationTypeForm',
+    mounted () {
+        this.setSelectedDestinationType(null)
+    },
+    methods: {
+        ...mapActions('newCallForward', [
+            'setSelectedDestinationType'
+        ]),
+        cancel () {
+            this.close = false
+        },
+        close () {
+            this.$emit('close')
+        }
+    }
 }
 </script>
 

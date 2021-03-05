@@ -1,11 +1,11 @@
 <template>
-	<div />
+    <div />
 </template>
 
 <script>
 export default {
-	name: 'QModal',
-	props: {
-	}
+    name: 'QModal',
+    props: {
+    }
 }
 </script>

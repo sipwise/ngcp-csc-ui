@@ -3,7 +3,7 @@
 if [ "$1" == "report" ]; then
     OTHER_PARAMS=()
 else
-    OTHER_PARAMS=(--add --json-sort-keys --json-indent-characters "1,tab" --no-detailed-report)
+    OTHER_PARAMS=(--add --json-sort-keys --json-indent-characters "4,space" --no-detailed-report)
 fi
 
 node ./bin/vue-i18n-extract/vue-i18n-extract.js report -v './src/**/*.?(js|vue)' -l './src/i18n/*.json' \

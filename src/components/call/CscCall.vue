@@ -1,642 +1,642 @@
 <template>
-	<div
-		:class="componentClasses"
-	>
-		<audio
-			ref="callSound"
-			loop
-			playsinline
-			preload="auto"
-			src="ring.mp3"
-		/>
-		<div
-			class="csc-call-content"
-		>
-			<div
-				v-if="isInitiating || isRinging || isIncoming || isEnded"
-				class="csc-call-info full-height"
-			>
-				<div
-					class="row justify-center items-center full-height"
-				>
-					<div
-						class="csc-call-info-content col col-md-6 text-center"
-					>
-						<q-spinner-rings
-							v-if="isInitiating || isRinging || isIncoming"
-							class="csc-call-spinner"
-							color="primary"
-							:size="64"
-						/>
-						<div
-							v-if="isInitiating || isRinging || isIncoming"
-							class="csc-phone-number"
-						>
-							<q-icon
-								v-if="isVideoCall"
-								class="csc-media-icon"
-								name="videocam"
-								size="24px"
-							/>
-							<q-icon
-								v-else
-								class="csc-media-icon"
-								name="call"
-								size="24px"
-							/>
-							<span
-								v-if="isInitiating"
-							>
-								{{ $t('Calling {number}...', {number: callNumberFormatted}) }}</span>
-							<span
-								v-else-if="isRinging"
-							>
-								{{ $t('Ringing at {number}...', {number: callNumberFormatted}) }}</span>
-							<span
-								v-else-if="isIncoming"
-							>
-								{{ $t('Incoming call from {number}...', {number: callNumberFormatted}) }}</span>
-						</div>
-						<div
-							v-else-if="isEnded"
-							class="csc-call-error"
-						>
-							{{ endedReason | startCase }} ({{ callNumberFormatted }})
-						</div>
-					</div>
-				</div>
-			</div>
-			<div
-				v-else-if="isEstablished"
-				class="csc-call-info-established"
-			>
-				<div
-					class="row justify-center items-center"
-				>
-					<q-icon
-						v-if="isVideoCall"
-						class="csc-media-icon"
-						name="videocam"
-						size="24px"
-					/>
-					<q-icon
-						v-else
-						class="csc-media-icon"
-						name="call"
-						size="24px"
-					/>
-					<div>
-						{{ $t('In call with {number}', {number: callNumberFormatted}) }}
-					</div>
-					<q-btn
-						v-if="!dialpadOpened"
-						class="csc-dialpad-button"
-						icon="dialpad"
-						round
-						small
-						color="default"
-						@click="toggleDialpad"
-					/>
-					<q-btn
-						v-else
-						class="csc-dialpad-button"
-						icon="expand_more"
-						round
-						small
-						color="default"
-						@click="toggleDialpad"
-					/>
-				</div>
-				<csc-call-dialpad
-					v-if="dialpadOpened"
-					:show-backspace-button="false"
-					:show-clear-button="false"
-					@click="dialpadClick"
-				/>
-			</div>
-			<div
-				ref="localMediaWrapper"
-				class="csc-call-media-local"
-			>
-				<csc-media
-					v-show="isActive && !minimized && hasLocalVideo"
-					ref="localMedia"
-					:muted="true"
-					:stream="localMediaStream"
-					:preview="true"
-					:width="localMediaWrapperWidth"
-				/>
-			</div>
-		</div>
-		<div
-			ref="remoteMediaWrapper"
-			class="csc-call-media-remote"
-		>
-			<div
-				v-show="!hasRemoteVideo && !minimized"
-				class="csc-call-media-icon row justify-center items-center full-height"
-			>
-				<q-icon
-					name="person"
-					size="128px"
-					color="white"
-				/>
-			</div>
-			<csc-media
-				v-show="hasRemoteVideo"
-				ref="remoteMedia"
-				:muted="!remoteVolumeEnabled"
-				:stream="remoteMediaStream"
-				:preview="minimized"
-				:width="remoteMediaWrapperWidth"
-			/>
-		</div>
-		<div
-			class="csc-call-content-minimized transition-generic"
-			@click="maximizeMobile"
-		>
-			<div
-				class="row justify-center items-center"
-				style="margin-top: -30px"
-			>
-				<q-btn
-					v-if="isEstablished && !(isMobile && minimized)"
-					:color="colorToggleMicrophone"
-					:icon="iconToggleMicrophone"
-					class="q-mr-sm"
-					text-color="dark"
-					round
-					size="large"
-					@click="toggleMicrophone()"
-				/>
-				<q-btn
-					v-if="isEstablished && hasLocalVideo && !(isMobile && minimized)"
-					:color="colorToggleCamera"
-					:icon="iconToggleCamera"
-					class="q-mr-sm"
-					text-color="dark"
-					round
-					size="large"
-					@click="toggleCamera()"
-				/>
-				<q-btn
-					v-if="isEstablished && !(isMobile && minimized)"
-					:color="colorToggleRemoteVolume"
-					:icon="iconToggleRemoteVolume"
-					class="q-mr-sm"
-					text-color="dark"
-					round
-					size="large"
-					@click="toggleRemoteVolume()"
-				/>
-				<q-btn
-					v-if="isActive"
-					color="negative"
-					text-color="dark"
-					icon="call_end"
-					class="q-mr-sm"
-					round
-					size="large"
-					@click="endCall"
-				/>
-				<q-btn
-					v-if="canClose"
-					color="negative"
-					text-color="dark"
-					icon="clear"
-					class="q-mr-sm"
-					round
-					size="large"
-					@click="closeCall()"
-				/>
-				<q-fab
-					v-if="canStart"
-					ref="startButton"
-					color="primary"
-					text-color="dark"
-					icon="call"
-					direction="up"
-				>
-					<q-fab-action
-						v-if="!isMobile"
-						color="primary"
-						text-color="dark"
-						icon="computer"
-						@click="startCall('audioScreen')"
-					/>
-					<q-fab-action
-						color="primary"
-						text-color="dark"
-						icon="videocam"
-						@click="startCall('audioVideo')"
-					/>
-					<q-fab-action
-						color="primary"
-						text-color="dark"
-						icon="call"
-						@click="startCall('audioOnly')"
-					/>
-				</q-fab>
-			</div>
-			<div
-				v-if="minimized"
-				class="csc-call-info-minimized"
-			>
-				<div
-					v-if="isCalling"
-					class="csc-call-info-loading"
-				>
-					<q-spinner-rings
-						class="csc-call-spinner"
-						color="primary"
-						size="64px"
-					/>
-				</div>
-				<div
-					class="csc-call-info-icon"
-				>
-					<q-icon
-						v-if="isActive && isVideoCall"
-						class="csc-media-icon"
-						name="videocam"
-						size="24px"
-						color="white"
-					/>
-					<q-icon
-						v-else-if="isActive"
-						class="csc-media-icon"
-						name="call"
-						size="24px"
-						color="white"
-					/>
-					<q-icon
-						v-else-if="isEnded"
-						class="csc-media-icon"
-						name="error"
-						size="24px"
-						color="white"
-					/>
-				</div>
-				<div
-					v-if="isActive"
-					class="csc-call-info-text"
-				>
-					<div
-						v-if="isActive"
-					>
-						<div
-							class="csc-call-info-phrase"
-						>
-							{{ callStateTitle }}
-						</div>
-						<div
-							class="csc-call-info-number"
-						>
-							{{ callNumberFormatted }}
-						</div>
-					</div>
-				</div>
-				<div
-					v-else-if="isEnded"
-					class="csc-call-info-text csc-call-error"
-				>
-					<div
-						class="csc-call-info-phrase"
-					>
-						{{ endedReason | startCase }}
-					</div>
-					<div
-						class="csc-call-info-number"
-					>
-						{{ callNumberFormatted }}
-					</div>
-				</div>
-			</div>
-			<q-btn
-				v-if="isEstablished && minimized && !isMobile"
-				class="csc-call-btn-fullscreen"
-				icon="fullscreen"
-				round
-				color="default"
-				@click="maximize"
-			/>
-			<q-btn
-				v-else-if="isEstablished && maximizable && !isMobile"
-				class="csc-call-btn-fullscreen-small"
-				icon="fullscreen_exit"
-				round
-				small
-				color="default"
-				@click="minimize"
-			/>
-		</div>
-	</div>
+    <div
+        :class="componentClasses"
+    >
+        <audio
+            ref="callSound"
+            loop
+            playsinline
+            preload="auto"
+            src="ring.mp3"
+        />
+        <div
+            class="csc-call-content"
+        >
+            <div
+                v-if="isInitiating || isRinging || isIncoming || isEnded"
+                class="csc-call-info full-height"
+            >
+                <div
+                    class="row justify-center items-center full-height"
+                >
+                    <div
+                        class="csc-call-info-content col col-md-6 text-center"
+                    >
+                        <q-spinner-rings
+                            v-if="isInitiating || isRinging || isIncoming"
+                            class="csc-call-spinner"
+                            color="primary"
+                            :size="64"
+                        />
+                        <div
+                            v-if="isInitiating || isRinging || isIncoming"
+                            class="csc-phone-number"
+                        >
+                            <q-icon
+                                v-if="isVideoCall"
+                                class="csc-media-icon"
+                                name="videocam"
+                                size="24px"
+                            />
+                            <q-icon
+                                v-else
+                                class="csc-media-icon"
+                                name="call"
+                                size="24px"
+                            />
+                            <span
+                                v-if="isInitiating"
+                            >
+                                {{ $t('Calling {number}...', {number: callNumberFormatted}) }}</span>
+                            <span
+                                v-else-if="isRinging"
+                            >
+                                {{ $t('Ringing at {number}...', {number: callNumberFormatted}) }}</span>
+                            <span
+                                v-else-if="isIncoming"
+                            >
+                                {{ $t('Incoming call from {number}...', {number: callNumberFormatted}) }}</span>
+                        </div>
+                        <div
+                            v-else-if="isEnded"
+                            class="csc-call-error"
+                        >
+                            {{ endedReason | startCase }} ({{ callNumberFormatted }})
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                v-else-if="isEstablished"
+                class="csc-call-info-established"
+            >
+                <div
+                    class="row justify-center items-center"
+                >
+                    <q-icon
+                        v-if="isVideoCall"
+                        class="csc-media-icon"
+                        name="videocam"
+                        size="24px"
+                    />
+                    <q-icon
+                        v-else
+                        class="csc-media-icon"
+                        name="call"
+                        size="24px"
+                    />
+                    <div>
+                        {{ $t('In call with {number}', {number: callNumberFormatted}) }}
+                    </div>
+                    <q-btn
+                        v-if="!dialpadOpened"
+                        class="csc-dialpad-button"
+                        icon="dialpad"
+                        round
+                        small
+                        color="default"
+                        @click="toggleDialpad"
+                    />
+                    <q-btn
+                        v-else
+                        class="csc-dialpad-button"
+                        icon="expand_more"
+                        round
+                        small
+                        color="default"
+                        @click="toggleDialpad"
+                    />
+                </div>
+                <csc-call-dialpad
+                    v-if="dialpadOpened"
+                    :show-backspace-button="false"
+                    :show-clear-button="false"
+                    @click="dialpadClick"
+                />
+            </div>
+            <div
+                ref="localMediaWrapper"
+                class="csc-call-media-local"
+            >
+                <csc-media
+                    v-show="isActive && !minimized && hasLocalVideo"
+                    ref="localMedia"
+                    :muted="true"
+                    :stream="localMediaStream"
+                    :preview="true"
+                    :width="localMediaWrapperWidth"
+                />
+            </div>
+        </div>
+        <div
+            ref="remoteMediaWrapper"
+            class="csc-call-media-remote"
+        >
+            <div
+                v-show="!hasRemoteVideo && !minimized"
+                class="csc-call-media-icon row justify-center items-center full-height"
+            >
+                <q-icon
+                    name="person"
+                    size="128px"
+                    color="white"
+                />
+            </div>
+            <csc-media
+                v-show="hasRemoteVideo"
+                ref="remoteMedia"
+                :muted="!remoteVolumeEnabled"
+                :stream="remoteMediaStream"
+                :preview="minimized"
+                :width="remoteMediaWrapperWidth"
+            />
+        </div>
+        <div
+            class="csc-call-content-minimized transition-generic"
+            @click="maximizeMobile"
+        >
+            <div
+                class="row justify-center items-center"
+                style="margin-top: -30px"
+            >
+                <q-btn
+                    v-if="isEstablished && !(isMobile && minimized)"
+                    :color="colorToggleMicrophone"
+                    :icon="iconToggleMicrophone"
+                    class="q-mr-sm"
+                    text-color="dark"
+                    round
+                    size="large"
+                    @click="toggleMicrophone()"
+                />
+                <q-btn
+                    v-if="isEstablished && hasLocalVideo && !(isMobile && minimized)"
+                    :color="colorToggleCamera"
+                    :icon="iconToggleCamera"
+                    class="q-mr-sm"
+                    text-color="dark"
+                    round
+                    size="large"
+                    @click="toggleCamera()"
+                />
+                <q-btn
+                    v-if="isEstablished && !(isMobile && minimized)"
+                    :color="colorToggleRemoteVolume"
+                    :icon="iconToggleRemoteVolume"
+                    class="q-mr-sm"
+                    text-color="dark"
+                    round
+                    size="large"
+                    @click="toggleRemoteVolume()"
+                />
+                <q-btn
+                    v-if="isActive"
+                    color="negative"
+                    text-color="dark"
+                    icon="call_end"
+                    class="q-mr-sm"
+                    round
+                    size="large"
+                    @click="endCall"
+                />
+                <q-btn
+                    v-if="canClose"
+                    color="negative"
+                    text-color="dark"
+                    icon="clear"
+                    class="q-mr-sm"
+                    round
+                    size="large"
+                    @click="closeCall()"
+                />
+                <q-fab
+                    v-if="canStart"
+                    ref="startButton"
+                    color="primary"
+                    text-color="dark"
+                    icon="call"
+                    direction="up"
+                >
+                    <q-fab-action
+                        v-if="!isMobile"
+                        color="primary"
+                        text-color="dark"
+                        icon="computer"
+                        @click="startCall('audioScreen')"
+                    />
+                    <q-fab-action
+                        color="primary"
+                        text-color="dark"
+                        icon="videocam"
+                        @click="startCall('audioVideo')"
+                    />
+                    <q-fab-action
+                        color="primary"
+                        text-color="dark"
+                        icon="call"
+                        @click="startCall('audioOnly')"
+                    />
+                </q-fab>
+            </div>
+            <div
+                v-if="minimized"
+                class="csc-call-info-minimized"
+            >
+                <div
+                    v-if="isCalling"
+                    class="csc-call-info-loading"
+                >
+                    <q-spinner-rings
+                        class="csc-call-spinner"
+                        color="primary"
+                        size="64px"
+                    />
+                </div>
+                <div
+                    class="csc-call-info-icon"
+                >
+                    <q-icon
+                        v-if="isActive && isVideoCall"
+                        class="csc-media-icon"
+                        name="videocam"
+                        size="24px"
+                        color="white"
+                    />
+                    <q-icon
+                        v-else-if="isActive"
+                        class="csc-media-icon"
+                        name="call"
+                        size="24px"
+                        color="white"
+                    />
+                    <q-icon
+                        v-else-if="isEnded"
+                        class="csc-media-icon"
+                        name="error"
+                        size="24px"
+                        color="white"
+                    />
+                </div>
+                <div
+                    v-if="isActive"
+                    class="csc-call-info-text"
+                >
+                    <div
+                        v-if="isActive"
+                    >
+                        <div
+                            class="csc-call-info-phrase"
+                        >
+                            {{ callStateTitle }}
+                        </div>
+                        <div
+                            class="csc-call-info-number"
+                        >
+                            {{ callNumberFormatted }}
+                        </div>
+                    </div>
+                </div>
+                <div
+                    v-else-if="isEnded"
+                    class="csc-call-info-text csc-call-error"
+                >
+                    <div
+                        class="csc-call-info-phrase"
+                    >
+                        {{ endedReason | startCase }}
+                    </div>
+                    <div
+                        class="csc-call-info-number"
+                    >
+                        {{ callNumberFormatted }}
+                    </div>
+                </div>
+            </div>
+            <q-btn
+                v-if="isEstablished && minimized && !isMobile"
+                class="csc-call-btn-fullscreen"
+                icon="fullscreen"
+                round
+                color="default"
+                @click="maximize"
+            />
+            <q-btn
+                v-else-if="isEstablished && maximizable && !isMobile"
+                class="csc-call-btn-fullscreen-small"
+                icon="fullscreen_exit"
+                round
+                small
+                color="default"
+                @click="minimize"
+            />
+        </div>
+    </div>
 </template>
 
 <script>
 import platformMixin from 'src/mixins/platform'
 import numberFormat, {
-	normalizeDestination
+    normalizeDestination
 } from 'src/filters/number-format'
 import {
-	showCallNotification
+    showCallNotification
 } from 'src/helpers/ui'
 import CscMedia from '../CscMedia'
 import CscCallDialpad from '../CscCallDialpad'
 import { CallStateTitle } from 'src/store/call'
 export default {
-	name: 'CscCall',
-	components: {
-		CscCallDialpad,
-		CscMedia
-	},
-	mixins: [
-		platformMixin
-	],
-	props: {
-		callState: {
-			type: String,
-			required: true
-		},
-		callNumber: {
-			type: String,
-			required: true
-		},
-		endedReason: {
-			type: String,
-			default: null
-		},
-		fullView: {
-			type: Boolean,
-			default: false
-		},
-		localMediaStream: {
-			type: MediaStream,
-			default: null
-		},
-		remoteMediaStream: {
-			type: MediaStream,
-			default: null
-		},
-		minimized: {
-			type: Boolean,
-			default: false
-		},
-		closed: {
-			type: Boolean,
-			default: false
-		},
-		isVideoCall: {
-			type: Boolean,
-			default: false
-		},
-		hasLocalVideo: {
-			type: Boolean,
-			default: false
-		},
-		hasRemoteVideo: {
-			type: Boolean,
-			default: false
-		},
-		microphoneEnabled: {
-			type: Boolean,
-			default: false
-		},
-		cameraEnabled: {
-			type: Boolean,
-			default: false
-		},
-		remoteVolumeEnabled: {
-			type: Boolean,
-			default: false
-		},
-		maximizable: {
-			type: Boolean,
-			default: false
-		},
-		dialpadOpened: {
-			type: Boolean,
-			default: false
-		},
-		menuMinimized: {
-			type: Boolean,
-			default: false
-		}
-	},
-	data () {
-		return {
-			localMediaWrapperWidth: 0,
-			remoteMediaWrapperWidth: 0
-		}
-	},
-	computed: {
-		componentClasses () {
-			const classes = [
-				'transition-generic',
-				'csc-call',
-				'csc-call-' + this.callState
-			]
-			if (this.fullView) {
-				classes.push('csc-call-full-width')
-			}
-			if (this.minimized) {
-				classes.push('csc-call-minimized')
-			}
-			if (this.isVideoCall) {
-				classes.push('csc-call-video')
-			}
-			if (this.isMobile) {
-				classes.push('csc-call-mobile')
-			}
-			if (this.menuMinimized) {
-				classes.push('csc-main-menu-minimized')
-			}
-			return classes
-		},
-		isCalling () {
-			return this.isInitiating || this.isRinging || this.isIncoming
-		},
-		isActive () {
-			return this.isCalling || this.isEstablished
-		},
-		isInitiating () {
-			return this.callState === 'initiating'
-		},
-		isRinging () {
-			return this.callState === 'ringing'
-		},
-		isEstablished () {
-			return this.callState === 'established'
-		},
-		isIncoming () {
-			return this.callState === 'incoming'
-		},
-		isEnded () {
-			return this.callState === 'ended'
-		},
-		canStart () {
-			return this.callState === 'input' || this.callState === 'incoming'
-		},
-		canClose () {
-			return this.callState === 'ended'
-		},
-		callNumberFormatted () {
-			return normalizeDestination(this.callNumber)
-		},
-		iconToggleMicrophone () {
-			if (this.microphoneEnabled) {
-				return 'mic'
-			} else {
-				return 'mic_off'
-			}
-		},
-		colorToggleMicrophone () {
-			if (this.microphoneEnabled) {
-				return 'primary'
-			} else {
-				return 'faded'
-			}
-		},
-		iconToggleCamera () {
-			if (this.cameraEnabled) {
-				return 'videocam'
-			} else {
-				return 'videocam_off'
-			}
-		},
-		colorToggleCamera () {
-			if (this.cameraEnabled) {
-				return 'primary'
-			} else {
-				return 'faded'
-			}
-		},
-		iconToggleRemoteVolume () {
-			if (this.remoteVolumeEnabled) {
-				return 'volume_up'
-			} else {
-				return 'volume_off'
-			}
-		},
-		colorToggleRemoteVolume () {
-			if (this.remoteVolumeEnabled) {
-				return 'primary'
-			} else {
-				return 'faded'
-			}
-		},
-		callStateTitle () {
-			return CallStateTitle[this.callState]
-		}
-	},
-	watch: {
-		callState (state) {
-			if (state === 'ringing' || state === 'incoming') {
-				this.playCallSound()
-				if (state === 'incoming') {
-					showCallNotification(numberFormat(this.callNumber))
-				}
-			} else {
-				this.stopCallSound()
-			}
-		},
-		closed (closed) {
-			if (closed && this.$refs.startButton) {
-				this.$refs.startButton.hide()
-			}
-		},
-		minimized () {
-			this.fetchLocalMediaWrapperWidth()
-			this.fetchRemoteMediaWrapperWidth()
-			this.$nextTick(() => {
-				this.fitMedia()
-			})
-		}
-	},
-	mounted () {
-		const fetchMediaWrapperWidth = () => {
-			this.fetchLocalMediaWrapperWidth()
-			this.fetchRemoteMediaWrapperWidth()
-		}
-		fetchMediaWrapperWidth()
-		this.$root.$on('window-resized', fetchMediaWrapperWidth)
-		this.$root.$on('content-resized', fetchMediaWrapperWidth)
-		this.$root.$on('orientation-changed', fetchMediaWrapperWidth)
-	},
-	methods: {
-		fetchLocalMediaWrapperWidth () {
-			if (this.$refs.localMediaWrapper) {
-				this.localMediaWrapperWidth = this.$refs.localMediaWrapper.clientWidth
-			} else {
-				this.localMediaWrapperWidth = 0
-			}
-		},
-		fetchRemoteMediaWrapperWidth () {
-			if (this.$refs.remoteMediaWrapper) {
-				this.remoteMediaWrapperWidth = this.$refs.remoteMediaWrapper.clientWidth
-			} else {
-				this.remoteMediaWrapperWidth = 0
-			}
-		},
-		startCall (media) {
-			if (this.callState === 'input') {
-				this.$emit('start-call', media)
-			} else if (this.callState === 'incoming') {
-				this.$emit('accept-call', media)
-			}
-		},
-		endCall (event) {
-			event.stopPropagation()
-			this.$emit('end-call')
-		},
-		closeCall () {
-			this.$emit('close-call')
-		},
-		playCallSound () {
-			this.$refs.callSound.play()
-		},
-		stopCallSound () {
-			this.$refs.callSound.pause()
-		},
-		toggleDialpad () {
-			this.$emit('toggle-dialpad')
-		},
-		toggleMicrophone () {
-			this.$emit('toggle-microphone')
-		},
-		toggleCamera () {
-			this.$emit('toggle-camera')
-		},
-		toggleRemoteVolume () {
-			this.$emit('toggle-remote-volume')
-		},
-		dialpadClick (value) {
-			this.$emit('click-dialpad', value)
-		},
-		maximize () {
-			this.$emit('maximize-call')
-		},
-		minimize () {
-			this.$emit('minimize-call')
-		},
-		maximizeMobile () {
-			if (this.isMobile && this.isEstablished) {
-				this.maximize()
-			}
-		},
-		fitMedia () {
-			this.fetchLocalMediaWrapperWidth()
-			this.fetchRemoteMediaWrapperWidth()
-			this.$nextTick(() => {
-				if (this.$refs.localMedia) {
-					this.$refs.localMedia.fitMedia()
-				}
-				if (this.$refs.remoteMedia) {
-					this.$refs.remoteMedia.fitMedia()
-				}
-			})
-		}
-	}
+    name: 'CscCall',
+    components: {
+        CscCallDialpad,
+        CscMedia
+    },
+    mixins: [
+        platformMixin
+    ],
+    props: {
+        callState: {
+            type: String,
+            required: true
+        },
+        callNumber: {
+            type: String,
+            required: true
+        },
+        endedReason: {
+            type: String,
+            default: null
+        },
+        fullView: {
+            type: Boolean,
+            default: false
+        },
+        localMediaStream: {
+            type: MediaStream,
+            default: null
+        },
+        remoteMediaStream: {
+            type: MediaStream,
+            default: null
+        },
+        minimized: {
+            type: Boolean,
+            default: false
+        },
+        closed: {
+            type: Boolean,
+            default: false
+        },
+        isVideoCall: {
+            type: Boolean,
+            default: false
+        },
+        hasLocalVideo: {
+            type: Boolean,
+            default: false
+        },
+        hasRemoteVideo: {
+            type: Boolean,
+            default: false
+        },
+        microphoneEnabled: {
+            type: Boolean,
+            default: false
+        },
+        cameraEnabled: {
+            type: Boolean,
+            default: false
+        },
+        remoteVolumeEnabled: {
+            type: Boolean,
+            default: false
+        },
+        maximizable: {
+            type: Boolean,
+            default: false
+        },
+        dialpadOpened: {
+            type: Boolean,
+            default: false
+        },
+        menuMinimized: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data () {
+        return {
+            localMediaWrapperWidth: 0,
+            remoteMediaWrapperWidth: 0
+        }
+    },
+    computed: {
+        componentClasses () {
+            const classes = [
+                'transition-generic',
+                'csc-call',
+                'csc-call-' + this.callState
+            ]
+            if (this.fullView) {
+                classes.push('csc-call-full-width')
+            }
+            if (this.minimized) {
+                classes.push('csc-call-minimized')
+            }
+            if (this.isVideoCall) {
+                classes.push('csc-call-video')
+            }
+            if (this.isMobile) {
+                classes.push('csc-call-mobile')
+            }
+            if (this.menuMinimized) {
+                classes.push('csc-main-menu-minimized')
+            }
+            return classes
+        },
+        isCalling () {
+            return this.isInitiating || this.isRinging || this.isIncoming
+        },
+        isActive () {
+            return this.isCalling || this.isEstablished
+        },
+        isInitiating () {
+            return this.callState === 'initiating'
+        },
+        isRinging () {
+            return this.callState === 'ringing'
+        },
+        isEstablished () {
+            return this.callState === 'established'
+        },
+        isIncoming () {
+            return this.callState === 'incoming'
+        },
+        isEnded () {
+            return this.callState === 'ended'
+        },
+        canStart () {
+            return this.callState === 'input' || this.callState === 'incoming'
+        },
+        canClose () {
+            return this.callState === 'ended'
+        },
+        callNumberFormatted () {
+            return normalizeDestination(this.callNumber)
+        },
+        iconToggleMicrophone () {
+            if (this.microphoneEnabled) {
+                return 'mic'
+            } else {
+                return 'mic_off'
+            }
+        },
+        colorToggleMicrophone () {
+            if (this.microphoneEnabled) {
+                return 'primary'
+            } else {
+                return 'faded'
+            }
+        },
+        iconToggleCamera () {
+            if (this.cameraEnabled) {
+                return 'videocam'
+            } else {
+                return 'videocam_off'
+            }
+        },
+        colorToggleCamera () {
+            if (this.cameraEnabled) {
+                return 'primary'
+            } else {
+                return 'faded'
+            }
+        },
+        iconToggleRemoteVolume () {
+            if (this.remoteVolumeEnabled) {
+                return 'volume_up'
+            } else {
+                return 'volume_off'
+            }
+        },
+        colorToggleRemoteVolume () {
+            if (this.remoteVolumeEnabled) {
+                return 'primary'
+            } else {
+                return 'faded'
+            }
+        },
+        callStateTitle () {
+            return CallStateTitle[this.callState]
+        }
+    },
+    watch: {
+        callState (state) {
+            if (state === 'ringing' || state === 'incoming') {
+                this.playCallSound()
+                if (state === 'incoming') {
+                    showCallNotification(numberFormat(this.callNumber))
+                }
+            } else {
+                this.stopCallSound()
+            }
+        },
+        closed (closed) {
+            if (closed && this.$refs.startButton) {
+                this.$refs.startButton.hide()
+            }
+        },
+        minimized () {
+            this.fetchLocalMediaWrapperWidth()
+            this.fetchRemoteMediaWrapperWidth()
+            this.$nextTick(() => {
+                this.fitMedia()
+            })
+        }
+    },
+    mounted () {
+        const fetchMediaWrapperWidth = () => {
+            this.fetchLocalMediaWrapperWidth()
+            this.fetchRemoteMediaWrapperWidth()
+        }
+        fetchMediaWrapperWidth()
+        this.$root.$on('window-resized', fetchMediaWrapperWidth)
+        this.$root.$on('content-resized', fetchMediaWrapperWidth)
+        this.$root.$on('orientation-changed', fetchMediaWrapperWidth)
+    },
+    methods: {
+        fetchLocalMediaWrapperWidth () {
+            if (this.$refs.localMediaWrapper) {
+                this.localMediaWrapperWidth = this.$refs.localMediaWrapper.clientWidth
+            } else {
+                this.localMediaWrapperWidth = 0
+            }
+        },
+        fetchRemoteMediaWrapperWidth () {
+            if (this.$refs.remoteMediaWrapper) {
+                this.remoteMediaWrapperWidth = this.$refs.remoteMediaWrapper.clientWidth
+            } else {
+                this.remoteMediaWrapperWidth = 0
+            }
+        },
+        startCall (media) {
+            if (this.callState === 'input') {
+                this.$emit('start-call', media)
+            } else if (this.callState === 'incoming') {
+                this.$emit('accept-call', media)
+            }
+        },
+        endCall (event) {
+            event.stopPropagation()
+            this.$emit('end-call')
+        },
+        closeCall () {
+            this.$emit('close-call')
+        },
+        playCallSound () {
+            this.$refs.callSound.play()
+        },
+        stopCallSound () {
+            this.$refs.callSound.pause()
+        },
+        toggleDialpad () {
+            this.$emit('toggle-dialpad')
+        },
+        toggleMicrophone () {
+            this.$emit('toggle-microphone')
+        },
+        toggleCamera () {
+            this.$emit('toggle-camera')
+        },
+        toggleRemoteVolume () {
+            this.$emit('toggle-remote-volume')
+        },
+        dialpadClick (value) {
+            this.$emit('click-dialpad', value)
+        },
+        maximize () {
+            this.$emit('maximize-call')
+        },
+        minimize () {
+            this.$emit('minimize-call')
+        },
+        maximizeMobile () {
+            if (this.isMobile && this.isEstablished) {
+                this.maximize()
+            }
+        },
+        fitMedia () {
+            this.fetchLocalMediaWrapperWidth()
+            this.fetchRemoteMediaWrapperWidth()
+            this.$nextTick(() => {
+                if (this.$refs.localMedia) {
+                    this.$refs.localMedia.fitMedia()
+                }
+                if (this.$refs.remoteMedia) {
+                    this.$refs.remoteMedia.fitMedia()
+                }
+            })
+        }
+    }
 }
 </script>
 

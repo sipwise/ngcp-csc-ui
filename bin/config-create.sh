@@ -9,9 +9,9 @@ echo "Configuring Sipwise VoIP Platform at $1"
 
 if [ "$NODE_VERSION_DEFAULT" != '' ]
 then
-	node "$SCRIPT_FILE" "$1"
+    node "$SCRIPT_FILE" "$1"
 elif [ "$NODE_VERSION_DEBIAN" != '' ]
 then
-	nodejs "$SCRIPT_FILE" "$1"
+    nodejs "$SCRIPT_FILE" "$1"
 fi
 

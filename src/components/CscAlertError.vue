@@ -1,30 +1,30 @@
 <template>
-	<div
-		class="csc-alert-error row no-vert-gutter no-wrap"
-	>
-		<div
-			class="col col-2"
-		>
-			<q-icon
-				name="error"
-				size="32px"
-				color="white"
-			/>
-		</div>
-		<div
-			class="csc-alert-error-text"
-		>
-			<slot />
-		</div>
-	</div>
+    <div
+        class="csc-alert-error row no-vert-gutter no-wrap"
+    >
+        <div
+            class="col col-2"
+        >
+            <q-icon
+                name="error"
+                size="32px"
+                color="white"
+            />
+        </div>
+        <div
+            class="csc-alert-error-text"
+        >
+            <slot />
+        </div>
+    </div>
 </template>
 
 <script>
 export default {
-	name: 'CscAlertError',
-	data () {
-		return {}
-	}
+    name: 'CscAlertError',
+    data () {
+        return {}
+    }
 }
 </script>
 

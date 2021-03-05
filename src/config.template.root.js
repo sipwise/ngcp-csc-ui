@@ -1,4 +1,4 @@
 export default {
-	baseHttpUrl: 'https://{{host}}',
-	baseWsUrl: 'wss://{{host}}'
+    baseHttpUrl: 'https://{{host}}',
+    baseWsUrl: 'wss://{{host}}'
 }

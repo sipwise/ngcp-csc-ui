@@ -1,13 +1,13 @@
 <template>
-	<div />
+    <div />
 </template>
 
 <script>
 export default {
-	name: 'CscConferenceJoined',
-	data () {
-		return {}
-	}
+    name: 'CscConferenceJoined',
+    data () {
+        return {}
+    }
 }
 </script>
 

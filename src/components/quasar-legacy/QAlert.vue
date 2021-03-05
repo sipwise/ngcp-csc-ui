@@ -1,11 +1,11 @@
 <template>
-	<q-banner />
+    <q-banner />
 </template>
 
 <script>
 export default {
-	name: 'QAlert',
-	props: {
-	}
+    name: 'QAlert',
+    props: {
+    }
 }
 </script>

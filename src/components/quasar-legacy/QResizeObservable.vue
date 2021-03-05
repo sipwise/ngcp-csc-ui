@@ -1,11 +1,11 @@
 <template>
-	<div />
+    <div />
 </template>
 
 <script>
 export default {
-	name: 'QResizeObservable',
-	props: {
-	}
+    name: 'QResizeObservable',
+    props: {
+    }
 }
 </script>

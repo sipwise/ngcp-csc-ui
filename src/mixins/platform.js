@@ -1,16 +1,16 @@
 
 import {
-	Platform
+    Platform
 } from 'quasar'
 
 export default {
 
-	computed: {
-		isMobile () {
-			return Platform.is.mobile
-		},
-		isDesktop () {
-			return Platform.is.platform
-		}
-	}
+    computed: {
+        isMobile () {
+            return Platform.is.mobile
+        },
+        isDesktop () {
+            return Platform.is.platform
+        }
+    }
 }

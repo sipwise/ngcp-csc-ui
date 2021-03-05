@@ -1,11 +1,11 @@
 <template>
-	<div />
+    <div />
 </template>
 
 <script>
 export default {
-	name: 'QPopover',
-	props: {
-	}
+    name: 'QPopover',
+    props: {
+    }
 }
 </script>

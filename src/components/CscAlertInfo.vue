@@ -1,30 +1,30 @@
 <template>
-	<div
-		class="csc-alert-info row no-vert-gutter no-wrap"
-	>
-		<div
-			class="csc-alert-icon ol col-2"
-		>
-			<q-icon
-				name="info"
-				size="32px"
-				color="white"
-			/>
-		</div>
-		<div
-			class="csc-alert-info-text col-10"
-		>
-			<slot />
-		</div>
-	</div>
+    <div
+        class="csc-alert-info row no-vert-gutter no-wrap"
+    >
+        <div
+            class="csc-alert-icon ol col-2"
+        >
+            <q-icon
+                name="info"
+                size="32px"
+                color="white"
+            />
+        </div>
+        <div
+            class="csc-alert-info-text col-10"
+        >
+            <slot />
+        </div>
+    </div>
 </template>
 
 <script>
 export default {
-	name: 'CscAlertInfo',
-	data () {
-		return {}
-	}
+    name: 'CscAlertInfo',
+    data () {
+        return {}
+    }
 }
 </script>
 

@@ -1,7 +1,7 @@
 /* for mocking out css files in jest.config.js */
 /*
 
-	moduleNameMapper: {
+    moduleNameMapper: {
     ...
     '.*css$': '<rootDir>/test/jest/utils/stub.css'
   },

@@ -1,29 +1,29 @@
 <template>
-	<div>
-		<p class="textContent">
-			{{ input }}
-		</p>
-		<span>{{ counter }}</span>
-		<q-btn
-			id="mybutton"
-			@click="increment()"
-		/>
-	</div>
+    <div>
+        <p class="textContent">
+            {{ input }}
+        </p>
+        <span>{{ counter }}</span>
+        <q-btn
+            id="mybutton"
+            @click="increment()"
+        />
+    </div>
 </template>
 
 <script>
 export default {
-	name: 'QBUTTON',
-	data () {
-		return {
-			counter: 0,
-			input: 'rocket muffin'
-		}
-	},
-	methods: {
-		increment () {
-			this.counter++
-		}
-	}
+    name: 'QBUTTON',
+    data () {
+        return {
+            counter: 0,
+            input: 'rocket muffin'
+        }
+    },
+    methods: {
+        increment () {
+            this.counter++
+        }
+    }
 }
 </script>

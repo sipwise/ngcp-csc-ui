@@ -1,25 +1,25 @@
 <template>
-	<q-btn
-		flat
-		icon="check"
-		color="primary"
-		@click="click"
-	>
-		{{ $t('Save') }}
-	</q-btn>
+    <q-btn
+        flat
+        icon="check"
+        color="primary"
+        @click="click"
+    >
+        {{ $t('Save') }}
+    </q-btn>
 </template>
 
 <script>
 export default {
-	name: 'CscFormSaveButton',
-	data () {
-		return {}
-	},
-	methods: {
-		click () {
-			this.$emit('click')
-		}
-	}
+    name: 'CscFormSaveButton',
+    data () {
+        return {}
+    },
+    methods: {
+        click () {
+            this.$emit('click')
+        }
+    }
 }
 </script>
 
