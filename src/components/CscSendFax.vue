@@ -51,6 +51,7 @@
                 />
                 <csc-input-file
                     accept=".pdf,.tiff,.txt,.ps"
+                    @isFileSelected="toggleFileSelected"
                 />
             </q-card-section>
             <q-card-actions>
@@ -71,70 +72,6 @@
                 />
             </q-card-actions>
         </q-card>
-
-        <!--        <q-field class="upload-field">-->
-        <!--            <label-->
-        <!--                for="fax-file-upload"-->
-        <!--                class="upload-label"-->
-        <!--            >-->
-        <!--                <div class="upload-label">-->
-        <!--                    {{ $t('Fax File') }}-->
-        <!--                </div>-->
-        <!--                <q-btn-->
-        <!--                    flat-->
-        <!--                    color="white"-->
-        <!--                    icon="cloud_upload"-->
-        <!--                    class="upload-button"-->
-        <!--                    @click="$refs.faxUpload.click()"-->
-        <!--                >-->
-        <!--                    {{ $t('Select') }}-->
-        <!--                </q-btn>-->
-        <!--                <span class="upload-filename">-->
-        <!--                    {{ selectedFile }}-->
-        <!--                </span>-->
-        <!--                <q-btn-->
-        <!--                    v-if="selectedFile.length > 0"-->
-        <!--                    flat-->
-        <!--                    icon="cancel"-->
-        <!--                    class="reset-button"-->
-        <!--                    @click="resetFile"-->
-        <!--                />-->
-        <!--            </label>-->
-        <!--            <input-->
-        <!--                id="fax-file-upload"-->
-        <!--                ref="faxUpload"-->
-        <!--                dark-->
-        <!--                type="file"-->
-        <!--                accept=".pdf,.tiff,.txt,.ps"-->
-        <!--                :error="$v.form.file.$error"-->
-        <!--                @change="processFile($event)"-->
-        <!--                @input="$v.form.file.$touch"-->
-        <!--                @blur="$v.form.file.$touch"-->
-        <!--            >-->
-        <!--        </q-field>-->
-        <!--        <div-->
-        <!--            v-if="$v.form.file.$error"-->
-        <!--            id="csc-error-label"-->
-        <!--        >-->
-        <!--            {{ fileErrorMessage }}-->
-        <!--        </div>-->
-        <!--        <q-btn-->
-        <!--            flat-->
-        <!--            icon="clear"-->
-        <!--            color="default"-->
-        <!--            @mousedown.native="hideModal"-->
-        <!--        >-->
-        <!--            {{ $t('Cancel') }}-->
-        <!--        </q-btn>-->
-        <!--        <q-btn-->
-        <!--            flat-->
-        <!--            color="primary"-->
-        <!--            icon="insert drive file"-->
-        <!--            :disable="formDisabled"-->
-        <!--            @click="sendFax"-->
-        <!--        >-->
-        <!--            {{ $t('Send') }}-->
-        <!--        </q-btn>-->
     </q-dialog>
 </template>
 
@@ -144,6 +81,7 @@ import {
     showGlobalError
 } from 'src/helpers/ui'
 import {
+    required,
     requiredUnless,
     maxLength
 } from 'vuelidate/lib/validators'
@@ -163,12 +101,12 @@ export default {
     },
     data () {
         return {
-            selectedFile: '',
+            selectedFile: false,
             form: {
-                destination: '',
-                pageHeader: '',
+                destination: null,
+                pageHeader: null,
                 data: null,
-                quality: this.$faxQualityOptionsDefault,
+                quality: this.$faxQualityOptionsDefault.value,
                 file: {}
             },
             isMobile: this.$q.platform.is.mobile,
@@ -189,16 +127,19 @@ export default {
                 })
             },
             pageHeader: {
+                required,
                 maxLength: maxLength(64)
             }
         }
     },
     computed: {
         hasContentToSend () {
-            return (!!this.form.data || !!this.form.file) || !this.$v.form.$anyDirty
+            return !!this.form.data || this.selectedFile
         },
         formDisabled () {
             return !this.$v.form.$anyDirty ||
+                !this.form.pageHeader ||
+                !this.form.destination ||
                 this.destinationError ||
                 this.$v.form.pageHeader.$error ||
                 !this.hasContentToSend
@@ -232,23 +173,8 @@ export default {
         }
     },
     methods: {
-        resetFile () {
-            this.form.file = {}
-            this.selectedFile = ''
-            this.$refs.faxUpload.value = ''
-        },
-        processFile (event) {
-            const file = event.target.files[0]
-            let fileName = file ? file.name : ''
-            const fileNameSplit = fileName.split('.')
-            const extension = fileNameSplit[1] ? fileNameSplit[1] : null
-            if (fileName.length > 22 && extension) {
-                fileName = `${fileName.substring(0, 14)}...${extension}`
-            } else if (fileName.length > 22 && !extension) {
-                fileName = `${fileName.substring(0, 17)}...`
-            }
-            this.form.file = file
-            this.selectedFile = fileName
+        toggleFileSelected (value) {
+            this.selectedFile = value
         },
         sendFax () {
             if (this.$v.form.$error ||
