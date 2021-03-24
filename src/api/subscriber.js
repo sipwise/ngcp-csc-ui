@@ -17,7 +17,6 @@ import {
 import {
     assignNumbers
 } from './user'
-
 export function getPreferences (id) {
     return new Promise((resolve, reject) => {
         Vue.http.get('api/subscriberpreferences/' + id).then((result) => {
@@ -560,4 +559,40 @@ export async function getBrandingLogo (subscriberId) {
     } catch (err) {
         return null
     }
+}
+
+export async function getRecordings (subscriberId) {
+    let retArr = []
+    const res = await Vue.http.get('api/callrecordings/', {
+        subscriber_id: subscriberId
+    })
+    if (res.body.total_count > 0) {
+        const recordings = getJsonBody(res.body)._embedded['ngcp:callrecordings']
+        retArr = recordings.map(recording => {
+            return {
+                id: recording.id,
+                time: recording.start_time,
+                files: []
+            }
+        })
+    }
+    return retArr
+}
+
+export async function getRecordingStreams (recId) {
+    let streams = []
+    const res = await Vue.http.get('api/callrecordingstreams/', {
+        params: {
+            recording_id: recId
+        }
+    })
+    if (res.body.total_count > 0) {
+        streams = getJsonBody(res.body)._embedded['ngcp:callrecordingstreams']
+    }
+    return streams
+}
+
+export async function downloadRecordingStream (fileId) {
+    const res = await Vue.http.get('api/callrecordingfiles/' + fileId, { responseType: 'blob' })
+    return res.body
 }

@@ -10,6 +10,7 @@ import CallForwardModule from './call-forward'
 import CallForwardingModule from './call-forwarding'
 import NewCallForwardModule from './new-call-forward'
 import CallModule, { errorVisibilityTimeout } from './call'
+import CallRecordingsModule from './call-recordings'
 import CallSettingsModule from './call-settings'
 import ConversationsModule from './conversations'
 
@@ -57,6 +58,7 @@ export default function (/* { ssrContext } */) {
             callBlocking: CallBlockingModule,
             callForward: CallForwardModule,
             newCallForward: NewCallForwardModule,
+            callRecordings: CallRecordingsModule,
             call: CallModule,
             callSettings: CallSettingsModule,
             conversations: ConversationsModule,

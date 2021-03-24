@@ -3,6 +3,7 @@
         ref="dialogComp"
         :title="title"
         :title-icon="titleIcon"
+        :title-icon-color="titleIconColor"
         :opened="opened"
         @close="onClose()"
     >
@@ -14,7 +15,7 @@
         <q-btn
             slot="actions"
             :icon="titleIcon"
-            color="primary"
+            :color="color"
             flat
             @click="confirm"
         >
@@ -40,6 +41,10 @@ export default {
             type: String,
             default: ''
         },
+        titleIconColor: {
+            type: String,
+            default: 'primary'
+        },
         message: {
             type: String,
             default: ''
@@ -47,6 +52,10 @@ export default {
         opened: {
             type: Boolean,
             default: false
+        },
+        color: {
+            type: String,
+            default: 'primary'
         }
     },
     data () {

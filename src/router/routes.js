@@ -13,6 +13,7 @@ import CscPageCallForwardAfterHours from 'src/pages/CscPageCallForwardAfterHours
 import CscPageCallBlockingIncoming from 'src/pages/CscPageCallBlockingIncoming'
 import CscPageCallBlockingOutgoing from 'src/pages/CscPageCallBlockingOutgoing'
 import CscPageCallBlockingPrivacy from 'src/pages/CscPageCallBlockingPrivacy'
+import CscPageCallRecording from 'src/pages/CscPageCallRecording'
 import CscPageReminder from 'src/pages/CscPageReminder'
 import CscPageSpeedDial from 'src/pages/CscPageSpeedDial'
 import CscPagePbxGroups from 'src/pages/CscPagePbxGroups'
@@ -115,6 +116,14 @@ export default function routes (app) {
                     meta: {
                         title: i18n.t('Call Blocking'),
                         subtitle: i18n.t('Privacy')
+                    }
+                },
+                {
+                    path: 'recordings',
+                    component: CscPageCallRecording,
+                    meta: {
+                        title: i18n.t('Recordings'),
+                        subtitle: i18n.t('Call recordings')
                     }
                 },
                 {

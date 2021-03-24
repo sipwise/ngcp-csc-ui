@@ -123,6 +123,12 @@ export default {
                             icon: 'notification_important',
                             label: this.$t('Reminder'),
                             visible: true
+                        },
+                        {
+                            to: '/user/recordings',
+                            icon: 'play_circle',
+                            label: this.$t('Recordings'),
+                            visible: true
                         }
                     ]
                 },
