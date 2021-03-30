@@ -37,12 +37,14 @@ export function getUserData (id) {
         return Promise.all([
             getSubscriberById(id),
             getCapabilities(id),
-            getFaxServerSettings(id)
+            getFaxServerSettings(id),
+            getResellerBranding()
         ]).then((results) => {
             results[1].faxactive = results[2].active
             resolve({
                 subscriber: results[0],
-                capabilities: results[1]
+                capabilities: results[1],
+                resellerBranding: results[3]?.items[0] || null
             })
         }).catch((err) => {
             reject(err)
@@ -125,5 +127,11 @@ export function getNumbers () {
         }).catch((err) => {
             reject(err)
         })
+    })
+}
+
+export async function getResellerBranding () {
+    return getList({
+        resource: 'resellerbrandings'
     })
 }

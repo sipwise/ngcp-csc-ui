@@ -30,7 +30,8 @@ module.exports = function (/* ctx */) {
             'vue-scrollto',
             'constants',
             'vue-wait',
-            'e2e-testing'
+            'e2e-testing',
+            'branding'
         ],
 
         // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

@@ -45,7 +45,9 @@ export default {
         newPasswordRequesting: false,
         logo: null,
         logoRequesting: false,
-        logoRequested: false
+        logoRequested: false,
+        resellerBranding: null,
+        defaultBranding: {}
     },
     getters: {
         isLogged (state) {
@@ -194,6 +196,8 @@ export default {
             state.loginError = error
         },
         userDataRequesting (state) {
+            state.resellerBranding = null
+
             state.userDataRequesting = true
             state.userDataSucceeded = false
             state.userDataError = null
@@ -201,6 +205,8 @@ export default {
         userDataSucceeded (state, options) {
             state.subscriber = options.subscriber
             state.capabilities = options.capabilities
+            state.resellerBranding = options.resellerBranding
+
             state.userDataSucceeded = true
             state.userDataRequesting = false
             state.userDataError = null
@@ -272,6 +278,9 @@ export default {
         updateLogoRequestState (state, isRequesting) {
             state.logoRequesting = isRequesting
             state.logoRequested = !isRequesting
+        },
+        setDefaultBranding (state, value) {
+            state.defaultBranding = value
         }
     },
     actions: {
@@ -299,11 +308,13 @@ export default {
                     context.commit('userDataRequesting')
                     const userData = await getUserData(getSubscriberId())
                     context.commit('userDataSucceeded', userData)
+
                     if (_.isNumber(context.getters.jwtTTL)) {
                         setTimeout(() => {
                             context.dispatch('logout')
                         }, context.getters.jwtTTL * 1000)
                     }
+
                     if (context.getters.hasRtcEngineCapabilityEnabled && context.getters.isRtcEngineUiVisible) {
                         context.commit('rtcEngineInitRequesting')
                         Vue.$rtcEngine.setNgcpApiJwt(getJwt())
@@ -375,6 +386,11 @@ export default {
                 context.commit('updateLogoRequestState', false)
             }
             return context.state.logo
+        },
+        setDefaultBranding (context, value) {
+            if (value) {
+                context.commit('setDefaultBranding', value)
+            }
         }
     }
 }

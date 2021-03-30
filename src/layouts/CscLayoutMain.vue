@@ -198,6 +198,7 @@
 </template>
 
 <script>
+import { colors } from 'quasar'
 import platformMixin from '../mixins/platform'
 import {
     startLoading,
@@ -309,6 +310,10 @@ export default {
             'isLogoRequesting',
             'isLogoRequested'
         ]),
+        ...mapState('user', [
+            'resellerBranding',
+            'defaultBranding'
+        ]),
         ...mapGetters('communication', [
             'createFaxState',
             'createFaxError'
@@ -409,6 +414,8 @@ export default {
         userDataSucceeded (userDataSucceeded) {
             if (userDataSucceeded) {
                 enableIncomingCallNotifications()
+
+                this.updateBrandings()
             }
         },
         isCallEnabled (value) {
@@ -449,13 +456,14 @@ export default {
         }
     },
     async mounted () {
-        this.$store.dispatch('user/initUser')
+        await this.$store.dispatch('user/initUser')
         window.addEventListener('orientationchange', () => {
             this.$root.$emit('orientation-changed')
         })
         window.addEventListener('resize', () => {
             this.$root.$emit('window-resized')
         })
+        this.updateBrandings()
         this.customLogo = await this.$store.dispatch('user/getCustomLogo')
     },
     methods: {
@@ -543,6 +551,16 @@ export default {
         },
         sideStateLeft () {
             return this.sideStates.left
+        },
+        updateBrandings () {
+            const primaryColor = this.resellerBranding?.csc_color_primary || this.defaultBranding?.primaryColor
+            const secondaryColor = this.resellerBranding?.csc_color_secondary || this.defaultBranding?.secondaryColor
+            if (primaryColor) {
+                colors.setBrand('primary', primaryColor)
+            }
+            if (secondaryColor) {
+                colors.setBrand('secondary', secondaryColor)
+            }
         }
     }
 }
