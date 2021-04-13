@@ -51,7 +51,7 @@
                     </div>
                 </div>
             </div>
-            <csc-pbx-attendant-selection
+            <csc-pbx-auto-attendant-selection
                 :value="selectedKeySubscriber"
                 :options="subscriberOptions"
                 @input="keySubscriberChanged"
@@ -100,18 +100,18 @@
 
 <script>
 import _ from 'lodash'
+import CscPbxAutoAttendantSelection from './CscPbxAutoAttendantSelection'
 import {
     Platform
 } from 'quasar'
 import {
     BoundingBox2D
 } from 'src/helpers/graphics'
-import CscPbxAttendantSelection from './CscPbxAttendantSelection'
 
 export default {
     name: 'CscPbxDeviceConfig',
     components: {
-        CscPbxAttendantSelection
+        CscPbxAutoAttendantSelection
     },
     props: {
         device: {

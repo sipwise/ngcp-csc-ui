@@ -35,7 +35,7 @@ export default {
             default: 'primary'
         },
         label: {
-            type: String,
+            type: [String, Number],
             default: ''
         },
         sublabel: {

@@ -179,6 +179,12 @@ export default {
                             icon: 'arrow_forward',
                             label: this.$t('Manager Secretary'),
                             visible: true
+                        },
+                        {
+                            to: '/user/pbx-configuration/auto-attendant',
+                            icon: 'dialpad',
+                            label: this.$t('Auto-attendant'),
+                            visible: true
                         }
                     ]
                 },

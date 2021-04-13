@@ -49,7 +49,7 @@
                     @opened="$emit('model-select-opened')"
                     @input="triggerFilter"
                 />
-                <csc-pbx-attendant-selection
+                <csc-pbx-auto-attendant-selection
                     v-if="filterType === 'display_name'"
                     use-input
                     dense
@@ -88,14 +88,14 @@
 <script>
 import _ from 'lodash'
 import CscPbxModelSelect from '../PbxConfiguration/CscPbxModelSelect'
-import CscPbxAttendantSelection from '../PbxConfiguration/CscPbxAttendantSelection'
+import CscPbxAutoAttendantSelection from './CscPbxAutoAttendantSelection'
 import { mapActions, mapState } from 'vuex'
 
 export default {
     name: 'CscPbxDeviceFilters',
     components: {
         CscPbxModelSelect,
-        CscPbxAttendantSelection
+        CscPbxAutoAttendantSelection
     },
     props: {
         loading: {

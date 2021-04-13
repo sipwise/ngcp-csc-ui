@@ -21,6 +21,7 @@ import PbxDevicesModule from './pbx-devices'
 import PbxCallQueuesModule from './pbx-callqueues'
 import PbxSoundSetsModule from './pbx-soundsets'
 import PbxMsConfigsModule from './pbx-ms-configs'
+import PbxAutoAttendants from './pbx-auto-attendants'
 
 import ReminderModule from './reminder'
 import SpeedDialModule from './speed-dial'
@@ -76,7 +77,8 @@ export default function (/* { ssrContext } */) {
             pbxCallQueues: PbxCallQueuesModule,
             pbxSoundSets: PbxSoundSetsModule,
             pbxMsConfigs: PbxMsConfigsModule,
-            callForwarding: CallForwardingModule
+            callForwarding: CallForwardingModule,
+            pbxAutoAttendants: PbxAutoAttendants
 
         },
         state: {

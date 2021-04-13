@@ -22,6 +22,7 @@ import CscPagePbxDevices from 'src/pages/CscPagePbxDevices'
 import CscPagePbxCallQueues from 'src/pages/CscPagePbxCallQueues'
 import CscPagePbxSoundSets from 'src/pages/CscPagePbxSoundSets'
 import CscPagePbxMsConfigs from 'src/pages/CscPagePbxMsConfigs'
+import CscPagePbxAutoAttendant from 'src/pages/CscPagePbxAutoAttendant'
 import CscPagePbxSettings from 'src/pages/CscPagePbxSettings'
 import CscPageVoicebox from 'src/pages/CscPageVoicebox'
 import CscPageFaxSettings from 'src/pages/CscPageFaxSettings'
@@ -188,6 +189,14 @@ export default function routes (app) {
                     meta: {
                         title: i18n.t('PBX Configuration'),
                         subtitle: i18n.t('Manager Secretary')
+                    }
+                },
+                {
+                    path: 'pbx-configuration/auto-attendant',
+                    component: CscPagePbxAutoAttendant,
+                    meta: {
+                        title: i18n.t('PBX Configuration'),
+                        subtitle: i18n.t('Auto-attendant')
                     }
                 },
                 {

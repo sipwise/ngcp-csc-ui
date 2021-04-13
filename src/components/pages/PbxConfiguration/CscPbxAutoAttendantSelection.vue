@@ -36,7 +36,7 @@
 
 <script>
 export default {
-    name: 'CscPbxAttendantSelection',
+    name: 'CscPbxAutoAttendantSelection',
     props: {
         showSelectedItemIcon: {
             type: Boolean,

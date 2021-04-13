@@ -391,13 +391,11 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" scoped>
         .csc-cf-daterange-btn-cont
             margin-top 10px
             width 100%
             text-align center
-        .q-menu
-            min-width auto !important
         .q-datetime-days div:not(.q-datetime-day-active),
         .q-datetime-dark,
         .q-datetime-range .q-datetime-input .q-input-target,
