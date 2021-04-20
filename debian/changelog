@@ -1,3 +1,22 @@
+ngcp-csc-ui (9.5.0.0+0~mr9.5.0.0) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [56efed6] TT#109763 Fix OfficeHours in the new CallForwarding implementation
+  * [d2905c4] TT#110924 Fix q-separator regression from Quasar Upgrade
+  * [793e634] TT#112013 CF - Fix date range data creation and interpretation
+  * [e9fa434] TT#111551 Convert Tabs to Spaces
+  * [571ba69] TT#108160 Branding - As Customer, I want to see the custom primary color if it is available
+
+  [ Nico Schedel ]
+  * [cca148c] TT#70901 selenium: rewrite tests to make them less sensitive to csc panel changes
+  * [6c8dd34] TT#70901 selenium: fix some button ids
+
+  [ Carlo Venusino ]
+  * [509065d] TT#114750 Web fax sending page result in an error
+  * [69ab2d4] TT#100755 CallRecordings - As Customer, I want to list CallRecordings
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 20 Apr 2021 11:58:00 +0200
+
 ngcp-csc-ui (9.4.0.0+0~mr9.4.0.0) unstable; urgency=medium
 
   [ Sergii Leonenko ]
