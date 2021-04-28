@@ -23,9 +23,13 @@ export default {
         }
     },
     actions: {
-        async fetchRecordings (context) {
-            const recs = await getRecordings(context.getters.subscriberId)
-            context.commit('callRecordings', recs)
+        async fetchRecordings (context, options) {
+            const recs = await getRecordings({
+                ...options,
+                subscriber_id: context.getters.subscriberId
+            })
+            context.commit('callRecordings', recs.recordings)
+            return recs.total_count
         },
         async fetchStreams (context, recId) {
             const streams = await getRecordingStreams(recId)

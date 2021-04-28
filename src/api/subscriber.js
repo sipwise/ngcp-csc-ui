@@ -561,22 +561,23 @@ export async function getBrandingLogo (subscriberId) {
     }
 }
 
-export async function getRecordings (subscriberId) {
-    let retArr = []
+export async function getRecordings (options) {
+    const data = { recordings: [], total_count: 0 }
     const res = await Vue.http.get('api/callrecordings/', {
-        subscriber_id: subscriberId
+        params: options
     })
     if (res.body.total_count > 0) {
         const recordings = getJsonBody(res.body)._embedded['ngcp:callrecordings']
-        retArr = recordings.map(recording => {
+        data.recordings = recordings.map(recording => {
             return {
                 id: recording.id,
                 time: recording.start_time,
                 files: []
             }
         })
+        data.total_count = res.body.total_count
     }
-    return retArr
+    return data
 }
 
 export async function getRecordingStreams (recId) {

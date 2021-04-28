@@ -9,6 +9,9 @@
                     :columns="columns"
                     :loading="$wait.is('csc-call-recordings')"
                     row-key="name"
+                    flat
+                    :pagination.sync="pagination"
+                    @request="fetchPaginatedRecordings"
                 >
                     <template v-slot:header="props">
                         <q-tr :props="props">
@@ -194,7 +197,14 @@ export default {
 
             ],
             data: [],
-            rowStatus: []
+            rowStatus: [],
+            pagination: {
+                sortBy: 'id',
+                descending: false,
+                page: 1,
+                rowsPerPage: 5,
+                rowsNumber: 0
+            }
         }
     },
     computed: {
@@ -214,7 +224,9 @@ export default {
         }
     },
     async mounted () {
-        await this.fetchRecordings()
+        await this.fetchPaginatedRecordings({
+            pagination: this.pagination
+        })
     },
     methods: {
         ...mapWaitingActions('callRecordings', {
@@ -223,6 +235,17 @@ export default {
             deleteRecording: 'csc-call-recordings',
             downloadRecording: 'csc-call-recordings'
         }),
+        async fetchPaginatedRecordings (props) {
+            const { page, rowsPerPage, sortBy, descending } = props.pagination
+            const count = await this.fetchRecordings({
+                page: page,
+                rows: rowsPerPage,
+                order_by: sortBy,
+                order_by_direction: descending ? 'desc' : 'asc'
+            })
+            this.pagination = { ...props.pagination }
+            this.pagination.rowsNumber = count
+        },
         confirmRowDeletion (rowId) {
             this.$refs['confirmDelete-' + rowId].open()
         },
@@ -230,7 +253,9 @@ export default {
             try {
                 await this.deleteRecording(rowId)
                 showToast(this.$t('Recording successfully deleted'))
-                await this.fetchRecordings()
+                await this.fetchPaginatedRecordings({
+                    pagination: this.pagination
+                })
             } catch (err) {
                 showGlobalError(this.$t('Something went wrong. Please retry later'))
             }
