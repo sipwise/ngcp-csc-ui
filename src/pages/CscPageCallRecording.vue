@@ -1,7 +1,37 @@
 <template>
-    <csc-page
-        class="q-pa-lg"
+    <csc-page-sticky
+        id="csc-page-call-recording"
     >
+        <template
+            v-slot:header
+        >
+            <q-btn
+                v-if="!showFilters"
+                icon="filter_alt"
+                color="primary"
+                flat
+                :label="$t('Filter')"
+                @click="openFilters"
+            />
+            <q-btn
+                v-if="showFilters"
+                icon="clear"
+                color="negative"
+                flat
+                :label="$t('Close filters')"
+                @click="closeFilters"
+            />
+        </template>
+        <template
+            v-slot:toolbar
+        >
+            <csc-call-recording-filters
+                v-if="showFilters"
+                ref="filters"
+                class="q-mb-md q-pa-md"
+                @filter="filterEvent"
+            />
+        </template>
         <template>
             <div class="q-pa-md">
                 <q-table
@@ -33,16 +63,7 @@
                         <q-tr
                             :props="props"
                         >
-                            <q-td auto-width>
-                                <q-btn
-                                    size="sm"
-                                    color="primary"
-                                    round
-                                    dense
-                                    :icon="isRowExpanded(props.row.id) ? 'remove' : 'add'"
-                                    @click="updateCollapseArray(props.row.id)"
-                                />
-                            </q-td>
+                            <q-td auto-width />
                             <q-td
                                 v-for="col in props.cols"
                                 :key="col.name"
@@ -51,12 +72,20 @@
                                 {{ col.value }}
                             </q-td>
                             <q-td>
-                                <csc-more-menu>
-                                    <csc-popup-menu-item-delete
-                                        color="negative"
-                                        @click="confirmRowDeletion(props.row.id)"
-                                    />
-                                </csc-more-menu>
+                                <q-btn
+                                    color="negative"
+                                    icon="delete"
+                                    flat
+                                    @click="confirmRowDeletion(props.row.id)"
+                                />
+                                <q-btn
+                                    size="md"
+                                    color="primary"
+                                    round
+                                    flat
+                                    :icon="isRowExpanded(props.row.id) ? 'expand_less' : 'expand_more'"
+                                    @click="updateCollapseArray(props.row.id)"
+                                />
                                 <csc-confirmation-dialog
                                     :key="props.row.id"
                                     :ref="'confirmDelete-'+props.row.id"
@@ -83,35 +112,45 @@
                                     :loading="$wait.is('csc-call-recordings')"
                                     :hide-pagination="true"
                                     row-key="name"
+                                    class="csc-item-odd"
                                 >
-                                    <template v-slot:header="props">
-                                        <q-tr :props="props">
+                                    <template v-slot:loading>
+                                        <q-inner-loading
+                                            showing
+                                            color="primary"
+                                        />
+                                    </template>
+                                    <template v-slot:header="innerProps">
+                                        <q-tr :props="innerProps">
+                                            <q-th auto-width />
                                             <q-th
-                                                v-for="col in props.cols"
+                                                v-for="col in innerProps.cols"
                                                 :key="col.name"
-                                                :props="props"
+                                                :props="innerProps"
                                             >
                                                 {{ col.label }}
                                             </q-th>
                                             <q-th auto-width />
                                         </q-tr>
                                     </template>
-                                    <template v-slot:body="props">
-                                        <q-tr :props="props">
+                                    <template v-slot:body="innerProps">
+                                        <q-tr :props="innerProps">
+                                            <q-td auto-width />
                                             <q-td
-                                                v-for="col in props.cols"
+                                                v-for="col in innerProps.cols"
                                                 :key="col.name"
-                                                :props="props"
+                                                :props="innerProps"
                                             >
                                                 {{ col.value }}
                                             </q-td>
                                             <q-td>
                                                 <q-btn
-                                                    size="sm"
+                                                    size="md"
                                                     color="primary"
                                                     icon="download"
                                                     dense
-                                                    @click="saveFile(props.row.id)"
+                                                    flat
+                                                    @click="saveFile(innerProps.row.id)"
                                                 />
                                             </q-td>
                                         </q-tr>
@@ -123,29 +162,23 @@
                 </q-table>
             </div>
         </template>
-    </csc-page>
+    </csc-page-sticky>
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
-import {
-    mapWaitingActions
-} from 'vue-wait'
-import CscPage from 'components/CscPage'
-import CscMoreMenu from 'components/CscMoreMenu'
-import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
-import CscConfirmationDialog from 'components/CscConfirmationDialog'
-import { showGlobalError, showToast } from 'src/helpers/ui'
+import { mapGetters } from 'vuex'
+import { mapWaitingActions } from 'vue-wait'
 import { saveAs } from 'file-saver'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import CscConfirmationDialog from 'components/CscConfirmationDialog'
+import CscPageSticky from 'components/CscPageSticky'
+import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
 export default {
     name: 'CscCallBlocking',
     components: {
-        CscPage,
-        CscMoreMenu,
-        CscPopupMenuItemDelete,
-        CscConfirmationDialog
+        CscConfirmationDialog,
+        CscPageSticky,
+        CscCallRecordingFilters
     },
     data () {
         return {
@@ -175,36 +208,38 @@ export default {
                     label: '#',
                     align: 'left',
                     field: row => row.id,
-                    format: val => `${val}`,
-                    sortable: true
+                    format: val => `${val}`
                 },
                 {
                     name: 'type',
                     required: true,
                     align: 'left',
                     label: this.$t('Type'),
-                    field: row => row.type,
-                    sortable: true
+                    field: row => row.type
                 },
                 {
                     name: 'format',
                     required: true,
                     align: 'left',
                     label: this.$t('Format'),
-                    field: row => row.format,
-                    sortable: true
+                    field: row => row.format
                 }
 
             ],
             data: [],
-            rowStatus: [],
             pagination: {
                 sortBy: 'id',
                 descending: false,
                 page: 1,
                 rowsPerPage: 5,
                 rowsNumber: 0
-            }
+            },
+            rowStatus: [],
+            filter: {
+                startTime: null,
+                endTime: null
+            },
+            showFilters: false
         }
     },
     computed: {
@@ -225,7 +260,8 @@ export default {
     },
     async mounted () {
         await this.fetchPaginatedRecordings({
-            pagination: this.pagination
+            pagination: this.pagination,
+            filter: this.filter
         })
     },
     methods: {
@@ -237,14 +273,26 @@ export default {
         }),
         async fetchPaginatedRecordings (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
+            const { startTime, endTime } = this.filter
             const count = await this.fetchRecordings({
                 page: page,
                 rows: rowsPerPage,
                 order_by: sortBy,
-                order_by_direction: descending ? 'desc' : 'asc'
+                order_by_direction: descending ? 'desc' : 'asc',
+                start_time: startTime,
+                end_time: endTime
             })
             this.pagination = { ...props.pagination }
             this.pagination.rowsNumber = count
+        },
+        openFilters () {
+            this.showFilters = true
+        },
+        closeFilters () {
+            if (this.$refs.filters) {
+                this.$refs.filters.removeFilters()
+            }
+            this.showFilters = false
         },
         confirmRowDeletion (rowId) {
             this.$refs['confirmDelete-' + rowId].open()
@@ -254,7 +302,8 @@ export default {
                 await this.deleteRecording(rowId)
                 showToast(this.$t('Recording successfully deleted'))
                 await this.fetchPaginatedRecordings({
-                    pagination: this.pagination
+                    pagination: this.pagination,
+                    filter: this.filter
                 })
             } catch (err) {
                 showGlobalError(this.$t('Something went wrong. Please retry later'))
@@ -275,6 +324,14 @@ export default {
         async saveFile (fileId) {
             const file = await this.downloadRecording(fileId)
             saveAs(file, 'call-recording-' + fileId + '.wav')
+        },
+        filterEvent (filter) {
+            this.$scrollTo(this.$parent.$el)
+            this.filter = filter
+            this.fetchPaginatedRecordings({
+                pagination: this.pagination,
+                filter: this.filter
+            })
         }
     }
 }
