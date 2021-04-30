@@ -228,6 +228,10 @@ export default {
                 {
                     label: this.$t('Callee'),
                     value: 'callee'
+                },
+                {
+                    label: this.$t('CallID'),
+                    value: 'callId'
                 }
             ]
         },
