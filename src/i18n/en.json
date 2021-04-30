@@ -119,6 +119,8 @@
     "Call ended": "Call ended",
     "Call forwarded": "Call forwarded",
     "Call recordings": "Call recordings",
+    "Callee": "Callee",
+    "Caller": "Caller",
     "Calling": "Calling",
     "Calling {number}...": "Calling {number}...",
     "Calls": "Calls",

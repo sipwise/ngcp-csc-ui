@@ -4,7 +4,7 @@
             class="row justify-center full-width q-gutter-x-sm"
         >
             <div
-                class="col-xs-12 col-md-2"
+                class="col-xs-12 col-md-3"
             >
                 <q-select
                     v-model="filterTypeModel"
@@ -12,12 +12,11 @@
                     :options="filterTypeOptions"
                     :label="$t('Filter by')"
                     :disable="loading"
-                    data-cy="filter-type"
                 />
             </div>
             <div
                 v-if="filterType === 'timerange'"
-                class="row col-xs-12 col-md-4"
+                class="row col-xs-12 col-md-6"
             >
                 <q-input
                     v-model="dateStartFilter"
@@ -146,6 +145,28 @@
                     </template>
                 </q-input>
             </div>
+            <div
+                v-else-if="filterType !== null"
+                class="row col-xs-12 col-md-3"
+            >
+                <q-input
+                    v-model="typedFilter"
+                    class="q-pr-sm col-12"
+                    dense
+                    :disable="loading || filterType === null"
+                    :label="(filterType === null) ? $t('Type something') : filterTypeModel.label"
+                    @keypress.enter="triggerFilter"
+                    @keydown.space.prevent
+                >
+                    <template v-slot:append>
+                        <q-icon
+                            name="search"
+                            class="cursor-pointer"
+                            @click="triggerFilter"
+                        />
+                    </template>
+                </q-input>
+            </div>
         </div>
         <div
             class="row justify-center full-width q-gutter-x-sm"
@@ -163,7 +184,6 @@
                     dense
                     color="primary"
                     text-color="dark"
-                    data-cy="filter-applied-item"
                     @remove="removeFilter(id)"
                 />
             </div>
@@ -200,6 +220,14 @@ export default {
                 {
                     label: this.$t('Timerange'),
                     value: 'timerange'
+                },
+                {
+                    label: this.$t('Caller'),
+                    value: 'caller'
+                },
+                {
+                    label: this.$t('Callee'),
+                    value: 'callee'
                 }
             ]
         },

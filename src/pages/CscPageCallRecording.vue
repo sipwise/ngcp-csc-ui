@@ -237,7 +237,9 @@ export default {
             rowStatus: [],
             filter: {
                 startTime: null,
-                endTime: null
+                endTime: null,
+                caller: null,
+                callee: null
             },
             showFilters: false
         }
@@ -273,14 +275,16 @@ export default {
         }),
         async fetchPaginatedRecordings (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
-            const { startTime, endTime } = this.filter
+            const { startTime, endTime, caller, callee } = this.filter
             const count = await this.fetchRecordings({
                 page: page,
                 rows: rowsPerPage,
                 order_by: sortBy,
                 order_by_direction: descending ? 'desc' : 'asc',
                 start_time: startTime,
-                end_time: endTime
+                end_time: endTime,
+                caller: caller ? '*' + caller : undefined,
+                callee: callee ? '*' + callee : undefined
             })
             this.pagination = { ...props.pagination }
             this.pagination.rowsNumber = count

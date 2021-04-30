@@ -119,6 +119,8 @@
     "Call ended": "Llamada terminada",
     "Call forwarded": "Llamada redirigida",
     "Call recordings": "",
+    "Callee": "",
+    "Caller": "",
     "Calling": "Llamando",
     "Calling {number}...": "Iniciando ...",
     "Calls": "Llamadas",
