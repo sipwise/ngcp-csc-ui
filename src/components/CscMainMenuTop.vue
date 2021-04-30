@@ -193,6 +193,12 @@ export default {
                     icon: 'settings',
                     label: this.$t('PBX Settings'),
                     visible: this.isPbxEnabled
+                },
+                {
+                    to: '/user/registered-devices',
+                    icon: 'devices',
+                    label: this.$t('Registered Devices'),
+                    visible: true
                 }
             ]
         }

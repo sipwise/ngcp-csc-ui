@@ -597,3 +597,22 @@ export async function downloadRecordingStream (fileId) {
     const res = await Vue.http.get('api/callrecordingfiles/' + fileId, { responseType: 'blob' })
     return res.body
 }
+
+export async function getSubscriberRegistrations (options) {
+    let all = false
+    if (options.rows === 0) {
+        delete options.rows
+        delete options.page
+        all = true
+    }
+    if (!options.order_by) {
+        delete options.order_by
+        delete options.order_by_direction
+    }
+    const list = await getList({
+        resource: 'subscriberregistrations',
+        all,
+        params: options
+    })
+    return list
+}

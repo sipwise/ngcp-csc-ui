@@ -13,7 +13,13 @@ import {
     login,
     getUserData
 } from '../api/user'
-import { changePassword, resetPassword, recoverPassword, getBrandingLogo } from '../api/subscriber'
+import {
+    changePassword,
+    resetPassword,
+    recoverPassword,
+    getBrandingLogo,
+    getSubscriberRegistrations
+} from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import { setSession } from 'src/storage'
 
@@ -47,7 +53,8 @@ export default {
         logoRequesting: false,
         logoRequested: false,
         resellerBranding: null,
-        defaultBranding: {}
+        defaultBranding: {},
+        subscriberRegistrations: []
     },
     getters: {
         isLogged (state) {
@@ -281,6 +288,9 @@ export default {
         },
         setDefaultBranding (state, value) {
             state.defaultBranding = value
+        },
+        setSubscriberRegistrations (state, value) {
+            state.subscriberRegistrations = value
         }
     },
     actions: {
@@ -390,6 +400,19 @@ export default {
         setDefaultBranding (context, value) {
             if (value) {
                 context.commit('setDefaultBranding', value)
+            }
+        },
+        async loadSubscriberRegistrations ({ commit, dispatch, state, rootGetters }, options) {
+            try {
+                const list = await getSubscriberRegistrations({
+                    ...options,
+                    subscriber_id: getSubscriberId()
+                })
+                commit('setSubscriberRegistrations', list.items)
+                return list.totalCount
+            } catch (err) {
+                commit('setSubscriberRegistrations', [])
+                throw err
             }
         }
     }

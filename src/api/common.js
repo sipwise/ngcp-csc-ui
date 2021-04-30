@@ -100,7 +100,8 @@ export async function getList (options) {
     }
     return {
         items: items,
-        lastPage: lastPage
+        lastPage: lastPage,
+        totalCount
     }
 }
 

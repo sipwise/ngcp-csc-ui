@@ -31,6 +31,7 @@ import CscPageError404 from 'src/pages/CscPageError404'
 import CscRecoverPassword from 'src/pages/CscRecoverPassword'
 import CscPageCf from 'pages/CscPageCf'
 import CscPageCallSettings from 'pages/CscPageCallSettings'
+import CscPageRegisteredDevices from 'pages/CscPageRegisteredDevices'
 
 const getToken = (route) => {
     return {
@@ -245,6 +246,14 @@ export default function routes (app) {
                     meta: {
                         title: i18n.t('PBX Settings'),
                         subtitle: i18n.t('Set your PBX settings')
+                    }
+                },
+                {
+                    path: 'registered-devices',
+                    component: CscPageRegisteredDevices,
+                    meta: {
+                        title: i18n.t('Registered Devices'),
+                        subtitle: i18n.t('List of registered devices for the subscriber')
                     }
                 },
                 {
