@@ -1,11 +1,11 @@
-# DOCKER_NAME=ngcp-csc-ui-buster
-FROM docker.mgm.sipwise.com/sipwise-buster:latest
+# DOCKER_NAME=ngcp-csc-ui-bullseye
+FROM docker.mgm.sipwise.com/sipwise-bullseye:latest
 
 # Important! Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2020-09-16
+ENV REFRESHED_AT 2021-05-03
 ENV DEBIAN_FRONTEND noninteractive
 ENV DISPLAY=:0
 
@@ -36,16 +36,16 @@ WORKDIR /code
 #
 # you need to put the proper NGCP sources at t/sources.list.d/builddeps.list
 # for instance, trunk:
-# echo "deb https://deb.sipwise.com/autobuild/ release-trunk-buster main" > t/sources.list.d/builddeps.list
+# echo "deb https://deb.sipwise.com/autobuild/ release-trunk-bullseye main" > t/sources.list.d/builddeps.list
 #
 # NOTE: run the following command from root folder of git repository:
-# % docker build --tag="ngcp-csc-ui-buster" -f ./t/Dockerfile .
-# % docker run --rm -i -t -v $(pwd):/code:ro ngcp-csc-ui-buster:latest bash
+# % docker build --tag="ngcp-csc-ui-bullseye" -f ./t/Dockerfile .
+# % docker run --rm -i -t -v $(pwd):/code:ro ngcp-csc-ui-bullseye:latest bash
 #
 # Use the existing docker image:
-# % docker pull docker.mgm.sipwise.com/ngcp-csc-ui-buster
+# % docker pull docker.mgm.sipwise.com/ngcp-csc-ui-bullseye
 # NOTE: run the following command from root folder of git repository:
-# % docker run --rm -i -t -v $(pwd):/code:ro -v /results docker.mgm.sipwise.com/ngcp-csc-ui-buster:latest bash
+# % docker run --rm -i -t -v $(pwd):/code:ro -v /results docker.mgm.sipwise.com/ngcp-csc-ui-bullseye:latest bash
 #
 # Inside docker:
 #   cd /code && ./t/testrunner
