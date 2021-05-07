@@ -86,16 +86,6 @@
                                     :icon="isRowExpanded(props.row.id) ? 'expand_less' : 'expand_more'"
                                     @click="updateCollapseArray(props.row.id)"
                                 />
-                                <csc-confirmation-dialog
-                                    :key="props.row.id"
-                                    :ref="'confirmDelete-'+props.row.id"
-                                    title-icon="delete"
-                                    title-icon-color="negative"
-                                    color="negative"
-                                    :title="$t('Delete recording', {id: props.row.id})"
-                                    :message="$t('You are about to delete recording #{id}', {id: props.row.id})"
-                                    @confirm="deleteRecord(props.row.id)"
-                                />
                             </q-td>
                         </q-tr>
                         <q-tr
@@ -109,7 +99,7 @@
                                 <q-table
                                     :data="props.row.files"
                                     :columns="filesColumns"
-                                    :loading="$wait.is('csc-call-recordings')"
+                                    :loading="$wait.is('csc-call-recordings') && $wait.is('loading-stream-' + props.row.id)"
                                     :hide-pagination="true"
                                     row-key="name"
                                     class="csc-item-odd"
@@ -143,13 +133,22 @@
                                             >
                                                 {{ col.value }}
                                             </q-td>
-                                            <q-td>
+                                            <q-td
+                                                class="row justify-end table-td-action-cont"
+                                            >
+                                                <csc-audio-player
+                                                    v-if="innerProps.row.url"
+                                                    :file-url="innerProps.row.url"
+                                                    :pausable="true"
+                                                    class="player-btns"
+                                                />
                                                 <q-btn
                                                     size="md"
                                                     color="primary"
                                                     icon="download"
                                                     dense
                                                     flat
+                                                    class="download-btn"
                                                     @click="saveFile(innerProps.row.id)"
                                                 />
                                             </q-td>
@@ -170,13 +169,14 @@ import { mapGetters } from 'vuex'
 import { mapWaitingActions } from 'vue-wait'
 import { saveAs } from 'file-saver'
 import { showGlobalError, showToast } from 'src/helpers/ui'
-import CscConfirmationDialog from 'components/CscConfirmationDialog'
+import CscAudioPlayer from 'components/CscAudioPlayer'
 import CscPageSticky from 'components/CscPageSticky'
 import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
+import CscRemoveDialog from 'components/CscRemoveDialog'
 export default {
     name: 'CscCallBlocking',
     components: {
-        CscConfirmationDialog,
+        CscAudioPlayer,
         CscPageSticky,
         CscCallRecordingFilters
     },
@@ -272,7 +272,8 @@ export default {
             fetchRecordings: 'csc-call-recordings',
             fetchStreams: 'csc-call-recordings',
             deleteRecording: 'csc-call-recordings',
-            downloadRecording: 'csc-call-recordings'
+            downloadRecording: 'csc-call-recordings',
+            playStreamFile: 'csc-call-recordings'
         }),
         async fetchPaginatedRecordings (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
@@ -301,7 +302,14 @@ export default {
             this.showFilters = false
         },
         confirmRowDeletion (rowId) {
-            this.$refs['confirmDelete-' + rowId].open()
+            this.$q.dialog({
+                component: CscRemoveDialog,
+                parent: this,
+                title: this.$t('Delete recording'),
+                message: this.$t('You are about to delete recording #{id}', { id: rowId })
+            }).onOk(() => {
+                this.deleteRecord(rowId)
+            })
         },
         async deleteRecord (rowId) {
             try {
@@ -319,12 +327,17 @@ export default {
             const rowStatus = this.rowStatus.filter(row => row.id === id)[0] || null
             return rowStatus && rowStatus.expanded
         },
-        updateCollapseArray (id) {
+        async updateCollapseArray (id) {
             const recording = this.recordings.filter(rec => rec.id === id)[0]
             const rowStatus = this.rowStatus.filter(row => row.id === id)[0]
             rowStatus.expanded = !rowStatus.expanded
             if (rowStatus.expanded && recording.files.length === 0) {
-                this.fetchStreams(id)
+                this.$wait.start('loading-stream-' + id)
+                try {
+                    await this.fetchStreams(id)
+                } finally {
+                    this.$wait.end('loading-stream-' + id)
+                }
             }
         },
         async saveFile (fileId) {
@@ -348,4 +361,12 @@ export default {
     font-size 15px
 .table-td-no-padding
     padding 0px !important // needed to override .q-table td
+.table-td-action-cont
+    min-width 140px
+    .player-btns
+        bottom 9px
+        left 8px
+    .download-btn
+        height 30px
+
 </style>

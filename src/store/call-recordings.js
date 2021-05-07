@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { getRecordings, getRecordingStreams, downloadRecordingStream } from '../api/subscriber'
+import { getRecordings, getRecordingStreams, downloadRecordingStream, getRecordingStream } from '../api/subscriber'
 export default {
     namespaced: true,
     state: {
@@ -15,6 +15,11 @@ export default {
     },
     mutations: {
         callRecordings (state, res) {
+            (state.recordings || []).forEach(r => {
+                (r?.files || []).forEach(s => {
+                    if (s.url) URL.revokeObjectURL(s.url)
+                })
+            })
             state.recordings = res
         },
         callRecordingStreams (state, data) {
@@ -33,6 +38,10 @@ export default {
         },
         async fetchStreams (context, recId) {
             const streams = await getRecordingStreams(recId)
+            await Promise.all(streams.map(async stream => {
+                const blob = await getRecordingStream(stream.id)
+                stream.url = blob
+            }))
             context.commit('callRecordingStreams', {
                 recId: recId,
                 streams: streams

@@ -7,6 +7,7 @@ import {
 import {
     getList,
     get,
+    getAsBlob,
     patchAdd,
     patchReplace,
     patchRemove,
@@ -14,9 +15,11 @@ import {
     patchAddFull
 
 } from './common'
+
 import {
     assignNumbers
 } from './user'
+
 export function getPreferences (id) {
     return new Promise((resolve, reject) => {
         Vue.http.get('api/subscriberpreferences/' + id).then((result) => {
@@ -615,4 +618,10 @@ export async function getSubscriberRegistrations (options) {
         params: options
     })
     return list
+}
+
+export async function getRecordingStream (fileId) {
+    return await getAsBlob({
+        path: 'api/callrecordingfiles/' + fileId
+    })
 }
