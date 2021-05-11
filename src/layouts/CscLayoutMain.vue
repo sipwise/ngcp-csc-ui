@@ -713,10 +713,10 @@ export default {
     .csc-collapsible-menu
         .q-icon
             display none
-        #csc-default-logo
-                height 48px
-        #csc-custom-logo
-                min-width $logo-min-width
-                max-width $logo-max-width
-                max-height $logo-max-height
+    #csc-default-logo
+            height 48px
+    #csc-custom-logo
+            min-width $logo-min-width
+            max-width $logo-max-width
+            max-height $logo-max-height
 </style>
