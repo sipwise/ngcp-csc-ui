@@ -18,7 +18,8 @@ import {
     resetPassword,
     recoverPassword,
     getBrandingLogo,
-    getSubscriberRegistrations
+    getSubscriberRegistrations,
+    getSubscriberProfile
 } from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import { setSession } from 'src/storage'
@@ -30,6 +31,7 @@ export default {
         subscriberId: null,
         subscriber: null,
         capabilities: null,
+        profile: null,
         features: {
             sendFax: true,
             sendSms: false
@@ -182,6 +184,9 @@ export default {
         },
         isLogoRequested (state) {
             return state.logoRequested
+        },
+        hasSubscriberProfileAttribute: (state) => (attribute) => {
+            return state.profile?.attributes.includes(attribute) || false
         }
     },
     mutations: {
@@ -291,6 +296,9 @@ export default {
         },
         setSubscriberRegistrations (state, value) {
             state.subscriberRegistrations = value
+        },
+        setProfile (state, value) {
+            state.profile = value
         }
     },
     actions: {
@@ -335,6 +343,10 @@ export default {
                             console.debug(err)
                             context.commit('rtcEngineInitFailed', err.message)
                         }
+                    }
+                    if (userData.subscriber.profile_id) {
+                        const profile = await getSubscriberProfile(userData.subscriber.profile_id)
+                        context.commit('setProfile', profile)
                     }
                     await context.dispatch('forwardHome')
                 } catch (err) {

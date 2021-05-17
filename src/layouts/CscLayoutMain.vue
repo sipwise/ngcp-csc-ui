@@ -456,7 +456,6 @@ export default {
         }
     },
     async mounted () {
-        await this.$store.dispatch('user/initUser')
         window.addEventListener('orientationchange', () => {
             this.$root.$emit('orientation-changed')
         })

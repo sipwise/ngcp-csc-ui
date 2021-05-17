@@ -134,6 +134,13 @@ export default function routes (app) {
                     meta: {
                         title: i18n.t('Reminder'),
                         subtitle: i18n.t('Set your personal alarm')
+                    },
+                    async beforeEnter (routeTo, routeFrom, next) {
+                        if (app.store.getters['user/hasSubscriberProfileAttribute']('reminder')) {
+                            next()
+                        } else {
+                            next('/')
+                        }
                     }
                 },
                 {
@@ -216,7 +223,6 @@ export default function routes (app) {
                         subtitle: i18n.t('Set your fax settings')
                     },
                     async beforeEnter (routeTo, routeFrom, next) {
-                        await app.store.dispatch('user/initUser')
                         if (app.store.getters['user/hasFaxCapability']) {
                             next()
                         } else {

@@ -290,9 +290,6 @@ export default {
             }
         }
     },
-    mounted () {
-        this.$store.dispatch('user/initUser')
-    },
     methods: {
         ...mapActions('conference', [
             'leave'

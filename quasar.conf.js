@@ -26,6 +26,7 @@ module.exports = function (/* ctx */) {
             // 'axios',
             'vue-resource',
             'routes',
+            'user',
             'components',
             'vue-scrollto',
             'constants',

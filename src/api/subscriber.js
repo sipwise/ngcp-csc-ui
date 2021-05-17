@@ -13,7 +13,6 @@ import {
     patchRemove,
     patchReplaceFull,
     patchAddFull
-
 } from './common'
 
 import {
@@ -624,4 +623,11 @@ export async function getRecordingStream (fileId) {
     return await getAsBlob({
         path: 'api/callrecordingfiles/' + fileId
     })
+}
+
+export async function getSubscriberProfile (id) {
+    const profile = await get({
+        path: `api/subscriberprofiles/${id}`
+    })
+    return profile
 }

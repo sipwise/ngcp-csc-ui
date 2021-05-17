@@ -47,7 +47,8 @@ export default {
         ...mapGetters('user', [
             'isRtcEngineUiVisible',
             'isPbxEnabled',
-            'hasFaxCapability'
+            'hasFaxCapability',
+            'hasSubscriberProfileAttribute'
         ]),
         items () {
             return [
@@ -122,7 +123,7 @@ export default {
                             to: '/user/reminder',
                             icon: 'notification_important',
                             label: this.$t('Reminder'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttribute('reminder')
                         },
                         {
                             to: '/user/recordings',
