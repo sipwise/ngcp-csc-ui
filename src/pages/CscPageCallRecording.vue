@@ -137,10 +137,13 @@
                                                 class="row justify-end table-td-action-cont"
                                             >
                                                 <csc-audio-player
-                                                    v-if="innerProps.row.url"
-                                                    :file-url="innerProps.row.url"
                                                     :pausable="true"
                                                     class="player-btns"
+                                                    :file-url="innerProps.row.url"
+                                                    @load="fetchFile({
+                                                        recId: props.row.id,
+                                                        streamId: innerProps.row.id
+                                                    })"
                                                 />
                                                 <q-btn
                                                     size="md"
@@ -273,7 +276,8 @@ export default {
             fetchStreams: 'csc-call-recordings',
             deleteRecording: 'csc-call-recordings',
             downloadRecording: 'csc-call-recordings',
-            playStreamFile: 'csc-call-recordings'
+            playStreamFile: 'csc-call-recordings',
+            fetchFile: 'csc-call-recordings'
         }),
         async fetchPaginatedRecordings (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination

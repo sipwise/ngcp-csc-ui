@@ -1,5 +1,10 @@
 import Vue from 'vue'
-import { getRecordings, getRecordingStreams, downloadRecordingStream, getRecordingStream } from '../api/subscriber'
+import {
+    getRecordings,
+    getRecordingStreams,
+    downloadRecordingStream,
+    getRecordingStream
+} from '../api/subscriber'
 export default {
     namespaced: true,
     state: {
@@ -25,6 +30,11 @@ export default {
         callRecordingStreams (state, data) {
             const recording = state.recordings.filter(rec => rec.id === data.recId)[0]
             recording.files = data.streams
+        },
+        callRecordingStream (state, { recId, streamId, url }) {
+            const recording = state.recordings.filter(rec => rec.id === recId)[0]
+            const stream = recording.files.filter((file) => file.id === streamId)[0]
+            stream.url = url
         }
     },
     actions: {
@@ -38,13 +48,17 @@ export default {
         },
         async fetchStreams (context, recId) {
             const streams = await getRecordingStreams(recId)
-            await Promise.all(streams.map(async stream => {
-                const blob = await getRecordingStream(stream.id)
-                stream.url = blob
-            }))
             context.commit('callRecordingStreams', {
                 recId: recId,
                 streams: streams
+            })
+        },
+        async fetchFile (context, { recId, streamId }) {
+            const blob = await getRecordingStream(streamId)
+            context.commit('callRecordingStream', {
+                recId: recId,
+                streamId: streamId,
+                url: blob
             })
         },
         async deleteRecording (context, recId) {
