@@ -133,14 +133,8 @@ export default function routes (app) {
                     component: CscPageReminder,
                     meta: {
                         title: i18n.t('Reminder'),
-                        subtitle: i18n.t('Set your personal alarm')
-                    },
-                    async beforeEnter (routeTo, routeFrom, next) {
-                        if (app.store.getters['user/hasSubscriberProfileAttribute']('reminder')) {
-                            next()
-                        } else {
-                            next('/')
-                        }
+                        subtitle: i18n.t('Set your personal alarm'),
+                        profileAttribute: 'reminder'
                     }
                 },
                 {
@@ -212,7 +206,8 @@ export default function routes (app) {
                     component: CscPageVoicebox,
                     meta: {
                         title: i18n.t('Voicebox'),
-                        subtitle: i18n.t('Set your voicebox settings')
+                        subtitle: i18n.t('Set your voicebox settings'),
+                        profileAttribute: 'voice_mail'
                     }
                 },
                 {

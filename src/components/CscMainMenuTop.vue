@@ -87,7 +87,7 @@ export default {
                             to: '/user/voicebox',
                             icon: 'voicemail',
                             label: this.$t('Voicebox'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttribute('voice_mail')
                         },
                         {
                             to: '/user/call-forwarding',

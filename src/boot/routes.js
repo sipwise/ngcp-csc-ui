@@ -35,7 +35,11 @@ export default ({ app, router, store }) => {
                 })
                 break
             default:
-                next()
+                if (to.meta?.profileAttribute) {
+                    app.store.getters['user/hasSubscriberProfileAttribute'](to.meta.profileAttribute) ? next() : next('/')
+                } else {
+                    next()
+                }
             }
         }
     })
