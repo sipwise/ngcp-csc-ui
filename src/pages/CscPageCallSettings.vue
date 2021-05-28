@@ -6,7 +6,9 @@
         <q-list
             class="col col-xs-12 col-md-6"
         >
-            <q-item>
+            <q-item
+                v-if="hasSubscriberProfileAttribute('music_on_hold')"
+            >
                 <q-item-section>
                     <q-toggle
                         :value="musicOnHold"
@@ -90,6 +92,9 @@ export default {
             'language',
             'defaultLanguage',
             'languages'
+        ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
         ]),
         ...mapWaitingGetters({
             processingSubscriberPreferences: 'processing subscriberPreferences'
