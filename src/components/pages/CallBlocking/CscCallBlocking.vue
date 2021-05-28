@@ -67,49 +67,53 @@
             </q-list>
         </div>
         <div
-            class="row justify-center q-mb-lg"
+            v-if="hasSubscriberProfileAttribute(blockList)"
         >
-            <csc-call-blocking-add-form
-                ref="addForm"
-                class="col-xs-12 col-md-4 col-lg-8"
-                :loading="isAddNumberLoading"
-                @save="addNumber"
-            />
-        </div>
-        <div
-            v-if="isNumberListLoading"
-            class="row justify-center"
-        >
-            <csc-spinner />
-        </div>
-        <div
-            v-if="numbers && numbers.length > 0"
-            class="row justify-center"
-        >
-            <q-list
-                class="col-xs-12 col-md-4 col-lg-8"
+            <div
+                class="row justify-center q-mb-lg"
             >
-                <csc-blocked-number
-                    v-for="(number, index) in numbers"
-                    :key="index"
-                    :class="'q-pa-sm csc-item-' + ((index % 2 === 0)?'odd':'even')"
-                    :icon="(listMode === 'whitelist')? 'check' : 'block'"
-                    :number="number"
-                    :index="index"
-                    :loading="isEditNumberLoading && currentNumberIndex === index"
-                    :removing="isRemoveNumberLoading && currentNumberIndex === index"
-                    @save="saveNumber"
-                    @remove="numberDeletionConfirm"
+                <csc-call-blocking-add-form
+                    ref="addForm"
+                    class="col-xs-12 col-md-4 col-lg-8"
+                    :loading="isAddNumberLoading"
+                    @save="addNumber"
+                />
+            </div>
+            <div
+                v-if="isNumberListLoading"
+                class="row justify-center"
+            >
+                <csc-spinner />
+            </div>
+            <div
+                v-if="numbers && numbers.length > 0"
+                class="row justify-center"
+            >
+                <q-list
+                    class="col-xs-12 col-md-4 col-lg-8"
                 >
-                    {{ number }}
-                </csc-blocked-number>
-            </q-list>
-        </div>
-        <div
-            v-else
-            class="row justify-center"
-        >
-            {{ $t('No numbers found') }}
+                    <csc-blocked-number
+                        v-for="(number, index) in numbers"
+                        :key="index"
+                        :class="'q-pa-sm csc-item-' + ((index % 2 === 0)?'odd':'even')"
+                        :icon="(listMode === 'whitelist')? 'check' : 'block'"
+                        :number="number"
+                        :index="index"
+                        :loading="isEditNumberLoading && currentNumberIndex === index"
+                        :removing="isRemoveNumberLoading && currentNumberIndex === index"
+                        @save="saveNumber"
+                        @remove="numberDeletionConfirm"
+                    >
+                        {{ number }}
+                    </csc-blocked-number>
+                </q-list>
+            </div>
+            <div
+                v-else
+                class="row justify-center"
+            >
+                {{ $t('No numbers found') }}
+            </div>
         </div>
     </csc-page>
 </template>
@@ -135,6 +139,10 @@ export default {
         pageName: {
             type: String,
             default: 'incoming'
+        },
+        blockList: {
+            type: String,
+            default: null
         }
     },
     data () {
@@ -159,6 +167,9 @@ export default {
             'listMode',
             'isAnonymousBlocked',
             'isAnonymousBlockRequesting'
+        ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
         ]),
         toggleButtonLabel () {
             if (!this.enabled) {
