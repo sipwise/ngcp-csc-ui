@@ -22,6 +22,7 @@
             </q-item>
         </q-list>
         <div
+            v-if="hasSubscriberProfileAttribute(blockMode)"
             class="row q-mb-lg"
         >
             <q-list
@@ -139,6 +140,10 @@ export default {
         pageName: {
             type: String,
             default: 'incoming'
+        },
+        blockMode: {
+            type: String,
+            default: null
         },
         blockList: {
             type: String,
