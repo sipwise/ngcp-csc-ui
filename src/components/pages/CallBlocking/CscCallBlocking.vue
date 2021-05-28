@@ -6,7 +6,9 @@
             v-if="pageName === 'incoming'"
             class="q-mb-lg"
         >
-            <q-item>
+            <q-item
+                v-if="hasSubscriberProfileAttribute('block_in_clir')"
+            >
                 <q-toggle
                     :label="$t('All anonymous incoming calls are blocked')"
                     :value="isAnonymousBlocked"
