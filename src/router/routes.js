@@ -142,7 +142,8 @@ export default function routes (app) {
                     component: CscPageSpeedDial,
                     meta: {
                         title: i18n.t('Speed Dial'),
-                        subtitle: i18n.t('Set your speed dials')
+                        subtitle: i18n.t('Set your speed dials'),
+                        profileAttribute: 'speed_dial'
                     }
                 },
                 {

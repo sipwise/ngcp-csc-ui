@@ -117,7 +117,7 @@ export default {
                             to: '/user/speeddial',
                             icon: 'touch_app',
                             label: this.$t('Speed Dial'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttribute('speed_dial')
                         },
                         {
                             to: '/user/reminder',
