@@ -1,3 +1,4 @@
+/* eslint-env node */
 /*
  * This file runs in a Node context (it's NOT transpiled by Babel), so use only
  * the ES6 features that are supported by your Node version. https://node.green/
@@ -5,9 +6,18 @@
 
 // Configuration for your app
 // https://quasar.dev/quasar-cli/quasar-conf-js
-/* eslint-env node */
+module.exports = function (ctx) {
+    let devServerConfig = {}
+    try {
+        devServerConfig = (ctx.dev) ? require('./quasar.conf.dev.js') : {}
+    } catch (e) {
+        if (e.code === 'MODULE_NOT_FOUND') {
+            devServerConfig = {}
+        } else {
+            throw e
+        }
+    }
 
-module.exports = function (/* ctx */) {
     return {
         // https://quasar.dev/quasar-cli/supporting-ts
         supportTS: false,
@@ -88,7 +98,24 @@ module.exports = function (/* ctx */) {
         devServer: {
             https: false,
             port: 8080,
-            open: true // opens browser window automatically
+            open: true, // opens browser window automatically,
+            public: devServerConfig.public,
+            publicPath: devServerConfig.publicPath,
+            ...(!devServerConfig.proxyAPI2localhost ? {} : {
+                https: true,
+                publicPath: devServerConfig.publicPath || '/v2/',
+                proxy: {
+                    [`!${devServerConfig.publicPath || '/v2/'}`]: {
+                        target: devServerConfig.proxyAPIFromURL,
+                        secure: false
+                    }
+                },
+                before: function (app, server, compiler) {
+                    app.get('/', function (req, res) {
+                        res.redirect(301, devServerConfig.publicPath || '/v2/')
+                    })
+                }
+            })
         },
 
         // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework

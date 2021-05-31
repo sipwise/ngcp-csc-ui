@@ -37,3 +37,5 @@ yarn-error.log*
 
 /junit.xml
 /test/jest/coverage
+
+quasar.conf.dev.js
