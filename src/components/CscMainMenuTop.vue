@@ -48,7 +48,9 @@ export default {
             'isRtcEngineUiVisible',
             'isPbxEnabled',
             'hasFaxCapability',
-            'hasSubscriberProfileAttribute'
+            'hasSubscriberProfileAttribute',
+            'getCustomerId',
+            'isOldCSCProxyingAllowed'
         ]),
         items () {
             return [
@@ -200,6 +202,12 @@ export default {
                     icon: 'devices',
                     label: this.$t('Registered Devices'),
                     visible: true
+                },
+                {
+                    to: '/customer/' + this.getCustomerId + '/details',
+                    icon: 'far fa-address-card',
+                    label: this.$t('Customer Details'),
+                    visible: this.isOldCSCProxyingAllowed
                 }
             ]
         }

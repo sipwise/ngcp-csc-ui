@@ -173,6 +173,9 @@ export default {
         getSubscriber (state) {
             return state.subscriber
         },
+        getCustomerId (state) {
+            return state.subscriber?.customer_id
+        },
         isPasswordChanging (state) {
             return state.changePasswordState === RequestState.requesting
         },
@@ -199,6 +202,9 @@ export default {
         },
         hasSubscriberProfileAttributes: (state) => (attributes) => {
             return state.profile ? state.profile.attributes.some(item => attributes.includes(item)) : true
+        },
+        isOldCSCProxyingAllowed (state, getters) {
+            return getters.isAdmin && state.platformInfo?.csc_v2_mode === 'mixed' && !!getters.getCustomerId
         }
     },
     mutations: {
