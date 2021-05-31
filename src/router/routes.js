@@ -356,6 +356,21 @@ export default function routes (app) {
                     }
                 },
                 {
+                    path: '/customer/*',
+                    component: () => import('pages/Proxy'),
+                    meta: {
+                        title: i18n.t('Customer Details'),
+                        subtitle: i18n.t('Customer Details')
+                    },
+                    async beforeEnter (routeTo, routeFrom, next) {
+                        if (app.store.getters['user/isOldCSCProxyingAllowed']) {
+                            next()
+                        } else {
+                            next('/')
+                        }
+                    }
+                },
+                {
                     path: '*',
                     component: CscPageError404,
                     meta: {
