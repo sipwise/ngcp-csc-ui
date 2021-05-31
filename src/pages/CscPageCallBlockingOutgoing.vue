@@ -2,6 +2,7 @@
     <csc-call-blocking
         id="csc-page-call-blocking-outgoing"
         page-name="outgoing"
+        block-list="block_out_list"
     />
 </template>
 
