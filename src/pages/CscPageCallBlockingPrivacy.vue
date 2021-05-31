@@ -6,7 +6,9 @@
         <q-list
             class="col col-xs-12 col-md-4"
         >
-            <q-item>
+            <q-item
+                v-if="hasSubscriberProfileAttribute('clir')"
+            >
                 <q-item-section>
                     <q-toggle
                         :label="privacyLabel"
@@ -74,6 +76,9 @@ export default {
             'privacyUpdated',
             'privacyLoadingState',
             'privacyLoading'
+        ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
         ])
     },
     watch: {
