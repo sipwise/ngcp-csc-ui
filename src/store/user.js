@@ -186,7 +186,10 @@ export default {
             return state.logoRequested
         },
         hasSubscriberProfileAttribute: (state) => (attribute) => {
-            return state.profile?.attributes.includes(attribute) || false
+            return state.profile ? state.profile.attributes.includes(attribute) : true
+        },
+        hasSubscriberProfileAttributes: (state) => (attributes) => {
+            return state.profile ? state.profile.attributes.some(item => attributes.includes(item)) : true
         }
     },
     mutations: {

@@ -186,7 +186,7 @@
         >
             <csc-more-menu>
                 <csc-popup-menu-item
-                    v-if="mapping.type === 'cfu'"
+                    v-if="mapping.type === 'cfu' && hasSubscriberProfileAttribute('cft')"
                     icon="ring_volume"
                     :label="$t('Ring primary number')"
                     @click="ringPrimaryNumberEvent"
@@ -266,7 +266,7 @@
 <script>
 import _ from 'lodash'
 import {
-    mapActions
+    mapActions, mapGetters
 } from 'vuex'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
@@ -315,6 +315,9 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
+        ]),
         clickableClasses () {
             return ['cursor-pointer', 'text-weight-bold', 'text-primary']
         },

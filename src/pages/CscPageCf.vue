@@ -4,6 +4,7 @@
         class="q-pa-lg"
     >
         <template
+            v-if="hasSubscriberProfileAttributes(['cfu', 'cfna', 'cfb'])"
             v-slot:header
         >
             <q-btn
@@ -16,16 +17,19 @@
             >
                 <csc-popup-menu>
                     <csc-popup-menu-item
+                        v-if="hasSubscriberProfileAttribute('cfu')"
                         color="primary"
                         :label="$t('If available')"
                         @click="createMapping({ type: 'cfu'})"
                     />
                     <csc-popup-menu-item
+                        v-if="hasSubscriberProfileAttribute('cfna')"
                         color="primary"
                         :label="$t('If not available')"
                         @click="createMapping({ type: 'cfna'})"
                     />
                     <csc-popup-menu-item
+                        v-if="hasSubscriberProfileAttribute('cfb')"
                         color="primary"
                         :label="$t('If busy')"
                         @click="createMapping({ type: 'cfb'})"
@@ -111,6 +115,10 @@ export default {
         ]),
         ...mapGetters('callForwarding', [
             'groups'
+        ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute',
+            'hasSubscriberProfileAttributes'
         ])
     },
     async mounted () {
