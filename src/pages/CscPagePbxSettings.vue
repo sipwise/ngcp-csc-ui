@@ -5,7 +5,9 @@
         class="q-pa-lg"
     >
         <q-list>
-            <q-item>
+            <q-item
+                v-if="hasSubscriberProfileAttribute('clir_intrapbx')"
+            >
                 <q-item-section
                     side
                 >
@@ -57,6 +59,9 @@ export default {
     computed: {
         ...mapGetters('pbxSeats', [
             'getIntraPbx'
+        ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
         ]),
         ...mapState('pbxSeats', [
             'seatUpdateState',
