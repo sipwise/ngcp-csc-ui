@@ -29,7 +29,9 @@
                     />
                 </q-item-section>
             </q-item>
-            <q-item>
+            <q-item
+                v-if="hasSubscriberProfileAttribute('language')"
+            >
                 <q-item-section>
                     <q-select
                         v-model="selectedOption"
