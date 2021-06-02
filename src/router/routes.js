@@ -216,7 +216,8 @@ export default function routes (app) {
                     component: CscPageFaxSettings,
                     meta: {
                         title: i18n.t('Fax Settings'),
-                        subtitle: i18n.t('Set your fax settings')
+                        subtitle: i18n.t('Set your fax settings'),
+                        profileAttribute: 'fax_server'
                     },
                     async beforeEnter (routeTo, routeFrom, next) {
                         if (app.store.getters['user/hasFaxCapability']) {

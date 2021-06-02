@@ -137,7 +137,7 @@ export default {
                     to: '/user/fax-settings',
                     icon: 'fas fa-fax',
                     label: this.$t('Fax Settings'),
-                    visible: this.hasFaxCapability
+                    visible: this.hasFaxCapability && this.hasSubscriberProfileAttribute('fax_server')
                 },
                 {
                     icon: 'miscellaneous_services',
