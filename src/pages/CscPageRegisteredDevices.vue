@@ -5,6 +5,7 @@
         class="q-pa-lg"
     >
         <q-table
+            class="no-shadow"
             :columns="columns"
             :data="subscriberRegistrations"
             :loading="$wait.is('loadSubscriberRegistrations')"

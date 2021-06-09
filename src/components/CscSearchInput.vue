@@ -7,7 +7,6 @@
         >
             <q-input
                 v-model="phraseInput"
-                dark
                 :label="label"
                 :disable="searching"
                 @keyup.enter="search"

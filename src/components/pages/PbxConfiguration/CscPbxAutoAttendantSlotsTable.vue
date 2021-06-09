@@ -6,7 +6,7 @@
         :pagination.sync="pagination"
         :hide-pagination="true"
         row-key="name"
-        class="csc-item-odd"
+        class="csc-item-odd no-shadow"
     >
         <template v-slot:loading>
             <q-inner-loading

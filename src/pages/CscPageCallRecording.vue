@@ -35,6 +35,7 @@
         <template>
             <div class="q-pa-md">
                 <q-table
+                    class="no-shadow"
                     :data="data"
                     :columns="columns"
                     :loading="$wait.is('csc-call-recordings')"
@@ -102,7 +103,7 @@
                                     :loading="$wait.is('csc-call-recordings') && $wait.is('loading-stream-' + props.row.id)"
                                     :hide-pagination="true"
                                     row-key="name"
-                                    class="csc-item-odd"
+                                    class="csc-item-odd no-shadow"
                                 >
                                     <template v-slot:loading>
                                         <q-inner-loading

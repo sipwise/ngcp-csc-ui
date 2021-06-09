@@ -117,25 +117,3 @@ export default {
     }
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    //.csc-call-page-mobile
-    //    min-height calc(100vh - 203px)
-    //.csc-call-page
-    //    .csc-communication-actions
-    //        position absolute
-    //        top $header-height
-    //        right 0
-    //        left 0
-    //        .q-btn
-    //            box-shadow none
-    //            .q-btn-inner
-    //                color $dark
-    //.csc-info
-    //    background-color $info
-    //    padding  $flex-gutter-md
-    //    margin-bottom $flex-gutter-lg
-    //    .csc-info-text
-    //        line-height 1.4em
-    //        color $white
-</style>

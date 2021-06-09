@@ -4,6 +4,7 @@
     >
         <div class="q-pa-md">
             <q-table
+                class="no-shadow"
                 :data="data"
                 :columns="columns"
                 :loading="$wait.is('csc-pbx-auto-attendant')"

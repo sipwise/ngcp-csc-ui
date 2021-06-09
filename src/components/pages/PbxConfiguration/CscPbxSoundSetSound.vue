@@ -54,7 +54,6 @@
                 >
                     <q-btn
                         v-if="!selectedFile"
-                        dark
                         flat
                         color="primary"
                         icon="folder"
@@ -64,7 +63,6 @@
                     </q-btn>
                     <q-btn
                         v-if="selectedFile && !isUploading"
-                        dark
                         flat
                         color="primary"
                         icon="cloud_upload"
@@ -74,7 +72,6 @@
                     </q-btn>
                     <q-btn
                         v-if="selectedFile && !isUploading"
-                        dark
                         flat
                         color="white"
                         icon="undo"

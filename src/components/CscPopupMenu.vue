@@ -4,7 +4,6 @@
     >
         <q-list
             v-bind="$attrs"
-            class="bg-dark"
             v-on="$listeners"
         >
             <slot />

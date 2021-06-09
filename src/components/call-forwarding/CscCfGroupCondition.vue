@@ -1,6 +1,6 @@
 <template>
     <q-card
-        class="bg-dark no-padding no-margin relative-position"
+        class="no-padding no-margin relative-position bg-transparent"
     >
         <q-item
             class="no-margin no-padding"

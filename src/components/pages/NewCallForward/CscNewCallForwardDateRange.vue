@@ -101,7 +101,6 @@
         >
             <q-input
                 v-model="dayFromFormatted"
-                dark
                 :placeholder="$t('Start date')"
                 @click="openDayFrom()"
             >
@@ -115,7 +114,6 @@
             <q-input
                 v-model="dayToFormatted"
                 :disable="!dayFrom"
-                dark
                 :placeholder="$t('End date')"
                 @click="openDayTo()"
             >
@@ -132,7 +130,6 @@
         >
             <q-input
                 v-model="hourFromFormatted"
-                dark
                 :disable="!dayFrom"
                 :placeholder="$t('Start time')"
                 @click="openHourFrom()"
@@ -146,7 +143,6 @@
             </q-input>
             <q-input
                 v-model="hourToFormatted"
-                dark
                 :placeholder="$t('End time')"
                 :disable="!dayTo"
                 @click="openHourTo()"

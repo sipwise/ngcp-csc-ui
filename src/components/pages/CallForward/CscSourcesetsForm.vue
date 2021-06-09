@@ -2,7 +2,6 @@
     <div class="add-source-form">
         <q-input
             v-model="source"
-            dark
             autofocus
             :label="$t('Source')"
             color="primary"

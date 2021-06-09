@@ -7,7 +7,6 @@
             filled
             mask="time"
             :rules="['time']"
-            dark
             dense
             no-error-icon
             :placeholder="$t('Start time')"
@@ -51,7 +50,6 @@
             filled
             mask="time"
             :rules="['time']"
-            dark
             dense
             no-error-icon
             :placeholder="$t('End time')"

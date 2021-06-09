@@ -1,6 +1,7 @@
 <template>
     <csc-page-sticky-tabs
         v-model="selectedTab"
+        class="q-pa-lg"
     >
         <template
             v-slot:tabs

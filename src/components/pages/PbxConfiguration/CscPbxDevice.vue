@@ -64,7 +64,6 @@
             >
                 <q-input
                     v-model="changes.identifier"
-                    dark
                     @keyup.enter="save"
                 />
                 <csc-fade>

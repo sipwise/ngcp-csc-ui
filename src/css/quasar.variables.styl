@@ -12,6 +12,8 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
+$darkBase      = #151d30
+
 $primary   = #40cc3d
 $secondary = #3b3440
 $tertiary  = #6e747f
@@ -23,13 +25,12 @@ $negative  = #de2a2a
 $info      = #38c7ce
 $warning   = #ffcc24
 $faded     = #999999
-$dark      = #151d30
+$dark      = alpha($darkBase, 80%)
 $white     = #ffffff
 $light     = #cccccc
 
-$main-menu-background = alpha(#151d30, 80%)
+$main-menu-background = $dark
 $main-menu-background-light = alpha($primary, 10%)
-
 
 $main-menu-item-hover-background = lighten($main-menu-background, 12%)
 $main-menu-title-color = $white
