@@ -478,7 +478,7 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath('//*[@id="csc-page-speed-dial"]//div/label').click()
         driver.find_element_by_xpath('/html/body//*[contains(., "*5")]').click()
         fill_element(driver, '//*[@id="csc-page-speed-dial"]//div/label[2]//div/input[@aria-label="Destination"]', "testination")
-        driver.find_element_by_xpath('//*[@id="csc-page-speed-dial"]//button[contains(., "Save")]').click()
+        click_js(driver, '//*[@id="csc-page-speed-dial"]//button[contains(., "Save")]')
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-page-speed-dial"]//div[contains(., "When I dial *5")]')) > 0,
             "Speed dial button is not correct")
