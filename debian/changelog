@@ -1,3 +1,40 @@
+ngcp-csc-ui (9.5.1.0+0~mr9.5.1.0) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [cd6e98a] TT#120900 CSC: CallRecording - Integrate server side pagination
+  * [6bc5155] TT#100756 CallRecordings - As Customer, I want to filter CallRecordings by time range
+  * [c07d21b] TT#117522 CallRecordings - As a Customer, I want to filter CallRecordings by caller and callee
+  * [180cc90] TT#119466 CallRecordings - As Subscriber I want o be able to filter CallRecordings by CallID
+  * [01032ca] TT#117521 Auto-attendant - As a SubscriberAdmin, I want to configure Auto-attendant slots
+  * [2609e1b] TT#121651 CallRecordings - Integrate CscAudioPlayer
+  * [be03c7f] TT#122353 CallRecordings - Lazy load audio files
+  * [5388fe2] TT#122200 SubscriberProfiles - As Subscriber, I want to see the "Reminder"-Feature, if I have the permission according to the SubscriberProfile, to do so
+  * [508205b] TT#123750 SubscriberProfiles - As Subscriber, I want to see the "VoiceMail"-Feature if I have the permission to do so
+  * [df1df09] TT#124260 SubscriberProfiles - As Subscriber, I want to see the "MusicOnHold"-Feature if I have the permission to do so
+  * [255fb80] TT#124257 SubscriberProfiles - As Subscriber, I want to see the "Speeddial"-Feature if I have the permission to do so
+  * [202d8e0] TT#124265 SubscriberProfiles - Integrate block_in_list
+  * [88d4591] TT#124268 SubscriberProfiles - Integrate block_out_list
+  * [0742ffe] TT#124269 SubscriberProfiles - Integrate clir
+  * [00b6452] TT#124261 SubscriberProfiles - Integrate block_in_mode
+  * [f19270d] TT#124263 SubscriberProfiles - Integrate block_in_clir
+  * [893d1da] TT#124267 SubscriberProfiles - Integrate block_out_mode
+  * [0b0dc18] TT#124271 SubscriberProfiles - Integrate clir_intrapbx
+  * [cd17075] TT#124401 SubscriberProfiles - Integrate language
+  * [e16ccb6] TT#124277 SubscriberProfiles - Integrate cfu/cfb/cfna/cft TT#124407 SubscriberProfiles - Show all features if no SubscriberProfile and no SubscriberProfileSet is set
+  * [d1cb5f7] TT#124406 SubscriberProfiles - Integrate fax_server
+
+  [ Manuel Montecelo ]
+  * [6ea6a06] TT#118659 Switch Dockerfiles from Debian buster to bullseye
+
+  [ Sergii Leonenko ]
+  * [06ba06a] TT#96358 As a Subscriber, I want to see a list of my SubscriberRegistrations
+  * [ab1bfa6] TT#122027 huge Sipwise logo bugfix
+
+  [ Hans-Peter Herzog ]
+  * [0742b47] TT#125301 Branding - Secondary color is used to colorize the background
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Jun 2021 16:36:39 +0200
+
 ngcp-csc-ui (9.5.0.0+0~mr9.5.0.0) unstable; urgency=medium
 
   [ Sergii Leonenko ]
