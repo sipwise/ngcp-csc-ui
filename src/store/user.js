@@ -23,6 +23,7 @@ import {
 } from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import { setSession } from 'src/storage'
+import { get } from 'src/api/common'
 
 export default {
     namespaced: true,
@@ -56,7 +57,8 @@ export default {
         logoRequested: false,
         resellerBranding: null,
         defaultBranding: {},
-        subscriberRegistrations: []
+        subscriberRegistrations: [],
+        platformInfo: null
     },
     getters: {
         isLogged (state) {
@@ -302,6 +304,9 @@ export default {
         },
         setProfile (state, value) {
             state.profile = value
+        },
+        platformInfo (state, payload) {
+            state.platformInfo = payload
         }
     },
     actions: {
@@ -329,13 +334,11 @@ export default {
                     context.commit('userDataRequesting')
                     const userData = await getUserData(getSubscriberId())
                     context.commit('userDataSucceeded', userData)
-
                     if (_.isNumber(context.getters.jwtTTL)) {
                         setTimeout(() => {
                             context.dispatch('logout')
                         }, context.getters.jwtTTL * 1000)
                     }
-
                     if (context.getters.hasRtcEngineCapabilityEnabled && context.getters.isRtcEngineUiVisible) {
                         context.commit('rtcEngineInitRequesting')
                         Vue.$rtcEngine.setNgcpApiJwt(getJwt())
@@ -351,6 +354,9 @@ export default {
                         const profile = await getSubscriberProfile(userData.subscriber.profile_id)
                         context.commit('setProfile', profile)
                     }
+                    context.commit('platformInfo', await get({
+                        path: 'api/platforminfo'
+                    }))
                     await context.dispatch('forwardHome')
                 } catch (err) {
                     console.debug(err)
