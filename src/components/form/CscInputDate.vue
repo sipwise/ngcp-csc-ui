@@ -2,7 +2,7 @@
     <csc-input
         :value="value"
         v-bind="$attrs"
-        @click="$refs.popupTime.show()"
+        @click="loadFormattedDate(); $refs.popupTime.show()"
         @input="$emit('input', $event)"
     >
         <template
@@ -13,6 +13,7 @@
                 color="primary"
                 dense
                 flat
+                @click="loadFormattedDate();"
             >
                 <q-popup-proxy
                     ref="popupTime"
@@ -31,6 +32,7 @@
 
 <script>
 import CscInput from 'components/form/CscInput'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscInputDate',
     components: { CscInput },
@@ -42,6 +44,19 @@ export default {
     },
     data () {
         return {}
+    },
+    computed: {
+        ...mapGetters([
+            'getCurrentFormattedDateWithDash'
+        ])
+    },
+    methods: {
+        loadFormattedDate () {
+            const currentDate = this.getCurrentFormattedDateWithDash
+            if (!this.value) {
+                this.$emit('input', currentDate)
+            }
+        }
     }
 }
 </script>
