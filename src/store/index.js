@@ -4,6 +4,7 @@ import {
     i18n
 } from 'src/boot/i18n'
 import _ from 'lodash'
+import { date } from 'quasar'
 
 import CallBlockingModule from './call-blocking'
 import CallForwardModule from './call-forward'
@@ -34,6 +35,7 @@ import ConferenceModule from './conference'
 import RtcEnginePlugin from 'src/plugins/rtc-engine'
 import CallPlugin from 'src/plugins/call'
 import ConferencePlugin from 'src/plugins/conference'
+import { INTERNAL_DATE_FORMAT_SLASH, INTERNAL_DATE_FORMAT_DASH, INTERNAL_DATE_FORMAT_DASH_HOUR } from 'src/constants'
 
 import {
     getLanguageLabels
@@ -116,6 +118,19 @@ export default function (/* { ssrContext } */) {
             },
             title () {
                 return i18n.t('CSC')
+            },
+            getCurrentFormattedDateWithDash () {
+                const currentDate = Date.now()
+                return date.formatDate(currentDate, INTERNAL_DATE_FORMAT_DASH)
+            },
+            getCurrentFormattedDateWithDashAndHour () {
+                const currentDate = new Date()
+                currentDate.setHours(0, 0, 0, 0)
+                return date.formatDate(currentDate, INTERNAL_DATE_FORMAT_DASH_HOUR)
+            },
+            getCurrentFormattedDateWithSlash () {
+                const currentDate = Date.now()
+                return date.formatDate(currentDate, INTERNAL_DATE_FORMAT_SLASH)
             }
         },
         mutations: {

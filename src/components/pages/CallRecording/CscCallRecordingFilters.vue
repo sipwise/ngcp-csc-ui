@@ -29,6 +29,7 @@
                         <q-icon
                             name="event"
                             class="cursor-pointer"
+                            @click="loadFormattedDateStart()"
                         >
                             <q-popup-proxy
                                 transition-show="scale"
@@ -93,6 +94,7 @@
                         <q-icon
                             name="event"
                             class="cursor-pointer"
+                            @click="loadFormattedDateEnd()"
                         >
                             <q-popup-proxy
                                 transition-show="scale"
@@ -193,6 +195,7 @@
 
 <script>
 import _ from 'lodash'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscCallRecordingFilters',
@@ -212,6 +215,9 @@ export default {
         }
     },
     computed: {
+        ...mapGetters([
+            'getCurrentFormattedDateWithDashAndHour'
+        ]),
         filterType () {
             return this.filterTypeModel && this.filterTypeModel.value
         },
@@ -299,6 +305,18 @@ export default {
             this.typedFilter = null
             this.dateStartFilter = null
             this.dateEndFilter = null
+        },
+        loadFormattedDateStart () {
+            const currentDate = this.getCurrentFormattedDateWithDashAndHour
+            if (!this.dateStartFilter) {
+                this.dateStartFilter = currentDate
+            }
+        },
+        loadFormattedDateEnd () {
+            const currentDate = this.getCurrentFormattedDateWithDashAndHour
+            if (!this.dateEndFilter) {
+                this.dateEndFilter = currentDate
+            }
         }
     }
 }
