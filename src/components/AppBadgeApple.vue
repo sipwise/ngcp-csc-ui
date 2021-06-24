@@ -9,7 +9,7 @@
             <img
                 style="width: 100%"
                 src="apple-store-badge.svg"
-            />
+            >
         </a>
     </div>
 </template>

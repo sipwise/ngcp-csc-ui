@@ -153,46 +153,7 @@
                 :is-pbx-admin="isPbxAdmin"
                 :is-pbx-configuration="isPbxConfiguration"
             />
-            <q-list
-                v-if="platformInfo.app.apple || platformInfo.app.android"
-                dense
-            >
-                <q-item-label
-                    header
-                >
-                    {{ $t('Apps') }}
-                </q-item-label>
-                <q-item
-                    v-if="platformInfo.app.apple"
-                >
-                    <q-item-section>
-                        <q-item-label
-                            class="q-pa-sm"
-                        >
-                            {{ platformInfo.app.apple.name }}
-                        </q-item-label>
-                        <app-badge-apple
-                            class="app-badge"
-                            :href="platformInfo.app.apple.url"
-                        />
-                    </q-item-section>
-                </q-item>
-                <q-item
-                    v-if="platformInfo.app.android"
-                >
-                    <q-item-section>
-                        <q-item-label
-                            class="q-pa-sm"
-                        >
-                            {{ platformInfo.app.android.name }}
-                        </q-item-label>
-                        <app-badge-google
-                            class="app-badge"
-                            :href="platformInfo.app.android.url"
-                        />
-                    </q-item-section>
-                </q-item>
-            </q-list>
+            <aui-mobile-app-badges />
         </q-drawer>
         <q-page-container
             id="csc-page-main"
@@ -264,14 +225,12 @@ import {
 import CscMainMenuTop from 'components/CscMainMenuTop'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import AppBadgeApple from 'components/AppBadgeApple'
-import AppBadgeGoogle from 'components/AppBadgeGoogle'
+import AuiMobileAppBadges from 'components/AuiMobileAppBadges'
 
 export default {
     name: 'CscMainLayout',
     components: {
-        AppBadgeGoogle,
-        AppBadgeApple,
+        AuiMobileAppBadges,
         CscPopupMenuItem,
         CscPopupMenu,
         CscMainMenuTop,
@@ -353,8 +312,7 @@ export default {
         ]),
         ...mapState('user', [
             'resellerBranding',
-            'defaultBranding',
-            'platformInfo'
+            'defaultBranding'
         ]),
         ...mapGetters('communication', [
             'createFaxState',
