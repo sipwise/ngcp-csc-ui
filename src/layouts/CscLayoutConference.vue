@@ -158,10 +158,11 @@
                             <q-item
                                 class="cursor-pointer"
                             >
-                                <q-item-main
-                                    :label="muteLabel()"
+                                <q-item-section
                                     @click="toggleMuteAll()"
-                                />
+                                >
+                                    <q-item-label>{{ muteLabel }}</q-item-label>
+                                </q-item-section>
                             </q-item>
                         </q-list>
                     </q-menu>
@@ -268,6 +269,11 @@ export default {
         },
         conferenceHasParticipants () {
             return Object.keys(this.participantsList).length < 1
+        },
+        muteLabel () {
+            return _.isEmpty(this.mutedState)
+                ? this.$t('Mute all')
+                : this.$t('Unmute all')
         }
     },
     watch: {
@@ -323,11 +329,6 @@ export default {
             } else {
                 this.$store.dispatch('conference/unMuteAll')
             }
-        },
-        muteLabel () {
-            return _.isEmpty(this.mutedState)
-                ? this.$t('Mute all')
-                : this.$t('Unmute all')
         },
         async join (conferenceId) {
             if (this.hasConferenceId) {
