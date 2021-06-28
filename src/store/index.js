@@ -37,10 +37,6 @@ import CallPlugin from 'src/plugins/call'
 import ConferencePlugin from 'src/plugins/conference'
 import { INTERNAL_DATE_FORMAT_SLASH, INTERNAL_DATE_FORMAT_DASH, INTERNAL_DATE_FORMAT_DASH_HOUR } from 'src/constants'
 
-import {
-    getLanguageLabels
-} from 'src/i18n'
-
 Vue.use(RtcEnginePlugin)
 Vue.use(CallPlugin)
 Vue.use(ConferencePlugin)
@@ -190,9 +186,6 @@ export default function (/* { ssrContext } */) {
                 }).onConferenceEnded(() => {
                     store.dispatch('conference/leave')
                 })
-            },
-            function initI18n (store) {
-                store.commit('user/setLanguageLabels', getLanguageLabels())
             }
         ],
         // enable strict mode (adds overhead!)

@@ -49,66 +49,6 @@
                     >
                         {{ $t('do not ring own phone') }}
                     </q-item-label>
-                    <!--                    <div-->
-                    <!--                        v-if="!isMobile"-->
-                    <!--                    >-->
-                    <!--                        <span v-if="ownPhone">-->
-                    <!--                            <span>-->
-                    <!--                                {{ $t('first ring') }}-->
-                    <!--                            </span>-->
-                    <!--                            <span>-->
-                    <!--                                {{ $t('own phone') }}-->
-                    <!--                            </span>-->
-                    <!--                            <span>-->
-                    <!--                                {{ $t('for') }}-->
-                    <!--                            </span>-->
-                    <!--                            <span>-->
-                    <!--                                {{ ownPhoneTimeout || 0 }}-->
-                    <!--                            </span>-->
-                    <!--                            <span>-->
-                    <!--                                {{ $t('secs') }}-->
-                    <!--                            </span>-->
-                    <!--                        </span>-->
-                    <!--                        <span v-else>-->
-                    <!--                            {{ $t('do not ring own phone') }}-->
-                    <!--                        </span>-->
-                    <!--                    </div>-->
-
-                    <!--                    <div-->
-                    <!--                        v-if="isMobile"-->
-                    <!--                    >-->
-                    <!--                        <div-->
-                    <!--                            v-if="ownPhone"-->
-                    <!--                        >-->
-                    <!--                            {{ $t('own phone') }}-->
-                    <!--                        </div>-->
-                    <!--                        <div-->
-                    <!--                            v-else-->
-                    <!--                        >-->
-                    <!--                            {{ $t('do not ring own phone') }}-->
-                    <!--                        </div>-->
-                    <!--                        <div-->
-                    <!--                            v-if="ownPhone"-->
-                    <!--                        >-->
-                    <!--                            <span v-if="ownPhone">-->
-                    <!--                                <span>-->
-                    <!--                                    {{ $t('first ring') }}-->
-                    <!--                                </span>-->
-                    <!--                                <span>-->
-                    <!--                                    {{ $t('for') }}-->
-                    <!--                                </span>-->
-                    <!--                                <span class="dest-values">-->
-                    <!--                                    {{ ownPhoneTimeout || 0 }}-->
-                    <!--                                </span>-->
-                    <!--                                <span>-->
-                    <!--                                    {{ $t('secs') }}-->
-                    <!--                                </span>-->
-                    <!--                            </span>-->
-                    <!--                            <span v-else>-->
-                    <!--                                {{ $t('do not ring own phone') }}-->
-                    <!--                            </span>-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
                 </q-item-section>
 
                 <q-item-section
@@ -139,35 +79,6 @@
                             @click="showModal()"
                         />
                     </csc-more-menu>
-                    <!--                    <q-menu-->
-                    <!--                        ref="popover"-->
-                    <!--                    >-->
-                    <!--                        <q-list-->
-                    <!--                            link-->
-                    <!--                            no-border-->
-                    <!--                            highlight-->
-                    <!--                        >-->
-                    <!--                            <q-item-->
-                    <!--                                v-if="isMobile"-->
-                    <!--                                @click="toggle();$refs.popover.close()"-->
-                    <!--                            >-->
-                    <!--                                <q-item-main-->
-                    <!--                                    :label="toggleTimeoutLabel"-->
-                    <!--                                />-->
-                    <!--                                <q-item-side-->
-                    <!--                                    :icon="toggleIcon"-->
-                    <!--                                    color="secondary"-->
-                    <!--                                />-->
-                    <!--                            </q-item>-->
-                    <!--                            <q-item @click="showModal();$refs.popover.close()">-->
-                    <!--                                <q-item-main :label="$t('Edit timeout')" />-->
-                    <!--                                <q-item-side-->
-                    <!--                                    icon="fa-edit"-->
-                    <!--                                    color="secondary"-->
-                    <!--                                />-->
-                    <!--                            </q-item>-->
-                    <!--                        </q-list>-->
-                    <!--                    </q-menu>-->
                 </q-item-section>
             </q-item>
             <q-item

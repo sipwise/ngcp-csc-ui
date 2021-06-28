@@ -125,40 +125,6 @@
                     @click="deleteDestination(index)"
                 />
             </csc-more-menu>
-            <!--                <q-popover ref="popover">-->
-            <!--                    <q-list-->
-            <!--                        link-->
-            <!--                        no-border-->
-            <!--                    >-->
-            <!--                        <q-item-->
-            <!--                            v-if="destinations.length > 1 && !hasNoUpOption(index)"-->
-            <!--                            @click="moveDestination('up', index), $refs.popover[index].close()"-->
-            <!--                        >-->
-            <!--                            <q-item-main :label="$t('Move up')" />-->
-            <!--                            <q-item-side-->
-            <!--                                icon="keyboard_arrow_up"-->
-            <!--                                color="white"-->
-            <!--                            />-->
-            <!--                        </q-item>-->
-            <!--                        <q-item-->
-            <!--                            v-if="destinations.length > 1 && !hasNoDownOption(index)"-->
-            <!--                            @click="moveDestination('down', index), $refs.popover[index].close()"-->
-            <!--                        >-->
-            <!--                            <q-item-main :label="$t('Move down')" />-->
-            <!--                            <q-item-side-->
-            <!--                                icon="keyboard_arrow_down"-->
-            <!--                                color="white"-->
-            <!--                            />-->
-            <!--                        </q-item>-->
-            <!--                        <q-item @click="deleteDestination(index), $refs.popover[index].close()">-->
-            <!--                            <q-item-main :label="$t('Remove')" />-->
-            <!--                            <q-item-side-->
-            <!--                                icon="delete"-->
-            <!--                                color="negative"-->
-            <!--                            />-->
-            <!--                        </q-item>-->
-            <!--                    </q-list>-->
-            <!--                </q-popover>-->
         </q-item-section>
     </q-item>
 </template>

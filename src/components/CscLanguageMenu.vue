@@ -17,9 +17,9 @@
                     clickable
                     @click="changeSessionLanguage(language[0])"
                 >
-                    <q-item-main
-                        :label="language[1]"
-                    />
+                    <q-item-section>
+                        <q-item-label>{{ language[1] }}</q-item-label>
+                    </q-item-section>
                 </q-item>
             </q-list>
         </q-expansion-item>
@@ -54,9 +54,3 @@ export default {
     }
 }
 </script>
-
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-language-selection
-        .q-item-side-right
-            color white
-</style>
