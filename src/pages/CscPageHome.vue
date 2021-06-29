@@ -57,6 +57,12 @@ import CscInlineAlertInfo from 'components/CscInlineAlertInfo'
 import CscInput from 'components/form/CscInput'
 
 export default {
+    name: 'CscPageHome',
+    meta () {
+        return {
+            title: this.pageTitle
+        }
+    },
     components: {
         CscInput,
         CscInlineAlertInfo,
@@ -79,7 +85,9 @@ export default {
             'hasRtcEngineCapabilityEnabled',
             'desktopSharingInstall',
             'isCallEnabled',
-            'isCallInitializing'
+            'isCallInitializing',
+            'callStateTitle',
+            'callStateSubtitle'
         ]),
         dialpadOpened () {
             return this.callState === 'input' &&
@@ -97,6 +105,13 @@ export default {
                 classes.push('csc-call-page-mobile')
             }
             return classes
+        },
+        pageTitle () {
+            let title = this.callStateTitle
+            if (this.callStateSubtitle !== '') {
+                title += ' (' + this.callStateSubtitle + ')'
+            }
+            return title
         }
     },
     methods: {

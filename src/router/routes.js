@@ -50,15 +50,21 @@ export default function routes (app) {
                     path: 'home',
                     component: CscPageHome,
                     meta: {
-                        title: i18n.t('Start new call')
+                        get title () {
+                            return i18n.t('Start new call')
+                        }
                     }
                 },
                 {
                     path: 'conversations',
                     component: CscPageConversations,
                     meta: {
-                        title: i18n.t('Conversations'),
-                        subtitle: i18n.t('Calls, Faxes, VoiceMails')
+                        get title () {
+                            return i18n.t('Conversations')
+                        },
+                        get subtitle () {
+                            return i18n.t('Calls, Faxes, VoiceMails')
+                        }
                     }
                 },
                 {
@@ -69,71 +75,105 @@ export default function routes (app) {
                     path: 'call-forwarding',
                     component: CscPageCf,
                     meta: {
-                        title: i18n.t('Call Forwarding')
+                        get title () {
+                            return i18n.t('Call Forwarding')
+                        }
                     }
                 },
                 {
                     path: 'call-forward/always',
                     component: CscPageCallForwardAlways,
                     meta: {
-                        title: i18n.t('Call Forwarding'),
-                        subtitle: i18n.t('Always')
+                        get title () {
+                            return i18n.t('Call Forwarding')
+                        },
+                        get subtitle () {
+                            return i18n.t('Always')
+                        }
                     }
                 },
                 {
                     path: 'call-forward/company-hours',
                     component: CscPageCallForwardCompanyHours,
                     meta: {
-                        title: i18n.t('Call Forwarding'),
-                        subtitle: i18n.t('Company Hours')
+                        get title () {
+                            return i18n.t('Call Forwarding')
+                        },
+                        get subtitle () {
+                            return i18n.t('Company Hours')
+                        }
                     }
                 },
                 {
                     path: 'call-forward/after-hours',
                     component: CscPageCallForwardAfterHours,
                     meta: {
-                        title: i18n.t('Call Forwarding'),
-                        subtitle: i18n.t('After Hours')
+                        get title () {
+                            return i18n.t('Call Forwarding')
+                        },
+                        get subtitle () {
+                            return i18n.t('After Hours')
+                        }
                     }
                 },
                 {
                     path: 'call-blocking/incoming',
                     component: CscPageCallBlockingIncoming,
                     meta: {
-                        title: i18n.t('Call Blocking'),
-                        subtitle: i18n.t('Incoming')
+                        get title () {
+                            return i18n.t('Call Blocking')
+                        },
+                        get subtitle () {
+                            return i18n.t('Incoming')
+                        }
                     }
                 },
                 {
                     path: 'call-blocking/outgoing',
                     component: CscPageCallBlockingOutgoing,
                     meta: {
-                        title: i18n.t('Call Blocking'),
-                        subtitle: i18n.t('Outgoing')
+                        get title () {
+                            return i18n.t('Call Blocking')
+                        },
+                        get subtitle () {
+                            return i18n.t('Outgoing')
+                        }
                     }
                 },
                 {
                     path: 'call-blocking/privacy',
                     component: CscPageCallBlockingPrivacy,
                     meta: {
-                        title: i18n.t('Call Blocking'),
-                        subtitle: i18n.t('Privacy')
+                        get title () {
+                            return i18n.t('Call Blocking')
+                        },
+                        get subtitle () {
+                            return i18n.t('Privacy')
+                        }
                     }
                 },
                 {
                     path: 'recordings',
                     component: CscPageCallRecording,
                     meta: {
-                        title: i18n.t('Recordings'),
-                        subtitle: i18n.t('Call recordings')
+                        get title () {
+                            return i18n.t('Recordings')
+                        },
+                        get subtitle () {
+                            return i18n.t('Call recordings')
+                        }
                     }
                 },
                 {
                     path: 'reminder',
                     component: CscPageReminder,
                     meta: {
-                        title: i18n.t('Reminder'),
-                        subtitle: i18n.t('Set your personal alarm'),
+                        get title () {
+                            return i18n.t('Reminder')
+                        },
+                        get subtitle () {
+                            return i18n.t('Set your personal alarm')
+                        },
                         profileAttribute: 'reminder'
                     }
                 },
@@ -141,8 +181,12 @@ export default function routes (app) {
                     path: 'speeddial',
                     component: CscPageSpeedDial,
                     meta: {
-                        title: i18n.t('Speed Dial'),
-                        subtitle: i18n.t('Set your speed dials'),
+                        get title () {
+                            return i18n.t('Speed Dial')
+                        },
+                        get subtitle () {
+                            return i18n.t('Set your speed dials')
+                        },
                         profileAttribute: 'speed_dial'
                     }
                 },
@@ -150,64 +194,96 @@ export default function routes (app) {
                     path: 'pbx-configuration/groups',
                     component: CscPagePbxGroups,
                     meta: {
-                        title: i18n.t('PBX Configuration'),
-                        subtitle: i18n.t('Groups')
+                        get title () {
+                            return i18n.t('PBX Configuration')
+                        },
+                        get subtitle () {
+                            return i18n.t('Groups')
+                        }
                     }
                 },
                 {
                     path: 'pbx-configuration/seats',
                     component: CscPagePbxSeats,
                     meta: {
-                        title: i18n.t('PBX Configuration'),
-                        subtitle: i18n.t('Seats')
+                        get title () {
+                            return i18n.t('PBX Configuration')
+                        },
+                        get subtitle () {
+                            return i18n.t('Seats')
+                        }
                     }
                 },
                 {
                     path: 'pbx-configuration/devices',
                     component: CscPagePbxDevices,
                     meta: {
-                        title: i18n.t('PBX Configuration'),
-                        subtitle: i18n.t('Devices')
+                        get title () {
+                            return i18n.t('PBX Configuration')
+                        },
+                        get subtitle () {
+                            return i18n.t('Devices')
+                        }
                     }
                 },
                 {
                     path: 'pbx-configuration/call-queues',
                     component: CscPagePbxCallQueues,
                     meta: {
-                        title: i18n.t('PBX Configuration'),
-                        subtitle: i18n.t('Call Queues')
+                        get title () {
+                            return i18n.t('PBX Configuration')
+                        },
+                        get subtitle () {
+                            return i18n.t('Call Queues')
+                        }
                     }
                 },
                 {
                     path: 'pbx-configuration/sound-sets',
                     component: CscPagePbxSoundSets,
                     meta: {
-                        title: i18n.t('PBX Configuration'),
-                        subtitle: i18n.t('Sound Sets')
+                        get title () {
+                            return i18n.t('PBX Configuration')
+                        },
+                        get subtitle () {
+                            return i18n.t('Sound Sets')
+                        }
                     }
                 },
                 {
                     path: 'pbx-configuration/ms-configs',
                     component: CscPagePbxMsConfigs,
                     meta: {
-                        title: i18n.t('PBX Configuration'),
-                        subtitle: i18n.t('Manager Secretary')
+                        get title () {
+                            return i18n.t('PBX Configuration')
+                        },
+                        get subtitle () {
+                            return i18n.t('Manager Secretary')
+                        }
                     }
                 },
                 {
                     path: 'pbx-configuration/auto-attendant',
                     component: CscPagePbxAutoAttendant,
                     meta: {
-                        title: i18n.t('PBX Configuration'),
-                        subtitle: i18n.t('Auto-attendant')
+                        get title () {
+                            return i18n.t('PBX Configuration')
+                        },
+                        get subtitle () {
+                            return i18n.t('Auto-attendant')
+                        }
                     }
                 },
                 {
                     path: 'voicebox',
                     component: CscPageVoicebox,
                     meta: {
-                        title: i18n.t('Voicebox'),
-                        subtitle: i18n.t('Set your voicebox settings'),
+                        get title () {
+                            return i18n.t('Voicebox')
+                        },
+                        get subtitle () {
+                            return i18n.t('Set your voicebox settings')
+                        },
                         profileAttribute: 'voice_mail'
                     }
                 },
@@ -215,8 +291,12 @@ export default function routes (app) {
                     path: 'fax-settings',
                     component: CscPageFaxSettings,
                     meta: {
-                        title: i18n.t('Fax Settings'),
-                        subtitle: i18n.t('Set your fax settings'),
+                        get title () {
+                            return i18n.t('Fax Settings')
+                        },
+                        get subtitle () {
+                            return i18n.t('Set your fax settings')
+                        },
                         profileAttribute: 'fax_server'
                     },
                     async beforeEnter (routeTo, routeFrom, next) {
@@ -231,37 +311,58 @@ export default function routes (app) {
                     path: 'settings',
                     component: CscPageUserSettings,
                     meta: {
-                        title: i18n.t('User settings'),
-                        subtitle: i18n.t('Change password')
+                        get title () {
+                            return i18n.t('User settings')
+                        },
+                        get subtitle () {
+                            return i18n.t('Change password')
+                        }
                     }
                 },
                 {
                     path: 'call-settings',
                     component: CscPageCallSettings,
                     meta: {
-                        title: i18n.t('Call Settings'),
-                        subtitle: i18n.t('Call Settings')
+                        get title () {
+                            return i18n.t('Call Settings')
+                        },
+                        get subtitle () {
+                            return i18n.t('Call Settings')
+                        }
                     }
                 },
                 {
                     path: 'pbx-settings',
                     component: CscPagePbxSettings,
                     meta: {
-                        title: i18n.t('PBX Settings'),
-                        subtitle: i18n.t('Set your PBX settings')
+                        get title () {
+                            return i18n.t('PBX Settings')
+                        },
+                        get subtitle () {
+                            return i18n.t('Set your PBX settings')
+                        }
                     }
                 },
                 {
                     path: 'registered-devices',
                     component: CscPageRegisteredDevices,
                     meta: {
-                        title: i18n.t('Registered Devices'),
-                        subtitle: i18n.t('List of registered devices for the subscriber')
+                        get title () {
+                            return i18n.t('Registered Devices')
+                        },
+                        get subtitle () {
+                            return i18n.t('List of registered devices for the subscriber')
+                        }
                     }
                 },
                 {
                     path: '*',
-                    component: CscPageError404
+                    component: CscPageError404,
+                    meta: {
+                        get title () {
+                            return i18n.t('Page not found')
+                        }
+                    }
                 }
             ]
         },
@@ -269,21 +370,27 @@ export default function routes (app) {
             path: '/login',
             component: CscPageLogin,
             meta: {
-                title: i18n.t('Subscriber Sign In')
+                get title () {
+                    return i18n.t('Subscriber Sign In')
+                }
             }
         },
         {
             path: '/conference',
             component: CscLayoutConference,
             meta: {
-                title: 'Conference'
+                get title () {
+                    return i18n.t('Conference')
+                }
             }
         },
         {
             path: '/conference/:id',
             component: CscLayoutConference,
             meta: {
-                title: 'Conference'
+                get title () {
+                    return i18n.t('Conference')
+                }
             }
         },
         {
@@ -295,7 +402,9 @@ export default function routes (app) {
                     component: CscRecoverPassword,
                     props: getToken,
                     meta: {
-                        title: 'Reset Password',
+                        get title () {
+                            return i18n.t('Reset Password')
+                        },
                         permission: 'public'
                     }
                 }
@@ -309,7 +418,18 @@ export default function routes (app) {
         },
         {
             path: '*',
-            component: CscPageError404
+            component: CscLayoutLogin,
+            children: [
+                {
+                    path: '',
+                    component: CscPageError404,
+                    meta: {
+                        get title () {
+                            return i18n.t('Page not found')
+                        }
+                    }
+                }
+            ]
         }
     ]
 }

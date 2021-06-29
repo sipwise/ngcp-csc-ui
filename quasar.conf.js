@@ -115,7 +115,8 @@ module.exports = function (/* ctx */) {
                 'Dialog',
                 'SessionStorage',
                 'LocalStorage',
-                'Dark'
+                'Dark',
+                'Meta'
             ]
         },
 

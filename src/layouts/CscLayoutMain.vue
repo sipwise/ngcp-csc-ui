@@ -264,13 +264,10 @@ export default {
             'route'
         ]),
         ...mapGetters([
-            'pageTitle',
-            'pageSubtitle',
             'isCallForward',
             'isCallBlocking',
             'isPbxConfiguration',
-            'isHome',
-            'title'
+            'isHome'
         ]),
         ...mapGetters('call', [
             'isCallEnabled',
@@ -341,20 +338,6 @@ export default {
             }
             return classes
         },
-        pageTitleExt () {
-            if (this.isHome) {
-                return this.callStateTitle
-            } else {
-                return this.pageTitle
-            }
-        },
-        pageSubtitleExt () {
-            if (this.isHome) {
-                return this.callStateSubtitle
-            } else {
-                return this.pageSubtitle
-            }
-        },
         headerClasses () {
             const classes = ['transition-generic']
             if (this.isMobile) {
@@ -404,14 +387,10 @@ export default {
             } else {
                 this.header = true
             }
-            if (this.isHome) {
-                this.setCallStateTitle()
-            }
         },
         isHome (isHome) {
             if (isHome) {
                 this.$store.commit('call/minimize')
-                this.setCallStateTitle()
             }
         },
         userDataSucceeded (userDataSucceeded) {
@@ -540,13 +519,6 @@ export default {
         },
         leftBreakpoint (enabled) {
             this.mobileMenu = !enabled
-        },
-        setCallStateTitle () {
-            let title = this.callStateTitle
-            if (this.callStateSubtitle !== '') {
-                title = title + ' (' + this.callStateSubtitle + ')'
-            }
-            document.title = this.title + ' - ' + title
         },
         toggleMenu () {
             this.menuMinimized = !this.menuMinimized

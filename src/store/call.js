@@ -20,12 +20,12 @@ export var CallState = {
     ended: 'ended'
 }
 export var CallStateTitle = {
-    input: i18n.t('Start new call'),
-    initiating: i18n.t('Calling'),
-    ringing: i18n.t('Ringing at'),
-    incoming: i18n.t('Incoming call from'),
-    established: i18n.t('In call with'),
-    ended: i18n.t('Call ended')
+    get input () { return i18n.t('Start new call') },
+    get initiating () { return i18n.t('Calling') },
+    get ringing () { return i18n.t('Ringing at') },
+    get incoming () { return i18n.t('Incoming call from') },
+    get established () { return i18n.t('In call with') },
+    get ended () { return i18n.t('Call ended') }
 }
 
 export var MediaType = {
