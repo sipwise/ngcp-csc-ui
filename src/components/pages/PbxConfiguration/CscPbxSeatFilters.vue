@@ -94,17 +94,7 @@ export default {
                     value: 'alias_number'
                 }
             ]
-        },
-        getFilterLabel (filterItem) {
-            const filterNameTranslation = {
-                display_name: this.$t('Name'),
-                pbx_extension: this.$t('Extension'),
-                primary_number: this.$t('Primary Number'),
-                alias_number: this.$t('Alias Number')
-            }
-            const filterNameTitle = filterNameTranslation[filterItem.name] || this.$t('Unknown name')
-            return filterNameTitle + ': ' + filterItem.value
-        }
+        }   
     },
     methods: {
         triggerFilter () {
@@ -139,6 +129,16 @@ export default {
                 params[filter.name] = filter.value
             })
             this.$emit('filter', params)
+        },
+        getFilterLabel (filterItem) {
+            const filterNameTranslation = {
+                display_name: this.$t('Name'),
+                pbx_extension: this.$t('Extension'),
+                primary_number: this.$t('Primary Number'),
+                alias_number: this.$t('Alias Number')
+            }
+            const filterNameTitle = filterNameTranslation[filterItem.name] || this.$t('Unknown name')
+            return filterNameTitle + ': ' + filterItem.value
         }
     }
 }
