@@ -184,13 +184,11 @@ import CscConferenceJoin from 'components/pages/Conference/CscConferenceJoin'
 import CscConferenceJoined from 'components/pages/Conference/CscConferenceJoined'
 import CscMedia from 'components/CscMedia'
 import CscConfirmDialog from 'components/CscConfirmationDialog'
-// import CscConferenceLocalParticipant from 'components/pages/Conference/CscConferenceLocalParticipant'
 import CscConferenceParticipants from 'components/pages/Conference/CscConferenceParticipants'
 
 export default {
     name: 'CscConferenceLayout',
     components: {
-        // CscConferenceLocalParticipant,
         CscConferenceParticipants,
         CscConfirmDialog,
         CscMedia,

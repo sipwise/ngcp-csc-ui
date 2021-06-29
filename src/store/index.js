@@ -1,8 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {
-    i18n
-} from 'src/boot/i18n'
 import _ from 'lodash'
 import { date } from 'quasar'
 
@@ -94,12 +91,6 @@ export default function (/* { ssrContext } */) {
             hasConferenceId (state, getters) {
                 return getters.conferenceId !== null && getters.conferenceId !== undefined
             },
-            pageTitle (state) {
-                return _.get(state, 'route.meta.title', 'Not defined')
-            },
-            pageSubtitle (state) {
-                return _.get(state, 'route.meta.subtitle', '')
-            },
             isCallForward (state) {
                 return _.startsWith(_.get(state, 'route.path', ''), '/user/call-forward')
             },
@@ -111,9 +102,6 @@ export default function (/* { ssrContext } */) {
             },
             isHome (state) {
                 return _.get(state, 'route.path', '') === '/user/home'
-            },
-            title () {
-                return i18n.t('CSC')
             },
             getCurrentFormattedDateWithDash () {
                 const currentDate = Date.now()

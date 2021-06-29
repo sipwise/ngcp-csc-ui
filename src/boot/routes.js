@@ -1,6 +1,5 @@
 
 import routes from 'src/router/routes'
-import _ from 'lodash'
 import {
     Dark
 } from 'quasar'
@@ -45,16 +44,6 @@ export default ({ app, router, store }) => {
     })
 
     router.afterEach((to, from) => {
-        const mainTitle = app.i18n.t('CSC')
-        let title = _.get(to, 'meta.title', '')
-        const subTitle = _.get(to, 'meta.subtitle', '')
-        if (mainTitle !== '') {
-            title = mainTitle + ' - ' + title
-        }
-        if (subTitle !== '') {
-            title = title + ' - ' + subTitle
-        }
-        document.title = title
         store.commit('routeChanged', to)
     })
 
