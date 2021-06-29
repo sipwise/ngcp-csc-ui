@@ -14,7 +14,7 @@
             </csc-inline-alert-info>
             <csc-input
                 id="csc-call-number-input"
-                :label="$t('Phone number')"
+                :label="$t('Enter a number to dial')"
                 :value="callNumberInput"
                 :readonly="dialpadOpened"
                 :disable="!isCallEnabled"
