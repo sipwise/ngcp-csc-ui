@@ -29,6 +29,7 @@ import CscRecoverPassword from 'src/pages/CscRecoverPassword'
 import CscPageCf from 'pages/CscPageCf'
 import CscPageCallSettings from 'pages/CscPageCallSettings'
 import CscPageRegisteredDevices from 'pages/CscPageRegisteredDevices'
+import CscPagePbxSettingsAutoAttendant from 'pages/CscPagePbxSettingsAutoAttendant'
 
 const getToken = (route) => {
     return {
@@ -293,7 +294,7 @@ export default function routes (app) {
                     }
                 },
                 {
-                    path: 'pbx-settings',
+                    path: 'pbx-settings/general',
                     component: CscPagePbxSettings,
                     meta: {
                         get title () {
@@ -303,6 +304,18 @@ export default function routes (app) {
                             return i18n.t('Set your PBX settings')
                         },
                         profileAttribute: PROFILE_ATTRIBUTE_MAP.pbxSettings
+                    }
+                },
+                {
+                    path: 'pbx-settings/auto-attendant',
+                    component: CscPagePbxSettingsAutoAttendant,
+                    meta: {
+                        get title () {
+                            return i18n.t('PBX Settings')
+                        },
+                        get subtitle () {
+                            return i18n.t('Auto-attendant')
+                        }
                     }
                 },
                 {

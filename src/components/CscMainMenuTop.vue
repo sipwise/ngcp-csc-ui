@@ -195,10 +195,23 @@ export default {
                     ]
                 },
                 {
-                    to: '/user/pbx-settings',
                     icon: 'settings',
                     label: this.$t('PBX Settings'),
-                    visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.pbxSettings)
+                    visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.pbxSettings),
+                    children: [
+                        {
+                            to: '/user/pbx-settings/general',
+                            icon: 'settings',
+                            label: this.$t('General'),
+                            visible: true
+                        },
+                        {
+                            to: '/user/pbx-settings/auto-attendant',
+                            icon: 'dialpad',
+                            label: this.$t('Auto-attendant'),
+                            visible: true
+                        }
+                    ]
                 },
                 {
                     to: '/user/registered-devices',
