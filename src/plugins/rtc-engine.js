@@ -179,6 +179,6 @@ export class RtcEnginePlugin {
 export default {
     install (Vue) {
         Vue.$rtcEngine = RtcEnginePlugin.getInstance()
-        Vue.$rtcEngine.setNgcpApiJwt(localStorage.getItem('jwt'))
+        Vue.$rtcEngine.setNgcpApiJwt(localStorage.getItem('jwt')) // TODO: probably should be replaced with "getJwt" function
     }
 }

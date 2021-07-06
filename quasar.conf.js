@@ -30,6 +30,7 @@ module.exports = function (ctx) {
         // https://quasar.dev/quasar-cli/boot-files
         boot: [
             'config',
+            'rtc-engine',
             'filters',
             'vuelidate',
             'i18n',
