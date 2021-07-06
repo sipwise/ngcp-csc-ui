@@ -1,3 +1,29 @@
+ngcp-csc-ui (9.5.1.1+0~mr9.5.1.1) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [2bf0754] TT#122006 Conversations->Faxes do not show failed fax sending
+  * [7aff631] TT#127759 Feedback on the label "Phone number" from the customer
+  * [c2b3693] TT#127353 Maintenance - Upgrade vulnerable dependencies
+
+  [ Hans-Peter Herzog ]
+  * [136a97f] TT#122014 Add links to Google/Apple app store is customer bought Sipphone app
+
+  [ CORP\hzigha ]
+  * [3d138f0] TT#122029 As Subscriber/SubscriberAdmin, I want to see today as default date for all date selections based on QDate
+
+  [ Victor Tsvetov ]
+  * [664f346] TT#122703 Complete French translations
+
+  [ Sergii Leonenko ]
+  * [91b157e] TT#127852 i18n - Extraction tool must extract to english language file only
+  * [991d458] TT#128152 Remove legacy files which are not used anymore
+  * [4e92b96] TT#128154  i18n - Fix none reactive translations in all places
+
+  [ CORP\hzigha ]
+  * [7a143f7] TT#127756 'Seats' strange filter behavior on clicking 'search' button
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 06 Jul 2021 14:36:25 +0200
+
 ngcp-csc-ui (9.5.1.0+0~mr9.5.1.0) unstable; urgency=medium
 
   [ Carlo Venusino ]
