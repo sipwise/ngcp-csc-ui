@@ -70,6 +70,15 @@
                         />
                     </q-menu>
                 </q-btn>
+                <q-btn
+                    v-if="showQrBtn"
+                    flat
+                    dense
+                    class="q-ml-sm"
+                    icon="qr_code"
+                    color="primary"
+                    @click="showQrDialog"
+                />
                 <q-space />
                 <csc-logo
                     v-if="isLogoRequested && !customLogo"
@@ -226,6 +235,7 @@ import CscMainMenuTop from 'components/CscMainMenuTop'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import AuiMobileAppBadges from 'components/AuiMobileAppBadges'
+import CscDialogQrCode from 'components/CscDialogQrCode'
 
 export default {
     name: 'CscMainLayout',
@@ -312,12 +322,16 @@ export default {
         ]),
         ...mapState('user', [
             'resellerBranding',
-            'defaultBranding'
+            'defaultBranding',
+            'platformInfo'
         ]),
         ...mapGetters('communication', [
             'createFaxState',
             'createFaxError'
         ]),
+        showQrBtn () {
+            return this.platformInfo?.app?.show_qr
+        },
         hasCommunicationCapabilities () {
             return (this.hasSmsCapability && this.hasSendSmsFeature) ||
                 (this.hasFaxCapabilityAndFaxActive && this.hasSendFaxFeature)
@@ -449,7 +463,8 @@ export default {
     },
     methods: {
         ...mapActions('user', [
-            'forwardHome'
+            'forwardHome',
+            'fetchAuthToken'
         ]),
         layoutResized () {
             this.$refs.call.fitMedia()
@@ -535,6 +550,13 @@ export default {
             if (secondaryColor) {
                 colors.setBrand('secondary', secondaryColor)
             }
+        },
+        async showQrDialog () {
+            await this.fetchAuthToken()
+            this.$q.dialog({
+                component: CscDialogQrCode,
+                parent: this
+            })
         }
     }
 }

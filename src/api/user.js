@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Vue from 'vue'
 import {
     get,
+    post,
     getList,
     patchReplace
 } from './common'
@@ -134,4 +135,15 @@ export async function getResellerBranding () {
     return getList({
         resource: 'resellerbrandings'
     })
+}
+
+export async function createAuthToken (tokenExpiringTime) {
+    const response = await post({
+        resource: 'authtokens',
+        body: {
+            type: 'onetime',
+            expires: tokenExpiringTime
+        }
+    })
+    return response.token
 }
