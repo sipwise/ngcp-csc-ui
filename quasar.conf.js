@@ -19,9 +19,6 @@ module.exports = function (ctx) {
     }
 
     return {
-        // https://quasar.dev/quasar-cli/supporting-ts
-        supportTS: false,
-
         // https://quasar.dev/quasar-cli/prefetch-feature
         // preFetch: true,
 
@@ -29,7 +26,7 @@ module.exports = function (ctx) {
         // --> boot files are part of "main.js"
         // https://quasar.dev/quasar-cli/boot-files
         boot: [
-            'config',
+            'appConfig',
             'rtc-engine',
             'filters',
             'vuelidate',
@@ -63,6 +60,9 @@ module.exports = function (ctx) {
             'roboto-font', // optional, you are not bound to it
             'material-icons' // optional, you are not bound to it
         ],
+
+        // https://quasar.dev/quasar-cli/supporting-ts
+        supportTS: false,
 
         // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
         build: {

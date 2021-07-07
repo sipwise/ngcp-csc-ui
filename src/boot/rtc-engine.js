@@ -1,10 +1,17 @@
 import Vue from 'vue'
-import RtcEnginePlugin from 'src/plugins/rtc-engine'
+import getRtcEnginePlugin from 'src/plugins/rtc-engine'
 import CallPlugin from 'src/plugins/call'
 import ConferencePlugin from 'src/plugins/conference'
 import { errorVisibilityTimeout } from 'src/store/call'
 
-export default ({ Vue, store }) => {
+export default ({ Vue, store, app }) => {
+    const rtcPluginConfig = {
+        cdkScriptUrl: app.$appConfig.baseHttpUrl + '/rtc/files/dist/cdk-prod.js',
+        webSocketUrl: app.$appConfig.baseWsUrl + '/rtc/api',
+        ngcpApiBaseUrl: app.$appConfig.baseHttpUrl
+        // ngcpApiJwt: ... // Note: this value will be set in userInit action, with value from "getJwt" function
+    }
+    const RtcEnginePlugin = getRtcEnginePlugin(rtcPluginConfig)
     Vue.use(RtcEnginePlugin)
     Vue.use(CallPlugin)
     Vue.use(ConferencePlugin)
@@ -15,7 +22,6 @@ export default ({ Vue, store }) => {
 }
 
 function rtcEngine (store) {
-    Vue.$rtcEngine.setNgcpApiBaseUrl(Vue.$config.baseHttpUrl)
     Vue.$rtcEngine.onSipNetworkConnected(() => {
         store.commit('call/enableCall')
     }).onSipNetworkDisconnected(() => {

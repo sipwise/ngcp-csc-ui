@@ -551,11 +551,11 @@ export async function changeSIPPassword (subscriber, newPassword) {
     })
 }
 
-export async function resetPassword (userName) {
+export async function resetPassword ({ username, domain = '' }) {
     const payLoad = {
-        domain: Vue.$config.baseHttpUrl.replace(/(^\w+:|^)\/\//, ''),
+        domain,
         type: 'subscriber',
-        username: userName
+        username
     }
     return await Vue.http.post('api/passwordreset/', payLoad)
 }

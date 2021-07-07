@@ -93,7 +93,10 @@ export default {
             this.$v.$touch()
             if (!this.$v.$invalid) {
                 try {
-                    const res = await this.resetPassword(this.username)
+                    const res = await this.resetPassword({
+                        username: this.username,
+                        domain: this.$appConfig.baseHttpUrl.replace(/(^\w+:|^)\/\//, '')
+                    })
                     this.$q.notify({
                         position: 'top',
                         color: 'positive',

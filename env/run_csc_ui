@@ -13,8 +13,8 @@ if [ -z "${ngcp_address}" ] ; then
 fi
 echo "Found NGCP address '${ngcp_address}', processing further..."
 
-app_config="src/config.js"
-default_app_config="src/config.template.js"
+app_config="src/config/app.js"
+default_app_config="src/config/app.template.js"
 if [ ! -f "${app_config}" ]; then
   if [ ! -f "${default_app_config}" ]; then
     echo "ERROR: missing default quasar config '${default_app_config}'. Aborting."

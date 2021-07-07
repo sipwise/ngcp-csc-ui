@@ -41,8 +41,8 @@ export default {
         },
         finalSrc () {
             let url = null
-            if (_.isString(this.$config.baseHttpUrl) && _.trim(this.$config.baseHttpUrl) !== '') {
-                url = new URL(this.$config.baseHttpUrl)
+            if (_.isString(this.$appConfig.baseHttpUrl) && _.trim(this.$appConfig.baseHttpUrl) !== '') {
+                url = new URL(this.$appConfig.baseHttpUrl)
             } else {
                 url = new URL(location.origin)
             }

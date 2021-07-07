@@ -33,7 +33,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 
-/src/config.js
+/src/config/app.js
 
 /junit.xml
 /test/jest/coverage

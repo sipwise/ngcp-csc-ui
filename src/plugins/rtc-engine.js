@@ -1,16 +1,20 @@
 
-import config from '../config'
 import loadScript from 'load-script'
 import EventEmitter from 'events'
 
 const scriptId = 'cdk'
-const scriptUrl = config.baseHttpUrl + '/rtc/files/dist/cdk-prod.js'
-const webSocketUrl = config.baseWsUrl + '/rtc/api'
 
 let rtcEnginePlugin = null
 
 export class RtcEnginePlugin {
-    constructor () {
+    constructor ({
+        cdkScriptUrl = null,
+        webSocketUrl = null,
+        ngcpApiBaseUrl = null,
+        ngcpApiJwt = null
+    }) {
+        this.cdkScriptUrl = cdkScriptUrl
+        this.webSocketUrl = webSocketUrl
         this.script = null
         /**
          *
@@ -18,8 +22,8 @@ export class RtcEnginePlugin {
          */
         this.client = null
         this.sessionToken = null
-        this.ngcpApiJwt = null
-        this.ngcpApiBaseUrl = null
+        this.ngcpApiJwt = ngcpApiJwt
+        this.ngcpApiBaseUrl = ngcpApiBaseUrl
         this.events = new EventEmitter()
     }
 
@@ -55,7 +59,7 @@ export class RtcEnginePlugin {
     loadLibrary () {
         return new Promise((resolve, reject) => {
             if (this.script === null) {
-                loadScript(scriptUrl, {
+                loadScript(this.cdkScriptUrl, {
                     attrs: {
                         id: scriptId
                     }
@@ -102,7 +106,7 @@ export class RtcEnginePlugin {
             if (this.client === null) {
                 // eslint-disable-next-line no-undef
                 this.client = new cdk.Client({
-                    url: webSocketUrl,
+                    url: this.webSocketUrl,
                     userSession: this.sessionToken
                 })
                 this.client.onConnect(() => {
@@ -168,17 +172,18 @@ export class RtcEnginePlugin {
         return this.client.getNetworkByTag('conference')
     }
 
-    static getInstance () {
+    static getInstance (rtcConfig = {}) {
         if (rtcEnginePlugin === null) {
-            rtcEnginePlugin = new RtcEnginePlugin()
+            rtcEnginePlugin = new RtcEnginePlugin(rtcConfig)
         }
         return rtcEnginePlugin
     }
 }
 
-export default {
-    install (Vue) {
-        Vue.$rtcEngine = RtcEnginePlugin.getInstance()
-        Vue.$rtcEngine.setNgcpApiJwt(localStorage.getItem('jwt')) // TODO: probably should be replaced with "getJwt" function
+export default function getVuePlugin (rtcConfig) {
+    return {
+        install (Vue) {
+            Vue.$rtcEngine = RtcEnginePlugin.getInstance(rtcConfig)
+        }
     }
 }

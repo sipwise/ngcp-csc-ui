@@ -11,6 +11,6 @@ YARN_BIN := $(shell which yarnpkg || echo yarn)
 
 override_dh_auto_install:
 	$(YARN_BIN) install
-	cp src/config.template.js src/config.js
+	cp src/config/app.template.js src/config/app.js
 	$(YARN_BIN) run build
 	mv dist/spa csc

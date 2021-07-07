@@ -7,7 +7,7 @@ import {
 
 export default ({ Vue, app }) => {
     Vue.use(VueResource)
-    Vue.http.options.root = app.config.baseHttpUrl
+    Vue.http.options.root = app.$appConfig.baseHttpUrl
     Vue.http.interceptors.push(function (request, next) {
         if (hasJwt()) {
             request.headers.set('Authorization', 'Bearer ' + getJwt())

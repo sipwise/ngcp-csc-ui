@@ -1,11 +1,4 @@
 import EventEmitter from 'events'
-import {
-    loadCdkLib,
-    connectCdkNetwork
-} from '../helpers/cdk-lib'
-import {
-    createSessionToken
-} from '../api/rtcsession'
 
 export const LocalMedia = {
     audioOnly: 'audioOnly',
@@ -87,18 +80,6 @@ export class RtcEngineCall {
         return this.currentCall !== null
     }
 
-    loadLibrary () {
-        return loadCdkLib()
-    }
-
-    createSession () {
-        return createSessionToken()
-    }
-
-    connectNetwork (session) {
-        return connectCdkNetwork(session, this.networkTag)
-    }
-
     createLocalMedia (localMedia) {
         return new Promise((resolve, reject) => {
             // eslint-disable-next-line no-undef
@@ -151,7 +132,7 @@ export class RtcEngineCall {
         } else if (this.network !== null) {
             throw new CallAlreadyExists()
         } else {
-            throw new NetworkNotConnected(this.networkTag)
+            throw new NetworkNotConnected(this.networkTag) // TODO: "this.networkTag" is not defined. We should get this variable from somewhere
         }
     }
 
