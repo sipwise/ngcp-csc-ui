@@ -11,7 +11,8 @@ import {
 } from './common'
 import {
     login,
-    getUserData
+    getUserData,
+    createAuthToken
 } from '../api/user'
 import {
     changePassword,
@@ -24,6 +25,10 @@ import {
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import { setSession } from 'src/storage'
 import { get } from 'src/api/common'
+import QRCode from 'qrcode'
+import {
+    qrPayload
+} from 'src/helpers/qr'
 
 export default {
     namespaced: true,
@@ -58,7 +63,9 @@ export default {
         resellerBranding: null,
         defaultBranding: {},
         subscriberRegistrations: [],
-        platformInfo: null
+        platformInfo: null,
+        qrCode: null,
+        qrExpiringTime: null
     },
     getters: {
         isLogged (state) {
@@ -307,6 +314,12 @@ export default {
         },
         platformInfo (state, payload) {
             state.platformInfo = payload
+        },
+        setQrCode (state, qrCode) {
+            state.qrCode = qrCode
+        },
+        setQrExpiringTime (state, qrExpiringTime) {
+            state.qrExpiringTime = qrExpiringTime
         }
     },
     actions: {
@@ -434,6 +447,22 @@ export default {
             } catch (err) {
                 commit('setSubscriberRegistrations', [])
                 throw err
+            }
+        },
+        async fetchAuthToken ({ commit, state, getters }, expiringTime = 300) {
+            const subscriber = state.subscriber
+            commit('setQrExpiringTime', expiringTime)
+            try {
+                const authToken = await createAuthToken(expiringTime)
+                const data = qrPayload({
+                    subscriber: subscriber.username,
+                    server: subscriber.domain,
+                    token: authToken
+                })
+                const qrCode = await QRCode.toDataURL(data)
+                commit('setQrCode', qrCode)
+            } catch (err) {
+                commit('setQrCode', null)
             }
         }
     }

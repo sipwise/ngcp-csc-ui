@@ -24,4 +24,12 @@ describe('UserStore', () => {
         expect(state.jwt).toBe('1234')
         expect(state.subscriberId).toBe('5678')
     })
+
+    it('should successfully store a qrcode ',() => {
+        const dataImg = 'data:image;123456789'
+        const state = {}
+        UserStore.mutations.setQrCode(state, dataImg)
+        expect(state.qrCode).toBe(dataImg)
+    })
+
 })
