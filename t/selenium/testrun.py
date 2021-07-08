@@ -567,16 +567,19 @@ class testrun(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    print('----------------------------------------------------------------------')
     print('Preparing Domain, Customer and Subscriber for NGCP CSC tests ...')
     try:
         preparation()
     except Exception as e:
         print('Preperation failed! See log below for more details')
-        print('--------------------------------------------------------------')
+        print('----------------------------------------------------------------------')
         traceback.print_exc()
-        print('--------------------------------------------------------------')
+        print('----------------------------------------------------------------------')
         quit(1)
     print('Preperation successful, running tests now ...')
+    print('----------------------------------------------------------------------')
+
     nose2.main(exit=False)
     try:
         cleanup()

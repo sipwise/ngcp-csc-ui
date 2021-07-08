@@ -38,6 +38,7 @@ else
   vncserver -localhost no -geometry 1280x1024 :99
 fi
 
+echo "################################################################################"
 echo "Firefox version:"
 firefox --version
 
