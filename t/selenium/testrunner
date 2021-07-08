@@ -56,7 +56,7 @@ cd t/selenium
 
 if [ "${OUTPUT_TYPE:-}" = "junit" ] ; then
   #Change thread count here and in nose2cfg/jenkinstest.cfg
-  export THREADS=2
+  export THREADS=1
   export JENKINS=1
   python3 testrun.py -v -c nose2cfg/jenkinstest.cfg | \
     tee -a "${OUTPUT_DIRECTORY}/selenium.xml"
