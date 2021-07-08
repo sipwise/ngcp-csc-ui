@@ -32,13 +32,13 @@
                                 no-wrap
                             >
                                 <q-item-label
-                                    class="text-weight-bold"
+                                    class="text-weight-bold csc-word-space"
                                 >
                                     {{ child.label }}
                                 </q-item-label>
                                 <q-item-label
                                     v-if="child.sublabel !== undefined"
-                                    class="text-weight-light text-subtitle2"
+                                    class="text-weight-light text-subtitle2 csc-word-space"
                                 >
                                     {{ child.sublabel }}
                                 </q-item-label>
@@ -63,13 +63,13 @@
                     no-wrap
                 >
                     <q-item-label
-                        class="text-weight-bold"
+                        class="text-weight-bold csc-word-space"
                     >
                         {{ item.label }}
                     </q-item-label>
                     <q-item-label
                         v-if="item.sublabel !== undefined"
-                        class="text-weight-light text-subtitle2"
+                        class="text-weight-light text-subtitle2 csc-word-space"
                     >
                         {{ item.sublabel }}
                     </q-item-label>
@@ -93,3 +93,8 @@ export default {
     }
 }
 </script>
+
+<style lang="stylus" rel="stylesheet/stylus">
+.csc-word-space
+    white-space normal
+</style>
