@@ -4,6 +4,7 @@ import localeFr from './fr.json'
 import localeIt from './it.json'
 import localeEs from './es.json'
 import localeDe from './de.json'
+import localeRu from './ru.json'
 
 export const defaultLocale = 'en-US'
 
@@ -12,7 +13,8 @@ export const messages = {
     fr: patchKeysForFallback(localeFr),
     it: patchKeysForFallback(localeIt),
     es: patchKeysForFallback(localeEs),
-    de: patchKeysForFallback(localeDe)
+    de: patchKeysForFallback(localeDe),
+    ru: patchKeysForFallback(localeRu)
 }
 
 export function getLanguageLabels () {
