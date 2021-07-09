@@ -27,7 +27,8 @@ import {
     deleteSourceFromSourcesetByIndex,
     flipCfuAndCft,
     getOwnPhoneTimeout,
-    updateOwnPhoneTimeout
+    updateOwnPhoneTimeout,
+    rewriteDestination
 } from '../api/call-forward';
 
 export default {
@@ -552,11 +553,15 @@ export default {
                     });
             });
         },
-        addDestination(context, options) {
+        async addDestination(context, options) {
             let form = _.clone(context.getters.getForm);
             let updatedOptions;
             let type = context.getters.getFormType;
             let timeset = null;
+            const newDestination = await rewriteDestination({
+                destination: options.form.destination,
+                subscriberId: context.getters.subscriberId
+            })
             if (options.timeset === 'Company Hours' ||
                 options.timeset === 'After Hours') {
                 timeset = context.getters.getTimesetId;
@@ -568,7 +573,7 @@ export default {
             }
             else {
                 form.timeout = options.form.timeout;
-                form.destination = options.form.destination;
+                form.destination = newDestination
             }
             updatedOptions = {
                 subscriberId: context.getters.subscriberId,
@@ -581,7 +586,7 @@ export default {
             if (options.destinations) {
                 return new Promise(() => {
                     addDestinationToExistingGroup(updatedOptions).then(() => {
-                        context.commit('setLastAddedDestination', options.form.destination);
+                        context.commit('setLastAddedDestination', newDestination);
                         context.commit('addDestinationSucceeded');
                     }).catch((err) => {
                         context.commit('addDestinationFailed', err.message);
@@ -591,7 +596,7 @@ export default {
             else {
                 return new Promise(() => {
                     addDestinationToEmptyGroup(updatedOptions).then(() => {
-                        context.commit('setLastAddedDestination', options.form.destination);
+                        context.commit('setLastAddedDestination', newDestination);
                         context.commit('addDestinationSucceeded');
                     }).catch((err) => {
                         context.commit('addDestinationFailed', err.message);

@@ -991,3 +991,17 @@ export function updateOwnPhoneTimeout(options) {
         });
     });
 }
+
+export async function rewriteDestination ({ subscriberId, destination }) {
+    try {
+        const req = await Vue.http.post('api/applyrewrites/', {
+            direction: 'callee_in',
+            subscriber_id: subscriberId,
+            numbers: [ destination ]
+        })
+        return req.body.result
+    }
+    catch (err) {
+        return destination
+    }
+}
