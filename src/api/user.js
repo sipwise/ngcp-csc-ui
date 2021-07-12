@@ -39,13 +39,15 @@ export function getUserData (id) {
             getSubscriberById(id),
             getCapabilities(id),
             getFaxServerSettings(id),
-            getResellerBranding()
-        ]).then((results) => {
-            results[1].faxactive = results[2].active
+            getResellerBranding(),
+            getPlatformInfo()
+        ]).then(([subscriber, capabilities, faxServerSettings, resellerBranding, platformInfo]) => {
+            capabilities.faxactive = faxServerSettings.active
             resolve({
-                subscriber: results[0],
-                capabilities: results[1],
-                resellerBranding: results[3]?.items[0] || null
+                subscriber,
+                capabilities,
+                resellerBranding: resellerBranding?.items[0] || null,
+                platformInfo
             })
         }).catch((err) => {
             reject(err)
@@ -134,6 +136,12 @@ export function getNumbers () {
 export async function getResellerBranding () {
     return getList({
         resource: 'resellerbrandings'
+    })
+}
+
+export async function getPlatformInfo () {
+    return get({
+        path: 'api/platforminfo'
     })
 }
 
