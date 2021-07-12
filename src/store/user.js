@@ -24,7 +24,6 @@ import {
 } from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import { setSession } from 'src/storage'
-import { get } from 'src/api/common'
 import QRCode from 'qrcode'
 import {
     qrPayload
@@ -236,6 +235,7 @@ export default {
             state.subscriber = options.subscriber
             state.capabilities = options.capabilities
             state.resellerBranding = options.resellerBranding
+            state.platformInfo = options.platformInfo
 
             state.userDataSucceeded = true
             state.userDataRequesting = false
@@ -318,9 +318,6 @@ export default {
         setProfile (state, value) {
             state.profile = value
         },
-        platformInfo (state, payload) {
-            state.platformInfo = payload
-        },
         setQrCode (state, qrCode) {
             state.qrCode = qrCode
         },
@@ -373,9 +370,6 @@ export default {
                         const profile = await getSubscriberProfile(userData.subscriber.profile_id)
                         context.commit('setProfile', profile)
                     }
-                    context.commit('platformInfo', await get({
-                        path: 'api/platforminfo'
-                    }))
                     await context.dispatch('forwardHome')
                 } catch (err) {
                     console.debug(err)
