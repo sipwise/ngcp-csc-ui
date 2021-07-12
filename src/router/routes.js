@@ -30,6 +30,7 @@ import CscPageCf from 'pages/CscPageCf'
 import CscPageCallSettings from 'pages/CscPageCallSettings'
 import CscPageRegisteredDevices from 'pages/CscPageRegisteredDevices'
 import CscPagePbxSettingsAutoAttendant from 'pages/CscPagePbxSettingsAutoAttendant'
+import CscPageDashboard from 'pages/CscPageDashboard'
 
 const getToken = (route) => {
     return {
@@ -45,6 +46,15 @@ export default function routes (app) {
             component: CscLayoutMain,
             children: [
                 {
+                    path: 'dashboard',
+                    component: CscPageDashboard,
+                    meta: {
+                        get title () {
+                            return i18n.t('Dashboard')
+                        }
+                    }
+                },
+                {
                     path: 'home',
                     component: CscPageHome,
                     meta: {
@@ -55,7 +65,9 @@ export default function routes (app) {
                 },
                 {
                     path: 'conversations',
+                    name: 'CscConversations',
                     component: CscPageConversations,
+                    props: true,
                     meta: {
                         get title () {
                             return i18n.t('Conversations')
@@ -320,6 +332,7 @@ export default function routes (app) {
                 },
                 {
                     path: 'registered-devices',
+                    name: 'RegisteredDevices',
                     component: CscPageRegisteredDevices,
                     meta: {
                         get title () {
@@ -403,7 +416,7 @@ export default function routes (app) {
         {
             path: '/',
             redirect: {
-                path: '/user/home'
+                path: '/user/dashboard'
             }
         },
         {

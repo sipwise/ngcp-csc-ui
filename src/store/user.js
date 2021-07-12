@@ -376,7 +376,7 @@ export default {
             }
         },
         async forwardHome (context) {
-            if (context.rootState.route?.path === '/user/home' && !context.getters.isRtcEngineUiVisible) {
+            if (context.rootState.route?.path === '/user/dashboard' && !context.getters.isRtcEngineUiVisible) {
                 await router.push({ path: '/user/conversations' })
             }
         },

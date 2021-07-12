@@ -58,6 +58,12 @@ export default {
         items () {
             return [
                 {
+                    to: '/user/dashboard',
+                    icon: 'fas fa-tachometer-alt',
+                    label: this.$t('Dashboard'),
+                    visible: true
+                },
+                {
                     to: '/user/home',
                     icon: 'call',
                     label: this.callStateTitle,

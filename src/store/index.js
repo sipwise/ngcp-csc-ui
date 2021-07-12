@@ -26,6 +26,7 @@ import CommunicationModule from './communication'
 import FaxModule from './fax'
 import VoiceboxModule from './voicebox'
 import ConferenceModule from './conference'
+import DashboardModule from './dashboard'
 
 import RtcEnginePlugin from 'src/plugins/rtc-engine'
 import CallPlugin from 'src/plugins/call'
@@ -69,7 +70,8 @@ export default function (/* { ssrContext } */) {
             pbxSoundSets: PbxSoundSetsModule,
             pbxMsConfigs: PbxMsConfigsModule,
             callForwarding: CallForwardingModule,
-            pbxAutoAttendants: PbxAutoAttendants
+            pbxAutoAttendants: PbxAutoAttendants,
+            dashboard: DashboardModule
 
         },
         state: {

@@ -125,12 +125,18 @@ export default {
     mixins: [
         platformMixin
     ],
+    props: {
+        initialTab: {
+            type: String,
+            default: 'call-fax-voicemail'
+        }
+    },
     data () {
         return {
             filter: undefined,
             topMargin: 0,
             deletionId: null,
-            selectedTab: 'call-fax-voicemail'
+            selectedTab: this.initialTab
         }
     },
     computed: {

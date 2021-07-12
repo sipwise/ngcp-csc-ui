@@ -112,3 +112,29 @@ export async function deleteVoicemail (id) {
     const res = await Vue.http.delete('api/voicemails/' + id)
     return res.status >= 200
 }
+
+export function getAllVoicemails (options) {
+    return new Promise((resolve, reject) => {
+        getList({
+            resource: 'voicemails',
+            params: { subscriber_id: options.subscriberId, rows: options.rows }
+        }).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+export function getAllCalls (options) {
+    return new Promise((resolve, reject) => {
+        getList({
+            resource: 'conversations',
+            params: { subscriber_id: options.subscriberId, rows: options.rows, type: 'call' }
+        }).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}

@@ -300,7 +300,7 @@ export default {
         ]),
         close () {
             if (!this.isJoined) {
-                this.$router.push({ path: '/user/home' })
+                this.$router.push({ path: '/user/dashboard' })
                 this.$store.commit('conference/disposeLocalMedia')
             } else {
                 this.$refs.confirmDialog.open()

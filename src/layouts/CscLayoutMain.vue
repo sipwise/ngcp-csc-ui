@@ -415,7 +415,7 @@ export default {
                 })
             }
             window.scrollTo(0, 0)
-            if (route.path === '/user/home') {
+            if (route.path === '/user/dashboard') {
                 this.forwardHome()
             }
         }

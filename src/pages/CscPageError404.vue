@@ -29,7 +29,7 @@
                     icon="home"
                     text-color="dark"
                     unelevated
-                    to="/user/home"
+                    to="/user/dashboard"
                 />
             </q-card-actions>
         </q-card>
