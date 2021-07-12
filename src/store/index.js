@@ -4,9 +4,7 @@ import _ from 'lodash'
 import { date } from 'quasar'
 
 import CallBlockingModule from './call-blocking'
-import CallForwardModule from './call-forward'
 import CallForwardingModule from './call-forwarding'
-import NewCallForwardModule from './new-call-forward'
 import CallModule, { errorVisibilityTimeout } from './call'
 import CallRecordingsModule from './call-recordings'
 import CallSettingsModule from './call-settings'
@@ -52,8 +50,6 @@ export default function (/* { ssrContext } */) {
     const Store = new Vuex.Store({
         modules: {
             callBlocking: CallBlockingModule,
-            callForward: CallForwardModule,
-            newCallForward: NewCallForwardModule,
             callRecordings: CallRecordingsModule,
             call: CallModule,
             callSettings: CallSettingsModule,

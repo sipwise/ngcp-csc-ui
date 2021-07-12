@@ -6,10 +6,6 @@ import CscLayoutLogin from 'src/layouts/CscLayoutLogin'
 import CscPageLogin from 'src/pages/CscPageLogin'
 import CscPageHome from 'src/pages/CscPageHome'
 import CscPageConversations from 'src/pages/CscPageConversations'
-import CscPageNewCallForward from 'src/pages/CscPageNewCallForward'
-import CscPageCallForwardAlways from 'src/pages/CscPageCallForwardAlways'
-import CscPageCallForwardCompanyHours from 'src/pages/CscPageCallForwardCompanyHours'
-import CscPageCallForwardAfterHours from 'src/pages/CscPageCallForwardAfterHours'
 import CscPageCallBlockingIncoming from 'src/pages/CscPageCallBlockingIncoming'
 import CscPageCallBlockingOutgoing from 'src/pages/CscPageCallBlockingOutgoing'
 import CscPageCallBlockingPrivacy from 'src/pages/CscPageCallBlockingPrivacy'
@@ -68,51 +64,11 @@ export default function routes (app) {
                     }
                 },
                 {
-                    path: 'new-call-forward',
-                    component: CscPageNewCallForward
-                },
-                {
                     path: 'call-forwarding',
                     component: CscPageCf,
                     meta: {
                         get title () {
                             return i18n.t('Call Forwarding')
-                        }
-                    }
-                },
-                {
-                    path: 'call-forward/always',
-                    component: CscPageCallForwardAlways,
-                    meta: {
-                        get title () {
-                            return i18n.t('Call Forwarding')
-                        },
-                        get subtitle () {
-                            return i18n.t('Always')
-                        }
-                    }
-                },
-                {
-                    path: 'call-forward/company-hours',
-                    component: CscPageCallForwardCompanyHours,
-                    meta: {
-                        get title () {
-                            return i18n.t('Call Forwarding')
-                        },
-                        get subtitle () {
-                            return i18n.t('Company Hours')
-                        }
-                    }
-                },
-                {
-                    path: 'call-forward/after-hours',
-                    component: CscPageCallForwardAfterHours,
-                    meta: {
-                        get title () {
-                            return i18n.t('Call Forwarding')
-                        },
-                        get subtitle () {
-                            return i18n.t('After Hours')
                         }
                     }
                 },
