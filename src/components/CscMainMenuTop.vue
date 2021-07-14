@@ -9,6 +9,8 @@ import {
     mapGetters
 } from 'vuex'
 import CscMainMenu from 'components/CscMainMenu'
+import { PROFILE_ATTRIBUTE_MAP, PROFILE_ATTRIBUTES_MAP } from 'src/constants'
+
 export default {
     name: 'CscMainMenuTop',
     components: {
@@ -49,6 +51,7 @@ export default {
             'isPbxEnabled',
             'hasFaxCapability',
             'hasSubscriberProfileAttribute',
+            'hasSubscriberProfileAttributes',
             'getCustomerId',
             'isOldCSCProxyingAllowed'
         ]),
@@ -83,13 +86,13 @@ export default {
                             to: '/user/call-settings',
                             icon: 'settings',
                             label: this.$t('General'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings)
                         },
                         {
                             to: '/user/voicebox',
                             icon: 'voicemail',
                             label: this.$t('Voicebox'),
-                            visible: this.hasSubscriberProfileAttribute('voice_mail')
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail)
                         },
                         {
                             to: '/user/call-forwarding',
@@ -101,31 +104,31 @@ export default {
                             to: '/user/call-blocking/incoming',
                             icon: 'call_received',
                             label: this.$t('Block incoming'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingIncoming)
                         },
                         {
                             to: '/user/call-blocking/outgoing',
                             icon: 'call_made',
                             label: this.$t('Block outgoing'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingOutgoing)
                         },
                         {
                             to: '/user/call-blocking/privacy',
                             icon: 'fas fa-user-secret',
                             label: this.$t('Privacy'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.callBlockingPrivacy)
                         },
                         {
                             to: '/user/speeddial',
                             icon: 'touch_app',
                             label: this.$t('Speed Dial'),
-                            visible: this.hasSubscriberProfileAttribute('speed_dial')
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.speedDial)
                         },
                         {
                             to: '/user/reminder',
                             icon: 'notification_important',
                             label: this.$t('Reminder'),
-                            visible: this.hasSubscriberProfileAttribute('reminder')
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.reminder)
                         },
                         {
                             to: '/user/recordings',
@@ -139,7 +142,7 @@ export default {
                     to: '/user/fax-settings',
                     icon: 'fas fa-fax',
                     label: this.$t('Fax Settings'),
-                    visible: this.hasFaxCapability && this.hasSubscriberProfileAttribute('fax_server')
+                    visible: this.hasFaxCapability && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.faxServer)
                 },
                 {
                     icon: 'miscellaneous_services',
@@ -195,7 +198,7 @@ export default {
                     to: '/user/pbx-settings',
                     icon: 'settings',
                     label: this.$t('PBX Settings'),
-                    visible: this.isPbxEnabled
+                    visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.pbxSettings)
                 },
                 {
                     to: '/user/registered-devices',
