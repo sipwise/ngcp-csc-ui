@@ -12,6 +12,7 @@
             spinner-color="primary"
             :ratio="1"
             width="300px"
+            data-cy="qr-code-img"
         />
         <div
             v-else

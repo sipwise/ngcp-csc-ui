@@ -4,7 +4,7 @@ import _ from 'lodash'
 export default ({ app, Vue }) => {
     Vue.mixin({
         mounted () {
-            if (this.$vnode && this.$el && this.$el.setAttribute) {
+            if (this.$vnode && this.$el && this.$el.setAttribute && this.$el.getAttribute && !this.$el.getAttribute('data-cy')) {
                 let dataCy = _.get(this.$vnode, 'componentOptions.Ctor.extendOptions.name', null)
                 if (dataCy !== null && this.$vnode.key) {
                     dataCy += '--' + this.$vnode.key

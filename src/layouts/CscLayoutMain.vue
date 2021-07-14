@@ -61,6 +61,7 @@
                     class="q-ml-sm"
                     icon="qr_code"
                     color="primary"
+                    data-cy="qr-code-btn"
                     @click="showQrDialog"
                 />
                 <q-space />
