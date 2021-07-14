@@ -59,7 +59,7 @@ export default {
             if (this.selectedFile !== null) {
                 return this.selectedFile.name + ' (' + this.selectedFile.size + ' Byte)'
             }
-            return 'No file'
+            return this.$t('No file')
         }
     },
     methods: {

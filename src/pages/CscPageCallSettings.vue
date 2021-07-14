@@ -42,7 +42,7 @@
                         :readonly="dataLoading"
                         :label="$t('Language for voicemail and app server')"
                         :title="$t('Voice prompts language for voicemail, conference and application server')"
-                        :options="options"
+                        :options="languages"
                         @input="languageSelected()"
                     />
                 </q-item-section>
@@ -81,8 +81,7 @@ export default {
     },
     data () {
         return {
-            selectedOption: this.$defaultVoicePromptLanguage,
-            options: []
+            selectedOption: this.$defaultVoicePromptLanguage
         }
     },
     computed: {
@@ -107,15 +106,16 @@ export default {
     },
     async mounted () {
         try {
+            await this.loadPreferencesDefsAction()
             await this.loadSubscriberPreferencesAction()
-            this.options = await this.languages
-            this.selectedOption = this.language || await this.defaultLanguage
+            this.selectedOption = this.language || this.defaultLanguage
         } catch (err) {
             showGlobalError(err?.message || this.$t('Unknown error'))
         }
     },
     methods: {
         ...mapWaitingActions('callSettings', {
+            loadPreferencesDefsAction: 'processing subscriberPreferences',
             loadSubscriberPreferencesAction: 'processing subscriberPreferences',
             setMusicOnHold: 'processing subscriberPreferences',
             setLanguage: 'processing subscriberPreferences'

@@ -106,7 +106,7 @@
                 >
                     <q-checkbox
                         :value="soundFileLoopplay"
-                        label="Loop"
+                        :label="$t('Loop')"
                         left-label
                         @input="toggleLoopPlay"
                     />

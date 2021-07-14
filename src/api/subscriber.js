@@ -18,6 +18,7 @@ import {
 import {
     assignNumbers
 } from './user'
+import { getCurrentLangAsV1Format } from 'src/i18n'
 
 export function getPreferences (id) {
     return new Promise((resolve, reject) => {
@@ -30,7 +31,11 @@ export function getPreferences (id) {
 }
 
 export async function getPreferencesDefs (id) {
-    const result = await Vue.http.get('api/subscriberpreferencedefs/')
+    const result = await Vue.http.get('api/subscriberpreferencedefs/', {
+        params: {
+            lang: getCurrentLangAsV1Format()
+        }
+    })
     return getJsonBody(result.body)
 }
 

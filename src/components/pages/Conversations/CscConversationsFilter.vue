@@ -6,7 +6,7 @@
             class="q-mr-sm"
             dense
             clearable
-            label="From"
+            :label="$t('From')"
             :disable="loading"
             @input="inputFrom"
         />
@@ -14,7 +14,7 @@
             v-model="value.to"
             dense
             clearable
-            label="To"
+            :label="$t('To')"
             :disable="loading"
             @input="inputTo"
         />

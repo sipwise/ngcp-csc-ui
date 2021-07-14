@@ -32,4 +32,8 @@ export default ({ app, store }) => {
     }
     i18n.locale = getSession('locale') + ''
     store.commit('user/changeSessionLocaleSucceeded', i18n.locale)
+
+    store.watch(() => i18n.locale, () => {
+        store.dispatch('reloadLanguageRelatedData')
+    })
 }

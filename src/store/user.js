@@ -2,9 +2,6 @@
 
 import router from '../router'
 import Vue from 'vue'
-import {
-    i18n
-} from 'src/boot/i18n'
 import _ from 'lodash'
 import {
     RequestState
@@ -23,11 +20,11 @@ import {
     getSubscriberProfile
 } from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
-import { setSession } from 'src/storage'
 import QRCode from 'qrcode'
 import {
     qrPayload
 } from 'src/helpers/qr'
+import { setLanguage } from 'src/i18n'
 
 export default {
     namespaced: true,
@@ -382,8 +379,8 @@ export default {
         changeSessionLanguage (context, locale) {
             context.commit('changeSessionLocaleRequesting')
             try {
-                setSession('locale', locale)
-                i18n.locale = locale
+                setLanguage(locale)
+
                 context.commit('changeSessionLocaleSucceeded', locale)
             } catch (error) {
                 context.commit('changeSessionLocaleFailed', error)

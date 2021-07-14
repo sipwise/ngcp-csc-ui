@@ -6,6 +6,8 @@ import localeEs from './es.json'
 import localeDe from './de.json'
 import localeRu from './ru.json'
 import { i18n } from 'src/boot/i18n'
+import { setSession } from 'src/storage'
+import Quasar from 'quasar'
 
 export const defaultLocale = 'en-US'
 
@@ -43,6 +45,20 @@ function patchKeysForFallback (messages = {}) {
         }
     })
     return messages
+}
+
+export function setLanguage (lang) {
+    setSession('locale', lang)
+    i18n.locale = lang
+
+    import(
+        /* webpackInclude: /(en-us|de|es|fr|it|ru)\.js$/ */
+        'quasar/lang/' + lang.toLowerCase()
+    ).then(lang => {
+        Quasar.lang.set(lang.default)
+    })
+
+    // Note: please extend "reloadLanguageRelatedData" action in the store if you are using language related API endpoints
 }
 
 /**

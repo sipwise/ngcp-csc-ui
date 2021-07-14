@@ -103,7 +103,7 @@ export default {
         return {
             selectedFile: false,
             form: {
-                destination: null,
+                destination: '',
                 pageHeader: null,
                 data: null,
                 quality: this.$faxQualityOptionsDefault.value,

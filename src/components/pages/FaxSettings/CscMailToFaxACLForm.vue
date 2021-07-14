@@ -88,7 +88,7 @@
                 icon="person"
                 :loading="loading"
                 :disable="$v.data.$invalid || loading"
-                label="Create ACL"
+                :label="$t('Create ACL')"
                 @click="save()"
             />
         </div>

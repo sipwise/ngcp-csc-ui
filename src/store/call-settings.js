@@ -10,7 +10,8 @@ export default {
     namespaced: true,
     state: {
         subscriberPreferencesInitialized: false,
-        subscriberPreferences: {}
+        subscriberPreferences: {},
+        preferencesDefs: {}
     },
     getters: {
         subscriberId (state, getters, rootState, rootGetters) {
@@ -22,16 +23,15 @@ export default {
         language (state) {
             return state.subscriberPreferences.language
         },
-        async defaultLanguage (state, getters) {
-            const languages = await getters.languages
+        defaultLanguage (state, getters) {
+            const languages = getters.languages
             return languages.find(lang => lang.default_val).label
         },
-        async languages (state) {
-            const preferencesDefs = await getPreferencesDefs()
-            return preferencesDefs
-                .language
-                .enum_values
-                .map((lang) => { return { value: lang.value, label: lang.label, default_val: lang.default_val } })
+        languages (state) {
+            return state.preferencesDefs
+                .language?.enum_values?.map((lang) => {
+                    return { value: lang.value, label: lang.label, default_val: lang.default_val }
+                })
         }
     },
     mutations: {
@@ -41,6 +41,9 @@ export default {
         },
         subscriberPreferencesUpdate (state, { field, value }) {
             Vue.set(state.subscriberPreferences, field, value)
+        },
+        preferencesDefsSucceeded (state, res) {
+            state.preferencesDefs = res
         }
     },
     actions: {
@@ -54,6 +57,10 @@ export default {
                 field: options.field,
                 value: options.value
             })
+        },
+        async loadPreferencesDefsAction (context) {
+            const preferencesDefs = await getPreferencesDefs()
+            context.commit('preferencesDefsSucceeded', preferencesDefs)
         },
         async setMusicOnHold (context, value) {
             await context.dispatch('fieldUpdateAction', { field: 'music_on_hold', value })

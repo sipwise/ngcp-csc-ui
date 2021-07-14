@@ -118,6 +118,17 @@ export default function (/* { ssrContext } */) {
                 state.route = route
             }
         },
+        actions: {
+            async reloadLanguageRelatedData (context) {
+                /* NOTE: this action will be called after UI language change. So you could place here actions calls for
+                   refreshing language related data in the store */
+
+                if (Object.keys(context.state.callSettings.preferencesDefs).length > 0) {
+                    // preferencesDefs were loaded already so we need updated them for a new language
+                    await context.dispatch('callSettings/loadPreferencesDefsAction')
+                }
+            }
+        },
         plugins: [
             function rtcEngine (store) {
                 Vue.$rtcEngine.setNgcpApiBaseUrl(Vue.$config.baseHttpUrl)

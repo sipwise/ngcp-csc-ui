@@ -30,7 +30,7 @@
                             color="primary"
                             flat
                             dense
-                            label="Save"
+                            :label="$t('Save')"
                             :disable="pinRequesting"
                             @click="updatePin"
                         />
@@ -67,7 +67,7 @@
                             color="primary"
                             flat
                             dense
-                            label="Save"
+                            :label="$t('Save')"
                             :disable="emailRequesting"
                             @click="updateEmail"
                         />
