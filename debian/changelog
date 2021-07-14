@@ -1,3 +1,10 @@
+ngcp-csc-ui (8.5.4.2+0~mr8.5.4.2) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [886b775] TT#129159 When adding a CF, CSC does not apply Rewrite Rules to the number before saving
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 14 Jul 2021 09:13:50 +0200
+
 ngcp-csc-ui (8.5.4.1+0~mr8.5.4.1) unstable; urgency=medium
 
   [ Sergii Leonenko ]
