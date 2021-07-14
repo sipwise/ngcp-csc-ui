@@ -14,6 +14,7 @@
                 :icon="tab.icon"
                 :label="tab.label"
                 :default="tab.value === selectedTab"
+                :disable="listLoading"
                 @click="selectTab(tab.value)"
             />
         </template>
@@ -24,8 +25,8 @@
                 id="csc-conversations-filter"
                 v-model="filter"
                 class="q-pb-sm"
-                :loading="isNextPageRequesting"
-                :disable="isNextPageRequesting"
+                :loading="listLoading"
+                :disable="listLoading"
                 @input="filterTab(selectedTab)"
             />
         </template>
@@ -37,13 +38,17 @@
             <template
                 slot="loading"
             >
-                <csc-list-spinner
-                    class="q-pa-lg"
-                />
+                <div />
             </template>
             <div
                 class="row justify-center"
             >
+                <div
+                    v-if="listLoading"
+                    class="col-xs-12 col-md-8"
+                >
+                    <csc-list-spinner />
+                </div>
                 <q-list
                     v-if="items.length > 0"
                     class="col-xs-12 col-md-8"
@@ -68,10 +73,16 @@
                     />
                 </q-list>
                 <div
-                    v-else-if="!isNextPageRequesting && items.length === 0"
-                    class="q-pa-lg text-center"
+                    v-else-if="!listLoading && items.length === 0"
+                    class="col-xs-12 col-md-8 q-pa-lg text-center"
                 >
                     {{ noResultsMessage }}
+                </div>
+                <div
+                    v-if="listLoading && items.length > 0"
+                    class="col-xs-12 col-md-8"
+                >
+                    <csc-list-spinner />
                 </div>
                 <q-page-scroller
                     color="primary"
@@ -84,7 +95,7 @@
             title-icon-color="negative"
             :title="$t('Remove Voicemail')"
             :message="$t('You are about to remove this Voicemail')"
-            @remove="deleteVoicemail({id:deletionId, tab: selectedTab})"
+            @remove="deleteVoicemailConfirmed({id:deletionId, tab: selectedTab})"
             @cancel="deletionId=null"
         />
     </csc-page-sticky-tabs>
@@ -213,6 +224,9 @@ export default {
             } else {
                 return this.$t('Voicemails')
             }
+        },
+        listLoading () {
+            return this.$wait.is('csc-conversations')
         }
     },
     async mounted () {
@@ -222,16 +236,22 @@ export default {
         this.$refs.infiniteScroll.poll()
     },
     methods: {
+        ...mapActions('conversations', [
+            'deleteVoicemail'
+        ]),
         loadNextPage (index, done) {
             let type = this.selectedTab
             if (this.selectedTab === 'call-fax-voicemail') {
                 type = null
             }
+            this.startLoader()
             this.$store.dispatch('conversations/nextPage', {
                 type: type,
                 index: index,
                 filter: this.filter,
                 done: done
+            }).finally(() => {
+                this.$wait.end('csc-conversations')
             })
         },
         selectTab (tabName) {
@@ -241,6 +261,7 @@ export default {
         },
         forceTabReload (tabName) {
             this.selectedTab = tabName
+            this.startLoader()
             this.$store.commit('conversations/resetList')
             this.$refs.infiniteScroll.reset()
             if (this.reachedLastPage) {
@@ -250,15 +271,12 @@ export default {
                 this.$refs.infiniteScroll.poll()
             }
         },
+        forceReload () {
+            this.forceTabReload(this.selectedTab)
+        },
         filterTab (tabName) {
             this.forceTabReload(tabName)
         },
-        async reload () {
-            this.$store.commit('conversations/resetList')
-        },
-        ...mapActions('conversations', [
-            'deleteVoicemail'
-        ]),
         startCall (number) {
             this.$store.commit('call/numberInputChanged', number)
             this.$router.push('home')
@@ -276,15 +294,32 @@ export default {
             })
         },
         toggleBlockIncoming (options) {
+            this.startLoader()
+            this.$store.commit('conversations/resetList')
             this.$store.dispatch('conversations/toggleBlockIncoming', options).finally(() => {
-                this.reload()
+                this.forceReload()
             })
         },
         toggleBlockOutgoing (options) {
-            this.$store.dispatch('conversations/toggleBlockOutgoing', options)
+            this.startLoader()
+            this.$store.commit('conversations/resetList')
+            this.$store.dispatch('conversations/toggleBlockOutgoing', options).finally(() => {
+                this.forceReload()
+            })
         },
         toggleBlockBoth (options) {
-            this.$store.dispatch('conversations/toggleBlockBoth', options)
+            this.startLoader()
+            this.$store.commit('conversations/resetList')
+            this.$store.dispatch('conversations/toggleBlockBoth', options).finally(() => {
+                this.forceReload()
+            })
+        },
+        deleteVoicemailConfirmed (payload) {
+            this.startLoader()
+            this.$store.commit('conversations/resetList')
+            this.deleteVoicemail(payload).finally(() => {
+                this.forceReload()
+            })
         },
         blockedIncoming (item) {
             if (item.direction === 'out') {
@@ -299,6 +334,9 @@ export default {
             } else {
                 return this.isNumberOutgoingBlocked(item.caller)
             }
+        },
+        startLoader () {
+            this.$wait.start('csc-conversations')
         }
     }
 }
