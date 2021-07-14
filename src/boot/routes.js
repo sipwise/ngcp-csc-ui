@@ -36,6 +36,8 @@ export default ({ app, router, store }) => {
             default:
                 if (to.meta?.profileAttribute) {
                     app.store.getters['user/hasSubscriberProfileAttribute'](to.meta.profileAttribute) ? next() : next('/')
+                } else if (to.meta?.profileAttributes) {
+                    app.store.getters['user/hasSubscriberProfileAttributes'](to.meta.profileAttributes) ? next() : next('/')
                 } else {
                     next()
                 }

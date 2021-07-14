@@ -1,4 +1,3 @@
-
 export default ({ Vue, app }) => {
     Vue.prototype.$faxQualityOptions = [
         { label: app.i18n.t('Normal'), value: 'normal' },
