@@ -1,3 +1,4 @@
+import { PROFILE_ATTRIBUTE_MAP, PROFILE_ATTRIBUTES_MAP } from 'src/constants'
 
 import CscLayoutConference from 'src/layouts/CscLayoutConference'
 import CscLayoutMain from 'src/layouts/CscLayoutMain'
@@ -125,7 +126,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Incoming')
-                        }
+                        },
+                        profileAttributes: PROFILE_ATTRIBUTES_MAP.callBlockingIncoming
                     }
                 },
                 {
@@ -137,7 +139,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Outgoing')
-                        }
+                        },
+                        profileAttributes: PROFILE_ATTRIBUTES_MAP.callBlockingOutgoing
                     }
                 },
                 {
@@ -149,7 +152,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Privacy')
-                        }
+                        },
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.callBlockingPrivacy
                     }
                 },
                 {
@@ -174,7 +178,7 @@ export default function routes (app) {
                         get subtitle () {
                             return i18n.t('Set your personal alarm')
                         },
-                        profileAttribute: 'reminder'
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.reminder
                     }
                 },
                 {
@@ -187,7 +191,7 @@ export default function routes (app) {
                         get subtitle () {
                             return i18n.t('Set your speed dials')
                         },
-                        profileAttribute: 'speed_dial'
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.speedDial
                     }
                 },
                 {
@@ -284,7 +288,7 @@ export default function routes (app) {
                         get subtitle () {
                             return i18n.t('Set your voicebox settings')
                         },
-                        profileAttribute: 'voice_mail'
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.voiceMail
                     }
                 },
                 {
@@ -297,7 +301,7 @@ export default function routes (app) {
                         get subtitle () {
                             return i18n.t('Set your fax settings')
                         },
-                        profileAttribute: 'fax_server'
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.faxServer
                     },
                     async beforeEnter (routeTo, routeFrom, next) {
                         if (app.store.getters['user/hasFaxCapability']) {
@@ -328,7 +332,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Call Settings')
-                        }
+                        },
+                        profileAttributes: PROFILE_ATTRIBUTES_MAP.callSettings
                     }
                 },
                 {
@@ -340,7 +345,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Set your PBX settings')
-                        }
+                        },
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.pbxSettings
                     }
                 },
                 {
