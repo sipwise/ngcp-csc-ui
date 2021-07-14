@@ -194,9 +194,6 @@ export default {
         }).then(() => {
             context.dispatch('getBlockedNumbersIncoming')
             context.dispatch('getBlockedNumbersOutgoing')
-        }).then(() => {
-            context.commit('resetList')
-            context.dispatch('nextPage', null)
         }).catch((err) => {
             context.commit('toggleBlockedFailed', err.message, options.type)
         })
@@ -206,8 +203,6 @@ export default {
         try {
             await deleteVoicemail(options.id)
             context.commit('deletionSucceeded')
-            context.commit('resetList')
-            await context.dispatch('nextPage', options.tab)
         } catch (err) {
             context.commit('deletionFailed', err.message)
         }
