@@ -2,6 +2,7 @@ import Vue from 'vue'
 import {
     RequestState
 } from '../common'
+import { ROWS_PER_PAGE } from './actions'
 
 function linkCallsWithSameId (state) {
     let callId = null
@@ -86,7 +87,7 @@ export default {
         state.nextPageState = RequestState.succeeded
         state.nextPageError = null
         state.items = state.items.concat(res.items)
-        state.reachedLastPage = res.items.length === 0
+        state.reachedLastPage = res.items.length === 0 || res.items.length < ROWS_PER_PAGE
     },
     nextPageFailed (state, error) {
         state.nextPageState = RequestState.failed

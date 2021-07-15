@@ -16,7 +16,7 @@ import {
     toggleNumberInBothLists
 } from 'src/api/call-blocking'
 
-const ROWS_PER_PAGE = 15
+export const ROWS_PER_PAGE = 15
 
 const ReloadConfig = {
     retryLimit: 5,
@@ -96,12 +96,12 @@ export default {
         } catch (err) {
             context.commit('nextPageFailed', err.message)
         } finally {
-            if (options.done !== undefined && (res === undefined || res.items === undefined)) {
-                options.done(true)
-            } else if (options.done !== undefined && res.items && res.items.length === 0) {
-                options.done(true)
-            } else if (options.done !== undefined) {
-                options.done()
+            if (typeof options.done === 'function') {
+                if (res?.items === undefined || res?.items?.length === 0 || res?.items?.length < ROWS_PER_PAGE) {
+                    options.done(true)
+                } else {
+                    options.done()
+                }
             }
         }
     },

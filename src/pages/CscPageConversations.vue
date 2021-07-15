@@ -43,12 +43,6 @@
             <div
                 class="row justify-center"
             >
-                <div
-                    v-if="listLoading"
-                    class="col-xs-12 col-md-8"
-                >
-                    <csc-list-spinner />
-                </div>
                 <q-list
                     v-if="items.length > 0"
                     class="col-xs-12 col-md-8"
@@ -66,9 +60,9 @@
                         @download-fax="downloadFax"
                         @download-voice-mail="downloadVoiceMail"
                         @play-voice-mail="playVoiceMail"
-                        @toggle-block-incoming="toggleBlockIncoming"
-                        @toggle-block-outgoing="toggleBlockOutgoing"
-                        @toggle-block-both="toggleBlockBoth"
+                        @toggle-block-incoming="toggleBlockIncomingAction"
+                        @toggle-block-outgoing="toggleBlockOutgoingAction"
+                        @toggle-block-both="toggleBlockBothAction"
                         @delete-voicemail="$refs.confirmDeletionDialog.open();deletionId=$event.id"
                     />
                 </q-list>
@@ -79,14 +73,11 @@
                     {{ noResultsMessage }}
                 </div>
                 <div
-                    v-if="listLoading && items.length > 0"
+                    v-if="listLoading"
                     class="col-xs-12 col-md-8"
                 >
                     <csc-list-spinner />
                 </div>
-                <q-page-scroller
-                    color="primary"
-                />
             </div>
         </q-infinite-scroll>
         <csc-remove-dialog
@@ -104,8 +95,7 @@
 <script>
 import platformMixin from 'src/mixins/platform'
 import {
-    mapGetters,
-    mapActions,
+    mapGetters, mapMutations,
     mapState
 } from 'vuex'
 import CscPageStickyTabs from 'components/CscPageStickyTabs'
@@ -113,6 +103,7 @@ import CscListSpinner from 'components/CscListSpinner'
 import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
 import CscConversationsFilter from 'components/pages/Conversations/CscConversationsFilter'
 import CscRemoveDialog from 'components/CscRemoveDialog'
+import { mapWaitingActions } from 'vue-wait'
 export default {
     name: 'CscConversations',
     components: {
@@ -169,20 +160,10 @@ export default {
         ]),
         ...mapGetters('conversations', [
             'items',
-            'isNextPageRequesting',
-            'downloadFaxState',
-            'downloadVoiceMailState',
-            'downloadFaxError',
-            'downloadVoiceMailError',
-            'itemsReloaded',
-            'reloadItemsError',
-            'toggleBlockedState',
-            'lastToggledType',
             'isNumberIncomingBlocked',
             'isNumberOutgoingBlocked'
         ]),
         ...mapGetters('call', [
-            'callState',
             'isCallEnabled'
         ]),
         pageStyle () {
@@ -237,21 +218,27 @@ export default {
     },
     async mounted () {
         this.topMargin = this.$refs.pageSticky.$el.offsetHeight
-        this.$store.commit('conversations/resetList')
+        this.resetList()
         await this.$store.dispatch('conversations/getBlockedNumbers')
         this.$refs.infiniteScroll.poll()
     },
     methods: {
-        ...mapActions('conversations', [
-            'deleteVoicemail'
+        ...mapWaitingActions('conversations', {
+            nextPage: 'csc-conversations',
+            deleteVoicemail: 'csc-conversations',
+            toggleBlockIncoming: 'csc-conversations',
+            toggleBlockOutgoing: 'csc-conversations',
+            toggleBlockBoth: 'csc-conversations'
+        }),
+        ...mapMutations('conversations', [
+            'resetList'
         ]),
-        loadNextPage (index, done) {
+        async loadNextPage (index, done) {
             let type = this.selectedTab
             if (this.selectedTab === 'call-fax-voicemail') {
                 type = null
             }
-            this.startLoader()
-            this.$store.dispatch('conversations/nextPage', {
+            await this.nextPage({
                 type: type,
                 index: index,
                 filter: this.filter,
@@ -267,8 +254,10 @@ export default {
         },
         forceTabReload (tabName) {
             this.selectedTab = tabName
-            this.startLoader()
-            this.$store.commit('conversations/resetList')
+            // Note: we have to set loading mark manually as a workaround that we cannot force infinitScroll to load data immediately
+            this.$wait.start('csc-conversations')
+
+            this.resetList()
             this.$refs.infiniteScroll.reset()
             if (this.reachedLastPage) {
                 this.$refs.infiniteScroll.resume()
@@ -299,33 +288,37 @@ export default {
                 format: voiceMail.format
             })
         },
-        toggleBlockIncoming (options) {
-            this.startLoader()
-            this.$store.commit('conversations/resetList')
-            this.$store.dispatch('conversations/toggleBlockIncoming', options).finally(() => {
+        async toggleBlockIncomingAction (options) {
+            this.resetList()
+            try {
+                await this.toggleBlockIncoming(options)
+            } finally {
                 this.forceReload()
-            })
+            }
         },
-        toggleBlockOutgoing (options) {
-            this.startLoader()
-            this.$store.commit('conversations/resetList')
-            this.$store.dispatch('conversations/toggleBlockOutgoing', options).finally(() => {
+        async toggleBlockOutgoingAction (options) {
+            this.resetList()
+            try {
+                await this.toggleBlockOutgoing(options)
+            } finally {
                 this.forceReload()
-            })
+            }
         },
-        toggleBlockBoth (options) {
-            this.startLoader()
-            this.$store.commit('conversations/resetList')
-            this.$store.dispatch('conversations/toggleBlockBoth', options).finally(() => {
+        async toggleBlockBothAction (options) {
+            this.resetList()
+            try {
+                await this.toggleBlockBoth(options)
+            } finally {
                 this.forceReload()
-            })
+            }
         },
-        deleteVoicemailConfirmed (payload) {
-            this.startLoader()
-            this.$store.commit('conversations/resetList')
-            this.deleteVoicemail(payload).finally(() => {
+        async deleteVoicemailConfirmed (payload) {
+            this.resetList()
+            try {
+                await this.deleteVoicemail(payload)
+            } finally {
                 this.forceReload()
-            })
+            }
         },
         blockedIncoming (item) {
             if (item.direction === 'out') {
@@ -340,9 +333,6 @@ export default {
             } else {
                 return this.isNumberOutgoingBlocked(item.caller)
             }
-        },
-        startLoader () {
-            this.$wait.start('csc-conversations')
         }
     }
 }
