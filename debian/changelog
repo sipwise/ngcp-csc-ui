@@ -1,3 +1,26 @@
+ngcp-csc-ui (9.5.1.2+0~mr9.5.1.2) unstable; urgency=medium
+
+  [ Victor Tsvetov ]
+  * [416b139] TT#129160 Add Russian translations file
+
+  [ hzigha ]
+  * [2e02526] TT#129502 Add Russian language to the language menu
+  * [8b0adf7] TT#129504 Fix cropped main menu item text (Russian, German, ...)
+
+  [ Alexander Lutay ]
+  * [fa808c2] TT#129160 fix ca34192: use label 'Русский' for Russian localization
+
+  [ Hans-Peter Herzog ]
+  * [dd2dc5f] TT#127757 If mobile app badge configs has the same name, then show the name once
+
+  [ Carlo Venusino ]
+  * [dee9e6c] TT#122015 Add QR-Code to login to sip:phone mobile app from CSC
+
+  [ Sergii Leonenko ]
+  * [366f633] TT#122202 ProxiedFeature - As SubscriberAdmin, I want to be able to access the "Customer Details" page in v1 from within v2
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 15 Jul 2021 14:32:44 +0200
+
 ngcp-csc-ui (9.5.1.1+0~mr9.5.1.1) unstable; urgency=medium
 
   [ Carlo Venusino ]
