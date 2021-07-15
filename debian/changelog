@@ -1,3 +1,10 @@
+ngcp-csc-ui (9.5.1.3+0~mr9.5.1.3) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [6fb2f66] TT#129212 Optimise the initial load of the user
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 15 Jul 2021 15:53:48 +0200
+
 ngcp-csc-ui (9.5.1.2+0~mr9.5.1.2) unstable; urgency=medium
 
   [ Victor Tsvetov ]
