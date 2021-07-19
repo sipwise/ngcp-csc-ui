@@ -37,25 +37,9 @@
                         />
                     </csc-popup-menu>
                 </q-btn>
-                <q-btn
+                <csc-selection-language
                     v-if="!isMobile"
-                    class="q-mr-sm"
-                    icon="language"
-                    color="primary"
-                    small
-                    flat
-                    dense
-                    round
-                >
-                    <q-menu>
-                        <csc-language-menu
-                            id="csc-language-menu-main"
-                            class="csc-language-menu"
-                            :language-label="languageLabel"
-                            :language-labels="languageLabels"
-                        />
-                    </q-menu>
-                </q-btn>
+                />
                 <q-btn
                     icon="person"
                     color="primary"
@@ -145,12 +129,10 @@
                     />
                 </div>
             </div>
-            <csc-language-menu
+            <csc-selection-language-mobile
                 v-if="$q.platform.is.mobile"
                 id="csc-language-menu-main-mobile"
                 class="csc-language-menu"
-                :language-label="languageLabel"
-                :language-labels="languageLabels"
             />
             <csc-main-menu-top
                 id="csc-main-menu-top"
@@ -226,25 +208,24 @@ import CscCall from 'components/call/CscCall'
 import CscSendFax from 'components/CscSendFax'
 import CscLogo from 'components/CscLogo'
 import CscCustomLogo from 'components/CscCustomLogo'
-import CscLanguageMenu from 'components/CscLanguageMenu'
 import CscUserMenu from 'components/CscUserMenu'
-import {
-    getLanguageLabel
-} from 'src/i18n'
 import CscMainMenuTop from 'components/CscMainMenuTop'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import AuiMobileAppBadges from 'components/AuiMobileAppBadges'
 import CscDialogQrCode from 'components/CscDialogQrCode'
+import CscSelectionLanguage from 'components/CscSelectionLanguage'
+import CscSelectionLanguageMobile from 'components/CscSelectionLanguageMobile'
 
 export default {
     name: 'CscMainLayout',
     components: {
+        CscSelectionLanguage,
+        CscSelectionLanguageMobile,
         AuiMobileAppBadges,
         CscPopupMenuItem,
         CscPopupMenu,
         CscMainMenuTop,
-        CscLanguageMenu,
         CscCall,
         CscSendFax,
         CscLogo,
@@ -313,9 +294,6 @@ export default {
             'hasSendFaxFeature',
             'userDataRequesting',
             'userDataSucceeded',
-            'changeSessionLocaleState',
-            'locale',
-            'languageLabels',
             'isRtcEngineUiVisible',
             'isLogoRequesting',
             'isLogoRequested'
@@ -361,11 +339,6 @@ export default {
                 classes.push('csc-header-full')
             }
             return classes
-        },
-        languageLabel () {
-            return this.$t('Language ({language})', {
-                language: getLanguageLabel(this.locale)
-            })
         },
         pinMenuButtonIcon () {
             if (!this.menuPinned) {
@@ -443,11 +416,6 @@ export default {
             window.scrollTo(0, 0)
             if (route.path === '/user/home') {
                 this.forwardHome()
-            }
-        },
-        changeSessionLocaleState (state) {
-            if (state === 'succeeded') {
-                showToast(this.$t('Session language successfully changed'))
             }
         }
     },

@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import localeEn from './en.json'
 import localeFr from './fr.json'
 import localeIt from './it.json'
@@ -13,27 +12,40 @@ export const defaultLocale = 'en-US'
 
 export const messages = {
     'en-US': patchKeysForFallback(localeEn),
+    de: patchKeysForFallback(localeDe),
+    es: patchKeysForFallback(localeEs),
     fr: patchKeysForFallback(localeFr),
     it: patchKeysForFallback(localeIt),
-    es: patchKeysForFallback(localeEs),
-    de: patchKeysForFallback(localeDe),
     ru: patchKeysForFallback(localeRu)
 }
 
 export function getLanguageLabels () {
-    const languageLabels = []
-    Object.keys(messages).forEach((locale) => {
-        languageLabels.push([locale, messages[locale].English])
-    })
-    return languageLabels
-}
-
-export function getLanguageLabel (locale) {
-    if (_.has(messages, locale)) {
-        return messages[locale].English
-    } else {
-        return messages[defaultLocale].English
-    }
+    return [
+        {
+            value: 'en-US',
+            label: i18n.t('English', 'en-US')
+        },
+        {
+            value: 'de',
+            label: i18n.t('German', 'de')
+        },
+        {
+            value: 'es',
+            label: i18n.t('Spanish', 'es')
+        },
+        {
+            value: 'fr',
+            label: i18n.t('French', 'fr')
+        },
+        {
+            value: 'it',
+            label: i18n.t('Italian', 'it')
+        },
+        {
+            value: 'ru',
+            label: i18n.t('Russian', 'ru')
+        }
+    ]
 }
 
 function patchKeysForFallback (messages = {}) {

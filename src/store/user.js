@@ -24,7 +24,6 @@ import QRCode from 'qrcode'
 import {
     qrPayload
 } from 'src/helpers/qr'
-import { setLanguage } from 'src/i18n'
 
 export default {
     namespaced: true,
@@ -46,10 +45,6 @@ export default {
         userDataError: null,
         rtcEngineInitState: RequestState.initiated,
         rtcEngineInitError: null,
-        sessionLocale: null,
-        changeSessionLocaleState: RequestState.initiated,
-        changeSessionLocaleError: null,
-        languageLabels: [],
         changePasswordState: RequestState.initiated,
         changePasswordError: null,
         newPasswordRequesting: false,
@@ -157,15 +152,6 @@ export default {
         isRtcEngineInitializing (state) {
             return state.rtcEngineInitState === RequestState.requesting
         },
-        changeSessionLocaleState (state) {
-            return state.changeSessionLocaleState
-        },
-        locale (state) {
-            return state.sessionLocale
-        },
-        languageLabels (state) {
-            return state.languageLabels
-        },
         getSubscriber (state) {
             return state.subscriber
         },
@@ -265,22 +251,6 @@ export default {
             state.rtcEngineInitState = RequestState.failed
             state.rtcEngineInitError = error
         },
-        changeSessionLocaleRequesting (state) {
-            state.changeSessionLocaleState = RequestState.requesting
-            state.changeSessionLocaleError = null
-        },
-        changeSessionLocaleSucceeded (state, locale) {
-            state.sessionLocale = locale
-            state.changeSessionLocaleState = RequestState.succeeded
-            state.changeSessionLocaleError = null
-        },
-        changeSessionLocaleFailed (state, error) {
-            state.changeSessionLocaleState = RequestState.failed
-            state.changeSessionLocaleError = error
-        },
-        setLanguageLabels (state, languageLabels) {
-            state.languageLabels = languageLabels
-        },
         userPasswordRequesting (state) {
             state.changePasswordState = RequestState.requesting
             state.changePasswordError = null
@@ -374,16 +344,6 @@ export default {
                 }
             } else {
                 await context.dispatch('forwardHome')
-            }
-        },
-        changeSessionLanguage (context, locale) {
-            context.commit('changeSessionLocaleRequesting')
-            try {
-                setLanguage(locale)
-
-                context.commit('changeSessionLocaleSucceeded', locale)
-            } catch (error) {
-                context.commit('changeSessionLocaleFailed', error)
             }
         },
         changePassword (context, newPassword) {

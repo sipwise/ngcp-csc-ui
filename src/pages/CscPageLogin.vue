@@ -11,23 +11,7 @@
             <q-toolbar
                 id="csc-header-toolbar-login"
             >
-                <q-btn
-                    icon="language"
-                    color="primary"
-                    round
-                    small
-                    flat
-                >
-                    <q-menu>
-                        <csc-language-menu
-                            id="csc-language-menu-login"
-                            class="csc-language-menu"
-                            :language-label="languageLabel"
-                            :language-labels="languageLabels"
-                            @change-language="changeLanguage"
-                        />
-                    </q-menu>
-                </q-btn>
+                <csc-selection-language />
             </q-toolbar>
         </q-header>
         <q-page-container>
@@ -121,21 +105,18 @@ import {
 import {
     Platform
 } from 'quasar'
-import {
-    getLanguageLabel
-} from '../i18n'
-import CscLanguageMenu from 'components/CscLanguageMenu'
 import CscSpinner from 'components/CscSpinner'
 import CscInputPassword from 'components/form/CscInputPassword'
 import CscInput from 'components/form/CscInput'
 import CscRetrievePasswordDialog from 'components/CscRetrievePasswordDialog'
+import CscSelectionLanguage from 'components/CscSelectionLanguage'
 export default {
     name: 'Login',
     components: {
+        CscSelectionLanguage,
         CscInput,
         CscInputPassword,
         CscSpinner,
-        CscLanguageMenu,
         CscRetrievePasswordDialog
     },
     data () {
@@ -159,15 +140,8 @@ export default {
         ...mapGetters('user', [
             'loginRequesting',
             'loginSucceeded',
-            'loginError',
-            'locale',
-            'languageLabels'
-        ]),
-        languageLabel () {
-            return this.$t('Language ({language})', {
-                language: getLanguageLabel(this.locale)
-            })
-        }
+            'loginError'
+        ])
     },
     watch: {
         loginSucceeded (loggedIn) {
@@ -187,9 +161,6 @@ export default {
                 username: this.username,
                 password: this.password
             })
-        },
-        changeLanguage (language) {
-            this.$store.dispatch('user/changeSessionLanguage', language)
         },
         showRetrievePasswordDialog () {
             this.showDialog = true

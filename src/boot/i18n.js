@@ -2,7 +2,6 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import {
-    getLanguageLabels,
     messages
 } from 'src/i18n'
 import {
@@ -23,15 +22,12 @@ export const i18n = new VueI18n({
 })
 
 export default ({ app, store }) => {
-    store.commit('user/setLanguageLabels', getLanguageLabels())
-
     app.i18n = i18n
     store.$i18n = i18n
     if (!hasSession('locale')) {
         setSession('locale', navigator.language)
     }
     i18n.locale = getSession('locale') + ''
-    store.commit('user/changeSessionLocaleSucceeded', i18n.locale)
 
     store.watch(() => i18n.locale, () => {
         store.dispatch('reloadLanguageRelatedData')
