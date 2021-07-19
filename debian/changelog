@@ -1,3 +1,13 @@
+ngcp-csc-ui (9.5.1.4+0~mr9.5.1.4) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [081dc7d] TT#129653 Conversations - List filtering is corrupted after performing an action on single item
+
+  [ Carlo Venusino ]
+  * [49c4e44] TT#130400 SubscriberProfiles - Hide main menu item, if none of the containing parts of the page are visible due to a SubscriberProfile
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 19 Jul 2021 13:47:20 +0200
+
 ngcp-csc-ui (9.5.1.3+0~mr9.5.1.3) unstable; urgency=medium
 
   [ Sergii Leonenko ]
