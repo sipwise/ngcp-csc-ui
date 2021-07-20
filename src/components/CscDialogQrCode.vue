@@ -5,15 +5,13 @@
         :opened="true"
         @cancel="hide"
     >
-        <q-img
+        <img
             v-if="qrCode"
             class="full-width justify-center"
-            :src="qrCode"
-            spinner-color="primary"
-            :ratio="1"
-            width="300px"
+            width="300"
             data-cy="qr-code-img"
-        />
+            :src="qrCode"
+        >
         <div
             v-else
             class="full-width text-center text-negative "
