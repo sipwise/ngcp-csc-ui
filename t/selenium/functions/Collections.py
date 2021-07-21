@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from functions.Functions import fill_element
 from functions.Functions import scroll_to_element
 from functions.Functions import click_js
+from functions.Functions import check_if_unchecked
 
 
 def login_csc(driver, name, pwd):
@@ -59,6 +60,7 @@ def create_customer(driver, name=None):
     scroll_to_element(driver, '//*[@id="external_id"]')
     fill_element(driver, '//*[@id="external_id"]', name)
     driver.find_element_by_xpath('//*[@id="save"]').click()
+    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="content"]//div[@class="alert alert-info"]')))
     return name
 
 
@@ -91,7 +93,7 @@ def create_subscriber(driver, customername, domainname):
     driver.find_element_by_css_selector('#domainidtable tr > td.dataTables_empty')
     fill_element(driver, '//*[@id="domainidtable_filter"]//input', domainname)
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="domainidtable"]//tr[1]//td[text()="%s"]' % domainname)))
-    click_js(driver, '//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input')
+    check_if_unchecked(driver, '//*[@id="domainidtable"]/tbody/tr[1]/td[4]/input')
     driver.find_element_by_xpath('//*[@id="webusername"]').send_keys('testuser')
     driver.find_element_by_xpath('//*[@id="webpassword"]').send_keys('testpasswd')
     driver.find_element_by_xpath('//*[@id="username"]').send_keys('testuser')
@@ -99,6 +101,7 @@ def create_subscriber(driver, customername, domainname):
     scroll_to_element(driver, '//*[@id="administrative"]')
     driver.find_element_by_xpath('//*[@id="administrative"]').click()
     driver.find_element_by_xpath('//*[@id="save"]').click()
+    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="content"]//div[@class="alert alert-info"]')))
 
 
 def delete_subscriber(driver, customername):
@@ -127,6 +130,7 @@ def create_domain(driver, name=None):
     driver.find_element_by_xpath('//*[@id="reselleridtable"]//tr[1]/td[5]/input').click()
     fill_element(driver, '//*[@id="domain"]', name)
     driver.find_element_by_xpath('//*[@id="save"]').click()
+    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="content"]//div[@class="alert alert-info"]')))
     return name
 
 
