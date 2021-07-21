@@ -55,3 +55,9 @@ def wait_for_invisibility(driver, xpath):
     driver.implicitly_wait(2)
     WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.XPATH, xpath)))
     driver.implicitly_wait(10)
+
+
+def check_if_unchecked(driver, element):
+    checkmark = driver.find_element_by_xpath(element)
+    if not checkmark.is_selected():
+        click_js(driver, element)
