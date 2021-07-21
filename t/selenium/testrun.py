@@ -13,6 +13,7 @@ from functions.Collections import delete_subscriber
 from functions.Collections import delete_domain
 from functions.Collections import login_csc
 from functions.Collections import login_panel
+from functions.Collections import logout_panel
 from functions.Collections import logout_csc
 from functions.Functions import click_js
 from functions.Functions import create_driver
@@ -22,6 +23,7 @@ from functions.Functions import wait_for_loading_screen
 from functions.Functions import wait_for_invisibility
 import selenium.common.exceptions
 from selenium import webdriver
+from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
@@ -468,6 +470,129 @@ class testrun(unittest.TestCase):
             driver.find_element_by_xpath('//*[@id="csc-page-reminder"]/div//label//div//input').get_attribute("value") == '12:00',
             "Time has not been changed")
         filename = 0
+
+    def test_security(self):
+        global customers
+        global filename
+        filename = "test_speeddial.png"
+        driver = self.driver
+        driver.get(os.environ['CATALYST_SERVER'])
+        print("Try to log in with valid credentials...", end="")
+        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
+        print("OK")
+        print("Go to 'Call Forwarding' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Forwarding")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-forwarding"]')) > 0, "Conference page wasnt opened")
+        print("OK")
+        print("Create a call forwarding 'if available'...", end="")
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"')
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]//button[contains(., "Add forwarding")]/span/svg')
+        click_js(driver, '//*[@id="csc-page-call-forwarding"]//div//button[contains(., "Add forwarding")]')
+        time.sleep(1)
+        click_js(driver, '/html/body/div[3]/div/div[1]')
+        print("OK")
+        print("Create a call forwarding 'if not available'...", end="")
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"')
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]//button[contains(., "Add forwarding")]/span/svg')
+        click_js(driver, '//*[@id="csc-page-call-forwarding"]//div//button[contains(., "Add forwarding")]')
+        time.sleep(1)
+        click_js(driver, '/html/body/div[3]/div/div[2]')
+        print("OK")
+        print("Create a call forwarding 'if busy'...", end="")
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"')
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]//button[contains(., "Add forwarding")]/span/svg')
+        click_js(driver, '//*[@id="csc-page-call-forwarding"]//div//button[contains(., "Add forwarding")]')
+        time.sleep(1)
+        click_js(driver, '/html/body/div[3]/div/div[3]')
+        print("OK")
+        print("Try to edit all 'forwared to...' numbers...", end="")
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"')
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]//button[contains(., "Add forwarding")]/span/svg')
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div[1]//div/span[contains(., "Number")]').click()
+        fill_element(driver, "/html/body//label//div//input", "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\|}{;'\":,./?><EOL")
+        driver.find_element_by_xpath('/html/body//div/button[contains(., "Set")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Voicebox")]').click()
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change PIN"]')))
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Forwarding")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-forwarding"]')) > 0, "Conference page wasnt opened")
+        print("OK")
+        print("Create a call forwarding 'if available'...", end="")
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"')
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]//button[contains(., "Add forwarding")]/span/svg')
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div[1]//div/span[contains(., "Number")]').click()
+        fill_element(driver, "/html/body//label//div//input", "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\|}{;'\":,./?><EOL")
+        driver.find_element_by_xpath('/html/body//div/button[contains(., "Set")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div[2]//div/span[contains(., "Number")]').click()
+        fill_element(driver, "/html/body//label//div//input", "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\|}{;'\":,./?><EOL")
+        driver.find_element_by_xpath('/html/body//div/button[contains(., "Set")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div[3]//div/span[contains(., "Number")]').click()
+        fill_element(driver, "/html/body//label//div//input", "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\|}{;'\":,./?><EOL")
+        driver.find_element_by_xpath('/html/body//div/button[contains(., "Set")]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
+        print("OK")
+        print("Go to Admin Panel...", end="")
+        logout_csc(driver)
+        login_panel(driver)
+        print("OK")
+        print("Open Subscriber and check if Call forwarding doesn't execute malicious code...", end="")
+        driver.find_element_by_xpath('//*[@id="main-nav"]/li//span[contains(., "Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="main-nav"]//li/a[contains(., "Subscribers")]').click()
+        fill_element(driver, '//*[@id="subscriber_table_filter"]/label/input', self.domainname)
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="subscriber_table"]//tr[1]/td[5][contains(., "' + self.domainname + '")]')))
+        click_js(driver, '//*[@id="subscriber_table"]/tbody/tr[1]/td//a[contains(., "Details")]')
+        driver.find_element_by_xpath('//*[@id="content"]/div//span/a[contains(., "Preferences")]').click()
+        try:
+            alert_obj = Alert(driver)
+            self.assertTrue(alert_obj.text != 'test', "JavaScript Code was executed")
+            alert_obj.accept()
+            alert_obj.accept()
+            alert_obj.accept()
+        except selenium.common.exceptions.NoAlertPresentException:
+            pass
+        driver.find_element_by_xpath('//*[@id="preference_groups"]/div[contains(., "Call Forwards")]').click()
+        driver.find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[1]/td[6]/a').click()
+        self.assertTrue(
+            "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\|}{;'\":,./?><EOL" in driver.find_element_by_xpath('//div[@id="collapse_cf"]//table//tr[1]/td[6]/div/div[2]').text,
+            "Didn't match test string")
+        driver.find_element_by_xpath('//div[@id="collapse_cf"]/div/table/tbody/tr[1]/td[6]//div/button').click()
+        driver.find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[2]/td[6]/a').click()
+        self.assertTrue(
+            "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\|}{;'\":,./?><EOL" in driver.find_element_by_xpath('//div[@id="collapse_cf"]//table//tr[2]/td[6]/div/div[2]').text,
+            "Didn't match test string")
+        driver.find_element_by_xpath('//div[@id="collapse_cf"]/div/table/tbody/tr[2]/td[6]//div/button').click()
+        driver.find_element_by_xpath('//*[@id="preferences_table_cf"]/tbody/tr[4]/td[6]/a').click()
+        self.assertTrue(
+            "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\|}{;'\":,./?><EOL" in driver.find_element_by_xpath('//div[@id="collapse_cf"]//table//tr[4]/td[6]/div/div[2]').text,
+            "Didn't match test string")
+        driver.find_element_by_xpath('//div[@id="collapse_cf"]/div/table/tbody/tr[4]/td[6]//div/button').click()
+        print("OK")
+        print("Try to delete call forwarding...", end="")
+        click_js(driver, '//*[@id="preferences_table_cf"]/tbody/tr[1]/td[8]//a[contains(., "Delete")]')
+        driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
+        click_js(driver, '//*[@id="preferences_table_cf"]/tbody/tr[2]/td[8]//a[contains(., "Delete")]')
+        driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
+        click_js(driver, '//*[@id="preferences_table_cf"]/tbody/tr[4]/td[8]//a[contains(., "Delete")]')
+        driver.find_element_by_xpath('//*[@id="dataConfirmOK"]').click()
+        print("OK")
+        print("Go back to CSC Panel Call Fowarding page...", end="")
+        logout_panel(driver)
+        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Forwarding")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-forwarding"]')) > 0, "Conference page wasnt opened")
+        print("OK")
 
     def test_speed_dial(self):
         global customers
