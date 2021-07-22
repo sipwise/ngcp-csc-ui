@@ -2,7 +2,9 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import {
-    messages
+    messages,
+    getLangFromBrowserDefaults,
+    normalizeLocaleCode
 } from 'src/i18n'
 import {
     hasSession,
@@ -25,9 +27,9 @@ export default ({ app, store }) => {
     app.i18n = i18n
     store.$i18n = i18n
     if (!hasSession('locale')) {
-        setSession('locale', navigator.language)
+        setSession('locale', getLangFromBrowserDefaults())
     }
-    i18n.locale = getSession('locale') + ''
+    i18n.locale = normalizeLocaleCode(getSession('locale'))
 
     store.watch(() => i18n.locale, () => {
         store.dispatch('reloadLanguageRelatedData')

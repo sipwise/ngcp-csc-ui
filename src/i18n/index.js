@@ -63,9 +63,10 @@ export function setLanguage (lang) {
     setSession('locale', lang)
     i18n.locale = lang
 
+    const quasarLangCode = lang.toLowerCase()
     import(
         /* webpackInclude: /(en-us|de|es|fr|it|ru)\.js$/ */
-        'quasar/lang/' + lang.toLowerCase()
+        'quasar/lang/' + quasarLangCode
     ).then(lang => {
         Quasar.lang.set(lang.default)
     })
@@ -93,4 +94,16 @@ export function convertLangV1toV2 (lang) {
 
 export function getCurrentLangAsV1Format () {
     return convertLangV2toV1(i18n.locale)
+}
+
+export function normalizeLocaleCode (locale) {
+    const shortLangCode = String(locale || defaultLocale).substr(0, 2).toLowerCase()
+    const langCodeInV2Format = (shortLangCode === 'en') ? 'en-US' : shortLangCode
+    const langCode = Object.keys(messages).filter(l => l === langCodeInV2Format)[0]
+    return langCode || defaultLocale
+}
+
+export function getLangFromBrowserDefaults () {
+    const browserLanguage = navigator?.language
+    return normalizeLocaleCode(browserLanguage)
 }
