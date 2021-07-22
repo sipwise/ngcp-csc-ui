@@ -33,6 +33,24 @@ export function login (username, password) {
     })
 }
 
+export async function loginByExchangeToken (token) {
+    try {
+        const res = await Vue.http.post('login_jwt', {
+            token: token
+        })
+        return {
+            jwt: res.body?.jwt,
+            subscriberId: res.body?.subscriber_id + ''
+        }
+    } catch (err) {
+        if (err.status && err.status >= 400) {
+            throw new Error(err.body.message)
+        } else {
+            throw err
+        }
+    }
+}
+
 export function getUserData (id) {
     return new Promise((resolve, reject) => {
         return Promise.all([
