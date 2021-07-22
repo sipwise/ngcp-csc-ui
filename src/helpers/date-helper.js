@@ -70,3 +70,8 @@ export function isWithinLastWeek (date, $today) {
     return date.getTime() >= weekStart.getTime() &&
         date.getTime() < todayStart.getTime()
 }
+
+export function getBrowserTimezone () {
+    return Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone
+        ? Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone : 'UTC'
+}

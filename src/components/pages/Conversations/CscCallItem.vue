@@ -82,6 +82,10 @@ import {
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
+import {
+    callIconColor,
+    callIcon
+} from 'src/helpers/call-utils'
 export default {
     name: 'CscCallItem',
     components: { CscPopupMenuItemStartCall, CscPopupMenuItem, CscMoreMenu },
@@ -154,29 +158,10 @@ export default {
             }
         },
         icon () {
-            if (this.call.call_type === 'cfu' || this.call.call_type === 'cfna' ||
-                this.call.call_type === 'cfb' || this.call.call_type === 'cft') {
-                return 'phone_forwarded'
-            } else if (this.call.call_type === 'call' && this.call.direction === 'in' && this.call.status === 'cancel') {
-                return 'call_missed'
-            } else if (this.call.call_type === 'call' && this.call.direction === 'in') {
-                return 'call_received'
-            } else if (this.call.call_type === 'call' && this.call.direction === 'out') {
-                return 'call_made'
-            } else {
-                return 'phone'
-            }
+            return callIcon(this.call)
         },
         color () {
-            if (this.call.call_type === 'call' && (this.call.status === 'cancel' ||
-                this.call.status === 'offline' || this.call.status === 'noanswer')) {
-                return 'negative'
-            } else if (this.call.call_type === 'call' && (this.call.direction === 'in' ||
-                this.call.direction === 'out')) {
-                return 'primary'
-            } else {
-                return 'white'
-            }
+            return callIconColor(this.call)
         },
         isMobile () {
             return Platform.is.mobile

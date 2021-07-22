@@ -50,7 +50,60 @@
 
         <q-card-section
             class="csc-card-list"
-        />
+        >
+            <q-list
+                v-for="(item, index) in itemsList"
+                :key="item.id"
+            >
+                <q-item>
+                    <q-item-section avatar>
+                        <q-icon
+                            v-if="!item.clickable_icon"
+                            :color="item.icon.color"
+                            clickable
+                            :name="item.icon.name"
+                        />
+                        <q-btn
+                            v-if="item.clickable_icon"
+                            flat
+                            :color="item.icon.color"
+                            :icon="item.icon.name"
+                            @click="$emit('action', item.id)"
+                        />
+                    </q-item-section>
+
+                    <q-item-section>
+                        <q-item-label>{{ item.title }}</q-item-label>
+                        <q-item-label caption>
+                            {{ item.sub_title }}
+                        </q-item-label>
+                    </q-item-section>
+
+                    <q-item-section side>
+                        <q-item-label caption>
+                            {{ item.extra_text }}
+                        </q-item-label>
+                    </q-item-section>
+                </q-item>
+                <q-separator
+                    v-if="index !== itemsList.length-1"
+                    spaced
+                />
+            </q-list>
+            <div
+                v-if="!loading && itemsList.length === 0"
+                class="text-center"
+            >
+                {{ error ? $t('Data loading error') : noItemsMessage }}
+            </div>
+            <div
+                class="text-center"
+            >
+                <csc-spinner
+                    v-if="loading"
+                />
+            </div>
+        </q-card-section>
 
         <q-separator
             dark
@@ -112,6 +165,10 @@ export default {
         error: {
             type: Boolean,
             default: false
+        },
+        noItemsMessage: {
+            type: String,
+            default: ''
         }
     }
 }
@@ -129,5 +186,5 @@ export default {
         padding-bottom: 22px
 
     .csc-card-list
-        min-height: 316px
+        min-height: 359px
 </style>

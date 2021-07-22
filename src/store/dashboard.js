@@ -1,10 +1,13 @@
 import {
-    getAllVoicemails,
-    getAllCalls
+    getAllCallsOrVoicemails
 } from '../api/conversations'
 import {
     getSubscriberRegistrations
 } from '../api/subscriber'
+
+import {
+    getBrowserTimezone
+} from '../helpers/date-helper'
 
 export default {
     namespaced: true,
@@ -15,23 +18,34 @@ export default {
     },
     actions: {
         async getVoicemailsData (context) {
-            const res = await getAllVoicemails({
-                subscriberId: context.getters.getSubscriberId,
-                rows: 5
+            const res = await getAllCallsOrVoicemails({
+                subscriber_id: context.getters.getSubscriberId,
+                rows: 5,
+                order_by: 'timestamp',
+                order_by_direction: 'desc',
+                type: 'voicemail',
+                tz: getBrowserTimezone()
             })
             return res
         },
         async getCallsData (context) {
-            const res = await getAllCalls({
-                subscriberId: context.getters.getSubscriberId,
-                rows: 5
+            const res = await getAllCallsOrVoicemails({
+                subscriber_id: context.getters.getSubscriberId,
+                rows: 5,
+                order_by: 'timestamp',
+                order_by_direction: 'desc',
+                type: 'call',
+                tz: getBrowserTimezone()
             })
             return res
         },
         async getRegisteredDevicesData (context) {
             const res = await getSubscriberRegistrations({
                 subscriber_id: context.getters.getSubscriberId,
-                rows: 5
+                rows: 5,
+                order_by: 'timestamp',
+                order_by_direction: 'desc',
+                tz: getBrowserTimezone()
             })
             return res
         }
