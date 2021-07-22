@@ -399,7 +399,8 @@ class testrun(unittest.TestCase):
             "General page wasnt opened")
         print("OK")
         print("Try to enable 'Music on Hold'...", end="")
-        driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]//div[@aria-label="Music on Hold"]/div[1]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-page-voicebox"]/div/div[1]/div[2]/svg')
+        click_js(driver, '//*[@id="csc-page-voicebox"]//div[@aria-label="Music on Hold"]/div[1]')
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-page-voicebox"]//div[@aria-checked="true"]')) > 0,
             "Music on Hold was not enabled")
