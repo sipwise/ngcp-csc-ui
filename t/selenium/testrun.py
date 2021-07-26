@@ -496,6 +496,7 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-page-speed-dial"]/div[2]/div[contains(., "No speed dials found")]')) > 0,
             "Speed dial was not deleted")
+        filename = 0
 
     def test_voicebox(self):
         global customers
