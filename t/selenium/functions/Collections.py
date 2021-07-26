@@ -16,8 +16,9 @@ def login_csc(driver, name, pwd):
 
 
 def logout_csc(driver):
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="csc-header-toolbar"]/div[1]/button')))
-    driver.find_element_by_xpath('//*[@id="csc-header-toolbar"]/div[1]/button').click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="csc-header-toolbar-main"]/button[2]')))
+    driver.find_element_by_xpath('//*[@id="csc-header-toolbar-main"]/button[2]').click()
+    scroll_to_element(driver, '/html/body//div[contains(text(), "Logout")]')
     driver.find_element_by_xpath('/html/body//div[contains(text(), "Logout")]').click()
 
 
