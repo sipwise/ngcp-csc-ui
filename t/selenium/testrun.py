@@ -410,7 +410,8 @@ class testrun(unittest.TestCase):
             len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-privacy"]')) > 0, "Privacy page wasnt opened")
         print("OK")
         print("Try to enable privacy setting...", end="")
-        driver.find_element_by_xpath('//*[@id="csc-page-call-blocking-privacy"]/div/div/div[1]/div/div[1]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-blocking-privacy"]/div/div/div[2]/svg')
+        click_js(driver, '//*[@id="csc-page-call-blocking-privacy"]//div[@role="checkbox"]/div[1]')
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-privacy"]//div[contains(., "Your number is hidden to the callee")]')) > 0,
             "Privacy setting wasnt enabled")
