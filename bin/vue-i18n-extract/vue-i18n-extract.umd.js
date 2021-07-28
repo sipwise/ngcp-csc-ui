@@ -28,6 +28,8 @@
     return _extends.apply(this, arguments);
   }
 
+  const decomment = require('decomment');
+
   function readVueFiles(src) {
     if (!isValidGlob(src)) {
       throw new Error(`vueFiles isn't a valid glob pattern.`);
@@ -44,7 +46,7 @@
       return {
         fileName,
         path: f,
-        content: fs.readFileSync(f, 'utf8')
+        content: decomment.text(fs.readFileSync(f, 'utf8'))
       };
     });
   }

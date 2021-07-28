@@ -51,6 +51,7 @@
     "@quasar/quasar-app-extension-testing-unit-jest": "^1.0.1",
     "babel-eslint": "^10.0.1",
     "commander": "6.2.1",
+    "decomment": "0.9.4",
     "dot-object": "2.1.4",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
