@@ -1,3 +1,16 @@
+ngcp-csc-ui (9.5.1.6+0~mr9.5.1.6) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [05eabf1] TT#70901 selenium: fix for one element obscuring 'save' button
+  * [27a0f66] TT#70901 selenium: fix speed dial always taking screenshots
+  * [e9aa16c] TT#70901 selenium: fix up logout_csc function
+  * [fa7e04e] TT#70901 selenium: fix weird privacy setting behaviour
+  * [8501660] TT#70901 selenium: add new checked_if_unchecked functions
+  * [2a85a73] TT#70901 selenium: only use one thread for local testruns
+  * [0c0c905] TT#70901 selenium: fix language changing test on login page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 28 Jul 2021 11:26:17 +0200
+
 ngcp-csc-ui (9.5.1.5+0~mr9.5.1.5) unstable; urgency=medium
 
   [ Nico Schedel ]
