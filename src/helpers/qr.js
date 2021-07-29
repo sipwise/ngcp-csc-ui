@@ -1,3 +1,3 @@
-export function qrPayload ({ subscriber, server, token }) {
-    return `username=${subscriber}&server=${server}&token=${token}`
+export function qrPayload ({ subscriber, server, expire, token }) {
+    return `username=${subscriber}&server=${server}&expire=${expire}&token=${token}`
 }
