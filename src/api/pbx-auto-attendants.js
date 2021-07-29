@@ -2,7 +2,7 @@ import Vue from 'vue'
 import { patchReplaceFull } from 'src/api/common'
 
 export async function getAutoAttendants (options) {
-    const params = { ...options, ...{ expand: 1 } }
+    const params = { ...options, ...{ expand: 'all' } }
     const res = await Vue.http.get('api/autoattendants/', {
         params: params
     })
