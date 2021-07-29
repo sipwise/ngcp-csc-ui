@@ -28,6 +28,7 @@ import QRCode from 'qrcode'
 import {
     qrPayload
 } from 'src/helpers/qr'
+import { date } from 'quasar'
 
 export default {
     namespaced: true,
@@ -451,12 +452,14 @@ export default {
         },
         async fetchAuthToken ({ commit, state, getters }, expiringTime = 300) {
             const subscriber = state.subscriber
+            const expireDate = date.addToDate(new Date(), { seconds: expiringTime })
             commit('setQrExpiringTime', expiringTime)
             try {
                 const authToken = await createAuthToken(expiringTime)
                 const data = qrPayload({
                     subscriber: subscriber.username,
                     server: subscriber.domain,
+                    expire: expireDate.getTime(),
                     token: authToken
                 })
                 const qrCode = await QRCode.toDataURL(data)
