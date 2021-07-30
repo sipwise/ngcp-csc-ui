@@ -306,42 +306,48 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Trying to change to every available language...", end="")
         driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[3]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[1]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[5]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Subscriber Log-in")]')) > 0,
             "Language wasnt changed to German")
         driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[4]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[1]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[4]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Iniciar sesión de suscriptor")]')) > 0,
             "Language wasnt changed to Spanish")
         driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[5]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[1]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[2]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Authentification de l’abonné")]')) > 0,
             "Language wasnt changed to French")
         driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[6]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[1]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[3]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Accedi come utente")]')) > 0,
             "Language wasnt changed to Italian")
         driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[7]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[1]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[6]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Регистрация подписчика")]')) > 0,
             "Language wasnt changed to Russian")
         driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[2]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[1]')
+        click_js(driver, '//*[@id="csc-language-menu-login"]/div/div/div[2]/div/div[1]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
