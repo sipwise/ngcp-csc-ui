@@ -1,3 +1,10 @@
+ngcp-csc-ui (9.5.1.7+0~mr9.5.1.7) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [eaf5ab8] TT#70901 selenium: fix language changing test for mr9.5
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 02 Aug 2021 12:54:20 +0200
+
 ngcp-csc-ui (9.5.1.6+0~mr9.5.1.6) unstable; urgency=medium
 
   [ Nico Schedel ]
