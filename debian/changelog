@@ -1,3 +1,10 @@
+ngcp-csc-ui (9.5.1.8+0~mr9.5.1.8) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [afd652b] TT#133501 Add "expire" time to QR code generated for sip:phone
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 03 Aug 2021 12:31:31 +0200
+
 ngcp-csc-ui (9.5.1.7+0~mr9.5.1.7) unstable; urgency=medium
 
   [ Nico Schedel ]
