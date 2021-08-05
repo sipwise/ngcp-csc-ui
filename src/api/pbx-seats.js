@@ -130,7 +130,7 @@ export function createSeat (seat) {
         Promise.resolve().then(() => {
             return createSubscriber({
                 username: _.kebabCase(seat.name),
-                password: createId(),
+                password: seat.sipPassword ? seat.sipPassword : createId(),
                 display_name: seat.name,
                 webpassword: seat.webPassword.length > 0 ? seat.webPassword : null,
                 is_pbx_group: false,
