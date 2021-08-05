@@ -9,7 +9,8 @@ import {
     setPbxGroupIds,
     setSubscriberNumbers,
     setPreferenceIntraPbx,
-    getPreferences
+    getPreferences,
+    setPbxSIPPassword
 } from './subscriber'
 import _ from 'lodash'
 import {
@@ -218,6 +219,28 @@ export function setSeatWebPassword (options) {
     return new Promise((resolve, reject) => {
         Promise.resolve().then(() => {
             return setPbxWebPassword(options.seatId, options.seatWebPassword)
+        }).then(() => {
+            return getSubscriberAndPreferences(options.seatId)
+        }).then((result) => {
+            resolve({
+                seat: result.subscriber,
+                preferences: result.preferences
+            })
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+/**
+ * @param options
+ * @param options.seatId
+ * @param options.seatSIPPassword
+ */
+export function setSeatSIPPassword (options) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            return setPbxSIPPassword(options.seatId, options.seatSIPPassword)
         }).then(() => {
             return getSubscriberAndPreferences(options.seatId)
         }).then((result) => {

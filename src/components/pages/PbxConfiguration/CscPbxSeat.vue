@@ -76,6 +76,12 @@
                         :label="$t('Change Password')"
                         @click="showPasswordDialog"
                     />
+                    <csc-popup-menu-item
+                        icon="vpn_key"
+                        color="primary"
+                        :label="$t('Change SIP Password')"
+                        @click="showSIPPasswordDialog"
+                    />
                     <csc-popup-menu-item-delete
                         @click="deleteSeat"
                     />
@@ -477,10 +483,27 @@ export default {
                 this.changeWebPassword(password)
             })
         },
+        showSIPPasswordDialog () {
+            this.$q.dialog({
+                component: CscDialogChangePassword,
+                title: this.$t('Change SIP Password'),
+                passwordLabel: this.$t('SIP Password'),
+                passwordConfirmLabel: this.$t('SIP Password confirm'),
+                parent: this
+            }).onOk((password) => {
+                this.changeSIPPassword(password)
+            })
+        },
         async changeWebPassword (password) {
             await this.$store.dispatch('pbxSeats/setSeatWebPassword', {
                 seatId: this.seat.id,
                 seatWebPassword: password
+            })
+        },
+        async changeSIPPassword (password) {
+            await this.$store.dispatch('pbxSeats/setSeatSIPPassword', {
+                seatId: this.seat.id,
+                seatSIPPassword: password
             })
         },
         changeIntraPbx () {
