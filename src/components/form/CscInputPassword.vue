@@ -37,6 +37,9 @@
                 dense
                 @click.stop="generatePassword"
             />
+            <slot
+                name="append"
+            />
         </template>
     </csc-input>
 </template>

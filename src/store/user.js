@@ -17,7 +17,8 @@ import {
     recoverPassword,
     getBrandingLogo,
     getSubscriberRegistrations,
-    getSubscriberProfile
+    getSubscriberProfile,
+    changeSIPPassword
 } from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import QRCode from 'qrcode'
@@ -225,6 +226,9 @@ export default {
             state.userDataRequesting = false
             state.userDataError = null
         },
+        subscriberUpdateSucceeded (state, data) {
+            state.subscriber = data
+        },
         userDataFailed (state, error) {
             state.userDataError = error
             state.userDataSucceeded = false
@@ -356,6 +360,11 @@ export default {
             }).catch((err) => {
                 context.commit('userPasswordFailed', err.message)
             })
+        },
+        async changeSIPPassword (context, newPassword) {
+            const subscriberId = getSubscriberId()
+            const subscriberData = await changeSIPPassword(subscriberId, newPassword)
+            context.commit('subscriberUpdateSucceeded', subscriberData)
         },
         async resetPassword ({ commit }, data) {
             commit('newPasswordRequesting', true)

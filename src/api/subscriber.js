@@ -539,6 +539,14 @@ export function changePassword (subscriber, newPassword) {
     })
 }
 
+export async function changeSIPPassword (subscriber, newPassword) {
+    return patchReplaceFull({
+        path: 'api/subscribers/' + subscriber,
+        fieldPath: 'password',
+        value: newPassword
+    })
+}
+
 export async function resetPassword (userName) {
     const payLoad = {
         domain: Vue.$config.baseHttpUrl.replace(/(^\w+:|^)\/\//, ''),
