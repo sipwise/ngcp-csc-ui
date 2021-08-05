@@ -8,7 +8,7 @@
             v-bind="$attrs"
             generate
             clearable
-            :label="$t('Password')"
+            :label="passwordLabel"
             @input="inputPassword"
             @generated="passwordGenerated"
             @clear="passwordClear"
@@ -28,7 +28,7 @@
             ref="passwordRetype"
             v-model="passwordRetype"
             v-bind="$attrs"
-            :label="$t('Password Retype')"
+            :label="passwordConfirmLabel"
             :error="$v.passwordRetype.$error"
             :error-message="errorMessagePasswordRetype"
             clearable
@@ -69,6 +69,18 @@ export default {
                     password: '',
                     passwordRetype: ''
                 }
+            }
+        },
+        passwordLabel: {
+            type: String,
+            default () {
+                return this.$t('Password')
+            }
+        },
+        passwordConfirmLabel: {
+            type: String,
+            default () {
+                return this.$t('Password Retype')
             }
         }
     },

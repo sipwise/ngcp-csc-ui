@@ -51,6 +51,16 @@
                 </csc-input>
                 <csc-input-password-retype
                     v-model="data.password"
+                    :password-label="$t('Web Password')"
+                    :password-confirm-label="$t('Web Password confirm')"
+                    :disable="loading"
+                    hide-bottom-space
+                    dense
+                />
+                <csc-input-password-retype
+                    v-model="data.sipPassword"
+                    :password-label="$t('SIP Password')"
+                    :password-confirm-label="$t('SIP Password confirm')"
                     :disable="loading"
                     dense
                 />
@@ -194,6 +204,22 @@ export default {
                 isInRange: function (value) {
                     return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
                 }
+            },
+            password: {
+                password: {
+                    required
+                },
+                passwordRetype: {
+                    required
+                }
+            },
+            sipPassword: {
+                password: {
+                    required
+                },
+                passwordRetype: {
+                    required
+                }
             }
         }
     },
@@ -271,6 +297,10 @@ export default {
                     password: '',
                     passwordRetype: ''
                 },
+                sipPassword: {
+                    password: '',
+                    passwordRetype: ''
+                },
                 aliasNumbers: [],
                 groups: [],
                 soundSet: null,
@@ -285,6 +315,7 @@ export default {
                 name: this.data.name,
                 extension: this.data.extension,
                 webPassword: this.data.password.password,
+                sipPassword: this.data.sipPassword.password,
                 aliasNumbers: this.data.aliasNumbers,
                 groups: this.data.groups,
                 soundSet: this.data.soundSet,
