@@ -2,7 +2,7 @@
     <csc-dialog
         ref="dialog"
         title-icon="vpn_key"
-        :title="$t('Change login password')"
+        :title="title"
     >
         <template
             v-slot:actions
@@ -19,6 +19,8 @@
         </template>
         <csc-input-password-retype
             v-model="passwordRetype"
+            :password-label="passwordLabel"
+            :password-confirm-label="passwordConfirmLabel"
             dense
             @validation-failed="ready=false"
             @validation-succeeded="ready=true"
@@ -34,6 +36,24 @@ export default {
     components: {
         CscDialog,
         CscInputPasswordRetype
+    },
+    props: {
+        title: {
+            type: String,
+            default () { return this.$t('Change login password') }
+        },
+        passwordLabel: {
+            type: String,
+            default () {
+                return this.$t('Password')
+            }
+        },
+        passwordConfirmLabel: {
+            type: String,
+            default () {
+                return this.$t('Password confirm')
+            }
+        }
     },
     data () {
         return {

@@ -305,6 +305,10 @@ export function setPbxWebPassword (id, pbxWebPassword) {
     return setField(id, 'webpassword', pbxWebPassword)
 }
 
+export function setPbxSIPPassword (id, pbxWebPassword) {
+    return setField(id, 'password', pbxWebPassword)
+}
+
 export function setPbxHuntPolicy (id, pbxHuntPolicy) {
     return setField(id, 'pbx_hunt_policy', pbxHuntPolicy)
 }

@@ -20,7 +20,8 @@ import {
     setSeatSoundSet,
     setSeatIntraPbx,
     setSeatWebPassword,
-    getSeatPreferences
+    getSeatPreferences,
+    setSeatSIPPassword
 } from '../api/pbx-seats'
 
 export default {
@@ -347,6 +348,20 @@ export default {
             setSeatWebPassword({
                 seatId: options.seatId,
                 seatWebPassword: options.seatWebPassword
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        setSeatSIPPassword (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.t('SIP Password')
+            })
+            setSeatSIPPassword({
+                seatId: options.seatId,
+                seatSIPPassword: options.seatSIPPassword
             }).then((result) => {
                 context.commit('seatUpdateSucceeded', result)
             }).catch((err) => {
