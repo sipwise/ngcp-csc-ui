@@ -1,3 +1,10 @@
+ngcp-csc-ui (9.5.1.9+0~mr9.5.1.9) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [3772f4d] TT#134715 SIPAuth - As PBXAdmin, I want to set the SIP-password during the creation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Aug 2021 15:09:32 +0200
+
 ngcp-csc-ui (9.5.1.8+0~mr9.5.1.8) unstable; urgency=medium
 
   [ Carlo Venusino ]
