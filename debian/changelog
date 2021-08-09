@@ -1,3 +1,10 @@
+ngcp-csc-ui (9.5.1.10+0~mr9.5.1.10) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [03aa052] TT#134651 SIPAuth - As Subscriber/PBXAttendant, I want to change my SIP-Password, in order to authenticate my SIP-Device against NGCP
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Aug 2021 15:43:15 +0200
+
 ngcp-csc-ui (9.5.1.9+0~mr9.5.1.9) unstable; urgency=medium
 
   [ Hugo Zigha ]
