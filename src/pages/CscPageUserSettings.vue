@@ -6,12 +6,15 @@
         <div
             class="col col-xs-12 col-md-6"
         >
-            <csc-change-password
+            <csc-change-password-embedded
+                ref="changeWebPasswordSection"
                 class="q-mb-md"
-                :loading="isPasswordChanging"
-                :error="changePasswordError"
-                :subscriber="getSubscriber"
-                @change="changePassword"
+                :btn-label="$t('Change Web Password')"
+                :password-label="$t('New Web Password')"
+                :password-confirm-label="$t('New Web Password confirm')"
+                :save-conformation-text="$t('You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password. ')"
+                :loading="processingChangeWebPassword"
+                @change="requestWebPasswordChange"
             />
             <csc-change-password-embedded
                 ref="changeSipPasswordSection"
@@ -62,26 +65,22 @@ import {
     showToast
 } from 'src/helpers/ui'
 import {
-    RequestState
-} from 'src/store/common'
-import {
-    mapState,
-    mapGetters,
-    mapActions
+    mapGetters
 } from 'vuex'
 import CscPage from 'components/CscPage'
-import CscChangePassword from 'components/pages/UserSettings/CscChangePassword'
 import CscChangePasswordEmbedded from 'components/pages/UserSettings/CscChangePasswordEmbeded'
 import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
 import { copyToClipboard } from 'quasar'
 import CscInputPassword from 'components/form/CscInputPassword'
+
+const WAIT_CHANGE_WEB_PASSWORD = 'processing-changeWebPassword'
+const WAIT_CHANGE_SIP_PASSWORD = 'processing-changeSIPPassword'
 
 export default {
     name: 'CscPageUserSettings',
     components: {
         CscInputPassword,
         CscChangePasswordEmbedded,
-        CscChangePassword,
         CscPage
     },
     data () {
@@ -89,16 +88,12 @@ export default {
         }
     },
     computed: {
-        ...mapState('user', [
-            'changePasswordState',
-            'changePasswordError'
-        ]),
         ...mapGetters('user', [
-            'getSubscriber',
-            'isPasswordChanging'
+            'getSubscriber'
         ]),
         ...mapWaitingGetters({
-            processingChangeSIPPassword: 'processing-changeSIPPassword'
+            processingChangeSIPPassword: WAIT_CHANGE_SIP_PASSWORD,
+            processingChangeWebPassword: WAIT_CHANGE_WEB_PASSWORD
         }),
         currentSIPPassword () {
             return this.getSubscriber?.password || ''
@@ -108,22 +103,20 @@ export default {
             return subscriberData?.username + '@' + subscriberData?.domain
         }
     },
-    watch: {
-        changePasswordState (state) {
-            if (state === RequestState.succeeded) {
-                showToast(this.$t('Your password has been changed successfully'))
-            } else if (state === RequestState.failed) {
-                showGlobalError(this.changePasswordError)
-            }
-        }
-    },
     methods: {
-        ...mapActions('user', [
-            'changePassword'
-        ]),
         ...mapWaitingActions('user', {
-            changeSIPPassword: 'processing-changeSIPPassword'
+            changeSIPPassword: WAIT_CHANGE_SIP_PASSWORD,
+            changePassword: WAIT_CHANGE_WEB_PASSWORD
         }),
+        async requestWebPasswordChange (newPassword) {
+            try {
+                await this.changePassword(newPassword)
+                showToast(this.$t('Your Web password has been changed successfully'))
+                this.$refs.changeWebPasswordSection.cancel()
+            } catch (error) {
+                showGlobalError(error?.message)
+            }
+        },
         async requestSIPPasswordChange (newPassword) {
             try {
                 await this.changeSIPPassword(newPassword)

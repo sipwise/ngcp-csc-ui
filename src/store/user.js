@@ -351,15 +351,10 @@ export default {
                 await context.dispatch('forwardHome')
             }
         },
-        changePassword (context, newPassword) {
+        async changePassword (context, newPassword) {
             const subscriberId = getSubscriberId()
-            context.commit('userPasswordRequesting')
-            changePassword(subscriberId, newPassword).then(() => {
-                context.commit('userPasswordSucceeded')
-                context.dispatch('logout')
-            }).catch((err) => {
-                context.commit('userPasswordFailed', err.message)
-            })
+            await changePassword(subscriberId, newPassword)
+            await context.dispatch('logout')
         },
         async changeSIPPassword (context, newPassword) {
             const subscriberId = getSubscriberId()

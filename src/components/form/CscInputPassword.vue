@@ -1,36 +1,38 @@
 <template>
     <csc-input
         ref="input"
-        v-bind="$attrs"
+        :value="$attrs.value"
         :type="inputType"
-        :value="value"
-        @input="$emit('input', $event)"
+        v-bind="$attrs"
         v-on="$listeners"
     >
         <template
             slot="prepend"
         >
+            <slot
+                name="prepend"
+            />
             <q-icon
-                name="lock"
+                :name="$attrs.icon || 'lock'"
             />
         </template>
         <template
             v-slot:append
         >
             <q-btn
-                v-if="value !== ''"
-                :icon="icon"
-                :disable="$attrs.disable"
+                v-if="$attrs.value !== ''"
+                :icon="visibilityIcon"
+                :disable="$attrs.disable || $attrs.loading"
                 tabindex="-1"
                 color="primary"
                 flat
                 dense
-                @click.stop="visible=!visible"
+                @click.stop="toggleVisibility"
             />
             <q-btn
                 v-if="generate"
                 icon="casino"
-                :disable="$attrs.disable"
+                :disable="$attrs.disable || $attrs.loading"
                 tabindex="-1"
                 color="primary"
                 flat
@@ -50,13 +52,41 @@ export default {
     name: 'CscInputPassword',
     components: { CscInput },
     props: {
-        value: {
-            type: String,
-            default: undefined
-        },
         generate: {
             type: Boolean,
             default: false
+        },
+        generateLength: {
+            type: Number,
+            default: 10
+        },
+        generateNumbers: {
+            type: Boolean,
+            default: true
+        },
+        generateLowercase: {
+            type: Boolean,
+            default: true
+        },
+        generateUppercase: {
+            type: Boolean,
+            default: true
+        },
+        generateSymbols: {
+            type: Boolean,
+            default: false
+        },
+        generateExcludeSimilarCharacters: {
+            type: Boolean,
+            default: false
+        },
+        generateExclude: {
+            type: String,
+            default: ''
+        },
+        generateStrict: {
+            type: Boolean,
+            default: true
         }
     },
     data () {
@@ -72,7 +102,7 @@ export default {
                 return 'password'
             }
         },
-        icon () {
+        visibilityIcon () {
             if (!this.visible) {
                 return 'visibility_off'
             } else {
@@ -83,11 +113,20 @@ export default {
     methods: {
         generatePassword () {
             const pass = PasswordGenerator.generate({
-                length: 10,
-                numbers: true
+                length: this.generateLength,
+                numbers: this.generateNumbers,
+                lowercase: this.generateLowercase,
+                uppercase: this.generateUppercase,
+                symbols: this.generateSymbols,
+                excludeSimilarCharacters: this.generateExcludeSimilarCharacters,
+                exclude: this.generateExclude,
+                strict: this.generateStrict
             })
             this.$emit('input', pass)
             this.$emit('generated', pass)
+        },
+        toggleVisibility () {
+            this.visible = !this.visible
         },
         clear () {
             this.$refs.input.clear()

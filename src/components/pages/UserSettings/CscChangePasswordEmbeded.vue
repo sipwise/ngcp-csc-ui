@@ -42,16 +42,15 @@
                         :disable="!isValid"
                         @click="openConfirmDialog"
                     >
-                        {{ $t('Save new password') }}
+                        {{ saveButtonLabel }}
                     </q-btn>
                 </div>
             </div>
         </q-slide-transition>
-        <q-inner-loading :showing="loading">
-            <q-spinner-dots
-                size="32px"
-                color="primary"
-            />
+        <q-inner-loading
+            :showing="loading"
+        >
+            <csc-spinner />
         </q-inner-loading>
     </div>
 </template>
@@ -59,18 +58,25 @@
 <script>
 
 import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
+import CscSpinner from 'components/CscSpinner'
 export default {
     name: 'CscChangePasswordEmbedded',
-    components: { CscInputPasswordRetype },
+    components: { CscSpinner, CscInputPasswordRetype },
     props: {
         loading: {
             type: Boolean,
             default: false
         },
+        saveButtonLabel: {
+            type: String,
+            default () {
+                return this.$t('Save')
+            }
+        },
         btnLabel: {
             type: String,
             default () {
-                return this.$t('Change Password')
+                return this.$t('Change password')
             }
         },
         passwordLabel: {
