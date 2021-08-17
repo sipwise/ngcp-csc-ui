@@ -196,17 +196,22 @@ class testrun(unittest.TestCase):
             "Second condition was not deleted")
         print("OK")
         print("Try to add second condition 'date is...'...", end="")
+        day = datetime.today().day
+        if day >= 28:
+            day -= 1
+        elif day < 28:
+            day += 1
         driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "condition")]').click()
         driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/div/div[3]/div[3]').click()
-        driver.find_element_by_xpath('/html/body//div/button[contains(., 15)]').click()
+        driver.find_element_by_xpath('/html/body//div/button[contains(., ' + str(day) + ')]').click()
         driver.find_element_by_xpath('/html/body//div//button[contains(., "Save")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "' + datetime.today().strftime('%Y/%m') + '/15' + '")]')) > 0,
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "' + datetime.today().strftime('%Y/%m/') + str(day) + '")]')) > 0,
             "'Office hours are...' condition is not correct")
         print("OK")
         print("Try to delete second condition...", end="")
-        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "' + datetime.today().strftime('%Y/%m') + '/15' + '")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "' + datetime.today().strftime('%Y/%m/') + str(day) + '")]').click()
         driver.find_element_by_xpath('/html/body//div//button[contains(., "Delete")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         self.assertTrue(
