@@ -26,6 +26,14 @@ def logout_csc(driver):
 def login_panel(driver):
     driver.get(os.environ['CATALYST_SERVER'] + ":1443/logout")
     driver.get(os.environ['CATALYST_SERVER'] + ":1443")
+    try:
+        driver.implicitly_wait(1)
+        driver.find_element_by_xpath('//*[@id="q-app"]/div/footer/div/button/span[2]/span').click()
+        driver.implicitly_wait(10)
+    except:
+        pass
+    finally:
+        driver.implicitly_wait(10)
     driver.find_element_by_xpath('//*[@id="username"]').send_keys('administrator')
     driver.find_element_by_xpath('//*[@id="password"]').send_keys('administrator')
     driver.find_element_by_xpath('//*[@id="submit"]').click()
