@@ -205,7 +205,7 @@ class testrun(unittest.TestCase):
             day += 1
         driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "condition")]').click()
         driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/div/div[3]/div[3]').click()
-        driver.find_element_by_xpath('/html/body//div/button[contains(., ' + str(day) + ')]').click()
+        driver.find_element_by_xpath('/html/body//div[@class="q-date__calendar-days fit"]/div[' + str(day) + ']/button').click()
         driver.find_element_by_xpath('/html/body//div//button[contains(., "Save")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         self.assertTrue(
