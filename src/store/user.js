@@ -206,6 +206,18 @@ export default {
         },
         isOldCSCProxyingAllowed (state, getters) {
             return getters.isAdmin && state.platformInfo?.csc_v2_mode === 'mixed' && !!getters.getCustomerId
+        },
+        isPbxPilot (state) {
+            return !!state.subscriber?.is_pbx_pilot
+        },
+        isPbxGroup (state) {
+            return !!state.subscriber?.is_pbx_group
+        },
+        isPbxSeat (state, getters) {
+            return !getters.isPbxPilot && !getters.isPbxGroup && !!state.subscriber?.pbx_extension
+        },
+        isPbxAttendant (state, getters) {
+            return getters.isPbxPilot || getters.isPbxGroup || getters.isPbxSeat
         }
     },
     mutations: {
