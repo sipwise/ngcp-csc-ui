@@ -184,80 +184,137 @@
         <q-item-section
             side
         >
-            <csc-more-menu>
-                <csc-popup-menu-item
-                    v-if="mapping.type === 'cfu' && hasSubscriberProfileAttribute('cft')"
-                    icon="ring_volume"
-                    :label="$t('Ring primary number')"
-                    @click="ringPrimaryNumberEvent"
-                />
-                <csc-popup-menu-item
-                    v-if="mapping.type === 'cft'"
-                    icon="phone_disabled"
-                    :label="$t('Do not ring primary number')"
-                    @click="doNotRingPrimaryNumberEvent"
-                />
-                <csc-popup-menu-item
-                    icon="phone_forwarded"
-                    :label="$t('Forward to Number')"
-                    :disable="hasTermination"
-                    @click="addDestinationEvent({
-                        destinationSetId: destinationSet.id
-                    })"
-                />
-                <csc-popup-menu-item
-                    icon="voicemail"
-                    :label="$t('Forward to Voicebox')"
-                    :disable="hasTermination"
-                    @click="addDestinationEvent({
-                        destination: 'voicebox',
-                        destinationSetId: destinationSet.id
-                    })"
-                />
-                <csc-popup-menu-item
-                    icon="email"
-                    :label="$t('Forward to Fax2Mail')"
-                    :disable="hasTermination"
-                    @click="addDestinationEvent({
-                        destination: 'fax2mail',
-                        destinationSetId: destinationSet.id
-                    })"
-                />
-                <csc-popup-menu-item
-                    icon="phone_forwarded"
-                    :label="$t('Forward to ManagerSecretary')"
-                    :disable="hasTermination"
-                    @click="addDestinationEvent({
-                        destination: 'managersecretary',
-                        destinationSetId: destinationSet.id
-                    })"
-                />
-                <csc-popup-menu-item
-                    icon="groups"
-                    :label="$t('Forward to Conference')"
-                    :disable="hasTermination"
-                    @click="addDestinationEvent({
-                        destination: 'conference',
-                        destinationSetId: destinationSet.id
-                    })"
-                />
-                <csc-popup-menu-item
-                    icon="music_note"
-                    :label="$t('Custom Announcement')"
-                    :disable="hasTermination"
-                    @click="addDestinationEvent({
-                        destination: 'customhours',
-                        destinationSetId: destinationSet.id
-                    })"
-                />
-                <csc-popup-menu-item
-                    :icon="(mapping.enabled)?'toggle_on':'toggle_off'"
-                    :label="(mapping.enabled)?$t('Disable'):$t('Enable')"
-                    @click="toggleMappingEvent(mapping)"
-                />
-                <csc-popup-menu-item-delete
-                    @click="deleteMappingEvent(mapping)"
-                />
+            <csc-more-menu
+                :grid-view="true"
+            >
+                <template
+                    v-slot:grid-column-1
+                >
+                    <csc-popup-menu-item
+                        v-if="mapping.type === 'cfu' && hasSubscriberProfileAttribute('cft')"
+                        icon="ring_volume"
+                        :label="$t('Ring primary number')"
+                        @click="ringPrimaryNumberEvent"
+                    />
+                    <csc-popup-menu-item
+                        v-if="mapping.type === 'cft'"
+                        icon="phone_disabled"
+                        :label="$t('Do not ring primary number')"
+                        @click="doNotRingPrimaryNumberEvent"
+                    />
+                    <csc-popup-menu-item
+                        :icon="destinationIconByType('Number')"
+                        :label="$t('Forward to Number')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                    <csc-popup-menu-item
+                        :icon="destinationIconByType('VoiceBox')"
+                        :label="$t('Forward to Voicebox')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destination: 'voicebox',
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                    <csc-popup-menu-item
+                        :icon="destinationIconByType('Conference')"
+                        :label="$t('Forward to Conference')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destination: 'conference',
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                    <csc-popup-menu-item
+                        :icon="destinationIconByType('Fax2Mail')"
+                        :label="$t('Forward to Fax2Mail')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destination: 'fax2mail',
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                    <csc-popup-menu-item
+                        :icon="destinationIconByType('ManagerSecretary')"
+                        :label="$t('Forward to Manager Secretary')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destination: 'managersecretary',
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                    <csc-popup-menu-item
+                        :icon="destinationIconByType('CustomAnnouncement')"
+                        :label="$t('Forward to Custom Announcement')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destination: 'customhours',
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                </template>
+                <template
+                    v-slot:grid-column-2
+                >
+                    <csc-popup-menu-item
+                        v-if="isPbxAttendant"
+                        :icon="destinationIconByType('AutoAttendant')"
+                        :label="$t('Forward to Auto Attendant')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destination: 'autoattendant',
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                    <csc-popup-menu-item
+                        v-if="isPbxAttendant"
+                        :icon="destinationIconByType('OfficeHoursAnnouncement')"
+                        :label="$t('Forward to Office Hours Announcement')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destination: 'officehours',
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                    <csc-popup-menu-item
+                        :icon="destinationIconByType('CallingCard')"
+                        :label="$t('Forward to Calling Card')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destination: 'callingcard',
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                    <csc-popup-menu-item
+                        :icon="destinationIconByType('CallThrough')"
+                        :label="$t('Forward to Call Through')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destination: 'callthrough',
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                    <csc-popup-menu-item
+                        :icon="destinationIconByType('LocalSubscriber')"
+                        :label="$t('Forward to Local Subscriber')"
+                        :disable="hasTermination"
+                        @click="addDestinationEvent({
+                            destination: 'localuser',
+                            destinationSetId: destinationSet.id
+                        })"
+                    />
+                    <csc-popup-menu-item
+                        :icon="(mapping.enabled)?'toggle_on':'toggle_off'"
+                        :label="(mapping.enabled)?$t('Disable'):$t('Enable')"
+                        @click="toggleMappingEvent(mapping)"
+                    />
+                    <csc-popup-menu-item-delete
+                        @click="deleteMappingEvent(mapping)"
+                    />
+                </template>
             </csc-more-menu>
         </q-item-section>
     </q-item>
@@ -278,6 +335,7 @@ import CscCfConditionPopupCallNotFrom from 'components/call-forwarding/CscCfCond
 import CscCfConditionPopupDateRange from 'components/call-forwarding/CscCfConditionPopupDateRange'
 import CscCfConditionPopupWeekdays from 'components/call-forwarding/CscCfConditionPopupWeekdays'
 import CscCfConditionPopupOfficeHours from 'components/call-forwarding/CscCfConditionPopupOfficeHours'
+import destination from 'src/mixins/destination'
 export default {
     name: 'CscCfGroupTitle',
     components: {
@@ -292,6 +350,7 @@ export default {
         CscPopupMenuItemDelete,
         CscMoreMenu
     },
+    mixins: [destination],
     props: {
         mapping: {
             type: Object,
@@ -316,7 +375,8 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'hasSubscriberProfileAttribute'
+            'hasSubscriberProfileAttribute',
+            'isPbxAttendant'
         ]),
         clickableClasses () {
             return ['cursor-pointer', 'text-weight-bold', 'text-primary']

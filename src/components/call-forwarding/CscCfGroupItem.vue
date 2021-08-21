@@ -92,118 +92,29 @@
                     </span>
                     {{ $t('forwarded to') }}
                 </template>
-                <span
-                    v-if="destination.destination.endsWith('voicebox.local')"
-                    class="q-pl-xs text-weight-bold"
-                    style="white-space: nowrap"
-                >
-                    <q-icon
-                        name="voicemail"
-                    />
-                    {{ $t('Voicebox') }}
-                </span>
-                <span
-                    v-else-if="destination.destination.endsWith('fax2mail.local')"
-                    class="q-pl-xs text-weight-bold"
-                    style="white-space: nowrap"
-                >
-                    <q-icon
-                        name="email"
-                    />
-                    {{ $t('Fax2Mail') }}
-                </span>
-                <span
-                    v-else-if="destination.destination.endsWith('managersecretary.local')"
-                    class="q-pl-xs text-weight-bold"
-                    style="white-space: nowrap"
-                >
-                    <q-icon
-                        name="phone_forwarded"
-                    />
-                    {{ $t('ManagerSecretary') }}
-                </span>
-                <span
-                    v-else-if="destination.destination.endsWith('conference.local')"
-                    class="q-pl-xs text-weight-bold"
-                    style="white-space: nowrap"
-                >
-                    <q-icon
-                        name="groups"
-                    />
-                    {{ $t('Conference') }}
-                </span>
-                <span
-                    v-else-if="destination.announcement_id"
-                    class="q-pl-xs text-primary text-weight-bold cursor-pointer"
-                    style="white-space: nowrap"
-                >
-                    <q-icon
-                        name="music_note"
-                    />
-                    {{ announcement ? announcement.label : '' }}
-                    <q-popup-edit
-                        v-model="announcement"
-                        buttons
-                        anchor="top left"
-                        @before-show="$store.commit('callForwarding/popupShow', null)"
-                        @save="updateAnnouncementEvent({
-                            destinationIndex: destinationIndex,
-                            destinationSetId: destinationSet.id
-                        })"
-                    >
-                        <q-select
-                            v-model="announcement"
-                            emit-value
-                            map-options
-                            :rules="[ checkAnnouncement ]"
-                            :options="announcements"
-                            :label="$t('Custom Announcements')"
-                            :disable="loading"
-                        />
-                    </q-popup-edit>
-                </span>
-                <span
-                    v-else-if="destination.destination.endsWith('app.local')"
-                    class="q-pl-xs text-weight-bold"
-                    style="white-space: nowrap"
-                >
-                    <q-icon
-                        name="app"
-                    />
-                    {{ $t('Application') }}
-                </span>
-                <span
+                <csc-cf-destination-custom-announcement
+                    v-if="isDestinationTypeCustomAnnouncement(destination.destination) && destination.announcement_id"
+                    v-model="announcement"
+                    :destination="destination"
+                    :announcements="announcements"
+                    @input="updateAnnouncementEvent({
+                        destinationIndex: destinationIndex,
+                        destinationSetId: destinationSet.id
+                    })"
+                />
+                <csc-cf-destination-number
+                    v-else-if="isDestinationTypeNumber(destination.destination)"
+                    v-model="changedDestination"
+                    :destination="destination"
+                    @input="updateDestinationEvent({
+                        destinationIndex: destinationIndex,
+                        destinationSetId: destinationSet.id
+                    })"
+                />
+                <csc-cf-destination
                     v-else
-                    class="q-pl-xs text-primary text-weight-bold cursor-pointer"
-                    style="white-space: nowrap"
-                >
-                    <q-icon
-                        name="phone_forwarded"
-                    />
-                    {{ destination.simple_destination }}
-                    <q-popup-edit
-                        v-model="changedDestination"
-                        buttons
-                        @before-show="$store.commit('callForwarding/popupShow', null)"
-                        @save="updateDestinationEvent({
-                            destinationIndex: destinationIndex,
-                            destinationSetId: destinationSet.id
-                        })"
-                    >
-                        <csc-input
-                            v-model="changedDestination"
-                            dense
-                        >
-                            <template
-                                v-slot:prepend
-                            >
-                                <q-icon
-                                    name="phone_forwarded"
-                                />
-                            </template>
-                        </csc-input>
-                    </q-popup-edit>
-                </span>
+                    :value="destination"
+                />
             </q-item-label>
         </q-item-section>
         <q-item-section
@@ -241,9 +152,14 @@ import CscSpinner from 'components/CscSpinner'
 import {
     showGlobalError
 } from 'src/helpers/ui'
+import destination from 'src/mixins/destination'
+import CscCfDestination from 'components/call-forwarding/CscCfDestination'
+import CscCfDestinationCustomAnnouncement from 'components/call-forwarding/CscCfDestinationCustomAnnouncement'
+import CscCfDestinationNumber from 'components/call-forwarding/CscCfDestinationNumber'
 export default {
     name: 'CscCfGroupItem',
-    components: { CscSpinner, CscInput, CscPopupMenuItemDelete, CscMoreMenu },
+    components: { CscCfDestinationNumber, CscCfDestinationCustomAnnouncement, CscCfDestination, CscSpinner, CscInput, CscPopupMenuItemDelete, CscMoreMenu },
+    mixins: [destination],
     props: {
         mapping: {
             type: Object,
@@ -366,7 +282,7 @@ export default {
         async updateAnnouncementEvent (payload) {
             this.$wait.start(this.waitIdentifier)
             try {
-                await this.updateAnnouncement({ ...payload, announcementId: this.announcement })
+                await this.updateAnnouncement({ ...payload, announcementId: this.announcement.value })
                 this.setAnnouncement()
             } catch (err) {
                 showGlobalError(err.message)
