@@ -33,7 +33,7 @@ const DEFAULT_CUSTOM_ANNOUNCEMENT_ID = 255 // TODO get from endpoint
 
 function createDefaultDestination (destination) {
     const payload = {
-        destination: destination || 'Number',
+        destination: destination || ' ',
         priority: DEFAULT_PRIORITY,
         timeout: DEFAULT_RING_TIMEOUT
     }
