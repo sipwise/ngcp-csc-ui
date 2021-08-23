@@ -317,7 +317,7 @@ class testrun(unittest.TestCase):
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Subscriber Log-in")]')) > 0,
+            len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Subscriber-Anmeldung")]')) > 0,
             "Language wasnt changed to German")
         driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
         click_js(driver, '/html/body/div[3]/div[4]')
