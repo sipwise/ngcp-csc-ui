@@ -426,6 +426,61 @@ class testrun(unittest.TestCase):
             "Privacy setting wasnt enabled")
         filename = 0
 
+    def test_recording(self):
+        global customers
+        global filename
+        now = datetime.now()
+        filename = "test_recording.png"
+        driver = self.driver
+        driver.get(os.environ['CATALYST_SERVER'])
+        print("Try to log in with valid credentials...", end="")
+        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
+        print("OK")
+        print("Go to 'Recordings' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div/a[contains(., "Recordings")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-recording"]')) > 0, "Recordings page wasnt opened")
+        print("OK")
+        print("Add a timerange filter and check if they got created...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]//div//button[contains(., "Filter")]').click()
+        click_js(driver, '//*[@id="csc-page-call-recording"]//div[@data-cy="csc-call-recording-filters"]//label[1]/div/div/div[1]')
+        driver.find_element_by_xpath('/html/body/div[3]/div[2]/div[1]').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[1]/div[2]/label[1]/div/div/div[1]').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/div[2]/div/button').click()
+        checkstring = "Start time: " + now.strftime("%Y-%m-%d")
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[2]/div/div[contains(., "' + checkstring + '")]')) > 0,
+            "Start timerange could not be found")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[1]/div[2]/label[2]/div/div/div[1]').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/div[2]/div/button').click()
+        checkstring = "End time: " + now.strftime("%Y-%m-%d")
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[2]/div/div[contains(., "' + checkstring + '")]')) > 0,
+            "End timerange could not be found")
+        print("OK")
+        print("Try to remove the End time...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]//div[contains(., "End time:")]/../i[2]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-recording"]//div[contains(., "End time:")]/../i[2]')
+        print("OK")
+        print("Add filter by CallID...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]//div//label//div[contains(., "Filter by")]').click()
+        click_js(driver, '/html/body/div[3]/div[2]/div[4]')
+        fill_element(driver, '//*[@id="csc-page-call-recording"]//div//label//input[@aria-label="CallID"]', "TestCallID")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[1]/div[2]/label/div/div/div[2]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[2]/div/div[contains(., "CallID: TestCallID")]')) > 0,
+            "Call ID could not be found")
+        print("OK")
+        print("Try to delete all filters...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]//div[contains(., "Start time:")]/../i[2]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-recording"]//div[contains(., "Start time:")]/../i[2]')
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]//div[contains(., "CallID:")]/../i[2]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-page-call-recording"]//div[contains(., "CallID:")]/../i[2]')
+        filename = 0
+
     def test_reminder(self):
         global customers
         global filename
