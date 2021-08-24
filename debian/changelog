@@ -1,3 +1,86 @@
+ngcp-csc-ui (10.1.0.0+0~mr10.1.0.0) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [781792f] TT#122006 Conversations->Faxes do not show failed fax sending
+  * [f7054a0] TT#127353 Maintenance - Upgrade vulnerable dependencies
+  * [7776ee9] TT#127759 Feedback on the label "Phone number" from the customer
+  * [be19c20] TT#127353 Maintenance - Upgrade vulnerable dependencies
+  * [389a6bc] TT#122015 Add QR-Code to login to sip:phone mobile app from CSC
+  * [a282cd2] TT#130400 SubscriberProfiles - Hide main menu item, if none of the containing parts of the page are visible due to a SubscriberProfile
+  * [61da993] TT#130250 Add data-cy selectors for QR code
+  * [3349979] TT#133501 Add "expire" time to QR code generated for sip:phone
+
+  [ Nico Schedel ]
+  * [b950bff] TT#70901 selenium: fix for one element obscuring 'save' button
+  * [77ffa11] TT#70901 selenium: only use one thread for local testruns
+  * [0f37e24] TT#70901 selenium: small formatting changes
+  * [fbf0f6d] TT#70901 selenium: update on "only use one thread for local testruns"
+  * [8e65738] TT#70901 selenium: fix language changing test on login page
+  * [cdc53a7] TT#70901 selenium: fix weird music on hold behavior
+  * [6a6b953] TT#70901 selenium: add new checked_if_unchecked functions
+  * [5b13af5] TT#70901 selenium: fix speed dial always taking screenshots
+  * [9d1ad45] TT#70901 selenium: fix up logout_csc function
+  * [1abc1c8] TT#70901 selenium: fix weird privacy setting behaviour
+  * [f9f6881] TT#70901 selenium: choose call forwarding date more carefully
+  * [79bf775] TT#70901 selenium: Fix for call forward menu not always opening reliably
+  * [1fb7189] TT#70901 selenium: Only switch to old admin UI when necessary
+  * [0d19893] TT#70901 selenium: prevent date selection from choosing year instead of date
+  * [2cdfc79] TT#70901 selenium: change german comparison string when checking for language
+
+  [ Hans-Peter Herzog ]
+  * [05a10d4] TT#122014 Add links to Google/Apple app store is customer bought Sipphone app
+  * [15c93c4] Revert "TT#127353 Maintenance - Upgrade vulnerable dependencies"
+  * [0f66fdc] TT#127757 If mobile app badge configs has the same name, then show the name once
+  * [773edd1] TT#129653 Conversations - List filtering is corrupted after performing an action on single item
+  * [22739de] TT#129501 QR-Code test
+  * [fc70ad2] TT#132162 As Admin, I want to login from AUIv1
+  * [1b912b7] TT#136203 UserSettings - Reuse same Vue.js component for both SIP/Web password change
+
+  [ CORP\hzigha ]
+  * [b868415] TT#122029 As Subscriber/SubscriberAdmin, I want to see today as default date for all date selections based on QDate
+
+  [ Victor Tsvetov ]
+  * [0435786] TT#122703 Complete French translations
+  * [ca34192] TT#129160 Add Russian translations file
+  * [47b1429] TT#137552 Update German translations
+
+  [ Sergii Leonenko ]
+  * [f5c1f45] TT#127852 i18n - Extraction tool must extract to english language file only
+  * [d7782b1] TT#128152 Remove legacy files which are not used anymore
+  * [9bfde3e] TT#128154  i18n - Fix none reactive translations in all places
+  * [0354615] TT#122202 ProxiedFeature - As SubscriberAdmin, I want to be able to access the "Customer Details" page in v1 from within v2
+  * [5a3093e] TT#129212 Optimise the initial load of the user
+  * [1c5fc09] TT#129900 i18n - Remove unused translation keys
+  * [b45da7a] TT#130352 missing localisations on JS CSC
+  * [ac204b3] TT#131362 MajorIssue - English translation for language translation is missing
+  * [6fdc329] TT#132150 Fix language selection if default browser language is not en-US
+  * [f633b6c] TT#129211 Extract registration of RTC:Engine global events from store
+  * [62fb7e9] TT#127356 i18n - Key extraction command (i18n:extract) must ignore code in comments
+  * [611d34e] TT#129653 Conversations - List filtering is corrupted after performing an action on single item
+  * [ecfe57e] TT#134651 SIPAuth - As Subscriber/PBXAttendant, I want to change my SIP-Password, in order to authenticate my SIP-Device against NGCP
+  * [e32dd9b] TT#134650 SIPAuth - As PBXAdmin, I want to change the (SIP)-passwords of all PBXAttendants
+
+  [ CORP\hzigha ]
+  * [8cbecc1] TT#127756 'Seats' strange filter behavior on clicking 'search' button
+
+  [ hzigha ]
+  * [5de2135] TT#129502 Add Russian language to the language menu
+  * [4a5ebe4] TT#129504 Fix cropped main menu item text (Russian, German, ...)
+
+  [ Alexander Lutay ]
+  * [97538c4] TT#129160 fix ca34192: use label 'Русский' for Russian localization
+
+  [ CORP\hzigha ]
+  * [17f2345] TT#124272 AutoAttendant - As PBX-Attendant (Pilot, Seat, Group), I can change my AutoAttendant configuration
+
+  [ Hugo Zigha ]
+  * [1167737] TT#100754 Dashboard - As Customer, I want to see a Dashboard
+  * [fe97011] TT#129050 Dashboard - As Customer, I want to see the most recent items (voicemails, calls, device-registrations) on the Dashboard
+  * [b5ac2e0] TT#133950 Update expand param in /api/autoattendants request
+  * [a3691b4] TT#134715 SIPAuth - As PBXAdmin, I want to set the SIP-password during the creation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 24 Aug 2021 16:51:30 +0200
+
 ngcp-csc-ui (10.0.0.0+0~mr10.0.0.0) unstable; urgency=medium
 
   [ Carlo Venusino ]
