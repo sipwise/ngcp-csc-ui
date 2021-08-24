@@ -61,6 +61,13 @@ export default function routes (app) {
                         get title () {
                             return i18n.t('Start new call')
                         }
+                    },
+                    beforeEnter (routeTo, routeFrom, next) {
+                        if (app.store.getters['user/isRtcEngineUiVisible']) {
+                            next()
+                        } else {
+                            next('/user/conversations')
+                        }
                     }
                 },
                 {
