@@ -1,3 +1,10 @@
+ngcp-csc-ui (9.5.1.13+0~mr9.5.1.13) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [4904cf4] TT#70901 selenium: change german comparison string when checking for language
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 Aug 2021 10:40:48 +0200
+
 ngcp-csc-ui (9.5.1.12+0~mr9.5.1.12) unstable; urgency=medium
 
   [ Victor Tsvetov ]
