@@ -220,7 +220,7 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to add another foward...", end="")
         driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
-        driver.find_element_by_xpath('/html/body/div[3]/div/div[2]').click()
+        driver.find_element_by_xpath('/html/body//div[@class="q-list q-list--dark"]/div[contains(., "Voicebox")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[3]/svg')
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div[contains(., "Voicebox")]')) > 0, "Voicebox forwarding was not added")
@@ -236,7 +236,7 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to disable a call forward...", end="")
         driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
-        driver.find_element_by_xpath('/html/body/div[3]/div//div[contains(., "Disable")]').click()
+        driver.find_element_by_xpath('/html/body//div[@class="q-list q-list--dark"]/div[contains(., "Disable")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[4]/svg')
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[contains(@class, "disabled")]')) > 0,
@@ -244,12 +244,12 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to enable a call forward...", end="")
         driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
-        driver.find_element_by_xpath('/html/body/div[3]/div//div[contains(., "Enable")]').click()
+        driver.find_element_by_xpath('/html/body//div[@class="q-list q-list--dark"]/div[contains(., "Enable")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[4]/svg')
         print("OK")
         print("Try to delete call forwarding...", end="")
         driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
-        driver.find_element_by_xpath('/html/body/div[3]/div//div[contains(., "Remove")]').click()
+        driver.find_element_by_xpath('/html/body//div[@class="q-list q-list--dark"]/div[contains(., "Remove")]').click()
         driver.find_element_by_xpath('/html/body/div[3]/div[2]/div/div[3]/button[2]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         self.assertTrue(
