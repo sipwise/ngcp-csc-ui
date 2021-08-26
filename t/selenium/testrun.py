@@ -263,6 +263,63 @@ class testrun(unittest.TestCase):
             driver.find_element_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div/div').text == "Always", "Call forward was not deleted")
         filename = 0
 
+    def test_fax_settings(self):
+        global customers
+        global filename
+        filename = "test_fax_settings.png"
+        driver = self.driver
+        driver.get(os.environ['CATALYST_SERVER'])
+        print("Try to log in with valid credentials...", end="")
+        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
+        print("OK")
+        print("Go to 'Fax Settings' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]//div[contains(., "Fax Settings")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-main"]')) > 0, "Fax page wasnt opened")
+        print("OK")
+        print("Try to add a new destination...", end="")
+        wait_for_invisibility(driver, '//*[@id="csc-page-main"]/main/div[2]/div[1]/div[5]/div[2]/svg')
+        driver.find_element_by_xpath('//*[@id="csc-page-main"]/main//div//button[contains(., "Add destination")]').click()
+        fill_element(driver, '//*[@id="csc-page-main"]/main//div//label//input[@aria-label="Destination Email"]', "testdestination@test.com")
+        driver.find_element_by_xpath('//*[@id="csc-page-main"]/main//div//label[2]').click()
+        driver.find_element_by_xpath('/html/body//div[contains(., "PDF")]').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-main"]/main//div//button[contains(., "Create destination")]').click()
+        print("OK")
+        print("Check if destination is correct...", end="")
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-main"]//main//div[contains(., "<testdestination@test.com> as PDF")]')) > 0, "Destination was not found")
+        print("OK")
+        print("Try to edit Fax destination. Disabling 'Deliver incoming/outgoing Faxes'...", end="")
+        wait_for_invisibility(driver, '//*[@id="csc-page-main"]/main/div[2]/div[1]/div[5]/div[2]/svg')
+        driver.find_element_by_xpath('//*[@id="csc-page-main"]/main//div[@data-cy="csc-list-item"]').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-main"]/main/div[2]//div[@aria-label="Deliver Incoming Faxes"]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-page-main"]/main/div[2]/div[1]/div[5]/div[2]/svg')
+        driver.find_element_by_xpath('//*[@id="csc-page-main"]/main/div[2]//div[@aria-label="Deliver Outgoing Faxes"]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-page-main"]/main/div[2]/div[1]/div[5]/div[2]/svg')
+        driver.find_element_by_xpath('//*[@id="csc-page-main"]/main//div[@data-cy="csc-list-item"]/div[1]').click()
+        wait_for_invisibility(driver, '//*[@id="csc-page-main"]/main//div/i[contains(., "call_recieved")]')
+        wait_for_invisibility(driver, '//*[@id="csc-page-main"]/main//div/i[contains(., "call_made")]')
+        print("OK")
+        print("Try to activate sendfax...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-page-main"]/main//div[@aria-label="Active"]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]/button[1]')) > 0, "Fax button was not found")
+        print("OK")
+        print("Try to send a fax to a test destination...", end="")
+        wait_for_invisibility(driver, '//*[@id="csc-page-main"]/main/div[2]/div[1]/div[5]/div[2]/svg')
+        driver.find_element_by_xpath('//*[@id="csc-header-toolbar-main"]/button[1]').click()
+        driver.find_element_by_xpath('/html/body/div[contains(., "Send Fax")]').click()
+        fill_element(driver, '/html/body//div//label//div/input[@aria-label="Destination Number"]', '999999')
+        fill_element(driver, '/html/body//div//label//div/input[@aria-label="Page Header"]', 'Test')
+        fill_element(driver, '/html/body//div//label//div/textarea[@aria-label="Content"]', 'This is a test Text')
+        driver.find_element_by_xpath('/html/body//div//button[contains(., "Send")]').click()
+        self.assertTrue(
+            len(driver.find_elements_by_xpath('/html/body//div[@role="alert"]//div[contains(., "Sending fax completed")]')) > 0, "Fax was not sent")
+        print("OK")
+        filename = 0
+
     def test_login_page(self):
         global customers
         global filename
