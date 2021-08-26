@@ -1,4 +1,3 @@
-
 import _ from 'lodash'
 import {
     Loading,
@@ -10,9 +9,13 @@ import {
 import {
     i18n
 } from 'src/boot/i18n'
+import CscSpinner from 'components/CscSpinner'
 
 export function startLoading () {
-    Loading.show({ delay: 0 })
+    Loading.show({
+        delay: 0,
+        spinner: CscSpinner
+    })
 }
 
 export function stopLoading () {

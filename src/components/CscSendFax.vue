@@ -51,7 +51,7 @@
                 />
                 <csc-input-file
                     accept=".pdf,.tiff,.txt,.ps"
-                    @isFileSelected="toggleFileSelected"
+                    @file-selected="toggleFileSelected"
                 />
             </q-card-section>
             <q-card-actions>
@@ -61,6 +61,7 @@
                     icon="clear"
                     color="default"
                     :label="$t('Cancel')"
+                    @click="resetFormData"
                 />
                 <q-btn
                     flat
@@ -101,14 +102,7 @@ export default {
     },
     data () {
         return {
-            selectedFile: false,
-            form: {
-                destination: '',
-                pageHeader: null,
-                data: null,
-                quality: this.$faxQualityOptionsDefault.value,
-                file: {}
-            },
+            form: {},
             isMobile: this.$q.platform.is.mobile,
             destinationError: false
         }
@@ -121,7 +115,7 @@ export default {
                 }),
                 maxLength: maxLength(3600)
             },
-            file: {
+            faxfile: {
                 required: requiredUnless(function () {
                     return this.hasContentToSend
                 })
@@ -134,7 +128,7 @@ export default {
     },
     computed: {
         hasContentToSend () {
-            return !!this.form.data || this.selectedFile
+            return (this.form.data && this.form.data.length > 0) || this.form.faxfile
         },
         formDisabled () {
             return !this.$v.form.$anyDirty ||
@@ -172,9 +166,12 @@ export default {
             })
         }
     },
+    mounted () {
+        this.resetFormData()
+    },
     methods: {
         toggleFileSelected (value) {
-            this.selectedFile = value
+            this.form.faxfile = value
         },
         sendFax () {
             if (this.$v.form.$error ||
@@ -182,10 +179,21 @@ export default {
                 showGlobalError(this.$t('You have invalid form input. Please check and try again.'))
             } else {
                 this.$store.dispatch('communication/createFax', this.form)
+                this.resetFormData()
             }
         },
         error (state) {
             this.destinationError = state
+        },
+        resetFormData () {
+            this.form = {
+                destination: '',
+                pageHeader: null,
+                data: null,
+                quality: this.$faxQualityOptionsDefault.value,
+                faxfile: null
+            }
+            this.$v.$reset()
         }
     }
 }
