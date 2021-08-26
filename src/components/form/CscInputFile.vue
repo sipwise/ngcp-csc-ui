@@ -32,11 +32,12 @@
                     size="sm"
                     unelevated
                     :label="$t('Reset')"
-                    @click="selectedFile = null; $refs.fileInput.$el.value = null"
+                    @click="resetFile"
                 />
             </template>
         </q-input>
         <q-input
+            :value="selectedFile"
             v-show="false"
             ref="fileInput"
             type="file"
@@ -62,9 +63,17 @@ export default {
             return 'No file'
         }
     },
+    watch: {
+        selectedFile () {
+            this.$emit('file-selected', this.selectedFile)
+        }
+    },
     methods: {
         fileInput (fileList) {
             this.selectedFile = fileList[0]
+        },
+        resetFile () {
+            this.selectedFile = null
         }
     }
 }
