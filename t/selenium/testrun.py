@@ -44,6 +44,8 @@ def preparation():
         del i
         for customer in customers.keys():
             create_subscriber(driver, customer, customers[customer])
+        if os.environ.get('vmtype') == None:
+            os.environ['vmtype'] = "CE"
         driver.quit()
     except Exception:
         driver.save_screenshot('/results/preperation.png')
@@ -266,6 +268,10 @@ class testrun(unittest.TestCase):
     def test_fax_settings(self):
         global customers
         global filename
+        if os.environ.get('vmtype') == "CE":
+            print("Running CE, test is skipped...")
+            filename = 0
+            return True
         filename = "test_fax_settings.png"
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
