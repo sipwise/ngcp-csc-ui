@@ -1,13 +1,14 @@
 import { getAutoAttendants, editSubscriberSlots } from '../api/pbx-auto-attendants'
 import { getSubscribers } from '../api/subscriber'
 import { displayName } from 'src/filters/subscriber'
+
 export default {
     namespaced: true,
     state: {
         slots: [],
         newSlots: [],
         subscribers: [],
-        slotsNumbers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        slotsNumbers: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     },
     getters: {
         slots (state) {
