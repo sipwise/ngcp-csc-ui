@@ -1,3 +1,10 @@
+ngcp-csc-ui (9.5.1.14+0~mr9.5.1.14) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [a200e77] TT#136550 CallForwarding - Add missing call forwarding types
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 02 Sep 2021 13:30:50 +0200
+
 ngcp-csc-ui (9.5.1.13+0~mr9.5.1.13) unstable; urgency=medium
 
   [ Nico Schedel ]
