@@ -170,7 +170,7 @@ export async function rewriteDestination ({ dispatch, commit, state, rootGetters
             body: {
                 direction: 'callee_in',
                 subscriber_id: rootGetters['user/getSubscriberId'],
-                numbers: [destination]
+                numbers: [_.trim(destination)]
             }
         })
         return req.result
