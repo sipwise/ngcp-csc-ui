@@ -1,3 +1,10 @@
+ngcp-csc-ui (9.5.1.15+0~mr9.5.1.15) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [10ad563] TT#70901 selenium: adapt to call forwarding button changes
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 03 Sep 2021 10:49:12 +0200
+
 ngcp-csc-ui (9.5.1.14+0~mr9.5.1.14) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
