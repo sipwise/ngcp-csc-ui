@@ -8,7 +8,7 @@ export default {
         slots: [],
         newSlots: [],
         subscribers: [],
-        slotsNumbers: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        slotsNumbers: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'default']
     },
     getters: {
         slots (state) {
