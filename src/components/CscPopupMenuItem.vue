@@ -2,6 +2,7 @@
     <q-item
         v-close-popup="closePopup"
         clickable
+        :disable="disable"
         v-bind="$attrs"
         v-on="$listeners"
     >
@@ -45,6 +46,10 @@ export default {
         closePopup: {
             type: Boolean,
             default: true
+        },
+        disable: {
+            type: Boolean,
+            default: false
         }
     }
 }
