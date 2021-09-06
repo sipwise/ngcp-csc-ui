@@ -220,6 +220,7 @@
                         })"
                     />
                     <csc-popup-menu-item
+                        v-if="platformInfo.conference"
                         :icon="destinationIconByType('Conference')"
                         :label="$t('Forward to Conference')"
                         :disable="hasTermination"
@@ -229,6 +230,7 @@
                         })"
                     />
                     <csc-popup-menu-item
+                        v-if="platformInfo.faxserver"
                         :icon="destinationIconByType('Fax2Mail')"
                         :label="$t('Forward to Fax2Mail')"
                         :disable="hasTermination"
@@ -238,6 +240,7 @@
                         })"
                     />
                     <csc-popup-menu-item
+                        v-if="platformInfo.manager_secretary"
                         :icon="destinationIconByType('ManagerSecretary')"
                         :label="$t('Forward to Manager Secretary')"
                         :disable="hasTermination"
@@ -260,7 +263,7 @@
                     v-slot:grid-column-2
                 >
                     <csc-popup-menu-item
-                        v-if="isPbxAttendant"
+                        v-if="isPbxAttendant && platformInfo.cloudpbx"
                         :icon="destinationIconByType('AutoAttendant')"
                         :label="$t('Forward to Auto Attendant')"
                         :disable="hasTermination"
@@ -270,7 +273,7 @@
                         })"
                     />
                     <csc-popup-menu-item
-                        v-if="isPbxAttendant"
+                        v-if="isPbxAttendant && platformInfo.cloudpbx"
                         :icon="destinationIconByType('OfficeHoursAnnouncement')"
                         :label="$t('Forward to Office Hours Announcement')"
                         :disable="hasTermination"
@@ -280,6 +283,7 @@
                         })"
                     />
                     <csc-popup-menu-item
+                        v-if="platformInfo.callingcard"
                         :icon="destinationIconByType('CallingCard')"
                         :label="$t('Forward to Calling Card')"
                         :disable="hasTermination"
@@ -289,6 +293,7 @@
                         })"
                     />
                     <csc-popup-menu-item
+                        v-if="platformInfo.callthrough"
                         :icon="destinationIconByType('CallThrough')"
                         :label="$t('Forward to Call Through')"
                         :disable="hasTermination"
@@ -298,6 +303,7 @@
                         })"
                     />
                     <csc-popup-menu-item
+                        v-if="platformInfo.callthrough || platformInfo.callingcard"
                         :icon="destinationIconByType('LocalSubscriber')"
                         :label="$t('Forward to Local Subscriber')"
                         :disable="hasTermination"
@@ -323,7 +329,7 @@
 <script>
 import _ from 'lodash'
 import {
-    mapActions, mapGetters
+    mapActions, mapGetters, mapState
 } from 'vuex'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
@@ -377,6 +383,9 @@ export default {
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
             'isPbxAttendant'
+        ]),
+        ...mapState('user', [
+            'platformInfo'
         ]),
         clickableClasses () {
             return ['cursor-pointer', 'text-weight-bold', 'text-primary']
