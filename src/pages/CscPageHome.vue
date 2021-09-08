@@ -24,6 +24,7 @@
                 @keydown.space.prevent
                 @keyup.space.prevent
                 @input="numberInputChanged"
+                @keyup.enter="startCall"
             >
                 <template
                     v-slot:prepend
@@ -128,6 +129,11 @@ export default {
         },
         removeAll () {
             this.$store.commit('call/numberInputChanged', '')
+        },
+        startCall () {
+            if (this.callNumberInput !== '' && this.callNumberInput !== null) {
+                this.$store.dispatch('call/start', 'audioOnly')
+            }
         }
     }
 }

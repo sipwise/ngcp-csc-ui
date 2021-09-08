@@ -308,7 +308,10 @@ export default {
     },
     actions: {
         start (context, localMedia) {
-            const number = context.getters.callNumberInput
+            const number = context.getters.callNumberInput.replaceAll('(', '')
+                .replaceAll(')', '')
+                .replaceAll(' ', '')
+                .replaceAll('-', '')
             context.commit('startCalling', number)
             Promise.resolve().then(() => {
                 return Vue.$call.createLocalMedia(localMedia)
