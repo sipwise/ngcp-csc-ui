@@ -15,7 +15,7 @@
             >
                 {{ $t('Fax') }}
                 {{ direction }}
-                {{ fax.caller | numberFormat }}
+                {{ number | numberFormat }}
             </q-item-label>
             <q-item-label
                 caption
@@ -89,6 +89,13 @@ export default {
                 return 'to'
             } else {
                 return 'from'
+            }
+        },
+        number () {
+            if (this.fax.direction === 'out') {
+                return this.fax.callee
+            } else {
+                return this.fax.caller
             }
         }
     },
