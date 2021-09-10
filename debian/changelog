@@ -1,3 +1,25 @@
+ngcp-csc-ui (10.0.1.1+0~mr10.0.1.1) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [fc056c2] TT#136550 CallForwarding - Add missing call forwarding types
+
+  [ Nico Schedel ]
+  * [bb17309] TT#70901 selenium: improve date selection in call forward tests
+  * [7282388] TT#70901 selenium: adapt to call forwarding button changes
+  * [c6ca38c] TT#70901 selenium: add new securtiy tests
+  * [9d20ea4] TT#70901 selenium: add new recording test
+  * [d7ef813] TT#70901 selenium: fix missing string conversions in call forwarding
+  * [fe052de] TT#70901 selenium: small debug screenshot fixes
+
+  [ Carlo Venusino ]
+  * [d7f7fe5] TT#138300 CallForwarding - Issues when setting pbx_base_cli as destination
+  * [75d97de] TT#137700 WebRTC make call screen still shown after setting "show_rtcengine_features=no"
+
+  [ Hugo Zigha ]
+  * [23dcb83] TT#139400 CallForwarding - Integrate conditional visibility depending on platform-info for certain call forwarding types
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Sep 2021 16:11:55 +0200
+
 ngcp-csc-ui (10.0.1.0+0~mr10.0.1.0) unstable; urgency=medium
 
   [ Carlo Venusino ]
