@@ -592,7 +592,7 @@ class testrun(unittest.TestCase):
     def test_security(self):
         global customers
         global filename
-        filename = "test_speeddial.png"
+        filename = "test_security.png"
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
@@ -711,11 +711,12 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-page-call-forwarding"]')) > 0, "Conference page wasnt opened")
         print("OK")
+        filename = 0
 
     def test_speed_dial(self):
         global customers
         global filename
-        filename = "test_speeddial.png"
+        filename = "test_speed_dial.png"
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
