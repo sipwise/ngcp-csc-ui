@@ -34,6 +34,7 @@ yarn-error.log*
 *.sln
 
 /src/config/app.js
+/src/config.js
 
 /junit.xml
 /test/jest/coverage
