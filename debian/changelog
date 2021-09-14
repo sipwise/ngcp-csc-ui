@@ -1,3 +1,17 @@
+ngcp-csc-ui (9.5.1.17+0~mr9.5.1.17) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [a6f2474] TT#137700 WebRTC make call screen still shown after setting "show_rtcengine_features=no"
+  * [02f0b59] TT#136551 Send FAX - Content/File not working properly
+
+  [ Hugo Zigha ]
+  * [4753f96] TT#139400 CallForwarding - Integrate conditional visibility depending on platform-info for certain call forwarding types
+
+  [ Sergii Leonenko ]
+  * [c81caed] TT#140900 Issue - Login - Unable to log in
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Sep 2021 14:21:20 +0200
+
 ngcp-csc-ui (9.5.1.16+0~mr9.5.1.16) unstable; urgency=medium
 
   [ Carlo Venusino ]
