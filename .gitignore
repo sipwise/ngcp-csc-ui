@@ -33,6 +33,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 
+/src/config/app.js
 /src/config.js
 
 /junit.xml
