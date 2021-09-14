@@ -1,6 +1,5 @@
 'use strict'
 
-import router from '../router'
 import Vue from 'vue'
 import _ from 'lodash'
 import {
@@ -394,7 +393,7 @@ export default {
         },
         async forwardHome (context) {
             if (context.rootState.route?.path === '/user/dashboard' && !context.getters.isRtcEngineUiVisible) {
-                await router.push({ path: '/user/conversations' })
+                await this.$router.push({ path: '/user/conversations' })
             }
         },
         async getCustomLogo (context) {
