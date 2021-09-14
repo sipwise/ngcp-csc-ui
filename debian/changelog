@@ -1,3 +1,13 @@
+ngcp-csc-ui (10.0.1.2+0~mr10.0.1.2) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [7622769] TT#136551 Send FAX - Content/File not working properly
+
+  [ Sergii Leonenko ]
+  * [185d227] TT#140900 Issue - Login - Unable to log in
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Sep 2021 14:21:14 +0200
+
 ngcp-csc-ui (10.0.1.1+0~mr10.0.1.1) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
