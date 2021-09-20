@@ -4,6 +4,7 @@ import {
     CreationState,
     RequestState
 } from './common'
+
 import {
     getSoundSetList,
     createSoundSet,
@@ -314,10 +315,11 @@ export default {
         loadSoundSetList (context, options) {
             return new Promise((resolve) => {
                 const listVisible = _.get(options, 'listVisible', false)
-                const page = _.get(options, 'page', context.state.soundSetListCurrentPage)
                 context.commit('soundSetListRequesting', {
                     listVisible: listVisible
                 })
+                let page = _.get(options, 'page', context.state.soundSetListCurrentPage)
+                page = (page === null) ? 1 : page
                 getSoundSetList({
                     page: page
                 }).then((soundSetList) => {
