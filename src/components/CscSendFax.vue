@@ -50,7 +50,7 @@
                     @blur="$v.form.data.$touch"
                 />
                 <csc-input-file
-                    accept=".pdf,.tiff,.txt,.ps"
+                    accept=".pdf,.tif,.tiff,.txt,.ps"
                     @file-selected="toggleFileSelected"
                 />
             </q-card-section>

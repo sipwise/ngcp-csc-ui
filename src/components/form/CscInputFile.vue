@@ -37,10 +37,10 @@
             </template>
         </q-input>
         <q-input
-            :value="selectedFile"
             v-show="false"
             ref="fileInput"
             type="file"
+            :value="selectedFile"
             :accept="$attrs.accept"
             @input="fileInput"
         />
