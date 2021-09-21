@@ -212,6 +212,12 @@ export default {
                             visible: true
                         },
                         {
+                            to: '/user/pbx-settings/call-queues',
+                            icon: 'filter_none',
+                            label: this.$t('Call Queues'),
+                            visible: true
+                        },
+                        {
                             to: '/user/pbx-settings/ms-configs',
                             icon: 'arrow_forward',
                             label: this.$t('Manager Secretary'),
