@@ -1,3 +1,58 @@
+ngcp-csc-ui (9.5.3.0+0~mr9.5.3.0) unstable; urgency=medium
+
+  [ Victor Tsvetov ]
+  * [0aa1f42] TT#129160 Add Russian translations file
+  * [fc0054b] TT#137552 Update German translations
+
+  [ hzigha ]
+  * [70e58fe] TT#129502 Add Russian language to the language menu
+  * [3c4eca8] TT#129504 Fix cropped main menu item text (Russian, German, ...)
+
+  [ Nico Schedel ]
+  * [b5202be] TT#70901 selenium: fix for one element obscuring 'save' button
+  * [8426b8f] TT#70901 selenium: update on "only use one thread for local testruns"
+  * [cc0961a] TT#70901 selenium: small formatting changes
+  * [ca198c4] TT#70901 selenium: fix weird music on hold behavior
+  * [307983f] TT#70901 selenium: fix speed dial always taking screenshots
+  * [5257ded] TT#70901 selenium: fix up logout_csc function
+  * [d87bf99] TT#70901 selenium: fix weird privacy setting behaviour
+  * [d831ae3] TT#70901 selenium: add new checked_if_unchecked functions
+  * [81f9493] TT#70901 selenium: only use one thread for local testruns
+  * [6c3a6d9] TT#70901 selenium: fix language changing test on login page
+  * [fbea22c] TT#70901 selenium: fix language changing test for mr9.5
+  * [d9c4bf3] TT#70901 selenium: change german comparison string when checking for language
+  * [d902b24] TT#70901 selenium: adapt to call forwarding button changes
+  * [1523514] TT#70901 selenium: Fix for call forward menu not always opening reliably
+
+  [ Alexander Lutay ]
+  * [b0c734a] TT#129160 fix ca34192: use label 'Русский' for Russian localization
+
+  [ Hans-Peter Herzog ]
+  * [b26dd3a] TT#127757 If mobile app badge configs has the same name, then show the name once
+  * [bf75795] TT#129653 Conversations - List filtering is corrupted after performing an action on single item
+  * [045d280] TT#136550 CallForwarding - Add missing call forwarding types
+
+  [ Carlo Venusino ]
+  * [ccdf897] TT#122015 Add QR-Code to login to sip:phone mobile app from CSC
+  * [2d02fe0] TT#130400 SubscriberProfiles - Hide main menu item, if none of the containing parts of the page are visible due to a SubscriberProfile
+  * [0fccc8c] TT#133501 Add "expire" time to QR code generated for sip:phone
+  * [a966af6] TT#138300 CallForwarding - Issues when setting pbx_base_cli as destination
+  * [c756489] TT#137700 WebRTC make call screen still shown after setting "show_rtcengine_features=no"
+  * [85430f9] TT#136551 Send FAX - Content/File not working properly
+
+  [ Sergii Leonenko ]
+  * [31f00c6] TT#122202 ProxiedFeature - As SubscriberAdmin, I want to be able to access the "Customer Details" page in v1 from within v2
+  * [44373b7] TT#129212 Optimise the initial load of the user
+  * [30d0285] TT#134651 SIPAuth - As Subscriber/PBXAttendant, I want to change my SIP-Password, in order to authenticate my SIP-Device against NGCP
+  * [40836f2] TT#134650 SIPAuth - As PBXAdmin, I want to change the (SIP)-passwords of all PBXAttendants
+  * [0539797] TT#140900 Issue - Login - Unable to log in
+
+  [ Hugo Zigha ]
+  * [b44bb07] TT#134715 SIPAuth - As PBXAdmin, I want to set the SIP-password during the creation
+  * [b73bf9e] TT#139400 CallForwarding - Integrate conditional visibility depending on platform-info for certain call forwarding types
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 21 Sep 2021 16:26:33 +0200
+
 ngcp-csc-ui (9.5.2.0+0~mr9.5.2.0) unstable; urgency=medium
 
   [ Carlo Venusino ]
