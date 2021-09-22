@@ -212,6 +212,12 @@ export default {
                             visible: true
                         },
                         {
+                            to: '/user/pbx-settings/ms-configs',
+                            icon: 'arrow_forward',
+                            label: this.$t('Manager Secretary'),
+                            visible: true
+                        },
+                        {
                             to: '/user/pbx-settings/auto-attendant',
                             icon: 'dialpad',
                             label: this.$t('Auto-attendant'),

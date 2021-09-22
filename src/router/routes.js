@@ -31,6 +31,7 @@ import CscPageCallSettings from 'pages/CscPageCallSettings'
 import CscPageRegisteredDevices from 'pages/CscPageRegisteredDevices'
 import CscPagePbxSettingsAutoAttendant from 'pages/CscPagePbxSettingsAutoAttendant'
 import CscPageDashboard from 'pages/CscPageDashboard'
+import CscPagePbxSettingsMsConfigs from 'pages/CscPagePbxSettingsMsConfigs'
 
 const getToken = (route) => {
     return {
@@ -323,6 +324,18 @@ export default function routes (app) {
                             return i18n.t('Set your PBX settings')
                         },
                         profileAttribute: PROFILE_ATTRIBUTE_MAP.pbxSettings
+                    }
+                },
+                {
+                    path: 'pbx-settings/ms-configs',
+                    component: CscPagePbxSettingsMsConfigs,
+                    meta: {
+                        get title () {
+                            return i18n.t('PBX Settings')
+                        },
+                        get subtitle () {
+                            return i18n.t('Manager Secretary')
+                        }
                     }
                 },
                 {
