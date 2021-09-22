@@ -27,11 +27,11 @@ module.exports = function (ctx) {
         // https://quasar.dev/quasar-cli/boot-files
         boot: [
             'appConfig',
-            'rtc-engine',
             'filters',
             'vuelidate',
             'i18n',
             'vue-resource',
+            'ngcp-call',
             'user',
             'routes',
             'vue-scrollto',

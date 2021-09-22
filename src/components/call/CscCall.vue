@@ -170,7 +170,7 @@
                     @click="toggleMicrophone()"
                 />
                 <q-btn
-                    v-if="isEstablished && hasLocalVideo && !(isMobile && minimized)"
+                    v-if="isEstablished && !(isMobile && minimized)"
                     :color="colorToggleCamera"
                     :icon="iconToggleCamera"
                     class="q-mr-sm"
@@ -178,6 +178,16 @@
                     round
                     size="large"
                     @click="toggleCamera()"
+                />
+                <q-btn
+                    v-if="isEstablished && !(isMobile && minimized)"
+                    :color="colorToggleScreen"
+                    icon="screen_share"
+                    class="q-mr-sm"
+                    text-color="dark"
+                    round
+                    size="large"
+                    @click="toggleScreen()"
                 />
                 <q-btn
                     v-if="isEstablished && !(isMobile && minimized)"
@@ -209,34 +219,16 @@
                     size="large"
                     @click="closeCall()"
                 />
-                <q-fab
+                <q-btn
                     v-if="canStart"
-                    ref="startButton"
                     color="primary"
                     text-color="dark"
                     icon="call"
-                    direction="up"
-                >
-                    <q-fab-action
-                        v-if="!isMobile"
-                        color="primary"
-                        text-color="dark"
-                        icon="computer"
-                        @click="startCall('audioScreen')"
-                    />
-                    <q-fab-action
-                        color="primary"
-                        text-color="dark"
-                        icon="videocam"
-                        @click="startCall('audioVideo')"
-                    />
-                    <q-fab-action
-                        color="primary"
-                        text-color="dark"
-                        icon="call"
-                        @click="startCall('audioOnly')"
-                    />
-                </q-fab>
+                    class="q-mr-sm"
+                    round
+                    size="large"
+                    @click="startCall('audioOnly')"
+                />
             </div>
             <div
                 v-if="minimized"
@@ -343,7 +335,7 @@ import {
 } from 'src/helpers/ui'
 import CscMedia from '../CscMedia'
 import CscCallDialpad from '../CscCallDialpad'
-import { CallStateTitle } from 'src/store/call'
+import { CallStateTitle } from 'src/store/call/common'
 export default {
     name: 'CscCall',
     components: {
@@ -403,6 +395,10 @@ export default {
             default: false
         },
         cameraEnabled: {
+            type: Boolean,
+            default: false
+        },
+        screenEnabled: {
             type: Boolean,
             default: false
         },
@@ -494,7 +490,7 @@ export default {
             if (this.microphoneEnabled) {
                 return 'primary'
             } else {
-                return 'faded'
+                return 'grey-1'
             }
         },
         iconToggleCamera () {
@@ -508,7 +504,14 @@ export default {
             if (this.cameraEnabled) {
                 return 'primary'
             } else {
-                return 'faded'
+                return 'grey-1'
+            }
+        },
+        colorToggleScreen () {
+            if (this.screenEnabled) {
+                return 'primary'
+            } else {
+                return 'grey-1'
             }
         },
         iconToggleRemoteVolume () {
@@ -522,7 +525,7 @@ export default {
             if (this.remoteVolumeEnabled) {
                 return 'primary'
             } else {
-                return 'faded'
+                return 'grey-1'
             }
         },
         callStateTitle () {
@@ -604,9 +607,6 @@ export default {
         toggleMicrophone () {
             this.$emit('toggle-microphone')
         },
-        toggleCamera () {
-            this.$emit('toggle-camera')
-        },
         toggleRemoteVolume () {
             this.$emit('toggle-remote-volume')
         },
@@ -635,6 +635,12 @@ export default {
                     this.$refs.remoteMedia.fitMedia()
                 }
             })
+        },
+        toggleCamera () {
+            this.$emit('toggle-camera')
+        },
+        toggleScreen () {
+            this.$emit('toggle-screen')
         }
     }
 }

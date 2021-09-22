@@ -11,9 +11,6 @@ import {
 import {
     RequestState
 } from './common'
-// import {
-//     loadDeviceModel
-// } from '../api/pbx-devices'
 import { getNumbers } from '../api/user'
 import {
     i18n

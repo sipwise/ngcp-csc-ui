@@ -5,7 +5,7 @@ import { date } from 'quasar'
 
 import CallBlockingModule from './call-blocking'
 import CallForwardingModule from './call-forwarding'
-import CallModule from './call'
+import CallModule from 'src/store/call'
 import CallRecordingsModule from './call-recordings'
 import CallSettingsModule from './call-settings'
 import ConversationsModule from './conversations'

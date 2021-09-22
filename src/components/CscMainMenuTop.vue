@@ -68,13 +68,7 @@ export default {
                     icon: 'call',
                     label: this.callStateTitle,
                     sublabel: this.callStateSubtitle,
-                    visible: this.isRtcEngineUiVisible
-                },
-                {
-                    to: '/conference',
-                    icon: 'videocam',
-                    label: this.$t('Join conference'),
-                    visible: this.isRtcEngineUiVisible
+                    visible: true
                 },
                 {
                     to: '/user/conversations',

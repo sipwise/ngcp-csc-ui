@@ -172,6 +172,7 @@
             :has-remote-video="hasRemoteVideo"
             :microphone-enabled="isMicrophoneEnabled"
             :camera-enabled="isCameraEnabled"
+            :screen-enabled="isScreenEnabled"
             :remote-volume-enabled="isRemoteVolumeEnabled"
             :dialpad-opened="isDialpadOpened"
             :menu-minimized="menuMinimized"
@@ -181,11 +182,13 @@
             @close-call="closeCall"
             @toggle-microphone="toggleMicrophone"
             @toggle-camera="toggleCamera"
-            @toggle-remote-volume="toggleRemoteVolume"
+            @toggle-screen="toggleScreen"
+            @toggle-remote-volume="toggleRemoteAudio"
             @click-dialpad="clickDialpad"
             @toggle-dialpad="toggleDialpad"
             @maximize-call="maximizeCall"
             @minimize-call="minimizeCall"
+            @add-camera="toggleCamera"
         />
     </q-layout>
 </template>
@@ -275,6 +278,7 @@ export default {
             'hasRemoteVideo',
             'isMicrophoneEnabled',
             'isCameraEnabled',
+            'isScreenEnabled',
             'isRemoteVolumeEnabled',
             'isMaximized',
             'isDialpadOpened',
@@ -435,6 +439,12 @@ export default {
             'forwardHome',
             'fetchAuthToken'
         ]),
+        ...mapActions('call', [
+            'toggleCamera',
+            'toggleScreen',
+            'toggleMicrophone',
+            'toggleRemoteAudio'
+        ]),
         layoutResized () {
             this.$refs.call.fitMedia()
         },
@@ -475,15 +485,6 @@ export default {
         },
         endCall () {
             this.$store.dispatch('call/end')
-        },
-        toggleMicrophone () {
-            this.$store.dispatch('call/toggleMicrophone')
-        },
-        toggleCamera () {
-            this.$store.dispatch('call/toggleCamera')
-        },
-        toggleRemoteVolume () {
-            this.$store.dispatch('call/toggleRemoteVolume')
         },
         clickDialpad (value) {
             this.$store.dispatch('call/sendDTMF', value)

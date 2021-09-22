@@ -1,6 +1,5 @@
 'use strict'
 
-import Vue from 'vue'
 import _ from 'lodash'
 import {
     RequestState
@@ -25,6 +24,7 @@ import {
     qrPayload
 } from 'src/helpers/qr'
 import { date } from 'quasar'
+import { callInitialize } from 'src/api/ngcp-call'
 import { setLocal } from 'src/storage'
 
 export default {
@@ -147,12 +147,6 @@ export default {
             } catch (err) {
                 return null
             }
-        },
-        isRtcEngineInitialized (state) {
-            return state.rtcEngineInitState === RequestState.succeeded
-        },
-        isRtcEngineInitializing (state) {
-            return state.rtcEngineInitState === RequestState.requesting
         },
         getSubscriber (state) {
             return state.subscriber
@@ -309,19 +303,20 @@ export default {
         }
     },
     actions: {
-        login (context, options) {
+        async login (context, options) {
             context.commit('loginRequesting')
-            login(options.username, options.password).then((result) => {
+            try {
+                const result = await login(options.username, options.password)
                 setJwt(result.jwt)
                 setSubscriberId(result.subscriberId)
                 context.commit('loginSucceeded', {
                     jwt: getJwt(),
                     subscriberId: getSubscriberId()
                 })
-                context.dispatch('initUser')
-            }).catch((err) => {
+                await context.dispatch('initUser')
+            } catch (err) {
                 context.commit('loginFailed', err.message)
-            })
+            }
         },
         logout () {
             deleteJwt()
@@ -339,20 +334,16 @@ export default {
                             context.dispatch('logout')
                         }, context.getters.jwtTTL * 1000)
                     }
-                    if (context.getters.hasRtcEngineCapabilityEnabled && context.getters.isRtcEngineUiVisible) {
-                        context.commit('rtcEngineInitRequesting')
-                        Vue.$rtcEngine.setNgcpApiJwt(getJwt())
-                        try {
-                            await Vue.$rtcEngine.initialize()
-                            context.commit('rtcEngineInitSucceeded')
-                        } catch (err) {
-                            console.debug(err)
-                            context.commit('rtcEngineInitFailed', err.message)
-                        }
-                    }
                     if (userData.subscriber.profile_id) {
                         const profile = await getSubscriberProfile(userData.subscriber.profile_id)
                         context.commit('setProfile', profile)
+                    }
+                    try {
+                        await callInitialize({
+                            subscriber: userData.subscriber
+                        })
+                    } catch (err) {
+                        console.log(err)
                     }
                     await context.dispatch('forwardHome')
                 } catch (err) {
