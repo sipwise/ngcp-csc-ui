@@ -95,13 +95,17 @@ import CscListItem from '../../CscListItem'
 import CscListItemTitle from '../../CscListItemTitle'
 import CscListItemSubtitle from '../../CscListItemSubtitle'
 import CscListMenuItem from '../../CscListMenuItem'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import CscInputButtonReset from 'components/form/CscInputButtonReset'
 export default {
-    name: 'CscPbxCallQueue',
+    name: 'CscPbxMsConfig',
     components: {
         CscListItem,
         CscListItemTitle,
         CscListItemSubtitle,
-        CscListMenuItem
+        CscListMenuItem,
+        CscInputButtonSave,
+        CscInputButtonReset
     },
     props: {
         odd: {
