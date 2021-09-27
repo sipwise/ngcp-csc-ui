@@ -25,6 +25,7 @@ import {
     qrPayload
 } from 'src/helpers/qr'
 import { date } from 'quasar'
+import { setLocal } from 'src/storage'
 
 export default {
     namespaced: true,
@@ -133,7 +134,7 @@ export default {
         jwtTTL (state) {
             const expirationBuffer = 0.05
             try {
-                const jwtParts = state.jwt.split('.')
+                const jwtParts = getJwt().split('.')
                 const jwtPayload = JSON.parse(atob(jwtParts[1]))
                 if (_.isNumber(jwtPayload.exp)) {
                     const timeDiff = Math.floor((Date.now() / 1000) - jwtPayload.exp)
@@ -222,7 +223,6 @@ export default {
         },
         userDataRequesting (state) {
             state.resellerBranding = null
-
             state.userDataRequesting = true
             state.userDataSucceeded = false
             state.userDataError = null
@@ -335,6 +335,7 @@ export default {
                     context.commit('userDataSucceeded', userData)
                     if (_.isNumber(context.getters.jwtTTL)) {
                         setTimeout(() => {
+                            setLocal('show_session_expired_msg', true)
                             context.dispatch('logout')
                         }, context.getters.jwtTTL * 1000)
                     }

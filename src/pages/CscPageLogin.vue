@@ -110,6 +110,8 @@ import CscInputPassword from 'components/form/CscInputPassword'
 import CscInput from 'components/form/CscInput'
 import CscRetrievePasswordDialog from 'components/CscRetrievePasswordDialog'
 import CscSelectionLanguage from 'components/CscSelectionLanguage'
+import { deleteLocal, getLocal } from 'src/storage'
+import { showToast } from 'src/helpers/ui'
 export default {
     name: 'Login',
     components: {
@@ -153,6 +155,12 @@ export default {
             if (error) {
                 showGlobalError(this.$i18n.t('Wrong username or password'))
             }
+        }
+    },
+    mounted () {
+        if (getLocal('show_session_expired_msg')) {
+            showToast(this.$t('Session expired, please login again'))
+            deleteLocal('show_session_expired_msg')
         }
     },
     methods: {
