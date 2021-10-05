@@ -1,3 +1,42 @@
+ngcp-csc-ui (10.1.1.0+0~mr10.1.1.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [07a4dbd] TT#136550 CallForwarding - Add missing call forwarding types
+
+  [ Nico Schedel ]
+  * [15b9151] TT#70901 selenium: adapt to call forwarding button changes
+  * [fd63fde] TT#70901 selenium: add new recording test
+  * [17c0829] TT#70901 selenium: add new fax settings test
+  * [ab7838d] TT#70901 selenium: add ability to skip tests depending on ce/pro usage
+  * [3a30841] TT#70901 selenium: improve date selection in call forward tests
+  * [76e2e41] TT#70901 selenium: add new securtiy tests
+  * [aa50e1e] TT#70901 selenium: fix missing string conversions in call forwarding
+  * [c25ef97] TT#70901 selenium: small debug screenshot fixes
+
+  [ Carlo Venusino ]
+  * [e877125] TT#137700 WebRTC make call screen still shown after setting "show_rtcengine_features=no"
+  * [6f1b7fa] TT#138300 CallForwarding - Issues when setting pbx_base_cli as destination
+  * [6ab3544] TT#136551 Send FAX - Content/File not working properly
+  * [bbe230a] TT#141900 SendFax - Support *.tif as extension
+  * [59f508e] TT#141051 Logout - Logout automatically if JWT token expiration time is reached
+
+  [ Hugo Zigha ]
+  * [b0536ec] TT#139201 Issue - AutoAttendant - Prevent user from adding multiple slots with the same slot number
+  * [24b2843] TT#138353 AutoAttendant - Add 'default' action for the Auto-Attendant functionality
+  * [9365f72] TT#139400 CallForwarding - Integrate conditional visibility depending on platform-info for certain call forwarding types
+  * [ca69763] TT#128651 copy&paste number to dial, removing spaces and () and pressing enter to make a voice call.
+  * [1d0d89c] TT#140451 Issue - SendFax - If failed fax is rendered in Conversations the destination number is supposed to be the receiver and not the sender
+  * [12a514b] TT#141400 Issue - PBXConfiguration - SoundSet - Can not see (first) SoundSet after creation
+  * [b5e7933] TT#129221 PBXSettings - ManagerSecretary - As PBX-Attendant (Pilot, Seat, Group), I can change my ManagerSecretary preferences
+  * [f3865eb] TT#142850 Issue - ManagerSecretary - Can not add and save new numbers
+  * [b9403d9] TT#129220 PBXSettings - CallQueue - As PBX-Attendant (Pilot, Seat, Group), I can change my CallQueue preferences
+
+  [ Sergii Leonenko ]
+  * [bd6a332] TT#128153 Refactor configuration injection
+  * [0cfb10a] TT#140900 Issue - Login - Unable to log in
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 Oct 2021 13:19:18 +0200
+
 ngcp-csc-ui (10.1.0.0+0~mr10.1.0.0) unstable; urgency=medium
 
   [ Carlo Venusino ]
