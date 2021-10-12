@@ -134,5 +134,8 @@ export default {
         } else {
             return ''
         }
+    },
+    connectionError (state) {
+        return state.connectionError
     }
 }

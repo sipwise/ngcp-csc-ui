@@ -30,18 +30,14 @@ export default {
     },
     establishCall (state, {
         mediaStreamId,
-        isLocalAudioMuted = false,
         hasLocalCamera = false,
         hasLocalScreen = false,
-        hasRemoteVideo = false,
-        isRemoteAudioMuted = false
+        hasRemoteVideo = false
     }) {
-        state.remoteMediaStream = mediaStreamId
         state.callState = CallState.established
-        state.microphoneEnabled = !isLocalAudioMuted
+        state.remoteMediaStream = mediaStreamId
         state.cameraEnabled = hasLocalCamera
         state.screenEnabled = hasLocalScreen
-        state.remoteAudioEnabled = !isRemoteAudioMuted
         state.remoteVideoEnabled = hasRemoteVideo
     },
     incomingCall (state, options) {
@@ -52,36 +48,35 @@ export default {
         state.endedReason = null
     },
     hangUpCall (state) {
-        state.callState = CallState.input
-        state.number = ''
-        state.numberInput = ''
-        state.endedReason = null
-    },
-    endCall (state, reason) {
-        if (state.endedReason === null) {
-            state.callState = CallState.ended
-            state.endedReason = reason
-            state.localMediaStream = null
-            state.remoteMediaStream = null
+        if (state.callState !== CallState.input) {
+            state.callState = CallState.input
+            state.number = ''
+            state.numberInput = ''
+            state.endedReason = null
         }
     },
-    sendDTMF (state, value) {
-        state.dtmf = value
+    endCall (state, reason) {
+        if (reason) {
+            state.callState = CallState.ended
+            state.endedReason = reason
+        }
+        state.dialpadOpened = false
+        state.microphoneEnabled = true
+        state.cameraEnabled = false
+        state.screenEnabled = false
+        state.remoteAudioEnabled = true
+        state.remoteVideoEnabled = false
+        state.localMediaStream = null
+        state.remoteMediaStream = null
     },
     toggleMicrophone (state, enabled) {
         state.microphoneEnabled = enabled
-    },
-    setCamera (state, enabled) {
-        state.cameraEnabled = enabled
     },
     enableCamera (state) {
         state.cameraEnabled = true
     },
     enableScreen (state) {
         state.screenEnabled = true
-    },
-    setScreen (state, enabled) {
-        state.screenEnabled = enabled
     },
     disableVideo (state) {
         state.cameraEnabled = false
@@ -103,8 +98,10 @@ export default {
     },
     enableCall (state) {
         state.callEnabled = true
+        state.connectionError = null
     },
-    disableCall (state) {
+    disableCall (state, options = { error: null }) {
         state.callEnabled = false
+        state.connectionError = options.error
     }
 }

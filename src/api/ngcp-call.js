@@ -8,28 +8,66 @@ let $baseWebSocketUrl = null
 let $subscriber = null
 let $socket = null
 let $userAgent = null
+let $isVideoScreen = false
 let $outgoingRtcSession = null
 let $incomingRtcSession = null
 let $localMediaStream = null
 let $remoteMediaStream = null
-let $isVideoScreen = false
+let $videoTransceiver = null
+let $audioTransceiver = null
 
 const TERMINATION_OPTIONS = {
     status_code: 603,
     reason_phrase: 'Decline'
 }
 
+const MEDIA_VIDEO_DEFAULT_CONFIG = {
+    width: {
+        ideal: 4096
+    },
+    height: {
+        ideal: 2160
+    }
+}
+
 export const callEvent = new EventEmitter()
 
-function handleRemoteMediaStream (trackEvent) {
-    const stream = trackEvent.streams[0]
-    if (!$remoteMediaStream) {
-        $remoteMediaStream = stream
-        callEvent.emit('remoteStream', $remoteMediaStream)
-    } else if ($remoteMediaStream && $remoteMediaStream.id !== stream.id) {
-        $remoteMediaStream = stream
+function callTrackMuteHandler () {
+    if ($audioTransceiver) {
+        $remoteMediaStream = new MediaStream([
+            $audioTransceiver.receiver.track
+        ])
         callEvent.emit('remoteStream', $remoteMediaStream)
     }
+}
+
+function callTrackUnMuteHandler () {
+    if ($audioTransceiver && $videoTransceiver) {
+        $remoteMediaStream = new MediaStream([
+            $audioTransceiver.receiver.track,
+            $videoTransceiver.receiver.track
+        ])
+        callEvent.emit('remoteStream', $remoteMediaStream)
+    }
+}
+
+function handleRemoteMediaStream ({ transceiver }) {
+    if (!$audioTransceiver && transceiver.receiver.track.kind === 'audio') {
+        $audioTransceiver = transceiver
+    } else if (!$videoTransceiver && transceiver.receiver.track.kind === 'video') {
+        $videoTransceiver = transceiver
+        $videoTransceiver.receiver.track.onmute = callTrackMuteHandler
+        $videoTransceiver.receiver.track.onunmute = callTrackUnMuteHandler
+    }
+    const tracks = []
+    if ($audioTransceiver) {
+        tracks.push($audioTransceiver.receiver.track)
+    }
+    if ($videoTransceiver) {
+        tracks.push($videoTransceiver.receiver.track)
+    }
+    $remoteMediaStream = new MediaStream(tracks)
+    callEvent.emit('remoteStream', $remoteMediaStream)
 }
 
 function getSubscriberUri () {
@@ -118,10 +156,6 @@ export async function callStart ({ number }) {
         mediaStream: $localMediaStream
     })
     $outgoingRtcSession.connection.ontrack = handleRemoteMediaStream
-    const delegateEvent = (eventName, newName) => {
-        $outgoingRtcSession.on(eventName, (event) => callEvent.emit(newName, event))
-    }
-    delegateEvent('failed', 'outgoingFailed')
 }
 
 export async function callAccept () {
@@ -165,56 +199,58 @@ export function callGetRtcSession () {
     }
 }
 
-export async function callChangeVideoStream (stream) {
-    if ($localMediaStream && callGetRtcSession()) {
-        callGetRtcSession().connection.getSenders().forEach(
-            sender => callGetRtcSession().connection.removeTrack(sender)
-        )
-        $localMediaStream.getTracks().forEach(track => track.stop())
-        $localMediaStream = stream
-        $localMediaStream.getTracks().forEach(
-            track => callGetRtcSession().connection.addTrack(track, $localMediaStream)
-        )
+export function callGetRtcConnection () {
+    return callGetRtcSession().connection
+}
+
+async function callStopVideo () {
+    if ($videoTransceiver && $localMediaStream) {
+        $localMediaStream.removeTrack($videoTransceiver.sender.track)
+        $videoTransceiver.sender.track.stop()
+        $videoTransceiver.direction = 'recvonly'
+        await $videoTransceiver.sender.replaceTrack(null)
         await callRenegotiate()
     }
 }
 
+export async function callSendVideo (stream, audioMuted) {
+    const videoTrack = stream.getVideoTracks()[0]
+    if ($videoTransceiver?.sender?.track) {
+        $localMediaStream.removeTrack($videoTransceiver.sender.track)
+        $videoTransceiver.sender.track.stop()
+    }
+    $localMediaStream.addTrack(videoTrack)
+    callEvent.emit('localStream', $localMediaStream)
+    if (!$videoTransceiver) {
+        $videoTransceiver = callGetRtcConnection().addTransceiver(videoTrack, { direction: 'sendrecv' })
+        $videoTransceiver.receiver.track.onmute = callTrackMuteHandler
+        $videoTransceiver.receiver.track.onunmute = callTrackUnMuteHandler
+    } else {
+        $videoTransceiver.direction = 'sendrecv'
+        await $videoTransceiver.sender.replaceTrack(videoTrack)
+    }
+    await callRenegotiate()
+}
+
 export async function callAddCamera () {
-    await callChangeVideoStream(await navigator.mediaDevices.getUserMedia({
-        video: {
-            width: {
-                ideal: 4096
-            },
-            height: {
-                ideal: 2160
-            }
-        },
-        audio: true
-    }))
     $isVideoScreen = false
+    await callSendVideo(await navigator.mediaDevices.getUserMedia({
+        video: MEDIA_VIDEO_DEFAULT_CONFIG,
+        audio: false
+    }))
 }
 
 export async function callAddScreen () {
     $isVideoScreen = true
-    await callChangeVideoStream(await navigator.mediaDevices.getDisplayMedia({
-        video: {
-            width: {
-                ideal: 4096
-            },
-            height: {
-                ideal: 2160
-            }
-        },
-        audio: true
+    await callSendVideo(await navigator.mediaDevices.getDisplayMedia({
+        video: MEDIA_VIDEO_DEFAULT_CONFIG,
+        audio: false
     }))
 }
 
 export async function callRemoveVideo () {
     $isVideoScreen = false
-    await callChangeVideoStream(await navigator.mediaDevices.getUserMedia({
-        video: false,
-        audio: true
-    }))
+    await callStopVideo()
 }
 
 export async function callRenegotiate () {
@@ -226,11 +262,11 @@ export async function callRenegotiate () {
 }
 
 export function callHasRemoteVideo () {
-    return $remoteMediaStream?.getVideoTracks?.()?.length > 0
+    return $videoTransceiver?.receiver?.track?.enabled
 }
 
 export function callHasLocalVideo () {
-    return $localMediaStream?.getVideoTracks?.()?.length > 0
+    return $videoTransceiver?.sender?.track?.enabled
 }
 
 export function callHasLocalCamera () {
@@ -242,21 +278,24 @@ export function callHasLocalScreen () {
 }
 
 export function callToggleMicrophone () {
-    const config = {
-        audio: true,
-        video: false
-    }
-    const rtcSession = callGetRtcSession()
-    const muted = rtcSession?.isMuted()
-    if (muted.audio) {
-        rtcSession.unmute(config)
-    } else {
-        rtcSession.mute(config)
+    if ($audioTransceiver?.sender?.track) {
+        $audioTransceiver.sender.track.enabled = !$audioTransceiver.sender.track.enabled
     }
 }
 
+export function callMute () {
+    return callGetRtcSession()?.mute()
+}
+
+export function callUnMute () {
+    return callGetRtcSession()?.unmute()
+}
+
 export function callIsMuted () {
-    return callGetRtcSession()?.isMuted()?.audio
+    if ($audioTransceiver?.sender?.track) {
+        return !$audioTransceiver.sender.track.enabled
+    }
+    return false
 }
 
 export function callSendDTMF (tone, transport = 'RFC2833') {
@@ -268,31 +307,59 @@ export function callSendDTMF (tone, transport = 'RFC2833') {
     }
 }
 
+/**
+ * Enables or disables the remote audio depending on the current state.
+ */
 export function callToggleRemoteAudio () {
-    if ($remoteMediaStream && $remoteMediaStream.getAudioTracks()[0]) {
-        $remoteMediaStream.getAudioTracks()[0].enabled = !$remoteMediaStream?.getAudioTracks()[0]?.enabled
+    if ($audioTransceiver?.receiver?.track) {
+        $audioTransceiver.receiver.track.enabled = !$audioTransceiver.receiver.track.enabled
     }
 }
 
-export function callIsRemoteAudioMuted () {
-    return !$remoteMediaStream?.getAudioTracks()[0]?.enabled
+export function callMuteRemote () {
+    if ($audioTransceiver?.receiver?.track) {
+        $audioTransceiver.receiver.track.enabled = false
+    }
 }
 
+export function callUnMuteRemote () {
+    if ($audioTransceiver?.receiver?.track) {
+        $audioTransceiver.receiver.track.enabled = true
+    }
+}
+
+/**
+ * Checks whether remote audio is muted or not.
+ * @returns {boolean}
+ */
+export function callIsRemoteMuted () {
+    return !$audioTransceiver?.receiver?.track?.enabled
+}
+
+/**
+ * Terminates the call if not ended and cleans up all related resources.
+ */
 export function callEnd () {
-    if ($outgoingRtcSession && !$outgoingRtcSession.isEnded()) {
-        $outgoingRtcSession.terminate(TERMINATION_OPTIONS)
-        $outgoingRtcSession = null
+    const rtcSession = callGetRtcSession()
+    if (rtcSession && !rtcSession.isEnded()) {
+        rtcSession.terminate(TERMINATION_OPTIONS)
     }
-    if ($incomingRtcSession && !$incomingRtcSession.isEnded()) {
-        $incomingRtcSession.terminate(TERMINATION_OPTIONS)
-        $incomingRtcSession = null
-    }
-    if ($localMediaStream) {
-        $localMediaStream.getTracks().forEach(track => track.stop())
+    try {
+        if ($localMediaStream) {
+            $localMediaStream.getTracks().forEach(track => track.stop())
+        }
+    } finally {
         $localMediaStream = null
     }
-    if ($remoteMediaStream) {
-        $remoteMediaStream.getTracks().forEach(track => track.stop())
+    try {
+        if ($remoteMediaStream) {
+            $remoteMediaStream.getTracks().forEach(track => track.stop())
+        }
+    } finally {
         $remoteMediaStream = null
     }
+    $outgoingRtcSession = null
+    $incomingRtcSession = null
+    $audioTransceiver = null
+    $videoTransceiver = null
 }

@@ -6,12 +6,19 @@
         <div
             class="col-xs-10 col-sm-8 col-md-4 csc-opt-center"
         >
+            <csc-inline-alert-alert
+                v-if="connectionError"
+                class="q-mb-md"
+            >
+                {{ connectionError }}
+            </csc-inline-alert-alert>
             <csc-input
                 id="csc-call-number-input"
                 :label="$t('Enter a number to dial')"
                 :value="callNumberInput"
                 :readonly="dialpadOpened"
                 clearable
+                :disable="!isCallEnabled"
                 @keypress.space.prevent
                 @keydown.space.prevent
                 @keyup.space.prevent
@@ -47,6 +54,7 @@ import {
 import CscCallDialpad from 'components/CscCallDialpad'
 import CscPage from 'components/CscPage'
 import CscInput from 'components/form/CscInput'
+import CscInlineAlertAlert from 'components/CscInlineAlertAlert'
 
 export default {
     name: 'CscPageHome',
@@ -56,6 +64,7 @@ export default {
         }
     },
     components: {
+        CscInlineAlertAlert,
         CscInput,
         CscPage,
         CscCallDialpad
@@ -75,7 +84,8 @@ export default {
             'callNumberInput',
             'isCallEnabled',
             'callStateTitle',
-            'callStateSubtitle'
+            'callStateSubtitle',
+            'connectionError'
         ]),
         dialpadOpened () {
             return this.callState === 'input' && this.isMobile

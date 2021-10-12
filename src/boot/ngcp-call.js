@@ -1,19 +1,16 @@
 
-import {
-    v4
-} from 'uuid'
 import _ from 'lodash'
 import {
     callConfigure,
-    callEnd,
     callEvent,
     callHasLocalCamera,
     callHasLocalScreen,
     callHasRemoteVideo,
-    callIsMuted,
-    callIsRemoteAudioMuted
+    callMute,
+    callMuteRemote,
+    callUnMute,
+    callUnMuteRemote
 } from 'src/api/ngcp-call'
-import { errorVisibilityTimeout } from 'src/store/call/common'
 
 export default async ({ Vue, app, store }) => {
     callConfigure({
@@ -25,19 +22,21 @@ export default async ({ Vue, app, store }) => {
         if (reason?.text) {
             cause = reason.text
         }
-        if (event.originator !== 'local') {
-            callEnd()
-            store.commit('call/endCall', cause)
-            setTimeout(() => {
-                store.commit('call/inputNumber')
-            }, errorVisibilityTimeout)
-        }
+        store.dispatch('call/end', { cause })
     }
     callEvent.on('connected', () => {
         store.commit('call/enableCall')
     })
-    callEvent.on('disconnected', () => {
-        store.commit('call/disableCall')
+    callEvent.on('disconnected', ({ error, code }) => {
+        let errorMessage = null
+        if (error) {
+            errorMessage = app.i18n.t('WebSocket connection to kamailio lb failed with code {code}', {
+                code: code
+            })
+        }
+        store.commit('call/disableCall', {
+            error: errorMessage
+        })
     })
     callEvent.on('outgoingProgress', (event) => {
         store.commit('call/startRinging')
@@ -51,17 +50,25 @@ export default async ({ Vue, app, store }) => {
             number: _.get(session, 'remote_identity.uri.user', 'Unknown')
         })
     })
-    callEvent.on('localStream', () => {
-        store.commit('call/toggleMicrophone', !callIsMuted())
+    callEvent.on('localStream', (stream) => {
+        if (store.state.call.microphoneEnabled) {
+            callUnMute()
+        } else {
+            callMute()
+        }
+        store.commit('call/localMediaSuccess', stream.id)
     })
-    callEvent.on('remoteStream', () => {
+    callEvent.on('remoteStream', (stream) => {
+        if (store.state.call.remoteAudioEnabled) {
+            callUnMuteRemote()
+        } else {
+            callMuteRemote()
+        }
         store.commit('call/establishCall', {
-            mediaStreamId: v4(),
-            isLocalAudioMuted: callIsMuted(),
+            mediaStreamId: stream.id,
             hasLocalCamera: callHasLocalCamera(),
             hasLocalScreen: callHasLocalScreen(),
-            hasRemoteVideo: callHasRemoteVideo(),
-            isRemoteAudioMuted: callIsRemoteAudioMuted()
+            hasRemoteVideo: callHasRemoteVideo()
         })
     })
 }

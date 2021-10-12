@@ -1,6 +1,6 @@
 <template>
     <csc-inline-alert
-        icon="alert"
+        icon="error"
         color="negative"
         v-bind="$attrs"
         v-on="$listeners"

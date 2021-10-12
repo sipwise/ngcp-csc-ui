@@ -2,7 +2,11 @@
     <q-banner
         :class="bannerClasses"
         inline-actions
+        rounded
+        v-bind="$attrs"
+        v-on="$listeners"
     >
+        <slot />
         <template
             v-if="icon !== null && icon !== undefined"
             v-slot:avatar
@@ -13,7 +17,6 @@
                 size="24px"
             />
         </template>
-        <slot />
         <template
             v-slot:action
         >
@@ -39,7 +42,7 @@ export default {
     },
     computed: {
         bannerClasses () {
-            return ['text-dark', 'bg-' + this.color]
+            return ['text-weight-bold', 'text-dark', 'bg-' + this.color, 'content-start']
         }
     }
 }

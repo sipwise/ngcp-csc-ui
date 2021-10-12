@@ -4,6 +4,7 @@ import {
 } from 'src/store/call/common'
 
 export default {
+    connectionError: null,
     callEnabled: false,
     endedReason: null,
     callState: CallState.input,

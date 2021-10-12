@@ -11,8 +11,13 @@ import {
     callIsMuted,
     callSendDTMF,
     callToggleRemoteAudio,
-    callIsRemoteAudioMuted, callHasLocalScreen, callHasLocalCamera
+    callIsRemoteMuted,
+    callHasLocalScreen,
+    callHasLocalCamera
 } from 'src/api/ngcp-call'
+import { errorVisibilityTimeout } from 'src/store/call/common'
+
+let errorVisibilityTimer = null
 
 export default {
     async start (context, localMedia) {
@@ -37,6 +42,10 @@ export default {
         callToggleMicrophone()
         context.commit('toggleMicrophone', !callIsMuted())
     },
+    toggleRemoteAudio (context) {
+        callToggleRemoteAudio()
+        context.commit('toggleRemoteAudio', !callIsRemoteMuted())
+    },
     async toggleCamera (context) {
         if (!callHasLocalVideo() || callHasLocalScreen()) {
             await callAddCamera()
@@ -46,7 +55,6 @@ export default {
             await callRemoveVideo()
             context.commit('disableVideo')
         }
-        context.commit('localMediaSuccess', callGetLocalMediaStreamId())
     },
     async toggleScreen (context) {
         if (!callHasLocalVideo() || callHasLocalCamera()) {
@@ -57,17 +65,24 @@ export default {
             await callRemoveVideo()
             context.commit('disableVideo')
         }
-        context.commit('localMediaSuccess', callGetLocalMediaStreamId())
     },
-    end (context) {
+    end (context, options = { cause: null }) {
         callEnd()
-        context.commit('hangUpCall')
+        if (!options.cause) {
+            if (errorVisibilityTimer) {
+                clearTimeout(errorVisibilityTimer)
+            }
+            context.commit('endCall')
+            context.commit('hangUpCall')
+        } else if (options.cause && !errorVisibilityTimer) {
+            context.commit('endCall', options.cause)
+            errorVisibilityTimer = setTimeout(() => {
+                context.commit('hangUpCall')
+                errorVisibilityTimer = null
+            }, errorVisibilityTimeout)
+        }
     },
     sendDTMF (context, tone) {
         callSendDTMF(tone)
-    },
-    toggleRemoteAudio (context) {
-        callToggleRemoteAudio()
-        context.commit('toggleRemoteAudio', !callIsRemoteAudioMuted())
     }
 }
