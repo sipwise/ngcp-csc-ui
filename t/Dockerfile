@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-stretch:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2018-06-27
+ENV REFRESHED_AT 2021-10-13
 ENV DEBIAN_FRONTEND noninteractive
 ENV DISPLAY=:0
 
@@ -35,7 +35,7 @@ ADD package.json /tmp/
 ADD npm-shrinkwrap.json /tmp/
 ADD README.md /tmp/
 WORKDIR /tmp
-RUN npm install /tmp
+RUN npm config set strict-ssl false && npm install /tmp
 
 WORKDIR /code
 
