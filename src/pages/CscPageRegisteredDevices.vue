@@ -21,6 +21,17 @@
                     <csc-spinner />
                 </q-inner-loading>
             </template>
+
+            <template v-slot:top-left>
+                <q-btn
+                    icon="refresh"
+                    size="sm"
+                    flat
+                    @click="refresh"
+                >
+                    {{ $t('Refresh') }}
+                </q-btn>
+            </template>
         </q-table>
     </csc-page>
 </template>
@@ -104,17 +115,18 @@ export default {
             ]
         }
     },
-    watch: {
-    },
     async mounted () {
-        await this.fetchPaginatedRegistrations({
-            pagination: this.pagination
-        })
+        await this.refresh()
     },
     methods: {
         ...mapWaitingActions('user', {
             loadSubscriberRegistrations: 'loadSubscriberRegistrations'
         }),
+        async refresh () {
+            await this.fetchPaginatedRegistrations({
+                pagination: this.pagination
+            })
+        },
         async fetchPaginatedRegistrations (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
             const count = await this.loadSubscriberRegistrations({
