@@ -1,3 +1,11 @@
+ngcp-csc-ui (6.5.13.2+0~mr6.5.13.2) unstable; urgency=medium
+
+  [ Manuel Montecelo ]
+  * [7e19d85] TT#138660 Fix to build release mr6.5.13
+  * [3455afd] TT#138660 Fix to build release mr6.5.13, Dockerfile
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Oct 2021 00:08:01 +0200
+
 ngcp-csc-ui (6.5.13.1+0~mr6.5.13.1) unstable; urgency=medium
 
   * New release.
