@@ -437,11 +437,10 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
-        print("Go to 'Join Conference' page...", end="")
-        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]/a[contains(., "Join conference")]').click()
+        print("Go to 'Start new call' page...", end="")
+        driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]/a[contains(., "Start new call")]').click()
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="csc-page-conference"]')) > 0, "Conference page wasnt opened")
-        driver.find_element_by_xpath('//*[@id="csc-header-toolbar-conference"]/button').click()
+            len(driver.find_elements_by_xpath('//*[@id="csc-call"]')) > 0, "Start new call page wasnt opened")
         print("OK")
         print("Go to 'Conversations' page...", end="")
         driver.find_element_by_xpath('//*[@id="csc-main-menu-top"]/a[contains(., "Conversations")]').click()
