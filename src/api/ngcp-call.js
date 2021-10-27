@@ -21,13 +21,38 @@ const TERMINATION_OPTIONS = {
     reason_phrase: 'Decline'
 }
 
-const MEDIA_VIDEO_DEFAULT_CONFIG = {
-    width: {
-        ideal: 4096
-    },
-    height: {
-        ideal: 2160
+const VIDEO_MAX_FRAME_RATE = 30
+const VIDEO_IDEAL_WIDTH = 1920
+const VIDEO_IDEAL_HEIGHT = 1080
+
+function callGetVideoConstraints () {
+    const supported = navigator?.mediaDevices?.getSupportedConstraints()
+    const constraints = {}
+    if (supported.frameRate) {
+        constraints.frameRate = {
+            max: VIDEO_MAX_FRAME_RATE
+        }
     }
+    constraints.width = {
+        ideal: VIDEO_IDEAL_WIDTH
+    }
+    constraints.height = {
+        ideal: VIDEO_IDEAL_HEIGHT
+    }
+    return constraints
+}
+
+function callGetCameraConstraints () {
+    const supported = navigator?.mediaDevices?.getSupportedConstraints()
+    const constraints = callGetVideoConstraints()
+    if (supported.facingMode) {
+        constraints.facingMode = 'user'
+    }
+    return constraints
+}
+
+function callGetScreenConstraints () {
+    return callGetVideoConstraints()
 }
 
 export const callEvent = new EventEmitter()
@@ -235,7 +260,7 @@ export async function callSendVideo (stream, audioMuted) {
 export async function callAddCamera () {
     $isVideoScreen = false
     await callSendVideo(await navigator.mediaDevices.getUserMedia({
-        video: MEDIA_VIDEO_DEFAULT_CONFIG,
+        video: callGetCameraConstraints(),
         audio: false
     }))
 }
@@ -243,7 +268,7 @@ export async function callAddCamera () {
 export async function callAddScreen () {
     $isVideoScreen = true
     await callSendVideo(await navigator.mediaDevices.getDisplayMedia({
-        video: MEDIA_VIDEO_DEFAULT_CONFIG,
+        video: callGetScreenConstraints(),
         audio: false
     }))
 }
