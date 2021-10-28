@@ -4,6 +4,7 @@ import {
     getJwt,
     hasJwt
 } from 'src/auth'
+import { getCurrentLangAsV1Format } from 'src/i18n'
 
 export default ({ Vue, app }) => {
     Vue.use(VueResource)
@@ -15,6 +16,10 @@ export default ({ Vue, app }) => {
         if (request.method === 'POST' && (request.body === undefined || request.body === null)) {
             request.body = {}
         }
+        if (!request.params) {
+            request.params = {}
+        }
+        request.params.lang = getCurrentLangAsV1Format()
         next()
     })
 }
