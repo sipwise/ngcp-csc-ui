@@ -73,8 +73,8 @@ class testrun(unittest.TestCase):
         self.driver = create_driver()
         self.longMessage = True
         execs.value += 1
-        key = list(customers.keys())[execs.value % int(os.environ['THREADS'])]
-        self.domainname = customers[key]
+        self.key = list(customers.keys())[execs.value % int(os.environ['THREADS'])]
+        self.domainname = customers[self.key]
 
     def test_call_blocking(self):
         global customers
@@ -662,11 +662,12 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Open Subscriber and check if Call forwarding doesn't execute malicious code...", end="")
         driver.find_element_by_xpath('//*[@id="main-nav"]/li//span[contains(., "Settings")]').click()
-        driver.find_element_by_xpath('//*[@id="main-nav"]//li/a[contains(., "Subscribers")]').click()
-        fill_element(driver, '//*[@id="subscriber_table_filter"]/label/input', self.domainname)
-        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="subscriber_table"]//tr[1]/td[5][contains(., "' + self.domainname + '")]')))
-        click_js(driver, '//*[@id="subscriber_table"]/tbody/tr[1]/td//a[contains(., "Details")]')
-        driver.find_element_by_xpath('//*[@id="content"]/div//span/a[contains(., "Preferences")]').click()
+        driver.find_element_by_xpath('//*[@id="main-nav"]//li/a[contains(., "Customers")]').click()
+        fill_element(driver, '//*[@id="Customer_table_filter"]/label/input', self.key)
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="Customer_table"]//tr[1]/td[2][contains(., "' + self.key + '")]')))
+        click_js(driver, '//*[@id="Customer_table"]/tbody/tr[1]/td//a[contains(., "Details")]')
+        driver.find_element_by_xpath('//*[@id="customer_details"]/div[contains(., "Subscribers")]').click()
+        click_js(driver, '//*[@id="subscribers_table"]/tbody/tr[1]//td//a[contains(., "Preferences")]')
         try:
             alert_obj = Alert(driver)
             self.assertTrue(alert_obj.text != 'test', "JavaScript Code was executed")
