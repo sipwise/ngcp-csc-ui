@@ -329,6 +329,10 @@ export function setPreferenceIntraPbx (id, value) {
     return setPreference(id, 'clir_intrapbx', value)
 }
 
+export function setPreferenceMusicOnHold (id, value) {
+    return setPreference(id, 'music_on_hold', value)
+}
+
 export function getSubscribers (options) {
     return new Promise((resolve, reject) => {
         options = options || {}

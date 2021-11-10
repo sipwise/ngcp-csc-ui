@@ -19,6 +19,7 @@ import {
     setSeatNumbers,
     setSeatSoundSet,
     setSeatIntraPbx,
+    setSeatMusicOnHold,
     setSeatWebPassword,
     getSeatPreferences,
     setSeatSIPPassword
@@ -96,6 +97,11 @@ export default {
             return (id) => {
                 const seatPreferences = state.preferenceMapById[id]
                 return seatPreferences && seatPreferences.clir_intrapbx ? state.preferenceMapById[id].clir_intrapbx : false
+            }
+        },
+        getMusicOnHold (state) {
+            return (id) => {
+                return state?.preferenceMapById[id]?.music_on_hold || false
             }
         },
         getSeatCreatingName (state) {
@@ -427,6 +433,18 @@ export default {
             })
             try {
                 const result = await setSeatIntraPbx(options.seatId, options.intraPbx)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setMusicOnHold (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.t('music on hold of the seat')
+            })
+            try {
+                const result = await setSeatMusicOnHold(options.seatId, options.musicOnHold)
                 context.commit('seatUpdateSucceeded', result)
             } catch (err) {
                 context.commit('seatUpdateFailed', err.message)
