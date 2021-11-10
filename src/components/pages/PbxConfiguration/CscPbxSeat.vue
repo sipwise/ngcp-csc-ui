@@ -99,6 +99,19 @@
                             />
                         </q-item-section>
                     </q-item>
+                    <q-item
+                        class="no-padding"
+                    >
+                        <q-item-section>
+                            <q-toggle
+                                v-model="changes.musicOnHold"
+                                class="q-pa-sm"
+                                :label="$t('Music on hold')"
+                                :disable="loading"
+                                @input="changeMusicOnHold"
+                            />
+                        </q-item-section>
+                    </q-item>
                 </csc-more-menu>
             </q-item-section>
         </template>
@@ -243,6 +256,13 @@
                 :disable="loading"
                 @click="jumpToCallQueue"
             />
+            <q-toggle
+                v-model="changes.musicOnHold"
+                class="q-pa-sm"
+                :label="$t('Music on hold')"
+                :disable="loading"
+                @input="changeMusicOnHold"
+            />
         </div>
     </q-expansion-item>
 </template>
@@ -316,6 +336,10 @@ export default {
             default: undefined
         },
         hasCallQueue: {
+            type: Boolean,
+            default: undefined
+        },
+        musicOnHold: {
             type: Boolean,
             default: undefined
         }
@@ -398,6 +422,7 @@ export default {
                 aliasNumbers: this.getAliasNumberIds(),
                 webPassword: this.seat.webpassword,
                 clirIntrapbx: this.intraPbx,
+                musicOnHold: this.musicOnHold,
                 groups: this.getGroupIds(),
                 soundSet: this.getSoundSetId()
             }
@@ -510,6 +535,12 @@ export default {
             this.$emit('save-intra-pbx', {
                 seatId: this.seat.id,
                 intraPbx: this.changes.clirIntrapbx
+            })
+        },
+        changeMusicOnHold () {
+            this.$emit('save-music-on-hold', {
+                seatId: this.seat.id,
+                musicOnHold: this.changes.musicOnHold
             })
         }
     }

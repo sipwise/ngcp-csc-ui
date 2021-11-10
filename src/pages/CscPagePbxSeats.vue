@@ -77,6 +77,7 @@
                 :class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
                 :seat="seat"
                 :intra-pbx="getIntraPbx(seat.id)"
+                :music-on-hold="getMusicOnHold(seat.id)"
                 :groups="groupMapById"
                 :expanded="isSeatExpanded(seat.id)"
                 :loading="isSeatLoading(seat.id)"
@@ -95,6 +96,7 @@
                 @save-groups="setSeatGroups"
                 @save-sound-set="setSeatSoundSet"
                 @save-intra-pbx="setIntraPbx"
+                @save-music-on-hold="setMusicOnHold"
                 @jump-to-call-queue="jumpToCallQueue"
             />
         </q-list>
@@ -189,6 +191,7 @@ export default {
             'isSeatExpanded',
             'isSeatLoading',
             'getIntraPbx',
+            'getMusicOnHold',
             'getSoundSetBySeatId',
             'getSeatCreatingName',
             'getSeatUpdatingField',
@@ -241,7 +244,8 @@ export default {
             'setSeatGroups',
             'setSeatNumbers',
             'setSeatSoundSet',
-            'setIntraPbx'
+            'setIntraPbx',
+            'setMusicOnHold'
         ]),
         ...mapMutations('pbxSeats', [
             'enableSeatAddForm',
