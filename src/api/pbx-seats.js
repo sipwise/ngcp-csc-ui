@@ -9,6 +9,7 @@ import {
     setPbxGroupIds,
     setSubscriberNumbers,
     setPreferenceIntraPbx,
+    setPreferenceMusicOnHold,
     getPreferences,
     setPbxSIPPassword
 } from './subscriber'
@@ -260,6 +261,14 @@ export function setSeatSIPPassword (options) {
  */
 export function setSeatIntraPbx (seatId, clirIntrapbx) {
     return setPreferenceIntraPbx(seatId, clirIntrapbx)
+}
+
+/**
+ * @param seatId
+ * @param musicOnHold
+ */
+export function setSeatMusicOnHold (seatId, musicOnHold) {
+    return setPreferenceMusicOnHold(seatId, musicOnHold)
 }
 
 /**
