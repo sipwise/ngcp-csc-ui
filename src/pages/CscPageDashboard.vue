@@ -55,6 +55,7 @@ import {
     callIconColor,
     callIcon
 } from 'src/helpers/call-utils'
+import { mapState } from 'vuex'
 export default {
     name: 'CscPageDashboard',
     components: {
@@ -72,6 +73,22 @@ export default {
             voicemailsError: false,
             callsError: false,
             registeredDevicesError: false
+        }
+    },
+    computed: {
+        ...mapState('call', [
+            'callEnabled'
+        ])
+    },
+    watch: {
+        async callEnabled () {
+            try {
+                const registeredDevices = await this.getRegisteredDevicesData()
+                this.manageDevicesData(registeredDevices)
+            } catch (err) {
+                this.registeredDevicesError = true
+                showGlobalError(err.message)
+            }
         }
     },
     mounted () {
@@ -130,12 +147,13 @@ export default {
             }
         },
         manageDevicesData (devices) {
-            if (devices.status === 'rejected') {
+            if (devices?.status === 'rejected') {
                 this.registeredDevicesError = true
                 showGlobalError(devices?.reason?.data?.message)
             } else {
-                this.registeredDevicesCount = devices.value.totalCount
-                this.registeredDevicesItems = devices.value.items.map((item) => {
+                const registeredDevices = devices?.value || devices
+                this.registeredDevicesCount = registeredDevices.totalCount
+                this.registeredDevicesItems = registeredDevices.items.map((item) => {
                     return {
                         id: item.id,
                         icon: { name: 'devices', color: 'primary' },
