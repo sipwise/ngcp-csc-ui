@@ -1,3 +1,28 @@
+ngcp-csc-ui (10.2.1.0+0~mr10.2.1.0) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [3d1c2a7] TT#136702 Fix vulnerabilities in dependencies
+  * [c7e101c] TT#145750 adding refresh button onto Regisered Devices list
+
+  [ Hans-Peter Herzog ]
+  * [238f78c] TT#142700 CSC: Create a PoC integration of the VoIP(NGCP) call using Javascript library JsSip in combination with Kamailio's WebSocket module
+  * [83d622f] TT#145001 Call - Implement Stage-3-WebRTC-API
+  * [90eb048] TT#145900 Call - Configure video constraints including frameRate
+
+  [ Nico Schedel ]
+  * [3c92d05] TT#70901 selenium: fix accessing call page
+  * [07b0e28] TT#70901 selenium: fix subscriber search in security test
+
+  [ Guillem Jover ]
+  * [cce4886] TT#124273 Update packaging for bullseye
+
+  [ Carlo Venusino ]
+  * [b790902] TT#134104 Issue - password change error shown Russian message ignoring choosen language
+  * [ea9f43b] TT#149351 Seats - As PBXAdmin, I can update the Music on hold preference of all PBXSeats
+  * [3c6ac2f] TT#149702 Reload dashboard registered devices after call functionality is available
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 23 Nov 2021 14:18:12 +0100
+
 ngcp-csc-ui (10.2.0.0+0~mr10.2.0.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
