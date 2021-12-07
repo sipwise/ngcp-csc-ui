@@ -333,8 +333,7 @@ export default {
             await Promise.all(requests)
         },
         loadSubscribers (context) {
-            if (context.state.subscriberList.length === 0 &&
-                context.state.subscriberListState !== RequestState.requesting) {
+            if (context.state.subscriberListState !== RequestState.requesting) {
                 context.commit('subscribersRequesting')
                 getSubscribers({
                     all: true
