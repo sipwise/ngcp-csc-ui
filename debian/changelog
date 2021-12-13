@@ -1,3 +1,11 @@
+ngcp-csc-ui (9.5.3.1+0~mr9.5.3.1) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [2ac6fec] TT#149351 Seats - As PBXAdmin, I can update the Music on hold preference of all PBXSeats
+  * [56dd893] TT#148700 CallQueue - [Netcologne] CSC-UI manual reload is needed to see new group under call queue drop-down menu
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Dec 2021 19:29:11 +0100
+
 ngcp-csc-ui (9.5.3.0+0~mr9.5.3.0) unstable; urgency=medium
 
   [ Victor Tsvetov ]
