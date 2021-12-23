@@ -211,6 +211,7 @@
                         })"
                     />
                     <csc-popup-menu-item
+                        v-if="hasSubscriberProfileAttribute('voice_mail')"
                         :icon="destinationIconByType('VoiceBox')"
                         :label="$t('Forward to Voicebox')"
                         :disable="hasTermination"
