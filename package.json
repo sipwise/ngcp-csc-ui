@@ -27,7 +27,7 @@
     "i18n:extract-report": "sh ./bin/vue-i18n-extract/extract.sh report"
   },
   "dependencies": {
-    "@quasar/extras": "^1.11.1",
+    "@quasar/extras": "^1.12.2",
     "core-js": "^3.6.5",
     "file-saver": "^2.0.2",
     "jest-junit": "^11.1.0",
@@ -36,8 +36,8 @@
     "load-script": "^1.0.0",
     "lodash": "4.17.21",
     "moment": "^2.27.0",
-    "qrcode": "1.4.4",
-    "quasar": "^1.16.0",
+    "qrcode": "1.5.0",
+    "quasar": "^1.16.3",
     "vue-i18n": "^8.0.0",
     "vue-password-strength-meter": "^1.7.2",
     "vue-resource": "^1.5.1",
@@ -46,9 +46,9 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@quasar/app": "^2.2.10",
-    "@quasar/cli": "1.2.1",
-    "@quasar/quasar-app-extension-testing": "^1.0.3",
+    "@quasar/app": "^2.2.11",
+    "@quasar/cli": "1.2.2",
+    "@quasar/quasar-app-extension-testing": "^1.0.5",
     "@quasar/quasar-app-extension-testing-unit-jest": "^1.0.1",
     "babel-eslint": "^10.0.1",
     "commander": "6.2.1",
