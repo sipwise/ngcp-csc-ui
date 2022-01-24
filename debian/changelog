@@ -1,3 +1,12 @@
+ngcp-csc-ui (10.3.1.0+0~mr10.3.1.0) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [500c6fc] TT#148700 CallQueue - [Netcologne] CSC-UI manual reload is needed to see new group under call queue drop-down menu
+  * [0a41139] TT#141104 SubscriberProfile - Not working for voicemail
+  * [2d36cfe] TT#156201 Maintenance - Upgrade dependencies
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Jan 2022 16:56:00 +0100
+
 ngcp-csc-ui (10.3.0.0+0~mr10.3.0.0) unstable; urgency=medium
 
   [ Sergii Leonenko ]
