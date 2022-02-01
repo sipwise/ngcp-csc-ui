@@ -123,7 +123,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Name'),
-                    field: row => displayName(row.subscriber)
+                    field: row => displayName(row.subscriber_id_expand)
                 }
             ],
             pagination: {
