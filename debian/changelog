@@ -1,3 +1,10 @@
+ngcp-csc-ui (9.5.1.19+0~mr9.5.1.19) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [7fa9c55] TT#141104 SubscriberProfile - Not working for voicemail
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 04 Feb 2022 12:40:15 +0100
+
 ngcp-csc-ui (9.5.1.18+0~mr9.5.1.18) unstable; urgency=medium
 
   [ Nico Schedel ]
