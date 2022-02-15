@@ -6,23 +6,23 @@
         <csc-card-dashboard
             :title="$t('Voicebox Messages')"
             :count="voicemailsCount"
-            :count-title="$t('New Messages')"
+            :count-title="$t('Messages')"
             :button-title="$t('View Voicebox Messages')"
             :items-list="voicemailItems"
             :route-to="{ name: 'CscConversations', params: { initialTab: 'voicemail' } }"
             :loading="$wait.is('getVoicemailsData')"
-            :no-items-message="$t('No new messages')"
+            :no-items-message="$t('No messages')"
             :error="voicemailsError"
             @action="downloadVoicemail"
         />
         <csc-card-dashboard
             :title="$t('Call List')"
             :count="callsCount"
-            :count-title="$t('Recent Calls')"
+            :count-title="$t('Calls')"
             :button-title="$t('View Call List')"
             :items-list="callItems"
             :route-to="{ name: 'CscConversations', params: { initialTab: 'call' } }"
-            :no-items-message="$t('No calls yet')"
+            :no-items-message="$t('No calls')"
             :loading="$wait.is('getCallsData')"
             :error="callsError"
         />
