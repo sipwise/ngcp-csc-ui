@@ -6,6 +6,16 @@
         <q-list
             class="col col-xs-12 col-md-6"
         >
+            <csc-voicebox-language
+                :value="language"
+                :language-options="languages"
+                :default-language-option="{
+                    label: defaultLanguage,
+                    value: defaultLanguage
+                }"
+                :loading="$wait.is('processing subscriberPreferences')"
+                @input="selectLanguage"
+            />
             <q-item>
                 <q-item-section>
                     <csc-input-saveable
@@ -142,6 +152,7 @@ import {
     mapState
 } from 'vuex'
 import {
+    showGlobalError,
     showToast
 } from 'src/helpers/ui'
 import CscPage from 'components/CscPage'
@@ -153,8 +164,11 @@ import {
     numeric
 } from 'vuelidate/lib/validators'
 import CscSpinner from 'components/CscSpinner'
+import CscVoiceboxLanguage from 'components/CscVoiceboxLanguage'
+import { mapWaitingActions } from 'vue-wait'
 export default {
     components: {
+        CscVoiceboxLanguage,
         CscSpinner,
         CscPage,
         CscInputSaveable,
@@ -217,6 +231,11 @@ export default {
             'unavailableGreetingFileLoaded',
             'unavailableGreetingLabel',
             'unavailableGreetingDeleting'
+        ]),
+        ...mapGetters('callSettings', [
+            'language',
+            'defaultLanguage',
+            'languages'
         ]),
         soundFileIcon () {
             return 'music_note'
@@ -289,8 +308,12 @@ export default {
             this.formData.delete = value
         }
     },
-    mounted () {
-        this.settingsLoadAction()
+    async mounted () {
+        await Promise.all([
+            this.loadPreferencesDefsAction(),
+            this.loadSubscriberPreferencesAction(),
+            this.settingsLoadAction()
+        ])
         this.formData.pin = this.pinValue
         this.formData.email = this.emailValue
         this.formData.attach = this.attachValue
@@ -316,6 +339,19 @@ export default {
             'unavailableGreetingPlay',
             'unavailableGreetingDelete'
         ]),
+        ...mapWaitingActions('callSettings', {
+            loadPreferencesDefsAction: 'processing subscriberPreferences',
+            loadSubscriberPreferencesAction: 'processing subscriberPreferences',
+            setLanguage: 'processing subscriberPreferences'
+        }),
+        async selectLanguage (language) {
+            try {
+                await this.setLanguage(language)
+                showToast(this.$t('Language changed successfully'))
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
         pinInput () {
             this.pinInitialize()
             this.$v.formData.pin.$touch()

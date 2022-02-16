@@ -29,32 +29,6 @@
                     />
                 </q-item-section>
             </q-item>
-            <q-item
-                v-if="hasSubscriberProfileAttribute('language')"
-            >
-                <q-item-section>
-                    <q-select
-                        v-model="selectedOption"
-                        dense
-                        emit-value
-                        map-options
-                        :disable="dataLoading"
-                        :readonly="dataLoading"
-                        :label="$t('Language for voicemail and app server')"
-                        :title="$t('Voice prompts language for voicemail, conference and application server')"
-                        :options="languages"
-                        @input="languageSelected()"
-                    />
-                </q-item-section>
-                <q-item-section
-                    side
-                >
-                    <csc-spinner
-                        v-if="dataLoading"
-                        class="self-center"
-                    />
-                </q-item-section>
-            </q-item>
         </q-list>
     </csc-page>
 </template>
@@ -79,20 +53,12 @@ export default {
         CscSpinner,
         CscPage
     },
-    data () {
-        return {
-            selectedOption: this.$defaultVoicePromptLanguage
-        }
-    },
     computed: {
         ...mapState('callSettings', [
             'subscriberPreferencesInitialized'
         ]),
         ...mapGetters('callSettings', [
-            'musicOnHold',
-            'language',
-            'defaultLanguage',
-            'languages'
+            'musicOnHold'
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute'
@@ -117,19 +83,11 @@ export default {
         ...mapWaitingActions('callSettings', {
             loadPreferencesDefsAction: 'processing subscriberPreferences',
             loadSubscriberPreferencesAction: 'processing subscriberPreferences',
-            setMusicOnHold: 'processing subscriberPreferences',
-            setLanguage: 'processing subscriberPreferences'
+            setMusicOnHold: 'processing subscriberPreferences'
         }),
         async toggleMusicOnHold () {
             try {
                 await this.setMusicOnHold(!this.musicOnHold)
-            } catch (err) {
-                showGlobalError(err?.message || this.$t('Unknown error'))
-            }
-        },
-        async languageSelected () {
-            try {
-                await this.setLanguage(this.selectedOption)
             } catch (err) {
                 showGlobalError(err?.message || this.$t('Unknown error'))
             }

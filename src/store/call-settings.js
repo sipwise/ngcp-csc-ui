@@ -25,7 +25,7 @@ export default {
         },
         defaultLanguage (state, getters) {
             const languages = getters.languages
-            return languages.find(lang => lang.default_val).label
+            return languages && languages.find(lang => lang.default_val).label
         },
         languages (state) {
             return state.preferencesDefs
