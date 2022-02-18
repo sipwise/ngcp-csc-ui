@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.2.1.3+0~mr10.2.1.3) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [b79d4bb] TT#70901 selenium: fix russian and italian strings for language test
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 18 Feb 2022 11:28:06 +0100
+
 ngcp-csc-ui (10.2.1.2+0~mr10.2.1.2) unstable; urgency=medium
 
   [ Sergii Leonenko ]
