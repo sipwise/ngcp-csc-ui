@@ -15,7 +15,7 @@
                     {{ direction }}
                 </span>
                 <span class="csc-entity-title csc-phone-number">
-                    {{ fax.caller | numberFormat }}
+                    {{ number | numberFormat }}
                 </span>
             </q-item-tile>
             <q-item-tile
@@ -134,6 +134,14 @@
                 }
                 else {
                     return 'from';
+                }
+            },
+            number () {
+                if (this.fax.direction === 'out') {
+                    return this.fax.callee
+                }
+                else {
+                    return this.fax.caller
                 }
             }
         },
