@@ -408,13 +408,6 @@ class testrun(unittest.TestCase):
             len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Accesso abbonato")]')) > 0,
             "Language wasnt changed to Italian")
         driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[7]')
-        wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
-        time.sleep(1)
-        self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="csc-login-card"]/div[contains(., "Вход для абонентов")]')) > 0,
-            "Language wasnt changed to Russian")
-        driver.find_element_by_xpath('//*[@id="csc-header-toolbar-login"]/button').click()
         click_js(driver, '/html/body/div[3]/div[2]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)

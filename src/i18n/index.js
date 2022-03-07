@@ -3,7 +3,6 @@ import localeFr from './fr.json'
 import localeIt from './it.json'
 import localeEs from './es.json'
 import localeDe from './de.json'
-import localeRu from './ru.json'
 import { i18n } from 'src/boot/i18n'
 import { setSession } from 'src/storage'
 import Quasar from 'quasar'
@@ -15,8 +14,7 @@ export const messages = {
     de: patchKeysForFallback(localeDe),
     es: patchKeysForFallback(localeEs),
     fr: patchKeysForFallback(localeFr),
-    it: patchKeysForFallback(localeIt),
-    ru: patchKeysForFallback(localeRu)
+    it: patchKeysForFallback(localeIt)
 }
 
 export function getLanguageLabels () {
@@ -40,10 +38,6 @@ export function getLanguageLabels () {
         {
             value: 'it',
             label: i18n.t('Italian', 'it')
-        },
-        {
-            value: 'ru',
-            label: i18n.t('Russian', 'ru')
         }
     ]
 }
@@ -65,7 +59,7 @@ export function setLanguage (lang) {
 
     const quasarLangCode = lang.toLowerCase()
     import(
-        /* webpackInclude: /(en-us|de|es|fr|it|ru)\.js$/ */
+        /* webpackInclude: /(en-us|de|es|fr|it)\.js$/ */
         'quasar/lang/' + quasarLangCode
     ).then(lang => {
         Quasar.lang.set(lang.default)

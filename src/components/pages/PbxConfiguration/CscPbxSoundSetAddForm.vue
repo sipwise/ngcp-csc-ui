@@ -132,10 +132,6 @@ export default {
                     label: 'Spanish'
                 },
                 {
-                    value: 'ru',
-                    label: 'Russian'
-                },
-                {
                     value: 'it',
                     label: 'Italian'
                 },
