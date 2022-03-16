@@ -423,7 +423,7 @@ export default {
         async deleteMappingEvent (mapping) {
             this.$q.dialog({
                 title: this.$t('Delete forwarding'),
-                message: 'You are about to delete this forwarding',
+                message: this.$t('You are about to delete this forwarding'),
                 color: 'negative',
                 cancel: true,
                 persistent: true

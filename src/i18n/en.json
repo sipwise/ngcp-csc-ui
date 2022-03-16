@@ -479,6 +479,8 @@
     "You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password. ": "You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password. ",
     "You are about to delete recording #{id}": "You are about to delete recording #{id}",
     "You are about to delete slot {slot}": "You are about to delete slot {slot}",
+    "You are about to delete this destination": "You are about to delete this destination",
+    "You are about to delete this forwarding": "You are about to delete this forwarding",
     "You are about to delete time range \"{from} - {to}\"": "You are about to delete time range \"{from} - {to}\"",
     "You are about to remove ACL: From email <{from_email}>": "You are about to remove ACL: From email <{from_email}>",
     "You are about to remove call queue for {subscriber}": "You are about to remove call queue for {subscriber}",
