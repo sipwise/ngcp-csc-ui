@@ -520,6 +520,13 @@ export default {
             if (secondaryColor) {
                 colors.setBrand('secondary', secondaryColor)
             }
+            let customCss = document.getElementById('csc-custom-css')
+            if (!customCss && this.resellerBranding?.css) {
+                customCss = document.createElement('style')
+                customCss.id = 'csc-custom-css'
+                customCss.textContent = this.resellerBranding.css
+                document.body.appendChild(customCss)
+            }
         },
         async showQrDialog () {
             await this.fetchAuthToken()
