@@ -53,7 +53,8 @@ function patchKeysForFallback (messages = {}) {
     return messages
 }
 
-export function setLanguage (lang) {
+export function setLanguage (locale) {
+    const lang = normalizeLocaleCode(locale)
     setSession('locale', lang)
     i18n.locale = lang
 
@@ -61,8 +62,8 @@ export function setLanguage (lang) {
     import(
         /* webpackInclude: /(en-us|de|es|fr|it)\.js$/ */
         'quasar/lang/' + quasarLangCode
-    ).then(lang => {
-        Quasar.lang.set(lang.default)
+    ).then(qLang => {
+        Quasar.lang.set(qLang.default)
     })
 
     // Note: please extend "reloadLanguageRelatedData" action in the store if you are using language related API endpoints

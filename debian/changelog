@@ -1,3 +1,25 @@
+ngcp-csc-ui (10.5.0.0+0~mr10.5.0.0) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [469cf07] TT#158250 API: [netcologne] [CSC-UI] Cannot read properties of undefined (reading 'display_name')
+  * [b2c1c7b] TT#163509 Issue - i18n - Missing localisation on Forwarding tab
+
+  [ Alexander Lutay ]
+  * [7f5b7ce] TT#115002 Update DE/ES/FR/IT/RU localisation for CSC-UI
+  * [6a1e419] TT#166550 Remove Russian from NGCP.
+
+  [ Nico Schedel ]
+  * [becbbae] TT#70901 selenium: fix russian and italian strings for language test
+
+  [ Hans-Peter Herzog ]
+  * [e864670] TT#163506 CSC: wrong labels "New messages" and "Recent calls"
+  * [55d5dee] TT#163508 Move "voicebox language" settings from "General" to "Voicebox"
+
+  [ Javier Rodriguez ]
+  * [641b6f6] TT#115002 Update Spanish Translations for ngcp-csc-ui
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 31 Mar 2022 00:00:05 +0200
+
 ngcp-csc-ui (10.4.0.0+0~mr10.4.0.0) unstable; urgency=medium
 
   [ Carlo Venusino ]

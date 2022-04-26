@@ -516,9 +516,7 @@ export async function loadAnnouncements ({ dispatch, commit }) {
         })
         commit('setAnnouncements', announcements.items.map((item) => { return { label: item.handle, value: item.id } }))
     } catch (err) {
-        commit('setAnnouncements', {
-            announcements: []
-        })
+        commit('setAnnouncements', [])
     }
 }
 

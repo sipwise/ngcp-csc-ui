@@ -251,7 +251,7 @@ export default {
         async removeDestinationEvent (payload) {
             this.$q.dialog({
                 title: this.$t('Delete destination'),
-                message: 'You are about to delete this destination',
+                message: this.$t('You are about to delete this destination'),
                 color: 'negative',
                 cancel: true,
                 persistent: true
