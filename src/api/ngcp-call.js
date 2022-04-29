@@ -107,18 +107,19 @@ export function callConfigure ({ baseWebSocketUrl }) {
     $baseWebSocketUrl = baseWebSocketUrl
 }
 
-export async function callInitialize ({ subscriber }) {
+export async function callInitialize ({ subscriber, instanceId }) {
     $subscriber = subscriber
-    callRegister()
+    callRegister({ instanceId })
 }
 
-export function callRegister () {
+export function callRegister ({ instanceId }) {
     if (!$socket) {
         $socket = callCreateSocket()
         const config = {
             sockets: [$socket],
             uri: getSubscriberUri(),
-            password: $subscriber.password
+            password: $subscriber.password,
+            instance_id: instanceId
         }
         $userAgent = new jssip.UA(config)
         const delegateEvent = (eventName) => {
