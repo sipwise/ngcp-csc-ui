@@ -26,6 +26,7 @@ import {
 import { date } from 'quasar'
 import { callInitialize } from 'src/api/ngcp-call'
 import { setLocal } from 'src/storage'
+import { getSipInstanceId } from 'src/helpers/call-utils'
 
 export default {
     namespaced: true,
@@ -340,7 +341,8 @@ export default {
                     }
                     try {
                         await callInitialize({
-                            subscriber: userData.subscriber
+                            subscriber: userData.subscriber,
+                            instanceId: getSipInstanceId()
                         })
                     } catch (err) {
                         console.log(err)
