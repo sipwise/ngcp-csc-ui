@@ -561,10 +561,14 @@ export default {
             this.fetchLocalMediaWrapperWidth()
             this.fetchRemoteMediaWrapperWidth()
         }
+        const startCall = (media) => {
+            this.startCall(media)
+        }
         fetchMediaWrapperWidth()
         this.$root.$on('window-resized', fetchMediaWrapperWidth)
         this.$root.$on('content-resized', fetchMediaWrapperWidth)
         this.$root.$on('orientation-changed', fetchMediaWrapperWidth)
+        this.$root.$on('start-call', startCall)
     },
     methods: {
         fetchLocalMediaWrapperWidth () {
