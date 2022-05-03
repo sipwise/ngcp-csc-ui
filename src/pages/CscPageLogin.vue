@@ -31,7 +31,7 @@
                     <q-card-section>
                         <form>
                             <csc-input
-                                v-model="username"
+                                v-model.trim="username"
                                 class="q-mb-sm"
                                 type="text"
                                 max-length="128"
@@ -42,7 +42,7 @@
                                 @keyup.enter="login()"
                             >
                                 <template
-                                    slot="prepend"
+                                    v-slot:prepend
                                 >
                                     <q-icon
                                         name="person"
@@ -50,7 +50,7 @@
                                 </template>
                             </csc-input>
                             <csc-input-password
-                                v-model="password"
+                                v-model.trim="password"
                                 max-length="32"
                                 :label="$t('Password')"
                                 :disable="loginRequesting"
