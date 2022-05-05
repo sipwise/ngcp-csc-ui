@@ -56,9 +56,6 @@ export default {
         return {}
     },
     computed: {
-        ...mapGetters('user', [
-            'isRtcEngineUiVisible'
-        ]),
         items () {
             return [
                 {

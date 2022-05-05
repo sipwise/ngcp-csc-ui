@@ -25,7 +25,6 @@ import UserModule from './user'
 import CommunicationModule from './communication'
 import FaxModule from './fax'
 import VoiceboxModule from './voicebox'
-import ConferenceModule from './conference'
 import DashboardModule from './dashboard'
 
 import { INTERNAL_DATE_FORMAT_SLASH, INTERNAL_DATE_FORMAT_DASH, INTERNAL_DATE_FORMAT_DASH_HOUR } from 'src/constants'
@@ -55,7 +54,6 @@ export default function (/* { ssrContext } */) {
             communication: CommunicationModule,
             fax: FaxModule,
             voicebox: VoiceboxModule,
-            conference: ConferenceModule,
             pbx: PbxModule,
             pbxSeats: PbxSeatsModule,
             pbxGroups: PbxGroupsModule,

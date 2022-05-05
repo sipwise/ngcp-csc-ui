@@ -299,7 +299,6 @@ export default {
             'hasSendFaxFeature',
             'userDataRequesting',
             'userDataSucceeded',
-            'isRtcEngineUiVisible',
             'isLogoRequesting',
             'isLogoRequested'
         ]),
@@ -393,7 +392,7 @@ export default {
             }
         },
         isCallEnabled (value) {
-            if (value && this.isRtcEngineUiVisible) {
+            if (value) {
                 showToast(this.$i18n.t('You are now able to start and receive calls'))
             }
         },

@@ -56,12 +56,6 @@ export default {
     isEnded (state) {
         return state.callState === CallState.ended
     },
-    hasRtcEngineCapability (state, getters, rootState, rootGetters) {
-        return rootGetters['user/hasRtcEngineCapability']
-    },
-    hasRtcEngineCapabilityEnabled (state, getters, rootState, rootGetters) {
-        return rootGetters['user/hasRtcEngineCapabilityEnabled']
-    },
     hasRemoteVideo (state) {
         if (state.remoteMediaStream !== null) {
             return callHasRemoteVideo()

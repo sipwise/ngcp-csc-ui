@@ -47,7 +47,6 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'isRtcEngineUiVisible',
             'isPbxEnabled',
             'hasFaxCapability',
             'hasSubscriberProfileAttribute',

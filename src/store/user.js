@@ -46,8 +46,6 @@ export default {
         userDataRequesting: false,
         userDataSucceeded: false,
         userDataError: null,
-        rtcEngineInitState: RequestState.initiated,
-        rtcEngineInitError: null,
         changePasswordState: RequestState.initiated,
         changePasswordError: null,
         newPasswordRequesting: false,
@@ -104,15 +102,6 @@ export default {
             return state.capabilities !== null &&
                 state.capabilities.faxserver &&
                 state.capabilities.faxactive
-        },
-        hasRtcEngineCapability (state) {
-            return state.capabilities !== null && _.has(state.capabilities, 'rtcengine')
-        },
-        hasRtcEngineCapabilityEnabled (state, getters) {
-            return getters.hasRtcEngineCapability && state.capabilities.rtcengine === true
-        },
-        isRtcEngineUiVisible (state) {
-            return (state.capabilities !== null && state.capabilities.csc_show_rtcengine_features === true)
         },
         getSubscriberId (state) {
             return state.subscriberId
@@ -252,16 +241,6 @@ export default {
             state.userDataSucceeded = false
             state.userDataError = null
         },
-        rtcEngineInitRequesting (state) {
-            state.rtcEngineInitState = RequestState.requesting
-        },
-        rtcEngineInitSucceeded (state) {
-            state.rtcEngineInitState = RequestState.succeeded
-        },
-        rtcEngineInitFailed (state, error) {
-            state.rtcEngineInitState = RequestState.failed
-            state.rtcEngineInitError = error
-        },
         userPasswordRequesting (state) {
             state.changePasswordState = RequestState.requesting
             state.changePasswordError = null
@@ -386,8 +365,9 @@ export default {
             }
         },
         async forwardHome (context) {
-            if (context.rootState.route?.path === '/user/dashboard' && !context.getters.isRtcEngineUiVisible) {
-                await this.$router.push({ path: '/user/conversations' })
+            const start = '/user/dashboard'
+            if (context.rootState.route?.path !== start) {
+                await this.$router.push({ path: start })
             }
         },
         async getCustomLogo (context) {

@@ -1,6 +1,5 @@
 import { PROFILE_ATTRIBUTE_MAP, PROFILE_ATTRIBUTES_MAP } from 'src/constants'
 
-import CscLayoutConference from 'src/layouts/CscLayoutConference'
 import CscLayoutMain from 'src/layouts/CscLayoutMain'
 import CscLayoutLogin from 'src/layouts/CscLayoutLogin'
 
@@ -62,13 +61,6 @@ export default function routes (app) {
                     meta: {
                         get title () {
                             return i18n.t('Start new call')
-                        }
-                    },
-                    beforeEnter (routeTo, routeFrom, next) {
-                        if (app.store.getters['user/isRtcEngineUiVisible']) {
-                            next()
-                        } else {
-                            next('/user/conversations')
                         }
                     }
                 },
@@ -408,24 +400,6 @@ export default function routes (app) {
             meta: {
                 get title () {
                     return i18n.t('Subscriber Sign In')
-                }
-            }
-        },
-        {
-            path: '/conference',
-            component: CscLayoutConference,
-            meta: {
-                get title () {
-                    return i18n.t('Conference')
-                }
-            }
-        },
-        {
-            path: '/conference/:id',
-            component: CscLayoutConference,
-            meta: {
-                get title () {
-                    return i18n.t('Conference')
                 }
             }
         },
