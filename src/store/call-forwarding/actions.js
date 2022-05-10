@@ -29,16 +29,15 @@ import _ from 'lodash'
 const DEFAULT_RING_TIMEOUT = 60
 const DEFAULT_PRIORITY = 0
 const WAIT_IDENTIFIER = 'csc-cf-mappings-full'
-const DEFAULT_CUSTOM_ANNOUNCEMENT_ID = 255 // TODO get from endpoint
 
-function createDefaultDestination (destination) {
+function createDefaultDestination (destination, defaultAnnouncementId) {
     const payload = {
         destination: destination || ' ',
         priority: DEFAULT_PRIORITY,
         timeout: DEFAULT_RING_TIMEOUT
     }
     if (destination === 'customhours') {
-        payload.announcement_id = DEFAULT_CUSTOM_ANNOUNCEMENT_ID
+        payload.announcement_id = defaultAnnouncementId
     }
     return payload
 }
@@ -149,7 +148,7 @@ export async function updateDestination ({ dispatch, commit, state, rootGetters 
 export async function addDestination ({ dispatch, commit, state, rootGetters }, payload) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
-    destinations.push(createDefaultDestination(payload.destination))
+    destinations.push(createDefaultDestination(payload.destination, payload.defaultAnnouncementId))
     await patchReplace({
         resource: 'cfdestinationsets',
         resourceId: payload.destinationSetId,
