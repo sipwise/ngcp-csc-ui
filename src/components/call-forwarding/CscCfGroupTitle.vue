@@ -388,6 +388,9 @@ export default {
         ...mapState('user', [
             'platformInfo'
         ]),
+        ...mapState('callForwarding', [
+            'announcements'
+        ]),
         clickableClasses () {
             return ['cursor-pointer', 'text-weight-bold', 'text-primary']
         },
@@ -412,6 +415,10 @@ export default {
         ]),
         async addDestinationEvent (payload) {
             this.$wait.start(this.waitIdentifier)
+            payload.defaultAnnouncementId = null
+            if (_.isArray(this.announcements) && this.announcements.length > 0) {
+                payload.defaultAnnouncementId = this.announcements[0].value
+            }
             await this.addDestination(payload)
             this.$wait.end(this.waitIdentifier)
         },
