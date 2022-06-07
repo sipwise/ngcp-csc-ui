@@ -1,3 +1,18 @@
+ngcp-csc-ui (11.0.0.0+0~mr11.0.0.0) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [d33c931] TT#157152 Maintenance - Fix vulnerabilities in dependencies
+  * [76abadf] TT#163513 Issue - CallForwarding - JS error on Forwarding tab after re-adding already deleted rule
+  * [9da0c00] TT#174850 Trim leading, tailing whitespaces from login username
+
+  [ Hans-Peter Herzog ]
+  * [1746a7f] TT#164702 Branding - CSS customization for CSC-UI v2
+  * [0c394be] TT#173850 Add permanent instance_id to SIP UA config
+  * [73ba4fa] TT#175000 Remove RTCEngine related components
+  * [666b7d1] TT#164701 CallForwarding - CustomAnnouncements - Removed id for default custom announcement
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Jun 2022 11:43:35 +0200
+
 ngcp-csc-ui (10.5.0.0+0~mr10.5.0.0) unstable; urgency=medium
 
   [ Sergii Leonenko ]
