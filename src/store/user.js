@@ -27,6 +27,7 @@ import { date } from 'quasar'
 import { callInitialize } from 'src/api/ngcp-call'
 import { setLocal } from 'src/storage'
 import { getSipInstanceId } from 'src/helpers/call-utils'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 
 export default {
     namespaced: true,
@@ -318,13 +319,15 @@ export default {
                         const profile = await getSubscriberProfile(userData.subscriber.profile_id)
                         context.commit('setProfile', profile)
                     }
-                    try {
-                        await callInitialize({
-                            subscriber: userData.subscriber,
-                            instanceId: getSipInstanceId()
-                        })
-                    } catch (err) {
-                        console.log(err)
+                    if (context.getters.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls)) {
+                        try {
+                            await callInitialize({
+                                subscriber: userData.subscriber,
+                                instanceId: getSipInstanceId()
+                            })
+                        } catch (err) {
+                            console.log(err)
+                        }
                     }
                     await context.dispatch('forwardHome')
                 } catch (err) {

@@ -67,7 +67,7 @@ export default {
                     icon: 'call',
                     label: this.callStateTitle,
                     sublabel: this.callStateSubtitle,
-                    visible: true
+                    visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls)
                 },
                 {
                     to: '/user/conversations',

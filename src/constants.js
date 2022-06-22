@@ -12,7 +12,8 @@ export const PROFILE_ATTRIBUTE_MAP = {
     voiceMail: 'voice_mail',
     callBlockingPrivacy: 'clir',
     faxServer: 'fax_server',
-    pbxSettings: 'clir_intrapbx'
+    pbxSettings: 'clir_intrapbx',
+    cscCalls: 'csc_calls'
 }
 
 export const PROFILE_ATTRIBUTES_MAP = {
