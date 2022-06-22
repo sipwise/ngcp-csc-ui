@@ -156,6 +156,7 @@
             v-model="faxDialog"
         />
         <csc-call
+            v-if="hasSubscriberProfileAttribute('csc_calls')"
             id="csc-call"
             ref="call"
             :call-state="callState"
@@ -300,7 +301,8 @@ export default {
             'userDataRequesting',
             'userDataSucceeded',
             'isLogoRequesting',
-            'isLogoRequested'
+            'isLogoRequested',
+            'hasSubscriberProfileAttribute'
         ]),
         ...mapState('user', [
             'resellerBranding',
@@ -445,7 +447,11 @@ export default {
             'toggleRemoteAudio'
         ]),
         layoutResized () {
-            this.$refs.call.fitMedia()
+            if (this.$refs.call) {
+                this.$nextTick(() => {
+                    this.$refs.call.fitMedia()
+                })
+            }
         },
         pinMenu () {
             this.menuPinned = !this.menuPinned

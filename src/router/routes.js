@@ -61,7 +61,8 @@ export default function routes (app) {
                     meta: {
                         get title () {
                             return i18n.t('Start new call')
-                        }
+                        },
+                        subscriberProfile: ['csc_calls']
                     }
                 },
                 {
