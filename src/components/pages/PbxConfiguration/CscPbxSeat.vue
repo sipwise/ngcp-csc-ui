@@ -223,7 +223,7 @@
                 radio
                 emit-value
                 map-options
-                :options="soundSetOptions"
+                :options="internalSoundSetOptions"
                 :label="$t('Sound Set')"
                 :disable="loading"
             >
@@ -391,6 +391,25 @@ export default {
             } else {
                 return ''
             }
+        },
+        internalSoundSetOptions () {
+            const items = []
+            if (this.soundSet) {
+                items.push({
+                    label: this.soundSet.name,
+                    value: this.soundSet.id
+                })
+            }
+            if (_.isArray(this.soundSetOptions)) {
+                this.soundSetOptions.forEach((soundSet) => {
+                    if (this.soundSet && this.soundSet.id !== soundSet.value) {
+                        items.push(soundSet)
+                    } else if (!this.soundSet) {
+                        items.push(soundSet)
+                    }
+                })
+            }
+            return items
         }
     },
     watch: {
