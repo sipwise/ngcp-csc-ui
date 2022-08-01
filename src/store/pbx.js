@@ -90,16 +90,12 @@ export default {
         },
         getSoundSetOptions (state) {
             const options = []
-            let defaultLabel = i18n.t('Default')
+            const defaultLabel = i18n.t('Default')
             state.soundSetList.forEach((soundSet) => {
-                if (soundSet.contract_default) {
-                    defaultLabel = i18n.t('Default') + ' (' + soundSet.name + ')'
-                } else {
-                    options.push({
-                        label: soundSet.name,
-                        value: soundSet.id
-                    })
-                }
+                options.push({
+                    label: soundSet.name,
+                    value: soundSet.id
+                })
             })
             options.unshift({
                 label: defaultLabel,
