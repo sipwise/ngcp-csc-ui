@@ -1,3 +1,11 @@
+ngcp-csc-ui (10.4.1.3+0~mr10.4.1.3) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [e5e6087] TT#164701 CallForwarding - CustomAnnouncements - Removed id for default custom announcement
+  * [a4c0263] TT#177101 Issue - PBXConfiguration - PBXSeats - Show SoundSet name if selected
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 02 Aug 2022 12:07:33 +0200
+
 ngcp-csc-ui (10.4.1.2+0~mr10.4.1.2) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
