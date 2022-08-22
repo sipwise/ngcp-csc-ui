@@ -1,3 +1,11 @@
+ngcp-csc-ui (11.0.1.0+0~mr11.0.1.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [0894dfe] TT#179952 Call - Hide "CSC Calls" functionality if subscriber profile csc_calls is not set
+  * [9f0d279] TT#177101 Issue - PBXConfiguration - PBXSeats - Show SoundSet name if selected
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 22 Aug 2022 20:01:33 +0200
+
 ngcp-csc-ui (11.0.0.0+0~mr11.0.0.0) unstable; urgency=medium
 
   [ Sergii Leonenko ]
