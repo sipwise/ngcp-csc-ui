@@ -9,7 +9,7 @@ import {
     getOutgoingCallBlocking
 } from './call-blocking'
 import {
-    getList
+    getList, LIST_DEFAULT_ROWS
 } from './common'
 
 export function getConversations (options) {
@@ -24,7 +24,7 @@ export function getConversations (options) {
             no_count: true,
             tz: 'UTC',
             page: _.get(options, 'page', 1),
-            rows: _.get(options, 'rows', 25)
+            rows: _.get(options, 'rows', LIST_DEFAULT_ROWS)
         }
         if (type !== null) {
             params.type = type

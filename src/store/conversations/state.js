@@ -2,10 +2,11 @@
 import {
     RequestState
 } from '../common'
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
 
 export default {
     page: 1,
-    rows: 10,
+    rows: LIST_DEFAULT_ROWS,
     conversations: [],
     downloadVoiceMailState: RequestState.button,
     downloadVoiceMailError: null,

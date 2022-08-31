@@ -98,6 +98,7 @@ import { displayName } from 'src/filters/subscriber'
 import CscPage from 'components/CscPage'
 import CscPbxAutoAttendantSlotsTable from 'components/pages/PbxConfiguration/CscPbxAutoAttendantSlotsTable'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import {LIST_DEFAULT_ROWS} from "src/api/common";
 export default {
     name: 'CscPagePbxAutoAttendant',
     components: {
@@ -128,7 +129,7 @@ export default {
             ],
             pagination: {
                 page: 1,
-                rowsPerPage: 5,
+                rowsPerPage: LIST_DEFAULT_ROWS,
                 rowsNumber: 0
             }
         }

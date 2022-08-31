@@ -177,6 +177,7 @@ import CscAudioPlayer from 'components/CscAudioPlayer'
 import CscPageSticky from 'components/CscPageSticky'
 import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
 import CscRemoveDialog from 'components/CscRemoveDialog'
+import {LIST_DEFAULT_ROWS} from "src/api/common";
 export default {
     name: 'CscCallBlocking',
     components: {
@@ -235,7 +236,7 @@ export default {
                 sortBy: 'id',
                 descending: false,
                 page: 1,
-                rowsPerPage: 5,
+                rowsPerPage: LIST_DEFAULT_ROWS,
                 rowsNumber: 0
             },
             rowStatus: [],

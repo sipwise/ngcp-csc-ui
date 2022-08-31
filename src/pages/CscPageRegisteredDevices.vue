@@ -41,6 +41,7 @@ import { mapState } from 'vuex'
 import CscPage from 'components/CscPage'
 import { mapWaitingActions } from 'vue-wait'
 import CscSpinner from 'components/CscSpinner'
+import {LIST_DEFAULT_ROWS} from "src/api/common";
 export default {
     name: 'CscPageRegisteredDevices',
     components: {
@@ -54,7 +55,7 @@ export default {
                 sortBy: 'id',
                 descending: false,
                 page: 1,
-                rowsPerPage: 5,
+                rowsPerPage: LIST_DEFAULT_ROWS,
                 rowsNumber: 0
             }
         }

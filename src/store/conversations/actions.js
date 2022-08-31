@@ -15,8 +15,9 @@ import {
     removeFromOutgoingListByNumber,
     toggleNumberInBothLists
 } from 'src/api/call-blocking'
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
 
-export const ROWS_PER_PAGE = 15
+export const ROWS_PER_PAGE = LIST_DEFAULT_ROWS
 
 const ReloadConfig = {
     retryLimit: 5,

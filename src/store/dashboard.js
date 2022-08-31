@@ -8,6 +8,7 @@ import {
 import {
     getBrowserTimezone
 } from '../helpers/date-helper'
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
 
 export default {
     namespaced: true,
@@ -20,7 +21,7 @@ export default {
         async getVoicemailsData (context) {
             const res = await getAllCallsOrVoicemails({
                 subscriber_id: context.getters.getSubscriberId,
-                rows: 5,
+                rows: LIST_DEFAULT_ROWS,
                 order_by: 'timestamp',
                 order_by_direction: 'desc',
                 type: 'voicemail',
@@ -31,7 +32,7 @@ export default {
         async getCallsData (context) {
             const res = await getAllCallsOrVoicemails({
                 subscriber_id: context.getters.getSubscriberId,
-                rows: 5,
+                rows: LIST_DEFAULT_ROWS,
                 order_by: 'timestamp',
                 order_by_direction: 'desc',
                 type: 'call',
@@ -42,7 +43,7 @@ export default {
         async getRegisteredDevicesData (context) {
             const res = await getSubscriberRegistrations({
                 subscriber_id: context.getters.getSubscriberId,
-                rows: 5,
+                rows: LIST_DEFAULT_ROWS,
                 order_by: 'timestamp',
                 order_by_direction: 'desc',
                 tz: getBrowserTimezone()
