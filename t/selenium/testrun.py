@@ -799,10 +799,10 @@ class testrun(unittest.TestCase):
             "Changed Email is not correct")
         print("OK")
         print("Try to disable 'Attach voicemail to email' setting...", end="")
-        driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]/div/div[3]/div[1]/div/div[1]').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-voicebox"]//div[@aria-label="Attach voicemail to email notification"]').click()
         wait_for_invisibility(driver, '//*[@id="csc-page-voicebox"]/div/div[3]/div[2]/svg')
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="csc-page-voicebox"]/div/div[4]/div[1]/div[@aria-disabled="true"]')) > 0,
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-voicebox"]/div/div[5]/div[1]/div[@aria-disabled="true"]')) > 0,
             "Setting was not disabled")
         filename = 0
 
