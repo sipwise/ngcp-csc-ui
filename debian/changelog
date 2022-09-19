@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.5.3.0+0~mr10.5.3.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [70b4976] TT#177101 Issue - PBXConfiguration - PBXSeats - Show SoundSet name if selected
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 19 Sep 2022 14:36:17 +0200
+
 ngcp-csc-ui (10.5.2.0+0~mr10.5.2.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
