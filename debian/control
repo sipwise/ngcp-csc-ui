@@ -6,12 +6,14 @@ Homepage: https://www.sipwise.com/
 Standards-Version: 4.5.1
 Build-Depends:
  debhelper-compat (= 13),
- yarnpkg | nodejs (>= 12.19.0~),
- yarnpkg | yarn,
+ nodejs (>= 18),
+ python3,
+ yarnpkg,
 
 Package: ngcp-csc-ui
 Architecture: all
 Depends:
+ nodejs (>= 18),
  ${misc:Depends},
  ${shlibs:Depends},
 Description: Customer Self-Care Web UI

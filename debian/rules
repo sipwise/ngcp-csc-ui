@@ -3,6 +3,11 @@
 # Uncomment this to turn on verbose mode.
 # export DH_VERBOSE=1
 
+export NODE_PATH=/usr/lib/nodejs:/usr/share/nodejs
+
+# webpack 4.x compatibility, remove it when @quasar/app is upgraded and it uses webpack 5.x
+export NODE_OPTIONS=--openssl-legacy-provider
+
 # if yarnpkg is available use it, otherwise fall back to yarn
 YARN_BIN := $(shell which yarnpkg || echo yarn)
 
