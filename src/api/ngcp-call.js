@@ -166,7 +166,11 @@ export async function callStart ({ number }) {
     $outgoingRtcSession = $userAgent.call(number, {
         eventHandlers: {
             progress (event) {
-                callEvent.emit('outgoingProgress', event)
+                if (event.response.status_code === 183) {
+                    callEvent.emit('outgoingProgress', event)
+                } else {
+                    callEvent.emit('outgoingRinging', event)
+                }
             },
             failed (event) {
                 callEvent.emit('outgoingFailed', event)
