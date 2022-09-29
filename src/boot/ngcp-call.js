@@ -38,8 +38,14 @@ export default async ({ Vue, app, store }) => {
             error: errorMessage
         })
     })
-    callEvent.on('outgoingProgress', (event) => {
+    callEvent.on('outgoingRinging', (event) => {
         store.commit('call/startRinging')
+    })
+    callEvent.on('outgoingProgress', (event) => {
+        store.commit('call/stopRinging')
+    })
+    callEvent.on('outgoingConfirmed', (event) => {
+        store.commit('call/stopRinging')
     })
     callEvent.on('outgoingFailed', callFailed)
     callEvent.on('incomingFailed', callFailed)
