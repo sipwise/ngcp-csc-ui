@@ -15,6 +15,11 @@
                         name="header"
                     />
                 </div>
+                <div class="row q-ml-sm q-mb-sm">
+                    <slot
+                        name="header-align-left"
+                    />
+                </div>
                 <q-separator />
                 <div
                     class="col-12"

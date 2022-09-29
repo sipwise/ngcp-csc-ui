@@ -14,6 +14,7 @@ import CscPageReminder from 'src/pages/CscPageReminder'
 import CscPageSpeedDial from 'src/pages/CscPageSpeedDial'
 import CscPagePbxGroups from 'src/pages/CscPagePbxGroups'
 import CscPagePbxSeats from 'src/pages/CscPagePbxSeats'
+import CscPagePbxSeatDetails from 'src/pages/CscPagePbxSeatDetails'
 import CscPagePbxDevices from 'src/pages/CscPagePbxDevices'
 import CscPagePbxCallQueues from 'src/pages/CscPagePbxCallQueues'
 import CscPagePbxSoundSets from 'src/pages/CscPagePbxSoundSets'
@@ -180,6 +181,18 @@ export default function routes (app) {
                 {
                     path: 'pbx-configuration/seats',
                     component: CscPagePbxSeats,
+                    meta: {
+                        get title () {
+                            return i18n.t('PBX Configuration')
+                        },
+                        get subtitle () {
+                            return i18n.t('Seats')
+                        }
+                    }
+                },
+                {
+                    path: 'pbx-configuration/seat/:id',
+                    component: CscPagePbxSeatDetails,
                     meta: {
                         get title () {
                             return i18n.t('PBX Configuration')

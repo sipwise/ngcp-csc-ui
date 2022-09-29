@@ -66,11 +66,6 @@ export default {
         isSeatCreating (state) {
             return state.seatCreationState === CreationState.creating
         },
-        isSeatExpanded (state) {
-            return (id) => {
-                return state.seatSelected !== null && state.seatSelected.id === id
-            }
-        },
         isSeatRemoving (state) {
             return state.seatRemovalState === RequestState.requesting
         },
@@ -240,10 +235,10 @@ export default {
             state.seatRemovalState = RequestState.failed
             state.seatRemovalError = err
         },
-        expandSeat (state, seatId) {
+        selectSeat (state, seatId) {
             state.seatSelected = state.seatMapById[seatId]
         },
-        collapseSeat (state) {
+        resetSelectedSeat (state) {
             state.seatSelected = null
         },
         enableSeatAddForm (state) {
@@ -399,13 +394,7 @@ export default {
                 assignedNumbers: options.assignedNumbers,
                 unassignedNumbers: options.unassignedNumbers
             }).then((result) => {
-                if (options.assignedNumbers.length > 0) {
-                    return context.dispatch('loadSeatListItems', {
-                        clearList: false
-                    })
-                } else {
-                    return Promise.resolve(result)
-                }
+                return Promise.resolve(result)
             }).then((result) => {
                 context.commit('seatUpdateSucceeded', result)
             }).catch((err) => {

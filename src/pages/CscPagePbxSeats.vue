@@ -79,25 +79,10 @@
                 :intra-pbx="getIntraPbx(seat.id)"
                 :music-on-hold="getMusicOnHold(seat.id)"
                 :groups="groupMapById"
-                :expanded="isSeatExpanded(seat.id)"
                 :loading="isSeatLoading(seat.id)"
-                :alias-number-options="getNumberOptions"
-                :group-options="getGroupOptions"
-                :sound-set-options="getSoundSetOptions"
-                :sound-set="getSoundSetBySeatId(seat.id)"
-                :label-width="4"
-                :has-call-queue="hasCallQueue(seat.id)"
-                @expand="expandSeat(seat.id)"
-                @collapse="collapseSeat(seat.id)"
                 @remove="openSeatRemovalDialog(seat.id)"
-                @save-name="setSeatName"
-                @save-extension="setSeatExtension"
-                @save-alias-numbers="setSeatNumbers"
-                @save-groups="setSeatGroups"
-                @save-sound-set="setSeatSoundSet"
                 @save-intra-pbx="setIntraPbx"
                 @save-music-on-hold="setMusicOnHold"
-                @jump-to-call-queue="jumpToCallQueue"
             />
         </q-list>
         <div
@@ -188,19 +173,13 @@ export default {
             'isSeatCreating',
             'isSeatUpdating',
             'isSeatRemoving',
-            'isSeatExpanded',
             'isSeatLoading',
             'getIntraPbx',
             'getMusicOnHold',
-            'getSoundSetBySeatId',
-            'getSeatCreatingName',
-            'getSeatUpdatingField',
-            'getSeatRemovingName',
             'getSeatRemoveDialogMessage',
             'getSeatCreationToastMessage',
-            'getSeatUpdateToastMessage',
             'getSeatRemovalToastMessage',
-            'hasCallQueue'
+            'getSeatUpdateToastMessage'
         ])
     },
     watch: {
@@ -239,24 +218,14 @@ export default {
             'loadSeatListItems',
             'createSeat',
             'removeSeat',
-            'setSeatName',
-            'setSeatExtension',
-            'setSeatGroups',
-            'setSeatNumbers',
-            'setSeatSoundSet',
             'setIntraPbx',
             'setMusicOnHold'
         ]),
         ...mapMutations('pbxSeats', [
             'enableSeatAddForm',
             'disableSeatAddForm',
-            'expandSeat',
-            'collapseSeat',
             'seatRemovalRequesting',
             'seatRemovalCanceled'
-        ]),
-        ...mapActions('pbxCallQueues', [
-            'jumpToCallQueue'
         ]),
         resetSeatAddForm () {
             if (this.$refs.addForm) {
