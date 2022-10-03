@@ -1,3 +1,13 @@
+ngcp-csc-ui (10.5.1.3+0~mr10.5.1.3) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [1d345b4] TT#70901 fix voicebox test
+
+  [ Daniel Grotti ]
+  * [81d7133] MT#55460 Stop ringing on CSC when call is connected or in progress
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 03 Oct 2022 11:18:21 +0200
+
 ngcp-csc-ui (10.5.1.2+0~mr10.5.1.2) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
