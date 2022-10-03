@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.5.2.3+0~mr10.5.2.3) unstable; urgency=medium
+
+  [ Daniel Grotti ]
+  * [e18ad2f] MT#55460 Stop ringing on CSC when call is connected or in progress
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 03 Oct 2022 11:32:42 +0200
+
 ngcp-csc-ui (10.5.2.2+0~mr10.5.2.2) unstable; urgency=medium
 
   [ Nico Schedel ]
