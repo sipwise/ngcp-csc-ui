@@ -36,6 +36,7 @@
                                 type="text"
                                 max-length="128"
                                 :label="$t('Username')"
+                                data-cy="csc-login-username"
                                 :disable="loginRequesting"
                                 autofocus
                                 clearable
@@ -53,6 +54,7 @@
                                 v-model.trim="password"
                                 max-length="32"
                                 :label="$t('Password')"
+                                data-cy="csc-login-password"
                                 :disable="loginRequesting"
                                 clearable
                                 @keypress.enter="login()"
@@ -67,12 +69,14 @@
                             unelevated
                             flat
                             :label="$t('Forgot password?')"
+                            data-cy="csc-login-resetpassword"
                             @click="showRetrievePasswordDialog"
                         />
                         <q-btn
                             icon="arrow_forward"
                             color="primary"
                             :label="$t('Sign In')"
+                            data-cy="csc-login-button"
                             :loading="loginRequesting"
                             flat
                             @click="login()"
