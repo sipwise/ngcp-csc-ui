@@ -40,6 +40,7 @@
             v-ripple
             clickable
             to="/user/settings"
+            data-cy="user-settings"
         >
             <q-item-section
                 side
@@ -57,6 +58,7 @@
             v-ripple
             clickable
             @click="logout"
+            data-cy="user-logout"
         >
             <q-item-section
                 side

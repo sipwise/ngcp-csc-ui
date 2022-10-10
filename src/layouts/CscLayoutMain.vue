@@ -47,6 +47,7 @@
                     flat
                     dense
                     :label="getUsername"
+                    data-cy="user-menu"
                 >
                     <q-menu>
                         <csc-user-menu
