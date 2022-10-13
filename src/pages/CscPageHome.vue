@@ -15,6 +15,7 @@
             <csc-input
                 id="csc-call-number-input"
                 :label="$t('Enter a number to dial')"
+                data-cy="csc-call-number-input"
                 :value="callNumberInput"
                 :readonly="dialpadOpened"
                 clearable

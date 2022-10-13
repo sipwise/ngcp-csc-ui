@@ -207,6 +207,7 @@
                     class="q-mr-sm"
                     round
                     size="large"
+                    data-cy="end-call"
                     @click="endCall"
                 />
                 <q-btn
@@ -227,6 +228,7 @@
                     class="q-mr-sm"
                     round
                     size="large"
+                    data-cy="start-call"
                     @click="startCall('audioOnly')"
                 />
             </div>

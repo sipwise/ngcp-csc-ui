@@ -34,6 +34,7 @@
                 flat
                 dense
                 tabindex="-1"
+                data-cy="field-delete"
                 :disable="$attrs.disable"
                 @click="clear"
             />
