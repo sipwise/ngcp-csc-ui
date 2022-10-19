@@ -4,6 +4,7 @@
         <csc-input-date
             v-model="value.from"
             class="q-mr-sm"
+            data-cy="filter-from"
             dense
             clearable
             :label="$t('From')"
@@ -12,6 +13,7 @@
         />
         <csc-input-date
             v-model="value.to"
+            data-cy="filter-to"
             dense
             clearable
             :label="$t('To')"
