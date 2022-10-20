@@ -13,6 +13,7 @@
             :loading="$wait.is('getVoicemailsData')"
             :no-items-message="$t('No messages')"
             :error="voicemailsError"
+            data-cy="dashboard-view-voicebox"
             @action="downloadVoicemail"
         />
         <csc-card-dashboard
@@ -25,6 +26,7 @@
             :no-items-message="$t('No calls')"
             :loading="$wait.is('getCallsData')"
             :error="callsError"
+            data-cy="dashboard-view-calllist"
         />
         <csc-card-dashboard
             :title="$t('Registered Devices')"
@@ -36,6 +38,7 @@
             :no-items-message="$t('No devices registered')"
             :loading="$wait.is('getRegisteredDevicesData')"
             :error="registeredDevicesError"
+            data-cy="dashboard-view-registered-devices"
         />
     </csc-page>
 </template>
