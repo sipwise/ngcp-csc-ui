@@ -69,6 +69,7 @@
                 <div
                     v-else-if="!listLoading && items.length === 0"
                     class="col-xs-12 col-md-8 q-pa-lg text-center"
+                    data-cy="conversations-empty"
                 >
                     {{ noResultsMessage }}
                 </div>
