@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.1.1.1+0~mr11.1.1.1) unstable; urgency=medium
+
+  [ Mykola Malkov ]
+  * [a40d611] MT#55391 Add NODE_PATH variable to Dockerfile
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 21 Oct 2022 14:37:40 +0200
+
 ngcp-csc-ui (11.1.1.0+0~mr11.1.1.0) unstable; urgency=medium
 
   [ hherzog ]
