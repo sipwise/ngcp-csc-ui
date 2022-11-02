@@ -8,7 +8,6 @@ Build-Depends:
  debhelper-compat (= 13),
  nodejs (>= 18),
  python3,
- yarnpkg,
 
 Package: ngcp-csc-ui
 Architecture: all
