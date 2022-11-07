@@ -26,6 +26,7 @@
                     flat
                     dense
                     icon="apps"
+                    data-cy="appsicon-more"
                     color="primary"
                 >
                     <csc-popup-menu>
@@ -33,6 +34,7 @@
                             icon="description"
                             color="primary"
                             :label="$t('Send Fax')"
+                            data-cy="send-fax"
                             @click="showSendFax()"
                         />
                     </csc-popup-menu>

@@ -17,6 +17,7 @@
                     v-if="value"
                     v-model="form.destination"
                     :label="$t('Destination Number')"
+                    data-cy="sendfax-destinationnumber"
                     @submit="sendFax"
                     @error="error"
                 />
@@ -26,12 +27,14 @@
                     map-options
                     :options="$faxQualityOptions"
                     :label="$t('Quality')"
+                    data-cy="sendfax-quality"
                 />
                 <q-input
                     v-model="form.pageHeader"
                     clearable
                     type="text"
                     :label="$t('Page Header')"
+                    data-cy="sendfax-pageheader"
                     :error="$v.form.pageHeader.$error"
                     :error-message="pageHeaderErrorMessage"
                     @input="$v.form.pageHeader.$touch"
@@ -44,6 +47,7 @@
                     :max-height="100"
                     :min-rows="10"
                     :label="$t('Content')"
+                    data-cy="sendfax-content"
                     :error="$v.form.data.$error"
                     :error-message="dataErrorMessage"
                     @input="$v.form.data.$touch"
@@ -52,6 +56,7 @@
                 <csc-input-file
                     accept=".pdf,.tif,.tiff,.txt,.ps"
                     @file-selected="toggleFileSelected"
+                    data-cy="sendfax-fileinput"
                 />
             </q-card-section>
             <q-card-actions>
@@ -61,6 +66,7 @@
                     icon="clear"
                     color="default"
                     :label="$t('Cancel')"
+                    data-cy="sendfax-cancel"
                     @click="resetFormData"
                 />
                 <q-btn
@@ -69,6 +75,7 @@
                     icon="send"
                     :disable="formDisabled"
                     :label="$t('Send')"
+                    data-cy="sendfax-confirm"
                     @click="sendFax"
                 />
             </q-card-actions>

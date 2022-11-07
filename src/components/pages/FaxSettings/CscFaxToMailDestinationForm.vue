@@ -8,6 +8,7 @@
                     v-model="data.destination"
                     icon="email"
                     :label="$t('Destination Email')"
+                    data-cy="destination-email"
                     :disable="disabled"
                     :readonly="loading"
                     :error="$v.data.destination.$error"
@@ -28,6 +29,7 @@
                     :disable="loading"
                     :readonly="loading"
                     :label="$t('File Type')"
+                    data-cy="destinaton-filetype"
                     :options="fileTypeOptions"
                     @input="updatePropertyData('filetype')"
                 />
@@ -38,18 +40,21 @@
                 <q-toggle
                     v-model="data.incoming"
                     :label="$t('Deliver Incoming Faxes')"
+                    data-cy="destinaton-deliver-incoming"
                     :disable="loading"
                     @input="updatePropertyData('incoming')"
                 />
                 <q-toggle
                     v-model="data.outgoing"
                     :label="$t('Deliver Outgoing Faxes')"
+                    data-cy="destinaton-deliver-outgoing"
                     :disable="loading"
                     @input="updatePropertyData('outgoing')"
                 />
                 <q-toggle
                     v-model="data.status"
                     :label="$t('Receive Reports')"
+                    data-cy="destinaton-receive-reports"
                     :disable="loading"
                     @input="updatePropertyData('status')"
                 />
@@ -65,6 +70,7 @@
                 icon="clear"
                 :disable="loading"
                 :label="$t('Cancel')"
+                data-cy="destinaton-cancel-creation"
                 @click="cancel()"
             />
             <q-btn
@@ -74,6 +80,7 @@
                 :loading="loading"
                 :disable="$v.data.$invalid || loading"
                 :label="$t('Create destination')"
+                data-cy="destinaton-creation-confirm"
                 @click="save()"
             />
         </div>

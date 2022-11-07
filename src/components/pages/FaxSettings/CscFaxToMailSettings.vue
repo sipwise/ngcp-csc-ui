@@ -9,6 +9,7 @@
                     <q-toggle
                         v-model="faxToMailSettings.active"
                         :label="$t('Active')"
+                        data-cy="faxtomail-enable"
                         :disable="!dataLoaded"
                         @input="setChangedData('active', !faxServerSettings.active)"
                     />
@@ -27,6 +28,7 @@
                     <csc-input-saveable
                         v-model.trim="faxToMailSettings.name"
                         :label="$t('Name in Fax Header for Sendfax')"
+                        data-cy="sendfax-faxheader-name"
                         :disable="!dataLoaded"
                         :loading="loadingFaxServerSettings"
                         :value-changed="nameChanged"
@@ -40,6 +42,7 @@
                     <q-toggle
                         v-model="faxToMailSettings.t38"
                         :label="$t('T38')"
+                        data-cy="faxtomail-t38"
                         :disable="!dataLoaded"
                         @input="setChangedData('t38', !faxServerSettings.t38)"
                     />
@@ -58,6 +61,7 @@
                     <q-toggle
                         v-model="faxToMailSettings.ecm"
                         :label="$t('ECM')"
+                        data-cy="faxtomail-ecm"
                         :disable="!dataLoaded"
                         @input="setChangedData('ecm', !faxServerSettings.ecm)"
                     />
@@ -85,6 +89,7 @@
                         flat
                         color="primary"
                         icon="add"
+                        data-cy="destination-add"
                         :disable="!dataLoaded || showAddNewDestination"
                         @click="openAddNewDestination"
                     >
