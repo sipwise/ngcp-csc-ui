@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.1.1.2+0~mr11.1.1.2) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [6eafe2e] MT#55682 When uploading greeting files in CSC, filter shows unsupported options.
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 07 Nov 2022 17:57:06 +0100
+
 ngcp-csc-ui (11.1.1.1+0~mr11.1.1.1) unstable; urgency=medium
 
   [ Mykola Malkov ]
