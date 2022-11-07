@@ -241,7 +241,7 @@ export default {
             return 'music_note'
         },
         soundFileTypes () {
-            return '.wav,.mp3,.ogg'
+            return '.wav'
         },
         soundFileFormat () {
             return this.platform.mozilla ? 'ogg' : 'mp3'
