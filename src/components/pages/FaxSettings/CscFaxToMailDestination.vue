@@ -18,14 +18,17 @@
                     <q-icon
                         size="16px"
                         :name="destination.incoming ? 'call_received' : ' '"
+                        data-cy="destination-icon-deliver-incoming"
                     />
                     <q-icon
                         size="16px"
                         :name="destination.outgoing ? 'call_made' : ' '"
+                        data-cy="destination-icon-deliver-outgoing"
                     />
                     <q-icon
                         size="16px"
                         :name="destination.status ? 'fas fa-file-alt' : ' '"
+                        data-cy="destination-icon-receive-reports"
                     />
                 </csc-list-item-subtitle>
             </q-slide-transition>
@@ -36,6 +39,7 @@
             <csc-list-menu-item
                 :disable="loading"
                 icon="delete"
+                data-cy="destination-delete"
                 icon-color="negative"
                 @click="deleteDestination"
             >
