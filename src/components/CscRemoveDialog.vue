@@ -14,6 +14,7 @@
         <q-btn
             slot="actions"
             icon="delete"
+            data-cy="csc-dialog-delete"
             color="negative"
             flat
             @click="remove"
