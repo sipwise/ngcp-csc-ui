@@ -114,6 +114,27 @@
                     </template>
                 </q-select>
                 <q-select
+                    v-model="changes.cliNumber"
+                    emit-value
+                    map-options
+                    :options="getCliNumbersOptions"
+                    :disable="isLoading"
+                    :label="$t('CLI')"
+                >
+                    <template
+                        v-slot:append
+                    >
+                        <csc-input-button-save
+                            v-if="hasCliNumberChanged"
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            v-if="hasCliNumberChanged"
+                            @click.stop="resetCliNumber"
+                        />
+                    </template>
+                </q-select>
+                <q-select
                     v-model="changes.groups"
                     use-chips
                     multiple
@@ -223,7 +244,8 @@ export default {
         return {
             changes: null,
             id: this.$route.params.id,
-            soundSet: null
+            soundSet: null,
+            currentCli: ""
         }
     },
     validations: {
@@ -245,6 +267,7 @@ export default {
             'getSoundSetBySeatId',
             'hasCallQueue',
             'getMusicOnHold',
+            'getCurrentCli',
             'getIntraPbx',
             'getSeatUpdateToastMessage',
             'isSeatLoading'
@@ -268,6 +291,9 @@ export default {
         },
         hasAliasNumbersChanged () {
             return !_.isEqual(_.cloneDeep(this.changes.aliasNumbers).sort(), this.getAliasNumberIds().sort())
+        },
+        hasCliNumberChanged () {
+            return !_.isEqual(this.changes.cliNumber, this.getCliNumberId())
         },
         hasGroupsChanged () {
             return !_.isEqual(_.cloneDeep(this.changes.groups).sort(), _.cloneDeep(this.seatSelected.pbx_group_ids).sort())
@@ -301,14 +327,37 @@ export default {
             }
             return items
         },
+        getCliNumbersOptions () {
+            let cliOptions = []
+            const clis = [...this.seatSelected.alias_numbers]
+            clis.forEach((cli) => {
+                cliOptions.push({
+                    label: cli.cc + cli.ac + cli.sn,
+                    value: cli.cc + cli.ac + cli.sn
+                })
+            })
+            cliOptions = cliOptions.concat(this.getPrimaryNumberOptions())
+            return cliOptions
+        },
         isLoading () {
             return this.isSeatLoading(this.seatSelected.id)
         }
     },
     watch: {
         seatSelected () {
-            this.changes = this.getSeatData()
             this.soundSet = this.getSoundSetBySeatId(this.seatSelected.id)
+            this.loadPreferences(this.seatSelected.id).then ( (preferences) => {
+                const clis = [...this.seatSelected.alias_numbers]
+                this.numbers().forEach((cli) => {
+                    clis.push({ac: cli.ac, cc: cli.cc, sn: cli.sn, number_id: cli.id})
+                })
+                const cliFound = clis.find(cli => cli.cc + cli.ac + cli.sn === preferences.cli)
+                if (cliFound) this.currentCli = {
+                        label: cliFound.cc + cliFound.ac + cliFound.sn,
+                        value: cliFound.cc + cliFound.ac + cliFound.sn
+                    }
+                this.changes = this.getSeatData()
+            })
         },
         seatUpdateState (state) {
             if (state === RequestState.succeeded) {
@@ -318,7 +367,7 @@ export default {
             }
         }
     },
-    mounted () {
+    async mounted () {
         this.selectSeat(this.id)
     },
     beforeDestroy () {
@@ -332,7 +381,9 @@ export default {
             'setSeatGroups',
             'setIntraPbx',
             'setMusicOnHold',
-            'setSeatSoundSet'
+            'setSeatSoundSet',
+            'loadPreferences',
+            'setCli'
         ]),
         ...mapActions('pbxCallQueues', [
             'jumpToCallQueue'
@@ -340,6 +391,10 @@ export default {
         ...mapMutations('pbxSeats', [
             'selectSeat',
             'resetSelectedSeat'
+        ]),
+        ...mapGetters('pbx', [
+            'getPrimaryNumberOptions',
+            'numbers'
         ]),
         getAliasNumberIds () {
             const numberIds = []
@@ -350,6 +405,9 @@ export default {
         },
         getGroupIds () {
             return _.clone(this.seatSelected.pbx_group_ids)
+        },
+        getCliNumberId () {
+            return this.currentCli
         },
         getSoundSetId () {
             const soundSet = this.getSoundSetBySeatId(this.seatSelected.id)
@@ -367,7 +425,8 @@ export default {
                 clirIntrapbx: this.getIntraPbx(this.seatSelected.id),
                 musicOnHold: this.getMusicOnHold(this.seatSelected.id),
                 groups: this.getGroupIds(),
-                soundSet: this.getSoundSetId()
+                soundSet: this.getSoundSetId(),
+                cliNumber: this.getCliNumberId()
             } : null
         },
         resetName () {
@@ -378,6 +437,9 @@ export default {
         },
         resetAliasNumbers () {
             this.changes.aliasNumbers = this.getAliasNumberIds()
+        },
+        resetCliNumber () {
+            this.changes.cliNumber = this.getCliNumberId()
         },
         resetGroups () {
             this.changes.groups = this.getGroupIds()
@@ -403,6 +465,12 @@ export default {
                     seatId: this.seatSelected.id,
                     assignedNumbers: _.difference(this.changes.aliasNumbers, this.getAliasNumberIds()),
                     unassignedNumbers: _.difference(this.getAliasNumberIds(), this.changes.aliasNumbers)
+                })
+            }
+            if (this.hasCliNumberChanged) {
+                this.setCli({
+                    seatId: this.seatSelected.id,
+                    cli: this.changes.cliNumber
                 })
             }
             if (this.hasGroupsChanged) {

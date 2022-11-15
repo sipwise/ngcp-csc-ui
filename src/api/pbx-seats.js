@@ -2,7 +2,8 @@ import {
     createSubscriber,
     deleteSubscriber,
     getFullSubscribers,
-    getSubscriberAndPreferences, getSubscribers,
+    getSubscriberAndPreferences,
+    getSubscribers,
     setDisplayName,
     setPbxExtension,
     setPbxWebPassword,
@@ -10,6 +11,7 @@ import {
     setSubscriberNumbers,
     setPreferenceIntraPbx,
     setPreferenceMusicOnHold,
+    setPreferenceCli,
     getPreferences,
     setPbxSIPPassword
 } from './subscriber'
@@ -110,7 +112,8 @@ export function getSeatList (options) {
                 all: true
             }),
             getPilot(),
-            getNumbers()
+            getNumbers(),
+            getSubscribers()
         ]).then((result) => {
             resolve({
                 seats: result[0].subscribers,
@@ -269,6 +272,27 @@ export function setSeatIntraPbx (seatId, clirIntrapbx) {
  */
 export function setSeatMusicOnHold (seatId, musicOnHold) {
     return setPreferenceMusicOnHold(seatId, musicOnHold)
+}
+
+/**
+ * @param seatId
+ * @param cli
+ */
+export function setSeatCli (seatId, cli) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            return setPreferenceCli(seatId, cli)
+        }).then(() => {
+            return getSubscriberAndPreferences(seatId)
+        }).then((result) => {
+            resolve({
+                seat: result.subscriber,
+                preferences: result.preferences
+            })
+        }).catch((err) => {
+            reject(err)
+        })
+    })
 }
 
 /**

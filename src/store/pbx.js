@@ -58,6 +58,18 @@ export default {
             })
             return options
         },
+        getPrimaryNumberOptions (state) {
+            const options = []
+            state.numberList.forEach((number) => {
+                if (number.is_primary) {
+                    options.push({
+                        label: numberFilter(number),
+                        value: numberFilter(number)
+                    })
+                }
+            })
+            return options
+        },
         getFullNumberOptions (state) {
             const options = []
             state.numberList.forEach((number) => {
