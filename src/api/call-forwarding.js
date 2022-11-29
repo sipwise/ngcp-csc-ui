@@ -19,36 +19,30 @@ export async function cfLoadDestinationSets (subscriberId) {
     return getList({
         resource: 'cfdestinationsets',
         all: true,
-        params: {
-            subscriber_id: subscriberId
-        }
+        params: (subscriberId) ? { subscriber_id: subscriberId } : {}
     })
 }
 
 export async function cfLoadSourceSets (subscriberId) {
     return getList({
         resource: 'cfsourcesets',
-        params: {
-            subscriber_id: subscriberId
-        }
+        params: (subscriberId) ? { subscriber_id: subscriberId } : {}
     })
 }
 
 export async function cfLoadTimeSets (subscriberId) {
     return getList({
         resource: 'cftimesets',
-        params: {
-            subscriber_id: subscriberId
-        }
+        params: (subscriberId) ? { subscriber_id: subscriberId } : {}
     })
 }
 
 export async function cfLoadMappingsFull (subscriberId) {
     return await Promise.all([
         cfLoadMappings(subscriberId),
-        cfLoadDestinationSets(subscriberId),
-        cfLoadSourceSets(subscriberId),
-        cfLoadTimeSets(subscriberId)
+        cfLoadDestinationSets(),
+        cfLoadSourceSets(),
+        cfLoadTimeSets()
     ])
 }
 
