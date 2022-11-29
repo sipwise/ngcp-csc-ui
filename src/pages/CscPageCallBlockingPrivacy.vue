@@ -11,7 +11,7 @@
             >
                 <q-item-section>
                     <q-toggle
-                        :label="privacyLabel"
+                        :label="$t('Hide your number to the callee')"
                         :value="privacy"
                         :disable="privacyLoading"
                         checked-icon="visibility_off"
@@ -53,13 +53,6 @@ export default {
         return {}
     },
     computed: {
-        privacyLabel () {
-            if (this.privacy) {
-                return this.$t('Your number is hidden to the callee')
-            } else {
-                return this.$t('Your number is visible to the callee')
-            }
-        },
         fieldIcon () {
             if (!this.privacy) {
                 return 'visibility'
