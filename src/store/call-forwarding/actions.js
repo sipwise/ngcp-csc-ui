@@ -42,9 +42,14 @@ function createDefaultDestination (destination, defaultAnnouncementId) {
     return payload
 }
 
-export async function loadMappingsFull ({ dispatch, commit, rootGetters }) {
+export async function loadMappingsFull ({ dispatch, commit, rootGetters }, payload) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
-    const res = await cfLoadMappingsFull(rootGetters['user/getSubscriberId'])
+    let res = null
+    if (payload) {
+        res = await cfLoadMappingsFull(payload)
+    } else {
+        res = await cfLoadMappingsFull(rootGetters['user/getSubscriberId'])
+    }
     commit('dataSucceeded', {
         mappings: res[0],
         destinationSets: res[1].items,
@@ -60,12 +65,13 @@ export async function createMapping ({ dispatch, commit, state, rootGetters }, p
     if (payload.type === 'cfu' && state.mappings.cft && state.mappings.cft.length > 0) {
         type = 'cft'
     }
+    const subscriberId = (payload.subscriberId) ? (payload.subscriberId) : rootGetters['user/getSubscriberId']
     const mappings = _.cloneDeep(state.mappings[type])
     const destinationSetId = await post({
         resource: 'cfdestinationsets',
         body: {
             name: 'csc-' + v4(),
-            subscriber_id: rootGetters['user/getSubscriberId'],
+            subscriber_id: subscriberId,
             destinations: [createDefaultDestination()]
         }
     })
@@ -75,7 +81,7 @@ export async function createMapping ({ dispatch, commit, state, rootGetters }, p
     const res = await Promise.all([
         patchReplaceFull({
             resource: 'cfmappings',
-            resourceId: rootGetters['user/getSubscriberId'],
+            resourceId: subscriberId,
             fieldPath: type,
             value: mappings
         }),
@@ -104,7 +110,7 @@ export async function deleteMapping ({ dispatch, commit, state, rootGetters }, p
         value: updatedMappings
     })
     await cfDeleteDestinationSet(payload.destinationset_id)
-    const destinationSets = await cfLoadDestinationSets(rootGetters['user/getSubscriberId'])
+    const destinationSets = await cfLoadDestinationSets()
     commit('dataSucceeded', {
         mappings: patchRes,
         destinationSets: destinationSets.items
@@ -138,7 +144,7 @@ export async function updateDestination ({ dispatch, commit, state, rootGetters 
         fieldPath: 'destinations',
         value: destinations
     })
-    const destinationSets = await cfLoadDestinationSets(rootGetters['user/getSubscriberId'])
+    const destinationSets = await cfLoadDestinationSets()
     commit('dataSucceeded', {
         destinationSets: destinationSets.items
     })
@@ -155,7 +161,7 @@ export async function addDestination ({ dispatch, commit, state, rootGetters }, 
         fieldPath: 'destinations',
         value: destinations
     })
-    const destinationSets = await cfLoadDestinationSets(rootGetters['user/getSubscriberId'])
+    const destinationSets = await cfLoadDestinationSets()
     commit('dataSucceeded', {
         destinationSets: destinationSets.items
     })
@@ -193,7 +199,7 @@ export async function removeDestination ({ dispatch, commit, state, rootGetters 
         fieldPath: 'destinations',
         value: updatedDestinations
     })
-    const destinationSets = await cfLoadDestinationSets(rootGetters['user/getSubscriberId'])
+    const destinationSets = await cfLoadDestinationSets()
     commit('dataSucceeded', {
         destinationSets: destinationSets.items
     })
@@ -210,7 +216,7 @@ export async function updateDestinationTimeout ({ dispatch, commit, state, rootG
         fieldPath: 'destinations',
         value: destinations
     })
-    const destinationSets = await cfLoadDestinationSets(rootGetters['user/getSubscriberId'])
+    const destinationSets = await cfLoadDestinationSets()
     commit('dataSucceeded', {
         destinationSets: destinationSets.items
     })
@@ -219,7 +225,7 @@ export async function updateDestinationTimeout ({ dispatch, commit, state, rootG
 
 export async function loadSourceSets ({ dispatch, commit, rootGetters }) {
     dispatch('wait/start', 'csc-cf-sourcesets', { root: true })
-    const sourceSets = await cfLoadSourceSets(rootGetters['user/getSubscriberId'])
+    const sourceSets = await cfLoadSourceSets()
     commit('dataSucceeded', {
         sourceSets: sourceSets.items
     })
@@ -238,7 +244,7 @@ export async function createSourceSet ({ dispatch, commit, rootGetters, state },
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
-        const sourceSets = await cfLoadSourceSets(rootGetters['user/getSubscriberId'])
+        const sourceSets = await cfLoadSourceSets()
         commit('dataSucceeded', {
             mappings: updatedMappings,
             sourceSets: sourceSets.items
@@ -252,7 +258,7 @@ export async function updateSourceSet ({ dispatch, commit, rootGetters, state },
     try {
         dispatch('wait/start', 'csc-cf-source-set-create', { root: true })
         await cfUpdateSourceSet(rootGetters['user/getSubscriberId'], payload)
-        const sourceSets = await cfLoadSourceSets(rootGetters['user/getSubscriberId'])
+        const sourceSets = await cfLoadSourceSets()
         commit('dataSucceeded', {
             sourceSets: sourceSets.items
         })
@@ -274,7 +280,7 @@ export async function deleteSourceSet ({ dispatch, commit, rootGetters, state },
             value: updatedMapping
         })
         await cfDeleteSourceSet(payload.id)
-        const sourceSets = await cfLoadSourceSets(rootGetters['user/getSubscriberId'])
+        const sourceSets = await cfLoadSourceSets()
         commit('dataSucceeded', {
             mappings: updatedMappings,
             sourceSets: sourceSets.items
@@ -334,7 +340,7 @@ export async function createTimeSetDate ({ dispatch, commit, rootGetters, state 
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
-    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
+    const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
         timeSets: timeSets.items
@@ -345,7 +351,7 @@ export async function createTimeSetDate ({ dispatch, commit, rootGetters, state 
 export async function updateTimeSetDate ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     await cfUpdateTimeSetDate(payload.id, payload.date)
-    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
+    const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         timeSets: timeSets.items
     })
@@ -364,7 +370,7 @@ export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, p
         value: updatedMapping
     })
     await cfDeleteTimeSet(payload.id)
-    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
+    const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
         timeSets: timeSets.items
@@ -425,7 +431,7 @@ export async function createTimeSetDateRange ({ dispatch, commit, rootGetters, s
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
-    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
+    const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
         timeSets: timeSets.items
@@ -436,7 +442,7 @@ export async function createTimeSetDateRange ({ dispatch, commit, rootGetters, s
 export async function updateTimeSetDateRange ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     await cfUpdateTimeSetDateRange(payload.id, payload.date)
-    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
+    const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         timeSets: timeSets.items
     })
@@ -454,7 +460,7 @@ export async function createTimeSetWeekdays ({ dispatch, commit, rootGetters, st
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
-    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
+    const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
         timeSets: timeSets.items
@@ -465,7 +471,7 @@ export async function createTimeSetWeekdays ({ dispatch, commit, rootGetters, st
 export async function updateTimeSetWeekdays ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     await cfUpdateTimeSetWeekdays(payload.id, payload.weekdays)
-    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
+    const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         timeSets: timeSets.items
     })
@@ -486,7 +492,7 @@ export async function createOfficeHours ({ dispatch, commit, rootGetters, state 
     if (payload.id) {
         await cfDeleteTimeSet(payload.id)
     }
-    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
+    const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
         timeSets: timeSets.items
@@ -497,7 +503,7 @@ export async function createOfficeHours ({ dispatch, commit, rootGetters, state 
 export async function updateOfficeHours ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     await cfUpdateOfficeHours(payload.id, payload.times)
-    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
+    const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         timeSets: timeSets.items
     })
@@ -539,7 +545,7 @@ export async function updateAnnouncement ({ dispatch, commit, rootGetters, state
         fieldPath: 'destinations',
         value: destinations
     })
-    const destinationSets = await cfLoadDestinationSets(rootGetters['user/getSubscriberId'])
+    const destinationSets = await cfLoadDestinationSets()
     commit('dataSucceeded', {
         destinationSets: destinationSets.items
     })
