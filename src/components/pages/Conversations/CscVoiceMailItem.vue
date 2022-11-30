@@ -29,6 +29,12 @@
                 {{ voiceMail.duration }}
                 {{ $t('seconds') }}
             </q-item-label>
+            <q-item-label v-if="voiceMail.folder"
+                caption
+            >
+                {{ $t('Folder : ') }}
+                {{ voiceMail.folder.toUpperCase() }}
+            </q-item-label>
             <csc-audio-player
                 ref="voicemailPlayer"
                 :file-url="soundFileUrl"
