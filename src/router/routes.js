@@ -13,6 +13,7 @@ import CscPageCallRecording from 'src/pages/CscPageCallRecording'
 import CscPageReminder from 'src/pages/CscPageReminder'
 import CscPageSpeedDial from 'src/pages/CscPageSpeedDial'
 import CscPagePbxGroups from 'src/pages/CscPagePbxGroups'
+import CscPagePbxGroupDetails from 'src/pages/CscPagePbxGroupDetails'
 import CscPagePbxSeats from 'src/pages/CscPagePbxSeats'
 import CscPagePbxSeatDetails from 'src/pages/CscPagePbxSeatDetails'
 import CscPagePbxDevices from 'src/pages/CscPagePbxDevices'
@@ -169,6 +170,18 @@ export default function routes (app) {
                 {
                     path: 'pbx-configuration/groups',
                     component: CscPagePbxGroups,
+                    meta: {
+                        get title () {
+                            return i18n.t('PBX Configuration')
+                        },
+                        get subtitle () {
+                            return i18n.t('Groups')
+                        }
+                    }
+                },
+                {
+                    path: 'pbx-configuration/group/:id',
+                    component: CscPagePbxGroupDetails,
                     meta: {
                         get title () {
                             return i18n.t('PBX Configuration')

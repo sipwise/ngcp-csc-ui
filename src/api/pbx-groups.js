@@ -232,7 +232,15 @@ export function setGroupNumbers (options) {
             assignedNumbers: options.assignedNumbers,
             unassignedNumbers: options.unassignedNumbers
         }).then((result) => {
-            resolve(result)
+            if (result.subscriber !== null && result.preferences !== null) {
+                return result
+            }
+            return getSubscriberAndPreferences(options.groupId)
+        }).then((result) => {
+            resolve({
+                group: result.subscriber,
+                preferences: result.preferences
+            })
         }).catch((err) => {
             reject(err)
         })

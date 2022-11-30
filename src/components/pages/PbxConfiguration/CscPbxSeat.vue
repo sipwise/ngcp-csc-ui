@@ -12,7 +12,7 @@
             <q-icon
                 name="person"
                 color="white"
-            />
+            /> 
         </q-item-section>
         <q-item-section>
             <q-item-label

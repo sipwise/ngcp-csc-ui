@@ -68,11 +68,6 @@ export default {
         isGroupUpdating (state) {
             return state.groupUpdateState === RequestState.requesting
         },
-        isGroupExpanded (state) {
-            return (groupId) => {
-                return state.groupSelected !== null && state.groupSelected.id === groupId
-            }
-        },
         isGroupLoading (state, getters) {
             return (groupId) => {
                 return (getters.isGroupRemoving && state.groupRemoving.id === groupId) ||
@@ -245,10 +240,10 @@ export default {
             state.groupRemovalState = RequestState.failed
             state.groupRemovalError = err
         },
-        expandGroup (state, groupId) {
+        selectGroup (state, groupId) {
             state.groupSelected = state.groupMapById[groupId]
         },
-        collapseGroup (state) {
+        resetSelectedGroup (state) {
             state.groupSelected = null
         },
         enableGroupAddForm (state) {
@@ -380,14 +375,6 @@ export default {
                 pilotId: context.rootGetters['pbx/pilot'].id,
                 assignedNumbers: options.assignedNumbers,
                 unassignedNumbers: options.unassignedNumbers
-            }).then((result) => {
-                if (options.assignedNumbers.length > 0) {
-                    return context.dispatch('loadGroupListItems', {
-                        clearList: false
-                    })
-                } else {
-                    return Promise.resolve(result)
-                }
             }).then((result) => {
                 context.commit('groupUpdateSucceeded', result)
             }).catch((err) => {
