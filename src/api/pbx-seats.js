@@ -131,7 +131,7 @@ export function createSeat (seat) {
         let subscriberId
         Promise.resolve().then(() => {
             return createSubscriber({
-                username: _.kebabCase(seat.name),
+                username: seat.name.trim().toLowerCase().replace(/\s+/g, '-'),
                 password: seat.sipPassword ? seat.sipPassword : createId(),
                 display_name: seat.name,
                 webpassword: seat.webPassword.length > 0 ? seat.webPassword : null,
