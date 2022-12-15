@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.5.2.5+0~mr10.5.2.5) unstable; urgency=medium
+
+  [ CORP\franci11 ]
+  * [9ca54fc] MT#53860 Fix seat NameSyntax when creating a new subscriber
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 15 Dec 2022 12:30:45 +0100
+
 ngcp-csc-ui (10.5.2.4+0~mr10.5.2.4) unstable; urgency=medium
 
   [ Hugo Zigha ]
