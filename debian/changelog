@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.1.1.5+0~mr11.1.1.5) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [2977697] MT#55676 Call to the webRTC not working properly
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 15 Dec 2022 14:52:37 +0100
+
 ngcp-csc-ui (11.1.1.4+0~mr11.1.1.4) unstable; urgency=medium
 
   [ CORP\franci11 ]
