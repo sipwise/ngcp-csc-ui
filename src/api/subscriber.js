@@ -590,6 +590,8 @@ export async function getRecordings (options) {
             return {
                 id: recording.id,
                 time: recording.start_time,
+                caller: recording.caller,
+                callee: recording.callee,
                 files: []
             }
         })
