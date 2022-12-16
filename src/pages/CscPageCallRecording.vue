@@ -178,6 +178,7 @@ import CscPageSticky from 'components/CscPageSticky'
 import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
 import CscRemoveDialog from 'components/CscRemoveDialog'
 import {LIST_DEFAULT_ROWS} from "src/api/common";
+import moment from 'moment'
 export default {
     name: 'CscCallBlocking',
     components: {
@@ -202,7 +203,26 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Time'),
-                    field: row => row.time,
+                    field: row => {
+                        const momentDate = moment.utc(row.time, 'YYYY-MM-DD HH:mm:SS')
+                        return momentDate.format('LLL')
+                    },
+                    sortable: true
+                },
+                {
+                    name: 'caller',
+                    required: true,
+                    align: 'left',
+                    label: this.$t('Caller'),
+                    field: row => (!row.callerName)? row.caller : row.callerName,
+                    sortable: true
+                },
+                {
+                    name: 'callee',
+                    required: true,
+                    align: 'left',
+                    label: this.$t('Callee'),
+                    field: row => (!row.calleeName)? row.callee : row.calleeName,
                     sortable: true
                 }
             ],
@@ -258,6 +278,16 @@ export default {
     watch: {
         recordings () {
             this.data = this.recordings
+            this.data.forEach((recording) => {
+                const user = this.getSubscriber()
+                const userCli = user.primary_number.cc + user.primary_number.ac + user.primary_number.sn
+                if (recording.caller) {
+                    if (recording.caller === userCli) recording.callerName = this.$t('Me')
+                }
+                if (recording.callee) {
+                    if (recording.callee === userCli) recording.calleeName = this.$t('Me')
+                }
+            });
             this.rowStatus = this.recordings.map(rec => {
                 return {
                     id: rec.id,
@@ -281,6 +311,9 @@ export default {
             playStreamFile: 'csc-call-recordings',
             fetchFile: 'csc-call-recordings'
         }),
+        ...mapGetters('user', [
+            'getSubscriber'
+        ]),
         async fetchPaginatedRecordings (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
             const { startTime, endTime, caller, callee, callId } = this.filter
