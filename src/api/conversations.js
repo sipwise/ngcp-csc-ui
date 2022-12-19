@@ -17,6 +17,7 @@ export function getConversations (options) {
         const type = _.get(options, 'type', null)
         const from = _.get(options, 'from', '')
         const to = _.get(options, 'to', '')
+        const direction = _.get(options, 'direction', '')
         const params = {
             subscriber_id: _.get(options, 'subscriberId'),
             order_by: _.get(options, 'order_by', 'timestamp'),
@@ -34,6 +35,9 @@ export function getConversations (options) {
         }
         if (to !== '') {
             params.to = to
+        }
+        if (direction !== '') {
+            params.direction = direction
         }
         getList({
             path: 'api/conversations/',
