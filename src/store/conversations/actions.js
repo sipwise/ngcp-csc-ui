@@ -90,7 +90,8 @@ export default {
                 rows: ROWS_PER_PAGE,
                 type: options.type,
                 from: _.get(options, 'filter.from', ''),
-                to: _.get(options, 'filter.to', '')
+                to: _.get(options, 'filter.to', ''),
+                direction: _.get(options, 'filter.direction', '')
             })
             context.commit('nextPageSucceeded', res)
         } catch (err) {
