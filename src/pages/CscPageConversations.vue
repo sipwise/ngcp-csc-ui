@@ -29,6 +29,13 @@
                 :disable="listLoading"
                 @input="filterTab(selectedTab)"
             />
+            <csc-conversations-calls-filter
+                v-if="selectedTab === 'call'"
+                id="csc-conversations-calls-filter"
+                class="q-pb-sm"
+                :loading="listLoading"
+                @filter="filterCallDirectionEvent"
+            />
         </template>
         <q-infinite-scroll
             ref="infiniteScroll"
@@ -102,6 +109,7 @@ import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscListSpinner from 'components/CscListSpinner'
 import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
 import CscConversationsFilter from 'components/pages/Conversations/CscConversationsFilter'
+import CscConversationsCallsFilter from 'components/pages/Conversations/CscConversationsCallsFilter'
 import CscRemoveDialog from 'components/CscRemoveDialog'
 import { mapWaitingActions } from 'vue-wait'
 export default {
@@ -109,6 +117,7 @@ export default {
     components: {
         CscRemoveDialog,
         CscConversationsFilter,
+        CscConversationsCallsFilter,
         CscConversationItem,
         CscListSpinner,
         CscPageStickyTabs
@@ -125,6 +134,7 @@ export default {
     data () {
         return {
             filter: undefined,
+            filterDirection: undefined,
             topMargin: 0,
             deletionId: null,
             selectedTab: this.initialTab
@@ -238,10 +248,14 @@ export default {
             if (this.selectedTab === 'call-fax-voicemail') {
                 type = null
             }
+            const fullFilters = {}
+            if (this.filter) Object.assign(fullFilters, this.filter)
+            if (this.filterDirection) Object.assign(fullFilters, this.filterDirection)
+
             await this.nextPage({
                 type: type,
                 index: index,
-                filter: this.filter,
+                filter: fullFilters,
                 done: done
             }).finally(() => {
                 this.$wait.end('csc-conversations')
@@ -333,6 +347,11 @@ export default {
             } else {
                 return this.isNumberOutgoingBlocked(item.caller)
             }
+        },
+        filterCallDirectionEvent (filter) {
+            this.$scrollTo(this.$parent.$el)
+            this.filterDirection = filter
+            this.forceReload()
         }
     }
 }
