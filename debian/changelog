@@ -1,3 +1,20 @@
+ngcp-csc-ui (10.5.4.0+0~mr10.5.4.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [3d42d80] TT#70901 fix voicebox test
+
+  [ Daniel Grotti ]
+  * [e974696] MT#55460 Stop ringing on CSC when call is connected or in progress
+
+  [ Hugo Zigha ]
+  * [63bd409] MT#55682 When uploading greeting files in CSC, filter shows unsupported options.
+  * [eb62c21] MT#55676 Call to the webRTC not working properly
+
+  [ CORP\franci11 ]
+  * [4eecf37] MT#53860 Fix seat NameSyntax when creating a new subscriber
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 22 Dec 2022 16:20:08 +0100
+
 ngcp-csc-ui (10.5.3.0+0~mr10.5.3.0) unstable; urgency=medium
 
   [ Hans-Peter Herzog ]
