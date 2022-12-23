@@ -1,3 +1,11 @@
+ngcp-csc-ui (10.5.2.7+0~mr10.5.2.7) unstable; urgency=medium
+
+  [ CORP\franci11 ]
+  * [c687d43] MT#56138 Call Recording in CSC and AUI does not show who is the caller/callee
+  * [cd7680d] MT#53076 CSC: missing time/filter/search on Conversations page (comparing to v1 CSC)
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 23 Dec 2022 15:54:13 +0100
+
 ngcp-csc-ui (10.5.2.6+0~mr10.5.2.6) unstable; urgency=medium
 
   [ Hugo Zigha ]
