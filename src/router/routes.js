@@ -343,7 +343,7 @@ export default function routes (app) {
                         get subtitle () {
                             return i18n.t('Set your PBX settings')
                         },
-                        profileAttribute: PROFILE_ATTRIBUTE_MAP.pbxSettings
+                        profileAttributes: PROFILE_ATTRIBUTE_MAP.clir_intrapbx
                     }
                 },
                 {
@@ -355,7 +355,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Call Queues')
-                        }
+                        },
+                        profileAttributes: PROFILE_ATTRIBUTES_MAP.pbxSettingsCallQueue
                     }
                 },
                 {
@@ -367,7 +368,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Manager Secretary')
-                        }
+                        },
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.manager_secretary
                     }
                 },
                 {
@@ -379,7 +381,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Auto-attendant')
-                        }
+                        },
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.auto_attendant
                     }
                 },
                 {

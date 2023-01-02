@@ -196,31 +196,31 @@ export default {
                 {
                     icon: 'settings',
                     label: this.$t('PBX Settings'),
-                    visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.pbxSettings),
+                    visible: this.isPbxEnabled && this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettings),
                     children: [
                         {
                             to: '/user/pbx-settings/general',
                             icon: 'settings',
                             label: this.$t('General'),
-                            visible: true
+                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.clir_intrapbx)
                         },
                         {
                             to: '/user/pbx-settings/call-queues',
                             icon: 'filter_none',
                             label: this.$t('Call Queues'),
-                            visible: true
+                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettingsCallQueue)
                         },
                         {
                             to: '/user/pbx-settings/ms-configs',
                             icon: 'arrow_forward',
                             label: this.$t('Manager Secretary'),
-                            visible: true
+                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.manager_secretary)
                         },
                         {
                             to: '/user/pbx-settings/auto-attendant',
                             icon: 'dialpad',
                             label: this.$t('Auto-attendant'),
-                            visible: true
+                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.auto_attendant)
                         }
                     ]
                 },
