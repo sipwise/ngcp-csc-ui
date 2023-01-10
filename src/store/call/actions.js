@@ -77,12 +77,14 @@ export default {
             context.commit('hangUpCall')
         } else if (options.cause && !errorVisibilityTimer) {
             context.commit('endCall', options.cause)
-            errorVisibilityTimer = setTimeout(() => {
-                if (context.state.callState === 'ended') {
-                    context.commit('hangUpCall')
-                }
-                errorVisibilityTimer = null
-            }, errorVisibilityTimeout)
+            if (options.cause !== 'Busy') {
+                errorVisibilityTimer = setTimeout(() => {
+                    if (context.state.callState === 'ended') {
+                        context.commit('hangUpCall')
+                    }
+                    errorVisibilityTimer = null
+                }, errorVisibilityTimeout)
+            }
         }
     },
     sendDTMF (context, tone) {
