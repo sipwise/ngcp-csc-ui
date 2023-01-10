@@ -134,18 +134,25 @@ export function callRegister ({ instanceId }) {
         delegateEvent('registrationFailed')
         $userAgent.on('newRTCSession', (event) => {
             if (event.originator === 'remote') {
-                $incomingRtcSession = event.session
-                $incomingRtcSession.on('peerconnection', () => {
-                    $incomingRtcSession.connection.ontrack = handleRemoteMediaStream
-                })
-                $incomingRtcSession.on('failed', (failedEvent) => {
-                    callEvent.emit('incomingFailed', failedEvent)
-                })
-                $incomingRtcSession.on('ended', (failedEvent) => {
-                    callEvent.emit('incomingEnded', failedEvent)
-                    $incomingRtcSession = null
-                })
-                callEvent.emit('incoming', $incomingRtcSession)
+                if ($incomingRtcSession || $outgoingRtcSession) {
+                    event.session.terminate({
+                        status_code: 486,
+                        reason_phrase: 'Busy'
+                    })
+                } else {
+                    $incomingRtcSession = event.session
+                    $incomingRtcSession.on('peerconnection', () => {
+                        $incomingRtcSession.connection.ontrack = handleRemoteMediaStream
+                    })
+                    $incomingRtcSession.on('failed', (failedEvent) => {
+                        callEvent.emit('incomingFailed', failedEvent)
+                    })
+                    $incomingRtcSession.on('ended', (failedEvent) => {
+                        callEvent.emit('incomingEnded', failedEvent)
+                        $incomingRtcSession = null
+                    })
+                    callEvent.emit('incoming', $incomingRtcSession)
+                }
             }
         })
         $userAgent.start()
