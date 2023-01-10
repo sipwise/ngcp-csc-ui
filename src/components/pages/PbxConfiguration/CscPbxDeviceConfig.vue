@@ -223,6 +223,24 @@ export default {
                     value: 'shared'
                 })
             }
+            if (this.selectedKey !== null && this.selectedKey.keySet.can_speeddial) {
+                options.push({
+                    label: this.$t('SpeedDial'),
+                    value: 'speeddial'
+                })
+            }
+            if (this.selectedKey !== null && this.selectedKey.keySet.can_forward) {
+                options.push({
+                    label: this.$t('Forward'),
+                    value: 'forward'
+                })
+            }
+            if (this.selectedKey !== null && this.selectedKey.keySet.can_transfer) {
+                options.push({
+                    label: this.$t('Transfer'),
+                    value: 'transfer'
+                })
+            }
             return options
         },
         isMobile () {
