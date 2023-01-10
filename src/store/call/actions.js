@@ -71,6 +71,7 @@ export default {
         if (!options.cause) {
             if (errorVisibilityTimer) {
                 clearTimeout(errorVisibilityTimer)
+                errorVisibilityTimer = null
             }
             context.commit('endCall')
             context.commit('hangUpCall')
