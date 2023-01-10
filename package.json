@@ -31,7 +31,7 @@
     "async": "^2.6.4",
     "core-js": "^3.6.5",
     "decode-uri-component": "^0.2.2",
-    "eventsource": "^1.1.1",
+    "eventsource": "^2.0.2",
     "file-saver": "^2.0.2",
     "jest-junit": "^11.1.0",
     "jssip": "3.8.2",
