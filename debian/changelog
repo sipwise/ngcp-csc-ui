@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.5.1.8+0~mr10.5.1.8) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [fee9b44] MT#56343 WebRTC calls stuck on CSC interface
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Jan 2023 08:52:59 +0100
+
 ngcp-csc-ui (10.5.1.7+0~mr10.5.1.7) unstable; urgency=medium
 
   [ CORP\franci11 ]
