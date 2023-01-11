@@ -49,42 +49,48 @@
         />
 
         <q-card-section
-            class="csc-card-list"
-        >
+            class="csc-card-list">
+
             <q-list
                 v-for="(item, index) in itemsList"
                 :key="item.id"
             >
-                <q-item>
-                    <q-item-section avatar>
-                        <q-icon
-                            v-if="!item.clickable_icon"
-                            :color="item.icon.color"
-                            clickable
-                            :name="item.icon.name"
-                        />
-                        <q-btn
-                            v-if="item.clickable_icon"
-                            flat
-                            :color="item.icon.color"
-                            :icon="item.icon.name"
-                            @click="$emit('action', item.id)"
-                        />
-                    </q-item-section>
+                <template v-if="useSlot">
+                    <slot name="listItems" :call="item.call" :index="index"></slot>
+                </template>
+                <template v-else>
+                    <q-item>
+                        <q-item-section avatar>
+                            <q-icon
+                                v-if="!item.clickable_icon"
+                                :color="item.icon.color"
+                                clickable
+                                :name="item.icon.name"
+                            />
+                            <q-btn
+                                v-if="item.clickable_icon"
+                                flat
+                                :color="item.icon.color"
+                                :icon="item.icon.name"
+                                @click="$emit('action', item.id)"
+                            />
+                        </q-item-section>
 
-                    <q-item-section>
-                        <q-item-label>{{ item.title }}</q-item-label>
-                        <q-item-label caption>
-                            {{ item.sub_title }}
-                        </q-item-label>
-                    </q-item-section>
+                        <q-item-section>
+                            <q-item-label>{{ item.title }}</q-item-label>
+                            <q-item-label caption>
+                                {{ item.sub_title }}
+                            </q-item-label>
+                        </q-item-section>
 
-                    <q-item-section side>
-                        <q-item-label caption>
-                            {{ item.extra_text }}
-                        </q-item-label>
-                    </q-item-section>
-                </q-item>
+                        <q-item-section side>
+                            <q-item-label caption>
+                                {{ item.extra_text }}
+                            </q-item-label>
+                        </q-item-section>
+
+                    </q-item>
+                </template>
                 <q-separator
                     v-if="index !== itemsList.length-1"
                     spaced
@@ -111,7 +117,7 @@
         />
 
         <q-card-section
-            class="text-center"
+            class="csc-card-footer text-center justify-center"
         >
             <q-btn
                 color="primary"
@@ -119,6 +125,7 @@
                 flat
                 :label="buttonTitle"
                 :to="routeTo"
+                class="vertical-middle  justify-center"
             />
         </q-card-section>
     </q-card>
@@ -169,6 +176,10 @@ export default {
         noItemsMessage: {
             type: String,
             default: ''
+        },
+        useSlot: {
+            type: Boolean,
+            default: false
         }
     }
 }
@@ -186,5 +197,8 @@ export default {
         padding-bottom: 22px
 
     .csc-card-list
-        min-height: 359px
+        height: 400px
+
+    .csc-card-footer
+        height: 80px
 </style>

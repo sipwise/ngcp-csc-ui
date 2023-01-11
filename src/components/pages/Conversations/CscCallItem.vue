@@ -1,5 +1,7 @@
 <template>
-    <q-item>
+    <q-item
+        :class="sleekMode ? 'csc-call-item-sleek-mode' : ''"
+    >
         <q-item-section
             side
             top
@@ -28,6 +30,7 @@
                 {{ $t('Duration') }}: {{ call.duration }}
             </q-item-label>
             <q-item-label
+                v-if="!sleekMode"
                 caption
             >
                 <span>
@@ -44,6 +47,7 @@
             </q-item-label>
         </q-item-section>
         <q-item-section
+            v-if="!sleekMode"
             side
         >
             <csc-more-menu>
@@ -111,6 +115,10 @@ export default {
             default: ''
         },
         blockBothPossible: {
+            type: Boolean,
+            default: false
+        },
+        sleekMode: {
             type: Boolean,
             default: false
         }
@@ -185,4 +193,6 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+    .csc-call-item-sleek-mode
+        padding 2px !important
 </style>

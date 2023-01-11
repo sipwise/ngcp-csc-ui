@@ -27,7 +27,18 @@
             :loading="$wait.is('getCallsData')"
             :error="callsError"
             data-cy="dashboard-view-calllist"
-        />
+            :use-slot=true
+        >
+            <template
+                v-slot:listItems="{call}"
+            >
+                <csc-call-item
+                    :call="call"
+                    :call-available="callAvailable"
+                    :sleek-mode=true
+                />
+            </template>
+        </csc-card-dashboard>
         <csc-card-dashboard
             :title="$t('Registered Devices')"
             :count="registeredDevicesCount"
@@ -45,6 +56,7 @@
 
 <script>
 import CscCardDashboard from 'components/pages/Dashboard/CscCardDashboard'
+import CscCallItem from 'components/pages/Conversations/CscCallItem'
 import CscPage from 'components/CscPage'
 import { mapWaitingActions } from 'vue-wait'
 import {
@@ -63,7 +75,8 @@ export default {
     name: 'CscPageDashboard',
     components: {
         CscCardDashboard,
-        CscPage
+        CscPage,
+        CscCallItem
     },
     data () {
         return {
@@ -119,14 +132,15 @@ export default {
                 showGlobalError(calls?.reason?.data?.message)
             } else {
                 this.callsCount = calls.value.totalCount
-                this.callItems = calls.value.items.map((item) => {
+                this.callItems = calls.value.items.slice(0, 5).map((item) => {
                     return {
                         id: item.id,
                         icon: { name: callIcon(item), color: callIconColor(item) },
                         clickable_icon: false,
                         title: this.checkTitleToShow(item),
                         sub_title: date.formatDate(item.start_time, INTERNAL_DATE_FORMAT_DASH_HOUR),
-                        extra_text: item.duration.split('.')[0]
+                        extra_text: item.duration.split('.')[0],
+                        call: item
                     }
                 })
             }
