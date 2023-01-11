@@ -252,7 +252,8 @@ export default {
             },
             mobileMenu: null,
             faxDialog: false,
-            customLogo: null
+            customLogo: null,
+            menuPinnedBBeforeCall: true
         }
     },
     computed: {
@@ -374,8 +375,15 @@ export default {
     watch: {
         callState (state) {
             if (state === 'established') {
+                this.menuPinnedBBeforeCall = this.menuPinned
                 this.menuPinned = false
                 this.menuMinimized = true
+                this.header = true
+            } else if (state === 'ended') {
+                if (this.menuPinnedBBeforeCall) {
+                    this.menuPinned = true
+                    this.menuMinimized = false
+                }
                 this.header = true
             } else {
                 this.header = true
@@ -490,6 +498,11 @@ export default {
         },
         endCall () {
             this.$store.dispatch('call/end')
+             if (this.menuPinnedBBeforeCall) {
+                this.menuPinned = true
+                this.menuMinimized = false
+                this.header = true
+            }
         },
         clickDialpad (value) {
             this.$store.dispatch('call/sendDTMF', value)
