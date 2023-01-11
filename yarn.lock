@@ -4742,10 +4742,10 @@ decode-uri-component@^0.2.0:
   resolved "https://npm-registry.sipwise.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
   integrity sha1-6zkTMzRYd1y4TNGh+uBiEGu4dUU=
 
-decode-uri-component@^0.3.0:
-  version "0.3.0"
-  resolved "https://npm-registry.sipwise.com/decode-uri-component/-/decode-uri-component-0.3.0.tgz#e9719c5cb63e4580f6e84527d2256b60bc0efe64"
-  integrity sha512-DtZDg5Xyj8fhtXChxK7OJksolzQH33uYKxOvhu49tjnNRHfwnxbxTl9g+kZvEJp5w+DMe4DTKAue20A8u8oBHg==
+decode-uri-component@^0.4.0:
+  version "0.4.0"
+  resolved "https://npm-registry.sipwise.com/decode-uri-component/-/decode-uri-component-0.4.0.tgz#65b5eef8a698e60d8ca3a24ab681195fada29472"
+  integrity sha512-YDg1/aOMvZnuqEavyBv5ZBiPpjt+X7cEk+R/suM681HfvumytFjV8GFfNFw0GpohwrnCuUgnOIzt3SUIMV5wWg==
 
 decomment@0.9.4:
   version "0.9.4"

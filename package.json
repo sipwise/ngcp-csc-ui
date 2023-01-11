@@ -30,7 +30,7 @@
     "@quasar/extras": "^1.12.2",
     "async": "^3.2.2",
     "core-js": "^3.6.5",
-    "decode-uri-component": "^0.3.0",
+    "decode-uri-component": "^0.4.0",
     "eventsource": "^2.0.2",
     "file-saver": "^2.0.2",
     "jest-junit": "^11.1.0",
