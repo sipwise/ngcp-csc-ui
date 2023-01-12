@@ -42,21 +42,52 @@
                     @change-password="changeWebPassword({ password: $event.password })"
                 />
                 <q-input
-                    v-model="changes.name"
-                    :label="$t('Name')"
+                    v-model="changes.displayName"
+                    :label="$t('Display Name')"
                     :disable="isLoading"
+                    :error="$v.changes.displayName.$error"
+                    :error-message="seatDisplayNameErrorMessage"
+                    @input="$v.changes.displayName.$touch"
                     @keyup.enter="save"
                 >
                     <template
+                        v-if="hasDisplayNameChanged"
                         v-slot:append
                     >
                         <csc-input-button-save
-                            v-if="hasNameChanged"
+                            v-if="!$v.changes.displayName.$error"
                             @click.stop="save"
                         />
                         <csc-input-button-reset
-                            v-if="hasNameChanged"
-                            @click.stop="resetName"
+                            @click.stop="resetDisplayName"
+                        />
+                    </template>
+                </q-input>
+                <q-input
+                    readonly
+                    disable
+                    :label="$t('SIP Username')"
+                    :value="changes.sipUsername"
+                />
+                <q-input
+                    v-model="changes.webUsername"
+                    :label="$t('Web Username')"
+                    :disable="isLoading"
+                    :error="$v.changes.webUsername.$error"
+                    :error-message="seatWebUsernameErrorMessage"
+                    @input="$v.changes.webUsername.$touch"
+                    @keyup.enter="save"
+                >
+                    <template
+                        v-if="hasWebUsernameChanged"
+                        v-slot:append
+                    >
+                        <csc-input-button-save
+                            v-if="!$v.changes.webUsername.$error"
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetWebUsername"
                         />
                     </template>
                 </q-input>
@@ -72,14 +103,14 @@
                     @input="$v.changes.extension.$touch"
                 >
                     <template
+                        v-if="hasExtensionChanged"
                         v-slot:append
                     >
                         <csc-input-button-save
-                            v-if="hasExtensionChanged"
+                            v-if="!$v.changes.webUsername.$error"
                             @click.stop="save"
                         />
                         <csc-input-button-reset
-                            v-if="hasExtensionChanged"
                             @click.stop="resetExtension"
                         />
                     </template>
@@ -227,9 +258,13 @@ import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscChangePasswordDialog from 'src/components/CscChangePasswordDialog'
 import CscPageSticky from 'src/components/CscPageSticky'
-import { between } from 'vuelidate/lib/validators'
 import { inRange } from 'src/helpers/validation'
 import numberFilter from '../filters/number'
+import {
+    required,
+    maxLength,
+    between
+} from 'vuelidate/lib/validators'
 export default {
     name: 'CscPagePbxSeatDetails',
     components: {
@@ -254,6 +289,14 @@ export default {
                 isInRange: function (value) {
                     return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
                 }
+            },
+            displayName: {
+                required,
+                maxLength: maxLength(64)
+            },
+            webUsername: {
+                required,
+                maxLength: maxLength(64)
             }
         }
     },
@@ -283,8 +326,11 @@ export default {
         getPrimaryNumber () {
             return numberFilter(this.seatSelected.primary_number)
         },
-        hasNameChanged () {
-            return this.changes.name !== this.seatSelected.display_name
+        hasDisplayNameChanged () {
+            return this.changes.displayName !== this.seatSelected.display_name
+        },
+        hasWebUsernameChanged () {
+            return this.changes.webUsername !== this.seatSelected.webusername
         },
         hasExtensionChanged () {
             return this.changes.extension !== this.seatSelected.pbx_extension
@@ -304,6 +350,34 @@ export default {
         extensionErrorMessage () {
             if (!this.$v.changes.extension.isInRange) {
                 return this.getExtensionHint
+            } else {
+                return ''
+            }
+        },
+        seatDisplayNameErrorMessage () {
+            if (!this.$v.changes.displayName.required) {
+                return this.$t('{field} is required', {
+                    field: this.$t('Seat Display Name')
+                })
+            } else if (!this.$v.changes.displayName.maxLength) {
+                return this.$t('{field} must have at most {maxLength} letters', {
+                    field: this.$t('Seat Display Name'),
+                    maxLength: this.$v.changes.displayName.$params.maxLength.max
+                })
+            } else {
+                return ''
+            }
+        },
+        seatWebUsernameErrorMessage () {
+            if (!this.$v.changes.webUsername.required) {
+                return this.$t('{field} is required', {
+                    field: this.$t('Seat Web Username')
+                })
+            } else if (!this.$v.changes.webUsername.maxLength) {
+                return this.$t('{field} must have at most {maxLength} letters', {
+                    field: this.$t('Seat Web Username'),
+                    maxLength: this.$v.changes.webUsername.$params.maxLength.max
+                })
             } else {
                 return ''
             }
@@ -375,7 +449,8 @@ export default {
     },
     methods: {
         ...mapActions('pbxSeats', [
-            'setSeatName',
+            'setSeatDisplayName',
+            'setSeatWebUsername',
             'setSeatExtension',
             'setSeatNumbers',
             'setSeatGroups',
@@ -418,7 +493,9 @@ export default {
         },
         getSeatData () {
             return (this.seatSelected) ? {
-                name: this.seatSelected.display_name,
+                displayName: this.seatSelected.display_name,
+                sipUsername: this.seatSelected.username,
+                webUsername: this.seatSelected.webusername,
                 extension: this.seatSelected.pbx_extension,
                 aliasNumbers: this.getAliasNumberIds(),
                 webPassword: this.seatSelected.webpassword,
@@ -429,8 +506,11 @@ export default {
                 cliNumber: this.getCliNumberId()
             } : null
         },
-        resetName () {
-            this.changes.name = this.seatSelected.display_name
+        resetDisplayName () {
+            this.changes.displayName = this.seatSelected.display_name
+        },
+        resetWebUsername () {
+            this.changes.webUsername = this.seatSelected.webusername
         },
         resetExtension () {
             this.changes.extension = this.seatSelected.pbx_extension
@@ -448,10 +528,16 @@ export default {
             this.changes.soundSet = this.getSoundSetId()
         },
         save () {
-            if (this.hasNameChanged) {
-                this.setSeatName({
+            if (this.hasDisplayNameChanged) {
+                this.setSeatDisplayName({
                     seatId: this.seatSelected.id,
-                    seatName: this.changes.name
+                    displayName: this.changes.displayName
+                })
+            }
+            if (this.hasWebUsernameChanged) {
+                this.setSeatWebUsername({
+                    seatId: this.seatSelected.id,
+                    webUsername: this.changes.webUsername
                 })
             }
             if (this.hasExtensionChanged) {

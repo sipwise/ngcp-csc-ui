@@ -13,7 +13,8 @@ import {
     getSeatList,
     createSeat,
     removeSeat,
-    setSeatName,
+    setSeatDisplayName,
+    setSeatWebUsername,
     setSeatExtension,
     setSeatGroups,
     setSeatNumbers,
@@ -319,14 +320,28 @@ export default {
                 context.commit('seatRemovalFailed', err.message)
             })
         },
-        setSeatName (context, options) {
+        setSeatDisplayName (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Seat name')
+                seatField: i18n.t('Seat displayName')
             })
-            setSeatName({
+            setSeatDisplayName({
                 seatId: options.seatId,
-                seatName: options.seatName
+                displayName: options.displayName
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        setSeatWebUsername (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.t('Seat Web Username')
+            })
+            setSeatWebUsername({
+                seatId: options.seatId,
+                webUsername: options.webUsername
             }).then((result) => {
                 context.commit('seatUpdateSucceeded', result)
             }).catch((err) => {
@@ -457,6 +472,6 @@ export default {
                 context.commit('seatUpdateFailed', err.message)
             }
         }
-        
+
     }
 }

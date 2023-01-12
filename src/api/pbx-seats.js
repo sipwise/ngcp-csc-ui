@@ -5,6 +5,7 @@ import {
     getSubscriberAndPreferences,
     getSubscribers,
     setDisplayName,
+    setWebUsername,
     setPbxExtension,
     setPbxWebPassword,
     setPbxGroupIds,
@@ -134,9 +135,10 @@ export function createSeat (seat) {
         let subscriberId
         Promise.resolve().then(() => {
             return createSubscriber({
-                username: seat.name.trim().toLowerCase().replace(/\s+/g, '-'),
+                username: seat.sipUsername.trim(),
+                display_name: seat.displayName.trim(),
+                webusername: seat.webUsername.trim(),
                 password: seat.sipPassword ? seat.sipPassword : createId(),
-                display_name: seat.name,
                 webpassword: seat.webPassword.length > 0 ? seat.webPassword : null,
                 is_pbx_group: false,
                 pbx_extension: seat.extension,
@@ -173,12 +175,34 @@ export function removeSeat (id) {
 /**
  * @param options
  * @param options.seatId
- * @param options.seatName
+ * @param options.displayName
  */
-export function setSeatName (options) {
+export function setSeatDisplayName (options) {
     return new Promise((resolve, reject) => {
         Promise.resolve().then(() => {
-            return setDisplayName(options.seatId, options.seatName)
+            return setDisplayName(options.seatId, options.displayName)
+        }).then(() => {
+            return getSubscriberAndPreferences(options.seatId)
+        }).then((result) => {
+            resolve({
+                seat: result.subscriber,
+                preferences: result.preferences
+            })
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+/**
+ * @param options
+ * @param options.seatId
+ * @param options.webUsername
+ */
+export function setSeatWebUsername (options) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            return setWebUsername(options.seatId, options.webUsername)
         }).then(() => {
             return getSubscriberAndPreferences(options.seatId)
         }).then((result) => {

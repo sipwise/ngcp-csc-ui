@@ -297,6 +297,10 @@ export function setDisplayName (id, displayName) {
     return setField(id, 'display_name', displayName)
 }
 
+export function setWebUsername (id, webUsername) {
+    return setField(id, 'webusername', webUsername)
+}
+
 export function setPbxExtension (id, pbxExtension) {
     return setField(id, 'pbx_extension', pbxExtension)
 }

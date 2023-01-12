@@ -7,17 +7,17 @@
                 class="col-xs-12 col-lg-3"
             >
                 <csc-input
-                    v-model="data.name"
+                    v-model="data.displayName"
                     clearable
                     autofocus
                     dense
                     hide-bottom-space
-                    :error="$v.data.name.$error"
-                    :error-message="seatNameErrorMessage"
+                    :error="$v.data.displayName.$error"
+                    :error-message="seatDisplayNameErrorMessage"
                     :disable="loading"
                     :readonly="loading"
-                    :label="$t('Name')"
-                    @input="$v.data.name.$touch"
+                    :label="$t('Display Name')"
+                    @input="$v.data.displayName.$touch"
                 >
                     <template
                         v-slot:prepend
@@ -49,25 +49,6 @@
                         />
                     </template>
                 </csc-input>
-                <csc-input-password-retype
-                    v-model="data.password"
-                    :password-label="$t('Web Password')"
-                    :password-confirm-label="$t('Web Password confirm')"
-                    :disable="loading"
-                    hide-bottom-space
-                    dense
-                />
-                <csc-input-password-retype
-                    v-model="data.sipPassword"
-                    :password-label="$t('SIP Password')"
-                    :password-confirm-label="$t('SIP Password confirm')"
-                    :disable="loading"
-                    dense
-                />
-            </div>
-            <div
-                class="col-xs-12 col-lg-3"
-            >
                 <q-select
                     v-model="data.aliasNumbers"
                     clearable
@@ -126,6 +107,65 @@
                     :label="$t('Hide number within own PBX')"
                     :disable="loading"
                     class="q-pa-md"
+                    dense
+                />
+            </div>
+            <div
+                class="col-xs-12 col-lg-3"
+            >
+                <csc-input
+                    v-model="data.webUsername"
+                    clearable
+                    dense
+                    hide-bottom-space
+                    :error="$v.data.webUsername.$error"
+                    :error-message="seatWebUsernameErrorMessage"
+                    :disable="loading"
+                    :readonly="loading"
+                    :label="$t('Web Username')"
+                    @input="$v.data.webUsername.$touch"
+                >
+                    <template
+                        v-slot:prepend
+                    >
+                        <q-icon
+                            name="person"
+                        />
+                    </template>
+                </csc-input>
+                <csc-input-password-retype
+                    v-model="data.password"
+                    :password-label="$t('Web Password')"
+                    :password-confirm-label="$t('Web Password confirm')"
+                    :disable="loading"
+                    hide-bottom-space
+                    dense
+                />
+                <csc-input
+                    v-model="data.sipUsername"
+                    clearable
+                    dense
+                    hide-bottom-space
+                    :error="$v.data.sipUsername.$error"
+                    :error-message="seatSipUsernameErrorMessage"
+                    :disable="loading"
+                    :readonly="loading"
+                    :label="$t('SIP Username')"
+                    @input="$v.data.sipUsername.$touch"
+                >
+                    <template
+                        v-slot:prepend
+                    >
+                        <q-icon
+                            name="person"
+                        />
+                    </template>
+                </csc-input>
+                <csc-input-password-retype
+                    v-model="data.sipPassword"
+                    :password-label="$t('SIP Password')"
+                    :password-confirm-label="$t('SIP Password confirm')"
+                    :disable="loading"
                     dense
                 />
             </div>
@@ -193,7 +233,18 @@ export default {
     },
     validations: {
         data: {
-            name: {
+            displayName: {
+                required,
+                maxLength: maxLength(64)
+            },
+            sipUsername: {
+                required,
+                maxLength: maxLength(64),
+                noWhiteSpace: (value) => {
+                    return new RegExp(/\s/).test(value) === false
+                }
+            },
+            webUsername: {
                 required,
                 maxLength: maxLength(64)
             },
@@ -234,15 +285,48 @@ export default {
             'getMinAllowedExtension',
             'getMaxAllowedExtension'
         ]),
-        seatNameErrorMessage () {
-            if (!this.$v.data.name.required) {
+        seatDisplayNameErrorMessage () {
+            if (!this.$v.data.displayName.required) {
                 return this.$t('{field} is required', {
-                    field: this.$t('Seat name')
+                    field: this.$t('Seat Display Name')
                 })
-            } else if (!this.$v.data.name.maxLength) {
+            } else if (!this.$v.data.displayName.maxLength) {
                 return this.$t('{field} must have at most {maxLength} letters', {
-                    field: this.$t('Seat name'),
-                    maxLength: this.$v.data.name.$params.maxLength.max
+                    field: this.$t('Seat Display Name'),
+                    maxLength: this.$v.data.displayName.$params.maxLength.max
+                })
+            } else {
+                return ''
+            }
+        },
+        seatWebUsernameErrorMessage () {
+            if (!this.$v.data.webUsername.required) {
+                return this.$t('{field} is required', {
+                    field: this.$t('Seat Web Username')
+                })
+            } else if (!this.$v.data.webUsername.maxLength) {
+                return this.$t('{field} must have at most {maxLength} letters', {
+                    field: this.$t('Seat Web Username'),
+                    maxLength: this.$v.data.webUsername.$params.maxLength.max
+                })
+            } else {
+                return ''
+            }
+        },
+        seatSipUsernameErrorMessage () {
+            if (!this.$v.data.sipUsername.required) {
+                return this.$t('SIP Username is required', {
+                    field: this.$t('Seat SIP Username')
+                })
+            } else if (!this.$v.data.sipUsername.maxLength) {
+                return this.$t('SIP Username must have at most {maxLength} letters', {
+                    field: this.$t('Seat SIP Username'),
+                    maxLength: this.$v.data.sipUsername.$params.maxLength.max
+                })
+            } else if (!this.$v.data.sipUsername.noWhiteSpace) {
+                return this.$t('SIP Username must not contain any space character', {
+                    field: this.$t('Seat SIP Username'),
+                    maxLength: this.$v.data.sipUsername.$params.maxLength.max
                 })
             } else {
                 return ''
@@ -291,7 +375,9 @@ export default {
     methods: {
         getDefaults () {
             return {
-                name: '',
+                displayName: '',
+                sipUsername: '',
+                webUsername: '',
                 extension: '',
                 password: {
                     password: '',
@@ -312,7 +398,9 @@ export default {
         },
         save () {
             this.$emit('save', {
-                name: this.data.name,
+                displayName: this.data.displayName,
+                sipUsername: this.data.sipUsername,
+                webUsername: this.data.webUsername,
                 extension: this.data.extension,
                 webPassword: this.data.password.password,
                 sipPassword: this.data.sipPassword.password,
