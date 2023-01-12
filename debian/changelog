@@ -1,3 +1,11 @@
+ngcp-csc-ui (10.5.1.9+0~mr10.5.1.9) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [fb60fb3] MT#56085 Reply with 486 from WebRTC when the user is busy in another conversation
+  * [10fc777] MT#53241 The last state of the "Main menu" is not restored after RTCengine call
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 12 Jan 2023 09:29:53 +0100
+
 ngcp-csc-ui (10.5.1.8+0~mr10.5.1.8) unstable; urgency=medium
 
   [ Hugo Zigha ]
