@@ -1,3 +1,12 @@
+ngcp-csc-ui (11.1.1.7+0~mr11.1.1.7) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [c0520a2] MT#56343 WebRTC calls stuck on CSC interface
+  * [075dea3] MT#56085 Reply with 486 from WebRTC when the user is busy in another conversation
+  * [a3c6b7f] MT#53241 The last state of the "Main menu" is not restored after RTCengine call
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 12 Jan 2023 09:29:43 +0100
+
 ngcp-csc-ui (11.1.1.6+0~mr11.1.1.6) unstable; urgency=medium
 
   [ CORP\franci11 ]
