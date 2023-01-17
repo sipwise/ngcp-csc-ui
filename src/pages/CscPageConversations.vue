@@ -16,7 +16,8 @@
                 :default="tab.value === selectedTab"
                 :disable="listLoading"
                 @click="selectTab(tab.value)"
-            />
+            />       
+                
         </template>
         <template
             v-slot:toolbar
@@ -289,6 +290,7 @@ export default {
         },
         startCall (number) {
             this.$store.commit('call/numberInputChanged', number)
+            this.$root.$emit('start-call', 'audioOnly')
             this.$router.push('home')
         },
         downloadFax (fax) {
