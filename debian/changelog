@@ -1,3 +1,49 @@
+ngcp-csc-ui (11.2.1.0+0~mr11.2.1.0) unstable; urgency=medium
+
+  [ Mykola Malkov ]
+  * [c97988e] MT#55391 Add NODE_PATH variable to Dockerfile
+
+  [ Nico Schedel ]
+  * [11b4a0f] MT#55492 add data-cy for login page
+  * [24397c8] MT#55492 add data-cy for user menu
+  * [9446710] MT#55492 add data-cy for call page
+  * [d66f815] MT#55492 add data-cy to conversations page
+  * [af558c2] MT#55492 add data-cy for empty list in conversations page
+  * [3cdcf00] MT#55492 add data-cy for dashboard links to other pages
+  * [48993e8] MT#55492 add data-cy for fax settings, sendfax and destination creation
+  * [5d7e407] MT#55492 add data-cy for destinations list
+  * [9dfcfff] MT#55492 add data-cy for deletion dialog
+
+  [ Michael Prokop ]
+  * [bd8a150] MT#55813 MT#55391 Use bundled yarn
+
+  [ CORP\franci11 ]
+  * [63a0099] MT#32998 Customer admin user should be able to open seats configuration in a separated page
+  * [d83cb7f] MT#54497 do not change options 'description' on option change
+  * [8c6405b] MT#53842 CSC: voicemail page doesn't report in which folder the messages are
+  * [25fa549] MT#53860 Fix seat NameSyntax when creating a new subscriber
+  * [9d84761] MT#56138 Call Recording in CSC and AUI does not show who is the caller/callee
+  * [8030e05] MT#56083 [CSC] PBX Configuration > Groups configuration should be displayed like Seats
+  * [168f403] MT#33001 Configure subscriber's CLI via CSC panel
+  * [d772832] MT#53076 CSC: missing time/filter/search on Conversations page (comparing to v1 CSC)
+
+  [ Hugo Zigha ]
+  * [7f1094b] MT#55682 When uploading greeting files in CSC, filter shows unsupported options.
+  * [ab8e008] MT#55676 Call to the webRTC not working properly
+  * [c75aef6] MT#56003 update modules reported as critical
+  * [dcb49eb] MT#56343 WebRTC calls stuck on CSC interface
+  * [175c344] MT#56085 Reply with 486 from WebRTC when the user is busy in another conversation
+  * [256332c] MT#56339 update modules reported as critical
+  * [169cfa8] MT#53241 The last state of the "Main menu" is not restored after RTCengine call
+
+  [ Marco Capetta ]
+  * [2867213] MT#56307 PBX settings visible only if clir_intrapbx is enabled
+
+  [ Georges Francisco ]
+  * [c6613b0] MT#54808 Calls to Voicebox signed differently on Call list and Dashboard
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 17 Jan 2023 17:43:06 +0100
+
 ngcp-csc-ui (11.2.0.0+0~mr11.2.0.0) unstable; urgency=medium
 
   [ hherzog ]
