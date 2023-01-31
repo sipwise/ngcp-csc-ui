@@ -1,3 +1,16 @@
+ngcp-csc-ui (11.2.2.0+0~mr11.2.2.0) unstable; urgency=medium
+
+  [ Georges Francisco ]
+  * [1c32d03] MT#54861 Configure sip username, display-names and web username independently in CSC
+
+  [ Marco Capetta ]
+  * [ebacab6] MT#55940 Add new speeddial, forward, transfer device buttons
+
+  [ CORP\franci11 ]
+  * [55e02c4] MT#32999 Customer admin must be able to configure seat's call forward
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 31 Jan 2023 19:45:40 +0100
+
 ngcp-csc-ui (11.2.1.0+0~mr11.2.1.0) unstable; urgency=medium
 
   [ Mykola Malkov ]
