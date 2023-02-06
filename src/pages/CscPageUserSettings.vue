@@ -17,6 +17,7 @@
                 @change="requestWebPasswordChange"
             />
             <csc-change-password-embedded
+                v-if= "isAdministrative"
                 ref="changeSipPasswordSection"
                 class="q-mb-md"
                 :btn-label="$t('Change SIP Password')"
@@ -73,6 +74,7 @@ import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
 import { copyToClipboard } from 'quasar'
 import CscInputPassword from 'components/form/CscInputPassword'
 
+
 const WAIT_CHANGE_WEB_PASSWORD = 'processing-changeWebPassword'
 const WAIT_CHANGE_SIP_PASSWORD = 'processing-changeSIPPassword'
 
@@ -97,6 +99,9 @@ export default {
         }),
         currentSIPPassword () {
             return this.getSubscriber?.password || ''
+        },
+        isAdministrative () {
+            return this.getSubscriber?.administrative || false
         },
         currentSIPURI () {
             const subscriberData = this.getSubscriber
