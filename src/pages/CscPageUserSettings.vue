@@ -14,6 +14,7 @@
                 @change="changePassword"
             />
             <csc-change-password-embedded
+                v-if= "isAdministrative"
                 ref="changeSipPasswordSection"
                 class="q-mb-md"
                 :btn-label="$t('Change SIP Password')"
@@ -102,6 +103,9 @@ export default {
         }),
         currentSIPPassword () {
             return this.getSubscriber?.password || ''
+        },
+        isAdministrative () {
+            return this.getSubscriber?.administrative || false
         },
         currentSIPURI () {
             const subscriberData = this.getSubscriber
