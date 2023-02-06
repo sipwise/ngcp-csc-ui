@@ -102,13 +102,11 @@
             <csc-pbx-device-config
                 v-if="modelImage"
                 :device="device"
-                :profile="profile"
                 :model="model"
                 :model-image="modelImage"
                 :loading="subscribersLoading"
                 :subscribers="subscribers"
                 :subscriber-map="subscriberMap"
-                :subscriber-options="subscriberOptions"
                 @keysChanged="saveKeys"
             />
         </template>

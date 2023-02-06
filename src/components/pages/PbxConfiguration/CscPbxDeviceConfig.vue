@@ -30,67 +30,17 @@
             </div>
         </div>
         <div
-            v-show="keyOverlayActive"
+            v-if="keyOverlayActive"
             class="csc-pbx-device-config-key-overlay animate-fade"
         >
-            <div
-                class="csc-device-key-title row justify-center items-center"
-            >
-                <q-icon
-                    class="csc-device-key-title-icon"
-                    name="touch_app"
-                    size="24px"
-                />
-                <div
-                    class="column"
-                >
-                    <div
-                        class="csc-device-key-title-main"
-                    >
-                        {{ selectedKeySetName }}: {{ $t('Lamp/Key') }} {{ selectedKeyNumber }}
-                    </div>
-                </div>
-            </div>
-            <csc-pbx-auto-attendant-selection
-                :value="selectedKeySubscriber"
-                :options="subscriberOptions"
-                @input="keySubscriberChanged"
+            <csc-pbx-device-config-key-form
+                :selected-line="selectedLine"
+                :selected-key="selectedKey"
+                :subsriber-map="subscriberMap"
+                :loading="isDeviceLoading(device.id)"
+                @closeKeyOverlay="keyOverlayActive = false"
+                @onSave="onSave"
             />
-            <q-select
-                v-show="selectedKeySubscriber !== null && selectedKeySubscriber.value !== null"
-                ref="selectType"
-                v-model="selectedKeyType"
-                emit-value
-                map-options
-                :label="$t('Lamp/Key')"
-                :options="typeOptions"
-                @input="keyTypeChanged"
-            >
-                <template
-                    v-slot:prepend
-                >
-                    <q-icon
-                        name="radio_button_checked"
-                    />
-                </template>
-            </q-select>
-            <div
-                class="row justify-center actions"
-            >
-                <div
-                    class="column"
-                >
-                    <q-btn
-                        flat
-                        icon="clear"
-                        color="white"
-                        :big="isMobile"
-                        @click="closeKeyOverlay()"
-                    >
-                        {{ $t('Close') }}
-                    </q-btn>
-                </div>
-            </div>
         </div>
         <q-resize-observer
             @resize="windowResize"
@@ -100,25 +50,19 @@
 
 <script>
 import _ from 'lodash'
-import CscPbxAutoAttendantSelection from './CscPbxAutoAttendantSelection'
-import {
-    Platform
-} from 'quasar'
+import CscPbxDeviceConfigKeyForm from './CscPbxDeviceConfigKeyForm'
 import {
     BoundingBox2D
 } from 'src/helpers/graphics'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscPbxDeviceConfig',
     components: {
-        CscPbxAutoAttendantSelection
+        CscPbxDeviceConfigKeyForm
     },
     props: {
         device: {
-            type: Object,
-            default: null
-        },
-        profile: {
             type: Object,
             default: null
         },
@@ -129,12 +73,6 @@ export default {
         modelImage: {
             type: Object,
             default: null
-        },
-        subscriberOptions: {
-            type: Array,
-            default () {
-                return []
-            }
         },
         subscriberMap: {
             type: Object,
@@ -151,101 +89,13 @@ export default {
             scaledBoundingBox: null,
             selectedKey: null,
             selectedLine: null,
-            keyOverlayActive: false,
-            selectedKeyTypeData: null,
-            selectedLineIndex: null
+            keyOverlayActive: false
         }
     },
     computed: {
-        selectedKeyIcon () {
-            if (this.selectedLine !== null) {
-                const subscriber = this.subscriberMap[this.selectedLine.subscriber_id]
-                if (subscriber !== null && subscriber.is_pbx_pilot === true) {
-                    return 'person_outline'
-                } else if (subscriber !== null && subscriber.is_pbx_group === true) {
-                    return 'group'
-                } else if (subscriber !== null) {
-                    return 'person'
-                } else {
-                    return ''
-                }
-            }
-            return ''
-        },
-        selectedKeySubscriber () {
-            const unassignedItem = this.subscriberOptions[0]
-            if (this.selectedLine !== null) {
-                const selectedOption = this.subscriberOptions.find(opt => opt.value === this.selectedLine.subscriber_id)
-                return selectedOption || unassignedItem
-            }
-            return unassignedItem
-        },
-        selectedKeyType: {
-            get () {
-                if (this.selectedLine !== null) {
-                    return this.selectedLine.type
-                }
-                return _.get(this.typeOptions, '0.value', '')
-            },
-            set (type) {
-                this.selectedKeyTypeData = type
-            }
-        },
-        selectedKeySetName () {
-            if (this.selectedKey !== null) {
-                return this.selectedKey.keySet.name
-            }
-            return ''
-        },
-        selectedKeyNumber () {
-            if (this.selectedKey !== null) {
-                return (this.selectedKey.index + 1)
-            }
-            return ''
-        },
-        typeOptions () {
-            const options = []
-            if (this.selectedKey !== null && this.selectedKey.keySet.can_blf) {
-                options.push({
-                    label: this.$t('Busy Lamp Field'),
-                    value: 'blf'
-                })
-            }
-            if (this.selectedKey !== null && this.selectedKey.keySet.can_private) {
-                options.push({
-                    label: this.$t('Private'),
-                    value: 'private'
-                })
-            }
-            if (this.selectedKey !== null && this.selectedKey.keySet.can_shared) {
-                options.push({
-                    label: this.$t('Shared'),
-                    value: 'shared'
-                })
-            }
-            if (this.selectedKey !== null && this.selectedKey.keySet.can_speeddial) {
-                options.push({
-                    label: this.$t('SpeedDial'),
-                    value: 'speeddial'
-                })
-            }
-            if (this.selectedKey !== null && this.selectedKey.keySet.can_forward) {
-                options.push({
-                    label: this.$t('Forward'),
-                    value: 'forward'
-                })
-            }
-            if (this.selectedKey !== null && this.selectedKey.keySet.can_transfer) {
-                options.push({
-                    label: this.$t('Transfer'),
-                    value: 'transfer'
-                })
-            }
-            return options
-        },
-        isMobile () {
-            return Platform.is.mobile
-        },
+        ...mapGetters('pbxDevices', [
+            'isDeviceLoading'
+        ]),
         imageUrl () {
             return _.get(this.modelImage, 'url', null)
         },
@@ -265,9 +115,6 @@ export default {
             })
             return keys
         },
-        lines () {
-            return _.get(this.device, 'lines', [])
-        },
         canvasStyles () {
             return {
                 width: this.configWidth + 'px'
@@ -283,6 +130,9 @@ export default {
                 left: this.imageDeltaX + 'px',
                 width: (this.imageWidth * this.imageScaleFactor) + 'px'
             }
+        },
+        lines () {
+            return _.get(this.device, 'lines', [])
         }
     },
     watch: {
@@ -295,7 +145,6 @@ export default {
     mounted () {
         this.boundingBox = BoundingBox2D.createFromPoints(this.keys)
         this.boundingBox.addMargin(40)
-        this.loadGroupsAndSeats()
     },
     methods: {
         getLineByKey (key) {
@@ -317,8 +166,8 @@ export default {
             this.placeImage()
         },
         resize () {
-            this.imageWidth = this.$refs.image.naturalWidth
-            this.configWidth = this.$refs.config.clientWidth
+            this.imageWidth = this.$refs.image?.naturalWidth
+            this.configWidth = this.$refs.config?.clientWidth
             if (this.boundingBox !== null) {
                 if (this.boundingBox.getWidth() > this.configWidth) {
                     this.imageScaleFactor = this.configWidth / this.boundingBox.getWidth()
@@ -404,32 +253,19 @@ export default {
             this.keyOverlayActive = true
             this.$scrollTo(this.$parent.$el)
         },
-        closeKeyOverlay () {
-            this.keyOverlayActive = false
-        },
-        loadGroupsAndSeats () {
-            this.$emit('loadGroupsAndSeats')
-        },
-        keySubscriberChanged ({ value: subscriberId }) {
+        onSave(newLine) {
             const newLines = []
             const lines = _.clone(this.lines)
             const line = this.getLineByKey(this.selectedKey)
-            let changed = false
-            if (line !== null && subscriberId === null) {
+            if (line !== null && newLine.type === null ) {
                 delete lines[line.index]
-                changed = true
             } else if (line !== null) {
-                _.set(lines, line.index + '.subscriber_id', subscriberId)
-                changed = true
-            } else if (subscriberId !== null) {
-                newLines.push({
-                    extension_unit: 0,
-                    key_num: this.selectedKey.index,
-                    subscriber_id: subscriberId,
-                    linerange: this.selectedKey.keySet.name,
-                    type: this.$refs.selectType.value
-                })
-                changed = true
+                _.set(lines, line.index + '.subscriber_id', newLine.subscriber_id)
+                _.set(lines, line.index + '.target_number', newLine.target_number)
+                _.set(lines, line.index + '.type', newLine.type)
+
+            } else {
+                newLines.push(newLine)
             }
             lines.forEach((line) => {
                 newLines.push({
@@ -437,30 +273,11 @@ export default {
                     key_num: line.key_num,
                     subscriber_id: line.subscriber_id,
                     linerange: line.linerange,
-                    type: line.type
+                    type: line.type,
+                    target_number: line.target_number
                 })
             })
-            if (changed === true) {
-                this.$emit('keysChanged', newLines)
-            }
-        },
-        keyTypeChanged (type) {
-            const newLines = []
-            const lines = _.clone(this.lines)
-            const line = this.getLineByKey(this.selectedKey)
-            if (line != null) {
-                _.set(lines, line.index + '.type', type)
-                lines.forEach((line) => {
-                    newLines.push({
-                        extension_unit: line.extension_unit,
-                        key_num: line.key_num,
-                        subscriber_id: line.subscriber_id,
-                        linerange: line.linerange,
-                        type: line.type
-                    })
-                })
-                this.$emit('keysChanged', newLines)
-            }
+           this.$emit('keysChanged', newLines)
         }
     }
 }
