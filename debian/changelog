@@ -1,3 +1,13 @@
+ngcp-csc-ui (11.2.1.2+0~mr11.2.1.2) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [60f1cea] MT#55940 Add possibility to configure "user defined buttons" on phones via CSC panel
+
+  [ nouhaila ]
+  * [e804739] MT#56399 Give option to disable SIP-password-change in CSC
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 08 Feb 2023 16:12:00 +0100
+
 ngcp-csc-ui (11.2.1.1+0~mr11.2.1.1) unstable; urgency=medium
 
   [ Georges Francisco ]
