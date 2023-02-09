@@ -45,7 +45,7 @@
 
             <q-list
                 v-if="changes"
-                class="col"
+                class="col col-xs-12 col-md-6"
                 side
                 top
                 no-wrap
@@ -253,8 +253,6 @@
             class="col col-xs-12 col-md-6"
             v-else
         >
-        <!-- v-else-if="selectedTab === 'callForwards'" -->
-        <!-- v-if="hasSubscriberProfileAttributes(['cfu', 'cfna', 'cfb'])" -->
 
             <q-item
                 class="row justify-center q-pt-lg"
@@ -299,7 +297,7 @@
             >
                 <div
                     id="csc-wrapper-call-forwarding"
-                    class="col-xs-12 col-lg-8"
+                    class="col col-xs-12 col-md-6"
                 >
                     <q-list
                         v-if="groups.length === 0 && !$wait.is('csc-cf-mappings-full')"
