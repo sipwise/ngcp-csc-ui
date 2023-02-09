@@ -18,7 +18,7 @@
                     <q-icon
                         name="ring_volume"
                     />
-                    {{ primaryNumber | number }}
+                    {{ getPrimaryNumber }}
                 </span>
             </q-item-label>
         </q-item-section>
@@ -34,9 +34,11 @@
 
 <script>
 import {
-    mapGetters
+    mapGetters,
+    mapState
 } from 'vuex'
 import CscSpinner from 'components/CscSpinner'
+import numberFilter from '../../filters/number'
 export default {
     name: 'CscCfGroupItemPrimaryNumber',
     components: { CscSpinner },
@@ -67,11 +69,18 @@ export default {
         }
     },
     computed: {
+        ...mapState('pbxSeats', [
+            'seatSelected'
+        ]),
         ...mapGetters('user', [
             'primaryNumber'
         ]),
         waitIdentifier () {
             return 'csc'
+        },
+        getPrimaryNumber () {
+            const resultNumber = (this.seatSelected) ? numberFilter(this.seatSelected.primary_number) : numberFilter(this.primaryNumber)
+            return resultNumber
         }
     }
 }
