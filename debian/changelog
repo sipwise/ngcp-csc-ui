@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.5.3.4+0~mr10.5.3.4) unstable; urgency=medium
+
+  [ nouhaila ]
+  * [3bd52aa] MT#56399 Give option to disable SIP-password-change in CSC
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Feb 2023 10:11:15 +0100
+
 ngcp-csc-ui (10.5.3.3+0~mr10.5.3.3) unstable; urgency=medium
 
   [ Hugo Zigha ]
