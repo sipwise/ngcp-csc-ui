@@ -1,3 +1,13 @@
+ngcp-csc-ui (9.5.2.3+0~mr9.5.2.3) unstable; urgency=medium
+
+  [ Carlo Venusino ]
+  * [a5bd80b] TT#141104 SubscriberProfile - Not working for voicemail
+
+  [ nouhaila ]
+  * [38b58bb] MT#56399 Give option to disable SIP-password-change in CSC
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Feb 2023 10:10:48 +0100
+
 ngcp-csc-ui (9.5.2.2+0~mr9.5.2.2) unstable; urgency=medium
 
   [ Carlo Venusino ]
