@@ -15,6 +15,7 @@
                         :disable="dataLoading"
                         :label="$t('Music on Hold')"
                         :title="$t('&quot;Music on Hold&quot; - if set to true and a music on hold file is provided, a calling party gets that file played when put on hold')"
+                        data-cy="music-on-hold"
                         checked-icon="audiotrack"
                         unchecked-icon="audiotrack"
                         @input="toggleMusicOnHold"
