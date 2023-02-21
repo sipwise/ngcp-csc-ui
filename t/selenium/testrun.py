@@ -373,7 +373,7 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to log out...", end="")
         driver.find_element_by_xpath('//*[@id="csc-header-toolbar-main"]/button[contains(., "testuser")]').click()
-        driver.find_element_by_xpath('/html/body/div[3]/div/div').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div/div[2]').click()
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-login"]')) > 0,
             "Logout wasnt successful")
@@ -481,7 +481,7 @@ class testrun(unittest.TestCase):
         wait_for_invisibility(driver, '//*[@id="csc-page-call-blocking-privacy"]/div/div/div[2]/svg')
         click_js(driver, '//*[@id="csc-page-call-blocking-privacy"]//div[@role="checkbox"]/div[1]')
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-privacy"]//div[contains(., "Your number is hidden to the callee")]')) > 0,
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-blocking-privacy"]//div[@aria-checked="true"]')) > 0,
             "Privacy setting wasnt enabled")
         filename = 0
 
@@ -507,17 +507,18 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]//div//button[contains(., "Filter")]').click()
         click_js(driver, '//*[@id="csc-page-call-recording"]//div[@data-cy="csc-call-recording-filters"]//label[1]/div/div/div[1]')
         driver.find_element_by_xpath('/html/body/div[3]/div[2]/div[1]').click()
-        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[1]/div[2]/label[1]/div/div/div[1]').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[3]/div/div[1]/div[2]/label[1]/div/div/div[1]').click()
         driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/div[2]/div/button').click()
-        checkstring = "Start time: " + now.strftime("%Y-%m-%d")
+        checkstring = "Start time: " + now.strftime("%Y-%m-%d") + " 00:00"
+        print(checkstring)
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[2]/div/div[contains(., "' + checkstring + '")]')) > 0,
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-recording"]//div[contains(., "' + checkstring + '")]')) > 0,
             "Start timerange could not be found")
-        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[1]/div[2]/label[2]/div/div/div[1]').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[3]/div/div[1]/div[2]/label[2]/div/div/div[1]').click()
         driver.find_element_by_xpath('/html/body/div[3]/div/div[2]/div[2]/div/button').click()
-        checkstring = "End time: " + now.strftime("%Y-%m-%d")
+        checkstring = "End time: " + now.strftime("%Y-%m-%d") + " 00:00"
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[2]/div/div[contains(., "' + checkstring + '")]')) > 0,
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-recording"]//div[contains(., "' + checkstring + '")]')) > 0,
             "End timerange could not be found")
         print("OK")
         print("Try to remove the End time...", end="")
@@ -528,9 +529,9 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]//div//label//div[contains(., "Filter by")]').click()
         click_js(driver, '/html/body/div[3]/div[2]/div[4]')
         fill_element(driver, '//*[@id="csc-page-call-recording"]//div//label//input[@aria-label="CallID"]', "TestCallID")
-        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[1]/div[2]/label/div/div/div[2]').click()
+        driver.find_element_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[3]/div/div[1]/div[2]/label/div/div/div[2]').click()
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-recording"]/div[1]/div/div[2]/div/div[2]/div/div[contains(., "CallID: TestCallID")]')) > 0,
+            len(driver.find_elements_by_xpath('//*[@id="csc-page-call-recording"]//div[contains(., "CallID: TestCallID")]')) > 0,
             "Call ID could not be found")
         print("OK")
         print("Try to delete all filters...", end="")
