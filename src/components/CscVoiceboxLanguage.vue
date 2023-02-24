@@ -8,6 +8,7 @@
                 :disable="loading"
                 :readonly="loading"
                 :label="$t('Language for voicemail and app server')"
+                data-cy="voicebox-change-language"
                 :title="$t('Voice prompts language for voicemail, conference and application server')"
                 :options="languageOptions"
                 v-on="$listeners"

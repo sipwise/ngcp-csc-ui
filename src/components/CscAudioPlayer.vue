@@ -18,6 +18,7 @@
                 dense
                 color="primary"
                 icon="play_arrow"
+                data-cy="csc-player-play"
                 :disable="disable"
                 @click="playLoad()"
             />
@@ -27,6 +28,7 @@
                 dense
                 color="primary"
                 icon="pause"
+                data-cy="csc-player-pause"
                 :disable="disable"
                 @click="toggle()"
             />
@@ -41,6 +43,7 @@
                 dense
                 color="primary"
                 icon="stop"
+                data-cy="csc-player-stop"
                 @click="stop()"
             />
         </q-item-section>

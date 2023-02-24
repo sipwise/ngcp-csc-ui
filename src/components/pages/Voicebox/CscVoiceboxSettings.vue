@@ -8,6 +8,7 @@
                     :loading="pinRequesting"
                     :disable="pinRequesting"
                     :label="$t('Change PIN')"
+                    data-cy="voicebox-change-pin"
                     :error="$v.changes.pin.$error"
                     :error-message="pinErrorMessage"
                     @keyup.enter="updatePin"
@@ -31,6 +32,7 @@
                             flat
                             dense
                             :label="$t('Save')"
+                            data-cy="voicebox-change-pin-save"
                             :disable="pinRequesting"
                             @click="updatePin"
                         />
@@ -45,6 +47,7 @@
                     :loading="emailRequesting"
                     :disable="emailRequesting"
                     :label="$t('Change Email')"
+                    data-cy="voicebox-change-email"
                     :error="$v.changes.email.$error"
                     :error-message="emailErrorMessage"
                     @keyup.enter="updateEmail"
@@ -68,6 +71,7 @@
                             flat
                             dense
                             :label="$t('Save')"
+                            data-cy="voicebox-change-email-save"
                             :disable="emailRequesting"
                             @click="updateEmail"
                         />

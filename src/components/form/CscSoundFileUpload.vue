@@ -34,6 +34,7 @@
                             flat
                             dense
                             :label="$t('Select')"
+                            data-cy="csc-fileselect-select"
                             :disable="isPlaying"
                             @click="$refs.fileUpload.click()"
                         />
@@ -44,6 +45,7 @@
                             flat
                             dense
                             :label="$t('Remove')"
+                            data-cy="csc-fileselect-remove"
                             :disable="isPlaying"
                             @click="remove"
                         />
@@ -54,6 +56,7 @@
                             flat
                             dense
                             :label="$t('Reset')"
+                            data-cy="csc-fileselect-reset"
                             :disable="isPlaying"
                             @click="cancel"
                         />
@@ -64,6 +67,7 @@
                             flat
                             dense
                             :label="$t('Upload')"
+                            data-cy="csc-fileselect-upload"
                             :disable="isPlaying"
                             @click="upload"
                         />
