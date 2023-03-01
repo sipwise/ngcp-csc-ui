@@ -31,17 +31,21 @@
         <q-item-section
             side
         >
-            <csc-more-menu>
+            <csc-more-menu
+                data-cy="csc-blocked-number-menu"
+            >
                 <csc-popup-menu-item
                     icon="edit"
                     color="primary"
                     :label="$t('Edit')"
+                    data-cy="csc-blocked-number-edit"
                     @click="edit"
                 />
                 <csc-popup-menu-item
                     icon="delete"
                     color="negative"
                     :label="$t('Remove')"
+                    data-cy="csc-blocked-number-delete"
                     @click="remove"
                 />
             </csc-more-menu>

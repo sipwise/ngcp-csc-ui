@@ -6,6 +6,7 @@
         <csc-call-input
             v-model="number"
             :label="$t('Number')"
+            data-cy="csc-block-number-input"
             @submit="save"
             @error="error"
         />
@@ -16,6 +17,7 @@
                 flat
                 color="default"
                 icon="clear"
+                data-cy="csc-block-number-cancel"
                 @mousedown.native="cancel()"
             >
                 {{ $t('Cancel') }}
@@ -25,6 +27,7 @@
                 flat
                 color="primary"
                 icon="done"
+                data-cy="csc-block-number-save"
                 :disable="saveDisabled"
                 @click="save()"
             >
@@ -46,6 +49,7 @@
             flat
             color="primary"
             icon="add"
+            data-cy="csc-add-number"
             @click="add()"
         >
             {{ $t('Add number') }}

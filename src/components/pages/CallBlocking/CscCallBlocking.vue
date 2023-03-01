@@ -13,6 +13,7 @@
                     :label="$t('All anonymous incoming calls are blocked')"
                     :value="isAnonymousBlocked"
                     :disable="isAnonymousBlockRequesting"
+                    data-cy="csc-enable-incoming"
                     checked-icon="block"
                     unchecked-icon="block"
                     @input="toggleBlockAnonymous()"
@@ -36,6 +37,7 @@
                         <q-radio
                             :value="listMode"
                             :label="getTranslation('toggleDisableLabel')"
+                            data-cy="csc-block-all"
                             val="blacklist"
                             color="primary"
                             @input="updateListMode"
@@ -54,6 +56,7 @@
                         <q-radio
                             :value="listMode"
                             :label="getTranslation('toggleEnableLabel')"
+                            data-cy="csc-block-listed"
                             val="whitelist"
                             color="primary"
                             @input="updateListMode"
