@@ -42,6 +42,7 @@
                 </template>
             </q-input>
             <csc-input-password
+                v-if= "isAdministrative"
                 :value="currentSIPPassword"
                 :label="$t('SIP Password')"
                 readonly
