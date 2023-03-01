@@ -14,6 +14,7 @@
                         :label="$t('Hide your number to the callee')"
                         :value="privacy"
                         :disable="privacyLoading"
+                        data-cy="csc-privacy-hide"
                         checked-icon="visibility_off"
                         unchecked-icon="visibility"
                         @input="toggle()"
