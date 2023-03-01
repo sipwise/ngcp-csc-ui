@@ -11,6 +11,7 @@
                     dense
                     :options="filterTypeOptions"
                     :label="$t('Filter by')"
+                    data-cy="csc-recording-filter"
                     :disable="loading"
                 />
             </div>
@@ -24,6 +25,7 @@
                     dense
                     :disable="loading || filterType === null"
                     :label="$t('Start time')"
+                    data-cy="csc-recording-filter-time-start"
                 >
                     <template v-slot:prepend>
                         <q-icon
@@ -88,6 +90,7 @@
                     dense
                     :disable="loading || filterType === null"
                     :label="$t('End time')"
+                    data-cy="csc-recording-filter-time-end"
                     @input="triggerFilter"
                 >
                     <template v-slot:prepend>
@@ -157,6 +160,7 @@
                     dense
                     :disable="loading || filterType === null"
                     :label="(filterType === null) ? $t('Type something') : filterTypeModel.label"
+                    data-cy="csc-recording-filter-input"
                     @keypress.enter="triggerFilter"
                     @keydown.space.prevent
                 >
