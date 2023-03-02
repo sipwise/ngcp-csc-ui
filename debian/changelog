@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.5.1.11+0~mr10.5.1.11) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [08b8534] MT#56783 Show SIP password only to administrative subscribers
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 02 Mar 2023 12:17:57 +0100
+
 ngcp-csc-ui (10.5.1.10+0~mr10.5.1.10) unstable; urgency=medium
 
   [ nouhaila ]
