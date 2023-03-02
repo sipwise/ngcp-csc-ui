@@ -171,7 +171,7 @@ export default {
                             to: '/user/pbx-configuration/call-queues',
                             icon: 'filter_none',
                             label: this.$t('Call Queues'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettingsCallQueue)
                         },
                         {
                             to: '/user/pbx-configuration/sound-sets',
@@ -183,13 +183,13 @@ export default {
                             to: '/user/pbx-configuration/ms-configs',
                             icon: 'arrow_forward',
                             label: this.$t('Manager Secretary'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.manager_secretary)
                         },
                         {
                             to: '/user/pbx-configuration/auto-attendant',
                             icon: 'dialpad',
                             label: this.$t('Auto-attendant'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.auto_attendant)
                         }
                     ]
                 },
