@@ -15,7 +15,13 @@ export const PROFILE_ATTRIBUTE_MAP = {
     cscCalls: 'csc_calls',
     clir_intrapbx: 'clir_intrapbx',
     manager_secretary: 'manager_secretary',
-    auto_attendant: 'auto_attendant'
+    auto_attendant: 'auto_attendant',
+    soundSet: 'contract_sound_set',
+    deviceProvisioning: 'csc_device_provisioning',
+    conversations: 'csc_conversations',
+    registeredDevices: 'csc_registered_devices',
+    recordings: 'record_call',
+    huntGroups: 'csc_hunt_groups'
 }
 
 export const PROFILE_ATTRIBUTES_MAP = {

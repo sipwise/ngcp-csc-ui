@@ -78,7 +78,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Calls, Faxes, VoiceMails')
-                        }
+                        },
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.conversations
                     }
                 },
                 {
@@ -138,7 +139,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Call recordings')
-                        }
+                        },
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.recordings
                     }
                 },
                 {
@@ -176,7 +178,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Groups')
-                        }
+                        },
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.huntGroups
                     }
                 },
                 {
@@ -224,7 +227,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Devices')
-                        }
+                        },
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.deviceProvisioning
                     }
                 },
                 {
@@ -249,7 +253,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('Sound Sets')
-                        }
+                        },
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.soundSet
                     }
                 },
                 {
@@ -398,7 +403,8 @@ export default function routes (app) {
                         },
                         get subtitle () {
                             return i18n.t('List of registered devices for the subscriber')
-                        }
+                        },
+                        profileAttribute: PROFILE_ATTRIBUTE_MAP.registeredDevices
                     }
                 },
                 {

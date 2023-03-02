@@ -74,7 +74,7 @@ export default {
                     icon: 'question_answer',
                     label: this.$t('Conversations'),
                     sublabel: this.$t('Calls, Faxes, VoiceMails'),
-                    visible: true
+                    visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
                 },
                 {
                     icon: 'settings_phone',
@@ -133,7 +133,7 @@ export default {
                             to: '/user/recordings',
                             icon: 'play_circle',
                             label: this.$t('Recordings'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings)
                         }
                     ]
                 },
@@ -159,13 +159,13 @@ export default {
                             to: '/user/pbx-configuration/groups',
                             icon: 'group',
                             label: this.$t('Groups'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.huntGroups)
                         },
                         {
                             to: '/user/pbx-configuration/devices',
                             icon: 'fas fa-fax',
                             label: this.$t('Devices'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.deviceProvisioning)
                         },
                         {
                             to: '/user/pbx-configuration/call-queues',
@@ -177,7 +177,7 @@ export default {
                             to: '/user/pbx-configuration/sound-sets',
                             icon: 'queue_music',
                             label: this.$t('Sound Sets'),
-                            visible: true
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.soundSet)
                         },
                         {
                             to: '/user/pbx-configuration/ms-configs',
@@ -228,7 +228,7 @@ export default {
                     to: '/user/registered-devices',
                     icon: 'devices',
                     label: this.$t('Registered Devices'),
-                    visible: true
+                    visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.registeredDevices)
                 },
                 {
                     to: '/customer/' + this.getCustomerId + '/details',

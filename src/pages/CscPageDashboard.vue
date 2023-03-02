@@ -4,6 +4,7 @@
         class="row justify-center"
     >
         <csc-card-dashboard
+            v-if= "showConvList"
             :title="$t('Voicebox Messages')"
             :count="voicemailsCount"
             :count-title="$t('Messages')"
@@ -17,6 +18,7 @@
             @action="downloadVoicemail"
         />
         <csc-card-dashboard
+            v-if= "showConvList"
             :title="$t('Call List')"
             :count="callsCount"
             :count-title="$t('Calls')"
@@ -39,6 +41,7 @@
             </template>
         </csc-card-dashboard>
         <csc-card-dashboard
+            v-if= "showRegDevices"
             :title="$t('Registered Devices')"
             :count="registeredDevicesCount"
             :count-title="$t('Registered Devices')"
@@ -62,6 +65,9 @@ import {
     showGlobalError
 } from 'src/helpers/ui'
 import {
+    mapGetters
+} from 'vuex'
+import {
     date
 } from 'quasar'
 import { INTERNAL_DATE_FORMAT_DASH_HOUR } from 'src/constants'
@@ -70,6 +76,7 @@ import {
     callIcon
 } from 'src/helpers/call-utils'
 import { mapState } from 'vuex'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 export default {
     name: 'CscPageDashboard',
     components: {
@@ -93,7 +100,16 @@ export default {
     computed: {
         ...mapState('call', [
             'callEnabled'
-        ])
+        ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
+        ]),
+        showConvList () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
+        },
+        showRegDevices () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.registeredDevices)
+        },
     },
     watch: {
         async callEnabled () {
