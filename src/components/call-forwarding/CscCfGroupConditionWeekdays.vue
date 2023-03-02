@@ -16,6 +16,7 @@
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
+                data-cy="csc-weekdays-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -23,6 +24,7 @@
             />
             <q-btn
                 :label="$t('Save')"
+                data-cy="csc-weekdays-save"
                 flat
                 color="primary"
                 icon="check"

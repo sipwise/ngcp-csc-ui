@@ -51,6 +51,7 @@
                         {{ sourceSet.name }}
                         <csc-cf-condition-popup-call-from
                             v-if="sourceSet.mode === 'whitelist'"
+                            data-cy="csc-condtion-call-from"
                             :mapping="mapping"
                             :destination-set="destinationSet"
                             :source-set="sourceSet"
@@ -59,6 +60,7 @@
                         />
                         <csc-cf-condition-popup-call-not-from
                             v-else
+                            data-cy="csc-condtion-call-not-from"
                             :mapping="mapping"
                             :destination-set="destinationSet"
                             :source-set="sourceSet"
@@ -84,6 +86,7 @@
                             />
                             {{ timeSet.times | timeSetDateExact }}
                             <csc-cf-condition-popup-date
+                                data-cy="csc-condtion-date"
                                 :mapping="mapping"
                                 :destination-set="destinationSet"
                                 :source-set="sourceSet"
@@ -105,6 +108,7 @@
                             />
                             {{ timeSet.times | timeSetDateRange }}
                             <csc-cf-condition-popup-date-range
+                                data-cy="csc-condtion-date-range"
                                 :mapping="mapping"
                                 :destination-set="destinationSet"
                                 :source-set="sourceSet"
@@ -126,6 +130,7 @@
                             />
                             {{ timeSet.times | timeSetWeekdays }}
                             <csc-cf-condition-popup-weekdays
+                                data-cy="csc-condtion-weekdays"
                                 :mapping="mapping"
                                 :destination-set="destinationSet"
                                 :source-set="sourceSet"
@@ -147,6 +152,7 @@
                             />
                             {{ timeSet.times | timeSetOfficeHoursSameTime }}
                             <csc-cf-condition-popup-office-hours
+                                data-cy="csc-condtion-office-hours"
                                 :mapping="mapping"
                                 :destination-set="destinationSet"
                                 :source-set="sourceSet"
@@ -201,17 +207,20 @@
                         v-if="mapping.type === 'cfu' && hasSubscriberProfileAttribute('cft')"
                         icon="ring_volume"
                         :label="$t('Ring primary number')"
+                        data-cy="csc-forwarding-ring-primary"
                         @click="ringPrimaryNumberEvent"
                     />
                     <csc-popup-menu-item
                         v-if="mapping.type === 'cft'"
                         icon="phone_disabled"
                         :label="$t('Do not ring primary number')"
+                        data-cy="csc-forwarding-do-not-ring-primary"
                         @click="doNotRingPrimaryNumberEvent"
                     />
                     <csc-popup-menu-item
                         :icon="destinationIconByType('Number')"
                         :label="$t('Forward to Number')"
+                        data-cy="csc-forwarding-to-number"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destinationSetId: destinationSet.id
@@ -221,6 +230,7 @@
                         v-if="hasSubscriberProfileAttribute('voice_mail')"
                         :icon="destinationIconByType('VoiceBox')"
                         :label="$t('Forward to Voicebox')"
+                        data-cy="csc-forwarding-to-voicebox"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destination: 'voicebox',
@@ -231,6 +241,7 @@
                         v-if="platformInfo.conference"
                         :icon="destinationIconByType('Conference')"
                         :label="$t('Forward to Conference')"
+                        data-cy="csc-forwarding-to-conference"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destination: 'conference',
@@ -241,6 +252,7 @@
                         v-if="platformInfo.faxserver"
                         :icon="destinationIconByType('Fax2Mail')"
                         :label="$t('Forward to Fax2Mail')"
+                        data-cy="csc-forwarding-to-fax2mail"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destination: 'fax2mail',
@@ -251,6 +263,7 @@
                         v-if="platformInfo.manager_secretary"
                         :icon="destinationIconByType('ManagerSecretary')"
                         :label="$t('Forward to Manager Secretary')"
+                        data-cy="csc-forwarding-to-manager-secretary"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destination: 'managersecretary',
@@ -260,6 +273,7 @@
                     <csc-popup-menu-item
                         :icon="destinationIconByType('CustomAnnouncement')"
                         :label="$t('Forward to Custom Announcement')"
+                        data-cy="csc-forwarding-custom-annoucement"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destination: 'customhours',
@@ -274,6 +288,7 @@
                         v-if="isPbxAttendant && platformInfo.cloudpbx"
                         :icon="destinationIconByType('AutoAttendant')"
                         :label="$t('Forward to Auto Attendant')"
+                        data-cy="csc-forwarding-to-auto-attendant"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destination: 'autoattendant',
@@ -284,6 +299,7 @@
                         v-if="isPbxAttendant && platformInfo.cloudpbx"
                         :icon="destinationIconByType('OfficeHoursAnnouncement')"
                         :label="$t('Forward to Office Hours Announcement')"
+                        data-cy="csc-forwarding-to-office-hours-announcement"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destination: 'officehours',
@@ -294,6 +310,7 @@
                         v-if="platformInfo.callingcard"
                         :icon="destinationIconByType('CallingCard')"
                         :label="$t('Forward to Calling Card')"
+                        data-cy="csc-forwarding-to-calling-card"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destination: 'callingcard',
@@ -304,6 +321,7 @@
                         v-if="platformInfo.callthrough"
                         :icon="destinationIconByType('CallThrough')"
                         :label="$t('Forward to Call Through')"
+                        data-cy="csc-forwarding-to-call-through"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destination: 'callthrough',
@@ -314,6 +332,7 @@
                         v-if="platformInfo.callthrough || platformInfo.callingcard"
                         :icon="destinationIconByType('LocalSubscriber')"
                         :label="$t('Forward to Local Subscriber')"
+                        data-cy="csc-forwarding-to-local-subscriber"
                         :disable="hasTermination"
                         @click="addDestinationEvent({
                             destination: 'localuser',
@@ -323,9 +342,11 @@
                     <csc-popup-menu-item
                         :icon="(mapping.enabled)?'toggle_on':'toggle_off'"
                         :label="(mapping.enabled)?$t('Disable'):$t('Enable')"
+                        data-cy="csc-forwarding-disable"
                         @click="toggleMappingEvent(mapping)"
                     />
                     <csc-popup-menu-item-delete
+                        data-cy="csc-forwarding-delete"
                         @click="deleteMappingEvent(mapping)"
                     />
                 </template>

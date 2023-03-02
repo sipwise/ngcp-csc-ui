@@ -30,6 +30,7 @@
                 <q-checkbox
                     v-model="sameTimes"
                     :label="$t('Same time for selected days')"
+                    data-cy="csc-office-hours-sametime"
                     :disable="$v.$invalid"
                 />
             </div>
@@ -57,6 +58,7 @@
                             v-model="v.from.$model"
                             dense
                             :label="$t('Start time')"
+                            data-cy="csc-office-hours-starttime"
                             mask="##:##"
                             fill-mask
                             :disable="disabled"
@@ -95,6 +97,7 @@
                             v-model="v.to.$model"
                             dense
                             :label="$t('End time')"
+                            data-cy="csc-office-hours-endtime"
                             mask="##:##"
                             fill-mask
                             :disable="disabled"
@@ -136,6 +139,7 @@
                             dense
                             color="negative"
                             icon="delete"
+                            data-cy="csc-office-hours-delete-timerange"
                             :disable="currentDayTimeRanges.length < 2 || disabled"
                             @click="removeTimeRangeDialog(index)"
                         />
@@ -148,6 +152,7 @@
                     icon="add"
                     flat
                     :label="$t('Add time range')"
+                    data-cy="csc-office-hours-add-timerange"
                     :disable="disabled"
                     @click="addTimeRange"
                 />
@@ -159,6 +164,7 @@
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
+                data-cy="csc-office-hours-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -168,6 +174,7 @@
             <q-btn
                 v-if="!invalidTimeset"
                 :label="$t('Save')"
+                data-cy="csc-office-hours-save"
                 flat
                 color="primary"
                 icon="check"

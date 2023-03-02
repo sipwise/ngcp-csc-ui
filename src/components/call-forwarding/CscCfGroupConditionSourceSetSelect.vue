@@ -13,6 +13,7 @@
                 :mode="mode"
                 dense
                 :label="$t('Number list')"
+                data-cy="csc-call-select-number-list"
             />
         </div>
         <template
@@ -23,10 +24,12 @@
                 flat
                 color="primary"
                 icon="source"
+                data-cy="csc-call-select-edit-list"
                 @click="$emit('create')"
             />
             <q-btn
                 :label="$t('Save')"
+                data-cy="csc-call-selection-save"
                 flat
                 color="primary"
                 icon="check"

@@ -19,6 +19,7 @@
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
+                data-cy="csc-group-date-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -26,6 +27,7 @@
             />
             <q-btn
                 :label="$t('Save')"
+                data-cy="csc-group-date-save"
                 flat
                 color="primary"
                 icon="check"

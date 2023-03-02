@@ -18,6 +18,7 @@
                         dense
                         clearable
                         :label="$t('Number list name')"
+                        data-cy="csc-call-select-number-list"
                     />
                 </q-item-section>
             </q-item>
@@ -32,6 +33,7 @@
                         dense
                         clearable
                         :label="$t('Number')"
+                        data-cy="csc-call-select-number"
                     >
                         <template
                             v-if="index > 0"
@@ -41,6 +43,7 @@
                                 dense
                                 color="negative"
                                 icon="delete"
+                                data-cy="csc-call-select-number-delete"
                                 @click="deleteNumber(index)"
                             />
                         </template>
@@ -53,6 +56,7 @@
                 <q-item-section>
                     <q-btn
                         :label="$t('Add number')"
+                        data-cy="csc-call-select-number-add"
                         flat
                         color="primary"
                         icon="add"
@@ -67,6 +71,7 @@
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
+                data-cy="csc-call-select-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -75,6 +80,7 @@
             <q-btn
                 v-if="unassignButton"
                 :label="$t('Unassign')"
+                data-cy="csc-call-select-unassign"
                 flat
                 color="primary"
                 icon="undo"
@@ -82,6 +88,7 @@
             />
             <q-btn
                 :label="$t('Select')"
+                data-cy="csc-call-select-select"
                 flat
                 color="primary"
                 icon="source"
@@ -89,6 +96,7 @@
             />
             <q-btn
                 :label="$t('Save')"
+                data-cy="csc-call-select-save"
                 flat
                 color="primary"
                 icon="check"

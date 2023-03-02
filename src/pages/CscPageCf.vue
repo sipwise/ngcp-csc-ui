@@ -12,6 +12,7 @@
                 icon="add"
                 color="primary"
                 :label="$t('Add forwarding')"
+                data-cy="csc-add-forwarding"
                 :disable="$wait.is('csc-cf-mappings-full')"
                 :loading="$wait.is('csc-cf-mappings-full')"
             >
@@ -20,18 +21,21 @@
                         v-if="hasSubscriberProfileAttribute('cfu')"
                         color="primary"
                         :label="$t('If available')"
+                        data-cy="csc-add-forwarding-available"
                         @click="createMapping({ type: 'cfu'})"
                     />
                     <csc-popup-menu-item
                         v-if="hasSubscriberProfileAttribute('cfna')"
                         color="primary"
                         :label="$t('If not available')"
+                        data-cy="csc-add-forwarding-not-available"
                         @click="createMapping({ type: 'cfna'})"
                     />
                     <csc-popup-menu-item
                         v-if="hasSubscriberProfileAttribute('cfb')"
                         color="primary"
                         :label="$t('If busy')"
+                        data-cy="csc-add-forwarding-busy"
                         @click="createMapping({ type: 'cfb'})"
                     />
                 </csc-popup-menu>

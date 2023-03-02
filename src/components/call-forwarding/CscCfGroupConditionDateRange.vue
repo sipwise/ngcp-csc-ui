@@ -38,6 +38,7 @@
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
+                data-cy="csc-group-date-range-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -46,6 +47,7 @@
             <q-btn
                 v-if="!invalidDateset"
                 :label="$t('Save')"
+                data-cy="csc-group-date-range-save"
                 flat
                 color="primary"
                 icon="check"
