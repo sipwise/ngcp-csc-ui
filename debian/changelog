@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.5.3.6+0~mr10.5.3.6) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [1b14f0d] MT#55336 Add support for items that returned from a non array API
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Mar 2023 14:26:35 +0100
+
 ngcp-csc-ui (10.5.3.5+0~mr10.5.3.5) unstable; urgency=medium
 
   [ Marco Capetta ]
