@@ -94,7 +94,10 @@ export async function getList (options) {
     if (lastPage === 0) {
         lastPage = null
     }
-    const items = _.get(body, options.root, [])
+    let items = _.get(body, options.root, [])
+    if (!Array.isArray(items)) {
+        items = [items]
+    }
     for (let i = 0; i < items.length; i++) {
         items[i] = normalizeEntity(items[i])
     }
