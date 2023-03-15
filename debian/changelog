@@ -1,3 +1,23 @@
+ngcp-csc-ui (10.5.4.1+0~mr10.5.4.1) unstable; urgency=medium
+
+  [ CORP\franci11 ]
+  * [c1fd033] MT#56138 Call Recording in CSC and AUI does not show who is the caller/callee
+  * [fce6f21] MT#53076 CSC: missing time/filter/search on Conversations page (comparing to v1 CSC)
+
+  [ Hugo Zigha ]
+  * [e954ecf] MT#56343 WebRTC calls stuck on CSC interface
+  * [75a6cbd] MT#56085 Reply with 486 from WebRTC when the user is busy in another conversation
+  * [df5da62] MT#53241 The last state of the "Main menu" is not restored after RTCengine call
+
+  [ nouhaila ]
+  * [6265875] MT#56399 Give option to disable SIP-password-change in CSC
+
+  [ Marco Capetta ]
+  * [a466a50] MT#56783 Show SIP password only to administrative subscribers
+  * [4b54b0c] MT#55336 Add support for items that returned from a non array API
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 15 Mar 2023 16:08:54 +0100
+
 ngcp-csc-ui (10.5.4.0+0~mr10.5.4.0) unstable; urgency=medium
 
   [ Nico Schedel ]
