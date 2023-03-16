@@ -1,7 +1,5 @@
 <template>
-    <q-item
-        :disable="loading || !mapping.enabled"
-    >
+    <q-item>
         <q-item-section
             side
         >
@@ -9,7 +7,10 @@
                 name="subdirectory_arrow_right"
             />
         </q-item-section>
-        <q-item-section>
+        <q-item-section
+            :disabled="loading || !mapping.enabled"
+            >
+            
             <q-item-label>
                 <template
                     v-if="destinationIndex === 0 && mapping.type !== 'cft'"

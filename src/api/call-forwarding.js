@@ -7,6 +7,7 @@ import {
     v4
 } from 'uuid'
 import _ from 'lodash'
+import { showGlobalError } from 'src/helpers/ui'
 
 export async function cfLoadMappings (subscriberId) {
     return get({
@@ -67,20 +68,24 @@ export async function cfCreateSourceSet (id, payload) {
             source: number
         })
     })
-    const res = await post({
-        resource: 'cfsourcesets',
-        body: {
-            name: payload.name,
-            subscriber_id: id,
-            is_regex: true,
-            sources: sources,
-            mode: payload.mode
+    try {
+        const res = await post({
+            resource: 'cfsourcesets',
+            body: {
+                name: payload.name,
+                subscriber_id: id,
+                is_regex: true,
+                sources: sources,
+                mode: payload.mode
+            }
+        })
+        if (!_.isString(res)) {
+            return res.id + ''
+        } else {
+            return res
         }
-    })
-    if (!_.isString(res)) {
-        return res.id + ''
-    } else {
-        return res
+    } catch (e) {
+        showGlobalError(e)
     }
 }
 

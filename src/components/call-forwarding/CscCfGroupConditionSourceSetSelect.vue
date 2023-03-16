@@ -80,6 +80,10 @@ export default {
         createLabel: {
             type: String,
             required: true
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     data () {
@@ -94,7 +98,8 @@ export default {
         async selectSourceSetEvent () {
             await this.assignSourceSet({
                 mapping: this.mapping,
-                id: this.selectedSourceSet
+                id: this.selectedSourceSet,
+                subscriberId: this.subscriberId
             })
             this.$emit('close')
         }

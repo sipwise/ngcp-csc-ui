@@ -34,7 +34,6 @@
             >
                 <csc-call-item
                     :call="call"
-                    :call-available="callAvailable"
                     :sleek-mode=true
                 />
             </template>

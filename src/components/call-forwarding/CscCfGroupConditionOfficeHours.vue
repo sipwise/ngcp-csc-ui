@@ -223,6 +223,10 @@ export default {
         deleteButton: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     data () {
@@ -432,7 +436,8 @@ export default {
         async createTimeSetOfficeHoursEvent () {
             try {
                 const payload = {
-                    mapping: this.mapping
+                    mapping: this.mapping,
+                    subscriberId: this.subscriberId
                 }
                 if (this.timeSet) {
                     payload.id = this.timeSet.id
@@ -457,7 +462,8 @@ export default {
             try {
                 await this.deleteTimeSet({
                     mapping: this.mapping,
-                    id: this.timeSet.id
+                    id: this.timeSet.id,
+                    subscriberId: this.subscriberId
                 })
             } catch (e) {
                 showGlobalError(e)

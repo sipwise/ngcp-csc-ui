@@ -84,6 +84,10 @@ export default {
         deleteButton: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     data () {
@@ -126,7 +130,8 @@ export default {
             const kamilioTimesets = humanDatesetToKamailio([{ from: dateFrom, to: dateTo }])
             const payload = {
                 mapping: this.mapping,
-                date: kamilioTimesets
+                date: kamilioTimesets,
+                subscriberId: this.subscriberId
             }
             if (this.timeSet) {
                 payload.id = this.timeSet.id
@@ -139,7 +144,8 @@ export default {
         async deleteSourceSetEvent () {
             await this.deleteTimeSet({
                 mapping: this.mapping,
-                id: this.timeSet.id
+                id: this.timeSet.id,
+                subscriberId: this.subscriberId
             })
         }
     }

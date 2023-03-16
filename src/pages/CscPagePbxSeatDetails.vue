@@ -22,7 +22,7 @@
                 />
                 <q-breadcrumbs-el
                     key="seat"
-                    :label="seatSelected.display_name"
+                    :label="(seatSelected.display_name) ? seatSelected.display_name : seatSelected.username"
                 />
             </q-breadcrumbs>
 
@@ -315,7 +315,8 @@
                                 </q-item-label>
                             </q-item-section>
                         </q-item>
-                        <csc-cf-group-item-primary-number />
+                        <csc-cf-group-item-primary-number
+                            :primary-number-source="seatSelected"/>
                     </q-list>
                     <template
                         v-for="group in groups"
