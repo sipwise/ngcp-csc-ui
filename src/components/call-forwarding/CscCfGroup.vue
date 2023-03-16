@@ -11,6 +11,7 @@
             :destination-set="destinationSet"
             :source-set="sourceSet"
             :time-set="timeSet"
+            :subscriber-id="subscriberId"
         />
         <template
             v-if="destinationSet"
@@ -80,6 +81,10 @@ export default {
         loading: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     computed: {

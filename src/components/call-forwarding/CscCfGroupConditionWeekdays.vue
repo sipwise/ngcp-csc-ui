@@ -62,6 +62,10 @@ export default {
         deleteButton: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     data () {
@@ -92,7 +96,8 @@ export default {
         async createTimeSetEvent () {
             const payload = {
                 mapping: this.mapping,
-                weekdays: this.selectedWeekdays
+                weekdays: this.selectedWeekdays,
+                subscriberId: this.subscriberId
             }
             if (this.timeSet) {
                 payload.id = this.timeSet.id
@@ -105,7 +110,8 @@ export default {
         async deleteTimeSetEvent () {
             await this.deleteTimeSet({
                 mapping: this.mapping,
-                id: this.timeSet.id
+                id: this.timeSet.id,
+                subscriberId: this.subscriberId
             })
         }
     }

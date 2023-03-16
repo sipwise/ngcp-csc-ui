@@ -55,6 +55,7 @@
                             :destination-set="destinationSet"
                             :source-set="sourceSet"
                             :time-set="timeSet"
+                            :subscriber-id="subscriberId"
                         />
                         <csc-cf-condition-popup-call-not-from
                             v-else
@@ -62,6 +63,7 @@
                             :destination-set="destinationSet"
                             :source-set="sourceSet"
                             :time-set="timeSet"
+                            :subscriber-id="subscriberId"
                         />
                     </span>
                 </template>
@@ -86,6 +88,7 @@
                                 :destination-set="destinationSet"
                                 :source-set="sourceSet"
                                 :time-set="timeSet"
+                                :subscriber-id="subscriberId"
                             />
                         </span>
                     </template>
@@ -106,6 +109,7 @@
                                 :destination-set="destinationSet"
                                 :source-set="sourceSet"
                                 :time-set="timeSet"
+                                :subscriber-id="subscriberId"
                             />
                         </span>
                     </template>
@@ -126,6 +130,7 @@
                                 :destination-set="destinationSet"
                                 :source-set="sourceSet"
                                 :time-set="timeSet"
+                                :subscriber-id="subscriberId"
                             />
                         </span>
                     </template>
@@ -146,6 +151,7 @@
                                 :destination-set="destinationSet"
                                 :source-set="sourceSet"
                                 :time-set="timeSet"
+                                :subscriber-id="subscriberId"
                             />
                         </span>
                     </template>
@@ -176,6 +182,7 @@
                             :destination-set="destinationSet"
                             :source-set="sourceSet"
                             :time-set="timeSet"
+                            :subscriber-id="subscriberId"
                         />
                     </span>
                 </template>
@@ -378,6 +385,10 @@ export default {
         loading: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     computed: {
@@ -398,11 +409,13 @@ export default {
             return 'csc-cf-group-' + this.destinationSet.id
         },
         hasTermination () {
-            return _.endsWith(_.last(this.destinationSet.destinations).destination, 'voicebox.local') ||
-                _.endsWith(_.last(this.destinationSet.destinations).destination, 'fax2mail.local') ||
-                _.endsWith(_.last(this.destinationSet.destinations).destination, 'managersecretary.local') ||
-                _.endsWith(_.last(this.destinationSet.destinations).destination, 'conference.local') ||
-                (_.endsWith(_.last(this.destinationSet.destinations).destination, 'app.local') && !_.last(this.destinationSet.destinations).announcement_id)
+            const lastDestination = _.last(this.destinationSet.destinations).destination
+            const lastDestinationId = _.last(this.destinationSet.destinations).announcement_id
+            return _.endsWith(lastDestination, 'voicebox.local') ||
+                _.endsWith(lastDestination, 'fax2mail.local') ||
+                _.endsWith(lastDestination, 'managersecretary.local') ||
+                _.endsWith(lastDestination, 'conference.local') ||
+                (_.endsWith(lastDestination, 'app.local') && !lastDestinationId)
         }
     },
     methods: {
@@ -424,7 +437,9 @@ export default {
         },
         async toggleMappingEvent (mapping) {
             this.$wait.start(this.waitIdentifier)
-            await this.toggleMapping(mapping)
+            let mappingWithSubscriberId = Object.assign({}, mapping);
+            mappingWithSubscriberId["subscriberId"] = this.subscriberId
+            await this.toggleMapping(mappingWithSubscriberId)
             this.$wait.end(this.waitIdentifier)
         },
         async deleteMappingEvent (mapping) {
@@ -442,12 +457,12 @@ export default {
         },
         async ringPrimaryNumberEvent () {
             this.$wait.start('csc-cf-mappings-full')
-            await this.ringPrimaryNumber()
+            await this.ringPrimaryNumber({subscriberId: this.subscriberId})
             this.$wait.end('csc-cf-mappings-full')
         },
         async doNotRingPrimaryNumberEvent () {
             this.$wait.start('csc-cf-mappings-full')
-            await this.doNotRingPrimaryNumber()
+            await this.doNotRingPrimaryNumber({subscriberId: this.subscriberId})
             this.$wait.end('csc-cf-mappings-full')
         }
     }
