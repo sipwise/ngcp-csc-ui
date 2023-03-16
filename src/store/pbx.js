@@ -84,7 +84,7 @@ export default {
             const options = []
             state.seatList.forEach((seat) => {
                 options.push({
-                    label: seat.display_name,
+                    label: (seat.display_name) ? seat.display_name : seat.username,
                     value: seat.id
                 })
             })

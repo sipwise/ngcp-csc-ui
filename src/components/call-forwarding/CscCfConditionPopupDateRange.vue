@@ -8,6 +8,7 @@
             :source-set="sourceSet"
             :time-set="timeSet"
             :delete-button="true"
+            :subscriber-id="subscriberId"
             @close="closePopup"
         />
     </csc-cf-condition-popup>
@@ -38,6 +39,10 @@ export default {
         timeSet: {
             type: Object,
             default: undefined
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     methods: {

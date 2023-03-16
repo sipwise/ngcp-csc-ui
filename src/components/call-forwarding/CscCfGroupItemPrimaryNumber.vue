@@ -62,16 +62,17 @@ export default {
         loading: {
             type: Boolean,
             default: false
-        }
+        },
+        primaryNumberSource: {
+            type: Object,
+            default: undefined
+        },
     },
     data () {
         return {
         }
     },
     computed: {
-        ...mapState('pbxSeats', [
-            'seatSelected'
-        ]),
         ...mapGetters('user', [
             'primaryNumber'
         ]),
@@ -79,7 +80,7 @@ export default {
             return 'csc'
         },
         getPrimaryNumber () {
-            const resultNumber = (this.seatSelected) ? numberFilter(this.seatSelected.primary_number) : numberFilter(this.primaryNumber)
+            const resultNumber = (this.primaryNumberSource) ? numberFilter(this.primaryNumberSource.primary_number) : numberFilter(this.primaryNumber)
             return resultNumber
         }
     }

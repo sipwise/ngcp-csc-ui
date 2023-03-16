@@ -64,6 +64,10 @@ export default {
         deleteButton: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     data () {
@@ -98,6 +102,7 @@ export default {
                 await this.updateTimeSetDate({
                     mapping: this.mapping,
                     id: this.timeSet.id,
+                    subscriberId: this.subscriberId,
                     date: {
                         date: dateParts[2],
                         month: dateParts[1],
@@ -107,6 +112,7 @@ export default {
             } else {
                 await this.createTimeSetDate({
                     mapping: this.mapping,
+                    subscriberId: this.subscriberId,
                     date: {
                         date: dateParts[2],
                         month: dateParts[1],
@@ -119,7 +125,8 @@ export default {
         async deleteSourceSetEvent () {
             await this.deleteTimeSet({
                 mapping: this.mapping,
-                id: this.timeSet.id
+                id: this.timeSet.id,
+                subscriberId: this.subscriberId
             })
         }
     }

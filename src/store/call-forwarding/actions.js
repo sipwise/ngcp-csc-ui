@@ -42,11 +42,11 @@ function createDefaultDestination (destination, defaultAnnouncementId) {
     return payload
 }
 
-export async function loadMappingsFull ({ dispatch, commit, rootGetters }, payload) {
+export async function loadMappingsFull ({ dispatch, commit, rootGetters }, subscriberId) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     let res = null
-    if (payload) {
-        res = await cfLoadMappingsFull(payload)
+    if (subscriberId) {
+        res = await cfLoadMappingsFull(subscriberId)
     } else {
         res = await cfLoadMappingsFull(rootGetters['user/getSubscriberId'])
     }
@@ -105,7 +105,7 @@ export async function deleteMapping ({ dispatch, commit, state, rootGetters }, p
     }, [])
     const patchRes = await patchReplaceFull({
         resource: 'cfmappings',
-        resourceId: rootGetters['user/getSubscriberId'],
+        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.type,
         value: updatedMappings
     })
@@ -124,7 +124,7 @@ export async function toggleMapping ({ dispatch, commit, state, rootGetters }, p
     updatedMappings[payload.index].enabled = !updatedMappings[payload.index].enabled
     const patchRes = await patchReplaceFull({
         resource: 'cfmappings',
-        resourceId: rootGetters['user/getSubscriberId'],
+        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.type,
         value: updatedMappings
     })
@@ -240,7 +240,7 @@ export async function createSourceSet ({ dispatch, commit, rootGetters, state },
         updatedMapping[payload.mapping.index].sourceset_id = sourceSetId
         const updatedMappings = await patchReplaceFull({
             resource: 'cfmappings',
-            resourceId: rootGetters['user/getSubscriberId'],
+            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
@@ -275,7 +275,7 @@ export async function deleteSourceSet ({ dispatch, commit, rootGetters, state },
         updatedMapping[payload.mapping.index].sourceset = null
         const updatedMappings = await patchReplaceFull({
             resource: 'cfmappings',
-            resourceId: rootGetters['user/getSubscriberId'],
+            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
@@ -297,7 +297,7 @@ export async function assignSourceSet ({ dispatch, commit, rootGetters, state },
         updatedMapping[payload.mapping.index].sourceset_id = payload.id
         const updatedMappings = await patchReplaceFull({
             resource: 'cfmappings',
-            resourceId: rootGetters['user/getSubscriberId'],
+            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
@@ -317,7 +317,7 @@ export async function unassignSourceSet ({ dispatch, commit, rootGetters, state 
         updatedMapping[payload.mapping.index].sourceset = null
         const updatedMappings = await patchReplaceFull({
             resource: 'cfmappings',
-            resourceId: rootGetters['user/getSubscriberId'],
+            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
@@ -336,7 +336,7 @@ export async function createTimeSetDate ({ dispatch, commit, rootGetters, state 
     updatedMapping[payload.mapping.index].timeset_id = timeSetId
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
-        resourceId: rootGetters['user/getSubscriberId'],
+        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
@@ -365,7 +365,7 @@ export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, p
     updatedMapping[payload.mapping.index].timeset = null
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
-        resourceId: rootGetters['user/getSubscriberId'],
+        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
@@ -378,14 +378,14 @@ export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, p
     dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
 
-export async function ringPrimaryNumber ({ commit, rootGetters, state }) {
+export async function ringPrimaryNumber ({ commit, rootGetters, state }, payload) {
     const mappings = _.cloneDeep(state.mappings)
     mappings.cft = mappings.cfu
     mappings.cfu = []
     mappings.cft_ringtimeout = 60
     const updatedMappings = await put({
         resource: 'cfmappings',
-        resourceId: rootGetters['user/getSubscriberId'],
+        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         body: mappings
     })
     commit('dataSucceeded', {
@@ -393,14 +393,14 @@ export async function ringPrimaryNumber ({ commit, rootGetters, state }) {
     })
 }
 
-export async function doNotRingPrimaryNumber ({ commit, rootGetters, state }) {
+export async function doNotRingPrimaryNumber ({ commit, rootGetters, state }, payload) {
     const mappings = _.cloneDeep(state.mappings)
     mappings.cfu = mappings.cft
     mappings.cft = []
     mappings.cft_ringtimeout = null
     const updatedMappings = await put({
         resource: 'cfmappings',
-        resourceId: rootGetters['user/getSubscriberId'],
+        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         body: mappings
     })
     commit('dataSucceeded', {
@@ -427,7 +427,7 @@ export async function createTimeSetDateRange ({ dispatch, commit, rootGetters, s
     updatedMapping[payload.mapping.index].timeset_id = timeSetId
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
-        resourceId: rootGetters['user/getSubscriberId'],
+        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
@@ -456,7 +456,7 @@ export async function createTimeSetWeekdays ({ dispatch, commit, rootGetters, st
     updatedMapping[payload.mapping.index].timeset_id = timeSetId
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
-        resourceId: rootGetters['user/getSubscriberId'],
+        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
@@ -485,14 +485,14 @@ export async function createOfficeHours ({ dispatch, commit, rootGetters, state 
     updatedMapping[payload.mapping.index].timeset_id = timeSetId
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
-        resourceId: rootGetters['user/getSubscriberId'],
+        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
     if (payload.id) {
         await cfDeleteTimeSet(payload.id)
     }
-    const timeSets = await cfLoadTimeSets()
+    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
     commit('dataSucceeded', {
         mappings: updatedMappings,
         timeSets: timeSets.items
@@ -503,7 +503,7 @@ export async function createOfficeHours ({ dispatch, commit, rootGetters, state 
 export async function updateOfficeHours ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     await cfUpdateOfficeHours(payload.id, payload.times)
-    const timeSets = await cfLoadTimeSets()
+    const timeSets = await cfLoadTimeSets(rootGetters['user/getSubscriberId'])
     commit('dataSucceeded', {
         timeSets: timeSets.items
     })

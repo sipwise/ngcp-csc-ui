@@ -1,14 +1,14 @@
 <template>
-    <csc-page-sticky
-        v-if="groupSelected"
-        id="csc-page-pbx-group-details"
-        class="row q-pa-lg"
+    <csc-page-sticky-tabs
+        id="csc-page-pbx-groups-details"
+        ref="pageSticky"
+        :value="selectedTab"
     >
         <template
-            v-slot:header-align-left
+            v-slot:tabs
         >
             <q-breadcrumbs
-                class="text-weight-light q-mr-md"
+                class="q-item absolute absolute-left text-weight-light"
                 active-color="primary"
                 separator-color="primary"
             >
@@ -20,17 +20,31 @@
                     icon="group"
                 />
                 <q-breadcrumbs-el
+                    v-if="groupSelected"
                     key="group"
                     :label="groupSelected.display_name"
                 />
             </q-breadcrumbs>
+
+            <q-tab
+                v-for="tab in tabs"
+                class="d-flex justify-content-center"
+                :key="tab.value"
+                :name="tab.value"
+                :icon="tab.icon"
+                :label="tab.label"
+                :default="tab.value === selectedTab"
+                @click="selectTab(tab.value)"
+            />
         </template>
+
         <q-item
             class="col col-xs-12 col-md-6"
+            v-if="selectedTab === 'preferences'"
         >
             <q-list
                 v-if="changes"
-                class="col"
+                class="col col-xs-12 col-md-6"
                 side
                 top
                 no-wrap
@@ -197,7 +211,12 @@
                 />
             </q-list>
         </q-item>
-    </csc-page-sticky>
+        
+        <csc-call-forward-details
+            v-else
+            :id="id"/>
+
+    </csc-page-sticky-tabs>
 </template>
 
 <script>
@@ -218,24 +237,47 @@ import {
     showToast
 } from 'src/helpers/ui'
 import numberFilter from 'src/filters/number'
-import CscPageSticky from 'src/components/CscPageSticky'
+import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails.vue'
 export default {
     name: 'CscPbxGroupDetails',
     components: {
         CscInputButtonReset,
         CscInputButtonSave,
-        CscPageSticky
+        CscPageStickyTabs,
+        CscCallForwardDetails
+    },
+    props: {
+        initialTab: {
+            type: String,
+            default: 'preferences'
+        }
     },
     data () {
         return {
             changes: null,
             id: this.$route.params.id,
-            soundSet: null
+            soundSet: null,
+            selectedTab: this.initialTab
         }
     },
     computed: {
+        tabs () {
+            return [
+                {
+                    label: this.$t('Preferences'),
+                    value: 'preferences',
+                    icon: 'perm_phone_msg'
+                },
+                {
+                    label: this.$t('Call Forwards'),
+                    value: 'callForwards',
+                    icon: 'forward_to_inbox'
+                }
+            ]
+        },
         ...mapState('pbxGroups', [
             'groupSelected',
             'groupUpdateState',
@@ -255,6 +297,9 @@ export default {
             'getGroupUpdateToastMessage',
             'getSoundSetByGroupId',
             'isGroupLoading'
+        ]),
+        ...mapGetters('callForwarding', [
+            'groups'
         ]),
         hasNameChanged () {
             return this.changes.name !== this.groupSelected.display_name
@@ -309,6 +354,7 @@ export default {
     },
     mounted () {
         this.selectGroup(this.id)
+        this.loadMappingsFull(this.id)
     },
     beforeDestroy () {
         this.resetSelectedGroup()
@@ -334,6 +380,10 @@ export default {
         ]),
         ...mapActions('pbxCallQueues', [
             'jumpToCallQueue'
+        ]),
+        ...mapActions('callForwarding', [
+            'loadMappingsFull',
+            'createMapping'
         ]),
         ...mapMutations('pbxGroups', [
             'selectGroup',
@@ -435,6 +485,14 @@ export default {
                     soundSetId: this.changes.soundSet
                 })
             }
+        },
+        selectTab (tabName) {
+            if (this.selectedTab !== tabName) {
+                this.forceTabReload(tabName)
+            }
+        },
+        forceTabReload (tabName) {
+            this.selectedTab = tabName
         }
     }
 }

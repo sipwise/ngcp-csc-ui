@@ -14,6 +14,7 @@
             :destination-set="destinationSet"
             :source-set="sourceSet"
             :time-set="timeSet"
+            :subscriber-id="subscriberId"
             @select="internalStep='call-from-select'"
             @close="closePopup"
         />
@@ -28,6 +29,7 @@
             :destination-set="destinationSet"
             :source-set="sourceSet"
             :time-set="timeSet"
+            :subscriber-id="subscriberId"
             @back="internalStep='call-from'"
             @create="internalStep='call-from'"
             @close="closePopup"
@@ -62,6 +64,10 @@ export default {
         timeSet: {
             type: Object,
             default: undefined
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     data () {

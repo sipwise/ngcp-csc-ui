@@ -145,6 +145,10 @@ export default {
         unassignButton: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: null
         }
     },
     data () {
@@ -196,14 +200,16 @@ export default {
                     id: this.sourceSet.id,
                     name: this.sourceSetNameInternal,
                     numbers: this.sourceSetNumbersInternal,
-                    mode: this.mode
+                    mode: this.mode,
+                    subscriberId: this.subscriberId
                 })
             } else {
                 await this.createSourceSet({
                     mapping: this.mapping,
                     name: this.sourceSetNameInternal,
                     numbers: this.sourceSetNumbersInternal,
-                    mode: this.mode
+                    mode: this.mode,
+                    subscriberId: this.subscriberId
                 })
             }
             this.$emit('close')
@@ -220,7 +226,8 @@ export default {
             if (this.sourceSet) {
                 await this.unassignSourceSet({
                     mapping: this.mapping,
-                    id: this.sourceSet.id
+                    id: this.sourceSet.id,
+                    subscriberId: this.subscriberId
                 })
             }
         }
