@@ -249,91 +249,10 @@
             </q-list>
         </q-item>
 
-        <q-list
-            class="col col-xs-12 col-md-6"
+        <csc-call-forward-details
             v-else
-        >
-
-            <q-item
-                class="row justify-center q-pt-lg"
-            >
-                <q-btn
-                    flat
-                    icon="add"
-                    color="primary"
-                    :label="$t('Add forwarding')"
-                    :disable="$wait.is('csc-cf-mappings-full')"
-                    :loading="$wait.is('csc-cf-mappings-full')"
-                >
-                    <csc-popup-menu>
-                        <csc-popup-menu-item
-                            v-if="hasSubscriberProfileAttribute('cfu')"
-                            color="primary"
-                            :label="$t('If available')"
-                            @click="createMapping({ type: 'cfu', subscriberId: id})"
-                        />
-                        <csc-popup-menu-item
-                            v-if="hasSubscriberProfileAttribute('cfna')"
-                            color="primary"
-                            :label="$t('If not available')"
-                            @click="createMapping({ type: 'cfna', subscriberId: id})"
-                        />
-                        <csc-popup-menu-item
-                            v-if="hasSubscriberProfileAttribute('cfb')"
-                            color="primary"
-                            :label="$t('If busy')"
-                            @click="createMapping({ type: 'cfb', subscriberId: id})"
-                        />
-                    </csc-popup-menu>
-                    <template
-                        v-slot:loading
-                    >
-                        <csc-spinner />
-                    </template>
-                </q-btn>
-            </q-item>
-            <q-item
-                class="row justify-center q-pt-lg"
-            >
-                <div
-                    id="csc-wrapper-call-forwarding"
-                    class="col col-xs-12 col-md-6"
-                >
-                    <q-list
-                        v-if="groups.length === 0 && !$wait.is('csc-cf-mappings-full')"
-                        dense
-                        separator
-                    >
-                        <q-item
-                            :disable="$wait.is('csc-cf-mappings-full')"
-                        >
-                            <q-item-section>
-                                <q-item-label
-                                    class="text-weight-bold"
-                                >
-                                    {{ $t('Always') }}
-                                </q-item-label>
-                            </q-item-section>
-                        </q-item>
-                        <csc-cf-group-item-primary-number
-                            :primary-number-source="seatSelected"/>
-                    </q-list>
-                    <template
-                        v-for="group in groups"
-                    >
-                        <csc-cf-group
-                            :key="group.cfm_id"
-                            class="q-mb-lg"
-                            :loading="$wait.is('csc-cf-mappings-full')"
-                            :mapping="group"
-                            :destination-set="destinationSetMap[group.destinationset_id]"
-                            :source-set="sourceSetMap[group.sourceset_id]"
-                            :time-set="timeSetMap[group.timeset_id]"
-                        />
-                    </template>
-                </div>
-            </q-item>
-        </q-list>
+            :id="id"/>
+        
     </csc-page-sticky-tabs>
 </template>
 
@@ -352,16 +271,11 @@ import {
     mapGetters,
     mapActions
 } from 'vuex'
-import CscCfGroup from 'components/call-forwarding/CscCfGroup'
-import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
-import CscPopupMenu from 'components/CscPopupMenu'
-import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscChangePasswordDialog from 'src/components/CscChangePasswordDialog'
-import CscPageSticky from 'src/components/CscPageSticky'
-import CscSpinner from 'components/CscSpinner'
+import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails.vue'
 import { inRange } from 'src/helpers/validation'
 import numberFilter from '../filters/number'
 import {
@@ -372,16 +286,11 @@ import {
 export default {
     name: 'CscPagePbxSeatDetails',
     components: {
-        CscInputButtonReset,
-        CscInputButtonSave,
-        CscChangePasswordDialog,
-        CscPageSticky,
         CscPageStickyTabs,
-        CscPopupMenu,
-        CscPopupMenuItem,
-        CscCfGroupItemPrimaryNumber,
-        CscCfGroup,
-        CscSpinner
+        CscInputButtonSave,
+        CscInputButtonReset,
+        CscChangePasswordDialog,
+        CscCallForwardDetails
     },
     props: {
         initialTab: {
@@ -434,12 +343,6 @@ export default {
             'seatSelected',
             'seatUpdateState',
             'seatUpdateError'
-        ]),
-        ...mapState('callForwarding', [
-            'mappings',
-            'destinationSetMap',
-            'sourceSetMap',
-            'timeSetMap'
         ]),
         ...mapGetters('callForwarding', [
             'groups'
@@ -586,7 +489,6 @@ export default {
     async mounted () {
         this.selectSeat(this.id)
         await this.loadAnnouncements()
-        this.loadMappingsFull(this.id)
     },
     beforeDestroy () {
         this.resetSelectedSeat()
@@ -605,8 +507,6 @@ export default {
             'setCli'
         ]),
         ...mapActions('callForwarding', [
-            'loadMappingsFull',
-            'createMapping',
             'loadAnnouncements'
         ]),
         ...mapActions('pbxCallQueues', [
