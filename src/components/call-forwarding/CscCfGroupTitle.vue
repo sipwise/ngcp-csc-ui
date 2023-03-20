@@ -451,7 +451,9 @@ export default {
                 persistent: true
             }).onOk(async data => {
                 this.$wait.start(this.waitIdentifier)
-                await this.deleteMapping(mapping)
+                let mappingWithSubscriberId = Object.assign({}, mapping);
+                mappingWithSubscriberId["subscriberId"] = this.subscriberId
+                await this.deleteMapping(mappingWithSubscriberId)
                 this.$wait.end(this.waitIdentifier)
             })
         },
