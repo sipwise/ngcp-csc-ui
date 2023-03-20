@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.2.1.6+0~mr11.2.1.6) unstable; urgency=medium
+
+  [ Georges Francisco ]
+  * [44d818d] MT#56954 [CSC] fix Call forward configuration UI issues
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 Mar 2023 17:31:01 +0100
+
 ngcp-csc-ui (11.2.1.5+0~mr11.2.1.5) unstable; urgency=medium
 
   [ Marco Capetta ]
