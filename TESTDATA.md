@@ -18,7 +18,7 @@ cp root/conversations_dump.sql.tgz ~/Sipwise/mr/
 `
 1. SSH in to the vagrant box and become root
 1. Backup the existing database:
-`mysqldump --extended-insert --complete-insert --add-drop-database --databases accounting billing carrier fileshare kamailio ldap prosody provisioning rtcengine > ~/backup_before_conversations_dump.sql`
+`mysqldump --extended-insert --complete-insert --add-drop-database --databases accounting billing carrier fileshare kamailio ldap prosody provisioning > ~/backup_before_conversations_dump.sql`
 1. Import the test data database from your shared vagrant volume folder, for example:
 `
 cd /usr/local/devel
