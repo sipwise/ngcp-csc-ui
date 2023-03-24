@@ -1,3 +1,38 @@
+ngcp-csc-ui (11.4.0.0+0~mr11.4.0.0) unstable; urgency=medium
+
+  [ Georges Francisco ]
+  * [3f298e0] MT#54861 Configure sip username, display-names and web username independently in CSC
+  * [6d58d48] MT#56506 [CSC] The primary number reported in CF setting of a seat is not correct
+  * [88925a2] MT#56962 [CSC] Align the code if Call forwards setup for seats to the one used for Groups
+  * [f30a830] MT#56954 [CSC] fix Call forward configuration UI issues
+
+  [ Marco Capetta ]
+  * [64e8ff3] MT#55940 Add new speeddial, forward, transfer device buttons
+  * [cc3c5bd] MT#56783 Show SIP password only to administrative subscribers
+  * [2f415cf] MT#56403 Align PBX Configuration visibility with assigned profile
+  * [c3a912f] MT#55336 Add support for items that returned from a non array API
+  * [9e6597f] MT#56505 [CSC] Add possibility to configure call forwards also for groups
+  * [45d9967] MT#56403 Add new internal preferences to show/hide CSC menus
+
+  [ CORP\franci11 ]
+  * [58361b0] MT#32999 Customer admin must be able to configure seat's call forward
+
+  [ nouhaila ]
+  * [4c80215] MT#56399 Give option to disable SIP-password-change in CSC
+
+  [ Hugo Zigha ]
+  * [0308c9e] MT#55940 Add possibility to configure "user defined buttons" on phones via CSC panel
+
+  [ Nico Schedel ]
+  * [5202a81] MT#55492 add data-cy for music on hold
+  * [c092c29] MT#56388 fix selenium csc tests
+  * [60889fb] MT#55492 add data-cy to voicebox page
+  * [28b12bf] MT#55492 add data-cy to call blocking pages
+  * [02903fa] MT#55492 add data-cy to privacy page
+  * [01c7d81] MT#55492 add data-cy to call recording page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 24 Mar 2023 13:04:01 +0100
+
 ngcp-csc-ui (11.3.0.0+0~mr11.3.0.0) unstable; urgency=medium
 
   [ Mykola Malkov ]
