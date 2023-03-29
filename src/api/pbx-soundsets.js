@@ -102,6 +102,10 @@ export function setSoundSetDescription (soundSetId, description) {
     return setSoundSetProperty(soundSetId, 'description', description)
 }
 
+export function setSoundSetParent (soundSetId, parentId) {
+    return setSoundSetProperty(soundSetId, 'parent_id', parentId)
+}
+
 export function getSoundHandles (options) {
     return new Promise((resolve, reject) => {
         options = options || {}
