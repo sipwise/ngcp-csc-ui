@@ -22,6 +22,13 @@
             </q-slide-transition>
             <q-slide-transition>
                 <csc-list-item-subtitle
+                    v-if="!expanded && soundSet.parent_id && parent"
+                >
+                    {{ $t('Parent') + ': ' + parent.name }}
+                </csc-list-item-subtitle>
+            </q-slide-transition>
+            <q-slide-transition>
+                <csc-list-item-subtitle
                     v-if="!expanded"
                 >
                     <q-checkbox
@@ -76,6 +83,27 @@
                     />
                 </template>
             </q-input>
+
+            <q-select
+                v-model="changes.parent_id"
+                v-if="(changes.parent_id && parent) || !changes.parent_id"
+                emit-value
+                map-options
+                :options="getParentOptions"
+                :label="$t('Parent')"
+            >
+                <template
+                    v-if="hasParentChanged"
+                    v-slot:append
+                >
+                    <csc-input-button-save
+                        @click.stop="save"
+                    />
+                    <csc-input-button-reset
+                        @click.stop="resetParent"
+                    />
+                </template>
+            </q-select>
             <q-checkbox
                 :label="$t('Default sound set for all seats and groups')"
                 :value="soundSet.contract_default"
@@ -117,6 +145,9 @@
 </template>
 
 <script>
+import {
+    mapState
+} from 'vuex'
 import {
     maxLength
 } from 'vuelidate/lib/validators'
@@ -207,11 +238,37 @@ export default {
         }
     },
     computed: {
+        ...mapState('pbxSoundSets', [
+            'soundSetList'
+        ]),
         hasNameChanged () {
             return this.changes.name !== this.getDefaultData().name
         },
         hasDescriptionChanged () {
             return this.changes.description !== this.getDefaultData().description
+        },
+        parent () {
+            return this.changes.parent_id ? this.soundSetList.find((soundSet) => this.changes.parent_id === soundSet.id) : null
+        },
+        getParentOptions () {
+            let parentOptions = [
+                {
+                    label: this.$t('Unassigned'),
+                    value: null
+                }
+            ]
+            this.soundSetList.map((soundSet) => {
+                if (soundSet.id !== this.soundSet.id) {
+                    parentOptions.push({
+                        label: soundSet.name,
+                        value: soundSet.id
+                    })
+                }
+            })
+            return parentOptions
+        },
+        hasParentChanged () {
+            return this.changes.parent_id !== this.getDefaultData().parent_id
         }
     },
     watch: {
@@ -245,7 +302,8 @@ export default {
             return {
                 name: this.soundSet.name,
                 description: this.soundSet.description,
-                contract_default: this.soundSet.contract_default
+                contract_default: this.soundSet.contract_default,
+                parent_id: this.soundSet.parent_id
             }
         },
         resetName () {
@@ -253,6 +311,9 @@ export default {
         },
         resetDescription () {
             this.changes.description = this.getDefaultData().description
+        },
+        resetParent () {
+            this.changes.parent_id = this.getDefaultData().parent_id
         },
         playSoundFile (data) {
             this.$emit('play-sound-file', data)
@@ -278,6 +339,12 @@ export default {
                 this.$emit('save-description', {
                     soundSetId: this.soundSet.id,
                     description: this.changes.description
+                })
+            }
+            if (this.hasParentChanged) {
+                this.$emit('save-parent', {
+                    soundSetId: this.soundSet.id,
+                    parent_id: this.changes.parent_id
                 })
             }
         }

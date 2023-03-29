@@ -20,6 +20,15 @@
             hide-bottom-space
             @input="$v.data.description.$touch"
         />
+        <q-select
+            v-model="data.parent_id"
+            emit-value
+            map-options
+            :disable="loading"
+            :readonly="loading"
+            :options="getParentOptions"
+            :label="$t('Parent')"
+        />
         <div
             class="q-mb-sm q-mt-sm"
         >
@@ -91,6 +100,9 @@
 
 <script>
 import {
+    mapState
+} from 'vuex'
+import {
     required,
     maxLength
 } from 'vuelidate/lib/validators'
@@ -147,6 +159,9 @@ export default {
         }
     },
     computed: {
+        ...mapState('pbxSoundSets', [
+            'soundSetList'
+        ]),
         nameErrorMessage () {
             if (!this.$v.data.name.required) {
                 return this.$t('{field} is required', {
@@ -201,6 +216,21 @@ export default {
                 classes.push('csc-toggle-disabled')
             }
             return classes
+        },
+         getParentOptions () {
+            let parentOptions = [
+                {
+                    label: this.$t('Unassigned'),
+                    value: null
+                }
+            ]
+            this.soundSetList.map((soundSet) => {
+                parentOptions.push({
+                    label: soundSet.name,
+                    value: soundSet.id
+                })
+            })
+            return parentOptions
         }
     },
     methods: {
@@ -212,7 +242,8 @@ export default {
                 language: 'en',
                 contract_default: false,
                 copy_from_default: false,
-                description: ''
+                description: '',
+                parent_id: null
             }
         },
         cancel () {

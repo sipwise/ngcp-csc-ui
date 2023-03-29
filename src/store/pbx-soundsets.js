@@ -12,6 +12,7 @@ import {
     setAsDefault,
     setSoundSetName,
     setSoundSetDescription,
+    setSoundSetParent,
     getAllSoundHandles,
     getAllSoundFilesBySoundSetId,
     getSoundFile,
@@ -405,6 +406,22 @@ export default {
                 field: i18n.t('description')
             })
             setSoundSetDescription(options.soundSetId, options.description).then(() => {
+                return context.dispatch('loadSoundSetList', {
+                    listVisible: true,
+                    page: context.state.soundSetListCurrentPage
+                })
+            }).then(() => {
+                context.commit('soundSetUpdateSucceeded')
+            }).catch((err) => {
+                context.commit('soundSetUpdateFailed', err.message)
+            })
+        },
+        setSoundSetParent (context, options) {
+            context.commit('soundSetUpdateRequesting', {
+                soundSetId: options.soundSetId,
+                field: i18n.t('parent')
+            })
+            setSoundSetParent(options.soundSetId, options.parent_id).then(() => {
                 return context.dispatch('loadSoundSetList', {
                     listVisible: true,
                     page: context.state.soundSetListCurrentPage

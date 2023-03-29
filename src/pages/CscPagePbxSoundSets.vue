@@ -67,6 +67,7 @@
                     @save-as-default="setAsDefaultSoundSet"
                     @save-name="setSoundSetName"
                     @save-description="setSoundSetDescription"
+                    @save-parent="setSoundSetParent"
                     @expand="expandSoundSet(soundSet.id)"
                     @collapse="collapseSoundSet"
                     @play-sound-file="playSoundFile"
@@ -212,6 +213,7 @@ export default {
             'setAsDefaultSoundSet',
             'setSoundSetName',
             'setSoundSetDescription',
+            'setSoundSetParent',
             'loadSoundSetResources',
             'playSoundFile',
             'uploadSoundFile',
