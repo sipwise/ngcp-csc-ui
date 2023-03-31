@@ -73,6 +73,7 @@
                     @play-sound-file="playSoundFile"
                     @upload-sound-file="uploadSoundFile"
                     @toggle-loop-play="setLoopPlay"
+                    @toggle-use-parent="setUseParent"
                 />
             </csc-fade>
         </csc-list>
@@ -217,7 +218,8 @@ export default {
             'loadSoundSetResources',
             'playSoundFile',
             'uploadSoundFile',
-            'setLoopPlay'
+            'setLoopPlay',
+            'setUseParent'
         ]),
         loadSoundSetListPaginated (page) {
             this.loadSoundSetList({

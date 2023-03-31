@@ -28,7 +28,7 @@
                         @input="selectFile"
                     >
                     <q-icon
-                        v-if="soundFile || selectedFile"
+                        v-if="(soundFile && soundFile.filename) || selectedFile"
                         name="insert_drive_file"
                         class="csc-pbx-sound-set-sound-icon"
                         size="24px"
@@ -53,7 +53,7 @@
                     class="col-grow text-right"
                 >
                     <q-btn
-                        v-if="!selectedFile"
+                        v-if="!selectedFile && !readOnly"
                         flat
                         color="primary"
                         icon="folder"
@@ -98,7 +98,23 @@
                 </div>
             </div>
             <div
-                v-if="soundFile && !selectedFile"
+                v-if="hasParent"
+                class="row items-center"
+            >
+                <div
+                    class="col-auto"
+                >
+                    <q-checkbox
+                        :value="soundFileUseparent"
+                        :disable="readOnly"
+                        :label="$t('Use Parent')"
+                        left-label
+                        @input="toggleUseParent"
+                    />
+                </div>
+            </div>
+            <div
+                v-if="soundFile && !selectedFile && this.soundFile.filename"
                 class="row items-center"
             >
                 <div
@@ -107,6 +123,7 @@
                     <q-checkbox
                         :value="soundFileLoopplay"
                         :label="$t('Loop')"
+                        :disable="readOnly"
                         left-label
                         @input="toggleLoopPlay"
                     />
@@ -115,7 +132,7 @@
                     class="csc-col-right col-grow"
                 >
                     <csc-audio-player
-                        v-if="soundFileFilename"
+                        v-if="this.soundFile && this.soundFile.filename"
                         :file-url="soundFileUrl"
                         @load="loadPlay"
                     />
@@ -170,6 +187,14 @@ export default {
         soundFileUpdateState: {
             type: String,
             default: null
+        },
+        hasParent: {
+            type: Number,
+            default: null
+        },
+        readOnly: {
+            type: Boolean,
+            default: false
         }
     },
     data () {
@@ -188,6 +213,8 @@ export default {
         soundFileFilename () {
             if (this.soundFile && this.soundFile.filename) {
                 return this.soundFile.filename
+            } else if (this.soundFile && !this.soundFile.filename) {
+                return this.$t('(empty)')
             }
             return ''
         },
@@ -196,6 +223,12 @@ export default {
                 return this.soundFile.id
             }
             return null
+        },
+        soundFileUseparent () {
+            if (this.soundFile) {
+                return this.soundFile.use_parent
+            }
+            return true
         },
         itemClasses () {
             const classes = ['csc-pbx-sound-set-sound', 'row', 'items-center']
@@ -251,6 +284,22 @@ export default {
                 soundFileId: this.soundFile.id,
                 loopPlay: !this.soundFileLoopplay
             })
+        },
+        toggleUseParent () {
+            if (!this.soundFile) {
+                this.$emit('upload', {
+                    soundHandle: this.soundHandle.handle,
+                    soundFileData: null,
+                    useParent: false
+                })
+            } else {
+                this.$emit('toggle-use-parent', {
+                    soundSetId: this.soundFile.set_id,
+                    soundHandle: this.soundFile.handle,
+                    soundFileId: this.soundFile.id,
+                    useParent: !this.soundFileUseparent
+                })
+            }
         }
     }
 }

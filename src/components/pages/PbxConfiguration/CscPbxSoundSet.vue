@@ -34,6 +34,7 @@
                     <q-checkbox
                         :value="soundSet.contract_default"
                         :label="$t('Default')"
+                        :disable="!soundSet.customer_id"
                         :left-label="true"
                         @input="saveAsDefault"
                     />
@@ -47,6 +48,7 @@
                 v-model="changes.name"
                 :error="$v.changes.name.$error"
                 :label="$t('Name')"
+                :disable="!soundSet.customer_id"
                 @input="$v.changes.name.$touch"
                 @keyup.enter="save"
             >
@@ -67,6 +69,7 @@
                 v-model="changes.description"
                 :error="$v.changes.description.$error"
                 :label="$t('Description')"
+                :disable="!soundSet.customer_id"
                 @input="$v.changes.description.$touch"
                 @keyup.enter="save"
             >
@@ -89,6 +92,7 @@
                 v-if="(changes.parent_id && parent) || !changes.parent_id"
                 emit-value
                 map-options
+                :disable="!soundSet.customer_id"
                 :options="getParentOptions"
                 :label="$t('Parent')"
             >
@@ -107,6 +111,7 @@
             <q-checkbox
                 :label="$t('Default sound set for all seats and groups')"
                 :value="soundSet.contract_default"
+                :disable="!soundSet.customer_id"
                 @input="saveAsDefault"
             />
             <csc-list-spinner
@@ -126,9 +131,12 @@
                     :sound-file-upload-state="soundFileUploadState[soundSet.id + '-' + soundHandle.handle]"
                     :sound-file-upload-progress="soundFileUploadProgress[soundSet.id + '-' + soundHandle.handle]"
                     :sound-file-update-state="soundFileUpdateState[soundSet.id + '-' + soundHandle.handle]"
+                    :has-parent="soundSet.parent_id"
+                    :read-only="!soundSet.customer_id"
                     @play="playSoundFile"
                     @upload="uploadSoundFile"
                     @toggle-loop-play="toggleLoopPlay"
+                    @toggle-use-parent="toggleUseParent"
                 />
             </div>
         </template>
@@ -303,7 +311,8 @@ export default {
                 name: this.soundSet.name,
                 description: this.soundSet.description,
                 contract_default: this.soundSet.contract_default,
-                parent_id: this.soundSet.parent_id
+                parent_id: this.soundSet.parent_id,
+                customer_id: this.soundSet.customer_id
             }
         },
         resetName () {
@@ -327,6 +336,9 @@ export default {
         },
         toggleLoopPlay (options) {
             this.$emit('toggle-loop-play', options)
+        },
+        toggleUseParent (options) {
+            this.$emit('toggle-use-parent', options)
         },
         save () {
             if (this.hasNameChanged) {
