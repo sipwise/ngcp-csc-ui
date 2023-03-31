@@ -3,7 +3,8 @@ import {
     getList,
     patchReplaceFull,
     getAsBlob,
-    get
+    get,
+    post
 } from './common'
 import {
     PBX_CONFIG_ORDER_BY,
@@ -183,33 +184,66 @@ export function getSoundFile (options) {
 export function uploadSoundFile (options) {
     return new Promise((resolve, reject) => {
         const formData = new FormData()
-        formData.append('json', JSON.stringify({
-            loopplay: true,
-            filename: options.soundFileData.name,
-            set_id: options.soundSetId,
-            handle: options.soundHandle
-        }))
-        formData.append('soundfile', options.soundFileData)
-        Vue.http.post('api/soundfiles/', formData, {
-            before (request) {
-                options.initialized(request)
-            },
-            progress (progressEvent) {
-                if (progressEvent.lengthComputable) {
-                    options.progressed(Math.ceil((progressEvent.loaded / progressEvent.total) * 100))
+
+        if (options.soundFileData) {
+            formData.append('json', JSON.stringify({
+                loopplay: options.soundFileData !== null,
+                set_id: options.soundSetId,
+                handle: options.soundHandle,
+                filename: options.soundFileData.name
+            }))
+            formData.append('soundfile', options.soundFileData)
+            Vue.http.post('api/soundfiles/', formData, {
+                before (request) {
+                    options.initialized(request)
+                },
+                progress (progressEvent) {
+                    if (progressEvent.lengthComputable) {
+                        options.progressed(Math.ceil((progressEvent.loaded / progressEvent.total) * 100))
+                    }
                 }
-            }
-        }).then((res) => {
-            const fileId = _.last(res.headers.get('location').split(/\//))
-            return Promise.all([
-                get({ path: 'api/soundfiles/' + fileId }),
-                getSoundFile({ id: fileId })
-            ])
-        }).then((res) => {
-            resolve({
-                soundFile: res[0],
-                soundFileUrl: res[1]
+            }).then((res) => {
+                const fileId = _.last(res.headers.get('location').split(/\//))
+                return Promise.all([
+                    get({ path: 'api/soundfiles/' + fileId }),
+                    getSoundFile({ id: fileId })
+                ])
+            }).then((res) => {
+                resolve({
+                    soundFile: res[0],
+                    soundFileUrl: res[1]
+                })
+            }).catch((err) => {
+                reject(err)
             })
+        } else {
+            post({
+                resource: 'soundfiles',
+                body: {
+                    loopplay: false,
+                    set_id: options.soundSetId,
+                    handle: options.soundHandle,
+                    use_parent: false
+                }
+            }).then(async (id) => {
+                const res = await getSoundFileById({ id })
+                resolve({
+                    soundFile: res,
+                    soundFileUrl: null
+                })
+            }).catch((err) => {
+                reject(err)
+            })
+        }
+    })
+}
+
+export function getSoundFileById (options) {
+    return new Promise((resolve, reject) => {
+        get({
+            path: 'api/soundfiles/' + options.id
+        }).then((soundfile) => {
+            resolve(soundfile)
         }).catch((err) => {
             reject(err)
         })
@@ -222,6 +256,20 @@ export function setLoopPlay (options) {
             path: 'api/soundfiles/' + options.soundFileId,
             fieldPath: 'loopplay',
             value: (options.loopPlay === true) ? 'true' : 'false'
+        }).then((soundFile) => {
+            resolve(soundFile)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+export function setUseParent (options) {
+    return new Promise((resolve, reject) => {
+        patchReplaceFull({
+            path: 'api/soundfiles/' + options.soundFileId,
+            fieldPath: 'use_parent',
+            value: options.useParent
         }).then((soundFile) => {
             resolve(soundFile)
         }).catch((err) => {

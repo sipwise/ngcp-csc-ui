@@ -17,7 +17,7 @@ import {
     getAllSoundFilesBySoundSetId,
     getSoundFile,
     uploadSoundFile,
-    setLoopPlay, unsetAsDefault
+    setLoopPlay, unsetAsDefault, setUseParent
 } from '../api/pbx-soundsets'
 import _ from 'lodash'
 import {
@@ -519,6 +519,15 @@ export default {
         setLoopPlay (context, options) {
             context.commit('soundFileUpdateRequesting', options)
             setLoopPlay(options).then((soundFile) => {
+                context.commit('soundFileUpdateSucceeded', soundFile)
+            }).catch((err) => {
+                console.debug(err)
+                context.commit('soundFileUpdateFailed', options)
+            })
+        },
+        setUseParent (context, options) {
+            context.commit('soundFileUpdateRequesting', options)
+            setUseParent(options).then((soundFile) => {
                 context.commit('soundFileUpdateSucceeded', soundFile)
             }).catch((err) => {
                 console.debug(err)
