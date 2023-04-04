@@ -9,7 +9,7 @@
                 class="csc-pbx-sound-set-sound-icon"
                 name="music_note"
                 size="24px"
-            />{{ soundHandle.group }} {{ soundHandle.handle }}
+            />{{ soundHandle.handle }}
         </div>
         <div
             class="col-grow"
@@ -57,9 +57,20 @@
                         flat
                         color="primary"
                         icon="folder"
+                        :disable="isUpdating || isUploading || isSoundFileRemoving"
                         @click="openFileSelectionDialog"
                     >
                         Select file
+                    </q-btn>
+                    <q-btn
+                        v-if="soundFile && !selectedFile && !readOnly"
+                        flat
+                        color="negative"
+                        icon="delete"
+                        :disable="isUpdating || isSoundFileRemoving"
+                        @click="removeUploadedFile"
+                    >
+                       {{ $t('Remove') }}
                     </q-btn>
                     <q-btn
                         v-if="selectedFile && !isUploading"
@@ -88,55 +99,53 @@
                 <div
                     class="csc-progress-col col-grow"
                 >
-                    <q-progress
-                        :percentage="soundFileUploadProgress"
+                    <q-linear-progress
+                        :buffer="soundFileUploadProgress * 0.01"
                         color="primary"
                         stripe
-                        animate
                         height="24px"
                     />
                 </div>
             </div>
             <div
-                v-if="hasParent"
                 class="row items-center"
             >
                 <div
+                    v-if="hasParent"
                     class="col-auto"
                 >
                     <q-checkbox
                         :value="soundFileUseparent"
-                        :disable="readOnly"
+                        :disable="readOnly || isUploading || isUpdating || isSoundFileRemoving"
                         :label="$t('Use Parent')"
                         left-label
                         @input="toggleUseParent"
                     />
                 </div>
-            </div>
-            <div
-                v-if="soundFile && !selectedFile && this.soundFile.filename"
-                class="row items-center"
-            >
-                <div
-                    class="col-auto"
+                <template
+                    v-if="soundFile && !selectedFile && this.soundFile.filename"
                 >
-                    <q-checkbox
-                        :value="soundFileLoopplay"
-                        :label="$t('Loop')"
-                        :disable="readOnly"
-                        left-label
-                        @input="toggleLoopPlay"
-                    />
-                </div>
-                <div
-                    class="csc-col-right col-grow"
-                >
-                    <csc-audio-player
-                        v-if="this.soundFile && this.soundFile.filename"
-                        :file-url="soundFileUrl"
-                        @load="loadPlay"
-                    />
-                </div>
+                    <div
+                        class="col-auto"
+                    >
+                        <q-checkbox
+                            :value="soundFileLoopplay"
+                            :label="$t('Loop')"
+                            :disable="readOnly || isUpdating || isSoundFileRemoving"
+                            left-label
+                            @input="toggleLoopPlay"
+                        />
+                    </div>
+                    <div
+                        class="csc-col-right col-grow"
+                    >
+                        <csc-audio-player
+                            v-if="this.soundFile && this.soundFile.filename"
+                            :file-url="soundFileUrl"
+                            @load="loadPlay"
+                        />
+                    </div>
+                </template>
             </div>
         </div>
         <csc-object-spinner
@@ -147,6 +156,9 @@
 </template>
 
 <script>
+import {
+    mapGetters
+} from 'vuex'
 import {
     RequestState
 } from 'src/store/common'
@@ -204,6 +216,9 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('pbxSoundSets', [
+            'isSoundFileRemoving'
+        ]),
         soundFileLoopplay () {
             if (this.soundFile && this.soundFile.loopplay) {
                 return this.soundFile.loopplay
@@ -300,6 +315,13 @@ export default {
                     useParent: !this.soundFileUseparent
                 })
             }
+        },
+        removeUploadedFile () {
+            this.$emit('remove-uploaded-file', {
+                soundFileId: this.soundFile.id,
+                soundSetId: this.soundFile.set_id,
+                soundHandle: this.soundFile.handle
+            })
         }
     }
 }

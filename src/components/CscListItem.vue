@@ -31,6 +31,7 @@
                 />
             </div>
             <div
+                v-if="showMoreMenu"
                 class="csc-list-item-head-menu"
             >
                 <q-btn
@@ -51,6 +52,10 @@
                     </q-list>
                 </q-menu>
             </div>
+            <slot
+                name="actions"
+                class="csc-list-item-head-menu"
+            />
         </div>
         <q-slide-transition>
             <div
@@ -100,6 +105,10 @@ export default {
         odd: {
             type: Boolean,
             default: false
+        },
+        showMoreMenu: {
+            type: Boolean,
+            default: true
         }
     },
     data () {
