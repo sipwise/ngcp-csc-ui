@@ -1,6 +1,7 @@
 {
     "&lt;{destination}&gt; as {filetype}": "&lt;{destination}&gt; as {filetype}",
     "&quot;Music on Hold&quot; - if set to true and a music on hold file is provided, a calling party gets that file played when put on hold": "&quot;Music on Hold&quot; - if set to true and a music on hold file is provided, a calling party gets that file played when put on hold",
+    "(empty)": "(empty)",
     "404 Not Found": "404 Not Found",
     "ACL": "ACL",
     "Accepted email address to allow mail2fax transmission.": "Accepted email address to allow mail2fax transmission.",
@@ -277,6 +278,7 @@
     "No messages": "No messages",
     "No numbers assigned": "No numbers assigned",
     "No numbers found": "No numbers found",
+    "No parents assigned": "No parents assigned",
     "No seats": "No seats",
     "No seats created yet": "No seats created yet",
     "No sound sets created yet": "No sound sets created yet",
@@ -463,6 +465,7 @@
     "Updated {field} for manager secretary config {msConfig} successfully": "Updated {field} for manager secretary config {msConfig} successfully",
     "Updated {field} for sound set {soundSet} successfully": "Updated {field} for sound set {soundSet} successfully",
     "Upload": "Upload",
+    "Use Parent": "Use Parent",
     "Use RegExp": "Use RegExp",
     "Use as default for all seats and groups": "Use as default for all seats and groups",
     "Use custom number": "Use custom number",

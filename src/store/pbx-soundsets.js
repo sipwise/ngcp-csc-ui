@@ -17,7 +17,7 @@ import {
     getAllSoundFilesBySoundSetId,
     getSoundFile,
     uploadSoundFile,
-    setLoopPlay, unsetAsDefault, setUseParent
+    setLoopPlay, unsetAsDefault, setUseParent, removeSoundFile
 } from '../api/pbx-soundsets'
 import _ from 'lodash'
 import {
@@ -53,7 +53,7 @@ export default {
         soundSetUpdating: null,
         soundSetUpdatingField: null,
         soundSetSelected: null,
-        soundHandleList: [],
+        soundHandleList: {},
         soundHandleListState: RequestState.initiated,
         soundFileMap: {},
         soundFileUrlMap: {},
@@ -61,7 +61,9 @@ export default {
         soundFileState: {},
         soundFileUploadState: {},
         soundFileUploadProgress: {},
-        soundFileUpdateState: {}
+        soundFileUpdateState: {},
+        soundFileRemoveState: {},
+        soundHandleGroups: []
     },
     getters: {
         isSoundSetListEmpty (state) {
@@ -95,11 +97,6 @@ export default {
                     state.soundSetRemoving !== null && state.soundSetRemoving.id === id) ||
                     (state.soundSetUpdateState === RequestState.requesting &&
                         state.soundSetUpdating !== null && state.soundSetUpdating.id === id)
-            }
-        },
-        isSoundSetExpanded (state) {
-            return (id) => {
-                return state.soundSetSelected !== null && state.soundSetSelected.id === id
             }
         },
         getSoundSetRemoveDialogMessage (state) {
@@ -147,6 +144,9 @@ export default {
                 return state.soundFileListStates[soundSetId] &&
                     state.soundFileListStates[soundSetId] === RequestState.requesting
             }
+        },
+        isSoundFileRemoving (state) {
+            return state.soundFileRemoveState === RequestState.requesting
         }
     },
     mutations: {
@@ -184,8 +184,14 @@ export default {
             state.soundSetUpdating = state.soundSetMap[options.soundSetId]
             state.soundSetUpdatingField = options.field
         },
-        soundSetUpdateSucceeded (state) {
+        soundSetUpdateSucceeded (state, soundSet) {
             state.soundSetUpdateState = RequestState.succeeded
+            const index = state.soundSetList.findIndex((soundSetItem) => soundSetItem.id === soundSet.id)
+            Vue.set(state.soundSetMap, soundSet.id, soundSet)
+            state.soundSetList[index] = soundSet
+            if (state.soundSetSelected.id === soundSet.id) {
+                state.soundSetSelected = soundSet
+            }
         },
         soundSetUpdateFailed (state, err) {
             state.soundSetUpdateState = RequestState.failed
@@ -201,8 +207,11 @@ export default {
             state.soundSetRemovalState = RequestState.initiated
             state.soundSetRemoving = null
         },
-        soundSetRemovalSucceeded (state) {
+        soundSetRemovalSucceeded (state, soundSetId) {
             state.soundSetRemovalState = RequestState.succeeded
+            const index = state.soundSetList.findIndex((soundSetItem) => soundSetItem.id === soundSetId)
+            Vue.delete(state.soundSetMap, soundSetId)
+            state.soundSetList.splice(index, 1)
         },
         soundSetRemovalFailed (state, err) {
             state.soundSetRemovalState = RequestState.failed
@@ -214,18 +223,20 @@ export default {
         disableSoundSetAddForm (state) {
             state.soundSetCreationState = CreationState.initiated
         },
-        expandSoundSet (state, soundSetId) {
-            state.soundSetSelected = state.soundSetMap[soundSetId]
-        },
-        collapseSoundSet (state) {
-            state.soundSetSelected = null
-        },
         soundHandlesRequesting (state) {
             state.soundHandleListState = RequestState.requesting
         },
         soundHandlesSucceeded (state, soundHandles) {
             state.soundHandleListState = RequestState.succeeded
-            state.soundHandleList = _.get(soundHandles, 'items', [])
+            const soundHandleList = _.get(soundHandles, 'items', [])
+            soundHandleList.map((soundHandle) => {
+                if (!state.soundHandleGroups.includes(soundHandle.group)) {
+                    state.soundHandleGroups.push(soundHandle.group)
+                }
+            })
+            state.soundHandleGroups.map((group) => {
+                Vue.set(state.soundHandleList, group, soundHandleList.filter((soundHandle) => group === soundHandle.group))
+            })
         },
         soundFilesRequesting (state, soundSetId) {
             Vue.delete(state.soundFileListStates, soundSetId)
@@ -310,6 +321,37 @@ export default {
             })
             Vue.delete(state.soundFileUpdateState, soundFileIntId)
             Vue.set(state.soundFileUpdateState, soundFileIntId, RequestState.failed)
+        },
+        soundFileRemoveRequesting (state, options) {
+            const soundFileIntId = toFileId({
+                soundSetId: options.soundSetId,
+                soundHandle: options.soundHandle
+            })
+            Vue.delete(state.soundFileRemoveState, soundFileIntId)
+            Vue.set(state.soundFileRemoveState, soundFileIntId, RequestState.requesting)
+        },
+        soundFileRemoveSucceeded (state, soundFile) {
+            const soundFileIntId = toFileId({
+                soundSetId: soundFile.soundSetId,
+                soundHandle: soundFile.soundHandle
+            })
+            Vue.delete(state.soundFileRemoveState, soundFileIntId)
+            Vue.set(state.soundFileRemoveState, soundFileIntId, RequestState.succeeded)
+            Vue.delete(state.soundFileMap, soundFileIntId)
+        },
+        soundFileRemoveFailed (state, options) {
+            const soundFileIntId = toFileId({
+                soundSetId: options.soundSetId,
+                soundHandle: options.soundHandle
+            })
+            Vue.delete(state.soundFileRemoveState, soundFileIntId)
+            Vue.set(state.soundFileRemoveState, soundFileIntId, RequestState.failed)
+        },
+        selectSoundSet (state, soundSetId) {
+            state.soundSetSelected = state.soundSetMap[soundSetId]
+        },
+        resetSelectedSoundSet (state) {
+            state.soundSetSelected = null
         }
     },
     actions: {
@@ -354,12 +396,7 @@ export default {
         removeSoundSet (context) {
             context.commit('soundSetRemovalRequesting')
             removeSoundSet(context.state.soundSetRemoving.id).then(() => {
-                return context.dispatch('loadSoundSetList', {
-                    listVisible: true,
-                    page: context.state.soundSetListCurrentPage
-                })
-            }).then(() => {
-                context.commit('soundSetRemovalSucceeded')
+                context.commit('soundSetRemovalSucceeded', context.state.soundSetRemoving.id)
             }).catch((err) => {
                 context.commit('soundSetRemovalFailed', err.message)
             })
@@ -373,13 +410,8 @@ export default {
             if (options.contractDefault !== true) {
                 func = unsetAsDefault
             }
-            func(options.soundSetId).then(() => {
-                return context.dispatch('loadSoundSetList', {
-                    listVisible: true,
-                    page: context.state.soundSetListCurrentPage
-                })
-            }).then(() => {
-                context.commit('soundSetUpdateSucceeded')
+            func(options.soundSetId).then((soundSet) => {
+                context.commit('soundSetUpdateSucceeded', soundSet)
             }).catch((err) => {
                 context.commit('soundSetUpdateFailed', err.message)
             })
@@ -389,13 +421,8 @@ export default {
                 soundSetId: options.soundSetId,
                 field: i18n.t('name')
             })
-            setSoundSetName(options.soundSetId, options.name).then(() => {
-                return context.dispatch('loadSoundSetList', {
-                    listVisible: true,
-                    page: context.state.soundSetListCurrentPage
-                })
-            }).then(() => {
-                context.commit('soundSetUpdateSucceeded')
+            setSoundSetName(options.soundSetId, options.name).then((soundSet) => {
+                context.commit('soundSetUpdateSucceeded', soundSet)
             }).catch((err) => {
                 context.commit('soundSetUpdateFailed', err.message)
             })
@@ -405,13 +432,8 @@ export default {
                 soundSetId: options.soundSetId,
                 field: i18n.t('description')
             })
-            setSoundSetDescription(options.soundSetId, options.description).then(() => {
-                return context.dispatch('loadSoundSetList', {
-                    listVisible: true,
-                    page: context.state.soundSetListCurrentPage
-                })
-            }).then(() => {
-                context.commit('soundSetUpdateSucceeded')
+            setSoundSetDescription(options.soundSetId, options.description).then((soundSet) => {
+                context.commit('soundSetUpdateSucceeded', soundSet)
             }).catch((err) => {
                 context.commit('soundSetUpdateFailed', err.message)
             })
@@ -421,13 +443,8 @@ export default {
                 soundSetId: options.soundSetId,
                 field: i18n.t('parent')
             })
-            setSoundSetParent(options.soundSetId, options.parent_id).then(() => {
-                return context.dispatch('loadSoundSetList', {
-                    listVisible: true,
-                    page: context.state.soundSetListCurrentPage
-                })
-            }).then(() => {
-                context.commit('soundSetUpdateSucceeded')
+            setSoundSetParent(options.soundSetId, options.parent_id).then((soundSet) => {
+                context.commit('soundSetUpdateSucceeded', soundSet)
             }).catch((err) => {
                 context.commit('soundSetUpdateFailed', err.message)
             })
@@ -532,6 +549,15 @@ export default {
             }).catch((err) => {
                 console.debug(err)
                 context.commit('soundFileUpdateFailed', options)
+            })
+        },
+        removeSoundFile (context, options) {
+            context.commit('soundFileRemoveRequesting', options)
+            removeSoundFile(options.soundFileId).then(() => {
+                context.commit('soundFileRemoveSucceeded', options)
+            }).catch((err) => {
+                console.debug(err)
+                context.commit('soundFileRemoveFailed', options)
             })
         }
     }
