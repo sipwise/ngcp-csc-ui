@@ -34,6 +34,7 @@ import CscPagePbxSettingsAutoAttendant from 'pages/CscPagePbxSettingsAutoAttenda
 import CscPageDashboard from 'pages/CscPageDashboard'
 import CscPagePbxSettingsMsConfigs from 'pages/CscPagePbxSettingsMsConfigs'
 import CscPagePbxSettingsCallQueues from 'pages/CscPagePbxSettingsCallQueues'
+import CscPagePbxSoundSetDetails from 'src/pages/CscPagePbxSoundSetDetails'
 
 const getToken = (route) => {
     return {
@@ -255,6 +256,18 @@ export default function routes (app) {
                             return i18n.t('Sound Sets')
                         },
                         profileAttribute: PROFILE_ATTRIBUTE_MAP.soundSet
+                    }
+                },
+                {
+                    path: 'pbx-configuration/sound-sets/:id',
+                    component: CscPagePbxSoundSetDetails,
+                    meta: {
+                        get title () {
+                            return i18n.t('PBX Configuration')
+                        },
+                        get subtitle () {
+                            return i18n.t('Sound Sets')
+                        }
                     }
                 },
                 {

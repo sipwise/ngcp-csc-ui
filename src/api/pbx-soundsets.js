@@ -277,3 +277,17 @@ export function setUseParent (options) {
         })
     })
 }
+
+export function removeSoundFile (soundFileId) {
+    return new Promise((resolve, reject) => {
+        Vue.http.delete('api/soundfiles/' + soundFileId).then(() => {
+            resolve()
+        }).catch((err) => {
+            if (err.status >= 400) {
+                reject(new Error(err.body.message))
+            } else {
+                reject(err)
+            }
+        })
+    })
+}
