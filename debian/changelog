@@ -1,3 +1,11 @@
+ngcp-csc-ui (11.3.1.1+0~mr11.3.1.1) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [ad39718] MT#56986 [CSC] Add possibility to select parent soundset when creating/editing a soundset
+  * [0957441] MT#56987 Add possibility to select for each soundset announcement if the parent soundset has to be used or not
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 07 Apr 2023 10:55:19 +0200
+
 ngcp-csc-ui (11.3.1.0+0~mr11.3.1.0) unstable; urgency=medium
 
   [ Georges Francisco ]
