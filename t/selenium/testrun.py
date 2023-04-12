@@ -252,7 +252,7 @@ class testrun(unittest.TestCase):
         driver.find_element_by_xpath('/html/body//div[@class="q-list q-list--dark"]/div[contains(., "Disable")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[4]/svg')
         self.assertTrue(
-            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]/div/div[contains(@class, "disabled")]')) > 0,
+            len(driver.find_elements_by_xpath('//*[@id="csc-wrapper-call-forwarding"]//div[@data-cy="q-item-section"][@disabled="disabled"]')) > 0,
             "Call forward was not disabled")
         print("OK")
         print("Try to enable a call forward...", end="")
