@@ -373,7 +373,7 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to log out...", end="")
         driver.find_element_by_xpath('//*[@id="csc-header-toolbar-main"]/button[contains(., "testuser")]').click()
-        driver.find_element_by_xpath('/html/body/div[3]/div/div').click()
+        driver.find_element_by_xpath('/html/body/div[3]/div/div[2]').click()
         self.assertTrue(
             len(driver.find_elements_by_xpath('//*[@id="csc-header-toolbar-login"]')) > 0,
             "Logout wasnt successful")
