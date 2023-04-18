@@ -242,7 +242,7 @@ export default function routes (app) {
                         get subtitle () {
                             return i18n.t('Call Queues')
                         },
-                        profileAttributes: PROFILE_ATTRIBUTES_MAP.pbxSettingsCallQueue
+                        profileAttributes: PROFILE_ATTRIBUTES_MAP.extSettingsCallQueue
                     }
                 },
                 {
@@ -355,37 +355,37 @@ export default function routes (app) {
                     }
                 },
                 {
-                    path: 'pbx-settings/general',
+                    path: 'extension-settings/general',
                     component: CscPagePbxSettings,
                     meta: {
                         get title () {
-                            return i18n.t('PBX Settings')
+                            return i18n.t('Extension Settings')
                         },
                         get subtitle () {
-                            return i18n.t('Set your PBX settings')
+                            return i18n.t('Set your Extension settings')
                         },
                         profileAttributes: PROFILE_ATTRIBUTE_MAP.clir_intrapbx
                     }
                 },
                 {
-                    path: 'pbx-settings/call-queues',
+                    path: 'extension-settings/call-queues',
                     component: CscPagePbxSettingsCallQueues,
                     meta: {
                         get title () {
-                            return i18n.t('PBX Settings')
+                            return i18n.t('Extension Settings')
                         },
                         get subtitle () {
                             return i18n.t('Call Queues')
                         },
-                        profileAttributes: PROFILE_ATTRIBUTES_MAP.pbxSettingsCallQueue
+                        profileAttributes: PROFILE_ATTRIBUTES_MAP.extSettingsCallQueue
                     }
                 },
                 {
-                    path: 'pbx-settings/ms-configs',
+                    path: 'extension-settings/ms-configs',
                     component: CscPagePbxSettingsMsConfigs,
                     meta: {
                         get title () {
-                            return i18n.t('PBX Settings')
+                            return i18n.t('Extension Settings')
                         },
                         get subtitle () {
                             return i18n.t('Manager Secretary')
@@ -394,11 +394,11 @@ export default function routes (app) {
                     }
                 },
                 {
-                    path: 'pbx-settings/auto-attendant',
+                    path: 'extension-settings/auto-attendant',
                     component: CscPagePbxSettingsAutoAttendant,
                     meta: {
                         get title () {
-                            return i18n.t('PBX Settings')
+                            return i18n.t('Extension Settings')
                         },
                         get subtitle () {
                             return i18n.t('Auto-attendant')

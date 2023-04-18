@@ -195,29 +195,29 @@ export default {
                 },
                 {
                     icon: 'settings',
-                    label: this.$t('PBX Settings'),
+                    label: this.$t('Extension Settings'),
                     visible: this.isPbxEnabled && this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettings),
                     children: [
                         {
-                            to: '/user/pbx-settings/general',
+                            to: '/user/extension-settings/general',
                             icon: 'settings',
                             label: this.$t('General'),
                             visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.clir_intrapbx)
                         },
                         {
-                            to: '/user/pbx-settings/call-queues',
+                            to: '/user/extension-settings/call-queues',
                             icon: 'filter_none',
                             label: this.$t('Call Queues'),
                             visible: this.isPbxEnabled && this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettingsCallQueue)
                         },
                         {
-                            to: '/user/pbx-settings/ms-configs',
+                            to: '/user/extension-settings/ms-configs',
                             icon: 'arrow_forward',
                             label: this.$t('Manager Secretary'),
                             visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.manager_secretary)
                         },
                         {
-                            to: '/user/pbx-settings/auto-attendant',
+                            to: '/user/extension-settings/auto-attendant',
                             icon: 'dialpad',
                             label: this.$t('Auto-attendant'),
                             visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.auto_attendant)
