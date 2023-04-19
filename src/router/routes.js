@@ -21,7 +21,8 @@ import CscPagePbxCallQueues from 'src/pages/CscPagePbxCallQueues'
 import CscPagePbxSoundSets from 'src/pages/CscPagePbxSoundSets'
 import CscPagePbxMsConfigs from 'src/pages/CscPagePbxMsConfigs'
 import CscPagePbxAutoAttendant from 'src/pages/CscPagePbxAutoAttendant'
-import CscPagePbxSettings from 'src/pages/CscPagePbxSettings'
+// Just hide the page to re-use later
+// import CscPagePbxSettings from 'src/pages/CscPagePbxSettings'
 import CscPageVoicebox from 'src/pages/CscPageVoicebox'
 import CscPageFaxSettings from 'src/pages/CscPageFaxSettings'
 import CscPageUserSettings from 'src/pages/CscPageUserSettings'
@@ -128,7 +129,7 @@ export default function routes (app) {
                         get subtitle () {
                             return i18n.t('Privacy')
                         },
-                        profileAttribute: PROFILE_ATTRIBUTE_MAP.callBlockingPrivacy
+                        profileAttributes: PROFILE_ATTRIBUTES_MAP.callBlockingPrivacy
                     }
                 },
                 {
@@ -354,19 +355,19 @@ export default function routes (app) {
                         profileAttributes: PROFILE_ATTRIBUTES_MAP.callSettings
                     }
                 },
-                {
-                    path: 'extension-settings/general',
-                    component: CscPagePbxSettings,
-                    meta: {
-                        get title () {
-                            return i18n.t('Extension Settings')
-                        },
-                        get subtitle () {
-                            return i18n.t('Set your Extension settings')
-                        },
-                        profileAttributes: PROFILE_ATTRIBUTE_MAP.clir_intrapbx
-                    }
-                },
+                // Just hide the page to re-use later
+                // {
+                //     path: 'extension-settings/general',
+                //     component: CscPagePbxSettings,
+                //     meta: {
+                //         get title () {
+                //             return i18n.t('Extension Settings')
+                //         },
+                //         get subtitle () {
+                //             return i18n.t('Set your Extension settings')
+                //         },
+                //     }
+                // },
                 {
                     path: 'extension-settings/call-queues',
                     component: CscPagePbxSettingsCallQueues,

@@ -10,10 +10,10 @@ export const PROFILE_ATTRIBUTE_MAP = {
     reminder: 'reminder',
     speedDial: 'speed_dial',
     voiceMail: 'voice_mail',
-    callBlockingPrivacy: 'clir',
+    clir: 'clir',
+    clir_intrapbx: 'clir_intrapbx',
     faxServer: 'fax_server',
     cscCalls: 'csc_calls',
-    clir_intrapbx: 'clir_intrapbx',
     manager_secretary: 'manager_secretary',
     auto_attendant: 'auto_attendant',
     soundSet: 'contract_sound_set',
@@ -27,7 +27,8 @@ export const PROFILE_ATTRIBUTE_MAP = {
 export const PROFILE_ATTRIBUTES_MAP = {
     callBlockingIncoming: ['block_in_clir', 'block_in_mode', 'block_in_list'],
     callBlockingOutgoing: ['block_out_mode', 'block_out_list'],
+    callBlockingPrivacy: ['clir', 'clir_intrapbx'],
     callSettings: ['music_on_hold', 'language'],
-    pbxSettings: ['clir_intrapbx', 'auto_attendant', 'cloud_pbx_callqueue', 'max_queue_length', 'queue_wrap_up_time', 'manager_secretary'],
+    pbxSettings: ['auto_attendant', 'cloud_pbx_callqueue', 'max_queue_length', 'queue_wrap_up_time', 'manager_secretary'],
     pbxSettingsCallQueue: ['cloud_pbx_callqueue', 'max_queue_length', 'queue_wrap_up_time']
 }
