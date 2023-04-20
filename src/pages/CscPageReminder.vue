@@ -12,6 +12,7 @@
                         :disable="isReminderLoading"
                         :label="toggleLabel"
                         :value="isReminderActive"
+                        data-cy="csc-reminder-toggle"
                         checked-icon="notifications_active"
                         unchecked-icon="notifications_off"
                         @input="toggleReminder"
@@ -37,6 +38,7 @@
                             :value="reminderRecurrence"
                             :val="recurrenceOption.value"
                             :label="recurrenceOption.label"
+                            data-cy="csc-reminder-occurance"  
                             @input="updateRecurrence"
                         />
                     </div>
@@ -47,6 +49,7 @@
                     <q-input
                         :value="reminderTime"
                         :loading="isReminderLoading"
+                        data-cy="csc-reminder-time"
                         fill-mask="_"
                         mask="##:##"
                         dense
