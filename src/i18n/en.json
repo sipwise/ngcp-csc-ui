@@ -562,6 +562,6 @@
     "{field} must be at least {minValue} second": "{field} must be at least {minValue} second",
     "{field} must be maximum of {maxValue} seconds": "{field} must be maximum of {maxValue} seconds",
     "{field} must consist of numeric characters only": "{field} must consist of numeric characters only",
-    "{field} must consist only of numeric characters or the symbols * or #.": "{field} must consist only of numeric characters or the symbols * or #.",
+    "{field} must consist only of numeric characters or the symbols +, * or #.": "{field} must consist only of numeric characters or the symbols +, * or #.",
     "{field} must have at most {maxLength} letters": "{field} must have at most {maxLength} letters"
 }
