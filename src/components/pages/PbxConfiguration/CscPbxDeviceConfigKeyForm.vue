@@ -152,7 +152,7 @@ export default {
             target_number: {
                 required,
                 onlyChars: function (value) {
-                    const regExpTargetNumber = new RegExp("^[*#0-9]*$");
+                    const regExpTargetNumber = new RegExp("^[*#0-9+]*$");
                     return regExpTargetNumber.test(value)
                 }
             }
@@ -297,7 +297,7 @@ export default {
                     field: this.$t('Target number')
                 })
             } else if (!this.$v.changes.target_number.onlyChars) {
-                return this.$t('{field} must consist only of numeric characters or the symbols * or #.', {
+                return this.$t('{field} must consist only of numeric characters or the symbols +, * or #.', {
                     field: this.$t('Target number')
                 })
             } else {
