@@ -53,11 +53,13 @@
                     <q-item-section>
                         <q-item-label
                             class="text-subtitle1"
+                            data-cy="csc-speeddial-whendial"
                         >
                             {{ $t('When I dial {slot} ...', { slot: assigned.slot }) }}
                         </q-item-label>
                         <q-item-label
                             class="text-subtitle2"
+                            data-cy="csc-speeddial-ring"
                         >
                             {{ $t('ring') }}
                             {{ assigned.destination | destinationFormat }}
@@ -71,11 +73,13 @@
                             flat
                             dense
                             color="primary"
+                            data-cy="csc-speeddial-more"
                         >
                             <csc-popup-menu>
                                 <csc-popup-menu-item
                                     icon="delete"
                                     color="negative"
+                                    data-cy="csc-speeddial-remove"
                                     :label="$t('Remove')"
                                     @click="unassignSlot(assigned)"
                                 />

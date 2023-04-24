@@ -7,6 +7,7 @@
                 v-model="slot"
                 emit-value
                 map-options
+                data-cy="csc-speeddial-slot"
                 :disable="loading"
                 :readonly="loading"
                 :label="$t('Slot')"
@@ -14,6 +15,7 @@
             />
             <csc-call-input
                 v-model="destination"
+                data-cy="csc-speeddial-destination"
                 :label="$t('Destination')"
                 @submit="save"
                 @error="error"
@@ -26,6 +28,7 @@
                     flat
                     color="default"
                     icon="clear"
+                    data-cy="csc-speeddial-cancel"
                     @mousedown.native="cancel()"
                 >
                     {{ $t('Cancel') }}
@@ -35,6 +38,7 @@
                     flat
                     color="primary"
                     icon="done"
+                    data-cy="csc-speeddial-save"
                     :disable="destinationError"
                     @click="save()"
                 >
@@ -50,6 +54,7 @@
                 color="primary"
                 icon="add"
                 flat
+                data-cy="csc-speeddial-add"
                 @click="enableForm()"
             >
                 {{ $t('Add Speed Dial') }}
