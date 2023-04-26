@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.5.4.2+0~mr10.5.4.2) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [96b756b] MT#57273 MT#57274 Update german translation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 26 Apr 2023 14:41:39 +0200
+
 ngcp-csc-ui (10.5.4.1+0~mr10.5.4.1) unstable; urgency=medium
 
   [ CORP\franci11 ]
