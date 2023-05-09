@@ -12,7 +12,7 @@
                 <q-item-section>
                     <q-toggle
                         :label="$t('Hide your number to the callee')"
-                        :value="privacy"
+                        :value="privacy || false"
                         :disable="privacyLoading"
                         data-cy="csc-privacy-hide"
                         checked-icon="visibility_off"
