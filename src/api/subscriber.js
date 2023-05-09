@@ -35,19 +35,23 @@ export async function getPreferencesDefs (id) {
 }
 
 export async function setPreference (id, field, value) {
-    try {
-        await replacePreference(id, field, value)
-    } catch (err) {
-        const errCode = err.status + ''
-        if (errCode === '422') {
-            // eslint-disable-next-line no-useless-catch
-            try {
-                await addPreference(id, field, value)
-            } catch (innerErr) {
-                throw innerErr
+    if (value === undefined || value === null || value === '' || value === false || (Array.isArray(value) && !value.length)) {
+        await removePreference(id, field)
+    } else {
+        try {
+            await replacePreference(id, field, value)
+        } catch (err) {
+            const errCode = err.status + ''
+            if (errCode === '422') {
+                // eslint-disable-next-line no-useless-catch
+                try {
+                    await addPreference(id, field, value)
+                } catch (innerErr) {
+                    throw innerErr
+                }
+            } else {
+                throw err
             }
-        } else {
-            throw err
         }
     }
 }
