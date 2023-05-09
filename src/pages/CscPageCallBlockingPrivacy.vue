@@ -12,7 +12,7 @@
                 <q-item-section>
                     <q-toggle
                         :label="privacyLabel"
-                        :value="privacy"
+                        :value="privacy || false"
                         :disable="privacyLoading"
                         checked-icon="visibility_off"
                         unchecked-icon="visibility"
