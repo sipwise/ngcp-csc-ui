@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.5.2.12+0~mr10.5.2.12) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [d8eed56] MT#57338 Remove preferences when set to false or empty array value
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 10 May 2023 16:46:13 +0200
+
 ngcp-csc-ui (10.5.2.11+0~mr10.5.2.11) unstable; urgency=medium
 
   [ Marco Capetta ]
