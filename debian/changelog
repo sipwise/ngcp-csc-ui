@@ -1,3 +1,13 @@
+ngcp-csc-ui (11.2.1.9+0~mr11.2.1.9) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [a8b552e] MT#56505 [CSC] Add possibility to configure call forwards also for groups
+
+  [ Georges Francisco ]
+  * [07b5504] MT#56962 [CSC] Align the code if Call forwards setup for seats to the one used for Groups
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 12 May 2023 14:12:10 +0200
+
 ngcp-csc-ui (11.2.1.8+0~mr11.2.1.8) unstable; urgency=medium
 
   [ Marco Capetta ]
