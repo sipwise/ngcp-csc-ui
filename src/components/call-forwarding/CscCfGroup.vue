@@ -35,6 +35,7 @@
                 :destination-set="destinationSet"
                 :source-set="sourceSet"
                 :time-set="timeSet"
+                :subscriber-id="subscriberId"
                 @delete-last="$refs.cfGroupTitle.deleteMappingEvent(mapping)"
             />
         </template>

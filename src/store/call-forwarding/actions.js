@@ -408,12 +408,12 @@ export async function doNotRingPrimaryNumber ({ commit, rootGetters, state }, pa
     })
 }
 
-export async function updateRingTimeout ({ commit, rootGetters, state }, ringTimeout) {
+export async function updateRingTimeout ({ commit, rootGetters, state }, payload) {
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
-        resourceId: rootGetters['user/getSubscriberId'],
+        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: 'cft_ringtimeout',
-        value: ringTimeout
+        value: payload.ringTimeout
     })
     commit('dataSucceeded', {
         mappings: updatedMappings
