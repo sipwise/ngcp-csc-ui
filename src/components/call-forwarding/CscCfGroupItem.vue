@@ -193,6 +193,10 @@ export default {
         loading: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     data () {
@@ -274,7 +278,7 @@ export default {
         },
         async updateRingTimeoutEvent () {
             this.$wait.start('csc-cf-mappings-full')
-            await this.updateRingTimeout(this.changedDestinationTimeout)
+            await this.updateRingTimeout({ringTimeout: this.changedDestinationTimeout, subscriberId: this.subscriberId})
             this.$wait.end('csc-cf-mappings-full')
         },
         setAnnouncement () {
