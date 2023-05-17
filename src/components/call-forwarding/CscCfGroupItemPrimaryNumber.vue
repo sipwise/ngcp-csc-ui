@@ -34,8 +34,7 @@
 
 <script>
 import {
-    mapGetters,
-    mapState
+    mapGetters
 } from 'vuex'
 import CscSpinner from 'components/CscSpinner'
 import numberFilter from '../../filters/number'
@@ -44,18 +43,6 @@ export default {
     components: { CscSpinner },
     props: {
         mapping: {
-            type: Object,
-            default: undefined
-        },
-        destinationSet: {
-            type: Object,
-            default: undefined
-        },
-        sourceSet: {
-            type: Object,
-            default: undefined
-        },
-        timeSet: {
             type: Object,
             default: undefined
         },
