@@ -20,9 +20,7 @@
                 v-if="mapping.type === 'cft'"
                 :loading="loading"
                 :mapping="mapping"
-                :destination-set="destinationSet"
-                :source-set="sourceSet"
-                :time-set="timeSet"
+                :primary-number-source="getPrimaryNumberSource"
             />
             <csc-cf-group-item
                 v-for="(destination, destinationIndex) in destinationSet.destinations"
@@ -53,6 +51,9 @@ import CscCfGroupTitle from 'components/call-forwarding/CscCfGroupTitle'
 import CscCfGroupItem from 'components/call-forwarding/CscCfGroupItem'
 import CscSpinner from 'components/CscSpinner'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
+import {
+    mapState
+} from 'vuex'
 
 export default {
     name: 'CscCfGroup',
@@ -89,8 +90,22 @@ export default {
         }
     },
     computed: {
+        ...mapState('pbxGroups', [
+            'groupSelected'
+        ]),
+        ...mapState('pbxSeats', [
+            'seatSelected'
+        ]),
         waitIdentifier () {
             return 'csc-cf-group-' + this.destinationSet.id
+        },
+        getPrimaryNumberSource () {
+            if (this.groupSelected) {
+                return this.groupSelected
+            } else if (this.seatSelected) {
+                return this.seatSelected
+            }
+            return null
         }
     }
 }

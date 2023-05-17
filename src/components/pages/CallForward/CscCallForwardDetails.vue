@@ -66,7 +66,7 @@
                         </q-item-section>
                     </q-item>
                     <csc-cf-group-item-primary-number
-                        :primary-number-source="groupSelected"/>
+                        :primary-number-source="getPrimaryNumberSource"/>
                 </q-list>
                 <template
                     v-for="group in groups"
@@ -94,13 +94,6 @@ import {
     mapGetters,
     mapActions
 } from 'vuex'
-import {
-    RequestState
-} from 'src/store/common'
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
 import CscCfGroup from 'components/call-forwarding/CscCfGroup'
 import CscSpinner from 'components/CscSpinner'
 import CscPopupMenu from 'components/CscPopupMenu'
@@ -133,9 +126,10 @@ export default {
     },
     computed: {
         ...mapState('pbxGroups', [
-            'groupSelected',
-            'groupUpdateState',
-            'groupUpdateError'
+            'groupSelected'
+        ]),
+        ...mapState('pbxSeats', [
+            'seatSelected'
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
@@ -148,15 +142,14 @@ export default {
             'destinationSetMap',
             'sourceSetMap',
             'timeSetMap'
-        ])
-    },
-    watch: {
-        groupUpdateState (state) {
-            if (state === RequestState.succeeded) {
-                showToast(this.getGroupUpdateToastMessage)
-            } else if (state === RequestState.failed) {
-                showGlobalError(this.groupUpdateError)
+        ]),
+        getPrimaryNumberSource () {
+            if (this.groupSelected) {
+                return this.groupSelected
+            } else if (this.seatSelected) {
+                return this.seatSelected
             }
+            return null
         }
     },
     mounted () {
