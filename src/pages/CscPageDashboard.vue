@@ -34,7 +34,7 @@
             >
                 <csc-call-item
                     :call="call"
-                    :sleek-mode=true
+                    :sleek-mode="true"
                 />
             </template>
         </csc-card-dashboard>
