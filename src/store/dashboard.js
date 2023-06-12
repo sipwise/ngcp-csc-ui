@@ -36,7 +36,7 @@ export default {
                 order_by: 'timestamp',
                 order_by_direction: 'desc',
                 type: 'call',
-                tz: getBrowserTimezone()
+                tz: 'UTC'
             })
             return res
         },
