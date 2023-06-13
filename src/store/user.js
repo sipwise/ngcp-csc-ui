@@ -1,5 +1,5 @@
 'use strict'
-
+import Vue from 'vue'
 import _ from 'lodash'
 import {
     RequestState
@@ -389,7 +389,7 @@ export default {
         async loadSubscriberRegistrations ({ commit, dispatch, state, rootGetters }, options) {
             try {
                 const list = await getSubscriberRegistrations({
-                    ...options
+                    ...options, ...{ expand: 'subscriber_id' }
                 })
                 commit('setSubscriberRegistrations', list.items)
                 return list.totalCount
@@ -397,6 +397,9 @@ export default {
                 commit('setSubscriberRegistrations', [])
                 throw err
             }
+        },
+        async removeSubscriberRegistration (context, row) {
+            await Vue.http.delete('api/subscriberregistrations/' + row.id)
         },
         async fetchAuthToken ({ commit, state, getters }, expiringTime = 300) {
             const subscriber = state.subscriber

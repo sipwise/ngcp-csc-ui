@@ -32,6 +32,17 @@
                     {{ $t('Refresh') }}
                 </q-btn>
             </template>
+            <template v-slot:body-cell-menu="{ row }">
+                <td>
+                <q-icon
+                    name="delete"
+                    color="negative"
+                    size="25px"
+                    @click="deleteRow(row)"
+                    style="cursor: pointer;"
+                />
+            </td>
+                </template>
         </q-table>
     </csc-page>
 </template>
@@ -75,6 +86,14 @@ export default {
                     sortable: true
                 },
                 {
+                    name: 'username',
+                    required: true,
+                    label: this.$t('Username'),
+                    align: 'left',
+                    field: row => row.subscriber_id_expand.username,
+                    sortable: true
+                },
+                {
                     name: 'user_agent',
                     required: true,
                     align: 'left',
@@ -109,9 +128,9 @@ export default {
                 {
                     name: 'menu',
                     required: true,
-                    align: 'right',
+                    align: 'left',
                     label: '',
-                    sortable: false
+                    sortable: true
                 }
             ]
         }
@@ -121,7 +140,8 @@ export default {
     },
     methods: {
         ...mapWaitingActions('user', {
-            loadSubscriberRegistrations: 'loadSubscriberRegistrations'
+            loadSubscriberRegistrations: 'loadSubscriberRegistrations',
+            removeSubscriberRegistration: 'removeSubscriberRegistration'
         }),
         async refresh () {
             await this.fetchPaginatedRegistrations({
@@ -138,7 +158,19 @@ export default {
             })
             this.pagination = { ...props.pagination }
             this.pagination.rowsNumber = count
-        }
+        },
+        async deleteRow (row) {
+            this.$q.dialog({
+                title: this.$t('Delete registered device'),
+                message: this.$t('You are about to delete this registered device'),
+                color: 'negative',
+                cancel: true,
+                persistent: true
+            }).onOk(async data => {
+                await this.removeSubscriberRegistration(row)
+                await this.refresh()
+            })
+        },
     }
 }
 </script>
