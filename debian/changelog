@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.3.1.7+0~mr11.3.1.7) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [85783d6] MT#57588 [CSC-UI] Dashboard Call List is showing received calls with wrong time
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 13 Jun 2023 11:27:07 +0200
+
 ngcp-csc-ui (11.3.1.6+0~mr11.3.1.6) unstable; urgency=medium
 
   [ Marco Capetta ]
