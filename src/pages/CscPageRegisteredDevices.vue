@@ -86,14 +86,6 @@ export default {
                     sortable: true
                 },
                 {
-                    name: 'username',
-                    required: true,
-                    label: this.$t('Username'),
-                    align: 'left',
-                    field: row => row.subscriber_id_expand.username,
-                    sortable: true
-                },
-                {
                     name: 'user_agent',
                     required: true,
                     align: 'left',

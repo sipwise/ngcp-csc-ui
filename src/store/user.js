@@ -389,7 +389,7 @@ export default {
         async loadSubscriberRegistrations ({ commit, dispatch, state, rootGetters }, options) {
             try {
                 const list = await getSubscriberRegistrations({
-                    ...options, ...{ expand: 'subscriber_id' }
+                    ...options
                 })
                 commit('setSubscriberRegistrations', list.items)
                 return list.totalCount
