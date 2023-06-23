@@ -77,6 +77,12 @@ export default {
                     visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
                 },
                 {
+                    to: '/user/subscriber-phonebook',
+                    icon: 'fas fa-user',
+                    label: this.$t('Subscriber Phonebook'),
+                    visible: true
+                },
+                {
                     icon: 'settings_phone',
                     label: this.$t('Call Settings'),
                     visible: true,

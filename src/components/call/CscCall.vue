@@ -47,21 +47,21 @@
                             <span
                                 v-if="isInitiating"
                             >
-                                {{ $t('Calling {number}...', {number: callNumberFormatted}) }}</span>
+                                {{ $t('Calling {number}...', {number: callNumberFormatted || callNumberQuery }) }}</span>
                             <span
                                 v-else-if="isRinging"
                             >
-                                {{ $t('Ringing at {number}...', {number: callNumberFormatted}) }}</span>
+                                {{ $t('Ringing at {number}...', {number: callNumberFormatted || callNumberQuery }) }}</span>
                             <span
                                 v-else-if="isIncoming"
                             >
-                                {{ $t('Incoming call from {number}...', {number: callNumberFormatted}) }}</span>
+                                {{ $t('Incoming call from {number}...', {number: callNumberFormatted || callNumberQuery }) }}</span>
                         </div>
                         <div
                             v-else-if="isEnded"
                             class="csc-call-error"
                         >
-                            {{ endedReason | startCase }} ({{ callNumberFormatted }})
+                            {{ endedReason | startCase }} ({{ callNumberFormatted || callNumberQuery }})
                         </div>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                         size="24px"
                     />
                     <div>
-                        {{ $t('In call with {number}', {number: callNumberFormatted}) }}
+                        {{ $t('In call with {number}', {number: callNumberFormatted || callNumberQuery }) }}
                     </div>
                     <q-btn
                         v-if="!dialpadOpened"
@@ -286,7 +286,7 @@
                         <div
                             class="csc-call-info-number"
                         >
-                            {{ callNumberFormatted }}
+                            {{ callNumberFormatted || callNumberQuery }}
                         </div>
                     </div>
                 </div>
@@ -302,7 +302,7 @@
                     <div
                         class="csc-call-info-number"
                     >
-                        {{ callNumberFormatted }}
+                        {{ callNumberFormatted || callNumberQuery }}
                     </div>
                 </div>
             </div>
@@ -480,6 +480,9 @@ export default {
         },
         callNumberFormatted () {
             return normalizeDestination(this.callNumber)
+        },
+        callNumberQuery () {
+            return normalizeDestination(this.$route.query.number)
         },
         iconToggleMicrophone () {
             if (this.microphoneEnabled) {

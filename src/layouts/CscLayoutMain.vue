@@ -489,7 +489,7 @@ export default {
             this.faxDialog = false
         },
         startCall (localMedia) {
-            if (this.callNumberInput !== '' && this.callNumberInput !== null) {
+            if (this.$route.query.number !== '' && this.$route.query.number !== null || this.callNumberInput !== '' && this.callNumberInput !== null) {
                 this.$store.dispatch('call/start', localMedia)
             }
         },

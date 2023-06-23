@@ -55,14 +55,39 @@ export async function setPreference (id, field, value) {
         }
     }
 }
-
+export async function setPreferencePhonebook (id, field, value) {
+    if (value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)) {
+        await removePreferencePhonebook(id, field)
+    } else {
+        try {
+            await replacePreferencePhonebook(id, field, value)
+        } catch (err) {
+            const errCode = err.status + ''
+            if (errCode === '422') {
+                // eslint-disable-next-line no-useless-catch
+                try {
+                    await addPreferencePhonebook(id, field, value)
+                } catch (innerErr) {
+                    throw innerErr
+                }
+            } else {
+                throw err
+            }
+        }
+    }
+}
 export async function removePreference (id, field) {
     return await patchRemove({
         path: 'api/subscriberpreferences/' + id,
         fieldPath: field
     })
 }
-
+export async function removePreferencePhonebook (id, field) {
+    return await patchRemove({
+        path: 'api/phonebookentries/' + id,
+        fieldPath: field
+    })
+}
 export function addPreference (id, field, value) {
     return new Promise((resolve, reject) => {
         patchAdd({
@@ -76,7 +101,19 @@ export function addPreference (id, field, value) {
         })
     })
 }
-
+export function addPreferencePhonebook (id, field, value) {
+    return new Promise((resolve, reject) => {
+        patchAdd({
+            path: 'api/phonebookentries/' + id,
+            fieldPath: field,
+            value: value
+        }).then(() => {
+            resolve()
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
 export function addPreferenceFull (id, field, value) {
     return new Promise((resolve, reject) => {
         patchAddFull({
@@ -104,7 +141,19 @@ export function replacePreference (id, field, value) {
         })
     })
 }
-
+export function replacePreferencePhonebook (id, field, value) {
+    return new Promise((resolve, reject) => {
+        patchReplace({
+            path: 'api/phonebookentries/' + id,
+            fieldPath: field,
+            value: value
+        }).then(() => {
+            resolve()
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
 export function prependItemToArrayPreference (id, field, value) {
     return new Promise((resolve, reject) => {
         Promise.resolve().then(() => {
@@ -652,7 +701,41 @@ export async function getSubscriberRegistrations (options) {
     })
     return list
 }
-
+export async function getSubscriberPhonebook (options) {
+    let all = false
+    if (options.rows === 0) {
+        delete options.rows
+        delete options.page
+        all = true
+    }
+    if (!options.order_by) {
+        delete options.order_by
+        delete options.order_by_direction
+    }
+    const list = await getList({
+        resource: 'phonebookentries',
+        all,
+        params: options
+    })
+    return list
+}
+export async function createPhonebook (data) {
+    const payLoad = {
+        name: data.name,
+        number: data.number,
+        shared: data.shared
+    }
+    return await Vue.http.post('api/phonebookentries/', payLoad)
+}
+export function setValueShared (id, value) {
+    return setPreferencePhonebook(id, 'shared', value)
+}
+export function setValueName (id, value) {
+    return setPreferencePhonebook(id, 'name', value)
+}
+export function setValueNumber (id, value) {
+    return setPreferencePhonebook(id, 'number', value)
+}
 export async function getRecordingStream (fileId) {
     return await getAsBlob({
         path: 'api/callrecordingfiles/' + fileId

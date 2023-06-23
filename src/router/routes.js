@@ -31,11 +31,14 @@ import CscRecoverPassword from 'src/pages/CscRecoverPassword'
 import CscPageCf from 'pages/CscPageCf'
 import CscPageCallSettings from 'pages/CscPageCallSettings'
 import CscPageRegisteredDevices from 'pages/CscPageRegisteredDevices'
+import CscPageSubscriberPhonebook from 'pages/CscPageSubscriberPhonebook'
 import CscPagePbxSettingsAutoAttendant from 'pages/CscPagePbxSettingsAutoAttendant'
 import CscPageDashboard from 'pages/CscPageDashboard'
 import CscPagePbxSettingsMsConfigs from 'pages/CscPagePbxSettingsMsConfigs'
 import CscPagePbxSettingsCallQueues from 'pages/CscPagePbxSettingsCallQueues'
 import CscPagePbxSoundSetDetails from 'src/pages/CscPagePbxSoundSetDetails'
+import CscPageSubscriberPhonebookDetails from 'src/pages/CscPageSubscriberPhonebookDetails'
+import CscPageSubscriberPhonebookAdd from 'src/pages/CscPageSubscriberPhonebookAdd'
 
 const getToken = (route) => {
     return {
@@ -82,6 +85,34 @@ export default function routes (app) {
                             return i18n.t('Calls, Faxes, VoiceMails')
                         },
                         profileAttribute: PROFILE_ATTRIBUTE_MAP.conversations
+                    }
+                },
+                {
+                    path: 'subscriber-phonebook',
+                    name: 'SubscriberPhonebook',
+                    component: CscPageSubscriberPhonebook,
+                    meta: {
+                        get title () {
+                            return i18n.t('Subscriber Phonebook')
+                        }
+                    }
+                },
+                {
+                    path: 'subscriber-phonebook/create',
+                    component: CscPageSubscriberPhonebookAdd,
+                    meta: {
+                        get title () {
+                            return i18n.t('Add Phonebook')
+                        }
+                    }
+                },
+                {
+                    path: 'subscriber-phonebook/:id',
+                    component: CscPageSubscriberPhonebookDetails,
+                    meta: {
+                        get title () {
+                            return i18n.t('Subscriber Phonebook')
+                        }
                     }
                 },
                 {

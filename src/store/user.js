@@ -15,8 +15,13 @@ import {
     recoverPassword,
     getBrandingLogo,
     getSubscriberRegistrations,
+    getSubscriberPhonebook,
     getSubscriberProfile,
-    changeSIPPassword
+    setValueShared,
+    setValueName,
+    setValueNumber,
+    changeSIPPassword,
+    createPhonebook
 } from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import QRCode from 'qrcode'
@@ -56,6 +61,8 @@ export default {
         resellerBranding: null,
         defaultBranding: {},
         subscriberRegistrations: [],
+        subscriberPhonebook: [],
+        phonebookMap: {},
         platformInfo: null,
         qrCode: null,
         qrExpiringTime: null
@@ -273,6 +280,9 @@ export default {
         setSubscriberRegistrations (state, value) {
             state.subscriberRegistrations = value
         },
+        setSubscriberPhonebook (state, value) {
+            state.subscriberPhonebook = value
+        },
         setProfile (state, value) {
             state.profile = value
         },
@@ -398,8 +408,36 @@ export default {
                 throw err
             }
         },
+        async loadSubscriberPhonebook ({ commit, dispatch, state, rootGetters }, options) {
+            try {
+                const list = await getSubscriberPhonebook({
+                    ...options
+                })
+                commit('setSubscriberPhonebook', list.items)
+                return list.totalCount
+            } catch (err) {
+                commit('setSubscriberPhonebook', [])
+                throw err
+            }
+        },
         async removeSubscriberRegistration (context, row) {
             await Vue.http.delete('api/subscriberregistrations/' + row.id)
+        },
+        async getPhonebookDetails (context, id) {
+            const list = await Vue.http.get('api/phonebookentries/' + id)
+            return list 
+        },
+        async getValueShared (context, options) {
+            await setValueShared(options.phonebookId, options.shared)
+        },
+        async getValueName (context, options) {
+            await setValueName(options.phonebookId, options.name)
+        },
+        async getValueNumber (context, options) {
+            await setValueNumber(options.phonebookId, options.number)
+        },
+        async createPhonebookSubscriber (context, data) {
+            await createPhonebook(data)
         },
         async fetchAuthToken ({ commit, state, getters }, expiringTime = 300) {
             const subscriber = state.subscriber
