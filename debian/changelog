@@ -1,3 +1,39 @@
+ngcp-csc-ui (11.5.0.0+0~mr11.5.0.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [87d31b2] MT#56986 [CSC] Add possibility to select parent soundset when creating/editing a soundset
+  * [d45f67b] MT#56987 Add possibility to select for each soundset announcement if the parent soundset has to be used or not
+  * [9ca8d4b] MT#56989 Soundset page general UI improvements
+  * [68f189b] MT#57030 Update AUI and CSC to fix latest security warnings
+  * [8ee50d2] MT#57588 [CSC-UI] Dashboard Call List is showing received calls with wrong time
+
+  [ Nico Schedel ]
+  * [b6f1e44] MT#56388 fix call forwards csc test
+  * [db1df27] MT#55492 add data-cy to call forward page
+  * [1e39ce3] MT#55492 add data-cy to reminder page
+  * [39adcab] MT#55492 add data-cy to speed dial page
+
+  [ Marco Capetta ]
+  * [b925553] MT#57183 Rename 'PBX Settings' to 'Extension Settings'
+  * [04d9274] MT#57240 Allow '+' char in device line number definition
+  * [21f9d8a] MT#57273 MT#57274 Update german translation
+  * [a2cc142] MT#57338 Remove preferences when set to false or empty array value
+  * [f2d08d8] MT#57305 Fix ringtimeout configuration on CFT for seats/groups
+  * [7849c0d] MT#57305 CSC CFT feature requires +E.164 number format
+  * [d53f9f1] MT#57604 Show all registered devices for subscriber's admin
+  * [7e58437] MT#57605 Remove username indication in registered devices
+
+  [ Georges Francisco ]
+  * [7395ef0] MT#57195 move clir_intrapbx setting to privacy page
+
+  [ Guillem Jover ]
+  * [bba8cab] TT#175000 Remove rtcengine support
+
+  [ nouhaila ]
+  * [b9c1320] MT#57605 allow the deletion of current registered devices
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 26 Jun 2023 14:10:37 +0200
+
 ngcp-csc-ui (11.4.0.0+0~mr11.4.0.0) unstable; urgency=medium
 
   [ Georges Francisco ]
