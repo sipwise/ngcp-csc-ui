@@ -16,7 +16,7 @@ cd /tmp/code/
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
 
-yarnpkg test:unit
+/tmp/yarn test:unit
 
 echo "### Moving JUnit XML files to /results"
 cp /tmp/code/junit.xml /results/

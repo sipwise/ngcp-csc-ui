@@ -1,11 +1,11 @@
-# DOCKER_NAME=ngcp-csc-ui-selenium-test-bullseye
-FROM docker.mgm.sipwise.com/sipwise-bullseye:latest
+# DOCKER_NAME=ngcp-csc-ui-selenium-test-bookworm
+FROM docker.mgm.sipwise.com/sipwise-bookworm:latest
 
 # Important! Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2021-05-03
+ENV REFRESHED_AT 2023-06-26
 
 RUN apt-get update
 RUN apt-get install --assume-yes \
@@ -47,8 +47,8 @@ RUN wget http://deb.sipwise.com/files/firefox-70.0.1.tar.bz2 && \
 RUN wget http://deb.sipwise.com/files/nose2-0.9.1.tar.gz && \
     wget http://deb.sipwise.com/files/selenium-3.141.0.tar.gz && \
     wget http://deb.sipwise.com/files/coverage-4.5.4.tar.gz && \
-    pip3 install coverage-4.5.4.tar.gz && \
-    pip3 install nose2-0.9.1.tar.gz selenium-3.141.0.tar.gz && \
+    pip3 install --break-system-packages coverage-4.5.4.tar.gz && \
+    pip3 install --break-system-packages nose2-0.9.1.tar.gz selenium-3.141.0.tar.gz && \
     rm -f nose2-0.9.1.tar.gz selenium-3.141.0.tar.gz coverage-4.5.4.tar.gz
 
 RUN echo "cd /code && ./t/selenium/testrunner 1.2.3.4 /code/ tap" >/home/selenium/.bash_history
@@ -62,12 +62,12 @@ COPY t/selenium/jenkins_docker_run /home/selenium/
 # ----------------------
 # When you want to build the base image from scratch (jump to the next section if you don't want to build yourself!):
 # NOTE: run the following command from root folder of git repository:
-# % docker build --tag="ngcp-csc-ui-selenium-test-bullseye" -f t/selenium/Dockerfile .
-# % docker run --rm -p 5999:5999 --shm-size 4g -i -t -v ~/Dokumente/ngcp-csc-ui:/code:rw ngcp-csc-ui-selenium-test-bullseye bash
+# % docker build --tag="ngcp-csc-ui-selenium-test-bookworm" -f t/selenium/Dockerfile .
+# % docker run --rm -p 5999:5999 --shm-size 4g -i -t -v ~/Dokumente/ngcp-csc-ui:/code:rw ngcp-csc-ui-selenium-test-bookworm bash
 #
 # Use the existing docker image:
-# % docker pull docker.mgm.sipwise.com/ngcp-csc-ui-selenium-test-bullseye
-# % docker run --rm -p 5999:5999 --shm-size 4g -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-csc-ui-selenium-test-bullseye:latest bash
+# % docker pull docker.mgm.sipwise.com/ngcp-csc-ui-selenium-test-bookworm
+# % docker run --rm -p 5999:5999 --shm-size 4g -i -t -v $(pwd):/code:rw docker.mgm.sipwise.com/ngcp-csc-ui-selenium-test-bookworm:latest bash
 #
 # Inside docker:
 #   su - selenium
