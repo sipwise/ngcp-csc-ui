@@ -15,17 +15,17 @@ def fill_element(driver, element, text, pathtype=By.XPATH):
 
 def scroll_to_element(driver, element):
     if element[:1] == "/":
-        webelem = driver.find_element_by_xpath(element)
+        webelem = driver.find_element(By.XPATH, element)
     else:
-        webelem = driver.find_element_by_link_text(element)
+        webelem = driver.find_element(By.LINK_TEXT, element)
     driver.execute_script("arguments[0].scrollIntoView();", webelem)
 
 
 def click_js(driver, element):
     if element[:1] == "/":
-        webelement = driver.find_element_by_xpath(element)
+        webelement = driver.find_element(By.XPATH, element)
     else:
-        webelement = driver.find_element_by_link_text(element)
+        webelement = driver.find_element(By.LINK_TEXT ,element)
     driver.execute_script("arguments[0].click();", webelement)
 
 
@@ -58,6 +58,6 @@ def wait_for_invisibility(driver, xpath):
 
 
 def check_if_unchecked(driver, element):
-    checkmark = driver.find_element_by_xpath(element)
+    checkmark = driver.find_element(By.XPATH, element)
     if not checkmark.is_selected():
         click_js(driver, element)
