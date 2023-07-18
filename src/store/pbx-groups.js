@@ -13,7 +13,8 @@ import {
     setGroupHuntTimeout,
     setGroupNumbers,
     setGroupSeats,
-    setGroupSoundSet
+    setGroupSoundSet,
+    setGroupHuntCancelMode
 } from '../api/pbx-groups'
 import _ from 'lodash'
 import Vue from 'vue'
@@ -150,6 +151,18 @@ export default {
             return (groupId) => {
                 return _.get(state, 'preferenceMapById.' + groupId + '.cloud_pbx_callqueue', false)
             }
+        },
+        getHuntCancelModeOptions () {
+            return [
+                {
+                    label: i18n.t('Using Cancel'),
+                    value: 'cancel'
+                },
+                {
+                    label: i18n.t('Using Bye'),
+                    value: 'bye'
+                }
+            ]
         }
     },
     mutations: {
@@ -359,6 +372,20 @@ export default {
             setGroupHuntTimeout({
                 groupId: options.groupId,
                 groupHuntTimeout: options.groupHuntTimeout
+            }).then((result) => {
+                context.commit('groupUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('groupUpdateFailed', err.message)
+            })
+        },
+        setGroupHuntCancelMode (context, options) {
+            context.commit('groupUpdateRequesting', {
+                groupId: options.groupId,
+                groupField: i18n.t('Hunt Cancel Mode')
+            })
+            setGroupHuntCancelMode({
+                groupId: options.groupId,
+                groupHuntCancelMode: options.groupHuntCancelMode
             }).then((result) => {
                 context.commit('groupUpdateSucceeded', result)
             }).catch((err) => {

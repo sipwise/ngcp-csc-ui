@@ -49,6 +49,7 @@
                     :alias-number-options="getNumberOptions"
                     :sound-set-options="getSoundSetOptions"
                     :hunt-policy-options="getHuntPolicyOptions"
+                    :hunt-cancel-mode-options="getHuntCancelModeOptions"
                     @save="createGroup"
                     @cancel="disableGroupAddForm"
                 />
@@ -94,6 +95,7 @@
                     :seats="seatMapById"
                     :loading="isGroupLoading(group.id)"
                     :hunt-policy-options="getHuntPolicyOptions"
+                    :hunt-cancel-mode-options="getHuntCancelModeOptions"
                     :label-width="4"
                     @remove="openGroupRemovalDialog(group.id)"
                 />
@@ -204,7 +206,8 @@ export default {
             'getGroupRemoveDialogMessage',
             'getGroupCreationToastMessage',
             'getGroupRemovalToastMessage',
-            'getHuntPolicyOptions'
+            'getHuntPolicyOptions',
+            'getHuntCancelModeOptions'
         ]),
         hasFilters () {
             return Object.keys(this.filters).length > 0

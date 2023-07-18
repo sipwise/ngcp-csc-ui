@@ -59,6 +59,18 @@
                     data-cy="group-hunt-timeout"
                     @input="$v.data.huntTimeout.$touch"
                 />
+                <q-select
+                    v-model="data.huntCancelMode"
+                    radio
+                    emit-value
+                    map-options
+                    hide-bottom-space
+                    :disable="loading"
+                    :readonly="loading"
+                    :label="$t('Cancel Mode')"
+                    :options="huntCancelModeOptions"
+                    data-cy="group-hunt-cancel-mode"
+                />
             </div>
             <div
                 class="col-3"
@@ -154,6 +166,10 @@ export default {
     },
     props: {
         huntPolicyOptions: {
+            type: Array,
+            default: () => []
+        },
+        huntCancelModeOptions: {
             type: Array,
             default: () => []
         },
@@ -270,6 +286,7 @@ export default {
                 extension: this.data.extension,
                 huntPolicy: this.data.huntPolicy,
                 huntTimeout: this.data.huntTimeout,
+                huntCancelMode: this.data.huntCancelMode,
                 aliasNumbers: this.data.aliasNumbers,
                 seats: this.data.seats,
                 soundSet: this.data.soundSet
@@ -288,6 +305,7 @@ export default {
                 extension: '',
                 huntPolicy: 'serial',
                 huntTimeout: 10,
+                huntCancelMode: 'cancel',
                 aliasNumbers: [],
                 seats: [],
                 soundSet: null

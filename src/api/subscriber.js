@@ -325,6 +325,10 @@ export function setPbxHuntTimeout (id, pbxHuntTimeout) {
     return setField(id, 'pbx_hunt_timeout', pbxHuntTimeout)
 }
 
+export function setPbxHuntCancelMode (id, pbxHuntCancelMode) {
+    return setField(id, 'pbx_hunt_cancel_mode', pbxHuntCancelMode)
+}
+
 export function setPbxGroupMemberIds (id, ids) {
     return setField(id, 'pbx_groupmember_ids', ids)
 }

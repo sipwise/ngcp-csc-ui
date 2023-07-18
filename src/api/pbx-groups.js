@@ -8,7 +8,8 @@ import {
     setDisplayName,
     setPbxExtension, setPbxGroupMemberIds,
     setPbxHuntPolicy,
-    setPbxHuntTimeout, setSubscriberNumbers
+    setPbxHuntTimeout, setSubscriberNumbers,
+    setPbxHuntCancelMode
 } from './subscriber'
 import {
     getAllSoundSets,
@@ -127,6 +128,7 @@ export function createGroup (group) {
                 pbx_extension: group.extension,
                 pbx_hunt_policy: group.huntPolicy,
                 pbx_hunt_timeout: group.huntTimeout,
+                pbx_hunt_cancel_mode: group.huntCancelMode,
                 pbx_groupmember_ids: group.seats
             })
         }).then(($subscriberId) => {
@@ -211,6 +213,23 @@ export function setGroupHuntTimeout (options) {
     return new Promise((resolve, reject) => {
         Promise.resolve().then(() => {
             return setPbxHuntTimeout(options.groupId, options.groupHuntTimeout)
+        }).then(() => {
+            return getSubscriberAndPreferences(options.groupId)
+        }).then((result) => {
+            resolve({
+                group: result.subscriber,
+                preferences: result.preferences
+            })
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+export function setGroupHuntCancelMode (options) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            return setPbxHuntCancelMode(options.groupId, options.groupHuntCancelMode)
         }).then(() => {
             return getSubscriberAndPreferences(options.groupId)
         }).then((result) => {

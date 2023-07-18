@@ -136,6 +136,27 @@
                     </template>
                 </q-input>
                 <q-select
+                    v-model="changes.huntCancelMode"
+                    emit-value
+                    map-options
+                    radio
+                    :label="$t('Cancel Mode')"
+                    :disable="isLoading"
+                    :options="getHuntCancelModeOptions"
+                >
+                    <template
+                        v-if="hasHuntCancelModeChanged"
+                        v-slot:append
+                    >
+                        <csc-input-button-save
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetHuntCancelMode"
+                        />
+                    </template>
+                </q-select>
+                <q-select
                     v-model="changes.aliasNumbers"
                     emit-value
                     map-options
@@ -211,7 +232,7 @@
                 />
             </q-list>
         </q-item>
-        
+
         <csc-call-forward-details
             v-else
             :id="id"/>
@@ -296,7 +317,8 @@ export default {
             'hasCallQueue',
             'getGroupUpdateToastMessage',
             'getSoundSetByGroupId',
-            'isGroupLoading'
+            'isGroupLoading',
+            'getHuntCancelModeOptions'
         ]),
         ...mapGetters('callForwarding', [
             'groups'
@@ -312,6 +334,9 @@ export default {
         },
         hasHuntTimeoutChanged () {
             return this.changes.huntTimeout !== this.groupSelected.pbx_hunt_timeout
+        },
+        hasHuntCancelModeChanged () {
+            return this.changes.huntCancelMode !== this.groupSelected.pbx_hunt_cancel_mode
         },
         hasAliasNumbersChanged () {
             const aliasNumbers = _.clone(this.changes.aliasNumbers)
@@ -374,6 +399,7 @@ export default {
             'setGroupExtension',
             'setGroupHuntPolicy',
             'setGroupHuntTimeout',
+            'setGroupHuntCancelMode',
             'setGroupSeats',
             'setGroupNumbers',
             'setGroupSoundSet'
@@ -395,6 +421,7 @@ export default {
                 extension: this.groupSelected.pbx_extension,
                 huntPolicy: this.groupSelected.pbx_hunt_policy,
                 huntTimeout: this.groupSelected.pbx_hunt_timeout,
+                huntCancelMode: this.groupSelected.pbx_hunt_cancel_mode,
                 aliasNumbers: this.getAliasNumberIds(),
                 seats: this.getSeatIds(),
                 soundSet: this.getSoundSetId()
@@ -428,6 +455,9 @@ export default {
         },
         resetHuntTimeout () {
             this.changes.huntTimeout = this.groupSelected.pbx_hunt_timeout
+        },
+        resetHuntCancelMode () {
+            this.changes.huntCancelMode = this.groupSelected.pbx_hunt_cancel_mode
         },
         resetAliasNumbers () {
             this.changes.aliasNumbers = this.getAliasNumberIds()
@@ -464,6 +494,12 @@ export default {
                 this.setGroupHuntTimeout({
                     groupId: this.groupSelected.id,
                     groupHuntTimeout: this.changes.huntTimeout
+                })
+            }
+             if (this.hasHuntCancelModeChanged) {
+                this.setGroupHuntCancelMode({
+                    groupId: this.groupSelected.id,
+                    groupHuntCancelMode: this.changes.huntCancelMode
                 })
             }
             if (this.hasAliasNumbersChanged) {
