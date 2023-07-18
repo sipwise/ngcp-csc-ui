@@ -27,7 +27,7 @@
                     @keypress.enter="triggerFilter"
                 >
                     <template
-                        v-slot:append
+                        #append
                     >
                         <q-btn
                             icon="search"
@@ -67,6 +67,7 @@
 import _ from 'lodash'
 export default {
     name: 'CscPbxSeatFilters',
+    emits: ['filter'],
     data () {
         return {
             filterType: null,
@@ -94,7 +95,7 @@ export default {
                     value: 'alias_number'
                 }
             ]
-        }   
+        }
     },
     methods: {
         triggerFilter () {

@@ -9,17 +9,17 @@
         @input="$emit('input')"
         @hide="$emit('dialog-closed')"
     >
-        <div
-            slot="content"
+        <template
+            #content
         >
             <csc-change-password-form
                 ref="changePasswordForm"
                 :loading="loading"
                 @validation-succeeded="validationSucceeded"
             />
-        </div>
-        <div
-            slot="actions"
+        </template>
+        <template
+            #actions
         >
             <q-btn
                 icon="check"
@@ -31,7 +31,7 @@
             >
                 {{ $t('Save') }}
             </q-btn>
-        </div>
+        </template>
     </csc-dialog>
 </template>
 <script>
@@ -54,35 +54,36 @@ export default {
             default: false
         }
     },
+    emits: ['change-password', 'dialog-closed', 'input'],
     methods: {
         validationSucceeded (payload) {
             this.$emit('change-password', payload)
         },
         open () {
-            this.$refs.dialog.open()
+            this.$refs.dialog.show()
             this.$refs.changePasswordForm.resetForm()
         },
         close () {
-            this.$refs.dialog.close()
+            this.$refs.dialog.hide()
         }
     }
 }
 </script>
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
     .csc-pbx-password-dialog
         .csc-dialog-actions,
         .csc-dialog-content
-            padding 15px
+            padding: 15px
             .q-input
-                width 100%
-                min-width 270px
+                width: 100%
+                min-width: 270px
             .q-if:before,
             .q-icon
-                color white
+                color: white
             .Password__strength-meter:after,
             .Password__strength-meter:before
-                border-color #3b3440
+                border-color: #3b3440
             .Password
-                width 100%
-                margin 20px 0px 30px
+                width: 100%
+                margin: 20px 0px 30px
 </style>

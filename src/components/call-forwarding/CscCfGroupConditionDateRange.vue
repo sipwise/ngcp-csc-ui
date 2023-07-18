@@ -4,7 +4,7 @@
         icon="book_online"
         :loading="$wait.is('csc-cf-time-set-create')"
         v-bind="$attrs"
-        v-on="$listeners"
+        @close="$emit('close')"
     >
         <template
             v-if="invalidDateset"
@@ -14,7 +14,7 @@
                 dense
                 class="bg-red-8 text-white q-pt-md q-ma-md half-screen-width"
             >
-                <template v-slot:avatar>
+                <template #avatar>
                     <q-icon name="date_range" />
                 </template>
                 {{ $t('The "{timeset}" timeset contains incompatible values. You can resolve this by deleting it and recreating from the scratch.', { timeset: timeSet.name }) }}
@@ -33,7 +33,7 @@
             />
         </template>
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 v-if="deleteButton"
@@ -92,6 +92,7 @@ export default {
             default: ''
         }
     },
+    emits: ['close'],
     data () {
         return {
             invalidDateset: false,

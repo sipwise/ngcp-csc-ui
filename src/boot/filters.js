@@ -1,5 +1,4 @@
 
-import Vue from 'vue'
 import NumberFilter from 'src/filters/number'
 import NumberFormatFilter, {
     normalizeDestination
@@ -23,22 +22,24 @@ import {
     timeSetWeekdays
 } from 'src/filters/time-set'
 
-export default () => {
-    Vue.filter('number', NumberFilter)
-    Vue.filter('readableDate', DateFilter)
-    Vue.filter('numberFormat', NumberFormatFilter)
-    Vue.filter('destinationFormat', normalizeDestination)
-    Vue.filter('smartTime', smartTime)
-    Vue.filter('startCase', startCase)
-    Vue.filter('wholeCurrency', WholeCurrency)
-    Vue.filter('seatName', displayName)
-    Vue.filter('groupName', displayName)
-    Vue.filter('displayName', displayName)
-    Vue.filter('time', time)
-    Vue.filter('weekday', weekday)
-    Vue.filter('timeSetDateExact', timeSetDateExact)
-    Vue.filter('timeSetWeekdays', timeSetWeekdays)
-    Vue.filter('timeSetDateRange', timeSetDateRange)
-    Vue.filter('timeSetOfficeHoursSameTime', timeSetOfficeHoursSameTime)
-    Vue.filter('timeSetTimes', timeSetTimes)
+export default ({ app }) => {
+    app.config.globalProperties.$filters = {
+        number: NumberFilter,
+        readableDate: DateFilter,
+        numberFormat: NumberFormatFilter,
+        destinationFormat: normalizeDestination,
+        smartTime,
+        startCase,
+        wholeCurrency: WholeCurrency,
+        seatName: displayName,
+        groupName: displayName,
+        displayName,
+        time,
+        weekday,
+        timeSetDateExact,
+        timeSetWeekdays,
+        timeSetDateRange,
+        timeSetOfficeHoursSameTime,
+        timeSetTimes
+    }
 }

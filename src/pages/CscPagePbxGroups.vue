@@ -6,34 +6,39 @@
         <csc-list-actions
             class="row justify-center q-mb-xs"
         >
-            <csc-list-action-button
+            <template
                 v-if="isGroupAddFormDisabled"
-                slot="slot1"
-                icon="add"
-                color="primary"
-                :label="$t('Add Group')"
-                :disable="isGroupListRequesting"
-                data-cy="groups-add-new"
-                @click="enableAddForm"
-            />
-            <csc-list-action-button
-                v-if="!filtersEnabled"
-                slot="slot2"
-                icon="filter_alt"
-                color="primary"
-                :label="$t('Filter groups')"
-                data-cy="groups-filter-open"
-                @click="enableFilters"
-            />
-            <csc-list-action-button
-                v-if="filtersEnabled"
-                slot="slot2"
-                icon="clear"
-                color="negative"
-                :label="$t('Close filters')"
-                data-cy="groups-filter-close"
-                @click="closeFilters"
-            />
+                #slot1
+            >
+                <csc-list-action-button
+                    icon="add"
+                    color="primary"
+                    :label="$t('Add Group')"
+                    :disable="isGroupListRequesting"
+                    data-cy="groups-add-new"
+                    @click="enableAddForm"
+                />
+            </template>
+            <template
+                #slot2
+            >
+                <csc-list-action-button
+                    v-if="!filtersEnabled"
+                    icon="filter_alt"
+                    color="primary"
+                    :label="$t('Filter groups')"
+                    data-cy="groups-filter-open"
+                    @click="enableFilters"
+                />
+                <csc-list-action-button
+                    v-if="filtersEnabled"
+                    icon="clear"
+                    color="negative"
+                    :label="$t('Close filters')"
+                    data-cy="groups-filter-close"
+                    @click="closeFilters"
+                />
+            </template>
         </csc-list-actions>
         <q-separator class="q-mb-xs" />
         <q-slide-transition>
@@ -88,8 +93,8 @@
                 :key="'csc-fade-' + group.id"
             >
                 <csc-pbx-group
-                    :class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
                     :key="group.id"
+                    :class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
                     :odd="(index % 2) === 0"
                     :group="group"
                     :seats="seatMapById"
@@ -148,7 +153,6 @@ import {
 } from 'src/store/common'
 import platform from 'src/mixins/platform'
 import CscFade from 'components/transitions/CscFade'
-import CscList from 'components/CscList'
 import CscListSpinner from 'components/CscListSpinner'
 
 export default {
@@ -160,7 +164,6 @@ export default {
         CscPbxGroupFilters,
         CscPbxGroupAddForm,
         CscRemoveDialog,
-        CscList,
         CscListActions,
         CscListActionButton
     },
@@ -287,7 +290,7 @@ export default {
         openGroupRemovalDialog (groupId) {
             if (this.$refs.removeDialog) {
                 this.groupRemovalRequesting(groupId)
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
             }
         },
         closeGroupRemovalDialog () {

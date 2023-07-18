@@ -49,14 +49,18 @@
         />
 
         <q-card-section
-            class="csc-card-list">
-
+            class="csc-card-list"
+        >
             <q-list
                 v-for="(item, index) in itemsList"
                 :key="item.id"
             >
                 <template v-if="useSlot">
-                    <slot name="listItems" :call="item.call" :index="index"></slot>
+                    <slot
+                        name="listItems"
+                        :call="item.call"
+                        :index="index"
+                    />
                 </template>
                 <template v-else>
                     <q-item>
@@ -88,7 +92,6 @@
                                 {{ item.extra_text }}
                             </q-item-label>
                         </q-item-section>
-
                     </q-item>
                 </template>
                 <q-separator
@@ -181,24 +184,25 @@ export default {
             type: Boolean,
             default: false
         }
-    }
+    },
+    emits: ['action']
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-card-style
-        margin 10px
-        width 30%
-        height max-content
-        min-width 284px
+<style lang="sass" rel="stylesheet/sass">
+.csc-card-style
+    margin: 10px
+    width: 30%
+    height: max-content
+    min-width: 284px
 
-    .csc-card-data-error
-        color: $negative
-        padding-bottom: 22px
+.csc-card-data-error
+    color: $negative
+    padding-bottom: 22px
 
-    .csc-card-list
-        height: 400px
+.csc-card-list
+    height: 400px
 
-    .csc-card-footer
-        height: 80px
+.csc-card-footer
+    height: 80px
 </style>

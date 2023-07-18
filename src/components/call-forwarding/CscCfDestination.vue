@@ -17,7 +17,7 @@ export default {
     name: 'CscCfDestination',
     mixins: [destination],
     props: {
-        value: {
+        modelValue: {
             type: Object,
             default: undefined
         },
@@ -38,8 +38,8 @@ export default {
         destinationIcon () {
             if (this.icon) {
                 return this.icon
-            } else if (this.value?.destination) {
-                return this.destinationIconBySipUri(this.value.destination)
+            } else if (this.modelValue?.destination) {
+                return this.destinationIconBySipUri(this.modelValue.destination)
             } else {
                 return ''
             }
@@ -47,8 +47,8 @@ export default {
         destinationLabel () {
             if (this.label) {
                 return this.label
-            } else if (this.value?.destination) {
-                return this.destinationFormattedBySipUri(this.value.destination)
+            } else if (this.modelValue?.destination) {
+                return this.destinationFormattedBySipUri(this.modelValue.destination)
             } else {
                 return ''
             }
@@ -58,10 +58,12 @@ export default {
                 'q-pl-xs',
                 'text-weight-bold',
                 'text-no-wrap',
-                ...(this.clickable ? [
-                    'cursor-pointer',
-                    'text-primary'
-                ] : [])
+                ...(this.clickable
+                    ? [
+                        'cursor-pointer',
+                        'text-primary'
+                    ]
+                    : [])
             ]
         }
     }

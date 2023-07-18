@@ -1,12 +1,11 @@
-import Vue from 'vue'
-import { patchReplaceFull } from 'src/api/common'
+import { patchReplaceFull, httpApi } from 'src/api/common'
 
 export async function getAutoAttendants (options) {
     const params = { ...options, ...{ expand: 'all' } }
-    const res = await Vue.http.get('api/autoattendants/', {
+    const res = await httpApi.get('api/autoattendants/', {
         params: params
     })
-    return res.body.total_count > 0 ? res.body : []
+    return res.data.total_count > 0 ? res.data : []
 }
 
 export async function editSubscriberSlots (options) {

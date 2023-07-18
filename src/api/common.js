@@ -1,13 +1,19 @@
 
 import _ from 'lodash'
-import Vue from 'vue'
+import axios from 'axios'
 import {
     getJsonBody
 } from './utils'
+import {
+    getJwt,
+    hasJwt
+} from 'src/auth'
+import { getCurrentLangAsV1Format } from 'src/i18n'
 
 export const LIST_DEFAULT_PAGE = 1
 export const LIST_DEFAULT_ROWS = 24
 export const LIST_ALL_ROWS = 1000
+export const API_REQUEST_DEFAULT_TIMEOUT = 30000
 
 export const ContentType = {
     json: 'application/json',
@@ -18,6 +24,10 @@ export const Prefer = {
     minimal: 'return=minimal',
     representation: 'return=representation'
 }
+
+export const httpApi = axios.create({
+    timeout: API_REQUEST_DEFAULT_TIMEOUT
+})
 
 const PATCH_HEADERS = {
     'Content-Type': ContentType.jsonPatch,
@@ -49,6 +59,53 @@ export class ApiResponseError extends Error {
     }
 }
 
+export function initAPI ({ baseURL }) {
+    httpApi.defaults.baseURL = baseURL
+
+    httpApi.interceptors.request.use(function normaliseApiRequestBody (config) {
+        if (config) {
+            if (hasJwt()) {
+                if (config.headers) {
+                    config.headers = {
+                        ...config.headers,
+                        Authorization: 'Bearer ' + getJwt()
+                    }
+                } else {
+                    config = {
+                        ...config,
+                        headers: {
+                            Authorization: 'Bearer ' + getJwt()
+                        }
+                    }
+                }
+            }
+            if (config.method === 'POST' && (config.data === undefined || config.data === null)) {
+                config.data = {}
+            }
+            if (config.params) {
+                config.params = {
+                    ...config.params,
+                    lang: getCurrentLangAsV1Format()
+                }
+            } else {
+                config.params = {
+                    lang: getCurrentLangAsV1Format()
+                }
+            }
+            return config
+        }
+    })
+}
+
+export function apiCreateCancelObject () {
+    const CancelToken = axios.CancelToken
+    return CancelToken.source()
+}
+
+export function apiIsCanceledRequest (exception) {
+    return axios.isCancel(exception)
+}
+
 export async function getList (options) {
     options = options || {}
     options = _.merge({
@@ -66,25 +123,26 @@ export async function getList (options) {
         options.path = 'api/' + options.resource + '/'
         options.root = '_embedded.ngcp:' + options.resource
     }
-    const firstRes = await Vue.http.get(options.path, {
-        params: options.params,
-        headers: options.headers
+    const firstRes = await httpApi.get(options.path, {
+        headers: options.headers,
+        params: options.params
     })
     let secondRes = null
-    const firstResBody = getJsonBody(firstRes.body)
+    const firstResBody = getJsonBody(firstRes.data)
     if (options.all === true && firstResBody.total_count > LIST_ALL_ROWS) {
-        secondRes = await Vue.http.get(options.path, {
-            params: _.merge(options.params, {
-                rows: firstResBody.total_count
-            }),
-            headers: options.headers
+        const newParams = _.merge(options.params, {
+            rows: firstResBody.total_count
+        })
+        secondRes = await httpApi.get(options.path, {
+            headers: options.headers,
+            params: newParams
         })
     }
     let res = firstRes
     let body = firstResBody
     if (secondRes !== null) {
         res = secondRes
-        body = getJsonBody(res.body)
+        body = getJsonBody(res.data)
     }
     const totalCount = _.get(body, 'total_count', 0)
     let lastPage = Math.ceil(totalCount / options.params.rows)
@@ -109,10 +167,10 @@ export async function getList (options) {
 }
 
 function handleResponseError (err) {
-    const code = _.get(err, 'body.code', null)
-    const message = _.get(err, 'body.message', null)
+    const code = _.get(err, 'response.data.code', null)
+    const message = _.get(err, 'response.data.message', null)
     if (code !== null && message !== null) {
-        throw new ApiResponseError(err.body.code, err.body.message)
+        throw new ApiResponseError(err.response.data.code, err.response.data.message)
     } else {
         throw err
     }
@@ -123,9 +181,14 @@ export async function get (options) {
     options = _.merge({
         headers: GET_HEADERS
     }, options)
-    const requestOptions = {
-        headers: options.headers,
-        params: options.params
+    let requestOptions = {
+        headers: options.headers
+    }
+    if (options.params) {
+        requestOptions = {
+            ...requestOptions,
+            params: options.params
+        }
     }
     if (options.blob === true) {
         requestOptions.responseType = 'blob'
@@ -135,12 +198,12 @@ export async function get (options) {
         path = 'api/' + options.resource + '/' + options.resourceId
     }
     try {
-        const res = await Vue.http.get(path, requestOptions)
+        const res = await httpApi.get(path, requestOptions)
         let body = null
         if (options.blob === true) {
-            body = URL.createObjectURL(res.body)
+            body = URL.createObjectURL(res.data)
         } else {
-            body = normalizeEntity(getJsonBody(res.body))
+            body = normalizeEntity(getJsonBody(res.data))
         }
         return body
     } catch (err) {
@@ -165,7 +228,7 @@ export async function patch (operation, options) {
         path = 'api/' + options.resource + '/' + options.resourceId
     }
     try {
-        return await Vue.http.patch(path, [body], {
+        return await httpApi.patch(path, [body], {
             headers: options.headers
         })
     } catch (err) {
@@ -193,7 +256,7 @@ export async function patchFull (operation, options) {
         }
     })
     const res = await patch(operation, options)
-    return normalizeEntity(getJsonBody(res.body))
+    return normalizeEntity(getJsonBody(res.data))
 }
 
 export function patchReplaceFull (options) {
@@ -218,14 +281,14 @@ export async function post (options) {
         path = 'api/' + options.resource + '/'
     }
     try {
-        const res = await Vue.http.post(path, options.body, {
+        const res = await httpApi.post(path, options.body, {
             headers: options.headers
         })
-        const hasBody = res.body !== undefined && res.body !== null && res.body !== ''
+        const hasBody = res.data !== undefined && res.data !== null && res.data !== ''
         if (hasBody) {
-            return normalizeEntity(getJsonBody(res.body))
-        } else if (!hasBody && res.headers.has('Location')) {
-            return _.last(res.headers.get('Location').split('/'))
+            return normalizeEntity(getJsonBody(res.data))
+        } else if (!hasBody && res?.headers?.location) {
+            return _.last(res.headers.location.split('/'))
         } else {
             return null
         }
@@ -254,11 +317,11 @@ export async function put (options) {
         path = 'api/' + options.resource + '/' + options.resourceId
     }
     try {
-        const res = await Vue.http.put(path, options.body, {
+        const res = await httpApi.put(path, options.body, {
             headers: options.headers
         })
         if (options.headers.Prefer === Prefer.representation) {
-            return normalizeEntity(getJsonBody(res.body))
+            return normalizeEntity(getJsonBody(res.data))
         } else {
             return null
         }
@@ -291,7 +354,7 @@ export async function del (options) {
         path = 'api/' + options.resource + '/' + options.resourceId
     }
     try {
-        await Vue.http.delete(path, requestOptions)
+        await httpApi.delete(path, requestOptions)
     } catch (err) {
         handleResponseError(err)
     }
@@ -303,10 +366,10 @@ export function getFieldList (options) {
         options = _.merge({
             headers: GET_HEADERS
         }, options)
-        Vue.http.get(options.path, {
+        httpApi.get(options.path, {
             headers: options.headers
         }).then((result) => {
-            const fieldList = getJsonBody(result.body)[options.field]
+            const fieldList = getJsonBody(result.data)[options.field]
             resolve(fieldList)
         }).catch((err) => {
             reject(err)

@@ -1,8 +1,7 @@
 
 import _ from 'lodash'
-import Vue from 'vue'
 import { i18n } from 'src/boot/i18n'
-import { getFieldList } from './common'
+import { getFieldList, httpApi } from './common'
 
 export function getSpeedDialsById (id) {
     return new Promise((resolve, reject) => {
@@ -13,7 +12,7 @@ export function getSpeedDialsById (id) {
             const sortedResult = _.sortBy(result, ['slot'])
             resolve(sortedResult)
         }).catch((err) => {
-            reject(err.body.message)
+            reject(err)
         })
     })
 }
@@ -30,13 +29,13 @@ export function getUnassignedSlots (id) {
             const slotOptions = []
             unassignedSlots.forEach((slot) => {
                 slotOptions.push({
-                    label: `${i18n.t('Slot')} ${slot}`,
+                    label: `${i18n.global.tc('Slot')} ${slot}`,
                     value: slot
                 })
             })
             resolve(slotOptions)
         }).catch((err) => {
-            reject(err.body.message)
+            reject(err)
         })
     })
 }
@@ -47,14 +46,14 @@ export function unassignSpeedDialSlot (options) {
         const headers = {
             'Content-Type': 'application/json-patch+json'
         }
-        Vue.http.patch('api/speeddials/' + options.id, [{
+        httpApi.patch('api/speeddials/' + options.id, [{
             op: 'replace',
             path: '/speeddials',
             value: updatedAssignedSlots
         }], { headers: headers }).then(() => {
             resolve()
         }).catch((err) => {
-            reject(err.body.message)
+            reject(err)
         })
     })
 }
@@ -64,14 +63,14 @@ export function addSlotToSpeedDials (options) {
         const headers = {
             'Content-Type': 'application/json-patch+json'
         }
-        Vue.http.patch('api/speeddials/' + options.id, [{
+        httpApi.patch('api/speeddials/' + options.id, [{
             op: 'replace',
             path: '/speeddials',
             value: options.slots
         }], { headers: headers }).then(() => {
             resolve()
         }).catch((err) => {
-            reject(err.body.message)
+            reject(err)
         })
     })
 }

@@ -6,26 +6,26 @@
             <q-item-section>
                 <q-input
                     readonly
-                    :value="inputValue"
+                    :model-value="inputValue"
                     :loading="uploading || updating"
                     :label="label || floatLabel"
                 >
                     <template
-                        v-slot:loading
+                        #loading
                     >
                         <q-spinner-dots
                             color="primary"
                         />
                     </template>
                     <template
-                        v-slot:prepend
+                        #prepend
                     >
                         <q-icon
                             :name="icon"
                         />
                     </template>
                     <template
-                        v-slot:append
+                        #append
                     >
                         <q-btn
                             v-if="!uploaded && selectedFile === null"
@@ -188,6 +188,7 @@ export default {
             default: false
         }
     },
+    emits: ['init', 'remove', 'abort', 'upload'],
     data () {
         return {
             selectedFile: null,
@@ -276,33 +277,33 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-upload-field
-        margin-bottom 40px
+<style lang="sass" rel="stylesheet/sass">
+.csc-upload-field
+    margin-bottom: 40px
 
-        .q-field-icon
-            color $primary
+    .q-field-icon
+        color: $primary
 
-        .items-end
-            margin-left -1.3rem
+    .items-end
+        margin-left: -1.3rem
 
-    .csc-upload-field.csc-player-margin
-        margin-bottom 0
+.csc-upload-field.csc-player-margin
+    margin-bottom: 0
 
-    .csc-upload-progress-field
-        margin 10px 0 5px 0
+.csc-upload-progress-field
+    margin: 10px 0 5px 0
 
-        .upload-chip
-            min-height 20px
-            height 20px
-            width 50px
-            border-top-right-radius 0
-            border-bottom-right-radius 0
+    .upload-chip
+        min-height: 20px
+        height: 20px
+        width: 50px
+        border-top-right-radius: 0
+        border-bottom-right-radius: 0
 
-        .upload-progress
-            height 20px
+    .upload-progress
+        height: 20px
 
-    .csc-greeting-player
-        padding 0
+.csc-greeting-player
+    padding: 0
 
 </style>

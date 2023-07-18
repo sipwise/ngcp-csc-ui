@@ -1,0 +1,39 @@
+@import "quasar.variables"
+
+body.body--light
+    .bg-main-menu
+        background-color: rgba($light, 30%)
+    .bg-page
+        background-color: white
+
+body.body--dark
+    background-color: var(--q-secondary)
+    .bg-main-menu
+        background-color: $main-menu-background
+    .bg-page
+        background-color: $secondary
+    .csc-item-odd
+        background-color: $item-stripe-color
+    .csc-item-even
+        background-color: rgba($main-menu-background, 20%)
+    .q-drawer,
+    .bg-footer
+        background-color: transparent
+
+.csc-main-menu
+    margin-top: $header-height
+    font-size: 16px
+    .q-item__section.q-item__section--avatar
+        min-width: 0
+
+.csc-opt-center
+    margin-top: ($header-height * -2)
+
+.striped-list
+    > :nth-of-type(2n+1)
+        background-color: $item-stripe-color
+    > :nth-of-type(2n)
+        background-color: rgba($main-menu-background, 20%)
+
+.half-screen-width
+    width: 50vw

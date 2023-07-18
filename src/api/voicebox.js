@@ -1,10 +1,10 @@
 
 import _ from 'lodash'
-import Vue from 'vue'
 import {
     get,
     getList,
-    patchReplace
+    patchReplace,
+    httpApi
 } from './common'
 
 export function getVoiceboxSettings (subscriberId) {
@@ -83,7 +83,7 @@ export function getVoiceboxGreetingByType (options) {
 
 export function deleteVoiceboxGreetingById (id) {
     return new Promise((resolve, reject) => {
-        Vue.http.delete(`api/voicemailgreetings/${id}`).then(() => {
+        httpApi.delete(`api/voicemailgreetings/${id}`).then(() => {
             resolve()
         }).catch((err) => {
             reject(err)
@@ -91,14 +91,11 @@ export function deleteVoiceboxGreetingById (id) {
     })
 }
 
-export function createNewGreeting (formData, onProgress, type) {
+export function createNewGreeting (formData, onProgress, cancelToken) {
     return new Promise((resolve, reject) => {
-        const requestKey = `previous${_.capitalize(type)}Request`
-        Vue.http.post('api/voicemailgreetings/', formData, {
-            before (request) {
-                Vue[requestKey] = request
-            },
-            progress (e) {
+        httpApi.post('api/voicemailgreetings/', formData, {
+            cancelToken,
+            onUploadProgress (e) {
                 if (e.lengthComputable) {
                     onProgress(Math.ceil((e.loaded / e.total) * 100))
                 }
@@ -130,7 +127,7 @@ export function uploadGreeting (options) {
             if (_.some(greetings.items, { dir: options.data.dir })) {
                 deleteVoiceboxGreetingById(greetings.items[0].id)
             }
-            return createNewGreeting(formData, options.onProgress, options.data.dir)
+            return createNewGreeting(formData, options.onProgress, options.cancelToken)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -139,20 +136,12 @@ export function uploadGreeting (options) {
     })
 }
 
-export function abortPreviousRequest (name) {
-    return new Promise((resolve) => {
-        const requestKey = `previous${_.capitalize(name)}Request`
-        Vue[requestKey].abort()
-        resolve()
-    })
-}
-
 export function playGreeting (options) {
     return new Promise((resolve, reject) => {
         const params = { format: options.format }
-        Vue.http.get(`api/voicemailgreetings/${options.id}`, { params: params, responseType: 'blob' })
+        httpApi.get(`api/voicemailgreetings/${options.id}`, { params: params, responseType: 'blob' })
             .then((res) => {
-                resolve(URL.createObjectURL(res.body))
+                resolve(URL.createObjectURL(res.data))
             }).catch((err) => {
                 reject(err)
             })

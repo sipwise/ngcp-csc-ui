@@ -5,7 +5,7 @@
     >
         <template
             v-if="hasSubscriberProfileAttributes(['cfu', 'cfna', 'cfb'])"
-            v-slot:header
+            #header
         >
             <q-btn
                 flat
@@ -40,7 +40,7 @@
                     />
                 </csc-popup-menu>
                 <template
-                    v-slot:loading
+                    #loading
                 >
                     <csc-spinner />
                 </template>
@@ -71,11 +71,11 @@
                     </q-item>
                     <csc-cf-group-item-primary-number />
                 </q-list>
-                <template
+                <div
                     v-for="group in groups"
+                    :key="group.cfm_id"
                 >
                     <csc-cf-group
-                        :key="group.cfm_id"
                         class="q-mb-lg"
                         :loading="$wait.is('csc-cf-mappings-full')"
                         :mapping="group"
@@ -83,7 +83,7 @@
                         :source-set="sourceSetMap[group.sourceset_id]"
                         :time-set="timeSetMap[group.timeset_id]"
                     />
-                </template>
+                </div>
             </div>
         </div>
     </csc-page-sticky>
@@ -127,7 +127,7 @@ export default {
     },
     async mounted () {
         await this.loadAnnouncements()
-        this.loadMappingsFull()
+        await this.loadMappingsFull()
     },
     methods: {
         ...mapActions('callForwarding', [

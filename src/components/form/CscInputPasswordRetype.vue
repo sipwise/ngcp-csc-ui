@@ -9,14 +9,13 @@
             generate
             clearable
             :label="passwordLabel"
-            @input="inputPassword"
+            @update:model-value="inputPassword"
             @generated="passwordGenerated"
             @clear="passwordClear"
         />
-        <password-strength-meter
+        <password-meter
             v-show="false"
-            v-model="password"
-            :strength-meter-only="true"
+            :password="password"
             @score="strengthMeterScoreUpdate"
         />
         <q-linear-progress
@@ -29,13 +28,13 @@
             v-model="passwordRetype"
             v-bind="$attrs"
             :label="passwordConfirmLabel"
-            :error="$v.passwordRetype.$error"
+            :error="v$.passwordRetype.$errors.length > 0"
             :error-message="errorMessagePasswordRetype"
             clearable
             :disable="passwordScore < 2 || $attrs.disable"
-            @clear="$v.passwordRetype.$reset"
+            @clear="v$.passwordRetype.$reset()"
             @blur="passwordRetypeBlur"
-            @input="inputRetypePassword"
+            @update:model-value="inputRetypePassword"
         />
     </div>
 </template>
@@ -43,26 +42,18 @@
 import {
     sameAs,
     required
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import CscInputPassword from 'components/form/CscInputPassword'
-import PasswordStrengthMeter from 'vue-password-strength-meter'
+import PasswordMeter from 'vue-simple-password-meter'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscInputPasswordRetype',
     components: {
         CscInputPassword,
-        PasswordStrengthMeter
-    },
-    validations: {
-        password: {
-            required
-        },
-        passwordRetype: {
-            required,
-            sameAsPassword: sameAs('password')
-        }
+        PasswordMeter
     },
     props: {
-        value: {
+        modelValue: {
             type: Object,
             default () {
                 return {
@@ -74,26 +65,42 @@ export default {
         passwordLabel: {
             type: String,
             default () {
+                // eslint-disable-next-line vue/no-deprecated-props-default-this
                 return this.$t('Password')
             }
         },
         passwordConfirmLabel: {
             type: String,
             default () {
+                // eslint-disable-next-line vue/no-deprecated-props-default-this
                 return this.$t('Password Retype')
             }
         }
     },
+    emits: ['validation-failed', 'validation-succeeded', 'update:modelValue', 'score'],
     data () {
         return {
-            password: this.value.password,
-            passwordRetype: this.value.passwordRetype,
-            passwordScore: null
+            password: this.modelValue.password,
+            passwordRetype: this.modelValue.passwordRetype,
+            passwordScore: null,
+            v$: useValidate()
+        }
+    },
+    validations () {
+        return {
+            password: {
+                required
+            },
+            passwordRetype: {
+                required,
+                sameAsPassword: sameAs(this.password)
+            }
         }
     },
     computed: {
         errorMessagePasswordRetype () {
-            if (!this.$v.passwordRetype.sameAsPassword) {
+            const errorsTab = this.v$.passwordRetype.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'sameAsPassword') {
                 return this.$t('Passwords must be equal')
             } else {
                 return ''
@@ -116,29 +123,29 @@ export default {
         }
     },
     watch: {
-        value (value) {
+        modelValue (value) {
             this.password = value.password
             this.passwordRetype = value.passwordRetype
         },
         passwordScore (score) {
             if (score < 2) {
                 this.$refs.passwordRetype.clear()
-                this.$v.$reset()
+                this.v$.$reset()
             }
         }
     },
     mounted () {
-        this.$v.$reset()
+        this.v$.$reset()
         this.$refs.passwordRetype.clear()
         this.$refs.password.clear()
     },
     methods: {
-        strengthMeterScoreUpdate (score) {
-            this.passwordScore = score
-            this.$emit('score', score)
+        strengthMeterScoreUpdate (evt) {
+            this.passwordScore = evt.score
+            this.$emit('score', evt.score)
         },
         inputPassword () {
-            this.$emit('input', {
+            this.$emit('update:modelValue', {
                 password: this.password,
                 passwordRetype: this.passwordRetype
             })
@@ -148,7 +155,7 @@ export default {
             this.inputPassword()
         },
         passwordGenerated (password) {
-            this.$emit('input', {
+            this.$emit('update:modelValue', {
                 password: password,
                 passwordRetype: password
             })
@@ -159,14 +166,14 @@ export default {
         passwordClear () {
             this.$refs.passwordRetype.clear()
             this.validate()
-            this.$v.$reset()
+            this.v$.$reset()
         },
         passwordRetypeBlur () {
             this.validate()
         },
         validate () {
-            this.$v.$touch()
-            if (!this.$v.$invalid) {
+            this.v$.$touch()
+            if (!this.v$.$invalid) {
                 this.$emit('validation-succeeded')
             } else {
                 this.$emit('validation-failed')
@@ -176,10 +183,13 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 .csc-input-password-retype
-    .Password__strength-meter
-        margin 0
-        margin-top 16px !important
-        margin-bottom 16px !important
+    .po-password-strength-bar
+        border-radius: 2px
+        transition: all 0.2s linear
+        height: 6px
+        margin-bottom: 16px !important
+        margin-top: 16px !important
+        background-color: #ddd
 </style>

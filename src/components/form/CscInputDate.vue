@@ -6,7 +6,7 @@
         @input="$emit('input', $event)"
     >
         <template
-            v-slot:prepend
+            #prepend
         >
             <q-btn
                 icon="date_range"
@@ -19,10 +19,10 @@
                     ref="popupTime"
                 >
                     <q-date
-                        :value="value"
+                        v-model="date"
                         mask="YYYY-MM-DD"
                         color="primary"
-                        @input="$emit('input', $event); $refs.popupTime.hide()"
+                        @update:model-value="$emit('input', $event); $refs.popupTime.hide()"
                     />
                 </q-popup-proxy>
             </q-btn>
@@ -42,13 +42,24 @@ export default {
             default: undefined
         }
     },
+    emits: ['input'],
     data () {
-        return {}
+        return {
+            date: null
+        }
     },
     computed: {
         ...mapGetters([
             'getCurrentFormattedDateWithDash'
         ])
+    },
+    watch: {
+        value (newValue) {
+            this.date = newValue
+        }
+    },
+    mounted () {
+        this.date = this.value
     },
     methods: {
         loadFormattedDate () {

@@ -1,8 +1,8 @@
 <template>
-
     <q-item
         class="cursor-pointer"
-        @click.native="showSeatDetails"
+        clickable
+        @click="showSeatDetails"
     >
         <q-item-section
             side
@@ -12,13 +12,13 @@
             <q-icon
                 name="person"
                 color="white"
-            /> 
+            />
         </q-item-section>
         <q-item-section>
             <q-item-label
                 class="text-subtitle1"
             >
-                {{ seat | seatName }}
+                {{ $filters.seatName(seat) }}
             </q-item-label>
             <q-item-label
                 caption
@@ -46,7 +46,7 @@
                             name="group"
                             size="16px"
                         />
-                        {{ groups[groupId] | groupName }}
+                        {{ $filters.groupName(groups[groupId]) }}
                     </span>
                 </span>
                 <span
@@ -91,7 +91,7 @@
                             class="q-pa-sm"
                             :label="$t('Hide number within own PBX')"
                             :disable="loading"
-                            @input="changeIntraPbx"
+                            @update:model-value="changeIntraPbx"
                         />
                     </q-item-section>
                 </q-item>
@@ -104,21 +104,17 @@
                             class="q-pa-sm"
                             :label="$t('Music on hold')"
                             :disable="loading"
-                            @input="changeMusicOnHold"
+                            @update:model-value="changeMusicOnHold"
                         />
                     </q-item-section>
                 </q-item>
             </csc-more-menu>
         </q-item-section>
     </q-item>
-
 </template>
 
 <script>
 import _ from 'lodash'
-import CscChangePasswordDialog from '../../CscChangePasswordDialog'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
@@ -128,10 +124,7 @@ export default {
     components: {
         CscPopupMenuItem,
         CscPopupMenuItemDelete,
-        CscMoreMenu,
-        CscInputButtonReset,
-        CscInputButtonSave,
-        CscChangePasswordDialog
+        CscMoreMenu
     },
     props: {
         seat: {
@@ -155,6 +148,7 @@ export default {
             default: undefined
         }
     },
+    emits: ['save-intra-pbx', 'save-music-on-hold', 'remove'],
     data () {
         return {
             changes: this.getSeatData()
@@ -188,7 +182,11 @@ export default {
         showPasswordDialog () {
             this.$q.dialog({
                 component: CscDialogChangePassword,
-                parent: this
+                componentProps: {
+                    title: this.$t('Change login Password'),
+                    passwordLabel: this.$t('Password'),
+                    passwordConfirmLabel: this.$t('Password confirm')
+                }
             }).onOk((password) => {
                 this.changeWebPassword(password)
             })
@@ -196,10 +194,11 @@ export default {
         showSIPPasswordDialog () {
             this.$q.dialog({
                 component: CscDialogChangePassword,
-                title: this.$t('Change SIP Password'),
-                passwordLabel: this.$t('SIP Password'),
-                passwordConfirmLabel: this.$t('SIP Password confirm'),
-                parent: this
+                componentProps: {
+                    title: this.$t('Change SIP Password'),
+                    passwordLabel: this.$t('SIP Password'),
+                    passwordConfirmLabel: this.$t('SIP Password confirm')
+                }
             }).onOk((password) => {
                 this.changeSIPPassword(password)
             })
@@ -229,7 +228,7 @@ export default {
             })
         },
         showSeatDetails () {
-            this.$router.push('/user/pbx-configuration/seat/'+this.seat.id)
+            this.$router.push('/user/pbx-configuration/seat/' + this.seat.id)
         }
     }
 }

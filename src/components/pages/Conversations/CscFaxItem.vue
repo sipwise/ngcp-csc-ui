@@ -15,12 +15,12 @@
             >
                 {{ $t('Fax') }}
                 {{ direction }}
-                {{ number | numberFormat }}
+                {{ $filters.numberFormat(number) }}
             </q-item-label>
             <q-item-label
                 caption
             >
-                {{ fax.start_time | smartTime }}
+                {{ $filters.smartTime(fax.start_time) }}
             </q-item-label>
             <q-item-label
                 v-if="fax.pages === 0"
@@ -81,6 +81,7 @@ export default {
             default: false
         }
     },
+    emits: ['start-call', 'download-fax', 'delete-fax'],
     data () {
         return {}
     },
@@ -112,10 +113,10 @@ export default {
         },
         deleteFax (fax) {
             this.$emit('delete-fax', fax)
-        },
+        }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

@@ -29,7 +29,7 @@ export function showGlobalError (messageOrException, timeout = 3000) {
         errorMessage = messageOrException?.response?.data?.message || messageOrException?.message
     }
     if (errorMessage === '' || errorMessage === undefined || errorMessage === null) {
-        errorMessage = i18n.t('Unknown error')
+        errorMessage = i18n.global.tc('Unknown error')
     }
     return Notify.create({
         message: errorMessage,
@@ -77,27 +77,27 @@ export function askForNotificationPermission () {
         if (_.isObject(Notification)) {
             Notification.requestPermission().then((perms) => {
                 if (perms === 'denied' || perms === 'default') {
-                    showPermanentGlobalWarning(i18n.t('You have blocked incoming call notifications.'))
+                    showPermanentGlobalWarning(i18n.global.tc('You have blocked incoming call notifications.'))
                 }
                 resolve()
             }).catch((err) => {
                 reject(err)
             })
         } else {
-            showPermanentGlobalWarning(i18n.t('Incoming call notifications are not supported.'))
+            showPermanentGlobalWarning(i18n.global.tc('Incoming call notifications are not supported.'))
             resolve()
         }
     })
 }
 
-var serviceWorkerPath = document.location.pathname + '/statics/service-worker.js'
+const serviceWorkerPath = document.location.pathname + '/statics/service-worker.js'
 export function enableIncomingCallNotifications () {
     return new Promise((resolve) => {
         Promise.resolve().then(() => {
             if (navigator.serviceWorker) {
                 return navigator.serviceWorker.register(serviceWorkerPath)
             } else {
-                showPermanentGlobalWarning(i18n.t('Incoming call notifications are not supported.'))
+                showPermanentGlobalWarning(i18n.global.tc('Incoming call notifications are not supported.'))
                 resolve()
             }
         }).then(() => {
@@ -106,7 +106,7 @@ export function enableIncomingCallNotifications () {
             resolve()
         }).catch((err) => {
             console.debug(err)
-            showPermanentGlobalWarning(i18n.t('Could not enable incoming call notifications.'))
+            showPermanentGlobalWarning(i18n.global.tc('Could not enable incoming call notifications.'))
         })
     })
 }
@@ -115,7 +115,7 @@ export function showCallNotification (number) {
     if (navigator.serviceWorker) {
         navigator.serviceWorker.getRegistration(serviceWorkerPath).then((registration) => {
             if (registration && registration.showNotification) {
-                registration.showNotification(i18n.t('Incoming call from {number}', {
+                registration.showNotification(i18n.global.tc('Incoming call from {number}', {
                     number: number
                 }), {
                     requireInteraction: true,

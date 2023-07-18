@@ -27,7 +27,7 @@
                 @keyup.enter="startCall"
             >
                 <template
-                    v-slot:prepend
+                    #prepend
                 >
                     <q-icon
                         name="contact_phone"

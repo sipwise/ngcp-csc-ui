@@ -2,7 +2,7 @@
     <q-item>
         <q-item-section>
             <q-select
-                v-model="selectedLanguage"
+                :model-value="selectedLanguage"
                 emit-value
                 map-options
                 :disable="loading"
@@ -11,7 +11,7 @@
                 data-cy="voicebox-change-language"
                 :title="$t('Voice prompts language for voicemail, conference and application server')"
                 :options="languageOptions"
-                v-on="$listeners"
+                @update:model-value="$emit('input', $event)"
             >
                 <template
                     #prepend

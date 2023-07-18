@@ -3,7 +3,7 @@
         :title="title"
         :loading="$wait.is('csc-cf-source-set-create')"
         v-bind="$attrs"
-        v-on="$listeners"
+        @close="$emit('close')"
     >
         <q-list
             class="no-margin q-pa-md"
@@ -66,7 +66,7 @@
             </q-item>
         </q-list>
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 v-if="deleteButton"
@@ -159,10 +159,11 @@ export default {
             default: null
         }
     },
+    emits: ['close', 'select'],
     data () {
         return {
-            sourceSetNameInternal: this.sourceSetName,
-            sourceSetNumbersInternal: this.sourceSetNumbers
+            sourceSetNameInternal: null,
+            sourceSetNumbersInternal: null
         }
     },
     computed: {

@@ -151,8 +151,8 @@ export default {
                 return this.$t('Manager Secretary')
             case DestinationType.Application:
                 return _.words(parsedSipUri.parsedUri.username).map(word => _.upperFirst(word)).join(' ')
-            default:
             case DestinationType.Number:
+            default:
                 return parsedSipUri.parsedUri.username
             }
         }

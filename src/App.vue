@@ -1,7 +1,5 @@
 <template>
-    <div id="q-app">
-        <router-view />
-    </div>
+    <router-view />
 </template>
 <script>
 import { APP_NAME } from 'src/constants'
@@ -25,8 +23,10 @@ export default {
             this.updateTitle(route)
         }
     },
-    mounted () {
+    async mounted () {
+        this.$initWait()
         this.updateTitle(this.$route)
+        await this.$router.push({ name: 'dashboard' })
     },
     methods: {
         updateTitle: function (route) {

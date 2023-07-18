@@ -88,6 +88,7 @@ export default {
             default: false
         }
     },
+    emits: ['save', 'remove'],
     data () {
         return {
             editing: false,
@@ -149,5 +150,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

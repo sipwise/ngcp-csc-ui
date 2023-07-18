@@ -21,13 +21,13 @@
                 v-model="newEmail"
                 :label="$t('Renew Notify Email')"
                 :value-changed="isChanged"
-                :error="$v.newEmail.$error"
+                :error="v$.newEmail.$errors.length > 0"
                 :error-message="newEmailErrorMessage"
                 dense
                 @keypress.space.prevent
                 @keydown.space.prevent
                 @keyup.space.prevent
-                @input="$v.newEmail.$touch"
+                @input="v$.newEmail.$touch()"
                 @save="save"
                 @undo="undo"
                 @focusout="focusOutEditing"
@@ -52,7 +52,8 @@
 
 <script>
 import CscInputSaveable from 'components/form/CscInputSaveable'
-import { email, required } from 'vuelidate/lib/validators'
+import { email, required } from '@vuelidate/validators'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscMailToFaxRenewNotifyEmail',
     components: {
@@ -64,11 +65,13 @@ export default {
             required: true
         }
     },
+    emits: ['save', 'remove'],
     data () {
         return {
             newEmail: this.value,
             editing: false,
-            timerHandler: undefined
+            timerHandler: undefined,
+            v$: useValidate()
         }
     },
     validations: {
@@ -82,18 +85,19 @@ export default {
             return this.newEmail !== this.value
         },
         newEmailErrorMessage () {
-            if (!this.$v.newEmail.required) {
+            const errorsTab = this.v$.newEmail.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Renew Notify Email')
                 })
-            } else if (!this.$v.newEmail.email) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'email') {
                 return this.$t('Input a valid email address')
             } else {
                 return ''
             }
         }
     },
-    beforeDestroy () {
+    beforeUnmount () {
         this.cancelTimer()
     },
     methods: {
@@ -127,7 +131,7 @@ export default {
         },
         undo () {
             this.newEmail = this.value
-            this.$v.$reset()
+            this.v$.$reset()
             this.focusEmailInput()
         },
         save () {

@@ -11,10 +11,11 @@ import {
     callUnMute,
     callUnMuteRemote
 } from 'src/api/ngcp-call'
+import { i18n } from 'boot/i18n'
 
-export default async ({ Vue, app, store }) => {
+export default async ({ app, store }) => {
     callConfigure({
-        baseWebSocketUrl: app.$appConfig.baseWsUrl + '/wss/sip'
+        baseWebSocketUrl: app.config.globalProperties.$appConfig.baseWsUrl + '/wss/sip'
     })
     const callFailed = (event) => {
         let cause = event.cause
@@ -30,7 +31,7 @@ export default async ({ Vue, app, store }) => {
     callEvent.on('disconnected', ({ error, code }) => {
         let errorMessage = null
         if (error) {
-            errorMessage = app.i18n.t('WebSocket connection to kamailio lb failed with code {code}', {
+            errorMessage = i18n.global.tc('WebSocket connection to kamailio lb failed with code {code}', {
                 code: code
             })
         }

@@ -1,9 +1,7 @@
 <template>
-
     <q-list
         class="col col-xs-12 col-md-6"
     >
-
         <q-item
             class="row justify-center q-pt-lg"
         >
@@ -36,7 +34,7 @@
                     />
                 </csc-popup-menu>
                 <template
-                    v-slot:loading
+                    #loading
                 >
                     <csc-spinner />
                 </template>
@@ -66,13 +64,14 @@
                         </q-item-section>
                     </q-item>
                     <csc-cf-group-item-primary-number
-                        :primary-number-source="getPrimaryNumberSource"/>
+                        :primary-number-source="getPrimaryNumberSource"
+                    />
                 </q-list>
-                <template
+                <div
                     v-for="group in groups"
+                    :key="group.cfm_id"
                 >
                     <csc-cf-group
-                        :key="group.cfm_id"
                         class="q-mb-lg"
                         :loading="$wait.is('csc-cf-mappings-full')"
                         :mapping="group"
@@ -81,14 +80,13 @@
                         :time-set="timeSetMap[group.timeset_id]"
                         :subscriber-id="id"
                     />
-                </template>
+                </div>
             </div>
         </q-item>
     </q-list>
 </template>
 
 <script>
-import _ from 'lodash'
 import {
     mapState,
     mapGetters,
@@ -98,14 +96,10 @@ import CscCfGroup from 'components/call-forwarding/CscCfGroup'
 import CscSpinner from 'components/CscSpinner'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
 export default {
     name: 'CscCallForwardDetails',
     components: {
-        CscInputButtonReset,
-        CscInputButtonSave,
         CscPopupMenu,
         CscPopupMenuItem,
         CscCfGroup,
@@ -159,7 +153,7 @@ export default {
         ...mapActions('callForwarding', [
             'loadMappingsFull',
             'createMapping'
-        ]),
+        ])
     }
 }
 </script>

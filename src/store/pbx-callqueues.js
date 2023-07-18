@@ -1,5 +1,4 @@
 
-import Vue from 'vue'
 import _ from 'lodash'
 import {
     CreationState,
@@ -73,7 +72,7 @@ export default {
         },
         getCallQueueRemoveDialogMessage (state) {
             if (state.callQueueRemoving !== null) {
-                return i18n.t('You are about to remove call queue for {subscriber}', {
+                return i18n.global.tc('You are about to remove call queue for {subscriber}', {
                     subscriber: state.subscriberMap[state.callQueueRemoving.id].display_name
                 })
             }
@@ -95,18 +94,18 @@ export default {
             return state.callQueueUpdatingField
         },
         getCallQueueCreationToastMessage (state, getters) {
-            return i18n.t('Created call queue for {callQueue} successfully', {
+            return i18n.global.tc('Created call queue for {callQueue} successfully', {
                 callQueue: getters.getCallQueueCreatingName
             })
         },
         getCallQueueUpdateToastMessage (state, getters) {
-            return i18n.t('Updated {field} for call queue {callQueue} successfully', {
+            return i18n.global.tc('Updated {field} for call queue {callQueue} successfully', {
                 callQueue: getters.getCallQueueUpdatingName,
                 field: getters.getCallQueueUpdatingField
             })
         },
         getCallQueueRemovalToastMessage (state, getters) {
-            return i18n.t('Removed call queue for {callQueue} successfully', {
+            return i18n.global.tc('Removed call queue for {callQueue} successfully', {
                 callQueue: getters.getCallQueueRemovingName
             })
         }
@@ -126,10 +125,10 @@ export default {
             state.callQueueListState = RequestState.succeeded
             state.callQueueList = _.get(callQueueList, 'callQueues.items', [])
             state.callQueueList.forEach((callQueue) => {
-                Vue.set(state.callQueueMap, callQueue.id, callQueue)
+                state.callQueueMap[callQueue.id] = callQueue
             })
             _.get(callQueueList, 'subscribers.items', []).forEach((subscriber) => {
-                Vue.set(state.subscriberMap, subscriber.id, subscriber)
+                state.subscriberMap[subscriber.id] = subscriber
             })
             state.callQueueListVisible = true
         },
@@ -174,8 +173,8 @@ export default {
                         state.callQueueList[i] = preferences
                     }
                 }
-                Vue.delete(state.callQueueMap, preferences.id)
-                Vue.set(state.callQueueMap, preferences.id, preferences)
+                delete state.callQueueMap[preferences.id]
+                state.callQueueMap[preferences.id] = preferences
             }
         },
         callQueueUpdateFailed (state, err) {

@@ -15,7 +15,7 @@
                 dense
                 class="bg-red-8 text-white q-pt-md q-ma-md half-screen-width"
             >
-                <template v-slot:avatar>
+                <template #avatar>
                     <q-icon name="date_range" />
                 </template>
                 {{ $t('The "{timeset}" timeset contains incompatible values. You can resolve this by deleting it and recreating from the scratch.', { timeset: timeSet.name }) }}
@@ -31,7 +31,7 @@
                     v-model="sameTimes"
                     :label="$t('Same time for selected days')"
                     data-cy="csc-office-hours-sametime"
-                    :disable="$v.$invalid"
+                    :disable="v$.$invalid"
                 />
             </div>
             <div
@@ -39,9 +39,10 @@
             >
                 <q-item-section>
                     <csc-cf-selection-weekdays
-                        v-model="weekdays"
+                        :weekdays="weekdays"
                         :tabs="!sameTimes"
-                        :disable="$v.$invalid"
+                        :disable="v$.$invalid"
+                        @input="weekdays=$event"
                     />
                 </q-item-section>
             </div>
@@ -50,23 +51,23 @@
                 class="scroll time-range-list-height"
             >
                 <q-item
-                    v-for="(v, index) in $v.currentDayTimeRanges.$each.$iter"
+                    v-for="(currentDayTimeRange, index) in currentDayTimeRanges"
                     :key="index"
                 >
                     <q-item-section>
                         <csc-input
-                            v-model="v.from.$model"
+                            v-model="currentDayTimeRange.from"
                             dense
                             :label="$t('Start time')"
                             data-cy="csc-office-hours-starttime"
                             mask="##:##"
                             fill-mask
                             :disable="disabled"
-                            :error="v.from.$invalid"
-                            :error-message="timeValidationErrMsg(v.from)"
+                            :error="v$.$error && v$.currentDayTimeRanges.$each.$response.$errors[index].from.length > 0"
+                            :error-message="timeValidationErrMsg(v$.currentDayTimeRanges.$each.$response.$errors[index].from)"
                         >
                             <template
-                                v-slot:append
+                                #append
                             >
                                 <q-btn
                                     icon="access_time"
@@ -78,14 +79,14 @@
                                         ref="startTimePopup"
                                     >
                                         <q-time
-                                            v-model="v.from.$model"
+                                            v-model="currentDayTimeRange.from"
                                             flat
                                             now-btn
                                             square
                                             format24h
                                             text-color="dark"
                                             color="primary"
-                                            @input="$refs.startTimePopup[index].hide()"
+                                            @update:model-value="$refs.startTimePopup[index].hide()"
                                         />
                                     </q-popup-proxy>
                                 </q-btn>
@@ -94,18 +95,18 @@
                     </q-item-section>
                     <q-item-section>
                         <csc-input
-                            v-model="v.to.$model"
+                            v-model="currentDayTimeRange.to"
                             dense
                             :label="$t('End time')"
                             data-cy="csc-office-hours-endtime"
                             mask="##:##"
                             fill-mask
                             :disable="disabled"
-                            :error="v.to.$invalid"
-                            :error-message="timeValidationErrMsg(v.to)"
+                            :error="v$.$error && v$.currentDayTimeRanges.$each.$response.$errors[index].to.length > 0"
+                            :error-message="timeValidationErrMsg(v$.currentDayTimeRanges.$each.$response.$errors[index].to)"
                         >
                             <template
-                                v-slot:append
+                                #append
                             >
                                 <q-btn
                                     icon="access_time"
@@ -117,14 +118,14 @@
                                         ref="endTimePopup"
                                     >
                                         <q-time
-                                            v-model="v.to.$model"
+                                            v-model="currentDayTimeRange.to"
                                             flat
                                             now-btn
                                             square
                                             format24h
                                             text-color="dark"
                                             color="primary"
-                                            @input="$refs.endTimePopup[index].hide()"
+                                            @update:model-value="$refs.endTimePopup[index].hide()"
                                         />
                                     </q-popup-proxy>
                                 </q-btn>
@@ -159,7 +160,7 @@
             </div>
         </template>
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 v-if="deleteButton"
@@ -178,7 +179,7 @@
                 flat
                 color="primary"
                 icon="check"
-                :disable="disabled || $v.$invalid"
+                :disable="disabled || v$.$invalid"
                 @click="createTimeSetOfficeHoursEvent"
             />
         </template>
@@ -197,8 +198,8 @@ import {
     kamailioTimesetToHuman, timeStrToMinutes
 } from 'src/helpers/kamailio-timesets-converter'
 import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
-import { or } from 'vuelidate/lib/validators'
-
+import { or, helpers } from '@vuelidate/validators'
+import useValidate from '@vuelidate/core'
 function isTimeStrEmpty (val) {
     return val === '' || val === '__:__'
 }
@@ -236,18 +237,20 @@ export default {
             default: ''
         }
     },
+    emits: ['close', 'back'],
     data () {
         return {
             invalidTimeset: false,
             sameTimes: true,
             weekdays: DEFAULT_WEEKDAYS,
             timeRangesByDay: this.getInitialTimeRanges(),
-            timeRangesForAll: [this.getEmptyTimeRange()]
+            timeRangesForAll: [this.getEmptyTimeRange()],
+            v$: useValidate()
         }
     },
     validations: {
         currentDayTimeRanges: {
-            $each: {
+            $each: helpers.forEach({
                 from: {
                     validTime: or(isTimeStrEmpty, isTimeStrValid),
                     bothFilled: (val, vm) => (isTimeStrEmpty(val) && isTimeStrEmpty(vm.to)) || (!isTimeStrEmpty(val) && !isTimeStrEmpty(vm.to))
@@ -256,7 +259,7 @@ export default {
                     validTime: or(isTimeStrEmpty, isTimeStrValid),
                     notInversed: (val, vm) => isTimeStrEmpty(vm.from) || !isTimeStrValid(vm.from) || isTimeStrEmpty(vm.to) || (isTimeStrValid(vm.to) && timeStrToMinutes(vm.from) <= timeStrToMinutes(vm.to))
                 }
-            }
+            })
         }
     },
     computed: {
@@ -398,13 +401,13 @@ export default {
             this.currentDayTimeRanges.splice(index, 1)
         },
         timeValidationErrMsg (field) {
-            if (!field.validTime) {
+            if (field.length && field[0].$validator === 'validTime') {
                 return this.$t('Time is invalid')
             }
-            if (field.bothFilled === false) {
+            if (field.length && field[0].$validator === 'bothFilled') {
                 return this.$t('Start and End time should be set')
             }
-            if (field.notInversed === false) {
+            if (field.length && field[0].$validator === 'notInversed') {
                 return this.$t('Start time should be less than End time')
             }
         },
@@ -480,10 +483,10 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="sass" rel="stylesheet/sass" scoped>
 
     .time-range-list-height
         // NOTE: 65vh is a default max-height for q-dialog. Other magic numbers are sum of another elements heights, like headers, buttons etc
-        max-height calc(65vh - 250px)
+        max-height: calc(65vh - 250px)
 
 </style>

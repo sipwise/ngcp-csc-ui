@@ -7,7 +7,7 @@
         @hide="resetForm()"
     >
         <template
-            v-slot:content
+            #content
         >
             <q-form>
                 <q-item>
@@ -18,12 +18,12 @@
                             dense
                             :label="$t('Username')"
                             type="text"
-                            :error="$v.username.$error"
-                            :error-message="$errorMessage($v.username)"
-                            @blur="$v.username.$touch()"
+                            :error="v$.username.$errors.length > 0"
+                            :error-message="$errorMessage(v$.username)"
+                            @blur="v$.username.$touch()"
                         >
                             <template
-                                v-slot:prepend
+                                #prepend
                             >
                                 <q-icon
                                     name="fas fa-user-cog"
@@ -35,7 +35,7 @@
             </q-form>
         </template>
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 icon="check"
@@ -53,12 +53,13 @@
 <script>
 import {
     required
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import {
     mapActions,
     mapState
 } from 'vuex'
 import CscDialog from './CscDialog'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscRetrievePasswordDialog',
     components: {
@@ -70,8 +71,10 @@ export default {
             default: false
         }
     },
+    emits: ['input', 'close'],
     data () {
         return {
+            v$: useValidate(),
             username: ''
         }
     },
@@ -90,8 +93,8 @@ export default {
             'resetPassword'
         ]),
         async submit () {
-            this.$v.$touch()
-            if (!this.$v.$invalid) {
+            this.v$.$touch()
+            if (!this.v$.$invalid) {
                 try {
                     const res = await this.resetPassword({
                         username: this.username,
@@ -116,7 +119,7 @@ export default {
             }
         },
         resetForm () {
-            this.$v.$reset()
+            this.v$.$reset()
             this.username = ''
         }
     }

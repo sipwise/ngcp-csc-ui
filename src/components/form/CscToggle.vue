@@ -2,7 +2,7 @@
     <q-toggle
         v-model="toggleState"
         :label="label"
-        @input="toggle()"
+        @update:model-value="toggle()"
     />
 </template>
 
@@ -19,6 +19,7 @@ export default {
             default: ''
         }
     },
+    emits: ['change'],
     data () {
         return {
             toggleState: this.enabled
@@ -35,5 +36,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

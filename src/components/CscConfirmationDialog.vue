@@ -7,20 +7,23 @@
         :opened="opened"
         @close="onClose()"
     >
-        <div
-            slot="content"
+        <template
+            #content
         >
             {{ message }}
-        </div>
-        <q-btn
-            slot="actions"
-            :icon="titleIcon"
-            :color="color"
-            flat
-            @click="confirm"
+        </template>
+        <template
+            #actions
         >
-            {{ $t('Confirm') }}
-        </q-btn>
+            <q-btn
+                :icon="titleIcon"
+                :color="color"
+                flat
+                @click="confirm"
+            >
+                {{ $t('Confirm') }}
+            </q-btn>
+        </template>
     </csc-dialog>
 </template>
 
@@ -58,16 +61,17 @@ export default {
             default: 'primary'
         }
     },
+    emits: ['confirm', 'cancel', 'closed'],
     data () {
         return {
         }
     },
     methods: {
         open () {
-            this.$refs.dialogComp.open()
+            this.$refs.dialogComp.show()
         },
         close () {
-            this.$refs.dialogComp.close()
+            this.$refs.dialogComp.hide()
         },
         onClose () {
             this.$emit('closed')
@@ -84,5 +88,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

@@ -12,15 +12,15 @@
                     autofocus
                     dense
                     hide-bottom-space
-                    :error="$v.data.displayName.$error"
+                    :error="v$.data.displayName.$errors.length > 0"
                     :error-message="seatDisplayNameErrorMessage"
                     :disable="loading"
                     :readonly="loading"
                     :label="$t('Display Name')"
-                    @input="$v.data.displayName.$touch"
+                    @update:model-value="v$.data.displayName.$touch()"
                 >
                     <template
-                        v-slot:prepend
+                        #prepend
                     >
                         <q-icon
                             name="person"
@@ -33,16 +33,16 @@
                     dense
                     hide-bottom-space
                     hide-hint
-                    :error="$v.data.extension.$error"
+                    :error="v$.data.extension.$errors.length > 0"
                     :error-message="extensionErrorMessage"
                     :disable="loading"
                     :readonly="loading"
                     :label="$t('Extension')"
                     :hint="getExtensionHint"
-                    @input="$v.data.extension.$touch"
+                    @update:model-value="v$.data.extension.$touch()"
                 >
                     <template
-                        v-slot:prepend
+                        #prepend
                     >
                         <q-icon
                             name="call"
@@ -76,7 +76,7 @@
                     :options="groupOptions"
                 >
                     <template
-                        v-slot:prepend
+                        #prepend
                     >
                         <q-icon
                             name="group"
@@ -95,7 +95,7 @@
                     :options="soundSetOptions"
                 >
                     <template
-                        v-slot:prepend
+                        #prepend
                     >
                         <q-icon
                             name="queue_music"
@@ -118,15 +118,15 @@
                     clearable
                     dense
                     hide-bottom-space
-                    :error="$v.data.webUsername.$error"
+                    :error="v$.data.webUsername.$errors.length > 0"
                     :error-message="seatWebUsernameErrorMessage"
                     :disable="loading"
                     :readonly="loading"
                     :label="$t('Web Username')"
-                    @input="$v.data.webUsername.$touch"
+                    @update:model-value="v$.data.webUsername.$touch()"
                 >
                     <template
-                        v-slot:prepend
+                        #prepend
                     >
                         <q-icon
                             name="person"
@@ -146,15 +146,15 @@
                     clearable
                     dense
                     hide-bottom-space
-                    :error="$v.data.sipUsername.$error"
+                    :error="v$.data.sipUsername.$errors.length > 0"
                     :error-message="seatSipUsernameErrorMessage"
                     :disable="loading"
                     :readonly="loading"
                     :label="$t('SIP Username')"
-                    @input="$v.data.sipUsername.$touch"
+                    @update:model-value="v$.data.sipUsername.$touch()"
                 >
                     <template
-                        v-slot:prepend
+                        #prepend
                     >
                         <q-icon
                             name="person"
@@ -186,7 +186,7 @@
                 color="primary"
                 icon="person"
                 :loading="loading"
-                :disable="$v.data.$invalid || loading"
+                :disable="v$.data.$invalid || loading"
                 :label="$t('Create seat')"
                 @click="save()"
             />
@@ -203,10 +203,11 @@ import {
     maxLength,
     numeric,
     between
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import { inRange } from 'src/helpers/validation'
 import CscInput from 'components/form/CscInput'
 import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscPbxSeatAddForm',
     components: {
@@ -231,6 +232,7 @@ export default {
             default: () => []
         }
     },
+    emits: ['save', 'cancel'],
     validations: {
         data: {
             displayName: {
@@ -241,6 +243,7 @@ export default {
                 required,
                 maxLength: maxLength(64),
                 noWhiteSpace: (value) => {
+                    // eslint-disable-next-line prefer-regex-literals
                     return new RegExp(/\s/).test(value) === false
                 }
             },
@@ -276,7 +279,8 @@ export default {
     },
     data () {
         return {
-            data: this.getDefaults()
+            data: this.getDefaults(),
+            v$: useValidate()
         }
     },
     computed: {
@@ -286,81 +290,86 @@ export default {
             'getMaxAllowedExtension'
         ]),
         seatDisplayNameErrorMessage () {
-            if (!this.$v.data.displayName.required) {
+            const errorsTab = this.v$.data.displayName.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Seat Display Name')
                 })
-            } else if (!this.$v.data.displayName.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Seat Display Name'),
-                    maxLength: this.$v.data.displayName.$params.maxLength.max
+                    maxLength: this.v$.data.displayName.maxLength.$params.max
                 })
             } else {
                 return ''
             }
         },
         seatWebUsernameErrorMessage () {
-            if (!this.$v.data.webUsername.required) {
+            const errorsTab = this.v$.data.webUsername.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Seat Web Username')
                 })
-            } else if (!this.$v.data.webUsername.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Seat Web Username'),
-                    maxLength: this.$v.data.webUsername.$params.maxLength.max
+                    maxLength: this.v$.data.webUsername.maxLength.$params.max
                 })
             } else {
                 return ''
             }
         },
         seatSipUsernameErrorMessage () {
-            if (!this.$v.data.sipUsername.required) {
+            const errorsTab = this.v$.data.sipUsername.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('SIP Username is required', {
                     field: this.$t('Seat SIP Username')
                 })
-            } else if (!this.$v.data.sipUsername.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('SIP Username must have at most {maxLength} letters', {
                     field: this.$t('Seat SIP Username'),
-                    maxLength: this.$v.data.sipUsername.$params.maxLength.max
+                    maxLength: this.v$.data.sipUsername.maxLength.$params.max
                 })
-            } else if (!this.$v.data.sipUsername.noWhiteSpace) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'noWhiteSpace') {
                 return this.$t('SIP Username must not contain any space character', {
                     field: this.$t('Seat SIP Username'),
-                    maxLength: this.$v.data.sipUsername.$params.maxLength.max
+                    maxLength: this.v$.data.sipUsername.maxLength.$params.max
                 })
             } else {
                 return ''
             }
         },
         extensionErrorMessage () {
-            if (!this.$v.data.extension.required) {
+            const errorsTab = this.v$.data.extension.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Extension')
                 })
-            } else if (!this.$v.data.extension.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Extension'),
-                    maxLength: this.$v.data.extension.$params.maxLength.max
+                    maxLength: this.v$.data.extension.maxLength.$params.max
                 })
-            } else if (!this.$v.data.extension.numeric) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('Extension')
                 })
-            } else if (!this.$v.data.extension.isInRange) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
                 return this.getExtensionHint
             } else {
                 return ''
             }
         },
         webPasswordErrorMessage () {
-            if (!this.$v.data.webPassword.required) {
+            const errorsTab = this.v$.data.webPassword.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Password')
                 })
-            } else if (!this.$v.data.webPassword.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Password'),
-                    maxLength: this.$v.data.webPassword.$params.maxLength.max
+                    maxLength: this.v$.data.webPassword.maxLength.$params.max
                 })
             } else {
                 return ''
@@ -412,18 +421,18 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
+            this.v$.$reset()
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 .Password__strength-meter
-    margin-top 20px !important
+    margin-top: 20px !important
 .Password__strength-meter:after,
 .Password__strength-meter:before
-    border-color #3b3440 !important
+    border-color: #3b3440 !important
 .Password
-    max-width 100%
+    max-width: 100%
 </style>

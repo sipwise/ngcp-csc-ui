@@ -11,12 +11,12 @@ export const CallState = {
     ended: 'ended'
 }
 export const CallStateTitle = {
-    get input () { return i18n.t('Start new call') },
-    get initiating () { return i18n.t('Calling') },
-    get ringing () { return i18n.t('Ringing at') },
-    get incoming () { return i18n.t('Incoming call from') },
-    get established () { return i18n.t('In call with') },
-    get ended () { return i18n.t('Call ended') }
+    get input () { return i18n.global.tc('Start new call') },
+    get initiating () { return i18n.global.tc('Calling') },
+    get ringing () { return i18n.global.tc('Ringing at') },
+    get incoming () { return i18n.global.tc('Incoming call from') },
+    get established () { return i18n.global.tc('In call with') },
+    get ended () { return i18n.global.tc('Call ended') }
 }
 
 export const MediaType = {

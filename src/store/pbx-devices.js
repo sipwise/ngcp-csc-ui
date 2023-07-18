@@ -13,7 +13,6 @@ import {
     setDeviceProfile,
     setDeviceKeys
 } from '../api/pbx-devices'
-import Vue from 'vue'
 import {
     i18n
 } from 'src/boot/i18n'
@@ -89,25 +88,25 @@ export default {
         },
         getDeviceRemoveDialogMessage (state, getters) {
             if (getters.isDeviceRemoving) {
-                return i18n.t('You are about to remove device {device}', {
+                return i18n.global.tc('You are about to remove device {device}', {
                     device: getters.getDeviceRemovingName
                 })
             }
             return ''
         },
         getDeviceCreationToastMessage (state, getters) {
-            return i18n.t('Created device {device} successfully', {
+            return i18n.global.tc('Created device {device} successfully', {
                 device: getters.getDeviceCreatingName
             })
         },
         getDeviceUpdateToastMessage (state, getters) {
-            return i18n.t('Updated {field} for device {device} successfully', {
+            return i18n.global.tc('Updated {field} for device {device} successfully', {
                 device: getters.getDeviceUpdatingName,
                 field: getters.getDeviceUpdatingField
             })
         },
         getDeviceRemovalToastMessage (state, getters) {
-            return i18n.t('Removed device {device} successfully', {
+            return i18n.global.tc('Removed device {device} successfully', {
                 device: getters.getDeviceRemovingName
             })
         }
@@ -132,7 +131,7 @@ export default {
             state.deviceListLastPage = _.get(options, 'devices.lastPage', 1)
             state.deviceMap = {}
             state.deviceListItems.forEach((device) => {
-                Vue.set(state.deviceMap, device.id, device)
+                state.deviceMap[device.id] = device
             })
             state.deviceListVisibility = 'visible'
         },
@@ -157,8 +156,8 @@ export default {
         },
         deviceUpdateSucceeded (state, device) {
             state.deviceUpdateState = RequestState.succeeded
-            Vue.delete(state.deviceMap, device.id)
-            Vue.set(state.deviceMap, device.id, device)
+            delete state.deviceMap[device.id]
+            state.deviceMap[device.id] = device
             for (let i = 0; i < state.deviceListItems.length; i++) {
                 if (state.deviceListItems[i].id === device.id) {
                     state.deviceListItems[i] = device
@@ -256,7 +255,7 @@ export default {
         setDeviceStationName (context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: i18n.t('Station name')
+                deviceField: i18n.global.tc('Station name')
             })
             setDeviceStationName(options.deviceId, options.stationName).then((device) => {
                 context.commit('deviceUpdateSucceeded', device)
@@ -267,7 +266,7 @@ export default {
         setDeviceIdentifier (context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: i18n.t('MAC address')
+                deviceField: i18n.global.tc('MAC address')
             })
             setDeviceIdentifier(options.deviceId, options.identifier).then((device) => {
                 context.commit('deviceUpdateSucceeded', device)
@@ -278,7 +277,7 @@ export default {
         setDeviceProfile (context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: i18n.t('Phone model')
+                deviceField: i18n.global.tc('Phone model')
             })
             setDeviceProfile(options.deviceId, options.profileId).then((device) => {
                 context.commit('deviceUpdateSucceeded', device)
@@ -289,7 +288,7 @@ export default {
         setDeviceKeys (context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: i18n.t('Lamps/Keys')
+                deviceField: i18n.global.tc('Lamps/Keys')
             })
             setDeviceKeys(options.deviceId, options.keys).then((device) => {
                 context.commit('deviceUpdateSucceeded', device)

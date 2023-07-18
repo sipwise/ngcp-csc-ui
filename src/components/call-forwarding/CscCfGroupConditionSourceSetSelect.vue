@@ -3,7 +3,7 @@
         :title="title"
         :loading="$wait.is('csc-cf-source-set-create')"
         v-bind="$attrs"
-        v-on="$listeners"
+        @close="$emit('close')"
     >
         <div
             class="no-margin q-pa-md"
@@ -17,7 +17,7 @@
             />
         </div>
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 :label="createLabel"
@@ -89,6 +89,7 @@ export default {
             default: ''
         }
     },
+    emits: ['close', 'create'],
     data () {
         return {
             selectedSourceSet: null

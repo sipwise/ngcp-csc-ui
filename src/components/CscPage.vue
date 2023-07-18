@@ -1,7 +1,6 @@
 <template>
     <q-page
         v-bind="$attrs"
-        v-on="$listeners"
     >
         <slot />
     </q-page>
@@ -10,7 +9,6 @@
 <script>
 
 import platformMixin from '../mixins/platform'
-
 export default {
     name: 'CscPage',
     mixins: [
@@ -26,6 +24,7 @@ export default {
             default: false
         }
     },
+    emits: ['content-resized'],
     data () {
         return {}
     },
@@ -43,13 +42,13 @@ export default {
     },
     methods: {
         resizeContent () {
-            this.$root.$emit('content-resized')
+            this.emitter.$emit('content-resized')
         }
     }
 }
 </script>
 
-<!--<style lang="stylus" rel="stylesheet/stylus">-->
+<!--<style lang="sass" rel="stylesheet/sass">-->
 <!--    .csc-page-->
 <!--        min-height 100vh-->
 <!--        position relative-->

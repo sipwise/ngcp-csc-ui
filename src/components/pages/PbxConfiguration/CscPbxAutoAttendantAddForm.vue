@@ -4,9 +4,9 @@
             class="csc-pbx-aa-form-cont"
         >
             <q-form
-                @submit="save"
                 :loading="$wait.is('csc-pbx-auto-attendant-form')"
                 class="csc-pbx-aa-form justify-center"
+                @submit="save"
             >
                 <div class="row">
                     <csc-select-lazy
@@ -19,7 +19,6 @@
                         store-action="pbxAutoAttendants/fetchSubscribers"
                         :load-initially="false"
                         v-bind="$attrs"
-                        v-on="$listeners"
                         @input="setSubscriberId($event)"
                     />
                 </div>
@@ -79,7 +78,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { required } from 'vuelidate/lib/validators'
+import { required } from '@vuelidate/validators'
 import { mapWaitingActions } from 'vue-wait'
 import { showToast } from 'src/helpers/ui'
 import CscSelectLazy from 'components/form/CscSelectLazy'
@@ -88,6 +87,7 @@ export default {
     components: {
         CscSelectLazy
     },
+    emits: ['closeForm', 'newSubscriberSaved'],
     data () {
         return {
             data: {
@@ -123,14 +123,17 @@ export default {
         async save () {
             await this.updateSubscriberSlots({
                 subscriberId: this.data.subscriberId,
-                slots: this.data.slots.map((slot, index) => {
+                slots: this.data.slots.filter((slot, index) => {
                     if (slot) {
-                        return {
-                            slot: index,
-                            destination: slot
-                        }
+                        return true
                     }
-                }).filter(Boolean)
+                    return false
+                }).map((slot, index) => {
+                    return {
+                        slot: index,
+                        destination: slot
+                    }
+                })
             })
             showToast(this.$t('Slots successfully added'))
             this.$emit('newSubscriberSaved')
@@ -140,10 +143,10 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="sass" rel="stylesheet/sass" scoped>
 .csc-pbx-aa-form-cont
-    width 100%
+    width: 100%
 .csc-pbx-aa-form
-    width 50%
-    margin auto
+    width: 50%
+    margin: auto
 </style>

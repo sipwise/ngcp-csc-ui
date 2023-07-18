@@ -1,6 +1,5 @@
 <template>
     <div
-        v-if="pageType === 'typeoutgoing'"
         class="q-mb-lg"
     >
         <q-item
@@ -13,17 +12,15 @@
                 no-wrap
             >
                 <q-select
-                    v-if="hasSubscriberProfileAttribute('ncos') && (this.isPbxAdmin || ! this.isPbxEnabled)"
+                    v-if="hasSubscriberProfileAttribute('ncos') && (isPbxAdmin || !isPbxEnabled)"
                     v-model="ncosLevel"
-                    use-chips
-                    radio
                     emit-value
                     map-options
                     :options="ncosOptions"
                     :label="$t('Ncos')"
                 >
-                <template
-                        v-slot:append
+                    <template
+                        #append
                     >
                         <csc-input-button-save
                             v-if="hasNcosChanged"
@@ -36,17 +33,15 @@
                     </template>
                 </q-select>
                 <q-select
-                    v-if="hasSubscriberProfileAttribute('ncos_set') && (this.isPbxAdmin || ! this.isPbxEnabled)"
+                    v-if="hasSubscriberProfileAttribute('ncos_set') && (isPbxAdmin || !isPbxEnabled)"
                     v-model="ncosSet"
-                    use-chips
-                    radio
                     emit-value
                     map-options
                     :options="ncosSetOptions"
                     :label="$t('Ncos Set')"
                 >
-                <template
-                        v-slot:append
+                    <template
+                        #append
                     >
                         <csc-input-button-save
                             v-if="hasNcosSetChanged"
@@ -76,12 +71,6 @@ export default {
         CscInputButtonSave,
         CscInputButtonReset
     },
-    props: {
-        pageType: {
-            type: String,
-            default: null
-        }
-    },
     data () {
         return {
             ncosLevel: null,
@@ -92,12 +81,6 @@ export default {
             originalNcosSet: null
         }
     },
-    async created() {
-        await this.getNcosSubscriber();
-        await this.getCurrentNcosSubscriber();
-        await this.getNcosSetsSubscriber();
-        await this.getCurrentNcosSetsSubscriber();
-  },
     computed: {
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
@@ -109,7 +92,13 @@ export default {
         },
         hasNcosSetChanged () {
             return this.ncosSet !== this.originalNcosSet
-        },
+        }
+    },
+    async created () {
+        await this.getNcosSubscriber()
+        await this.getCurrentNcosSubscriber()
+        await this.getNcosSetsSubscriber()
+        await this.getCurrentNcosSetsSubscriber()
     },
     async mounted () {
         await this.getNcosSetSubscriber()
@@ -131,37 +120,37 @@ export default {
             this.ncosOptions = listNcos.map((ncos) => ({
                 label: ncos.label,
                 value: ncos.value
-            }));        
+            }))
         },
         async getCurrentNcosSubscriber () {
             const currentNcos = await this.getCurrentNcosLevelsSubscriber()
             this.ncosLevel = currentNcos
-            this.originalNcosLevel = currentNcos;
+            this.originalNcosLevel = currentNcos
         },
         async getNcosSetsSubscriber () {
             const listNcosSet = await this.getNcosSetSubscriber()
             this.ncosSetOptions = listNcosSet.map((ncosSet) => ({
                 label: ncosSet.label,
                 value: ncosSet.value
-            }));        
+            }))
         },
         async getCurrentNcosSetsSubscriber () {
             const currentNcosSet = await this.getCurrentNcosSetSubscriber()
             this.ncosSet = currentNcosSet
-            this.originalNcosSet = currentNcosSet;
+            this.originalNcosSet = currentNcosSet
         },
-         save () {
+        save () {
             if (this.hasNcosChanged) {
                 this.setNcosLevelSet({
                     ncosId: this.ncosLevel
                 })
-                this.originalNcosLevel = this.ncosLevel;
+                this.originalNcosLevel = this.ncosLevel
             }
             if (this.hasNcosSetChanged) {
                 this.setNcosSets({
                     ncosSetId: this.ncosSet
                 })
-                this.originalNcosSet = this.ncosSet;
+                this.originalNcosSet = this.ncosSet
             }
         },
         resetNcos () {

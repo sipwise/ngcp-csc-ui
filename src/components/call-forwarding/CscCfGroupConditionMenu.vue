@@ -1,7 +1,6 @@
 <template>
     <csc-cf-group-condition
         title=" "
-        v-on="$listeners"
     >
         <q-list
             dense
@@ -81,6 +80,7 @@ export default {
             type: Object,
             default: undefined
         }
-    }
+    },
+    emits: ['step']
 }
 </script>

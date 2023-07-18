@@ -1,9 +1,10 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 <template>
     <csc-page-sticky
         id="csc-page-call-recording"
     >
         <template
-            v-slot:header
+            #header
         >
             <q-btn
                 v-if="!showFilters"
@@ -23,7 +24,7 @@
             />
         </template>
         <template
-            v-slot:toolbar
+            #toolbar
         >
             <csc-call-recording-filters
                 v-if="showFilters"
@@ -32,19 +33,19 @@
                 @filter="filterEvent"
             />
         </template>
-        <template>
+        <div>
             <div class="q-pa-md">
                 <q-table
+                    v-model:pagination="pagination"
                     class="no-shadow"
-                    :data="data"
+                    :rows="data"
                     :columns="columns"
                     :loading="$wait.is('csc-call-recordings')"
                     row-key="name"
                     flat
-                    :pagination.sync="pagination"
                     @request="fetchPaginatedRecordings"
                 >
-                    <template v-slot:header="props">
+                    <template #header="props">
                         <q-tr :props="props">
                             <q-th auto-width />
                             <q-th
@@ -59,7 +60,7 @@
                         </q-tr>
                     </template>
                     <template
-                        v-slot:body="props"
+                        #body="props"
                     >
                         <q-tr
                             :props="props"
@@ -98,20 +99,20 @@
                                 class="table-td-no-padding"
                             >
                                 <q-table
-                                    :data="props.row.files"
+                                    :rows="props.row.files"
                                     :columns="filesColumns"
                                     :loading="$wait.is('csc-call-recordings') && $wait.is('loading-stream-' + props.row.id)"
                                     :hide-pagination="true"
                                     row-key="name"
                                     class="csc-item-odd no-shadow"
                                 >
-                                    <template v-slot:loading>
+                                    <template #loading>
                                         <q-inner-loading
                                             showing
                                             color="primary"
                                         />
                                     </template>
-                                    <template v-slot:header="innerProps">
+                                    <template #header="innerProps">
                                         <q-tr :props="innerProps">
                                             <q-th auto-width />
                                             <q-th
@@ -124,7 +125,7 @@
                                             <q-th auto-width />
                                         </q-tr>
                                     </template>
-                                    <template v-slot:body="innerProps">
+                                    <template #body="innerProps">
                                         <q-tr :props="innerProps">
                                             <q-td auto-width />
                                             <q-td
@@ -164,7 +165,7 @@
                     </template>
                 </q-table>
             </div>
-        </template>
+        </div>
     </csc-page-sticky>
 </template>
 
@@ -177,7 +178,7 @@ import CscAudioPlayer from 'components/CscAudioPlayer'
 import CscPageSticky from 'components/CscPageSticky'
 import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
 import CscRemoveDialog from 'components/CscRemoveDialog'
-import {LIST_DEFAULT_ROWS} from "src/api/common";
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import moment from 'moment'
 export default {
     name: 'CscCallBlocking',
@@ -214,7 +215,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Caller'),
-                    field: row => (!row.callerName)? row.caller : row.callerName,
+                    field: row => (!row.callerName) ? row.caller : row.callerName,
                     sortable: true
                 },
                 {
@@ -222,7 +223,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Callee'),
-                    field: row => (!row.calleeName)? row.callee : row.calleeName,
+                    field: row => (!row.calleeName) ? row.callee : row.calleeName,
                     sortable: true
                 }
             ],
@@ -287,7 +288,7 @@ export default {
                 if (recording.callee) {
                     if (recording.callee === userCli) recording.calleeName = this.$t('Me')
                 }
-            });
+            })
             this.rowStatus = this.recordings.map(rec => {
                 return {
                     id: rec.id,
@@ -395,17 +396,17 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="sass" rel="stylesheet/sass" scoped>
 .table-th
-    font-size 15px
+    font-size: 15px
 .table-td-no-padding
-    padding 0px !important // needed to override .q-table td
+    padding: 0px !important // needed to override .q-table td
 .table-td-action-cont
-    min-width 140px
+    min-width: 140px
     .player-btns
-        bottom 9px
-        left 8px
+        bottom: 9px
+        left: 8px
     .download-btn
-        height 30px
+        height: 30px
 
 </style>

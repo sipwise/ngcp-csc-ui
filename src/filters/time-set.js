@@ -13,23 +13,23 @@ export const DEFAULT_WEEKDAYS = [
 
 export function getDayNameByNumber (dayNumber, isShortName = false) {
     const daysNamesMap = [
-        i18n.t('Monday'),
-        i18n.t('Tuesday'),
-        i18n.t('Wednesday'),
-        i18n.t('Thursday'),
-        i18n.t('Friday'),
-        i18n.t('Saturday'),
-        i18n.t('Sunday')
+        i18n.global.tc('Monday'),
+        i18n.global.tc('Tuesday'),
+        i18n.global.tc('Wednesday'),
+        i18n.global.tc('Thursday'),
+        i18n.global.tc('Friday'),
+        i18n.global.tc('Saturday'),
+        i18n.global.tc('Sunday')
     ]
     // NOTE: in some languages the short days names may be not just first two letters of the full day's name
     const daysShortNamesMap = [
-        i18n.t('Mo'),
-        i18n.t('Tu'),
-        i18n.t('We'),
-        i18n.t('Th'),
-        i18n.t('Fr'),
-        i18n.t('Sa'),
-        i18n.t('Su')
+        i18n.global.tc('Mo'),
+        i18n.global.tc('Tu'),
+        i18n.global.tc('We'),
+        i18n.global.tc('Th'),
+        i18n.global.tc('Fr'),
+        i18n.global.tc('Sa'),
+        i18n.global.tc('Su')
     ]
     return isShortName ? daysShortNamesMap[dayNumber] : daysNamesMap[dayNumber]
 }
@@ -42,10 +42,10 @@ export function timeSetDateRange (times) {
     try {
         const hDateset = kamailioDatesetToHuman(times)
         return (hDateset.length === 0)
-            ? i18n.t('empty')
+            ? i18n.global.tc('empty')
             : hDateset.map(d => (d.from === d.to) ? d.from : d.from + '-' + d.to).join(', ')
     } catch (e) {
-        return i18n.t('data error')
+        return i18n.global.tc('data error')
     }
 }
 

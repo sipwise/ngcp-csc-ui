@@ -7,9 +7,9 @@
             :disable="loading"
             :readonly="loading"
             :label="$t('Station name')"
-            :error="$v.formData.stationName.$error"
+            :error="v$.formData.stationName.$errors.length > 0"
             :error-message="stationNameErrorMessage"
-            @input="$v.formData.stationName.$touch"
+            @update:model-value="v$.formData.stationName.$touch()"
         />
         <q-input
             v-model="formData.identifier"
@@ -17,9 +17,9 @@
             :disable="loading"
             :readonly="loading"
             :label="$t('MAC address')"
-            :error="$v.formData.identifier.$error"
+            :error="v$.formData.identifier.$errors.length > 0"
             :error-message="identifierErrorMessage"
-            @input="$v.formData.identifier.$touch"
+            @update:model-value="v$.formData.identifier.$touch"
         />
         <csc-pbx-model-select
             v-model="formData.profile"
@@ -46,7 +46,7 @@
                 flat
                 color="primary"
                 icon="done"
-                :disable="$v.formData.$invalid || formData.profile === null || loading"
+                :disable="v$.formData.$invalid || formData.profile === null || loading"
                 @click="submit"
             >
                 {{ $t('Create device') }}
@@ -63,12 +63,13 @@
 import {
     required,
     maxLength
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import {
     customMacAddress
 } from 'src/helpers/validation'
 import CscPbxModelSelect from './CscPbxModelSelect'
 import CscObjectSpinner from '../../CscObjectSpinner'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscPbxDeviceAddForm',
     components: {
@@ -93,6 +94,7 @@ export default {
             default: null
         }
     },
+    emits: ['submit', 'cancel', 'model-select-opened'],
     validations: {
         formData: {
             stationName: {
@@ -107,30 +109,33 @@ export default {
     },
     data () {
         return {
-            formData: this.getDefaultFormData()
+            formData: this.getDefaultFormData(),
+            v$: useValidate()
         }
     },
     computed: {
         stationNameErrorMessage () {
-            if (!this.$v.formData.stationName.required) {
+            const errorsTab = this.v$.formData.stationName.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Station name')
                 })
-            } else if (!this.$v.formData.stationName.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Station name'),
-                    maxLength: this.$v.formData.stationName.$params.maxLength.max
+                    maxLength: this.v$.formData.stationName.maxLength.$params.max
                 })
             } else {
                 return ''
             }
         },
         identifierErrorMessage () {
-            if (!this.$v.formData.identifier.required) {
+            const errorsTab = this.v$.formData.identifier.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('MAC address')
                 })
-            } else if (!this.$v.formData.identifier.customMacAddress) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'customMacAddress') {
                 return this.$t('Input a valid mac address')
             } else {
                 return ''
@@ -164,8 +169,8 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
     .form-actions
-        margin-top 16px
-        margin-bottom 8px
+        margin-top: 16px
+        margin-bottom: 8px
 </style>

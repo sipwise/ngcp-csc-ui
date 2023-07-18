@@ -29,6 +29,7 @@ export default {
     components: {
         CscDialog
     },
+    emits: ['hide'],
     data () {
         return {
             dataImg: null

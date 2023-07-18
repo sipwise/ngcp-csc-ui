@@ -44,6 +44,7 @@ export default {
     components: {
         CscPage
     },
+    emits: ['input'],
     data () {
         return {
             topMargin: 0

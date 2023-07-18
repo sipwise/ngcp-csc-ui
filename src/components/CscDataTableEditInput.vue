@@ -19,6 +19,7 @@
 
 <script>
 import { i18n } from 'src/boot/i18n'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscDataTableEditInput',
     props: {
@@ -36,11 +37,13 @@ export default {
         },
         saveLabel: {
             type: String,
-            default: i18n.t('Save')
+            default: i18n.global.tc('Save')
         }
     },
+    emits: ['changed'],
     data () {
         return {
+            v$: useValidate(),
             internalValue: this.value
         }
     },
@@ -57,7 +60,7 @@ export default {
     computed: {
         error () {
             if (this.column.componentValidations) {
-                return this.$v.internalValue.$error
+                return this.v$.internalValue.$errors.length > 0
             } else {
                 return false
             }
@@ -65,7 +68,7 @@ export default {
         errorMessage () {
             if (this.column.componentValidations) {
                 const validation = this.column.componentValidations.find(validation =>
-                    this.$v.internalValue[validation.name] === false
+                    this.v$.internalValue[validation.name]?.$invalid === true
                 )
                 if (validation) {
                     return validation.error
@@ -84,19 +87,19 @@ export default {
     },
     mounted () {
         this.internalValue = this.value
-        this.$v.$reset()
+        this.v$.$reset()
     },
     methods: {
         validate () {
             if (this.column.componentValidations) {
-                this.$v.$touch()
-                return !this.$v.$invalid
+                this.v$.$touch()
+                return !this.v$.$invalid
             } else {
                 return true
             }
         },
         save () {
-            this.$v.$touch()
+            this.v$.$touch()
             this.$emit('changed', {
                 column: this.column,
                 row: this.row,
@@ -104,7 +107,7 @@ export default {
             })
         },
         clear () {
-            this.$v.$reset()
+            this.v$.$reset()
         }
     }
 }

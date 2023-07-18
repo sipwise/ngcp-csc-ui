@@ -6,7 +6,7 @@
         @toggle="toggle"
     >
         <template
-            slot="title"
+            #title
         >
             <csc-list-item-title>
                 {{ $t('Slot') }}: {{ personalSlot.slot }}
@@ -19,7 +19,7 @@
                 </csc-list-item-subtitle>
             </q-slide-transition>
         </template>
-        <template slot="menu">
+        <template #menu>
             <csc-list-menu-item
                 icon="delete"
                 icon-color="negative"
@@ -29,19 +29,19 @@
             </csc-list-menu-item>
         </template>
         <template
-            slot="body"
+            #body
         >
             <q-input
                 v-model="newDestination"
                 :label="$t('Destination')"
-                :error="$v.newDestination.$error"
+                :error="v$.newDestination.$errors.length > 0"
                 :error-message="errorMessage"
                 @keyup.enter="save"
-                @input="valueChanged"
+                @update:model-value="valueChanged"
             >
                 <template
                     v-if="hasDestinationChanged"
-                    v-slot:append
+                    #append
                 >
                     <csc-input-button-save
                         v-if="newDestination !== '' && newDestination !== null"
@@ -67,7 +67,8 @@ import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscRemoveDialog from 'components/CscRemoveDialog'
 import {
     required
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscPbxSettingsAutoAttendant',
     components: {
@@ -88,12 +89,14 @@ export default {
             default: false
         }
     },
+    emits: ['remove', 'save', 'edit', 'reset'],
     data () {
         return {
             expanded: this.addNewSlot,
             hasDestinationChanged: false,
             newDestination: this.personalSlot.destination,
-            currentDestination: this.personalSlot.destination
+            currentDestination: this.personalSlot.destination,
+            v$: useValidate()
         }
     },
     validations: {
@@ -103,7 +106,8 @@ export default {
     },
     computed: {
         errorMessage () {
-            if (!this.$v.newDestination.required) {
+            const errorsTab = this.v$.newDestination.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('Destination must not be empty')
             } else {
                 return ''
@@ -111,10 +115,10 @@ export default {
         }
     },
     mounted () {
-        this.$root.$on('all-slots-saved', () => {
+        this.emitter.$on('all-slots-saved', () => {
             if (this.expanded) {
                 this.toggle()
-            } 
+            }
             this.newDestination = this.personalSlot.destination
             this.currentDestination = this.personalSlot.destination
             this.hasDestinationChanged = this.newDestination !== this.currentDestination
@@ -125,9 +129,10 @@ export default {
             if (!this.addNewSlot) {
                 this.$q.dialog({
                     component: CscRemoveDialog,
-                    parent: this,
-                    title: this.$t('Delete slot?'),
-                    message: this.$t('You are about to delete slot {slot}', { slot: this.personalSlot.slot })
+                    componentProps: {
+                        title: this.$t('Delete slot?'),
+                        message: this.$t('You are about to delete slot {slot}', { slot: this.personalSlot.slot })
+                    }
                 }).onOk(() => {
                     this.remove()
                 })
@@ -148,7 +153,7 @@ export default {
             this.newDestination = this.personalSlot.destination
         },
         valueChanged () {
-            this.$v.newDestination.$touch()
+            this.v$.newDestination.$touch()
             this.hasDestinationChanged = this.newDestination !== this.currentDestination
             this.$emit('edit', this.newDestination, this.personalSlot.slot)
         },

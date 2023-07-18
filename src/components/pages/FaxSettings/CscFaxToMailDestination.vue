@@ -6,7 +6,7 @@
         @toggle="toggle"
     >
         <template
-            slot="title"
+            #title
         >
             <csc-list-item-title>
                 {{ $t('&lt;{destination}&gt; as {filetype}', {destination: destination.destination, filetype: destination.filetype}) }}
@@ -34,7 +34,7 @@
             </q-slide-transition>
         </template>
         <template
-            slot="menu"
+            #menu
         >
             <csc-list-menu-item
                 :disable="loading"
@@ -46,12 +46,12 @@
                 {{ $t('Remove') }}
             </csc-list-menu-item>
         </template>
-        <template slot="body">
+        <template #body>
             <csc-fax-to-mail-destination-form
                 :is-add-new-mode="false"
                 :initial-data="destination"
                 :loading="loading"
-                @update-property="updateProperty"
+                @update-property="updateProperty($event)"
             />
         </template>
     </csc-list-item>
@@ -91,6 +91,7 @@ export default {
             default: false
         }
     },
+    emits: ['update-property', 'expand', 'collapse', 'remove'],
     methods: {
         deleteDestination () {
             if (this.$refs.listItem) {
@@ -105,8 +106,8 @@ export default {
                 this.$emit('expand')
             }
         },
-        updateProperty () {
-            this.$emit('update-property', ...arguments)
+        updateProperty (data) {
+            this.$emit('update-property', data)
         }
 
     }

@@ -8,7 +8,7 @@
         @toggle="toggle"
     >
         <template
-            slot="title"
+            #title
         >
             <csc-list-item-title>
                 {{ device.station_name }}
@@ -29,7 +29,7 @@
             </q-slide-transition>
         </template>
         <template
-            slot="menu"
+            #menu
         >
             <csc-list-menu-item
                 icon="delete"
@@ -40,7 +40,7 @@
             </csc-list-menu-item>
         </template>
         <template
-            slot="body"
+            #body
         >
             <q-input
                 v-model="changes.stationName"
@@ -49,7 +49,7 @@
             >
                 <template
                     v-if="hasStationNameChanged"
-                    v-slot:append
+                    #append
                 >
                     <csc-input-button-save
                         @click.stop="save"
@@ -89,7 +89,7 @@
             >
                 <template
                     v-if="hasProfileChanged"
-                    v-slot:append
+                    #append
                 >
                     <csc-input-button-save
                         @click.stop="save"
@@ -205,6 +205,7 @@ export default {
             default: null
         }
     },
+    emits: ['save-profile', 'save-identifier', 'save-station-name', 'save-keys', 'remove', 'expand', 'collapse', 'load-model', 'expanded', 'model-select-opened'],
     data () {
         return {
             changes: this.getData()
@@ -303,6 +304,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>
-s

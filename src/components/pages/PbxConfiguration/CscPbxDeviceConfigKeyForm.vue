@@ -19,18 +19,18 @@
             </div>
         </div>
         <q-select
-            ref="selectType"
             v-if="changes"
+            ref="selectType"
             v-model="changes.type"
             :disable="loading"
             emit-value
             map-options
             :label="$t('Lamp/Key')"
             :options="typeOptions"
-            @input="keyTypeChanged"
+            @update:model-value="keyTypeChanged"
         >
             <template
-                v-slot:prepend
+                #prepend
             >
                 <q-icon
                     name="radio_button_checked"
@@ -39,13 +39,12 @@
         </q-select>
         <q-toggle
             v-if="showCustomNumberToggle"
-            class="q-pt-md"
             v-model="hasTargetNumber"
+            class="q-pt-md"
             :label="$t('Use custom number')"
             :disable="loading"
             data-cy="pbxdevices-target_number"
-            @input="targetNumberToggleChanged()"
-
+            @update:model-value="targetNumberToggleChanged()"
         />
         <csc-pbx-auto-attendant-selection
             v-if="changes.type && !hasTargetNumber"
@@ -62,10 +61,10 @@
             dense
             hide-bottom-space
             hide-hint
-            :error="$v.changes.target_number.$error"
+            :error="v$.changes.target_number.$errors.length > 0"
             :error-message="targetNumberErrorMessage"
             :label="$t('Number')"
-            @input="$v.changes.target_number.$touch"
+            @input="v$.changes.target_number.$touch()"
         />
         <csc-list-spinner
             v-if="loading"
@@ -99,7 +98,7 @@
                 <q-btn
                     v-if="hasTypeChanged || hasSubscriberChanged || hasTargetNumberChanged"
                     :label="$t('Save')"
-                    :disable="($v.changes.$invalid && hasTargetNumber) || loading"
+                    :disable="(v$.changes.$invalid && hasTargetNumber) || loading"
                     flat
                     color="primary"
                     icon="check"
@@ -121,7 +120,8 @@ import {
 } from 'quasar'
 import {
     required
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscPbxDeviceConfigKeyForm',
     components: {
@@ -147,12 +147,14 @@ export default {
             default: false
         }
     },
+    emits: ['onSave', 'closeKeyOverlay'],
     validations: {
         changes: {
             target_number: {
                 required,
                 onlyChars: function (value) {
-                    const regExpTargetNumber = new RegExp("^[*#0-9+]*$");
+                    // eslint-disable-next-line prefer-regex-literals
+                    const regExpTargetNumber = new RegExp('^[*#0-9+]*$')
                     return regExpTargetNumber.test(value)
                 }
             }
@@ -162,18 +164,12 @@ export default {
         return {
             keyData: this.getKeyData(),
             changes: this.getKeyData(),
-            hasTargetNumber: this.selectedLine?.target_number ? true : false
-        }
-    },
-    watch: {
-        selectedLine () {
-            this.changes = this.getKeyData()
-            this.keyData = this.getKeyData()
-            this.hasTargetNumber = this.selectedLine?.target_number ? true : false
+            hasTargetNumber: !!this.selectedLine?.target_number,
+            v$: useValidate()
         }
     },
     computed: {
-         ...mapState('pbx', [
+        ...mapState('pbx', [
             'subscriberList'
         ]),
         hasSubscriberChanged () {
@@ -292,11 +288,12 @@ export default {
             return this.changes.type === 'transfer' || this.changes.type === 'speeddial' || this.changes.type === 'forward'
         },
         targetNumberErrorMessage () {
-            if (!this.$v.changes.target_number.required) {
+            const errorsTab = this.v$.changes.target_number.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Target number')
                 })
-            } else if (!this.$v.changes.target_number.onlyChars) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'onlyChars') {
                 return this.$t('{field} must consist only of numeric characters or the symbols +, * or #.', {
                     field: this.$t('Target number')
                 })
@@ -305,10 +302,17 @@ export default {
             }
         }
     },
+    watch: {
+        selectedLine () {
+            this.changes = this.getKeyData()
+            this.keyData = this.getKeyData()
+            this.hasTargetNumber = !!this.selectedLine?.target_number
+        }
+    },
     methods: {
         getKeyData () {
             if (this.selectedLine) {
-                this.hasTargetNumber = this.selectedLine.target_number ? true : false
+                this.hasTargetNumber = !!this.selectedLine.target_number
                 return {
                     extension_unit: this.selectedLine.extension_unit,
                     key_num: this.selectedLine.key_num,
@@ -327,7 +331,6 @@ export default {
                     target_number: null
                 }
             }
-
         },
         closeKeyOverlay () {
             this.$emit('closeKeyOverlay')
@@ -347,7 +350,7 @@ export default {
                 this.hasTargetNumber = false
             }
         },
-        keySubscriberChanged ({ value: subscriberId}) {
+        keySubscriberChanged ({ value: subscriberId }) {
             this.changes.subscriber_id = subscriberId
         },
         targetNumberToggleChanged () {
@@ -360,7 +363,7 @@ export default {
         },
         resetData () {
             this.changes = _.clone(this.keyData)
-            this.hasTargetNumber = this.selectedLine?.target_number ? true : false
+            this.hasTargetNumber = !!this.selectedLine?.target_number
         },
         onSave () {
             this.$emit('onSave', this.changes)

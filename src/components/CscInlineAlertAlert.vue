@@ -3,11 +3,10 @@
         icon="error"
         color="negative"
         v-bind="$attrs"
-        v-on="$listeners"
     >
         <slot />
         <template
-            v-slot:action
+            #action
         >
             <slot
                 name="action"

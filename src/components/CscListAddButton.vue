@@ -24,6 +24,7 @@ export default {
             default: ''
         }
     },
+    emits: ['click'],
     data () {
         return {}
     },

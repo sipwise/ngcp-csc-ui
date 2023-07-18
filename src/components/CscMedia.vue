@@ -96,9 +96,9 @@ export default {
     mounted () {
         this.assignStream(this.stream)
         const fitMedia = () => { this.fitMedia() }
-        this.$root.$on('window-resized', fitMedia)
-        this.$root.$on('content-resized', fitMedia)
-        this.$root.$on('orientation-changed', fitMedia)
+        this.emitter.$on('window-resized', fitMedia)
+        this.emitter.$on('content-resized', fitMedia)
+        this.emitter.$on('orientation-changed', fitMedia)
         this.$refs.media.addEventListener('playing', () => {
             this.loading = false
             this.fitMedia()
@@ -202,21 +202,21 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-media
-        position relative
-        overflow hidden
-        .csc-media-spinner
-            position absolute
-            top 50%
-            left 50%
-            margin-top -12px
-            margin-left -12px
-        video.csc-media-video
-            position: absolute;
-            @media (max-width: $breakpoint-sm)
-                top 0px !important
-                width 100%
-                height 100%
-                object-fit cover
+<style lang="sass" rel="stylesheet/sass">
+.csc-media
+    position: relative
+    overflow: hidden
+    .csc-media-spinner
+        position: absolute
+        top: 50%
+        left: 50%
+        margin-top: -12px
+        margin-left: -12px
+    video.csc-media-video
+        position: absolute
+        @media (max-width: $breakpoint-sm)
+            top: 0px !important
+            width: 100%
+            height: 100%
+            object-fit: cover
 </style>

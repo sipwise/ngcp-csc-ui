@@ -1,5 +1,4 @@
 
-import Vue from 'vue'
 import _ from 'lodash'
 import {
     CreationState,
@@ -70,7 +69,7 @@ export default {
         },
         getMsConfigRemoveDialogMessage (state) {
             if (state.msConfigRemoving !== null) {
-                return i18n.t('You are about to remove config for {msConfig}', {
+                return i18n.global.tc('You are about to remove config for {msConfig}', {
                     msConfig: state.subscriberMap[state.msConfigRemoving.id].display_name
                 })
             }
@@ -92,18 +91,18 @@ export default {
             return state.msConfigUpdatingField
         },
         getMsConfigCreationToastMessage (state, getters) {
-            return i18n.t('Created manager secretary config for {msConfig} successfully', {
+            return i18n.global.tc('Created manager secretary config for {msConfig} successfully', {
                 msConfig: getters.getMsConfigCreatingName
             })
         },
         getMsConfigUpdateToastMessage (state, getters) {
-            return i18n.t('Updated {field} for manager secretary config {msConfig} successfully', {
+            return i18n.global.tc('Updated {field} for manager secretary config {msConfig} successfully', {
                 msConfig: getters.getMsConfigUpdatingName,
                 field: getters.getMsConfigUpdatingField
             })
         },
         getMsConfigRemovalToastMessage (state, getters) {
-            return i18n.t('Removed manager secretary config for {msConfig} successfully', {
+            return i18n.global.tc('Removed manager secretary config for {msConfig} successfully', {
                 msConfig: getters.getMsConfigRemovingName
             })
         }
@@ -123,10 +122,10 @@ export default {
             state.msConfigListState = RequestState.succeeded
             state.msConfigList = _.get(msConfigList, 'msConfigs.items', [])
             state.msConfigList.forEach((msConfig) => {
-                Vue.set(state.msConfigMap, msConfig.id, msConfig)
+                state.msConfigMap[msConfig.id] = msConfig
             })
             _.get(msConfigList, 'subscribers.items', []).forEach((subscriber) => {
-                Vue.set(state.subscriberMap, subscriber.id, subscriber)
+                state.subscriberMap[subscriber.id] = subscriber
             })
             state.msConfigListVisible = true
         },
@@ -171,8 +170,8 @@ export default {
                         state.msConfigList[i] = preferences
                     }
                 }
-                Vue.delete(state.msConfigMap, preferences.id)
-                Vue.set(state.msConfigMap, preferences.id, preferences)
+                delete state.msConfigMap[preferences.id]
+                state.msConfigMap[preferences.id] = preferences
             }
         },
         msConfigUpdateFailed (state, err) {
@@ -242,7 +241,7 @@ export default {
         setSecretaryNumbers (context, options) {
             context.commit('msConfigUpdateRequesting', {
                 msConfigId: options.msConfigId,
-                field: i18n.t('Secretary numbers')
+                field: i18n.global.tc('Secretary numbers')
             })
             setSecretaryNumber(options).then((preferences) => {
                 context.commit('msConfigUpdateSucceeded', preferences)

@@ -4,13 +4,13 @@
         class="q-pa-lg"
     >
         <template
-            v-slot:header 
+            #header
         >
             <q-btn-dropdown
                 size="md"
                 color="primary"
                 :label="$t('Add slot')"
-                :disabled="getAvailableSlots().length === 0" 
+                :disabled="getAvailableSlots().length === 0"
                 icon="add"
                 dropdown-icon=" "
                 flat
@@ -44,7 +44,7 @@
                 <csc-pbx-settings-auto-attendant
                     :add-new-slot="true"
                     :personal-slot="newSlot"
-                    @save="saveSlot" 
+                    @save="saveSlot"
                     @remove="removeSlot"
                     @edit="editNewSlotDestination"
                 />
@@ -60,7 +60,7 @@
                 <csc-pbx-settings-auto-attendant
                     v-model="personalSlots[index].destination"
                     :personal-slot="personalSlot"
-                    @save="saveSlot" 
+                    @save="saveSlot"
                     @remove="removeSlot"
                     @edit="editNewSlotDestination"
                     @reset="resetPersonalSlot"
@@ -91,6 +91,7 @@ export default {
         CscFade,
         CscSpinner
     },
+    emits: ['all-slots-saved'],
     data () {
         return {
             data: [],
@@ -140,7 +141,7 @@ export default {
             if (!isARemoval) {
                 for (const newSlot of this.newPersonalSlots) {
                     this.updateLocalDestination(newSlot.slot, newSlot.destination)
-                }  
+                }
             }
             await this.updateSubscriberSlots({
                 subscriberId: this.subscriberId,
@@ -151,7 +152,7 @@ export default {
             this.newPersonalSlots = _.cloneDeep(this.newSlots.filter(slot => slot.subscriber_id === this.subscriberId)[0].slots)
             this.sortArrays()
             showToast(this.$t('Slots saved successfully'))
-            this.$root.$emit('all-slots-saved')
+            this.emitter.$emit('all-slots-saved')
         },
         removeSlot (slotToRemove) {
             const foundIndex = this.newPersonalSlots.findIndex(item => item.slot === slotToRemove)

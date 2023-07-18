@@ -73,5 +73,6 @@ export function isWithinLastWeek (date, $today) {
 
 export function getBrowserTimezone () {
     return Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone
-        ? Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone : 'UTC'
+        ? Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone
+        : 'UTC'
 }

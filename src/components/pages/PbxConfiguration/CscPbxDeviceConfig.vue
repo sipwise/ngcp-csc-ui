@@ -79,6 +79,7 @@ export default {
             default: null
         }
     },
+    emits: ['keysChanged'],
     data () {
         return {
             configWidth: 0,
@@ -253,17 +254,16 @@ export default {
             this.keyOverlayActive = true
             this.$scrollTo(this.$parent.$el)
         },
-        onSave(newLine) {
+        onSave (newLine) {
             const newLines = []
             const lines = _.clone(this.lines)
             const line = this.getLineByKey(this.selectedKey)
-            if (line !== null && newLine.type === null ) {
+            if (line !== null && newLine.type === null) {
                 delete lines[line.index]
             } else if (line !== null) {
                 _.set(lines, line.index + '.subscriber_id', newLine.subscriber_id)
                 _.set(lines, line.index + '.target_number', newLine.target_number)
                 _.set(lines, line.index + '.type', newLine.type)
-
             } else {
                 newLines.push(newLine)
             }
@@ -277,104 +277,104 @@ export default {
                     target_number: line.target_number
                 })
             })
-           this.$emit('keysChanged', newLines)
+            this.$emit('keysChanged', newLines)
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    $spotSize = 25px
+<style lang="sass" rel="stylesheet/sass">
+$spotSize: 25px
 
-    .csc-device-key-title
-        margin-bottom $flex-gutter-md
+.csc-device-key-title
+    margin-bottom: $flex-gutter-md
 
-    .csc-device-key-title-icon
-        margin-right $flex-gutter-xs
+.csc-device-key-title-icon
+    margin-right: $flex-gutter-xs
 
-    .csc-device-key-title-main
-        font-size 1rem
-    .csc-device-key-title-sub
-        font-size 90%
-        margin-top 0.2rem
+.csc-device-key-title-main
+    font-size: 1rem
+.csc-device-key-title-sub
+    font-size: 90%
+    margin-top: 0.2rem
 
-    .csc-pbx-device-config-key-overlay
-        .title
-            .q-icon
-                margin-right 8px
-            font-size 18px
-            font-weight 400
-            letter-spacing normal
-            line-height 1.8rem
-            margin-bottom 32px
-            text-align center
+.csc-pbx-device-config-key-overlay
+    .title
+        .q-icon
+            margin-right: 8px
+        font-size: 18px
+        font-weight: 400
+        letter-spacing: normal
+        line-height: 1.8rem
+        margin-bottom: 32px
+        text-align: center
 
-        position absolute
-        top 0
-        left 0
-        right 0
-        bottom 0
-        background-color alpha($secondary, 0.85)
-        z-index 10
-        padding 48px
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background-color: rgba($secondary, 85%)
+    z-index: 10
+    padding: 48px
 
-    .csc-pbx-device-key-details
-        padding 50px
-        position relative
+.csc-pbx-device-key-details
+    padding: 50px
+    position: relative
 
-    .csc-pbx-device-config
-        margin-top $flex-gutter-lg
-        position relative
-        .spot-modal-content
-            position relative
-        .actions
-            padding 32px
+.csc-pbx-device-config
+    margin-top: $flex-gutter-lg
+    position: relative
+    .spot-modal-content
+        position: relative
+    .actions
+        padding: 32px
 
-    .csc-pbx-device-image
-        position relative
-        overflow hidden
-        img
-            display block
-            position relative
-
-    .csc-pbx-device-canvas
+.csc-pbx-device-image
+    position: relative
+    overflow: hidden
+    img
+        display: block
         position: relative
 
-    .csc-pbx-key-popover-title
-        font-size 18px
-        font-weight 400
-        letter-spacing normal
-        line-height 1.8rem
+.csc-pbx-device-canvas
+    position: relative
 
-    .csc-pbx-device-loader
-        z-index 20
+.csc-pbx-key-popover-title
+    font-size: 18px
+    font-weight: 400
+    letter-spacing: normal
+    line-height: 1.8rem
 
-    .csc-pbx-device-button-spot
-        border-radius: 50%;
-        width $spotSize
-        height $spotSize
-        background-color white
-        line-height $spotSize
-        color $primary
-        text-align center
-        cursor pointer
-        font-weight bold
+.csc-pbx-device-loader
+    z-index: 20
 
-    .csc-pbx-device-button
-        background-color $primary
+.csc-pbx-device-button-spot
+    border-radius: 50%
+    width: $spotSize
+    height: $spotSize
+    background-color: white
+    line-height: $spotSize
+    color: $primary
+    text-align: center
+    cursor: pointer
+    font-weight: bold
 
-    .csc-pbx-device-button-active
-        background-color $primary
-        color white
+.csc-pbx-device-button
+    background-color: $primary
 
-    .csc-pbx-key-popover
-        min-height 40px
-        padding 16px
-        padding-right 40px
+.csc-pbx-device-button-active
+    background-color: $primary
+    color: white
 
-    .csc-close-button.q-btn
-        padding $flex-gutter-xs
-        .q-btn-inner
-            i
-                margin 0
+.csc-pbx-key-popover
+    min-height: 40px
+    padding: 16px
+    padding-right: 40px
+
+.csc-close-button.q-btn
+    padding: $flex-gutter-xs
+    .q-btn-inner
+        i
+            margin: 0
 </style>

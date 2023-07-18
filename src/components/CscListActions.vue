@@ -39,7 +39,8 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-list-actions
-        margin-bottom $flex-gutter-sm
+<style lang="sass" rel="stylesheet/sass">
+
+.csc-list-actions
+    margin-bottom: $flex-gutter-sm
 </style>

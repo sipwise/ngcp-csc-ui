@@ -141,23 +141,23 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
     .csc-logo-light
         .csc-logo-bubbles
             path
-                stroke white !important
+                stroke: white !important
         .csc-logo-phrase
             path
-                fill white !important
+                fill: white !important
         .csc-logo-ale
-            fill white !important
+            fill: white !important
     .csc-logo-dark
         .csc-logo-bubbles
             path
-                stroke black !important
+                stroke: black !important
         .csc-logo-phrase
             path
-                fill black !important
+                fill: black !important
         .csc-logo-ale
-            fill black !important
+            fill: black !important
 </style>

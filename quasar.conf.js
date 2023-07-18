@@ -6,6 +6,10 @@
 
 // Configuration for your app
 // https://quasar.dev/quasar-cli/quasar-conf-js
+
+const ESLintPlugin = require('eslint-webpack-plugin')
+const webpack = require('webpack')
+
 module.exports = function (ctx) {
     let devServerConfig = {}
     try {
@@ -27,10 +31,10 @@ module.exports = function (ctx) {
         // https://quasar.dev/quasar-cli/boot-files
         boot: [
             'appConfig',
+            'i18n',
+            'api',
             'filters',
             'vuelidate',
-            'i18n',
-            'vue-resource',
             'ngcp-call',
             'user',
             'routes',
@@ -38,13 +42,14 @@ module.exports = function (ctx) {
             'constants',
             'vue-wait',
             'e2e-testing',
-            'branding'
+            'branding',
+            'event-bus'
         ],
 
         // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
         css: [
-            'app.fonts.styl',
-            'app.styl'
+            'app.fonts.sass',
+            'app.sass'
         ],
 
         // https://github.com/quasarframework/quasar/tree/dev/extras
@@ -61,11 +66,44 @@ module.exports = function (ctx) {
             'material-icons' // optional, you are not bound to it
         ],
 
+        // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
+        framework: {
+            iconSet: 'material-icons', // Quasar icon set
+            lang: 'en-US', // Quasar language pack
+            config: {},
+
+            // Possible values for "importStrategy":
+            // * 'auto' - (DEFAULT) Auto-import needed Quasar components & directives
+            // * 'all'  - Manually specify what to import
+            importStrategy: 'auto',
+
+            // For special cases outside of where "auto" importStrategy can have an impact
+            // (like functional components as one of the examples),
+            // you can manually specify Quasar components/directives to be available everywhere:
+            //
+            // components: [],
+            // directives: [],
+
+            // Quasar plugins
+            plugins: [
+                'Loading',
+                'Notify',
+                'Dialog',
+                'SessionStorage',
+                'LocalStorage',
+                'Dark',
+                'Meta'
+            ]
+        },
+
         // https://quasar.dev/quasar-cli/supporting-ts
         supportTS: false,
 
         // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
         build: {
+            env: {
+                ...process.env
+            },
             vueRouterMode: 'hash', // available values: 'hash', 'history'
 
             // transpile: false,
@@ -86,12 +124,19 @@ module.exports = function (ctx) {
 
             // https://quasar.dev/quasar-cli/handling-webpack
             extendWebpack (cfg) {
-                cfg.module.rules.push({
-                    enforce: 'pre',
-                    test: /\.(js|vue)$/,
-                    loader: 'eslint-loader',
-                    exclude: /node_modules/
-                })
+                cfg.plugins.push(
+                    new ESLintPlugin({ extensions: ['js', 'vue'] })
+                )
+                cfg.plugins.push(
+                    new webpack.ProvidePlugin({
+                        process: 'process/browser'
+                    })
+                )
+                cfg.plugins.push(
+                    new webpack.DefinePlugin({
+                        'process.env': JSON.stringify(process.env)
+                    })
+                )
             }
         },
 
@@ -100,52 +145,32 @@ module.exports = function (ctx) {
             https: false,
             port: 8080,
             open: true, // opens browser window automatically,
-            public: devServerConfig.public,
-            publicPath: devServerConfig.publicPath,
-            ...(!devServerConfig.proxyAPI2localhost ? {} : {
-                https: true,
-                publicPath: devServerConfig.publicPath || '/v2/',
-                proxy: {
-                    [`!${devServerConfig.publicPath || '/v2/'}`]: {
-                        target: devServerConfig.proxyAPIFromURL,
-                        secure: false
+            devMiddleware: {
+                publicPath: devServerConfig.publicPath,
+                ...(!devServerConfig.proxyAPI2localhost
+                    ? {}
+                    : {
+                        publicPath: devServerConfig.publicPath || '/v2/'
                     }
-                },
-                before: function (app, server, compiler) {
-                    app.get('/', function (req, res) {
-                        res.redirect(301, devServerConfig.publicPath || '/v2/')
-                    })
+                )
+            },
+            ...(!devServerConfig.proxyAPI2localhost
+                ? {}
+                : {
+                    https: true,
+                    proxy: {
+                        [`!${devServerConfig.publicPath || '/v2/'}`]: {
+                            target: devServerConfig.proxyAPIFromURL,
+                            secure: false
+                        }
+                    },
+                    onBeforeSetupMiddleware: (devServer) => {
+                        devServer.app.get('/', function (req, res) {
+                            res.redirect(301, devServerConfig.publicPath || '/v2/')
+                        })
+                    }
                 }
-            })
-        },
-
-        // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
-        framework: {
-            iconSet: 'material-icons', // Quasar icon set
-            lang: 'en-us', // Quasar language pack
-            config: {},
-
-            // Possible values for "importStrategy":
-            // * 'auto' - (DEFAULT) Auto-import needed Quasar components & directives
-            // * 'all'  - Manually specify what to import
-            importStrategy: 'auto',
-
-            // For special cases outside of where "auto" importStrategy can have an impact
-            // (like functional components as one of the examples),
-            // you can manually specify Quasar components/directives to be available everywhere:
-            //
-            // components: [],
-            // directives: [],
-
-            // Quasar plugins
-            plugins: [
-                'Notify',
-                'Dialog',
-                'SessionStorage',
-                'LocalStorage',
-                'Dark',
-                'Meta'
-            ]
+            )
         },
 
         // animations: 'all', // --- includes all animations

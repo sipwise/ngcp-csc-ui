@@ -10,6 +10,7 @@
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 export default {
     name: 'CscPopupMenuItemDelete',
-    components: { CscPopupMenuItem }
+    components: { CscPopupMenuItem },
+    emits: ['click']
 }
 </script>

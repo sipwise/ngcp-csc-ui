@@ -2,17 +2,16 @@
     <q-select
         :label="selectedKeyLabel"
         v-bind="$attrs"
-        v-on="$listeners"
     >
         <template
             v-if="showSelectedItemIcon"
-            v-slot:prepend
+            #prepend
         >
             <q-icon
                 :name="selectedKeyIcon"
             />
         </template>
-        <template v-slot:option="scope">
+        <template #option="scope">
             <q-item
                 v-bind="scope.itemProps"
                 v-on="scope.itemEvents"

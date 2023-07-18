@@ -1,10 +1,13 @@
-import Vue from 'vue'
 import {
     getRecordings,
     getRecordingStreams,
     downloadRecordingStream,
     getRecordingStream
 } from '../api/subscriber'
+
+import {
+    httpApi
+} from 'src/api/common'
 export default {
     namespaced: true,
     state: {
@@ -62,7 +65,7 @@ export default {
             })
         },
         async deleteRecording (context, recId) {
-            await Vue.http.delete('api/callrecordings/' + recId + '?force_delete=1')
+            await httpApi.delete('api/callrecordings/' + recId + '?force_delete=1')
         },
         async downloadRecording (context, fileId) {
             const fileBody = await downloadRecordingStream(fileId)

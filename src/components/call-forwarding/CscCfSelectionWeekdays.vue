@@ -59,7 +59,7 @@ import {
 export default {
     name: 'CscCfSelectionWeekdays',
     props: {
-        value: {
+        weekdays: {
             type: Array,
             default: () => [DAY_MAP[0]]
         },
@@ -72,9 +72,10 @@ export default {
             default: false
         }
     },
+    emits: ['input'],
     data () {
         return {
-            selectedWeekdays: this.value
+            selectedWeekdays: this.weekdays
         }
     },
     computed: {
@@ -101,7 +102,7 @@ export default {
         selectedWeekdays (weekdays) {
             this.$emit('input', weekdays)
         },
-        value (weekdays) {
+        weekdays (weekdays) {
             this.selectedWeekdays = weekdays
         }
     },
@@ -112,17 +113,21 @@ export default {
             } else {
                 this.selectedWeekdays.push(day.value)
             }
+            this.$emit('input', this.selectedWeekdays)
         },
         isSelected (day) {
-            return this.selectedWeekdays.find(dayValue => day.value === dayValue)
+            if (this.selectedWeekdays) {
+                return this.selectedWeekdays.find(dayValue => day.value === dayValue)
+            }
+            return false
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="sass" rel="stylesheet/sass" scoped>
     .weekdays-selection-component
         // Note: the magic number for height is the max component height in buttons mode.
         // It makes the height of our component stable in any mode (tab \ buttons)
-        min-height 42px
+        min-height: 42px
 </style>

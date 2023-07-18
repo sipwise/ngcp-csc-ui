@@ -8,7 +8,6 @@ import {
     RequestState
 } from './common'
 import _ from 'lodash'
-import Vue from 'vue'
 import {
     getSeatList,
     createSeat,
@@ -106,12 +105,12 @@ export default {
         },
         getDefaultNcos (state) {
             return (id) => {
-                return state?.preferenceMapById[id]?.ncos 
+                return state?.preferenceMapById[id]?.ncos
             }
         },
         getDefaultNcosSet (state) {
             return (id) => {
-                return state?.preferenceMapById[id]?.ncos_set 
+                return state?.preferenceMapById[id]?.ncos_set
             }
         },
         getIntraPbx (state) {
@@ -141,24 +140,24 @@ export default {
         },
         getSeatRemoveDialogMessage (state, getters) {
             if (state.seatRemoving !== null) {
-                return i18n.t('You are about to remove seat {seat}', {
+                return i18n.global.tc('You are about to remove seat {seat}', {
                     seat: getters.getSeatRemovingName
                 })
             }
             return ''
         },
         getSeatCreationToastMessage (state, getters) {
-            return i18n.t('Added seat {seat}', {
+            return i18n.global.tc('Added seat {seat}', {
                 seat: getters.getSeatCreatingName
             })
         },
         getSeatUpdateToastMessage (state, getters) {
-            return i18n.t('Changed {field} successfully', {
+            return i18n.global.tc('Changed {field} successfully', {
                 field: getters.getSeatUpdatingField
             })
         },
         getSeatRemovalToastMessage (state, getters) {
-            return i18n.t('Removed seat {seat}', {
+            return i18n.global.tc('Removed seat {seat}', {
                 seat: getters.getSeatRemovingName
             })
         },
@@ -186,11 +185,11 @@ export default {
             state.seatListLastPage = _.get(options, 'seats.lastPage', 1)
             state.seatMapById = {}
             state.seatListItems.forEach((seat) => {
-                Vue.set(state.seatMapById, seat.id, seat)
+                state.seatMapById[seat.id] = seat
             })
             state.preferenceMapById = {}
             _.get(options, 'preferences.items', []).forEach((preference) => {
-                Vue.set(state.preferenceMapById, preference.id, preference)
+                state.preferenceMapById[preference.id] = preference
             })
             state.seatListVisibility = 'visible'
         },
@@ -232,15 +231,15 @@ export default {
             const seat = _.get(options, 'seat', null)
             const preferences = _.get(options, 'preferences', null)
             if (seat !== null && preferences !== null) {
-                Vue.delete(state.seatMapById, seat.id)
-                Vue.set(state.seatMapById, seat.id, seat)
+                delete state.seatMapById[seat.id]
+                state.seatMapById[seat.id] = seat
                 for (let i = 0; i < state.seatListItems.length; i++) {
                     if (state.seatListItems[i].id === seat.id) {
                         state.seatListItems[i] = seat
                     }
                 }
-                Vue.delete(state.preferenceMapById, preferences.id)
-                Vue.set(state.preferenceMapById, preferences.id, preferences)
+                delete state.preferenceMapById[preferences.id]
+                state.preferenceMapById[preferences.id] = preferences
                 if (state.seatSelected !== null && state.seatSelected.id === options.seat.id) {
                     state.seatSelected = options.seat
                 }
@@ -347,7 +346,7 @@ export default {
         setSeatDisplayName (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Seat displayName')
+                seatField: i18n.global.tc('Seat displayName')
             })
             setSeatDisplayName({
                 seatId: options.seatId,
@@ -361,7 +360,7 @@ export default {
         setSeatWebUsername (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Seat Web Username')
+                seatField: i18n.global.tc('Seat Web Username')
             })
             setSeatWebUsername({
                 seatId: options.seatId,
@@ -375,7 +374,7 @@ export default {
         setSeatExtension (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Extension')
+                seatField: i18n.global.tc('Extension')
             })
             setSeatExtension({
                 seatId: options.seatId,
@@ -389,7 +388,7 @@ export default {
         setSeatWebPassword (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Password')
+                seatField: i18n.global.tc('Password')
             })
             setSeatWebPassword({
                 seatId: options.seatId,
@@ -403,7 +402,7 @@ export default {
         setSeatSIPPassword (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('SIP Password')
+                seatField: i18n.global.tc('SIP Password')
             })
             setSeatSIPPassword({
                 seatId: options.seatId,
@@ -417,7 +416,7 @@ export default {
         setSeatGroups (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Groups')
+                seatField: i18n.global.tc('Groups')
             })
             setSeatGroups({
                 seatId: options.seatId,
@@ -431,7 +430,7 @@ export default {
         setSeatNumbers (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Alias Numbers')
+                seatField: i18n.global.tc('Alias Numbers')
             })
             setSeatNumbers({
                 seatId: options.seatId,
@@ -449,7 +448,7 @@ export default {
         setSeatSoundSet (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Sound Set')
+                seatField: i18n.global.tc('Sound Set')
             })
             setSeatSoundSet({
                 seatId: options.seatId,
@@ -463,7 +462,7 @@ export default {
         setNcosSet (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Ncos')
+                seatField: i18n.global.tc('Ncos')
             })
             setNcosSet({
                 seatId: options.seatId,
@@ -477,7 +476,7 @@ export default {
         NcosSet (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Ncos Set')
+                seatField: i18n.global.tc('Ncos Set')
             })
             NcosSet({
                 seatId: options.seatId,
@@ -491,7 +490,7 @@ export default {
         setNcosLevelSet (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: getSubscriberId(),
-                seatField: i18n.t('Ncos')
+                seatField: i18n.global.tc('Ncos')
             })
             setNcosLevelSets({
                 seatId: getSubscriberId(),
@@ -505,7 +504,7 @@ export default {
         setNcosSets (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: getSubscriberId(),
-                seatField: i18n.t('Ncos Set')
+                seatField: i18n.global.tc('Ncos Set')
             })
             NcosSets({
                 seatId: getSubscriberId(),
@@ -519,7 +518,7 @@ export default {
         async setIntraPbx (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.t('the visibility of the number within own PBX')
+                seatField: options.message || i18n.global.tc('the visibility of the number within own PBX')
             })
             try {
                 const result = await setSeatIntraPbx(options.seatId, options.intraPbx)
@@ -531,7 +530,7 @@ export default {
         async setMusicOnHold (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.t('music on hold of the seat')
+                seatField: options.message || i18n.global.tc('music on hold of the seat')
             })
             try {
                 const result = await setSeatMusicOnHold(options.seatId, options.musicOnHold)
@@ -543,7 +542,7 @@ export default {
         async setCli (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.t('cli of the seat')
+                seatField: options.message || i18n.global.tc('cli of the seat')
             })
             try {
                 const result = await setSeatCli(options.seatId, options.cli)

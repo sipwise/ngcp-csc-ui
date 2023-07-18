@@ -67,6 +67,17 @@ export default {
             default: false
         }
     },
+    emits: [
+        'download-fax',
+        'delete-voicemail',
+        'toggle-block-both',
+        'toggle-block-outgoing',
+        'toggle-block-incoming',
+        'start-call',
+        'download-voice-mail',
+        'play-voice-mail',
+        'delete-fax'
+    ],
     data () {
         return {}
     },
@@ -149,5 +160,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

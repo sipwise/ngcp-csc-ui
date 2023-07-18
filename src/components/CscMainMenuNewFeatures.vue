@@ -13,9 +13,6 @@
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
 import CscMainMenu from 'components/CscMainMenu'
 export default {
     name: 'CscMainMenuNewFeatures',

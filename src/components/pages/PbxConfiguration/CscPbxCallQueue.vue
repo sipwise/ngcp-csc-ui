@@ -8,12 +8,12 @@
         @toggle="toggle"
     >
         <template
-            slot="title"
+            #title
         >
             <csc-list-item-title
                 :icon="getTitleIcon"
             >
-                {{ subscriber | displayName }}
+                {{ $filters.displayName(subscriber) }}
             </csc-list-item-title>
             <q-slide-transition>
                 <csc-list-item-subtitle
@@ -30,7 +30,7 @@
                 </csc-list-item-subtitle>
             </q-slide-transition>
         </template>
-        <template slot="menu">
+        <template #menu>
             <csc-list-menu-item
                 icon="delete"
                 icon-color="negative"
@@ -40,22 +40,22 @@
             </csc-list-menu-item>
         </template>
         <template
-            slot="body"
+            #body
         >
             <q-input
                 v-model="changes.max_queue_length"
                 :label="$t('Maximum calls in queue')"
-                :error="$v.changes.max_queue_length.$error"
+                :error="v$.changes.max_queue_length.$errors.length > 0"
                 :error-message="queueMaxLengthErrorMessage"
-                @input="$v.changes.max_queue_length.$touch"
+                @update:model-value="v$.changes.max_queue_length.$touch()"
                 @keyup.enter="save"
             >
                 <template
                     v-if="hasMaxQueueLengthChanged"
-                    v-slot:append
+                    #append
                 >
                     <csc-input-button-save
-                        v-if="!$v.changes.max_queue_length.$error"
+                        v-if="v$.changes.max_queue_length.$errors.length <= 0"
                         @click.stop="save"
                     />
                     <csc-input-button-reset
@@ -67,17 +67,17 @@
                 v-model="changes.queue_wrap_up_time"
                 :suffix="$t('seconds')"
                 :label="$t('Wrap up time')"
-                :error="$v.changes.queue_wrap_up_time.$error"
+                :error="v$.changes.queue_wrap_up_time.$errors.length > 0"
                 :error-message="queueWrapUpTimeErrorMessage"
-                @input="$v.changes.queue_wrap_up_time.$touch"
+                @update:model-value="v$.changes.queue_wrap_up_time.$touch()"
                 @keyup.enter="save"
             >
                 <template
                     v-if="hasQueueWrapUpTimeChanged"
-                    v-slot:append
+                    #append
                 >
                     <csc-input-button-save
-                        v-if="!$v.changes.queue_wrap_up_time.$error"
+                        v-if="v$.changes.queue_wrap_up_time.$errors.length <= 0"
                         @click.stop="save"
                     />
                     <csc-input-button-reset
@@ -94,13 +94,14 @@ import {
     minValue,
     maxValue,
     numeric
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import CscListItem from '../../CscListItem'
 import CscListItemTitle from '../../CscListItemTitle'
 import CscListItemSubtitle from '../../CscListItemSubtitle'
 import CscListMenuItem from '../../CscListMenuItem'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscPbxCallQueue',
     components: {
@@ -141,9 +142,11 @@ export default {
             default: 300
         }
     },
+    emits: ['save-queue-wrap-up-time', 'save-max-queue-length', 'expand', 'collapse', 'remove'],
     data () {
         return {
-            changes: this.getDefaultData()
+            changes: this.getDefaultData(),
+            v$: useValidate()
         }
     },
     validations: {
@@ -177,38 +180,40 @@ export default {
             return this.callQueue.queue_wrap_up_time !== this.changes.queue_wrap_up_time
         },
         queueMaxLengthErrorMessage () {
-            if (!this.$v.changes.max_queue_length.numeric) {
+            const errorsTab = this.v$.changes.max_queue_length.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('Queue Length')
                 })
-            } else if (!this.$v.changes.max_queue_length.minValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
                     field: this.$t('Queue Length'),
-                    minValue: this.$v.changes.max_queue_length.$params.minValue.min
+                    minValue: this.v$.changes.max_queue_length.minValue.$params.min
                 })
-            } else if (!this.$v.changes.max_queue_length.maxValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
                     field: this.$t('Queue Length'),
-                    maxValue: this.$v.changes.max_queue_length.$params.maxValue.max
+                    maxValue: this.v$.changes.max_queue_length.maxValue.$params.max
                 })
             } else {
                 return ''
             }
         },
         queueWrapUpTimeErrorMessage () {
-            if (!this.$v.changes.queue_wrap_up_time.numeric) {
+            const errorsTab = this.v$.changes.queue_wrap_up_time.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('Wrap Up Time')
                 })
-            } else if (!this.$v.changes.queue_wrap_up_time.minValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
                     field: this.$t('Wrap Up Time'),
-                    minValue: this.$v.changes.queue_wrap_up_time.$params.minValue.min
+                    minValue: this.v$.changes.queue_wrap_up_time.minValue.$params.min
                 })
-            } else if (!this.$v.changes.queue_wrap_up_time.maxValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
                     field: this.$t('Wrap Up Time'),
-                    maxValue: this.$v.changes.queue_wrap_up_time.$params.maxValue.max
+                    maxValue: this.v$.changes.queue_wrap_up_time.maxValue.$params.max
                 })
             } else {
                 return ''
@@ -247,13 +252,13 @@ export default {
             }
         },
         save () {
-            if (this.hasMaxQueueLengthChanged && !this.$v.changes.max_queue_length.$error) {
+            if (this.hasMaxQueueLengthChanged && this.v$.changes.max_queue_length.$errors.length <= 0) {
                 this.$emit('save-max-queue-length', {
                     callQueueId: this.callQueue.id,
                     maxQueueLength: this.changes.max_queue_length
                 })
             }
-            if (this.hasQueueWrapUpTimeChanged && !this.$v.changes.queue_wrap_up_time.$error) {
+            if (this.hasQueueWrapUpTimeChanged && this.v$.changes.queue_wrap_up_time.$errors.length <= 0) {
                 this.$emit('save-queue-wrap-up-time', {
                     callQueueId: this.callQueue.id,
                     queueWrapUpTime: this.changes.queue_wrap_up_time

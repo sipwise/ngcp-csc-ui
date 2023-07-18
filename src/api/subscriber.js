@@ -1,6 +1,5 @@
 
 import _ from 'lodash'
-import Vue from 'vue'
 import {
     getJsonBody
 } from './utils'
@@ -12,7 +11,8 @@ import {
     patchReplace,
     patchRemove,
     patchReplaceFull,
-    patchAddFull
+    patchAddFull,
+    httpApi
 } from './common'
 
 import {
@@ -21,8 +21,8 @@ import {
 
 export function getPreferences (id) {
     return new Promise((resolve, reject) => {
-        Vue.http.get('api/subscriberpreferences/' + id).then((result) => {
-            resolve(getJsonBody(result.body))
+        httpApi.get('api/subscriberpreferences/' + id).then((result) => {
+            resolve(getJsonBody(result.data))
         }).catch((err) => {
             reject(err)
         })
@@ -30,8 +30,8 @@ export function getPreferences (id) {
 }
 
 export async function getPreferencesDefs (id) {
-    const result = await Vue.http.get('api/subscriberpreferencedefs/')
-    return getJsonBody(result.body)
+    const result = await httpApi.get('api/subscriberpreferencedefs/')
+    return getJsonBody(result.data)
 }
 
 export async function setPreference (id, field, value) {
@@ -93,9 +93,9 @@ export function getNcosLevels (options) {
 }
 export async function getNcosSet () {
     let streams = []
-    const res = await Vue.http.get('api/v2/ncos/sets/')
-    if (res.body.total_count > 0) {
-        streams = getJsonBody(res.body)._embedded['ngcp:ncos/sets']
+    const res = await httpApi.get('api/v2/ncos/sets/')
+    if (res.data.total_count > 0) {
+        streams = getJsonBody(res.data)._embedded['ngcp:ncos/sets']
     }
     return streams
 }
@@ -186,7 +186,7 @@ export function prependItemToArrayPreference (id, field, value) {
             delete prefs._links
             prefs[field] = _.get(prefs, field, [])
             prefs[field] = [value].concat(prefs[field])
-            return Vue.http.put('api/subscriberpreferences/' + id, prefs)
+            return httpApi.put('api/subscriberpreferences/' + id, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -200,11 +200,11 @@ export function appendItemToArrayPreference (id, field, value) {
         Promise.resolve().then(() => {
             return getPreferences(id)
         }).then((result) => {
-            var prefs = _.cloneDeep(result)
+            const prefs = _.cloneDeep(result)
             delete prefs._links
             prefs[field] = _.get(prefs, field, [])
             prefs[field].push(value)
-            return Vue.http.put('api/subscriberpreferences/' + id, prefs)
+            return httpApi.put('api/subscriberpreferences/' + id, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -222,7 +222,7 @@ export function editItemInArrayPreference (id, field, itemIndex, value) {
             delete prefs._links
             if (_.isArray(prefs[field]) && itemIndex < prefs[field].length) {
                 prefs[field][itemIndex] = value
-                return Vue.http.put('api/subscriberpreferences/' + id, prefs)
+                return httpApi.put('api/subscriberpreferences/' + id, prefs)
             } else {
                 return Promise.reject(new Error('Array index does not exists'))
             }
@@ -245,7 +245,7 @@ export function removeItemFromArrayPreference (id, field, itemIndex) {
             _.remove(prefs[field], (value, index) => {
                 return index === itemIndex
             })
-            return Vue.http.put('api/subscriberpreferences/' + id, prefs)
+            return httpApi.put('api/subscriberpreferences/' + id, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -316,15 +316,15 @@ export function disablePrivacy (id) {
 
 export function createSubscriber (subscriber) {
     return new Promise((resolve, reject) => {
-        Vue.http.post('api/subscribers/', subscriber, {
+        httpApi.post('api/subscribers/', subscriber, {
             params: {
                 customer_id: subscriber.customer_id
             }
         }).then((res) => {
-            resolve(_.last(_.split(res.headers.get('Location'), '/')))
+            resolve(_.last(res.headers.location.split('/')))
         }).catch((err) => {
-            if (err.status >= 400) {
-                reject(new Error(err.body.message))
+            if (err.response.status >= 400) {
+                reject(new Error(err.response.data.message))
             } else {
                 reject(err)
             }
@@ -334,11 +334,11 @@ export function createSubscriber (subscriber) {
 
 export function deleteSubscriber (id) {
     return new Promise((resolve, reject) => {
-        Vue.http.delete('api/subscribers/' + id).then(() => {
+        httpApi.delete('api/subscribers/' + id).then(() => {
             resolve()
         }).catch((err) => {
-            if (err.status >= 400) {
-                reject(new Error(err.body.message))
+            if (err.response.status >= 400) {
+                reject(new Error(err.response.data.message))
             } else {
                 reject(err)
             }
@@ -348,7 +348,7 @@ export function deleteSubscriber (id) {
 
 export function setField (id, field, value) {
     return new Promise((resolve, reject) => {
-        Vue.http.patch('api/subscribers/' + id, [{
+        httpApi.patch('api/subscribers/' + id, [{
             op: 'replace',
             path: '/' + field,
             value: value
@@ -360,8 +360,8 @@ export function setField (id, field, value) {
         }).then((result) => {
             resolve(result)
         }).catch((err) => {
-            if (err.status >= 400) {
-                reject(new Error(err.body.message))
+            if (err.response.status >= 400) {
+                reject(new Error(err.response.data.message))
             } else {
                 reject(err)
             }
@@ -527,7 +527,7 @@ export function getSubscribersByCallQueueEnabled () {
 }
 
 export function addNewCallQueueConfig (id, config) {
-    return Vue.http.put('api/subscriberpreferences/' + id, config)
+    return httpApi.put('api/subscriberpreferences/' + id, config)
 }
 
 export function editCallQueuePreference (id, config) {
@@ -538,7 +538,7 @@ export function editCallQueuePreference (id, config) {
         }).then((result) => {
             const prefs = Object.assign(result, $prefs)
             delete prefs._links
-            return Vue.http.put('api/subscriberpreferences/' + id, prefs)
+            return httpApi.put('api/subscriberpreferences/' + id, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -557,7 +557,7 @@ export function setWrapUpTime (id, wrapUpTime) {
 
 export function removeCallQueueConfig (subscriberId) {
     const param = { cloud_pbx_callqueue: false }
-    return Vue.http.put('api/subscriberpreferences/' + subscriberId, param)
+    return httpApi.put('api/subscriberpreferences/' + subscriberId, param)
 }
 
 export function getAllPreferences (options) {
@@ -644,7 +644,7 @@ export async function resetPassword ({ username, domain = '' }) {
         type: 'subscriber',
         username
     }
-    return await Vue.http.post('api/passwordreset/', payLoad)
+    return await httpApi.post('api/passwordreset/', payLoad)
 }
 
 export async function recoverPassword (data) {
@@ -652,16 +652,16 @@ export async function recoverPassword (data) {
         new_password: data.password,
         token: data.token
     }
-    return await Vue.http.post('api/passwordrecovery/', payLoad)
+    return await httpApi.post('api/passwordrecovery/', payLoad)
 }
 
 export async function getBrandingLogo (subscriberId) {
     const url = 'api/resellerbrandinglogos/?subscriber_id=' + subscriberId
     try {
-        const res = await Vue.http.get(url, {
+        const res = await httpApi.get(url, {
             responseType: 'blob'
         })
-        return URL.createObjectURL(res.body)
+        return URL.createObjectURL(res.data)
     } catch (err) {
         return null
     }
@@ -669,11 +669,11 @@ export async function getBrandingLogo (subscriberId) {
 
 export async function getRecordings (options) {
     const data = { recordings: [], total_count: 0 }
-    const res = await Vue.http.get('api/callrecordings/', {
+    const res = await httpApi.get('api/callrecordings/', {
         params: options
     })
-    if (res.body.total_count > 0) {
-        const recordings = getJsonBody(res.body)._embedded['ngcp:callrecordings']
+    if (res.data.total_count > 0) {
+        const recordings = getJsonBody(res.data)._embedded['ngcp:callrecordings']
         data.recordings = recordings.map(recording => {
             return {
                 id: recording.id,
@@ -683,27 +683,27 @@ export async function getRecordings (options) {
                 files: []
             }
         })
-        data.total_count = res.body.total_count
+        data.total_count = res.data.total_count
     }
     return data
 }
 
 export async function getRecordingStreams (recId) {
     let streams = []
-    const res = await Vue.http.get('api/callrecordingstreams/', {
+    const res = await httpApi.get('api/callrecordingstreams/', {
         params: {
             recording_id: recId
         }
     })
-    if (res.body.total_count > 0) {
-        streams = getJsonBody(res.body)._embedded['ngcp:callrecordingstreams']
+    if (res.data.total_count > 0) {
+        streams = getJsonBody(res.data)._embedded['ngcp:callrecordingstreams']
     }
     return streams
 }
 
 export async function downloadRecordingStream (fileId) {
-    const res = await Vue.http.get('api/callrecordingfiles/' + fileId, { responseType: 'blob' })
-    return res.body
+    const res = await httpApi.get('api/callrecordingfiles/' + fileId, { responseType: 'blob' })
+    return res.data
 }
 
 export async function getSubscriberRegistrations (options) {
@@ -748,7 +748,7 @@ export async function createPhonebook (data) {
         number: data.number,
         shared: data.shared
     }
-    return await Vue.http.post('api/phonebookentries/', payLoad)
+    return await httpApi.post('api/phonebookentries/', payLoad)
 }
 export function setValueShared (id, value) {
     return setPreferencePhonebook(id, 'shared', value)

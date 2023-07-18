@@ -7,7 +7,7 @@
         @click="$refs.popupTime.show()"
     >
         <template
-            v-slot:prepend
+            #prepend
         >
             <q-btn
                 icon="schedule"
@@ -42,6 +42,7 @@ export default {
             default: '00:00'
         }
     },
+    emits: ['input'],
     data () {
         return {}
     }

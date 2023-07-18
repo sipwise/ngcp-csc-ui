@@ -1,5 +1,4 @@
 
-import routes from 'src/router/routes'
 import {
     Dark
 } from 'quasar'
@@ -21,6 +20,21 @@ export default ({ app, router, store }) => {
                 next()
             }
         } else {
+            /* ==== A VOIR ===== if (to.fullPath === '/user/fax-settings') {
+                if (store.getters['user/hasFaxCapability']) {
+                    next()
+                } else {
+                    next('/')
+                }
+            } else if (to.fullPath === '/user/customer/*') {
+                if (store.getters['user/isOldCSCProxyingAllowed']) {
+                    next()
+                } else {
+                    next('/')
+                }
+            } else {
+                next()
+            } */
             // already authorized user
             switch (to.path) {
             case '/login':
@@ -35,9 +49,9 @@ export default ({ app, router, store }) => {
                 break
             default:
                 if (to.meta?.profileAttribute) {
-                    app.store.getters['user/hasSubscriberProfileAttribute'](to.meta.profileAttribute) ? next() : next('/')
+                    store.getters['user/hasSubscriberProfileAttribute'](to.meta.profileAttribute) ? next() : next('/')
                 } else if (to.meta?.profileAttributes) {
-                    app.store.getters['user/hasSubscriberProfileAttributes'](to.meta.profileAttributes) ? next() : next('/')
+                    store.getters['user/hasSubscriberProfileAttributes'](to.meta.profileAttributes) ? next() : next('/')
                 } else {
                     next()
                 }
@@ -57,6 +71,5 @@ export default ({ app, router, store }) => {
     }
 
     store.$router = router
-    router.addRoutes(routes(app))
     Dark.set(true)
 }

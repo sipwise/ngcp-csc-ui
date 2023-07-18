@@ -3,24 +3,27 @@
         ref="dialogComp"
         :title="title"
         :title-icon="titleIcon"
-        :opened="opened"
-        @cancel="cancel"
+        v-bind="$attrs"
     >
-        <div
-            slot="content"
+        <template
+            #content
         >
             {{ message }}
-        </div>
-        <q-btn
-            slot="actions"
-            icon="delete"
-            data-cy="csc-dialog-delete"
-            color="negative"
-            flat
-            @click="remove"
+        </template>
+        <template
+            #actions
         >
-            {{ $t('Remove') }}
-        </q-btn>
+            <q-btn
+                v-close-popup
+                icon="delete"
+                data-cy="csc-dialog-delete"
+                color="negative"
+                flat
+                @click="remove"
+            >
+                {{ $t('Remove') }}
+            </q-btn>
+        </template>
     </csc-dialog>
 </template>
 
@@ -49,31 +52,25 @@ export default {
             default: false
         }
     },
+    emits: ['ok', 'remove', 'cancel'],
     data () {
         return {
         }
     },
     methods: {
         show () {
-            this.open()
+            this.$refs.dialogComp.show()
         },
-        open () {
-            this.$refs.dialogComp.open()
-        },
-        close () {
-            this.$refs.dialogComp.close()
+        hide () {
+            this.$refs.dialogComp.hide()
         },
         remove () {
-            this.close()
             this.$emit('remove')
             this.$emit('ok')
-        },
-        cancel () {
-            this.$emit('cancel')
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

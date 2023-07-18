@@ -4,7 +4,7 @@
         icon="today"
         :loading="$wait.is('csc-cf-time-set-create')"
         v-bind="$attrs"
-        v-on="$listeners"
+        @close="$emit('close')"
     >
         <q-date
             v-model="selectedDate"
@@ -14,7 +14,7 @@
             minimal
         />
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 v-if="deleteButton"
@@ -72,9 +72,10 @@ export default {
             default: ''
         }
     },
+    emits: ['close'],
     data () {
         return {
-            selectedDate: this.formattedDate
+            selectedDate: null
         }
     },
     computed: {

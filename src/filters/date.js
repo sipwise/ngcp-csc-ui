@@ -21,27 +21,27 @@ export function smartTime ($date) {
     const diffMinutes = Math.floor(diffSeconds / 60)
     const momentDate = moment(date)
 
-    let seconds = i18n.t('second')
+    let seconds = i18n.global.tc('second')
     if (diffSeconds > 1) {
-        seconds = i18n.t('seconds')
+        seconds = i18n.global.tc('seconds')
     }
 
     let minutes = 'minute'
     if (diffSeconds > 120) {
-        minutes = i18n.t('minutes')
+        minutes = i18n.global.tc('minutes')
     }
 
     if (diffSeconds < 60) {
-        const descriptor = i18n.t('ago')
+        const descriptor = i18n.global.tc('ago')
         return `${diffSeconds} ${seconds} ${descriptor}`
     } else if (diffSeconds < 3600) {
-        const descriptor = i18n.t('ago')
+        const descriptor = i18n.global.tc('ago')
         return `${diffMinutes} ${minutes} ${descriptor}`
     } else if (isToday(date)) {
-        const descriptor = i18n.t('Today')
+        const descriptor = i18n.global.tc('Today')
         return `${descriptor}, ${momentDate.format('HH:mm')}`
     } else if (isYesterday(date)) {
-        const descriptor = i18n.t('Yesterday')
+        const descriptor = i18n.global.tc('Yesterday')
         return `${descriptor}, ${momentDate.format('HH:mm')}`
     } else if (isWithinLastWeek(date)) {
         return momentDate.format('dddd, HH:mm')
@@ -61,13 +61,13 @@ export const WeekdayMap = {
 }
 
 export const WeekdayTranslationMap = {
-    sunday: i18n.t('Sunday'),
-    monday: i18n.t('Monday'),
-    tuesday: i18n.t('Tuesday'),
-    wednesday: i18n.t('Wednesday'),
-    thursday: i18n.t('Thursday'),
-    friday: i18n.t('Friday'),
-    saturday: i18n.t('Saturday')
+    sunday: i18n.global.tc('Sunday'),
+    monday: i18n.global.tc('Monday'),
+    tuesday: i18n.global.tc('Tuesday'),
+    wednesday: i18n.global.tc('Wednesday'),
+    thursday: i18n.global.tc('Thursday'),
+    friday: i18n.global.tc('Friday'),
+    saturday: i18n.global.tc('Saturday')
 }
 
 export function weekday (weekdayNumber) {

@@ -61,7 +61,7 @@
                             v-else-if="isEnded"
                             class="csc-call-error"
                         >
-                            {{ endedReason | startCase }} ({{ callNumberFormatted || callNumberQuery }})
+                            {{ $filters.startCase(endedReason) }} ({{ callNumberFormatted || callNumberQuery }})
                         </div>
                     </div>
                 </div>
@@ -297,7 +297,7 @@
                     <div
                         class="csc-call-info-phrase"
                     >
-                        {{ endedReason | startCase }}
+                        {{ $filters.startCase(endedReason) }}
                     </div>
                     <div
                         class="csc-call-info-number"
@@ -421,6 +421,7 @@ export default {
             default: false
         }
     },
+    emits: ['toggle-screen', 'toggle-camera', 'minimize-call', 'maximize-call', 'click-dialpad', 'toggle-remote-volume', 'toggle-microphone', 'toggle-dialpad', 'close-call', 'end-call', 'accept-call', 'start-call'],
     data () {
         return {
             localMediaWrapperWidth: 0,
@@ -567,9 +568,9 @@ export default {
             this.fetchRemoteMediaWrapperWidth()
         }
         fetchMediaWrapperWidth()
-        this.$root.$on('window-resized', fetchMediaWrapperWidth)
-        this.$root.$on('content-resized', fetchMediaWrapperWidth)
-        this.$root.$on('orientation-changed', fetchMediaWrapperWidth)
+        this.emitter.$on('window-resized', fetchMediaWrapperWidth)
+        this.emitter.$on('content-resized', fetchMediaWrapperWidth)
+        this.emitter.$on('orientation-changed', fetchMediaWrapperWidth)
     },
     methods: {
         fetchLocalMediaWrapperWidth () {
@@ -651,202 +652,203 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-call
-        left $layout-aside-left-width
-        top 0
-        position fixed
-        bottom 0
-        right 0
-        z-index 40
-        .q-btn.q-btn-round
-            box-shadow none
-        .csc-call-content
-            position absolute
-            bottom $call-footer-height
-            top 0
-            right 0
-            left 0
-            z-index 2
-            background-color $secondary
-            .csc-call-info
-                .csc-call-info-content
-                    margin-top -80px
-                    .csc-call-error
-                        color $negative
-                    .csc-call-spinner
-                        margin-bottom $flex-gutter-sm
-            .csc-call-media-local
-                position absolute
-                bottom $flex-gutter-sm
-                left $flex-gutter-sm
-                width 20%
-                height auto
-                overflow hidden
-                z-index 2
-                font-size 0
-            .csc-call-info-established
-                position absolute
-                bottom $call-footer-action-margin * 2
-                right 0
-                left 0
-                justify-items center
-                z-index 3
-                color white
-                .csc-media-icon
-                    margin-right $flex-gutter-xs
-                .csc-dialpad-button
-                    vertical-align center
-                    margin-left $flex-gutter-sm
-        .csc-call-media-remote
-            position absolute
-            top 0
-            bottom $call-footer-height
-            right 0
-            left 0
-            z-index 1
-            background-color black
-            font-size 0
-            .csc-call-media-icon
-                opacity 0.5
-        .csc-call-content-minimized
-            position absolute
-            bottom 0
-            left 0
-            right 0
-            height $call-footer-height
-            background-color $call-minimized-background
-            z-index 3
-            display block
-            flex-wrap no-wrap
-            align-items center
-            justify-content center
-            .csc-call-info-minimized
-                display flex
-                flex-wrap no-wrap
-                align-items center
-                margin-bottom -16px
-                .csc-call-info-text
-                    color white
-                    padding-left $flex-gutter-xs
-                    .csc-call-info-phrase
-                        margin-bottom 4px
-                    .csc-call-info-number
-                        font-size 14px
-                .csc-call-info-loading
-                    margin-right $flex-gutter-sm
-            .csc-call-btn-fullscreen
-                position absolute
-                right $flex-gutter-md
-                top 50%
-                bottom 50%
-                margin-top -27px
-            .csc-call-btn-fullscreen-small
-                position absolute
-                right $flex-gutter-sm
-                top 50%
-                bottom 50%
-                margin-top -20px
-            .csc-call-actions
-                position absolute
-                left 0
-                right 0
-                top $call-footer-action-margin * -1
-                .q-btn
-                    .q-btn-inner
-                        color $dark
-                .q-btn.q-btn-round
-                    box-shadow none
-                .csc-call-button
-                    margin-right $flex-gutter-sm
-                .csc-call-button:last-child
-                    margin-right 0
-            .csc-phone-number
-                color white
-                text-align center
-    .csc-call.csc-call-input
-        top auto
-        height $call-footer-height
-        .csc-call-content
-            bottom 0
-            height 0
-            visibility hidden
-        .csc-call-media-remote
-            bottom 0
-            height 0
-            visibility hidden
-    .csc-call.csc-call-established
-        .csc-call-content
-            background-color transparent
-    .csc-call.csc-call-minimized
-        opacity 0
-        height $call-footer-height-big
-        top auto
-        bottom ($call-footer-height-big + $call-footer-action-margin) * -1
-        .csc-call-content
-            bottom 0
-            height 0
-            visibility hidden
-        .csc-call-media-remote
-            top auto
-            bottom $call-footer-height-big + $flex-gutter-sm
-            right $flex-gutter-sm
-            left auto
-            height auto
-            width 20%
-            z-index 1
-            font-size 0
-        .csc-call-content-minimized
-            height $call-footer-height-big
-            .csc-call-actions
-                top $call-footer-action-margin * -1
-    .csc-call.csc-call-minimized.csc-call-incoming,
-    .csc-call.csc-call-minimized.csc-call-initiating,
-    .csc-call.csc-call-minimized.csc-call-ringing
+<style lang="sass" rel="stylesheet/sass">
+
+.csc-call
+    left: $layout-aside-left-width
+    top: 0
+    position: fixed
+    bottom: 0
+    right: 0
+    z-index: 40
+    .q-btn.q-btn-round
+        box-shadow: none
+    .csc-call-content
+        position: absolute
+        bottom: $call-footer-height
+        top: 0
+        right: 0
+        left: 0
+        z-index: 2
+        background-color: $secondary
+        .csc-call-info
+            .csc-call-info-content
+                margin-top: -80px
+                .csc-call-error
+                    color: $negative
+                .csc-call-spinner
+                    margin-bottom: $flex-gutter-sm
+        .csc-call-media-local
+            position: absolute
+            bottom: $flex-gutter-sm
+            left: $flex-gutter-sm
+            width: 20%
+            height: auto
+            overflow: hidden
+            z-index: 2
+            font-size: 0
+        .csc-call-info-established
+            position: absolute
+            bottom: $call-footer-action-margin * 2
+            right: 0
+            left: 0
+            justify-items: center
+            z-index: 3
+            color: white
+            .csc-media-icon
+                margin-right: $flex-gutter-xs
+            .csc-dialpad-button
+                vertical-align: center
+                margin-left: $flex-gutter-sm
+    .csc-call-media-remote
+        position: absolute
+        top: 0
+        bottom: $call-footer-height
+        right: 0
+        left: 0
+        z-index: 1
+        background-color: black
+        font-size: 0
+        .csc-call-media-icon
+            opacity: 0.5
+    .csc-call-content-minimized
+        position: absolute
+        bottom: 0
+        left: 0
+        right: 0
+        height: $call-footer-height
+        background-color: $call-minimized-background
+        z-index: 3
+        display: block
+        flex-wrap: no-wrap
+        align-items: center
+        justify-content: center
+        .csc-call-info-minimized
+            display: flex
+            flex-wrap: no-wrap
+            align-items: center
+            margin-bottom: -16px
+            .csc-call-info-text
+                color: white
+                padding-left: $flex-gutter-xs
+                .csc-call-info-phrase
+                    margin-bottom: 4px
+                .csc-call-info-number
+                    font-size: 14px
+            .csc-call-info-loading
+                margin-right: $flex-gutter-sm
+        .csc-call-btn-fullscreen
+            position: absolute
+            right: $flex-gutter-md
+            top: 50%
+            bottom: 50%
+            margin-top: -27px
+        .csc-call-btn-fullscreen-small
+            position: absolute
+            right: $flex-gutter-sm
+            top: 50%
+            bottom: 50%
+            margin-top: -20px
         .csc-call-actions
-            margin-bottom 8px
-    .csc-call.csc-call-minimized.csc-call-incoming,
-    .csc-call.csc-call-minimized.csc-call-initiating,
-    .csc-call.csc-call-minimized.csc-call-ringing,
-    .csc-call.csc-call-minimized.csc-call-established,
-    .csc-call.csc-call-minimized.csc-call-ended
-        bottom 0
-        opacity 1
-    .csc-call.csc-call-full-width
-        left 0
-    .csc-call.csc-main-menu-minimized
-        left $main-menu-minimized-width
-    .csc-call.csc-call-mobile
-        .csc-call-content
-            .csc-call-media-local
-                font-size 0
-                top $flex-gutter-sm
-                left $flex-gutter-sm
-                bottom auto
-                width 30%
-                height auto
-                overflow hidden
-    .csc-call.csc-call-mobile.csc-call-minimized
-        .csc-call-content-minimized
-            height $call-footer-height-big
-    .csc-call.csc-call-mobile.csc-call-minimized.csc-call-ended,
-    .csc-call.csc-call-mobile.csc-call-minimized.csc-call-established
-        .csc-call-content-minimized
-            height $call-footer-height * 1.4
-            justify-content left
-            padding-left $flex-gutter-sm
-            .csc-call-info-minimized
-                margin-bottom 0
-            .csc-call-actions
-                position absolute
-                margin auto
-                margin-top -27px
-                top 50%
-                right $flex-gutter-sm
-                left auto
-                .csc-call-button
-                    margin-right $flex-gutter-sm
-                .csc-call-button:last-child
-                    margin-right 0
+            position: absolute
+            left: 0
+            right: 0
+            top: $call-footer-action-margin * -1
+            .q-btn
+                .q-btn-inner
+                    color: $dark
+            .q-btn.q-btn-round
+                box-shadow: none
+            .csc-call-button
+                margin-right: $flex-gutter-sm
+            .csc-call-button:last-child
+                margin-right: 0
+        .csc-phone-number
+            color: white
+            text-align: center
+.csc-call.csc-call-input
+    top: auto
+    height: $call-footer-height
+    .csc-call-content
+        bottom: 0
+        height: 0
+        visibility: hidden
+    .csc-call-media-remote
+        bottom: 0
+        height: 0
+        visibility: hidden
+.csc-call.csc-call-established
+    .csc-call-content
+        background-color: transparent
+.csc-call.csc-call-minimized
+    opacity: 0
+    height: $call-footer-height-big
+    top: auto
+    bottom: ($call-footer-height-big + $call-footer-action-margin) * -1
+    .csc-call-content
+        bottom: 0
+        height: 0
+        visibility: hidden
+    .csc-call-media-remote
+        top: auto
+        bottom: $call-footer-height-big + $flex-gutter-sm
+        right: $flex-gutter-sm
+        left: auto
+        height: auto
+        width: 20%
+        z-index: 1
+        font-size: 0
+    .csc-call-content-minimized
+        height: $call-footer-height-big
+        .csc-call-actions
+            top: $call-footer-action-margin * -1
+.csc-call.csc-call-minimized.csc-call-incoming,
+.csc-call.csc-call-minimized.csc-call-initiating,
+.csc-call.csc-call-minimized.csc-call-ringing
+    .csc-call-actions
+        margin-bottom: 8px
+.csc-call.csc-call-minimized.csc-call-incoming,
+.csc-call.csc-call-minimized.csc-call-initiating,
+.csc-call.csc-call-minimized.csc-call-ringing,
+.csc-call.csc-call-minimized.csc-call-established,
+.csc-call.csc-call-minimized.csc-call-ended
+    bottom: 0
+    opacity: 1
+.csc-call.csc-call-full-width
+    left: 0
+.csc-call.csc-main-menu-minimized
+    left: $main-menu-minimized-width
+.csc-call.csc-call-mobile
+    .csc-call-content
+        .csc-call-media-local
+            font-size: 0
+            top: $flex-gutter-sm
+            left: $flex-gutter-sm
+            bottom: auto
+            width: 30%
+            height: auto
+            overflow: hidden
+.csc-call.csc-call-mobile.csc-call-minimized
+    .csc-call-content-minimized
+        height: $call-footer-height-big
+.csc-call.csc-call-mobile.csc-call-minimized.csc-call-ended,
+.csc-call.csc-call-mobile.csc-call-minimized.csc-call-established
+    .csc-call-content-minimized
+        height: $call-footer-height * 1.4
+        justify-content: left
+        padding-left: $flex-gutter-sm
+        .csc-call-info-minimized
+            margin-bottom: 0
+        .csc-call-actions
+            position: absolute
+            margin: auto
+            margin-top: -27px
+            top: 50%
+            right: $flex-gutter-sm
+            left: auto
+            .csc-call-button
+                margin-right: $flex-gutter-sm
+            .csc-call-button:last-child
+                margin-right: 0
 
 </style>

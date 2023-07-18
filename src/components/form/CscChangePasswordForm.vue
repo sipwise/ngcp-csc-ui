@@ -10,11 +10,11 @@
             hide-bottom-space
             :label="$t('Password')"
             :disable="loading"
-            :error="$v.password.$error"
+            :error="v$.password.$errors.length > 0"
             :error-message="errorMessagePass"
-            @blur="$v.password.$touch()"
+            @blur="v$.password.$touch()"
         />
-        <password-strength-meter
+        <password-meter
             v-model="passwordScored"
             class="full-width"
             style="max-width: none;"
@@ -29,24 +29,25 @@
             hide-bottom-space
             :label="$t('Password Retype')"
             :disable="loading"
-            :error="$v.passwordRetype.$error"
+            :error="v$.passwordRetype.$errors.length > 0"
             :error-message="errorMessagePassRetype"
-            @blur="$v.passwordRetype.$touch();onRetypeBlur()"
+            @blur="v$.passwordRetype.$touch();onRetypeBlur()"
         />
     </div>
 </template>
 
 <script>
-import PasswordStrengthMeter from 'vue-password-strength-meter'
+import PasswordMeter from 'vue-simple-password-meter'
 import {
     required
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import CscInputPassword from 'components/form/CscInputPassword'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscChangePasswordForm',
     components: {
         CscInputPassword,
-        PasswordStrengthMeter
+        PasswordMeter
     },
     props: {
         noSubmit: {
@@ -58,12 +59,14 @@ export default {
             default: false
         }
     },
+    emits: ['validation-succeeded', 'validation-failed'],
     data () {
         return {
             password: '',
             passwordRetype: '',
             passwordScored: '',
-            passwordStrengthScore: null
+            passwordStrengthScore: null,
+            v$: useValidate()
         }
     },
     validations: {
@@ -82,14 +85,16 @@ export default {
     },
     computed: {
         errorMessagePass () {
-            if (!this.$v.password.passwordStrength) {
+            const errorsTab = this.v$.password.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'passwordStrength') {
                 return this.$t('Password is not strong enough')
             } else {
                 return ''
             }
         },
         errorMessagePassRetype () {
-            if (!this.$v.passwordRetype.sameAsPassword) {
+            const errorsTab = this.v$.passwordRetype.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'sameAsPassword') {
                 return this.$t('Passwords must be equal')
             } else {
                 return ''
@@ -106,17 +111,17 @@ export default {
         }
     },
     methods: {
-        strengthMeterScoreUpdate (score) {
-            this.passwordStrengthScore = score
+        strengthMeterScoreUpdate (evt) {
+            this.passwordStrengthScore = evt.score
         },
         resetForm () {
             this.password = this.passwordRetype = this.passwordScored = ''
             this.passwordStrengthScore = null
-            this.$v.$reset()
+            this.v$.$reset()
         },
         submit () {
-            this.$v.$touch()
-            if (this.$v.$invalid) {
+            this.v$.$touch()
+            if (this.v$.$invalid) {
                 this.$emit('validation-failed')
             } else {
                 this.$emit('validation-succeeded', {
@@ -126,7 +131,7 @@ export default {
             }
         },
         onRetypeBlur () {
-            if (this.noSubmit && !this.$v.$invalid) {
+            if (this.noSubmit && !this.v$.$invalid) {
                 this.$emit('validation-succeeded', {
                     password: this.password,
                     strengthScore: this.passwordStrengthScore
@@ -136,3 +141,14 @@ export default {
     }
 }
 </script>
+
+<style lang="sass" rel="stylesheet/sass">
+.po-password-strength-bar
+    border-radius: 2px
+    transition: all 0.2s linear
+    height: 6px
+    margin-bottom: 12px
+    margin-top: 3px
+    background-color: #ddd
+    max-width: none
+</style>

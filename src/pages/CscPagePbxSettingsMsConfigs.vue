@@ -10,7 +10,7 @@
                 v-model="manager_secretary"
                 :label="$t('Manager Secretary feature')"
                 :disable="isNumbersRequesting || isLoading"
-                @input="addOrRemoveMs()"
+                @update:model-value="addOrRemoveMs()"
             />
             <csc-spinner
                 v-if="isLoading || !msConfig || !changes"
@@ -30,7 +30,7 @@
                     >
                         <template
                             v-if="hasSecretaryNumbersChanged"
-                            v-slot:append
+                            #append
                         >
                             <csc-input-button-save
                                 @click.stop="save"

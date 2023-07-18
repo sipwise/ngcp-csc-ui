@@ -5,7 +5,7 @@
         :title="title"
     >
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 icon="check"
@@ -40,21 +40,18 @@ export default {
     props: {
         title: {
             type: String,
-            default () { return this.$t('Change login password') }
+            required: true
         },
         passwordLabel: {
             type: String,
-            default () {
-                return this.$t('Password')
-            }
+            required: true
         },
         passwordConfirmLabel: {
             type: String,
-            default () {
-                return this.$t('Password confirm')
-            }
+            required: true
         }
     },
+    emits: ['ok'],
     data () {
         return {
             ready: false,

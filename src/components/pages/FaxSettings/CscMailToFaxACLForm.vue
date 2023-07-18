@@ -10,10 +10,10 @@
                     :label="$t('From email')"
                     :disable="disabled"
                     :readonly="loading"
-                    :error="$v.data.from_email.$error"
+                    :error="v$.data.from_email.$errors.length > 0"
                     :error-message="fromEmailErrorMessage"
                     :value-changed="!isAddNewMode && data.from_email !== initialData.from_email"
-                    @input="$v.data.from_email.$touch"
+                    @input="v$.data.from_email.$touch()"
                     @keypress.space.prevent
                     @keydown.space.prevent
                     @keyup.space.prevent
@@ -62,7 +62,7 @@
                     :label="$t('Use RegExp')"
                     :hint="$t('Enable regex matching for &quot;Received from IP&quot; and &quot;Destination&quot; fields.')"
                     :disable="loading"
-                    @input="updatePropertyData('use_regex')"
+                    @update:model-value="updatePropertyData('use_regex')"
                 >
                     <csc-tooltip>
                         {{ $t('Enable regex matching for \"Received from IP\" and \"Destination\" fields.') }}
@@ -87,7 +87,7 @@
                 color="primary"
                 icon="person"
                 :loading="loading"
-                :disable="$v.data.$invalid || loading"
+                :disable="v$.data.$invalid || loading"
                 :label="$t('Create ACL')"
                 @click="save()"
             />
@@ -96,10 +96,10 @@
 </template>
 
 <script>
-import { email } from 'vuelidate/lib/validators'
+import { email } from '@vuelidate/validators'
 import CscInputSaveable from 'components/form/CscInputSaveable'
 import CscTooltip from 'components/CscTooltip'
-
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscMailToFaxACLForm',
     components: {
@@ -129,9 +129,11 @@ export default {
             default: false
         }
     },
+    emits: ['save', 'cancel', 'update-property'],
     data () {
         return {
-            data: this.getDefaults()
+            data: this.getDefaults(),
+            v$: useValidate()
         }
     },
     validations: {
@@ -143,7 +145,8 @@ export default {
     },
     computed: {
         fromEmailErrorMessage () {
-            if (!this.$v.data.from_email.email) {
+            const errorsTab = this.v$.data.from_email.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'email') {
                 return this.$t('Input a valid email address')
             } else {
                 return ''
@@ -164,7 +167,7 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
+            this.v$.$reset()
         },
         updatePropertyData (propertyName) {
             this.$emit('update-property', {

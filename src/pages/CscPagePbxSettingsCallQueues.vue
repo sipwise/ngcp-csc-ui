@@ -10,7 +10,7 @@
                 v-model="cloud_pbx_callqueue"
                 :label="$t('Call Queue feature')"
                 :disable="isLoading"
-                @input="addOrRemoveCallQueue()"
+                @update:model-value="addOrRemoveCallQueue()"
             />
             <csc-spinner
                 v-if="isLoading || !callQueue || !changes"
@@ -23,12 +23,12 @@
                             v-model="changes.max_queue_length"
                             :label="$t('Queue Length')"
                             :value-changed="hasMaxQueueLengthChanged"
-                            :error="$v.changes.max_queue_length.$error"
+                            :error="v$.changes.max_queue_length.$errors.length > 0"
                             :error-message="queueMaxLengthErrorMessage"
                             :disable="isLoading || !cloud_pbx_callqueue"
                             @undo="resetMaxQueueLength"
                             @save="save"
-                            @input="$v.changes.max_queue_length.$touch"
+                            @update:model-value="v$.changes.max_queue_length.$touch()"
                             @keypress.space.prevent
                             @keydown.space.prevent
                             @keyup.space.prevent
@@ -41,12 +41,12 @@
                             v-model="changes.queue_wrap_up_time"
                             :label="$t('Wrap up time')"
                             :value-changed="hasQueueWrapUpTimeChanged"
-                            :error="$v.changes.queue_wrap_up_time.$error"
+                            :error="v$.changes.queue_wrap_up_time.$errors.length > 0"
                             :error-message="queueWrapUpTimeErrorMessage"
                             :disable="isLoading || !cloud_pbx_callqueue"
                             @undo="resetQueueWrapUpTime"
                             @save="save"
-                            @input="$v.changes.queue_wrap_up_time.$touch"
+                            @update:model-value="v$.changes.queue_wrap_up_time.$touch()"
                             @keypress.space.prevent
                             @keydown.space.prevent
                             @keyup.space.prevent
@@ -71,11 +71,12 @@ import {
     maxValue,
     minValue,
     numeric
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import { getSubscriberId } from 'src/auth'
 import {
     showToast
 } from 'src/helpers/ui'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscPagePbxSettingsCallQueues',
     components: {
@@ -87,7 +88,8 @@ export default {
         return {
             callQueue: null,
             changes: null,
-            cloud_pbx_callqueue: false
+            cloud_pbx_callqueue: false,
+            v$: useValidate()
         }
     },
     validations: {
@@ -122,38 +124,40 @@ export default {
             return this.callQueue.queue_wrap_up_time !== this.changes.queue_wrap_up_time
         },
         queueMaxLengthErrorMessage () {
-            if (!this.$v.changes.max_queue_length.numeric) {
+            const errorsTab = this.v$.changes.max_queue_length.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('Queue Length')
                 })
-            } else if (!this.$v.changes.max_queue_length.minValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
                     field: this.$t('Queue Length'),
-                    minValue: this.$v.changes.max_queue_length.$params.minValue.min
+                    minValue: this.v$.changes.max_queue_length.minValue.$params.min
                 })
-            } else if (!this.$v.changes.max_queue_length.maxValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
                     field: this.$t('Queue Length'),
-                    maxValue: this.$v.changes.max_queue_length.$params.maxValue.max
+                    maxValue: this.v$.changes.max_queue_length.maxValue.$params.max
                 })
             } else {
                 return ''
             }
         },
         queueWrapUpTimeErrorMessage () {
-            if (!this.$v.changes.queue_wrap_up_time.numeric) {
+            const errorsTab = this.v$.changes.queue_wrap_up_time.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('Wrap Up Time')
                 })
-            } else if (!this.$v.changes.queue_wrap_up_time.minValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
                     field: this.$t('Wrap Up Time'),
-                    minValue: this.$v.changes.queue_wrap_up_time.$params.minValue.min
+                    minValue: this.v$.changes.queue_wrap_up_time.minValue.$params.min
                 })
-            } else if (!this.$v.changes.queue_wrap_up_time.maxValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
                     field: this.$t('Wrap Up Time'),
-                    maxValue: this.$v.changes.queue_wrap_up_time.$params.maxValue.max
+                    maxValue: this.v$.changes.queue_wrap_up_time.maxValue.$params.max
                 })
             } else {
                 return ''
@@ -187,14 +191,14 @@ export default {
             }
         },
         async save () {
-            if (this.hasMaxQueueLengthChanged && !this.$v.changes.max_queue_length.$error) {
+            if (this.hasMaxQueueLengthChanged && this.v$.changes.max_queue_length.$errors.length <= 0) {
                 await this.fieldUpdateAction({ field: 'max_queue_length', value: this.changes.max_queue_length || this.defaultMaxQueueLength })
                 showToast(this.$t('Updated {field} for call queue {callQueue} successfully', {
                     callQueue: this.getUsername,
                     field: this.$t('Queue Length')
                 }))
             }
-            if (this.hasQueueWrapUpTimeChanged && !this.$v.changes.queue_wrap_up_time.$error) {
+            if (this.hasQueueWrapUpTimeChanged && this.v$.changes.queue_wrap_up_time.$errors.length <= 0) {
                 await this.fieldUpdateAction({ field: 'queue_wrap_up_time', value: this.changes.queue_wrap_up_time || this.defaultQueueWrapUpTime })
                 showToast(this.$t('Updated {field} for call queue {callQueue} successfully', {
                     callQueue: this.getUsername,

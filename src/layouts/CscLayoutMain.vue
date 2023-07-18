@@ -107,7 +107,7 @@
             ref="mainMenu"
             v-model="menuClosed"
             :mini="menuMinimized"
-            content-class="bg-main-menu"
+            class="bg-main-menu"
             :behavior="drawerBehavior"
             show-if-above
             :width="280"
@@ -156,29 +156,29 @@
             <router-view />
         </q-page-container>
         <csc-send-fax
-            v-model="faxDialog"
+            ref="faxDialog"
         />
         <csc-call
             v-if="hasSubscriberProfileAttribute('csc_calls')"
             id="csc-call"
             ref="call"
             :call-state="callState"
-            :call-number="callNumber"
+            :call-number="number"
             :ended-reason="endedReason"
             :full-view="isFullView"
-            :minimized="!isHome && !isMaximized"
+            :minimized="!isHome && !maximized"
             :maximizable="!isHome"
             :closed="!isCalling && !isHome"
-            :local-media-stream="localMediaStream"
-            :remote-media-stream="remoteMediaStream"
+            :local-media-stream="getLocalMediaStream"
+            :remote-media-stream="getRemoteMediaStream"
             :is-video-call="hasVideo"
             :has-local-video="hasLocalVideo"
             :has-remote-video="hasRemoteVideo"
-            :microphone-enabled="isMicrophoneEnabled"
-            :camera-enabled="isCameraEnabled"
-            :screen-enabled="isScreenEnabled"
-            :remote-volume-enabled="isRemoteVolumeEnabled"
-            :dialpad-opened="isDialpadOpened"
+            :microphone-enabled="microphoneEnabled"
+            :camera-enabled="cameraEnabled"
+            :screen-enabled="screenEnabled"
+            :remote-volume-enabled="remoteAudioEnabled"
+            :dialpad-opened="dialpadOpened"
             :menu-minimized="menuMinimized"
             @start-call="startCall"
             @accept-call="acceptCall"
@@ -198,7 +198,7 @@
 </template>
 
 <script>
-import { colors } from 'quasar'
+import { setCssVar } from 'quasar'
 import platformMixin from '../mixins/platform'
 import {
     startLoading,
@@ -224,7 +224,22 @@ import AuiMobileAppBadges from 'components/AuiMobileAppBadges'
 import CscDialogQrCode from 'components/CscDialogQrCode'
 import CscSelectionLanguage from 'components/CscSelectionLanguage'
 import CscSelectionLanguageMobile from 'components/CscSelectionLanguageMobile'
-
+import _ from 'lodash'
+import {
+    callGetLocalMediaStream,
+    callGetRemoteMediaStream,
+    callHasRemoteVideo
+} from 'src/api/ngcp-call'
+import {
+    CallState,
+    CallStateTitle
+} from 'src/store/call/common'
+import {
+    normalizeDestination
+} from 'src/filters/number-format'
+import {
+    startCase
+} from 'src/filters/string'
 export default {
     name: 'CscMainLayout',
     components: {
@@ -243,6 +258,7 @@ export default {
     mixins: [
         platformMixin
     ],
+    emits: ['window-resized', 'orientation-changed'],
     data () {
         return {
             header: true,
@@ -254,7 +270,6 @@ export default {
                 right: false
             },
             mobileMenu: null,
-            faxDialog: false,
             customLogo: null,
             menuPinnedBBeforeCall: true
         }
@@ -263,35 +278,20 @@ export default {
         ...mapState([
             'route'
         ]),
-        ...mapGetters([
-            'isCallForward',
-            'isCallBlocking',
-            'isPbxConfiguration',
-            'isHome'
-        ]),
-        ...mapGetters('call', [
-            'isCallEnabled',
+        ...mapState('call', [
+            'callEnabled',
             'callState',
-            'callNumber',
-            'callNumberInput',
+            'number',
+            'numberInput',
             'endedReason',
-            'isCalling',
             'localMediaStream',
             'remoteMediaStream',
-            'hasVideo',
-            'hasLocalVideo',
-            'hasRemoteVideo',
-            'isMicrophoneEnabled',
-            'isCameraEnabled',
-            'isScreenEnabled',
-            'isRemoteVolumeEnabled',
-            'isMaximized',
-            'isDialpadOpened',
-            'callStateTitle',
-            'callStateSubtitle'
-        ]),
-        ...mapGetters('conference', [
-            'isConferencingEnabled'
+            'cameraEnabled',
+            'screenEnabled',
+            'microphoneEnabled',
+            'remoteAudioEnabled',
+            'maximized',
+            'dialpadOpened'
         ]),
         ...mapGetters('user', [
             'isLogged',
@@ -313,7 +313,7 @@ export default {
             'defaultBranding',
             'platformInfo'
         ]),
-        ...mapGetters('communication', [
+        ...mapState('communication', [
             'createFaxState',
             'createFaxError'
         ]),
@@ -373,6 +373,73 @@ export default {
             } else {
                 return 'desktop'
             }
+        },
+        isHome () {
+            return this.route?.path === '/user/home'
+        },
+        isCallForward () {
+            return _.startsWith(this.route?.path, '/user/call-forward')
+        },
+        isCallBlocking () {
+            return _.startsWith(this.route?.path, '/user/call-blocking')
+        },
+        isPbxConfiguration () {
+            return _.startsWith(this.route?.path, '/user/pbx-configuration')
+        },
+        isCalling () {
+            return this.callState === 'initiating' ||
+                this.callState === 'ringing' ||
+                this.callState === 'established' ||
+                this.callState === 'incoming' ||
+                this.callState === 'ended'
+        },
+        getLocalMediaStream () {
+            if (this.localMediaStream) {
+                return callGetLocalMediaStream()
+            }
+            return null
+        },
+        getRemoteMediaStream () {
+            if (this.remoteMediaStream) {
+                return callGetRemoteMediaStream()
+            }
+            return null
+        },
+        hasRemoteVideo () {
+            if (this.remoteMediaStream !== null) {
+                return callHasRemoteVideo()
+            }
+            return null
+        },
+        hasLocalVideo () {
+            if (this.localMediaStream !== null) {
+                return this.screenEnabled || this.cameraEnabled
+            }
+            return null
+        },
+        hasVideo () {
+            return this.hasLocalVideo || this.hasRemoteVideo
+        },
+        callStateTitle () {
+            return CallStateTitle[this.callState]
+        },
+        callStateSubtitle () {
+            if (this.callState === CallState.initiating ||
+                this.callState === CallState.ringing ||
+                this.callState === CallState.incoming ||
+                this.callState === CallState.established) {
+                return this.callNumberFormatted
+            } else if (this.callState === CallState.ended) {
+                return this.callEndedReasonFormatted
+            } else {
+                return ''
+            }
+        },
+        callNumberFormatted () {
+            return normalizeDestination(this.number)
+        },
+        callEndedReasonFormatted () {
+            return startCase(this.endedReason)
         }
     },
     watch: {
@@ -392,10 +459,14 @@ export default {
                 this.header = true
             }
         },
-        isHome (isHome) {
-            if (isHome) {
-                this.$store.commit('call/minimize')
-            }
+        route: {
+            handler (val, oldVal) {
+                if (val?.path === '/user/home') {
+                    this.$store.commit('call/minimize')
+                }
+            },
+            deep: true,
+            immediate: true
         },
         userDataSucceeded (userDataSucceeded) {
             if (userDataSucceeded) {
@@ -404,9 +475,9 @@ export default {
                 this.updateBrandings()
             }
         },
-        isCallEnabled (value) {
+        callEnabled (value) {
             if (value) {
-                showToast(this.$i18n.t('You are now able to start and receive calls'))
+                showToast(this.$t('You are now able to start and receive calls'))
             }
         },
         createFaxState (state) {
@@ -438,10 +509,10 @@ export default {
     },
     async mounted () {
         window.addEventListener('orientationchange', () => {
-            this.$root.$emit('orientation-changed')
+            this.emitter.$emit('orientation-changed')
         })
         window.addEventListener('resize', () => {
-            this.$root.$emit('window-resized')
+            this.emitter.$emit('window-resized')
         })
         this.updateBrandings()
         this.customLogo = await this.$store.dispatch('user/getCustomLogo')
@@ -483,13 +554,13 @@ export default {
             this.layoutResized()
         },
         showSendFax () {
-            this.faxDialog = true
+            this.$refs.faxDialog.show()
         },
         hideSendFax () {
-            this.faxDialog = false
+            this.$refs.faxDialog.hide()
         },
         startCall (localMedia) {
-            if (this.$route.query.number !== '' && this.$route.query.number !== null || this.callNumberInput !== '' && this.callNumberInput !== null) {
+            if ((this.$route.query.number !== '' && this.$route.query.number !== null) || (this.numberInput !== '' && this.numberInput !== null)) {
                 this.$store.dispatch('call/start', localMedia)
             }
         },
@@ -501,7 +572,7 @@ export default {
         },
         endCall () {
             this.$store.dispatch('call/end')
-             if (this.menuPinnedBBeforeCall) {
+            if (this.menuPinnedBBeforeCall) {
                 this.menuPinned = true
                 this.menuMinimized = false
                 this.header = true
@@ -536,10 +607,10 @@ export default {
             const primaryColor = this.resellerBranding?.csc_color_primary || this.defaultBranding?.primaryColor
             const secondaryColor = this.resellerBranding?.csc_color_secondary || this.defaultBranding?.secondaryColor
             if (primaryColor) {
-                colors.setBrand('primary', primaryColor)
+                setCssVar('primary', primaryColor)
             }
             if (secondaryColor) {
-                colors.setBrand('secondary', secondaryColor)
+                setCssVar('secondary', secondaryColor)
             }
             let customCss = document.getElementById('csc-custom-css')
             if (!customCss && this.resellerBranding?.css) {
@@ -560,160 +631,161 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .app-badge
-        width: 60% !important
+<style lang="sass" rel="stylesheet/sass">
 
-    .pin-menu-button
-        height: $header-height
-    #csc-header-toolbar
-        background-color $secondary
-    #csc-main-logo
-        height 52px
-        width auto
-        right 12px
-        top 4px
-        position absolute
-    .csc-user-menu-button
-        margin-left 0
-        margin-right 0.2rem
-        padding 0.2rem
-        .on-left
-            margin 0
-        .csc-username
-            padding-left 3px
-            font-weight normal
-            color rgba(255,255,255,0.6)
-    .page.page-call-active
-        padding-bottom 120px
-    #main-menu
-        padding 0
-        .q-item
-            padding-top $flex-gutter-xs * 1.4
-            padding-bottom  $flex-gutter-xs * 1.4
-            .q-item-side-left
-                min-width auto
-            .q-item-main
-                margin-left $flex-gutter-sm
-            .q-icon
-                color $main-menu-icon-color
-            .q-item-label
-                color $main-menu-title-color
-                font-weight bold
-                white-space nowrap
-            .q-item-sublabel
-                color $main-menu-subtitle-color
-        .q-item:hover
-            background-color $main-menu-item-hover-background
-        .q-item.router-link-active
-            .q-icon
-                color $main-menu-icon-active-color
-            .q-item-label
-                color $main-menu-title-active-color
-                font-weight bold
-            .q-item-sublabel
-                color $main-menu-subtitle-active-color
-            background-color transparent
-    #user-login-as
-        display inline-block
-        text-transform none
-    #user-login-as:after
-        content " "
-        white-space pre
-    #user-name
-        font-weight bold
-    .q-card
-        margin 15px
-        margin-left 0
-        margin-right 0
-    .q-card.page
-        padding 0
-        margin 0
-    .q-if-control.q-if-control-before.q-icon,
-    .q-if-control.q-if-control-before.q-icon:before
-        font-size 24px
-    .csc-toolbar-btn-popover
-        .q-item-main.q-item-section
-            margin-left 0
-    .q-toolbar
-        .csc-toolbar-btn.q-btn
-            padding-left 8px
-            padding-right 8px
-        .csc-toolbar-btn-right
-            .csc-toolbar-btn-icon
-                margin-right 8px
-    .csc-layout-call-active
-        padding-bottom 152px
-    #csc-header
-        position fixed
-        top 0
-        left $layout-aside-left-width
-        right 0
-        height $header-height
-        overflow hidden
-        z-index 100
-        background-color $secondary
-        .csc-header-content
-            position absolute
-            top 0
-            right 0
-            left 0
-            bottom 0
-            padding $logo-margin
-            background linear-gradient(to bottom, rgba(21,29,48,0.5) 0%,rgba(21,29,48,0) 75%,rgba(21,29,48,0) 100%)
-    #csc-header.csc-header-full
-        left 0
-    #csc-user-menu
-        cursor pointer
-        display inline-block
-        .csc-username
-            padding-left 4px
-    .csc-toggle-menu
-        cursor pointer
-        position absolute
-        top $logo-margin
-        right $logo-margin
-        display flex
-        justify-content center
-        align-items center
-        width 40px
-        height 40px
+.app-badge
+    width: 60% !important
+
+.pin-menu-button
+    height: $header-height
+#csc-header-toolbar
+    background-color: $secondary
+#csc-main-logo
+    height: 52px
+    width: auto
+    right: 12px
+    top: 4px
+    position: absolute
+.csc-user-menu-button
+    margin-left: 0
+    margin-right: 0.2rem
+    padding: 0.2rem
+    .on-left
+        margin: 0
+    .csc-username
+        padding-left: 3px
+        font-weight: normal
+        color: rgba(255,255,255,0.6)
+.page.page-call-active
+    padding-bottom: 120px
+#main-menu
+    padding: 0
+    .q-item
+        padding-top: $flex-gutter-xs * 1.4
+        padding-bottom:  $flex-gutter-xs * 1.4
+        .q-item-side-left
+            min-width: auto
+        .q-item-main
+            margin-left: $flex-gutter-sm
         .q-icon
-            display flex
-            position relative
-            font-size 24px
+            color: $main-menu-icon-color
+        .q-item-label
+            color: $main-menu-title-color
+            font-weight: bold
+            white-space: nowrap
+        .q-item-sublabel
+            color: $main-menu-subtitle-color
+    .q-item:hover
+        background-color: $main-menu-item-hover-background
+    .q-item.router-link-active
+        .q-icon
+            color: $main-menu-icon-active-color
+        .q-item-label
+            color: $main-menu-title-active-color
+            font-weight: bold
+        .q-item-sublabel
+            color: $main-menu-subtitle-active-color
+        background-color: transparent
+#user-login-as
+    display: inline-block
+    text-transform: none
+#user-login-as:after
+    content: " "
+    white-space: pre
+#user-name
+    font-weight: bold
+.q-card
+    margin: 15px
+    margin-left: 0
+    margin-right: 0
+.q-card.page
+    padding: 0
+    margin: 0
+.q-if-control.q-if-control-before.q-icon,
+.q-if-control.q-if-control-before.q-icon:before
+    font-size: 24px
+.csc-toolbar-btn-popover
+    .q-item-main.q-item-section
+        margin-left: 0
+.q-toolbar
+    .csc-toolbar-btn.q-btn
+        padding-left: 8px
+        padding-right: 8px
+    .csc-toolbar-btn-right
+        .csc-toolbar-btn-icon
+            margin-right: 8px
+.csc-layout-call-active
+    padding-bottom: 152px
+#csc-header
+    position: fixed
+    top: 0
+    left: $layout-aside-left-width
+    right: 0
+    height: $header-height
+    overflow: hidden
+    z-index: 100
+    background-color: $secondary
+    .csc-header-content
+        position: absolute
+        top: 0
+        right: 0
+        left: 0
+        bottom: 0
+        padding: $logo-margin
+        background: linear-gradient(to bottom, rgba(21,29,48,0.5) 0%,rgba(21,29,48,0) 75%,rgba(21,29,48,0) 100%)
+#csc-header.csc-header-full
+    left: 0
+#csc-user-menu
+    cursor: pointer
+    display: inline-block
+    .csc-username
+        padding-left: 4px
+.csc-toggle-menu
+    cursor: pointer
+    position: absolute
+    top: $logo-margin
+    right: $logo-margin
+    display: flex
+    justify-content: center
+    align-items: center
+    width: 40px
+    height: 40px
+    .q-icon
+        display: flex
+        position: relative
+        font-size: 24px
+.layout-aside-left
+    padding-top: $header-height
+.csc-menu-minimized
     .layout-aside-left
-        padding-top $header-height
-    .csc-menu-minimized
-        .layout-aside-left
-            width $main-menu-minimized-width
-            .q-item-main
-                display none
-        .csc-toggle-menu
-            width $main-menu-minimized-width
-            left 0
-        #main-menu
-            .q-collapsible
-                .q-collapsible-sub-item
-                    padding 0
-        #csc-header
-            left $main-menu-minimized-width
-    .mobile
-        .layout-aside-left
-            width auto
-            right 0
-    .csc-subitem-label
-        padding-left 20px
-    .csc-toolbar-btn-popover
-        .q-collapsible-sub-item
-            padding 0 16px 0 16px
-    .csc-collapsible-menu
-        .q-icon
-            display none
-    #csc-default-logo
-            height 48px
-    #csc-custom-logo
-            min-width $logo-min-width
-            max-width $logo-max-width
-            max-height $logo-max-height
+        width: $main-menu-minimized-width
+        .q-item-main
+            display: none
+    .csc-toggle-menu
+        width: $main-menu-minimized-width
+        left: 0
+    #main-menu
+        .q-collapsible
+            .q-collapsible-sub-item
+                padding: 0
+    #csc-header
+        left: $main-menu-minimized-width
+.mobile
+    .layout-aside-left
+        width: auto
+        right: 0
+.csc-subitem-label
+    padding-left: 20px
+.csc-toolbar-btn-popover
+    .q-collapsible-sub-item
+        padding: 0 16px 0 16px
+.csc-collapsible-menu
+    .q-icon
+        display: none
+#csc-default-logo
+        height: 48px
+#csc-custom-logo
+        min-width: $logo-min-width
+        max-width: $logo-max-width
+        max-height: $logo-max-height
 </style>

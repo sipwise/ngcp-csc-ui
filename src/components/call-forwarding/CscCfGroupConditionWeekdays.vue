@@ -4,14 +4,15 @@
         icon="calendar_today"
         :loading="$wait.is('csc-cf-time-set-create')"
         v-bind="$attrs"
-        v-on="$listeners"
+        @close="$emit('close')"
     >
         <csc-cf-selection-weekdays
-            v-model="selectedWeekdays"
+            :weekdays="selectedWeekdays"
             class="q-pl-md q-pr-md q-pt-sm q-pb-sm"
+            @input="selectedWeekdays=$event"
         />
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 v-if="deleteButton"
@@ -70,9 +71,10 @@ export default {
             default: ''
         }
     },
+    emits: ['close'],
     data () {
         return {
-            selectedWeekdays: this.weekdays
+            selectedWeekdays: null
         }
     },
     computed: {

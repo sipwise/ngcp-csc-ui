@@ -1,31 +1,30 @@
 <template>
     <q-item
         class="cursor-pointer"
-        @click.native="showGroupDetails"
+        clickable
+        @click="showGroupDetails"
     >
         <q-item-section
-                side
-                center
-                no-wrap
+            side
+            center
+            no-wrap
         >
             <q-icon
                 name="group"
                 color="white"
-            /> 
+            />
         </q-item-section>
         <q-item-section>
             <csc-list-item-title>
-                {{ group | groupName }}
+                {{ $filters.groupName(group) }}
             </csc-list-item-title>
             <q-slide-transition>
-                <csc-list-item-subtitle
-                >
+                <csc-list-item-subtitle>
                     {{ $t('Extension') }}: {{ group.pbx_extension }}
                 </csc-list-item-subtitle>
             </q-slide-transition>
             <q-slide-transition>
-                <csc-list-item-subtitle
-                >
+                <csc-list-item-subtitle>
                     <span
                         v-if="group.pbx_groupmember_ids.length > 0"
                     >
@@ -39,7 +38,7 @@
                                 name="person"
                                 size="16px"
                             />
-                            {{ seats[seatId] | seatName }}
+                            {{ $filters.seatName(seats[seatId]) }}
                         </span>
                     </span>
                     <span
@@ -72,22 +71,17 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import CscListItem from '../../CscListItem'
 import CscListItemTitle from '../../CscListItemTitle'
 import CscListItemSubtitle from '../../CscListItemSubtitle'
-import CscListMenuItem from '../../CscListMenuItem'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 export default {
     name: 'CscPbxGroup',
     components: {
-        CscListMenuItem,
-        CscListItem,
         CscListItemTitle,
         CscListItemSubtitle,
         CscPopupMenuItem,
-        CscMoreMenu,
+        CscMoreMenu
     },
     props: {
         group: {
@@ -111,6 +105,7 @@ export default {
             default: null
         }
     },
+    emits: ['remove'],
     methods: {
         deleteGroup () {
             if (this.$refs.listItem) {
@@ -119,11 +114,11 @@ export default {
             this.$emit('remove')
         },
         showGroupDetails () {
-            this.$router.push('/user/pbx-configuration/group/'+this.group.id)
+            this.$router.push('/user/pbx-configuration/group/' + this.group.id)
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

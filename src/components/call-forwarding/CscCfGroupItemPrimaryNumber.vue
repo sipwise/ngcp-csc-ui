@@ -53,7 +53,7 @@ export default {
         primaryNumberSource: {
             type: Object,
             default: undefined
-        },
+        }
     },
     data () {
         return {

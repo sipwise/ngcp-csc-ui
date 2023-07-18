@@ -38,7 +38,7 @@
             >
                 <template
                     v-if="column.componentIcon"
-                    v-slot:prepend
+                    #prepend
                 >
                     <q-icon
                         :name="column.componentIcon"
@@ -72,9 +72,10 @@ export default {
         },
         saveLabel: {
             type: String,
-            default: i18n.t('Save')
+            default: i18n.global.tc('Save')
         }
     },
+    emits: ['saved'],
     data () {
         return {
             internalValue: this.value

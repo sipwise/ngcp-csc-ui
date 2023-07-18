@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 
 <template>
     <csc-page
@@ -5,15 +6,15 @@
         class="q-pa-lg"
     >
         <q-table
+            v-model:pagination="pagination"
             class="no-shadow"
             :columns="columns"
-            :data="subscriberRegistrations"
+            :rows="subscriberRegistrations"
             :loading="$wait.is('loadSubscriberRegistrations')"
             row-key="id"
-            :pagination.sync="pagination"
             @request="fetchPaginatedRegistrations"
         >
-            <template v-slot:loading>
+            <template #loading>
                 <q-inner-loading
                     showing
                     color="primary"
@@ -22,7 +23,7 @@
                 </q-inner-loading>
             </template>
 
-            <template v-slot:top-left>
+            <template #top-left>
                 <q-btn
                     icon="refresh"
                     size="sm"
@@ -32,17 +33,17 @@
                     {{ $t('Refresh') }}
                 </q-btn>
             </template>
-            <template v-slot:body-cell-menu="{ row }">
+            <template #body-cell-menu="{ row }">
                 <td>
-                <q-icon
-                    name="delete"
-                    color="negative"
-                    size="25px"
-                    @click="deleteRow(row)"
-                    style="cursor: pointer;"
-                />
-            </td>
-                </template>
+                    <q-icon
+                        name="delete"
+                        color="negative"
+                        size="25px"
+                        style="cursor: pointer;"
+                        @click="deleteRow(row)"
+                    />
+                </td>
+            </template>
         </q-table>
     </csc-page>
 </template>
@@ -52,7 +53,7 @@ import { mapState } from 'vuex'
 import CscPage from 'components/CscPage'
 import { mapWaitingActions } from 'vue-wait'
 import CscSpinner from 'components/CscSpinner'
-import {LIST_DEFAULT_ROWS} from "src/api/common";
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
 export default {
     name: 'CscPageRegisteredDevices',
     components: {
@@ -162,7 +163,7 @@ export default {
                 await this.removeSubscriberRegistration(row)
                 await this.refresh()
             })
-        },
+        }
     }
 }
 </script>

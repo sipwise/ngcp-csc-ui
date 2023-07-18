@@ -6,24 +6,25 @@
         :label="$t('Phone number')"
         :value="value"
         :disable="!enabled"
-        :error="$v.phoneNumber.$error"
+        :error="v$.phoneNumber.$errors.length > 0"
         :readonly="readonly"
         @keypress.space.prevent
         @keydown.space.prevent
         @keyup.space.prevent
         @keyup.enter="keyReturn()"
-        @input="inputNumber"
+        @update:model-value="inputNumber"
     />
 </template>
 <script>
-import Vue from 'vue'
+import { nextTick } from 'vue'
 import {
     userInfoAndEmpty
 } from 'src/helpers/validation'
 import {
     maxLength
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import platformMixin from '../../mixins/platform'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscPhoneNumberInput',
     validations: {
@@ -57,23 +58,26 @@ export default {
             default: ''
         }
     },
+    emits: ['key-return', 'number-changed'],
     data () {
         return {
-            phoneNumber: this.value
+            phoneNumber: this.value,
+            v$: useValidate()
         }
     },
     computed: {
         errorMessage () {
-            if (!this.$v.phoneNumber.required) {
+            const errorsTab = this.v$.phoneNumber.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Phone number')
                 })
-            } else if (!this.$v.phoneNumber.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Phone number'),
-                    maxLength: this.$v.phoneNumber.$params.maxLength.max
+                    maxLength: this.v$.phoneNumber.maxLength.$params.max
                 })
-            } else if (!this.$v.phoneNumber.userInfo) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'userInfo') {
                 return this.$t('Input a valid phone number')
             } else {
                 return ''
@@ -86,27 +90,27 @@ export default {
     watch: {
         value () {
             this.phoneNumber = this.value
-            this.$v.phoneNumber.$touch()
+            this.v$.phoneNumber.$touch()
         }
     },
     methods: {
         inputNumber (input) {
             this.phoneNumber = input
-            this.$v.phoneNumber.$touch()
+            this.v$.phoneNumber.$touch()
             this.$emit('number-changed', this.phoneNumber)
         },
         keyReturn () {
             this.$emit('key-return')
         },
         focus () {
-            Vue.nextTick(() => {
+            nextTick(() => {
                 if (this.$refs.inputField) {
                     this.$refs.inputField.focus()
                 }
             })
         },
         blur () {
-            Vue.nextTick(() => {
+            nextTick(() => {
                 if (this.$refs.inputField) {
                     this.$refs.inputField.blur()
                 }
@@ -115,5 +119,5 @@ export default {
     }
 }
 </script>
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

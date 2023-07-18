@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import {
     RequestState
 } from '../common'
@@ -63,18 +62,18 @@ export default {
         state.reloadItemsError = error
     },
     playVoiceMailRequesting (state, id) {
-        Vue.set(state.playVoiceMailStates, id, RequestState.requesting)
-        Vue.set(state.playVoiceMailErrors, id, null)
+        state.playVoiceMailStates[id] = RequestState.requesting
+        state.playVoiceMailErrors[id] = null
     },
     playVoiceMailSucceeded (state, options) {
-        Vue.set(state.playVoiceMailUrls, options.id, options.url)
-        Vue.set(state.playVoiceMailStates, options.id, RequestState.succeeded)
-        Vue.set(state.playVoiceMailErrors, options.id, null)
+        state.playVoiceMailUrls[options.id] = options.url
+        state.playVoiceMailStates[options.id] = RequestState.succeeded
+        state.playVoiceMailErrors[options.id] = null
     },
     playVoiceMailFailed (state, id, err) {
-        Vue.set(state.playVoiceMailUrls, id, null)
-        Vue.set(state.playVoiceMailStates, id, RequestState.failed)
-        Vue.set(state.playVoiceMailErrors, id, err)
+        state.playVoiceMailUrls[id] = null
+        state.playVoiceMailStates[id] = RequestState.failed
+        state.playVoiceMailErrors[id] = err
     },
     resetList (state) {
         state.items = []

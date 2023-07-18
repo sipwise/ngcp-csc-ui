@@ -7,11 +7,11 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        v-model="faxToMailSettings.active"
+                        :model-value="faxToMailSettings.active"
                         :label="$t('Active')"
                         data-cy="faxtomail-enable"
                         :disable="!dataLoaded"
-                        @input="setChangedData('active', !faxServerSettings.active)"
+                        @update:model-value="setChangedData('active', !faxServerSettings.active)"
                     />
                 </q-item-section>
                 <q-item-section
@@ -40,11 +40,11 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        v-model="faxToMailSettings.t38"
+                        :model-value="faxToMailSettings.t38"
                         :label="$t('T38')"
                         data-cy="faxtomail-t38"
                         :disable="!dataLoaded"
-                        @input="setChangedData('t38', !faxServerSettings.t38)"
+                        @update:model-value="setChangedData('t38', !faxServerSettings.t38)"
                     />
                 </q-item-section>
                 <q-item-section
@@ -59,11 +59,11 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        v-model="faxToMailSettings.ecm"
+                        :model-value="faxToMailSettings.ecm"
                         :label="$t('ECM')"
                         data-cy="faxtomail-ecm"
                         :disable="!dataLoaded"
-                        @input="setChangedData('ecm', !faxServerSettings.ecm)"
+                        @update:model-value="setChangedData('ecm', !faxServerSettings.ecm)"
                     />
                 </q-item-section>
                 <q-item-section
@@ -134,7 +134,7 @@
                     @collapse="expandedDestinationId = null"
                     @expand="expandedDestinationId = destinationItem.destination"
                     @remove="openDeleteDestinationDialog(destinationItem.destination)"
-                    @update-property="updateDestinationItemProperty(destinationItem.destination, ...arguments)"
+                    @update-property="updateDestinationItemProperty(destinationItem.destination, $event)"
                 />
             </q-list>
         </div>
@@ -256,9 +256,10 @@ export default {
         openDeleteDestinationDialog (destinationId) {
             this.$q.dialog({
                 component: CscRemoveDialog,
-                parent: this,
-                title: this.$t('Remove Destination'),
-                message: this.$t('You are about to remove destination {destination}', { destination: destinationId })
+                componentProps: {
+                    title: this.$t('Remove Destination'),
+                    message: this.$t('You are about to remove destination {destination}', { destination: destinationId })
+                }
             }).onOk(() => {
                 this.deleteDestination(destinationId)
             })
