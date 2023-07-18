@@ -1,20 +1,22 @@
 <template>
     <csc-page-sticky-tabs
-        v-model="selectedTab"
+        :value="selectedTab"
         class="q-pa-lg"
     >
         <template
-            v-slot:tabs
+            #tabs
         >
             <q-tab
                 name="fax2mail"
                 icon="perm_phone_msg"
                 :label="$t('Fax to Mail and Sendfax')"
+                @click="selectTab('fax2mail')"
             />
             <q-tab
                 name="mail2fax"
                 icon="forward_to_inbox"
                 :label="$t('Mail to Fax')"
+                @click="selectTab('mail2fax')"
             />
         </template>
 
@@ -42,6 +44,13 @@ export default {
     data () {
         return {
             selectedTab: 'fax2mail'
+        }
+    },
+    methods: {
+        selectTab (tabName) {
+            if (this.selectedTab !== tabName) {
+                this.selectedTab = tabName
+            }
         }
     }
 }

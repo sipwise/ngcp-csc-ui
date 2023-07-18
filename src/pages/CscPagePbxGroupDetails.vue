@@ -5,7 +5,7 @@
         :value="selectedTab"
     >
         <template
-            v-slot:tabs
+            #tabs
         >
             <q-breadcrumbs
                 class="q-item absolute absolute-left text-weight-light"
@@ -28,8 +28,8 @@
 
             <q-tab
                 v-for="tab in tabs"
-                class="d-flex justify-content-center"
                 :key="tab.value"
+                class="d-flex justify-content-center"
                 :name="tab.value"
                 :icon="tab.icon"
                 :label="tab.label"
@@ -39,8 +39,8 @@
         </template>
 
         <q-item
-            class="col col-xs-12 col-md-6"
             v-if="selectedTab === 'preferences'"
+            class="col col-xs-12 col-md-6"
         >
             <q-list
                 v-if="changes"
@@ -57,7 +57,7 @@
                 >
                     <template
                         v-if="hasNameChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             @click.stop="save"
@@ -70,17 +70,17 @@
                 <q-input
                     v-model="changes.extension"
                     hide-hint
-                    :error="$v.changes.extension.$error"
+                    :error="v$.changes.extension.$errors.length > 0"
                     :error-message="extensionErrorMessage"
                     :label="$t('Extension')"
                     :hint="getExtensionHint"
                     :disable="isLoading"
                     @keyup.enter="save"
-                    @input="$v.changes.extension.$touch"
+                    @update:model-value="v$.changes.extension.$touch()"
                 >
                     <template
                         v-if="hasExtensionChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             @click.stop="save"
@@ -93,7 +93,7 @@
                 <q-input
                     readonly
                     disable
-                    :value="getPrimaryNumber"
+                    :model-value="getPrimaryNumber"
                     :label="$t('Primary Number')"
                 />
                 <q-select
@@ -107,7 +107,7 @@
                 >
                     <template
                         v-if="hasHuntPolicyChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             @click.stop="save"
@@ -125,7 +125,7 @@
                 >
                     <template
                         v-if="hasHuntTimeoutChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             @click.stop="save"
@@ -146,7 +146,7 @@
                 >
                     <template
                         v-if="hasHuntCancelModeChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             @click.stop="save"
@@ -168,7 +168,7 @@
                 >
                     <template
                         v-if="hasAliasNumbersChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             @click.stop="save"
@@ -190,7 +190,7 @@
                 >
                     <template
                         v-if="hasSeatsChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             @click.stop="save"
@@ -211,7 +211,7 @@
                 >
                     <template
                         v-if="hasSoundSetChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             @click.stop="save"
@@ -235,14 +235,14 @@
 
         <csc-call-forward-details
             v-else
-            :id="id"/>
-
+            :id="id"
+        />
     </csc-page-sticky-tabs>
 </template>
 
 <script>
 import _ from 'lodash'
-import { between } from 'vuelidate/lib/validators'
+import { between } from '@vuelidate/validators'
 import { inRange } from 'src/helpers/validation'
 import {
     mapState,
@@ -262,6 +262,7 @@ import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails.vue'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscPbxGroupDetails',
     components: {
@@ -281,7 +282,8 @@ export default {
             changes: null,
             id: this.$route.params.id,
             soundSet: null,
-            selectedTab: this.initialTab
+            selectedTab: this.initialTab,
+            v$: useValidate()
         }
     },
     computed: {
@@ -354,7 +356,8 @@ export default {
             return numberFilter(this.groupSelected.primary_number)
         },
         extensionErrorMessage () {
-            if (!this.$v.changes.extension.isInRange) {
+            const errorsTab = this.v$.changes.extension.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
                 return this.getExtensionHint
             } else {
                 return ''
@@ -381,7 +384,7 @@ export default {
         this.selectGroup(this.id)
         this.loadMappingsFull(this.id)
     },
-    beforeDestroy () {
+    beforeUnmount () {
         this.resetSelectedGroup()
     },
     validations: {
@@ -416,16 +419,18 @@ export default {
             'resetSelectedGroup'
         ]),
         getGroupData () {
-            return (this.groupSelected) ? {
-                name: this.groupSelected.display_name,
-                extension: this.groupSelected.pbx_extension,
-                huntPolicy: this.groupSelected.pbx_hunt_policy,
-                huntTimeout: this.groupSelected.pbx_hunt_timeout,
-                huntCancelMode: this.groupSelected.pbx_hunt_cancel_mode,
-                aliasNumbers: this.getAliasNumberIds(),
-                seats: this.getSeatIds(),
-                soundSet: this.getSoundSetId()
-            } : null
+            return (this.groupSelected)
+                ? {
+                    name: this.groupSelected.display_name,
+                    extension: this.groupSelected.pbx_extension,
+                    huntPolicy: this.groupSelected.pbx_hunt_policy,
+                    huntTimeout: this.groupSelected.pbx_hunt_timeout,
+                    huntCancelMode: this.groupSelected.pbx_hunt_cancel_mode,
+                    aliasNumbers: this.getAliasNumberIds(),
+                    seats: this.getSeatIds(),
+                    soundSet: this.getSoundSetId()
+                }
+                : null
         },
         getAliasNumberIds () {
             const numberIds = []
@@ -496,7 +501,7 @@ export default {
                     groupHuntTimeout: this.changes.huntTimeout
                 })
             }
-             if (this.hasHuntCancelModeChanged) {
+            if (this.hasHuntCancelModeChanged) {
                 this.setGroupHuntCancelMode({
                     groupId: this.groupSelected.id,
                     groupHuntCancelMode: this.changes.huntCancelMode

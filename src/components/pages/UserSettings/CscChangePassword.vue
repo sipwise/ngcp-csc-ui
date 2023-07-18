@@ -27,7 +27,7 @@
                         :label="$t('New password')"
                     >
                         <template
-                            v-slot:prepend
+                            #prepend
                         >
                             <q-icon
                                 name="lock"
@@ -41,7 +41,7 @@
                         :label="$t('New password retyped')"
                     >
                         <template
-                            v-slot:prepend
+                            #prepend
                         >
                             <q-icon
                                 name="lock"
@@ -97,6 +97,7 @@ export default {
             default: false
         }
     },
+    emits: ['change'],
     data () {
         return {
             inputEnabled: false,

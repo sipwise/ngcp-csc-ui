@@ -29,12 +29,12 @@
                     <template
                         v-if="sourceSet.mode === 'whitelist'"
                     >
-                        {{ $t('and call from') }}
+                        {{ ' ' + $t('and call from') + ' ' }}
                     </template>
                     <template
                         v-else
                     >
-                        {{ $t('and call not from') }}
+                        {{ ' ' + $t('and call not from') + ' ' }}
                     </template>
                     <span
                         :class="clickableClasses"
@@ -72,7 +72,7 @@
                 <template
                     v-if="timeSet"
                 >
-                    {{ $t('and') }}
+                    {{ ' ' + $t('and') + ' ' }}
                     <template
                         v-if="timeSet.name.startsWith('csc-date-exact')"
                     >
@@ -84,7 +84,7 @@
                             <q-icon
                                 name="today"
                             />
-                            {{ timeSet.times | timeSetDateExact }}
+                            {{ $filters.timeSetDateExact(timeSet.times) }}
                             <csc-cf-condition-popup-date
                                 data-cy="csc-condtion-date"
                                 :mapping="mapping"
@@ -106,7 +106,7 @@
                             <q-icon
                                 name="book_online"
                             />
-                            {{ timeSet.times | timeSetDateRange }}
+                            {{ $filters.timeSetDateRange(timeSet.times) }}
                             <csc-cf-condition-popup-date-range
                                 data-cy="csc-condtion-date-range"
                                 :mapping="mapping"
@@ -128,7 +128,7 @@
                             <q-icon
                                 name="calendar_today"
                             />
-                            {{ timeSet.times | timeSetWeekdays }}
+                            {{ $filters.timeSetWeekdays(timeSet.times) }}
                             <csc-cf-condition-popup-weekdays
                                 data-cy="csc-condtion-weekdays"
                                 :mapping="mapping"
@@ -150,7 +150,7 @@
                             <q-icon
                                 name="access_time"
                             />
-                            {{ timeSet.times | timeSetOfficeHoursSameTime }}
+                            {{ $filters.timeSetOfficeHoursSameTime(timeSet.times) }}
                             <csc-cf-condition-popup-office-hours
                                 data-cy="csc-condtion-office-hours"
                                 :mapping="mapping"
@@ -165,14 +165,14 @@
                         v-else
                         :class="clickableClasses"
                     >
-                        {{ timeSet.times | timeSetTimes }}
+                        {{ $filters.timeSetTimes(timeSet.times) }}
                     </span>
                 </template>
                 <template
                     v-if="!sourceSet || !timeSet"
                 >
                     <span>
-                        {{ $t('and') }}
+                        {{ ' ' + $t('and') + ' ' }}
                     </span>
                     <span
                         :class="clickableClasses"
@@ -201,7 +201,7 @@
                 :grid-view="true"
             >
                 <template
-                    v-slot:grid-column-1
+                    #grid-column-1
                 >
                     <csc-popup-menu-item
                         v-if="mapping.type === 'cfu' && hasSubscriberProfileAttribute('cft')"
@@ -282,7 +282,7 @@
                     />
                 </template>
                 <template
-                    v-slot:grid-column-2
+                    #grid-column-2
                 >
                     <csc-popup-menu-item
                         v-if="isPbxAttendant && platformInfo.cloudpbx"
@@ -458,8 +458,8 @@ export default {
         },
         async toggleMappingEvent (mapping) {
             this.$wait.start(this.waitIdentifier)
-            let mappingWithSubscriberId = Object.assign({}, mapping);
-            mappingWithSubscriberId["subscriberId"] = this.subscriberId
+            const mappingWithSubscriberId = Object.assign({}, mapping)
+            mappingWithSubscriberId.subscriberId = this.subscriberId
             await this.toggleMapping(mappingWithSubscriberId)
             this.$wait.end(this.waitIdentifier)
         },
@@ -472,20 +472,20 @@ export default {
                 persistent: true
             }).onOk(async data => {
                 this.$wait.start(this.waitIdentifier)
-                let mappingWithSubscriberId = Object.assign({}, mapping);
-                mappingWithSubscriberId["subscriberId"] = this.subscriberId
+                const mappingWithSubscriberId = Object.assign({}, mapping)
+                mappingWithSubscriberId.subscriberId = this.subscriberId
                 await this.deleteMapping(mappingWithSubscriberId)
                 this.$wait.end(this.waitIdentifier)
             })
         },
         async ringPrimaryNumberEvent () {
             this.$wait.start('csc-cf-mappings-full')
-            await this.ringPrimaryNumber({subscriberId: this.subscriberId})
+            await this.ringPrimaryNumber({ subscriberId: this.subscriberId })
             this.$wait.end('csc-cf-mappings-full')
         },
         async doNotRingPrimaryNumberEvent () {
             this.$wait.start('csc-cf-mappings-full')
-            await this.doNotRingPrimaryNumber({subscriberId: this.subscriberId})
+            await this.doNotRingPrimaryNumber({ subscriberId: this.subscriberId })
             this.$wait.end('csc-cf-mappings-full')
         }
     }

@@ -1,8 +1,6 @@
 
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
-import {
-    messages,
+import { createI18n } from 'vue-i18n'
+import messages, {
     getLangFromBrowserDefaults,
     setLanguage
 } from 'src/i18n'
@@ -10,22 +8,23 @@ import {
     getSession
 } from 'src/storage'
 
-Vue.use(VueI18n)
-
 export const defaultLocale = 'en-US'
 
-export const i18n = new VueI18n({
+const messageLoaded = messages()
+
+const currentLocale = getSession('locale') || getLangFromBrowserDefaults() || defaultLocale
+
+export const i18n = createI18n({
     locale: defaultLocale,
     fallbackLocale: defaultLocale,
     formatFallbackMessages: true,
-    messages
+    messages: messageLoaded
 })
 
-export default ({ app, store }) => {
-    const currentLocale = getSession('locale') || getLangFromBrowserDefaults() || defaultLocale
+export default async ({ app, store }) => {
+    app.use(i18n)
     app.i18n = i18n
-    store.$i18n = i18n
-    setLanguage(currentLocale)
+    await setLanguage(currentLocale)
     store.watch(() => i18n.locale, () => {
         store.dispatch('reloadLanguageRelatedData')
     })

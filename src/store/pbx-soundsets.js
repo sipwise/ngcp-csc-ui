@@ -1,5 +1,3 @@
-
-import Vue from 'vue'
 import {
     CreationState,
     RequestState
@@ -102,7 +100,7 @@ export default {
         getSoundSetRemoveDialogMessage (state) {
             if (state.soundSetRemoving !== null) {
                 const id = _.get(state, 'soundSetRemoving.id', null)
-                return i18n.t('You are about to remove sound set {soundSetName}', {
+                return i18n.global.tc('You are about to remove sound set {soundSetName}', {
                     soundSetName: _.get(state, 'soundSetMap.' + id + '.name', null)
                 })
             }
@@ -121,18 +119,18 @@ export default {
             return state.soundSetUpdatingField
         },
         getSoundSetCreationToastMessage (state, getters) {
-            return i18n.t('Created sound set {soundSet} successfully', {
+            return i18n.global.tc('Created sound set {soundSet} successfully', {
                 soundSet: getters.getSoundSetCreatingName
             })
         },
         getSoundSetUpdateToastMessage (state, getters) {
-            return i18n.t('Updated {field} for sound set {soundSet} successfully', {
+            return i18n.global.tc('Updated {field} for sound set {soundSet} successfully', {
                 soundSet: getters.getSoundSetUpdatingName,
                 field: getters.getSoundSetUpdatingField
             })
         },
         getSoundSetRemovalToastMessage (state, getters) {
-            return i18n.t('Removed sound set {soundSet} successfully', {
+            return i18n.global.tc('Removed sound set {soundSet} successfully', {
                 soundSet: getters.getSoundSetRemovingName
             })
         },
@@ -165,7 +163,7 @@ export default {
             state.soundSetListLastPage = _.get(soundSetList, 'soundSets.lastPage', 1)
             state.soundSetList = _.get(soundSetList, 'soundSets.items', [])
             state.soundSetList.forEach((soundSet) => {
-                Vue.set(state.soundSetMap, soundSet.id, soundSet)
+                state.soundSetMap[soundSet.id] = soundSet
             })
         },
         soundSetCreationRequesting (state, options) {
@@ -187,7 +185,7 @@ export default {
         soundSetUpdateSucceeded (state, soundSet) {
             state.soundSetUpdateState = RequestState.succeeded
             const index = state.soundSetList.findIndex((soundSetItem) => soundSetItem.id === soundSet.id)
-            Vue.set(state.soundSetMap, soundSet.id, soundSet)
+            state.soundSetMap[soundSet.id] = soundSet
             state.soundSetList[index] = soundSet
             if (state.soundSetSelected.id === soundSet.id) {
                 state.soundSetSelected = soundSet
@@ -210,7 +208,7 @@ export default {
         soundSetRemovalSucceeded (state, soundSetId) {
             state.soundSetRemovalState = RequestState.succeeded
             const index = state.soundSetList.findIndex((soundSetItem) => soundSetItem.id === soundSetId)
-            Vue.delete(state.soundSetMap, soundSetId)
+            delete state.soundSetMap[soundSetId]
             state.soundSetList.splice(index, 1)
         },
         soundSetRemovalFailed (state, err) {
@@ -233,119 +231,124 @@ export default {
                 if (!state.soundHandleGroups.includes(soundHandle.group)) {
                     state.soundHandleGroups.push(soundHandle.group)
                 }
+                return soundHandle
             })
             state.soundHandleGroups.map((group) => {
-                Vue.set(state.soundHandleList, group, soundHandleList.filter((soundHandle) => group === soundHandle.group))
+                state.soundHandleList[group] = soundHandleList.filter((soundHandle) => group === soundHandle.group)
+                return group
             })
         },
         soundFilesRequesting (state, soundSetId) {
-            Vue.delete(state.soundFileListStates, soundSetId)
-            Vue.set(state.soundFileListStates, soundSetId, RequestState.requesting)
+            delete state.soundFileListStates[soundSetId]
+            state.soundFileListStates[soundSetId] = RequestState.requesting
         },
         soundFilesSucceeded (state, soundFilesList) {
-            Vue.delete(state.soundFileListStates, soundFilesList.soundSetId)
-            Vue.set(state.soundFileListStates, soundFilesList.soundSetId, RequestState.succeeded)
+            delete state.soundFileListStates[soundFilesList.soundSetId]
+            state.soundFileListStates[soundFilesList.soundSetId] = RequestState.succeeded
+
             _.get(soundFilesList, 'soundFiles.items', []).forEach((soundFile) => {
-                Vue.set(state.soundFileMap, toFileId({
+                state.soundFileMap[toFileId({
                     soundSetId: soundFile.set_id,
                     soundHandle: soundFile.handle
-                }), soundFile)
+                })] = soundFile
             })
         },
         soundFileRequesting (state, options) {
-            Vue.delete(state.soundFileState, options.soundFile.id)
-            Vue.set(state.soundFileState, options.soundFile.id, RequestState.requesting)
+            delete state.soundFileState[options.soundFile.id]
+            state.soundFileState[options.soundFile.id] = RequestState.requesting
         },
         soundFileSucceeded (state, options) {
             const soundFileIntId = toFileId({
                 soundSetId: options.soundFile.set_id,
                 soundHandle: options.soundFile.handle
             })
-            Vue.delete(state.soundFileState, options.soundFile.id)
-            Vue.set(state.soundFileState, options.soundFile.id, RequestState.succeeded)
-            Vue.delete(state.soundFileUrlMap, soundFileIntId)
-            Vue.set(state.soundFileUrlMap, soundFileIntId, options.soundFileUrl)
+            delete state.soundFileState[options.soundFile.id]
+            state.soundFileState[options.soundFile.id] = RequestState.succeeded
+            delete state.soundFileUrlMap[soundFileIntId]
+            state.soundFileUrlMap[soundFileIntId] = options.soundFileUrl
         },
         soundFileFailed (state, options) {
-            Vue.delete(state.soundFileState, options.soundFile.id)
-            Vue.set(state.soundFileState, options.soundFile.id, RequestState.failed)
+            delete state.soundFileState[options.soundFile.id]
+            state.soundFileState[options.soundFile.id] = RequestState.failed
         },
         soundFileUploadRequesting (state, soundFileId) {
-            Vue.delete(state.soundFileUploadState, soundFileId)
-            Vue.set(state.soundFileUploadState, soundFileId, RequestState.requesting)
+            delete state.soundFileUploadState[soundFileId]
+            state.soundFileUploadState[soundFileId] = RequestState.requesting
         },
         soundFileUploadProgressed (state, options) {
-            Vue.delete(state.soundFileUploadProgress, options.soundFileId)
-            Vue.set(state.soundFileUploadProgress, options.soundFileId, options.progress)
+            delete state.soundFileUploadProgress[options.soundFileId]
+            state.soundFileUploadProgress[options.soundFileId] = options.progress
         },
         soundFileUploadSucceeded (state, options) {
             const soundFileId = toFileId({
                 soundSetId: options.soundFile.set_id,
                 soundHandle: options.soundFile.handle
             })
-            Vue.delete(state.soundFileUploadState, soundFileId)
-            Vue.set(state.soundFileUploadState, soundFileId, RequestState.succeeded)
-            Vue.delete(state.soundFileMap, soundFileId)
-            Vue.set(state.soundFileMap, soundFileId, options.soundFile)
-            Vue.delete(state.soundFileUrlMap, soundFileId)
-            Vue.set(state.soundFileUrlMap, soundFileId, options.soundFileUrl)
-            Vue.delete(state.soundFileUploadProgress, soundFileId)
-            Vue.set(state.soundFileUploadProgress, soundFileId, 0)
+            delete state.soundFileUploadState[soundFileId]
+            state.soundFileUploadState[soundFileId] = RequestState.succeeded
+            delete state.soundFileMap[soundFileId]
+            state.soundFileMap[soundFileId] = options.soundFile
+            delete state.soundFileUrlMap[soundFileId]
+            state.soundFileUrlMap[soundFileId] = options.soundFileUrl
+            delete state.soundFileUploadProgress[soundFileId]
+            state.soundFileUploadProgress[soundFileId] = 0
         },
         soundFileUploadAborted (state, options) {
-            Vue.delete(state.soundFileUploadState, options.soundFileId)
-            Vue.set(state.soundFileUploadState, options.soundFileId, RequestState.failed)
+            delete state.soundFileUploadState[options.soundFileId]
+            state.soundFileUploadState[options.soundFileId] = RequestState.failed
         },
         soundFileUpdateRequesting (state, options) {
             const soundFileIntId = toFileId({
                 soundSetId: options.soundSetId,
                 soundHandle: options.soundHandle
             })
-            Vue.delete(state.soundFileUpdateState, soundFileIntId)
-            Vue.set(state.soundFileUpdateState, soundFileIntId, RequestState.requesting)
+
+            delete state.soundFileUpdateState[soundFileIntId]
+            state.soundFileUpdateState[soundFileIntId] = RequestState.requesting
         },
         soundFileUpdateSucceeded (state, soundFile) {
             const soundFileIntId = toFileId({
                 soundSetId: soundFile.set_id,
                 soundHandle: soundFile.handle
             })
-            Vue.delete(state.soundFileUpdateState, soundFileIntId)
-            Vue.set(state.soundFileUpdateState, soundFileIntId, RequestState.succeeded)
-            Vue.delete(state.soundFileMap, soundFileIntId)
-            Vue.set(state.soundFileMap, soundFileIntId, soundFile)
+            delete state.soundFileUpdateState[soundFileIntId]
+            state.soundFileUpdateState[soundFileIntId] = RequestState.succeeded
+
+            delete state.soundFileMap[soundFileIntId]
+            state.soundFileMap[soundFileIntId] = soundFile
         },
         soundFileUpdateFailed (state, options) {
             const soundFileIntId = toFileId({
                 soundSetId: options.soundSetId,
                 soundHandle: options.soundHandle
             })
-            Vue.delete(state.soundFileUpdateState, soundFileIntId)
-            Vue.set(state.soundFileUpdateState, soundFileIntId, RequestState.failed)
+            delete state.soundFileUpdateState[soundFileIntId]
+            state.soundFileUpdateState[soundFileIntId] = RequestState.failed
         },
         soundFileRemoveRequesting (state, options) {
             const soundFileIntId = toFileId({
                 soundSetId: options.soundSetId,
                 soundHandle: options.soundHandle
             })
-            Vue.delete(state.soundFileRemoveState, soundFileIntId)
-            Vue.set(state.soundFileRemoveState, soundFileIntId, RequestState.requesting)
+            delete state.soundFileRemoveState[soundFileIntId]
+            state.soundFileRemoveState[soundFileIntId] = RequestState.requesting
         },
         soundFileRemoveSucceeded (state, soundFile) {
             const soundFileIntId = toFileId({
                 soundSetId: soundFile.soundSetId,
                 soundHandle: soundFile.soundHandle
             })
-            Vue.delete(state.soundFileRemoveState, soundFileIntId)
-            Vue.set(state.soundFileRemoveState, soundFileIntId, RequestState.succeeded)
-            Vue.delete(state.soundFileMap, soundFileIntId)
+            delete state.soundFileRemoveState[soundFileIntId]
+            state.soundFileRemoveState[soundFileIntId] = RequestState.succeeded
+            delete state.soundFileMap[soundFileIntId]
         },
         soundFileRemoveFailed (state, options) {
             const soundFileIntId = toFileId({
                 soundSetId: options.soundSetId,
                 soundHandle: options.soundHandle
             })
-            Vue.delete(state.soundFileRemoveState, soundFileIntId)
-            Vue.set(state.soundFileRemoveState, soundFileIntId, RequestState.failed)
+            delete state.soundFileRemoveState[soundFileIntId]
+            state.soundFileRemoveState[soundFileIntId] = RequestState.failed
         },
         selectSoundSet (state, soundSetId) {
             state.soundSetSelected = state.soundSetMap[soundSetId]
@@ -404,7 +407,7 @@ export default {
         setAsDefaultSoundSet (context, options) {
             context.commit('soundSetUpdateRequesting', {
                 soundSetId: options.soundSetId,
-                field: i18n.t('default option')
+                field: i18n.global.tc('default option')
             })
             let func = setAsDefault
             if (options.contractDefault !== true) {
@@ -419,7 +422,7 @@ export default {
         setSoundSetName (context, options) {
             context.commit('soundSetUpdateRequesting', {
                 soundSetId: options.soundSetId,
-                field: i18n.t('name')
+                field: i18n.global.tc('name')
             })
             setSoundSetName(options.soundSetId, options.name).then((soundSet) => {
                 context.commit('soundSetUpdateSucceeded', soundSet)
@@ -430,7 +433,7 @@ export default {
         setSoundSetDescription (context, options) {
             context.commit('soundSetUpdateRequesting', {
                 soundSetId: options.soundSetId,
-                field: i18n.t('description')
+                field: i18n.global.tc('description')
             })
             setSoundSetDescription(options.soundSetId, options.description).then((soundSet) => {
                 context.commit('soundSetUpdateSucceeded', soundSet)
@@ -441,7 +444,7 @@ export default {
         setSoundSetParent (context, options) {
             context.commit('soundSetUpdateRequesting', {
                 soundSetId: options.soundSetId,
-                field: i18n.t('parent')
+                field: i18n.global.tc('parent')
             })
             setSoundSetParent(options.soundSetId, options.parent_id).then((soundSet) => {
                 context.commit('soundSetUpdateSucceeded', soundSet)

@@ -3,7 +3,7 @@
         id="csc-page-pbx-seats"
     >
         <template
-            v-slot:header
+            #header
         >
             <q-btn
                 icon="add"
@@ -31,7 +31,7 @@
             />
         </template>
         <template
-            v-slot:toolbar
+            #toolbar
         >
             <csc-pbx-seat-filters
                 v-if="showFilters"
@@ -234,7 +234,7 @@ export default {
         },
         openSeatRemovalDialog (seatId) {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
                 this.seatRemovalRequesting(seatId)
             }
         },

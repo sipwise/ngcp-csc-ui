@@ -1,10 +1,11 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 
 <template>
-        <csc-page-sticky
-            id="csc-page-subscriber-phonebook"
+    <csc-page-sticky
+        id="csc-page-subscriber-phonebook"
     >
         <template
-            v-slot:header
+            #header
         >
             <q-btn
                 icon="add"
@@ -14,66 +15,65 @@
                 @click="openAddPhonebook()"
             />
         </template>
-    <csc-page
-        class="q-pa-lg"
-    >
-        <q-table
-            class="no-shadow"
-            :columns="columns"
-            :data="subscriberPhonebook"
-            :loading="$wait.is('loadSubscriberPhonebook')"
-            row-key="id"
-            :pagination.sync="pagination"
-            @request="fetchPaginatedRegistrations"
+        <csc-page
+            class="q-pa-lg"
         >
-            <template v-slot:loading>
-                <q-inner-loading
-                    showing
-                    color="primary"
-                >
-                    <csc-spinner />
-                </q-inner-loading>
-            </template>
-
-            <template v-slot:top-left>
-                <q-btn
-                    icon="refresh"
-                    size="sm"
-                    flat
-                    @click="refresh"
-                >
-                    {{ $t('Refresh') }}
-                </q-btn>
-            </template>
-            <template v-slot:body-cell-shared="{ row }">
-                <td>
-                    <q-toggle
-                    :value=row.shared
-                    />
-            </td>
-                </template>
-            <template v-slot:body-cell-menu="{ row }">
-                <td>
-                    <csc-more-menu>
-                        <csc-popup-menu-item
-                            icon="fas fa-phone-alt"
-                            color="primary"
-                            :label="$t('Call back')"
-                            @click="homePageCall(row)"
+            <q-table
+                v-model:pagination="pagination"
+                class="no-shadow"
+                :columns="columns"
+                :rows="subscriberPhonebook"
+                :loading="$wait.is('loadSubscriberPhonebook')"
+                row-key="id"
+                @request="fetchPaginatedRegistrations"
+            >
+                <template #loading>
+                    <q-inner-loading
+                        showing
+                        color="primary"
                     >
-                    </csc-popup-menu-item>
-                        <csc-popup-menu-item
-                            icon="fas fa-pen"
-                            color="primary"
-                            :label="$t('Edit')"
-                            @click="showPhonebookDetails(row)">   
-                    </csc-popup-menu-item>
-            </csc-more-menu>
-            </td>
+                        <csc-spinner />
+                    </q-inner-loading>
                 </template>
-        </q-table>
-    </csc-page>
-</csc-page-sticky>
+
+                <template #top-left>
+                    <q-btn
+                        icon="refresh"
+                        size="sm"
+                        flat
+                        @click="refresh"
+                    >
+                        {{ $t('Refresh') }}
+                    </q-btn>
+                </template>
+                <template #body-cell-shared="{ row }">
+                    <td>
+                        <q-toggle
+                            :model-value="row.shared"
+                        />
+                    </td>
+                </template>
+                <template #body-cell-menu="{ row }">
+                    <td>
+                        <csc-more-menu>
+                            <csc-popup-menu-item
+                                icon="fas fa-phone-alt"
+                                color="primary"
+                                :label="$t('Call back')"
+                                @click="homePageCall(row)"
+                            />
+                            <csc-popup-menu-item
+                                icon="fas fa-pen"
+                                color="primary"
+                                :label="$t('Edit')"
+                                @click="showPhonebookDetails(row)"
+                            />
+                        </csc-more-menu>
+                    </td>
+                </template>
+            </q-table>
+        </csc-page>
+    </csc-page-sticky>
 </template>
 
 <script>
@@ -83,7 +83,7 @@ import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import { mapWaitingActions } from 'vue-wait'
 import CscSpinner from 'components/CscSpinner'
-import {LIST_DEFAULT_ROWS} from "src/api/common";
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import CscPageSticky from 'components/CscPageSticky'
 export default {
     name: 'CscPageSubscriberPhonebook',
@@ -134,7 +134,7 @@ export default {
                     align: 'left',
                     label: this.$t('Number'),
                     field: row => row.number,
-                    sortable: true,
+                    sortable: true
                 },
                 {
                     name: 'shared',
@@ -142,7 +142,7 @@ export default {
                     align: 'left',
                     label: this.$t('Shared'),
                     field: row => row.shared,
-                    sortable: true,
+                    sortable: true
                 },
                 {
                     name: 'menu',
@@ -178,16 +178,17 @@ export default {
             this.pagination.rowsNumber = count
         },
         async showPhonebookDetails (row) {
-            this.$router.push('/user/subscriber-phonebook/'+ row.id)
+            this.$router.push('/user/subscriber-phonebook/' + row.id)
         },
         async openAddPhonebook () {
             this.$router.push('/user/subscriber-phonebook/create')
         },
         async homePageCall (row) {
-            this.$router.push({ 
+            this.$router.push({
                 path: '/user/home',
-                query: { number: row.number } })
-        },
+                query: { number: row.number }
+            })
+        }
     }
 }
 </script>

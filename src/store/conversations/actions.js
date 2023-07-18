@@ -30,7 +30,8 @@ export default {
         context.commit('reloadItemsRequesting')
         const rows = context.state.currentPage * ROWS_PER_PAGE
         const firstStateItemTimestamp = context.state.items[0]
-            ? context.state.items[0].start_time : null
+            ? context.state.items[0].start_time
+            : null
         if (options.retryCount < ReloadConfig.retryLimit) {
             getConversations({
                 subscriberId: context.getters.getSubscriberId,
@@ -39,7 +40,8 @@ export default {
                 type: options.type
             }).then((result) => {
                 const firstResultItemTimestamp = result.items[0]
-                    ? result.items[0].start_time : null
+                    ? result.items[0].start_time
+                    : null
                 if (_.isEqual(firstStateItemTimestamp, firstResultItemTimestamp)) {
                     setTimeout(() => {
                         context.dispatch('reloadItems', {
@@ -60,7 +62,7 @@ export default {
         downloadVoiceMail(id).then(() => {
             context.commit('downloadVoiceMailSucceeded')
         }).catch((err) => {
-            context.commit('downloadVoiceMailFailed', err.body.message)
+            context.commit('downloadVoiceMailFailed', err.response.data.message)
         })
     },
     downloadFax (context, id) {
@@ -68,7 +70,7 @@ export default {
         downloadFax(id).then(() => {
             context.commit('downloadFaxSucceeded')
         }).catch((err) => {
-            context.commit('downloadFaxFailed', err.body.message)
+            context.commit('downloadFaxFailed', err.response.data.message)
         })
     },
     playVoiceMail (context, options) {

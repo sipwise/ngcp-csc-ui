@@ -43,7 +43,7 @@
                                 @keyup.enter="login()"
                             >
                                 <template
-                                    v-slot:prepend
+                                    #prepend
                                 >
                                     <q-icon
                                         name="person"
@@ -82,7 +82,7 @@
                             @click="login()"
                         >
                             <template
-                                v-slot:loading
+                                #loading
                             >
                                 <csc-spinner />
                             </template>
@@ -117,7 +117,7 @@ import CscSelectionLanguage from 'components/CscSelectionLanguage'
 import { deleteLocal, getLocal } from 'src/storage'
 import { showToast } from 'src/helpers/ui'
 export default {
-    name: 'Login',
+    name: 'CscPageLogin',
     components: {
         CscSelectionLanguage,
         CscInput,
@@ -157,7 +157,7 @@ export default {
         },
         loginError (error) {
             if (error) {
-                showGlobalError(this.$i18n.t('Wrong username or password'))
+                showGlobalError(this.$t('Wrong username or password'))
             }
         }
     },
@@ -181,8 +181,8 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 #csc-login-card
-    margin 0
-    margin-top $header-height * -2
+    margin: 0
+    margin-top: $header-height * -2
 </style>

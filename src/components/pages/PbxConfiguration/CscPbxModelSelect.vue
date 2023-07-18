@@ -1,17 +1,16 @@
 <template>
     <q-select
-        :value="value"
+        :model-value="value"
         :options="options"
         :label="$t('Phone model')"
         emit-value
         map-options
         v-bind="$attrs"
-        v-on="$listeners"
-        @input="$emit('input', $event)"
+        @update:model-value="$emit('input', $event)"
         @popup-show="$emit('opened', $event)"
     >
         <template
-            v-slot:prepend
+            #prepend
         >
             <q-icon
                 v-if="!selectedProfileImageUrl"
@@ -29,7 +28,7 @@
             </q-avatar>
         </template>
         <template
-            v-slot:option="scope"
+            #option="scope"
         >
             <q-item
                 v-bind="scope.itemProps"
@@ -62,8 +61,8 @@
             </q-item>
         </template>
         <template
-            v-for="(_, slot) of $scopedSlots"
-            v-slot:[slot]="scope"
+            v-for="(_, slot) of $slots"
+            #[slot]="scope"
         >
             <slot
                 v-if="slot !== 'prepend' && slot !== 'option'"
@@ -187,6 +186,7 @@ export default {
             default: false
         }
     },
+    emits: ['reset', 'selected', 'opened', 'input'],
     data () {
         return {
             selectedProfile: this.getProfileById(this.value)
@@ -239,24 +239,24 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-pbx-model-select
-        .q-input
-            margin 0
-        .q-btn
-            padding-left $flex-gutter-xs
-            padding-right $flex-gutter-xs
-            .q-btn-inner
-                i
-                    margin 0
-    .csc-pbx-device-model-image
-        position relative
-        width 32px
-        height 32px
-        overflow hidden
-        img
-            position absolute
-            width 32px
-            left 0
-            top 0
+<style lang="sass" rel="stylesheet/sass">
+.csc-pbx-model-select
+    .q-input
+        margin: 0
+    .q-btn
+        padding-left: $flex-gutter-xs
+        padding-right: $flex-gutter-xs
+        .q-btn-inner
+            i
+                margin: 0
+.csc-pbx-device-model-image
+    position: relative
+    width: 32px
+    height: 32px
+    overflow: hidden
+    img
+        position: absolute
+        width: 32px
+        left: 0
+        top: 0
 </style>

@@ -1,5 +1,4 @@
 'use strict'
-import Vue from 'vue'
 import _ from 'lodash'
 import {
     RequestState
@@ -37,6 +36,9 @@ import { callInitialize } from 'src/api/ngcp-call'
 import { setLocal } from 'src/storage'
 import { getSipInstanceId } from 'src/helpers/call-utils'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import {
+    httpApi
+} from 'src/api/common'
 
 export default {
     namespaced: true,
@@ -309,6 +311,7 @@ export default {
                     subscriberId: getSubscriberId()
                 })
                 await context.dispatch('initUser')
+                await this.$router.push({ name: 'dashboard' })
             } catch (err) {
                 context.commit('loginFailed', err.message)
             }
@@ -384,7 +387,7 @@ export default {
         async forwardHome (context) {
             const start = '/user/dashboard'
             if (context.rootState.route?.path !== start) {
-                await this.$router.push({ path: start })
+                await this.$router.push({ name: 'root' })
             }
         },
         async getCustomLogo (context) {
@@ -425,7 +428,7 @@ export default {
             }
         },
         async removeSubscriberRegistration (context, row) {
-            await Vue.http.delete('api/subscriberregistrations/' + row.id)
+            await httpApi.delete('api/subscriberregistrations/' + row.id)
         },
         async getNcosLevelsSubscriber () {
             const ncosLevel = []
@@ -463,8 +466,8 @@ export default {
             await setPreference(getSubscriberId(), 'ncos', value)
         },
         async getPhonebookDetails (context, id) {
-            const list = await Vue.http.get('api/phonebookentries/' + id)
-            return list 
+            const list = await httpApi.get('api/phonebookentries/' + id)
+            return list
         },
         async getValueShared (context, options) {
             await setValueShared(options.phonebookId, options.shared)

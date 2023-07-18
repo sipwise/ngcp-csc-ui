@@ -4,13 +4,13 @@
         class="row justify-center"
     >
         <csc-card-dashboard
-            v-if= "showConvList"
+            v-if="showConvList"
             :title="$t('Voicebox Messages')"
             :count="voicemailsCount"
             :count-title="$t('Messages')"
             :button-title="$t('View Voicebox Messages')"
             :items-list="voicemailItems"
-            :route-to="{ name: 'CscConversations', params: { initialTab: 'voicemail' } }"
+            :route-to="{ name: 'CscConversations', state: { initialTab: 'voicemail' } }"
             :loading="$wait.is('getVoicemailsData')"
             :no-items-message="$t('No messages')"
             :error="voicemailsError"
@@ -18,21 +18,21 @@
             @action="downloadVoicemail"
         />
         <csc-card-dashboard
-            v-if= "showConvList"
+            v-if="showConvList"
             :title="$t('Call List')"
             :count="callsCount"
             :count-title="$t('Calls')"
             :button-title="$t('View Call List')"
             :items-list="callItems"
-            :route-to="{ name: 'CscConversations', params: { initialTab: 'call' } }"
+            :route-to="{ name: 'CscConversations', state: { initialTab: 'call' } }"
             :no-items-message="$t('No calls')"
             :loading="$wait.is('getCallsData')"
             :error="callsError"
             data-cy="dashboard-view-calllist"
-            :use-slot=true
+            :use-slot="true"
         >
             <template
-                v-slot:listItems="{call}"
+                #listItems="{call}"
             >
                 <csc-call-item
                     :call="call"
@@ -41,13 +41,13 @@
             </template>
         </csc-card-dashboard>
         <csc-card-dashboard
-            v-if= "showRegDevices"
+            v-if="showRegDevices"
             :title="$t('Registered Devices')"
             :count="registeredDevicesCount"
             :count-title="$t('Registered Devices')"
             :button-title="$t('View All Registered Devices')"
             :items-list="registeredDevicesItems"
-            :route-to="{ name: 'RegisteredDevices', params: { initialTab: 'null' } }"
+            :route-to="{ name: 'RegisteredDevices', state: { initialTab: 'null' } }"
             :no-items-message="$t('No devices registered')"
             :loading="$wait.is('getRegisteredDevicesData')"
             :error="registeredDevicesError"
@@ -65,18 +65,14 @@ import {
     showGlobalError
 } from 'src/helpers/ui'
 import {
-    mapGetters
-} from 'vuex'
-import {
     date
 } from 'quasar'
-import { INTERNAL_DATE_FORMAT_DASH_HOUR } from 'src/constants'
 import {
     callIconColor,
     callIcon
 } from 'src/helpers/call-utils'
-import { mapState } from 'vuex'
-import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { mapState, mapGetters } from 'vuex'
+import { INTERNAL_DATE_FORMAT_DASH_HOUR, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 export default {
     name: 'CscPageDashboard',
     components: {
@@ -109,7 +105,7 @@ export default {
         },
         showRegDevices () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.registeredDevices)
-        },
+        }
     },
     watch: {
         async callEnabled () {

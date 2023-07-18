@@ -8,12 +8,12 @@
         @toggle="toggle"
     >
         <template
-            slot="title"
+            #title
         >
             <csc-list-item-title
                 :icon="getTitleIcon"
             >
-                {{ subscriber | displayName }}
+                {{ $filters.displayName(subscriber) }}
             </csc-list-item-title>
             <q-slide-transition>
                 <csc-list-item-subtitle
@@ -50,7 +50,7 @@
                 </csc-list-item-subtitle>
             </q-slide-transition>
         </template>
-        <template slot="menu">
+        <template #menu>
             <csc-list-menu-item
                 icon="delete"
                 icon-color="negative"
@@ -60,7 +60,7 @@
             </csc-list-menu-item>
         </template>
         <template
-            slot="body"
+            #body
         >
             <q-select
                 v-model="changes.secretaryNumbers"
@@ -75,7 +75,7 @@
             >
                 <template
                     v-if="hasSecretaryNumbersChanged"
-                    v-slot:append
+                    #append
                 >
                     <csc-input-button-save
                         @click.stop="saveSecretaryNumbers"
@@ -137,6 +137,7 @@ export default {
             default: false
         }
     },
+    emits: ['save-secretary-numbers', 'expand', 'collapse', 'remove', 'ready'],
     data () {
         return {
             changes: this.getDefaultData()

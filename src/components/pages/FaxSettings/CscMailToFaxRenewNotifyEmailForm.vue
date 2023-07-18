@@ -6,10 +6,10 @@
             :label="$t('Renew Notify Email')"
             :disable="disabled"
             :readonly="loading"
-            :error="$v.data.destination.$error"
+            :error="v$.data.destination.$errors.length > 0"
             :error-message="destinationErrorMessage"
             :value-changed="!isAddNewMode && data.destination !== initialData.destination"
-            @input="$v.data.destination.$touch"
+            @input="v$.data.destination.$touch()"
             @keypress.space.prevent
             @keydown.space.prevent
             @keyup.space.prevent
@@ -37,7 +37,7 @@
                 color="primary"
                 icon="done"
                 :loading="loading"
-                :disable="$v.data.$invalid || loading"
+                :disable="v$.data.$invalid || loading"
                 :label="$t('Add email')"
                 @click="save()"
             />
@@ -46,10 +46,10 @@
 </template>
 
 <script>
-import { email, required } from 'vuelidate/lib/validators'
+import { email, required } from '@vuelidate/validators'
 import CscInputSaveable from 'components/form/CscInputSaveable'
 import CscTooltip from 'components/CscTooltip'
-
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscMailToFaxRenewNotifyEmailForm',
     components: {
@@ -76,9 +76,11 @@ export default {
             default: false
         }
     },
+    emits: ['save', 'cancel', 'update-property'],
     data () {
         return {
-            data: this.getDefaults()
+            data: this.getDefaults(),
+            v$: useValidate()
         }
     },
     validations: {
@@ -91,11 +93,12 @@ export default {
     },
     computed: {
         destinationErrorMessage () {
-            if (!this.$v.data.destination.required) {
+            const errorsTab = this.v$.data.destination.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Email')
                 })
-            } else if (!this.$v.data.destination.email) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'email') {
                 return this.$t('Input a valid email address')
             } else {
                 return ''
@@ -116,7 +119,7 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
+            this.v$.$reset()
         },
         updatePropertyData (propertyName) {
             this.$emit('update-property', {

@@ -5,10 +5,10 @@
         :odd="odd"
         :loading="loading"
         :show-more-menu="soundSet.customer_id"
-        @click.native="showSoundSetDetails"
+        @click="showSoundSetDetails"
     >
         <template
-            slot="title"
+            #title
         >
             <csc-list-item-title>
                 {{ soundSet.name }}
@@ -35,18 +35,18 @@
             <q-slide-transition>
                 <csc-list-item-subtitle>
                     <q-checkbox
-                        :value="soundSet.contract_default"
+                        :model-value="soundSet.contract_default"
                         :label="$t('Default')"
                         :disable="!soundSet.customer_id"
                         :left-label="true"
-                        @input="saveAsDefault"
+                        @update:model-value="saveAsDefault"
                     />
                 </csc-list-item-subtitle>
             </q-slide-transition>
         </template>
         <template
             v-if="soundSet.customer_id"
-            slot="menu"
+            #menu
         >
             <csc-list-menu-item
                 icon="delete"
@@ -90,6 +90,7 @@ export default {
             default: null
         }
     },
+    emits: ['save-as-default', 'remove'],
     computed: {
         ...mapState('pbxSoundSets', [
             'soundSetList'
@@ -112,13 +113,14 @@ export default {
             this.$emit('remove', this.soundSet.id)
         },
         showSoundSetDetails () {
-            this.$router.push('/user/pbx-configuration/sound-sets/'+ this.soundSet.id)
+            this.$router.push('/user/pbx-configuration/sound-sets/' + this.soundSet.id)
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-pbx-sound-set-sound-list
-        margin-top $flex-gutter-sm
+<style lang="sass" rel="stylesheet/sass">
+
+.csc-pbx-sound-set-sound-list
+    margin-top: $flex-gutter-sm
 </style>

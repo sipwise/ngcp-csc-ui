@@ -62,7 +62,7 @@
                             data-cy="csc-speeddial-ring"
                         >
                             {{ $t('ring') }}
-                            {{ assigned.destination | destinationFormat }}
+                            {{ $filters.destinationFormat(assigned.destination) }}
                         </q-item-label>
                     </q-item-section>
                     <q-item-section

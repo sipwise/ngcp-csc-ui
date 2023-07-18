@@ -1,17 +1,17 @@
 <template>
     <q-toolbar>
-        <q-space/>
-            <div
-                class="col-xs-12 col-md-4"
-            >
-                <q-select
-                    v-model="filterTypeModel"
-                    dense
-                    :options="filterTypeOptions"
-                    :label="$t('Filter by')"
-                    :disable="loading"
-                />
-            </div>
+        <q-space />
+        <div
+            class="col-xs-12 col-md-4"
+        >
+            <q-select
+                v-model="filterTypeModel"
+                dense
+                :options="filterTypeOptions"
+                :label="$t('Filter by')"
+                :disable="loading"
+            />
+        </div>
         <q-space />
     </q-toolbar>
 </template>
@@ -25,14 +25,10 @@ export default {
             default: false
         }
     },
+    emits: ['filter'],
     data () {
         return {
             filterTypeModel: null
-        }
-    },
-    watch: {
-        filterTypeModel () {
-            this.filter()
         }
     },
     computed: {
@@ -56,13 +52,18 @@ export default {
             ]
         }
     },
+    watch: {
+        filterTypeModel () {
+            this.filter()
+        }
+    },
     methods: {
         filter () {
             const params = {}
-            if (this.filterType === "incomingCallsOnly") params["direction"] = "in"
-            else if (this.filterType === "outgoingCallsOnly") params["direction"] = "out"
+            if (this.filterType === 'incomingCallsOnly') params.direction = 'in'
+            else if (this.filterType === 'outgoingCallsOnly') params.direction = 'out'
             this.$emit('filter', params)
-        },
-    },
+        }
+    }
 }
 </script>

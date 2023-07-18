@@ -29,7 +29,7 @@
                     color="default"
                     icon="clear"
                     data-cy="csc-speeddial-cancel"
-                    @mousedown.native="cancel()"
+                    @mousedown="cancel()"
                 >
                     {{ $t('Cancel') }}
                 </q-btn>
@@ -96,6 +96,7 @@ export default {
             default: false
         }
     },
+    emits: ['save'],
     data () {
         return {
             formEnabled: false,
@@ -144,8 +145,8 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
     .form-actions
-        margin-top 16px
-        margin-bottom 8px
+        margin-top: 16px
+        margin-bottom: 8px
 </style>

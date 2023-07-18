@@ -28,7 +28,7 @@
                     @keypress.enter="triggerFilter"
                 >
                     <template
-                        v-slot:append
+                        #append
                     >
                         <q-btn
                             icon="search"
@@ -77,6 +77,7 @@ export default {
             default: false
         }
     },
+    emits: ['filter'],
     data () {
         return {
             filterTypeModel: null,

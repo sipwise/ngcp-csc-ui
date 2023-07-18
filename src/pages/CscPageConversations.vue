@@ -5,7 +5,7 @@
         :value="selectedTab"
     >
         <template
-            v-slot:tabs
+            #tabs
         >
             <q-tab
                 v-for="tab in tabs"
@@ -19,15 +19,15 @@
             />
         </template>
         <template
-            v-slot:toolbar
+            #toolbar
         >
             <csc-conversations-filter
                 id="csc-conversations-filter"
-                v-model="filter"
+                :value="filter"
                 class="q-pb-sm"
                 :loading="listLoading"
                 :disable="listLoading"
-                @input="filterTab(selectedTab)"
+                @input="filterTab($event, selectedTab)"
             />
             <csc-conversations-calls-filter
                 v-if="selectedTab === 'call'"
@@ -43,7 +43,7 @@
             @load="loadNextPage"
         >
             <template
-                slot="loading"
+                #loading
             >
                 <div />
             </template>
@@ -70,8 +70,8 @@
                         @toggle-block-incoming="toggleBlockIncomingAction"
                         @toggle-block-outgoing="toggleBlockOutgoingAction"
                         @toggle-block-both="toggleBlockBothAction"
-                        @delete-voicemail="$refs.confirmDeletionDialog.open();deletionId=$event.id"
-                        @delete-fax="$refs.confirmDeletionFaxDialog.open();deletionId=$event.id"
+                        @delete-voicemail="$refs.confirmDeletionDialog.show();deletionId=$event.id"
+                        @delete-fax="$refs.confirmDeletionFaxDialog.show();deletionId=$event.id"
                     />
                 </q-list>
                 <div
@@ -136,19 +136,13 @@ export default {
     mixins: [
         platformMixin
     ],
-    props: {
-        initialTab: {
-            type: String,
-            default: 'call-fax-voicemail'
-        }
-    },
     data () {
         return {
             filter: undefined,
             filterDirection: undefined,
             topMargin: 0,
             deletionId: null,
-            selectedTab: this.initialTab
+            selectedTab: window.history.state.initialTab || 'call-fax-voicemail'
         }
     },
     computed: {
@@ -275,6 +269,7 @@ export default {
         },
         selectTab (tabName) {
             if (this.selectedTab !== tabName) {
+                this.filterDirection = undefined
                 this.forceTabReload(tabName)
             }
         },
@@ -295,7 +290,11 @@ export default {
         forceReload () {
             this.forceTabReload(this.selectedTab)
         },
-        filterTab (tabName) {
+        filterTab (data, tabName) {
+            this.filter = {
+                from: data.from,
+                to: data.to
+            }
             this.forceTabReload(tabName)
         },
         startCall (number) {

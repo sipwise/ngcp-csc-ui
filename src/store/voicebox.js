@@ -10,7 +10,6 @@ import {
     setVoiceboxPin,
     setVoiceboxEmail,
     uploadGreeting,
-    abortPreviousRequest,
     getVoiceboxGreetingByType,
     deleteVoiceboxGreetingById,
     playGreeting
@@ -18,6 +17,10 @@ import {
 import {
     i18n
 } from 'src/boot/i18n'
+import {
+    apiCreateCancelObject,
+    apiIsCanceledRequest
+} from 'src/api/common'
 
 const setVoiceboxSettings = {
     pin: setVoiceboxPin,
@@ -63,7 +66,9 @@ export default {
         unavailableGreetingUploadError: null,
         unavailableGreetingUploadProgress: 0,
         unavailableGreetingDeletionState: RequestState.initiated,
-        unavailableGreetingDeletionError: null
+        unavailableGreetingDeletionError: null,
+
+        uploadCancelActions: {}
     },
     getters: {
         subscriberId (state, getters, rootState, rootGetters) {
@@ -98,8 +103,8 @@ export default {
         },
         attachLabel (state, getters) {
             return state.attachValue
-                ? i18n.t('Attach voicemail to email notification')
-                : i18n.t('Attach voicemail to email notification')
+                ? i18n.global.tc('Attach voicemail to email notification')
+                : i18n.global.tc('Attach voicemail to email notification')
         },
 
         deleteLoading (state, getters) {
@@ -107,8 +112,8 @@ export default {
         },
         deleteLabel (state, getters) {
             return state.deleteValue
-                ? i18n.t('Delete voicemail after email notification is delivered')
-                : i18n.t('Delete voicemail after email notification is delivered')
+                ? i18n.global.tc('Delete voicemail after email notification is delivered')
+                : i18n.global.tc('Delete voicemail after email notification is delivered')
         },
 
         busyGreetingUploading (state) {
@@ -118,8 +123,9 @@ export default {
             return state.busyGreetingLoadState === RequestState.succeeded
         },
         busyGreetingLabel (state) {
-            return state.busyGreetingId ? i18n.t('Custom sound')
-                : i18n.t('Default sound')
+            return state.busyGreetingId
+                ? i18n.global.tc('Custom sound')
+                : i18n.global.tc('Default sound')
         },
         busyGreetingDeleting (state) {
             return state.busyGreetingDeletionState === RequestState.requesting
@@ -132,8 +138,9 @@ export default {
             return state.unavailableGreetingLoadState === RequestState.succeeded
         },
         unavailableGreetingLabel (state) {
-            return state.unavailableGreetingId ? i18n.t('Custom sound')
-                : i18n.t('Default sound')
+            return state.unavailableGreetingId
+                ? i18n.global.tc('Custom sound')
+                : i18n.global.tc('Default sound')
         },
         unavailableGreetingDeleting (state) {
             return state.unavailableGreetingDeletionState === RequestState.requesting
@@ -309,6 +316,9 @@ export default {
         unavailableGreetingDeletionFailed (state, error) {
             state.unavailableGreetingDeletionState = RequestState.failed
             state.unavailableGreetingDeletionError = error
+        },
+        updateUploadCancelActions (state, field, value) {
+            state.uploadCancelActions[field] = value
         }
     },
     actions: {
@@ -373,6 +383,8 @@ export default {
         async greetingUpload (context, options) {
             try {
                 context.commit(options.type + 'GreetingUploadRequesting')
+                const cancelToken = apiCreateCancelObject()
+                context.commit('updateUploadCancelActions', options.greeting, cancelToken.cancel)
                 await uploadGreeting({
                     data: {
                         subscriber_id: context.getters.subscriberId,
@@ -381,7 +393,8 @@ export default {
                     },
                     onProgress: (progress) => {
                         context.commit(options.type + 'GreetingUploadProgress', progress)
-                    }
+                    },
+                    cancelToken: cancelToken.token
                 })
                 const greetings = await getVoiceboxGreetingByType({
                     id: context.getters.subscriberId,
@@ -389,11 +402,18 @@ export default {
                 })
                 context.commit(options.type + 'GreetingUploadSucceeded', greetings.items[0].id)
             } catch (err) {
-                context.commit(options.type + 'GreetingUploadFailed', err.message)
+                if (!apiIsCanceledRequest(err)) {
+                    context.commit(options.type + 'GreetingUploadFailed', err.message)
+                }
+            } finally {
+                context.commit('updateUploadCancelActions', options.greeting, undefined)
             }
         },
         async greetingUploadAbort (context, greeting) {
-            await abortPreviousRequest(greeting)
+            const cancelFunction = context.state.uploadCancelActions[greeting]
+            if (typeof cancelFunction === 'function') {
+                cancelFunction()
+            }
         },
         async greetingPlay (context, options) {
             try {

@@ -3,43 +3,39 @@ import localeFr from './fr.json'
 import localeIt from './it.json'
 import localeEs from './es.json'
 import localeDe from './de.json'
-import { i18n } from 'src/boot/i18n'
+import { i18n } from 'boot/i18n'
 import { setSession } from 'src/storage'
-import Quasar from 'quasar'
+import { Quasar } from 'quasar'
 
 export const defaultLocale = 'en-US'
 
-export const messages = {
-    'en-US': patchKeysForFallback(localeEn),
-    de: patchKeysForFallback(localeDe),
-    es: patchKeysForFallback(localeEs),
-    fr: patchKeysForFallback(localeFr),
-    it: patchKeysForFallback(localeIt)
+export default function messages () {
+    return {
+        'en-US': patchKeysForFallback(localeEn),
+        de: patchKeysForFallback(localeDe),
+        es: patchKeysForFallback(localeEs),
+        fr: patchKeysForFallback(localeFr),
+        it: patchKeysForFallback(localeIt)
+    }
 }
+const loadedLanguages = [defaultLocale]
+async function loadLanguageAsync (lang) {
+    if (i18n.locale !== lang && !loadedLanguages.includes(lang)) {
+        const language = lang === 'en-US' ? 'en' : lang
+        await import(
+            /* webpackChunkName: "lang-[request]" */
+            `./${language}`
+        ).then(
+            messages => {
+                i18n.global.setLocaleMessage(lang, patchKeysForFallback(messages.default))
 
-export function getLanguageLabels () {
-    return [
-        {
-            value: 'en-US',
-            label: i18n.t('English', 'en-US')
-        },
-        {
-            value: 'de',
-            label: i18n.t('German', 'de')
-        },
-        {
-            value: 'es',
-            label: i18n.t('Spanish', 'es')
-        },
-        {
-            value: 'fr',
-            label: i18n.t('French', 'fr')
-        },
-        {
-            value: 'it',
-            label: i18n.t('Italian', 'it')
-        }
-    ]
+                loadedLanguages.push(lang)
+            }
+        ).catch((e) => {
+            console.error(e)
+            i18n.global.setLocaleMessage(lang, {})
+        })
+    }
 }
 
 function patchKeysForFallback (messages = {}) {
@@ -53,15 +49,16 @@ function patchKeysForFallback (messages = {}) {
     return messages
 }
 
-export function setLanguage (locale) {
+export async function setLanguage (locale) {
     const lang = normalizeLocaleCode(locale)
     setSession('locale', lang)
+    await loadLanguageAsync(lang)
     i18n.locale = lang
+    i18n.global.locale = lang
 
-    const quasarLangCode = lang.toLowerCase()
     import(
-        /* webpackInclude: /(en-us|de|es|fr|it)\.js$/ */
-        'quasar/lang/' + quasarLangCode
+        /* webpackInclude: /(en-US|de|es|fr|it)\.js$/ */
+        'quasar/lang/' + lang
     ).then(qLang => {
         Quasar.lang.set(qLang.default)
     })
@@ -94,7 +91,7 @@ export function getCurrentLangAsV1Format () {
 export function normalizeLocaleCode (locale) {
     const shortLangCode = String(locale || defaultLocale).substr(0, 2).toLowerCase()
     const langCodeInV2Format = (shortLangCode === 'en') ? 'en-US' : shortLangCode
-    const langCode = Object.keys(messages).filter(l => l === langCodeInV2Format)[0]
+    const langCode = Object.keys(messages()).filter(l => l === langCodeInV2Format)[0]
     return langCode || defaultLocale
 }
 

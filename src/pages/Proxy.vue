@@ -26,6 +26,7 @@ import {
 import { showGlobalError } from 'src/helpers/ui'
 import { getCurrentLangAsV1Format } from 'src/i18n'
 export default {
+    // eslint-disable-next-line vue/multi-word-component-names
     name: 'Proxy',
     data () {
         return {
@@ -62,7 +63,7 @@ export default {
     watch: {
         currentPathIframe (path) {
             const routeData = this.$router.resolve(path)
-            if (!routeData?.route?.meta?.proxy && !routeData?.route?.meta?.proxyReverseInvisible) {
+            if (!routeData?.meta?.proxy && !routeData?.meta?.proxyReverseInvisible) {
                 this.$router.push({
                     path: path
                 })
@@ -72,7 +73,7 @@ export default {
     mounted () {
         window.addEventListener('message', this.trackMessagesFromV1, false)
     },
-    beforeDestroy () {
+    beforeUnmount () {
         window.removeEventListener('message', this.trackMessagesFromV1, false)
     },
     methods: {
@@ -81,7 +82,7 @@ export default {
         ]),
         loadedEvent () {
             try {
-                const domEl = this.$refs.proxyIframe.contentWindow.document.getElementById('login_page_v1')
+                const domEl = this.$refs.proxyIframe?.contentWindow?.document?.getElementById('login_page_v1')
                 if (domEl !== null) {
                     this.logout()
                     return

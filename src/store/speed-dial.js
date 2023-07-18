@@ -42,13 +42,13 @@ export default {
             return state.speedDialLoadingState
         },
         speedDialLoadingError (state) {
-            return state.speedDialLoadingError || i18n.t('An error occured while trying to load the speed dials. Please try again')
+            return state.speedDialLoadingError || i18n.global.tc('An error occured while trying to load the speed dials. Please try again')
         },
         unassignSlotState (state) {
             return state.unassignSlotState
         },
         unassignSlotError (state) {
-            return state.unassignSlotError || i18n.t('An error occured while trying to unassign the speed dial slot. Please try again')
+            return state.unassignSlotError || i18n.global.tc('An error occured while trying to unassign the speed dial slot. Please try again')
         },
         lastUnassignedSlot (state) {
             return state.lastUnassignedSlot
@@ -62,7 +62,7 @@ export default {
             return state.assignSlotState
         },
         assignSlotError (state) {
-            return state.assignSlotError || i18n.t('An error occured while trying to assign the speed dial slot. Please try again')
+            return state.assignSlotError || i18n.global.tc('An error occured while trying to assign the speed dial slot. Please try again')
         },
         lastAssignedSlot (state) {
             return state.lastAssignedSlot

@@ -8,9 +8,9 @@ import _ from 'lodash'
 import {
     getList,
     patchReplace,
-    patchReplaceFull
+    patchReplaceFull,
+    httpApi
 } from './common'
-import Vue from 'vue'
 
 export function getDevices (options) {
     return new Promise((resolve, reject) => {
@@ -67,15 +67,15 @@ export function getDeviceList (options) {
 
 export function createDevice (deviceData) {
     return new Promise((resolve, reject) => {
-        Vue.http.post('api/pbxdevices/', {
+        httpApi.post('api/pbxdevices/', {
             station_name: deviceData.stationName,
             identifier: deviceData.identifier,
             profile_id: deviceData.profile
         }).then((res) => {
             resolve(res)
         }).catch((err) => {
-            if (err.status >= 400) {
-                reject(new Error(err.body.message))
+            if (err.response.status >= 400) {
+                reject(new Error(err.response.data.message))
             } else {
                 reject(err)
             }
@@ -85,11 +85,11 @@ export function createDevice (deviceData) {
 
 export function removeDevice (id) {
     return new Promise((resolve, reject) => {
-        Vue.http.delete('api/pbxdevices/' + id).then(() => {
+        httpApi.delete('api/pbxdevices/' + id).then(() => {
             resolve()
         }).catch((err) => {
-            if (err.status >= 400) {
-                reject(new Error(err.body.message))
+            if (err.response.status >= 400) {
+                reject(new Error(err.response.data.message))
             } else {
                 reject(err)
             }

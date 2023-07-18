@@ -5,7 +5,6 @@
         <q-list
             v-if="!gridView"
             v-bind="$attrs"
-            v-on="$listeners"
         >
             <slot />
         </q-list>
@@ -18,7 +17,6 @@
             >
                 <q-list
                     v-bind="$attrs"
-                    v-on="$listeners"
                 >
                     <slot
                         name="grid-column-1"
@@ -30,7 +28,6 @@
             >
                 <q-list
                     v-bind="$attrs"
-                    v-on="$listeners"
                 >
                     <slot
                         name="grid-column-2"

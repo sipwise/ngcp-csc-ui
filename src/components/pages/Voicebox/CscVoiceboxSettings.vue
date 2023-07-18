@@ -9,22 +9,22 @@
                     :disable="pinRequesting"
                     :label="$t('Change PIN')"
                     data-cy="voicebox-change-pin"
-                    :error="$v.changes.pin.$error"
+                    :error="v$.changes.pin.$errors.length > 0"
                     :error-message="pinErrorMessage"
                     @keyup.enter="updatePin"
-                    @input="$v.changes.pin.$touch"
-                    @blur="$v.changes.pin.$touch"
+                    @update:model-value="v$.changes.pin.$touch()"
+                    @blur="v$.changes.pin.$touch"
                 >
                     <template
-                        v-slot:prepend
+                        #prepend
                     >
                         <q-icon
                             name="lock"
                         />
                     </template>
                     <template
-                        v-if="changes.pin !== pin && !$v.changes.pin.$error"
-                        v-slot:append
+                        v-if="changes.pin !== pin && v$.changes.pin.$errors.length <= 0"
+                        #append
                     >
                         <q-btn
                             icon="check"
@@ -48,22 +48,22 @@
                     :disable="emailRequesting"
                     :label="$t('Change Email')"
                     data-cy="voicebox-change-email"
-                    :error="$v.changes.email.$error"
+                    :error="v$.changes.email.$errors.length > 0"
                     :error-message="emailErrorMessage"
                     @keyup.enter="updateEmail"
-                    @input="$v.changes.email.$touch"
-                    @blur="$v.changes.email.$touch"
+                    @update:model-value="v$.changes.email.$touch()"
+                    @blur="v$.changes.email.$touch"
                 >
                     <template
-                        v-slot:prepend
+                        #prepend
                     >
                         <q-icon
                             name="email"
                         />
                     </template>
                     <template
-                        v-if="changes.email !== email && !$v.changes.email.$error"
-                        v-slot:append
+                        v-if="changes.email !== email && v$.changes.email.$errors.length <= 0"
+                        #append
                     >
                         <q-btn
                             icon="check"
@@ -89,7 +89,7 @@
                     :label="attachLabel"
                     checked-icon="attach_file"
                     unchecked-icon="attach_file"
-                    @input="toggleAttach"
+                    @update:model-value="toggleAttach"
                 />
             </q-item-section>
         </q-item>
@@ -103,7 +103,7 @@
                     :label="deleteLabel"
                     checked-icon="delete"
                     unchecked-icon="delete"
-                    @input="toggleDelete"
+                    @update:model-value="toggleDelete"
                 />
             </q-item-section>
         </q-item>
@@ -118,8 +118,8 @@ import {
     maxLength,
     numeric,
     email
-} from 'vuelidate/lib/validators'
-
+} from '@vuelidate/validators'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscVoiceboxSettings',
     props: {
@@ -166,7 +166,8 @@ export default {
     },
     data () {
         return {
-            changes: this.getSettings()
+            changes: this.getSettings(),
+            v$: useValidate()
         }
     },
     validations: {
@@ -182,12 +183,13 @@ export default {
     },
     computed: {
         pinErrorMessage () {
-            if (!this.$v.changes.pin.maxLength) {
+            const errorsTab = this.v$.changes.pin.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('PIN'),
-                    maxLength: this.$v.changes.pin.$params.maxLength.max
+                    maxLength: this.v$.changes.pin.maxLength.$params.max
                 })
-            } else if (!this.$v.changes.pin.numeric) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('PIN')
                 })
@@ -210,7 +212,7 @@ export default {
         pinButtons () {
             const buttons = []
             const self = this
-            if (this.pinHasChanged && this.$v.changes.pin.$error) {
+            if (this.pinHasChanged && this.v$.changes.pin.$errors.lenght > 0) {
                 buttons.push({
                     icon: 'clear',
                     error: true,
@@ -243,7 +245,7 @@ export default {
         emailButtons () {
             const buttons = []
             const self = this
-            if (this.emailHasChanged && this.$v.changes.email.$error) {
+            if (this.emailHasChanged && this.v$.changes.email.$errors.length > 0) {
                 buttons.push({
                     icon: 'clear',
                     error: true,
@@ -325,14 +327,14 @@ export default {
             this.$store.dispatch('voicebox/toggleAttach')
         },
         updatePin () {
-            if (this.pinHasChanged && !this.$v.changes.pin.$error) {
+            if (this.pinHasChanged && this.v$.changes.pin.$errors.length <= 0) {
                 this.$store.dispatch('voicebox/updatePin', this.changes.pin)
             } else {
                 showGlobalError(this.$t('Input a valid PIN'))
             }
         },
         updateEmail () {
-            if (this.emailHasChanged && !this.$v.changes.email.$error) {
+            if (this.emailHasChanged && this.v$.changes.email.$errors.length <= 0) {
                 this.$store.dispatch('voicebox/updateEmail', this.changes.email)
             } else {
                 showGlobalError(this.$t('Input a valid email address'))
@@ -342,5 +344,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

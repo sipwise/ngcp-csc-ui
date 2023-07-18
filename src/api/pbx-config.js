@@ -1,6 +1,5 @@
 
 import _ from 'lodash'
-import Vue from 'vue'
 import {
     getSubscribers
 } from './subscriber'
@@ -11,7 +10,8 @@ import {
     getList,
     get,
     patchAdd,
-    patchRemove
+    patchRemove,
+    httpApi
 } from './common'
 
 export const createId = v4
@@ -77,7 +77,7 @@ export function getModel (id) {
 
 export async function getModelImage (id, type) {
     try {
-        const res = await Vue.http.get('api/pbxdevicemodelimages/' + id, {
+        const res = await httpApi.get('api/pbxdevicemodelimages/' + id, {
             responseType: 'blob',
             params: {
                 type: type
@@ -85,8 +85,8 @@ export async function getModelImage (id, type) {
         })
         return {
             id: id,
-            url: URL.createObjectURL(res.body),
-            blob: res.body
+            url: URL.createObjectURL(res.data),
+            blob: res.data
         }
     } catch (err) {
         return {
@@ -122,7 +122,7 @@ export function getAllSoundSets (options) {
 }
 
 export function removeSoundSet (id) {
-    return Vue.http.delete('api/soundsets/' + id)
+    return httpApi.delete('api/soundsets/' + id)
 }
 
 export function getSoundSet (id) {
@@ -144,7 +144,7 @@ export function editSoundSetFields (id, fields) {
         }).then((result) => {
             const prefs = Object.assign(result, fields)
             delete fields._links
-            return Vue.http.put('api/soundsets/' + id, prefs)
+            return httpApi.put('api/soundsets/' + id, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -155,7 +155,7 @@ export function editSoundSetFields (id, fields) {
 
 export function createSoundSet (soundSet) {
     return new Promise((resolve, reject) => {
-        Vue.http.post('api/soundsets/', soundSet).then(() => {
+        httpApi.post('api/soundsets/', soundSet).then(() => {
             resolve()
         }).catch((err) => {
             reject(err)
@@ -174,9 +174,9 @@ export function setSoundSetDescription (id, value) {
 export function playSoundFile (options) {
     return new Promise((resolve, reject) => {
         const params = { format: options.format }
-        Vue.http.get(`api/soundfilerecordings/${options.id}`, { params: params, responseType: 'blob' })
+        httpApi.get(`api/soundfilerecordings/${options.id}`, { params: params, responseType: 'blob' })
             .then((res) => {
-                resolve(URL.createObjectURL(res.body))
+                resolve(URL.createObjectURL(res.data))
             }).catch((err) => {
                 reject(err)
             })
@@ -194,16 +194,12 @@ export function uploadSoundFile (options, onProgress) {
             handle: options.item.handle
         }
         const json = JSON.stringify(fields)
-        const requestKey = `previous-${options.item.handle}-request`
         formData.append('json', json)
         if (options.file) {
             formData.append('soundfile', options.file)
         }
-        Vue.http.post('api/soundfiles/', formData, {
-            before (request) {
-                Vue[requestKey] = request
-            },
-            progress (e) {
+        httpApi.post('api/soundfiles/', formData, {
+            onUploadProgress (e) {
                 if (e.lengthComputable) {
                     onProgress(Math.ceil((e.loaded / e.total) * 100))
                 }

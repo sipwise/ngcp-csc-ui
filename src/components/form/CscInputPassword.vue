@@ -4,10 +4,10 @@
         :value="$attrs.value"
         :type="inputType"
         v-bind="$attrs"
-        v-on="$listeners"
+        @input="$emit('update:modelValue', $event)"
     >
         <template
-            slot="prepend"
+            #prepend
         >
             <slot
                 name="prepend"
@@ -17,7 +17,7 @@
             />
         </template>
         <template
-            v-slot:append
+            #append
         >
             <q-btn
                 v-if="$attrs.value !== ''"
@@ -89,6 +89,7 @@ export default {
             default: true
         }
     },
+    emits: ['generated', 'update:modelValue'],
     data () {
         return {
             visible: false
@@ -122,7 +123,7 @@ export default {
                 exclude: this.generateExclude,
                 strict: this.generateStrict
             })
-            this.$emit('input', pass)
+            this.$emit('update:modelValue', pass)
             this.$emit('generated', pass)
         },
         toggleVisibility () {

@@ -1,8 +1,7 @@
 <template>
     <q-dialog
-        :value="value"
+        ref="faxDialog"
         v-bind="$attrs"
-        v-on="$listeners"
     >
         <q-card
             style="min-width: 50%"
@@ -14,7 +13,6 @@
             </q-card-section>
             <q-card-section>
                 <csc-call-input
-                    v-if="value"
                     v-model="form.destination"
                     :label="$t('Destination Number')"
                     data-cy="sendfax-destinationnumber"
@@ -35,10 +33,10 @@
                     type="text"
                     :label="$t('Page Header')"
                     data-cy="sendfax-pageheader"
-                    :error="$v.form.pageHeader.$error"
+                    :error="v$.form.pageHeader.$errors.length > 0"
                     :error-message="pageHeaderErrorMessage"
-                    @input="$v.form.pageHeader.$touch"
-                    @blur="$v.form.pageHeader.$touch"
+                    @update:model-value="v$.form.pageHeader.$touch()"
+                    @blur="v$.form.pageHeader.$touch()"
                 />
                 <q-input
                     v-model="form.data"
@@ -48,15 +46,15 @@
                     :min-rows="10"
                     :label="$t('Content')"
                     data-cy="sendfax-content"
-                    :error="$v.form.data.$error"
+                    :error="v$.form.data.$errors.length > 0"
                     :error-message="dataErrorMessage"
-                    @input="$v.form.data.$touch"
-                    @blur="$v.form.data.$touch"
+                    @update:model-value="v$.form.data.$touch()"
+                    @blur="v$.form.data.$touch()"
                 />
                 <csc-input-file
                     accept=".pdf,.tif,.tiff,.txt,.ps"
-                    @file-selected="toggleFileSelected"
                     data-cy="sendfax-fileinput"
+                    @file-selected="toggleFileSelected"
                 />
             </q-card-section>
             <q-card-actions>
@@ -67,7 +65,7 @@
                     color="default"
                     :label="$t('Cancel')"
                     data-cy="sendfax-cancel"
-                    @click="resetFormData"
+                    @click="hide"
                 />
                 <q-btn
                     flat
@@ -92,8 +90,9 @@ import {
     required,
     requiredUnless,
     maxLength
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import CscInputFile from 'components/form/CscInputFile'
+import useValidate from '@vuelidate/core'
 
 export default {
     name: 'CscSendFax',
@@ -101,17 +100,18 @@ export default {
         CscInputFile,
         CscCallInput
     },
-    props: {
-        value: {
-            type: Boolean,
-            default: false
-        }
-    },
     data () {
         return {
-            form: {},
+            form: {
+                destination: '',
+                pageHeader: null,
+                data: null,
+                quality: this.$faxQualityOptionsDefault.value,
+                faxfile: null
+            },
             isMobile: this.$q.platform.is.mobile,
-            destinationError: false
+            destinationError: false,
+            v$: useValidate()
         }
     },
     validations: {
@@ -138,29 +138,30 @@ export default {
             return (this.form.data && this.form.data.length > 0) || this.form.faxfile
         },
         formDisabled () {
-            return !this.$v.form.$anyDirty ||
+            return !this.v$.form.$anyDirty ||
                 !this.form.pageHeader ||
                 !this.form.destination ||
                 this.destinationError ||
-                this.$v.form.pageHeader.$error ||
+                this.v$.form.pageHeader.$errors.length > 0 ||
                 !this.hasContentToSend
         },
         pageHeaderErrorMessage () {
             return this.$t('{field} must have at most {maxLength} letters', {
                 field: this.$t('Page Header'),
-                maxLength: this.$v.form.pageHeader.$params.maxLength.max
+                maxLength: this.v$.form.pageHeader.maxLength.$params.max
             })
         },
         dataErrorMessage () {
-            if (!this.$v.form.data.required) {
+            const errorsTab = this.v$.form.data.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{fieldOne} or {fieldTwo} is required', {
                     fieldOne: this.$t('Content'),
                     fieldTwo: this.$t('File')
                 })
-            } else if (!this.$v.form.data.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Content'),
-                    maxLength: this.$v.form.data.$params.maxLength.max
+                    maxLength: this.v$.form.data.maxLength.$params.max
                 })
             } else {
                 return ''
@@ -181,7 +182,7 @@ export default {
             this.form.faxfile = value
         },
         sendFax () {
-            if (this.$v.form.$error ||
+            if (this.v$.form.$errors.length > 0 ||
                 this.destinationError) {
                 showGlobalError(this.$t('You have invalid form input. Please check and try again.'))
             } else {
@@ -200,48 +201,54 @@ export default {
                 quality: this.$faxQualityOptionsDefault.value,
                 faxfile: null
             }
-            this.$v.$reset()
+            this.v$.$reset()
+        },
+        show () {
+            this.$refs.faxDialog.show()
+        },
+        hide () {
+            this.resetFormData()
+            this.$refs.faxDialog.hide()
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    #fax-modal
-        .modal-content
-            min-width 40vw
-            padding 20px 15px
+<style lang="sass" rel="stylesheet/sass">
+#fax-modal
+    .modal-content
+        min-width: 40vw
+        padding: 20px 15px
 
-        .title
-            line-height $csc-subtitle-line-height
-            font-size $csc-subtitle-font-size
-            font-weight $csc-subtitle-font-weight
-    .upload-field
-        margin-bottom 10px
+    .title
+        line-height: $csc-subtitle-line-height
+        font-size: $csc-subtitle-font-size
+.upload-field
+    margin-bottom: 10px
 
-        .upload-label
-            display block
-            font-size 16px
-            margin-bottom 5px
+    .upload-label
+        display: block
+        font-size: 16px
+        margin-bottom: 5px
 
-        .upload-button
-            color black
+    .upload-button
+        color: black
 
-        .reset-button
-            padding 0
+    .reset-button
+        padding: 0
 
-            .q-icon
-                margin 0
+        .q-icon
+            margin: 0
 
-        .upload-filename
-            color black
+    .upload-filename
+        color: black
 
-    #fax-file-upload
-        display none
+#fax-file-upload
+    display: none
 
-    #csc-error-label
-        font-size 12px
-        color $negative
-        margin -15px 0 10px 0
+#csc-error-label
+    font-size: 12px
+    color: $negative
+    margin: -15px 0 10px 0
 
 </style>

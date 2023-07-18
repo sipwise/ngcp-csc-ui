@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import {
     getPreferences,
     getPreferencesDefs,
@@ -18,7 +17,7 @@ export default {
             return parseInt(rootGetters['user/getSubscriberId'])
         },
         musicOnHold (state) {
-            return state.subscriberPreferences.music_on_hold
+            return state.subscriberPreferences?.music_on_hold
         },
         language (state) {
             return state.subscriberPreferences.language
@@ -40,7 +39,7 @@ export default {
             state.subscriberPreferencesInitialized = true
         },
         subscriberPreferencesUpdate (state, { field, value }) {
-            Vue.set(state.subscriberPreferences, field, value)
+            state.subscriberPreferences[field] = value
         },
         preferencesDefsSucceeded (state, res) {
             state.preferencesDefs = res

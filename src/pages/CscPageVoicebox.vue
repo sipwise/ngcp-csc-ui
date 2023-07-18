@@ -59,14 +59,14 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        v-model="formData.attach"
+                        :model-value="formData.attach"
                         :loading="attachLoading"
                         :disable="attachLoading"
                         :label="attachLabel"
                         data-cy="voicebox-attach-file"
                         checked-icon="attach_file"
                         unchecked-icon="attach_file"
-                        @input="attachToggleAction(!attachValue)"
+                        @update:model-value="attachToggleAction(!attachValue)"
                     />
                 </q-item-section>
                 <q-item-section
@@ -81,14 +81,14 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        v-model="formData.delete"
+                        :model-value="formData.delete"
                         :loading="deleteLoading"
                         :disable="deleteLoading || !attachValue"
                         :label="deleteLabel"
                         data-cy="voicebox-delete-file"
                         checked-icon="delete"
                         unchecked-icon="delete"
-                        @input="deleteToggleAction(!deleteValue)"
+                        @update:model-value="deleteToggleAction(!deleteValue)"
                     />
                 </q-item-section>
                 <q-item-section
@@ -168,10 +168,11 @@ import {
     email,
     maxLength,
     numeric
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import CscSpinner from 'components/CscSpinner'
 import CscVoiceboxLanguage from 'components/CscVoiceboxLanguage'
 import { mapWaitingActions } from 'vue-wait'
+import useValidate from '@vuelidate/core'
 export default {
     components: {
         CscVoiceboxLanguage,
@@ -188,7 +189,8 @@ export default {
                 attach: this.attachValue,
                 delete: this.deleteValue
             },
-            platform: this.$q.platform.is
+            platform: this.$q.platform.is,
+            v$: useValidate()
         }
     },
     validations: {
@@ -256,15 +258,16 @@ export default {
             return this.pinValue !== this.formData.pin
         },
         pinHasError () {
-            return this.$v.formData.pin.$error || this.pinUpdateFailed
+            return this.v$.formData.pin.$errors.length > 0 || this.pinUpdateFailed
         },
         pinErrorMessage () {
-            if (!this.$v.formData.pin.maxLength) {
+            const errorsTab = this.v$.formData.pin.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('PIN'),
-                    maxLength: this.$v.formData.pin.$params.maxLength.max
+                    maxLength: this.v$.formData.pin.maxLength.$params.max
                 })
-            } else if (!this.$v.formData.pin.numeric) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('PIN')
                 })
@@ -278,10 +281,11 @@ export default {
             return this.emailValue !== this.formData.email
         },
         emailHasError () {
-            return this.$v.formData.email.$error || this.emailUpdateFailed
+            return this.v$.formData.email.$errors.length > 0 || this.emailUpdateFailed
         },
         emailErrorMessage () {
-            if (!this.$v.formData.email.email) {
+            const errorsTab = this.v$.formData.email.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'email') {
                 return this.$t('Input a valid email address')
             } else if (this.emailUpdateFailed) {
                 return this.emailUpdateError
@@ -360,28 +364,28 @@ export default {
         },
         pinInput () {
             this.pinInitialize()
-            this.$v.formData.pin.$touch()
+            this.v$.formData.pin.$touch()
         },
         pinUndo (oldPin) {
             this.formData.pin = oldPin
             this.pinInitialize()
         },
         pinUpdate (newPin) {
-            this.$v.formData.pin.$touch()
+            this.v$.formData.pin.$touch()
             if (this.pinHasChanged && !this.pinHasError) {
                 this.pinUpdateAction(newPin)
             }
         },
         emailInput () {
             this.emailInitialize()
-            this.$v.formData.email.$touch()
+            this.v$.formData.email.$touch()
         },
         emailUndo (oldEmail) {
             this.emailInitialize()
             this.formData.email = oldEmail
         },
         emailUpdate (newEmail) {
-            this.$v.formData.email.$touch()
+            this.v$.formData.email.$touch()
             if (this.emailHasChanged && !this.emailHasError) {
                 this.emailUpdateAction(newEmail)
             }

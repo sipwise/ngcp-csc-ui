@@ -1,9 +1,12 @@
-import VueWait from 'vue-wait'
+import { createVueWait } from 'vue-wait'
 
-export default ({ Vue, app, store }) => {
-    Vue.use(VueWait)
-    app.wait = new VueWait({
-        useVuex: true,
-        registerDirective: true
-    })
+export default ({ app }) => {
+    app.config.globalProperties.$initWait = () => {
+        const VueWait = createVueWait({
+            useVuex: true,
+            vuexModuleName: 'wait',
+            registerDirective: true
+        })
+        app.use(VueWait)
+    }
 }

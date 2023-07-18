@@ -1,6 +1,4 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import _ from 'lodash'
+import { createStore } from 'vuex'
 import { date } from 'quasar'
 
 import CallBlockingModule from './call-blocking'
@@ -29,8 +27,6 @@ import DashboardModule from './dashboard'
 
 import { INTERNAL_DATE_FORMAT_SLASH, INTERNAL_DATE_FORMAT_DASH, INTERNAL_DATE_FORMAT_DASH_HOUR } from 'src/constants'
 
-Vue.use(Vuex)
-
 /*
  * If not building with SSR mode, you can
  * directly export the Store instantiation;
@@ -41,7 +37,7 @@ Vue.use(Vuex)
  */
 
 export default function (/* { ssrContext } */) {
-    const Store = new Vuex.Store({
+    const Store = createStore({
         modules: {
             callBlocking: CallBlockingModule,
             callRecordings: CallRecordingsModule,
@@ -69,29 +65,6 @@ export default function (/* { ssrContext } */) {
             route: null
         },
         getters: {
-            conferenceId (state) {
-                return _.get(state, 'route.params.id', null)
-            },
-            conferenceUrl (state) {
-                // eslint-disable-next-line no-unused-vars
-                const id = _.get(state, 'route.params.id', null)
-                return window.location.href
-            },
-            hasConferenceId (state, getters) {
-                return getters.conferenceId !== null && getters.conferenceId !== undefined
-            },
-            isCallForward (state) {
-                return _.startsWith(_.get(state, 'route.path', ''), '/user/call-forward')
-            },
-            isCallBlocking (state) {
-                return _.startsWith(_.get(state, 'route.path', ''), '/user/call-blocking')
-            },
-            isPbxConfiguration (state) {
-                return _.startsWith(_.get(state, 'route.path', ''), '/user/pbx-configuration')
-            },
-            isHome (state) {
-                return _.get(state, 'route.path', '') === '/user/home'
-            },
             getCurrentFormattedDateWithDash () {
                 const currentDate = Date.now()
                 return date.formatDate(currentDate, INTERNAL_DATE_FORMAT_DASH)

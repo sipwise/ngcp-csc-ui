@@ -18,7 +18,7 @@
                         :label="clirIntrapbx ? $t('Your number is hidden to the callee within own PBX') : $t('Your number is visible to the callee within own PBX')"
                         checked-icon="visibility_off"
                         unchecked-icon="visibility"
-                        @input="changeIntraPbx"
+                        @update:model-value="changeIntraPbx"
                     />
                 </q-item-section>
                 <q-item-section

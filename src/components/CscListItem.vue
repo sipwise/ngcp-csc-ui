@@ -111,6 +111,7 @@ export default {
             default: true
         }
     },
+    emits: ['toggle'],
     data () {
         return {
             moreMenu: false
@@ -139,64 +140,65 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-list-item-title-value,
-    .csc-list-item-title-keyword
-        margin-right $flex-gutter-xs
-        font-weight bold
-        vertical-align middle
-    .csc-list-item.csc-list-item-background
-        .csc-list-item-head
-            background-color $item-stripe-color
-    .csc-list-item
-        position relative
-        .csc-list-item-head
-            cursor pointer
-            padding $flex-gutter-sm
-            .csc-list-item-head-icon
-                padding 0
-                padding-right $flex-gutter-xs
-                padding-left $flex-gutter-xs
-            .csc-list-item-head-image
-                width 32px
-                height 32px
-                position relative
-                overflow hidden
-                img
-                    position absolute
-                    width 100%
-            .csc-list-item-head-title
-                padding-left $flex-gutter-sm
-                .csc-list-item-title
-                    font-size 1rem
-                    vertical-align middle
-                .csc-list-item-subtitle
-                    margin-top 0.2 rem
-                    font-size 90%
-                    vertical-align middle
-            .csc-list-item-head-menu
-                .q-btn
-                    padding 0
-                    padding-left $flex-gutter-xs
-                    padding-right $flex-gutter-xs
-                    .q-btn-inner
-                        i
-                            margin 0
-        .csc-list-item-body
-            background-color $item-highlight-color
-            .csc-list-item-body-content
-                padding $flex-gutter-md
-    .csc-list-item.csc-list-item-expanded
-        .csc-list-item-head
-            background-color $item-highlight-color
-            .csc-list-item-head-icon
-                color $primary
-            .csc-list-item-head-title
-                .csc-list-item-title
-                    color $primary
-        .csc-list-item-body
-            background-color $item-highlight-color
-            .csc-list-item-body-content
-                padding $flex-gutter-md
-                padding-top $flex-gutter-sm
+<style lang="sass" rel="stylesheet/sass">
+
+.csc-list-item-title-value,
+.csc-list-item-title-keyword
+    margin-right: $flex-gutter-xs
+    font-weight: bold
+    vertical-align: middle
+.csc-list-item.csc-list-item-background
+    .csc-list-item-head
+        background-color: $item-stripe-color
+.csc-list-item
+    position: relative
+    .csc-list-item-head
+        cursor: pointer
+        padding: $flex-gutter-sm
+        .csc-list-item-head-icon
+            padding: 0
+            padding-right: $flex-gutter-xs
+            padding-left: $flex-gutter-xs
+        .csc-list-item-head-image
+            width: 32px
+            height: 32px
+            position: relative
+            overflow: hidden
+            img
+                position: absolute
+                width: 100%
+        .csc-list-item-head-title
+            padding-left: $flex-gutter-sm
+            .csc-list-item-title
+                font-size: 1rem
+                vertical-align: middle
+            .csc-list-item-subtitle
+                margin-top: 0.2 rem
+                font-size: 90%
+                vertical-align: middle
+        .csc-list-item-head-menu
+            .q-btn
+                padding: 0
+                padding-left: $flex-gutter-xs
+                padding-right: $flex-gutter-xs
+                .q-btn-inner
+                    i
+                        margin: 0
+    .csc-list-item-body
+        background-color: $item-highlight-color
+        .csc-list-item-body-content
+            padding: $flex-gutter-md
+.csc-list-item.csc-list-item-expanded
+    .csc-list-item-head
+        background-color: $item-highlight-color
+        .csc-list-item-head-icon
+            color: $primary
+        .csc-list-item-head-title
+            .csc-list-item-title
+                color: $primary
+    .csc-list-item-body
+        background-color: $item-highlight-color
+        .csc-list-item-body-content
+            padding: $flex-gutter-md
+            padding-top: $flex-gutter-sm
 </style>

@@ -11,11 +11,11 @@
                     <q-toggle
                         :disable="isReminderLoading"
                         :label="toggleLabel"
-                        :value="isReminderActive"
+                        :model-value="isReminderActive"
                         data-cy="csc-reminder-toggle"
                         checked-icon="notifications_active"
                         unchecked-icon="notifications_off"
-                        @input="toggleReminder"
+                        @update:model-value="toggleReminder"
                     />
                 </q-item-section>
                 <q-item-section
@@ -35,11 +35,11 @@
                         <q-radio
                             v-for="(recurrenceOption, index) in recurrenceOptions"
                             :key="index"
-                            :value="reminderRecurrence"
+                            :model-value="reminderRecurrence"
                             :val="recurrenceOption.value"
                             :label="recurrenceOption.label"
-                            data-cy="csc-reminder-occurance"  
-                            @input="updateRecurrence"
+                            data-cy="csc-reminder-occurance"
+                            @update:model-value="updateRecurrence"
                         />
                     </div>
                 </q-item-section>
@@ -47,7 +47,7 @@
             <q-item>
                 <q-item-section>
                     <q-input
-                        :value="reminderTime"
+                        :model-value="reminderTime"
                         :loading="isReminderLoading"
                         data-cy="csc-reminder-time"
                         fill-mask="_"
@@ -56,14 +56,14 @@
                         @focus="$refs.timePopup.show()"
                     >
                         <template
-                            v-slot:loading
+                            #loading
                         >
                             <q-spinner-dots
                                 color="primary"
                             />
                         </template>
                         <template
-                            v-slot:prepend
+                            #prepend
                         >
                             <q-btn
                                 icon="access_alarm"
@@ -75,13 +75,13 @@
                                     ref="timePopup"
                                 >
                                     <q-time
-                                        :value="reminderTime"
+                                        :model-value="reminderTime"
                                         format24h
                                         now-btn
                                         flat
                                         mask="HH:mm"
                                         color="primary"
-                                        @input="timeUpdate"
+                                        @update:model-value="timeUpdate"
                                     />
                                 </q-popup-proxy>
                             </q-btn>

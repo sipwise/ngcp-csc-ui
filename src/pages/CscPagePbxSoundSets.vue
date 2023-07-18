@@ -6,14 +6,17 @@
         <csc-list-actions
             class="row justify-center q-mb-xs"
         >
-            <csc-list-action-button
+            <template
                 v-if="!isSoundSetAddFormEnabled"
-                slot="slot1"
-                icon="add"
-                color="primary"
-                :label="$t('Add Sound Set')"
-                @click="enableSoundSetAddForm"
-            />
+                #slot1
+            >
+                <csc-list-action-button
+                    icon="add"
+                    color="primary"
+                    :label="$t('Add Sound Set')"
+                    @click="enableSoundSetAddForm"
+                />
+            </template>
         </csc-list-actions>
         <q-separator />
         <q-slide-transition>
@@ -192,7 +195,7 @@ export default {
         },
         openSoundSetRemovalDialog (soundSetId) {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
             }
             this.soundSetRemovalRequesting(soundSetId)
         },

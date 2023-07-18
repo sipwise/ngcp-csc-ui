@@ -28,14 +28,14 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
     .csc-alert-info
-        background-color $info
-        padding  $flex-gutter-md
-        margin-bottom $flex-gutter-lg
+        background-color: $info
+        padding:  $flex-gutter-md
+        margin-bottom: $flex-gutter-lg
         .csc-alert-icon
-            text-align left
+            text-align: left
         .csc-alert-info-text
-            line-height 1.4em
-            color $white
+            line-height: 1.4em
+            color: $white
 </style>

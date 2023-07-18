@@ -19,7 +19,7 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        :value="mailToFaxSettingsModel.active"
+                        :model-value="mailToFaxSettingsModel.active"
                         :label="$t('Active')"
                         :disable="true"
                     />
@@ -60,7 +60,7 @@
                         :readonly="!dataLoaded"
                         :label="$t('Secret Key Renew')"
                         :options="secretKeyRenewOptions"
-                        @input="setChangedData('secret_key_renew', mailToFaxSettingsModel.secret_key_renew)"
+                        @update:model-value="setChangedData('secret_key_renew', mailToFaxSettingsModel.secret_key_renew)"
                     >
                         <csc-tooltip>
                             {{ $t('Interval when the secret key is automatically renewed.') }}
@@ -126,7 +126,7 @@
                                 v-for="renewEmail in mailToFaxSettingsModel.secret_renew_notify"
                                 :key="renewEmail.destination"
                                 :value="renewEmail.destination"
-                                @save="updateRenewEmailItem(renewEmail.destination, ...arguments)"
+                                @save="updateRenewEmailItem(renewEmail.destination, $event)"
                                 @remove="deleteRenewEmailItem(renewEmail.destination)"
                             />
                         </q-list>
@@ -191,7 +191,7 @@
                                 :expanded="index === expandedACLId"
                                 @expand="expandedACLId = index"
                                 @collapse="expandedACLId = null"
-                                @update-property="updateACL(index, ...arguments)"
+                                @update-property="updateACL(index, $event)"
                                 @remove="deleteACL(index)"
                             />
                         </q-list>
@@ -368,6 +368,6 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="sass" rel="stylesheet/sass" scoped>
 
 </style>

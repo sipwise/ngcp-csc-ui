@@ -1,17 +1,17 @@
 <template>
-   <csc-page-sticky
+    <csc-page-sticky
         id="csc-page-pbx-sound-set-details"
         ref="pageSticky"
     >
         <template
-            v-slot:header
+            #header
         >
             <q-breadcrumbs
                 v-if="soundSetSelected"
                 class="absolute-left q-ml-md text-weight-light"
                 active-color="primary"
                 separator-color="primary"
-                >
+            >
                 <q-breadcrumbs-el
                     key="soundSets"
                     class="cursor-pointer"
@@ -37,18 +37,18 @@
             >
                 <q-input
                     v-model="changes.name"
-                    :error="$v.changes.name.$error"
+                    :error="v$.changes.name.$errors.length > 0"
                     :label="$t('Name')"
                     :disable="!soundSetSelected.customer_id || isSoundSetUpdating"
-                    @input="$v.changes.name.$touch"
+                    @update:model-value="v$.changes.name.$touch()"
                     @keyup.enter="save"
                 >
                     <template
                         v-if="hasNameChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
-                            v-if="!$v.changes.name.$error"
+                            v-if="v$.changes.name.$errors.length <= 0"
                             @click.stop="save"
                         />
                         <csc-input-button-reset
@@ -58,18 +58,18 @@
                 </q-input>
                 <q-input
                     v-model="changes.description"
-                    :error="$v.changes.description.$error"
+                    :error="v$.changes.description.$errors.length > 0"
                     :label="$t('Description')"
                     :disable="!soundSetSelected.customer_id || isSoundSetUpdating"
-                    @input="$v.changes.description.$touch"
+                    @update:model-value="v$.changes.description.$touch()"
                     @keyup.enter="save"
                 >
                     <template
                         v-if="hasDescriptionChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
-                            v-if="!$v.changes.description.$error"
+                            v-if="v$.changes.description.$errors.length <= 0"
                             @click.stop="save"
                         />
                         <csc-input-button-reset
@@ -79,8 +79,8 @@
                 </q-input>
 
                 <q-select
-                    v-model="changes.parent_id"
                     v-if="(changes.parent_id && parent) || !changes.parent_id"
+                    v-model="changes.parent_id"
                     emit-value
                     map-options
                     :disable="!soundSetSelected.customer_id || isSoundSetUpdating"
@@ -89,7 +89,7 @@
                 >
                     <template
                         v-if="hasParentChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             @click.stop="save"
@@ -101,9 +101,9 @@
                 </q-select>
                 <q-checkbox
                     :label="$t('Default sound set for all seats and groups')"
-                    :value="soundSetSelected.contract_default"
+                    :model-value="soundSetSelected.contract_default"
                     :disable="!soundSetSelected.customer_id || isSoundSetUpdating"
-                    @input="saveAsDefault"
+                    @update:model-value="saveAsDefault"
                 />
                 <csc-list-spinner
                     v-if="isSoundHandleListRequesting || isSoundFileListRequesting(soundSetSelected.id)"
@@ -115,27 +115,27 @@
                     <csc-list-item
                         v-for="(group, index) in soundHandleGroups"
                         :key="group"
-                        :odd="(index % 2) === 0"
                         ref="soundFiles"
+                        :odd="(index % 2) === 0"
                         icon="music_note"
                         :expanded="expanded[group]"
                         :show-more-menu="false"
                         @toggle="toggle(group)"
                     >
                         <template
-                            slot="title"
+                            #title
                         >
                             <csc-list-item-title>
                                 {{ group }}
                             </csc-list-item-title>
                         </template>
                         <template
-                            slot="body"
+                            #body
                         >
                             <csc-pbx-sound-set-sound
-                                v-for="(soundHandle, index) in soundHandleList[group]"
+                                v-for="(soundHandle, indexSoundHandle) in soundHandleList[group]"
                                 :key="soundHandle.id"
-                                :odd="(index % 2) === 0"
+                                :odd="(indexSoundHandle % 2) === 0"
                                 :sound-handle="soundHandle"
                                 :sound-file="soundFileMap[soundSetSelected.id + '-' + soundHandle.handle]"
                                 :sound-file-url="soundFileUrlMap[soundSetSelected.id + '-' + soundHandle.handle]"
@@ -152,9 +152,9 @@
                             />
                         </template>
                         <template
-                            slot="actions"
+                            #actions
                         >
-                             <q-btn
+                            <q-btn
                                 size="md"
                                 color="primary"
                                 round
@@ -171,7 +171,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import {
     mapState, mapGetters, mapMutations, mapActions
 } from 'vuex'
@@ -184,7 +183,7 @@ import {
 } from 'src/store/common'
 import {
     maxLength
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import CscPbxSoundSetSound from 'components/pages/PbxConfiguration/CscPbxSoundSetSound'
 import CscListSpinner from 'components/CscListSpinner'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
@@ -192,7 +191,8 @@ import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscPageSticky from 'components/CscPageSticky'
 import CscListItem from 'components/CscListItem'
 import CscListItemTitle from 'components/CscListItemTitle'
-
+import useValidate from '@vuelidate/core'
+import _ from 'lodash'
 export default {
     name: 'CscPbxSoundSet',
     components: {
@@ -204,29 +204,11 @@ export default {
         CscListItemTitle,
         CscListItem
     },
-    async mounted () {
-        this.selectSoundSet(this.$route.params.id)
-        await this.loadSoundSetResources(this.$route.params.id)
-        if (this.soundHandleGroups.length > 0) {
-            this.soundHandleGroups.map((group) => {
-                this.$set(this.expanded, group, false)
-            })
-        }
-    },
     data () {
         return {
             changes: null,
-            expanded: {}
-        }
-    },
-    validations: {
-        changes: {
-            name: {
-                maxLength: maxLength(64)
-            },
-            description: {
-                maxLength: maxLength(255)
-            }
+            expanded: {},
+            v$: useValidate()
         }
     },
     computed: {
@@ -259,7 +241,7 @@ export default {
             return this.changes.parent_id ? this.soundSetList.find((soundSet) => this.changes.parent_id === soundSet.id) : null
         },
         getParentOptions () {
-            let parentOptions = [
+            const parentOptions = [
                 {
                     label: this.$t('Unassigned'),
                     value: null
@@ -272,6 +254,7 @@ export default {
                         value: soundSet.id
                     })
                 }
+                return soundSet
             })
             return parentOptions
         },
@@ -293,9 +276,29 @@ export default {
         soundHandleGroups (state) {
             if (state.length > 0) {
                 state.map((group) => {
-                    this.$set(this.expanded, group, false)
-
+                    _.set(this.expanded, group, false)
+                    return group
                 })
+            }
+        }
+    },
+    async mounted () {
+        this.selectSoundSet(this.$route.params.id)
+        await this.loadSoundSetResources(this.$route.params.id)
+        if (this.soundHandleGroups.length > 0) {
+            this.soundHandleGroups.map((group) => {
+                _.set(this.expanded, group, false)
+                return group
+            })
+        }
+    },
+    validations: {
+        changes: {
+            name: {
+                maxLength: maxLength(64)
+            },
+            description: {
+                maxLength: maxLength(255)
             }
         }
     },
@@ -350,7 +353,7 @@ export default {
             this.removeSoundFile(options)
         },
         toggle (group) {
-            this.$set(this.expanded, group, !this.expanded[group])
+            _.set(this.expanded, group, !this.expanded[group])
         },
         save () {
             if (this.hasNameChanged) {
@@ -376,7 +379,7 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-pbx-sound-set-sound-list
-        margin-top $flex-gutter-sm
+<style lang="sass" rel="stylesheet/sass">
+.csc-pbx-sound-set-sound-list
+    margin-top: $flex-gutter-sm
 </style>

@@ -2,11 +2,9 @@ s
 <template>
     <q-input
         v-bind="$attrs"
-        :value="value"
-        :error="$v.inputValue.$error"
+        :error="v$.inputValue.$errors.length > 0"
         :error-message="errorMessage"
-        v-on="$listeners"
-        @input="$emit('input', $event)"
+        @update:model-value="$emit('input', $event)"
     />
 </template>
 
@@ -17,20 +15,17 @@ import {
 import {
     maxLength,
     required
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
+import useValidate from '@vuelidate/core'
 
 export default {
     name: 'CscCallInput',
-    props: {
-        value: {
-            type: String,
-            required: true
-        }
-    },
+    emits: ['submit', 'input', 'error'],
     data () {
         return {
             inputValue: '',
-            error: ''
+            error: '',
+            v$: useValidate()
         }
     },
     validations: {
@@ -42,16 +37,17 @@ export default {
     },
     computed: {
         errorMessage () {
-            if (!this.$v.inputValue.required) {
+            const errorsTab = this.v$.inputValue.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.label
                 })
-            } else if (!this.$v.inputValue.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.label,
-                    maxLength: this.$v.inputValue.$params.maxLength.max
+                    maxLength: this.v$.inputValue.maxLength.$params.max
                 })
-            } else if (!this.$v.inputValue.userInfo) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'userInfo') {
                 return this.$t('Input a valid phone number')
             } else {
                 return ''
@@ -71,17 +67,17 @@ export default {
             this.$emit('submit')
         },
         input () {
-            this.$v.inputValue.$touch()
-            this.error = this.$v.inputValue.$error
+            this.v$.inputValue.$touch()
+            this.error = this.v$.inputValue.$error
             this.$emit('input', this.inputValue)
         },
         blur () {
-            this.$v.inputValue.$touch()
-            this.error = this.$v.inputValue.$error
+            this.v$.inputValue.$touch()
+            this.error = this.v$.inputValue.$error
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

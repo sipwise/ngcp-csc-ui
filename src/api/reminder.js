@@ -1,14 +1,14 @@
 
 import _ from 'lodash'
-import Vue from 'vue'
 import {
     getList,
-    patchReplace
+    patchReplace,
+    httpApi
 } from './common'
 
 export function createReminder (subscriberId) {
     return new Promise((resolve, reject) => {
-        Vue.http.post('api/reminders/', {
+        httpApi.post('api/reminders/', {
             subscriber_id: subscriberId,
             time: '00:00',
             recur: 'never',

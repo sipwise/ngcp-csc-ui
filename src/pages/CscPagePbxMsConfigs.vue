@@ -6,14 +6,17 @@
         <csc-list-actions
             class="row justify-center q-mb-lg"
         >
-            <csc-list-action-button
+            <template
                 v-if="!isMsConfigAddFormEnabled"
-                slot="slot1"
-                icon="add"
-                color="primary"
-                :label="$t('Add Config')"
-                @click="enableMsConfigAddForm"
-            />
+                #slot1
+            >
+                <csc-list-action-button
+                    icon="add"
+                    color="primary"
+                    :label="$t('Add Config')"
+                    @click="enableMsConfigAddForm"
+                />
+            </template>
         </csc-list-actions>
         <div
             v-if="isMsConfigAddFormEnabled"
@@ -195,13 +198,13 @@ export default {
         ]),
         openMsConfigRemovalDialog (msConfigId) {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
             }
             this.msConfigRemovalRequesting(msConfigId)
         },
         closeMsConfigRemovalDialog () {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.close()
+                this.$refs.removeDialog.hide()
             }
             this.msConfigRemovalCanceled()
         },

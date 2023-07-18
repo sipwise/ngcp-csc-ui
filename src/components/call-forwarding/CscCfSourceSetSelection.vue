@@ -8,7 +8,6 @@
         input-debounce="300"
         v-bind="$attrs"
         @filter="filter"
-        v-on="$listeners"
     />
 </template>
 <script>

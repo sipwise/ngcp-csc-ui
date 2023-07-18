@@ -5,14 +5,14 @@
         :value="selectedTab"
     >
         <template
-            v-slot:tabs
+            #tabs
         >
             <q-breadcrumbs
                 v-if="seatSelected"
                 class="q-item absolute absolute-left text-weight-light"
                 active-color="primary"
                 separator-color="primary"
-                >
+            >
                 <q-breadcrumbs-el
                     key="seats"
                     class="cursor-pointer"
@@ -28,8 +28,8 @@
 
             <q-tab
                 v-for="tab in tabs"
-                class="d-flex justify-content-center"
                 :key="tab.value"
+                class="d-flex justify-content-center"
                 :name="tab.value"
                 :icon="tab.icon"
                 :label="tab.label"
@@ -39,10 +39,9 @@
         </template>
 
         <q-item
-            class="col col-xs-12 col-md-6"
             v-if="selectedTab === 'preferences'"
+            class="col col-xs-12 col-md-6"
         >
-
             <q-list
                 v-if="changes"
                 class="col col-xs-12 col-md-6"
@@ -58,17 +57,17 @@
                     v-model="changes.displayName"
                     :label="$t('Display Name')"
                     :disable="isLoading"
-                    :error="$v.changes.displayName.$error"
+                    :error="v$.changes.displayName.$errors.length > 0"
                     :error-message="seatDisplayNameErrorMessage"
-                    @input="$v.changes.displayName.$touch"
+                    @update:model-value="v$.changes.displayName.$touch()"
                     @keyup.enter="save"
                 >
                     <template
                         v-if="hasDisplayNameChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
-                            v-if="!$v.changes.displayName.$error"
+                            v-if="v$.changes.displayName.$errors.length <= 0"
                             @click.stop="save"
                         />
                         <csc-input-button-reset
@@ -80,23 +79,23 @@
                     readonly
                     disable
                     :label="$t('SIP Username')"
-                    :value="changes.sipUsername"
+                    :model-value="changes.sipUsername"
                 />
                 <q-input
                     v-model="changes.webUsername"
                     :label="$t('Web Username')"
                     :disable="isLoading"
-                    :error="$v.changes.webUsername.$error"
+                    :error="v$.changes.webUsername.$errors.length > 0"
                     :error-message="seatWebUsernameErrorMessage"
-                    @input="$v.changes.webUsername.$touch"
+                    @update:model-value="v$.changes.webUsername.$touch()"
                     @keyup.enter="save"
                 >
                     <template
                         v-if="hasWebUsernameChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
-                            v-if="!$v.changes.webUsername.$error"
+                            v-if="v$.changes.webUsername.$errors.length <= 0"
                             @click.stop="save"
                         />
                         <csc-input-button-reset
@@ -107,20 +106,20 @@
                 <q-input
                     v-model="changes.extension"
                     hide-hint
-                    :error="$v.changes.extension.$error"
+                    :error="v$.changes.extension.$errors.length > 0"
                     :error-message="extensionErrorMessage"
                     :label="$t('Extension')"
                     :hint="getExtensionHint"
                     :disable="isLoading"
                     @keyup.enter="save"
-                    @input="$v.changes.extension.$touch"
+                    @update:model-value="v$.changes.extension.$touch()"
                 >
                     <template
                         v-if="hasExtensionChanged"
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
-                            v-if="!$v.changes.webUsername.$error"
+                            v-if="v$.changes.webUsername.$errors.length <= 0"
                             @click.stop="save"
                         />
                         <csc-input-button-reset
@@ -132,7 +131,7 @@
                     readonly
                     disable
                     :label="$t('Primary Number')"
-                    :value="getPrimaryNumber"
+                    :model-value="getPrimaryNumber"
                 />
                 <q-select
                     v-model="changes.aliasNumbers"
@@ -145,7 +144,7 @@
                     :label="$t('Alias Numbers')"
                 >
                     <template
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             v-if="hasAliasNumbersChanged"
@@ -166,7 +165,7 @@
                     :label="$t('CLI')"
                 >
                     <template
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             v-if="hasCliNumberChanged"
@@ -189,7 +188,7 @@
                     :label="$t('Groups')"
                 >
                     <template
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             v-if="hasGroupsChanged"
@@ -211,7 +210,7 @@
                     :label="$t('Sound Set')"
                 >
                     <template
-                        v-slot:append
+                        #append
                     >
                         <csc-input-button-save
                             v-if="hasSoundSetChanged"
@@ -224,7 +223,7 @@
                     </template>
                 </q-select>
                 <q-select
-                v-model="changes.ncos"
+                    v-model="changes.ncos"
                     use-chips
                     radio
                     emit-value
@@ -233,8 +232,8 @@
                     :options="ncosOptions"
                     :label="$t('Ncos')"
                 >
-                <template
-                        v-slot:append
+                    <template
+                        #append
                     >
                         <csc-input-button-save
                             v-if="hasNcosChanged"
@@ -247,7 +246,7 @@
                     </template>
                 </q-select>
                 <q-select
-                v-model="changes.ncosSet"
+                    v-model="changes.ncosSet"
                     use-chips
                     radio
                     emit-value
@@ -256,8 +255,8 @@
                     :options="ncosSetOptions"
                     :label="$t('Ncos Set')"
                 >
-                <template
-                        v-slot:append
+                    <template
+                        #append
                     >
                         <csc-input-button-save
                             v-if="hasNcosSetChanged"
@@ -274,7 +273,7 @@
                     class="q-pa-sm"
                     :label="$t('Hide number within own PBX')"
                     :disable="isLoading"
-                    @input="changeIntraPbx"
+                    @update:model-value="changeIntraPbx"
                 />
                 <q-btn
                     v-if="hasCallQueue(seatSelected.id)"
@@ -290,15 +289,15 @@
                     class="q-pa-sm"
                     :label="$t('Music on hold')"
                     :disable="isLoading"
-                    @input="changeMusicOnHold"
+                    @update:model-value="changeMusicOnHold"
                 />
             </q-list>
         </q-item>
 
         <csc-call-forward-details
             v-else
-            :id="id"/>
-        
+            :id="id"
+        />
     </csc-page-sticky-tabs>
 </template>
 
@@ -324,11 +323,12 @@ import CscChangePasswordDialog from 'src/components/CscChangePasswordDialog'
 import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails.vue'
 import { inRange } from 'src/helpers/validation'
 import numberFilter from '../filters/number'
+import useValidate from '@vuelidate/core'
 import {
     required,
     maxLength,
     between
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 export default {
     name: 'CscPagePbxSeatDetails',
     components: {
@@ -349,31 +349,11 @@ export default {
             changes: null,
             id: this.$route.params.id,
             soundSet: null,
-            currentCli: "",
+            currentCli: '',
             selectedTab: this.initialTab,
             ncosOptions: [],
             ncosSetOptions: [],
-        }
-    },
-    async created() {
-        await this.getNcosSubscriber();
-        await this.getNcosSetsSubscriber();
-    },
-    validations: {
-        changes: {
-            extension: {
-                isInRange: function (value) {
-                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
-                }
-            },
-            displayName: {
-                required,
-                maxLength: maxLength(64)
-            },
-            webUsername: {
-                required,
-                maxLength: maxLength(64)
-            }
+            v$: useValidate()
         }
     },
     computed: {
@@ -454,35 +434,38 @@ export default {
             return this.changes.ncosSet !== this.getDefaultNcosSet(this.seatSelected.id)
         },
         extensionErrorMessage () {
-            if (!this.$v.changes.extension.isInRange) {
+            const errorsTab = this.v$.changes.extension.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
                 return this.getExtensionHint
             } else {
                 return ''
             }
         },
         seatDisplayNameErrorMessage () {
-            if (!this.$v.changes.displayName.required) {
+            const errorsTab = this.v$.changes.displayName.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Seat Display Name')
                 })
-            } else if (!this.$v.changes.displayName.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Seat Display Name'),
-                    maxLength: this.$v.changes.displayName.$params.maxLength.max
+                    maxLength: this.v$.changes.displayName.maxLength.$params.max
                 })
             } else {
                 return ''
             }
         },
         seatWebUsernameErrorMessage () {
-            if (!this.$v.changes.webUsername.required) {
+            const errorsTab = this.v$.changes.webUsername.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Seat Web Username')
                 })
-            } else if (!this.$v.changes.webUsername.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Seat Web Username'),
-                    maxLength: this.$v.changes.webUsername.$params.maxLength.max
+                    maxLength: this.v$.changes.webUsername.maxLength.$params.max
                 })
             } else {
                 return ''
@@ -519,16 +502,18 @@ export default {
     watch: {
         seatSelected () {
             this.soundSet = this.getSoundSetBySeatId(this.seatSelected.id)
-            this.loadPreferences(this.seatSelected.id).then ( (preferences) => {
+            this.loadPreferences(this.seatSelected.id).then((preferences) => {
                 const clis = [...this.seatSelected.alias_numbers]
                 this.numbers().forEach((cli) => {
-                    clis.push({ac: cli.ac, cc: cli.cc, sn: cli.sn, number_id: cli.id})
+                    clis.push({ ac: cli.ac, cc: cli.cc, sn: cli.sn, number_id: cli.id })
                 })
                 const cliFound = clis.find(cli => cli.cc + cli.ac + cli.sn === preferences.cli)
-                if (cliFound) this.currentCli = {
+                if (cliFound) {
+                    this.currentCli = {
                         label: cliFound.cc + cliFound.ac + cliFound.sn,
                         value: cliFound.cc + cliFound.ac + cliFound.sn
                     }
+                }
                 this.changes = this.getSeatData()
             })
         },
@@ -540,13 +525,34 @@ export default {
             }
         }
     },
+    async created () {
+        await this.getNcosSubscriber()
+        await this.getNcosSetsSubscriber()
+    },
+    validations: {
+        changes: {
+            extension: {
+                isInRange: function (value) {
+                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
+                }
+            },
+            displayName: {
+                required,
+                maxLength: maxLength(64)
+            },
+            webUsername: {
+                required,
+                maxLength: maxLength(64)
+            }
+        }
+    },
     async mounted () {
         this.selectSeat(this.id)
         await this.loadAnnouncements()
         // await this.getNcosLevelsSubscriber()
         await this.getNcosSetSubscriber()
     },
-    beforeDestroy () {
+    beforeUnmount () {
         this.resetSelectedSeat()
     },
     methods: {
@@ -618,21 +624,23 @@ export default {
             return null
         },
         getSeatData () {
-            return (this.seatSelected) ? {
-                displayName: this.seatSelected.display_name,
-                sipUsername: this.seatSelected.username,
-                webUsername: this.seatSelected.webusername,
-                extension: this.seatSelected.pbx_extension,
-                aliasNumbers: this.getAliasNumberIds(),
-                webPassword: this.seatSelected.webpassword,
-                clirIntrapbx: this.getIntraPbx(this.seatSelected.id),
-                musicOnHold: this.getMusicOnHold(this.seatSelected.id),
-                groups: this.getGroupIds(),
-                soundSet: this.getSoundSetId(),
-                cliNumber: this.getCliNumberId(),
-                ncos: this.getDefaultNcos(this.seatSelected.id),
-                ncosSet:this.getDefaultNcosSet(this.seatSelected.id),
-            } : null
+            return (this.seatSelected)
+                ? {
+                    displayName: this.seatSelected.display_name,
+                    sipUsername: this.seatSelected.username,
+                    webUsername: this.seatSelected.webusername,
+                    extension: this.seatSelected.pbx_extension,
+                    aliasNumbers: this.getAliasNumberIds(),
+                    webPassword: this.seatSelected.webpassword,
+                    clirIntrapbx: this.getIntraPbx(this.seatSelected.id),
+                    musicOnHold: this.getMusicOnHold(this.seatSelected.id),
+                    groups: this.getGroupIds(),
+                    soundSet: this.getSoundSetId(),
+                    cliNumber: this.getCliNumberId(),
+                    ncos: this.getDefaultNcos(this.seatSelected.id),
+                    ncosSet: this.getDefaultNcosSet(this.seatSelected.id)
+                }
+                : null
         },
         resetDisplayName () {
             this.changes.displayName = this.seatSelected.display_name
@@ -719,7 +727,7 @@ export default {
             }
         },
         changeIntraPbx () {
-            this.setIntraPbx( {
+            this.setIntraPbx({
                 seatId: this.seatSelected.id,
                 intraPbx: this.changes.clirIntrapbx
             })
@@ -743,14 +751,14 @@ export default {
             this.ncosOptions = listNcos.map((ncos) => ({
                 label: ncos.label,
                 value: ncos.value
-            }));        
+            }))
         },
         async getNcosSetsSubscriber () {
             const listNcosSet = await this.getNcosSetSubscriber()
             this.ncosSetOptions = listNcosSet.map((ncosSet) => ({
                 label: ncosSet.label,
                 value: ncosSet.value
-            }));        
+            }))
         }
     }
 }

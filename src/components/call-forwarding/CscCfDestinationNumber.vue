@@ -1,21 +1,22 @@
 <template>
     <csc-cf-destination
-        :value="destination"
+        :model-value="destination"
         :label="destination.simple_destination === ' ' ? $t('Number') : destination.simple_destination"
         :clickable="true"
     >
         <q-popup-edit
+            v-slot="scope"
             v-model="number"
             buttons
             @before-show="$store.commit('callForwarding/popupShow', null)"
             @save="$emit('input', $event)"
         >
             <csc-input
-                v-model="number"
+                v-model="scope.value"
                 dense
             >
                 <template
-                    v-slot:prepend
+                    #prepend
                 >
                     <q-icon
                         name="phone_forwarded"
@@ -38,6 +39,7 @@ export default {
             default: undefined
         }
     },
+    emits: ['input'],
     data () {
         return {
             number: this.$attrs.value

@@ -80,6 +80,7 @@ export default {
             default: false
         }
     },
+    emits: ['load', 'stopped', 'playing', 'loading'],
     data () {
         return {
             playing: false,
@@ -178,19 +179,19 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
     .audio-player
-        width 100%
-        display flex
-        justify-content space-around
-        align-items center
+        width: 100%
+        display: flex
+        justify-content: space-around
+        align-items: center
 
         .control-btns
-            display flex
-            justify-content space-between
+            display: flex
+            justify-content: space-between
 
         .progress-bar
-            margin-left 16px
-            margin-right 16px
+            margin-left: 16px
+            margin-right: 16px
 
 </style>

@@ -1,28 +1,27 @@
 <template>
     <q-input
-        :value="value"
+        :model-value="value"
         :clearable="false"
         v-bind="$attrs"
-        @input="$emit('input', $event)"
-        v-on="$listeners"
+        @update:model-value="$emit('input', $event)"
     >
         <template
-            v-for="(_, slot) of $scopedSlots"
-            v-slot:[slot]="scope"
+            v-for="(_, slot) of $slots"
+            #[slot]="scope"
         >
             <slot
-                v-if="slot !== 'loading' && slot !== 'append'"
+                v-if="slot !== 'loading'"
                 :name="slot"
                 v-bind="scope"
             />
         </template>
         <template
-            v-slot:loading
+            #loading
         >
             <csc-spinner />
         </template>
         <template
-            v-slot:append
+            #append
         >
             <slot
                 name="append"
@@ -55,6 +54,7 @@ export default {
             default: undefined
         }
     },
+    emits: ['input', 'clear'],
     date () {
         return {
 

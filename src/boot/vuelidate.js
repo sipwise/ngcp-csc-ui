@@ -1,15 +1,12 @@
-import Vuelidate from 'vuelidate'
-import _ from 'lodash'
 
 export default ({ Vue, app }) => {
-    Vue.use(Vuelidate)
-    Vue.prototype.$errorMessage = (def) => {
+    app.config.globalProperties.$errorMessage = (def) => {
         let message = null
-        _.forEach(def.$params, (param, paramName) => {
-            if (def[paramName] === false) {
-                message = app.i18n.t('validators.' + paramName) // TODO: does it work? we should recheck translations
+        if (def.$errors && def.$errors.length) {
+            if (def.$errors[0].$validator) {
+                message = app.i18n.global.tc('validators.' + def.$errors[0].$validator)
             }
-        })
+        }
         return message
     }
 }

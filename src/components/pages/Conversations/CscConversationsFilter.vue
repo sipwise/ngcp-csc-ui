@@ -2,7 +2,7 @@
     <q-toolbar>
         <q-space />
         <csc-input-date
-            v-model="value.from"
+            :value="value.from"
             class="q-mr-sm"
             data-cy="filter-from"
             dense
@@ -12,7 +12,7 @@
             @input="inputFrom"
         />
         <csc-input-date
-            v-model="value.to"
+            :value="value.to"
             data-cy="filter-to"
             dense
             clearable
@@ -50,6 +50,7 @@ export default {
             default: false
         }
     },
+    emits: ['input'],
     methods: {
         inputFrom (from) {
             this.$emit('input', {

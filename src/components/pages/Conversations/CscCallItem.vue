@@ -17,12 +17,12 @@
             >
                 {{ typeTerm }}
                 {{ direction }}
-                {{ number | destinationFormat }}
+                {{ $filters.destinationFormat(number) }}
             </q-item-label>
             <q-item-label
                 caption
             >
-                {{ call.start_time | smartTime }}
+                {{ $filters.smartTime(call.start_time) }}
             </q-item-label>
             <q-item-label
                 caption
@@ -37,7 +37,7 @@
                     {{ $t('Cost') }}
                 </span>
                 <span>
-                    {{ totalCustomerCostRounded | wholeCurrency }}
+                    {{ $filters.wholeCurrency(totalCustomerCostRounded) }}
                 </span>
                 <span
                     v-if="call.currency && call.currency.length > 0"
@@ -123,6 +123,7 @@ export default {
             default: false
         }
     },
+    emits: ['toggle-block-both', 'toggle-block-outgoing', 'toggle-block-incoming', 'start-call'],
     data () {
         return {}
     },
@@ -192,7 +193,7 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
     .csc-call-item-sleek-mode
-        padding 2px !important
+        padding: 2px !important
 </style>

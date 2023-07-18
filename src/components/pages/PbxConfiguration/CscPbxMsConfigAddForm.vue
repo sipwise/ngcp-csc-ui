@@ -36,7 +36,7 @@
             <q-btn
                 v-if="!loading"
                 flat
-                :disable="$v.data.$invalid || !secretaryNumbersIsValid"
+                :disable="v$.data.$invalid || !secretaryNumbersIsValid"
                 color="primary"
                 icon="arrow_forward"
                 @click="save()"
@@ -55,8 +55,9 @@
 import _ from 'lodash'
 import {
     required
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import CscObjectSpinner from '../../CscObjectSpinner'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscPbxMsConfigAddForm',
     components: {
@@ -84,6 +85,7 @@ export default {
             default: false
         }
     },
+    emits: ['submit', 'cancel', 'ready'],
     validations: {
         data: {
             subscriberId: {
@@ -93,7 +95,8 @@ export default {
     },
     data () {
         return {
-            data: this.getDefaults()
+            data: this.getDefaults(),
+            v$: useValidate()
         }
     },
     computed: {
@@ -119,7 +122,7 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
+            this.v$.$reset()
         }
     }
 }

@@ -12,12 +12,12 @@
                 <q-item-section>
                     <q-toggle
                         :label="$t('Hide your number to the callee')"
-                        :value="privacy || false"
+                        :model-value="privacy || false"
                         :disable="privacyLoading"
                         data-cy="csc-privacy-hide"
                         checked-icon="visibility_off"
                         unchecked-icon="visibility"
-                        @input="toggle()"
+                        @update:model-value="toggle()"
                     />
                 </q-item-section>
                 <q-item-section
@@ -35,12 +35,12 @@
             >
                 <q-item-section>
                     <q-toggle
-                        v-model="clirIntrapbx"
-                        :disabled="isLoading"
+                        :model-value="clirIntrapbx"
+                        :class="isLoading ? 'disabled' : ''"
                         :label="$t('Hide number to the callee within own PBX')"
                         checked-icon="visibility_off"
                         unchecked-icon="visibility"
-                        @input="changeIntraPbx"
+                        @update:model-value="changeIntraPbx()"
                     />
                 </q-item-section>
                 <q-item-section
@@ -114,7 +114,7 @@ export default {
         },
         showClirIntrapbx () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.clir_intrapbx)
-        },
+        }
     },
     watch: {
         privacyUpdated (updated) {
@@ -143,7 +143,7 @@ export default {
     async mounted () {
         this.requestInProgress(true)
         const preferences = await this.loadPreferences(getSubscriberId())
-        this.clirIntrapbx = preferences.clir_intrapbx
+        this.clirIntrapbx = preferences.clir_intrapbx || false
         this.requestInProgress(false)
         this.$store.dispatch('callBlocking/loadPrivacy')
     },
@@ -153,12 +153,13 @@ export default {
             'loadPreferences'
         ]),
         changeIntraPbx () {
-            const msg = this.clirIntrapbx ? this.$t('Your number is hidden to the callee within own PBX') : this.$t('Your number is visible to the callee within own PBX')
+            const msg = !this.clirIntrapbx ? this.$t('Your number is hidden to the callee within own PBX') : this.$t('Your number is visible to the callee within own PBX')
             this.setIntraPbx({
                 seatId: getSubscriberId(),
-                intraPbx: this.clirIntrapbx,
+                intraPbx: !this.clirIntrapbx,
                 message: msg
             })
+            this.clirIntrapbx = !this.clirIntrapbx
         },
         requestInProgress (loading) {
             this.isLoading = loading

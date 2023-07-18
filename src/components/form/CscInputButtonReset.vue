@@ -7,7 +7,6 @@
         :label="$t('Reset')"
         :disable="$attrs.loading"
         v-bind="$attrs"
-        v-on="$listeners"
     />
 </template>
 

@@ -27,7 +27,7 @@
                     :label="$t('Start time')"
                     data-cy="csc-recording-filter-time-start"
                 >
-                    <template v-slot:prepend>
+                    <template #prepend>
                         <q-icon
                             name="event"
                             class="cursor-pointer"
@@ -56,7 +56,7 @@
                         </q-icon>
                     </template>
 
-                    <template v-slot:append>
+                    <template #append>
                         <q-icon
                             name="access_time"
                             class="cursor-pointer"
@@ -93,7 +93,7 @@
                     data-cy="csc-recording-filter-time-end"
                     @input="triggerFilter"
                 >
-                    <template v-slot:prepend>
+                    <template #prepend>
                         <q-icon
                             name="event"
                             class="cursor-pointer"
@@ -121,7 +121,7 @@
                         </q-icon>
                     </template>
 
-                    <template v-slot:append>
+                    <template #append>
                         <q-icon
                             name="access_time"
                             class="cursor-pointer"
@@ -164,7 +164,7 @@
                     @keypress.enter="triggerFilter"
                     @keydown.space.prevent
                 >
-                    <template v-slot:append>
+                    <template #append>
                         <q-icon
                             name="search"
                             class="cursor-pointer"
@@ -209,6 +209,7 @@ export default {
             default: false
         }
     },
+    emits: ['filter'],
     data () {
         return {
             filterTypeModel: null,

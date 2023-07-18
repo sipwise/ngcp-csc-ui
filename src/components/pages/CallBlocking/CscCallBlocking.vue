@@ -11,12 +11,12 @@
             >
                 <q-toggle
                     :label="$t('All anonymous incoming calls are blocked')"
-                    :value="isAnonymousBlocked"
+                    :model-value="isAnonymousBlocked"
                     :disable="isAnonymousBlockRequesting"
                     data-cy="csc-enable-incoming"
                     checked-icon="block"
                     unchecked-icon="block"
-                    @input="toggleBlockAnonymous()"
+                    @update:model-value="toggleBlockAnonymous()"
                 />
                 <csc-spinner
                     v-if="isAnonymousBlockRequesting"
@@ -25,8 +25,8 @@
             </q-item>
         </q-list>
         <csc-ncos
-            :page-type=pageType
-    />
+            v-if="pageName === 'outgoing'"
+        />
         <div
             v-if="hasSubscriberProfileAttribute(blockMode)"
             class="row q-mb-lg"
@@ -38,12 +38,12 @@
                 <q-item>
                     <q-item-section>
                         <q-radio
-                            :value="listMode"
+                            :model-value="listMode"
                             :label="getTranslation('toggleDisableLabel')"
                             data-cy="csc-block-all"
                             val="blacklist"
                             color="primary"
-                            @input="updateListMode"
+                            @update:model-value="updateListMode"
                         />
                     </q-item-section>
                     <q-item-section
@@ -57,12 +57,12 @@
                 <q-item>
                     <q-item-section>
                         <q-radio
-                            :value="listMode"
+                            :model-value="listMode"
                             :label="getTranslation('toggleEnableLabel')"
                             data-cy="csc-block-listed"
                             val="whitelist"
                             color="primary"
-                            @input="updateListMode"
+                            @update:model-value="updateListMode"
                         />
                     </q-item-section>
                     <q-item-section
@@ -150,10 +150,6 @@ export default {
         pageName: {
             type: String,
             default: 'incoming'
-        },
-        pageType: {
-            type: String,
-            default: null
         },
         blockMode: {
             type: String,
@@ -298,26 +294,26 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    #toggle-call-blocking
-        margin-bottom 60px
+<style lang="sass" rel="stylesheet/sass">
+#toggle-call-blocking
+    margin-bottom: 60px
 
-    #add-number-form
-        margin-bottom 15px
+#add-number-form
+    margin-bottom: 15px
 
-    .blocked-number .q-input
-        margin 0
+.blocked-number .q-input
+    margin: 0
 
-    .blocked-number-title
-        padding-left 8px
+.blocked-number-title
+    padding-left: 8px
 
-    .mode-list
-        margin-bottom 30px
+.mode-list
+    margin-bottom: 30px
 
-    .csc-list-item.q-item.csc-blocked-number
-        padding-top $flex-gutter-xs
-        padding-bottom $flex-gutter-xs
-    .csc-block-anonymous
-        margin-bottom $flex-gutter-md
+.csc-list-item.q-item.csc-blocked-number
+    padding-top: $flex-gutter-xs
+    padding-bottom: $flex-gutter-xs
+.csc-block-anonymous
+    margin-bottom: $flex-gutter-md
 
 </style>

@@ -70,7 +70,7 @@
                         :disable="isUpdating || isSoundFileRemoving"
                         @click="removeUploadedFile"
                     >
-                       {{ $t('Remove') }}
+                        {{ $t('Remove') }}
                     </q-btn>
                     <q-btn
                         v-if="selectedFile && !isUploading"
@@ -115,32 +115,32 @@
                     class="col-auto"
                 >
                     <q-checkbox
-                        :value="soundFileUseparent"
+                        :model-value="soundFileUseparent"
                         :disable="readOnly || isUploading || isUpdating || isSoundFileRemoving"
                         :label="$t('Use Parent')"
                         left-label
-                        @input="toggleUseParent"
+                        @update:model-value="toggleUseParent"
                     />
                 </div>
                 <template
-                    v-if="soundFile && !selectedFile && this.soundFile.filename"
+                    v-if="soundFile && !selectedFile && soundFile.filename"
                 >
                     <div
                         class="col-auto"
                     >
                         <q-checkbox
-                            :value="soundFileLoopplay"
+                            :model-value="soundFileLoopplay"
                             :label="$t('Loop')"
                             :disable="readOnly || isUpdating || isSoundFileRemoving"
                             left-label
-                            @input="toggleLoopPlay"
+                            @update:model-value="toggleLoopPlay"
                         />
                     </div>
                     <div
                         class="csc-col-right col-grow"
                     >
                         <csc-audio-player
-                            v-if="this.soundFile && this.soundFile.filename"
+                            v-if="soundFile && soundFile.filename"
                             :file-url="soundFileUrl"
                             @load="loadPlay"
                         />
@@ -209,6 +209,7 @@ export default {
             default: false
         }
     },
+    emits: ['play', 'upload', 'toggle-loop-play', 'toggle-use-parent', 'remove-uploaded-file'],
     data () {
         return {
             selectedFile: null,
@@ -327,27 +328,28 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-progress-col
-        margin-top $flex-gutter-xs
-        .q-progress
-            height 24px
-    .csc-pbx-sound-set-sound.csc-pbx-sound-set-sound-odd
-        background-color $item-stripe-color
-    .csc-pbx-sound-set-sound
-        position relative
-        padding $flex-gutter-xs
-        .csc-col-right
-            padding-left $flex-gutter-sm
-        .csc-pbx-sound-set-sound-icon
-            margin-right $flex-gutter-xs
-        .csc-pbx-sound-set-sound-player
-            padding-left $flex-gutter-md
-            .q-input
-                margin 0
-        .csc-pbx-sound-set-sound-label
-            color alpha($white, 0.6)
-        .audio-player
-            .progress-bar
-                margin-right 0
+<style lang="sass" rel="stylesheet/sass">
+
+.csc-progress-col
+    margin-top: $flex-gutter-xs
+    .q-progress
+        height: 24px
+.csc-pbx-sound-set-sound.csc-pbx-sound-set-sound-odd
+    background-color: $item-stripe-color
+.csc-pbx-sound-set-sound
+    position: relative
+    padding: $flex-gutter-xs
+    .csc-col-right
+        padding-left: $flex-gutter-sm
+    .csc-pbx-sound-set-sound-icon
+        margin-right: $flex-gutter-xs
+    .csc-pbx-sound-set-sound-player
+        padding-left: $flex-gutter-md
+        .q-input
+            margin: 0
+    .csc-pbx-sound-set-sound-label
+        color: rgba($white, 60%)
+    .audio-player
+        .progress-bar
+            margin-right: 0
 </style>

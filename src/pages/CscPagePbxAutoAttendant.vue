@@ -1,19 +1,20 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 <template>
     <csc-page
         class="q-pa-lg"
     >
         <div class="q-pa-md">
             <q-table
+                v-model:pagination="pagination"
                 class="no-shadow"
-                :data="data"
+                :rows="data"
                 :columns="columns"
                 :loading="$wait.is('csc-pbx-auto-attendant')"
                 row-key="name"
                 flat
-                :pagination.sync="pagination"
                 @request="fetchWithPagination"
             >
-                <template v-slot:header="props">
+                <template #header="props">
                     <q-tr :props="props">
                         <q-th auto-width />
                         <q-th
@@ -29,7 +30,7 @@
                     </q-tr>
                 </template>
                 <template
-                    v-slot:body="props"
+                    #body="props"
                 >
                     <q-tr>
                         <q-td auto-width />
@@ -98,7 +99,7 @@ import { displayName } from 'src/filters/subscriber'
 import CscPage from 'components/CscPage'
 import CscPbxAutoAttendantSlotsTable from 'components/pages/PbxConfiguration/CscPbxAutoAttendantSlotsTable'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import {LIST_DEFAULT_ROWS} from "src/api/common";
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
 export default {
     name: 'CscPagePbxAutoAttendant',
     components: {
@@ -206,9 +207,9 @@ export default {
     }
 }
 </script>
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="sass" rel="stylesheet/sass" scoped>
 .table-header
-    font-size 15px
+    font-size: 15px
 .table-cell
-    padding 0
+    padding: 0
 </style>

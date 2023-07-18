@@ -73,6 +73,7 @@ export default {
             default: false
         }
     },
+    emits: ['click', 'remove', 'remove-all'],
     data () {
         return {}
     },
@@ -101,41 +102,41 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-dialpad
-        padding 16px
-        padding-bottom 0
+<style lang="sass" rel="stylesheet/sass">
+.csc-dialpad
+    padding: 16px
+    padding-bottom: 0
 
-    .csc-dialpad-btn
-        display flex
-        flex-direction column
-        margin-left 16px
+.csc-dialpad-btn
+    display: flex
+    flex-direction: column
+    margin-left: 16px
+    .q-btn-inner
+        color: $dark
+        font-size: 22px
+    .q-btn-small
         .q-btn-inner
-            color $dark
-            font-size 22px
-        .q-btn-small
-            .q-btn-inner
-                color $dark
-                font-size 18px
+            color: $dark
+            font-size: 18px
 
-    .csc-dialpad-btn.csc-dialpad-btn-main
-        .q-btn-inner
-            color white
+.csc-dialpad-btn.csc-dialpad-btn-main
+    .q-btn-inner
+        color: white
 
-    .csc-dialpad-btn:first-child
-        margin-left 0
+.csc-dialpad-btn:first-child
+    margin-left: 0
 
-    .csc-dialpad-btn-group
-        display: flex
-        flex-direction row
-        margin-bottom 8px
-        justify-content: center
+.csc-dialpad-btn-group
+    display: flex
+    flex-direction: row
+    margin-bottom: 8px
+    justify-content: center
 
-    .csc-dialpad-btn-group.csc-dialpad-btn-group-special
-        justify-content: center
-        .q-btn
-            font-size 14px
+.csc-dialpad-btn-group.csc-dialpad-btn-group-special
+    justify-content: center
+    .q-btn
+        font-size: 14px
 
-    .csc-dialpad-btn-group:last-child
-        margin-bottom 0
+.csc-dialpad-btn-group:last-child
+    margin-bottom: 0
 </style>

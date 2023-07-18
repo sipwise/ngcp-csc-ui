@@ -6,33 +6,38 @@
         <csc-list-actions
             class="row justify-center q-mb-xs"
         >
-            <csc-list-action-button
+            <template
                 v-if="isDeviceAddFormDisabled"
-                slot="slot1"
-                icon="add"
-                color="primary"
-                :label="$t('Add device')"
-                :disable="isDeviceListRequesting || isDeviceRemoving || isDeviceUpdating"
-                @click="enableAddForm"
-            />
-            <csc-list-action-button
-                v-if="!filtersEnabled"
-                slot="slot2"
-                icon="filter_alt"
-                color="primary"
-                :label="$t('Filter devices')"
-                :disable="isDeviceListRequesting || isDeviceCreating || isDeviceRemoving || isDeviceUpdating"
-                @click="enableFilters"
-            />
-            <csc-list-action-button
-                v-if="filtersEnabled"
-                slot="slot2"
-                icon="clear"
-                color="negative"
-                :label="$t('Close filters')"
-                :disable="isDeviceListRequesting || isDeviceCreating || isDeviceRemoving || isDeviceUpdating"
-                @click="closeFilters"
-            />
+                #slot1
+            >
+                <csc-list-action-button
+                    icon="add"
+                    color="primary"
+                    :label="$t('Add device')"
+                    :disable="isDeviceListRequesting || isDeviceRemoving || isDeviceUpdating"
+                    @click="enableAddForm"
+                />
+            </template>
+            <template
+                #slot2
+            >
+                <csc-list-action-button
+                    v-if="!filtersEnabled"
+                    icon="filter_alt"
+                    color="primary"
+                    :label="$t('Filter devices')"
+                    :disable="isDeviceListRequesting || isDeviceCreating || isDeviceRemoving || isDeviceUpdating"
+                    @click="enableFilters"
+                />
+                <csc-list-action-button
+                    v-if="filtersEnabled"
+                    icon="clear"
+                    color="negative"
+                    :label="$t('Close filters')"
+                    :disable="isDeviceListRequesting || isDeviceCreating || isDeviceRemoving || isDeviceUpdating"
+                    @click="closeFilters"
+                />
+            </template>
         </csc-list-actions>
         <q-separator class="q-mb-xs" />
         <q-slide-transition>
@@ -309,7 +314,7 @@ export default {
         openDeviceRemovalDialog (deviceId) {
             if (this.$refs.removeDialog) {
                 this.deviceRemovalRequesting(deviceId)
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
             }
         },
         closeDeviceRemovalDialog () {
@@ -319,5 +324,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

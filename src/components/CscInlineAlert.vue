@@ -4,12 +4,11 @@
         inline-actions
         rounded
         v-bind="$attrs"
-        v-on="$listeners"
     >
         <slot />
         <template
             v-if="icon !== null && icon !== undefined"
-            v-slot:avatar
+            #avatar
         >
             <q-icon
                 :name="icon"
@@ -18,7 +17,7 @@
             />
         </template>
         <template
-            v-slot:action
+            #action
         >
             <slot
                 name="action"

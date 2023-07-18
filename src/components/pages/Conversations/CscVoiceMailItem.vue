@@ -15,12 +15,12 @@
             >
                 {{ $t('Voicemail') }}
                 {{ direction }}
-                {{ voiceMail.caller | destinationFormat }}
+                {{ $filters.destinationFormat(voiceMail.caller) }}
             </q-item-label>
             <q-item-label
                 caption
             >
-                {{ voiceMail.start_time | smartTime }}
+                {{ $filters.smartTime(voiceMail.start_time) }}
             </q-item-label>
             <q-item-label
                 caption
@@ -29,7 +29,8 @@
                 {{ voiceMail.duration }}
                 {{ $t('seconds') }}
             </q-item-label>
-            <q-item-label v-if="voiceMail.folder"
+            <q-item-label
+                v-if="voiceMail.folder"
                 caption
             >
                 {{ $t('Folder : ') }}
@@ -127,6 +128,7 @@ export default {
             default: false
         }
     },
+    emits: ['delete-voicemail', 'toggle-block-both', 'toggle-block-outgoing', 'toggle-block-incoming', 'start-call', 'download-voice-mail', 'play-voice-mail'],
     data () {
         return {
             platform: this.$q.platform.is

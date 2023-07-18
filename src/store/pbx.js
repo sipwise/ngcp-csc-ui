@@ -1,5 +1,4 @@
 
-import Vue from 'vue'
 import numberFilter from '../filters/number'
 import _ from 'lodash'
 import {
@@ -103,7 +102,7 @@ export default {
         },
         getSoundSetOptions (state) {
             const options = []
-            const defaultLabel = i18n.t('Default')
+            const defaultLabel = i18n.global.tc('Default')
             state.soundSetList.forEach((soundSet) => {
                 options.push({
                     label: soundSet.name,
@@ -129,7 +128,7 @@ export default {
         getSubscriberOptions (state) {
             const options = []
             options.push({
-                label: i18n.t('Unassigned'),
+                label: i18n.global.tc('Unassigned'),
                 icon: 'clear',
                 value: null,
                 type: null
@@ -171,15 +170,15 @@ export default {
             const min = getters.getMinAllowedExtension
             const max = getters.getMaxAllowedExtension
             if (min && max == null) {
-                return i18n.t('Minimum allowed extension is {min}', {
+                return i18n.global.tc('Minimum allowed extension is {min}', {
                     min: min
                 })
             } else if (min == null && max) {
-                return i18n.t('Maximum allowed extension is {max}', {
+                return i18n.global.tc('Maximum allowed extension is {max}', {
                     max: max
                 })
             } else if (min && max) {
-                return i18n.t('Allowed extensions are between {min} and {max}', {
+                return i18n.global.tc('Allowed extensions are between {min} and {max}', {
                     min: min,
                     max: max
                 })
@@ -200,35 +199,35 @@ export default {
             state.numberList = _.get(numberList, 'items', [])
             state.numberMapById = {}
             state.numberList.forEach((number) => {
-                Vue.set(state.numberMapById, number.id, number)
+                state.numberMapById[number.id] = number
             })
         },
         seatsSucceeded (state, seatList) {
             state.seatList = _.get(seatList, 'items', [])
             state.seatMapById = {}
             state.seatList.forEach((seat) => {
-                Vue.set(state.seatMapById, seat.id, seat)
+                state.seatMapById[seat.id] = seat
             })
         },
         groupsSucceeded (state, groupList) {
             state.groupList = _.get(groupList, 'items', [])
             state.groupMapById = {}
             state.groupList.forEach((group) => {
-                Vue.set(state.groupMapById, group.id, group)
+                state.groupMapById[group.id] = group
             })
         },
         soundSetsSucceeded (state, soundSetList) {
             state.soundSetList = _.get(soundSetList, 'items', [])
             state.soundSetMapByName = {}
             state.soundSetList.forEach((soundSet) => {
-                Vue.set(state.soundSetMapByName, soundSet.name, soundSet)
+                state.soundSetMapByName[soundSet.name] = soundSet
             })
         },
         deviceProfilesSucceeded (state, deviceProfileList) {
             state.deviceProfileList = _.get(deviceProfileList, 'items', [])
             state.deviceProfileMap = {}
             state.deviceProfileList.forEach((deviceProfile) => {
-                Vue.set(state.deviceProfileMap, deviceProfile.id, deviceProfile)
+                state.deviceProfileMap[deviceProfile.id] = deviceProfile
             })
         },
         deviceProfilesFailed (state) {
@@ -240,19 +239,19 @@ export default {
             const modelImage = _.get(deviceModel, 'modelImage', null)
             const modelImageThumbnail = _.get(deviceModel, 'modelImageThumbnail', null)
             if (model !== null) {
-                Vue.set(state.deviceModelMap, model.id, model)
+                state.deviceModelMap[model.id] = model
             }
             if (modelImage !== null) {
-                Vue.set(state.deviceModelImageMap, modelImage.id, modelImage)
+                state.deviceModelImageMap[modelImage.id] = modelImage
             }
             if (modelImageThumbnail !== null) {
-                Vue.set(state.deviceModelImageSmallMap, modelImageThumbnail.id, modelImageThumbnail)
+                state.deviceModelImageSmallMap[modelImageThumbnail.id] = modelImageThumbnail
             }
         },
         deviceModelFailed (state, deviceModelId) {
-            Vue.delete(state.deviceModelMap, deviceModelId)
-            Vue.delete(state.deviceModelImageMap, deviceModelId)
-            Vue.delete(state.deviceModelImageSmallMap, deviceModelId)
+            delete state.deviceModelMap[deviceModelId]
+            delete state.deviceModelImageMap[deviceModelId]
+            delete state.deviceModelImageSmallMap[deviceModelId]
         },
         subscribersRequesting (state) {
             state.subcriberListState = RequestState.requesting
@@ -262,7 +261,7 @@ export default {
             state.subscriberList = _.get(subscribers, 'items', [])
             state.subscriberMap = {}
             state.subscriberList.forEach((subscriber) => {
-                Vue.set(state.subscriberMap, subscriber.id, subscriber)
+                state.subscriberMap[subscriber.id] = subscriber
             })
         }
     },

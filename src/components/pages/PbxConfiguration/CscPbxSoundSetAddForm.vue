@@ -2,23 +2,23 @@
     <div>
         <q-input
             v-model="data.name"
-            :error="$v.data.name.$error"
+            :error="v$.data.name.$errors.length > 0"
             :error-message="nameErrorMessage"
             :disable="loading"
             :readonly="loading"
             :label="$t('Name')"
             hide-bottom-space
-            @input="$v.data.name.$touch"
+            @update:model-value="v$.data.name.$touch()"
         />
         <q-input
             v-model="data.description"
-            :error="$v.data.description.$error"
+            :error="v$.data.description.$errors.length > 0"
             :error-message="descriptionErrorMessage"
             :disable="loading"
             :readonly="loading"
             :label="$t('Description')"
             hide-bottom-space
-            @input="$v.data.description.$touch"
+            @update:model-value="v$.data.description.$touch()"
         />
         <q-select
             v-model="data.parent_id"
@@ -43,7 +43,7 @@
                 v-model="data.copy_from_default"
                 :disable="loading"
                 :label="$t('Use language specific preset')"
-                @input="toggleLoadFiles"
+                @update:model-value="toggleLoadFiles"
             />
         </div>
         <q-select
@@ -85,7 +85,7 @@
                 flat
                 color="primary"
                 icon="queue_music"
-                :disable="$v.data.$invalid || !data.language"
+                :disable="v$.data.$invalid || !data.language"
                 @click="save()"
             >
                 {{ $t('Create sound set') }}
@@ -105,8 +105,9 @@ import {
 import {
     required,
     maxLength
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import CscObjectSpinner from '../../CscObjectSpinner'
+import useValidate from '@vuelidate/core'
 
 export default {
     name: 'CscPbxSoundSetAddForm',
@@ -119,6 +120,7 @@ export default {
             default: false
         }
     },
+    emits: ['save', 'cancel'],
     validations: {
         data: {
             name: {
@@ -175,7 +177,8 @@ export default {
                     value: 'pt_br',
                     label: 'Brazialian'
                 }
-            ]
+            ],
+            v$: useValidate()
         }
     },
     computed: {
@@ -183,28 +186,30 @@ export default {
             'soundSetList'
         ]),
         nameErrorMessage () {
-            if (!this.$v.data.name.required) {
+            const errorsTab = this.v$.data.name.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Name')
                 })
-            } else if (!this.$v.data.name.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Name'),
-                    maxLength: this.$v.data.name.$params.maxLength.max
+                    maxLength: this.v$.data.name.maxLength.$params.max
                 })
             } else {
                 return ''
             }
         },
         descriptionErrorMessage () {
-            if (!this.$v.data.description.required) {
+            const errorsTab = this.v$.data.description.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Description')
                 })
-            } else if (!this.$v.data.description.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Description'),
-                    maxLength: this.$v.data.description.$params.maxLength.max
+                    maxLength: this.v$.data.description.maxLength.$params.max
                 })
             } else {
                 return ''
@@ -237,8 +242,8 @@ export default {
             }
             return classes
         },
-         getParentOptions () {
-            let parentOptions = [
+        getParentOptions () {
+            const parentOptions = [
                 {
                     label: this.$t('Unassigned'),
                     value: null
@@ -249,6 +254,7 @@ export default {
                     label: soundSet.name,
                     value: soundSet.id
                 })
+                return soundSet
             })
             return parentOptions
         }
@@ -274,7 +280,7 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
+            this.v$.$reset()
         },
         toggleLoadFiles () {
             this.data.language = 'en'

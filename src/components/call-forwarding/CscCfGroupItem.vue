@@ -8,9 +8,8 @@
             />
         </q-item-section>
         <q-item-section
-            :disabled="loading || !mapping.enabled"
-            >
-            
+            :class="loading || !mapping.enabled ? 'disabled' : ''"
+        >
             <q-item-label>
                 <template
                     v-if="destinationIndex === 0 && mapping.type !== 'cft'"
@@ -42,7 +41,7 @@
                                 dense
                             >
                                 <template
-                                    v-slot:prepend
+                                    #prepend
                                 >
                                     <q-icon
                                         name="access_time"
@@ -67,22 +66,23 @@
                         {{ destinationPrevious.timeout }}
                         {{ $t('seconds') }}
                         <q-popup-edit
+                            v-slot="scope"
                             v-model="changedDestinationTimeout"
                             buttons
                             @before-show="$store.commit('callForwarding/popupShow', null)"
                             @save="updateDestinationTimeoutEvent({
-                                destinationTimeout: changedDestinationTimeout,
+                                destinationTimeout: $event,
                                 destinationIndex: destinationIndex - 1,
                                 destinationSetId: destinationSet.id
                             })"
                         >
                             <csc-input
-                                v-model="changedDestinationTimeout"
+                                v-model="scope.value"
                                 type="number"
                                 dense
                             >
                                 <template
-                                    v-slot:prepend
+                                    #prepend
                                 >
                                     <q-icon
                                         name="access_time"
@@ -95,26 +95,26 @@
                 </template>
                 <csc-cf-destination-custom-announcement
                     v-if="isDestinationTypeCustomAnnouncement(destination.destination) && destination.announcement_id"
-                    v-model="announcement"
+                    :value="announcement"
                     :destination="destination"
                     :announcements="announcements"
                     @input="updateAnnouncementEvent({
                         destinationIndex: destinationIndex,
                         destinationSetId: destinationSet.id
-                    })"
+                    }, $event)"
                 />
                 <csc-cf-destination-number
                     v-else-if="isDestinationTypeNumber(destination.destination)"
-                    v-model="changedDestination"
+                    :value="changedDestination"
                     :destination="destination"
                     @input="updateDestinationEvent({
                         destinationIndex: destinationIndex,
                         destinationSetId: destinationSet.id
-                    })"
+                    }, $event)"
                 />
                 <csc-cf-destination
                     v-else
-                    :value="destination"
+                    :model-value="destination"
                 />
             </q-item-label>
         </q-item-section>
@@ -199,6 +199,7 @@ export default {
             default: ''
         }
     },
+    emits: ['delete-last'],
     data () {
         return {
             changedDestination: this.destination.simple_destination,
@@ -242,10 +243,10 @@ export default {
             'getAnnouncementById',
             'updateAnnouncement'
         ]),
-        async updateDestinationEvent (payload) {
+        async updateDestinationEvent (payload, newDestination) {
             this.$wait.start(this.waitIdentifier)
             try {
-                const validatedDest = await this.rewriteDestination(this.changedDestination)
+                const validatedDest = await this.rewriteDestination(newDestination)
                 await this.updateDestination({ ...payload, destination: validatedDest })
             } catch (err) {
                 showGlobalError(err.message)
@@ -278,16 +279,16 @@ export default {
         },
         async updateRingTimeoutEvent () {
             this.$wait.start('csc-cf-mappings-full')
-            await this.updateRingTimeout({ringTimeout: this.changedDestinationTimeout, subscriberId: this.subscriberId})
+            await this.updateRingTimeout({ ringTimeout: this.changedDestinationTimeout, subscriberId: this.subscriberId })
             this.$wait.end('csc-cf-mappings-full')
         },
         setAnnouncement () {
             this.announcement = _.first(this.announcements.filter(announcement => announcement.value === this.destination.announcement_id))
         },
-        async updateAnnouncementEvent (payload) {
+        async updateAnnouncementEvent (payload, newAnnouncement) {
             this.$wait.start(this.waitIdentifier)
             try {
-                await this.updateAnnouncement({ ...payload, announcementId: this.announcement.value })
+                await this.updateAnnouncement({ ...payload, announcementId: newAnnouncement.value })
                 this.setAnnouncement()
             } catch (err) {
                 showGlobalError(err.message)

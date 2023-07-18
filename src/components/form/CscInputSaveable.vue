@@ -1,23 +1,21 @@
 <template>
     <q-input
         v-bind="$attrs"
-        :value="value"
         :disable="disable === true || $attrs.loading"
-        v-on="$listeners"
-        @input="$emit('input', $event)"
+        @update:model-value="$emit('input', $event)"
         @keyup.enter="$emit('save', $event)"
     >
         <slot />
         <template
             v-if="icon !== undefined && icon !== null"
-            v-slot:prepend
+            #prepend
         >
             <q-icon
                 :name="icon"
             />
         </template>
         <template
-            v-slot:loading
+            #loading
         >
             <q-spinner-dots
                 color="primary"
@@ -25,7 +23,7 @@
         </template>
         <template
             v-if="valueChanged"
-            v-slot:append
+            #append
         >
             <q-btn
                 v-if="!$attrs.loading"
@@ -67,19 +65,11 @@ export default {
             type: Boolean,
             default: true
         },
-        value: {
-            type: String,
-            default: ''
-        },
         disable: {
             type: Boolean,
             default: null
         }
     },
-    data () {
-        return {
-            inputValue: this.value
-        }
-    }
+    emits: ['save', 'undo', 'input']
 }
 </script>

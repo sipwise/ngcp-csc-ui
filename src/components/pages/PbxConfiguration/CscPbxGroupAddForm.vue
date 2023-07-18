@@ -11,26 +11,26 @@
                     clearable
                     autofocus
                     hide-bottom-space
-                    :error="$v.data.name.$error"
+                    :error="v$.data.name.$errors.length > 0"
                     :error-message="groupNameErrorMessage"
                     :disable="loading"
                     :readonly="loading"
                     :label="$t('Group Name')"
                     data-cy="group-name"
-                    @input="$v.data.name.$touch"
+                    @update:model-value="v$.data.name.$touch()"
                 />
                 <q-input
                     v-model="data.extension"
                     clearable
                     hide-bottom-space
-                    :error="$v.data.extension.$error"
+                    :error="v$.data.extension.$errors.length > 0"
                     :error-message="extensionErrorMessage"
                     :disable="loading"
                     :readonly="loading"
                     :label="$t('Extension')"
                     :hint="getExtensionHint"
                     data-cy="group-extension"
-                    @input="$v.data.extension.$touch"
+                    @update:model-value="v$.data.extension.$touch()"
                 />
                 <q-select
                     v-model="data.huntPolicy"
@@ -48,7 +48,7 @@
                     v-model="data.huntTimeout"
                     clearable
                     hide-bottom-space
-                    :error="$v.data.huntTimeout.$error"
+                    :error="v$.data.huntTimeout.$errors.length > 0"
                     :error-message="huntTimeoutErrorMessage"
                     :disable="loading"
                     :readonly="loading"
@@ -57,7 +57,7 @@
                     :min="1"
                     :max="3600"
                     data-cy="group-hunt-timeout"
-                    @input="$v.data.huntTimeout.$touch"
+                    @update:model-value="v$.data.huntTimeout.$touch()"
                 />
                 <q-select
                     v-model="data.huntCancelMode"
@@ -124,7 +124,7 @@
                 color="default"
                 icon="clear"
                 data-cy="group-btn-clear"
-                @mousedown.native="cancel()"
+                @mousedown="cancel()"
             >
                 {{ $t('Cancel') }}
             </q-btn>
@@ -133,7 +133,7 @@
                 flat
                 color="primary"
                 icon="group"
-                :disable="$v.data.$invalid"
+                :disable="v$.data.$invalid"
                 data-cy="group-btn-save"
                 @click="save()"
             >
@@ -156,9 +156,10 @@ import {
     maxLength,
     numeric,
     between
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
 import { inRange } from 'src/helpers/validation'
 import CscObjectSpinner from '../../CscObjectSpinner'
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscPbxGroupAddForm',
     components: {
@@ -190,6 +191,7 @@ export default {
             default: false
         }
     },
+    emits: ['save', 'cancel'],
     validations: {
         data: {
             name: {
@@ -214,7 +216,8 @@ export default {
     },
     data () {
         return {
-            data: this.getDefaults()
+            data: this.getDefaults(),
+            v$: useValidate()
         }
     },
     computed: {
@@ -224,57 +227,60 @@ export default {
             'getMaxAllowedExtension'
         ]),
         groupNameErrorMessage () {
-            if (!this.$v.data.name.required) {
+            const errorsTab = this.v$.data.name.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Group Name')
                 })
-            } else if (!this.$v.data.name.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Group Name'),
-                    maxLength: this.$v.data.name.$params.maxLength.max
+                    maxLength: this.v$.data.name.maxLength.$params.max
                 })
             } else {
                 return ''
             }
         },
         extensionErrorMessage () {
-            if (!this.$v.data.extension.required) {
+            const errorsTab = this.v$.data.extension.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Extension')
                 })
-            } else if (!this.$v.data.extension.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Extension'),
-                    maxLength: this.$v.data.extension.$params.maxLength.max
+                    maxLength: this.v$.data.extension.maxLength.$params.max
                 })
-            } else if (!this.$v.data.extension.numeric) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('Extension')
                 })
-            } else if (!this.$v.data.extension.isInRange) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
                 return this.getExtensionHint
             } else {
                 return ''
             }
         },
         huntTimeoutErrorMessage () {
-            if (!this.$v.data.huntTimeout.required) {
+            const errorsTab = this.v$.data.huntTimeout.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Hunt timeout')
                 })
-            } else if (!this.$v.data.huntTimeout.numeric) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('Hunt timeout')
                 })
-            } else if (!this.$v.data.huntTimeout.minValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
                     field: this.$t('Hunt timeout'),
-                    minValue: this.$v.data.huntTimeout.$params.minValue.min
+                    minValue: this.v$.data.huntTimeout.minValue.$params.min
                 })
-            } else if (!this.$v.data.huntTimeout.maxValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
                     field: this.$t('Hunt timeout'),
-                    maxValue: this.$v.data.huntTimeout.$params.maxValue.max
+                    maxValue: this.v$.data.huntTimeout.maxValue.$params.max
                 })
             } else {
                 return ''
@@ -319,13 +325,13 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
+            this.v$.$reset()
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
     .csc-pbx-group-add-form
         position: relative
     .csc-pbx-group-add-form

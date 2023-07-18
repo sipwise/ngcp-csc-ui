@@ -1,13 +1,15 @@
 
 import _ from 'lodash'
+import { getCurrentInstance } from 'vue'
 
-export default ({ app, Vue }) => {
-    Vue.mixin({
+export default ({ app }) => {
+    app.mixin({
         mounted () {
-            if (this.$vnode && this.$el && this.$el.setAttribute && this.$el.getAttribute && !this.$el.getAttribute('data-cy')) {
-                let dataCy = _.get(this.$vnode, 'componentOptions.Ctor.extendOptions.name', null)
-                if (dataCy !== null && this.$vnode.key) {
-                    dataCy += '--' + this.$vnode.key
+            const vnode = getCurrentInstance()?.vnode
+            if (vnode && this.$el && this.$el.setAttribute && this.$el.getAttribute && !this.$el.getAttribute('data-cy')) {
+                let dataCy = _.get(vnode, 'type.name', null)
+                if (dataCy !== null && vnode?.key) {
+                    dataCy += '--' + vnode?.key
                 }
                 if (dataCy !== null) {
                     this.$el.setAttribute('data-cy', _.kebabCase(dataCy))

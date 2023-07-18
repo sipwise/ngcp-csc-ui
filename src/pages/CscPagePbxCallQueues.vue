@@ -6,14 +6,17 @@
         <csc-list-actions
             class="row justify-center q-mb-lg"
         >
-            <csc-list-action-button
+            <template
                 v-if="!isCallQueueAddFormEnabled"
-                slot="slot1"
-                icon="add"
-                color="primary"
-                :label="$t('Add call queue')"
-                @click="enableCallQueueAddForm"
-            />
+                #slot1
+            >
+                <csc-list-action-button
+                    icon="add"
+                    color="primary"
+                    :label="$t('Add call queue')"
+                    @click="enableCallQueueAddForm"
+                />
+            </template>
         </csc-list-actions>
         <q-slide-transition>
             <div
@@ -197,13 +200,13 @@ export default {
         ]),
         openCallQueueRemovalDialog (callQueueId) {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
             }
             this.callQueueRemovalRequesting(callQueueId)
         },
         closeCallQueueRemovalDialog () {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.close()
+                this.$refs.removeDialog.hide()
             }
             this.callQueueRemovalCanceled()
         }

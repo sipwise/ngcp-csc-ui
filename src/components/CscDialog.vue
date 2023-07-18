@@ -2,7 +2,6 @@
     <q-dialog
         ref="dialog"
         v-bind="$attrs"
-        v-on="$listeners"
     >
         <q-card
             class="bg-dark q-dialog-plugin"
@@ -42,11 +41,11 @@
                 align="right"
             >
                 <q-btn
+                    v-close-popup
                     icon="clear"
                     color="white"
                     flat
                     :label="$t('Cancel')"
-                    @click="cancel"
                 />
                 <slot
                     name="actions"
@@ -72,45 +71,14 @@ export default {
         titleIconColor: {
             type: String,
             default: 'primary'
-        },
-        opened: {
-            type: Boolean,
-            default: false
-        }
-    },
-    watch: {
-        opened (opened) {
-            if (opened === true) {
-                this.open()
-            } else {
-                this.close()
-            }
-        }
-    },
-    mounted () {
-        if (this.opened) {
-            this.open()
         }
     },
     methods: {
-        open () {
-            this.show()
-        },
         show () {
             this.$refs.dialog.show()
-            this.$emit('show')
-        },
-        close () {
-            this.hide()
-            this.$emit('close')
         },
         hide () {
             this.$refs.dialog.hide()
-            this.$emit('hide')
-        },
-        cancel () {
-            this.close()
-            this.$emit('cancel')
         }
     }
 }

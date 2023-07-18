@@ -11,10 +11,10 @@
                     data-cy="destination-email"
                     :disable="disabled"
                     :readonly="loading"
-                    :error="$v.data.destination.$error"
+                    :error="v$.data.destination.$errors.length > 0"
                     :error-message="destinationErrorMessage"
                     :value-changed="!isAddNewMode && data.destination !== initialData.destination"
-                    @input="$v.data.destination.$touch"
+                    @update:model-value="v$.data.destination.$touch()"
                     @keypress.space.prevent
                     @keydown.space.prevent
                     @keyup.space.prevent
@@ -31,7 +31,7 @@
                     :label="$t('File Type')"
                     data-cy="destinaton-filetype"
                     :options="fileTypeOptions"
-                    @input="updatePropertyData('filetype')"
+                    @update:model-value="updatePropertyData('filetype')"
                 />
             </div>
             <div
@@ -42,21 +42,21 @@
                     :label="$t('Deliver Incoming Faxes')"
                     data-cy="destinaton-deliver-incoming"
                     :disable="loading"
-                    @input="updatePropertyData('incoming')"
+                    @update:model-value="updatePropertyData('incoming')"
                 />
                 <q-toggle
                     v-model="data.outgoing"
                     :label="$t('Deliver Outgoing Faxes')"
                     data-cy="destinaton-deliver-outgoing"
                     :disable="loading"
-                    @input="updatePropertyData('outgoing')"
+                    @update:model-value="updatePropertyData('outgoing')"
                 />
                 <q-toggle
                     v-model="data.status"
                     :label="$t('Receive Reports')"
                     data-cy="destinaton-receive-reports"
                     :disable="loading"
-                    @input="updatePropertyData('status')"
+                    @update:model-value="updatePropertyData('status')"
                 />
             </div>
         </div>
@@ -78,7 +78,7 @@
                 color="primary"
                 icon="done"
                 :loading="loading"
-                :disable="$v.data.$invalid || loading"
+                :disable="v$.data.$invalid || loading"
                 :label="$t('Create destination')"
                 data-cy="destinaton-creation-confirm"
                 @click="save()"
@@ -88,9 +88,9 @@
 </template>
 
 <script>
-import { email, required } from 'vuelidate/lib/validators'
+import { email, required } from '@vuelidate/validators'
 import CscInputSaveable from 'components/form/CscInputSaveable'
-
+import useValidate from '@vuelidate/core'
 export default {
     name: 'CscFaxToMailDestinationForm',
     components: {
@@ -120,9 +120,11 @@ export default {
             default: false
         }
     },
+    emits: ['save', 'cancel', 'update-property'],
     data () {
         return {
-            data: this.getDefaults()
+            data: this.getDefaults(),
+            v$: useValidate()
         }
     },
     validations: {
@@ -135,11 +137,12 @@ export default {
     },
     computed: {
         destinationErrorMessage () {
-            if (!this.$v.data.destination.required) {
+            const errorsTab = this.v$.data.destination.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Destination Email')
                 })
-            } else if (!this.$v.data.destination.email) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'email') {
                 return this.$t('Input a valid email address')
             } else {
                 return ''
@@ -163,7 +166,7 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
+            this.v$.$reset()
         },
         updatePropertyData (propertyName) {
             this.$emit('update-property', {

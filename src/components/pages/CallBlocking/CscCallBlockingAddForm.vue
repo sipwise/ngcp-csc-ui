@@ -18,7 +18,7 @@
                 color="default"
                 icon="clear"
                 data-cy="csc-block-number-cancel"
-                @mousedown.native="cancel()"
+                @mousedown="cancel()"
             >
                 {{ $t('Cancel') }}
             </q-btn>
@@ -79,6 +79,7 @@ export default {
             default: false
         }
     },
+    emits: ['save'],
     data () {
         return {
             enabled: false,
@@ -117,5 +118,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

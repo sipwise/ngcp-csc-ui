@@ -1,18 +1,18 @@
 <template>
     <div>
         <q-input
-            :value="inputText"
+            :model-value="inputText"
             type="text"
         >
             <template
-                v-slot:prepend
+                #prepend
             >
                 <q-icon
                     name="description"
                 />
             </template>
             <template
-                v-slot:append
+                #append
             >
                 <q-btn
                     icon="folder"
@@ -40,9 +40,9 @@
             v-show="false"
             ref="fileInput"
             type="file"
-            :value="selectedFile"
+            :model-value="selectedFile"
             :accept="$attrs.accept"
-            @input="fileInput"
+            @update:model-value="fileInput"
         />
     </div>
 </template>
@@ -50,6 +50,7 @@
 <script>
 export default {
     name: 'CscInputFile',
+    emits: ['file-selected'],
     data () {
         return {
             selectedFile: null

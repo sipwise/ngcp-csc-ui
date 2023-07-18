@@ -4,16 +4,21 @@ import {
     patchReplaceFull,
     getAsBlob,
     get,
-    post
+    post,
+    httpApi
 } from './common'
 import {
     PBX_CONFIG_ORDER_BY,
     PBX_CONFIG_ORDER_DIRECTION
 } from './pbx-config'
-import Vue from 'vue'
 import {
     Platform
 } from 'quasar'
+import {
+    getJwt,
+    hasJwt
+} from 'src/auth'
+import { getCurrentLangAsV1Format } from 'src/i18n'
 
 export function getSoundSets (options) {
     return new Promise((resolve, reject) => {
@@ -51,7 +56,7 @@ export function getSoundSetList (options) {
 
 export function createSoundSet (soundSet) {
     return new Promise((resolve, reject) => {
-        Vue.http.post('api/soundsets/', soundSet).then(() => {
+        httpApi.post('api/soundsets/', soundSet).then(() => {
             resolve()
         }).catch((err) => {
             reject(err)
@@ -61,11 +66,11 @@ export function createSoundSet (soundSet) {
 
 export function removeSoundSet (soundSetId) {
     return new Promise((resolve, reject) => {
-        Vue.http.delete('api/soundsets/' + soundSetId).then(() => {
+        httpApi.delete('api/soundsets/' + soundSetId).then(() => {
             resolve()
         }).catch((err) => {
-            if (err.status >= 400) {
-                reject(new Error(err.body.message))
+            if (err.response.status >= 400) {
+                reject(new Error(err.response.data.message))
             } else {
                 reject(err)
             }
@@ -193,27 +198,59 @@ export function uploadSoundFile (options) {
                 filename: options.soundFileData.name
             }))
             formData.append('soundfile', options.soundFileData)
-            Vue.http.post('api/soundfiles/', formData, {
-                before (request) {
-                    options.initialized(request)
-                },
-                progress (progressEvent) {
+            const initializedSoundFiles = httpApi.interceptors.request.use(function (config) {
+                options.initialized(config)
+
+                if (hasJwt()) {
+                    if (config.headers) {
+                        config.headers = {
+                            ...config.headers,
+                            Authorization: 'Bearer ' + getJwt()
+                        }
+                    } else {
+                        config = {
+                            ...config,
+                            headers: {
+                                Authorization: 'Bearer ' + getJwt()
+                            }
+                        }
+                    }
+                }
+                if (config.method === 'POST' && (config.data === undefined || config.data === null)) {
+                    config.data = {}
+                }
+                if (config.params) {
+                    config.params = {
+                        ...config.params,
+                        lang: getCurrentLangAsV1Format()
+                    }
+                } else {
+                    config.params = {
+                        lang: getCurrentLangAsV1Format()
+                    }
+                }
+                return config
+            })
+            httpApi.post('api/soundfiles/', formData, {
+                onUploadProgress (progressEvent) {
                     if (progressEvent.lengthComputable) {
                         options.progressed(Math.ceil((progressEvent.loaded / progressEvent.total) * 100))
                     }
                 }
             }).then((res) => {
-                const fileId = _.last(res.headers.get('location').split(/\//))
+                const fileId = _.last(res.headers.location.split(/\//))
                 return Promise.all([
                     get({ path: 'api/soundfiles/' + fileId }),
                     getSoundFile({ id: fileId })
                 ])
             }).then((res) => {
+                httpApi.interceptors.request.eject(initializedSoundFiles)
                 resolve({
                     soundFile: res[0],
                     soundFileUrl: res[1]
                 })
             }).catch((err) => {
+                httpApi.interceptors.request.eject(initializedSoundFiles)
                 reject(err)
             })
         } else {
@@ -280,11 +317,11 @@ export function setUseParent (options) {
 
 export function removeSoundFile (soundFileId) {
     return new Promise((resolve, reject) => {
-        Vue.http.delete('api/soundfiles/' + soundFileId).then(() => {
+        httpApi.delete('api/soundfiles/' + soundFileId).then(() => {
             resolve()
         }).catch((err) => {
-            if (err.status >= 400) {
-                reject(new Error(err.body.message))
+            if (err.response.status >= 400) {
+                reject(new Error(err.response.data.message))
             } else {
                 reject(err)
             }

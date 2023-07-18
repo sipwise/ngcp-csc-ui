@@ -1,20 +1,21 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 <template>
     <q-table
-        :data="data"
+        v-model:pagination="pagination"
+        :rows="data"
         :columns="columns"
         :loading="$wait.is('csc-pbx-autoattendant-slots-table')"
-        :pagination.sync="pagination"
         :hide-pagination="true"
         row-key="name"
         class="csc-item-odd no-shadow"
     >
-        <template v-slot:loading>
+        <template #loading>
             <q-inner-loading
                 showing
                 color="primary"
             />
         </template>
-        <template v-slot:header="props">
+        <template #header="props">
             <q-tr>
                 <q-th auto-width />
                 <q-th
@@ -65,7 +66,7 @@
                 <q-td auto-width />
             </q-tr>
         </template>
-        <template v-slot:body="props">
+        <template #body="props">
             <q-tr>
                 <q-td auto-width />
                 <q-td
@@ -113,7 +114,7 @@
 import _ from 'lodash'
 import { mapWaitingActions } from 'vue-wait'
 import { mapGetters } from 'vuex'
-import { required } from 'vuelidate/lib/validators'
+import { required } from '@vuelidate/validators'
 import { showGlobalError, showToast } from 'src/helpers/ui'
 import CscDataTableEditInput from 'components/CscDataTableEditInput'
 import CscRemoveDialog from 'components/CscRemoveDialog'
@@ -214,9 +215,10 @@ export default {
         confirmRowDeletion (slot, rowIndex) {
             this.$q.dialog({
                 component: CscRemoveDialog,
-                parent: this,
-                title: this.$t('Delete slot?'),
-                message: this.$t('You are about to delete slot {slot}', { slot: slot })
+                componentProps: {
+                    title: this.$t('Delete slot?'),
+                    message: this.$t('You are about to delete slot {slot}', { slot: slot })
+                }
             }).onOk(() => {
                 this.deleteSlot(rowIndex)
             })

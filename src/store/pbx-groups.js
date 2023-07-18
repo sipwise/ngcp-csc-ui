@@ -17,7 +17,6 @@ import {
     setGroupHuntCancelMode
 } from '../api/pbx-groups'
 import _ from 'lodash'
-import Vue from 'vue'
 import {
     i18n
 } from 'src/boot/i18n'
@@ -96,24 +95,24 @@ export default {
         },
         getGroupRemoveDialogMessage (state, getters) {
             if (getters.isGroupRemoving) {
-                return i18n.t('You are about to remove group {group}', {
+                return i18n.global.tc('You are about to remove group {group}', {
                     group: getters.getGroupRemovingName
                 })
             }
             return ''
         },
         getGroupCreationToastMessage (state, getters) {
-            return i18n.t('Added group {group}', {
+            return i18n.global.tc('Added group {group}', {
                 group: getters.getGroupCreatingName
             })
         },
         getGroupUpdateToastMessage (state, getters) {
-            return i18n.t('Changed {field} successfully', {
+            return i18n.global.tc('Changed {field} successfully', {
                 field: getters.getGroupUpdatingField
             })
         },
         getGroupRemovalToastMessage (state, getters) {
-            return i18n.t('Removed group {group}', {
+            return i18n.global.tc('Removed group {group}', {
                 group: getters.getGroupRemovingName
             })
         },
@@ -130,19 +129,19 @@ export default {
         getHuntPolicyOptions () {
             return [
                 {
-                    label: i18n.t('Serial Ringing'),
+                    label: i18n.global.tc('Serial Ringing'),
                     value: 'serial'
                 },
                 {
-                    label: i18n.t('Parallel Ringing'),
+                    label: i18n.global.tc('Parallel Ringing'),
                     value: 'parallel'
                 },
                 {
-                    label: i18n.t('Random Ringing'),
+                    label: i18n.global.tc('Random Ringing'),
                     value: 'random'
                 },
                 {
-                    label: i18n.t('Circular Ringing'),
+                    label: i18n.global.tc('Circular Ringing'),
                     value: 'circular'
                 }
             ]
@@ -155,11 +154,11 @@ export default {
         getHuntCancelModeOptions () {
             return [
                 {
-                    label: i18n.t('Using Cancel'),
+                    label: i18n.global.tc('Using Cancel'),
                     value: 'cancel'
                 },
                 {
-                    label: i18n.t('Using Bye'),
+                    label: i18n.global.tc('Using Bye'),
                     value: 'bye'
                 }
             ]
@@ -177,7 +176,7 @@ export default {
             })
             const preferences = _.get(options, 'preferences.items', [])
             preferences.forEach((preference) => {
-                Vue.set(state.preferenceMapById, preference.id, preference)
+                state.preferenceMapById[preference.id] = preference
             })
             state.groupListVisibility = 'visible'
         },
@@ -219,15 +218,15 @@ export default {
             const group = _.get(options, 'group', null)
             const preferences = _.get(options, 'preferences', null)
             if (group !== null && preferences !== null) {
-                Vue.delete(state.groupMapById, group.id)
-                Vue.set(state.groupMapById, group.id, group)
+                delete state.groupMapById[group.id]
+                state.groupMapById[group.id] = group
                 for (let i = 0; i < state.groupListItems.length; i++) {
                     if (state.groupListItems[i].id === group.id) {
                         state.groupListItems[i] = group
                     }
                 }
-                Vue.delete(state.preferenceMapById, preferences.id)
-                Vue.set(state.preferenceMapById, preferences.id, preferences)
+                delete state.preferenceMapById[preferences.id]
+                state.preferenceMapById[preferences.id] = preferences
                 if (state.groupSelected !== null && state.groupSelected.id === options.group.id) {
                     state.groupSelected = options.group
                 }
@@ -325,7 +324,7 @@ export default {
         setGroupName (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Group Name')
+                groupField: i18n.global.tc('Group Name')
             })
             setGroupName({
                 groupId: options.groupId,
@@ -339,7 +338,7 @@ export default {
         setGroupExtension (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Extension')
+                groupField: i18n.global.tc('Extension')
             })
             setGroupExtension({
                 groupId: options.groupId,
@@ -353,7 +352,7 @@ export default {
         setGroupHuntPolicy (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Hunt Policy')
+                groupField: i18n.global.tc('Hunt Policy')
             })
             setGroupHuntPolicy({
                 groupId: options.groupId,
@@ -367,7 +366,7 @@ export default {
         setGroupHuntTimeout (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Hunt Policy')
+                groupField: i18n.global.tc('Hunt Policy')
             })
             setGroupHuntTimeout({
                 groupId: options.groupId,
@@ -381,7 +380,7 @@ export default {
         setGroupHuntCancelMode (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Hunt Cancel Mode')
+                groupField: i18n.global.tc('Hunt Cancel Mode')
             })
             setGroupHuntCancelMode({
                 groupId: options.groupId,
@@ -395,7 +394,7 @@ export default {
         setGroupNumbers (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Alias Numbers')
+                groupField: i18n.global.tc('Alias Numbers')
             })
             setGroupNumbers({
                 groupId: options.groupId,
@@ -411,7 +410,7 @@ export default {
         setGroupSeats (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Seats')
+                groupField: i18n.global.tc('Seats')
             })
             setGroupSeats({
                 groupId: options.groupId,
@@ -425,7 +424,7 @@ export default {
         setGroupSoundSet (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Sound Set')
+                groupField: i18n.global.tc('Sound Set')
             })
             setGroupSoundSet({
                 groupId: options.groupId,
