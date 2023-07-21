@@ -37,7 +37,7 @@
                     @save="updatePropertyData('received_from')"
                 >
                     <csc-tooltip>
-                        {{ $t('Allow mail2fax emails only to this IP (the IP or hostname is present in the &quot;Received&quot; header).') }}
+                        {{ $t('Allow mail2fax emails only to this IP (the IP or hostname is present in the \"Received\" header).') }}
                     </csc-tooltip>
                 </csc-input-saveable>
                 <csc-input-saveable
