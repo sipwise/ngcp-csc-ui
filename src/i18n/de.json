@@ -34,7 +34,7 @@
     "All outgoing calls to listed numbers are blocked": "Alle ausgehenden Anrufe zu den aufgeführten Nummern werden blockiert",
     "Allocated by {type} {name}": "Belegt {type} {name}",
     "Allow mail2fax destination only to this number.": "Mail2fax nur für diese Nummer erlauben.",
-    "Allow mail2fax emails only to this IP (the IP or hostname is present in the &quot;Received&quot; header).": "Mail2fax-E-Mails nur an diese IP zulassen (die IP oder der Hostname ist im &quot;Received&quot;-Header vorhanden).",
+    "Allow mail2fax emails only to this IP (the IP or hostname is present in the \"Received\" header).": "Erlauben Sie „mail2fax“-E-Mails nur an diese IP (die IP oder der Hostname ist im Empfangsheader vorhanden).",
     "Allowed extensions are between {min} and {max}": "Erlaubte Durchwahlen haben eine Länge zwischen {min} und {max} Zahlen",
     "Always": "Immer",
     "An error occured while trying to assign the speed dial slot. Please try again": "Kurzwahl-Eintrag konnte nicht zugewiesen werden. Bitte erneut versuchen",
