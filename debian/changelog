@@ -1,3 +1,14 @@
+ngcp-csc-ui (10.5.5.1+0~mr10.5.5.1) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [3016e58] MT#56388 fix login test in mr10.5
+
+  [ Marco Capetta ]
+  * [97cd05f] MT#57273 MT#57274 Update german translation
+  * [ab568bd] MT#57338 Remove preferences when set to false or empty array value
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Jul 2023 12:20:22 +0200
+
 ngcp-csc-ui (10.5.5.0+0~mr10.5.5.0) unstable; urgency=medium
 
   [ CORP\franci11 ]
