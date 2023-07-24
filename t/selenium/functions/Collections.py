@@ -1,5 +1,6 @@
 import os
 import random
+import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -94,7 +95,7 @@ def create_subscriber(driver, customername, domainname):
     fill_element(driver, '//*[@id="Customer_table_filter"]//input', customername)
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="Customer_table"]//tr[1]//td[text()="%s"]' % customername)))
     click_js(driver, '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), "Details")]')
-    driver.find_element(By.XPATH, '//*[contains(., "Expand Groups")]').click()
+    time.sleep(1)
     driver.find_element(By.XPATH, '//*[contains(., "Expand Groups")]').click()
     scroll_to_element(driver, 'Subscribers')
     driver.find_element(By.LINK_TEXT, "Create Subscriber").click()
