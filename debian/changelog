@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.2.1.12+0~mr11.2.1.12) unstable; urgency=medium
+
+  [ Author: Nouhaila Idrissi Zouggari ]
+  * [871038e] MT#57750 Tooltip for mail2fax ACL is not translated to German
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Jul 2023 15:34:48 +0200
+
 ngcp-csc-ui (11.2.1.11+0~mr11.2.1.11) unstable; urgency=medium
 
   [ Hugo Zigha ]
