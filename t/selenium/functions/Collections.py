@@ -96,7 +96,7 @@ def create_subscriber(driver, customername, domainname):
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="Customer_table"]//tr[1]//td[text()="%s"]' % customername)))
     click_js(driver, '//*[@id="Customer_table"]//tr[1]//td//a[contains(text(), "Details")]')
     time.sleep(1)
-    driver.find_element(By.XPATH, '//*[contains(., "Expand Groups")]').click()
+    driver.find_element(By.XPATH, '//a[@id="toggle-accordions"]').click()
     scroll_to_element(driver, 'Subscribers')
     driver.find_element(By.LINK_TEXT, "Create Subscriber").click()
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="domainidtable_paginate"]/a[4]')))
