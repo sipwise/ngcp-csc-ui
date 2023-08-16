@@ -65,7 +65,7 @@
                     @input="updatePropertyData('use_regex')"
                 >
                     <csc-tooltip>
-                        {{ $t('Enable regex matching for &quot;Received from IP&quot; and &quot;Destination&quot; fields.') }}
+                        {{ $t('Enable regex matching for \"Received from IP\" and \"Destination\" fields.') }}
                     </csc-tooltip>
                 </q-toggle>
             </div>
