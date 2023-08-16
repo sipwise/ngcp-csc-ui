@@ -150,7 +150,7 @@
     "Edit List": "Liste bearbeiten",
     "Email": "E-Mail",
     "Enable": "Aktivieren",
-    "Enable regex matching for &quot;Received from IP&quot; and &quot;Destination&quot; fields.": "Aktivieren Sie den RegEx-Abgleich für die Felder &quot;Received from IP&quot; und &quot;Destination&quot;.",
+    "Enable regex matching for \"Received from IP\" and \"Destination\" fields.": "Aktivieren Sie den RegEx-Abgleich für die Felder \"Received from IP\" und \"Destination\".",
     "Enable strict mode that requires all mail2fax emails to have the secret key as the very first line of the email + an empty line. The key is removed from the email once matched.": "Aktivieren des strengen Modus, der verlangt, dass alle mail2fax-E-Mails in der ersten Zeile den Geheimschlüssel gefolgt von einer Leerzeile enthalten. Der Schlüssel wird nach dem Abgleich aus der E-Mail entfernt.",
     "End time": "Endzeit",
     "English": "Deutsch",
