@@ -24,7 +24,11 @@ import {
     createId,
     PBX_CONFIG_ORDER_BY,
     PBX_CONFIG_ORDER_DIRECTION,
-    setSubscriberSoundSet
+    setSubscriberSoundSet,
+    getNcos,
+    getNcosSet,
+    setSubscriberNcos,
+    setSubscriberNcosSet
 } from './pbx-config'
 import {
     assignNumbers,
@@ -33,7 +37,9 @@ import {
 import {
     getGroupsOnly
 } from './pbx-groups'
-
+import {
+    getSubscriberId
+} from 'src/auth'
 export function getSeats (options) {
     return new Promise((resolve, reject) => {
         options = options || {}
@@ -410,4 +416,114 @@ export async function getSeatPreferences (seatId) {
     } catch (err) {
         return err
     }
+}
+/**
+ * @param options
+ * @param options.seatId
+ * @param options.ncosId
+ */
+export function setNcosSet (options) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            if (options.ncosId !== null && options.ncosId !== undefined) {
+                return getNcos(options.ncosId)
+            } else {
+                return Promise.resolve(null)
+            }
+        }).then((ncos) => {
+            const ncosName = _.get(ncos, 'level', null)
+            return setSubscriberNcos(options.seatId, ncosName)
+        }).then(() => {
+            return getSubscriberAndPreferences(options.seatId)
+        }).then((result) => {
+            resolve({
+                seat: result.subscriber,
+                preferences: result.preferences
+            })
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+/**
+ * @param options
+ * @param options.seatId
+ * @param options.ncosId
+ */
+export function NcosSet (options) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            if (options.ncosSetId !== null && options.ncosSetId !== undefined) {
+                return getNcosSet(options.ncosSetId)
+            } else {
+                return Promise.resolve(null)
+            }
+        }).then((ncosSet) => {
+            const ncosName = _.get(ncosSet, 'name', null)
+            return setSubscriberNcosSet(options.seatId, ncosName)
+        }).then(() => {
+            return getSubscriberAndPreferences(options.seatId)
+        }).then((result) => {
+            resolve({
+                seat: result.subscriber,
+                preferences: result.preferences
+            })
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+/**
+ * @param options
+ * @param options.ncosId
+ */
+export function NcosSets (options) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            if (options.ncosSetId !== null && options.ncosSetId !== undefined) {
+                return getNcosSet(options.ncosSetId)
+            } else {
+                return Promise.resolve(null)
+            }
+        }).then((ncosSet) => {
+            const ncosName = _.get(ncosSet, 'name', null)
+            return setSubscriberNcosSet(getSubscriberId(), ncosName)
+        }).then(() => {
+            return getSubscriberAndPreferences(getSubscriberId())
+        }).then((result) => {
+            resolve({
+                seat: result.subscriber,
+                preferences: result.preferences
+            })
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+/**
+ * @param options
+ * @param options.ncosId
+ */
+export function setNcosLevelSets (options) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            if (options.ncosId !== null && options.ncosId !== undefined) {
+                return getNcos(options.ncosId)
+            } else {
+                return Promise.resolve(null)
+            }
+        }).then((ncos) => {
+            const ncosName = _.get(ncos, 'level', null)
+            return setSubscriberNcos(getSubscriberId(), ncosName)
+        }).then(() => {
+            return getSubscriberAndPreferences(getSubscriberId())
+        }).then((result) => {
+            resolve({
+                seat: result.subscriber,
+                preferences: result.preferences
+            })
+        }).catch((err) => {
+            reject(err)
+        })
+    })
 }

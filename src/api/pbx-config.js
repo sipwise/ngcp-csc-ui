@@ -240,3 +240,73 @@ export function setSubscriberSoundSet (id, soundSet) {
         })
     })
 }
+export function getNcos (id) {
+    return new Promise((resolve, reject) => {
+        get({
+            path: 'api/ncoslevels/' + id
+        }).then((ncos) => {
+            resolve(ncos)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+export function getNcosSet (id) {
+    return new Promise((resolve, reject) => {
+        get({
+            path: 'api/v2/ncos/sets/' + id
+        }).then((ncosSet) => {
+            resolve(ncosSet)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+export function setSubscriberNcos (id, ncos) {
+    return new Promise((resolve, reject) => {
+        let promise
+        const path = 'api/subscriberpreferences/' + id
+        const fieldPath = 'ncos'
+        if (ncos === null || ncos === undefined) {
+            promise = patchRemove({
+                path: path,
+                fieldPath: 'ncos'
+            })
+        } else {
+            promise = patchAdd({
+                path: path,
+                fieldPath: fieldPath,
+                value: ncos
+            })
+        }
+        promise.then(() => {
+            resolve()
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+export function setSubscriberNcosSet (id, ncosSet) {
+    return new Promise((resolve, reject) => {
+        let promise
+        const path = 'api/subscriberpreferences/' + id
+        const fieldPath = 'ncos_set'
+        if (ncosSet === null || ncosSet === undefined) {
+            promise = patchRemove({
+                path: path,
+                fieldPath: 'ncos_set'
+            })
+        } else {
+            promise = patchAdd({
+                path: path,
+                fieldPath: fieldPath,
+                value: ncosSet
+            })
+        }
+        promise.then(() => {
+            resolve()
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}

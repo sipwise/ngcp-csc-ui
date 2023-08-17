@@ -21,7 +21,11 @@ import {
     setValueName,
     setValueNumber,
     changeSIPPassword,
-    createPhonebook
+    createPhonebook,
+    getNcosLevels,
+    getNcosSet,
+    getPreferences,
+    setPreference
 } from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import QRCode from 'qrcode'
@@ -422,6 +426,41 @@ export default {
         },
         async removeSubscriberRegistration (context, row) {
             await Vue.http.delete('api/subscriberregistrations/' + row.id)
+        },
+        async getNcosLevelsSubscriber () {
+            const ncosLevel = []
+            const list = await getNcosLevels()
+            list.items.forEach((ncos) => {
+                ncosLevel.push({
+                    label: ncos.level,
+                    value: ncos.id
+                })
+            })
+            return ncosLevel
+        },
+        async getNcosSetSubscriber () {
+            const ncosSet = []
+            const list = await getNcosSet()
+            list.forEach((setNcos) => {
+                ncosSet.push({
+                    label: setNcos.name,
+                    value: setNcos.id
+                })
+            })
+            return ncosSet
+        },
+        async getCurrentNcosLevelsSubscriber () {
+            const list = await getPreferences(getSubscriberId())
+            const currentNcosLevel = list.ncos
+            return currentNcosLevel
+        },
+        async getCurrentNcosSetSubscriber () {
+            const list = await getPreferences(getSubscriberId())
+            const currentNcosSet = list.ncos_set
+            return currentNcosSet
+        },
+        async setNcosLevelsSubscriber (value) {
+            await setPreference(getSubscriberId(), 'ncos', value)
         },
         async getPhonebookDetails (context, id) {
             const list = await Vue.http.get('api/phonebookentries/' + id)

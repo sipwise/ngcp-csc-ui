@@ -76,6 +76,29 @@ export async function setPreferencePhonebook (id, field, value) {
         }
     }
 }
+export function getNcosLevels (options) {
+    return new Promise((resolve, reject) => {
+        options = options || {}
+        options = _.merge(options, {
+            path: 'api/ncoslevels/',
+            root: '_embedded.ngcp:ncoslevels',
+            all: true
+        })
+        getList(options).then((list) => {
+            resolve(list)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+export async function getNcosSet () {
+    let streams = []
+    const res = await Vue.http.get('api/v2/ncos/sets/')
+    if (res.body.total_count > 0) {
+        streams = getJsonBody(res.body)._embedded['ngcp:ncos/sets']
+    }
+    return streams
+}
 export async function removePreference (id, field) {
     return await patchRemove({
         path: 'api/subscriberpreferences/' + id,

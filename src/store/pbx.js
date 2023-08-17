@@ -37,7 +37,8 @@ export default {
         deviceModelImageSmallMap: {},
         subscriberList: [],
         subscriberListState: RequestState.initiated,
-        subscriberMap: {}
+        subscriberMap: {},
+        ncosMapByName: {}
     },
     getters: {
         pilot (state) {
@@ -114,6 +115,11 @@ export default {
                 value: null
             })
             return options
+        },
+        getNcosByName (state) {
+            return (level) => {
+                return _.get(state.ncosMapByName, level, null)
+            }
         },
         getSoundSetByName (state) {
             return (name) => {

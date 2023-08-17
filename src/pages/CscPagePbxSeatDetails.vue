@@ -223,6 +223,52 @@
                         />
                     </template>
                 </q-select>
+                <q-select
+                v-model="changes.ncos"
+                    use-chips
+                    radio
+                    emit-value
+                    map-options
+                    :disable="isLoading"
+                    :options="ncosOptions"
+                    :label="$t('Ncos')"
+                >
+                <template
+                        v-slot:append
+                    >
+                        <csc-input-button-save
+                            v-if="hasNcosChanged"
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            v-if="hasNcosChanged"
+                            @click.stop="resetNcos"
+                        />
+                    </template>
+                </q-select>
+                <q-select
+                v-model="changes.ncosSet"
+                    use-chips
+                    radio
+                    emit-value
+                    map-options
+                    :disable="isLoading"
+                    :options="ncosSetOptions"
+                    :label="$t('Ncos Set')"
+                >
+                <template
+                        v-slot:append
+                    >
+                        <csc-input-button-save
+                            v-if="hasNcosSetChanged"
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            v-if="hasNcosSetChanged"
+                            @click.stop="resetNcosSet"
+                        />
+                    </template>
+                </q-select>
                 <q-toggle
                     v-model="changes.clirIntrapbx"
                     class="q-pa-sm"
@@ -304,8 +350,14 @@ export default {
             id: this.$route.params.id,
             soundSet: null,
             currentCli: "",
-            selectedTab: this.initialTab
+            selectedTab: this.initialTab,
+            ncosOptions: [],
+            ncosSetOptions: [],
         }
+    },
+    async created() {
+        await this.getNcosSubscriber();
+        await this.getNcosSetsSubscriber();
     },
     validations: {
         changes: {
@@ -353,8 +405,11 @@ export default {
         ]),
         ...mapGetters('pbxSeats', [
             'getSoundSetBySeatId',
+            'getNcosBySeatId',
             'hasCallQueue',
             'getMusicOnHold',
+            'getDefaultNcos',
+            'getDefaultNcosSet',
             'getCurrentCli',
             'getIntraPbx',
             'getSeatUpdateToastMessage',
@@ -391,6 +446,12 @@ export default {
         },
         hasSoundSetChanged () {
             return this.changes.soundSet !== this.getSoundSetId()
+        },
+        hasNcosChanged () {
+            return this.changes.ncos !== this.getDefaultNcos(this.seatSelected.id)
+        },
+        hasNcosSetChanged () {
+            return this.changes.ncosSet !== this.getDefaultNcosSet(this.seatSelected.id)
         },
         extensionErrorMessage () {
             if (!this.$v.changes.extension.isInRange) {
@@ -489,6 +550,8 @@ export default {
     async mounted () {
         this.selectSeat(this.id)
         await this.loadAnnouncements()
+        // await this.getNcosLevelsSubscriber()
+        await this.getNcosSetSubscriber()
     },
     beforeDestroy () {
         this.resetSelectedSeat()
@@ -504,7 +567,13 @@ export default {
             'setMusicOnHold',
             'setSeatSoundSet',
             'loadPreferences',
-            'setCli'
+            'setCli',
+            'setNcosSet',
+            'NcosSet'
+        ]),
+        ...mapActions('user', [
+            'getNcosLevelsSubscriber',
+            'getNcosSetSubscriber'
         ]),
         ...mapActions('callForwarding', [
             'loadAnnouncements'
@@ -548,6 +617,13 @@ export default {
             }
             return null
         },
+        getNcosId () {
+            const ncos = this.getNcosBySeatId(this.seatSelected.id)
+            if (ncos) {
+                return ncos.id
+            }
+            return null
+        },
         getSeatData () {
             return (this.seatSelected) ? {
                 displayName: this.seatSelected.display_name,
@@ -560,7 +636,9 @@ export default {
                 musicOnHold: this.getMusicOnHold(this.seatSelected.id),
                 groups: this.getGroupIds(),
                 soundSet: this.getSoundSetId(),
-                cliNumber: this.getCliNumberId()
+                cliNumber: this.getCliNumberId(),
+                ncos: this.getDefaultNcos(this.seatSelected.id),
+                ncosSet:this.getDefaultNcosSet(this.seatSelected.id),
             } : null
         },
         resetDisplayName () {
@@ -583,6 +661,12 @@ export default {
         },
         resetSoundSet () {
             this.changes.soundSet = this.getSoundSetId()
+        },
+        resetNcos () {
+            this.changes.ncos = this.getDefaultNcos(this.seatSelected.id)
+        },
+        resetNcosSet () {
+            this.changes.ncosSet = this.getDefaultNcosSet(this.seatSelected.id)
         },
         save () {
             if (this.hasDisplayNameChanged) {
@@ -628,6 +712,18 @@ export default {
                     soundSetId: this.changes.soundSet
                 })
             }
+            if (this.hasNcosChanged) {
+                this.setNcosSet({
+                    seatId: this.seatSelected.id,
+                    ncosId: this.changes.ncos
+                })
+            }
+            if (this.hasNcosSetChanged) {
+                this.NcosSet({
+                    seatId: this.seatSelected.id,
+                    ncosSetId: this.changes.ncosSet
+                })
+            }
         },
         changeIntraPbx () {
             this.setIntraPbx( {
@@ -649,6 +745,20 @@ export default {
         goToCallQueue () {
             this.jumpToCallQueue(this.seatSelected)
         },
+        async getNcosSubscriber () {
+            const listNcos = await this.getNcosLevelsSubscriber()
+            this.ncosOptions = listNcos.map((ncos) => ({
+                label: ncos.label,
+                value: ncos.value
+            }));        
+        },
+        async getNcosSetsSubscriber () {
+            const listNcosSet = await this.getNcosSetSubscriber()
+            this.ncosSetOptions = listNcosSet.map((ncosSet) => ({
+                label: ncosSet.label,
+                value: ncosSet.value
+            }));        
+        }
     }
 }
 </script>

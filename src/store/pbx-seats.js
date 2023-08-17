@@ -24,9 +24,13 @@ import {
     setSeatCli,
     setSeatWebPassword,
     getSeatPreferences,
-    setSeatSIPPassword
+    setSeatSIPPassword,
+    setNcosSet,
+    setNcosLevelSets,
+    NcosSet,
+    NcosSets
 } from '../api/pbx-seats'
-
+import { getSubscriberId } from 'src/auth'
 export default {
     namespaced: true,
     state: {
@@ -88,6 +92,26 @@ export default {
                     return rootGetters['pbx/getSoundSetByName'](soundSetName)
                 }
                 return null
+            }
+        },
+        getNcosBySeatId (state, getters, rootState, rootGetters) {
+            return (seatId) => {
+                const prefs = state.preferenceMapById[seatId]
+                const ncosName = _.get(prefs, 'ncos', null)
+                if (ncosName !== null) {
+                    return rootGetters['pbx/getNcosByName'](ncosName)
+                }
+                return null
+            }
+        },
+        getDefaultNcos (state) {
+            return (id) => {
+                return state?.preferenceMapById[id]?.ncos 
+            }
+        },
+        getDefaultNcosSet (state) {
+            return (id) => {
+                return state?.preferenceMapById[id]?.ncos_set 
             }
         },
         getIntraPbx (state) {
@@ -430,6 +454,62 @@ export default {
             setSeatSoundSet({
                 seatId: options.seatId,
                 soundSetId: options.soundSetId
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        setNcosSet (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.t('Ncos')
+            })
+            setNcosSet({
+                seatId: options.seatId,
+                ncosId: options.ncosId
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        NcosSet (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.t('Ncos Set')
+            })
+            NcosSet({
+                seatId: options.seatId,
+                ncosSetId: options.ncosSetId
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        setNcosLevelSet (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: getSubscriberId(),
+                seatField: i18n.t('Ncos')
+            })
+            setNcosLevelSets({
+                seatId: getSubscriberId(),
+                ncosId: options.ncosId
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        setNcosSets (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: getSubscriberId(),
+                seatField: i18n.t('Ncos Set')
+            })
+            NcosSets({
+                seatId: getSubscriberId(),
+                ncosSetId: options.ncosSetId
             }).then((result) => {
                 context.commit('seatUpdateSucceeded', result)
             }).catch((err) => {

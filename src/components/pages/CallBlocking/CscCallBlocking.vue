@@ -24,6 +24,9 @@
                 />
             </q-item>
         </q-list>
+        <csc-ncos
+            :page-type=pageType
+    />
         <div
             v-if="hasSubscriberProfileAttribute(blockMode)"
             class="row q-mb-lg"
@@ -131,12 +134,14 @@ import {
     mapGetters
 } from 'vuex'
 import CscPage from '../../CscPage'
+import CscNcos from '../../CscNcos'
 import CscCallBlockingAddForm from '../../pages/CallBlocking/CscCallBlockingAddForm'
 import CscBlockedNumber from '../../pages/CallBlocking/CscBlockedNumber'
 export default {
     name: 'CscCallBlocking',
     components: {
         CscPage,
+        CscNcos,
         CscCallBlockingAddForm,
         CscBlockedNumber,
         CscSpinner
@@ -145,6 +150,10 @@ export default {
         pageName: {
             type: String,
             default: 'incoming'
+        },
+        pageType: {
+            type: String,
+            default: null
         },
         blockMode: {
             type: String,
