@@ -26,7 +26,7 @@ export const PROFILE_ATTRIBUTE_MAP = {
 
 export const PROFILE_ATTRIBUTES_MAP = {
     callBlockingIncoming: ['block_in_clir', 'block_in_mode', 'block_in_list'],
-    callBlockingOutgoing: ['block_out_mode', 'block_out_list'],
+    callBlockingOutgoing: ['block_out_mode', 'block_out_list', 'ncos', 'ncos_set'],
     callBlockingPrivacy: ['clir', 'clir_intrapbx'],
     callSettings: ['music_on_hold', 'language'],
     pbxSettings: ['auto_attendant', 'cloud_pbx_callqueue', 'max_queue_length', 'queue_wrap_up_time', 'manager_secretary'],

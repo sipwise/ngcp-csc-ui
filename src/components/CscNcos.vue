@@ -1,6 +1,7 @@
 <template>
     <div
         v-if="pageType === 'typeoutgoing'"
+        class="q-mb-lg"
     >
         <q-item
             class="col col-xs-12 col-md-6"
@@ -12,6 +13,7 @@
                 no-wrap
             >
                 <q-select
+                    v-if="hasSubscriberProfileAttribute('ncos') && (this.isPbxAdmin || ! this.isPbxEnabled)"
                     v-model="ncosLevel"
                     use-chips
                     radio
@@ -34,7 +36,8 @@
                     </template>
                 </q-select>
                 <q-select
-                v-model="ncosSet"
+                    v-if="hasSubscriberProfileAttribute('ncos_set') && (this.isPbxAdmin || ! this.isPbxEnabled)"
+                    v-model="ncosSet"
                     use-chips
                     radio
                     emit-value
@@ -59,9 +62,11 @@
         </q-item>
     </div>
 </template>
+
 <script>
 import {
-    mapActions
+    mapActions,
+    mapGetters
 } from 'vuex'
 import CscInputButtonSave from 'src/components/form/CscInputButtonSave'
 import CscInputButtonReset from 'src/components/form/CscInputButtonReset'
@@ -94,6 +99,11 @@ export default {
         await this.getCurrentNcosSetsSubscriber();
   },
     computed: {
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute',
+            'isPbxAdmin',
+            'isPbxEnabled'
+        ]),
         hasNcosChanged () {
             return this.ncosLevel !== this.originalNcosLevel
         },
