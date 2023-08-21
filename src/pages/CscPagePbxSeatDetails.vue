@@ -448,14 +448,7 @@ export default {
         },
         getCliNumbersOptions () {
             let cliOptions = []
-            const clis = [...this.seatSelected.alias_numbers]
-            clis.forEach((cli) => {
-                cliOptions.push({
-                    label: cli.cc + cli.ac + cli.sn,
-                    value: cli.cc + cli.ac + cli.sn
-                })
-            })
-            cliOptions = cliOptions.concat(this.getPrimaryNumberOptions())
+            cliOptions = cliOptions.concat(this.getFullNumberOptions())
             return cliOptions
         },
         isLoading () {
@@ -517,7 +510,7 @@ export default {
             'resetSelectedSeat'
         ]),
         ...mapGetters('pbx', [
-            'getPrimaryNumberOptions',
+            'getFullNumberOptions',
             'numbers'
         ]),
         selectTab (tabName) {
