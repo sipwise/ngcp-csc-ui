@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.2.1.14+0~mr11.2.1.14) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [d41c8a8] MT#58074 Allow the selection of all the aliases as cli
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 24 Aug 2023 10:02:30 +0200
+
 ngcp-csc-ui (11.2.1.13+0~mr11.2.1.13) unstable; urgency=medium
 
   [ Author: Nouhaila Idrissi Zouggari ]
