@@ -55,6 +55,9 @@
                     v-if="callAvailable"
                     @click="startCall"
                 />
+                <csc-popup-menu-item-delete
+                    @click="deleteFax(fax)"
+                />
             </csc-more-menu>
         </q-item-section>
     </q-item>
@@ -64,9 +67,10 @@
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
+import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 export default {
     name: 'CscFaxItem',
-    components: { CscPopupMenuItemStartCall, CscPopupMenuItem, CscMoreMenu },
+    components: { CscPopupMenuItemStartCall, CscPopupMenuItem, CscMoreMenu, CscPopupMenuItemDelete },
     props: {
         fax: {
             type: Object,
@@ -105,7 +109,10 @@ export default {
         },
         startCall () {
             this.$emit('start-call', this.fax.caller)
-        }
+        },
+        deleteFax (fax) {
+            this.$emit('delete-fax', fax)
+        },
     }
 }
 </script>

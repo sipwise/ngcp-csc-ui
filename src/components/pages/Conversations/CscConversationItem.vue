@@ -18,6 +18,7 @@
         :call-available="callAvailable"
         @download-fax="downloadFax"
         @start-call="startCall"
+        @delete-fax="$emit('delete-fax', $event)"
     />
     <csc-voice-mail-item
         v-else-if="item.type === 'voicemail'"

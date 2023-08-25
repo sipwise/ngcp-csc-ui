@@ -71,6 +71,7 @@
                         @toggle-block-outgoing="toggleBlockOutgoingAction"
                         @toggle-block-both="toggleBlockBothAction"
                         @delete-voicemail="$refs.confirmDeletionDialog.open();deletionId=$event.id"
+                        @delete-fax="$refs.confirmDeletionFaxDialog.open();deletionId=$event.id"
                     />
                 </q-list>
                 <div
@@ -95,6 +96,15 @@
             :title="$t('Remove Voicemail')"
             :message="$t('You are about to remove this Voicemail')"
             @remove="deleteVoicemailConfirmed({id:deletionId, tab: selectedTab})"
+            @cancel="deletionId=null"
+        />
+        <csc-remove-dialog
+            ref="confirmDeletionFaxDialog"
+            title-icon="delete"
+            title-icon-color="negative"
+            :title="$t('Remove Fax')"
+            :message="$t('You are about to remove this Fax')"
+            @remove="deleteFaxConfirmed({id:deletionId, tab: selectedTab})"
             @cancel="deletionId=null"
         />
     </csc-page-sticky-tabs>
@@ -239,7 +249,8 @@ export default {
             deleteVoicemail: 'csc-conversations',
             toggleBlockIncoming: 'csc-conversations',
             toggleBlockOutgoing: 'csc-conversations',
-            toggleBlockBoth: 'csc-conversations'
+            toggleBlockBoth: 'csc-conversations',
+            deleteFax: 'csc-conversations'
         }),
         ...mapMutations('conversations', [
             'resetList'
@@ -331,6 +342,14 @@ export default {
             this.resetList()
             try {
                 await this.deleteVoicemail(payload)
+            } finally {
+                this.forceReload()
+            }
+        },
+        async deleteFaxConfirmed (payload) {
+            this.resetList()
+            try {
+                await this.deleteFax(payload)
             } finally {
                 this.forceReload()
             }

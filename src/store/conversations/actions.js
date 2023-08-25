@@ -5,7 +5,8 @@ import {
     getConversations,
     getIncomingBlocked,
     getOutgoingBlocked,
-    playVoiceMail
+    playVoiceMail,
+    deleteFax
 } from 'src/api/conversations'
 import _ from 'lodash'
 import {
@@ -204,6 +205,15 @@ export default {
         context.commit('deletionRequesting')
         try {
             await deleteVoicemail(options.id)
+            context.commit('deletionSucceeded')
+        } catch (err) {
+            context.commit('deletionFailed', err.message)
+        }
+    },
+    async deleteFax (context, options) {
+        context.commit('deletionRequesting')
+        try {
+            await deleteFax(options.id)
             context.commit('deletionSucceeded')
         } catch (err) {
             context.commit('deletionFailed', err.message)

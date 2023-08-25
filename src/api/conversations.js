@@ -123,3 +123,8 @@ export async function getAllCallsOrVoicemails (options) {
         params: options
     })
 }
+
+export async function deleteFax (id) {
+    const res = await Vue.http.delete('api/faxes/' + id)
+    return res.status >= 200
+}
