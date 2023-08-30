@@ -1,3 +1,33 @@
+ngcp-csc-ui (11.5.1.0+0~mr11.5.1.0) unstable; urgency=medium
+
+  [ Mykola Malkov ]
+  * [6767abe] MT#57453 Switch docker image to bookworm
+
+  [ Nico Schedel ]
+  * [0536822] MT#57776 update dockerfile to make python csc tests work on debian 12
+  * [a618ad9] MT#57776 fix csc test preperation
+  * [90387d0] MT#57776 fix csc security tests
+  * [a511196] MT#57776 fix csc test preperation on jenkins side
+  * [fdee658] MT#57776 fix csc test preperation on jenkins side (again)
+
+  [ Hugo Zigha ]
+  * [a72696e] MT#57783 HG master data: add new preference `pbx_hunt_cancel_mode`
+  * [3e3e123] MT#55674 We cannot remove fax files from the CSC
+
+  [ nouhaila ]
+  * [37a807d] MT#57080 Expose Phonebook in the CSC
+
+  [ Author: Nouhaila Idrissi Zouggari ]
+  * [6822e7c] MT#57750 Tooltip for mail2fax ACL is not translated to German
+  * [1406526] MT#57750 Tooltip for mail2fax ACL is not translated to German
+  * [e02805e] MT#57577 subscriber's administrator should be able to configure NCOS and NCOS_SET of seats
+
+  [ Marco Capetta ]
+  * [f81267e] MT#57577 Make ncos and ncos_set visibile accordingly to profile
+  * [e5b0fb3] MT#58074 Allow the selection of all the aliases as cli
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 30 Aug 2023 18:04:21 +0200
+
 ngcp-csc-ui (11.5.0.0+0~mr11.5.0.0) unstable; urgency=medium
 
   [ Hugo Zigha ]
