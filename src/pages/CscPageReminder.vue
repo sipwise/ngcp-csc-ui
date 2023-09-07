@@ -47,13 +47,12 @@
             <q-item>
                 <q-item-section>
                     <q-input
-                        :model-value="reminderTime"
+                        v-model="reminderTime"
                         :loading="isReminderLoading"
                         data-cy="csc-reminder-time"
                         fill-mask="_"
                         mask="##:##"
                         dense
-                        @focus="$refs.timePopup.show()"
                     >
                         <template
                             #loading
@@ -75,14 +74,21 @@
                                     ref="timePopup"
                                 >
                                     <q-time
-                                        :model-value="reminderTime"
+                                        v-model="reminderTime"
                                         format24h
                                         now-btn
                                         flat
                                         mask="HH:mm"
                                         color="primary"
                                         @update:model-value="timeUpdate"
-                                    />
+                                    >
+                                        <q-btn
+                                            v-close-popup
+                                            :label="$t('Close')"
+                                            color="primary"
+                                            flat
+                                        />
+                                    </q-time>
                                 </q-popup-proxy>
                             </q-btn>
                         </template>
@@ -181,7 +187,6 @@ export default {
             'updateRecurrence'
         ]),
         timeUpdate (time) {
-            this.$refs.timePopup.hide()
             this.updateTime(time)
         },
         mapRecurrence (recurrence) {
