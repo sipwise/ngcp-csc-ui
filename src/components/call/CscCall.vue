@@ -222,6 +222,7 @@
                 />
                 <q-btn
                     v-if="canStart"
+                    :disabled="!isIncoming && !isNumberInputDefined"
                     color="primary"
                     text-color="dark"
                     icon="call"
@@ -353,6 +354,10 @@ export default {
             required: true
         },
         callNumber: {
+            type: String,
+            required: true
+        },
+        numberInput: {
             type: String,
             required: true
         },
@@ -536,6 +541,9 @@ export default {
         },
         callStateTitle () {
             return CallStateTitle[this.callState]
+        },
+        isNumberInputDefined () {
+            return this.numberInput !== '' && this.numberInput !== null
         }
     },
     watch: {

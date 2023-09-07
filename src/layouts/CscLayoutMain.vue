@@ -164,6 +164,7 @@
             ref="call"
             :call-state="callState"
             :call-number="number"
+            :number-input="numberInput"
             :ended-reason="endedReason"
             :full-view="isFullView"
             :minimized="!isHome && !maximized"
