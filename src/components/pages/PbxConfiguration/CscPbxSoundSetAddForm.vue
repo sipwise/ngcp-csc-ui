@@ -154,6 +154,26 @@ export default {
                 {
                     value: 'de',
                     label: 'German'
+                },
+                {
+                    value: 'fr',
+                    label: 'French'
+                },
+                {
+                    value: 'ar',
+                    label: 'Arabic'
+                },
+                {
+                    value: 'nl',
+                    label: 'Dutch'
+                },
+                {
+                    value: 'he',
+                    label: 'Hebrew'
+                },
+                {
+                    value: 'pt_br',
+                    label: 'Brazialian'
                 }
             ]
         }
