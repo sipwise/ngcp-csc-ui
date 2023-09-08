@@ -174,6 +174,7 @@ import CscVoiceboxLanguage from 'components/CscVoiceboxLanguage'
 import { mapWaitingActions } from 'vue-wait'
 import useValidate from '@vuelidate/core'
 export default {
+    name: 'CscPageVoicebox',
     components: {
         CscVoiceboxLanguage,
         CscSpinner,

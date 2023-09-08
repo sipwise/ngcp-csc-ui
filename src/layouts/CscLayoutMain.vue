@@ -242,7 +242,7 @@ import {
     startCase
 } from 'src/filters/string'
 export default {
-    name: 'CscMainLayout',
+    name: 'CscLayoutMain',
     components: {
         CscSelectionLanguage,
         CscSelectionLanguageMobile,

@@ -105,6 +105,7 @@ import CscFade from 'components/transitions/CscFade'
 import CscListActionButton from 'components/CscListActionButton'
 
 export default {
+    name: 'CscPagePbxCallQueues',
     components: {
         CscListActionButton,
         CscFade,

@@ -194,7 +194,7 @@ import CscListItemTitle from 'components/CscListItemTitle'
 import useValidate from '@vuelidate/core'
 import _ from 'lodash'
 export default {
-    name: 'CscPbxSoundSet',
+    name: 'CscPagePbxSoundSetDetails',
     components: {
         CscInputButtonReset,
         CscInputButtonSave,

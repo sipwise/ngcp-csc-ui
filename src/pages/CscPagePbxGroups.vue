@@ -152,6 +152,7 @@ import CscFade from 'components/transitions/CscFade'
 import CscListSpinner from 'components/CscListSpinner'
 
 export default {
+    name: 'CscPagePbxGroups',
     components: {
         CscListSpinner,
         CscFade,

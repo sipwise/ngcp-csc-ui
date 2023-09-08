@@ -105,6 +105,7 @@ import CscPbxSoundSetAddForm from 'components/pages/PbxConfiguration/CscPbxSound
 import CscRemoveDialog from 'components/CscRemoveDialog'
 
 export default {
+    name: 'CscPagePbxSoundSets',
     components: {
         CscRemoveDialog,
         CscPbxSoundSetAddForm,

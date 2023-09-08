@@ -36,6 +36,7 @@
 <script>
 import CscSpinner from 'components/CscSpinner'
 export default {
+    name: 'CscVoiceboxLanguage',
     components: { CscSpinner },
     props: {
         defaultLanguageOption: {

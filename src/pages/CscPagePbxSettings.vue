@@ -46,6 +46,7 @@ import {
 import CscSpinner from 'components/CscSpinner'
 import { getSubscriberId } from 'src/auth'
 export default {
+    name: 'CscPagePbxSettings',
     components: {
         CscSpinner,
         CscPage

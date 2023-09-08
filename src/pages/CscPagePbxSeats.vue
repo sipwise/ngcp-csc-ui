@@ -126,6 +126,7 @@ import CscPageSticky from 'components/CscPageSticky'
 import CscPbxSeatFilters from 'components/pages/PbxConfiguration/CscPbxSeatFilters'
 
 export default {
+    name: 'CscPagePbxSeats',
     components: {
         CscPbxSeatFilters,
         CscPageSticky,

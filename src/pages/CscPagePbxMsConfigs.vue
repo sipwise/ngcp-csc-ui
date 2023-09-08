@@ -103,6 +103,7 @@ import CscFade from 'components/transitions/CscFade'
 import CscListActionButton from 'components/CscListActionButton'
 
 export default {
+    name: 'CscPagePbxMsConfigs',
     components: {
         CscListActionButton,
         CscFade,

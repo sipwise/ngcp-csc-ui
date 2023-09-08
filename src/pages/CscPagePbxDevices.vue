@@ -166,7 +166,7 @@ import {
     RequestState
 } from 'src/store/common'
 export default {
-    name: 'CscPbxDevices',
+    name: 'CscPagePbxDevices',
     components: {
         CscRemoveDialog,
         CscPbxDeviceAddForm,

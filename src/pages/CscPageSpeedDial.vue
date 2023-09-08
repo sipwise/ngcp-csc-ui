@@ -107,6 +107,7 @@ import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 
 export default {
+    name: 'CscPageSpeedDial',
     components: {
         CscPopupMenuItem,
         CscPopupMenu,

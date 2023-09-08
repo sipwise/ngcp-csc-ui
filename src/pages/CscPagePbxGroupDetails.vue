@@ -264,7 +264,7 @@ import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails.vue'
 import useValidate from '@vuelidate/core'
 export default {
-    name: 'CscPbxGroupDetails',
+    name: 'CscPagePbxGroupDetails',
     components: {
         CscInputButtonReset,
         CscInputButtonSave,

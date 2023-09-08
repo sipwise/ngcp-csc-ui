@@ -181,7 +181,7 @@ import CscRemoveDialog from 'components/CscRemoveDialog'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import moment from 'moment'
 export default {
-    name: 'CscCallBlocking',
+    name: 'CscPageCallRecording',
     components: {
         CscAudioPlayer,
         CscPageSticky,

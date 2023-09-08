@@ -124,7 +124,7 @@ import CscConversationsCallsFilter from 'components/pages/Conversations/CscConve
 import CscRemoveDialog from 'components/CscRemoveDialog'
 import { mapWaitingActions } from 'vue-wait'
 export default {
-    name: 'CscConversations',
+    name: 'CscPageConversations',
     components: {
         CscRemoveDialog,
         CscConversationsFilter,
