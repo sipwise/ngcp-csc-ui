@@ -204,13 +204,6 @@ export default {
                     label: this.$t('Extension Settings'),
                     visible: this.isPbxEnabled && this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettings),
                     children: [
-                        // Just hide the page to re-use later
-                        // {
-                        //     to: '/user/extension-settings/general',
-                        //     icon: 'settings',
-                        //     label: this.$t('General'),
-                        //     visible: this.isPbxEnabled
-                        // },
                         {
                             to: '/user/extension-settings/call-queues',
                             icon: 'filter_none',

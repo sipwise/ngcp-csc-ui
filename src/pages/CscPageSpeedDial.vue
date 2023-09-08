@@ -135,29 +135,6 @@ export default {
         ])
     },
     watch: {
-        // speedDialLoadingState (state) {
-        //     if (state === 'requesting') {
-        //         startLoading()
-        //     } else if (state === 'failed') {
-        //         stopLoading()
-        //         showGlobalError(this.speedDialLoadingError)
-        //     } else if (state === 'succeeded') {
-        //         stopLoading()
-        //     }
-        // },
-        // unassignSlotState (state) {
-        //     if (state === 'requesting') {
-        //         startLoading()
-        //     } else if (state === 'failed') {
-        //         stopLoading()
-        //         showGlobalError(this.unassignSlotError)
-        //     } else if (state === 'succeeded') {
-        //         stopLoading()
-        //         showToast(this.$t('Unassigned slot {slot}', {
-        //             slot: this.lastUnassignedSlot
-        //         }))
-        //     }
-        // },
         assignSlotState (state) {
             if (state === 'failed') {
                 showGlobalError(this.assignSlotError)

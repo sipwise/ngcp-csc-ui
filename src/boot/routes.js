@@ -20,21 +20,6 @@ export default ({ app, router, store }) => {
                 next()
             }
         } else {
-            /* ==== A VOIR ===== if (to.fullPath === '/user/fax-settings') {
-                if (store.getters['user/hasFaxCapability']) {
-                    next()
-                } else {
-                    next('/')
-                }
-            } else if (to.fullPath === '/user/customer/*') {
-                if (store.getters['user/isOldCSCProxyingAllowed']) {
-                    next()
-                } else {
-                    next('/')
-                }
-            } else {
-                next()
-            } */
             // already authorized user
             switch (to.path) {
             case '/login':

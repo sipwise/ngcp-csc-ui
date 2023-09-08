@@ -549,7 +549,6 @@ export default {
     async mounted () {
         this.selectSeat(this.id)
         await this.loadAnnouncements()
-        // await this.getNcosLevelsSubscriber()
         await this.getNcosSetSubscriber()
     },
     beforeUnmount () {

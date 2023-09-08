@@ -81,9 +81,6 @@
         <csc-list-spinner
             v-if="isGroupListRequesting && !(isGroupCreating || isGroupRemoving || isGroupUpdating)"
         />
-        <!-- <csc-list
-            v-if="!isGroupListEmpty && groupListVisibility === 'visible'"
-        > -->
         <q-list
             v-if="!isGroupListEmpty && groupListVisibility === 'visible'"
             class="row justify-start items-start"
@@ -105,7 +102,6 @@
                     @remove="openGroupRemovalDialog(group.id)"
                 />
             </csc-fade>
-        <!-- </csc-list> -->
         </q-list>
         <div
             v-if="isGroupListEmpty && !isGroupListRequesting && hasFilters"

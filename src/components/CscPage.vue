@@ -47,24 +47,3 @@ export default {
     }
 }
 </script>
-
-<!--<style lang="sass" rel="stylesheet/sass">-->
-<!--    .csc-page-->
-<!--        min-height 100vh-->
-<!--        position relative-->
-<!--        margin 0-->
-<!--        padding 0-->
-<!--        .csc-page-content-->
-<!--            min-height 100vh-->
-<!--            padding $flex-gutter-lg-->
-<!--            padding-top 24px-->
-<!--            padding-bottom $call-footer-height-->
-<!--    .csc-page.csc-page-mobile-->
-<!--        .csc-page-content-->
-<!--            padding-left $flex-gutter-sm * 1.4-->
-<!--            padding-right $flex-gutter-sm * 1.4-->
-<!--    .csc-page.csc-page-mobile.csc-page-list-->
-<!--        .csc-page-content-->
-<!--            padding-left 0-->
-<!--            padding-right 0-->
-<!--</style>-->

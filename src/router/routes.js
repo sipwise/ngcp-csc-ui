@@ -21,8 +21,6 @@ import CscPagePbxCallQueues from 'src/pages/CscPagePbxCallQueues'
 import CscPagePbxSoundSets from 'src/pages/CscPagePbxSoundSets'
 import CscPagePbxMsConfigs from 'src/pages/CscPagePbxMsConfigs'
 import CscPagePbxAutoAttendant from 'src/pages/CscPagePbxAutoAttendant'
-// Just hide the page to re-use later
-// import CscPagePbxSettings from 'src/pages/CscPagePbxSettings'
 import CscPageVoicebox from 'src/pages/CscPageVoicebox'
 import CscPageFaxSettings from 'src/pages/CscPageFaxSettings'
 import CscPageUserSettings from 'src/pages/CscPageUserSettings'
@@ -380,19 +378,6 @@ const routes = [
                     profileAttributes: PROFILE_ATTRIBUTES_MAP.callSettings
                 }
             },
-            // Just hide the page to re-use later
-            // {
-            //     path: 'extension-settings/general',
-            //     component: CscPagePbxSettings,
-            //     meta: {
-            //         get title () {
-            //             return i18n.global.tc('Extension Settings')
-            //         },
-            //         get subtitle () {
-            //             return i18n.global.tc('Set your Extension settings')
-            //         },
-            //     }
-            // },
             {
                 path: 'extension-settings/call-queues',
                 component: CscPagePbxSettingsCallQueues,
