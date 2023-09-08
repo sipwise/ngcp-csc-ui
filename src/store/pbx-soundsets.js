@@ -187,7 +187,7 @@ export default {
             const index = state.soundSetList.findIndex((soundSetItem) => soundSetItem.id === soundSet.id)
             state.soundSetMap[soundSet.id] = soundSet
             state.soundSetList[index] = soundSet
-            if (state.soundSetSelected.id === soundSet.id) {
+            if (state?.soundSetSelected?.id === soundSet.id) {
                 state.soundSetSelected = soundSet
             }
         },
