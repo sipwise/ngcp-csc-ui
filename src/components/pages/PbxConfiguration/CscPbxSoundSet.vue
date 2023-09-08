@@ -4,7 +4,7 @@
         icon="queue_music"
         :odd="odd"
         :loading="loading"
-        :show-more-menu="soundSet.customer_id"
+        :show-more-menu="showMoreMenu"
         @click="showSoundSetDetails"
     >
         <template
@@ -97,6 +97,12 @@ export default {
         ]),
         parent () {
             return this.soundSet.parent_id ? this.soundSetList.find((soundSet) => this.soundSet.parent_id === soundSet.id) : null
+        },
+        showMoreMenu () {
+            if (this.soundSet.customer_id) {
+                return true
+            }
+            return false
         }
     },
     methods: {
