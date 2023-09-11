@@ -50,6 +50,7 @@
                     <td>
                         <q-toggle
                             :model-value="row.shared"
+                            @update:model-value="toggleShared(row)"
                         />
                     </td>
                 </template>
@@ -67,6 +68,12 @@
                                 color="primary"
                                 :label="$t('Edit')"
                                 @click="showPhonebookDetails(row)"
+                            />
+                            <csc-popup-menu-item
+                                icon="delete"
+                                color="negative"
+                                :label="$t('Delete')"
+                                @click="deleteRow(row)"
                             />
                         </csc-more-menu>
                     </td>
@@ -159,7 +166,9 @@ export default {
     },
     methods: {
         ...mapWaitingActions('user', {
-            loadSubscriberPhonebook: 'loadSubscriberPhonebook'
+            loadSubscriberPhonebook: 'loadSubscriberPhonebook',
+            removeSubscriberPhonebook: 'removeSubscriberPhonebook',
+            updateValueShared: 'updateValueShared'
         }),
         async refresh () {
             await this.fetchPaginatedRegistrations({
@@ -188,6 +197,21 @@ export default {
                 path: '/user/home',
                 query: { number: row.number }
             })
+        },
+        async deleteRow (row) {
+            this.$q.dialog({
+                title: this.$t('Delete subscriber phonebook'),
+                message: this.$t('You are about to delete this phonebook'),
+                color: 'negative',
+                cancel: true,
+                persistent: true
+            }).onOk(async data => {
+                await this.removeSubscriberPhonebook(row)
+                await this.refresh()
+            })
+        },
+        async toggleShared (row) {
+            await this.updateValueShared(row)
         }
     }
 }

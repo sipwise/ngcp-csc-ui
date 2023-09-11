@@ -297,6 +297,12 @@ export default {
         },
         setQrExpiringTime (state, qrExpiringTime) {
             state.qrExpiringTime = qrExpiringTime
+        },
+        setPhonebookShared (state, { id, value }) {
+            const index = state.subscriberPhonebook.findIndex(row => row.id === id)
+            if (index > -1) {
+                state.subscriberPhonebook[index].shared = value
+            }
         }
     },
     actions: {
@@ -430,6 +436,9 @@ export default {
         async removeSubscriberRegistration (context, row) {
             await httpApi.delete('api/subscriberregistrations/' + row.id)
         },
+        async removeSubscriberPhonebook (context, row) {
+            await httpApi.delete('api/phonebookentries/' + row.id)
+        },
         async getNcosLevelsSubscriber () {
             const ncosLevel = []
             const list = await getNcosLevels()
@@ -471,6 +480,10 @@ export default {
         },
         async getValueShared (context, options) {
             await setValueShared(options.phonebookId, options.shared)
+        },
+        async updateValueShared (context, row) {
+            context.commit('setPhonebookShared', { id: row.id, value: !row.shared })
+            await setValueShared(row.id, row.shared)
         },
         async getValueName (context, options) {
             await setValueName(options.phonebookId, options.name)
