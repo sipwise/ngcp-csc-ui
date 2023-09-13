@@ -222,7 +222,7 @@
                 />
                 <q-btn
                     v-if="canStart"
-                    :disabled="!isIncoming && !isNumberInputDefined"
+                    :disabled="!isIncoming && (!isNumberInputDefined || microphoneNotAllowed)"
                     color="primary"
                     text-color="dark"
                     icon="call"
@@ -231,7 +231,15 @@
                     size="large"
                     data-cy="start-call"
                     @click="startCall('audioOnly')"
-                />
+                >
+                    <q-tooltip
+                        v-if="microphoneNotAllowed"
+                        :delay="500"
+                        class="text-dark"
+                    >
+                        {{ $t('No microphone authorized.') }}
+                    </q-tooltip>
+                </q-btn>
             </div>
             <div
                 v-if="minimized"
@@ -430,7 +438,9 @@ export default {
     data () {
         return {
             localMediaWrapperWidth: 0,
-            remoteMediaWrapperWidth: 0
+            remoteMediaWrapperWidth: 0,
+            microphoneNotAllowed: false,
+            permissionState: ''
         }
     },
     computed: {
@@ -570,7 +580,7 @@ export default {
             })
         }
     },
-    mounted () {
+    async mounted () {
         const fetchMediaWrapperWidth = () => {
             this.fetchLocalMediaWrapperWidth()
             this.fetchRemoteMediaWrapperWidth()
@@ -579,6 +589,18 @@ export default {
         this.emitter.$on('window-resized', fetchMediaWrapperWidth)
         this.emitter.$on('content-resized', fetchMediaWrapperWidth)
         this.emitter.$on('orientation-changed', fetchMediaWrapperWidth)
+        if (!navigator.userAgent.includes('Firefox')) {
+            const permission = await navigator.permissions.query({ name: 'microphone' })
+            this.permissionState = permission.state
+            this.microphoneNotAllowed = this.permissionState === 'denied'
+            permission.onchange = (event) => {
+                if (this.permissionState === 'prompt' && event.target.state === 'denied') {
+                    this.closeCall()
+                }
+                this.permissionState = permission.state
+                this.microphoneNotAllowed = event.target.state === 'denied'
+            }
+        }
     },
     methods: {
         fetchLocalMediaWrapperWidth () {

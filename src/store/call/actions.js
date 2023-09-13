@@ -16,6 +16,12 @@ import {
     callHasLocalCamera
 } from 'src/api/ngcp-call'
 import { errorVisibilityTimeout } from 'src/store/call/common'
+import {
+    showGlobalError
+} from 'src/helpers/ui'
+import {
+    i18n
+} from 'boot/i18n'
 
 let errorVisibilityTimer = null
 
@@ -26,11 +32,16 @@ export default {
             .replaceAll(' ', '')
             .replaceAll('-', '')
         context.commit('startCalling', number)
-        await callStart({
+        const isStarted = await callStart({
             number,
             localMedia
         })
-        context.commit('localMediaSuccess', callGetLocalMediaStreamId())
+        if (isStarted) {
+            context.commit('localMediaSuccess', callGetLocalMediaStreamId())
+        } else {
+            context.commit('inputNumber')
+            showGlobalError(i18n.global.tc('No microphone authorized.'))
+        }
     },
     async accept (context, localMedia) {
         await callAccept({
