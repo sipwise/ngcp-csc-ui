@@ -168,31 +168,36 @@ export function callUnregister () {
 }
 
 export async function callStart ({ number }) {
-    $localMediaStream = await callCreateLocalAudioStream()
-    callEvent.emit('localStream', $localMediaStream)
-    $outgoingRtcSession = $userAgent.call(number, {
-        eventHandlers: {
-            progress (event) {
-                if (event.response.status_code === 183) {
-                    callEvent.emit('outgoingProgress', event)
-                } else {
-                    callEvent.emit('outgoingRinging', event)
+    try {
+        $localMediaStream = await callCreateLocalAudioStream()
+        callEvent.emit('localStream', $localMediaStream)
+        $outgoingRtcSession = $userAgent.call(number, {
+            eventHandlers: {
+                progress (event) {
+                    if (event.response.status_code === 183) {
+                        callEvent.emit('outgoingProgress', event)
+                    } else {
+                        callEvent.emit('outgoingRinging', event)
+                    }
+                },
+                failed (event) {
+                    callEvent.emit('outgoingFailed', event)
+                },
+                confirmed (event) {
+                    callEvent.emit('outgoingConfirmed', event)
+                },
+                ended (event) {
+                    callEvent.emit('outgoingEnded', event)
+                    $outgoingRtcSession = null
                 }
             },
-            failed (event) {
-                callEvent.emit('outgoingFailed', event)
-            },
-            confirmed (event) {
-                callEvent.emit('outgoingConfirmed', event)
-            },
-            ended (event) {
-                callEvent.emit('outgoingEnded', event)
-                $outgoingRtcSession = null
-            }
-        },
-        mediaStream: $localMediaStream
-    })
-    $outgoingRtcSession.connection.ontrack = handleRemoteMediaStream
+            mediaStream: $localMediaStream
+        })
+        $outgoingRtcSession.connection.ontrack = handleRemoteMediaStream
+        return true
+    } catch (e) {
+        return false
+    }
 }
 
 export async function callAccept () {
