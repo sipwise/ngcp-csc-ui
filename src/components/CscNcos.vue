@@ -14,6 +14,8 @@
                 <q-select
                     v-if="hasSubscriberProfileAttribute('ncos') && (isPbxAdmin || !isPbxEnabled)"
                     v-model="ncosLevel"
+                    use-chips
+                    radio
                     emit-value
                     map-options
                     :options="ncosOptions"
@@ -35,6 +37,8 @@
                 <q-select
                     v-if="hasSubscriberProfileAttribute('ncos_set') && (isPbxAdmin || !isPbxEnabled)"
                     v-model="ncosSet"
+                    use-chips
+                    radio
                     emit-value
                     map-options
                     :options="ncosSetOptions"
