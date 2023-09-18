@@ -1,3 +1,21 @@
+ngcp-csc-ui (11.5.2.0+0~mr11.5.2.0) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [ef3e4e5] MT#58236 Add missing soundset languanges
+
+  [ Hugo Zigha ]
+  * [181adce] MT#52919 CSC: QuasarMigration - Migrate Quasar from v1 to v2
+  * [a6694e9] MT#58239 time selector of the REMINDER page doesn't allow to select minutes
+  * [dc1ad55] MT#58235 it is possible to press the GREEN dial button even without entering the number to dial
+  * [b2f64b5] MT#58237 setting/unsetting a soundset as Default for subscribers return an error code
+  * [0049548] MT#57030 Update AUI and CSC to fix latest security warnings
+  * [f4adea7] MT#56937 Don't allow CSC starting calls without any microphone enabled
+
+  [ Author: Nouhaila Idrissi Zouggari ]
+  * [79a442a] MT#58240 there is no possibility to delete phonebook entries
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 18 Sep 2023 13:51:13 +0200
+
 ngcp-csc-ui (11.5.1.0+0~mr11.5.1.0) unstable; urgency=medium
 
   [ Mykola Malkov ]
