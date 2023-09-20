@@ -150,6 +150,20 @@ export default {
                     visible: this.hasFaxCapability && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.faxServer)
                 },
                 {
+                    icon: 'fas fa-chart-line',
+                    label: this.$t('PBX Statistics'),
+                    visible: this.isPbxAdmin,
+                    opened: this.isPbxConfiguration,
+                    children: [
+                        {
+                            to: '/user/pbx-statistics/cdr',
+                            icon: 'fas fa-table',
+                            label: this.$t('Cdr'),
+                            visible: true
+                        }
+                    ]
+                },
+                {
                     icon: 'miscellaneous_services',
                     label: this.$t('PBX Configuration'),
                     visible: this.isPbxAdmin,

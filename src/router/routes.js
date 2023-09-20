@@ -37,6 +37,7 @@ import CscPagePbxSettingsCallQueues from 'pages/CscPagePbxSettingsCallQueues'
 import CscPagePbxSoundSetDetails from 'src/pages/CscPagePbxSoundSetDetails'
 import CscPageSubscriberPhonebookDetails from 'src/pages/CscPageSubscriberPhonebookDetails'
 import CscPageSubscriberPhonebookAdd from 'src/pages/CscPageSubscriberPhonebookAdd'
+import CscPagePbxStatisticsCdr from 'src/pages/CscPagePbxStatisticsCdr'
 import { i18n } from 'src/boot/i18n'
 
 const getToken = (route) => {
@@ -199,6 +200,18 @@ const routes = [
                         return i18n.global.tc('Set your speed dials')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.speedDial
+                }
+            },
+            {
+                path: 'pbx-statistics/cdr',
+                component: CscPagePbxStatisticsCdr,
+                meta: {
+                    get title () {
+                        return i18n.global.tc('PBX Statistics')
+                    },
+                    get subtitle () {
+                        return i18n.global.tc('CDR')
+                    }
                 }
             },
             {

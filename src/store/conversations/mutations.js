@@ -155,5 +155,8 @@ export default {
     deletionFailed (state, err) {
         state.deletionState = RequestState.failed
         state.deletionError = err
+    },
+    setConversations (state, value) {
+        state.conversations = value
     }
 }

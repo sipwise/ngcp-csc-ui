@@ -26,6 +26,18 @@ const ReloadConfig = {
 }
 
 export default {
+    async loadConversations ({ commit, dispatch, state, rootGetters }, options) {
+        try {
+            const list = await getConversations({
+                ...options
+            })
+            commit('setConversations', list.items)
+            return list.totalCount
+        } catch (err) {
+            commit('setConversations', [])
+            throw err
+        }
+    },
     reloadItems (context, options) {
         context.commit('reloadItemsRequesting')
         const rows = context.state.currentPage * ROWS_PER_PAGE
@@ -37,7 +49,8 @@ export default {
                 subscriberId: context.getters.getSubscriberId,
                 page: 1,
                 rows: rows,
-                type: options.type
+                type: options.type,
+                no_count: true
             }).then((result) => {
                 const firstResultItemTimestamp = result.items[0]
                     ? result.items[0].start_time
@@ -95,7 +108,8 @@ export default {
                 type: options.type,
                 from: _.get(options, 'filter.from', ''),
                 to: _.get(options, 'filter.to', ''),
-                direction: _.get(options, 'filter.direction', '')
+                direction: _.get(options, 'filter.direction', ''),
+                no_count: true
             })
             context.commit('nextPageSucceeded', res)
         } catch (err) {

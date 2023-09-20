@@ -17,14 +17,20 @@ export function getConversations (options) {
         const from = _.get(options, 'from', '')
         const to = _.get(options, 'to', '')
         const direction = _.get(options, 'direction', '')
+        const subscriberId = _.get(options, 'subscriberId')
+        const noCount = _.get(options, 'no_count')
         const params = {
-            subscriber_id: _.get(options, 'subscriberId'),
             order_by: _.get(options, 'order_by', 'timestamp'),
             order_by_direction: 'desc',
-            no_count: true,
             tz: 'UTC',
             page: _.get(options, 'page', 1),
             rows: _.get(options, 'rows', LIST_DEFAULT_ROWS)
+        }
+        if (noCount !== null) {
+            params.no_count = noCount
+        }
+        if (subscriberId !== null) {
+            params.subscriber_id = subscriberId
         }
         if (type !== null) {
             params.type = type
