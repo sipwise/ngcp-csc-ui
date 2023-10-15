@@ -1,3 +1,28 @@
+ngcp-csc-ui (12.0.2.0+0~mr12.0.2.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [c833595] MT#52919 CSC: QuasarMigration - Migrate Quasar from v1 to v2
+  * [74ff3a2] MT#58239 time selector of the REMINDER page doesn't allow to select minutes
+  * [785a8c7] MT#58235 it is possible to press the GREEN dial button even without entering the number to dial
+  * [57d4c4a] MT#58237 setting/unsetting a soundset as Default for subscribers return an error code
+  * [140dc86] MT#53022 QuasarMigration - Remove all commented code
+  * [6dd98b6] MT#53027 QuasarMigration - All components must have "name" property
+  * [3aef140] MT#57030 Update AUI and CSC to fix latest security warnings
+  * [276ebf3] MT#56937 Don't allow CSC starting calls without any microphone enabled
+  * [8e7c0ad] MT#58238 CSC: selected NCOS/NCOSset cannot be removed
+  * [177f01d] MT#58289 add possibility to view the CDRs of the customer
+
+  [ Marco Capetta ]
+  * [4d76a53] MT#58236 Add missing soundset languanges
+
+  [ Author: Nouhaila Idrissi Zouggari ]
+  * [e10c356] MT#58240 there is no possibility to delete phonebook entries
+
+  [ Guillem Jover ]
+  * [9aed064] MT#58356 Update packaging for bookworm
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 15 Oct 2023 08:23:47 +0200
+
 ngcp-csc-ui (12.0.1.0+0~mr12.0.1.0) unstable; urgency=medium
 
   [ Mykola Malkov ]
