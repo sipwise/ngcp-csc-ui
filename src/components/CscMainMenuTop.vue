@@ -208,7 +208,7 @@ export default {
                         {
                             to: '/user/pbx-configuration/auto-attendant',
                             icon: 'dialpad',
-                            label: this.$t('Auto-attendant'),
+                            label: this.$t('Auto Attendant'),
                             visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.auto_attendant)
                         }
                     ]
@@ -233,7 +233,7 @@ export default {
                         {
                             to: '/user/extension-settings/auto-attendant',
                             icon: 'dialpad',
-                            label: this.$t('Auto-attendant'),
+                            label: this.$t('Auto Attendant'),
                             visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.auto_attendant)
                         }
                     ]
