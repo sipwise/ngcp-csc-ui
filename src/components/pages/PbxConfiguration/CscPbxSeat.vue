@@ -183,7 +183,7 @@ export default {
             this.$q.dialog({
                 component: CscDialogChangePassword,
                 componentProps: {
-                    title: this.$t('Change login Password'),
+                    title: this.$t('Change login password'),
                     passwordLabel: this.$t('Password'),
                     passwordConfirmLabel: this.$t('Password confirm')
                 }

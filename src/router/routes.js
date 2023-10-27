@@ -324,7 +324,7 @@ const routes = [
                         return i18n.global.tc('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Auto-attendant')
+                        return i18n.global.tc('Auto Attendant')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.auto_attendant
                 }
@@ -427,7 +427,7 @@ const routes = [
                         return i18n.global.tc('Extension Settings')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Auto-attendant')
+                        return i18n.global.tc('Auto Attendant')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.auto_attendant
                 }
