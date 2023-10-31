@@ -32,7 +32,6 @@
                     clearable
                     dense
                     hide-bottom-space
-                    hide-hint
                     :error="v$.data.extension.$errors.length > 0"
                     :error-message="extensionErrorMessage"
                     :disable="loading"
@@ -201,8 +200,7 @@ import {
 import {
     required,
     maxLength,
-    numeric,
-    between
+    numeric
 } from '@vuelidate/validators'
 import { inRange } from 'src/helpers/validation'
 import CscInput from 'components/form/CscInput'
@@ -256,7 +254,7 @@ export default {
                 numeric,
                 maxLength: maxLength(64),
                 isInRange: function (value) {
-                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
+                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension)
                 }
             },
             password: {

@@ -326,8 +326,7 @@ import numberFilter from '../filters/number'
 import useValidate from '@vuelidate/core'
 import {
     required,
-    maxLength,
-    between
+    maxLength
 } from '@vuelidate/validators'
 export default {
     name: 'CscPagePbxSeatDetails',
@@ -533,7 +532,7 @@ export default {
         changes: {
             extension: {
                 isInRange: function (value) {
-                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
+                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension)
                 }
             },
             displayName: {
