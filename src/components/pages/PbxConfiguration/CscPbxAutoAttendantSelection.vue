@@ -1,6 +1,8 @@
 <template>
     <q-select
         :label="selectedKeyLabel"
+        :model-value="modelValue"
+        :options="options"
         v-bind="$attrs"
     >
         <template
@@ -37,6 +39,14 @@
 export default {
     name: 'CscPbxAutoAttendantSelection',
     props: {
+        modelValue: {
+            type: Object,
+            default: undefined
+        },
+        options: {
+            type: Array,
+            default: () => []
+        },
         showSelectedItemIcon: {
             type: Boolean,
             default: true
@@ -44,19 +54,15 @@ export default {
     },
     computed: {
         selectedKeyLabel () {
-            const selectedValue = this.$attrs.value || { type: null }
+            const selectedValue = this.modelValue || { subscriberTypeTitle: null }
             let label = this.$t('Group/Seat/Pilot')
-            if (selectedValue.type !== null) {
-                label = ({
-                    pilot: this.$t('Pilot'),
-                    seat: this.$t('Seat'),
-                    group: this.$t('Group')
-                })[selectedValue.type]
+            if (selectedValue.subscriberTypeTitle !== null) {
+                label = this.$t(selectedValue.subscriberTypeTitle)
             }
             return label
         },
         selectedKeyIcon () {
-            return this.$attrs.value?.icon
+            return this.modelValue?.icon
         }
     }
 }
