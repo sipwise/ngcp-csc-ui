@@ -22,14 +22,14 @@ export function isPhone (value) {
     return /^\+[0-9]?()[0-9](\s|\S)(\d[0-9]{9})$/.test(value)
 }
 
-export function inRange (value, min, max, between) {
+export function inRange (value, min, max) {
     value = Number(value)
-    if (min && max == null) {
+    if (min >= 0 && max == null) {
         return min <= value
-    } else if (min == null && max) {
+    } else if (min < 0 && max) {
         return max >= value
-    } else if (min && max) {
-        return between(min, max)(value)
+    } else if (min >= 0 && max) {
+        return min <= value && max >= value
     } else {
         return true
     }
