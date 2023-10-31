@@ -51,14 +51,14 @@
                 />
                 <csc-pbx-auto-attendant-selection
                     v-if="filterType === 'display_name'"
+                    v-model="typedFilter"
                     use-input
                     dense
                     :show-selected-item-icon="false"
-                    :value="typedFilter"
                     :options="subscribersOptionsFiltered"
                     :disable="loading"
                     @filter="filterSubscriberOptions"
-                    @input="triggerFilter"
+                    @update:model-value="triggerFilter"
                 />
             </div>
         </div>

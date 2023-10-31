@@ -48,10 +48,10 @@
         />
         <csc-pbx-auto-attendant-selection
             v-if="changes.type && !hasTargetNumber"
-            :value="selectedKeySubscriber"
+            v-model="selectedKeySubscriber"
             :options="subscriberOptions"
             :disable="loading"
-            @input="keySubscriberChanged"
+            @update:model-value="keySubscriberChanged"
         />
         <csc-input
             v-if="showCustomNumberToggle && hasTargetNumber"
@@ -64,7 +64,7 @@
             :error="v$.changes.target_number.$errors.length > 0"
             :error-message="targetNumberErrorMessage"
             :label="$t('Number')"
-            @input="v$.changes.target_number.$touch()"
+            @update:model-value="v$.changes.target_number.$touch()"
         />
         <csc-list-spinner
             v-if="loading"
