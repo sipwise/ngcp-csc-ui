@@ -256,7 +256,7 @@ export default {
         },
         onSave (newLine) {
             const newLines = []
-            const lines = _.clone(this.lines)
+            const lines = _.cloneDeep(this.lines)
             const line = this.getLineByKey(this.selectedKey)
             if (line !== null && newLine.type === null) {
                 delete lines[line.index]
