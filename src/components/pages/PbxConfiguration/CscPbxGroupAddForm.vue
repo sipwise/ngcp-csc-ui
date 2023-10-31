@@ -154,8 +154,7 @@ import {
     minValue,
     maxValue,
     maxLength,
-    numeric,
-    between
+    numeric
 } from '@vuelidate/validators'
 import { inRange } from 'src/helpers/validation'
 import CscObjectSpinner from '../../CscObjectSpinner'
@@ -203,7 +202,7 @@ export default {
                 maxLength: maxLength(64),
                 numeric,
                 isInRange: function (value) {
-                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
+                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension)
                 }
             },
             huntTimeout: {

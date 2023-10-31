@@ -160,24 +160,24 @@ export default {
         },
         getMinAllowedExtension (state, getters, rootState, rootGetters) {
             const subscriber = rootGetters['user/getSubscriber']
-            return subscriber.ext_range_min
+            return subscriber.ext_range_min && subscriber.ext_range_min >= 0 ? +subscriber.ext_range_min : -1
         },
         getMaxAllowedExtension (state, getters, rootState, rootGetters) {
             const subscriber = rootGetters['user/getSubscriber']
-            return subscriber.ext_range_max
+            return subscriber.ext_range_max && subscriber.ext_range_max >= 1 ? +subscriber.ext_range_max : null
         },
         getExtensionHint (state, getters, rootState, rootGetters) {
             const min = getters.getMinAllowedExtension
             const max = getters.getMaxAllowedExtension
-            if (min && max == null) {
+            if (min >= 0 && max == null) {
                 return i18n.global.tc('Minimum allowed extension is {min}', {
                     min: min
                 })
-            } else if (min == null && max) {
+            } else if (min < 0 && max) {
                 return i18n.global.tc('Maximum allowed extension is {max}', {
                     max: max
                 })
-            } else if (min && max) {
+            } else if (min >= 0 && max) {
                 return i18n.global.tc('Allowed extensions are between {min} and {max}', {
                     min: min,
                     max: max

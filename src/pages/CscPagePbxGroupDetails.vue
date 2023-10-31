@@ -242,7 +242,6 @@
 
 <script>
 import _ from 'lodash'
-import { between } from '@vuelidate/validators'
 import { inRange } from 'src/helpers/validation'
 import {
     mapState,
@@ -391,7 +390,7 @@ export default {
         changes: {
             extension: {
                 isInRange: function (value) {
-                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension, between)
+                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension)
                 }
             }
         }
