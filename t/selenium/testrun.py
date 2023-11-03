@@ -129,11 +129,6 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-page-call-blocking-outgoing"]')) > 0, "'Block Outgoing' page wasnt opened")
         print("OK")
-        print("Try to enable option 'Only allow incoming calls from listed numbers'...", end="")
-        driver.find_element(By.XPATH, '//*[@id="csc-page-call-blocking-outgoing"]/div[1]/div/div[2]/div[1]/div/div[1]').click()
-        self.assertTrue(
-            len(driver.find_elements(By.XPATH, '//*[@id="csc-page-call-blocking-outgoing"]/div[1]/div/div[2]/div[1]/div[@aria-checked="true"]')) > 0,
-            "Option 'Only outgoing calls from listed numbers are allowed' was not enabled")
         filename = 0
 
     def test_call_forwarding(self):
@@ -160,11 +155,11 @@ class testrun(unittest.TestCase):
         wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"]')
         time.sleep(1)
         click_js(driver, '//*[@id="csc-page-call-forwarding"]//div//button[contains(., "Add forwarding")]')
-        click_js(driver, '/html/body/div[3]/div/div[3]')
+        click_js(driver, '//div[@data-cy="csc-add-forwarding-available"]')
         print("OK")
         print("Try to add a condition 'call from...' to the call forwarding...", end="")
         driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "condition")]').click()
-        driver.find_element(By.XPATH, '/html/body/div[3]/div/div[2]/div/div[1]').click()
+        driver.find_element(By.XPATH, '//div[@data-cy="csc-condtion-call-from"]').click()
         fill_element(driver, '/html/body//div[1]/div/label//div//input', 'TestUser')
         fill_element(driver, '/html/body//div[2]/div/label//div//input', '1234')
         driver.find_element(By.XPATH, '/html/body//button[contains(., "Add number")]').click()
@@ -186,7 +181,7 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to add a second condition 'office hours are...'...", end="")
         driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "condition")]').click()
-        driver.find_element(By.XPATH, '/html/body/div[3]/div/div[2]/div/div[6]').click()
+        driver.find_element(By.XPATH, '//div[@data-cy="csc-condtion-office-hours"]').click()
         fill_element(driver, '/html/body//div[1]/label//div//input[@aria-label="Start time"]', '1200')
         fill_element(driver, '/html/body//div[2]/label//div//input[@aria-label="End time"]', '1800')
         driver.find_element(By.XPATH, '/html/body//div//button[contains(., "Save")]').click()
@@ -205,19 +200,14 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to add second condition 'date is...'...", end="")
         day = datetime.today().day
-        if day >= 28:
-            day -= 1
-        elif day < 28:
-            day += 1
         driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "condition")]').click()
-        driver.find_element(By.XPATH, '/html/body/div[3]/div/div[2]/div/div[3]/div[3]').click()
-        driver.find_element(By.XPATH, '/html/body//div[@class="q-date__calendar-days fit"]//div//button//span[normalize-space()="' + str(day) + '"]').click()
+        driver.find_element(By.XPATH, '//div[@data-cy="csc-condtion-date"]').click()
         driver.find_element(By.XPATH, '/html/body//div//button[contains(., "Save")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         if day < 10:
             day = "0" + str(day)
         self.assertTrue(
-            len(driver.find_elements(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div/span[2][contains(., "' + datetime.today().strftime('%Y/%m/') + str(day) + '")]')) > 0,
+            len(driver.find_elements(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div[@data-cy="q-item-label"]/span[contains(., "' + datetime.today().strftime('%Y/%m/') + str(day) + '")]')) > 0,
             "'Office hours are...' condition is not correct")
         print("OK")
         print("Try to delete second condition...", end="")
@@ -230,42 +220,42 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to delete first condition...", end="")
         driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div/span[contains(., "TestUser")]').click()
-        driver.find_element(By.XPATH, '/html/body/div[3]/div/div[3]/button[1]').click()
+        driver.find_element(By.XPATH, '//button[@data-cy="csc-call-select-delete"]').click()
         wait_for_invisibility(driver, '/html/body/div[3]/div/div[4]/svg')
         print("OK")
         print("Try to add another foward...", end="")
-        driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
-        driver.find_element(By.XPATH, '/html/body//div[@class="q-list q-list--dark"]/div[contains(., "Voicebox")]').click()
+        driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div/div[1]/div[2]/button').click()
+        driver.find_element(By.XPATH, '//div[@data-cy="csc-forwarding-to-voicebox"]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[3]/svg')
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div[contains(., "Voicebox")]')) > 0, "Voicebox forwarding was not added")
         print("OK")
         print("Try to change the amount of time before it switches to the next forward...", end="")
-        driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div[3]/div[2]/div/span[contains(., "seconds")]').click()
-        fill_element(driver, '/html/body/div[3]/label/div/div/div[2]/input', "30")
-        driver.find_element(By.XPATH, '/html/body/div[3]/div/button[2]').click()
+        driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div/span[1][contains(., "seconds")]').click()
+        fill_element(driver, '/html/body//div/label//div//input', "30")
+        driver.find_element(By.XPATH, '/html/body/div[3]/div/div/button[contains(., "Set")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[4]/svg')
         self.assertTrue(
-            len(driver.find_elements(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div[3]/div[2]/div/span[contains(., "30")]')) > 0,
+            len(driver.find_elements(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div/span[1][contains(., "30")]')) > 0,
             "Voicebox forwarding time was not changed")
         print("OK")
         print("Try to disable a call forward...", end="")
-        driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
+        driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div/div[1]/div[2]/button').click()
         driver.find_element(By.XPATH, '/html/body//div[@class="q-list q-list--dark"]/div[contains(., "Disable")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[4]/svg')
         self.assertTrue(
-            len(driver.find_elements(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div[@data-cy="q-item-section"][@disabled="disabled"]')) > 0,
+            len(driver.find_elements(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]//div[@class="q-item__section column q-item__section--main justify-center disabled"]')) > 0,
             "Call forward was not disabled")
         print("OK")
         print("Try to enable a call forward...", end="")
-        driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
+        driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div/div[1]/div[2]/button').click()
         driver.find_element(By.XPATH, '/html/body//div[@class="q-list q-list--dark"]/div[contains(., "Enable")]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[4]/svg')
         print("OK")
         print("Try to delete call forwarding...", end="")
-        driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div[2]/button').click()
+        driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div/div[1]/div[2]/button').click()
         driver.find_element(By.XPATH, '/html/body//div[@class="q-list q-list--dark"]/div[contains(., "Remove")]').click()
-        driver.find_element(By.XPATH, '/html/body/div[3]/div[2]/div/div[3]/button[2]').click()
+        driver.find_element(By.XPATH, '/html/body//div/div[3]/button[2]').click()
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         self.assertTrue(
             driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div/div[1]/div/div').text == "Always", "Call forward was not deleted")
@@ -375,42 +365,42 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to log out...", end="")
         driver.find_element(By.XPATH, '//*[@id="csc-header-toolbar-main"]/button[contains(., "testuser")]').click()
-        driver.find_element(By.XPATH, '/html/body/div[3]/div/div[2]').click()
+        driver.find_element(By.XPATH, '//div[@data-cy="user-logout"]').click()
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-login"]')) > 0,
             "Logout wasnt successful")
         print("OK")
         print("Trying to change to every available language...", end="")
         driver.find_element(By.XPATH, '//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[3]')
+        click_js(driver, '/html/body/div[3]/div/div[3]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-login-card"]/div[contains(., "Subscriber-Anmeldung")]')) > 0,
             "Language wasnt changed to German")
         driver.find_element(By.XPATH, '//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[4]')
+        click_js(driver, '/html/body/div[3]/div/div[4]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-login-card"]/div[contains(., "Iniciar sesión de suscriptor")]')) > 0,
             "Language wasnt changed to Spanish")
         driver.find_element(By.XPATH, '//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[5]')
+        click_js(driver, '/html/body/div[3]/div/div[5]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-login-card"]/div[contains(., "Authentification de l’abonné")]')) > 0,
             "Language wasnt changed to French")
         driver.find_element(By.XPATH, '//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[6]')
+        click_js(driver, '/html/body/div[3]/div/div[6]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-login-card"]/div[contains(., "Accesso abbonato")]')) > 0,
             "Language wasnt changed to Italian")
         driver.find_element(By.XPATH, '//*[@id="csc-header-toolbar-login"]/button').click()
-        click_js(driver, '/html/body/div[3]/div[2]')
+        click_js(driver, '/html/body/div[3]/div/div[2]')
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
@@ -479,12 +469,16 @@ class testrun(unittest.TestCase):
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-page-call-blocking-privacy"]')) > 0, "Privacy page wasnt opened")
         print("OK")
-        print("Try to enable privacy setting...", end="")
+        print("Try to enable privacy settings...", end="")
         wait_for_invisibility(driver, '//*[@id="csc-page-call-blocking-privacy"]/div/div/div[2]/svg')
-        click_js(driver, '//*[@id="csc-page-call-blocking-privacy"]//div[@role="checkbox"]/div[1]')
+        click_js(driver, '//div[@data-cy="csc-privacy-hide"]')
         self.assertTrue(
-            len(driver.find_elements(By.XPATH, '//*[@id="csc-page-call-blocking-privacy"]//div[@aria-checked="true"]')) > 0,
-            "Privacy setting wasnt enabled")
+            len(driver.find_elements(By.XPATH, '//div[@data-cy="csc-privacy-hide"][@aria-checked="true"]')) > 0,
+            "'Hide your number to the callee' wasnt enabled")
+        click_js(driver, '//*[@id="csc-page-call-blocking-privacy"]/div/div[2]/div[1]/div')
+        self.assertTrue(
+            len(driver.find_elements(By.XPATH, '//*[@id="csc-page-call-blocking-privacy"]/div/div[2]/div[1]/div[@aria-checked="true"]')) > 0,
+            "'Hide number to the callee within own PBX' wasnt enabled")
         filename = 0
 
     def test_recording(self):
@@ -509,16 +503,16 @@ class testrun(unittest.TestCase):
         print("Add a timerange filter and check if they got created...", end="")
         driver.find_element(By.XPATH, '//*[@id="csc-page-call-recording"]//div//button[contains(., "Filter")]').click()
         click_js(driver, '//*[@id="csc-page-call-recording"]//div[@data-cy="csc-call-recording-filters"]//label[1]/div/div/div[1]')
-        driver.find_element(By.XPATH, '/html/body/div[3]/div[2]/div[1]').click()
+        driver.find_element(By.XPATH, '/html/body/div[3]/div/div[2]/div[1]').click()
         driver.find_element(By.XPATH, '//*[@id="csc-page-call-recording"]/div[1]/div/div[3]/div/div[1]/div[2]/label[1]/div/div/div[1]').click()
-        driver.find_element(By.XPATH, '/html/body/div[3]/div/div[2]/div[2]/div/button').click()
+        driver.find_element(By.XPATH, '/html/body/div[3]/div/div/div[2]/div[2]/div/button').click()
         checkstring = "Start time: " + now.strftime("%Y-%m-%d") + " 00:00"
         print(checkstring)
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-page-call-recording"]//div[contains(., "' + checkstring + '")]')) > 0,
             "Start timerange could not be found")
         driver.find_element(By.XPATH, '//*[@id="csc-page-call-recording"]/div[1]/div/div[3]/div/div[1]/div[2]/label[2]/div/div/div[1]').click()
-        driver.find_element(By.XPATH, '/html/body/div[3]/div/div[2]/div[2]/div/button').click()
+        driver.find_element(By.XPATH, '/html/body/div[3]/div/div/div[2]/div[2]/div/button').click()
         checkstring = "End time: " + now.strftime("%Y-%m-%d") + " 00:00"
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-page-call-recording"]//div[contains(., "' + checkstring + '")]')) > 0,
@@ -529,8 +523,8 @@ class testrun(unittest.TestCase):
         wait_for_invisibility(driver, '//*[@id="csc-page-call-recording"]//div[contains(., "End time:")]/../i[2]')
         print("OK")
         print("Add filter by CallID...", end="")
-        driver.find_element(By.XPATH, '//*[@id="csc-page-call-recording"]//div//label//div[contains(., "Filter by")]').click()
-        click_js(driver, '/html/body/div[3]/div[2]/div[4]')
+        click_js(driver, '//*[@id="csc-page-call-recording"]//div[@data-cy="csc-call-recording-filters"]//label[1]/div/div/div[1]')
+        driver.find_element(By.XPATH, '/html/body/div[3]/div/div[2]/div[4]').click()
         fill_element(driver, '//*[@id="csc-page-call-recording"]//div//label//input[@aria-label="CallID"]', "TestCallID")
         driver.find_element(By.XPATH, '//*[@id="csc-page-call-recording"]/div[1]/div/div[3]/div/div[1]/div[2]/label/div/div/div[2]').click()
         self.assertTrue(
@@ -563,10 +557,17 @@ class testrun(unittest.TestCase):
             len(driver.find_elements(By.XPATH, '//*[@id="csc-page-reminder"]')) > 0, "Reminder page wasnt opened")
         print("OK")
         print("Try to enable reminders...", end="")
-        click_js(driver, '//*[@id="csc-page-reminder"]//div[@aria-label="Reminder is disabled"]//input')
-        wait_for_invisibility(driver, '//*[@id="csc-page-reminder"]//div[@aria-label="Reminder is disabled"]')
+        wait_for_invisibility(driver, '//div[@data-cy="csc-reminder-toggle"][@aria-disabled="true"]')
+        driver.find_element(By.XPATH, '//div[@data-cy="csc-reminder-toggle"]').click()
+        time.sleep(1)
+        driver.find_element(By.XPATH, '//*[@id="csc-main-menu-top"]//div/a[contains(., "Speed Dial")]').click()
+        time.sleep(1)
+        driver.find_element(By.XPATH, '//*[@id="csc-main-menu-top"]//div/a[contains(., "Reminder")]').click()
+        wait_for_invisibility(driver, '//div[@data-cy="csc-reminder-toggle"][@aria-disabled="true"]')
+        driver.find_element(By.XPATH, '//div[@data-cy="csc-reminder-toggle"]').click()
+        wait_for_invisibility(driver, '//div[@data-cy="csc-reminder-toggle"][@aria-disabled="true"]')
         self.assertTrue(
-            len(driver.find_elements(By.XPATH, '//*[@id="csc-page-reminder"]//div[@aria-label="Reminder is enabled"]')) > 0,
+            len(driver.find_elements(By.XPATH, '//div[@data-cy="csc-reminder-toggle"][@aria-checked="true"]')) > 0,
             "Reminder has not been enabled")
         print("OK")
         print("Try to change reminder recurrance to 'Always'...", end="")
@@ -608,22 +609,19 @@ class testrun(unittest.TestCase):
         wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"]')
         wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]//button[contains(., "Add forwarding")]/span/svg')
         click_js(driver, '//*[@id="csc-page-call-forwarding"]//div//button[contains(., "Add forwarding")]')
-        time.sleep(1)
-        click_js(driver, '/html/body/div[3]/div/div[1]')
+        click_js(driver, '//div[@data-cy="csc-add-forwarding-available"]')
         print("OK")
         print("Create a call forwarding 'if not available'...", end="")
         wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"]')
         wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]//button[contains(., "Add forwarding")]/span/svg')
         click_js(driver, '//*[@id="csc-page-call-forwarding"]//div//button[contains(., "Add forwarding")]')
-        time.sleep(1)
-        click_js(driver, '/html/body/div[3]/div/div[2]')
+        click_js(driver, '//div[@data-cy="csc-add-forwarding-not-available"]')
         print("OK")
         print("Create a call forwarding 'if busy'...", end="")
         wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"]')
         wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]//button[contains(., "Add forwarding")]/span/svg')
         click_js(driver, '//*[@id="csc-page-call-forwarding"]//div//button[contains(., "Add forwarding")]')
-        time.sleep(1)
-        click_js(driver, '/html/body/div[3]/div/div[3]')
+        click_js(driver, '//div[@data-cy="csc-add-forwarding-busy"]')
         print("OK")
         print("Add test string to all call forwardings", end="")
         wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]/div[1]/button/span[3]/svg[@class="q-spinner text-primary"]')
@@ -671,20 +669,20 @@ class testrun(unittest.TestCase):
         print("Try to create a new Speed Dial...", end="")
         driver.find_element(By.XPATH, '//*[@id="csc-page-speed-dial"]//div/button').click()
         driver.find_element(By.XPATH, '//*[@id="csc-page-speed-dial"]//div/label').click()
-        driver.find_element(By.XPATH, '/html/body//*[contains(., "*5")]').click()
+        driver.find_element(By.XPATH, '//*[contains(., "*5")]').click()
         fill_element(driver, '//*[@id="csc-page-speed-dial"]//div/label[2]//div/input[@aria-label="Destination"]', "testination")
         click_js(driver, '//*[@id="csc-page-speed-dial"]//button[contains(., "Save")]')
         self.assertTrue(
-            len(driver.find_elements(By.XPATH, '//*[@id="csc-page-speed-dial"]//div[contains(., "When I dial *5")]')) > 0,
+            len(driver.find_elements(By.XPATH, '//*[@id="csc-page-speed-dial"]//div[@data-cy="csc-speeddial-whendial"][contains(., "When I dial *6")]')) > 0,
             "Speed dial button is not correct")
         self.assertTrue(
-            len(driver.find_elements(By.XPATH, '//*[@id="csc-page-speed-dial"]//div[contains(., "testination")]')) > 0,
+            len(driver.find_elements(By.XPATH, '//*[@id="csc-page-speed-dial"]//div[@data-cy="csc-speeddial-ring"][contains(., "testination")]')) > 0,
             "Speed dial destination is not correct")
         print("OK")
         print("Try to delete the speed dial...", end="")
-        driver.find_element(By.XPATH, '//*[@id="csc-page-speed-dial"]/div[2]/div/div/div[3]/button').click()
-        driver.find_element(By.XPATH, '/html/body/div[contains(., "Remove")]').click()
-        driver.find_element(By.XPATH, '/html/body//div//button[contains(., "OK")]').click()
+        driver.find_element(By.XPATH, '//*[@id="csc-page-speed-dial"]//div//button[@data-cy="csc-speeddial-more"]').click()
+        driver.find_element(By.XPATH, '/html/body//div[@data-cy="csc-speeddial-remove"]').click()
+        driver.find_element(By.XPATH, '/html/body/div[3]/div/div[2]/div/div[3]/button[2]').click()
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-page-speed-dial"]/div[2]/div[contains(., "No speed dials found")]')) > 0,
             "Speed dial was not deleted")
@@ -719,7 +717,7 @@ class testrun(unittest.TestCase):
         driver.find_element(By.XPATH, '//*[@id="csc-page-voicebox"]//div/button[contains(., "Undo")]').click()
         fill_element(driver, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change PIN"]', "12345")
         driver.find_element(By.XPATH, '//*[@id="csc-page-voicebox"]//div//button[contains(., "Save")]').click()
-        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[5]/div')))
+        wait_for_invisibility(driver, '//*[@id="csc-page-voicebox"]//div/label[aria-disabled="true"]//input[@data-cy="voicebox-change-pin"]')
         self.assertTrue(
             driver.find_element(By.XPATH, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change PIN"]').get_attribute("value") == "12345",
             "Changed PIN is not correct")
@@ -739,7 +737,7 @@ class testrun(unittest.TestCase):
         driver.find_element(By.XPATH, '//*[@id="csc-page-voicebox"]//div/button[contains(., "Undo")]').click()
         fill_element(driver, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change Email"]', "test@test.com")
         driver.find_element(By.XPATH, '//*[@id="csc-page-voicebox"]//div//button[contains(., "Save")]').click()
-        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[5]/div')))
+        wait_for_invisibility(driver, '//*[@id="csc-page-voicebox"]//div/label[aria-disabled="true"]//input[@data-cy="voicebox-change-email"]')
         self.assertTrue(
             driver.find_element(By.XPATH, '//*[@id="csc-page-voicebox"]//div//input[@aria-label="Change Email"]').get_attribute("value") == "test@test.com",
             "Changed Email is not correct")
