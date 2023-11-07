@@ -41,7 +41,8 @@ export default {
         async fetchRecordings (context, options) {
             const recs = await getRecordings({
                 ...options,
-                subscriber_id: context.getters.subscriberId
+                subscriber_id: context.getters.subscriberId,
+                wildcards: true
             })
             context.commit('callRecordings', recs.recordings)
             return recs.total_count
