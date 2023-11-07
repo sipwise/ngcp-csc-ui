@@ -1,35 +1,4 @@
-ngcp-csc-ui (12.0.3.0+0~mr12.0.3.0) unstable; urgency=medium
-
-  * New release.
-
- -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 30 Oct 2023 17:05:06 +0100
-
-ngcp-csc-ui (12.0.2.0+0~mr12.0.2.0) unstable; urgency=medium
-
-  [ Hugo Zigha ]
-  * [c833595] MT#52919 CSC: QuasarMigration - Migrate Quasar from v1 to v2
-  * [74ff3a2] MT#58239 time selector of the REMINDER page doesn't allow to select minutes
-  * [785a8c7] MT#58235 it is possible to press the GREEN dial button even without entering the number to dial
-  * [57d4c4a] MT#58237 setting/unsetting a soundset as Default for subscribers return an error code
-  * [140dc86] MT#53022 QuasarMigration - Remove all commented code
-  * [6dd98b6] MT#53027 QuasarMigration - All components must have "name" property
-  * [3aef140] MT#57030 Update AUI and CSC to fix latest security warnings
-  * [276ebf3] MT#56937 Don't allow CSC starting calls without any microphone enabled
-  * [8e7c0ad] MT#58238 CSC: selected NCOS/NCOSset cannot be removed
-  * [177f01d] MT#58289 add possibility to view the CDRs of the customer
-
-  [ Marco Capetta ]
-  * [4d76a53] MT#58236 Add missing soundset languanges
-
-  [ Author: Nouhaila Idrissi Zouggari ]
-  * [e10c356] MT#58240 there is no possibility to delete phonebook entries
-
-  [ Guillem Jover ]
-  * [9aed064] MT#58356 Update packaging for bookworm
-
- -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 15 Oct 2023 08:23:47 +0200
-
-ngcp-csc-ui (12.0.1.0+0~mr12.0.1.0) unstable; urgency=medium
+ngcp-csc-ui (12.0.0.0+0~mr12.0.0.0) unstable; urgency=medium
 
   [ Mykola Malkov ]
   * [6767abe] MT#57453 Switch docker image to bookworm
@@ -40,10 +9,23 @@ ngcp-csc-ui (12.0.1.0+0~mr12.0.1.0) unstable; urgency=medium
   * [90387d0] MT#57776 fix csc security tests
   * [a511196] MT#57776 fix csc test preperation on jenkins side
   * [fdee658] MT#57776 fix csc test preperation on jenkins side (again)
+  * [d59098a] MT#56388 fix all selenium csc tests
 
   [ Hugo Zigha ]
   * [a72696e] MT#57783 HG master data: add new preference `pbx_hunt_cancel_mode`
   * [3e3e123] MT#55674 We cannot remove fax files from the CSC
+  * [c833595] MT#52919 CSC: QuasarMigration - Migrate Quasar from v1 to v2
+  * [74ff3a2] MT#58239 time selector of the REMINDER page doesn't allow to select minutes
+  * [785a8c7] MT#58235 it is possible to press the GREEN dial button even without entering the number to dial
+  * [57d4c4a] MT#58237 setting/unsetting a soundset as Default for subscribers return an error code
+  * [140dc86] MT#53022 QuasarMigration - Remove all commented code
+  * [6dd98b6] MT#53027 QuasarMigration - All components must have "name" property
+  * [3aef140] MT#57030 Update AUI and CSC to fix latest security warnings
+  * [276ebf3] MT#56937 Don't allow CSC starting calls without any microphone enabled
+  * [8e7c0ad] MT#58238 CSC: selected NCOS/NCOSset cannot be removed
+  * [177f01d] MT#58289 add possibility to view the CDRs of the customer
+  * [34847c9] MT#58605 CSC Administrative subscriber cannot create Seats or Group if ext_range_min specified in Customer prefs
+  * [ea960ae] MT#58500 [CSC]Cannot assign seat on SNOM D865 devices
 
   [ nouhaila ]
   * [37a807d] MT#57080 Expose Phonebook in the CSC
@@ -52,12 +34,17 @@ ngcp-csc-ui (12.0.1.0+0~mr12.0.1.0) unstable; urgency=medium
   * [6822e7c] MT#57750 Tooltip for mail2fax ACL is not translated to German
   * [1406526] MT#57750 Tooltip for mail2fax ACL is not translated to German
   * [e02805e] MT#57577 subscriber's administrator should be able to configure NCOS and NCOS_SET of seats
+  * [e10c356] MT#58240 there is no possibility to delete phonebook entries
 
   [ Marco Capetta ]
   * [f81267e] MT#57577 Make ncos and ncos_set visibile accordingly to profile
   * [e5b0fb3] MT#58074 Allow the selection of all the aliases as cli
+  * [4d76a53] MT#58236 Add missing soundset languanges
 
- -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 30 Aug 2023 18:04:23 +0200
+  [ Guillem Jover ]
+  * [9aed064] MT#58356 Update packaging for bookworm
+
+ -- Mykola Malkov <mmalkov@sipwise.com>  Tue, 07 Nov 2023 16:18:09 +0200
 
 ngcp-csc-ui (11.5.0.0+0~mr11.5.0.0) unstable; urgency=medium
 
