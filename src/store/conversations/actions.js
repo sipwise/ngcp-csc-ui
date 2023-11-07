@@ -95,7 +95,10 @@ export default {
                 type: options.type,
                 from: _.get(options, 'filter.from', ''),
                 to: _.get(options, 'filter.to', ''),
-                direction: _.get(options, 'filter.direction', '')
+                direction: _.get(options, 'filter.direction', ''),
+                caller: _.get(options, 'filter.caller', ''),
+                callee: _.get(options, 'filter.callee', ''),
+                wildcards: true
             })
             context.commit('nextPageSucceeded', res)
         } catch (err) {
