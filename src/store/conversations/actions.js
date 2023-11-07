@@ -109,6 +109,9 @@ export default {
                 from: _.get(options, 'filter.from', ''),
                 to: _.get(options, 'filter.to', ''),
                 direction: _.get(options, 'filter.direction', ''),
+                caller: _.get(options, 'filter.caller', ''),
+                callee: _.get(options, 'filter.callee', ''),
+                wildcards: true,
                 no_count: true
             })
             context.commit('nextPageSucceeded', res)
