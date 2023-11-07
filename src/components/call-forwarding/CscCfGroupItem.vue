@@ -30,13 +30,14 @@
                         {{ ringTimeout }}
                         {{ $t('seconds') }}
                         <q-popup-edit
+                            v-slot="scope"
                             v-model="changedDestinationTimeout"
                             buttons
                             @before-show="$store.commit('callForwarding/popupShow', null)"
-                            @save="updateRingTimeoutEvent()"
+                            @save="updateRingTimeoutEvent($event)"
                         >
                             <csc-input
-                                v-model="changedDestinationTimeout"
+                                v-model="scope.value"
                                 type="number"
                                 dense
                             >
@@ -277,9 +278,9 @@ export default {
             await this.updateDestinationTimeout(payload)
             this.$wait.end(this.waitIdentifier)
         },
-        async updateRingTimeoutEvent () {
+        async updateRingTimeoutEvent (event) {
             this.$wait.start('csc-cf-mappings-full')
-            await this.updateRingTimeout({ ringTimeout: this.changedDestinationTimeout, subscriberId: this.subscriberId })
+            await this.updateRingTimeout({ ringTimeout: event, subscriberId: this.subscriberId })
             this.$wait.end('csc-cf-mappings-full')
         },
         setAnnouncement () {
