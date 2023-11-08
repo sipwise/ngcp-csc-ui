@@ -107,7 +107,7 @@ export async function removePreference (id, field) {
 }
 export async function removePreferencePhonebook (id, field) {
     return await patchRemove({
-        path: 'api/phonebookentries/' + id,
+        path: 'api/subscriberphonebookentries/' + id,
         fieldPath: field
     })
 }
@@ -127,7 +127,7 @@ export function addPreference (id, field, value) {
 export function addPreferencePhonebook (id, field, value) {
     return new Promise((resolve, reject) => {
         patchAdd({
-            path: 'api/phonebookentries/' + id,
+            path: 'api/subscriberphonebookentries/' + id,
             fieldPath: field,
             value: value
         }).then(() => {
@@ -167,7 +167,7 @@ export function replacePreference (id, field, value) {
 export function replacePreferencePhonebook (id, field, value) {
     return new Promise((resolve, reject) => {
         patchReplace({
-            path: 'api/phonebookentries/' + id,
+            path: 'api/subscriberphonebookentries/' + id,
             fieldPath: field,
             value: value
         }).then(() => {
@@ -736,7 +736,7 @@ export async function getSubscriberPhonebook (options) {
         delete options.order_by_direction
     }
     const list = await getList({
-        resource: 'phonebookentries',
+        resource: 'subscriberphonebookentries',
         all,
         params: options
     })
@@ -748,7 +748,7 @@ export async function createPhonebook (data) {
         number: data.number,
         shared: data.shared
     }
-    return await httpApi.post('api/phonebookentries/', payLoad)
+    return await httpApi.post('api/subscriberphonebookentries/', payLoad)
 }
 export function setValueShared (id, value) {
     return setPreferencePhonebook(id, 'shared', value)

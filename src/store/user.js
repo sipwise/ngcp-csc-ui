@@ -437,7 +437,7 @@ export default {
             await httpApi.delete('api/subscriberregistrations/' + row.id)
         },
         async removeSubscriberPhonebook (context, row) {
-            await httpApi.delete('api/phonebookentries/' + row.id)
+            await httpApi.delete('api/subscriberphonebookentries/' + row.id)
         },
         async getNcosLevelsSubscriber () {
             const ncosLevel = []
@@ -475,7 +475,7 @@ export default {
             await setPreference(getSubscriberId(), 'ncos', value)
         },
         async getPhonebookDetails (context, id) {
-            const list = await httpApi.get('api/phonebookentries/' + id)
+            const list = await httpApi.get('api/subscriberphonebookentries/' + id)
             return list
         },
         async getValueShared (context, options) {
