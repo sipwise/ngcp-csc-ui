@@ -1,3 +1,13 @@
+ngcp-csc-ui (12.0.1.2+0~mr12.0.1.2) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [a079535] MT#58591 Update all the language files
+
+  [ Nico Schedel ]
+  * [e1876a3] MT#58591 Add missing german translations
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Nov 2023 10:36:01 +0100
+
 ngcp-csc-ui (12.0.1.1+0~mr12.0.1.1) unstable; urgency=medium
 
   * New release.
