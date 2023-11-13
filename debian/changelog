@@ -1,3 +1,14 @@
+ngcp-csc-ui (11.5.1.5+0~mr11.5.1.5) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [7ce76d6] MT#56388 fix all selenium csc tests
+  * [cdc3fe9] MT#58591 Add missing german translations
+
+  [ Marco Capetta ]
+  * [2885cab] MT#58591 Update all the language files
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Nov 2023 10:36:04 +0100
+
 ngcp-csc-ui (11.5.1.4+0~mr11.5.1.4) unstable; urgency=medium
 
   [ Hugo Zigha ]
