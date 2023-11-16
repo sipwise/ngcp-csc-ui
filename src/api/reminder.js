@@ -14,7 +14,7 @@ export function createReminder (subscriberId) {
             recur: 'never',
             active: false
         }).then((result) => {
-            const parts = result.headers.get('Location').split('/')
+            const parts = result.headers.location.split('/')
             resolve(_.last(parts))
         }).catch((err) => {
             reject(err)
