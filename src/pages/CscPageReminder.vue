@@ -67,6 +67,7 @@
                             <q-btn
                                 icon="access_alarm"
                                 color="primary"
+                                data-cy="csc-reminder-show-timeselector"
                                 flat
                                 dense
                             >
@@ -80,11 +81,13 @@
                                         flat
                                         mask="HH:mm"
                                         color="primary"
+                                        data-cy="csc-reminder-timeselector"
                                         @update:model-value="timeUpdate"
                                     >
                                         <q-btn
                                             v-close-popup
                                             :label="$t('Close')"
+                                            data-cy="csc-reminder-timeseletor-close"
                                             color="primary"
                                             flat
                                         />
