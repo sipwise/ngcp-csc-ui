@@ -1,3 +1,25 @@
+ngcp-csc-ui (12.1.1.0+0~mr12.1.1.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [0bb677f] MT#58391 Chaijs/get-func-name vulnerable to ReDoS - CVE-2023-43646
+  * [1bb32f5] MT#58605 CSC Administrative subscriber cannot create Seats or Group if ext_range_min specified in Customer prefs
+  * [6e33e2d] MT#58500 [CSC]Cannot assign seat on SNOM D865 devices
+  * [52beb5f] MT#58597 CSC does not allow to modify CF ring timeout
+
+  [ Nico Schedel ]
+  * [074d7d7] MT#56388 fix all selenium csc tests
+  * [30d8240] MT#58591 Add missing german translations
+  * [2ebd1ee] MT#57568 add missing data-cy to reminders
+
+  [ Marco Capetta ]
+  * [5bd459c] MT#58591 Update all the language files
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [77ef397] MT#58686 fix the phonebook access after having update the API endpoints
+  * [64fecf2] MT#58658 After creating a new subscriber, visiting the reminders page doesnt let you enable reminders initially
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 Nov 2023 13:36:45 +0100
+
 ngcp-csc-ui (12.1.0.0+0~mr12.1.0.0) unstable; urgency=medium
 
   [ Hugo Zigha ]
