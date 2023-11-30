@@ -10,10 +10,7 @@
                     :label="$t('From email')"
                     :disable="disabled"
                     :readonly="loading"
-                    :error="v$.data.from_email.$errors.length > 0"
-                    :error-message="fromEmailErrorMessage"
                     :value-changed="!isAddNewMode && data.from_email !== initialData.from_email"
-                    @input="v$.data.from_email.$touch()"
                     @keypress.space.prevent
                     @keydown.space.prevent
                     @keyup.space.prevent
@@ -87,7 +84,7 @@
                 color="primary"
                 icon="person"
                 :loading="loading"
-                :disable="v$.data.$invalid || loading"
+                :disable="loading"
                 :label="$t('Create ACL')"
                 @click="save()"
             />
@@ -96,10 +93,8 @@
 </template>
 
 <script>
-import { email } from '@vuelidate/validators'
 import CscInputSaveable from 'components/form/CscInputSaveable'
 import CscTooltip from 'components/CscTooltip'
-import useValidate from '@vuelidate/core'
 export default {
     name: 'CscMailToFaxACLForm',
     components: {
@@ -118,9 +113,9 @@ export default {
         initialData: {
             type: Object,
             default: () => ({
-                destination: '',
-                from_email: '',
-                received_from: '',
+                destination: null,
+                from_email: null,
+                received_from: null,
                 use_regex: false
             })
         },
@@ -132,25 +127,7 @@ export default {
     emits: ['save', 'cancel', 'update-property'],
     data () {
         return {
-            data: this.getDefaults(),
-            v$: useValidate()
-        }
-    },
-    validations: {
-        data: {
-            from_email: {
-                email
-            }
-        }
-    },
-    computed: {
-        fromEmailErrorMessage () {
-            const errorsTab = this.v$.data.from_email.$errors
-            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'email') {
-                return this.$t('Input a valid email address')
-            } else {
-                return ''
-            }
+            data: this.getDefaults()
         }
     },
     methods: {
@@ -167,9 +144,11 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.v$.$reset()
         },
         updatePropertyData (propertyName) {
+            if (['from_email', 'received_from', 'destination'].includes(propertyName)) {
+                this.data[propertyName] = this.data[propertyName] === '' ? null : this.data[propertyName]
+            }
             this.$emit('update-property', {
                 name: propertyName,
                 value: this.data[propertyName]
