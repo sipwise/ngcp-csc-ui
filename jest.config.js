@@ -20,6 +20,7 @@ module.exports = {
         '<rootDir>/src/**/*.ts',
         '<rootDir>/src/**/*.jsx'
     ],
+    coveragePathIgnorePatterns: ['/node_modules/', '.d.ts$'],
     coverageThreshold: {
         global: {
             //  branches: 50,
@@ -47,14 +48,14 @@ module.exports = {
         '.*css$': '<rootDir>/test/jest/utils/stub.css'
     },
     transform: {
-        '.*\\.vue$': 'vue-jest',
-        '.*\\.js$': 'babel-jest',
+        '.*\\.vue$': '<rootDir>/node_modules/@vue/vue3-jest',
+        '.*\\.js$': '<rootDir>/node_modules/babel-jest',
         '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub'
         // use these if NPM is being flaky
         // '.*\\.vue$': '<rootDir>/node_modules/@quasar/quasar-app-extension-testing-unit-jest/node_modules/vue-jest',
         // '.*\\.js$': '<rootDir>/node_modules/@quasar/quasar-app-extension-testing-unit-jest/node_modules/babel-jest'
     },
-    transformIgnorePatterns: [`<rootDir>/node_modules/(?!(${esModules}))`],
+    transformIgnorePatterns: [`node_modules/(?!(${esModules}))`],
     snapshotSerializers: [
         '<rootDir>/node_modules/jest-serializer-vue'
     ],
