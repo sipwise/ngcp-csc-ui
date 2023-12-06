@@ -301,6 +301,9 @@ export default {
         },
         async setChangedData (field, value, beforeUpdateUI = () => {}) {
             try {
+                if (field === 'secret_key') {
+                    value = value === '' ? null : value
+                }
                 await this.mailToFaxSettingsUpdateAction({ field, value })
                 beforeUpdateUI()
                 this.updateDataFromStore()
