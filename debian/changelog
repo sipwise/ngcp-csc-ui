@@ -1,3 +1,13 @@
+ngcp-csc-ui (12.0.1.6+0~mr12.0.1.6) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [8dd8e66] MT#57568 add missing data-cy to reminders
+
+  [ Hugo Zigha ]
+  * [643633e] MT#57752 Removing SecretKey for mail2fax doesn't work
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 11 Dec 2023 09:15:30 +0100
+
 ngcp-csc-ui (12.0.1.5+0~mr12.0.1.5) unstable; urgency=medium
 
   [ Nouhaila Idrissi Zouggari ]
