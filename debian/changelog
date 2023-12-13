@@ -1,3 +1,11 @@
+ngcp-csc-ui (12.1.1.1+0~mr12.1.1.1) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [5921bed] MT#58893 Fix build failures for missing jest module
+  * [c74b8da] MT#57752 Removing SecretKey for mail2fax doesn't work
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 13 Dec 2023 10:20:07 +0100
+
 ngcp-csc-ui (12.1.1.0+0~mr12.1.1.0) unstable; urgency=medium
 
   [ Hugo Zigha ]
