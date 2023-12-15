@@ -360,6 +360,7 @@ import _ from 'lodash'
 import {
     mapActions, mapGetters, mapState
 } from 'vuex'
+import numberFilter from '../../filters/number'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
@@ -413,6 +414,12 @@ export default {
         }
     },
     computed: {
+        ...mapState('pbxGroups', [
+            'groupSelected'
+        ]),
+        ...mapState('pbxSeats', [
+            'seatSelected'
+        ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
             'isPbxAttendant'
@@ -453,6 +460,9 @@ export default {
             if (_.isArray(this.announcements) && this.announcements.length > 0) {
                 payload.defaultAnnouncementId = this.announcements[0].value
             }
+            if (this.subscriberId && this.subscriberId !== '') {
+                payload = this.createSpecificDestination(payload)
+            }
             await this.addDestination(payload)
             this.$wait.end(this.waitIdentifier)
         },
@@ -487,6 +497,38 @@ export default {
             this.$wait.start('csc-cf-mappings-full')
             await this.doNotRingPrimaryNumber({ subscriberId: this.subscriberId })
             this.$wait.end('csc-cf-mappings-full')
+        },
+        createSpecificDestination (payload) {
+            const newPayload = { ...payload }
+            if (newPayload.destination) {
+                switch (newPayload.destination) {
+                case 'voicebox':
+                    if (this.mapping.type === 'cfb') {
+                        newPayload.destination = 'sip:vmb' + this.getPrimaryNumber() + '@voicebox.local'
+                    } else {
+                        newPayload.destination = 'sip:vmu' + this.getPrimaryNumber() + '@voicebox.local'
+                    }
+                    break
+                case 'fax2mail':
+                    newPayload.destination = 'sip:fax=' + this.getPrimaryNumber() + '@fax2mail.local'
+                    break
+                case 'conference':
+                    newPayload.destination = 'sip:conf=' + this.getPrimaryNumber() + '@conference.local'
+                    break
+                case 'managersecretary':
+                    newPayload.destination = 'sip:' + this.getPrimaryNumber() + '@managersecretary.local'
+                    break
+                }
+            }
+            return newPayload
+        },
+        getPrimaryNumber () {
+            if (this.groupSelected) {
+                return numberFilter(this.groupSelected.primary_number)
+            } else if (this.seatSelected) {
+                return numberFilter(this.seatSelected.primary_number)
+            }
+            return null
         }
     }
 }
