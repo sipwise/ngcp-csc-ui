@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.1.1.2+0~mr12.1.1.2) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [ed284b6] MT#58355 call forwarding to fax2mail for a subs. does not work when configured with admin account - the fax arrives in admin account
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 18 Dec 2023 11:30:20 +0100
+
 ngcp-csc-ui (12.1.1.1+0~mr12.1.1.1) unstable; urgency=medium
 
   [ Hugo Zigha ]
