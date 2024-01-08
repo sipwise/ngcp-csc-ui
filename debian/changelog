@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.5.1.10+0~mr11.5.1.10) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [4eb00af] MT#58591 Fix 'Subscriber' tranlation in German
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 08 Jan 2024 11:07:19 +0100
+
 ngcp-csc-ui (11.5.1.9+0~mr11.5.1.9) unstable; urgency=medium
 
   [ Hugo Zigha ]
