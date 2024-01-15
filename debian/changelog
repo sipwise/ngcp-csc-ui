@@ -1,3 +1,15 @@
+ngcp-csc-ui (12.3.0.0+0~mr12.3.0.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [8975d78] MT#58893 Fix build failures for missing jest module
+  * [8d73ce0] MT#57752 Removing SecretKey for mail2fax doesn't work
+  * [598bf48] MT#58355 call forwarding to fax2mail for a subs. does not work when configured with admin account - the fax arrives in admin account
+
+  [ Marco Capetta ]
+  * [1f3fb41] MT#58591 Fix 'Subscriber' tranlation in German
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Jan 2024 14:47:10 +0100
+
 ngcp-csc-ui (12.2.0.0+0~mr12.2.0.0) unstable; urgency=medium
 
   [ Hugo Zigha ]
