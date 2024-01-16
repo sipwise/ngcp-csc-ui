@@ -7,8 +7,6 @@ import { i18n } from 'boot/i18n'
 import { setSession } from 'src/storage'
 import { Quasar } from 'quasar'
 
-export const defaultLocale = 'en-US'
-
 export default function messages () {
     return {
         'en-US': patchKeysForFallback(localeEn),
@@ -18,7 +16,8 @@ export default function messages () {
         it: patchKeysForFallback(localeIt)
     }
 }
-const loadedLanguages = [defaultLocale]
+
+const loadedLanguages = ['en-US']
 async function loadLanguageAsync (lang) {
     if (i18n.locale !== lang && !loadedLanguages.includes(lang)) {
         const language = lang === 'en-US' ? 'en' : lang
@@ -89,10 +88,10 @@ export function getCurrentLangAsV1Format () {
 }
 
 export function normalizeLocaleCode (locale) {
-    const shortLangCode = String(locale || defaultLocale).substr(0, 2).toLowerCase()
+    const shortLangCode = String(locale || 'en-US').substring(0, 2).toLowerCase()
     const langCodeInV2Format = (shortLangCode === 'en') ? 'en-US' : shortLangCode
     const langCode = Object.keys(messages()).filter(l => l === langCodeInV2Format)[0]
-    return langCode || defaultLocale
+    return langCode || 'en-US'
 }
 
 export function getLangFromBrowserDefaults () {
