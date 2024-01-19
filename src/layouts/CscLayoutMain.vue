@@ -178,6 +178,7 @@
             :microphone-enabled="microphoneEnabled"
             :camera-enabled="cameraEnabled"
             :screen-enabled="screenEnabled"
+            :hold-enabled="holdEnabled"
             :remote-volume-enabled="remoteAudioEnabled"
             :dialpad-opened="dialpadOpened"
             :menu-minimized="menuMinimized"
@@ -186,6 +187,7 @@
             @end-call="endCall"
             @close-call="closeCall"
             @toggle-microphone="toggleMicrophone"
+            @toggle-holdon="toggleHoldon"
             @toggle-camera="toggleCamera"
             @toggle-screen="toggleScreen"
             @toggle-remote-volume="toggleRemoteAudio"
@@ -289,6 +291,7 @@ export default {
             'remoteMediaStream',
             'cameraEnabled',
             'screenEnabled',
+            'holdEnabled',
             'microphoneEnabled',
             'remoteAudioEnabled',
             'maximized',
@@ -527,6 +530,7 @@ export default {
             'toggleCamera',
             'toggleScreen',
             'toggleMicrophone',
+            'toggleHoldon',
             'toggleRemoteAudio'
         ]),
         layoutResized () {

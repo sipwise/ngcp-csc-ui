@@ -8,6 +8,7 @@ import {
     callRemoveVideo,
     callHasLocalVideo,
     callToggleMicrophone,
+    callToggleHold,
     callIsMuted,
     callSendDTMF,
     callToggleRemoteAudio,
@@ -52,6 +53,10 @@ export default {
     async toggleMicrophone (context) {
         callToggleMicrophone()
         context.commit('toggleMicrophone', !callIsMuted())
+    },
+    async toggleHoldon (context) {
+        callToggleHold()
+        context.commit('toggleHold')
     },
     toggleRemoteAudio (context) {
         callToggleRemoteAudio()

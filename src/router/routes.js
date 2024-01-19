@@ -102,7 +102,7 @@ const routes = [
                 component: CscPageSubscriberPhonebookAdd,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Add Phonebook')
+                        return i18n.global.tc('Add Phoneboossdsk')
                     }
                 }
             },

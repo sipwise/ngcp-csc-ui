@@ -171,6 +171,16 @@
                 />
                 <q-btn
                     v-if="isEstablished && !(isMobile && minimized)"
+                    :color="colorToggleHold"
+                    text-color="dark"
+                    icon="pause_circle_filled"
+                    class="q-mr-sm"
+                    round
+                    size="large"
+                    @click="toggleHold()"
+                />
+                <q-btn
+                    v-if="isEstablished && !(isMobile && minimized)"
                     :color="colorToggleCamera"
                     :icon="iconToggleCamera"
                     class="q-mr-sm"
@@ -417,6 +427,10 @@ export default {
             type: Boolean,
             default: false
         },
+        holdEnabled: {
+            type: Boolean,
+            default: false
+        },
         remoteVolumeEnabled: {
             type: Boolean,
             default: false
@@ -434,7 +448,7 @@ export default {
             default: false
         }
     },
-    emits: ['toggle-screen', 'toggle-camera', 'minimize-call', 'maximize-call', 'click-dialpad', 'toggle-remote-volume', 'toggle-microphone', 'toggle-dialpad', 'close-call', 'end-call', 'accept-call', 'start-call'],
+    emits: ['toggle-screen', 'toggle-camera', 'minimize-call', 'maximize-call', 'click-dialpad', 'toggle-remote-volume', 'toggle-microphone', 'toggle-holdon', 'toggle-dialpad', 'close-call', 'end-call', 'accept-call', 'start-call'],
     data () {
         return {
             localMediaWrapperWidth: 0,
@@ -530,6 +544,13 @@ export default {
         },
         colorToggleScreen () {
             if (this.screenEnabled) {
+                return 'primary'
+            } else {
+                return 'grey-1'
+            }
+        },
+        colorToggleHold () {
+            if (this.holdEnabled) {
                 return 'primary'
             } else {
                 return 'grey-1'
@@ -642,6 +663,9 @@ export default {
         },
         toggleMicrophone () {
             this.$emit('toggle-microphone')
+        },
+        toggleHold () {
+            this.$emit('toggle-holdon')
         },
         toggleRemoteVolume () {
             this.$emit('toggle-remote-volume')

@@ -103,5 +103,11 @@ export default {
     disableCall (state, options = { error: null }) {
         state.callEnabled = false
         state.connectionError = options.error
+    },
+    toggleHold (state) {
+        state.holdEnabled = !state.holdEnabled
+        if (state.holdEnabled) {
+            state.holdEnabled = true
+        }
     }
 }

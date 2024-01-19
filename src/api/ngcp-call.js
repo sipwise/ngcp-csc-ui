@@ -405,3 +405,23 @@ export function callEnd () {
     $audioTransceiver = null
     $videoTransceiver = null
 }
+/**
+ * Hold on.
+ */
+export function callToggleHold () {
+    const rtcSession = callGetRtcSession()
+    if (rtcSession) {
+        if (rtcSession.isOnHold().local) {
+            rtcSession.unhold()
+            callEvent.emit('callResumed')
+        } else {
+            rtcSession.hold()
+            callEvent.emit('callOnHold')
+        }
+    }
+}
+
+export function callIsOnHold () {
+    const rtcSession = callGetRtcSession()
+    return rtcSession ? rtcSession.isOnHold().local : false
+}
