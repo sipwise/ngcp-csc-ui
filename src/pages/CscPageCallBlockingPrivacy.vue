@@ -38,6 +38,7 @@
                         :model-value="clirIntrapbx"
                         :class="isLoading ? 'disabled' : ''"
                         :label="$t('Hide number to the callee within own PBX')"
+                        data-cy="csc-callee-hide"
                         checked-icon="visibility_off"
                         unchecked-icon="visibility"
                         @update:model-value="changeIntraPbx()"
