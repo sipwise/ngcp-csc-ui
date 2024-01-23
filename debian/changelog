@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.2.1.2+0~mr12.2.1.2) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [9a67e6a] MT#59145 When Chrome browser is set to Czech language the CSC throws a Javascript error
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 23 Jan 2024 08:43:36 +0100
+
 ngcp-csc-ui (12.2.1.1+0~mr12.2.1.1) unstable; urgency=medium
 
   * New release.
