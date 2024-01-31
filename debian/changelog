@@ -1,3 +1,13 @@
+ngcp-csc-ui (12.1.1.5+0~mr12.1.1.5) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [c9cc800] MT#56239 enable caller/callee wildcards for conversations and recordings
+
+  [ Nico Schedel ]
+  * [876a6dd] MT#57568 add data-cy to privacy page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 31 Jan 2024 17:45:10 +0100
+
 ngcp-csc-ui (12.1.1.4+0~mr12.1.1.4) unstable; urgency=medium
 
   [ Hugo Zigha ]
