@@ -1,3 +1,10 @@
+ngcp-csc-ui (10.5.1.14+0~mr10.5.1.14) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [bb3980e] MT#56239 enable caller/callee wildcards for conversations and recordings
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 31 Jan 2024 17:44:22 +0100
+
 ngcp-csc-ui (10.5.1.13+0~mr10.5.1.13) unstable; urgency=medium
 
   [ Marco Capetta ]
