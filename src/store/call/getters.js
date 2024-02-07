@@ -26,6 +26,7 @@ export default {
         if (state.callState === CallState.initiating ||
             state.callState === CallState.ringing ||
             state.callState === CallState.incoming ||
+            state.callState === CallState.hold ||
             state.callState === CallState.established) {
             return getters.callNumberFormatted
         } else if (state.callState === CallState.ended) {

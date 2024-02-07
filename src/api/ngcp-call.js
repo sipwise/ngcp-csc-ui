@@ -152,6 +152,12 @@ export function callRegister ({ instanceId }) {
                         $incomingRtcSession = null
                     })
                     callEvent.emit('incoming', $incomingRtcSession)
+                    $incomingRtcSession.on('hold', (holdEvent) => {
+                        callEvent.emit('incomingHold', holdEvent)
+                    })
+                    $incomingRtcSession.on('unhold', (unholdEvent) => {
+                        callEvent.emit('incomingUnHold', unholdEvent)
+                    })
                 }
             }
         })
@@ -189,6 +195,20 @@ export async function callStart ({ number }) {
                 ended (event) {
                     callEvent.emit('outgoingEnded', event)
                     $outgoingRtcSession = null
+                },
+                hold (event) {
+                    if (event.originator === 'local') {
+                        callEvent.emit('outgoingHold', event)
+                    } else {
+                        callEvent.emit('outgoingHolded', event)
+                    }
+                },
+                unhold (event) {
+                    if (event.originator === 'local') {
+                        callEvent.emit('outgoingUnHold', event)
+                    } else {
+                        callEvent.emit('outgoingUnHolded', event)
+                    }
                 }
             },
             mediaStream: $localMediaStream
@@ -413,15 +433,8 @@ export function callToggleHold () {
     if (rtcSession) {
         if (rtcSession.isOnHold().local) {
             rtcSession.unhold()
-            callEvent.emit('callResumed')
         } else {
             rtcSession.hold()
-            callEvent.emit('callOnHold')
         }
     }
-}
-
-export function callIsOnHold () {
-    const rtcSession = callGetRtcSession()
-    return rtcSession ? rtcSession.isOnHold().local : false
 }

@@ -179,6 +179,8 @@
             :camera-enabled="cameraEnabled"
             :screen-enabled="screenEnabled"
             :hold-enabled="holdEnabled"
+            :local-on-hold="localOnHold"
+            :remote-on-hold="remoteOnHold"
             :remote-volume-enabled="remoteAudioEnabled"
             :dialpad-opened="dialpadOpened"
             :menu-minimized="menuMinimized"
@@ -295,7 +297,9 @@ export default {
             'microphoneEnabled',
             'remoteAudioEnabled',
             'maximized',
-            'dialpadOpened'
+            'dialpadOpened',
+            'localOnHold',
+            'remoteOnHold'
         ]),
         ...mapGetters('user', [
             'isLogged',
@@ -395,7 +399,8 @@ export default {
                 this.callState === 'ringing' ||
                 this.callState === 'established' ||
                 this.callState === 'incoming' ||
-                this.callState === 'ended'
+                this.callState === 'ended' ||
+                this.callState === 'hold'
         },
         getLocalMediaStream () {
             if (this.localMediaStream) {
@@ -431,6 +436,7 @@ export default {
             if (this.callState === CallState.initiating ||
                 this.callState === CallState.ringing ||
                 this.callState === CallState.incoming ||
+                this.callState === CallState.hold ||
                 this.callState === CallState.established) {
                 return this.callNumberFormatted
             } else if (this.callState === CallState.ended) {

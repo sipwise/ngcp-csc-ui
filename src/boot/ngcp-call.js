@@ -78,4 +78,35 @@ export default async ({ app, store }) => {
             hasRemoteVideo: callHasRemoteVideo()
         })
     })
+    callEvent.on('incomingHold', (event) => {
+        if (event.originator === 'remote') {
+            store.commit('call/toggleHold')
+            store.commit('call/setRemoteOnHold', true)
+        } else if (event.originator === 'local') {
+            callEvent.on('outgoingHold', (event) => {
+                store.commit('call/toggleHold')
+                store.commit('call/setLocalOnHold', true)
+                store.commit('call/setRemoteOnHold', false)
+            })
+        }
+    })
+    callEvent.on('incomingUnHold', (event) => {
+        if (event.originator === 'remote') {
+            store.commit('call/toggleHold')
+            store.commit('call/setRemoteOnHold', false)
+        } else if (event.originator === 'local') {
+            callEvent.on('outgoingUnHold', (event) => {
+                store.commit('call/toggleHold')
+                store.commit('call/setLocalOnHold', false)
+            })
+        }
+    })
+    callEvent.on('outgoingHolded', (event) => {
+        store.commit('call/toggleHold')
+        store.commit('call/setLocalOnHold', true)
+    })
+    callEvent.on('outgoingUnHolded', (event) => {
+        store.commit('call/toggleHold')
+        store.commit('call/setLocalOnHold', false)
+    })
 }

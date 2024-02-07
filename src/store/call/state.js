@@ -21,5 +21,7 @@ export default {
     remoteAudioEnabled: true,
     remoteVideoEnabled: true,
     maximized: false,
-    dialpadOpened: false
+    dialpadOpened: false,
+    localOnHold: false,
+    remoteOnHold: false
 }

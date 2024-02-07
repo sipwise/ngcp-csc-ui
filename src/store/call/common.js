@@ -8,7 +8,9 @@ export const CallState = {
     ringing: 'ringing',
     incoming: 'incoming',
     established: 'established',
-    ended: 'ended'
+    ended: 'ended',
+    hold: 'hold',
+    unhold: 'unhold'
 }
 export const CallStateTitle = {
     get input () { return i18n.global.tc('Start new call') },
@@ -16,7 +18,8 @@ export const CallStateTitle = {
     get ringing () { return i18n.global.tc('Ringing at') },
     get incoming () { return i18n.global.tc('Incoming call from') },
     get established () { return i18n.global.tc('In call with') },
-    get ended () { return i18n.global.tc('Call ended') }
+    get ended () { return i18n.global.tc('Call ended') },
+    get hold () { return i18n.global.tc('Call holded') }
 }
 
 export const MediaType = {

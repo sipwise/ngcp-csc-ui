@@ -67,7 +67,7 @@
                 </div>
             </div>
             <div
-                v-else-if="isEstablished"
+                v-else-if="isEstablished || isHolded"
                 class="csc-call-info-established"
             >
                 <div
@@ -137,7 +137,7 @@
                 class="csc-call-media-icon row justify-center items-center full-height"
             >
                 <q-icon
-                    name="person"
+                    :name="isHolded ? 'pause_circle_filled' : 'person'"
                     size="128px"
                     color="white"
                 />
@@ -160,7 +160,7 @@
                 style="margin-top: -30px"
             >
                 <q-btn
-                    v-if="isEstablished && !(isMobile && minimized)"
+                    v-if="isHolded || isEstablished && !(isMobile && minimized)"
                     :color="colorToggleMicrophone"
                     :icon="iconToggleMicrophone"
                     class="q-mr-sm"
@@ -170,17 +170,18 @@
                     @click="toggleMicrophone()"
                 />
                 <q-btn
-                    v-if="isEstablished && !(isMobile && minimized)"
+                    v-if="isHolded || isEstablished && !(isMobile && minimized)"
                     :color="colorToggleHold"
                     text-color="dark"
                     icon="pause_circle_filled"
                     class="q-mr-sm"
                     round
                     size="large"
+                    :disable="islocalOnHold || isremoteOnHold"
                     @click="toggleHold()"
                 />
                 <q-btn
-                    v-if="isEstablished && !(isMobile && minimized)"
+                    v-if="isHolded || isEstablished && !(isMobile && minimized)"
                     :color="colorToggleCamera"
                     :icon="iconToggleCamera"
                     class="q-mr-sm"
@@ -190,7 +191,7 @@
                     @click="toggleCamera()"
                 />
                 <q-btn
-                    v-if="isEstablished && !(isMobile && minimized)"
+                    v-if="isHolded || isEstablished && !(isMobile && minimized)"
                     :color="colorToggleScreen"
                     icon="screen_share"
                     class="q-mr-sm"
@@ -200,7 +201,7 @@
                     @click="toggleScreen()"
                 />
                 <q-btn
-                    v-if="isEstablished && !(isMobile && minimized)"
+                    v-if="isHolded || isEstablished && !(isMobile && minimized)"
                     :color="colorToggleRemoteVolume"
                     :icon="iconToggleRemoteVolume"
                     class="q-mr-sm"
@@ -431,6 +432,14 @@ export default {
             type: Boolean,
             default: false
         },
+        localOnHold: {
+            type: Boolean,
+            default: false
+        },
+        remoteOnHold: {
+            type: Boolean,
+            default: false
+        },
         remoteVolumeEnabled: {
             type: Boolean,
             default: false
@@ -485,7 +494,7 @@ export default {
             return this.isInitiating || this.isRinging || this.isIncoming
         },
         isActive () {
-            return this.isCalling || this.isEstablished
+            return this.isCalling || this.isEstablished || this.isHolded
         },
         isInitiating () {
             return this.callState === 'initiating'
@@ -501,6 +510,9 @@ export default {
         },
         isEnded () {
             return this.callState === 'ended'
+        },
+        isHolded () {
+            return this.callState === 'hold'
         },
         canStart () {
             return this.callState === 'input' || this.callState === 'incoming'
@@ -550,7 +562,7 @@ export default {
             }
         },
         colorToggleHold () {
-            if (this.holdEnabled) {
+            if (this.holdEnabled && !this.remoteOnHold && !this.localOnHold) {
                 return 'primary'
             } else {
                 return 'grey-1'
@@ -575,6 +587,12 @@ export default {
         },
         isNumberInputDefined () {
             return this.numberInput !== '' && this.numberInput !== null
+        },
+        islocalOnHold () {
+            return this.localOnHold
+        },
+        isremoteOnHold () {
+            return this.remoteOnHold
         }
     },
     watch: {
@@ -754,6 +772,19 @@ export default {
             .csc-dialpad-button
                 vertical-align: center
                 margin-left: $flex-gutter-sm
+        .csc-call-info-hold
+            position: absolute
+            bottom: $call-footer-action-margin * 2
+            right: 0
+            left: 0
+            justify-items: center
+            z-index: 3
+            color: white
+            .csc-media-icon
+                margin-right: $flex-gutter-xs
+            .csc-dialpad-button
+                vertical-align: center
+                margin-left: $flex-gutter-sm
     .csc-call-media-remote
         position: absolute
         top: 0
@@ -834,6 +865,9 @@ export default {
 .csc-call.csc-call-established
     .csc-call-content
         background-color: transparent
+.csc-call.csc-call-hold
+    .csc-call-content
+        background-color: transparent
 .csc-call.csc-call-minimized
     opacity: 0
     height: $call-footer-height-big
@@ -865,6 +899,7 @@ export default {
 .csc-call.csc-call-minimized.csc-call-initiating,
 .csc-call.csc-call-minimized.csc-call-ringing,
 .csc-call.csc-call-minimized.csc-call-established,
+.csc-call.csc-call-minimized.csc-call-hold,
 .csc-call.csc-call-minimized.csc-call-ended
     bottom: 0
     opacity: 1

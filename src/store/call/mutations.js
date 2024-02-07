@@ -58,6 +58,9 @@ export default {
     endCall (state, reason) {
         if (reason) {
             state.callState = CallState.ended
+            state.holdEnabled = false
+            state.remoteOnHold = false
+            state.localOnHold = false
             state.endedReason = reason
         }
         state.dialpadOpened = false
@@ -107,7 +110,19 @@ export default {
     toggleHold (state) {
         state.holdEnabled = !state.holdEnabled
         if (state.holdEnabled) {
+            state.callState = CallState.hold
             state.holdEnabled = true
+        } else {
+            state.callState = CallState.established
+            state.holdEnabled = false
         }
+    },
+    setLocalOnHold (state, value) {
+        state.localOnHold = value
+    },
+    
+    setRemoteOnHold (state, value) {
+        state.remoteOnHold = value
     }
+    
 }
