@@ -169,17 +169,21 @@
                     size="large"
                     @click="toggleMicrophone()"
                 />
-                <q-btn
-                    v-if="isHolded || isEstablished && !(isMobile && minimized)"
-                    :color="colorToggleHold"
-                    text-color="dark"
-                    icon="pause_circle_filled"
-                    class="q-mr-sm"
-                    round
-                    size="large"
-                    :disable="islocalOnHold || isremoteOnHold"
-                    @click="toggleHold()"
-                />
+                <div
+                    v-if="platformInfo.type != 'spce'"
+                >
+                    <q-btn
+                        v-if="isHolded || isEstablished && !(isMobile && minimized)"
+                        :color="colorToggleHold"
+                        text-color="dark"
+                        icon="pause_circle_filled"
+                        class="q-mr-sm"
+                        round
+                        size="large"
+                        :disable="islocalOnHold || isremoteOnHold"
+                        @click="toggleHold()"
+                    />
+                </div>
                 <q-btn
                     v-if="isHolded || isEstablished && !(isMobile && minimized)"
                     :color="colorToggleCamera"
@@ -358,6 +362,9 @@ import {
 import CscMedia from '../CscMedia'
 import CscCallDialpad from '../CscCallDialpad'
 import { CallStateTitle } from 'src/store/call/common'
+import {
+    mapState
+} from 'vuex'
 export default {
     name: 'CscCall',
     components: {
@@ -467,6 +474,9 @@ export default {
         }
     },
     computed: {
+        ...mapState('user', [
+            'platformInfo'
+        ]),
         componentClasses () {
             const classes = [
                 'transition-generic',
@@ -576,6 +586,7 @@ export default {
             }
         },
         colorToggleRemoteVolume () {
+            console.log(this.platformInfo)
             if (this.remoteVolumeEnabled) {
                 return 'primary'
             } else {
