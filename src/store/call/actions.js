@@ -9,6 +9,7 @@ import {
     callHasLocalVideo,
     callToggleMicrophone,
     callToggleHold,
+    callBlindTransfer,
     callIsMuted,
     callSendDTMF,
     callToggleRemoteAudio,
@@ -57,6 +58,19 @@ export default {
     async toggleHoldon (context) {
         callToggleHold()
         context.commit('toggleHold')
+    },
+    async toggleTransfer (context, number) {
+        try {
+            const result = await callBlindTransfer(number)
+            if (result) {
+                context.dispatch('end')
+            }
+        } catch (error) {
+            console.error(error.message)
+        }
+    },    
+    async toggleStateTransfer (context) {
+        context.commit('toggleTransfer')
     },
     toggleRemoteAudio (context) {
         callToggleRemoteAudio()

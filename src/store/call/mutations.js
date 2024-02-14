@@ -61,6 +61,7 @@ export default {
             state.holdEnabled = false
             state.remoteOnHold = false
             state.localOnHold = false
+            state.transferEnabled = false
             state.endedReason = reason
         }
         state.dialpadOpened = false
@@ -123,6 +124,14 @@ export default {
     
     setRemoteOnHold (state, value) {
         state.remoteOnHold = value
+    },
+    toggleTransfer (state) {
+        state.transferEnabled = !state.transferEnabled
+        if (state.transferEnabled) {
+            state.transferEnabled = true
+        } else {
+            state.transferEnabled = false
+        }
     }
     
 }

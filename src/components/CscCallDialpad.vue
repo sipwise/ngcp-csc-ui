@@ -32,8 +32,11 @@
                     />
                 </div>
             </div>
+            <div class="number-display">
+                {{ dialedNumber }}
+            </div>
             <div
-                v-for="(keyRow, rowIndex) in keys"
+                v-for="(keyRow, rowIndex) in transferCall ? keysTransfer : keys"
                 :key="rowIndex"
                 class="csc-dialpad-btn-group"
             >
@@ -46,9 +49,18 @@
                         color="default"
                         round
                         small
-                        @click="click(key)"
+                        @click="transferCall ? clickTransfer(key) : click(key)"
                     >
-                        {{ key }}
+                        <template v-if="typeof key === 'object'">
+                            <q-icon
+                                :name="key.icon"
+                                :color="key.icon === 'call' ? 'green' : ''"
+                                :size="key.icon === 'call' ? '40px' : ''"
+                            />
+                        </template>
+                        <template v-else>
+                            {{ key }}
+                        </template>
                     </q-btn>
                 </div>
             </div>
@@ -58,6 +70,9 @@
 
 <script>
 import platformMixin from '../mixins/platform'
+import {
+    mapActions
+} from 'vuex'
 export default {
     name: 'CscCallDialpad',
     mixins: [
@@ -71,11 +86,17 @@ export default {
         showClearButton: {
             type: Boolean,
             default: false
+        },
+        transferCall: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['click', 'remove', 'remove-all'],
     data () {
-        return {}
+        return {
+            dialedNumber: ''
+        }
     },
     computed: {
         keys () {
@@ -86,17 +107,50 @@ export default {
                 ['*', '0', '#'],
                 ['+']
             ]
+        },
+        keysTransfer () {
+            return [
+                ['1', '2', '3'],
+                ['4', '5', '6'],
+                ['7', '8', '9'],
+                ['*', '0', '#'],
+                ['+'],
+                [{ icon: 'backspace' }, { icon: 'call' }, { icon: 'cancel' }]
+            ]
         }
     },
     methods: {
+        ...mapActions('call', [
+            'toggleTransfer'
+        ]),
         click (value) {
             this.$emit('click', value)
+        },
+        clickTransfer (value) {
+            if (value.icon === 'call') {
+                this.transferCallMethod()
+            } else if (value.icon === 'cancel') {
+                this.dialedNumber = ''
+            } else if (value.icon === 'backspace') {
+                this.removeLastDigit()
+            } else {
+                this.dialedNumber += value 
+            }
         },
         remove () {
             this.$emit('remove')
         },
         removeAll () {
             this.$emit('remove-all')
+        },
+        transferCallMethod () {
+            this.toggleTransfer(this.dialedNumber)
+            // this.$store.dispatch('call/end')
+        },
+        removeLastDigit () {
+            if (this.dialedNumber.length > 0) {
+                this.dialedNumber = this.dialedNumber.slice(0, -1)
+            }
         }
     }
 }
@@ -139,4 +193,11 @@ export default {
 
 .csc-dialpad-btn-group:last-child
     margin-bottom: 0
+
+.number-display
+    font-size: 24px
+    color: white
+    margin-bottom: 16px
+    text-align: center
+
 </style>

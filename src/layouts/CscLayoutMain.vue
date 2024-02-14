@@ -179,6 +179,7 @@
             :camera-enabled="cameraEnabled"
             :screen-enabled="screenEnabled"
             :hold-enabled="holdEnabled"
+            :transfer-enabled="transferEnabled"
             :local-on-hold="localOnHold"
             :remote-on-hold="remoteOnHold"
             :remote-volume-enabled="remoteAudioEnabled"
@@ -190,6 +191,7 @@
             @close-call="closeCall"
             @toggle-microphone="toggleMicrophone"
             @toggle-holdon="toggleHoldon"
+            @toggle-state-transfer="toggleStateTransfer"
             @toggle-camera="toggleCamera"
             @toggle-screen="toggleScreen"
             @toggle-remote-volume="toggleRemoteAudio"
@@ -294,6 +296,7 @@ export default {
             'cameraEnabled',
             'screenEnabled',
             'holdEnabled',
+            'transferEnabled',
             'microphoneEnabled',
             'remoteAudioEnabled',
             'maximized',
@@ -537,6 +540,7 @@ export default {
             'toggleScreen',
             'toggleMicrophone',
             'toggleHoldon',
+            'toggleStateTransfer',
             'toggleRemoteAudio'
         ]),
         layoutResized () {

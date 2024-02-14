@@ -111,6 +111,7 @@
                     v-if="dialpadOpened"
                     :show-backspace-button="false"
                     :show-clear-button="false"
+                    :transfer-call="transferEnabled"
                     @click="dialpadClick"
                 />
             </div>
@@ -180,8 +181,20 @@
                         class="q-mr-sm"
                         round
                         size="large"
-                        :disable="islocalOnHold || isremoteOnHold"
+                        :disable="islocalOnHold || isremoteOnHold || transferEnabled"
                         @click="toggleHold()"
+                    />
+                
+                    <q-btn
+                        v-if="isEstablished || isHolded && !(isMobile && minimized)"
+                        :color="colorTransfer"
+                        icon="phone_forwarded"
+                        class="q-mr-sm"
+                        text-color="dark"
+                        round
+                        size="large"
+                        :disable="islocalOnHold || isremoteOnHold"
+                        @click="initiateTransfer()"
                     />
                 </div>
                 <q-btn
@@ -439,6 +452,10 @@ export default {
             type: Boolean,
             default: false
         },
+        transferEnabled: {
+            type: Boolean,
+            default: false
+        },
         localOnHold: {
             type: Boolean,
             default: false
@@ -464,7 +481,7 @@ export default {
             default: false
         }
     },
-    emits: ['toggle-screen', 'toggle-camera', 'minimize-call', 'maximize-call', 'click-dialpad', 'toggle-remote-volume', 'toggle-microphone', 'toggle-holdon', 'toggle-dialpad', 'close-call', 'end-call', 'accept-call', 'start-call'],
+    emits: ['toggle-screen', 'toggle-camera', 'minimize-call', 'maximize-call', 'click-dialpad', 'toggle-remote-volume', 'toggle-microphone', 'toggle-holdon', 'toggle-state-transfer', 'toggle-dialpad', 'close-call', 'end-call', 'accept-call', 'start-call'],
     data () {
         return {
             localMediaWrapperWidth: 0,
@@ -578,6 +595,13 @@ export default {
                 return 'grey-1'
             }
         },
+        colorTransfer () {
+            if (this.transferEnabled) {
+                return 'primary'
+            } else {
+                return 'grey-1'
+            }
+        },
         iconToggleRemoteVolume () {
             if (this.remoteVolumeEnabled) {
                 return 'volume_up'
@@ -586,7 +610,6 @@ export default {
             }
         },
         colorToggleRemoteVolume () {
-            console.log(this.platformInfo)
             if (this.remoteVolumeEnabled) {
                 return 'primary'
             } else {
@@ -730,6 +753,11 @@ export default {
         },
         toggleScreen () {
             this.$emit('toggle-screen')
+        },
+        initiateTransfer () {
+            this.$emit('toggle-state-transfer')
+            this.toggleDialpad()
+            this.toggleHold()
         }
     }
 }

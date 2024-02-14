@@ -158,6 +158,9 @@ export function callRegister ({ instanceId }) {
                     $incomingRtcSession.on('unhold', (unholdEvent) => {
                         callEvent.emit('incomingUnHold', unholdEvent)
                     })
+                    $incomingRtcSession.on('refer', (event) => {
+                        callEvent.emit('incomingRefer', event)
+                    })
                 }
             }
         })
@@ -209,7 +212,11 @@ export async function callStart ({ number }) {
                     } else {
                         callEvent.emit('outgoingUnHolded', event)
                     }
+                },
+                refer (event) {
+                    callEvent.emit('outgoingRefer', event)
                 }
+
             },
             mediaStream: $localMediaStream
         })
@@ -437,4 +444,29 @@ export function callToggleHold () {
             rtcSession.hold()
         }
     }
+}
+/**
+ * Blind Transfer.
+ */
+export function callBlindTransfer (numberToTransfer) {
+    return new Promise((resolve, reject) => {
+        const rtcSession = callGetRtcSession()
+        const eventHandlers = {
+            requestFailed: function (e) {
+                console.log('Transfer failed')
+                reject(new Error('Transfer failed'))
+            },
+            requestSucceeded: function (e) {
+                console.log('Success', e)
+                resolve(true)
+            }
+        }
+        try {
+            rtcSession.refer(numberToTransfer, {
+                eventHandlers
+            })
+        } catch (err) {
+            reject(err)
+        }
+    })
 }

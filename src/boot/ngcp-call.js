@@ -9,7 +9,8 @@ import {
     callMute,
     callMuteRemote,
     callUnMute,
-    callUnMuteRemote
+    callUnMuteRemote,
+    callStart
 } from 'src/api/ngcp-call'
 import { i18n } from 'boot/i18n'
 
@@ -108,5 +109,19 @@ export default async ({ app, store }) => {
     callEvent.on('outgoingUnHolded', (event) => {
         store.commit('call/toggleHold')
         store.commit('call/setLocalOnHold', false)
+    })
+    callEvent.on('outgoingRefer', (event) => {
+        const number = event.request.refer_to._uri._user
+        store.commit('call/startCalling', number)
+        callStart({
+            number
+        })
+    })
+    callEvent.on('incomingRefer', (event) => {
+        const number = event.request.refer_to._uri._user
+        store.commit('call/startCalling', number)
+        callStart({
+            number
+        })
     })
 }

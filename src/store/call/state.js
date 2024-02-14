@@ -16,6 +16,7 @@ export default {
     callee: false,
     microphoneEnabled: true,
     holdEnabled: false,
+    transferEnabled: false,
     cameraEnabled: false,
     screenEnabled: false,
     remoteAudioEnabled: true,
