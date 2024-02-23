@@ -138,17 +138,38 @@
                 id="csc-language-menu-main-mobile"
                 class="csc-language-menu"
             />
-            <csc-main-menu-top
-                id="csc-main-menu-top"
-                class="csc-main-menu no-margin"
-                :call-state-title="callStateTitle"
-                :call-state-subtitle="callStateSubtitle"
-                :is-call-forward="isCallForward"
-                :is-call-blocking="isCallBlocking"
-                :is-pbx-admin="isPbxAdmin"
-                :is-pbx-configuration="isPbxConfiguration"
-            />
+            <q-scroll-area
+                class="absolute-top main-menu-container"
+            >
+                <csc-main-menu-top
+                    id="csc-main-menu-top"
+                    class="csc-main-menu no-margin"
+                    :call-state-title="callStateTitle"
+                    :call-state-subtitle="callStateSubtitle"
+                    :is-call-forward="isCallForward"
+                    :is-call-blocking="isCallBlocking"
+                    :is-pbx-admin="isPbxAdmin"
+                    :is-pbx-configuration="isPbxConfiguration"
+                />
+            </q-scroll-area>
             <aui-mobile-app-badges />
+            <div class="absolute-bottom-left absolute-bottom-right bottom-text">
+                <div
+                    v-if="!menuMinimized && platformInfo.type === 'spce'"
+                >
+                    <div class="row justify-center content-center">
+                        <span
+                            class="no-wrap q-mr-xs"
+                        >
+                            {{ $t('Powered by') }}
+                            <a
+                                class="text-primary"
+                                href="http://www.sipwise.com"
+                            >Sipwise</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </q-drawer>
         <q-page-container
             id="csc-page-main"
@@ -647,7 +668,7 @@ export default {
 </script>
 
 <style lang="sass" rel="stylesheet/sass">
-
+$copyright-height: 45px
 .app-badge
     width: 60% !important
 
@@ -803,4 +824,11 @@ export default {
         min-width: $logo-min-width
         max-width: $logo-max-width
         max-height: $logo-max-height
+.bottom-text
+    height: $copyright-height
+    text-align: center
+
+.main-menu-container
+    top: $toolbar-min-height 
+    bottom: $copyright-height
 </style>
