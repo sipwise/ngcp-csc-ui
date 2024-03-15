@@ -1,3 +1,23 @@
+ngcp-csc-ui (12.3.1.0+0~mr12.3.1.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [d810727] MT#59145 When Chrome browser is set to Czech language the CSC throws a Javascript error
+
+  [ Nico Schedel ]
+  * [4d6ad4a] MT#57568 add data-cy to privacy page
+
+  [ Rene Krenn ]
+  * [cd25874] MT#56239 enable caller/callee wildcards for conversations and recordings
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [03a494b] MT#58958 Add support to call hold/unhold to the webrtc client
+  * [dc1d714] MT#59231 let the user know when it has been put on hold
+  * [9008ae2] MT#59358 HOLD button available only for PRO customers and hidden for CE customers
+  * [ef05bdf] MT#59232 add blind transfer feature
+  * [30470ef] MT#59450 Add a banner to CE UI to suggest to buy the PRO version
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 15 Mar 2024 08:48:15 +0100
+
 ngcp-csc-ui (12.3.0.0+0~mr12.3.0.0) unstable; urgency=medium
 
   [ Hugo Zigha ]
