@@ -376,7 +376,7 @@ class testrun(unittest.TestCase):
         wait_for_invisibility(driver, '//*[@id="csc-language-menu-login"]')
         time.sleep(1)
         self.assertTrue(
-            len(driver.find_elements(By.XPATH, '//*[@id="csc-login-card"]/div[contains(., "Subscriber-Anmeldung")]')) > 0,
+            len(driver.find_elements(By.XPATH, '//*[@id="csc-login-card"]/div[contains(., "Teilnehmer-Anmeldung")]')) > 0,
             "Language wasnt changed to German")
         driver.find_element(By.XPATH, '//*[@id="csc-header-toolbar-login"]/button').click()
         click_js(driver, '/html/body/div[3]/div/div[4]')
@@ -559,23 +559,20 @@ class testrun(unittest.TestCase):
         print("Try to enable reminders...", end="")
         wait_for_invisibility(driver, '//div[@data-cy="csc-reminder-toggle"][@aria-disabled="true"]')
         driver.find_element(By.XPATH, '//div[@data-cy="csc-reminder-toggle"]').click()
+        self.assertTrue(
+            len(driver.find_elements(By.XPATH, '//div[@data-cy="csc-reminder-toggle"][@aria-checked="true"]')) > 0,
+            "Reminder has not been enabled")
         time.sleep(1)
         driver.find_element(By.XPATH, '//*[@id="csc-main-menu-top"]//div/a[contains(., "Speed Dial")]').click()
         time.sleep(1)
         driver.find_element(By.XPATH, '//*[@id="csc-main-menu-top"]//div/a[contains(., "Reminder")]').click()
-        wait_for_invisibility(driver, '//div[@data-cy="csc-reminder-toggle"][@aria-disabled="true"]')
-        driver.find_element(By.XPATH, '//div[@data-cy="csc-reminder-toggle"]').click()
-        wait_for_invisibility(driver, '//div[@data-cy="csc-reminder-toggle"][@aria-disabled="true"]')
-        self.assertTrue(
-            len(driver.find_elements(By.XPATH, '//div[@data-cy="csc-reminder-toggle"][@aria-checked="true"]')) > 0,
-            "Reminder has not been enabled")
         print("OK")
         print("Try to change reminder recurrance to 'Always'...", end="")
         driver.find_element(By.XPATH, '//*[@id="csc-page-reminder"]//div[@aria-label="Always"]').click()
         WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '/html/body//div[@role="alert"]')))
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-page-reminder"]//div[@aria-label="Always"][@aria-checked="true"]')) > 0,
-            "Reminder has not been enabled")
+            "Reminder recurrance has not been changed to 'always'")
         print("OK")
         print("Try to change time to 12:00...")
         driver.find_element(By.XPATH, '//*[@id="csc-page-reminder"]/div/div[3]/div/label/div/div/div[2]/input').click()
