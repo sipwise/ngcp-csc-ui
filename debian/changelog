@@ -1,3 +1,13 @@
+ngcp-csc-ui (12.3.1.2+0~mr12.3.1.2) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [e67ee04] MT#57754 ACL is buggy on CSC
+
+  [ Nico Schedel ]
+  * [50a42b2] MT#56388 fix failing selenium csc tests
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 05 Apr 2024 16:15:10 +0200
+
 ngcp-csc-ui (12.3.1.1+0~mr12.3.1.1) unstable; urgency=medium
 
   * New release.
