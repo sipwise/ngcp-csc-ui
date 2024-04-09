@@ -71,9 +71,9 @@
             class="row justify-center"
         >
             <q-pagination
-                :value="deviceListCurrentPage"
+                :model-value="deviceListCurrentPage"
                 :max="deviceListLastPage"
-                @input="loadDeviceListItemsFiltered"
+                @update:model-value="loadDeviceListItemsFiltered"
             />
         </div>
         <csc-list-spinner
