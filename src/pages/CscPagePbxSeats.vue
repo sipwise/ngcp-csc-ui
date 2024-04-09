@@ -56,9 +56,9 @@
             class="row justify-center"
         >
             <q-pagination
-                :value="seatListCurrentPage"
+                :model-value="seatListCurrentPage"
                 :max="seatListLastPage"
-                @input="loadSeatListItemsPaginated"
+                @update:model-value="loadSeatListItemsPaginated"
             />
         </div>
         <div
