@@ -37,9 +37,9 @@
             class="row justify-center"
         >
             <q-pagination
-                :value="soundSetListCurrentPage"
+                :model-value="soundSetListCurrentPage"
                 :max="soundSetListLastPage"
-                @input="loadSoundSetListPaginated"
+                @update:model-value="loadSoundSetListPaginated"
             />
         </div>
         <csc-list-spinner

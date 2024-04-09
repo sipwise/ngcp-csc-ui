@@ -73,9 +73,9 @@
             class="row justify-center"
         >
             <q-pagination
-                :value="groupListCurrentPage"
+                :model-value="groupListCurrentPage"
                 :max="groupListLastPage"
-                @input="loadGroupListItemsPaginated"
+                @update:model-value="loadGroupListItemsPaginated"
             />
         </div>
         <csc-list-spinner
