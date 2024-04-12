@@ -16,7 +16,7 @@
                 id="csc-call-number-input"
                 :label="$t('Enter a number to dial')"
                 data-cy="csc-call-number-input"
-                :value="callNumberInput || $route.query.number"
+                :value="callNumberInput"
                 :readonly="dialpadOpened"
                 clearable
                 :disable="!isCallEnabled"
@@ -108,6 +108,11 @@ export default {
                 title += ' (' + this.callStateSubtitle + ')'
             }
             return title
+        }
+    },
+    mounted () {
+        if (this.$route.query.number) {
+            this.numberInputChanged(this.$route.query.number)
         }
     },
     methods: {
