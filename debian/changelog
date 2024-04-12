@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.5.1.16+0~mr11.5.1.16) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [e8d8319] MT#59848 Cannot use callback/ Rückruf option from Phonebook + call history isn't linking the no. that called with the Phonebook
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 12 Apr 2024 16:09:57 +0200
+
 ngcp-csc-ui (11.5.1.15+0~mr11.5.1.15) unstable; urgency=medium
 
   [ Nico Schedel ]
