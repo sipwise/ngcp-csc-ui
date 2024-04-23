@@ -92,6 +92,7 @@ import { mapWaitingActions } from 'vue-wait'
 import CscSpinner from 'components/CscSpinner'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import CscPageSticky from 'components/CscPageSticky'
+// import number from 'src/filters/number'
 export default {
     name: 'CscPageSubscriberPhonebook',
     components: {
@@ -193,9 +194,15 @@ export default {
             this.$router.push('/user/subscriber-phonebook/create')
         },
         async homePageCall (row) {
+            let newnumber = ''
+            if (row.number.includes('@')) {
+                newnumber = row.number.split('@')[0]
+            } else {
+                newnumber = row.number
+            }
             this.$router.push({
                 path: '/user/home',
-                query: { number: row.number }
+                query: { number: newnumber }
             })
         },
         async deleteRow (row) {
