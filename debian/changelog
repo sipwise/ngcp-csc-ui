@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.3.1.5+0~mr12.3.1.5) unstable; urgency=medium
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [61c85cb] MT#59888 Call back without domain
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 24 Apr 2024 16:18:42 +0200
+
 ngcp-csc-ui (12.3.1.4+0~mr12.3.1.4) unstable; urgency=medium
 
   [ Hugo Zigha ]
