@@ -14,7 +14,13 @@ import {
     setPreferenceMusicOnHold,
     setPreferenceCli,
     getPreferences,
-    setPbxSIPPassword
+    setPbxSIPPassword,
+    setPreferenceAnnouncementCfu,
+    setPreferenceAnnouncementCallSetup,
+    setPreferenceAnnouncementToCallee,
+    setPreferenceIgnoreCfWhenHunting,
+    setPreferenceCstaClient,
+    setPreferenceCstaController
 } from './subscriber'
 import _ from 'lodash'
 import {
@@ -323,6 +329,54 @@ export function setSeatCli (seatId, cli) {
             reject(err)
         })
     })
+}
+
+/**
+ * @param seatId
+ * @param announcementCfu
+ */
+export function setSeatAnnouncementCfu (seatId, announcementCfu) {
+    return setPreferenceAnnouncementCfu(seatId, announcementCfu)
+}
+
+/**
+ * @param seatId
+ * @param announcementCallSetup
+ */
+export function setSeatAnnouncementCallSetup (seatId, announcementCallSetup) {
+    return setPreferenceAnnouncementCallSetup(seatId, announcementCallSetup)
+}
+
+/**
+ * @param seatId
+ * @param announcementToCallee
+ */
+export function setSeatAnnouncementToCallee (seatId, announcementToCallee) {
+    return setPreferenceAnnouncementToCallee(seatId, announcementToCallee)
+}
+
+/**
+ * @param seatId
+ * @param ignoreCfWhenHunting
+ */
+export function setSeatIgnoreCfWhenHunting (seatId, ignoreCfWhenHunting) {
+    return setPreferenceIgnoreCfWhenHunting(seatId, ignoreCfWhenHunting)
+}
+
+/**
+ * @param seatId
+ * @param cstaClient
+ */
+export function setSeatCstaClient (seatId, cstaClient) {
+    return setPreferenceCstaClient(seatId, cstaClient)
+}
+
+/**
+ * @param seatId
+ * @param cstaController
+ */
+export function setSeatCstaController (seatId, cstaController) {
+    return setPreferenceCstaController(seatId, cstaController)
 }
 
 /**

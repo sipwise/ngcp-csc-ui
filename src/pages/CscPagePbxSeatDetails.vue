@@ -40,11 +40,11 @@
 
         <q-item
             v-if="selectedTab === 'preferences'"
-            class="col col-xs-12 col-md-6"
+            class="row"
         >
             <q-list
                 v-if="changes"
-                class="col col-xs-12 col-md-6"
+                class="col-xs-12 col-md-6 q-mr-xl"
                 side
                 top
                 no-wrap
@@ -268,13 +268,6 @@
                         />
                     </template>
                 </q-select>
-                <q-toggle
-                    v-model="changes.clirIntrapbx"
-                    class="q-pa-sm"
-                    :label="$t('Hide number within own PBX')"
-                    :disable="isLoading"
-                    @update:model-value="changeIntraPbx"
-                />
                 <q-btn
                     v-if="hasCallQueue(seatSelected.id)"
                     icon="filter_none"
@@ -284,12 +277,69 @@
                     :disable="isLoading"
                     @click="goToCallQueue"
                 />
+            </q-list>
+            <q-list
+                v-if="changes"
+                class="column"
+                side
+                top
+                no-wrap
+            >
+                <q-toggle
+                    v-model="changes.clirIntrapbx"
+                    class="q-pa-sm"
+                    :label="$t('Hide number within own PBX')"
+                    :disable="isLoading"
+                    @update:model-value="changeIntraPbx"
+                />
                 <q-toggle
                     v-model="changes.musicOnHold"
                     class="q-pa-sm"
                     :label="$t('Music on hold')"
                     :disable="isLoading"
                     @update:model-value="changeMusicOnHold"
+                />
+                <q-toggle
+                    v-model="changes.announcementCfu"
+                    class="q-pa-sm"
+                    :label="$t('Play announcement before routing to CFU/CFNA')"
+                    :disable="isLoading"
+                    @update:model-value="changeAnnouncementCfu"
+                />
+                <q-toggle
+                    v-model="changes.announcementCallSetup"
+                    class="q-pa-sm"
+                    :label="$t('Play announcement before call setup')"
+                    :disable="isLoading"
+                    @update:model-value="changeAnnouncementCallSetup"
+                />
+                <q-toggle
+                    v-model="changes.announcementToCallee"
+                    class="q-pa-sm"
+                    :label="$t('Play announcement to callee after answer')"
+                    :disable="isLoading"
+                    @update:model-value="changeAnnouncementToCallee"
+                />
+                <q-toggle
+                    v-model="changes.ignoreCfWhenHunting"
+                    class="q-pa-sm"
+                    :label="$t('Ignore Members Call Forwards when Hunting')"
+                    :disable="isLoading"
+                    @update:model-value="changeIgnoreCfWhenHunting"
+                />
+                <q-toggle
+                    v-model="changes.cstaClient"
+                    class="q-pa-sm"
+                    :label="$t('CSTA Client')"
+                    :disable="isLoading"
+                    @update:model-value="changeCstaClient"
+                />
+                <q-toggle
+                    v-model="changes.cstaController"
+                    class="q-pa-sm"
+                    :label="$t('CSTA Controller')"
+                    :disable="isLoading"
+                    @update:model-value="changeCstaController"
                 />
             </q-list>
         </q-item>
@@ -392,7 +442,13 @@ export default {
             'getCurrentCli',
             'getIntraPbx',
             'getSeatUpdateToastMessage',
-            'isSeatLoading'
+            'isSeatLoading',
+            'getAnnouncementCfu',
+            'getAnnouncementCallSetup',
+            'getAnnouncementToCallee',
+            'getIgnoreCfWhenHunting',
+            'getCstaClient',
+            'getCstaController'
         ]),
         ...mapGetters('pbx', [
             'getExtensionHint',
@@ -566,7 +622,13 @@ export default {
             'loadPreferences',
             'setCli',
             'setNcosSet',
-            'NcosSet'
+            'NcosSet',
+            'setAnnouncementCfu',
+            'setAnnouncementCallSetup',
+            'setAnnouncementToCallee',
+            'setIgnoreCfWhenHunting',
+            'setCstaClient',
+            'setCstaController'
         ]),
         ...mapActions('user', [
             'getNcosLevelsSubscriber',
@@ -631,6 +693,12 @@ export default {
                     aliasNumbers: this.getAliasNumberIds(),
                     webPassword: this.seatSelected.webpassword,
                     clirIntrapbx: this.getIntraPbx(this.seatSelected.id),
+                    announcementCfu: this.getAnnouncementCfu(this.seatSelected.id),
+                    announcementCallSetup: this.getAnnouncementCallSetup(this.seatSelected.id),
+                    announcementToCallee: this.getAnnouncementToCallee(this.seatSelected.id),
+                    ignoreCfWhenHunting: this.getIgnoreCfWhenHunting(this.seatSelected.id),
+                    cstaClient: this.getCstaClient(this.seatSelected.id),
+                    cstaController: this.getCstaController(this.seatSelected.id),
                     musicOnHold: this.getMusicOnHold(this.seatSelected.id),
                     groups: this.getGroupIds(),
                     soundSet: this.getSoundSetId(),
@@ -740,6 +808,42 @@ export default {
                 showGlobalError(err?.message || this.$t('Unknown error'))
                 this.changes.musicOnHold = !this.changes.musicOnHold
             }
+        },
+        changeAnnouncementCfu () {
+            this.setAnnouncementCfu({
+                seatId: this.seatSelected.id,
+                announcementCfu: this.changes.announcementCfu
+            })
+        },
+        changeAnnouncementCallSetup () {
+            this.setAnnouncementCallSetup({
+                seatId: this.seatSelected.id,
+                announcementCallSetup: this.changes.announcementCallSetup
+            })
+        },
+        changeAnnouncementToCallee () {
+            this.setAnnouncementToCallee({
+                seatId: this.seatSelected.id,
+                announcementToCallee: this.changes.announcementToCallee
+            })
+        },
+        changeIgnoreCfWhenHunting () {
+            this.setIgnoreCfWhenHunting({
+                seatId: this.seatSelected.id,
+                ignoreCfWhenHunting: this.changes.ignoreCfWhenHunting
+            })
+        },
+        changeCstaClient () {
+            this.setCstaClient({
+                seatId: this.seatSelected.id,
+                cstaClient: this.changes.cstaClient
+            })
+        },
+        changeCstaController () {
+            this.setCstaController({
+                seatId: this.seatSelected.id,
+                cstaController: this.changes.cstaController
+            })
         },
         goToCallQueue () {
             this.jumpToCallQueue(this.seatSelected)

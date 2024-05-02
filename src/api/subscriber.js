@@ -417,6 +417,30 @@ export function setPreferenceMusicOnHold (id, value) {
     return setPreference(id, 'music_on_hold', value)
 }
 
+export function setPreferenceAnnouncementCfu (id, value) {
+    return setPreference(id, 'play_announce_before_cf', value)
+}
+
+export function setPreferenceAnnouncementCallSetup (id, value) {
+    return setPreference(id, 'play_announce_before_call_setup', value)
+}
+
+export function setPreferenceAnnouncementToCallee (id, value) {
+    return setPreference(id, 'play_announce_to_callee', value)
+}
+
+export function setPreferenceIgnoreCfWhenHunting (id, value) {
+    return setPreference(id, 'ignore_cf_when_hunting', value)
+}
+
+export function setPreferenceCstaClient (id, value) {
+    return setPreference(id, 'csta_client', value)
+}
+
+export function setPreferenceCstaController (id, value) {
+    return setPreference(id, 'csta_controller', value)
+}
+
 export function setPreferenceCli (id, value) {
     return setPreference(id, 'cli', value)
 }

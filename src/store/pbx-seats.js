@@ -27,7 +27,13 @@ import {
     setNcosSet,
     setNcosLevelSets,
     NcosSet,
-    NcosSets
+    NcosSets,
+    setSeatAnnouncementCfu,
+    setSeatAnnouncementCallSetup,
+    setSeatAnnouncementToCallee,
+    setSeatIgnoreCfWhenHunting,
+    setSeatCstaClient,
+    setSeatCstaController
 } from '../api/pbx-seats'
 import { getSubscriberId } from 'src/auth'
 export default {
@@ -119,9 +125,45 @@ export default {
                 return seatPreferences && seatPreferences.clir_intrapbx ? state.preferenceMapById[id].clir_intrapbx : false
             }
         },
+        getAnnouncementCfu (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.play_announce_before_cf ? state.preferenceMapById[id].play_announce_before_cf : false
+            }
+        },
         getMusicOnHold (state) {
             return (id) => {
                 return state?.preferenceMapById[id]?.music_on_hold || false
+            }
+        },
+        getAnnouncementCallSetup (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.play_announce_before_call_setup ? state.preferenceMapById[id].play_announce_before_call_setup : false
+            }
+        },
+        getAnnouncementToCallee (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.play_announce_to_callee ? state.preferenceMapById[id].play_announce_to_callee : false
+            }
+        },
+        getIgnoreCfWhenHunting (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.ignore_cf_when_hunting ? state.preferenceMapById[id].ignore_cf_when_hunting : false
+            }
+        },
+        getCstaClient (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.csta_client ? state.preferenceMapById[id].csta_client : false
+            }
+        },
+        getCstaController (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.csta_controller ? state.preferenceMapById[id].csta_controller : false
             }
         },
         getCurrentCli (state) {
@@ -550,7 +592,78 @@ export default {
             } catch (err) {
                 context.commit('seatUpdateFailed', err.message)
             }
+        },
+        async setAnnouncementCfu (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.tc('the playback announcement as early media before Call Forward Unconditional or Unavailable')
+            })
+            try {
+                const result = await setSeatAnnouncementCfu(options.seatId, options.announcementCfu)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setAnnouncementCallSetup (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.tc('the playback announcement as early media before send the call to callee')
+            })
+            try {
+                const result = await setSeatAnnouncementCallSetup(options.seatId, options.announcementCallSetup)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setAnnouncementToCallee (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.tc('the playback announcement to callee after he answered the call')
+            })
+            try {
+                const result = await setSeatAnnouncementToCallee(options.seatId, options.announcementToCallee)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setIgnoreCfWhenHunting (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.tc('the behavior of the members call forwards from a Cloud PBX subscriber when it is called within a huntgroup')
+            })
+            try {
+                const result = await setSeatIgnoreCfWhenHunting(options.seatId, options.ignoreCfWhenHunting)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setCstaClient (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.tc('the right of this subscriber to be controlled by a CTI subscriber within the same customer using uaCSTA via SIP')
+            })
+            try {
+                const result = await setSeatCstaClient(options.seatId, options.cstaClient)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setCstaController (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.tc('the right this subscriber to initiate CTI sessions to other subscribers within the same customer using uaCSTA via SIP')
+            })
+            try {
+                const result = await setSeatCstaController(options.seatId, options.cstaController)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
         }
-
     }
 }
