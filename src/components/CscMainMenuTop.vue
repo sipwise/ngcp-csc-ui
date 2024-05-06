@@ -210,6 +210,12 @@ export default {
                             icon: 'dialpad',
                             label: this.$t('Auto Attendant'),
                             visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.auto_attendant)
+                        },
+                        {
+                            to: '/user/pbx-configuration/customer-phonebook',
+                            icon: 'person',
+                            label: this.$t('Customer Phonebook'),
+                            visible: true
                         }
                     ]
                 },

@@ -9,7 +9,7 @@ import {
     hasJwt
 } from 'src/auth'
 import { getCurrentLangAsV1Format } from 'src/i18n'
-
+import saveAs from 'file-saver'
 export const LIST_DEFAULT_PAGE = 1
 export const LIST_DEFAULT_ROWS = 24
 export const LIST_ALL_ROWS = 1000
@@ -396,4 +396,42 @@ export function getAsBlob (options) {
             reject(err)
         })
     })
+}
+export async function apiGet (options = {
+    path: undefined,
+    resource: undefined,
+    resourceId: undefined,
+    config: {}
+}) {
+    let path = options.path
+    if (options.resource && options.resourceId) {
+        path = 'api/' + options.resource + '/' + options.resourceId
+    } else if (options.resource) {
+        path = 'api/' + options.resource + '/'
+    }
+    return httpApi.get(path, options.config).catch(handleResponseError)
+}
+export async function apiPost (options = {
+    resource: undefined,
+    data: undefined,
+    config: {}
+}) {
+    let path = options.path
+    if (options.resource) {
+        path = options.resource + '/'
+    }
+    return httpApi.post(path, options.data, _.merge({
+        headers: {
+            Prefer: 'return=representation'
+        }
+    }, options.config)).catch(handleResponseError)
+}
+export async function apiDownloadFile ({ apiGetOptions, defaultFileName, defaultContentType }) {
+    const res = await apiGet(apiGetOptions)
+    const fileName = defaultFileName
+    saveAs(new Blob([res.data], { type: res.headers['content-type'] || defaultContentType }), fileName)
+}
+export async function apiUploadCsv (options) {
+    const res = await apiPost(options)
+    return res
 }

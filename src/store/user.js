@@ -15,12 +15,17 @@ import {
     getBrandingLogo,
     getSubscriberRegistrations,
     getSubscriberPhonebook,
+    getCustomerPhonebook,
     getSubscriberProfile,
     setValueShared,
     setValueName,
+    setValueNameCustomer,
+    setValueNumberCustomer,
     setValueNumber,
     changeSIPPassword,
     createPhonebook,
+    createCustomerPhonebook,
+    uploadCsv,
     getNcosLevels,
     getNcosSet,
     getPreferences,
@@ -37,7 +42,8 @@ import { setLocal } from 'src/storage'
 import { getSipInstanceId } from 'src/helpers/call-utils'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import {
-    httpApi
+    httpApi,
+    apiDownloadFile
 } from 'src/api/common'
 
 export default {
@@ -68,6 +74,7 @@ export default {
         defaultBranding: {},
         subscriberRegistrations: [],
         subscriberPhonebook: [],
+        customerPhonebook: [],
         phonebookMap: {},
         platformInfo: null,
         qrCode: null,
@@ -289,6 +296,9 @@ export default {
         setSubscriberPhonebook (state, value) {
             state.subscriberPhonebook = value
         },
+        setCustomerPhonebook (state, value) {
+            state.customerPhonebook = value
+        },
         setProfile (state, value) {
             state.profile = value
         },
@@ -433,11 +443,44 @@ export default {
                 throw err
             }
         },
+        async loadCustomerPhonebook ({ commit, dispatch, state, rootGetters }, options) {
+            try {
+                const list = await getCustomerPhonebook({
+                    ...options
+                })
+                commit('setCustomerPhonebook', list.items)
+                return list.totalCount
+            } catch (err) {
+                commit('setCustomerPhonebook', [])
+                throw err
+            }
+        },
+        async ajaxDownloadPhonebookCSV ({ commit }, customerId = 0) {
+            const apiGetOptions = {
+                resource: 'customerphonebookentries',
+                config: {
+                    headers: {
+                        Accept: 'text/csv'
+                    },
+                    params: {
+                        customer_id: customerId
+                    }
+                }
+            }
+            await apiDownloadFile({
+                apiGetOptions,
+                defaultFileName: 'customer_phonebook_entries.csv',
+                defaultContentType: 'text/csv'
+            })
+        },
         async removeSubscriberRegistration (context, row) {
             await httpApi.delete('api/subscriberregistrations/' + row.id)
         },
         async removeSubscriberPhonebook (context, row) {
             await httpApi.delete('api/subscriberphonebookentries/' + row.id)
+        },
+        async removeCustomerPhonebook (context, row) {
+            await httpApi.delete('api/customerphonebookentries/' + row.id)
         },
         async getNcosLevelsSubscriber () {
             const ncosLevel = []
@@ -478,6 +521,10 @@ export default {
             const list = await httpApi.get('api/subscriberphonebookentries/' + id)
             return list
         },
+        async getPhonebookCustomerDetails (context, id) {
+            const list = await httpApi.get('api/customerphonebookentries/' + id)
+            return list
+        },
         async getValueShared (context, options) {
             await setValueShared(options.phonebookId, options.shared)
         },
@@ -488,11 +535,23 @@ export default {
         async getValueName (context, options) {
             await setValueName(options.phonebookId, options.name)
         },
+        async getValueNameCustomer (context, options) {
+            await setValueNameCustomer(options.phonebookId, options.name)
+        },
         async getValueNumber (context, options) {
             await setValueNumber(options.phonebookId, options.number)
         },
+        async getValueNumberCustomer (context, options) {
+            await setValueNumberCustomer(options.phonebookId, options.number)
+        },
         async createPhonebookSubscriber (context, data) {
             await createPhonebook(data)
+        },
+        async createPhonebookCustomer (context, data) {
+            await createCustomerPhonebook(data)
+        },
+        async uploadPhonebookCustomer (context, data) {
+            await uploadCsv(context, data)
         },
         async fetchAuthToken ({ commit, state, getters }, expiringTime = 300) {
             const subscriber = state.subscriber

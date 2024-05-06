@@ -15,6 +15,7 @@ import CscPageSpeedDial from 'src/pages/CscPageSpeedDial'
 import CscPagePbxGroups from 'src/pages/CscPagePbxGroups'
 import CscPagePbxGroupDetails from 'src/pages/CscPagePbxGroupDetails'
 import CscPagePbxSeats from 'src/pages/CscPagePbxSeats'
+import CscPageCustomerPhonebook from 'src/pages/CscPageCustomerPhonebook'
 import CscPagePbxSeatDetails from 'src/pages/CscPagePbxSeatDetails'
 import CscPagePbxDevices from 'src/pages/CscPagePbxDevices'
 import CscPagePbxCallQueues from 'src/pages/CscPagePbxCallQueues'
@@ -36,7 +37,10 @@ import CscPagePbxSettingsMsConfigs from 'pages/CscPagePbxSettingsMsConfigs'
 import CscPagePbxSettingsCallQueues from 'pages/CscPagePbxSettingsCallQueues'
 import CscPagePbxSoundSetDetails from 'src/pages/CscPagePbxSoundSetDetails'
 import CscPageSubscriberPhonebookDetails from 'src/pages/CscPageSubscriberPhonebookDetails'
+import CscPageCustomerPhonebookDetails from 'src/pages/CscPageCustomerPhonebookDetails'
 import CscPageSubscriberPhonebookAdd from 'src/pages/CscPageSubscriberPhonebookAdd'
+import CscPageCustomerPhonebookAdd from 'src/pages/CscPageCustomerPhonebookAdd'
+import CscPageCustomerPhonebookUpload from 'src/pages/CscPageCustomerPhonebookUpload'
 import CscPagePbxStatisticsCdr from 'src/pages/CscPagePbxStatisticsCdr'
 import { i18n } from 'src/boot/i18n'
 
@@ -248,6 +252,45 @@ const routes = [
                     },
                     get subtitle () {
                         return i18n.global.tc('Seats')
+                    }
+                }
+            },
+            {
+                path: 'pbx-configuration/customer-phonebook',
+                component: CscPageCustomerPhonebook,
+                meta: {
+                    get title () {
+                        return i18n.global.tc('PBX Configuration')
+                    },
+                    get subtitle () {
+                        return i18n.global.tc('Customer Phonebook')
+                    }
+                }
+            },
+            {
+                path: 'pbx-configuration/customer-phonebook/create',
+                component: CscPageCustomerPhonebookAdd,
+                meta: {
+                    get title () {
+                        return i18n.global.tc('Add Phonebook')
+                    }
+                }
+            },
+            {
+                path: 'pbx-configuration/customer-phonebook/upload',
+                component: CscPageCustomerPhonebookUpload,
+                meta: {
+                    get title () {
+                        return i18n.global.tc('Upload CSV')
+                    }
+                }
+            },
+            {
+                path: 'pbx-configuration/customer-phonebook/:id',
+                component: CscPageCustomerPhonebookDetails,
+                meta: {
+                    get title () {
+                        return i18n.global.tc('Customer Phonebook')
                     }
                 }
             },
