@@ -68,7 +68,7 @@ export default {
         } catch (error) {
             console.error(error.message)
         }
-    },    
+    },
     async toggleStateTransfer (context) {
         context.commit('toggleTransfer')
     },

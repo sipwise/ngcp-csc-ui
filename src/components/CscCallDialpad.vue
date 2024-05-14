@@ -134,7 +134,7 @@ export default {
             } else if (value.icon === 'backspace') {
                 this.removeLastDigit()
             } else {
-                this.dialedNumber += value 
+                this.dialedNumber += value
             }
         },
         remove () {

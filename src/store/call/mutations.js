@@ -121,7 +121,6 @@ export default {
     setLocalOnHold (state, value) {
         state.localOnHold = value
     },
-    
     setRemoteOnHold (state, value) {
         state.remoteOnHold = value
     },
@@ -133,5 +132,4 @@ export default {
             state.transferEnabled = false
         }
     }
-    
 }

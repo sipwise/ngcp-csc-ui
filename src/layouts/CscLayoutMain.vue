@@ -829,6 +829,6 @@ $copyright-height: 45px
     text-align: center
 
 .main-menu-container
-    top: $toolbar-min-height 
+    top: $toolbar-min-height
     bottom: $copyright-height
 </style>

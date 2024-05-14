@@ -184,7 +184,7 @@
                         :disable="islocalOnHold || isremoteOnHold || transferEnabled"
                         @click="toggleHold()"
                     />
-                
+
                     <q-btn
                         v-if="isEstablished || isHolded && !(isMobile && minimized)"
                         :color="colorTransfer"

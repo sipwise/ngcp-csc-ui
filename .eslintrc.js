@@ -63,7 +63,7 @@ module.exports = {
         'import/no-extraneous-dependencies': 'off',
         'prefer-promise-reject-errors': 'off',
         'no-tabs': 'error',
-        'no-trailing-spaces': 'off',
+        'no-trailing-spaces': 'error',
         // allow debugger during development only
         'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
         'indent': ['error', 4],
