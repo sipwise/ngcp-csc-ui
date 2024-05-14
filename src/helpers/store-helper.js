@@ -1,4 +1,4 @@
-
+// eslint-disable-next-line import/default
 import Vue from 'vue'
 
 export function reactiveSet (object, name, value) {

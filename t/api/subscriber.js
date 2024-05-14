@@ -1,6 +1,6 @@
 
 'use strict'
-
+// eslint-disable-next-line import/default
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import { getPreferences } from '../../src/api/subscriber'

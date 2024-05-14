@@ -1,12 +1,8 @@
 
 'use strict'
-
+// eslint-disable-next-line import/default
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import {
-    get,
-    getList
-} from '../../src/api/common'
 import {
     getVoiceboxSettings,
     getVoiceboxGreetingByType

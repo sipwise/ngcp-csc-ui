@@ -3,7 +3,7 @@ import { createLocalVue, shallowMount } from 'test-utils'
 
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
-import Quasar, { Cookies } from 'quasar'
+import { Quasar, Cookies } from 'quasar'
 
 const mockSsrContext = () => {
     return {

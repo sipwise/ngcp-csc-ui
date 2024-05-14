@@ -6,20 +6,20 @@ import { assert } from 'chai'
 describe('CallBlocking', function () {
     describe('Incoming', function () {
         it('should enable list', function () {
-            var state = {}
+            const state = {}
             CallBlockingModule.mutations.toggleSucceeded(state, true)
             assert.equal(state.enabled, true)
         })
 
         it('should disable list', function () {
-            var state = {}
+            const state = {}
             CallBlockingModule.mutations.toggleSucceeded(state, false)
             assert.equal(state.enabled, false)
         })
 
         it('should load list and flag', function () {
-            var state = {}
-            var list = [
+            const state = {}
+            const list = [
                 '0123456789',
                 '0987654321'
             ]
@@ -34,20 +34,20 @@ describe('CallBlocking', function () {
 
     describe('Outgoing', function () {
         it('should enable list', function () {
-            var state = {}
+            const state = {}
             CallBlockingModule.mutations.toggleSucceeded(state, true)
             assert.equal(state.enabled, true)
         })
 
         it('should disable list', function () {
-            var state = {}
+            const state = {}
             CallBlockingModule.mutations.toggleSucceeded(state, false)
             assert.equal(state.enabled, false)
         })
 
         it('should load list and flag', function () {
-            var state = {}
-            var list = [
+            const state = {}
+            const list = [
                 '0123456789',
                 '0987654321'
             ]

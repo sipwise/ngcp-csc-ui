@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // vim: set filetype=javascript:
- /* eslint-disable */
+/* eslint-disable */
 'use strict';
 const program = require('commander');
 const { reportCommand } = require('./vue-i18n-extract.umd.js');

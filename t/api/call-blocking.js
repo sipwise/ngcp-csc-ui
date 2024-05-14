@@ -1,5 +1,5 @@
 'use strict'
-
+// eslint-disable-next-line import/default
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import {
@@ -21,7 +21,7 @@ import { assert } from 'chai'
 Vue.use(VueResource)
 
 describe('CallBlocking', function () {
-    var subscriberId = 123
+    const subscriberId = 123
 
     beforeEach(function () {
         Vue.http.interceptors = []
@@ -63,7 +63,7 @@ describe('CallBlocking', function () {
         })
 
         it('should get all data regarding incoming call blocking', function (done) {
-            var list = [
+            const list = [
                 '0123456789',
                 '0987654321'
             ]
@@ -86,8 +86,8 @@ describe('CallBlocking', function () {
         })
 
         it('should add a new number to incoming call blocking list', function (done) {
-            var number = '0987654321'
-            var list = [
+            const number = '0987654321'
+            const list = [
                 '0123456789'
             ]
             Vue.http.interceptors.unshift((request, next) => {
@@ -113,8 +113,8 @@ describe('CallBlocking', function () {
         })
 
         it('should edit a number from incoming call blocking list', function (done) {
-            var number = '0987654321'
-            var list = [
+            const number = '0987654321'
+            const list = [
                 '0123456789'
             ]
             Vue.http.interceptors.unshift((request, next) => {
@@ -140,8 +140,8 @@ describe('CallBlocking', function () {
         })
 
         it('should remove a number from incoming call blocking list', function (done) {
-            var number = '0987654321'
-            var list = [
+            const number = '0987654321'
+            const list = [
                 '0123456789'
             ]
             Vue.http.interceptors.unshift((request, next) => {
@@ -203,7 +203,7 @@ describe('CallBlocking', function () {
         })
 
         it('should get all data regarding outgoing call blocking', function (done) {
-            var list = [
+            const list = [
                 '0123456789',
                 '0987654321'
             ]
@@ -226,8 +226,8 @@ describe('CallBlocking', function () {
         })
 
         it('should add a new number to outgoing call blocking list', function (done) {
-            var number = '0987654321'
-            var list = [
+            const number = '0987654321'
+            const list = [
                 '0123456789'
             ]
             Vue.http.interceptors.unshift((request, next) => {
@@ -253,8 +253,8 @@ describe('CallBlocking', function () {
         })
 
         it('should edit a number from outgoing call blocking list', function (done) {
-            var number = '0987654321'
-            var list = [
+            const number = '0987654321'
+            const list = [
                 '0123456789'
             ]
             Vue.http.interceptors.unshift((request, next) => {
@@ -280,8 +280,8 @@ describe('CallBlocking', function () {
         })
 
         it('should remove a number from outgoing call blocking list', function (done) {
-            var number = '0987654321'
-            var list = [
+            const number = '0987654321'
+            const list = [
                 '0123456789'
             ]
             Vue.http.interceptors.unshift((request, next) => {

@@ -1,9 +1,8 @@
 
 'use strict'
-
+// eslint-disable-next-line import/default
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import crypto from 'crypto-browserify'
 import { getConversations } from '../../src/api/conversations'
 import { assert } from 'chai'
 

@@ -1,17 +1,14 @@
 
 'use strict'
-
+// eslint-disable-next-line import/default
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import {
-    getFieldList
-} from '../../src/api/common'
 import {
     getSpeedDialsById,
     getUnassignedSlots
 } from '../../src/api/speed-dial'
 import { assert } from 'chai'
-import { i18n } from '../../src/i18n'
+import { i18n } from 'src/boot/i18n'
 
 Vue.use(VueResource)
 

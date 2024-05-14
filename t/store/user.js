@@ -5,7 +5,7 @@ import { assert } from 'chai'
 
 describe('UserModule', () => {
     it('should login', () => {
-        var state = {}
+        const state = {}
         UserModule.mutations.loginSucceeded(state, {
             jwt: 'abc123',
             subscriberId: 123

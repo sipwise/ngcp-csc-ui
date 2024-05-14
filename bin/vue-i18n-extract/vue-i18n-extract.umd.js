@@ -1,3 +1,4 @@
+/* eslint-disable */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('path'), require('is-valid-glob'), require('glob'), require('fs'), require('dot-object'), require('js-yaml')) :
   typeof define === 'function' && define.amd ? define(['exports', 'path', 'is-valid-glob', 'glob', 'fs', 'dot-object', 'js-yaml'], factory) :
