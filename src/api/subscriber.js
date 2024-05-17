@@ -326,13 +326,16 @@ export function disablePrivacy (id) {
     return setPrivacy(id, false)
 }
 
-export function createSubscriber (subscriber) {
+export function createSubscriber (subscriber, config
+) {
+    const params = {}
+    if (config.forceCli) {
+        params.create_primary_acli = false
+    }
+
     return new Promise((resolve, reject) => {
-        httpApi.post('api/subscribers/', subscriber, {
-            params: {
-                customer_id: subscriber.customer_id
-            }
-        }).then((res) => {
+        httpApi.post('api/subscribers/', subscriber, { params }
+        ).then((res) => {
             resolve(_.last(res.headers.location.split('/')))
         }).catch((err) => {
             if (err.response.status >= 400) {

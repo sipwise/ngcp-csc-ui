@@ -48,6 +48,14 @@
                         />
                     </template>
                 </csc-input>
+                <q-checkbox
+                    v-model="data.forceCli"
+                    emit-value
+                    :disable="loading"
+                    :readonly="loading"
+                    :label="$t('Force CLI')"
+                    :left-label="true"
+                />
                 <q-select
                     v-model="data.aliasNumbers"
                     clearable
@@ -194,9 +202,7 @@
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
+import { mapGetters } from 'vuex'
 import {
     required,
     maxLength,
@@ -386,6 +392,7 @@ export default {
                 sipUsername: '',
                 webUsername: '',
                 extension: '',
+                forceCli: false,
                 password: {
                     password: '',
                     passwordRetype: ''
@@ -409,6 +416,7 @@ export default {
                 sipUsername: this.data.sipUsername,
                 webUsername: this.data.webUsername,
                 extension: this.data.extension,
+                forceCli: this.data.forceCli,
                 webPassword: this.data.password.password,
                 sipPassword: this.data.sipPassword.password,
                 aliasNumbers: this.data.aliasNumbers,

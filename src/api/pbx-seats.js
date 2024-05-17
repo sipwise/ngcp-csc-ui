@@ -155,7 +155,7 @@ export function createSeat (seat) {
                 is_pbx_group: false,
                 pbx_extension: seat.extension,
                 pbx_group_ids: seat.groups
-            })
+            }, { forceCli: seat.forceCli })
         }).then(($subscriberId) => {
             subscriberId = $subscriberId
             setSeatIntraPbx(subscriberId, seat.clirIntrapbx)

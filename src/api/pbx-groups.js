@@ -130,7 +130,7 @@ export function createGroup (group) {
                 pbx_hunt_timeout: group.huntTimeout,
                 pbx_hunt_cancel_mode: group.huntCancelMode,
                 pbx_groupmember_ids: group.seats
-            })
+            }, {})
         }).then(($subscriberId) => {
             subscriberId = $subscriberId
             if (group.soundSet !== null && group.soundSet !== undefined) {

@@ -398,7 +398,7 @@ export default {
             changes: null,
             id: this.$route.params.id,
             soundSet: null,
-            currentCli: '',
+            currentCli: {},
             selectedTab: this.initialTab,
             ncosOptions: [],
             ncosSetOptions: [],
