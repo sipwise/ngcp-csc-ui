@@ -1,3 +1,25 @@
+ngcp-csc-ui (12.5.0.0+0~mr12.5.0.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [41f3ab7] MT#59624 update firefox in docker to fix segfaults
+  * [37e582f] MT#56388 fix failing selenium csc tests
+
+  [ Hugo Zigha ]
+  * [eceac96] MT#57754 ACL is buggy on CSC
+  * [d79b656] MT#59800 Impossible to go to next page for seat configuration
+  * [56bf301] MT#59848 Cannot use callback/ Rückruf option from Phonebook + call history isn't linking the no. that called with the Phonebook
+  * [dac5941] MT#58744 Add some new subscriber's preferences in the 'pbx configuration > seats' page
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [6b7d53e] MT#59888 Call back without domain
+  * [89507f5] MT#58739 Add possibility to configure the customer phonebook
+
+  [ Debora Crescenzo ]
+  * [762256c] MT#60094 Add "no-trailing-spaces" rule in linter
+  * [3508a11] MT#60094 Lint review
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 22 May 2024 14:31:32 +0200
+
 ngcp-csc-ui (12.4.0.0+0~mr12.4.0.0) unstable; urgency=medium
 
   [ Hugo Zigha ]
