@@ -1,47 +1,48 @@
 import { PROFILE_ATTRIBUTE_MAP, PROFILE_ATTRIBUTES_MAP } from 'src/constants'
 
-import CscLayoutMain from 'src/layouts/CscLayoutMain'
 import CscLayoutLogin from 'src/layouts/CscLayoutLogin'
-
-import CscPageLogin from 'src/pages/CscPageLogin'
-import CscPageHome from 'src/pages/CscPageHome'
-import CscPageConversations from 'src/pages/CscPageConversations'
+import CscLayoutMain from 'src/layouts/CscLayoutMain'
 import CscPageCallBlockingIncoming from 'src/pages/CscPageCallBlockingIncoming'
 import CscPageCallBlockingOutgoing from 'src/pages/CscPageCallBlockingOutgoing'
 import CscPageCallBlockingPrivacy from 'src/pages/CscPageCallBlockingPrivacy'
 import CscPageCallRecording from 'src/pages/CscPageCallRecording'
+import CscPageCallSettings from 'pages/CscPageCallSettings'
+import CscPageCf from 'pages/CscPageCf'
+import CscPageConversations from 'src/pages/CscPageConversations'
+import CscPageCustomerPhonebook from 'src/pages/CscPageCustomerPhonebook'
+import CscPageCustomerPhonebookAdd from 'src/pages/CscPageCustomerPhonebookAdd'
+import CscPageCustomerPhonebookDetails from 'src/pages/CscPageCustomerPhonebookDetails'
+import CscPageCustomerPhonebookUpload from 'src/pages/CscPageCustomerPhonebookUpload'
+import CscPageDashboard from 'pages/CscPageDashboard'
+import CscPageError404 from 'src/pages/CscPageError404'
+import CscPageFaxSettings from 'src/pages/CscPageFaxSettings'
+import CscPageHome from 'src/pages/CscPageHome'
+import CscPageLogin from 'src/pages/CscPageLogin'
+import CscPagePbxAutoAttendant from 'src/pages/CscPagePbxAutoAttendant'
+import CscPagePbxCallQueues from 'src/pages/CscPagePbxCallQueues'
+import CscPagePbxDeviceDetails from 'src/pages/CscPagePbxDeviceDetails'
+import CscPagePbxDevices from 'src/pages/CscPagePbxDevices'
+import CscPagePbxGroupDetails from 'src/pages/CscPagePbxGroupDetails'
+import CscPagePbxGroups from 'src/pages/CscPagePbxGroups'
+import CscPagePbxMsConfigs from 'src/pages/CscPagePbxMsConfigs'
+import CscPagePbxSeatDetails from 'src/pages/CscPagePbxSeatDetails'
+import CscPagePbxSeats from 'src/pages/CscPagePbxSeats'
+import CscPagePbxSettingsAutoAttendant from 'pages/CscPagePbxSettingsAutoAttendant'
+import CscPagePbxSettingsCallQueues from 'pages/CscPagePbxSettingsCallQueues'
+import CscPagePbxSettingsMsConfigs from 'pages/CscPagePbxSettingsMsConfigs'
+import CscPagePbxSoundSetDetails from 'src/pages/CscPagePbxSoundSetDetails'
+import CscPagePbxSoundSets from 'src/pages/CscPagePbxSoundSets'
+import CscPagePbxStatisticsCdr from 'src/pages/CscPagePbxStatisticsCdr'
+import CscPageRegisteredDevices from 'pages/CscPageRegisteredDevices'
 import CscPageReminder from 'src/pages/CscPageReminder'
 import CscPageSpeedDial from 'src/pages/CscPageSpeedDial'
-import CscPagePbxGroups from 'src/pages/CscPagePbxGroups'
-import CscPagePbxGroupDetails from 'src/pages/CscPagePbxGroupDetails'
-import CscPagePbxSeats from 'src/pages/CscPagePbxSeats'
-import CscPageCustomerPhonebook from 'src/pages/CscPageCustomerPhonebook'
-import CscPagePbxSeatDetails from 'src/pages/CscPagePbxSeatDetails'
-import CscPagePbxDevices from 'src/pages/CscPagePbxDevices'
-import CscPagePbxCallQueues from 'src/pages/CscPagePbxCallQueues'
-import CscPagePbxSoundSets from 'src/pages/CscPagePbxSoundSets'
-import CscPagePbxMsConfigs from 'src/pages/CscPagePbxMsConfigs'
-import CscPagePbxAutoAttendant from 'src/pages/CscPagePbxAutoAttendant'
-import CscPageVoicebox from 'src/pages/CscPageVoicebox'
-import CscPageFaxSettings from 'src/pages/CscPageFaxSettings'
-import CscPageUserSettings from 'src/pages/CscPageUserSettings'
-import CscPageError404 from 'src/pages/CscPageError404'
-import CscRecoverPassword from 'src/pages/CscRecoverPassword'
-import CscPageCf from 'pages/CscPageCf'
-import CscPageCallSettings from 'pages/CscPageCallSettings'
-import CscPageRegisteredDevices from 'pages/CscPageRegisteredDevices'
 import CscPageSubscriberPhonebook from 'pages/CscPageSubscriberPhonebook'
-import CscPagePbxSettingsAutoAttendant from 'pages/CscPagePbxSettingsAutoAttendant'
-import CscPageDashboard from 'pages/CscPageDashboard'
-import CscPagePbxSettingsMsConfigs from 'pages/CscPagePbxSettingsMsConfigs'
-import CscPagePbxSettingsCallQueues from 'pages/CscPagePbxSettingsCallQueues'
-import CscPagePbxSoundSetDetails from 'src/pages/CscPagePbxSoundSetDetails'
-import CscPageSubscriberPhonebookDetails from 'src/pages/CscPageSubscriberPhonebookDetails'
-import CscPageCustomerPhonebookDetails from 'src/pages/CscPageCustomerPhonebookDetails'
 import CscPageSubscriberPhonebookAdd from 'src/pages/CscPageSubscriberPhonebookAdd'
-import CscPageCustomerPhonebookAdd from 'src/pages/CscPageCustomerPhonebookAdd'
-import CscPageCustomerPhonebookUpload from 'src/pages/CscPageCustomerPhonebookUpload'
-import CscPagePbxStatisticsCdr from 'src/pages/CscPagePbxStatisticsCdr'
+import CscPageSubscriberPhonebookDetails from 'src/pages/CscPageSubscriberPhonebookDetails'
+import CscPageUserSettings from 'src/pages/CscPageUserSettings'
+import CscPageVoicebox from 'src/pages/CscPageVoicebox'
+import CscRecoverPassword from 'src/pages/CscRecoverPassword'
+
 import { i18n } from 'src/boot/i18n'
 
 const getToken = (route) => {
@@ -106,7 +107,7 @@ const routes = [
                 component: CscPageSubscriberPhonebookAdd,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Add Phoneboossdsk')
+                        return i18n.global.tc('Add Phonebook')
                     }
                 }
             },
@@ -291,6 +292,18 @@ const routes = [
                 meta: {
                     get title () {
                         return i18n.global.tc('Customer Phonebook')
+                    }
+                }
+            },
+            {
+                path: 'pbx-configuration/device/:id',
+                component: CscPagePbxDeviceDetails,
+                meta: {
+                    get title () {
+                        return i18n.global.tc('PBX Configuration')
+                    },
+                    get subtitle () {
+                        return i18n.global.tc('Devices')
                     }
                 }
             },

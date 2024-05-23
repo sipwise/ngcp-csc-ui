@@ -79,8 +79,9 @@
         <csc-list-spinner
             v-if="isDeviceListRequesting && !(isDeviceCreating || isDeviceRemoving || isDeviceUpdating)"
         />
-        <csc-list
+        <q-list
             v-if="!isDeviceListEmpty && deviceListVisibility === 'visible'"
+            class="row justify-start items-start"
         >
             <csc-fade
                 v-for="(device, index) in deviceListItems"
@@ -88,36 +89,20 @@
             >
                 <csc-pbx-device
                     :key="device.id"
-                    :odd="(index % 2) === 0"
-                    :expanded="isDeviceExpanded(device.id)"
                     :loading="isDeviceLoading(device.id)"
                     :device="device"
+                    :class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
                     :profile="deviceProfileMap[device.profile_id]"
-                    :profiles="deviceProfileList"
-                    :profile-map="deviceProfileMap"
                     :model="deviceModelMap[deviceProfileMap[device.profile_id].device_id]"
                     :model-image="deviceModelImageMap[deviceProfileMap[device.profile_id].device_id]"
-                    :model-image-map="deviceModelImageMap"
-                    :subscribers="subscriberList"
-                    :subscriber-map="subscriberMap"
-                    :subscribers-loading="isSubscribersRequesting"
-                    :subscriber-options="getSubscriberOptions"
                     @load-model="loadDeviceModel({
                         type: 'all',
                         deviceId: deviceProfileMap[device.profile_id].device_id
                     })"
-                    @expand="expandDevice(device.id)"
-                    @collapse="collapseDevice"
-                    @expanded="deviceExpanded"
                     @remove="openDeviceRemovalDialog(device.id)"
-                    @save-station-name="setDeviceStationName"
-                    @save-identifier="setDeviceIdentifier"
-                    @save-profile="setDeviceProfile"
-                    @save-keys="setDeviceKeys"
-                    @model-select-opened="loadDeviceModels('front_thumb')"
                 />
             </csc-fade>
-        </csc-list>
+        </q-list>
         <div
             v-if="isDeviceListEmpty && !isDeviceListRequesting && hasFilters"
             class="row justify-center csc-no-entities"
@@ -148,7 +133,6 @@ import {
     mapMutations
 } from 'vuex'
 import CscPage from 'components/CscPage'
-import CscList from 'components/CscList'
 import CscPbxDevice from 'components/pages/PbxConfiguration/CscPbxDevice'
 import CscFade from 'components/transitions/CscFade'
 import CscListSpinner from 'components/CscListSpinner'
@@ -175,7 +159,6 @@ export default {
         CscListActionButton,
         CscFade,
         CscPage,
-        CscList,
         CscPbxDevice,
         CscListSpinner
     },
@@ -206,7 +189,6 @@ export default {
             'deviceListLastPage',
             'deviceListVisibility',
             'deviceCreationState',
-            'deviceUpdateState',
             'deviceRemovalState'
         ]),
         ...mapGetters('pbxDevices', [
@@ -237,13 +219,6 @@ export default {
                 showGlobalError(this.deviceCreationError)
             }
         },
-        deviceUpdateState (state) {
-            if (state === RequestState.succeeded) {
-                showToast(this.getDeviceUpdateToastMessage)
-            } else if (state === RequestState.failed) {
-                showGlobalError(this.deviceUpdateError)
-            }
-        },
         deviceRemovalState (state) {
             if (state === RequestState.succeeded) {
                 this.$scrollTo(this.$parent.$el)
@@ -256,12 +231,12 @@ export default {
     mounted () {
         this.$scrollTo(this.$parent.$el)
         this.loadDeviceListItemsFiltered()
+        this.loadDevicePreferencesListItems()
     },
     methods: {
         ...mapActions('pbx', [
             'loadDeviceModel',
-            'loadDeviceModels',
-            'loadSubscribers'
+            'loadDeviceModels'
         ]),
         ...mapMutations('pbxDevices', [
             'expandDevice',
@@ -273,6 +248,7 @@ export default {
         ]),
         ...mapActions('pbxDevices', [
             'loadDeviceListItems',
+            'loadDevicePreferencesListItems',
             'createDevice',
             'removeDevice',
             'setDeviceStationName',
@@ -307,9 +283,6 @@ export default {
                 this.filters = {}
                 this.loadDeviceListItemsFiltered()
             }
-        },
-        deviceExpanded () {
-            this.loadSubscribers()
         },
         openDeviceRemovalDialog (deviceId) {
             if (this.$refs.removeDialog) {

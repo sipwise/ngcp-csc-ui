@@ -5,13 +5,15 @@ import {
 } from './common'
 import _ from 'lodash'
 import {
-    getDeviceList,
     createDevice,
+    getDeviceList,
+    getDevicesPreferences,
     removeDevice,
-    setDeviceStationName,
     setDeviceIdentifier,
+    setDeviceKeys,
     setDeviceProfile,
-    setDeviceKeys
+    setDeviceStationName,
+    setPreferenceDevice
 } from '../api/pbx-devices'
 import {
     i18n
@@ -20,71 +22,53 @@ import {
 export default {
     namespaced: true,
     state: {
+        deviceCreating: null,
+        deviceCreationError: null,
+        deviceCreationState: CreationState.initiated,
+        deviceListCurrentPage: 1,
+        deviceListItems: [],
+        deviceListLastPage: null,
         deviceListState: RequestState.initiated,
         deviceListVisibility: 'visible',
-        deviceListItems: [],
-        deviceListCurrentPage: 1,
-        deviceListLastPage: null,
-        deviceSelected: null,
-        deviceCreating: null,
-        deviceCreationState: CreationState.initiated,
-        deviceCreationError: null,
-        deviceUpdating: null,
-        deviceUpdatingField: null,
-        deviceUpdateState: RequestState.initiated,
-        deviceUpdateError: null,
-        deviceRemoving: null,
-        deviceRemovalState: RequestState.initiated,
+        deviceMap: {},
+        devicePreferencesListItems: [],
+        devicePreferencesListState: RequestState.initiated,
+        devicePreferencesMap: {},
+        devicePreferencesRemovalState: RequestState.initiated,
+        devicePreferencesRemoving: null,
+        devicePreferencesSelected: null,
+        devicePreferencesUpdateError: null,
+        devicePreferencesUpdateState: RequestState.initiated,
+        devicePreferencesUpdating: null,
+        devicePreferencesUpdatingField: null,
         deviceRemovalError: null,
-        deviceMapById: {}
+        deviceRemovalState: RequestState.initiated,
+        deviceRemoving: null,
+        deviceSelected: null,
+        deviceUpdateError: null,
+        deviceUpdateState: RequestState.initiated,
+        deviceUpdating: null,
+        deviceUpdatingField: null
     },
     getters: {
-        isDeviceListEmpty (state) {
-            return Array.isArray(state.deviceListItems) && state.deviceListItems.length === 0
-        },
-        isDeviceListRequesting (state) {
-            return state.deviceListState === RequestState.requesting
-        },
-        isDeviceExpanded (state) {
-            return (id) => {
-                return state.deviceSelected !== null && state.deviceSelected.id === id
-            }
-        },
-        isDeviceListPaginationActive (state, getters) {
-            const requesting = !getters.isDeviceListRequesting || getters.isDeviceCreating ||
-                getters.isDeviceRemoving || getters.isDeviceUpdating
-            return !getters.isDeviceListEmpty && requesting && state.deviceListLastPage > 1
-        },
-        isDeviceAddFormDisabled (state) {
-            return state.deviceCreationState === CreationState.initiated ||
-                state.deviceCreationState === CreationState.created
-        },
-        isDeviceCreating (state) {
-            return state.deviceCreationState === CreationState.creating
-        },
-        isDeviceRemoving (state) {
-            return state.deviceRemovalState === RequestState.requesting
-        },
-        isDeviceUpdating (state) {
-            return state.deviceUpdateState === RequestState.requesting
-        },
-        isDeviceLoading (state, getters) {
-            return (deviceId) => {
-                return (getters.isDeviceUpdating && state.deviceUpdating.id === deviceId) ||
-                    (getters.isDeviceRemoving && state.deviceRemoving.id === deviceId)
-            }
-        },
-        getDeviceRemovingName (state) {
-            return _.get(state, 'deviceRemoving.station_name', '')
-        },
         getDeviceCreatingName (state) {
             return _.get(state, 'deviceCreating.stationName', '')
         },
-        getDeviceUpdatingName (state) {
-            return _.get(state, 'deviceUpdating.station_name', '')
+        getDeviceCreationToastMessage (state, getters) {
+            return i18n.global.tc('Created device {device} successfully', {
+                device: getters.getDeviceCreatingName
+            })
         },
-        getDeviceUpdatingField (state) {
-            return state.deviceUpdatingField
+        getDevicePreferencesUpdateToastMessage (state, getters) {
+            return i18n.global.tc('Updated {field} successfully', {
+                field: getters.getDevicePreferencesUpdatingField
+            })
+        },
+        getDevicePreferencesUpdatingField (state) {
+            return state.devicePreferencesUpdatingField
+        },
+        getDevicePreferencesUpdatingName (state) {
+            return _.get(state, 'devicePreferencesUpdating.admin_name', '')
         },
         getDeviceRemoveDialogMessage (state, getters) {
             if (getters.isDeviceRemoving) {
@@ -94,9 +78,12 @@ export default {
             }
             return ''
         },
-        getDeviceCreationToastMessage (state, getters) {
-            return i18n.global.tc('Created device {device} successfully', {
-                device: getters.getDeviceCreatingName
+        getDeviceRemovingName (state) {
+            return _.get(state, 'deviceRemoving.station_name', '')
+        },
+        getDeviceRemovalToastMessage (state, getters) {
+            return i18n.global.tc('Removed device {device} successfully', {
+                device: getters.getDeviceRemovingName
             })
         },
         getDeviceUpdateToastMessage (state, getters) {
@@ -105,10 +92,58 @@ export default {
                 field: getters.getDeviceUpdatingField
             })
         },
-        getDeviceRemovalToastMessage (state, getters) {
-            return i18n.global.tc('Removed device {device} successfully', {
-                device: getters.getDeviceRemovingName
-            })
+        getDeviceUpdatingField (state) {
+            return state.deviceUpdatingField
+        },
+        getDeviceUpdatingName (state) {
+            return _.get(state, 'deviceUpdating.station_name', '')
+        },
+        isDeviceAddFormDisabled (state) {
+            return state.deviceCreationState === CreationState.initiated ||
+                state.deviceCreationState === CreationState.created
+        },
+        isDeviceCreating (state) {
+            return state.deviceCreationState === CreationState.creating
+        },
+        isDeviceExpanded (state) {
+            return (id) => {
+                return state.deviceSelected !== null && state.deviceSelected.id === id
+            }
+        },
+        isDeviceListEmpty (state) {
+            return Array.isArray(state.deviceListItems) && state.deviceListItems.length === 0
+        },
+        isDeviceListPaginationActive (state, getters) {
+            const requesting = !getters.isDeviceListRequesting || getters.isDeviceCreating ||
+                getters.isDeviceRemoving || getters.isDeviceUpdating
+            return !getters.isDeviceListEmpty && requesting && state.deviceListLastPage > 1
+        },
+        isDeviceListRequesting (state) {
+            return state.deviceListState === RequestState.requesting
+        },
+        isDeviceLoading (state, getters) {
+            return (deviceId) => {
+                return (getters.isDeviceUpdating && state.deviceUpdating.id === deviceId) ||
+                    (getters.isDeviceRemoving && state.deviceRemoving.id === deviceId)
+            }
+        },
+        isDevicePreferencesLoading (state, getters) {
+            return (devicePreferencesId) => {
+                return (getters.isDevicePreferencesUpdating && state.devicePreferencesUpdating.id === devicePreferencesId) ||
+                    (getters.isDevicePreferencesRemoving && state.devicePreferencesRemoving.id === devicePreferencesId)
+            }
+        },
+        isDevicePreferencesRemoving (state) {
+            return state.devicePreferencesRemovalState === RequestState.requesting
+        },
+        isDevicePreferencesUpdating (state) {
+            return state.devicePreferencesUpdateState === RequestState.requesting
+        },
+        isDeviceRemoving (state) {
+            return state.deviceRemovalState === RequestState.requesting
+        },
+        isDeviceUpdating (state) {
+            return state.deviceUpdateState === RequestState.requesting
         }
     },
     mutations: {
@@ -135,8 +170,19 @@ export default {
             })
             state.deviceListVisibility = 'visible'
         },
+        devicePreferencesListItemsSucceeded (state, options) {
+            state.devicePreferencesListState = RequestState.succeeded
+            state.devicePreferencesListItems = _.get(options, 'devicesPreferences', [])
+            state.devicePreferencesMap = {}
+            state.devicePreferencesListItems.forEach((devicePreferences) => {
+                state.devicePreferencesMap[devicePreferences.id] = devicePreferences
+            })
+        },
         deviceListItemsFailed (state) {
             state.deviceListState = RequestState.failed
+        },
+        devicePreferencesListItemsFailed (state) {
+            state.devicePreferencesListState = RequestState.failed
         },
         deviceCreationRequesting (state, device) {
             state.deviceCreationState = CreationState.creating
@@ -154,6 +200,11 @@ export default {
             state.deviceUpdatingField = options.deviceField
             state.deviceUpdateState = RequestState.requesting
         },
+        devicePreferencesUpdateRequesting (state, options) {
+            state.devicePreferencesUpdating = state.devicePreferencesMap[options.deviceId]
+            state.devicePreferencesUpdatingField = options.devicePreferencesField
+            state.devicePreferencesUpdateState = RequestState.requesting
+        },
         deviceUpdateSucceeded (state, device) {
             state.deviceUpdateState = RequestState.succeeded
             delete state.deviceMap[device.id]
@@ -163,11 +214,32 @@ export default {
                     state.deviceListItems[i] = device
                 }
             }
+            if (state.deviceSelected !== null && state.deviceSelected.id === device.id) {
+                state.deviceSelected = device
+            }
+        },
+        devicePreferencesUpdateSucceeded (state, device) {
+            state.devicePreferencesUpdateState = RequestState.succeeded
+            delete state.devicePreferencesMap[device.id]
+            state.devicePreferencesMap[device.id] = device
+            for (let i = 0; i < state.devicePreferencesListItems.length; i++) {
+                if (state.devicePreferencesListItems[i].id === device.id) {
+                    state.devicePreferencesListItems[i] = device
+                }
+            }
+            if (state.devicePreferencesSelected !== null && state.devicePreferencesSelected.id === device.id) {
+                state.devicePreferencesSelected = device
+            }
         },
         deviceUpdateFailed (state, err) {
             state.deviceUpdating = null
             state.deviceUpdateState = RequestState.failed
             state.deviceUpdateError = err
+        },
+        devicePreferencesUpdateFailed (state, err) {
+            state.devicePreferencesUpdating = null
+            state.devicePreferencesUpdateState = RequestState.failed
+            state.devicePreferencesUpdateError = err
         },
         deviceRemovalRequesting (state, id) {
             state.deviceRemovalState = RequestState.requesting
@@ -186,6 +258,9 @@ export default {
         },
         expandDevice (state, deviceId) {
             state.deviceSelected = state.deviceMap[deviceId]
+        },
+        expandDevicePreferences (state, devicePreferencesId) {
+            state.devicePreferencesSelected = state.devicePreferencesMap[devicePreferencesId]
         },
         collapseDevice (state) {
             state.deviceSelected = null
@@ -226,13 +301,29 @@ export default {
                 })
             })
         },
+        loadDevicePreferencesListItems (context) {
+            return new Promise((resolve, reject) => {
+                Promise.resolve().then(() => {
+                    return getDevicesPreferences()
+                }).then((devicesPreferences) => {
+                    context.commit('devicePreferencesListItemsSucceeded', {
+                        devicesPreferences: devicesPreferences.items
+                    })
+                    resolve()
+                }).catch((err) => {
+                    context.commit('devicePreferencesListItemsFailed', err.message)
+                    reject(err)
+                })
+            })
+        },
         createDevice (context, deviceData) {
             context.commit('deviceCreationRequesting', deviceData)
             createDevice(deviceData).then(() => {
-                return context.dispatch('loadDeviceListItems', {
+                context.dispatch('loadDeviceListItems', {
                     page: 1,
                     clearList: false
                 })
+                context.dispatch('loadDevicePreferencesListItems')
             }).then(() => {
                 context.commit('deviceCreationSucceeded')
             }).catch((err) => {
@@ -294,6 +385,50 @@ export default {
                 context.commit('deviceUpdateSucceeded', device)
             }).catch((err) => {
                 context.commit('deviceUpdateFailed', err.message)
+            })
+        },
+        setAdminName (context, options) {
+            context.commit('devicePreferencesUpdateRequesting', {
+                deviceId: options.deviceId,
+                devicePreferencesField: i18n.global.tc('Admin name')
+            })
+            setPreferenceDevice(options.deviceId, options.adminName, 'admin_name').then((device) => {
+                context.commit('devicePreferencesUpdateSucceeded', device)
+            }).catch((err) => {
+                context.commit('devicePreferencesUpdateFailed', err.message)
+            })
+        },
+        setFW (context, options) {
+            context.commit('devicePreferencesUpdateRequesting', {
+                deviceId: options.deviceId,
+                devicePreferencesField: i18n.global.tc('FW Upgrade disable')
+            })
+            setPreferenceDevice(options.deviceId, options.FWupg, 'FW_upg_dis').then((device) => {
+                context.commit('devicePreferencesUpdateSucceeded', device)
+            }).catch((err) => {
+                context.commit('devicePreferencesUpdateFailed', err.message)
+            })
+        },
+        setGui (context, options) {
+            context.commit('devicePreferencesUpdateRequesting', {
+                deviceId: options.deviceId,
+                devicePreferencesField: i18n.global.tc('Disable phone web interface')
+            })
+            setPreferenceDevice(options.deviceId, options.webGui, 'web_gui_dis').then((device) => {
+                context.commit('devicePreferencesUpdateSucceeded', device)
+            }).catch((err) => {
+                context.commit('devicePreferencesUpdateFailed', err.message)
+            })
+        },
+        setUserConfig (context, options) {
+            context.commit('devicePreferencesUpdateRequesting', {
+                deviceId: options.deviceId,
+                devicePreferencesField: i18n.global.tc('User config priority over provisioning')
+            })
+            setPreferenceDevice(options.deviceId, options.userConf, 'user_conf_priority').then((device) => {
+                context.commit('devicePreferencesUpdateSucceeded', device)
+            }).catch((err) => {
+                context.commit('devicePreferencesUpdateFailed', err.message)
             })
         }
     }

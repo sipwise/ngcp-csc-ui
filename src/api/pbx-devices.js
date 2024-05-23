@@ -7,9 +7,11 @@ import {
 import _ from 'lodash'
 import {
     getList,
+    httpApi,
+    patchAdd,
+    patchRemove,
     patchReplace,
-    patchReplaceFull,
-    httpApi
+    patchReplaceFull
 } from './common'
 
 export function getDevices (options) {
@@ -20,6 +22,20 @@ export function getDevices (options) {
             root: '_embedded.ngcp:pbxdevices'
         })
         getList(options).then((list) => {
+            resolve(list)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+export function getDevicesPreferences (options) {
+    return new Promise((resolve, reject) => {
+        let requestOptions = options || {}
+        requestOptions = _.merge(requestOptions, {
+            path: 'api/pbxfielddevicepreferences/',
+            root: '_embedded.ngcp:pbxfielddevicepreferences'
+        })
+        getList(requestOptions).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -177,6 +193,39 @@ export async function loadDeviceModel (modelId) {
                 model: res[0],
                 modelImage: res[1]
             })
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+export function setPreferenceDevice (deviceId, deviceValue, fieldName) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            if (deviceValue === undefined || deviceValue === null || deviceValue === '' || (Array.isArray(deviceValue) && !deviceValue.length)) {
+                return patchRemove({
+                    path: 'api/pbxfielddevicepreferences/' + deviceId,
+                    fieldPath: fieldName
+                })
+            }
+            return patchReplaceFull({
+                path: 'api/pbxfielddevicepreferences/' + deviceId,
+                fieldPath: fieldName,
+                value: deviceValue
+            })
+        }).then((device) => {
+            resolve(device)
+        }).catch((err) => {
+            const errCode = err.status + ''
+            if (errCode === '422') {
+                return patchAdd({
+                    path: 'api/pbxfielddevicepreferences/' + deviceId,
+                    fieldPath: fieldName,
+                    value: deviceValue
+                })
+            }
+        }).then((device) => {
+            resolve(device.data)
         }).catch((err) => {
             reject(err)
         })
