@@ -25,6 +25,9 @@ import {
     post, put, get, getList
 } from 'src/api/common'
 import _ from 'lodash'
+import {
+    showGlobalError
+} from 'src/helpers/ui'
 
 const DEFAULT_RING_TIMEOUT = 60
 const DEFAULT_PRIORITY = 0
@@ -60,38 +63,43 @@ export async function loadMappingsFull ({ dispatch, commit, rootGetters }, subsc
 }
 
 export async function createMapping ({ dispatch, commit, state, rootGetters }, payload) {
-    dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
-    let type = payload.type
-    if (payload.type === 'cfu' && state.mappings.cft && state.mappings.cft.length > 0) {
-        type = 'cft'
-    }
-    const subscriberId = (payload.subscriberId) ? (payload.subscriberId) : rootGetters['user/getSubscriberId']
-    const mappings = _.cloneDeep(state.mappings[type])
-    const destinationSetId = await post({
-        resource: 'cfdestinationsets',
-        body: {
-            name: 'csc-' + v4(),
-            subscriber_id: subscriberId,
-            destinations: [createDefaultDestination()]
+    try {
+        dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
+        let type = payload.type
+        if (payload.type === 'cfu' && state.mappings.cft && state.mappings.cft.length > 0) {
+            type = 'cft'
         }
-    })
-    mappings.push({
-        destinationset_id: destinationSetId
-    })
-    const res = await Promise.all([
-        patchReplaceFull({
-            resource: 'cfmappings',
-            resourceId: subscriberId,
-            fieldPath: type,
-            value: mappings
-        }),
-        cfLoadDestinationSets(rootGetters['user/getSubscriberId'])
-    ])
-    commit('dataSucceeded', {
-        mappings: res[0],
-        destinationSets: res[1].items
-    })
-    dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
+        const subscriberId = (payload.subscriberId) ? (payload.subscriberId) : rootGetters['user/getSubscriberId']
+        const mappings = _.cloneDeep(state.mappings[type])
+        const destinationSet = await post({
+            resource: 'cfdestinationsets',
+            body: {
+                name: 'csc-' + v4(),
+                subscriber_id: subscriberId,
+                destinations: [createDefaultDestination()]
+            }
+        })
+        mappings.push({
+            destinationset_id: destinationSet?.id
+        })
+        const res = await Promise.all([
+            patchReplaceFull({
+                resource: 'cfmappings',
+                resourceId: subscriberId,
+                fieldPath: type,
+                value: mappings
+            }),
+            cfLoadDestinationSets(rootGetters['user/getSubscriberId'])
+        ])
+        commit('dataSucceeded', {
+            mappings: res[0],
+            destinationSets: res[1].items
+        })
+    } catch (error) {
+        showGlobalError(error.message)
+    } finally {
+        dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
+    }
 }
 
 export async function deleteMapping ({ dispatch, commit, state, rootGetters }, payload) {
