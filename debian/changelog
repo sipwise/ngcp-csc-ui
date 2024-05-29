@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.3.1.6+0~mr12.3.1.6) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [dcfc1ef] MT#60161 add an error message and stop the loading on network error
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 May 2024 11:58:45 +0200
+
 ngcp-csc-ui (12.3.1.5+0~mr12.3.1.5) unstable; urgency=medium
 
   [ Nouhaila Idrissi Zouggari ]
