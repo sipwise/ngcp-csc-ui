@@ -159,6 +159,12 @@ export default {
         CscSpinner,
         CscInputSaveable
     },
+    props: {
+        id: {
+            type: String,
+            default: ''
+        }
+    },
     data () {
         return {
             faxToMailSettings: {},
@@ -195,7 +201,7 @@ export default {
         }),
         async loadFaxServerSettings () {
             try {
-                await this.loadFaxSettingsAction()
+                await this.loadFaxSettingsAction(this.id)
                 this.updateDataFromStore()
             } catch (err) {
                 showGlobalError(err?.message)
@@ -206,7 +212,7 @@ export default {
         },
         async setChangedData (field, value) {
             try {
-                await this.faxServerSettingsUpdateAction({ field, value })
+                await this.faxServerSettingsUpdateAction({ field, value, id: this.id })
                 this.updateDataFromStore()
             } catch (err) {
                 showGlobalError(err?.message)
@@ -219,7 +225,8 @@ export default {
             try {
                 await this.faxServerSettingsUpdateAction({
                     field: 'destinations',
-                    value: destinationItems
+                    value: destinationItems,
+                    id: this.id
                 })
                 beforeUpdateUI()
                 this.updateDataFromStore()
@@ -245,7 +252,8 @@ export default {
             const destinationItems = this.faxToMailSettings.destinations.filter(d => d.destination !== destinationId)
             this.faxServerSettingsUpdateAction({
                 field: 'destinations',
-                value: destinationItems
+                value: destinationItems,
+                id: this.id
             }).then(() => {
                 if (this.expandedDestinationId === destinationId) {
                     this.expandedDestinationId = null

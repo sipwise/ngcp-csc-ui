@@ -2,7 +2,7 @@
     <q-item>
         <q-item-section>
             <q-select
-                :model-value="selectedLanguage"
+                :model-value="value"
                 emit-value
                 map-options
                 :disable="loading"
@@ -54,20 +54,6 @@ export default {
         loading: {
             type: Boolean,
             default: false
-        }
-    },
-    data () {
-        return {
-            selectedLanguage: null
-        }
-    },
-    watch: {
-        value (newLanguage) {
-            if (this.defaultLanguageOption && newLanguage === undefined) {
-                this.selectedLanguage = this.defaultLanguageOption.value
-            } else {
-                this.selectedLanguage = newLanguage
-            }
         }
     }
 }

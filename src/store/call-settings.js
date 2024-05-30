@@ -46,8 +46,9 @@ export default {
         }
     },
     actions: {
-        async loadSubscriberPreferencesAction (context) {
-            const subscriberPreferences = await getPreferences(context.getters.subscriberId)
+        async loadSubscriberPreferencesAction (context, id) {
+            const subscriberId = id ?? context.getters.subscriberId
+            const subscriberPreferences = await getPreferences(subscriberId)
             context.commit('subscriberPreferencesSucceeded', subscriberPreferences)
         },
         async fieldUpdateAction (context, options) {
@@ -64,13 +65,13 @@ export default {
         async setMusicOnHold (context, value) {
             await context.dispatch('fieldUpdateAction', { field: 'music_on_hold', value })
         },
-        async setLanguage (context, value) {
-            const subscriberId = context.getters.subscriberId
-            if (value) {
-                await setPreference(subscriberId, 'language', value)
+        async setLanguage (context, options) {
+            const subscriberId = options.subscriberId ?? context.getters.subscriberId
+            if (options.language) {
+                await setPreference(subscriberId, 'language', options.language)
                 context.commit('subscriberPreferencesUpdate', {
                     field: 'language',
-                    value: value
+                    value: options.language
                 })
             } else {
                 await removePreference(subscriberId, 'language')

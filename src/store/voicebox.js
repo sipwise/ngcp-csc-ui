@@ -322,16 +322,17 @@ export default {
         }
     },
     actions: {
-        async settingsLoadAction (context) {
+        async settingsLoadAction (context, id) {
+            const subscriberId = id ?? context.getters.subscriberId
             context.commit('settingsRequesting')
             const res = await Promise.all([
-                getVoiceboxSettings(context.getters.subscriberId),
+                getVoiceboxSettings(subscriberId),
                 getVoiceboxGreetingByType({
-                    id: context.getters.subscriberId,
+                    id: subscriberId,
                     type: 'busy'
                 }),
                 getVoiceboxGreetingByType({
-                    id: context.getters.subscriberId,
+                    id: subscriberId,
                     type: 'unavail'
                 })
             ])
@@ -342,52 +343,63 @@ export default {
             })
         },
         async updateAction (context, options) {
+            let subscriberId
+            if (options.subscriberId) {
+                subscriberId = options.subscriberId
+            } else {
+                subscriberId = context.getters.subscriberId
+            }
             try {
                 context.commit(options.property + 'UpdateRequesting')
                 await setVoiceboxSettings[options.property]({
-                    subscriberId: context.getters.subscriberId,
+                    subscriberId: subscriberId,
                     value: options.value
                 })
                 context.commit('settingsSucceeded', {
-                    settings: await getVoiceboxSettings(context.getters.subscriberId)
+                    settings: await getVoiceboxSettings(subscriberId)
                 })
                 context.commit(options.property + 'UpdateSucceeded')
             } catch (err) {
                 context.commit(options.property + 'UpdateFailed', err.message)
             }
         },
-        async pinUpdateAction (context, pin) {
+        async pinUpdateAction (context, options) {
             await context.dispatch('updateAction', {
                 property: 'pin',
-                value: pin
+                value: options.pin,
+                subscriberId: options.subscriberId
             })
         },
-        async emailUpdateAction (context, email) {
+        async emailUpdateAction (context, options) {
             await context.dispatch('updateAction', {
                 property: 'email',
-                value: email
+                value: options.email,
+                subscriberId: options.subscriberId
             })
         },
-        async attachToggleAction (context, attachValue) {
+        async attachToggleAction (context, options) {
             await context.dispatch('updateAction', {
                 property: 'attach',
-                value: attachValue
+                value: options.attachValue,
+                subscriberId: options.subscriberId
             })
         },
-        async deleteToggleAction (context, deleteValue) {
+        async deleteToggleAction (context, options) {
             await context.dispatch('updateAction', {
                 property: 'delete',
-                value: deleteValue
+                value: options.deleteValue,
+                subscriberId: options.subscriberId
             })
         },
         async greetingUpload (context, options) {
+            const subscriberId = options.subscriberId ?? context.getters.subscriberId
             try {
                 context.commit(options.type + 'GreetingUploadRequesting')
                 const cancelToken = apiCreateCancelObject()
                 context.commit('updateUploadCancelActions', options.greeting, cancelToken.cancel)
                 await uploadGreeting({
                     data: {
-                        subscriber_id: context.getters.subscriberId,
+                        subscriber_id: subscriberId,
                         dir: options.greeting,
                         file: options.file
                     },
@@ -397,7 +409,7 @@ export default {
                     cancelToken: cancelToken.token
                 })
                 const greetings = await getVoiceboxGreetingByType({
-                    id: context.getters.subscriberId,
+                    id: subscriberId,
                     type: options.greeting
                 })
                 context.commit(options.type + 'GreetingUploadSucceeded', greetings.items[0].id)
@@ -436,11 +448,12 @@ export default {
                 context.commit(options.type + 'GreetingDeletionFailed', err.message)
             }
         },
-        async busyGreetingUpload (context, file) {
+        async busyGreetingUpload (context, options) {
             await context.dispatch('greetingUpload', {
                 type: 'busy',
                 greeting: 'busy',
-                file: file
+                file: options.file,
+                subscriberId: options.subscriberId
             })
         },
         async busyGreetingUploadAbort (context) {
@@ -459,11 +472,12 @@ export default {
                 id: context.state.busyGreetingId
             })
         },
-        async unavailableGreetingUpload (context, file) {
+        async unavailableGreetingUpload (context, options) {
             await context.dispatch('greetingUpload', {
                 type: 'unavailable',
                 greeting: 'unavail',
-                file: file
+                file: options.file,
+                subscriberId: options.subscriberId
             })
         },
         async unavailableGreetingUploadAbort (context) {

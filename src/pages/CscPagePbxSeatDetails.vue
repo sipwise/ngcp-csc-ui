@@ -345,7 +345,19 @@
         </q-item>
 
         <csc-call-forward-details
-            v-else
+            v-if="selectedTab === 'callForwards'"
+            :id="id"
+        />
+        <csc-page-voicebox
+            v-if="selectedTab === 'voicebox'"
+            :id="id"
+        />
+        <csc-fax-to-mail-settings
+            v-if="selectedTab === 'fax2mail'"
+            :id="id"
+        />
+        <csc-mail-to-fax-settings
+            v-if="selectedTab === 'mail2fax'"
             :id="id"
         />
     </csc-page-sticky-tabs>
@@ -371,6 +383,9 @@ import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscChangePasswordDialog from 'src/components/CscChangePasswordDialog'
 import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails.vue'
+import CscFaxToMailSettings from 'components/pages/FaxSettings/CscFaxToMailSettings'
+import CscMailToFaxSettings from 'components/pages/FaxSettings/CscMailToFaxSettings'
+import CscPageVoicebox from 'src/pages/CscPageVoicebox.vue'
 import { inRange } from 'src/helpers/validation'
 import numberFilter from '../filters/number'
 import useValidate from '@vuelidate/core'
@@ -385,7 +400,10 @@ export default {
         CscInputButtonSave,
         CscInputButtonReset,
         CscChangePasswordDialog,
-        CscCallForwardDetails
+        CscCallForwardDetails,
+        CscPageVoicebox,
+        CscFaxToMailSettings,
+        CscMailToFaxSettings
     },
     props: {
         initialTab: {
@@ -416,6 +434,21 @@ export default {
                 {
                     label: this.$t('Call Forwards'),
                     value: 'callForwards',
+                    icon: 'forward_to_inbox'
+                },
+                {
+                    label: this.$t('Voicebox'),
+                    value: 'voicebox',
+                    icon: 'voicemail'
+                },
+                {
+                    label: this.$t('Fax to mail and sendfax'),
+                    value: 'fax2mail',
+                    icon: 'perm_phone_msg'
+                },
+                {
+                    label: this.$t('Mail to Fax'),
+                    value: 'mail2fax',
                     icon: 'forward_to_inbox'
                 }
             ]

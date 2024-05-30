@@ -233,6 +233,12 @@ export default {
         CscInputSaveable,
         CscSpinner
     },
+    props: {
+        id: {
+            type: String,
+            default: ''
+        }
+    },
     data () {
         return {
             mailToFaxSettingsModel: {},
@@ -272,7 +278,7 @@ export default {
         }
     },
     mounted () {
-        this.loadMailToFaxSettings()
+        this.loadMailToFaxSettings(this.id)
     },
     methods: {
         ...mapWaitingActions('fax', {
@@ -281,7 +287,7 @@ export default {
         }),
         async loadMailToFaxSettings () {
             try {
-                await this.loadMailToFaxSettingsAction()
+                await this.loadMailToFaxSettingsAction(this.id)
                 this.updateDataFromStore()
             } catch (err) {
                 if (String(err.code) === '403') {
@@ -304,7 +310,7 @@ export default {
                 if (field === 'secret_key') {
                     value = value === '' ? null : value
                 }
-                await this.mailToFaxSettingsUpdateAction({ field, value })
+                await this.mailToFaxSettingsUpdateAction({ field, value, id: this.id })
                 beforeUpdateUI()
                 this.updateDataFromStore()
             } catch (err) {

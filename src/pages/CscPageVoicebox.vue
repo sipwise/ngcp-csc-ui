@@ -66,7 +66,10 @@
                         data-cy="voicebox-attach-file"
                         checked-icon="attach_file"
                         unchecked-icon="attach_file"
-                        @update:model-value="attachToggleAction(!attachValue)"
+                        @update:model-value="attachToggleAction({
+                            attachValue: !attachValue,
+                            subscriberId: id
+                        })"
                     />
                 </q-item-section>
                 <q-item-section
@@ -88,7 +91,10 @@
                         data-cy="voicebox-delete-file"
                         checked-icon="delete"
                         unchecked-icon="delete"
-                        @update:model-value="deleteToggleAction(!deleteValue)"
+                        @update:model-value="deleteToggleAction({
+                            deleteValue: !deleteValue,
+                            subscriberId: id
+                        })"
                     />
                 </q-item-section>
                 <q-item-section
@@ -118,7 +124,7 @@
                         delete-term="revert"
                         @init="busyGreetingInitAudio"
                         @remove="busyGreetingDeletionConfirmation"
-                        @upload="busyGreetingUpload"
+                        @upload="selectFileBusyGreeting"
                         @abort="busyGreetingUploadAbort"
                     />
                 </q-item-section>
@@ -141,7 +147,7 @@
                         delete-term="revert"
                         @init="unavailableGreetingInitAudio"
                         @remove="unavailableGreetingDeletionConfirmation"
-                        @upload="unavailableGreetingUpload"
+                        @upload="selectFileUnavailableGreeting"
                         @abort="unavailableGreetingUploadAbort"
                     />
                 </q-item-section>
@@ -181,6 +187,12 @@ export default {
         CscPage,
         CscInputSaveable,
         CscSoundFileUpload
+    },
+    props: {
+        id: {
+            type: String,
+            default: ''
+        }
     },
     data () {
         return {
@@ -322,8 +334,8 @@ export default {
     async mounted () {
         await Promise.all([
             this.loadPreferencesDefsAction(),
-            this.loadSubscriberPreferencesAction(),
-            this.settingsLoadAction()
+            this.loadSubscriberPreferencesAction(this.id),
+            this.settingsLoadAction(this.id)
         ])
         this.formData.pin = this.pinValue
         this.formData.email = this.emailValue
@@ -357,8 +369,31 @@ export default {
         }),
         async selectLanguage (language) {
             try {
-                await this.setLanguage(language)
+                await this.setLanguage({
+                    language: language,
+                    subscriberId: this.id
+                })
                 showToast(this.$t('Language changed successfully'))
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
+        async selectFileBusyGreeting (file) {
+            try {
+                await this.busyGreetingUpload({
+                    file: file,
+                    subscriberId: this.id
+                })
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
+        async selectFileUnavailableGreeting (file) {
+            try {
+                await this.unavailableGreetingUpload({
+                    file: file,
+                    subscriberId: this.id
+                })
             } catch (err) {
                 showGlobalError(err?.message || this.$t('Unknown error'))
             }
@@ -374,7 +409,10 @@ export default {
         pinUpdate (newPin) {
             this.v$.formData.pin.$touch()
             if (this.pinHasChanged && !this.pinHasError) {
-                this.pinUpdateAction(newPin)
+                this.pinUpdateAction({
+                    pin: newPin,
+                    subscriberId: this.id
+                })
             }
         },
         emailInput () {
@@ -388,7 +426,10 @@ export default {
         emailUpdate (newEmail) {
             this.v$.formData.email.$touch()
             if (this.emailHasChanged && !this.emailHasError) {
-                this.emailUpdateAction(newEmail)
+                this.emailUpdateAction({
+                    email: newEmail,
+                    subscriberId: this.id
+                })
             }
         },
         busyGreetingInitAudio () {
