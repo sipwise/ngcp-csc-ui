@@ -24,9 +24,7 @@ import {
     assignNumbers,
     getNumbers
 } from './user'
-import {
-    getSeatsOnly
-} from './pbx-seats'
+import { getSeatsOnly } from './pbx-seats'
 
 export function getGroups (options) {
     return new Promise((resolve, reject) => {
@@ -121,7 +119,7 @@ export function createGroup (group) {
         let subscriberId
         Promise.resolve().then(() => {
             return createSubscriber({
-                username: _.kebabCase(group.name),
+                username: createUsername(group.name),
                 password: createId(),
                 is_pbx_group: true,
                 display_name: group.name,
@@ -305,4 +303,10 @@ export function setGroupSoundSet (options) {
             reject(err)
         })
     })
+}
+
+// This mirrors the logic we use in ngcp-admin to handle the pbx groups creation
+// If you change the logic below make sure you make the same changes in ngcp-admin too
+function createUsername (name) {
+    return name.trim().replaceAll(' ', '-').replace(/[^a-zA-Z0-9\-_ ]/g, '')
 }

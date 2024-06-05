@@ -68,6 +68,12 @@
                     </template>
                 </q-input>
                 <q-input
+                    readonly
+                    disable
+                    :model-value="changes.sipUsername"
+                    :label="$t('SIP Username')"
+                />
+                <q-input
                     v-model="changes.extension"
                     hide-hint
                     :error="v$.changes.extension.$errors.length > 0"
@@ -421,6 +427,7 @@ export default {
             return (this.groupSelected)
                 ? {
                     name: this.groupSelected.display_name,
+                    sipUsername: this.groupSelected.username,
                     extension: this.groupSelected.pbx_extension,
                     huntPolicy: this.groupSelected.pbx_hunt_policy,
                     huntTimeout: this.groupSelected.pbx_hunt_timeout,
