@@ -42,7 +42,7 @@ import CscPageSubscriberPhonebookDetails from 'src/pages/CscPageSubscriberPhoneb
 import CscPageUserSettings from 'src/pages/CscPageUserSettings'
 import CscPageVoicebox from 'src/pages/CscPageVoicebox'
 import CscRecoverPassword from 'src/pages/CscRecoverPassword'
-
+import CscPageCustomerPreferences from 'src/pages/CscPageCustomerPreferences'
 import { i18n } from 'src/boot/i18n'
 
 const getToken = (route) => {
@@ -394,6 +394,18 @@ const routes = [
                         return i18n.global.tc('Auto Attendant')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.auto_attendant
+                }
+            },
+            {
+                path: 'pbx-configuration/customer-preferences',
+                component: CscPageCustomerPreferences,
+                meta: {
+                    get title () {
+                        return i18n.global.tc('PBX Configuration')
+                    },
+                    get subtitle () {
+                        return i18n.global.tc('Customer Preferences')
+                    }
                 }
             },
             {

@@ -854,3 +854,50 @@ export async function getSubscriberProfile (id) {
     })
     return profile
 }
+
+export function getCustomerPreference (id) {
+    return new Promise((resolve, reject) => {
+        get({
+            path: 'api/customerpreferences/' + id
+        }).then((customerPreferences) => {
+            resolve(customerPreferences)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+export function setCustomerPreference (customerId, customerValue, fieldName) {
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            if (customerValue === undefined || customerValue === null || customerValue === '' || (Array.isArray(customerValue) && !customerValue.length)) {
+                return patchRemove({
+                    path: 'api/customerpreferences/' + customerId,
+                    fieldPath: fieldName
+                }).then((customer) => {
+                    resolve(customer.data)
+                })
+            }
+            return patchReplaceFull({
+                path: 'api/customerpreferences/' + customerId,
+                fieldPath: fieldName,
+                value: customerValue
+            })
+        }).then((customer) => {
+            resolve(customer)
+        }).catch((err) => {
+            const errCode = err.status + ''
+            if (errCode === '422') {
+                return patchAdd({
+                    path: 'api/customerpreferences/' + customerId,
+                    fieldPath: fieldName,
+                    value: customerValue
+                })
+            }
+        }).then((customer) => {
+            resolve(customer.data)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}

@@ -108,7 +108,7 @@ export default {
                         {
                             to: '/user/call-blocking/incoming',
                             icon: 'call_received',
-                            label: this.$t('Block incoming'),
+                            label: this.$t('Block Incoming'),
                             visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingIncoming)
                         },
                         {
@@ -215,6 +215,12 @@ export default {
                             to: '/user/pbx-configuration/customer-phonebook',
                             icon: 'person',
                             label: this.$t('Customer Phonebook'),
+                            visible: true
+                        },
+                        {
+                            to: '/user/pbx-configuration/customer-preferences',
+                            icon: 'fas fa-user-cog',
+                            label: this.$t('Customer Preferences'),
                             visible: true
                         }
                     ]

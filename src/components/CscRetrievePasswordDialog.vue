@@ -19,7 +19,7 @@
                             :label="$t('Username')"
                             type="text"
                             :error="v$.username.$errors.length > 0"
-                            :error-message="$errorMessage(v$.username)"
+                            :error-message="$errMsg(v$.username.$errors)"
                             @blur="v$.username.$touch()"
                         >
                             <template

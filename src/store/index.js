@@ -25,6 +25,8 @@ import FaxModule from './fax'
 import VoiceboxModule from './voicebox'
 import DashboardModule from './dashboard'
 
+import Customer from './customer'
+
 import { INTERNAL_DATE_FORMAT_SLASH, INTERNAL_DATE_FORMAT_DASH, INTERNAL_DATE_FORMAT_DASH_HOUR } from 'src/constants'
 
 /*
@@ -59,7 +61,8 @@ export default function (/* { ssrContext } */) {
             pbxMsConfigs: PbxMsConfigsModule,
             callForwarding: CallForwardingModule,
             pbxAutoAttendants: PbxAutoAttendants,
-            dashboard: DashboardModule
+            dashboard: DashboardModule,
+            customer: Customer
         },
         state: {
             route: null
