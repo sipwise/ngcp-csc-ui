@@ -41,6 +41,7 @@
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
 import { mapActions, mapGetters } from 'vuex'
 import { timeSetDateExact } from 'src/filters/time-set'
+import { showGlobalError } from 'src/helpers/ui'
 export default {
     name: 'CscCfGroupConditionDate',
     components: {
@@ -101,27 +102,31 @@ export default {
         ]),
         async createTimeSetEvent () {
             const dateParts = this.selectedDate.split('/')
-            if (this.timeSet) {
-                await this.updateTimeSetDate({
-                    mapping: this.mapping,
-                    id: this.timeSet.id,
-                    subscriberId: this.subscriberId,
-                    date: {
-                        date: dateParts[2],
-                        month: dateParts[1],
-                        year: dateParts[0]
-                    }
-                })
-            } else {
-                await this.createTimeSetDate({
-                    mapping: this.mapping,
-                    subscriberId: this.subscriberId,
-                    date: {
-                        date: dateParts[2],
-                        month: dateParts[1],
-                        year: dateParts[0]
-                    }
-                })
+            try {
+                if (this.timeSet) {
+                    await this.updateTimeSetDate({
+                        mapping: this.mapping,
+                        id: this.timeSet.id,
+                        subscriberId: this.subscriberId,
+                        date: {
+                            date: dateParts[2],
+                            month: dateParts[1],
+                            year: dateParts[0]
+                        }
+                    })
+                } else {
+                    await this.createTimeSetDate({
+                        mapping: this.mapping,
+                        subscriberId: this.subscriberId,
+                        date: {
+                            date: dateParts[2],
+                            month: dateParts[1],
+                            year: dateParts[0]
+                        }
+                    })
+                }
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
             }
             this.$emit('close')
         },

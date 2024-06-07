@@ -16,18 +16,14 @@ import {
     cfUpdateTimeSetDateRange,
     cfUpdateTimeSetWeekdays
 } from 'src/api/call-forwarding'
-import {
-    v4
-} from 'uuid'
+import { v4 } from 'uuid'
 import {
     patchReplace,
     patchReplaceFull,
     post, put, get, getList
 } from 'src/api/common'
 import _ from 'lodash'
-import {
-    showGlobalError
-} from 'src/helpers/ui'
+import { showGlobalError } from 'src/helpers/ui'
 
 const DEFAULT_RING_TIMEOUT = 60
 const DEFAULT_PRIORITY = 0
@@ -341,7 +337,7 @@ export async function createTimeSetDate ({ dispatch, commit, rootGetters, state 
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     const timeSetId = await cfCreateTimeSetDate(rootGetters['user/getSubscriberId'], payload.date)
     const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-    updatedMapping[payload.mapping.index].timeset_id = timeSetId
+    updatedMapping[payload.mapping.index].timeset_id = timeSetId.id
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
         resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
@@ -432,7 +428,7 @@ export async function createTimeSetDateRange ({ dispatch, commit, rootGetters, s
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     const timeSetId = await cfCreateTimeSetDateRange(rootGetters['user/getSubscriberId'], payload.date)
     const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-    updatedMapping[payload.mapping.index].timeset_id = timeSetId
+    updatedMapping[payload.mapping.index].timeset_id = timeSetId.id
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
         resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
@@ -461,7 +457,7 @@ export async function createTimeSetWeekdays ({ dispatch, commit, rootGetters, st
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     const timeSetId = await cfCreateTimeSetWeekdays(rootGetters['user/getSubscriberId'], payload.weekdays)
     const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-    updatedMapping[payload.mapping.index].timeset_id = timeSetId
+    updatedMapping[payload.mapping.index].timeset_id = timeSetId.id
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
         resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
@@ -490,7 +486,7 @@ export async function createOfficeHours ({ dispatch, commit, rootGetters, state 
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     const timeSetId = await cfCreateOfficeHours(rootGetters['user/getSubscriberId'], payload.times)
     const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-    updatedMapping[payload.mapping.index].timeset_id = timeSetId
+    updatedMapping[payload.mapping.index].timeset_id = timeSetId.id
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
         resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],

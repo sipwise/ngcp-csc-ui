@@ -272,17 +272,17 @@ export function patchRemoveFull (options) {
 }
 
 export async function post (options) {
-    options = options || {}
-    options = _.merge({
+    let requestOptions = options || {}
+    requestOptions = _.merge({
         headers: POST_HEADERS
     }, options)
-    let path = options.path
-    if (options.resource !== undefined) {
-        path = 'api/' + options.resource + '/'
+    let path = requestOptions.path
+    if (requestOptions.resource !== undefined) {
+        path = 'api/' + requestOptions.resource + '/'
     }
     try {
-        const res = await httpApi.post(path, options.body, {
-            headers: options.headers
+        const res = await httpApi.post(path, requestOptions.body, {
+            headers: requestOptions.headers
         })
         const hasBody = res.data !== undefined && res.data !== null && res.data !== ''
         if (hasBody) {
