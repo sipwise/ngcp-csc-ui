@@ -323,7 +323,7 @@ export default {
     },
     actions: {
         async settingsLoadAction (context, id) {
-            const subscriberId = id ?? context.getters.subscriberId
+            const subscriberId = id || context.getters.subscriberId
             context.commit('settingsRequesting')
             const res = await Promise.all([
                 getVoiceboxSettings(subscriberId),
@@ -392,7 +392,7 @@ export default {
             })
         },
         async greetingUpload (context, options) {
-            const subscriberId = options.subscriberId ?? context.getters.subscriberId
+            const subscriberId = options.subscriberId || context.getters.subscriberId
             try {
                 context.commit(options.type + 'GreetingUploadRequesting')
                 const cancelToken = apiCreateCancelObject()

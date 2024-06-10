@@ -47,7 +47,7 @@ export default {
     },
     actions: {
         async loadSubscriberPreferencesAction (context, id) {
-            const subscriberId = id ?? context.getters.subscriberId
+            const subscriberId = id || context.getters.subscriberId
             const subscriberPreferences = await getPreferences(subscriberId)
             context.commit('subscriberPreferencesSucceeded', subscriberPreferences)
         },
@@ -66,7 +66,7 @@ export default {
             await context.dispatch('fieldUpdateAction', { field: 'music_on_hold', value })
         },
         async setLanguage (context, options) {
-            const subscriberId = options.subscriberId ?? context.getters.subscriberId
+            const subscriberId = options.subscriberId || context.getters.subscriberId
             if (options.language) {
                 await setPreference(subscriberId, 'language', options.language)
                 context.commit('subscriberPreferencesUpdate', {

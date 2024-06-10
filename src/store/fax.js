@@ -35,14 +35,14 @@ export default {
     },
     actions: {
         async loadFaxSettingsAction (context, id) {
-            const subscriberId = id ?? context.getters.subscriberId
+            const subscriberId = id || context.getters.subscriberId
             const faxServerSettings = await getFaxServerSettings(subscriberId)
             context.commit('settingsSucceeded', {
                 faxServerSettings
             })
         },
         async faxServerSettingsUpdateAction (context, options) {
-            const subscriberId = options.id ?? context.getters.subscriberId
+            const subscriberId = options.id || context.getters.subscriberId
             const faxServerSettings = await setFaxServerField({
                 subscriberId: subscriberId,
                 field: options.field,
@@ -55,14 +55,14 @@ export default {
         },
 
         async loadMailToFaxSettingsAction (context, id) {
-            const subscriberId = id ?? context.getters.subscriberId
+            const subscriberId = id || context.getters.subscriberId
             const mailToFaxSettings = await getMailToFaxSettings(subscriberId)
             context.commit('settingsSucceeded', {
                 mailToFaxSettings
             })
         },
         async mailToFaxSettingsUpdateAction (context, options) {
-            const subscriberId = options.id ?? context.getters.subscriberId
+            const subscriberId = options.id || context.getters.subscriberId
             const mailToFaxSettings = await setMailToFaxSettingField({
                 subscriberId: subscriberId,
                 field: options.field,
