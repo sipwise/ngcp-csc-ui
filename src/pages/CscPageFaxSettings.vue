@@ -9,7 +9,7 @@
             <q-tab
                 name="fax2mail"
                 icon="perm_phone_msg"
-                :label="$t('Fax to Mail and Sendfax')"
+                :label="$t('Fax to mail and sendfax')"
                 @click="selectTab('fax2mail')"
             />
             <q-tab

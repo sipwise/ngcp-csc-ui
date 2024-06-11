@@ -146,6 +146,52 @@
                     />
                 </q-item-section>
             </q-item>
+            <q-item>
+                <q-item-section>
+                    <csc-sound-file-upload
+                        ref="uploadTemp"
+                        :icon="soundFileIcon"
+                        :file-types="soundFileTypes"
+                        :float-label="$t('Temp Greeting')"
+                        :value="tempGreetingLabel"
+                        :progress="tempGreetingUploadProgress"
+                        :uploading="tempGreetingUploading"
+                        :uploaded="tempGreetingId !== null"
+                        :updating="tempGreetingUploading || tempGreetingDeleting || settingsLoading"
+                        :file-url="tempGreetingUrl"
+                        :loaded="tempGreetingFileLoaded"
+                        data-cy="voicebox-temp-greeting"
+                        delete-term="revert"
+                        @init="tempGreetingInitAudio"
+                        @remove="tempGreetingDeletionConfirmation"
+                        @upload="selectFileTempGreeting"
+                        @abort="tempGreetingUploadAbort"
+                    />
+                </q-item-section>
+            </q-item>
+            <q-item>
+                <q-item-section>
+                    <csc-sound-file-upload
+                        ref="uploadGreet"
+                        :icon="soundFileIcon"
+                        :file-types="soundFileTypes"
+                        :float-label="$t('Greet Greeting')"
+                        :value="greetGreetingLabel"
+                        :progress="greetGreetingUploadProgress"
+                        :uploading="greetGreetingUploading"
+                        :uploaded="greetGreetingId !== null"
+                        :updating="greetGreetingUploading || greetGreetingDeleting || settingsLoading"
+                        :file-url="greetGreetingUrl"
+                        :loaded="greetGreetingFileLoaded"
+                        data-cy="voicebox-greet-greeting"
+                        delete-term="revert"
+                        @init="greetGreetingInitAudio"
+                        @remove="greetGreetingDeletionConfirmation"
+                        @upload="selectFileGreetGreeting"
+                        @abort="greetGreetingUploadAbort"
+                    />
+                </q-item-section>
+            </q-item>
         </q-list>
     </csc-page>
 </template>
@@ -218,7 +264,13 @@ export default {
             'busyGreetingUploadProgress',
             'unavailableGreetingId',
             'unavailableGreetingUrl',
-            'unavailableGreetingUploadProgress'
+            'unavailableGreetingUploadProgress',
+            'tempGreetingId',
+            'tempGreetingUrl',
+            'tempGreetingUploadProgress',
+            'greetGreetingId',
+            'greetGreetingUrl',
+            'greetGreetingUploadProgress'
         ]),
         ...mapGetters('voicebox', [
             'settingsLoading',
@@ -239,7 +291,15 @@ export default {
             'unavailableGreetingUploading',
             'unavailableGreetingFileLoaded',
             'unavailableGreetingLabel',
-            'unavailableGreetingDeleting'
+            'unavailableGreetingDeleting',
+            'tempGreetingUploading',
+            'tempGreetingFileLoaded',
+            'tempGreetingLabel',
+            'tempGreetingDeleting',
+            'greetGreetingUploading',
+            'greetGreetingFileLoaded',
+            'greetGreetingLabel',
+            'greetGreetingDeleting'
         ]),
         ...mapGetters('callSettings', [
             'language',
@@ -348,7 +408,15 @@ export default {
             'unavailableGreetingUpload',
             'unavailableGreetingUploadAbort',
             'unavailableGreetingPlay',
-            'unavailableGreetingDelete'
+            'unavailableGreetingDelete',
+            'tempGreetingUpload',
+            'tempGreetingUploadAbort',
+            'tempGreetingPlay',
+            'tempGreetingDelete',
+            'greetGreetingUpload',
+            'greetGreetingUploadAbort',
+            'greetGreetingPlay',
+            'greetGreetingDelete'
         ]),
         ...mapWaitingActions('callSettings', {
             loadPreferencesDefsAction: 'processing subscriberPreferences',
@@ -425,6 +493,62 @@ export default {
                 persistent: true
             }).onOk(data => {
                 this.unavailableGreetingDelete()
+            })
+        },
+        async selectFileTempGreeting (file) {
+            try {
+                await this.tempGreetingUpload({
+                    file: file,
+                    subscriberId: this.id
+                })
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
+        async selectFileGreetGreeting (file) {
+            try {
+                await this.greetGreetingUpload({
+                    file: file,
+                    subscriberId: this.id
+                })
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
+        tempGreetingInitAudio () {
+            this.tempGreetingPlay(this.soundFileFormat)
+            this.$refs.uploadTemp.setPlayingTrue()
+            this.$refs.uploadTemp.setPausedFalse()
+        },
+        tempGreetingDeletionConfirmation () {
+            this.$q.dialog({
+                title: this.$t('Reset greeting sound'),
+                message: this.$t('You are about to reset the custom {type} greeting sound to defaults', {
+                    type: this.$t('temp')
+                }),
+                color: 'primary',
+                cancel: true,
+                persistent: true
+            }).onOk(data => {
+                this.tempGreetingDelete()
+            })
+        },
+        greetGreetingInitAudio () {
+            this.greetGreetingPlay(this.soundFileFormat)
+            this.$refs.uploadGreet.setPlayingTrue()
+            this.$refs.uploadGreet.setPausedFalse()
+        },
+        greetGreetingDeletionConfirmation () {
+            this.$q.dialog({
+                title: this.$t('Reset greeting sound'),
+                message: this.$t('You are about to reset the custom {type} greeting sound to defaults', {
+                    type: this.$t('greet')
+                }),
+                color: 'primary',
+                cancel: true,
+                persistent: true
+            }).onOk(data => {
+                this.greetGreetingDelete()
             })
         }
     }
