@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.4.1.2+0~mr12.4.1.2) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [1862be2] MT#60150 sip username changes in pbx group creation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 18 Jun 2024 09:09:28 +0200
+
 ngcp-csc-ui (12.4.1.1+0~mr12.4.1.1) unstable; urgency=medium
 
   [ Hugo Zigha ]
