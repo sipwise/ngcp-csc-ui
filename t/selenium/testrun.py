@@ -90,7 +90,7 @@ class testrun(unittest.TestCase):
         print("Go to 'Block Incoming' page...", end="")
         driver.find_element(By.XPATH, '//*[@id="csc-main-menu-top"]//div[contains(., "Call Settings")]').click()
         time.sleep(1)
-        driver.find_element(By.XPATH, '//*[@id="csc-main-menu-top"]//div/a[contains(., "Block incoming")]').click()
+        driver.find_element(By.XPATH, '//*[@id="csc-main-menu-top"]//div/a[contains(., "Block Incoming")]').click()
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-page-call-blocking-incoming"]')) > 0, "'Block Incoming' page wasnt opened")
         print("OK")
