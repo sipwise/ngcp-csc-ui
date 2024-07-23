@@ -268,3 +268,7 @@ export default {
     }
 }
 </script>
+<style lang="sass" rel="stylesheet/sass">
+    .q-field__suffix
+        margin: -100px
+</style>
