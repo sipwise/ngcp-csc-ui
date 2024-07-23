@@ -1,5 +1,6 @@
 <template>
     <q-list
+        class="absolute-bottom"
         v-if="appUrlAndroid || appUrlApple"
         dense
     >
