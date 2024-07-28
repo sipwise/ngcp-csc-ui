@@ -1,3 +1,30 @@
+ngcp-csc-ui (13.0.0.0+0~mr13.0.0.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [a66dff2] MT#60161 add an error message and stop the loading on network error
+  * [de247fa] MT#60288 Changing Language in Voicebox shows "Path not found" error
+
+  [ Debora Crescenzo ]
+  * [35a4b26] MT#60068 Add ¨force CLI¨ checkbox to csc add pbx seat form
+  * [ccf2b82] MT#60150 sip username changes in pbx group creation
+  * [668e23d] MT#60289 Uploading greeeting files in voicebox bug fix
+  * [c78df75] MT#60187 bugfixes on call forwarding
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [f11e898] MT#58736 Improve Cloud PBX Device configuration adding some preferences
+  * [99fa8dd] MT#58738 add possibility to configure fax and voicebox for seats/groups
+  * [aff80a1] MT#60292 Selection for announcements missing : temp & greet
+  * [0cb6554] MT#58743 Create a new Pbx Configuration -> Customer Preferences page
+  * [93cbfb6] MT#60527 CSC-UI has the APP download button overlapping Dashboard
+
+  [ Marco Capetta ]
+  * [0c602b0] MT#60292 Fix German translation for new greeting messages
+
+  [ Nico Schedel ]
+  * [f8056e0] MT#56388 fix failing call blocking selenium tests
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 28 Jul 2024 12:02:44 +0200
+
 ngcp-csc-ui (12.5.0.0+0~mr12.5.0.0) unstable; urgency=medium
 
   [ Nico Schedel ]
