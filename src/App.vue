@@ -26,7 +26,6 @@ export default {
     async mounted () {
         this.$initWait()
         this.updateTitle(this.$route)
-        await this.$router.push({ name: 'dashboard' })
     },
     methods: {
         updateTitle: function (route) {

@@ -54,7 +54,5 @@ export default ({ app, router, store }) => {
             subscriberId: getSubscriberId()
         })
     }
-
-    store.$router = router
     Dark.set(true)
 }
