@@ -51,26 +51,30 @@ export async function loginByExchangeToken (token) {
     }
 }
 
-export function getUserData (id) {
-    return new Promise((resolve, reject) => {
-        return Promise.all([
-            getSubscriberById(id),
-            getCapabilities(id),
-            getFaxServerSettings(id),
-            getResellerBranding(),
-            getPlatformInfo()
-        ]).then(([subscriber, capabilities, faxServerSettings, resellerBranding, platformInfo]) => {
+export async function getUserData (id) {
+    const allPromise = Promise.all([
+        getSubscriberById(id),
+        getCapabilities(id),
+        getResellerBranding(),
+        getPlatformInfo()
+    ])
+
+    try {
+        const [subscriber, capabilities, resellerBranding, platformInfo] = await allPromise
+        if (capabilities.faxserver && platformInfo.licenses.find((license) => license === 'fax')) {
+            const faxServerSettings = await getFaxServerSettings(id)
             capabilities.faxactive = faxServerSettings.active
-            resolve({
-                subscriber,
-                capabilities,
-                resellerBranding: resellerBranding?.items[0] || null,
-                platformInfo
-            })
-        }).catch((err) => {
-            reject(err)
-        })
-    })
+        }
+
+        return {
+            subscriber,
+            capabilities,
+            resellerBranding: resellerBranding?.items[0] || null,
+            platformInfo
+        }
+    } catch (error) {
+        throw new Error(error.response.data.message)
+    }
 }
 
 export function getSubscriberById (id) {
