@@ -168,12 +168,15 @@ export async function getList (options) {
 
 function handleResponseError (err) {
     const code = _.get(err, 'response.data.code', null)
-    const message = _.get(err, 'response.data.message', null)
-    if (code !== null && message !== null) {
-        throw new ApiResponseError(err.response.data.code, err.response.data.message)
-    } else {
-        throw err
+    let message = _.get(err, 'response.data.message', null)
+    if (code === 403 && message === 'Invalid license') {
+        message = 'Invalid or expired license. Contact your administrator to activate this functionality'
     }
+    if (code !== null && message !== null) {
+        throw new ApiResponseError(code, message)
+    }
+
+    throw err
 }
 
 export async function get (options) {

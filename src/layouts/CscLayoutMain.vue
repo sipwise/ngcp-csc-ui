@@ -352,35 +352,11 @@ export default {
         showQrBtn () {
             return this.platformInfo?.app?.show_qr
         },
-        hasCommunicationCapabilities () {
-            return (this.hasSmsCapability && this.hasSendSmsFeature) ||
-                (this.hasFaxCapabilityAndFaxActive && this.hasSendFaxFeature)
-        },
         isMenuClosed () {
             return !this.sideStates.left
         },
         isFullView () {
             return this.isMenuClosed || this.isMobile || this.mobileMenu
-        },
-        layoutClasses () {
-            const classes = []
-            if (this.isCalling) {
-                classes.push('csc-layout-call-active')
-            }
-            if (this.menuMinimized) {
-                classes.push('csc-menu-minimized')
-            }
-            return classes
-        },
-        headerClasses () {
-            const classes = ['transition-generic']
-            if (this.isMobile) {
-                classes.push('csc-header-mobile')
-            }
-            if (this.isMobile || this.isMenuClosed) {
-                classes.push('csc-header-full')
-            }
-            return classes
         },
         pinMenuButtonIcon () {
             if (!this.menuPinned) {
