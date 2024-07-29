@@ -536,9 +536,6 @@ export default {
                 })
             }
             window.scrollTo(0, 0)
-            if (route.path === '/user/dashboard') {
-                this.forwardHome()
-            }
         }
     },
     async mounted () {
@@ -553,7 +550,6 @@ export default {
     },
     methods: {
         ...mapActions('user', [
-            'forwardHome',
             'fetchAuthToken'
         ]),
         ...mapActions('call', [

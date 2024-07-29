@@ -362,13 +362,10 @@ export default {
                             console.log(err)
                         }
                     }
-                    await context.dispatch('forwardHome')
                 } catch (err) {
                     console.debug(err)
                     await context.dispatch('logout')
                 }
-            } else {
-                await context.dispatch('forwardHome')
             }
         },
         async changePassword (context, newPassword) {
@@ -398,12 +395,6 @@ export default {
                 }
             } catch (err) {
                 commit('userPasswordFailed', err.message)
-            }
-        },
-        async forwardHome (context) {
-            const start = '/user/dashboard'
-            if (context.rootState.route?.path !== start) {
-                await this.$router.push({ name: 'root' })
             }
         },
         async getCustomLogo (context) {

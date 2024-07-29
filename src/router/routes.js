@@ -560,7 +560,7 @@ const routes = [
     {
         path: '/',
         redirect: {
-            name: 'root'
+            name: 'dashboard'
         }
     },
     {
