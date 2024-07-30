@@ -56,6 +56,15 @@ export async function setPreference (id, field, value) {
         }
     }
 }
+
+export async function setPreferenceCallBlocking (id, field, value) {
+    if (!value) {
+        return await removePreference(id, field)
+    }
+
+    await addPreference(id, field, value)
+}
+
 export async function setPreferencePhonebook (id, field, value) {
     if (value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)) {
         await removePreferencePhonebook(id, field)
@@ -267,7 +276,7 @@ export function removeItemFromArrayPreference (id, field, itemIndex) {
 }
 
 export function setBlockInMode (id, value) {
-    return setPreference(id, 'block_in_mode', value)
+    return setPreferenceCallBlocking(id, 'block_in_mode', value)
 }
 
 export function enableBlockIn (id) {
@@ -291,7 +300,7 @@ export function removeFromBlockInList (id, index) {
 }
 
 export function setBlockOutMode (id, value) {
-    return setPreference(id, 'block_out_mode', value)
+    return setPreferenceCallBlocking(id, 'block_out_mode', value)
 }
 
 export function enableBlockOut (id) {
