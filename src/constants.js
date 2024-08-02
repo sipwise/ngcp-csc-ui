@@ -32,3 +32,12 @@ export const PROFILE_ATTRIBUTES_MAP = {
     pbxSettings: ['auto_attendant', 'cloud_pbx_callqueue', 'max_queue_length', 'queue_wrap_up_time', 'manager_secretary'],
     pbxSettingsCallQueue: ['cloud_pbx_callqueue', 'max_queue_length', 'queue_wrap_up_time']
 }
+
+export const LICENSES = {
+    csc_calls: 'csc_calls',
+    device_provisioning: 'device_provisioning',
+    fax: 'fax',
+    pbx: 'pbx',
+    phonebook: 'phonebook',
+    call_recording: 'call_recording'
+}

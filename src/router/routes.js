@@ -1,4 +1,4 @@
-import { PROFILE_ATTRIBUTE_MAP, PROFILE_ATTRIBUTES_MAP } from 'src/constants'
+import { LICENSES, PROFILE_ATTRIBUTE_MAP, PROFILE_ATTRIBUTES_MAP } from 'src/constants'
 
 import CscLayoutLogin from 'src/layouts/CscLayoutLogin'
 import CscLayoutMain from 'src/layouts/CscLayoutMain'
@@ -99,7 +99,8 @@ const routes = [
                 meta: {
                     get title () {
                         return i18n.global.tc('Subscriber Phonebook')
-                    }
+                    },
+                    license: LICENSES.phonebook
                 }
             },
             {
@@ -217,7 +218,8 @@ const routes = [
                     get subtitle () {
                         return i18n.global.tc('CDR')
                     }
-                }
+                },
+                license: LICENSES.pbx
             },
             {
                 path: 'pbx-configuration/groups',
@@ -431,7 +433,8 @@ const routes = [
                     get subtitle () {
                         return i18n.global.tc('Set your fax settings')
                     },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.faxServer
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.faxServer,
+                    license: LICENSES.phonebook
                 }
             },
             {
