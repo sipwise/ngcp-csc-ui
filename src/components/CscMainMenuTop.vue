@@ -5,11 +5,9 @@
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
+import { mapGetters } from 'vuex'
 import CscMainMenu from 'components/CscMainMenu'
-import { PROFILE_ATTRIBUTE_MAP, PROFILE_ATTRIBUTES_MAP } from 'src/constants'
+import { LICENSES, PROFILE_ATTRIBUTE_MAP, PROFILE_ATTRIBUTES_MAP } from 'src/constants'
 
 export default {
     name: 'CscMainMenuTop',
@@ -47,12 +45,13 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'isPbxEnabled',
+            'getCustomerId',
             'hasFaxCapability',
             'hasSubscriberProfileAttribute',
             'hasSubscriberProfileAttributes',
-            'getCustomerId',
-            'isOldCSCProxyingAllowed'
+            'isLicenseActive',
+            'isOldCSCProxyingAllowed',
+            'isPbxEnabled'
         ]),
         items () {
             return [
@@ -67,7 +66,7 @@ export default {
                     icon: 'call',
                     label: this.callStateTitle,
                     sublabel: this.callStateSubtitle,
-                    visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls)
+                    visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls) && this.isLicenseActive(LICENSES.csc_calls)
                 },
                 {
                     to: '/user/conversations',
@@ -80,7 +79,7 @@ export default {
                     to: '/user/subscriber-phonebook',
                     icon: 'fas fa-user',
                     label: this.$t('Subscriber Phonebook'),
-                    visible: true
+                    visible: this.isLicenseActive(LICENSES.phonebook)
                 },
                 {
                     icon: 'settings_phone',
@@ -139,7 +138,7 @@ export default {
                             to: '/user/recordings',
                             icon: 'play_circle',
                             label: this.$t('Recordings'),
-                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings)
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings) && this.isLicenseActive(LICENSES.call_recording)
                         }
                     ]
                 },
@@ -147,12 +146,15 @@ export default {
                     to: '/user/fax-settings',
                     icon: 'fas fa-fax',
                     label: this.$t('Fax Settings'),
-                    visible: this.hasFaxCapability && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.faxServer)
+                    visible: this.hasFaxCapability &&
+                        this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.faxServer) &&
+                        this.isLicenseActive(LICENSES.fax)
+
                 },
                 {
                     icon: 'fas fa-chart-line',
                     label: this.$t('PBX Statistics'),
-                    visible: this.isPbxAdmin,
+                    visible: this.isPbxAdmin && this.isLicenseActive(LICENSES.pbx),
                     opened: this.isPbxConfiguration,
                     children: [
                         {
@@ -166,7 +168,7 @@ export default {
                 {
                     icon: 'miscellaneous_services',
                     label: this.$t('PBX Configuration'),
-                    visible: this.isPbxAdmin,
+                    visible: this.isPbxAdmin && this.isLicenseActive(LICENSES.pbx),
                     opened: this.isPbxConfiguration,
                     children: [
                         {
@@ -185,7 +187,7 @@ export default {
                             to: '/user/pbx-configuration/devices',
                             icon: 'fas fa-fax',
                             label: this.$t('Devices'),
-                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.deviceProvisioning)
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.deviceProvisioning) && this.isLicenseActive(LICENSES.device_provisioning)
                         },
                         {
                             to: '/user/pbx-configuration/call-queues',
@@ -215,7 +217,7 @@ export default {
                             to: '/user/pbx-configuration/customer-phonebook',
                             icon: 'person',
                             label: this.$t('Customer Phonebook'),
-                            visible: true
+                            visible: this.isLicenseActive(LICENSES.phonebook)
                         },
                         {
                             to: '/user/pbx-configuration/customer-preferences',
@@ -228,7 +230,9 @@ export default {
                 {
                     icon: 'settings',
                     label: this.$t('Extension Settings'),
-                    visible: this.isPbxEnabled && this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettings),
+                    visible: this.isPbxEnabled &&
+                        this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettings) &&
+                        this.isLicenseActive(LICENSES.pbx),
                     children: [
                         {
                             to: '/user/extension-settings/call-queues',

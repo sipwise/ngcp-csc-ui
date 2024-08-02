@@ -123,6 +123,7 @@ import CscConversationsFilter from 'components/pages/Conversations/CscConversati
 import CscConversationsCallsFilter from 'components/pages/Conversations/CscConversationsCallsFilter'
 import CscRemoveDialog from 'components/CscRemoveDialog'
 import { mapWaitingActions } from 'vue-wait'
+import { LICENSES } from 'src/constants'
 export default {
     name: 'CscPageConversations',
     components: {
@@ -146,6 +147,20 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('user', [
+            'isLicenseActive'
+        ]),
+        ...mapState('conversations', [
+            'reachedLastPage'
+        ]),
+        ...mapGetters('conversations', [
+            'items',
+            'isNumberIncomingBlocked',
+            'isNumberOutgoingBlocked'
+        ]),
+        ...mapGetters('call', [
+            'isCallEnabled'
+        ]),
         tabs () {
             return [
                 {
@@ -163,24 +178,15 @@ export default {
                     value: 'voicemail',
                     icon: 'voicemail'
                 },
-                {
-                    label: this.$t('Faxes'),
-                    value: 'fax',
-                    icon: 'description'
-                }
-            ]
+                this.isLicenseActive(LICENSES.fax)
+                    ? {
+                        label: this.$t('Faxes'),
+                        value: 'fax',
+                        icon: 'description'
+                    }
+                    : null
+            ].filter((label) => label !== null)
         },
-        ...mapState('conversations', [
-            'reachedLastPage'
-        ]),
-        ...mapGetters('conversations', [
-            'items',
-            'isNumberIncomingBlocked',
-            'isNumberOutgoingBlocked'
-        ]),
-        ...mapGetters('call', [
-            'isCallEnabled'
-        ]),
         pageStyle () {
             return {
                 paddingTop: this.topMargin + 'px'
