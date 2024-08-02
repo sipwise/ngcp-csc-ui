@@ -4,7 +4,7 @@
         class="row justify-center"
     >
         <csc-card-dashboard
-            v-if="showConvList"
+            v-if="showConversationsCard"
             :title="$t('Voicebox Messages')"
             :count="voicemailsCount"
             :count-title="$t('Messages')"
@@ -18,7 +18,7 @@
             @action="downloadVoicemail"
         />
         <csc-card-dashboard
-            v-if="showConvList"
+            v-if="showConversationsCard"
             :title="$t('Call List')"
             :count="callsCount"
             :count-title="$t('Calls')"
@@ -100,7 +100,7 @@ export default {
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute'
         ]),
-        showConvList () {
+        showConversationsCard () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
         },
         showRegDevices () {

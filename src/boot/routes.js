@@ -34,7 +34,14 @@ export default ({ app, router, store }) => {
                 break
             default:
                 if (to.meta?.profileAttribute) {
-                    store.getters['user/hasSubscriberProfileAttribute'](to.meta.profileAttribute) ? next() : next('/')
+                    const hasSubscriberProfileAttribute = store.getters['user/hasSubscriberProfileAttribute'](to.meta.profileAttribute)
+                    if (to.meta.license && hasSubscriberProfileAttribute) {
+                        // Guard to assure that users cannot click on menu if
+                        // it is mistakenly visible when the license is inactive
+                        store.getters['user/isLicenseActive'](to.meta.profileAttribute) ? next() : next('/')
+                    }
+
+                    hasSubscriberProfileAttribute ? next() : next('/')
                 } else if (to.meta?.profileAttributes) {
                     store.getters['user/hasSubscriberProfileAttributes'](to.meta.profileAttributes) ? next() : next('/')
                 } else {

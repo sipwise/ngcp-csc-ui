@@ -195,6 +195,9 @@ export default {
         isOldCSCProxyingAllowed (state, getters) {
             return getters.isAdmin && state.platformInfo?.csc_v2_mode === 'mixed' && !!getters.getCustomerId
         },
+        isLicenseActive: (state) => (license) => {
+            return state?.platformInfo.licenses.includes(license)
+        },
         isPbxPilot (state) {
             return !!state.subscriber?.is_pbx_pilot
         },
