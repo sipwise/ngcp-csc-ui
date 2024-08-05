@@ -20,6 +20,7 @@
                     map-options
                     :options="ncosOptions"
                     :label="$t('Ncos')"
+                    data-cy="csc-select-ncos"
                 >
                     <template
                         #append
@@ -43,6 +44,7 @@
                     map-options
                     :options="ncosSetOptions"
                     :label="$t('Ncos Set')"
+                    data-cy="csc-select-ncos-set"
                 >
                     <template
                         #append
