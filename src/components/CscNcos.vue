@@ -12,7 +12,7 @@
                 no-wrap
             >
                 <q-select
-                    v-if="hasSubscriberProfileAttribute('ncos') && (isPbxAdmin || !isPbxEnabled)"
+                    v-if="hasSubscriberProfileAttribute('ncos')"
                     v-model="ncosLevel"
                     use-chips
                     radio
@@ -35,7 +35,7 @@
                     </template>
                 </q-select>
                 <q-select
-                    v-if="hasSubscriberProfileAttribute('ncos_set') && (isPbxAdmin || !isPbxEnabled)"
+                    v-if="hasSubscriberProfileAttribute('ncos_set')"
                     v-model="ncosSet"
                     use-chips
                     radio
@@ -87,9 +87,7 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'hasSubscriberProfileAttribute',
-            'isPbxAdmin',
-            'isPbxEnabled'
+            'hasSubscriberProfileAttribute'
         ]),
         hasNcosChanged () {
             return this.ncosLevel !== this.originalNcosLevel
