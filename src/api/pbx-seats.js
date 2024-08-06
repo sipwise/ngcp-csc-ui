@@ -20,14 +20,14 @@ import {
     setPreferenceAnnouncementToCallee,
     setPreferenceIgnoreCfWhenHunting,
     setPreferenceCstaClient,
-    setPreferenceCstaController
+    setPreferenceCstaController,
+    generateGeneralPassword
 } from './subscriber'
 import _ from 'lodash'
 import {
     getAllSoundSets,
     getPilot,
     getSoundSet,
-    createId,
     PBX_CONFIG_ORDER_BY,
     PBX_CONFIG_ORDER_DIRECTION,
     setSubscriberSoundSet,
@@ -142,7 +142,8 @@ export function getSeatList (options) {
     })
 }
 
-export function createSeat (seat) {
+export async function createSeat (seat) {
+    const generatePassword = await generateGeneralPassword()
     return new Promise((resolve, reject) => {
         let subscriberId
         Promise.resolve().then(() => {
@@ -150,7 +151,7 @@ export function createSeat (seat) {
                 username: seat.sipUsername.trim(),
                 display_name: seat.displayName.trim(),
                 webusername: seat.webUsername.trim(),
-                password: seat.sipPassword ? seat.sipPassword : createId(),
+                password: seat.sipPassword ? seat.sipPassword : generatePassword,
                 webpassword: seat.webPassword.length > 0 ? seat.webPassword : null,
                 is_pbx_group: false,
                 pbx_extension: seat.extension,
