@@ -38,7 +38,7 @@ export default ({ app, router, store }) => {
                     if (to.meta.license && hasSubscriberProfileAttribute) {
                         // Guard to assure that users cannot click on menu if
                         // it is mistakenly visible when the license is inactive
-                        store.getters['user/isLicenseActive'](to.meta.profileAttribute) ? next() : next('/')
+                        store.getters['user/isLicenseActive'](to.meta.license) ? next() : next('/')
                     }
 
                     hasSubscriberProfileAttribute ? next() : next('/')
