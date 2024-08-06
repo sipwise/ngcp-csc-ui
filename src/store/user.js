@@ -29,7 +29,8 @@ import {
     getNcosLevels,
     getNcosSet,
     getPreferences,
-    setPreference
+    setPreference,
+    generateGeneralPassword
 } from '../api/subscriber'
 import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
 import QRCode from 'qrcode'
@@ -567,6 +568,11 @@ export default {
             } catch (err) {
                 commit('setQrCode', null)
             }
+        },
+        async generatePasswordUser () {
+            const password = await generateGeneralPassword()
+
+            return password
         }
     }
 }

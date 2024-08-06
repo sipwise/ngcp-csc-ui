@@ -4,9 +4,6 @@ import {
     getSubscribers
 } from './subscriber'
 import {
-    v4
-} from 'uuid'
-import {
     getList,
     get,
     patchAdd,
@@ -14,7 +11,6 @@ import {
     httpApi
 } from './common'
 
-export const createId = v4
 export const PBX_CONFIG_ORDER_BY = 'create_timestamp'
 export const PBX_CONFIG_ORDER_DIRECTION = 'desc'
 

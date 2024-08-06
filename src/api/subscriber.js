@@ -20,6 +20,13 @@ import {
     assignNumbers
 } from './user'
 
+const minValue = 3
+const generateSymbols = '!@#$%^&*()_+~`|}{[]:;?><,./-='
+const generateNumbers = '0123456789'
+const generateLowercase = 'abcdefghijklmnopqrstuvwxyz'
+const generateUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+const generateLength = 12
+
 export function getPreferences (id) {
     return new Promise((resolve, reject) => {
         httpApi.get('api/subscriberpreferences/' + id).then((result) => {
@@ -909,4 +916,34 @@ export function setCustomerPreference (customerId, customerValue, fieldName) {
             reject(err)
         })
     })
+}
+
+export async function generateGeneralPassword () {
+    const getRandomValues = (buf) => crypto.getRandomValues(buf)
+    const getRandomInt = (max) => {
+        const randomBuffer = new Uint32Array(1)
+        getRandomValues(randomBuffer)
+        return Math.floor(randomBuffer[0] / (0xFFFFFFFF + 1) * max)
+    }
+    const getRandomChar = (charset) => charset[getRandomInt(charset.length)]
+
+    const charGroups = [
+        generateNumbers,
+        generateLowercase,
+        generateUppercase,
+        generateSymbols
+    ]
+
+    let password = charGroups.flatMap(group =>
+        Array.from({ length: minValue }, () => getRandomChar(group))
+    ).join('')
+
+    while (password.length < generateLength) {
+        const allChars = charGroups.join('')
+        password += getRandomChar(allChars)
+    }
+
+    password = password.split('').sort(() => getRandomInt(2) - 0.5).join('')
+
+    return password
 }

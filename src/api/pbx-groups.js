@@ -9,13 +9,13 @@ import {
     setPbxExtension, setPbxGroupMemberIds,
     setPbxHuntPolicy,
     setPbxHuntTimeout, setSubscriberNumbers,
-    setPbxHuntCancelMode
+    setPbxHuntCancelMode,
+    generateGeneralPassword
 } from './subscriber'
 import {
     getAllSoundSets,
     getPilot,
     getSoundSet,
-    createId,
     PBX_CONFIG_ORDER_BY,
     PBX_CONFIG_ORDER_DIRECTION,
     setSubscriberSoundSet
@@ -114,13 +114,14 @@ export function getGroupList (options) {
     })
 }
 
-export function createGroup (group) {
+export async function createGroup (group) {
+    const generatePassword = await generateGeneralPassword()
     return new Promise((resolve, reject) => {
         let subscriberId
         Promise.resolve().then(() => {
             return createSubscriber({
                 username: createUsername(group.name),
-                password: createId(),
+                password: generatePassword,
                 is_pbx_group: true,
                 display_name: group.name,
                 pbx_extension: group.extension,
