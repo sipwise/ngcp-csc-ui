@@ -209,6 +209,9 @@ export default {
         },
         isPbxAttendant (state, getters) {
             return getters.isPbxPilot || getters.isPbxGroup || getters.isPbxSeat
+        },
+        isSpCe (state) {
+            return state.platformInfo.type === 'spce'
         }
     },
     mutations: {
