@@ -434,7 +434,7 @@ const routes = [
                         return i18n.global.tc('Set your fax settings')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.faxServer,
-                    license: LICENSES.phonebook
+                    license: LICENSES.fax
                 }
             },
             {
