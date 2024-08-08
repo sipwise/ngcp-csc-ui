@@ -51,7 +51,8 @@ export default {
             'hasSubscriberProfileAttributes',
             'isLicenseActive',
             'isOldCSCProxyingAllowed',
-            'isPbxEnabled'
+            'isPbxEnabled',
+            'isSpCe'
         ]),
         items () {
             return [
@@ -66,7 +67,7 @@ export default {
                     icon: 'call',
                     label: this.callStateTitle,
                     sublabel: this.callStateSubtitle,
-                    visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls) && this.isLicenseActive(LICENSES.csc_calls)
+                    visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls && (this.isSpCe || this.isLicenseActive(LICENSES.csc_calls)))
                 },
                 {
                     to: '/user/conversations',
@@ -138,7 +139,7 @@ export default {
                             to: '/user/recordings',
                             icon: 'play_circle',
                             label: this.$t('Recordings'),
-                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings) && this.isLicenseActive(LICENSES.call_recording)
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings) && (this.isSpCe || this.isLicenseActive(LICENSES.call_recording))
                         }
                     ]
                 },
