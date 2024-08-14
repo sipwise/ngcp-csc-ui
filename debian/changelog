@@ -1,3 +1,13 @@
+ngcp-csc-ui (12.5.2.0+0~mr12.5.2.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [e2fb249] MT#60578 Navigates to /dashboard on refresh
+
+  [ Debora Crescenzo ]
+  * [732e154] MT#60583 Amend Login API calls and 403 Invalid Licence err
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 14 Aug 2024 13:59:21 +0200
+
 ngcp-csc-ui (12.5.1.0+0~mr12.5.1.0) unstable; urgency=medium
 
   [ Hugo Zigha ]
