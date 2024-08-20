@@ -84,16 +84,19 @@ export function initAPI ({ baseURL }) {
             if (config.method === 'POST' && (config.data === undefined || config.data === null)) {
                 config.data = {}
             }
-            if (config.params) {
-                config.params = {
-                    ...config.params,
-                    lang: getCurrentLangAsV1Format()
-                }
-            } else {
-                config.params = {
-                    lang: getCurrentLangAsV1Format()
+            if (!config?.url.includes('v2')) {
+                if (config.params) {
+                    config.params = {
+                        ...config.params,
+                        lang: getCurrentLangAsV1Format()
+                    }
+                } else {
+                    config.params = {
+                        lang: getCurrentLangAsV1Format()
+                    }
                 }
             }
+
             return config
         }
     })
