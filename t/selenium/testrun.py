@@ -83,7 +83,7 @@ class testrun(unittest.TestCase):
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        login_csc(driver, "testuser@" + self.domainname, 'Rand0m#PasswOrd#12345#')
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
@@ -138,7 +138,7 @@ class testrun(unittest.TestCase):
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        login_csc(driver, "testuser@" + self.domainname, 'Rand0m#PasswOrd#12345#')
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
@@ -272,7 +272,7 @@ class testrun(unittest.TestCase):
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        login_csc(driver, "testuser@" + self.domainname, 'Rand0m#PasswOrd#12345#')
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
@@ -358,7 +358,7 @@ class testrun(unittest.TestCase):
         print("OK")
         print("Try to log in with valid credentials...", end="")
         fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="text"]', "testuser@" + self.domainname)
-        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="password"]', "testpasswd")
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="password"]', "Rand0m#PasswOrd#12345#")
         driver.find_element(By.XPATH, '//*[@id="csc-login-card"]//button[contains(., "Sign In")]').click()
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
@@ -417,7 +417,7 @@ class testrun(unittest.TestCase):
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
         fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="text"]', "testuser@" + self.domainname)
-        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="password"]', "testpasswd")
+        fill_element(driver, '//*[@id="csc-login-card"]//div//input[@type="password"]', "Rand0m#PasswOrd#12345#")
         driver.find_element(By.XPATH, '//*[@id="csc-login-card"]//button[contains(., "Sign In")]').click()
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
@@ -489,7 +489,7 @@ class testrun(unittest.TestCase):
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        login_csc(driver, "testuser@" + self.domainname, 'Rand0m#PasswOrd#12345#')
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
@@ -545,7 +545,7 @@ class testrun(unittest.TestCase):
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        login_csc(driver, "testuser@" + self.domainname, 'Rand0m#PasswOrd#12345#')
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
@@ -591,7 +591,7 @@ class testrun(unittest.TestCase):
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        login_csc(driver, "testuser@" + self.domainname, 'Rand0m#PasswOrd#12345#')
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
@@ -652,7 +652,7 @@ class testrun(unittest.TestCase):
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        login_csc(driver, "testuser@" + self.domainname, 'Rand0m#PasswOrd#12345#')
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
@@ -692,7 +692,7 @@ class testrun(unittest.TestCase):
         driver = self.driver
         driver.get(os.environ['CATALYST_SERVER'])
         print("Try to log in with valid credentials...", end="")
-        login_csc(driver, "testuser@" + self.domainname, 'testpasswd')
+        login_csc(driver, "testuser@" + self.domainname, 'Rand0m#PasswOrd#12345#')
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-header-toolbar-main"]')) > 0, "Login wasnt successful")
         print("OK")
