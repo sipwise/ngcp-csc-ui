@@ -1,3 +1,11 @@
+ngcp-csc-ui (12.5.1.3+0~mr12.5.1.3) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [7e597d6] MT#60613 Fix NCOS and NCOS Sets visibility in Block Outgoing page
+  * [5ac4a2f] MT#59449 Fix selenium tests after password enforcements
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 21 Aug 2024 10:17:22 +0200
+
 ngcp-csc-ui (12.5.1.2+0~mr12.5.1.2) unstable; urgency=medium
 
   [ Nouhaila Idrissi Zouggari ]
