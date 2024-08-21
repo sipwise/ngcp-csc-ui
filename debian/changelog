@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.4.1.5+0~mr12.4.1.5) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [bd48053] MT#60613 Fix NCOS and NCOS Sets visibility in Block Outgoing page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 21 Aug 2024 10:10:45 +0200
+
 ngcp-csc-ui (12.4.1.4+0~mr12.4.1.4) unstable; urgency=medium
 
   [ Nouhaila Idrissi Zouggari ]
