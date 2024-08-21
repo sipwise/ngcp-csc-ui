@@ -1,3 +1,14 @@
+ngcp-csc-ui (12.5.1.2+0~mr12.5.1.2) unstable; urgency=medium
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [adec1e2] MT#60641  Adapt random password generator to the new security standards
+
+  [ Debora Crescenzo ]
+  * [e7aee79] MT#60623 Hide features not covered by the license
+  * [14c50c0] MT#60623 Add translations for invalid license error message
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 21 Aug 2024 09:28:07 +0200
+
 ngcp-csc-ui (12.5.1.1+0~mr12.5.1.1) unstable; urgency=medium
 
   [ Hugo Zigha ]
