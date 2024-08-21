@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.4+0~mr12.5.1.4) unstable; urgency=medium
+
+  [ Marco Capetta ]
+  * [eba868b] MT#60674 Fix page permission for CE users
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 21 Aug 2024 14:09:24 +0200
+
 ngcp-csc-ui (12.5.1.3+0~mr12.5.1.3) unstable; urgency=medium
 
   [ Marco Capetta ]
