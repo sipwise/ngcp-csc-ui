@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.5+0~mr12.5.1.5) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [dd2298b] MT#60711 removing lang parameter when we use api v2
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 22 Aug 2024 12:58:34 +0200
+
 ngcp-csc-ui (12.5.1.4+0~mr12.5.1.4) unstable; urgency=medium
 
   [ Marco Capetta ]
