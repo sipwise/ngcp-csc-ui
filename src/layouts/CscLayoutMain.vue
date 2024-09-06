@@ -71,7 +71,7 @@
                 <csc-logo
                     v-if="isLogoRequested && !customLogo"
                     id="csc-default-logo"
-                    color="light"
+                    class="q-mr-md q-pt-sm"
                 />
                 <csc-custom-logo
                     v-else-if="isLogoRequested && customLogo"
