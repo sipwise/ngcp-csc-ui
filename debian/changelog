@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.6+0~mr12.5.1.6) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [e6cfbaa] MT#60860 Update new sipwise logo in CSC
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Sep 2024 23:25:59 +0200
+
 ngcp-csc-ui (12.5.1.5+0~mr12.5.1.5) unstable; urgency=medium
 
   [ Hugo Zigha ]
