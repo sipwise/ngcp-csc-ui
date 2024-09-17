@@ -21,6 +21,7 @@
                     v-model="passwordConfirmed"
                     :password-label="passLabel"
                     :password-confirm-label="passConfirmLabel"
+                    :password-type="passwordType"
                     @validation-failed="isValid=false"
                     @validation-succeeded="isValid=true"
                 />
@@ -98,6 +99,10 @@ export default {
         password: {
             type: String,
             default: ''
+        },
+        passwordType: {
+            type: String,
+            default: 'web'
         }
     },
     emits: ['change'],

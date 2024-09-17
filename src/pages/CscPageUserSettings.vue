@@ -23,6 +23,7 @@
                 :btn-label="$t('Change SIP Password')"
                 :password-label="$t('New SIP Password')"
                 :password-confirm-label="$t('New SIP Password confirm')"
+                :password-type="'sip'"
                 :loading="processingChangeSIPPassword"
                 @change="requestSIPPasswordChange"
             />
@@ -62,13 +63,8 @@
 </template>
 
 <script>
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import {
-    mapGetters
-} from 'vuex'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { mapGetters } from 'vuex'
 import CscPage from 'components/CscPage'
 import CscChangePasswordEmbedded from 'components/pages/UserSettings/CscChangePasswordEmbeded'
 import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
@@ -91,7 +87,8 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'getSubscriber'
+            'getSubscriber',
+            'passwordRequirements'
         ]),
         ...mapWaitingGetters({
             processingChangeSIPPassword: WAIT_CHANGE_SIP_PASSWORD,
