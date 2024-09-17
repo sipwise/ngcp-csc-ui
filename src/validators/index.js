@@ -8,5 +8,29 @@ export const errorMessages = {
     },
     required () {
         return i18n.global.tc('Input is required')
+    },
+    passwordDigits () {
+        return i18n.global.tc('Password is not strong enough, add more digits')
+    },
+    passwordLowercase () {
+        return i18n.global.tc('Password is not strong enough, add more lowercase letters')
+    },
+    passwordMaxLength (param) {
+        return i18n.global.tc('Password must be at least {max} characters long', param)
+    },
+    passwordMinLength (param) {
+        return i18n.global.tc('Password must be at least {min} characters long', param)
+    },
+    passwordUppercase () {
+        return i18n.global.tc('Password is not strong enough, add more uppercase letters')
+    },
+    passwordChars () {
+        return i18n.global.tc('Password is not strong enough, add more special characters')
+    },
+    passwordStrength () {
+        return i18n.global.tc('Password is considered weak')
+    },
+    sameAsPassword () {
+        return i18n.global.tc('Passwords must be equal')
     }
 }

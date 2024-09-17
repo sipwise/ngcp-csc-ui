@@ -137,6 +137,9 @@ export default {
         loginError (state) {
             return state.loginError
         },
+        passwordRequirements (state) {
+            return state.platformInfo.security.password
+        },
         userDataRequesting (state) {
             return state.userDataRequesting
         },

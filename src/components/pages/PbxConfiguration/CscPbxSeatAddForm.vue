@@ -17,6 +17,7 @@
                     :disable="loading"
                     :readonly="loading"
                     :label="$t('Display Name')"
+                    @blur="v$.data.displayName.$touch()"
                     @update:model-value="v$.data.displayName.$touch()"
                 >
                     <template
@@ -38,6 +39,7 @@
                     :readonly="loading"
                     :label="$t('Extension')"
                     :hint="getExtensionHint"
+                    @blur="v$.data.extension.$touch()"
                     @update:model-value="v$.data.extension.$touch()"
                 >
                     <template
@@ -130,6 +132,7 @@
                     :disable="loading"
                     :readonly="loading"
                     :label="$t('Web Username')"
+                    @blur="v$.data.webUsername.$touch()"
                     @update:model-value="v$.data.webUsername.$touch()"
                 >
                     <template
@@ -147,6 +150,8 @@
                     :disable="loading"
                     hide-bottom-space
                     dense
+                    @validation-failed="webPasswordReady=false"
+                    @validation-succeeded="webPasswordReady=true"
                 />
                 <csc-input
                     v-model="data.sipUsername"
@@ -158,6 +163,7 @@
                     :disable="loading"
                     :readonly="loading"
                     :label="$t('SIP Username')"
+                    @blur="v$.data.sipUsername.$touch()"
                     @update:model-value="v$.data.sipUsername.$touch()"
                 >
                     <template
@@ -172,8 +178,11 @@
                     v-model="data.sipPassword"
                     :password-label="$t('SIP Password')"
                     :password-confirm-label="$t('SIP Password confirm')"
+                    :password-type="'sip'"
                     :disable="loading"
                     dense
+                    @validation-failed="sipPasswordReady=false"
+                    @validation-succeeded="sipPasswordReady=true"
                 />
             </div>
         </div>
@@ -193,7 +202,7 @@
                 color="primary"
                 icon="person"
                 :loading="loading"
-                :disable="v$.data.$invalid || loading"
+                :disable="disableSaveButton()"
                 :label="$t('Create seat')"
                 @click="save()"
             />
@@ -203,11 +212,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import {
-    required,
-    maxLength,
-    numeric
-} from '@vuelidate/validators'
+import { required, maxLength, numeric } from '@vuelidate/validators'
 import { inRange } from 'src/helpers/validation'
 import CscInput from 'components/form/CscInput'
 import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
@@ -262,27 +267,13 @@ export default {
                 isInRange: function (value) {
                     return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension)
                 }
-            },
-            password: {
-                password: {
-                    required
-                },
-                passwordRetype: {
-                    required
-                }
-            },
-            sipPassword: {
-                password: {
-                    required
-                },
-                passwordRetype: {
-                    required
-                }
             }
         }
     },
     data () {
         return {
+            webPasswordReady: false,
+            sipPasswordReady: false,
             data: this.getDefaults(),
             v$: useValidate()
         }
@@ -363,21 +354,6 @@ export default {
             } else {
                 return ''
             }
-        },
-        webPasswordErrorMessage () {
-            const errorsTab = this.v$.data.webPassword.$errors
-            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
-                return this.$t('{field} is required', {
-                    field: this.$t('Password')
-                })
-            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
-                return this.$t('{field} must have at most {maxLength} letters', {
-                    field: this.$t('Password'),
-                    maxLength: this.v$.data.webPassword.maxLength.$params.max
-                })
-            } else {
-                return ''
-            }
         }
     },
     created () {
@@ -409,6 +385,12 @@ export default {
         },
         cancel () {
             this.$emit('cancel')
+        },
+        arePasswordsValid () {
+            return this.webPasswordReady && this.sipPasswordReady
+        },
+        disableSaveButton () {
+            return this.v$.data.$invalid || this.loading || !this.arePasswordsValid()
         },
         save () {
             this.$emit('save', {
