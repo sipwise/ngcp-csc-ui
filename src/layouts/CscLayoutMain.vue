@@ -140,6 +140,7 @@
             />
             <q-scroll-area
                 class="absolute-top main-menu-container"
+                :style="{ bottom: mainMenuBottom }"
             >
                 <csc-main-menu-top
                     id="csc-main-menu-top"
@@ -152,11 +153,15 @@
                     :is-pbx-configuration="isPbxConfiguration"
                 />
             </q-scroll-area>
-            <aui-mobile-app-badges />
-            <div class="absolute-bottom-left absolute-bottom-right bottom-text">
-                <div
-                    v-if="!menuMinimized && platformInfo.type === 'spce'"
-                >
+            <aui-mobile-app-badges
+                class="app-mobile-badge-height"
+                :style="{ bottom: appBadgeBottom }"
+            />
+            <div
+                v-if="!menuMinimized && platformInfo.type === 'spce'"
+                class="absolute-bottom-left absolute-bottom-right bottom-text"
+            >
+                <div>
                     <div class="row justify-center content-center">
                         <span
                             class="no-wrap q-mr-xs"
@@ -450,6 +455,26 @@ export default {
         },
         callEndedReasonFormatted () {
             return startCase(this.endedReason)
+        },
+        mainMenuBottom () {
+            const appUrlApple = this.platformInfo?.app?.apple?.url
+            const appUrlAndroid = this.platformInfo?.app?.android?.url
+            const copyrightIsDisplayed = !this.menuMinimized && this.platformInfo?.type === 'spce'
+            if ((appUrlApple || appUrlAndroid) && copyrightIsDisplayed) {
+                return '205px'
+            } else if (appUrlApple || appUrlAndroid) {
+                return '160px'
+            } else if (copyrightIsDisplayed) {
+                return '45px'
+            }
+            return '0px'
+        },
+        appBadgeBottom () {
+            const copyrightIsDisplayed = !this.menuMinimized && this.platformInfo?.type === 'spce'
+            if (copyrightIsDisplayed) {
+                return '45px'
+            }
+            return '0px'
         }
     },
     watch: {
@@ -802,5 +827,7 @@ $copyright-height: 45px
 
 .main-menu-container
     top: $toolbar-min-height
-    bottom: $copyright-height
+
+.app-mobile-badge-height
+    height: 160px
 </style>
