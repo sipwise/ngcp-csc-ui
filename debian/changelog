@@ -1,3 +1,30 @@
+ngcp-csc-ui (13.0.1.0+0~mr13.0.1.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [faf4499] MT#60578 Navigates to /dashboard on refresh
+  * [51bc01a] MT#60711 removing lang parameter when we use api v2
+
+  [ Debora Crescenzo ]
+  * [a0b6a35] MT#60545 Block outg/incom calls refactoring
+  * [98eee9c] MT#60583 Amend Login API calls and 403 Invalid Licence err
+  * [7c9a494] MT#60627 remove outdated caniuse-lite warning
+  * [2d1ec7c] MT#60623 Hide features not covered by the license
+  * [f301d02] MT#60623 Add translations for invalid license error message
+  * [90eb5ec] MT#60860 Update new sipwise logo in CSC
+
+  [ Marco Capetta ]
+  * [4f8015c] MT#60613 Fix NCOS and NCOS Sets visibility in Block Outgoing page
+  * [bc1b4f3] MT#60674 Fix page permission for CE users
+  * [a6fd358] MT#59449 Fix selenium tests after password enforcements
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [abf1d52] MT#60641  Adapt random password generator to the new security standards
+
+  [ Nico Schedel ]
+  * [c0cd3f0] MT#60625 add data-cy to outgoing cf ncos selection
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 01 Oct 2024 09:59:46 +0200
+
 ngcp-csc-ui (13.0.0.0+0~mr13.0.0.0) unstable; urgency=medium
 
   [ Hugo Zigha ]
