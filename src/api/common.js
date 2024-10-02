@@ -12,6 +12,7 @@ import { getCurrentLangAsV1Format } from 'src/i18n'
 import { i18n } from 'src/boot/i18n'
 
 import saveAs from 'file-saver'
+import { PATH_CHANGE_PASSWORD } from 'src/router/routes'
 export const LIST_DEFAULT_PAGE = 1
 export const LIST_DEFAULT_ROWS = 24
 export const LIST_ALL_ROWS = 1000
@@ -177,6 +178,11 @@ function handleResponseError (err) {
     if (code === 403 && message === 'Invalid license') {
         message = i18n.global.tc('Contact your administrator to activate this functionality')
     }
+    if (code === 403 && message === 'Password expired') {
+        message = i18n.global.tc('Password Expired')
+        return this.$router.push({ path: PATH_CHANGE_PASSWORD })
+    }
+
     if (code !== null && message !== null) {
         throw new ApiResponseError(code, message)
     }

@@ -9,7 +9,7 @@ import {
 
 export default ({ app, router, store }) => {
     router.beforeEach((to, from, next) => {
-        const publicUrls = ['/login', '/recoverpassword']
+        const publicUrls = ['/login', '/recoverpassword', '/changepassword']
         // not authorized user
         if (!hasJwt()) {
             if (!publicUrls.includes(to.path)) {

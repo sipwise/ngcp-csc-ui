@@ -8,6 +8,7 @@ import CscPageCallBlockingPrivacy from 'src/pages/CscPageCallBlockingPrivacy'
 import CscPageCallRecording from 'src/pages/CscPageCallRecording'
 import CscPageCallSettings from 'pages/CscPageCallSettings'
 import CscPageCf from 'pages/CscPageCf'
+import CscPageChangePassword from 'src/pages/CscChangeExpiredPassword.vue'
 import CscPageConversations from 'src/pages/CscPageConversations'
 import CscPageCustomerPhonebook from 'src/pages/CscPageCustomerPhonebook'
 import CscPageCustomerPhonebookAdd from 'src/pages/CscPageCustomerPhonebookAdd'
@@ -44,6 +45,8 @@ import CscPageVoicebox from 'src/pages/CscPageVoicebox'
 import CscRecoverPassword from 'src/pages/CscRecoverPassword'
 import CscPageCustomerPreferences from 'src/pages/CscPageCustomerPreferences'
 import { i18n } from 'src/boot/i18n'
+
+export const PATH_CHANGE_PASSWORD = '/changepassword'
 
 const getToken = (route) => {
     return {
@@ -542,6 +545,11 @@ const routes = [
                 return i18n.global.tc('Subscriber Sign In')
             }
         }
+    },
+    {
+        name: 'passwordChange',
+        path: PATH_CHANGE_PASSWORD,
+        component: CscPageChangePassword
     },
     {
         path: '/recoverpassword',

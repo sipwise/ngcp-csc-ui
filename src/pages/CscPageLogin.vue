@@ -157,7 +157,7 @@ export default {
         },
         loginError (error) {
             if (error) {
-                showGlobalError(this.$t('Wrong username or password'))
+                showGlobalError(error)
             }
         }
     },

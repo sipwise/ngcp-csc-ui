@@ -6,7 +6,9 @@ import {
 import {
     login,
     getUserData,
-    createAuthToken
+    createAuthToken,
+    changeExpiredPassword,
+    getPreLoginPasswordInfo
 } from '../api/user'
 import {
     changePassword,
@@ -46,6 +48,7 @@ import {
     httpApi,
     apiDownloadFile
 } from 'src/api/common'
+import { PATH_CHANGE_PASSWORD } from 'src/router/routes'
 
 export default {
     namespaced: true,
@@ -340,6 +343,9 @@ export default {
                 await this.$router.push({ name: 'dashboard' })
             } catch (err) {
                 context.commit('loginFailed', err.message)
+                if (err.message === 'Password expired') {
+                    this.$router.push({ path: PATH_CHANGE_PASSWORD })
+                }
             }
         },
         logout () {
@@ -377,6 +383,16 @@ export default {
                     await context.dispatch('logout')
                 }
             }
+        },
+        async changeExpiredPassword (context, newPassword) {
+            context.commit('userPasswordRequesting')
+            try {
+                await changeExpiredPassword(newPassword)
+            } catch (error) {
+                return context.commit('userPasswordFailed', error)
+            }
+
+            context.commit('userPasswordSucceeded')
         },
         async changePassword (context, newPassword) {
             const subscriberId = getSubscriberId()
@@ -571,6 +587,9 @@ export default {
             } catch (err) {
                 commit('setQrCode', null)
             }
+        },
+        async fetchPreLoginPasswordInfo () {
+            return await getPreLoginPasswordInfo()
         },
         async generatePasswordUser () {
             const password = await generateGeneralPassword()
