@@ -1,5 +1,6 @@
 
 import _ from 'lodash'
+import { i18n } from 'boot/i18n'
 import {
     get,
     post,
@@ -48,6 +49,15 @@ export async function loginByExchangeToken (token) {
         } else {
             throw err
         }
+    }
+}
+
+export async function getPreLoginPasswordInfo () {
+    try {
+        const res = await httpApi.get('api/platforminfo')
+        return res.data.security.password
+    } catch (err) {
+        throw new Error(err.response.data.message)
     }
 }
 
@@ -167,6 +177,29 @@ export async function getPlatformInfo () {
     })
 }
 
+export function changeExpiredPassword (payload) {
+    return new Promise((resolve, reject) => {
+        httpApi.post('/api/passwordchange/', {
+            new_password: payload.new_password
+        }, {
+            auth: {
+                username: payload.username,
+                password: payload.old_password
+            }
+        }).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            if (err.response.status === 401) {
+                reject(`Unauthorized. ${i18n.global.tc('Wrong username or password')}`)
+            } else if (err.response.status === 422) {
+                reject(_formatPasswordError(err.response.data.message))
+            } else {
+                reject('Unexpected error')
+            }
+        })
+    })
+}
+
 export async function createAuthToken (tokenExpiringTime) {
     const response = await post({
         resource: 'authtokens',
@@ -176,4 +209,8 @@ export async function createAuthToken (tokenExpiringTime) {
         }
     })
     return response.token
+}
+
+function _formatPasswordError (error) {
+    return error.split("'").slice(-2, -1)[0].replaceAll(',', ', ')
 }
