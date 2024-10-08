@@ -38,7 +38,7 @@ export default ({ app, router, store }) => {
                     if (to.meta.license && hasSubscriberProfileAttribute) {
                         // Guard to assure that:
                         // CE users have access to all available menus as they do not have licenses
-                        if (store.platformInfo.type === 'spce') {
+                        if (store.getters['user/isSpCe']) {
                             next()
                         }
                         // users cannot click on menu if it is mistakenly visible when the license is inactive
