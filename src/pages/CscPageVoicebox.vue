@@ -7,6 +7,7 @@
             class="col col-xs-12 col-md-6"
         >
             <csc-voicebox-language
+                v-if="defaultLanguage"
                 :value="language"
                 :language-options="languages"
                 :default-language-option="{
