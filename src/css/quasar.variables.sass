@@ -12,6 +12,8 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
+@use "sass:color"
+
 $darkBase: #151d30
 
 $primary: #40cc3d
@@ -32,7 +34,7 @@ $light: #cccccc
 $main-menu-background: $dark
 $main-menu-background-light: rgba($primary, 10%)
 
-$main-menu-item-hover-background: lighten($main-menu-background, 12%)
+$main-menu-item-hover-background: color.adjust($main-menu-background, $lightness: 12%)
 $main-menu-title-color: $white
 $main-menu-title-hover-color: $white
 $main-menu-title-active-color: $primary
@@ -112,7 +114,7 @@ $chip-color: $dark
 $conf-participant-icon-color: rgba(255, 255, 255, 0.6)
 $conf-participant-box-color: rgba(21,29,48,0.8)
 
-$cf-disabled-label: darken($white, 35%)
-$cf-disabled-link: darken($primary, 35%)
-$cf-disabled-btn: darken($negative, 35%)
+$cf-disabled-label: color.adjust($white, $lightness: -35%)
+$cf-disabled-link: color.adjust($primary, $lightness: -35%)
+$cf-disabled-btn: color.adjust($negative, $lightness: -35%)
 

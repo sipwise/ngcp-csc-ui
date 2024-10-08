@@ -129,7 +129,7 @@ module.exports = function (ctx) {
                 )
                 cfg.plugins.push(
                     new webpack.ProvidePlugin({
-                        process: 'process/browser'
+                        process: 'process/browser.js'
                     })
                 )
                 cfg.plugins.push(
