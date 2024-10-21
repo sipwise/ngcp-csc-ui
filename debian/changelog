@@ -1,3 +1,15 @@
+ngcp-csc-ui (13.0.1.1+0~mr13.0.1.1) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [61cc735] MT#61128 APP Download button overlapping on main menu fixed
+
+  [ Debora Crescenzo ]
+  * [13e9275] MT#60689 Dynamic password requirements
+  * [1ee2418] MT#61228 Replace direct access to state with a getter
+  * [18010ed] MT#60689 Add change password page for CSC
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 21 Oct 2024 19:21:52 +0200
+
 ngcp-csc-ui (13.0.1.0+0~mr13.0.1.0) unstable; urgency=medium
 
   [ Hugo Zigha ]
