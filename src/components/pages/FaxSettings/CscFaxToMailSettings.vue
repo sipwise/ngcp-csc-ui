@@ -142,15 +142,15 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { mapState } from 'vuex'
-import CscInputSaveable from 'components/form/CscInputSaveable'
-import CscSpinner from 'components/CscSpinner'
-import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
-import CscFaxToMailDestinationForm from 'components/pages/FaxSettings/CscFaxToMailDestinationForm'
-import CscFaxToMailDestination from 'components/pages/FaxSettings/CscFaxToMailDestination'
 import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscSpinner from 'components/CscSpinner'
+import CscInputSaveable from 'components/form/CscInputSaveable'
+import CscFaxToMailDestination from 'components/pages/FaxSettings/CscFaxToMailDestination'
+import CscFaxToMailDestinationForm from 'components/pages/FaxSettings/CscFaxToMailDestinationForm'
+import _ from 'lodash'
 import { showGlobalError } from 'src/helpers/ui'
+import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
+import { mapState } from 'vuex'
 export default {
     name: 'CscFaxToMailSettings',
     components: {
@@ -249,7 +249,7 @@ export default {
             })
         },
         deleteDestination (destinationId) {
-            const destinationItems = this.faxToMailSettings.destinations.filter(d => d.destination !== destinationId)
+            const destinationItems = this.faxToMailSettings.destinations.filter((d) => d.destination !== destinationId)
             this.faxServerSettingsUpdateAction({
                 field: 'destinations',
                 value: destinationItems,
@@ -274,7 +274,7 @@ export default {
         },
         updateDestinationItemProperty (destinationId, data) {
             const destinationItems = _.cloneDeep(this.faxToMailSettings.destinations)
-            const destinationItemIndex = destinationItems.findIndex(d => d.destination === destinationId)
+            const destinationItemIndex = destinationItems.findIndex((d) => d.destination === destinationId)
             if (destinationItemIndex >= 0) {
                 destinationItems[destinationItemIndex][data.name] = data.value
             }

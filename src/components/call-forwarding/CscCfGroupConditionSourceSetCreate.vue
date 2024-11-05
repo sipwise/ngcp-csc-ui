@@ -107,11 +107,9 @@
 </template>
 
 <script>
-import CscInput from 'components/form/CscInput'
-import {
-    mapActions
-} from 'vuex'
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
+import CscInput from 'components/form/CscInput'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfGroupConditionSourceSetCreate',
     components: {

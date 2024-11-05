@@ -1,4 +1,3 @@
-
 import _ from 'lodash'
 import sipUriParse from 'src/sip-uri-parse'
 
@@ -14,13 +13,12 @@ export default function numberFormat (number) {
     const destination = sipUriParse(number)
     if (destination !== null) {
         return destination.username
-    } else {
-        return number
     }
+    return number
 }
 
 export function rawNumber (number) {
-    return '' + number.replace(/\s*/g, '').replace(/^\+/, '')
+    return `${number.replace(/\s*/g, '').replace(/^\+/, '')}`
 }
 
 export function normalizeDestination (destination) {
@@ -40,9 +38,8 @@ export function normalizeDestination (destination) {
             return 'Conference'
         } else if (host === DestinationHosts.App) {
             return _.capitalize(username)
-        } else {
-            return username
         }
+        return username
     } catch (err) {
         return destination
     }
@@ -53,7 +50,6 @@ export function normalizeTerminationInput (destination) {
         return 'voicebox'
     } else if (destination === 'Fax2Mail') {
         return 'fax2mail'
-    } else {
-        return destination
     }
+    return destination
 }

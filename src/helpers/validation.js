@@ -23,14 +23,13 @@ export function isPhone (value) {
 }
 
 export function inRange (value, min, max) {
-    value = Number(value)
-    if (min >= 0 && max == null) {
-        return min <= value
+    const numericValue = Number(value)
+    if (min >= 0 && max === null) {
+        return min <= numericValue
     } else if (min < 0 && max) {
-        return max >= value
+        return max >= numericValue
     } else if (min >= 0 && max) {
-        return min <= value && max >= value
-    } else {
-        return true
+        return min <= numericValue && max >= numericValue
     }
+    return true
 }

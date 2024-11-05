@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import { i18n } from 'src/boot/i18n'
 import useValidate from '@vuelidate/core'
+import { i18n } from 'boot/i18n'
 export default {
     name: 'CscDataTableEditInput',
     props: {
@@ -61,23 +61,19 @@ export default {
         error () {
             if (this.column.componentValidations) {
                 return this.v$.internalValue.$errors.length > 0
-            } else {
-                return false
             }
+            return false
         },
         errorMessage () {
             if (this.column.componentValidations) {
-                const validation = this.column.componentValidations.find(validation =>
-                    this.v$.internalValue[validation.name]?.$invalid === true
+                const validation = this.column.componentValidations.find((validation) => this.v$.internalValue[validation.name]?.$invalid === true
                 )
                 if (validation) {
                     return validation.error
-                } else {
-                    return undefined
                 }
-            } else {
                 return undefined
             }
+            return undefined
         }
     },
     watch: {
@@ -94,9 +90,8 @@ export default {
             if (this.column.componentValidations) {
                 this.v$.$touch()
                 return !this.v$.$invalid
-            } else {
-                return true
             }
+            return true
         },
         save () {
             this.v$.$touch()

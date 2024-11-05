@@ -110,18 +110,15 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import CscPbxAutoAttendantSelection from './CscPbxAutoAttendantSelection'
-import CscInput from 'components/form/CscInput'
-import CscListSpinner from 'components/CscListSpinner'
-import { mapState } from 'vuex'
-import {
-    Platform
-} from 'quasar'
-import {
-    required
-} from '@vuelidate/validators'
 import useValidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
+import CscListSpinner from 'components/CscListSpinner'
+import CscInput from 'components/form/CscInput'
+import CscPbxAutoAttendantSelection from 'components/pages/PbxConfiguration/CscPbxAutoAttendantSelection'
+import _ from 'lodash'
+import { Platform } from 'quasar'
+import { mapState } from 'vuex'
+
 export default {
     name: 'CscPbxDeviceConfigKeyForm',
     components: {
@@ -195,7 +192,7 @@ export default {
                 }
                 options.push({
                     label: subscriber.display_name || subscriber.webusername,
-                    icon: icon,
+                    icon,
                     value: subscriber.id,
                     subscriberTypeTitle
                 })
@@ -211,16 +208,15 @@ export default {
                     return 'group'
                 } else if (subscriber !== null) {
                     return 'person'
-                } else {
-                    return ''
                 }
+                return ''
             }
             return ''
         },
         selectedKeySubscriber () {
             const unassignedItem = this.subscriberOptions[0]
             if (this.changes) {
-                const selectedOption = this.subscriberOptions.find(opt => opt?.value === this.changes.subscriber_id)
+                const selectedOption = this.subscriberOptions.find((opt) => opt?.value === this.changes.subscriber_id)
                 return selectedOption || unassignedItem
             }
             return unassignedItem
@@ -297,9 +293,8 @@ export default {
                 return this.$t('{field} must consist only of numeric characters or the symbols +, * or #.', {
                     field: this.$t('Target number')
                 })
-            } else {
-                return ''
             }
+            return ''
         }
     },
     watch: {
@@ -321,15 +316,14 @@ export default {
                     type: this.selectedLine.type,
                     target_number: this.selectedLine.target_number
                 }
-            } else {
-                return {
-                    extension_unit: 0,
-                    key_num: this.selectedKey.index,
-                    subscriber_id: null,
-                    linerange: this.selectedKey.keySet.name,
-                    type: null,
-                    target_number: null
-                }
+            }
+            return {
+                extension_unit: 0,
+                key_num: this.selectedKey.index,
+                subscriber_id: null,
+                linerange: this.selectedKey.keySet.name,
+                type: null,
+                target_number: null
             }
         },
         closeKeyOverlay () {

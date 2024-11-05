@@ -1,41 +1,37 @@
 'use strict'
 
-import {
-    i18n
-} from 'src/boot/i18n'
-import {
-    CreationState,
-    RequestState
-} from './common'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
-    getSeatList,
-    createSeat,
-    removeSeat,
-    setSeatDisplayName,
-    setSeatWebUsername,
-    setSeatExtension,
-    setSeatGroups,
-    setSeatNumbers,
-    setSeatSoundSet,
-    setSeatIntraPbx,
-    setSeatMusicOnHold,
-    setSeatCli,
-    setSeatWebPassword,
-    getSeatPreferences,
-    setSeatSIPPassword,
-    setNcosSet,
-    setNcosLevelSets,
     NcosSet,
     NcosSets,
-    setSeatAnnouncementCfu,
+    createSeat,
+    getSeatList,
+    getSeatPreferences,
+    removeSeat,
+    setNcosLevelSets,
+    setNcosSet,
     setSeatAnnouncementCallSetup,
+    setSeatAnnouncementCfu,
     setSeatAnnouncementToCallee,
-    setSeatIgnoreCfWhenHunting,
+    setSeatCli,
     setSeatCstaClient,
-    setSeatCstaController
-} from '../api/pbx-seats'
+    setSeatCstaController,
+    setSeatDisplayName,
+    setSeatExtension,
+    setSeatGroups,
+    setSeatIgnoreCfWhenHunting,
+    setSeatIntraPbx,
+    setSeatMusicOnHold,
+    setSeatNumbers,
+    setSeatSIPPassword,
+    setSeatSoundSet,
+    setSeatWebPassword,
+    setSeatWebUsername
+} from 'src/api/pbx-seats'
 import { getSubscriberId } from 'src/auth'
+import { CreationState, RequestState } from 'src/store/common'
+
 export default {
     namespaced: true,
     state: {
@@ -215,7 +211,7 @@ export default {
         },
         hasCallQueue (state) {
             return (seatId) => {
-                return _.get(state, 'preferenceMapById.' + seatId + '.cloud_pbx_callqueue', false)
+                return _.get(state, `preferenceMapById.${seatId}.cloud_pbx_callqueue`, false)
             }
         }
     },
@@ -334,10 +330,10 @@ export default {
                 const primaryNumber = _.get(options, 'primary_number', null)
                 const aliasNumber = _.get(options, 'alias_number', null)
                 context.commit('seatListItemsRequesting', {
-                    clearList: clearList
+                    clearList
                 })
                 getSeatList({
-                    page: page,
+                    page,
                     display_name: displayName,
                     pbx_extension: pbxExtension,
                     primary_number: primaryNumber,
@@ -350,7 +346,7 @@ export default {
                     context.commit('seatListItemsSucceeded', {
                         seats: seatList.seats,
                         preferences: seatList.preferences,
-                        page: page
+                        page
                     })
                     resolve()
                 }).catch((err) => {

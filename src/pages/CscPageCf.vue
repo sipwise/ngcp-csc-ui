@@ -89,17 +89,17 @@
     </csc-page-sticky>
 </template>
 <script>
+import CscPageSticky from 'components/CscPageSticky'
+import CscPopupMenu from 'components/CscPopupMenu'
+import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscSpinner from 'components/CscSpinner'
 import CscCfGroup from 'components/call-forwarding/CscCfGroup'
+import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
 import {
     mapActions,
-    mapState,
-    mapGetters
+    mapGetters,
+    mapState
 } from 'vuex'
-import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import CscPopupMenu from 'components/CscPopupMenu'
-import CscSpinner from 'components/CscSpinner'
-import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
-import CscPageSticky from 'components/CscPageSticky'
 export default {
     name: 'CscPageCf',
     components: {

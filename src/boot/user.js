@@ -1,5 +1,5 @@
-import { hasJwt, setJwt, setSubscriberId } from 'src/auth'
 import { loginByExchangeToken } from 'src/api/user'
+import { hasJwt, setJwt, setSubscriberId } from 'src/auth'
 
 export default async ({ store }) => {
     // Todo: Use "URL" shim to hide workaround

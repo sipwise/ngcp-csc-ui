@@ -35,19 +35,17 @@
 </template>
 
 <script>
-import {
-    mapGetters,
-    mapState
-} from 'vuex'
+import CscPage from 'components/CscPage'
+import CscSpinner from 'components/CscSpinner'
+import { showGlobalError } from 'src/helpers/ui'
 import {
     mapWaitingActions,
     mapWaitingGetters
 } from 'vue-wait'
 import {
-    showGlobalError
-} from 'src/helpers/ui'
-import CscPage from 'components/CscPage'
-import CscSpinner from 'components/CscSpinner'
+    mapGetters,
+    mapState
+} from 'vuex'
 export default {
     name: 'CscPageCallSettings',
     components: {

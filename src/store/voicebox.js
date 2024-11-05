@@ -1,26 +1,18 @@
-
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
+import { apiCreateCancelObject, apiIsCanceledRequest } from 'src/api/common'
 import {
-    RequestState
-} from './common'
-import {
-    getVoiceboxSettings,
-    setVoiceboxDelete,
-    setVoiceboxAttach,
-    setVoiceboxPin,
-    setVoiceboxEmail,
-    uploadGreeting,
-    getVoiceboxGreetingByType,
     deleteVoiceboxGreetingById,
-    playGreeting
-} from '../api/voicebox'
-import {
-    i18n
-} from 'src/boot/i18n'
-import {
-    apiCreateCancelObject,
-    apiIsCanceledRequest
-} from 'src/api/common'
+    getVoiceboxGreetingByType,
+    getVoiceboxSettings,
+    playGreeting,
+    setVoiceboxAttach,
+    setVoiceboxDelete,
+    setVoiceboxEmail,
+    setVoiceboxPin,
+    uploadGreeting
+} from 'src/api/voicebox'
+import { RequestState } from 'src/store/common'
 
 const setVoiceboxSettings = {
     pin: setVoiceboxPin,
@@ -502,17 +494,17 @@ export default {
                 subscriberId = context.getters.subscriberId
             }
             try {
-                context.commit(options.property + 'UpdateRequesting')
+                context.commit(`${options.property}UpdateRequesting`)
                 await setVoiceboxSettings[options.property]({
-                    subscriberId: subscriberId,
+                    subscriberId,
                     value: options.value
                 })
                 context.commit('settingsSucceeded', {
                     settings: await getVoiceboxSettings(subscriberId)
                 })
-                context.commit(options.property + 'UpdateSucceeded')
+                context.commit(`${options.property}UpdateSucceeded`)
             } catch (err) {
-                context.commit(options.property + 'UpdateFailed', err.message)
+                context.commit(`${options.property}UpdateFailed`, err.message)
             }
         },
         async pinUpdateAction (context, options) {
@@ -546,7 +538,7 @@ export default {
         async greetingUpload (context, options) {
             const subscriberId = options.subscriberId || context.getters.subscriberId
             try {
-                context.commit(options.type + 'GreetingUploadRequesting')
+                context.commit(`${options.type}GreetingUploadRequesting`)
                 const cancelToken = apiCreateCancelObject()
                 context.commit('updateUploadCancelActions', options.greeting, cancelToken.cancel)
                 await uploadGreeting({
@@ -556,7 +548,7 @@ export default {
                         file: options.file
                     },
                     onProgress: (progress) => {
-                        context.commit(options.type + 'GreetingUploadProgress', progress)
+                        context.commit(`${options.type}GreetingUploadProgress`, progress)
                     },
                     cancelToken: cancelToken.token
                 })
@@ -564,10 +556,10 @@ export default {
                     id: subscriberId,
                     type: options.greeting
                 })
-                context.commit(options.type + 'GreetingUploadSucceeded', greetings.items[0].id)
+                context.commit(`${options.type}GreetingUploadSucceeded`, greetings.items[0].id)
             } catch (err) {
                 if (!apiIsCanceledRequest(err)) {
-                    context.commit(options.type + 'GreetingUploadFailed', err.message)
+                    context.commit(`${options.type}GreetingUploadFailed`, err.message)
                 }
             } finally {
                 context.commit('updateUploadCancelActions', options.greeting, undefined)
@@ -581,23 +573,23 @@ export default {
         },
         async greetingPlay (context, options) {
             try {
-                context.commit(options.type + 'GreetingPlayRequesting')
+                context.commit(`${options.type}GreetingPlayRequesting`)
                 const greetingUrl = await playGreeting({
                     id: options.id,
                     format: options.format
                 })
-                context.commit(options.type + 'GreetingPlaySucceeded', greetingUrl)
+                context.commit(`${options.type}GreetingPlaySucceeded`, greetingUrl)
             } catch (err) {
-                context.commit(options.type + 'GreetingPlayFailed', err.message)
+                context.commit(`${options.type}GreetingPlayFailed`, err.message)
             }
         },
         async greetingDelete (context, options) {
             try {
-                context.commit(options.type + 'GreetingDeletionRequesting')
+                context.commit(`${options.type}GreetingDeletionRequesting`)
                 await deleteVoiceboxGreetingById(options.id)
-                context.commit(options.type + 'GreetingDeletionSucceeded')
+                context.commit(`${options.type}GreetingDeletionSucceeded`)
             } catch (err) {
-                context.commit(options.type + 'GreetingDeletionFailed', err.message)
+                context.commit(`${options.type}GreetingDeletionFailed`, err.message)
             }
         },
         async busyGreetingUpload (context, options) {
@@ -615,7 +607,7 @@ export default {
             await context.dispatch('greetingPlay', {
                 type: 'busy',
                 id: context.state.busyGreetingId,
-                format: format
+                format
             })
         },
         async busyGreetingDelete (context) {
@@ -639,7 +631,7 @@ export default {
             await context.dispatch('greetingPlay', {
                 type: 'unavailable',
                 id: context.state.unavailableGreetingId,
-                format: format
+                format
             })
         },
         async unavailableGreetingDelete (context) {
@@ -663,7 +655,7 @@ export default {
             await context.dispatch('greetingPlay', {
                 type: 'temp',
                 id: context.state.tempGreetingId,
-                format: format
+                format
             })
         },
         async tempGreetingDelete (context) {
@@ -687,7 +679,7 @@ export default {
             await context.dispatch('greetingPlay', {
                 type: 'greet',
                 id: context.state.greetGreetingId,
-                format: format
+                format
             })
         },
         async greetGreetingDelete (context) {

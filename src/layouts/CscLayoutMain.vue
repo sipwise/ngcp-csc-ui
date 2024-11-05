@@ -231,48 +231,45 @@
 </template>
 
 <script>
-import { setCssVar } from 'quasar'
-import platformMixin from '../mixins/platform'
-import {
-    startLoading,
-    stopLoading,
-    showToast,
-    showGlobalError,
-    enableIncomingCallNotifications
-} from 'src/helpers/ui'
-import {
-    mapGetters,
-    mapActions,
-    mapState
-} from 'vuex'
-import CscCall from 'components/call/CscCall'
-import CscSendFax from 'components/CscSendFax'
-import CscLogo from 'components/CscLogo'
+import AuiMobileAppBadges from 'components/AuiMobileAppBadges'
 import CscCustomLogo from 'components/CscCustomLogo'
-import CscUserMenu from 'components/CscUserMenu'
+import CscDialogQrCode from 'components/CscDialogQrCode'
+import CscLogo from 'components/CscLogo'
 import CscMainMenuTop from 'components/CscMainMenuTop'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import AuiMobileAppBadges from 'components/AuiMobileAppBadges'
-import CscDialogQrCode from 'components/CscDialogQrCode'
 import CscSelectionLanguage from 'components/CscSelectionLanguage'
 import CscSelectionLanguageMobile from 'components/CscSelectionLanguageMobile'
+import CscSendFax from 'components/CscSendFax'
+import CscUserMenu from 'components/CscUserMenu'
+import CscCall from 'components/call/CscCall'
 import _ from 'lodash'
+import { setCssVar } from 'quasar'
 import {
     callGetLocalMediaStream,
     callGetRemoteMediaStream,
     callHasRemoteVideo
 } from 'src/api/ngcp-call'
+import { normalizeDestination } from 'src/filters/number-format'
+import { startCase } from 'src/filters/string'
+import {
+    enableIncomingCallNotifications,
+    showGlobalError,
+    showToast,
+    startLoading,
+    stopLoading
+} from 'src/helpers/ui'
+import platformMixin from 'src/mixins/platform'
 import {
     CallState,
     CallStateTitle
 } from 'src/store/call/common'
 import {
-    normalizeDestination
-} from 'src/filters/number-format'
-import {
-    startCase
-} from 'src/filters/string'
+    mapActions,
+    mapGetters,
+    mapState
+} from 'vuex'
+
 export default {
     name: 'CscLayoutMain',
     components: {
@@ -366,9 +363,8 @@ export default {
         pinMenuButtonIcon () {
             if (!this.menuPinned) {
                 return 'push_pin'
-            } else {
-                return 'arrow_left'
             }
+            return 'arrow_left'
         },
         pinMenuButtonClasses () {
             const classes = ['pin-menu-button row items-center']
@@ -383,9 +379,8 @@ export default {
         drawerBehavior () {
             if (this.$q.platform.is.mobile) {
                 return 'mobile'
-            } else {
-                return 'desktop'
             }
+            return 'desktop'
         },
         isHome () {
             return this.route?.path === '/user/home'
@@ -446,9 +441,8 @@ export default {
                 return this.callNumberFormatted
             } else if (this.callState === CallState.ended) {
                 return this.callEndedReasonFormatted
-            } else {
-                return ''
             }
+            return ''
         },
         callNumberFormatted () {
             return normalizeDestination(this.number)

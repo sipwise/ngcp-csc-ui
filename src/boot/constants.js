@@ -1,15 +1,21 @@
 export default ({ app }) => {
     app.config.globalProperties.$faxQualityOptions = [
         {
-            get label () { return app.i18n.global.tc('Normal') },
+            get label () {
+                return app.i18n.global.tc('Normal')
+            },
             value: 'normal'
         },
         {
-            get label () { return app.i18n.global.tc('Fine') },
+            get label () {
+                return app.i18n.global.tc('Fine')
+            },
             value: 'fine'
         },
         {
-            get label () { return app.i18n.global.tc('Super') },
+            get label () {
+                return app.i18n.global.tc('Super')
+            },
             value: 'super'
         }
     ]

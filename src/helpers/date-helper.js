@@ -1,4 +1,3 @@
-
 export function addSecond (date) {
     const newDate = new Date()
     newDate.setTime(date.getTime() + 1000)

@@ -27,8 +27,8 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { i18n } from 'boot/i18n'
+import _ from 'lodash'
 import { setLanguage } from 'src/i18n'
 
 export default {
@@ -41,8 +41,8 @@ export default {
     },
     computed: {
         languageLabel () {
-            const lang = _.first(this.options.filter(item => item.value === i18n.locale))
-            return this.$t('Language') + ' (' + lang.label + ')'
+            const lang = _.first(this.options.filter((item) => item.value === i18n.locale))
+            return `${this.$t('Language')} (${lang.label})`
         },
         options () {
             return [

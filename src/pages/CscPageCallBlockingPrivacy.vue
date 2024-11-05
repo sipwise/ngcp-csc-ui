@@ -58,18 +58,16 @@
 
 <script>
 
-import { mapGetters, mapActions, mapState } from 'vuex'
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import {
-    RequestState
-} from 'src/store/common'
 import CscPage from 'components/CscPage'
 import CscSpinner from 'components/CscSpinner'
 import { getSubscriberId } from 'src/auth'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import {
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
+import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageCallBlockingPrivacy',
     components: {
@@ -86,9 +84,8 @@ export default {
         fieldIcon () {
             if (!this.privacy) {
                 return 'visibility'
-            } else {
-                return 'visibility_off'
             }
+            return 'visibility_off'
         },
         ...mapState('callBlocking', [
             'privacy'

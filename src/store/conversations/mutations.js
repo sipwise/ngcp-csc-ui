@@ -1,7 +1,5 @@
-import {
-    RequestState
-} from '../common'
-import { ROWS_PER_PAGE } from './actions'
+import { RequestState } from 'src/store/common'
+import { ROWS_PER_PAGE } from 'src/store/conversations/actions'
 
 function linkCallsWithSameId (state) {
     let callId = null
@@ -133,13 +131,13 @@ export default {
         state.toggleBlockedError = null
     },
     toggleBlockedSucceeded (state, type) {
-        const typePastTense = type ? type + 'ed' : 'toggled'
+        const typePastTense = type ? `${type}ed` : 'toggled'
         state.toggleBlockedState = RequestState.succeeded
         state.toggleBlockedError = null
         state.lastToggledType = typePastTense
     },
     toggleBlockedFailed (state, error, type) {
-        const typePastTense = type ? type + 'ed' : 'toggled'
+        const typePastTense = type ? `${type}ed` : 'toggled'
         state.toggleBlockedState = RequestState.failed
         state.toggleBlockedError = error
         state.lastToggledType = typePastTense

@@ -61,7 +61,7 @@ export default {
     computed: {
         pageStyle () {
             return {
-                paddingTop: this.topMargin + 'px'
+                paddingTop: `${this.topMargin}px`
             }
         }
     },

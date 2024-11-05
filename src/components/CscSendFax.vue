@@ -82,17 +82,11 @@
 </template>
 
 <script>
-import CscCallInput from './form/CscCallInput'
-import {
-    showGlobalError
-} from 'src/helpers/ui'
-import {
-    required,
-    requiredUnless,
-    maxLength
-} from '@vuelidate/validators'
-import CscInputFile from 'components/form/CscInputFile'
 import useValidate from '@vuelidate/core'
+import { maxLength, required, requiredUnless } from '@vuelidate/validators'
+import CscCallInput from 'components/form/CscCallInput'
+import CscInputFile from 'components/form/CscInputFile'
+import { showGlobalError } from 'src/helpers/ui'
 
 export default {
     name: 'CscSendFax',
@@ -163,9 +157,8 @@ export default {
                     field: this.$t('Content'),
                     maxLength: this.v$.form.data.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         fileErrorMessage () {
             return this.$t('{fieldOne} or {fieldTwo} is required', {

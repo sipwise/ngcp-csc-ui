@@ -1,7 +1,4 @@
-
-import {
-    Dark
-} from 'quasar'
+import { Dark } from 'quasar'
 import {
     getJwt, getSubscriberId,
     hasJwt

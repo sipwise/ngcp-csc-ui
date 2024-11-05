@@ -1,4 +1,3 @@
-
 <template>
     <csc-page
         id="csc-page-pbx-settings"
@@ -34,17 +33,15 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex'
 import CscPage from 'components/CscPage'
+import CscSpinner from 'components/CscSpinner'
+import { getSubscriberId } from 'src/auth'
 import {
     showGlobalError,
     showToast
 } from 'src/helpers/ui'
-import {
-    RequestState
-} from 'src/store/common'
-import CscSpinner from 'components/CscSpinner'
-import { getSubscriberId } from 'src/auth'
+import { RequestState } from 'src/store/common'
+import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPagePbxSettings',
     components: {

@@ -47,20 +47,18 @@
 </template>
 
 <script>
+import CscPage from 'components/CscPage'
+import CscSpinner from 'components/CscSpinner'
+import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import _ from 'lodash'
+import { getSubscriberId } from 'src/auth'
+import { showToast } from 'src/helpers/ui'
+import { mapWaitingActions } from 'vue-wait'
 import {
     mapGetters,
     mapState
 } from 'vuex'
-import { mapWaitingActions } from 'vue-wait'
-import CscPage from 'components/CscPage'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import CscInputButtonReset from 'components/form/CscInputButtonReset'
-import CscSpinner from 'components/CscSpinner'
-import { getSubscriberId } from 'src/auth'
-import {
-    showToast
-} from 'src/helpers/ui'
 export default {
     name: 'CscPagePbxSettingsMsConfigs',
     components: {

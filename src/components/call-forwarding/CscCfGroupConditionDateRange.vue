@@ -59,8 +59,8 @@
 </template>
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
-import { mapActions } from 'vuex'
 import { humanDatesetToKamailio, kamailioDatesetToHuman } from 'src/helpers/kamailio-timesets-converter'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfGroupConditionDateRange',
     components: {
@@ -115,6 +115,7 @@ export default {
                     hDateset = kamailioDatesetToHuman(this.timeSet.times)
                 } catch (e) {
                     this.invalidDateset = true
+                    // eslint-disable-next-line no-console
                     console.info(e)
                     return
                 }

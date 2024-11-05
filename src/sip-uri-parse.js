@@ -1,4 +1,3 @@
-
 export default function (sipUri) {
     const parsedUri = {}
     let sipUriParts1 = null
@@ -20,7 +19,6 @@ export default function (sipUri) {
         parsedUri.username = sipUriParts3 && sipUriParts3[0] ? sipUriParts3[0] : ''
         parsedUri.password = sipUriParts3 && sipUriParts3[1] ? sipUriParts3[1] : ''
         return parsedUri
-    } else {
-        return null
     }
+    return null
 }

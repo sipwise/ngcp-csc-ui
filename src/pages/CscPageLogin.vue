@@ -100,22 +100,16 @@
 
 <script>
 
-import {
-    mapGetters
-} from 'vuex'
-import {
-    showGlobalError
-} from '../helpers/ui'
-import {
-    Platform
-} from 'quasar'
-import CscSpinner from 'components/CscSpinner'
-import CscInputPassword from 'components/form/CscInputPassword'
-import CscInput from 'components/form/CscInput'
 import CscRetrievePasswordDialog from 'components/CscRetrievePasswordDialog'
 import CscSelectionLanguage from 'components/CscSelectionLanguage'
+import CscSpinner from 'components/CscSpinner'
+import CscInput from 'components/form/CscInput'
+import CscInputPassword from 'components/form/CscInputPassword'
+import { Platform } from 'quasar'
+import { showGlobalError, showToast } from 'src/helpers/ui'
 import { deleteLocal, getLocal } from 'src/storage'
-import { showToast } from 'src/helpers/ui'
+import { mapGetters } from 'vuex'
+
 export default {
     name: 'CscPageLogin',
     components: {

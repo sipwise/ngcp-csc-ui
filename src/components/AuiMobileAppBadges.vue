@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import AppBadgeGoogle from 'components/AppBadgeGoogle'
 import AppBadgeApple from 'components/AppBadgeApple'
+import AppBadgeGoogle from 'components/AppBadgeGoogle'
 import { mapState } from 'vuex'
 export default {
     name: 'AuiMobileAppBadges',

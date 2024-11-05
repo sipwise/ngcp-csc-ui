@@ -1,15 +1,12 @@
-
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
-import { RequestState } from './common'
 import {
+    assignSpeedDialSlot,
     getSpeedDialsById,
-    unassignSpeedDialSlot,
     getUnassignedSlots,
-    assignSpeedDialSlot
-} from '../api/speed-dial'
-import {
-    i18n
-} from 'src/boot/i18n'
+    unassignSpeedDialSlot
+} from 'src/api/speed-dial'
+import { RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -55,7 +52,7 @@ export default {
         },
         unassignedSlots (state) {
             const possibleSlots = ['*0', '*1', '*2', '*3', '*4', '*5', '*6', '*7', '*8', '*9']
-            const assignedSlots = state.assignedSlots.map(slot => slot.slot)
+            const assignedSlots = state.assignedSlots.map((slot) => slot.slot)
             return _.difference(possibleSlots, assignedSlots)
         },
         assignSlotState (state) {

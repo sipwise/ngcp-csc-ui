@@ -1,7 +1,4 @@
-
-import {
-    Platform
-} from 'quasar'
+import { Platform } from 'quasar'
 
 export default {
 

@@ -52,12 +52,11 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import {
-    required
-} from '@vuelidate/validators'
-import CscObjectSpinner from '../../CscObjectSpinner'
 import useValidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
+import CscObjectSpinner from 'components/CscObjectSpinner'
+import _ from 'lodash'
+
 export default {
     name: 'CscPbxMsConfigAddForm',
     components: {

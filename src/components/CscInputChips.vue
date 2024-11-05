@@ -95,8 +95,8 @@ export default {
             this.$emit('input', [])
         },
         remove (removable) {
-            const newItems = this.items.filter(item => item.value !== removable.value)
-            this.$emit('input', newItems.map(item => item.value))
+            const newItems = this.items.filter((item) => item.value !== removable.value)
+            this.$emit('input', newItems.map((item) => item.value))
         },
         add (value) {
             let isValid = true
@@ -105,16 +105,16 @@ export default {
                 isValid = !this.v$.input.$error
             }
             if (isValid) {
-                const exists = this.items.find(item => item.value === value)
+                const exists = this.items.find((item) => item.value === value)
                 if (value !== undefined && value !== null && value !== '' && !exists) {
                     this.resetInput()
                     this.input = ''
                     this.items.push({
-                        value: value,
+                        value,
                         label: value
                     })
 
-                    this.$emit('input', this.items.map(item => item.value))
+                    this.$emit('input', this.items.map((item) => item.value))
                 }
             }
         },
@@ -123,7 +123,7 @@ export default {
                 this.items = []
                 return newItems.forEach((value) => {
                     this.items.push({
-                        value: value,
+                        value,
                         label: value
                     })
                 })

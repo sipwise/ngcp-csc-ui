@@ -1,25 +1,19 @@
-
-import {
-    CreationState,
-    RequestState
-} from './common'
-import {
-    getGroupList,
-    createGroup,
-    removeGroup,
-    setGroupName,
-    setGroupExtension,
-    setGroupHuntPolicy,
-    setGroupHuntTimeout,
-    setGroupNumbers,
-    setGroupSeats,
-    setGroupSoundSet,
-    setGroupHuntCancelMode
-} from '../api/pbx-groups'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
-    i18n
-} from 'src/boot/i18n'
+    createGroup,
+    getGroupList,
+    removeGroup,
+    setGroupExtension,
+    setGroupHuntCancelMode,
+    setGroupHuntPolicy,
+    setGroupHuntTimeout,
+    setGroupName,
+    setGroupNumbers,
+    setGroupSeats,
+    setGroupSoundSet
+} from 'src/api/pbx-groups'
+import { CreationState, RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -148,7 +142,7 @@ export default {
         },
         hasCallQueue (state) {
             return (groupId) => {
-                return _.get(state, 'preferenceMapById.' + groupId + '.cloud_pbx_callqueue', false)
+                return _.get(state, `preferenceMapById.${groupId}.cloud_pbx_callqueue`, false)
             }
         },
         getHuntCancelModeOptions () {
@@ -273,7 +267,7 @@ export default {
                 const filters = _.get(options, 'filters', {})
                 const clearList = _.get(options, 'clearList', true)
                 context.commit('groupListItemsRequesting', {
-                    clearList: clearList
+                    clearList
                 })
                 getGroupList({
                     page,
@@ -286,7 +280,7 @@ export default {
                     context.commit('groupListItemsSucceeded', {
                         groups: groupList.groups,
                         preferences: groupList.preferences,
-                        page: page
+                        page
                     })
                     resolve()
                 }).catch((err) => {

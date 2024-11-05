@@ -156,14 +156,10 @@
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
-import {
-    RequestState
-} from 'src/store/common'
-import CscAudioPlayer from '../../CscAudioPlayer'
-import CscObjectSpinner from '../../CscObjectSpinner'
+import CscAudioPlayer from 'components/CscAudioPlayer'
+import CscObjectSpinner from 'components/CscObjectSpinner'
+import { RequestState } from 'src/store/common'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscPbxSoundSetSound',

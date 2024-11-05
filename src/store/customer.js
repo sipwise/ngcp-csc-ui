@@ -1,8 +1,9 @@
-import { RequestState } from './common'
 import {
     getCustomerPreference,
     setCustomerPreference
-} from '../api/subscriber'
+} from 'src/api/subscriber'
+import { RequestState } from 'src/store/common'
+
 export default {
     namespaced: true,
     state: {

@@ -102,28 +102,28 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import CscPbxSeatAddForm from 'components/pages/PbxConfiguration/CscPbxSeatAddForm'
-import CscPbxSeat from 'components/pages/PbxConfiguration/CscPbxSeat'
+import CscPageSticky from 'components/CscPageSticky'
 import CscRemoveDialog from 'components/CscRemoveDialog'
-import {
-    mapState,
-    mapGetters,
-    mapActions,
-    mapMutations
-} from 'vuex'
+import CscSpinner from 'components/CscSpinner'
+import CscPbxSeat from 'components/pages/PbxConfiguration/CscPbxSeat'
+import CscPbxSeatAddForm from 'components/pages/PbxConfiguration/CscPbxSeatAddForm'
+import CscPbxSeatFilters from 'components/pages/PbxConfiguration/CscPbxSeatFilters'
+import _ from 'lodash'
 import {
     showGlobalError,
     showToast
 } from 'src/helpers/ui'
-import CscSpinner from 'components/CscSpinner'
+import platform from 'src/mixins/platform'
 import {
     CreationState,
     RequestState
 } from 'src/store/common'
-import platform from 'src/mixins/platform'
-import CscPageSticky from 'components/CscPageSticky'
-import CscPbxSeatFilters from 'components/pages/PbxConfiguration/CscPbxSeatFilters'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 
 export default {
     name: 'CscPagePbxSeats',
@@ -245,7 +245,7 @@ export default {
         loadSeatListItemsPaginated (page) {
             this.$scrollTo(this.$parent.$el)
             this.loadSeatListItems({
-                page: page
+                page
             })
         },
         openAddForm () {

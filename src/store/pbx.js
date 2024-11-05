@@ -1,19 +1,15 @@
-
-import numberFilter from '../filters/number'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
-    getAllProfiles, getModel, getModelFrontImage, getModelFrontThumbnailImage
-} from '../api/pbx-config'
-import {
-    getSubscribers
-} from '../api/subscriber'
-import {
-    RequestState
-} from './common'
-import { getNumbers } from '../api/user'
-import {
-    i18n
-} from 'src/boot/i18n'
+    getAllProfiles,
+    getModel,
+    getModelFrontImage,
+    getModelFrontThumbnailImage
+} from 'src/api/pbx-config'
+import { getSubscribers } from 'src/api/subscriber'
+import { getNumbers } from 'src/api/user'
+import numberFilter from 'src/filters/number'
+import { RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -145,7 +141,7 @@ export default {
                 }
                 options.push({
                     label: subscriber.display_name || subscriber.webusername,
-                    icon: icon,
+                    icon,
                     value: subscriber.id,
                     type
                 })
@@ -169,22 +165,21 @@ export default {
         getExtensionHint (state, getters, rootState, rootGetters) {
             const min = getters.getMinAllowedExtension
             const max = getters.getMaxAllowedExtension
-            if (min >= 0 && max == null) {
+            if (min >= 0 && max === null) {
                 return i18n.global.tc('Minimum allowed extension is {min}', {
-                    min: min
+                    min
                 })
             } else if (min < 0 && max) {
                 return i18n.global.tc('Maximum allowed extension is {max}', {
-                    max: max
+                    max
                 })
             } else if (min >= 0 && max) {
                 return i18n.global.tc('Allowed extensions are between {min} and {max}', {
-                    min: min,
-                    max: max
+                    min,
+                    max
                 })
-            } else {
-                return null
             }
+            return null
         }
     },
     mutations: {
@@ -353,6 +348,7 @@ export default {
                 }).then((subscribers) => {
                     context.commit('subscribersSucceeded', subscribers)
                 }).catch((err) => {
+                    // eslint-disable-next-line no-console
                     console.debug(err)
                     context.commit('subscribersSucceeded', {
                         items: []
@@ -369,6 +365,7 @@ export default {
                 }).then((numbers) => {
                     context.commit('numbersSucceeded', numbers)
                 }).catch((err) => {
+                    // eslint-disable-next-line no-console
                     console.debug(err)
                     context.commit('numbersSucceeded', {
                         items: []

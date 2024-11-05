@@ -1,17 +1,17 @@
-
 'use strict'
+
+import { assert } from 'chai'
+import { getPreferences } from 'src/api/subscriber'
 // eslint-disable-next-line import/default
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import { getPreferences } from '../../src/api/subscriber'
-import { assert } from 'chai'
 
 Vue.use(VueResource)
 
-describe('Subscriber', function () {
+describe('Subscriber', () => {
     const subscriberId = 123
 
-    it('should get all subscriber preferences', function (done) {
+    it('should get all subscriber preferences', (done) => {
         Vue.http.interceptors = []
         Vue.http.interceptors.unshift((request, next) => {
             next(request.respondWith(JSON.stringify({
@@ -32,7 +32,7 @@ describe('Subscriber', function () {
         })
     })
 
-    it('should handle a 403 Forbidden while requesting the preferences', function (done) {
+    it('should handle a 403 Forbidden while requesting the preferences', (done) => {
         Vue.http.interceptors = []
         Vue.http.interceptors.unshift((request, next) => {
             next(request.respondWith(JSON.stringify({

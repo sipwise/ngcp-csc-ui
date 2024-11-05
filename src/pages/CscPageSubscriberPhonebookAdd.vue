@@ -70,10 +70,10 @@
     </csc-page-sticky>
 </template>
 <script>
-import { required } from 'vuelidate/lib/validators'
-import { mapWaitingActions } from 'vue-wait'
-import CscPageSticky from 'components/CscPageSticky'
 import useValidate from '@vuelidate/core'
+import CscPageSticky from 'components/CscPageSticky'
+import { mapWaitingActions } from 'vue-wait'
+import { required } from 'vuelidate/lib/validators'
 export default {
     name: 'CscPageSubscriberPhonebookAdd',
     components: {
@@ -102,9 +102,8 @@ export default {
                 return this.$t('{field} is required', {
                     field: this.$t('Name')
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         numberErrorMessage () {
             const errorsTab = this.v$.formData.number.$errors
@@ -112,9 +111,8 @@ export default {
                 return this.$t('{field} is required', {
                     field: this.$t('Number')
                 })
-            } else {
-                return ''
             }
+            return ''
         }
     },
     methods: {
@@ -138,4 +136,4 @@ export default {
         }
     }
 }
- </script>
+</script>

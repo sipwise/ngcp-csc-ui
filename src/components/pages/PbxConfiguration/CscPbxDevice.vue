@@ -46,10 +46,11 @@
 </template>
 
 <script>
-import CscListItemTitle from '../../CscListItemTitle'
-import CscListItemSubtitle from '../../CscListItemSubtitle'
+import CscListItemSubtitle from 'components/CscListItemSubtitle'
+import CscListItemTitle from 'components/CscListItemTitle'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+
 export default {
     name: 'CscPbxDevice',
     components: {
@@ -101,7 +102,7 @@ export default {
             this.$emit('remove')
         },
         goDeviceDetails () {
-            this.$router.push('/user/pbx-configuration/device/' + this.device.id)
+            this.$router.push(`/user/pbx-configuration/device/${this.device.id}`)
         }
     }
 }

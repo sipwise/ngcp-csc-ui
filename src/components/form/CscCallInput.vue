@@ -9,14 +9,12 @@ s
 </template>
 
 <script>
-import {
-    userInfo
-} from 'src/helpers/validation'
+import useValidate from '@vuelidate/core'
 import {
     maxLength,
     required
 } from '@vuelidate/validators'
-import useValidate from '@vuelidate/core'
+import { userInfo } from 'src/helpers/validation'
 
 export default {
     name: 'CscCallInput',
@@ -49,9 +47,8 @@ export default {
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'userInfo') {
                 return this.$t('Input a valid phone number')
-            } else {
-                return ''
             }
+            return ''
         },
         beforeButtons () {
             return this.before ? this.before : []

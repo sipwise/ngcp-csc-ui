@@ -119,19 +119,19 @@
 </template>
 
 <script>
-import {
-    mapGetters,
-    mapActions,
-    mapState,
-    mapMutations
-} from 'vuex'
-import CscPage from 'components/CscPage'
+import useValidate from '@vuelidate/core'
+import { integer } from '@vuelidate/validators'
 import CscInputChips from 'components/CscInputChips'
+import CscPage from 'components/CscPage'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import { integer } from '@vuelidate/validators'
-import useValidate from '@vuelidate/core'
 import _ from 'lodash'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 export default {
     name: 'CscPageCustomerPreferences',
     components: {
@@ -260,21 +260,23 @@ export default {
             this.items.splice(index, 1)
         },
         setPreferenceInboundEvent (value) {
+            let trimmedValue = value
             if (_.isString(value)) {
-                value = _.trim(value)
+                trimmedValue = _.trim(value)
             }
             this.updateBlockInList({
                 customerId: this.getCustomerId,
-                block_in_list: value
+                block_in_list: trimmedValue
             })
         },
         setPreferenceOutboundEvent (value) {
+            let trimmedValue = value
             if (_.isString(value)) {
-                value = _.trim(value)
+                trimmedValue = _.trim(value)
             }
             this.updateBlockOutList({
                 customerId: this.getCustomerId,
-                block_out_list: value
+                block_out_list: trimmedValue
             })
         },
         resetBlockOutOverridePin () {

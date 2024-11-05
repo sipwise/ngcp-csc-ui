@@ -1,17 +1,17 @@
-
 'use strict'
+
+import { assert } from 'chai'
+import { getConversations } from 'src/api/conversations'
 // eslint-disable-next-line import/default
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import { getConversations } from '../../src/api/conversations'
-import { assert } from 'chai'
 
 Vue.use(VueResource)
 
-describe('Conversations', function () {
+describe('Conversations', () => {
     const subscriberId = 123
 
-    it('should get all data regarding conversations', function (done) {
+    it('should get all data regarding conversations', (done) => {
         const innerData = [{
             _links: {
                 collection: {

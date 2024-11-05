@@ -1,11 +1,10 @@
-
 import _ from 'lodash'
 import {
     addPreference,
     addPreferenceFull,
     getAllPreferences,
     getSubscriber
-} from './subscriber'
+} from 'src/api/subscriber'
 
 export function getCallQueues () {
     return new Promise((resolve, reject) => {
@@ -42,7 +41,7 @@ export function getCallQueueList () {
                 subscribers: {
                     items: subscribers
                 },
-                callQueues: callQueues
+                callQueues
             })
         }).catch((err) => {
             reject(err)

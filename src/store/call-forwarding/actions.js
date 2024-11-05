@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import {
     cfCreateOfficeHours,
     cfCreateSourceSet,
@@ -16,14 +17,14 @@ import {
     cfUpdateTimeSetDateRange,
     cfUpdateTimeSetWeekdays
 } from 'src/api/call-forwarding'
-import { v4 } from 'uuid'
 import {
+    get, getList,
     patchReplace,
     patchReplaceFull,
-    post, put, get, getList
+    post, put
 } from 'src/api/common'
-import _ from 'lodash'
 import { showGlobalError } from 'src/helpers/ui'
+import { v4 } from 'uuid'
 
 const DEFAULT_RING_TIMEOUT = 60
 const DEFAULT_PRIORITY = 0
@@ -70,7 +71,7 @@ export async function createMapping ({ dispatch, commit, state, rootGetters }, p
         const destinationSet = await post({
             resource: 'cfdestinationsets',
             body: {
-                name: 'csc-' + v4(),
+                name: `csc-${v4()}`,
                 subscriber_id: subscriberId,
                 destinations: [createDefaultDestination()]
             }
@@ -523,7 +524,9 @@ export async function loadAnnouncements ({ dispatch, commit }) {
                 group: 'custom_announcements'
             }
         })
-        commit('setAnnouncements', announcements.items.map((item) => { return { label: item.handle, value: item.id } }))
+        commit('setAnnouncements', announcements.items.map((item) => {
+            return { label: item.handle, value: item.id }
+        }))
     } catch (err) {
         commit('setAnnouncements', [])
     }

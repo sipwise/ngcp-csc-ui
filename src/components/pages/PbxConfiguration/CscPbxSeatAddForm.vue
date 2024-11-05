@@ -211,12 +211,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { required, maxLength, numeric } from '@vuelidate/validators'
-import { inRange } from 'src/helpers/validation'
+import useValidate from '@vuelidate/core'
+import { maxLength, numeric, required } from '@vuelidate/validators'
 import CscInput from 'components/form/CscInput'
 import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
-import useValidate from '@vuelidate/core'
+import { inRange } from 'src/helpers/validation'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPbxSeatAddForm',
     components: {
@@ -251,10 +251,9 @@ export default {
             sipUsername: {
                 required,
                 maxLength: maxLength(64),
-                noWhiteSpace: (value) => {
+                noWhiteSpace: (value) =>
                     // eslint-disable-next-line prefer-regex-literals
-                    return new RegExp(/\s/).test(value) === false
-                }
+                    new RegExp(/\s/).test(value) === false
             },
             webUsername: {
                 required,
@@ -295,9 +294,8 @@ export default {
                     field: this.$t('Seat Display Name'),
                     maxLength: this.v$.data.displayName.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         seatWebUsernameErrorMessage () {
             const errorsTab = this.v$.data.webUsername.$errors
@@ -310,9 +308,8 @@ export default {
                     field: this.$t('Seat Web Username'),
                     maxLength: this.v$.data.webUsername.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         seatSipUsernameErrorMessage () {
             const errorsTab = this.v$.data.sipUsername.$errors
@@ -330,9 +327,8 @@ export default {
                     field: this.$t('Seat SIP Username'),
                     maxLength: this.v$.data.sipUsername.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         extensionErrorMessage () {
             const errorsTab = this.v$.data.extension.$errors
@@ -351,9 +347,8 @@ export default {
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
                 return this.getExtensionHint
-            } else {
-                return ''
             }
+            return ''
         }
     },
     created () {

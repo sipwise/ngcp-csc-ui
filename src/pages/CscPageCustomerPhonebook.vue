@@ -90,14 +90,14 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
-import CscPage from 'components/CscPage'
 import CscMoreMenu from 'components/CscMoreMenu'
+import CscPage from 'components/CscPage'
+import CscPageSticky from 'components/CscPageSticky'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import { mapWaitingActions } from 'vue-wait'
 import CscSpinner from 'components/CscSpinner'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
-import CscPageSticky from 'components/CscPageSticky'
+import { mapWaitingActions } from 'vue-wait'
+import { mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageCustomerPhonebook',
     components: {
@@ -133,7 +133,7 @@ export default {
                     required: true,
                     label: this.$t('Id'),
                     align: 'left',
-                    field: row => row.id,
+                    field: (row) => row.id,
                     sortable: true
                 },
                 {
@@ -141,7 +141,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Name'),
-                    field: row => row.name,
+                    field: (row) => row.name,
                     sortable: true
                 },
                 {
@@ -149,7 +149,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Number'),
-                    field: row => row.number,
+                    field: (row) => row.number,
                     sortable: true
                 },
                 {
@@ -188,7 +188,7 @@ export default {
             this.pagination.rowsNumber = count
         },
         async showPhonebookDetails (row) {
-            this.$router.push('/user/pbx-configuration/customer-phonebook/' + row.id)
+            this.$router.push(`/user/pbx-configuration/customer-phonebook/${row.id}`)
         },
         async openAddPhonebook () {
             this.$router.push('/user/pbx-configuration/customer-phonebook/create')
@@ -215,7 +215,7 @@ export default {
                 color: 'negative',
                 cancel: true,
                 persistent: true
-            }).onOk(async data => {
+            }).onOk(async (data) => {
                 await this.removeCustomerPhonebook(row)
                 await this.refresh()
             })

@@ -259,30 +259,25 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { inRange } from 'src/helpers/validation'
-import {
-    mapState,
-    mapMutations,
-    mapGetters,
-    mapActions
-} from 'vuex'
-import {
-    RequestState
-} from 'src/store/common'
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import numberFilter from 'src/filters/number'
-import CscPageStickyTabs from 'components/CscPageStickyTabs'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import CscInputButtonReset from 'components/form/CscInputButtonReset'
-import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails.vue'
-import CscFaxToMailSettings from 'components/pages/FaxSettings/CscFaxToMailSettings'
-import CscPageVoicebox from 'src/pages/CscPageVoicebox.vue'
-import CscMailToFaxSettings from 'components/pages/FaxSettings/CscMailToFaxSettings'
 import useValidate from '@vuelidate/core'
+import CscPageStickyTabs from 'components/CscPageStickyTabs'
+import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails'
+import CscFaxToMailSettings from 'components/pages/FaxSettings/CscFaxToMailSettings'
+import CscMailToFaxSettings from 'components/pages/FaxSettings/CscMailToFaxSettings'
+import _ from 'lodash'
+import CscPageVoicebox from 'pages/CscPageVoicebox'
+import numberFilter from 'src/filters/number'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { inRange } from 'src/helpers/validation'
+import { RequestState } from 'src/store/common'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 export default {
     name: 'CscPagePbxGroupDetails',
     components: {
@@ -397,9 +392,8 @@ export default {
             const errorsTab = this.v$.changes.extension.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
                 return this.getExtensionHint
-            } else {
-                return ''
             }
+            return ''
         },
         isLoading () {
             return this.isGroupLoading(this.groupSelected.id)

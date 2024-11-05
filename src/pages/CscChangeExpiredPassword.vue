@@ -146,12 +146,12 @@
 <script>
 import useValidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
-import { mapActions, mapState } from 'vuex'
-import CscSelectionLanguage from 'src/components/CscSelectionLanguage.vue'
-import CscInput from 'src/components/form/CscInput.vue'
-import CscInputPassword from 'src/components/form/CscInputPassword.vue'
+import CscSelectionLanguage from 'components/CscSelectionLanguage'
+import CscInput from 'components/form/CscInput'
+import CscInputPassword from 'components/form/CscInputPassword'
 import { RequestState } from 'src/store/common'
 import { mapWaitingActions } from 'vue-wait'
+import { mapActions, mapState } from 'vuex'
 
 export default {
     name: 'ChangeExpiredPassword',

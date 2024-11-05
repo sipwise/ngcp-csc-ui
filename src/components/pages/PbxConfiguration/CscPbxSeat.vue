@@ -114,11 +114,11 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import CscMoreMenu from 'components/CscMoreMenu'
-import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
-import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscDialogChangePassword from 'components/CscDialogChangePassword'
+import CscMoreMenu from 'components/CscMoreMenu'
+import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
+import _ from 'lodash'
 export default {
     name: 'CscPbxSeat',
     components: {
@@ -228,7 +228,7 @@ export default {
             })
         },
         showSeatDetails () {
-            this.$router.push('/user/pbx-configuration/seat/' + this.seat.id)
+            this.$router.push(`/user/pbx-configuration/seat/${this.seat.id}`)
         }
     }
 }

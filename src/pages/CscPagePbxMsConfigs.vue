@@ -78,29 +78,29 @@
 </template>
 
 <script>
+import CscList from 'components/CscList'
+import CscListActionButton from 'components/CscListActionButton'
+import CscListActions from 'components/CscListActions'
+import CscListSpinner from 'components/CscListSpinner'
+import CscPage from 'components/CscPage'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscPbxMsConfig from 'components/pages/PbxConfiguration/CscPbxMsConfig'
+import CscPbxMsConfigAddForm from 'components/pages/PbxConfiguration/CscPbxMsConfigAddForm'
+import CscFade from 'components/transitions/CscFade'
 import {
-    mapState,
-    mapActions,
-    mapGetters,
-    mapMutations
-} from 'vuex'
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
 import {
     CreationState,
     RequestState
 } from 'src/store/common'
 import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import CscPage from 'components/CscPage'
-import CscPbxMsConfig from 'components/pages/PbxConfiguration/CscPbxMsConfig'
-import CscPbxMsConfigAddForm from 'components/pages/PbxConfiguration/CscPbxMsConfigAddForm'
-import CscRemoveDialog from 'components/CscRemoveDialog'
-import CscListSpinner from 'components/CscListSpinner'
-import CscListActions from 'components/CscListActions'
-import CscList from 'components/CscList'
-import CscFade from 'components/transitions/CscFade'
-import CscListActionButton from 'components/CscListActionButton'
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 
 export default {
     name: 'CscPagePbxMsConfigs',

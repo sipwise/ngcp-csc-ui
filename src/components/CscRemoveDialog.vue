@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import CscDialog from './CscDialog'
+import CscDialog from 'components/CscDialog'
 export default {
     name: 'CscRemoveDialog',
     components: {

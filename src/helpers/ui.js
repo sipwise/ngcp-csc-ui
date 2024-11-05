@@ -1,15 +1,11 @@
+import { i18n } from 'boot/i18n'
+import CscSpinner from 'components/CscSpinner'
 import _ from 'lodash'
 import {
     Loading,
     Notify
 } from 'quasar'
-import {
-    Alert
-} from 'src/quasar-legacy'
-import {
-    i18n
-} from 'src/boot/i18n'
-import CscSpinner from 'components/CscSpinner'
+import { Alert } from 'src/quasar-legacy'
 
 export function startLoading () {
     Loading.show({
@@ -67,7 +63,7 @@ export function showToast (message) {
     Notify.create({
         textColor: 'dark',
         color: 'primary',
-        message: message,
+        message,
         position: 'top'
     })
 }
@@ -90,21 +86,21 @@ export function askForNotificationPermission () {
     })
 }
 
-const serviceWorkerPath = document.location.pathname + '/statics/service-worker.js'
+const serviceWorkerPath = `${document.location.pathname}/statics/service-worker.js`
 export function enableIncomingCallNotifications () {
     return new Promise((resolve) => {
         Promise.resolve().then(() => {
             if (navigator.serviceWorker) {
                 return navigator.serviceWorker.register(serviceWorkerPath)
-            } else {
-                showPermanentGlobalWarning(i18n.global.tc('Incoming call notifications are not supported.'))
-                resolve()
             }
+            showPermanentGlobalWarning(i18n.global.tc('Incoming call notifications are not supported.'))
+            resolve()
         }).then(() => {
             return askForNotificationPermission()
         }).then(() => {
             resolve()
         }).catch((err) => {
+            // eslint-disable-next-line no-console
             console.debug(err)
             showPermanentGlobalWarning(i18n.global.tc('Could not enable incoming call notifications.'))
         })
@@ -116,7 +112,7 @@ export function showCallNotification (number) {
         navigator.serviceWorker.getRegistration(serviceWorkerPath).then((registration) => {
             if (registration && registration.showNotification) {
                 registration.showNotification(i18n.global.tc('Incoming call from {number}', {
-                    number: number
+                    number
                 }), {
                     requireInteraction: true,
                     vibrate: [300, 200, 300, 200, 300],

@@ -364,35 +364,28 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import {
-    RequestState
-} from 'src/store/common'
-import {
-    mapMutations,
-    mapState,
-    mapGetters,
-    mapActions
-} from 'vuex'
+import useValidate from '@vuelidate/core'
+import { maxLength, required } from '@vuelidate/validators'
+import CscChangePasswordDialog from 'components/CscChangePasswordDialog'
 import CscPageStickyTabs from 'components/CscPageStickyTabs'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
-import CscChangePasswordDialog from 'src/components/CscChangePasswordDialog'
-import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails.vue'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails'
 import CscFaxToMailSettings from 'components/pages/FaxSettings/CscFaxToMailSettings'
 import CscMailToFaxSettings from 'components/pages/FaxSettings/CscMailToFaxSettings'
-import CscPageVoicebox from 'src/pages/CscPageVoicebox.vue'
+import _ from 'lodash'
+import CscPageVoicebox from 'pages/CscPageVoicebox'
+import numberFilter from 'src/filters/number'
+import { showGlobalError, showToast } from 'src/helpers/ui'
 import { inRange } from 'src/helpers/validation'
-import numberFilter from '../filters/number'
-import useValidate from '@vuelidate/core'
+import { RequestState } from 'src/store/common'
 import {
-    required,
-    maxLength
-} from '@vuelidate/validators'
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
+
 export default {
     name: 'CscPagePbxSeatDetails',
     components: {
@@ -525,9 +518,8 @@ export default {
             const errorsTab = this.v$.changes.extension.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
                 return this.getExtensionHint
-            } else {
-                return ''
             }
+            return ''
         },
         seatDisplayNameErrorMessage () {
             const errorsTab = this.v$.changes.displayName.$errors
@@ -540,9 +532,8 @@ export default {
                     field: this.$t('Seat Display Name'),
                     maxLength: this.v$.changes.displayName.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         seatWebUsernameErrorMessage () {
             const errorsTab = this.v$.changes.webUsername.$errors
@@ -555,9 +546,8 @@ export default {
                     field: this.$t('Seat Web Username'),
                     maxLength: this.v$.changes.webUsername.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         internalSoundSetOptions () {
             const items = []
@@ -595,7 +585,7 @@ export default {
                 this.numbers().forEach((cli) => {
                     clis.push({ ac: cli.ac, cc: cli.cc, sn: cli.sn, number_id: cli.id })
                 })
-                const cliFound = clis.find(cli => cli.cc + cli.ac + cli.sn === preferences.cli)
+                const cliFound = clis.find((cli) => cli.cc + cli.ac + cli.sn === preferences.cli)
                 if (cliFound) {
                     this.currentCli = {
                         label: cliFound.cc + cliFound.ac + cliFound.sn,

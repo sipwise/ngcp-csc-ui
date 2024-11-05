@@ -148,17 +148,18 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import {
-    required,
-    minValue,
-    maxValue,
-    maxLength,
-    numeric
-} from '@vuelidate/validators'
-import { inRange } from 'src/helpers/validation'
-import CscObjectSpinner from '../../CscObjectSpinner'
 import useValidate from '@vuelidate/core'
+import {
+    maxLength,
+    maxValue,
+    minValue,
+    numeric,
+    required
+} from '@vuelidate/validators'
+import CscObjectSpinner from 'components/CscObjectSpinner'
+import { inRange } from 'src/helpers/validation'
+import { mapGetters } from 'vuex'
+
 export default {
     name: 'CscPbxGroupAddForm',
     components: {
@@ -236,9 +237,8 @@ export default {
                     field: this.$t('Group Name'),
                     maxLength: this.v$.data.name.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         extensionErrorMessage () {
             const errorsTab = this.v$.data.extension.$errors
@@ -257,9 +257,8 @@ export default {
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
                 return this.getExtensionHint
-            } else {
-                return ''
             }
+            return ''
         },
         huntTimeoutErrorMessage () {
             const errorsTab = this.v$.data.huntTimeout.$errors
@@ -281,9 +280,8 @@ export default {
                     field: this.$t('Hunt timeout'),
                     maxValue: this.v$.data.huntTimeout.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         groupModel () {
             return {

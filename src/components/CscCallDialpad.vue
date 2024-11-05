@@ -69,10 +69,9 @@
 </template>
 
 <script>
-import platformMixin from '../mixins/platform'
-import {
-    mapActions
-} from 'vuex'
+import platformMixin from 'src/mixins/platform'
+import { mapActions } from 'vuex'
+
 export default {
     name: 'CscCallDialpad',
     mixins: [

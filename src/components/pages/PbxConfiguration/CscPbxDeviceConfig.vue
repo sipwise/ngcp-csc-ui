@@ -49,11 +49,9 @@
 </template>
 
 <script>
+import CscPbxDeviceConfigKeyForm from 'components/pages/PbxConfiguration/CscPbxDeviceConfigKeyForm'
 import _ from 'lodash'
-import CscPbxDeviceConfigKeyForm from './CscPbxDeviceConfigKeyForm'
-import {
-    BoundingBox2D
-} from 'src/helpers/graphics'
+import { BoundingBox2D } from 'src/helpers/graphics'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -118,18 +116,18 @@ export default {
         },
         canvasStyles () {
             return {
-                width: this.configWidth + 'px'
+                width: `${this.configWidth}px`
             }
         },
         imageWrapperStyles () {
             return {
-                width: this.configWidth + 'px'
+                width: `${this.configWidth}px`
             }
         },
         imageStyles () {
             return {
-                left: this.imageDeltaX + 'px',
-                width: (this.imageWidth * this.imageScaleFactor) + 'px'
+                left: `${this.imageDeltaX}px`,
+                width: `${this.imageWidth * this.imageScaleFactor}px`
             }
         },
         lines () {
@@ -232,12 +230,12 @@ export default {
                 break
             }
             return {
-                top: y + 'px',
-                left: x + 'px',
-                width: width + 'px',
-                height: height + 'px',
+                top: `${y}px`,
+                left: `${x}px`,
+                width: `${width}px`,
+                height: `${height}px`,
                 position: 'absolute',
-                lineHeight: width + 'px',
+                lineHeight: `${width}px`,
                 zIndex: 10
             }
         },
@@ -261,9 +259,9 @@ export default {
             if (line !== null && newLine.type === null) {
                 delete lines[line.index]
             } else if (line !== null) {
-                _.set(lines, line.index + '.subscriber_id', newLine.subscriber_id)
-                _.set(lines, line.index + '.target_number', newLine.target_number)
-                _.set(lines, line.index + '.type', newLine.type)
+                _.set(lines, `${line.index}.subscriber_id`, newLine.subscriber_id)
+                _.set(lines, `${line.index}.target_number`, newLine.target_number)
+                _.set(lines, `${line.index}.type`, newLine.type)
             } else {
                 newLines.push(newLine)
             }

@@ -66,10 +66,10 @@
     </csc-page-sticky>
 </template>
 <script>
-import { required } from 'vuelidate/lib/validators'
-import { mapWaitingActions } from 'vue-wait'
-import CscPageSticky from 'components/CscPageSticky'
 import useValidate from '@vuelidate/core'
+import CscPageSticky from 'components/CscPageSticky'
+import { mapWaitingActions } from 'vue-wait'
+import { required } from 'vuelidate/lib/validators'
 export default {
     name: 'CscPageCustomerPhonebookAdd',
     components: {
@@ -100,9 +100,8 @@ export default {
                 return this.$t('{field} is required', {
                     field: this.$t('Name')
                 })
-            } else {
-                return ''
             }
+            return ''
         }
     },
     methods: {
@@ -128,6 +127,7 @@ export default {
                     this.numberError = true
                     this.numberErrorMessage = this.$t('This number is already in use.')
                 } else {
+                    // eslint-disable-next-line no-console
                     console.error('An error occurred:', error)
                 }
             }

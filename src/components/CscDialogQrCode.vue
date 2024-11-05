@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import CscDialog from './CscDialog'
+import CscDialog from 'components/CscDialog'
 import { mapState } from 'vuex'
 export default {
     name: 'CscDialogQrCode',

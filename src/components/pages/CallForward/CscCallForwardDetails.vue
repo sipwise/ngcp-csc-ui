@@ -87,16 +87,12 @@
 </template>
 
 <script>
-import {
-    mapState,
-    mapGetters,
-    mapActions
-} from 'vuex'
-import CscCfGroup from 'components/call-forwarding/CscCfGroup'
-import CscSpinner from 'components/CscSpinner'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscSpinner from 'components/CscSpinner'
+import CscCfGroup from 'components/call-forwarding/CscCfGroup'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
+import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscCallForwardDetails',
     components: {

@@ -1,23 +1,20 @@
-
 import _ from 'lodash'
-
+import { httpApi } from 'src/api/common'
 import {
-    enableBlockIn,
-    disableBlockIn,
-    getPreferences,
     addToBlockInList,
-    editBlockInList,
-    removeFromBlockInList,
-    enableBlockOut,
-    disableBlockOut,
     addToBlockOutList,
+    disableBlockIn,
+    disableBlockOut,
+    disablePrivacy,
+    editBlockInList,
     editBlockOutList,
-    removeFromBlockOutList,
+    enableBlockIn,
+    enableBlockOut,
     enablePrivacy,
-    disablePrivacy
-} from './subscriber'
-
-import { httpApi } from './common'
+    getPreferences,
+    removeFromBlockInList,
+    removeFromBlockOutList
+} from 'src/api/subscriber'
 
 export function enableIncomingCallBlocking (id) {
     return enableBlockIn(id)
@@ -158,7 +155,7 @@ export function removeNumberFromList (id, field, value) {
             prefs[field] = _.get(prefs, field, []).filter((number) => {
                 return number !== value
             })
-            return httpApi.put('api/subscriberpreferences/' + id, prefs)
+            return httpApi.put(`api/subscriberpreferences/${id}`, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -210,7 +207,7 @@ export function toggleNumberInBothLists (options) {
                     return number !== options.number
                 })
             }
-            return httpApi.put('api/subscriberpreferences/' + options.id, prefs)
+            return httpApi.put(`api/subscriberpreferences/${options.id}`, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {

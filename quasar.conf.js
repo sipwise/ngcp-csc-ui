@@ -13,7 +13,7 @@ const webpack = require('webpack')
 module.exports = function (ctx) {
     let devServerConfig = {}
     try {
-        devServerConfig = (ctx.dev) ? require('./quasar.conf.dev.js') : {}
+        devServerConfig = (ctx.dev) ? require('./quasar.conf.dev') : {}
     } catch (e) {
         if (e.code === 'MODULE_NOT_FOUND') {
             devServerConfig = {}
@@ -125,7 +125,10 @@ module.exports = function (ctx) {
             // https://quasar.dev/quasar-cli/handling-webpack
             extendWebpack (cfg) {
                 cfg.plugins.push(
-                    new ESLintPlugin({ extensions: ['js', 'vue'] })
+                    new ESLintPlugin({
+                        extensions: ['js', 'vue'],
+                        configType: 'flat'
+                    })
                 )
                 cfg.plugins.push(
                     new webpack.ProvidePlugin({
@@ -165,7 +168,7 @@ module.exports = function (ctx) {
                         }
                     },
                     onBeforeSetupMiddleware: (devServer) => {
-                        devServer.app.get('/', function (req, res) {
+                        devServer.app.get('/', (req, res) => {
                             res.redirect(301, devServerConfig.publicPath || '/v2/')
                         })
                     }

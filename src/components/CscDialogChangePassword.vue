@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
 import CscDialog from 'components/CscDialog'
+import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
 export default {
     name: 'CscDialogChangePassword',
     components: {

@@ -1,4 +1,3 @@
-
 import { i18n } from 'boot/i18n'
 import { getKamailioRangeElements, kamailioDatesetToHuman } from 'src/helpers/kamailio-timesets-converter'
 
@@ -35,7 +34,7 @@ export function getDayNameByNumber (dayNumber, isShortName = false) {
 }
 
 export function timeSetDateExact (times) {
-    return times[0].year + '/' + times[0].month + '/' + times[0].mday
+    return `${times[0].year}/${times[0].month}/${times[0].mday}`
 }
 
 export function timeSetDateRange (times) {
@@ -43,24 +42,22 @@ export function timeSetDateRange (times) {
         const hDateset = kamailioDatesetToHuman(times)
         return (hDateset.length === 0)
             ? i18n.global.tc('empty')
-            : hDateset.map(d => (d.from === d.to) ? d.from : d.from + '-' + d.to).join(', ')
+            : hDateset.map((d) => (d.from === d.to) ? d.from : `${d.from}-${d.to}`).join(', ')
     } catch (e) {
         return i18n.global.tc('data error')
     }
 }
 
 export function timeSetWeekdays (times) {
-    const mappedWeekdays = times.map((time) => {
-        return DAY_MAP.indexOf(parseInt(time.wday))
-    })
+    const mappedWeekdays = times.map((time) => DAY_MAP.indexOf(parseInt(time.wday)))
     mappedWeekdays.sort()
-    const weekdaysStr = mappedWeekdays.map(weekday => getDayNameByNumber(weekday)).join(', ')
+    const weekdaysStr = mappedWeekdays.map((weekday) => getDayNameByNumber(weekday)).join(', ')
     return weekdaysStr
 }
 
 export function timeSetOfficeHoursSameTime (times) {
     const weekdays = new Set()
-    times.forEach(kamailioTimeRange => {
+    times.forEach((kamailioTimeRange) => {
         const wdayRange = getKamailioRangeElements(kamailioTimeRange.wday)[0]
         for (let day = wdayRange.from; day <= wdayRange.to; day++) {
             // To have Monday the first day of a week we are mapping days to change order
@@ -69,7 +66,7 @@ export function timeSetOfficeHoursSameTime (times) {
     })
     const weekdaysSorted = Array.from(weekdays)
     weekdaysSorted.sort()
-    const weekdaysStr = weekdaysSorted.map(weekday => getDayNameByNumber(weekday)).join(', ')
+    const weekdaysStr = weekdaysSorted.map((weekday) => getDayNameByNumber(weekday)).join(', ')
     return weekdaysStr
 }
 

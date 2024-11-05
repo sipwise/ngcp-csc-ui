@@ -1,12 +1,11 @@
-
 'use strict'
 
-import VoiceboxModule from '../../src/store/voicebox'
 import { i18n } from 'boot/i18n'
 import { assert } from 'chai'
+import VoiceboxModule from 'src/store/voicebox'
 
-describe('Voicebox', function () {
-    it('should load all voicebox settings into store', function () {
+describe('Voicebox', () => {
+    it('should load all voicebox settings into store', () => {
         const state = {
             voiceboxSettingDelete: false,
             voiceboxSettingAttach: false,
@@ -28,7 +27,7 @@ describe('Voicebox', function () {
         assert.equal(state.voiceboxSettingPin, settings.pin)
     })
 
-    it('should load all busy greeting id into store', function () {
+    it('should load all busy greeting id into store', () => {
         const state = {
             busyGreetingId: null
         }
@@ -41,7 +40,7 @@ describe('Voicebox', function () {
         assert.deepEqual(state.busyGreetingId, greetings[0].id)
     })
 
-    it('should load busy greeting id into store', function () {
+    it('should load busy greeting id into store', () => {
         const state = {
             busyGreetingId: null
         }
@@ -54,7 +53,7 @@ describe('Voicebox', function () {
         assert.deepEqual(state.busyGreetingId, greetings[0].id)
     })
 
-    it('should load unavailable greeting id into store', function () {
+    it('should load unavailable greeting id into store', () => {
         const state = {
             unavailGreetingId: null
         }
@@ -67,7 +66,7 @@ describe('Voicebox', function () {
         assert.deepEqual(state.unavailGreetingId, greetings[0].id)
     })
 
-    it('should load busy greeting url into store', function () {
+    it('should load busy greeting url into store', () => {
         const state = {
             playBusyGreetingUrl: null
         }
@@ -76,7 +75,7 @@ describe('Voicebox', function () {
         assert.deepEqual(state.playBusyGreetingUrl, url)
     })
 
-    it('should load unavailable greeting id into store', function () {
+    it('should load unavailable greeting id into store', () => {
         const state = {
             playUnavailGreetingUrl: null
         }
@@ -85,7 +84,7 @@ describe('Voicebox', function () {
         assert.deepEqual(state.playUnavailGreetingUrl, url)
     })
 
-    it('should get right label for busy greeting to indicate if it\'s custom or default', function () {
+    it('should get right label for busy greeting to indicate if it\'s custom or default', () => {
         const state = {
             busyGreetingId: null
         }
@@ -93,7 +92,7 @@ describe('Voicebox', function () {
         assert.equal(getterObject, i18n.t('Default sound'))
     })
 
-    it('should get right label for unavailable greeting to indicate if it\'s custom or default', function () {
+    it('should get right label for unavailable greeting to indicate if it\'s custom or default', () => {
         const state = {
             unavailGreetingId: 1
         }

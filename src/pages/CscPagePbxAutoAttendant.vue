@@ -92,14 +92,14 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { mapGetters } from 'vuex'
-import { mapWaitingActions } from 'vue-wait'
-import { displayName } from 'src/filters/subscriber'
 import CscPage from 'components/CscPage'
-import CscPbxAutoAttendantSlotsTable from 'components/pages/PbxConfiguration/CscPbxAutoAttendantSlotsTable'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscPbxAutoAttendantSlotsTable from 'components/pages/PbxConfiguration/CscPbxAutoAttendantSlotsTable'
+import _ from 'lodash'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { displayName } from 'src/filters/subscriber'
+import { mapWaitingActions } from 'vue-wait'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPagePbxAutoAttendant',
     components: {
@@ -117,15 +117,15 @@ export default {
                     required: true,
                     label: this.$t('Id'),
                     align: 'left',
-                    field: row => row.subscriber_id,
-                    format: val => `${val}`
+                    field: (row) => row.subscriber_id,
+                    format: (val) => `${val}`
                 },
                 {
                     name: 'Name',
                     required: true,
                     align: 'left',
                     label: this.$t('Name'),
-                    field: row => displayName(row.subscriber_id_expand)
+                    field: (row) => displayName(row.subscriber_id_expand)
                 }
             ],
             pagination: {
@@ -145,7 +145,7 @@ export default {
     watch: {
         slots () {
             this.data = this.slots
-            this.rowStatus = this.slots.map(slot => {
+            this.rowStatus = this.slots.map((slot) => {
                 return {
                     subscriber_id: slot.subscriber_id,
                     expanded: false
@@ -166,7 +166,7 @@ export default {
         async fetchWithPagination (props) {
             const { page, rowsPerPage } = props.pagination
             const count = await this.fetchAutoAttendants({
-                page: page,
+                page,
                 rows: rowsPerPage
             })
             this.pagination = { ...props.pagination }
@@ -174,30 +174,30 @@ export default {
         },
         async addSlot (subscriberId, slot) {
             this.createNewSlot({
-                subscriberId: subscriberId,
-                slot: slot
+                subscriberId,
+                slot
             })
             this.expandRow(subscriberId)
         },
         isRowExpanded (subscriberId) {
-            const rowStatus = this.rowStatus.filter(row => row.subscriber_id === subscriberId)[0] || null
+            const rowStatus = this.rowStatus.filter((row) => row.subscriber_id === subscriberId)[0] || null
             return rowStatus && rowStatus.expanded
         },
         updateCollapseArray (subscriberId) {
-            const rowStatus = this.rowStatus.filter(row => row.subscriber_id === subscriberId)[0]
+            const rowStatus = this.rowStatus.filter((row) => row.subscriber_id === subscriberId)[0]
             rowStatus.expanded = !rowStatus.expanded
         },
         getAvailableSlots (subscriberSlots, subscriberId) {
-            const subscriberSavedSlots = subscriberSlots.map(item => item.slot)
-            const subscriberNewSlots = this.newSlots.filter(item => item.subscriber_id === subscriberId)
-            subscriberSlots = subscriberNewSlots.length > 0
-                ? [...subscriberSavedSlots, ...subscriberNewSlots[0].slots.map(item => item.slot)]
+            const subscriberSavedSlots = subscriberSlots.map((item) => item.slot)
+            const subscriberNewSlots = this.newSlots.filter((item) => item.subscriber_id === subscriberId)
+            const combinedSubscriberSlots = subscriberNewSlots.length > 0
+                ? [...subscriberSavedSlots, ...subscriberNewSlots[0].slots.map((item) => item.slot)]
                 : subscriberSavedSlots
-            const availableSlots = this.slotsNumbers.filter(slot => !subscriberSlots.includes(slot))
+            const availableSlots = this.slotsNumbers.filter((slot) => !combinedSubscriberSlots.includes(slot))
             return availableSlots
         },
         expandRow (subscriberId) {
-            const status = this.rowStatus.filter(row => row.subscriber_id === subscriberId)[0]
+            const status = this.rowStatus.filter((row) => row.subscriber_id === subscriberId)[0]
             status.expanded = true
         },
         sortedSlots (slots) {

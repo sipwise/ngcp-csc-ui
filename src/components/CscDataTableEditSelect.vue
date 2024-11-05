@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { i18n } from 'src/boot/i18n'
+import { i18n } from 'boot/i18n'
 export default {
     name: 'CscDataTableEditSelect',
     props: {
@@ -83,12 +83,11 @@ export default {
     },
     computed: {
         label () {
-            const refOption = this.column.componentOptions.find(option => option.value === this.value)
+            const refOption = this.column.componentOptions.find((option) => option.value === this.value)
             if (refOption) {
                 return refOption.label
-            } else {
-                return this.value
             }
+            return this.value
         }
     },
     methods: {

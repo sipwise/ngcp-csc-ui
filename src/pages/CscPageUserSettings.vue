@@ -63,13 +63,13 @@
 </template>
 
 <script>
-import { showGlobalError, showToast } from 'src/helpers/ui'
-import { mapGetters } from 'vuex'
 import CscPage from 'components/CscPage'
-import CscChangePasswordEmbedded from 'components/pages/UserSettings/CscChangePasswordEmbeded'
-import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
-import { copyToClipboard } from 'quasar'
 import CscInputPassword from 'components/form/CscInputPassword'
+import CscChangePasswordEmbedded from 'components/pages/UserSettings/CscChangePasswordEmbeded'
+import { copyToClipboard } from 'quasar'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
+import { mapGetters } from 'vuex'
 
 const WAIT_CHANGE_WEB_PASSWORD = 'processing-changeWebPassword'
 const WAIT_CHANGE_SIP_PASSWORD = 'processing-changeSIPPassword'
@@ -101,7 +101,7 @@ export default {
         },
         currentSIPURI () {
             const subscriberData = this.getSubscriber
-            return subscriberData?.username + '@' + subscriberData?.domain
+            return `${subscriberData?.username}@${subscriberData?.domain}`
         }
     },
     methods: {
@@ -128,14 +128,13 @@ export default {
             }
         },
         copy2clipboard (copyData) {
-            copyToClipboard(copyData)
-                .then(() => {
-                    showToast(this.$t('Data is in the clipboard'))
-                })
-                .catch(() => {
-                    console.error(copyData)
-                    showGlobalError(this.$t('Unable to copy data to clipboard'))
-                })
+            copyToClipboard(copyData).then(() => {
+                showToast(this.$t('Data is in the clipboard'))
+            }).catch(() => {
+                // eslint-disable-next-line no-console
+                console.error(copyData)
+                showGlobalError(this.$t('Unable to copy data to clipboard'))
+            })
         }
     }
 }

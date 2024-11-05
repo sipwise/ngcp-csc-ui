@@ -172,23 +172,23 @@
 </template>
 
 <script>
+import useValidate from '@vuelidate/core'
+import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscPbxDeviceConfig from 'components/pages/PbxConfiguration/CscPbxDeviceConfig'
 import CscPbxModelSelect from 'components/pages/PbxConfiguration/CscPbxModelSelect'
-import useValidate from '@vuelidate/core'
+import {
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
 import {
     mapActions,
     mapGetters,
     mapMutations,
     mapState
 } from 'vuex'
-import { RequestState } from 'src/store/common'
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
 export default {
     name: 'CscPagePbxDeviceDetails',
     components: {
@@ -358,7 +358,7 @@ export default {
         keysSave (keys) {
             this.setDeviceKeys({
                 deviceId: this.deviceSelected.id,
-                keys: keys
+                keys
             })
         },
         save () {

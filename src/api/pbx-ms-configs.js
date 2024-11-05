@@ -1,11 +1,10 @@
-
 import _ from 'lodash'
 import {
     addPreference,
     addPreferenceFull,
     getAllPreferences,
     getSubscriber
-} from './subscriber'
+} from 'src/api/subscriber'
 
 export function getMsConfigs () {
     return new Promise((resolve, reject) => {
@@ -42,7 +41,7 @@ export function getMsConfigList () {
                 subscribers: {
                     items: subscribers
                 },
-                msConfigs: msConfigs
+                msConfigs
             })
         }).catch((err) => {
             reject(err)

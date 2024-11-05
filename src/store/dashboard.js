@@ -1,14 +1,7 @@
-import {
-    getAllCallsOrVoicemails
-} from '../api/conversations'
-import {
-    getSubscriberRegistrations
-} from '../api/subscriber'
-
-import {
-    getBrowserTimezone
-} from '../helpers/date-helper'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { getAllCallsOrVoicemails } from 'src/api/conversations'
+import { getSubscriberRegistrations } from 'src/api/subscriber'
+import { getBrowserTimezone } from 'src/helpers/date-helper'
 
 export default {
     namespaced: true,

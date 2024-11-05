@@ -72,14 +72,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import CscPageSticky from 'components/CscPageSticky'
-import { mapWaitingActions } from 'vue-wait'
 import CscSpinner from 'components/CscSpinner'
-import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import CscCdrFilters from 'components/pages/PbxStatistics/CscCdrFilters'
-
 import _ from 'lodash'
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { mapWaitingActions } from 'vue-wait'
+import { mapState } from 'vuex'
 export default {
     name: 'CscPagePbxStatisticsCdr',
     components: {
@@ -117,7 +116,7 @@ export default {
                     required: true,
                     label: this.$t('Start time'),
                     align: 'left',
-                    field: row => this.$filters.smartTime(row.start_time),
+                    field: (row) => this.$filters.smartTime(row.start_time),
                     sortable: true
                 },
                 {
@@ -125,7 +124,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Type'),
-                    field: row => _.capitalize(row.type),
+                    field: (row) => _.capitalize(row.type),
                     sortable: true
                 },
                 {
@@ -133,7 +132,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Caller'),
-                    field: row => row.caller,
+                    field: (row) => row.caller,
                     sortable: true
                 },
                 {
@@ -141,7 +140,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Callee'),
-                    field: row => row.callee,
+                    field: (row) => row.callee,
                     sortable: true
                 },
                 {
@@ -149,7 +148,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Direction'),
-                    field: row => row.direction,
+                    field: (row) => row.direction,
                     sortable: true
                 },
                 {
@@ -157,7 +156,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Duration'),
-                    field: row => row.duration,
+                    field: (row) => row.duration,
                     sortable: true
                 },
                 {
@@ -165,7 +164,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Status'),
-                    field: row => row.status,
+                    field: (row) => row.status,
                     sortable: true
                 }
             ]
@@ -193,8 +192,8 @@ export default {
                 order_by_direction: descending ? 'desc' : 'asc',
                 from: startTime,
                 to: endTime,
-                direction: direction,
-                type: type
+                direction,
+                type
             })
             this.pagination = { ...props.pagination }
             this.pagination.rowsNumber = count
@@ -210,7 +209,6 @@ export default {
         },
         filterEvent (filter) {
             this.$scrollTo(this.$parent.$el)
-            console.log(filter)
             this.filter = filter
             this.fetchPaginatedConversations({
                 pagination: this.pagination

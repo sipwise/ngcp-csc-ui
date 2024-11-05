@@ -1,9 +1,6 @@
-
-import { RequestState } from './common'
-import { createFax } from '../api/communication'
-import {
-    i18n
-} from 'src/boot/i18n'
+import { i18n } from 'boot/i18n'
+import { createFax } from 'src/api/communication'
+import { RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,

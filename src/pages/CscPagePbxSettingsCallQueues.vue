@@ -59,24 +59,22 @@
 </template>
 
 <script>
-import {
-    mapGetters,
-    mapState
-} from 'vuex'
-import { mapWaitingActions } from 'vue-wait'
-import CscPage from 'components/CscPage'
-import CscInputSaveable from 'components/form/CscInputSaveable'
-import CscSpinner from 'components/CscSpinner'
+import useValidate from '@vuelidate/core'
 import {
     maxValue,
     minValue,
     numeric
 } from '@vuelidate/validators'
+import CscPage from 'components/CscPage'
+import CscSpinner from 'components/CscSpinner'
+import CscInputSaveable from 'components/form/CscInputSaveable'
 import { getSubscriberId } from 'src/auth'
+import { showToast } from 'src/helpers/ui'
+import { mapWaitingActions } from 'vue-wait'
 import {
-    showToast
-} from 'src/helpers/ui'
-import useValidate from '@vuelidate/core'
+    mapGetters,
+    mapState
+} from 'vuex'
 export default {
     name: 'CscPagePbxSettingsCallQueues',
     components: {
@@ -139,9 +137,8 @@ export default {
                     field: this.$t('Queue Length'),
                     maxValue: this.v$.changes.max_queue_length.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         queueWrapUpTimeErrorMessage () {
             const errorsTab = this.v$.changes.queue_wrap_up_time.$errors
@@ -159,9 +156,8 @@ export default {
                     field: this.$t('Wrap Up Time'),
                     maxValue: this.v$.changes.queue_wrap_up_time.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         isLoading () {
             return this.$wait.is('csc-pbx-call-settings-load-preferences') ||

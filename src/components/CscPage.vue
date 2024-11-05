@@ -8,7 +8,7 @@
 
 <script>
 
-import platformMixin from '../mixins/platform'
+import platformMixin from 'src/mixins/platform'
 export default {
     name: 'CscPage',
     mixins: [

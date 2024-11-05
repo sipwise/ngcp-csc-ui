@@ -58,8 +58,8 @@
 
 <script>
 
-import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
 import CscSpinner from 'components/CscSpinner'
+import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
 export default {
     name: 'CscChangePasswordEmbedded',
     components: { CscSpinner, CscInputPasswordRetype },
@@ -154,7 +154,7 @@ export default {
                     color: 'primary',
                     cancel: true,
                     persistent: true
-                }).onOk(data => {
+                }).onOk((data) => {
                     this.submit()
                 })
             } else {

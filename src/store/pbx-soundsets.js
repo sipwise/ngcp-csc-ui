@@ -1,26 +1,20 @@
-import {
-    CreationState,
-    RequestState
-} from './common'
-
-import {
-    getSoundSetList,
-    createSoundSet,
-    removeSoundSet,
-    setAsDefault,
-    setSoundSetName,
-    setSoundSetDescription,
-    setSoundSetParent,
-    getAllSoundHandles,
-    getAllSoundFilesBySoundSetId,
-    getSoundFile,
-    uploadSoundFile,
-    setLoopPlay, unsetAsDefault, setUseParent, removeSoundFile
-} from '../api/pbx-soundsets'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
-    i18n
-} from 'src/boot/i18n'
+    createSoundSet,
+    getAllSoundFilesBySoundSetId,
+    getAllSoundHandles,
+    getSoundFile,
+    getSoundSetList, removeSoundFile,
+    removeSoundSet,
+    setAsDefault,
+    setLoopPlay,
+    setSoundSetDescription,
+    setSoundSetName,
+    setSoundSetParent, setUseParent, unsetAsDefault,
+    uploadSoundFile
+} from 'src/api/pbx-soundsets'
+import { CreationState, RequestState } from 'src/store/common'
 
 const soundFileUploadRequests = new Map()
 
@@ -101,7 +95,7 @@ export default {
             if (state.soundSetRemoving !== null) {
                 const id = _.get(state, 'soundSetRemoving.id', null)
                 return i18n.global.tc('You are about to remove sound set {soundSetName}', {
-                    soundSetName: _.get(state, 'soundSetMap.' + id + '.name', null)
+                    soundSetName: _.get(state, `soundSetMap.${id}.name`, null)
                 })
             }
             return ''
@@ -184,7 +178,9 @@ export default {
         },
         soundSetUpdateSucceeded (state, soundSet) {
             state.soundSetUpdateState = RequestState.succeeded
-            const index = state.soundSetList.findIndex((soundSetItem) => soundSetItem.id === soundSet.id)
+            const index = state.soundSetList.findIndex((soundSetItem) => {
+                return soundSetItem.id === soundSet.id
+            })
             state.soundSetMap[soundSet.id] = soundSet
             state.soundSetList[index] = soundSet
             if (state?.soundSetSelected?.id === soundSet.id) {
@@ -207,7 +203,9 @@ export default {
         },
         soundSetRemovalSucceeded (state, soundSetId) {
             state.soundSetRemovalState = RequestState.succeeded
-            const index = state.soundSetList.findIndex((soundSetItem) => soundSetItem.id === soundSetId)
+            const index = state.soundSetList.findIndex((soundSetItem) => {
+                return soundSetItem.id === soundSetId
+            })
             delete state.soundSetMap[soundSetId]
             state.soundSetList.splice(index, 1)
         },
@@ -234,7 +232,9 @@ export default {
                 return soundHandle
             })
             state.soundHandleGroups.map((group) => {
-                state.soundHandleList[group] = soundHandleList.filter((soundHandle) => group === soundHandle.group)
+                state.soundHandleList[group] = soundHandleList.filter((soundHandle) => {
+                    return group === soundHandle.group
+                })
                 return group
             })
         },
@@ -362,19 +362,20 @@ export default {
             return new Promise((resolve) => {
                 const listVisible = _.get(options, 'listVisible', false)
                 context.commit('soundSetListRequesting', {
-                    listVisible: listVisible
+                    listVisible
                 })
                 let page = _.get(options, 'page', context.state.soundSetListCurrentPage)
                 page = (page === null) ? 1 : page
                 getSoundSetList({
-                    page: page
+                    page
                 }).then((soundSetList) => {
                     context.commit('soundSetListSucceeded', {
                         soundSets: soundSetList.soundSets,
-                        page: page
+                        page
                     })
                     resolve()
                 }).catch((err) => {
+                    // eslint-disable-next-line no-console
                     console.debug(err)
                     context.commit('soundSetListSucceeded', {
                         soundSets: []
@@ -458,6 +459,7 @@ export default {
                 getAllSoundHandles().then((soundHandles) => {
                     context.commit('soundHandlesSucceeded', soundHandles)
                 }).catch((err) => {
+                    // eslint-disable-next-line no-console
                     console.debug(err)
                     context.commit('soundHandlesSucceeded', {
                         items: []
@@ -468,13 +470,14 @@ export default {
                 context.commit('soundFilesRequesting', soundSetId)
                 getAllSoundFilesBySoundSetId(soundSetId).then((soundFiles) => {
                     context.commit('soundFilesSucceeded', {
-                        soundSetId: soundSetId,
-                        soundFiles: soundFiles
+                        soundSetId,
+                        soundFiles
                     })
                 }).catch((err) => {
+                    // eslint-disable-next-line no-console
                     console.debug(err)
                     context.commit('soundFilesSucceeded', {
-                        soundSetId: soundSetId,
+                        soundSetId,
                         soundFiles: {
                             items: []
                         }
@@ -484,19 +487,20 @@ export default {
         },
         playSoundFile (context, soundFile) {
             context.commit('soundFileRequesting', {
-                soundFile: soundFile
+                soundFile
             })
             getSoundFile({
                 id: soundFile.id
             }).then((soundFileUrl) => {
                 context.commit('soundFileSucceeded', {
-                    soundFile: soundFile,
-                    soundFileUrl: soundFileUrl
+                    soundFile,
+                    soundFileUrl
                 })
             }).catch((err) => {
+                // eslint-disable-next-line no-console
                 console.debug(err)
                 context.commit('soundFileFailed', {
-                    soundFile: soundFile
+                    soundFile
                 })
             })
         },
@@ -521,12 +525,13 @@ export default {
                             soundSetId: options.soundSetId,
                             soundHandle: options.soundHandle
                         }),
-                        progress: progress
+                        progress
                     })
                 }
             }).then((res) => {
                 context.commit('soundFileUploadSucceeded', res)
             }).catch((err) => {
+                // eslint-disable-next-line no-console
                 console.debug(err)
                 context.commit('soundFileUploadAborted', {
                     soundFileId: toFileId({
@@ -541,6 +546,7 @@ export default {
             setLoopPlay(options).then((soundFile) => {
                 context.commit('soundFileUpdateSucceeded', soundFile)
             }).catch((err) => {
+                // eslint-disable-next-line no-console
                 console.debug(err)
                 context.commit('soundFileUpdateFailed', options)
             })
@@ -550,6 +556,7 @@ export default {
             setUseParent(options).then((soundFile) => {
                 context.commit('soundFileUpdateSucceeded', soundFile)
             }).catch((err) => {
+                // eslint-disable-next-line no-console
                 console.debug(err)
                 context.commit('soundFileUpdateFailed', options)
             })
@@ -559,6 +566,7 @@ export default {
             removeSoundFile(options.soundFileId).then(() => {
                 context.commit('soundFileRemoveSucceeded', options)
             }).catch((err) => {
+                // eslint-disable-next-line no-console
                 console.debug(err)
                 context.commit('soundFileRemoveFailed', options)
             })

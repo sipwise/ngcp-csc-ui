@@ -1,6 +1,4 @@
-import {
-    i18n
-} from 'boot/i18n'
+import { i18n } from 'boot/i18n'
 
 export const CallState = {
     input: 'input',
@@ -13,13 +11,27 @@ export const CallState = {
     unhold: 'unhold'
 }
 export const CallStateTitle = {
-    get input () { return i18n.global.tc('Start new call') },
-    get initiating () { return i18n.global.tc('Calling') },
-    get ringing () { return i18n.global.tc('Ringing at') },
-    get incoming () { return i18n.global.tc('Incoming call from') },
-    get established () { return i18n.global.tc('In call with') },
-    get ended () { return i18n.global.tc('Call ended') },
-    get hold () { return i18n.global.tc('Call holded') }
+    get input () {
+        return i18n.global.tc('Start new call')
+    },
+    get initiating () {
+        return i18n.global.tc('Calling')
+    },
+    get ringing () {
+        return i18n.global.tc('Ringing at')
+    },
+    get incoming () {
+        return i18n.global.tc('Incoming call from')
+    },
+    get established () {
+        return i18n.global.tc('In call with')
+    },
+    get ended () {
+        return i18n.global.tc('Call ended')
+    },
+    get hold () {
+        return i18n.global.tc('Call holded')
+    }
 }
 
 export const MediaType = {

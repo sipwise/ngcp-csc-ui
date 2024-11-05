@@ -1,7 +1,4 @@
-
-import {
-    CallState
-} from 'src/store/call/common'
+import { CallState } from 'src/store/call/common'
 
 export default {
     connectionError: null,

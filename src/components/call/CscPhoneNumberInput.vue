@@ -16,15 +16,12 @@
     />
 </template>
 <script>
-import { nextTick } from 'vue'
-import {
-    userInfoAndEmpty
-} from 'src/helpers/validation'
-import {
-    maxLength
-} from '@vuelidate/validators'
-import platformMixin from '../../mixins/platform'
 import useValidate from '@vuelidate/core'
+import { maxLength } from '@vuelidate/validators'
+import platformMixin from 'src/components/mixins/platform'
+import { userInfoAndEmpty } from 'src/helpers/validation'
+import { nextTick } from 'vue'
+
 export default {
     name: 'CscPhoneNumberInput',
     validations: {
@@ -79,9 +76,8 @@ export default {
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'userInfo') {
                 return this.$t('Input a valid phone number')
-            } else {
-                return ''
             }
+            return ''
         },
         helperMessage () {
             return this.$t('Input a phone number')

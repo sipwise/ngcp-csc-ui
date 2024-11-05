@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import CscObjectSpinner from './CscObjectSpinner'
+import CscObjectSpinner from 'components/CscObjectSpinner'
 export default {
     name: 'CscListItem',
     components: {

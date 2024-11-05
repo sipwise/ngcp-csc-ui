@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import CscCfGroupConditionOfficeHours from 'components/call-forwarding/CscCfGroupConditionOfficeHours'
 import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
+import CscCfGroupConditionOfficeHours from 'components/call-forwarding/CscCfGroupConditionOfficeHours'
 export default {
     name: 'CscCfConditionPopupOfficeHours',
     components: {

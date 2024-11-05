@@ -1,5 +1,5 @@
-import { post } from 'src/api/common'
 import _ from 'lodash'
+import { post } from 'src/api/common'
 
 export async function createFax (options) {
     const formData = new FormData()

@@ -1,15 +1,14 @@
-
+import { saveAs } from 'file-saver'
 import _ from 'lodash'
-import {
-    saveAs
-} from 'file-saver'
 import {
     getIncomingCallBlocking,
     getOutgoingCallBlocking
-} from './call-blocking'
+} from 'src/api/call-blocking'
 import {
-    getList, LIST_DEFAULT_ROWS, httpApi
-} from './common'
+    LIST_DEFAULT_ROWS,
+    getList,
+    httpApi
+} from 'src/api/common'
 
 export function getConversations (options) {
     return new Promise((resolve, reject) => {
@@ -47,7 +46,7 @@ export function getConversations (options) {
         getList({
             path: 'api/conversations/',
             root: '_embedded.ngcp:conversations',
-            params: params,
+            params,
             all: false
         }).then((list) => {
             resolve(list)
@@ -59,11 +58,11 @@ export function getConversations (options) {
 
 export function downloadVoiceMail (id) {
     return new Promise((resolve, reject) => {
-        httpApi.get('api/voicemailrecordings/' + id, { responseType: 'blob' })
+        httpApi.get(`api/voicemailrecordings/${id}`, { responseType: 'blob' })
             .then((res) => {
                 return res.data
-            }).then(voicemail => {
-                saveAs((voicemail), 'voicemail-' + id + '.wav')
+            }).then((voicemail) => {
+                saveAs((voicemail), `voicemail-${id}.wav`)
                 resolve()
             }).catch((err) => {
                 reject(err)
@@ -73,11 +72,11 @@ export function downloadVoiceMail (id) {
 
 export function downloadFax (id) {
     return new Promise((resolve, reject) => {
-        httpApi.get('api/faxrecordings/' + id, { responseType: 'blob' })
+        httpApi.get(`api/faxrecordings/${id}`, { responseType: 'blob' })
             .then((res) => {
                 return res.data
-            }).then(fax => {
-                saveAs((fax), 'fax-' + id + '.tif')
+            }).then((fax) => {
+                saveAs((fax), `fax-${id}.tif`)
                 resolve()
             }).catch((err) => {
                 reject(err)
@@ -88,7 +87,7 @@ export function downloadFax (id) {
 export function playVoiceMail (options) {
     return new Promise((resolve, reject) => {
         const params = { format: options.format }
-        httpApi.get(`api/voicemailrecordings/${options.id}`, { params: params, responseType: 'blob' })
+        httpApi.get(`api/voicemailrecordings/${options.id}`, { params, responseType: 'blob' })
             .then((res) => {
                 resolve(URL.createObjectURL(res.data))
             }).catch((err) => {
@@ -118,7 +117,7 @@ export function getOutgoingBlocked (id) {
 }
 
 export async function deleteVoicemail (id) {
-    const res = await httpApi.delete('api/voicemails/' + id)
+    const res = await httpApi.delete(`api/voicemails/${id}`)
     return res.status >= 200
 }
 
@@ -130,6 +129,6 @@ export async function getAllCallsOrVoicemails (options) {
 }
 
 export async function deleteFax (id) {
-    const res = await httpApi.delete('api/faxes/' + id)
+    const res = await httpApi.delete(`api/faxes/${id}`)
     return res.status >= 200
 }

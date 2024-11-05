@@ -58,17 +58,15 @@
 </template>
 
 <script>
-import CscListItem from '../../CscListItem'
-import CscListItemTitle from '../../CscListItemTitle'
-import CscListItemSubtitle from '../../CscListItemSubtitle'
-import CscListMenuItem from '../../CscListMenuItem'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import CscInputButtonReset from 'components/form/CscInputButtonReset'
-import CscRemoveDialog from 'components/CscRemoveDialog'
-import {
-    required
-} from '@vuelidate/validators'
 import useValidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
+import CscListItem from 'components/CscListItem'
+import CscListItemSubtitle from 'components/CscListItemSubtitle'
+import CscListItemTitle from 'components/CscListItemTitle'
+import CscListMenuItem from 'components/CscListMenuItem'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
 export default {
     name: 'CscPbxSettingsAutoAttendant',
     components: {
@@ -109,9 +107,8 @@ export default {
             const errorsTab = this.v$.newDestination.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('Destination must not be empty')
-            } else {
-                return ''
             }
+            return ''
         }
     },
     mounted () {

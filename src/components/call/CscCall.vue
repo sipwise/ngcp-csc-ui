@@ -365,19 +365,14 @@
 </template>
 
 <script>
+import CscCallDialpad from 'components/CscCallDialpad'
+import CscMedia from 'components/CscMedia'
+import numberFormat, { normalizeDestination } from 'src/filters/number-format'
+import { showCallNotification } from 'src/helpers/ui'
 import platformMixin from 'src/mixins/platform'
-import numberFormat, {
-    normalizeDestination
-} from 'src/filters/number-format'
-import {
-    showCallNotification
-} from 'src/helpers/ui'
-import CscMedia from '../CscMedia'
-import CscCallDialpad from '../CscCallDialpad'
 import { CallStateTitle } from 'src/store/call/common'
-import {
-    mapState
-} from 'vuex'
+import { mapState } from 'vuex'
+
 export default {
     name: 'CscCall',
     components: {
@@ -498,7 +493,7 @@ export default {
             const classes = [
                 'transition-generic',
                 'csc-call',
-                'csc-call-' + this.callState
+                `csc-call-${this.callState}`
             ]
             if (this.fullView) {
                 classes.push('csc-call-full-width')
@@ -556,65 +551,56 @@ export default {
         iconToggleMicrophone () {
             if (this.microphoneEnabled) {
                 return 'mic'
-            } else {
-                return 'mic_off'
             }
+            return 'mic_off'
         },
         colorToggleMicrophone () {
             if (this.microphoneEnabled) {
                 return 'primary'
-            } else {
-                return 'grey-1'
             }
+            return 'grey-1'
         },
         iconToggleCamera () {
             if (this.cameraEnabled) {
                 return 'videocam'
-            } else {
-                return 'videocam_off'
             }
+            return 'videocam_off'
         },
         colorToggleCamera () {
             if (this.cameraEnabled) {
                 return 'primary'
-            } else {
-                return 'grey-1'
             }
+            return 'grey-1'
         },
         colorToggleScreen () {
             if (this.screenEnabled) {
                 return 'primary'
-            } else {
-                return 'grey-1'
             }
+            return 'grey-1'
         },
         colorToggleHold () {
             if (this.holdEnabled && !this.remoteOnHold && !this.localOnHold) {
                 return 'primary'
-            } else {
-                return 'grey-1'
             }
+            return 'grey-1'
         },
         colorTransfer () {
             if (this.transferEnabled) {
                 return 'primary'
-            } else {
-                return 'grey-1'
             }
+            return 'grey-1'
         },
         iconToggleRemoteVolume () {
             if (this.remoteVolumeEnabled) {
                 return 'volume_up'
-            } else {
-                return 'volume_off'
             }
+            return 'volume_off'
         },
         colorToggleRemoteVolume () {
             if (this.remoteVolumeEnabled) {
                 return 'primary'
-            } else {
-                return 'grey-1'
             }
+            return 'grey-1'
         },
         callStateTitle () {
             return CallStateTitle[this.callState]

@@ -13,15 +13,14 @@
 </template>
 
 <script>
+import CscChangePasswordDialog from 'components/CscChangePasswordDialog'
+import { RequestState } from 'src/store/common'
 import {
     mapActions,
     mapGetters,
     mapState
 } from 'vuex'
-import {
-    RequestState
-} from 'src/store/common'
-import CscChangePasswordDialog from '../components/CscChangePasswordDialog'
+
 export default {
     name: 'CscRecoverPassword',
     components: {

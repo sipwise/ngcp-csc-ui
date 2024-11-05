@@ -1,4 +1,4 @@
-import appConfig from '../config/app'
+import appConfig from 'src/config/app'
 
 export default async ({ app, store }) => {
     app.config.globalProperties.$appConfig = appConfig

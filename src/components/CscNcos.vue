@@ -65,12 +65,9 @@
 </template>
 
 <script>
-import {
-    mapActions,
-    mapGetters
-} from 'vuex'
-import CscInputButtonSave from 'src/components/form/CscInputButtonSave'
-import CscInputButtonReset from 'src/components/form/CscInputButtonReset'
+import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscNcos',
     components: {

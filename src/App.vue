@@ -2,15 +2,15 @@
     <router-view />
 </template>
 <script>
-import { APP_NAME } from 'src/constants'
 import _ from 'lodash'
+import { APP_NAME } from 'src/constants'
 
 export default {
     name: 'App',
     meta () {
         return {
             title: this.pageTitle,
-            titleTemplate: title => `${APP_NAME} - ${title}`
+            titleTemplate: (title) => `${APP_NAME} - ${title}`
         }
     },
     data () {

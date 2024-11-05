@@ -204,28 +204,28 @@
 </template>
 
 <script>
-import {
-    mapMutations,
-    mapActions,
-    mapGetters,
-    mapState
-} from 'vuex'
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import CscPage from 'components/CscPage'
-import CscInputSaveable from 'components/form/CscInputSaveable'
-import CscSoundFileUpload from 'components/form/CscSoundFileUpload'
+import useValidate from '@vuelidate/core'
 import {
     email,
     maxLength,
     numeric
 } from '@vuelidate/validators'
+import CscPage from 'components/CscPage'
 import CscSpinner from 'components/CscSpinner'
 import CscVoiceboxLanguage from 'components/CscVoiceboxLanguage'
+import CscInputSaveable from 'components/form/CscInputSaveable'
+import CscSoundFileUpload from 'components/form/CscSoundFileUpload'
+import {
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
 import { mapWaitingActions } from 'vue-wait'
-import useValidate from '@vuelidate/core'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 export default {
     name: 'CscPageVoicebox',
     components: {
@@ -347,9 +347,8 @@ export default {
                 })
             } else if (this.pinUpdateFailed) {
                 return this.pinUpdateError
-            } else {
-                return ''
             }
+            return ''
         },
         emailHasChanged () {
             return this.emailValue !== this.formData.email
@@ -363,9 +362,8 @@ export default {
                 return this.$t('Input a valid email address')
             } else if (this.emailUpdateFailed) {
                 return this.emailUpdateError
-            } else {
-                return ''
             }
+            return ''
         }
     },
     watch: {
@@ -439,7 +437,7 @@ export default {
         async selectLanguage (language) {
             try {
                 await this.setLanguage({
-                    language: language,
+                    language,
                     subscriberId: this.id
                 })
                 showToast(this.$t('Language changed successfully'))
@@ -450,7 +448,7 @@ export default {
         async selectFileBusyGreeting (file) {
             try {
                 await this.busyGreetingUpload({
-                    file: file,
+                    file,
                     subscriberId: this.id
                 })
             } catch (err) {
@@ -460,7 +458,7 @@ export default {
         async selectFileUnavailableGreeting (file) {
             try {
                 await this.unavailableGreetingUpload({
-                    file: file,
+                    file,
                     subscriberId: this.id
                 })
             } catch (err) {
@@ -515,7 +513,7 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.busyGreetingDelete()
             })
         },
@@ -533,14 +531,14 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.unavailableGreetingDelete()
             })
         },
         async selectFileTempGreeting (file) {
             try {
                 await this.tempGreetingUpload({
-                    file: file,
+                    file,
                     subscriberId: this.id
                 })
             } catch (err) {
@@ -550,7 +548,7 @@ export default {
         async selectFileGreetGreeting (file) {
             try {
                 await this.greetGreetingUpload({
-                    file: file,
+                    file,
                     subscriberId: this.id
                 })
             } catch (err) {
@@ -571,7 +569,7 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.tempGreetingDelete()
             })
         },
@@ -589,7 +587,7 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.greetGreetingDelete()
             })
         }

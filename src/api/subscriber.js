@@ -1,24 +1,18 @@
-
 import _ from 'lodash'
 import {
-    getJsonBody
-} from './utils'
-import {
-    getList,
+    apiUploadCsv,
     get,
     getAsBlob,
-    patchAdd,
-    patchReplace,
-    patchRemove,
-    patchReplaceFull,
-    patchAddFull,
+    getList,
     httpApi,
-    apiUploadCsv
-} from './common'
-
-import {
-    assignNumbers
-} from './user'
+    patchAdd,
+    patchAddFull,
+    patchRemove,
+    patchReplace,
+    patchReplaceFull
+} from 'src/api/common'
+import { assignNumbers } from 'src/api/user'
+import { getJsonBody } from 'src/api/utils'
 
 const minValue = 3
 const generateSymbols = '!@#$%^&*()_+~`|}{[]:;?><,./-='
@@ -29,7 +23,7 @@ const generateLength = 12
 
 export function getPreferences (id) {
     return new Promise((resolve, reject) => {
-        httpApi.get('api/subscriberpreferences/' + id).then((result) => {
+        httpApi.get(`api/subscriberpreferences/${id}`).then((result) => {
             resolve(getJsonBody(result.data))
         }).catch((err) => {
             reject(err)
@@ -49,7 +43,7 @@ export async function setPreference (id, field, value) {
         try {
             await replacePreference(id, field, value)
         } catch (err) {
-            const errCode = err.status + ''
+            const errCode = `${err.status}`
             if (errCode === '422') {
                 // eslint-disable-next-line no-useless-catch
                 try {
@@ -100,13 +94,12 @@ export async function setPreferencePhonebookCustomer (id, field, value) {
 }
 export function getNcosLevels (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             path: 'api/ncoslevels/',
             root: '_embedded.ngcp:ncoslevels',
             all: true
         })
-        getList(options).then((list) => {
+        getList(mergedOptions).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -123,28 +116,28 @@ export async function getNcosSet () {
 }
 export async function removePreference (id, field) {
     return await patchRemove({
-        path: 'api/subscriberpreferences/' + id,
+        path: `api/subscriberpreferences/${id}`,
         fieldPath: field
     })
 }
 export async function removePreferencePhonebook (id, field) {
     return await patchRemove({
-        path: 'api/subscriberphonebookentries/' + id,
+        path: `api/subscriberphonebookentries/${id}`,
         fieldPath: field
     })
 }
 export async function removePreferencePhonebookCustomer (id, field) {
     return await patchRemove({
-        path: 'api/customerphonebookentries/' + id,
+        path: `api/customerphonebookentries/${id}`,
         fieldPath: field
     })
 }
 export function addPreference (id, field, value) {
     return new Promise((resolve, reject) => {
         patchAdd({
-            path: 'api/subscriberpreferences/' + id,
+            path: `api/subscriberpreferences/${id}`,
             fieldPath: field,
-            value: value
+            value
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -155,9 +148,9 @@ export function addPreference (id, field, value) {
 export function addPreferenceFull (id, field, value) {
     return new Promise((resolve, reject) => {
         patchAddFull({
-            path: 'api/subscriberpreferences/' + id,
+            path: `api/subscriberpreferences/${id}`,
             fieldPath: field,
-            value: value
+            value
         }).then((preferences) => {
             resolve(preferences)
         }).catch((err) => {
@@ -169,9 +162,9 @@ export function addPreferenceFull (id, field, value) {
 export function replacePreference (id, field, value) {
     return new Promise((resolve, reject) => {
         patchReplace({
-            path: 'api/subscriberpreferences/' + id,
+            path: `api/subscriberpreferences/${id}`,
             fieldPath: field,
-            value: value
+            value
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -182,9 +175,9 @@ export function replacePreference (id, field, value) {
 export function replacePreferencePhonebook (id, field, value) {
     return new Promise((resolve, reject) => {
         patchReplace({
-            path: 'api/subscriberphonebookentries/' + id,
+            path: `api/subscriberphonebookentries/${id}`,
             fieldPath: field,
-            value: value
+            value
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -195,9 +188,9 @@ export function replacePreferencePhonebook (id, field, value) {
 export function replacePreferencePhonebookCustomer (id, field, value) {
     return new Promise((resolve, reject) => {
         patchReplace({
-            path: 'api/customerphonebookentries/' + id,
+            path: `api/customerphonebookentries/${id}`,
             fieldPath: field,
-            value: value
+            value
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -214,7 +207,7 @@ export function prependItemToArrayPreference (id, field, value) {
             delete prefs._links
             prefs[field] = _.get(prefs, field, [])
             prefs[field] = [value].concat(prefs[field])
-            return httpApi.put('api/subscriberpreferences/' + id, prefs)
+            return httpApi.put(`api/subscriberpreferences/${id}`, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -232,7 +225,7 @@ export function appendItemToArrayPreference (id, field, value) {
             delete prefs._links
             prefs[field] = _.get(prefs, field, [])
             prefs[field].push(value)
-            return httpApi.put('api/subscriberpreferences/' + id, prefs)
+            return httpApi.put(`api/subscriberpreferences/${id}`, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -250,10 +243,9 @@ export function editItemInArrayPreference (id, field, itemIndex, value) {
             delete prefs._links
             if (_.isArray(prefs[field]) && itemIndex < prefs[field].length) {
                 prefs[field][itemIndex] = value
-                return httpApi.put('api/subscriberpreferences/' + id, prefs)
-            } else {
-                return Promise.reject(new Error('Array index does not exists'))
+                return httpApi.put(`api/subscriberpreferences/${id}`, prefs)
             }
+            return Promise.reject(new Error('Array index does not exists'))
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -273,7 +265,7 @@ export function removeItemFromArrayPreference (id, field, itemIndex) {
             _.remove(prefs[field], (value, index) => {
                 return index === itemIndex
             })
-            return httpApi.put('api/subscriberpreferences/' + id, prefs)
+            return httpApi.put(`api/subscriberpreferences/${id}`, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -365,7 +357,7 @@ export function createSubscriber (subscriber, config
 
 export function deleteSubscriber (id) {
     return new Promise((resolve, reject) => {
-        httpApi.delete('api/subscribers/' + id).then(() => {
+        httpApi.delete(`api/subscribers/${id}`).then(() => {
             resolve()
         }).catch((err) => {
             if (err.response.status >= 400) {
@@ -379,10 +371,10 @@ export function deleteSubscriber (id) {
 
 export function setField (id, field, value) {
     return new Promise((resolve, reject) => {
-        httpApi.patch('api/subscribers/' + id, [{
+        httpApi.patch(`api/subscribers/${id}`, [{
             op: 'replace',
-            path: '/' + field,
-            value: value
+            path: `/${field}`,
+            value
         }], {
             headers: {
                 'Content-Type': 'application/json-patch+json',
@@ -478,12 +470,11 @@ export function setPreferenceCli (id, value) {
 
 export function getSubscribers (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             path: 'api/subscribers/',
             root: '_embedded.ngcp:subscribers'
         })
-        getList(options).then((list) => {
+        getList(mergedOptions).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -507,8 +498,8 @@ export function getFullSubscribers (options) {
             return Promise.all(promises)
         }).then((preferences) => {
             resolve({
-                subscribers: subscribers,
-                preferences: preferences
+                subscribers,
+                preferences
             })
         }).catch((err) => {
             reject(err)
@@ -519,7 +510,7 @@ export function getFullSubscribers (options) {
 export function getSubscriber (id) {
     return new Promise((resolve, reject) => {
         get({
-            path: 'api/subscribers/' + id
+            path: `api/subscribers/${id}`
         }).then((subscriber) => {
             resolve(subscriber)
         }).catch((err) => {
@@ -531,7 +522,7 @@ export function getSubscriber (id) {
 export function getSubscriberPreference (id) {
     return new Promise((resolve, reject) => {
         get({
-            path: 'api/subscriberpreferences/' + id
+            path: `api/subscriberpreferences/${id}`
         }).then((subscriberPreference) => {
             resolve(subscriberPreference)
         }).catch((err) => {
@@ -582,7 +573,7 @@ export function getSubscribersByCallQueueEnabled () {
 }
 
 export function addNewCallQueueConfig (id, config) {
-    return httpApi.put('api/subscriberpreferences/' + id, config)
+    return httpApi.put(`api/subscriberpreferences/${id}`, config)
 }
 
 export function editCallQueuePreference (id, config) {
@@ -593,7 +584,7 @@ export function editCallQueuePreference (id, config) {
         }).then((result) => {
             const prefs = Object.assign(result, $prefs)
             delete prefs._links
-            return httpApi.put('api/subscriberpreferences/' + id, prefs)
+            return httpApi.put(`api/subscriberpreferences/${id}`, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -612,18 +603,17 @@ export function setWrapUpTime (id, wrapUpTime) {
 
 export function removeCallQueueConfig (subscriberId) {
     const param = { cloud_pbx_callqueue: false }
-    return httpApi.put('api/subscriberpreferences/' + subscriberId, param)
+    return httpApi.put(`api/subscriberpreferences/${subscriberId}`, param)
 }
 
 export function getAllPreferences (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             path: 'api/subscriberpreferences/',
             root: '_embedded.ngcp:subscriberpreferences',
             all: true
         })
-        getList(options).then((list) => {
+        getList(mergedOptions).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -660,9 +650,8 @@ export function setSubscriberNumbers (options) {
                     subscriber: null,
                     preferences: null
                 })
-            } else {
-                return getSubscriberAndPreferences(options.subscriberId)
             }
+            return getSubscriberAndPreferences(options.subscriberId)
         }).then((result) => {
             resolve(result)
         }).catch((err) => {
@@ -674,7 +663,7 @@ export function setSubscriberNumbers (options) {
 export function changePassword (subscriber, newPassword) {
     return new Promise((resolve, reject) => {
         patchReplaceFull({
-            path: 'api/subscribers/' + subscriber,
+            path: `api/subscribers/${subscriber}`,
             fieldPath: 'webpassword',
             value: newPassword
         }).then((subscriber) => {
@@ -687,7 +676,7 @@ export function changePassword (subscriber, newPassword) {
 
 export async function changeSIPPassword (subscriber, newPassword) {
     return patchReplaceFull({
-        path: 'api/subscribers/' + subscriber,
+        path: `api/subscribers/${subscriber}`,
         fieldPath: 'password',
         value: newPassword
     })
@@ -711,7 +700,7 @@ export async function recoverPassword (data) {
 }
 
 export async function getBrandingLogo (subscriberId) {
-    const url = 'api/resellerbrandinglogos/?subscriber_id=' + subscriberId
+    const url = `api/resellerbrandinglogos/?subscriber_id=${subscriberId}`
     try {
         const res = await httpApi.get(url, {
             responseType: 'blob'
@@ -729,7 +718,7 @@ export async function getRecordings (options) {
     })
     if (res.data.total_count > 0) {
         const recordings = getJsonBody(res.data)._embedded['ngcp:callrecordings']
-        data.recordings = recordings.map(recording => {
+        data.recordings = recordings.map((recording) => {
             return {
                 id: recording.id,
                 time: recording.start_time,
@@ -757,7 +746,7 @@ export async function getRecordingStreams (recId) {
 }
 
 export async function downloadRecordingStream (fileId) {
-    const res = await httpApi.get('api/callrecordingfiles/' + fileId, { responseType: 'blob' })
+    const res = await httpApi.get(`api/callrecordingfiles/${fileId}`, { responseType: 'blob' })
     return res.data
 }
 
@@ -838,7 +827,7 @@ export async function uploadCsv (context, formData) {
     }
     const purgeExistingValue = formData?.purge_existing ? '1' : '0'
     await apiUploadCsv({
-        path: 'api/customerphonebookentries' + '/?purge_existing=' + purgeExistingValue + '&customer_id=' + formData.customer_id,
+        path: 'api/customerphonebookentries' + `/?purge_existing=${purgeExistingValue}&customer_id=${formData.customer_id}`,
         data: formData.file,
         config
     })
@@ -860,7 +849,7 @@ export function setValueNumberCustomer (id, value) {
 }
 export async function getRecordingStream (fileId) {
     return await getAsBlob({
-        path: 'api/callrecordingfiles/' + fileId
+        path: `api/callrecordingfiles/${fileId}`
     })
 }
 
@@ -874,7 +863,7 @@ export async function getSubscriberProfile (id) {
 export function getCustomerPreference (id) {
     return new Promise((resolve, reject) => {
         get({
-            path: 'api/customerpreferences/' + id
+            path: `api/customerpreferences/${id}`
         }).then((customerPreferences) => {
             resolve(customerPreferences)
         }).catch((err) => {
@@ -888,24 +877,24 @@ export function setCustomerPreference (customerId, customerValue, fieldName) {
         Promise.resolve().then(() => {
             if (customerValue === undefined || customerValue === null || customerValue === '' || (Array.isArray(customerValue) && !customerValue.length)) {
                 return patchRemove({
-                    path: 'api/customerpreferences/' + customerId,
+                    path: `api/customerpreferences/${customerId}`,
                     fieldPath: fieldName
                 }).then((customer) => {
                     resolve(customer.data)
                 })
             }
             return patchReplaceFull({
-                path: 'api/customerpreferences/' + customerId,
+                path: `api/customerpreferences/${customerId}`,
                 fieldPath: fieldName,
                 value: customerValue
             })
         }).then((customer) => {
             resolve(customer)
         }).catch((err) => {
-            const errCode = err.status + ''
+            const errCode = `${err.status}`
             if (errCode === '422') {
                 return patchAdd({
-                    path: 'api/customerpreferences/' + customerId,
+                    path: `api/customerpreferences/${customerId}`,
                     fieldPath: fieldName,
                     value: customerValue
                 })
@@ -919,13 +908,17 @@ export function setCustomerPreference (customerId, customerValue, fieldName) {
 }
 
 export async function generateGeneralPassword () {
-    const getRandomValues = (buf) => crypto.getRandomValues(buf)
+    const getRandomValues = (buf) => {
+        return crypto.getRandomValues(buf)
+    }
     const getRandomInt = (max) => {
         const randomBuffer = new Uint32Array(1)
         getRandomValues(randomBuffer)
         return Math.floor(randomBuffer[0] / (0xFFFFFFFF + 1) * max)
     }
-    const getRandomChar = (charset) => charset[getRandomInt(charset.length)]
+    const getRandomChar = (charset) => {
+        return charset[getRandomInt(charset.length)]
+    }
 
     const charGroups = [
         generateNumbers,
@@ -934,8 +927,11 @@ export async function generateGeneralPassword () {
         generateSymbols
     ]
 
-    let password = charGroups.flatMap(group =>
-        Array.from({ length: minValue }, () => getRandomChar(group))
+    let password = charGroups.flatMap((group) => {
+        return Array.from({ length: minValue }, () => {
+            return getRandomChar(group)
+        })
+    }
     ).join('')
 
     while (password.length < generateLength) {
@@ -943,7 +939,9 @@ export async function generateGeneralPassword () {
         password += getRandomChar(allChars)
     }
 
-    password = password.split('').sort(() => getRandomInt(2) - 0.5).join('')
+    password = password.split('').sort(() => {
+        return getRandomInt(2) - 0.5
+    }).join('')
 
     return password
 }

@@ -1,8 +1,4 @@
-
-import {
-    CreationState,
-    RequestState
-} from './common'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
     createDevice,
@@ -14,10 +10,8 @@ import {
     setDeviceProfile,
     setDeviceStationName,
     setPreferenceDevice
-} from '../api/pbx-devices'
-import {
-    i18n
-} from 'src/boot/i18n'
+} from 'src/api/pbx-devices'
+import { CreationState, RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -280,19 +274,19 @@ export default {
                 const clearList = _.get(options, 'clearList', true)
                 const filters = _.get(options, 'filters', {})
                 context.commit('deviceListItemsRequesting', {
-                    clearList: clearList
+                    clearList
                 })
                 Promise.resolve().then(() => {
                     return context.dispatch('pbx/loadProfiles', null, { root: true })
                 }).then(() => {
                     return getDeviceList({
-                        page: page,
+                        page,
                         filters
                     })
                 }).then((devices) => {
                     context.commit('deviceListItemsSucceeded', {
-                        devices: devices,
-                        page: page
+                        devices,
+                        page
                     })
                     resolve()
                 }).catch((err) => {
