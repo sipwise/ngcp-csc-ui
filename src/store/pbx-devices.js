@@ -1,8 +1,4 @@
-
-import {
-    CreationState,
-    RequestState
-} from './common'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
     createDevice,
@@ -15,10 +11,8 @@ import {
     setDeviceProfile,
     setDeviceStationName,
     setPreferenceDevice
-} from '../api/pbx-devices'
-import {
-    i18n
-} from 'src/boot/i18n'
+} from 'src/api/pbx-devices'
+import { CreationState, RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,

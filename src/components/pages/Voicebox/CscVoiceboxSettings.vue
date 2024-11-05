@@ -1,4 +1,3 @@
-
 <template>
     <q-list>
         <q-item>
@@ -111,15 +110,13 @@
 </template>
 
 <script>
-import {
-    showGlobalError
-} from 'src/helpers/ui'
-import {
-    maxLength,
-    numeric,
-    email
-} from '@vuelidate/validators'
 import useValidate from '@vuelidate/core'
+import {
+    email,
+    maxLength,
+    numeric
+} from '@vuelidate/validators'
+import { showGlobalError } from 'src/helpers/ui'
 export default {
     name: 'CscVoiceboxSettings',
     props: {
@@ -193,9 +190,8 @@ export default {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('PIN')
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         emailErrorMessage () {
             return this.$t('Input a valid email address')

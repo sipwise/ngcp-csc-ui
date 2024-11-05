@@ -128,16 +128,14 @@
 </template>
 
 <script>
+import CscNcos from 'components/CscNcos'
+import CscPage from 'components/CscPage'
+import CscSpinner from 'components/CscSpinner'
+import CscBlockedNumber from 'components/pages/CallBlocking/CscBlockedNumber'
+import CscCallBlockingAddForm from 'components/pages/CallBlocking/CscCallBlockingAddForm'
 import _ from 'lodash'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
-import CscSpinner from '../../CscSpinner'
-import {
-    mapGetters
-} from 'vuex'
-import CscPage from '../../CscPage'
-import CscNcos from '../../CscNcos'
-import CscCallBlockingAddForm from '../../pages/CallBlocking/CscCallBlockingAddForm'
-import CscBlockedNumber from '../../pages/CallBlocking/CscBlockedNumber'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscCallBlocking',
     components: {
@@ -191,16 +189,14 @@ export default {
         toggleButtonLabel () {
             if (!this.enabled) {
                 return this.getTranslation('toggleEnableLabel')
-            } else {
-                return this.getTranslation('toggleDisableLabel')
             }
+            return this.getTranslation('toggleDisableLabel')
         },
         toggleToastMessage () {
             if (this.mode) {
                 return this.getTranslation('toggleEnabledToast')
-            } else {
-                return this.getTranslation('toggleDisabledToast')
             }
+            return this.getTranslation('toggleDisabledToast')
         },
         suffix () {
             return _.upperFirst(this.pageName)
@@ -210,9 +206,8 @@ export default {
                 return this.getTranslation('removeDialogText', {
                     number: this.numbers[this.currentRemovingIndex]
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         blockAnonymousClasses () {
             const classes = ['csc-block-anonymous']
@@ -236,23 +231,23 @@ export default {
         }
     },
     mounted () {
-        this.$store.dispatch('callBlocking/load' + this.suffix)
+        this.$store.dispatch(`callBlocking/load${this.suffix}`)
     },
     methods: {
         addNumber (number) {
-            this.$store.dispatch('callBlocking/addNumber' + this.suffix, number)
+            this.$store.dispatch(`callBlocking/addNumber${this.suffix}`, number)
         },
         saveNumber (data) {
-            this.$store.dispatch('callBlocking/editNumber' + this.suffix, data)
+            this.$store.dispatch(`callBlocking/editNumber${this.suffix}`, data)
         },
         removeNumber () {
             if (this.currentRemovingIndex !== null) {
-                this.$store.dispatch('callBlocking/removeNumber' + this.suffix, this.currentRemovingIndex)
+                this.$store.dispatch(`callBlocking/removeNumber${this.suffix}`, this.currentRemovingIndex)
                 this.currentRemovingIndex = null
             }
         },
         updateListMode (listMode) {
-            this.$store.dispatch('callBlocking/toggle' + this.suffix, listMode === 'whitelist')
+            this.$store.dispatch(`callBlocking/toggle${this.suffix}`, listMode === 'whitelist')
         },
         toggleBlockAnonymous () {
             this.$store.dispatch('callBlocking/toggleBlockAnonymous', !this.isAnonymousBlocked)
@@ -265,7 +260,7 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.removeNumber()
             })
         },

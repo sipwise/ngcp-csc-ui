@@ -1,7 +1,5 @@
+import { EventEmitter } from 'events'
 
-import {
-    EventEmitter
-} from 'events'
 import jssip from 'jssip'
 
 let $baseWebSocketUrl = null
@@ -96,11 +94,11 @@ function handleRemoteMediaStream ({ transceiver }) {
 }
 
 function getSubscriberUri () {
-    return 'sip:' + $subscriber.username + '@' + $subscriber.domain
+    return `sip:${$subscriber.username}@${$subscriber.domain}`
 }
 
 function callCreateSocket () {
-    return new jssip.WebSocketInterface($baseWebSocketUrl + '/' + $subscriber.username)
+    return new jssip.WebSocketInterface(`${$baseWebSocketUrl}/${$subscriber.username}`)
 }
 
 export function callConfigure ({ baseWebSocketUrl }) {
@@ -415,14 +413,14 @@ export function callEnd () {
     }
     try {
         if ($localMediaStream) {
-            $localMediaStream.getTracks().forEach(track => track.stop())
+            $localMediaStream.getTracks().forEach((track) => track.stop())
         }
     } finally {
         $localMediaStream = null
     }
     try {
         if ($remoteMediaStream) {
-            $remoteMediaStream.getTracks().forEach(track => track.stop())
+            $remoteMediaStream.getTracks().forEach((track) => track.stop())
         }
     } finally {
         $remoteMediaStream = null
@@ -453,11 +451,9 @@ export function callBlindTransfer (numberToTransfer) {
         const rtcSession = callGetRtcSession()
         const eventHandlers = {
             requestFailed: function (e) {
-                console.log('Transfer failed')
                 reject(new Error('Transfer failed'))
             },
             requestSucceeded: function (e) {
-                console.log('Success', e)
                 resolve(true)
             }
         }

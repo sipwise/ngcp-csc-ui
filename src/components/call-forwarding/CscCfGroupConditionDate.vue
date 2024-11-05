@@ -39,9 +39,9 @@
 </template>
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
-import { mapActions, mapGetters } from 'vuex'
 import { timeSetDateExact } from 'src/filters/time-set'
 import { showGlobalError } from 'src/helpers/ui'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupConditionDate',
     components: {
@@ -86,9 +86,8 @@ export default {
         formattedDate () {
             if (this.timeSet) {
                 return timeSetDateExact(this.timeSet.times)
-            } else {
-                return this.getCurrentFormattedDateWithSlash
             }
+            return this.getCurrentFormattedDateWithSlash
         }
     },
     mounted () {

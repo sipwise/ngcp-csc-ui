@@ -1,18 +1,12 @@
-
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
-    CreationState,
-    RequestState
-} from './common'
-import {
-    getMsConfigList,
     createMsConfig,
+    getMsConfigList,
     removeMsConfig,
     setSecretaryNumber
-} from '../api/pbx-ms-configs'
-import {
-    i18n
-} from 'src/boot/i18n'
+} from 'src/api/pbx-ms-configs'
+import { CreationState, RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -197,7 +191,7 @@ export default {
                 const listVisible = _.get(options, 'listVisible', false)
                 const selectedId = _.get(options, 'selectedId', null)
                 context.commit('msConfigListRequesting', {
-                    listVisible: listVisible
+                    listVisible
                 })
                 getMsConfigList().then((msConfigList) => {
                     context.commit('msConfigListSucceeded', msConfigList)
@@ -221,6 +215,7 @@ export default {
             }).then(() => {
                 context.commit('msConfigCreationSucceeded')
             }).catch((err) => {
+                // eslint-disable-next-line no-console
                 console.debug(err)
                 context.commit('msConfigCreationFailed', err.message)
             })
@@ -234,6 +229,7 @@ export default {
             }).then(() => {
                 context.commit('msConfigRemovalSucceeded')
             }).catch((err) => {
+                // eslint-disable-next-line no-console
                 console.debug(err)
                 context.commit('msConfigRemovalFailed', err.message)
             })
@@ -246,6 +242,7 @@ export default {
             setSecretaryNumber(options).then((preferences) => {
                 context.commit('msConfigUpdateSucceeded', preferences)
             }).catch((err) => {
+                // eslint-disable-next-line no-console
                 console.debug(err)
                 context.commit('msConfigUpdateFailed', err.message)
             })

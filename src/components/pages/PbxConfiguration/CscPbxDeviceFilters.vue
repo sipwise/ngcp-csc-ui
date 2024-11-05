@@ -86,12 +86,12 @@
 </template>
 
 <script>
+import CscPbxAutoAttendantSelection from 'components/pages/PbxConfiguration/CscPbxAutoAttendantSelection'
+import CscPbxModelSelect from 'components/pages/PbxConfiguration/CscPbxModelSelect'
 import _ from 'lodash'
-import CscPbxModelSelect from '../PbxConfiguration/CscPbxModelSelect'
-import CscPbxAutoAttendantSelection from './CscPbxAutoAttendantSelection'
-import { mapActions, mapState } from 'vuex'
-import { RequestState } from 'src/store/common'
 import { showGlobalError } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
+import { mapActions, mapState } from 'vuex'
 
 export default {
     name: 'CscPbxDeviceFilters',
@@ -136,7 +136,7 @@ export default {
                 }
                 options.push({
                     label: subscriber.display_name || subscriber.webusername,
-                    icon: icon,
+                    icon,
                     value: subscriber.display_name,
                     disable: !subscriber.display_name,
                     subscriberTypeTitle
@@ -145,7 +145,7 @@ export default {
             return options
         },
         subscribersOptionsFiltered () {
-            return this.subscribersOptions.filter(option => option.label.toLowerCase().indexOf(this.subscribersFilter) > -1)
+            return this.subscribersOptions.filter((option) => option.label.toLowerCase().indexOf(this.subscribersFilter) > -1)
         },
         filterType () {
             return this.filterTypeModel && this.filterTypeModel.value
@@ -187,7 +187,7 @@ export default {
                 }
                 return {
                     id: filterItem.id,
-                    filterInfo: filterItem.title + ': ' + filterDisplayValue
+                    filterInfo: `${filterItem.title}: ${filterDisplayValue}`
                 }
             })
         }
@@ -216,7 +216,7 @@ export default {
         },
         triggerFilter (data) {
             const filterId = this.filterTypeModel?.value
-            let filterTitle = this.filterTypeOptions.find(option => option.value === filterId).label
+            let filterTitle = this.filterTypeOptions.find((option) => option.value === filterId).label
             let filterValue = this.typedFilter
 
             if (this.filterType === 'display_name') {
@@ -226,7 +226,7 @@ export default {
             this.addFilter(filterId, filterTitle, filterValue)
         },
         removeFilter (id) {
-            this.filters = this.filters.filter(item => item.id !== id)
+            this.filters = this.filters.filter((item) => item.id !== id)
             this.filter()
         },
         removeFilters () {
@@ -239,7 +239,7 @@ export default {
             const valueTrimmed = _.trim(value)
             if (valueTrimmed) {
                 this.typedFilter = null
-                this.filters = this.filters.filter(item => item.id !== id)
+                this.filters = this.filters.filter((item) => item.id !== id)
                 const filter = {
                     id,
                     title,
@@ -251,7 +251,7 @@ export default {
         },
         filter () {
             const params = {}
-            this.filters.forEach(filter => {
+            this.filters.forEach((filter) => {
                 params[filter.id] = filter.value
             })
 

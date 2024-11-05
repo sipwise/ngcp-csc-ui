@@ -1,5 +1,5 @@
-import sipUriParse from 'src/sip-uri-parse'
 import _ from 'lodash'
+import sipUriParse from 'src/sip-uri-parse'
 
 const DestinationType = {
     VoiceBox: 'VoiceBox',
@@ -150,7 +150,7 @@ export default {
             case DestinationType.ManagerSecretary:
                 return this.$t('Manager Secretary')
             case DestinationType.Application:
-                return _.words(parsedSipUri.parsedUri.username).map(word => _.upperFirst(word)).join(' ')
+                return _.words(parsedSipUri.parsedUri.username).map((word) => _.upperFirst(word)).join(' ')
             case DestinationType.Number:
             default:
                 return parsedSipUri.parsedUri.username

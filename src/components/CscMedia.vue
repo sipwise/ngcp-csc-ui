@@ -64,15 +64,15 @@ export default {
         },
         mediaStyles () {
             const styles = {}
-            styles.left = this.mediaLeft + 'px'
-            styles.top = this.mediaTop + 'px'
+            styles.left = `${this.mediaLeft}px`
+            styles.top = `${this.mediaTop}px`
             return styles
         },
         componentStyles () {
             const styles = {}
             if (this.preview) {
-                styles.width = this.mediaWidth + 'px'
-                styles.height = this.mediaHeight + 'px'
+                styles.width = `${this.mediaWidth}px`
+                styles.height = `${this.mediaHeight}px`
             } else {
                 styles.width = '100%'
                 styles.height = '100%'
@@ -95,7 +95,9 @@ export default {
     },
     mounted () {
         this.assignStream(this.stream)
-        const fitMedia = () => { this.fitMedia() }
+        const fitMedia = () => {
+            this.fitMedia()
+        }
         this.emitter.$on('window-resized', fitMedia)
         this.emitter.$on('content-resized', fitMedia)
         this.emitter.$on('orientation-changed', fitMedia)

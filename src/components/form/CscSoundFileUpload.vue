@@ -124,7 +124,7 @@
 </template>
 
 <script>
-import CscAudioPlayer from '../CscAudioPlayer'
+import CscAudioPlayer from 'components/CscAudioPlayer'
 export default {
     name: 'CscSoundFileUpload',
     components: {
@@ -202,23 +202,20 @@ export default {
         inputValue () {
             if (this.selectedFile === null) {
                 return this.value
-            } else {
-                return this.selectedFile.name
             }
+            return this.selectedFile.name
         },
         removeLabel () {
             if (this.deleteTerm === 'remove') {
                 return this.$t('Remove file')
-            } else {
-                return this.$t('Reset to defaults')
             }
+            return this.$t('Reset to defaults')
         },
         removeIcon () {
             if (this.deleteTerm === 'remove') {
                 return 'delete'
-            } else {
-                return 'undo'
             }
+            return 'undo'
         }
     },
     watch: {

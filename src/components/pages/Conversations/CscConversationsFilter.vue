@@ -54,14 +54,14 @@ export default {
     methods: {
         inputFrom (from) {
             this.$emit('input', {
-                from: from,
+                from,
                 to: this.value.to
             })
         },
         inputTo (to) {
             this.$emit('input', {
                 from: this.value.from,
-                to: to
+                to
             })
         }
     }

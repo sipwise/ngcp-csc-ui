@@ -1,9 +1,9 @@
 // this is mapped in jest.config.js to resolve @vue/test-utils
+import { Cookies, Quasar } from 'quasar'
 import { createLocalVue, shallowMount } from 'test-utils'
-
+// eslint-disable-next-line import/default
+import VueRouter from 'vue-router'
 import Vuex from 'vuex'
-import * as VueRouter from 'vue-router'
-import { Quasar, Cookies } from 'quasar'
 
 const mockSsrContext = () => {
     return {
@@ -11,7 +11,9 @@ const mockSsrContext = () => {
             headers: {}
         },
         res: {
-            setHeader: () => undefined
+            setHeader: () => {
+                return undefined
+            }
         }
     }
 }
@@ -33,13 +35,13 @@ export const mountQuasar = (component, options = {}) => {
         if (options.cookies) {
             const cookieStorage = ssrContext ? Cookies.parseSSR(ssrContext) : Cookies
             const cookies = options.cookies
-            Object.keys(cookies).forEach(key => {
+            Object.keys(cookies).forEach((key) => {
                 cookieStorage.set(key, cookies[key])
             })
         }
 
         if (options.plugins) {
-            options.plugins.forEach(plugin => {
+            options.plugins.forEach((plugin) => {
                 plugin({ app, store, router, Vue: localVue, ssrContext })
             })
         }
@@ -52,7 +54,7 @@ export const mountQuasar = (component, options = {}) => {
     const $d = () => {}
 
     return shallowMount(component, {
-        localVue: localVue,
+        localVue,
         store,
         router,
         mocks: { $t, $tc, $n, $d },

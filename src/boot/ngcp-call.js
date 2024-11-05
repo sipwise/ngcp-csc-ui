@@ -1,4 +1,4 @@
-
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
     callConfigure,
@@ -8,15 +8,14 @@ import {
     callHasRemoteVideo,
     callMute,
     callMuteRemote,
+    callStart,
     callUnMute,
-    callUnMuteRemote,
-    callStart
+    callUnMuteRemote
 } from 'src/api/ngcp-call'
-import { i18n } from 'boot/i18n'
 
 export default async ({ app, store }) => {
     callConfigure({
-        baseWebSocketUrl: app.config.globalProperties.$appConfig.baseWsUrl + '/wss/sip'
+        baseWebSocketUrl: `${app.config.globalProperties.$appConfig.baseWsUrl}/wss/sip`
     })
     const callFailed = (event) => {
         let cause = event.cause

@@ -1,6 +1,4 @@
-import {
-    normalizeDestination
-} from 'src/filters/number-format'
+import { normalizeDestination } from 'src/filters/number-format'
 import {
     CallState,
     CallStateTitle
@@ -37,9 +35,8 @@ export default {
             return getters.callNumberFormatted
         } else if (state.callState === CallState.ended) {
             return getters.callEndedReasonFormatted
-        } else {
-            return ''
         }
+        return ''
     },
     connectionError (state) {
         return state.connectionError

@@ -126,30 +126,30 @@
 </template>
 
 <script>
-import CscPage from 'components/CscPage'
-import CscPbxGroupFilters from 'components/pages/PbxConfiguration/CscPbxGroupFilters'
-import CscPbxGroupAddForm from 'components/pages/PbxConfiguration/CscPbxGroupAddForm'
-import CscPbxGroup from 'components/pages/PbxConfiguration/CscPbxGroup'
-import CscRemoveDialog from 'components/CscRemoveDialog'
-import CscListActions from 'components/CscListActions'
 import CscListActionButton from 'components/CscListActionButton'
-import {
-    mapState,
-    mapGetters,
-    mapActions,
-    mapMutations
-} from 'vuex'
+import CscListActions from 'components/CscListActions'
+import CscListSpinner from 'components/CscListSpinner'
+import CscPage from 'components/CscPage'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscPbxGroup from 'components/pages/PbxConfiguration/CscPbxGroup'
+import CscPbxGroupAddForm from 'components/pages/PbxConfiguration/CscPbxGroupAddForm'
+import CscPbxGroupFilters from 'components/pages/PbxConfiguration/CscPbxGroupFilters'
+import CscFade from 'components/transitions/CscFade'
 import {
     showGlobalError,
     showToast
 } from 'src/helpers/ui'
+import platform from 'src/mixins/platform'
 import {
     CreationState,
     RequestState
 } from 'src/store/common'
-import platform from 'src/mixins/platform'
-import CscFade from 'components/transitions/CscFade'
-import CscListSpinner from 'components/CscListSpinner'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 
 export default {
     name: 'CscPagePbxGroups',
@@ -252,7 +252,7 @@ export default {
         ]),
         loadGroups (page) {
             this.loadGroupListItems({
-                page: page,
+                page,
                 filters: this.filters
             })
         },

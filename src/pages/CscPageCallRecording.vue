@@ -170,16 +170,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { mapWaitingActions } from 'vue-wait'
-import { saveAs } from 'file-saver'
-import { showGlobalError, showToast } from 'src/helpers/ui'
 import CscAudioPlayer from 'components/CscAudioPlayer'
 import CscPageSticky from 'components/CscPageSticky'
-import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
 import CscRemoveDialog from 'components/CscRemoveDialog'
-import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
+import { saveAs } from 'file-saver'
 import moment from 'moment'
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { mapWaitingActions } from 'vue-wait'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPageCallRecording',
     components: {
@@ -195,8 +195,8 @@ export default {
                     required: true,
                     label: this.$t('Id'),
                     align: 'left',
-                    field: row => row.id,
-                    format: val => `${val}`,
+                    field: (row) => row.id,
+                    format: (val) => `${val}`,
                     sortable: true
                 },
                 {
@@ -204,7 +204,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Time'),
-                    field: row => {
+                    field: (row) => {
                         const momentDate = moment.utc(row.time, 'YYYY-MM-DD HH:mm:SS')
                         return momentDate.format('LLL')
                     },
@@ -215,7 +215,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Caller'),
-                    field: row => (!row.callerName) ? row.caller : row.callerName,
+                    field: (row) => (!row.callerName) ? row.caller : row.callerName,
                     sortable: true
                 },
                 {
@@ -223,7 +223,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Callee'),
-                    field: row => (!row.calleeName) ? row.callee : row.calleeName,
+                    field: (row) => (!row.calleeName) ? row.callee : row.calleeName,
                     sortable: true
                 }
             ],
@@ -233,22 +233,22 @@ export default {
                     required: true,
                     label: '#',
                     align: 'left',
-                    field: row => row.id,
-                    format: val => `${val}`
+                    field: (row) => row.id,
+                    format: (val) => `${val}`
                 },
                 {
                     name: 'type',
                     required: true,
                     align: 'left',
                     label: this.$t('Type'),
-                    field: row => row.type
+                    field: (row) => row.type
                 },
                 {
                     name: 'format',
                     required: true,
                     align: 'left',
                     label: this.$t('Format'),
-                    field: row => row.format
+                    field: (row) => row.format
                 }
 
             ],
@@ -294,7 +294,6 @@ export default {
 
                 return recordingCopy
             })
-
             this.rowStatus = this.recordings.map((rec) => {
                 return {
                     id: rec.id,
@@ -325,15 +324,15 @@ export default {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
             const { startTime, endTime, caller, callee, callId } = this.filter
             const count = await this.fetchRecordings({
-                page: page,
+                page,
                 rows: rowsPerPage,
                 order_by: sortBy,
                 order_by_direction: descending ? 'desc' : 'asc',
                 start_time: startTime,
                 end_time: endTime,
-                caller: caller ? '*' + caller + '*' : undefined,
-                callee: callee ? '*' + callee + '*' : undefined,
-                call_id: callId ? '*' + callId + '*' : undefined
+                caller: caller ? `*${caller}*` : undefined,
+                callee: callee ? `*${callee}*` : undefined,
+                call_id: callId ? `*${callId}*` : undefined
             })
             this.pagination = { ...props.pagination }
             this.pagination.rowsNumber = count
@@ -371,7 +370,7 @@ export default {
             }
         },
         isRowExpanded (id) {
-            const rowStatus = this.rowStatus.filter(row => row.id === id)[0] || null
+            const rowStatus = this.rowStatus.filter((row) => row.id === id)[0] || null
             return rowStatus && rowStatus.expanded
         },
         async updateCollapseArray (id) {
@@ -379,7 +378,7 @@ export default {
             const rowStatus = this.rowStatus.filter((row) => row.id === id)[0]
             rowStatus.expanded = !rowStatus.expanded
             if (rowStatus.expanded && recording.files.length === 0) {
-                this.$wait.start('loading-stream-' + id)
+                this.$wait.start(`loading-stream-${id}`)
                 try {
                     await this.fetchStreams(id)
                     const updatedRecording = this.recordings.find((rec) => rec.id === id)
@@ -387,13 +386,13 @@ export default {
                         recording.files = [...updatedRecording.files]
                     }
                 } finally {
-                    this.$wait.end('loading-stream-' + id)
+                    this.$wait.end(`loading-stream-${id}`)
                 }
             }
         },
         async saveFile (fileId) {
             const file = await this.downloadRecording(fileId)
-            saveAs(file, 'call-recording-' + fileId + '.wav')
+            saveAs(file, `call-recording-${fileId}.wav`)
         },
         filterEvent (filter) {
             this.$scrollTo(this.$parent.$el)

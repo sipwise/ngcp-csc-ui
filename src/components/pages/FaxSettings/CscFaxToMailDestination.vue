@@ -59,9 +59,9 @@
 
 <script>
 import CscListItem from 'components/CscListItem'
+import CscListItemSubtitle from 'components/CscListItemSubtitle'
 import CscListItemTitle from 'components/CscListItemTitle'
 import CscListMenuItem from 'components/CscListMenuItem'
-import CscListItemSubtitle from 'components/CscListItemSubtitle'
 import CscFaxToMailDestinationForm from 'components/pages/FaxSettings/CscFaxToMailDestinationForm'
 
 export default {

@@ -39,9 +39,9 @@
 </template>
 
 <script>
-import CscCallItem from './CscCallItem'
-import CscFaxItem from './CscFaxItem'
-import CscVoiceMailItem from './CscVoiceMailItem'
+import CscCallItem from 'components/pages/Conversations/CscCallItem'
+import CscFaxItem from 'components/pages/Conversations/CscFaxItem'
+import CscVoiceMailItem from 'components/pages/Conversations/CscVoiceMailItem'
 export default {
     name: 'CscConversationItem',
     components: {
@@ -85,9 +85,8 @@ export default {
         number () {
             if (this.item.direction === 'out') {
                 return this.item.callee
-            } else {
-                return this.item.caller
             }
+            return this.item.caller
         },
         toggleActionIncoming () {
             return this.blockedIncoming ? 'unblock' : 'block'
@@ -98,25 +97,22 @@ export default {
         blockIncomingLabel () {
             if (this.blockedIncoming) {
                 return this.$t('Unblock Incoming')
-            } else {
-                return this.$t('Block Incoming')
             }
+            return this.$t('Block Incoming')
         },
         blockOutgoingLabel () {
             if (this.blockedOutgoing) {
                 return this.$t('Unblock Outgoing')
-            } else {
-                return this.$t('Block Outgoing')
             }
+            return this.$t('Block Outgoing')
         },
         blockBothLabel () {
             if (this.blockedBoth) {
                 return this.$t('Unblock Incoming/Outgoing')
             } else if (this.unblockedBoth) {
                 return this.$t('Block Incoming/Outgoing')
-            } else {
-                return ''
             }
+            return ''
         },
         blockedBoth () {
             return this.blockedIncoming && this.blockedOutgoing

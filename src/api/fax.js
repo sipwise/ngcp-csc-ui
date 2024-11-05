@@ -1,10 +1,9 @@
-
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
     get,
     patchReplaceFull
-} from './common'
-import { i18n } from 'src/boot/i18n'
+} from 'src/api/common'
 
 export async function getFaxServerSettings (subscriberId) {
     const result = await get({
@@ -21,7 +20,7 @@ export async function setFaxServerField (options) {
     }
     if (options.field === 'destinations') {
         // searching for duplicates
-        const destinationsIds = options.value.map(d => d.destination)
+        const destinationsIds = options.value.map((d) => d.destination)
         if ((new Set(destinationsIds)).size !== destinationsIds.length) {
             throw Error(i18n.global.t('The Destination Email is already used'))
         }
@@ -48,7 +47,7 @@ export async function setMailToFaxSettingField (options) {
     }
     if (options.field === 'secret_renew_notify') {
         // searching for duplicates
-        const destinationsIds = options.value.map(d => d.destination)
+        const destinationsIds = options.value.map((d) => d.destination)
         if ((new Set(destinationsIds)).size !== destinationsIds.length) {
             throw Error(i18n.global.t('The Notify Email is already used'))
         }

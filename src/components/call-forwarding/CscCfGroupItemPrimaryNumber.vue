@@ -33,11 +33,9 @@
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
 import CscSpinner from 'components/CscSpinner'
-import numberFilter from '../../filters/number'
+import numberFilter from 'src/filters/number'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupItemPrimaryNumber',
     components: { CscSpinner },

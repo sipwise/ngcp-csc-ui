@@ -1,5 +1,3 @@
-
-import numberFilter from '../filters/number'
 import _ from 'lodash'
 import {
     getAllProfiles,
@@ -10,9 +8,10 @@ import {
 } from 'src/api/pbx-config'
 import { getSubscribers } from 'src/api/subscriber'
 import { getNumbers } from 'src/api/user'
+import { i18n } from 'src/boot/i18n'
+import numberFilter from 'src/filters/number'
 import { showGlobalError } from 'src/helpers/ui'
 import { RequestState } from 'src/store/common'
-import { i18n } from 'src/boot/i18n'
 
 export default {
     namespaced: true,
@@ -147,7 +146,7 @@ export default {
                 }
                 options.push({
                     label: subscriber.display_name || subscriber.webusername,
-                    icon: icon,
+                    icon,
                     value: subscriber.id,
                     type
                 })
@@ -192,9 +191,8 @@ export default {
                     min,
                     max
                 })
-            } else {
-                return null
             }
+            return null
         }
     },
     mutations: {
@@ -442,6 +440,7 @@ export default {
                 }).then((subscribers) => {
                     context.commit('subscribersSucceeded', subscribers)
                 }).catch((err) => {
+                    // eslint-disable-next-line no-console
                     console.debug(err)
                     context.commit('subscribersSucceeded', {
                         items: []
@@ -458,6 +457,7 @@ export default {
                 }).then((numbers) => {
                     context.commit('numbersSucceeded', numbers)
                 }).catch((err) => {
+                    // eslint-disable-next-line no-console
                     console.debug(err)
                     context.commit('numbersSucceeded', {
                         items: []

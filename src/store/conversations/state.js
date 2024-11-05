@@ -1,8 +1,5 @@
-
-import {
-    RequestState
-} from '../common'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { RequestState } from 'src/store/common'
 
 export default {
     page: 1,

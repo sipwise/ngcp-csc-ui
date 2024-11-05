@@ -1,11 +1,12 @@
-import localeEn from './en.json'
-import localeFr from './fr.json'
-import localeIt from './it.json'
-import localeEs from './es.json'
-import localeDe from './de.json'
+/* eslint-disable import/extensions */
 import { i18n } from 'boot/i18n'
-import { setSession } from 'src/storage'
 import { Quasar } from 'quasar'
+import localeDe from 'src/i18n/de.json'
+import localeEn from 'src/i18n/en.json'
+import localeEs from 'src/i18n/es.json'
+import localeFr from 'src/i18n/fr.json'
+import localeIt from 'src/i18n/it.json'
+import { setSession } from 'src/storage'
 
 export default function messages () {
     return {
@@ -25,12 +26,13 @@ async function loadLanguageAsync (lang) {
             /* webpackChunkName: "lang-[request]" */
             `./${language}`
         ).then(
-            messages => {
+            (messages) => {
                 i18n.global.setLocaleMessage(lang, patchKeysForFallback(messages.default))
 
                 loadedLanguages.push(lang)
             }
         ).catch((e) => {
+            // eslint-disable-next-line no-console
             console.error(e)
             i18n.global.setLocaleMessage(lang, {})
         })
@@ -57,8 +59,8 @@ export async function setLanguage (locale) {
 
     import(
         /* webpackInclude: /(en-US|de|es|fr|it)\.js$/ */
-        'quasar/lang/' + lang
-    ).then(qLang => {
+        `quasar/lang/${lang}`
+    ).then((qLang) => {
         Quasar.lang.set(qLang.default)
     })
 
@@ -90,7 +92,7 @@ export function getCurrentLangAsV1Format () {
 export function normalizeLocaleCode (locale) {
     const shortLangCode = String(locale || 'en-US').substring(0, 2).toLowerCase()
     const langCodeInV2Format = (shortLangCode === 'en') ? 'en-US' : shortLangCode
-    const langCode = Object.keys(messages()).filter(l => l === langCodeInV2Format)[0]
+    const langCode = Object.keys(messages()).filter((l) => l === langCodeInV2Format)[0]
     return langCode || 'en-US'
 }
 

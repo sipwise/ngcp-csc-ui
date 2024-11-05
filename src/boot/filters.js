@@ -1,20 +1,13 @@
-
-import NumberFilter from 'src/filters/number'
-import NumberFormatFilter, {
-    normalizeDestination
-} from 'src/filters/number-format'
+import WholeCurrency from 'src/filters/currency'
 import DateFilter, {
     smartTime,
     time,
     weekday
 } from 'src/filters/date'
-import {
-    startCase
-} from 'src/filters/string'
-import WholeCurrency from 'src/filters/currency'
-import {
-    displayName
-} from 'src/filters/subscriber'
+import NumberFilter from 'src/filters/number'
+import NumberFormatFilter, { normalizeDestination } from 'src/filters/number-format'
+import { startCase } from 'src/filters/string'
+import { displayName } from 'src/filters/subscriber'
 import {
     timeSetDateExact,
     timeSetDateRange, timeSetOfficeHoursSameTime,

@@ -1,6 +1,5 @@
+import routes from 'src/router/routes'
 import { createRouter, createWebHashHistory } from 'vue-router'
-
-import routes from './routes'
 
 /*
  * If not building with SSR mode, you can

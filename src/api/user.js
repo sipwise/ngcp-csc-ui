@@ -1,12 +1,11 @@
-
 import _ from 'lodash'
 import {
     get,
-    post,
     getList,
+    httpApi,
     patchReplace,
-    httpApi
-} from './common'
+    post
+} from 'src/api/common'
 import { getFaxServerSettings } from 'src/api/fax'
 import { LICENSES } from 'src/constants'
 
@@ -15,14 +14,14 @@ export function login (username, password) {
         let jwt = null
         let subscriberId = null
         httpApi.post('login_jwt', {
-            username: username,
-            password: password
+            username,
+            password
         }).then((result) => {
             jwt = result.data.jwt
-            subscriberId = result.data.subscriber_id + ''
+            subscriberId = `${result.data.subscriber_id}`
             resolve({
-                jwt: jwt,
-                subscriberId: subscriberId
+                jwt,
+                subscriberId
             })
         }).catch((err) => {
             if (err.response) {
@@ -37,11 +36,11 @@ export function login (username, password) {
 export async function loginByExchangeToken (token) {
     try {
         const res = await httpApi.post('login_jwt', {
-            token: token
+            token
         })
         return {
             jwt: res.data?.jwt,
-            subscriberId: res.data?.subscriber_id + ''
+            subscriberId: `${res.data?.subscriber_id}`
         }
     } catch (err) {
         if (err.response.status && err.response.status >= 400) {
@@ -85,7 +84,7 @@ export async function getUserData (id) {
 export function getSubscriberById (id) {
     return new Promise((resolve, reject) => {
         get({
-            path: 'api/subscribers/' + id
+            path: `api/subscribers/${id}`
         }).then((body) => {
             resolve(body)
         }).catch((err) => {
@@ -122,7 +121,7 @@ export function getCapabilities () {
 export function assignNumber (numberId, subscriberId) {
     return new Promise((resolve, reject) => {
         patchReplace({
-            path: 'api/numbers/' + numberId,
+            path: `api/numbers/${numberId}`,
             fieldPath: 'subscriber_id',
             value: subscriberId
         }).then(() => {

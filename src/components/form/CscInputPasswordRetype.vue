@@ -63,10 +63,15 @@
 </template>
 <script>
 
+import useValidate from '@vuelidate/core'
+import {
+    maxLength,
+    minLength,
+    required,
+    sameAs
+} from '@vuelidate/validators'
 import CscInputPassword from 'components/form/CscInputPassword'
 import PasswordMeter from 'vue-simple-password-meter'
-import useValidate from '@vuelidate/core'
-import { sameAs, required, maxLength, minLength } from '@vuelidate/validators'
 import { mapGetters } from 'vuex'
 export default {
     name: 'CscInputPasswordRetype',
@@ -87,14 +92,12 @@ export default {
         passwordLabel: {
             type: String,
             default () {
-                // eslint-disable-next-line vue/no-deprecated-props-default-this
                 return this.$t('Password')
             }
         },
         passwordConfirmLabel: {
             type: String,
             default () {
-                // eslint-disable-next-line vue/no-deprecated-props-default-this
                 return this.$t('Password Retype')
             }
         },
@@ -145,9 +148,8 @@ export default {
                 return 'negative'
             } else if (this.passwordScore === 2) {
                 return 'warning'
-            } else {
-                return 'primary'
             }
+            return 'primary'
         }
     },
     watch: {
@@ -237,7 +239,7 @@ export default {
         },
         passwordGenerated (password) {
             this.$emit('update:modelValue', {
-                password: password,
+                password,
                 passwordRetype: password
             })
             this.$nextTick(() => {

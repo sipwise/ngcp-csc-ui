@@ -59,17 +59,16 @@
 </template>
 
 <script>
+import useValidate from '@vuelidate/core'
 import {
-    required,
     maxValue,
     minValue,
-    numeric
+    numeric,
+    required
 } from '@vuelidate/validators'
-import CscObjectSpinner from '../../CscObjectSpinner'
+import CscObjectSpinner from 'components/CscObjectSpinner'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { mapGetters } from 'vuex'
-import useValidate from '@vuelidate/core'
-
 export default {
     name: 'CscPbxCallQueueAddForm',
     components: {
@@ -149,9 +148,8 @@ export default {
                     field: this.$t('Queue Length'),
                     maxValue: this.v$.data.max_queue_length.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         wrapUpTimeErrorMessage () {
             const errorsTab = this.v$.data.queue_wrap_up_time.$errors
@@ -169,9 +167,8 @@ export default {
                     field: this.$t('Wrap up time'),
                     maxValue: this.v$.data.queue_wrap_up_time.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         }
     },
     mounted () {

@@ -1,12 +1,9 @@
-
-import { createI18n } from 'vue-i18n'
 import messages, {
     getLangFromBrowserDefaults,
     setLanguage
 } from 'src/i18n'
-import {
-    getSession
-} from 'src/storage'
+import { getSession } from 'src/storage'
+import { createI18n } from 'vue-i18n'
 
 export const defaultLocale = 'en-US'
 

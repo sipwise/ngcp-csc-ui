@@ -1,6 +1,4 @@
-import {
-    CallState
-} from 'src/store/call/common'
+import { CallState } from 'src/store/call/common'
 
 export default {
     numberInputChanged (state, numberInput) {

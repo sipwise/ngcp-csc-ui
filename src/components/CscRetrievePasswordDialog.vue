@@ -51,15 +51,10 @@
 </template>
 
 <script>
-import {
-    required
-} from '@vuelidate/validators'
-import {
-    mapActions,
-    mapState
-} from 'vuex'
-import CscDialog from './CscDialog'
 import useValidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
+import CscDialog from 'components/CscDialog'
+import { mapActions, mapState } from 'vuex'
 export default {
     name: 'CscRetrievePasswordDialog',
     components: {

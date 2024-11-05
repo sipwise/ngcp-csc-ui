@@ -99,15 +99,13 @@
 </template>
 
 <script>
-import {
-    mapState
-} from 'vuex'
-import {
-    required,
-    maxLength
-} from '@vuelidate/validators'
-import CscObjectSpinner from '../../CscObjectSpinner'
 import useValidate from '@vuelidate/core'
+import {
+    maxLength,
+    required
+} from '@vuelidate/validators'
+import CscObjectSpinner from 'components/CscObjectSpinner'
+import { mapState } from 'vuex'
 
 export default {
     name: 'CscPbxSoundSetAddForm',
@@ -200,9 +198,8 @@ export default {
                     field: this.$t('Name'),
                     maxLength: this.v$.data.name.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         descriptionErrorMessage () {
             const errorsTab = this.v$.data.description.$errors
@@ -215,9 +212,8 @@ export default {
                     field: this.$t('Description'),
                     maxLength: this.v$.data.description.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         contractDefaultClasses () {
             const classes = []

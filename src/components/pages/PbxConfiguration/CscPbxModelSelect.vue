@@ -76,9 +76,7 @@
 
 <script>
 import _ from 'lodash'
-import {
-    mapState
-} from 'vuex'
+import { mapState } from 'vuex'
 export default {
     name: 'CscPbxModelSelect',
     props: {
@@ -118,7 +116,7 @@ export default {
         },
         selectedProfileImageUrl () {
             const deviceModelId = _.get(this.selectedProfile, 'device_id', null)
-            return _.get(this.deviceModelImageSmallMap, deviceModelId + '.url', null)
+            return _.get(this.deviceModelImageSmallMap, `${deviceModelId}.url`, null)
         },
         options () {
             return this.profiles.map((profile) => ({

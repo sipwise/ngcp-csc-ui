@@ -90,13 +90,13 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import CscListItem from '../../CscListItem'
-import CscListItemTitle from '../../CscListItemTitle'
-import CscListItemSubtitle from '../../CscListItemSubtitle'
-import CscListMenuItem from '../../CscListMenuItem'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import CscListItem from 'components/CscListItem'
+import CscListItemSubtitle from 'components/CscListItemSubtitle'
+import CscListItemTitle from 'components/CscListItemTitle'
+import CscListMenuItem from 'components/CscListMenuItem'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import _ from 'lodash'
 export default {
     name: 'CscPbxMsConfig',
     components: {

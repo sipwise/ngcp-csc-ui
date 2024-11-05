@@ -1,4 +1,3 @@
-
 module.exports = {
     public: '',
     publicPath: '/v2/',

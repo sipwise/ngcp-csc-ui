@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import CscSpinner from './CscSpinner'
+import CscSpinner from 'components/CscSpinner'
 export default {
     name: 'CscListSpinner',
     components: {

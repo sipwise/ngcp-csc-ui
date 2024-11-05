@@ -40,18 +40,16 @@ export default {
                 return this.icon
             } else if (this.modelValue?.destination) {
                 return this.destinationIconBySipUri(this.modelValue.destination)
-            } else {
-                return ''
             }
+            return ''
         },
         destinationLabel () {
             if (this.label) {
                 return this.label
             } else if (this.modelValue?.destination) {
                 return this.destinationFormattedBySipUri(this.modelValue.destination)
-            } else {
-                return ''
             }
+            return ''
         },
         cssClasses () {
             return [

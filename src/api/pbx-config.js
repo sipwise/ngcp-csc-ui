@@ -1,30 +1,27 @@
-
 import _ from 'lodash'
 import {
-    getSubscribers
-} from './subscriber'
-import {
-    getList,
     get,
+    getList,
+    httpApi,
     patchAdd,
-    patchRemove,
-    httpApi
-} from './common'
+    patchRemove
+} from 'src/api/common'
+import { getSubscribers } from 'src/api/subscriber'
 
 export const PBX_CONFIG_ORDER_BY = 'create_timestamp'
 export const PBX_CONFIG_ORDER_DIRECTION = 'desc'
 
 export function getPilot (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const requestConfig = _.merge(options, {
             params: {
                 is_pbx_group: 0,
                 is_pbx_pilot: 1,
                 rows: 1
             }
         })
-        getSubscribers(options).then((subscribers) => {
+
+        getSubscribers(requestConfig).then((subscribers) => {
             if (subscribers.items.length === 1) {
                 resolve(subscribers.items[0])
             } else {
@@ -38,12 +35,11 @@ export function getPilot (options) {
 
 export function getProfiles (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const requestConfig = _.merge(options, {
             path: 'api/pbxdeviceprofiles/',
             root: '_embedded.ngcp:pbxdeviceprofiles'
         })
-        getList(options).then((list) => {
+        getList(requestConfig).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -66,27 +62,35 @@ export function getProfile (id) {
 }
 
 export function getModel (id) {
-    return get({
-        path: `api/pbxdevicemodels/${id}`
+    return new Promise((resolve, reject) => {
+        Promise.resolve().then(() => {
+            return get({
+                path: `api/pbxdevicemodels/${id}`
+            })
+        }).then((model) => {
+            resolve(model)
+        }).catch((err) => {
+            reject(err)
+        })
     })
 }
 
 export async function getModelImage (id, type) {
     try {
-        const res = await httpApi.get('api/pbxdevicemodelimages/' + id, {
+        const res = await httpApi.get(`api/pbxdevicemodelimages/${id}`, {
             responseType: 'blob',
             params: {
-                type: type
+                type
             }
         })
         return {
-            id: id,
+            id,
             url: URL.createObjectURL(res.data),
             blob: res.data
         }
     } catch (err) {
         return {
-            id: id,
+            id,
             url: null,
             blob: null
         }
@@ -103,13 +107,12 @@ export async function getModelFrontThumbnailImage (id) {
 
 export function getAllSoundSets (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const requestConfig = _.merge(options, {
             path: 'api/soundsets/',
             root: '_embedded.ngcp:soundsets',
             all: true
         })
-        getList(options).then((list) => {
+        getList(requestConfig).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -118,13 +121,13 @@ export function getAllSoundSets (options) {
 }
 
 export function removeSoundSet (id) {
-    return httpApi.delete('api/soundsets/' + id)
+    return httpApi.delete(`api/soundsets/${id}`)
 }
 
 export function getSoundSet (id) {
     return new Promise((resolve, reject) => {
         get({
-            path: 'api/soundsets/' + id
+            path: `api/soundsets/${id}`
         }).then((soundSet) => {
             resolve(soundSet)
         }).catch((err) => {
@@ -140,7 +143,7 @@ export function editSoundSetFields (id, fields) {
         }).then((result) => {
             const prefs = Object.assign(result, fields)
             delete fields._links
-            return httpApi.put('api/soundsets/' + id, prefs)
+            return httpApi.put(`api/soundsets/${id}`, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -170,7 +173,7 @@ export function setSoundSetDescription (id, value) {
 export function playSoundFile (options) {
     return new Promise((resolve, reject) => {
         const params = { format: options.format }
-        httpApi.get(`api/soundfilerecordings/${options.id}`, { params: params, responseType: 'blob' })
+        httpApi.get(`api/soundfilerecordings/${options.id}`, { params, responseType: 'blob' })
             .then((res) => {
                 resolve(URL.createObjectURL(res.data))
             }).catch((err) => {
@@ -184,7 +187,7 @@ export function uploadSoundFile (options, onProgress) {
         const formData = new FormData()
         const loopplay = options.item.loopplay ? 1 : 2
         const fields = {
-            loopplay: loopplay,
+            loopplay,
             filename: options.file.name,
             set_id: options.item.set_id,
             handle: options.item.handle
@@ -211,17 +214,17 @@ export function uploadSoundFile (options, onProgress) {
 export function setSubscriberSoundSet (id, soundSet) {
     return new Promise((resolve, reject) => {
         let promise
-        const path = 'api/subscriberpreferences/' + id
+        const path = `api/subscriberpreferences/${id}`
         const fieldPath = 'contract_sound_set'
         if (soundSet === null || soundSet === undefined) {
             promise = patchRemove({
-                path: path,
+                path,
                 fieldPath: 'contract_sound_set'
             })
         } else {
             promise = patchAdd({
-                path: path,
-                fieldPath: fieldPath,
+                path,
+                fieldPath,
                 value: soundSet
             })
         }
@@ -235,7 +238,7 @@ export function setSubscriberSoundSet (id, soundSet) {
 export function getNcos (id) {
     return new Promise((resolve, reject) => {
         get({
-            path: 'api/ncoslevels/' + id
+            path: `api/ncoslevels/${id}`
         }).then((ncos) => {
             resolve(ncos)
         }).catch((err) => {
@@ -246,7 +249,7 @@ export function getNcos (id) {
 export function getNcosSet (id) {
     return new Promise((resolve, reject) => {
         get({
-            path: 'api/v2/ncos/sets/' + id
+            path: `api/v2/ncos/sets/${id}`
         }).then((ncosSet) => {
             resolve(ncosSet)
         }).catch((err) => {
@@ -257,17 +260,17 @@ export function getNcosSet (id) {
 export function setSubscriberNcos (id, ncos) {
     return new Promise((resolve, reject) => {
         let promise
-        const path = 'api/subscriberpreferences/' + id
+        const path = `api/subscriberpreferences/${id}`
         const fieldPath = 'ncos'
         if (ncos === null || ncos === undefined) {
             promise = patchRemove({
-                path: path,
+                path,
                 fieldPath: 'ncos'
             })
         } else {
             promise = patchAdd({
-                path: path,
-                fieldPath: fieldPath,
+                path,
+                fieldPath,
                 value: ncos
             })
         }
@@ -281,17 +284,17 @@ export function setSubscriberNcos (id, ncos) {
 export function setSubscriberNcosSet (id, ncosSet) {
     return new Promise((resolve, reject) => {
         let promise
-        const path = 'api/subscriberpreferences/' + id
+        const path = `api/subscriberpreferences/${id}`
         const fieldPath = 'ncos_set'
         if (ncosSet === null || ncosSet === undefined) {
             promise = patchRemove({
-                path: path,
+                path,
                 fieldPath: 'ncos_set'
             })
         } else {
             promise = patchAdd({
-                path: path,
-                fieldPath: fieldPath,
+                path,
+                fieldPath,
                 value: ncosSet
             })
         }

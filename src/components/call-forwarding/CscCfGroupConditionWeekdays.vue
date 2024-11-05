@@ -37,8 +37,8 @@
 </template>
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
-import { mapActions } from 'vuex'
 import CscCfSelectionWeekdays from 'components/call-forwarding/CscCfSelectionWeekdays'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfGroupConditionWeekdays',
     components: {

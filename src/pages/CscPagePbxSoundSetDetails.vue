@@ -171,28 +171,26 @@
 </template>
 
 <script>
-import {
-    mapState, mapGetters, mapMutations, mapActions
-} from 'vuex'
+import useValidate from '@vuelidate/core'
+import { maxLength } from '@vuelidate/validators'
+import CscListItem from 'components/CscListItem'
+import CscListItemTitle from 'components/CscListItemTitle'
+import CscListSpinner from 'components/CscListSpinner'
+import CscPageSticky from 'components/CscPageSticky'
+import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import CscPbxSoundSetSound from 'components/pages/PbxConfiguration/CscPbxSoundSetSound'
+import _ from 'lodash'
 import {
     showGlobalError,
     showToast
 } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
 import {
-    RequestState
-} from 'src/store/common'
-import {
-    maxLength
-} from '@vuelidate/validators'
-import CscPbxSoundSetSound from 'components/pages/PbxConfiguration/CscPbxSoundSetSound'
-import CscListSpinner from 'components/CscListSpinner'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import CscInputButtonReset from 'components/form/CscInputButtonReset'
-import CscPageSticky from 'components/CscPageSticky'
-import CscListItem from 'components/CscListItem'
-import CscListItemTitle from 'components/CscListItemTitle'
-import useValidate from '@vuelidate/core'
-import _ from 'lodash'
+    mapActions,
+    mapGetters, mapMutations,
+    mapState
+} from 'vuex'
 export default {
     name: 'CscPagePbxSoundSetDetails',
     components: {
@@ -238,7 +236,8 @@ export default {
             return this.changes.description !== this.getSoundSetData().description
         },
         parent () {
-            return this.changes.parent_id ? this.soundSetList.find((soundSet) => this.changes.parent_id === soundSet.id) : null
+            return this.changes.parent_id ? this.soundSetList.find((soundSet) => this.changes.parent_id === soundSet.id)
+                : null
         },
         getParentOptions () {
             const parentOptions = [

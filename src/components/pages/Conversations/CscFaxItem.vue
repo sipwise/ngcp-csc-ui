@@ -66,8 +66,8 @@
 <script>
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
+import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
 export default {
     name: 'CscFaxItem',
     components: { CscPopupMenuItemStartCall, CscPopupMenuItem, CscMoreMenu, CscPopupMenuItemDelete },
@@ -92,16 +92,14 @@ export default {
         direction () {
             if (this.fax.direction === 'out') {
                 return 'to'
-            } else {
-                return 'from'
             }
+            return 'from'
         },
         number () {
             if (this.fax.direction === 'out') {
                 return this.fax.callee
-            } else {
-                return this.fax.caller
             }
+            return this.fax.caller
         }
     },
     methods: {

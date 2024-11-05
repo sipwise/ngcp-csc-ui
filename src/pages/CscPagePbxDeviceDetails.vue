@@ -194,19 +194,22 @@
 <script>
 import useValidate from '@vuelidate/core'
 import CscListSpinner from 'components/CscListSpinner'
+import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscPbxDeviceConfig from 'components/pages/PbxConfiguration/CscPbxDeviceConfig'
 import CscPbxModelSelect from 'components/pages/PbxConfiguration/CscPbxModelSelect'
-import { showGlobalError, showToast } from 'src/helpers/ui'
+import {
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
 import {
     mapActions,
     mapGetters,
     mapMutations,
     mapState
 } from 'vuex'
-import { RequestState } from 'src/store/common'
 export default {
     name: 'CscPagePbxDeviceDetails',
     components: {

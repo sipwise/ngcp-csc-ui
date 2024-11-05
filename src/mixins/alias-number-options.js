@@ -1,6 +1,6 @@
 'use strict'
 
-import numberFilter from '../filters/number'
+import numberFilter from 'src/filters/number'
 
 export default {
     computed: {

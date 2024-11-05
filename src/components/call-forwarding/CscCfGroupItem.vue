@@ -122,17 +122,20 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { mapActions, mapGetters } from 'vuex'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
-import CscInput from 'components/form/CscInput'
 import CscSpinner from 'components/CscSpinner'
-import { showGlobalError } from 'src/helpers/ui'
-import destination from 'src/mixins/destination'
 import CscCfDestination from 'components/call-forwarding/CscCfDestination'
 import CscCfDestinationCustomAnnouncement from 'components/call-forwarding/CscCfDestinationCustomAnnouncement'
 import CscCfDestinationNumber from 'components/call-forwarding/CscCfDestinationNumber'
+import CscInput from 'components/form/CscInput'
+import _ from 'lodash'
+import { showGlobalError } from 'src/helpers/ui'
+import destination from 'src/mixins/destination'
+import {
+    mapActions,
+    mapGetters
+} from 'vuex'
 export default {
     name: 'CscCfGroupItem',
     components: { CscCfDestinationNumber, CscCfDestinationCustomAnnouncement, CscCfDestination, CscSpinner, CscInput, CscPopupMenuItemDelete, CscMoreMenu },
@@ -189,7 +192,7 @@ export default {
             'announcements'
         ]),
         waitIdentifier () {
-            return 'csc-cf-group-item-' + this.destinationSet.id + '-' + this.destinationIndex
+            return `csc-cf-group-item-${this.destinationSet.id}-${this.destinationIndex}`
         }
     },
     watch: {
@@ -241,7 +244,7 @@ export default {
                 color: 'negative',
                 cancel: true,
                 persistent: true
-            }).onOk(async data => {
+            }).onOk(async (data) => {
                 this.$wait.start(this.waitIdentifier)
                 if (this.destinationSet.destinations.length > 1) {
                     await this.triggerRemoveDestination(payload)
@@ -270,7 +273,7 @@ export default {
             this.$wait.end('csc-cf-mappings-full')
         },
         setAnnouncement () {
-            this.announcement = _.first(this.announcements.filter(announcement => announcement.value === this.destination.announcement_id))
+            this.announcement = _.first(this.announcements.filter((announcement) => announcement.value === this.destination.announcement_id))
         },
         async updateAnnouncementEvent (payload, newAnnouncement) {
             this.$wait.start(this.waitIdentifier)

@@ -102,7 +102,7 @@ export default {
             this.addFilter(this.filterType, this.typedFilter)
         },
         removeFilter (name) {
-            this.filters = this.filters.filter(item => item.name !== name)
+            this.filters = this.filters.filter((item) => item.name !== name)
             this.filter()
         },
         removeFilters () {
@@ -115,9 +115,9 @@ export default {
             const valueTrimmed = _.trim(value)
             if (valueTrimmed) {
                 this.typedFilter = ''
-                this.filters = this.filters.filter(item => item.name !== name)
+                this.filters = this.filters.filter((item) => item.name !== name)
                 const filter = {
-                    name: name,
+                    name,
                     value: valueTrimmed
                 }
                 this.filters.push(filter)
@@ -126,7 +126,7 @@ export default {
         },
         filter () {
             const params = {}
-            this.filters.forEach(filter => {
+            this.filters.forEach((filter) => {
                 params[filter.name] = filter.value
             })
             this.$emit('filter', params)
@@ -139,7 +139,7 @@ export default {
                 alias_number: this.$t('Alias Number')
             }
             const filterNameTitle = filterNameTranslation[filterItem.name] || this.$t('Unknown name')
-            return filterNameTitle + ': ' + filterItem.value
+            return `${filterNameTitle}: ${filterItem.value}`
         }
     }
 }

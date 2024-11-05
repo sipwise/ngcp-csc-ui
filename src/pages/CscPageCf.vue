@@ -93,13 +93,13 @@
     </csc-page-sticky>
 </template>
 <script>
-import CscCfGroup from 'components/call-forwarding/CscCfGroup'
-import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
 import CscPageSticky from 'components/CscPageSticky'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuRingTimeout from 'components/CscPopupMenuRingTimeout'
 import CscSpinner from 'components/CscSpinner'
+import CscCfGroup from 'components/call-forwarding/CscCfGroup'
+import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
 import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageCf',

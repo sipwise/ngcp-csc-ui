@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import CscObjectSpinner from '../../CscObjectSpinner'
+import CscObjectSpinner from 'components/pages/components/CscObjectSpinner'
 
 export default {
     name: 'CscChangePassword',
@@ -137,7 +137,7 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.submit()
             })
         }

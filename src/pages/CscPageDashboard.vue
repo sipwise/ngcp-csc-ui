@@ -57,22 +57,18 @@
 </template>
 
 <script>
-import CscCardDashboard from 'components/pages/Dashboard/CscCardDashboard'
-import CscCallItem from 'components/pages/Conversations/CscCallItem'
 import CscPage from 'components/CscPage'
-import { mapWaitingActions } from 'vue-wait'
-import {
-    showGlobalError
-} from 'src/helpers/ui'
-import {
-    date
-} from 'quasar'
-import {
-    callIconColor,
-    callIcon
-} from 'src/helpers/call-utils'
-import { mapState, mapGetters } from 'vuex'
+import CscCallItem from 'components/pages/Conversations/CscCallItem'
+import CscCardDashboard from 'components/pages/Dashboard/CscCardDashboard'
+import { date } from 'quasar'
 import { INTERNAL_DATE_FORMAT_DASH_HOUR, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import {
+    callIcon,
+    callIconColor
+} from 'src/helpers/call-utils'
+import { showGlobalError } from 'src/helpers/ui'
+import { mapWaitingActions } from 'vue-wait'
+import { mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageDashboard',
     components: {
@@ -200,14 +196,13 @@ export default {
         checkTitleToShow (call) {
             if (call.call_type === 'cfu' || call.call_type === 'cfna' ||
                 call.call_type === 'cfb' || call.call_type === 'cft') {
-                return 'vmu' + call.caller
+                return `vmu${call.caller}`
             } else if (call.direction === 'out') {
                 return call.callee
             } else if (call.direction === 'in') {
                 return call.caller
-            } else {
-                return call.caller
             }
+            return call.caller
         },
         downloadVoicemail (id) {
             this.$store.dispatch('conversations/downloadVoiceMail', id)

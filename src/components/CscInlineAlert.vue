@@ -41,7 +41,7 @@ export default {
     },
     computed: {
         bannerClasses () {
-            return ['text-weight-bold', 'text-dark', 'bg-' + this.color, 'content-start']
+            return ['text-weight-bold', 'text-dark', `bg-${this.color}`, 'content-start']
         }
     }
 }

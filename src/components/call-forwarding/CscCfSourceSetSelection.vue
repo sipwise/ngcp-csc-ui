@@ -64,7 +64,7 @@ export default {
                 })
             } else {
                 update(() => {
-                    this.options = this.allOptions.filter(sourceSet =>
+                    this.options = this.allOptions.filter((sourceSet) =>
                         _.startsWith(_.lowerCase(sourceSet.label), _.lowerCase(value)))
                 })
             }

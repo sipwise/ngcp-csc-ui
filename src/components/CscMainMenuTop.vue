@@ -5,9 +5,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import CscMainMenu from 'components/CscMainMenu'
-import { LICENSES, PROFILE_ATTRIBUTE_MAP, PROFILE_ATTRIBUTES_MAP } from 'src/constants'
+import { LICENSES, PROFILE_ATTRIBUTES_MAP, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscMainMenuTop',
@@ -51,7 +51,8 @@ export default {
             'hasSomeSubscriberProfileAttributes',
             'hasLicenses',
             'isPbxEnabled',
-            'isSpCe'
+            'isSpCe',
+            'isOldCSCProxyingAllowed'
         ]),
         items () {
             const hasCallSettingsSubmenus = this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings) ||
@@ -283,7 +284,7 @@ export default {
                     visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.registeredDevices)
                 },
                 {
-                    to: '/customer/' + this.getCustomerId + '/details',
+                    to: `/customer/${this.getCustomerId}/details`,
                     icon: 'far fa-address-card',
                     label: this.$t('Customer Details'),
                     visible: this.isOldCSCProxyingAllowed

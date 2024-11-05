@@ -62,11 +62,11 @@
     </csc-page-sticky>
 </template>
 <script>
-import { required } from 'vuelidate/lib/validators'
-import { mapWaitingActions } from 'vue-wait'
-import CscPageSticky from 'components/CscPageSticky'
 import useValidate from '@vuelidate/core'
+import CscPageSticky from 'components/CscPageSticky'
 import CscInputFile from 'components/form/CscInputFile'
+import { mapWaitingActions } from 'vue-wait'
+import { required } from 'vuelidate/lib/validators'
 import { mapGetters } from 'vuex'
 export default {
     name: 'CscPageCustomerPhonebookUpload',
