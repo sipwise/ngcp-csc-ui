@@ -46,10 +46,10 @@
 </template>
 
 <script>
-import { email, required } from '@vuelidate/validators'
-import CscInputSaveable from 'components/form/CscInputSaveable'
-import CscTooltip from 'components/CscTooltip'
 import useValidate from '@vuelidate/core'
+import { email, required } from '@vuelidate/validators'
+import CscTooltip from 'components/CscTooltip'
+import CscInputSaveable from 'components/form/CscInputSaveable'
 export default {
     name: 'CscMailToFaxRenewNotifyEmailForm',
     components: {
@@ -100,9 +100,8 @@ export default {
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'email') {
                 return this.$t('Input a valid email address')
-            } else {
-                return ''
             }
+            return ''
         }
     },
     methods: {

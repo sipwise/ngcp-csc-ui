@@ -68,8 +68,8 @@
 </template>
 
 <script>
-import { mapWaitingActions } from 'vue-wait'
 import CscPageSticky from 'components/CscPageSticky'
+import { mapWaitingActions } from 'vue-wait'
 export default {
     name: 'CscPageSubscriberPhonebookDetails',
     components: {

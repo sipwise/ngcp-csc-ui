@@ -1,4 +1,3 @@
-
 export function dataSucceeded (state, res) {
     if (res.destinationSets) {
         const destinationSetMap = {}

@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import {
     getFaxServerSettings,
-    setFaxServerField,
     getMailToFaxSettings,
+    setFaxServerField,
     setMailToFaxSettingField
-} from '../api/fax'
+} from 'src/api/fax'
 
 export default {
     namespaced: true,
@@ -48,7 +48,7 @@ export default {
         async faxServerSettingsUpdateAction (context, options) {
             const subscriberId = options.id || context.getters.subscriberId
             const faxServerSettings = await setFaxServerField({
-                subscriberId: subscriberId,
+                subscriberId,
                 field: options.field,
                 value: options.value
             })
@@ -71,7 +71,7 @@ export default {
         async mailToFaxSettingsUpdateAction (context, options) {
             const subscriberId = options.id || context.getters.subscriberId
             const mailToFaxSettings = await setMailToFaxSettingField({
-                subscriberId: subscriberId,
+                subscriberId,
                 field: options.field,
                 value: options.value
             })

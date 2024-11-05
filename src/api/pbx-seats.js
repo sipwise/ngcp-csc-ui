@@ -1,55 +1,51 @@
+import _ from 'lodash'
+import {
+    PBX_CONFIG_ORDER_BY,
+    PBX_CONFIG_ORDER_DIRECTION,
+    getAllSoundSets,
+    getNcos,
+    getNcosSet,
+    getPilot,
+    getSoundSet,
+    setSubscriberNcos,
+    setSubscriberNcosSet,
+    setSubscriberSoundSet
+} from 'src/api/pbx-config'
+import { getGroupsOnly } from 'src/api/pbx-groups'
 import {
     createSubscriber,
     deleteSubscriber,
+    generateGeneralPassword,
     getFullSubscribers,
+    getPreferences,
     getSubscriberAndPreferences,
     getSubscribers,
     setDisplayName,
-    setWebUsername,
     setPbxExtension,
-    setPbxWebPassword,
     setPbxGroupIds,
-    setSubscriberNumbers,
-    setPreferenceIntraPbx,
-    setPreferenceMusicOnHold,
-    setPreferenceCli,
-    getPreferences,
     setPbxSIPPassword,
-    setPreferenceAnnouncementCfu,
+    setPbxWebPassword,
     setPreferenceAnnouncementCallSetup,
+    setPreferenceAnnouncementCfu,
     setPreferenceAnnouncementToCallee,
-    setPreferenceIgnoreCfWhenHunting,
+    setPreferenceCli,
     setPreferenceCstaClient,
     setPreferenceCstaController,
-    generateGeneralPassword
-} from './subscriber'
-import _ from 'lodash'
-import {
-    getAllSoundSets,
-    getPilot,
-    getSoundSet,
-    PBX_CONFIG_ORDER_BY,
-    PBX_CONFIG_ORDER_DIRECTION,
-    setSubscriberSoundSet,
-    getNcos,
-    getNcosSet,
-    setSubscriberNcos,
-    setSubscriberNcosSet
-} from './pbx-config'
+    setPreferenceIgnoreCfWhenHunting,
+    setPreferenceIntraPbx,
+    setPreferenceMusicOnHold,
+    setSubscriberNumbers,
+    setWebUsername
+} from 'src/api/subscriber'
 import {
     assignNumbers,
     getNumbers
-} from './user'
-import {
-    getGroupsOnly
-} from './pbx-groups'
-import {
-    getSubscriberId
-} from 'src/auth'
+} from 'src/api/user'
+import { getSubscriberId } from 'src/auth'
+
 export function getSeats (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             params: {
                 is_pbx_group: 0,
                 is_pbx_pilot: 0
@@ -57,7 +53,7 @@ export function getSeats (options) {
         })
         Promise.resolve().then(() => {
             return Promise.all([
-                getFullSubscribers(options),
+                getFullSubscribers(mergedOptions),
                 getAllSoundSets()
             ])
         }).then((result) => {
@@ -76,15 +72,14 @@ export function getSeats (options) {
 
 export function getSeatsOnly (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             params: {
                 is_pbx_group: 0,
                 is_pbx_pilot: 0
             }
         })
         Promise.resolve().then(() => {
-            return getSubscribers(options)
+            return getSubscribers(mergedOptions)
         }).then((result) => {
             resolve(result)
         }).catch((err) => {
@@ -101,7 +96,7 @@ export function getSeatList (options) {
         const primaryNumber = _.get(options, 'primary_number', null)
         const aliasNumber = _.get(options, 'alias_number', null)
         const params = {
-            page: page,
+            page,
             order_by: PBX_CONFIG_ORDER_BY,
             order_by_direction: PBX_CONFIG_ORDER_DIRECTION
         }
@@ -119,7 +114,7 @@ export function getSeatList (options) {
         }
         Promise.all([
             getSeats({
-                params: params
+                params
             }),
             getGroupsOnly({
                 all: true
@@ -162,9 +157,8 @@ export async function createSeat (seat) {
             setSeatIntraPbx(subscriberId, seat.clirIntrapbx)
             if (seat.soundSet !== null && seat.soundSet !== undefined) {
                 return getSoundSet(seat.soundSet)
-            } else {
-                return Promise.resolve(null)
             }
+            return Promise.resolve(null)
         }).then((soundSet) => {
             const promises = [
                 assignNumbers(seat.aliasNumbers, subscriberId)
@@ -443,9 +437,8 @@ export function setSeatSoundSet (options) {
         Promise.resolve().then(() => {
             if (options.soundSetId !== null && options.soundSetId !== undefined) {
                 return getSoundSet(options.soundSetId)
-            } else {
-                return Promise.resolve(null)
             }
+            return Promise.resolve(null)
         }).then((soundSet) => {
             const soundSetName = _.get(soundSet, 'name', null)
             return setSubscriberSoundSet(options.seatId, soundSetName)
@@ -482,9 +475,8 @@ export function setNcosSet (options) {
         Promise.resolve().then(() => {
             if (options.ncosId !== null && options.ncosId !== undefined) {
                 return getNcos(options.ncosId)
-            } else {
-                return Promise.resolve(null)
             }
+            return Promise.resolve(null)
         }).then((ncos) => {
             const ncosName = _.get(ncos, 'level', null)
             return setSubscriberNcos(options.seatId, ncosName)
@@ -510,9 +502,8 @@ export function NcosSet (options) {
         Promise.resolve().then(() => {
             if (options.ncosSetId !== null && options.ncosSetId !== undefined) {
                 return getNcosSet(options.ncosSetId)
-            } else {
-                return Promise.resolve(null)
             }
+            return Promise.resolve(null)
         }).then((ncosSet) => {
             const ncosName = _.get(ncosSet, 'name', null)
             return setSubscriberNcosSet(options.seatId, ncosName)
@@ -537,9 +528,8 @@ export function NcosSets (options) {
         Promise.resolve().then(() => {
             if (options.ncosSetId !== null && options.ncosSetId !== undefined) {
                 return getNcosSet(options.ncosSetId)
-            } else {
-                return Promise.resolve(null)
             }
+            return Promise.resolve(null)
         }).then((ncosSet) => {
             const ncosName = _.get(ncosSet, 'name', null)
             return setSubscriberNcosSet(getSubscriberId(), ncosName)
@@ -564,9 +554,8 @@ export function setNcosLevelSets (options) {
         Promise.resolve().then(() => {
             if (options.ncosId !== null && options.ncosId !== undefined) {
                 return getNcos(options.ncosId)
-            } else {
-                return Promise.resolve(null)
             }
+            return Promise.resolve(null)
         }).then((ncos) => {
             const ncosName = _.get(ncos, 'level', null)
             return setSubscriberNcos(getSubscriberId(), ncosName)

@@ -210,17 +210,17 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { mapState } from 'vuex'
-import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
-import { showGlobalError } from 'src/helpers/ui'
 import CscSpinner from 'components/CscSpinner'
-import CscInputSaveable from 'components/form/CscInputSaveable'
-import CscMailToFaxRenewNotifyEmail from 'components/pages/FaxSettings/CscMailToFaxRenewNotifyEmail'
-import CscMailToFaxACL from 'components/pages/FaxSettings/CscMailToFaxACL'
-import CscMailToFaxRenewNotifyEmailForm from 'components/pages/FaxSettings/CscMailToFaxRenewNotifyEmailForm'
-import CscMailToFaxACLForm from 'components/pages/FaxSettings/CscMailToFaxACLForm'
 import CscTooltip from 'components/CscTooltip'
+import CscInputSaveable from 'components/form/CscInputSaveable'
+import CscMailToFaxACL from 'components/pages/FaxSettings/CscMailToFaxACL'
+import CscMailToFaxACLForm from 'components/pages/FaxSettings/CscMailToFaxACLForm'
+import CscMailToFaxRenewNotifyEmail from 'components/pages/FaxSettings/CscMailToFaxRenewNotifyEmail'
+import CscMailToFaxRenewNotifyEmailForm from 'components/pages/FaxSettings/CscMailToFaxRenewNotifyEmailForm'
+import _ from 'lodash'
+import { showGlobalError } from 'src/helpers/ui'
+import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
+import { mapState } from 'vuex'
 
 export default {
     name: 'CscMailToFaxSettings',
@@ -260,11 +260,11 @@ export default {
         },
         secretKeyFieldLabel () {
             let label = this.$t('Secret Key (empty=disabled)')
-            label += ' (' + this.$t('Last Modify Time') + ': '
+            label += ` (${this.$t('Last Modify Time')}: `
             if (this.mailToFaxSettings.last_secret_key_modify) {
-                label += this.mailToFaxSettings.last_secret_key_modify + ')'
+                label += `${this.mailToFaxSettings.last_secret_key_modify})`
             } else {
-                label += this.$t('Not modified yet') + ')'
+                label += `${this.$t('Not modified yet')})`
             }
             return label
         },
@@ -307,10 +307,11 @@ export default {
         },
         async setChangedData (field, value, beforeUpdateUI = () => {}) {
             try {
+                let newValue = value
                 if (field === 'secret_key') {
-                    value = value === '' ? null : value
+                    newValue = newValue === '' ? null : newValue
                 }
-                await this.mailToFaxSettingsUpdateAction({ field, value, id: this.id })
+                await this.mailToFaxSettingsUpdateAction({ field, value: newValue, id: this.id })
                 beforeUpdateUI()
                 this.updateDataFromStore()
             } catch (err) {
@@ -333,7 +334,7 @@ export default {
         },
         updateRenewEmailItem (itemId, data) {
             const renewEmailItems = _.cloneDeep(this.mailToFaxSettingsModel.secret_renew_notify)
-            const renewEmailItemIndex = renewEmailItems.findIndex(d => d.destination === itemId)
+            const renewEmailItemIndex = renewEmailItems.findIndex((d) => d.destination === itemId)
             if (renewEmailItemIndex >= 0) {
                 renewEmailItems[renewEmailItemIndex].destination = data.value
             }
@@ -341,7 +342,7 @@ export default {
             this.setChangedData('secret_renew_notify', renewEmailItems)
         },
         deleteRenewEmailItem (itemId) {
-            const renewEmailItems = this.mailToFaxSettingsModel.secret_renew_notify.filter(d => d.destination !== itemId)
+            const renewEmailItems = this.mailToFaxSettingsModel.secret_renew_notify.filter((d) => d.destination !== itemId)
             this.setChangedData('secret_renew_notify', renewEmailItems)
         },
 

@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import CscCfGroupConditionWeekdays from 'components/call-forwarding/CscCfGroupConditionWeekdays'
 import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
+import CscCfGroupConditionWeekdays from 'components/call-forwarding/CscCfGroupConditionWeekdays'
 export default {
     name: 'CscCfConditionPopupWeekdays',
     components: {

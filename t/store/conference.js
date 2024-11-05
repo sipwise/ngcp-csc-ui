@@ -1,10 +1,9 @@
-
 'use strict'
 
-import ConferenceModule from '../../src/store/conference'
 import { assert } from 'chai'
+import ConferenceModule from 'src/store/conference'
 
-describe('Conference', function () {
+describe('Conference', () => {
     it('should add a participant id to the store if not already stored', () => {
         const state = {
             participants: []

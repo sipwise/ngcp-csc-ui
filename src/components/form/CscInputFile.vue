@@ -59,7 +59,7 @@ export default {
     computed: {
         inputText () {
             if (this.selectedFile !== null) {
-                return this.selectedFile.name + ' (' + this.selectedFile.size + ' Byte)'
+                return `${this.selectedFile.name} (${this.selectedFile.size} Byte)`
             }
             return this.$t('No file')
         }

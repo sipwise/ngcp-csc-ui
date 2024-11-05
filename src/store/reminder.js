@@ -1,12 +1,11 @@
-
 import _ from 'lodash'
-import { RequestState } from './common'
 import {
     getReminder,
     setReminderActive,
-    setReminderTime,
-    setReminderRecurrence
-} from '../api/reminder'
+    setReminderRecurrence,
+    setReminderTime
+} from 'src/api/reminder'
+import { RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,

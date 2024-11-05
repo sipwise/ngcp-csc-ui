@@ -187,19 +187,19 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import useValidate from '@vuelidate/core'
+import { helpers, or } from '@vuelidate/validators'
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
-import CscInput from 'components/form/CscInput'
 import CscCfSelectionWeekdays from 'components/call-forwarding/CscCfSelectionWeekdays'
+import CscInput from 'components/form/CscInput'
+import _ from 'lodash'
 import { DEFAULT_WEEKDAYS } from 'src/filters/time-set'
-import { mapActions } from 'vuex'
 import {
     humanTimesetToKamailio, isTimeStrValid,
     kamailioTimesetToHuman, timeStrToMinutes
 } from 'src/helpers/kamailio-timesets-converter'
 import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
-import { or, helpers } from '@vuelidate/validators'
-import useValidate from '@vuelidate/core'
+import { mapActions } from 'vuex'
 function isTimeStrEmpty (val) {
     return val === '' || val === '__:__'
 }
@@ -269,10 +269,9 @@ export default {
         currentDayTimeRanges () {
             if (this.sameTimes) {
                 return this.timeRangesForAll
-            } else {
-                const currentDay = this.weekdays[0]
-                return this.timeRangesByDay[currentDay]
             }
+            const currentDay = this.weekdays[0]
+            return this.timeRangesByDay[currentDay]
         }
     },
     watch: {
@@ -322,6 +321,7 @@ export default {
             } catch (e) {
                 this.reset()
                 this.invalidTimeset = true
+                // eslint-disable-next-line no-console
                 console.info(e)
                 return
             }
@@ -370,7 +370,7 @@ export default {
                 // So, if we have only one weekdays list it means we can set mark "sameTimes" to True
                 if (weekdaysListWithTheSameTimeRanges.length === 1) {
                     this.sameTimes = true
-                    this.weekdays = weekdaysListWithTheSameTimeRanges[0].split(',').map(day => Number(day))
+                    this.weekdays = weekdaysListWithTheSameTimeRanges[0].split(',').map((day) => Number(day))
                     this.timeRangesForAll = _.cloneDeep(this.timeRangesByDay[this.weekdays[0]])
                 } else {
                     this.sameTimes = false
@@ -392,7 +392,7 @@ export default {
                     color: 'negative',
                     cancel: true,
                     persistent: true
-                }).onOk(data => {
+                }).onOk((data) => {
                     this.removeTimeRange(index)
                 })
             }
@@ -420,7 +420,7 @@ export default {
             function processTimeRanges (timeRanges, dayNum) {
                 return timeRanges
                     .filter(isTimeRangeFilled)
-                    .map(timeRange => {
+                    .map((timeRange) => {
                         return {
                             weekday: dayNum,
                             from: timeRange.from,
@@ -432,7 +432,7 @@ export default {
             let hTimeSets = []
             if (this.sameTimes) {
                 // duplicating time ranges for each selected day
-                hTimeSets = this.weekdays.flatMap(dayNum => {
+                hTimeSets = this.weekdays.flatMap((dayNum) => {
                     return processTimeRanges(this.timeRangesForAll, dayNum)
                 })
             } else {

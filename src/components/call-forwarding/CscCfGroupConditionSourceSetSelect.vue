@@ -41,11 +41,9 @@
 </template>
 
 <script>
-import {
-    mapActions
-} from 'vuex'
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
 import CscCfSourceSetSelection from 'components/call-forwarding/CscCfSourceSetSelection'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfGroupConditionSourceSetSelect',
     components: {

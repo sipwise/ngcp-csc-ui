@@ -47,13 +47,11 @@
     </q-list>
 </template>
 <script>
-import CscCfGroupTitle from 'components/call-forwarding/CscCfGroupTitle'
-import CscCfGroupItem from 'components/call-forwarding/CscCfGroupItem'
 import CscSpinner from 'components/CscSpinner'
+import CscCfGroupItem from 'components/call-forwarding/CscCfGroupItem'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
-import {
-    mapState
-} from 'vuex'
+import CscCfGroupTitle from 'components/call-forwarding/CscCfGroupTitle'
+import { mapState } from 'vuex'
 
 export default {
     name: 'CscCfGroup',
@@ -97,7 +95,7 @@ export default {
             'seatSelected'
         ]),
         waitIdentifier () {
-            return 'csc-cf-group-' + this.destinationSet.id
+            return `csc-cf-group-${this.destinationSet.id}`
         },
         getPrimaryNumberSource () {
             if (this.groupSelected) {

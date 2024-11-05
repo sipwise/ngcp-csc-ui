@@ -58,11 +58,10 @@
 </template>
 
 <script>
-import CscCallInput from '../../form/CscCallInput'
-import CscSpinner from '../../CscSpinner'
-import {
-    showGlobalError
-} from 'src/helpers/ui'
+
+import CscSpinner from 'components/CscSpinner'
+import CscCallInput from 'components/form/CscCallInput'
+import { showGlobalError } from 'src/helpers/ui'
 export default {
     name: 'CscCallBlockingAddForm',
     components: {

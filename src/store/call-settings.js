@@ -1,9 +1,9 @@
 import {
     getPreferences,
     getPreferencesDefs,
-    setPreference,
-    removePreference
-} from '../api/subscriber'
+    removePreference,
+    setPreference
+} from 'src/api/subscriber'
 
 export default {
     namespaced: true,
@@ -24,13 +24,14 @@ export default {
         },
         defaultLanguage (state, getters) {
             const languages = getters.languages
-            return languages && languages.find(lang => lang.default_val).label
+            return languages && languages.find((lang) => {
+                return lang.default_val
+            }).label
         },
         languages (state) {
-            return state.preferencesDefs
-                .language?.enum_values?.map((lang) => {
-                    return { value: lang.value, label: lang.label, default_val: lang.default_val }
-                })
+            return state.preferencesDefs.language?.enum_values?.map((lang) => {
+                return { value: lang.value, label: lang.label, default_val: lang.default_val }
+            })
         }
     },
     mutations: {

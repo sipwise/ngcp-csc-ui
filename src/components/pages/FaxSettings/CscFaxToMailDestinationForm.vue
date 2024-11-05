@@ -88,9 +88,9 @@
 </template>
 
 <script>
+import useValidate from '@vuelidate/core'
 import { email, required } from '@vuelidate/validators'
 import CscInputSaveable from 'components/form/CscInputSaveable'
-import useValidate from '@vuelidate/core'
 export default {
     name: 'CscFaxToMailDestinationForm',
     components: {
@@ -144,9 +144,8 @@ export default {
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'email') {
                 return this.$t('Input a valid email address')
-            } else {
-                return ''
             }
+            return ''
         },
         fileTypeOptions () {
             return ['TIFF', 'PS', 'PDF', 'PDF14']

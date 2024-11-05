@@ -60,16 +60,15 @@
 </template>
 
 <script>
-import {
-    required,
-    maxLength
-} from '@vuelidate/validators'
-import {
-    customMacAddress
-} from 'src/helpers/validation'
-import CscPbxModelSelect from './CscPbxModelSelect'
-import CscObjectSpinner from '../../CscObjectSpinner'
 import useValidate from '@vuelidate/core'
+import {
+    maxLength,
+    required
+} from '@vuelidate/validators'
+import CscObjectSpinner from 'components/CscObjectSpinner'
+import CscPbxModelSelect from 'components/pages/PbxConfiguration/CscPbxModelSelect'
+import { customMacAddress } from 'src/helpers/validation'
+
 export default {
     name: 'CscPbxDeviceAddForm',
     components: {
@@ -125,9 +124,8 @@ export default {
                     field: this.$t('Station name'),
                     maxLength: this.v$.formData.stationName.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         identifierErrorMessage () {
             const errorsTab = this.v$.formData.identifier.$errors
@@ -137,9 +135,8 @@ export default {
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'customMacAddress') {
                 return this.$t('Input a valid mac address')
-            } else {
-                return ''
             }
+            return ''
         }
     },
     methods: {

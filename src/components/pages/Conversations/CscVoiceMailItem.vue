@@ -85,14 +85,13 @@
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
-import CscAudioPlayer from '../../CscAudioPlayer'
+import CscAudioPlayer from 'components/CscAudioPlayer'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
+import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
+import { mapGetters } from 'vuex'
+
 export default {
     name: 'CscVoiceMailItem',
     components: {
@@ -142,9 +141,8 @@ export default {
         direction () {
             if (this.voiceMail.direction === 'out') {
                 return 'to'
-            } else {
-                return 'from'
             }
+            return 'from'
         },
         soundFileFormat () {
             return this.platform.mozilla ? 'ogg' : 'mp3'

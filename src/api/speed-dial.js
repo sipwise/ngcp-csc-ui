@@ -1,12 +1,11 @@
-
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
-import { i18n } from 'src/boot/i18n'
-import { getFieldList, httpApi } from './common'
+import { getFieldList, httpApi } from 'src/api/common'
 
 export function getSpeedDialsById (id) {
     return new Promise((resolve, reject) => {
         getFieldList({
-            path: 'api/speeddials/' + id,
+            path: `api/speeddials/${id}`,
             field: 'speeddials'
         }).then((result) => {
             const sortedResult = _.sortBy(result, ['slot'])
@@ -46,11 +45,11 @@ export function unassignSpeedDialSlot (options) {
         const headers = {
             'Content-Type': 'application/json-patch+json'
         }
-        httpApi.patch('api/speeddials/' + options.id, [{
+        httpApi.patch(`api/speeddials/${options.id}`, [{
             op: 'replace',
             path: '/speeddials',
             value: updatedAssignedSlots
-        }], { headers: headers }).then(() => {
+        }], { headers }).then(() => {
             resolve()
         }).catch((err) => {
             reject(err)
@@ -63,11 +62,11 @@ export function addSlotToSpeedDials (options) {
         const headers = {
             'Content-Type': 'application/json-patch+json'
         }
-        httpApi.patch('api/speeddials/' + options.id, [{
+        httpApi.patch(`api/speeddials/${options.id}`, [{
             op: 'replace',
             path: '/speeddials',
             value: options.slots
-        }], { headers: headers }).then(() => {
+        }], { headers }).then(() => {
             resolve()
         }).catch((err) => {
             reject(err)

@@ -1,13 +1,14 @@
+import _ from 'lodash'
 import {
     del,
     get,
-    getList, patchReplace, post, putMinimal
+    getList,
+    patchReplace,
+    post,
+    putMinimal
 } from 'src/api/common'
-import {
-    v4
-} from 'uuid'
-import _ from 'lodash'
 import { showGlobalError } from 'src/helpers/ui'
+import { v4 } from 'uuid'
 
 export async function cfLoadMappings (subscriberId) {
     return get({
@@ -77,15 +78,14 @@ export async function cfCreateSourceSet (id, payload) {
                 name: payload.name,
                 subscriber_id: id,
                 is_regex: true,
-                sources: sources,
+                sources,
                 mode: payload.mode
             }
         })
         if (!_.isString(res)) {
-            return res.id + ''
-        } else {
-            return res
+            return `${res.id}`
         }
+        return res
     } catch (e) {
         showGlobalError(e)
     }
@@ -105,7 +105,7 @@ export async function cfUpdateSourceSet (id, payload) {
             name: payload.name,
             subscriber_id: id,
             is_regex: true,
-            sources: sources,
+            sources,
             mode: payload.mode
         }
     })
@@ -123,7 +123,7 @@ export async function cfCreateTimeSetDate (subscriberId, date) {
         resource: 'cftimesets',
         body: {
             subscriber_id: subscriberId,
-            name: 'csc-date-exact-' + v4(),
+            name: `csc-date-exact-${v4()}`,
             times: [
                 {
                     minute: null,
@@ -168,8 +168,8 @@ export async function cfCreateTimeSetDateRange (subscriberId, times) {
         resource: 'cftimesets',
         body: {
             subscriber_id: subscriberId,
-            name: 'csc-date-range-' + v4(),
-            times: times
+            name: `csc-date-range-${v4()}`,
+            times
         }
     })
 }
@@ -199,8 +199,8 @@ export async function cfCreateTimeSetWeekdays (subscriberId, weekdays) {
         resource: 'cftimesets',
         body: {
             subscriber_id: subscriberId,
-            name: 'csc-weekdays-' + v4(),
-            times: times
+            name: `csc-weekdays-${v4()}`,
+            times
         }
     })
 }
@@ -230,8 +230,8 @@ export async function cfCreateOfficeHours (subscriberId, times) {
         resource: 'cftimesets',
         body: {
             subscriber_id: subscriberId,
-            name: 'csc-office-hours-' + v4(),
-            times: times
+            name: `csc-office-hours-${v4()}`,
+            times
         }
     })
 }

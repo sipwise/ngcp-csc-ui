@@ -81,6 +81,14 @@
 </template>
 
 <script>
+import CscListActionButton from 'components/CscListActionButton'
+import CscListActions from 'components/CscListActions'
+import CscListSpinner from 'components/CscListSpinner'
+import CscPage from 'components/CscPage'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscPbxSoundSet from 'components/pages/PbxConfiguration/CscPbxSoundSet'
+import CscPbxSoundSetAddForm from 'components/pages/PbxConfiguration/CscPbxSoundSetAddForm'
+import CscFade from 'components/transitions/CscFade'
 import {
     showGlobalError,
     showToast
@@ -90,19 +98,11 @@ import {
     RequestState
 } from 'src/store/common'
 import {
-    mapMutations,
     mapActions,
-    mapState,
-    mapGetters
+    mapGetters,
+    mapMutations,
+    mapState
 } from 'vuex'
-import CscPage from 'components/CscPage'
-import CscFade from 'components/transitions/CscFade'
-import CscListActions from 'components/CscListActions'
-import CscListActionButton from 'components/CscListActionButton'
-import CscPbxSoundSet from 'components/pages/PbxConfiguration/CscPbxSoundSet'
-import CscListSpinner from 'components/CscListSpinner'
-import CscPbxSoundSetAddForm from 'components/pages/PbxConfiguration/CscPbxSoundSetAddForm'
-import CscRemoveDialog from 'components/CscRemoveDialog'
 
 export default {
     name: 'CscPagePbxSoundSets',
@@ -191,7 +191,7 @@ export default {
         ]),
         loadSoundSetListPaginated (page) {
             this.loadSoundSetList({
-                page: page
+                page
             })
         },
         openSoundSetRemovalDialog (soundSetId) {

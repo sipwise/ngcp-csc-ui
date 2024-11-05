@@ -1,33 +1,34 @@
 import _ from 'lodash'
 import {
+    PBX_CONFIG_ORDER_BY,
+    PBX_CONFIG_ORDER_DIRECTION,
+    getAllSoundSets,
+    getPilot,
+    getSoundSet,
+    setSubscriberSoundSet
+} from 'src/api/pbx-config'
+import { getSeatsOnly } from 'src/api/pbx-seats'
+import {
     createSubscriber,
     deleteSubscriber,
+    generateGeneralPassword,
     getFullSubscribers,
     getSubscriberAndPreferences,
     getSubscribers,
     setDisplayName,
-    setPbxExtension, setPbxGroupMemberIds,
-    setPbxHuntPolicy,
-    setPbxHuntTimeout, setSubscriberNumbers,
+    setPbxExtension,
+    setPbxGroupMemberIds,
     setPbxHuntCancelMode,
-    generateGeneralPassword,
+    setPbxHuntPolicy,
+    setPbxHuntTimeout,
     setPreferenceAnnouncementCallSetup,
-    setPreferenceAnnouncementCfu
-} from './subscriber'
-import {
-    getAllSoundSets,
-    getPilot,
-    getSoundSet,
-    PBX_CONFIG_ORDER_BY,
-    PBX_CONFIG_ORDER_DIRECTION,
-    setSubscriberSoundSet
-} from './pbx-config'
-
+    setPreferenceAnnouncementCfu,
+    setSubscriberNumbers
+} from 'src/api/subscriber'
 import {
     assignNumbers,
     getNumbers
-} from './user'
-import { getSeatsOnly } from './pbx-seats'
+} from 'src/api/user'
 
 export function getGroups (options) {
     return new Promise((resolve, reject) => {
@@ -42,8 +43,7 @@ export function getGroups (options) {
                 items: []
             }
         }
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             params: {
                 is_pbx_group: 1,
                 is_pbx_pilot: 0
@@ -51,7 +51,7 @@ export function getGroups (options) {
         })
         Promise.resolve().then(() => {
             return Promise.all([
-                getFullSubscribers(options),
+                getFullSubscribers(mergedOptions),
                 getAllSoundSets()
             ])
         }).then(($result) => {
@@ -67,15 +67,14 @@ export function getGroups (options) {
 
 export function getGroupsOnly (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             params: {
                 is_pbx_group: 1,
                 is_pbx_pilot: 0
             }
         })
         Promise.resolve().then(() => {
-            return getSubscribers(options)
+            return getSubscribers(mergedOptions)
         }).then((result) => {
             resolve(result)
         }).catch((err) => {
@@ -91,7 +90,7 @@ export function getGroupList (options) {
         Promise.all([
             getGroups({
                 params: {
-                    page: page,
+                    page,
                     ...filters,
                     order_by: PBX_CONFIG_ORDER_BY,
                     order_by_direction: PBX_CONFIG_ORDER_DIRECTION
@@ -137,9 +136,8 @@ export async function createGroup (group) {
             subscriberId = $subscriberId
             if (group.soundSet !== null && group.soundSet !== undefined) {
                 return getSoundSet(group.soundSet)
-            } else {
-                return Promise.resolve(null)
             }
+            return Promise.resolve(null)
         }).then((soundSet) => {
             const promises = [
                 assignNumbers(group.aliasNumbers, subscriberId)
@@ -290,9 +288,8 @@ export function setGroupSoundSet (options) {
         Promise.resolve().then(() => {
             if (options.soundSetId !== null && options.soundSetId !== undefined) {
                 return getSoundSet(options.soundSetId)
-            } else {
-                return Promise.resolve(null)
             }
+            return Promise.resolve(null)
         }).then((soundSet) => {
             const soundSetName = _.get(soundSet, 'name', null)
             return setSubscriberSoundSet(options.groupId, soundSetName)

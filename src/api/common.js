@@ -1,17 +1,11 @@
-
-import _ from 'lodash'
 import axios from 'axios'
-import {
-    getJsonBody
-} from './utils'
-import {
-    getJwt,
-    hasJwt
-} from 'src/auth'
-import { getCurrentLangAsV1Format } from 'src/i18n'
-import { i18n } from 'src/boot/i18n'
-
+import { i18n } from 'boot/i18n'
 import saveAs from 'file-saver'
+import _ from 'lodash'
+import { getJsonBody } from 'src/api/utils'
+import { getJwt, hasJwt } from 'src/auth'
+import { getCurrentLangAsV1Format } from 'src/i18n'
+
 export const LIST_DEFAULT_PAGE = 1
 export const LIST_DEFAULT_ROWS = 24
 export const LIST_ALL_ROWS = 1000
@@ -64,36 +58,21 @@ export class ApiResponseError extends Error {
 export function initAPI ({ baseURL }) {
     httpApi.defaults.baseURL = baseURL
 
-    httpApi.interceptors.request.use(function normaliseApiRequestBody (config) {
+    httpApi.interceptors.request.use((config) => {
         if (config) {
             if (hasJwt()) {
-                if (config.headers) {
-                    config.headers = {
-                        ...config.headers,
-                        Authorization: 'Bearer ' + getJwt()
-                    }
-                } else {
-                    config = {
-                        ...config,
-                        headers: {
-                            Authorization: 'Bearer ' + getJwt()
-                        }
-                    }
+                config.headers = {
+                    ...config.headers,
+                    Authorization: `Bearer ${getJwt()}`
                 }
             }
             if (config.method === 'POST' && (config.data === undefined || config.data === null)) {
                 config.data = {}
             }
-            if (!config?.url.includes('v2')) {
-                if (config.params) {
-                    config.params = {
-                        ...config.params,
-                        lang: getCurrentLangAsV1Format()
-                    }
-                } else {
-                    config.params = {
-                        lang: getCurrentLangAsV1Format()
-                    }
+            if (!config.url?.includes('v2')) {
+                config.params = {
+                    ...config.params,
+                    lang: getCurrentLangAsV1Format()
                 }
             }
 
@@ -112,8 +91,7 @@ export function apiIsCanceledRequest (exception) {
 }
 
 export async function getList (options) {
-    options = options || {}
-    options = _.merge({
+    const requestConfig = _.merge({
         all: false,
         params: {
             page: options.page || LIST_DEFAULT_PAGE,
@@ -121,25 +99,25 @@ export async function getList (options) {
         },
         headers: GET_HEADERS
     }, options)
-    if (options.all === true) {
-        options.params.rows = LIST_ALL_ROWS
+    if (requestConfig.all === true) {
+        requestConfig.params.rows = LIST_ALL_ROWS
     }
-    if (options.resource !== undefined) {
-        options.path = 'api/' + options.resource + '/'
-        options.root = '_embedded.ngcp:' + options.resource
+    if (requestConfig.resource !== undefined) {
+        requestConfig.path = `api/${requestConfig.resource}/`
+        requestConfig.root = `_embedded.ngcp:${requestConfig.resource}`
     }
-    const firstRes = await httpApi.get(options.path, {
-        headers: options.headers,
-        params: options.params
+    const firstRes = await httpApi.get(requestConfig.path, {
+        headers: requestConfig.headers,
+        params: requestConfig.params
     })
     let secondRes = null
     const firstResBody = getJsonBody(firstRes.data)
-    if (options.all === true && firstResBody.total_count > LIST_ALL_ROWS) {
-        const newParams = _.merge(options.params, {
+    if (requestConfig.all === true && firstResBody.total_count > LIST_ALL_ROWS) {
+        const newParams = _.merge(requestConfig.params, {
             rows: firstResBody.total_count
         })
-        secondRes = await httpApi.get(options.path, {
-            headers: options.headers,
+        secondRes = await httpApi.get(requestConfig.path, {
+            headers: requestConfig.headers,
             params: newParams
         })
     }
@@ -150,14 +128,14 @@ export async function getList (options) {
         body = getJsonBody(res.data)
     }
     const totalCount = _.get(body, 'total_count', 0)
-    let lastPage = Math.ceil(totalCount / options.params.rows)
-    if (options.all === true) {
+    let lastPage = Math.ceil(totalCount / requestConfig.params.rows)
+    if (requestConfig.all === true) {
         lastPage = 1
     }
     if (lastPage === 0) {
         lastPage = null
     }
-    let items = _.get(body, options.root, [])
+    let items = _.get(body, requestConfig.root, [])
     if (!Array.isArray(items)) {
         items = [items]
     }
@@ -165,8 +143,8 @@ export async function getList (options) {
         items[i] = normalizeEntity(items[i])
     }
     return {
-        items: items,
-        lastPage: lastPage,
+        items,
+        lastPage,
         totalCount
     }
 }
@@ -185,30 +163,20 @@ function handleResponseError (err) {
 }
 
 export async function get (options) {
-    options = options || {}
-    options = _.merge({
+    const requestConfig = _.merge({
         headers: GET_HEADERS
     }, options)
-    let requestOptions = {
-        headers: options.headers
+    if (requestConfig.blob === true) {
+        requestConfig.responseType = 'blob'
     }
-    if (options.params) {
-        requestOptions = {
-            ...requestOptions,
-            params: options.params
-        }
-    }
-    if (options.blob === true) {
-        requestOptions.responseType = 'blob'
-    }
-    let path = options.path
-    if (options.resource !== undefined && options.resourceId !== undefined) {
-        path = 'api/' + options.resource + '/' + options.resourceId
+    let path = requestConfig.path
+    if (requestConfig.resource !== undefined && requestConfig.resourceId !== undefined) {
+        path = `api/${requestConfig.resource}/${requestConfig.resourceId}`
     }
     try {
-        const res = await httpApi.get(path, requestOptions)
+        const res = await httpApi.get(path, requestConfig)
         let body = null
-        if (options.blob === true) {
+        if (requestConfig.blob === true) {
             body = URL.createObjectURL(res.data)
         } else {
             body = normalizeEntity(getJsonBody(res.data))
@@ -220,24 +188,23 @@ export async function get (options) {
 }
 
 export async function patch (operation, options) {
-    options = options || {}
-    options = _.merge({
+    const requestConfig = _.merge({
         headers: PATCH_HEADERS
     }, options)
     const body = {
         op: operation,
-        path: '/' + options.fieldPath
+        path: `/${requestConfig.fieldPath}`
     }
-    if (options.value !== undefined) {
-        body.value = options.value
+    if (requestConfig.value !== undefined) {
+        body.value = requestConfig.value
     }
-    let path = options.path
-    if (options.resource !== undefined && options.resourceId !== undefined) {
-        path = 'api/' + options.resource + '/' + options.resourceId
+    let path = requestConfig.path
+    if (requestConfig.resource !== undefined && requestConfig.resourceId !== undefined) {
+        path = `api/${requestConfig.resource}/${requestConfig.resourceId}`
     }
     try {
         return await httpApi.patch(path, [body], {
-            headers: options.headers
+            headers: requestConfig.headers
         })
     } catch (err) {
         handleResponseError(err)
@@ -257,13 +224,12 @@ export function patchRemove (options) {
 }
 
 export async function patchFull (operation, options) {
-    options = options || {}
-    options = _.merge(options, {
+    const requestConfig = _.merge({
         headers: {
             Prefer: 'return=representation'
         }
-    })
-    const res = await patch(operation, options)
+    }, options)
+    const res = await patch(operation, requestConfig)
     return normalizeEntity(getJsonBody(res.data))
 }
 
@@ -280,13 +246,12 @@ export function patchRemoveFull (options) {
 }
 
 export async function post (options) {
-    let requestOptions = options || {}
-    requestOptions = _.merge({
+    const requestOptions = _.merge({
         headers: POST_HEADERS
     }, options)
     let path = requestOptions.path
     if (requestOptions.resource !== undefined) {
-        path = 'api/' + requestOptions.resource + '/'
+        path = `api/${requestOptions.resource}/`
     }
     try {
         const res = await httpApi.post(path, requestOptions.body, {
@@ -297,72 +262,63 @@ export async function post (options) {
             return normalizeEntity(getJsonBody(res.data))
         } else if (!hasBody && res?.headers?.location) {
             return _.last(res.headers.location.split('/'))
-        } else {
-            return null
         }
+        return null
     } catch (err) {
         handleResponseError(err)
     }
 }
 
 export async function postMinimal (options) {
-    options = options || {}
-    options = _.merge(options, {
+    const requestConfig = _.merge({
         headers: {
             Prefer: 'return=representation'
         }
-    })
-    await post(options)
+    }, options)
+    await post(requestConfig)
 }
 
 export async function put (options) {
-    options = options || {}
-    options = _.merge({
+    const requestConfig = _.merge({
         headers: PUT_HEADERS
     }, options)
-    let path = options.path
-    if (options.resource !== undefined && options.resourceId !== undefined) {
-        path = 'api/' + options.resource + '/' + options.resourceId
+    let path = requestConfig.path
+    if (requestConfig.resource !== undefined && requestConfig.resourceId !== undefined) {
+        path = `api/${requestConfig.resource}/${requestConfig.resourceId}`
     }
     try {
-        const res = await httpApi.put(path, options.body, {
-            headers: options.headers
+        const res = await httpApi.put(path, requestConfig.body, {
+            headers: requestConfig.headers
         })
-        if (options.headers.Prefer === Prefer.representation) {
+        if (requestConfig.headers.Prefer === Prefer.representation) {
             return normalizeEntity(getJsonBody(res.data))
-        } else {
-            return null
         }
+        return null
     } catch (err) {
         handleResponseError(err)
     }
 }
 
 export async function putMinimal (options) {
-    options = options || {}
-    options = _.merge(options, {
+    const requestConfig = _.merge({
         headers: {
             Prefer: 'return=representation'
         }
-    })
-    await put(options)
+    }, options)
+    await put(requestConfig)
 }
 
 export async function del (options) {
-    options = options || {}
-    options = _.merge({
+    const requestConfig = _.merge({
         headers: GET_HEADERS
     }, options)
-    const requestOptions = {
-        headers: options.headers,
-        params: options.params
-    }
-    let path = options.path
-    if (options.resource !== undefined && options.resourceId !== undefined) {
-        path = 'api/' + options.resource + '/' + options.resourceId
+
+    let path = requestConfig.path
+    if (requestConfig.resource !== undefined && requestConfig.resourceId !== undefined) {
+        path = `api/${requestConfig.resource}/${requestConfig.resourceId}`
     }
     try {
-        await httpApi.delete(path, requestOptions)
+        await httpApi.delete(path, requestConfig)
     } catch (err) {
         handleResponseError(err)
     }
@@ -370,14 +326,13 @@ export async function del (options) {
 
 export function getFieldList (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge({
+        const requestConfig = _.merge({
             headers: GET_HEADERS
         }, options)
-        httpApi.get(options.path, {
-            headers: options.headers
+        httpApi.get(requestConfig.path, {
+            headers: requestConfig.headers
         }).then((result) => {
-            const fieldList = getJsonBody(result.data)[options.field]
+            const fieldList = getJsonBody(result.data)[requestConfig.field]
             resolve(fieldList)
         }).catch((err) => {
             reject(err)
@@ -394,11 +349,10 @@ export function normalizeEntity (entity) {
 
 export function getAsBlob (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const requestConfig = _.merge({
             blob: true
-        })
-        get(options).then((body) => {
+        }, options)
+        get(requestConfig).then((body) => {
             resolve(body)
         }).catch((err) => {
             reject(err)
@@ -411,11 +365,11 @@ export async function apiGet (options = {
     resourceId: undefined,
     config: {}
 }) {
-    let path = options.path
+    let path = options
     if (options.resource && options.resourceId) {
-        path = 'api/' + options.resource + '/' + options.resourceId
+        path = `api/${options.resource}/${options.resourceId}`
     } else if (options.resource) {
-        path = 'api/' + options.resource + '/'
+        path = `api/${options.resource}/`
     }
     return httpApi.get(path, options.config).catch(handleResponseError)
 }
@@ -424,9 +378,9 @@ export async function apiPost (options = {
     data: undefined,
     config: {}
 }) {
-    let path = options.path
+    let path = options
     if (options.resource) {
-        path = options.resource + '/'
+        path = `${options.resource}/`
     }
     return httpApi.post(path, options.data, _.merge({
         headers: {

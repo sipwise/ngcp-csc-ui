@@ -92,18 +92,18 @@
 </template>
 
 <script>
+import useValidate from '@vuelidate/core'
 import {
-    minValue,
     maxValue,
+    minValue,
     numeric
 } from '@vuelidate/validators'
-import CscListItem from '../../CscListItem'
-import CscListItemTitle from '../../CscListItemTitle'
-import CscListItemSubtitle from '../../CscListItemSubtitle'
-import CscListMenuItem from '../../CscListMenuItem'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import CscListItem from 'components/CscListItem'
+import CscListItemSubtitle from 'components/CscListItemSubtitle'
+import CscListItemTitle from 'components/CscListItemTitle'
+import CscListMenuItem from 'components/CscListMenuItem'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
-import useValidate from '@vuelidate/core'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { mapGetters } from 'vuex'
 export default {
@@ -208,9 +208,8 @@ export default {
                     field: this.$t('Queue Length'),
                     maxValue: this.v$.changes.max_queue_length.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         queueWrapUpTimeErrorMessage () {
             const errorsTab = this.v$.changes.queue_wrap_up_time.$errors
@@ -228,9 +227,8 @@ export default {
                     field: this.$t('Wrap up time'),
                     maxValue: this.v$.changes.queue_wrap_up_time.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         }
     },
     watch: {

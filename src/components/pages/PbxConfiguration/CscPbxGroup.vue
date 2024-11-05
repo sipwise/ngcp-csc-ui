@@ -71,10 +71,11 @@
 </template>
 
 <script>
-import CscListItemTitle from '../../CscListItemTitle'
-import CscListItemSubtitle from '../../CscListItemSubtitle'
+import CscListItemSubtitle from 'components/CscListItemSubtitle'
+import CscListItemTitle from 'components/CscListItemTitle'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+
 export default {
     name: 'CscPbxGroup',
     components: {
@@ -114,7 +115,7 @@ export default {
             this.$emit('remove')
         },
         showGroupDetails () {
-            this.$router.push('/user/pbx-configuration/group/' + this.group.id)
+            this.$router.push(`/user/pbx-configuration/group/${this.group.id}`)
         }
     }
 }

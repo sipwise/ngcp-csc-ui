@@ -60,8 +60,11 @@ export default {
     methods: {
         filter () {
             const params = {}
-            if (this.filterType === 'incomingCallsOnly') params.direction = 'in'
-            else if (this.filterType === 'outgoingCallsOnly') params.direction = 'out'
+            if (this.filterType === 'incomingCallsOnly') {
+                params.direction = 'in'
+            } else if (this.filterType === 'outgoingCallsOnly') {
+                params.direction = 'out'
+            }
             this.$emit('filter', params)
         }
     }

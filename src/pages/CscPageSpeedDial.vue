@@ -93,18 +93,16 @@
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
-import CscPage from 'components/CscPage'
-import CscSpeedDialAddForm from 'components/pages/SpeedDial/CscSpeedDialAddForm'
-import {
-    showToast,
-    showGlobalError
-} from 'src/helpers/ui'
 import CscListSpinner from 'components/CscListSpinner'
+import CscPage from 'components/CscPage'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscSpeedDialAddForm from 'components/pages/SpeedDial/CscSpeedDialAddForm'
+import {
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscPageSpeedDial',
@@ -163,7 +161,7 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.$store.dispatch('speedDial/unassignSpeedDialSlot', unassigned)
             })
         }

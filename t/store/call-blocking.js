@@ -1,23 +1,23 @@
 'use strict'
 
-import CallBlockingModule from '../../src/store/call-blocking'
 import { assert } from 'chai'
+import CallBlockingModule from 'src/store/call-blocking'
 
-describe('CallBlocking', function () {
-    describe('Incoming', function () {
-        it('should enable list', function () {
+describe('CallBlocking', () => {
+    describe('Incoming', () => {
+        it('should enable list', () => {
             const state = {}
             CallBlockingModule.mutations.toggleSucceeded(state, true)
             assert.equal(state.enabled, true)
         })
 
-        it('should disable list', function () {
+        it('should disable list', () => {
             const state = {}
             CallBlockingModule.mutations.toggleSucceeded(state, false)
             assert.equal(state.enabled, false)
         })
 
-        it('should load list and flag', function () {
+        it('should load list and flag', () => {
             const state = {}
             const list = [
                 '0123456789',
@@ -25,27 +25,27 @@ describe('CallBlocking', function () {
             ]
             CallBlockingModule.mutations.numberListSucceeded(state, {
                 enabled: true,
-                list: list
+                list
             })
             assert.equal(state.enabled, true)
             assert.deepEqual(state.list, list)
         })
     })
 
-    describe('Outgoing', function () {
-        it('should enable list', function () {
+    describe('Outgoing', () => {
+        it('should enable list', () => {
             const state = {}
             CallBlockingModule.mutations.toggleSucceeded(state, true)
             assert.equal(state.enabled, true)
         })
 
-        it('should disable list', function () {
+        it('should disable list', () => {
             const state = {}
             CallBlockingModule.mutations.toggleSucceeded(state, false)
             assert.equal(state.enabled, false)
         })
 
-        it('should load list and flag', function () {
+        it('should load list and flag', () => {
             const state = {}
             const list = [
                 '0123456789',
@@ -53,7 +53,7 @@ describe('CallBlocking', function () {
             ]
             CallBlockingModule.mutations.numberListSucceeded(state, {
                 enabled: true,
-                list: list
+                list
             })
             assert.equal(state.enabled, true)
             assert.deepEqual(state.list, list)

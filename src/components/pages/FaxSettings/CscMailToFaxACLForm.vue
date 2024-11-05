@@ -93,8 +93,8 @@
 </template>
 
 <script>
-import CscInputSaveable from 'components/form/CscInputSaveable'
 import CscTooltip from 'components/CscTooltip'
+import CscInputSaveable from 'components/form/CscInputSaveable'
 export default {
     name: 'CscMailToFaxACLForm',
     components: {

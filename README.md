@@ -278,3 +278,7 @@ const subscriber = await patchReplaceFull({
     value: 'dave'
 })
 console.log(subscriber.webusername)
+
+### Troubleshooting
+
+If you get a CORS error when trying to login, ssh in your machine and amend the flag `www_admin.http_csc.csc_dev` to yes.

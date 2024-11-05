@@ -358,24 +358,23 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import {
-    mapActions, mapGetters, mapState
-} from 'vuex'
-import numberFilter from 'src/filters/number'
 import CscMoreMenu from 'components/CscMoreMenu'
-import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscCfConditionPopupAll from 'components/call-forwarding/CscCfConditionPopupAll'
-import CscCfConditionPopupDate from 'components/call-forwarding/CscCfConditionPopupDate'
 import CscCfConditionPopupCallFrom from 'components/call-forwarding/CscCfConditionPopupCallFrom'
 import CscCfConditionPopupCallNotFrom from 'components/call-forwarding/CscCfConditionPopupCallNotFrom'
 import CscCfConditionPopupCustom from 'components/call-forwarding/CscCfConditionPopupCustom'
+import CscCfConditionPopupDate from 'components/call-forwarding/CscCfConditionPopupDate'
 import CscCfConditionPopupDateRange from 'components/call-forwarding/CscCfConditionPopupDateRange'
-import CscCfConditionPopupWeekdays from 'components/call-forwarding/CscCfConditionPopupWeekdays'
 import CscCfConditionPopupOfficeHours from 'components/call-forwarding/CscCfConditionPopupOfficeHours'
+import CscCfConditionPopupWeekdays from 'components/call-forwarding/CscCfConditionPopupWeekdays'
+import _ from 'lodash'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import numberFilter from 'src/filters/number'
 import destination from 'src/mixins/destination'
+import { mapActions, mapGetters, mapState } from 'vuex'
+
 export default {
     name: 'CscCfGroupTitle',
     components: {
@@ -441,7 +440,7 @@ export default {
             return ['cursor-pointer', 'text-weight-bold', 'text-primary']
         },
         waitIdentifier () {
-            return 'csc-cf-group-' + this.destinationSet.id
+            return `csc-cf-group-${this.destinationSet.id}`
         },
         hasTermination () {
             const lastDestination = _.last(this.destinationSet.destinations).destination
@@ -468,9 +467,9 @@ export default {
             'ringPrimaryNumber',
             'doNotRingPrimaryNumber'
         ]),
-        async addDestinationEvent (payload) {
+        async addDestinationEvent (originalPayload) {
             this.$wait.start(this.waitIdentifier)
-            payload.defaultAnnouncementId = null
+            let payload = { ...originalPayload, defaultAnnouncementId: null }
             if (_.isArray(this.announcements) && this.announcements.length > 0) {
                 payload.defaultAnnouncementId = this.announcements[0].value
             }
@@ -482,7 +481,7 @@ export default {
         },
         async toggleMappingEvent (mapping) {
             this.$wait.start(this.waitIdentifier)
-            const mappingWithSubscriberId = Object.assign({}, mapping)
+            const mappingWithSubscriberId = { ...mapping }
             mappingWithSubscriberId.subscriberId = this.subscriberId
             await this.toggleMapping(mappingWithSubscriberId)
             this.$wait.end(this.waitIdentifier)
@@ -494,9 +493,9 @@ export default {
                 color: 'negative',
                 cancel: true,
                 persistent: true
-            }).onOk(async data => {
+            }).onOk(async (data) => {
                 this.$wait.start(this.waitIdentifier)
-                const mappingWithSubscriberId = Object.assign({}, mapping)
+                const mappingWithSubscriberId = { ...mapping }
                 mappingWithSubscriberId.subscriberId = this.subscriberId
                 await this.deleteMapping(mappingWithSubscriberId)
                 this.$wait.end(this.waitIdentifier)
@@ -518,19 +517,19 @@ export default {
                 switch (newPayload.destination) {
                 case 'voicebox':
                     if (this.mapping.type === 'cfb') {
-                        newPayload.destination = 'sip:vmb' + this.getPrimaryNumber() + '@voicebox.local'
+                        newPayload.destination = `sip:vmb${this.getPrimaryNumber()}@voicebox.local`
                     } else {
-                        newPayload.destination = 'sip:vmu' + this.getPrimaryNumber() + '@voicebox.local'
+                        newPayload.destination = `sip:vmu${this.getPrimaryNumber()}@voicebox.local`
                     }
                     break
                 case 'fax2mail':
-                    newPayload.destination = 'sip:fax=' + this.getPrimaryNumber() + '@fax2mail.local'
+                    newPayload.destination = `sip:fax=${this.getPrimaryNumber()}@fax2mail.local`
                     break
                 case 'conference':
-                    newPayload.destination = 'sip:conf=' + this.getPrimaryNumber() + '@conference.local'
+                    newPayload.destination = `sip:conf=${this.getPrimaryNumber()}@conference.local`
                     break
                 case 'managersecretary':
-                    newPayload.destination = 'sip:' + this.getPrimaryNumber() + '@managersecretary.local'
+                    newPayload.destination = `sip:${this.getPrimaryNumber()}@managersecretary.local`
                     break
                 }
             }

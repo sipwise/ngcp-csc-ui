@@ -35,8 +35,8 @@
     </csc-dialog>
 </template>
 <script>
-import CscChangePasswordForm from './form/CscChangePasswordForm'
-import CscDialog from './CscDialog'
+import CscDialog from 'components/CscDialog'
+import CscChangePasswordForm from 'components/form/CscChangePasswordForm'
 
 export default {
     name: 'CscChangePasswordDialog',

@@ -253,11 +253,11 @@ export default {
                     filterName = this.$t('End time')
                     break
                 default:
-                    filterName = this.filterTypeOptions.find(option => option.value === filterItem.name).label
+                    filterName = this.filterTypeOptions.find((option) => option.value === filterItem.name).label
                 }
                 return {
                     id: filterItem.name,
-                    filterInfo: filterName + ': ' + filterDisplayValue
+                    filterInfo: `${filterName}: ${filterDisplayValue}`
                 }
             })
         }
@@ -275,7 +275,7 @@ export default {
             this.addFilter(this.filterTypeModel?.value, this.filterTypeField.value)
         },
         removeFilter (name) {
-            this.filters = this.filters.filter(item => item.name !== name)
+            this.filters = this.filters.filter((item) => item.name !== name)
             this.filter()
         },
         removeFilters () {
@@ -288,9 +288,9 @@ export default {
             const valueTrimmed = _.trim(value)
             if (valueTrimmed) {
                 this.resetFilters()
-                this.filters = this.filters.filter(item => item.name !== name)
+                this.filters = this.filters.filter((item) => item.name !== name)
                 const filter = {
-                    name: name,
+                    name,
                     value: valueTrimmed
                 }
                 this.filters.push(filter)
@@ -299,7 +299,7 @@ export default {
         },
         filter () {
             const params = {}
-            this.filters.forEach(filter => {
+            this.filters.forEach((filter) => {
                 params[filter.name] = filter.value
             })
             this.$emit('filter', params)

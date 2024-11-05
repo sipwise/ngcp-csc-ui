@@ -111,19 +111,20 @@
 </template>
 
 <script>
+import CscListSpinner from 'components/CscListSpinner'
+import CscPageStickyTabs from 'components/CscPageStickyTabs'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
+import CscConversationsCallsFilter from 'components/pages/Conversations/CscConversationsCallsFilter'
+import CscConversationsFilter from 'components/pages/Conversations/CscConversationsFilter'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import platformMixin from 'src/mixins/platform'
+import { mapWaitingActions } from 'vue-wait'
 import {
-    mapGetters, mapMutations,
+    mapGetters,
+    mapMutations,
     mapState
 } from 'vuex'
-import CscPageStickyTabs from 'components/CscPageStickyTabs'
-import CscListSpinner from 'components/CscListSpinner'
-import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
-import CscConversationsFilter from 'components/pages/Conversations/CscConversationsFilter'
-import CscConversationsCallsFilter from 'components/pages/Conversations/CscConversationsCallsFilter'
-import CscRemoveDialog from 'components/CscRemoveDialog'
-import { mapWaitingActions } from 'vue-wait'
 export default {
     name: 'CscPageConversations',
     components: {
@@ -198,7 +199,7 @@ export default {
         },
         pageStyle () {
             return {
-                paddingTop: this.topMargin + 'px'
+                paddingTop: `${this.topMargin}px`
             }
         },
         noResultsMessage () {
@@ -213,37 +214,32 @@ export default {
                 return this.$t('No Faxes found')
             } else if (this.selectedTab === 'voicemail') {
                 return this.$t('No Voicemails found')
-            } else {
-                return ''
             }
+            return ''
         },
         labelAll () {
             if (this.isMobile) {
                 return ''
-            } else {
-                return this.$t('All')
             }
+            return this.$t('All')
         },
         labelCalls () {
             if (this.isMobile) {
                 return ''
-            } else {
-                return this.$t('Calls')
             }
+            return this.$t('Calls')
         },
         labelFaxes () {
             if (this.isMobile) {
                 return ''
-            } else {
-                return this.$t('Faxes')
             }
+            return this.$t('Faxes')
         },
         labelVoicemails () {
             if (this.isMobile) {
                 return ''
-            } else {
-                return this.$t('Voicemails')
             }
+            return this.$t('Voicemails')
         },
         listLoading () {
             return this.$wait.is('csc-conversations')
@@ -273,14 +269,18 @@ export default {
                 type = null
             }
             const fullFilters = {}
-            if (this.filter) Object.assign(fullFilters, this.filter)
-            if (this.filterDirection) Object.assign(fullFilters, this.filterDirection)
+            if (this.filter) {
+                Object.assign(fullFilters, this.filter)
+            }
+            if (this.filterDirection) {
+                Object.assign(fullFilters, this.filterDirection)
+            }
 
             await this.nextPage({
-                type: type,
-                index: index,
+                type,
+                index,
                 filter: fullFilters,
-                done: done
+                done
             }).finally(() => {
                 this.$wait.end('csc-conversations')
             })
@@ -374,16 +374,14 @@ export default {
         blockedIncoming (item) {
             if (item.direction === 'out') {
                 return this.isNumberIncomingBlocked(item.callee)
-            } else {
-                return this.isNumberIncomingBlocked(item.caller)
             }
+            return this.isNumberIncomingBlocked(item.caller)
         },
         blockedOutgoing (item) {
             if (item.direction === 'out') {
                 return this.isNumberOutgoingBlocked(item.callee)
-            } else {
-                return this.isNumberOutgoingBlocked(item.caller)
             }
+            return this.isNumberOutgoingBlocked(item.caller)
         },
         filterCallDirectionEvent (filter) {
             this.$scrollTo(this.$parent.$el)

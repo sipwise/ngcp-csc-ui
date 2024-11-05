@@ -1,8 +1,7 @@
-
-import { isYesterday, isToday, isWithinLastWeek } from '../helpers/date-helper'
+import { i18n } from 'boot/i18n'
 import moment from 'moment'
 import { date } from 'quasar'
-import { i18n } from 'src/boot/i18n'
+import { isToday, isWithinLastWeek, isYesterday } from 'src/helpers/date-helper'
 const { formatDate } = date
 
 export default function (value) {
@@ -45,9 +44,8 @@ export function smartTime ($date) {
         return `${descriptor}, ${momentDate.format('HH:mm')}`
     } else if (isWithinLastWeek(date)) {
         return momentDate.format('dddd, HH:mm')
-    } else {
-        return momentDate.format('LLL')
     }
+    return momentDate.format('LLL')
 }
 
 export const WeekdayMap = {

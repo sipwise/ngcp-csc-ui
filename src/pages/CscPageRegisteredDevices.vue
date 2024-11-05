@@ -49,11 +49,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import CscPage from 'components/CscPage'
-import { mapWaitingActions } from 'vue-wait'
 import CscSpinner from 'components/CscSpinner'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { mapWaitingActions } from 'vue-wait'
+import { mapState } from 'vuex'
 export default {
     name: 'CscPageRegisteredDevices',
     components: {
@@ -83,7 +83,7 @@ export default {
                     required: true,
                     label: this.$t('Id'),
                     align: 'left',
-                    field: row => row.id,
+                    field: (row) => row.id,
                     sortable: true
                 },
                 {
@@ -91,7 +91,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('User Agent'),
-                    field: row => row.user_agent,
+                    field: (row) => row.user_agent,
                     sortable: true
                 },
                 {
@@ -99,7 +99,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Contact'),
-                    field: row => row.contact,
+                    field: (row) => row.contact,
                     sortable: true
                 },
                 {
@@ -107,7 +107,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Expires'),
-                    field: row => row.expires,
+                    field: (row) => row.expires,
                     sortable: true
                 },
                 {
@@ -115,7 +115,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Q-Value'),
-                    field: row => row.q,
+                    field: (row) => row.q,
                     sortable: true
                 },
                 {
@@ -159,7 +159,7 @@ export default {
                 color: 'negative',
                 cancel: true,
                 persistent: true
-            }).onOk(async data => {
+            }).onOk(async (data) => {
                 await this.removeSubscriberRegistration(row)
                 await this.refresh()
             })

@@ -79,16 +79,14 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import {
-    Platform
-} from 'quasar'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
+import _ from 'lodash'
+import { Platform } from 'quasar'
 import {
-    callIconColor,
-    callIcon
+    callIcon,
+    callIconColor
 } from 'src/helpers/call-utils'
 export default {
     name: 'CscCallItem',
@@ -131,9 +129,8 @@ export default {
         number () {
             if (this.call.direction === 'out') {
                 return this.call.callee
-            } else {
-                return this.call.caller
             }
+            return this.call.caller
         },
         totalCustomerCostRounded () {
             const formatter = new Intl.NumberFormat('en-US', {
@@ -148,23 +145,20 @@ export default {
                 return this.call.relatedCall.caller
             } else if (this.call.direction === 'out') {
                 return this.call.callee
-            } else {
-                return this.call.caller
             }
+            return this.call.caller
         },
         direction () {
             if (this.call.direction === 'out') {
                 return this.$t('to')
-            } else {
-                return this.$t('from')
             }
+            return this.$t('from')
         },
         typeTerm () {
             if (this.call.call_type === 'call') {
                 return this.$t('Call')
-            } else {
-                return this.$t('Call forwarded')
             }
+            return this.$t('Call forwarded')
         },
         icon () {
             return callIcon(this.call)

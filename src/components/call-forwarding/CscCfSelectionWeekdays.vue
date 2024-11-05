@@ -81,7 +81,7 @@ export default {
     computed: {
         selectedTab: {
             get () {
-                return 'tab-' + this.selectedWeekdays[0]
+                return `tab-${this.selectedWeekdays[0]}`
             },
             set (tab) {
                 this.selectedWeekdays = [Number(tab.replace('tab-', ''))]
@@ -109,7 +109,7 @@ export default {
     methods: {
         toggle (day) {
             if (this.isSelected(day)) {
-                this.selectedWeekdays = this.selectedWeekdays.filter(dayValue => day.value !== dayValue)
+                this.selectedWeekdays = this.selectedWeekdays.filter((dayValue) => day.value !== dayValue)
             } else {
                 this.selectedWeekdays.push(day.value)
             }
@@ -117,7 +117,7 @@ export default {
         },
         isSelected (day) {
             if (this.selectedWeekdays) {
-                return this.selectedWeekdays.find(dayValue => day.value === dayValue)
+                return this.selectedWeekdays.find((dayValue) => day.value === dayValue)
             }
             return false
         }

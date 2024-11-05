@@ -120,24 +120,29 @@
 </template>
 
 <script>
+import CscListActionButton from 'components/CscListActionButton'
+import CscListActions from 'components/CscListActions'
+import CscListSpinner from 'components/CscListSpinner'
+import CscPage from 'components/CscPage'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscPbxDevice from 'components/pages/PbxConfiguration/CscPbxDevice'
+import CscPbxDeviceAddForm from 'components/pages/PbxConfiguration/CscPbxDeviceAddForm'
+import CscPbxDeviceFilters from 'components/pages/PbxConfiguration/CscPbxDeviceFilters'
+import CscFade from 'components/transitions/CscFade'
 import {
-    mapState,
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
+import {
+    CreationState,
+    RequestState
+} from 'src/store/common'
+import {
     mapActions,
     mapGetters,
-    mapMutations
+    mapMutations,
+    mapState
 } from 'vuex'
-import CscPage from 'components/CscPage'
-import CscPbxDevice from 'components/pages/PbxConfiguration/CscPbxDevice'
-import CscFade from 'components/transitions/CscFade'
-import CscListSpinner from 'components/CscListSpinner'
-import CscListActions from 'components/CscListActions'
-import CscListActionButton from 'components/CscListActionButton'
-import CscPbxDeviceFilters from 'components/pages/PbxConfiguration/CscPbxDeviceFilters'
-import CscPbxDeviceAddForm from 'components/pages/PbxConfiguration/CscPbxDeviceAddForm'
-import CscRemoveDialog from 'components/CscRemoveDialog' // Add this import
-import { showGlobalError, showToast } from 'src/helpers/ui'
-import { CreationState, RequestState } from 'src/store/common'
-
 export default {
     name: 'CscPagePbxDevices',
     components: {

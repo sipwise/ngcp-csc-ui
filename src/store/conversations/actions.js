@@ -1,13 +1,3 @@
-import {
-    deleteVoicemail,
-    downloadFax,
-    downloadVoiceMail,
-    getConversations,
-    getIncomingBlocked,
-    getOutgoingBlocked,
-    playVoiceMail,
-    deleteFax
-} from 'src/api/conversations'
 import _ from 'lodash'
 import {
     addNumberToIncomingList,
@@ -17,6 +7,16 @@ import {
     toggleNumberInBothLists
 } from 'src/api/call-blocking'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import {
+    deleteFax,
+    deleteVoicemail,
+    downloadFax,
+    downloadVoiceMail,
+    getConversations,
+    getIncomingBlocked,
+    getOutgoingBlocked,
+    playVoiceMail
+} from 'src/api/conversations'
 
 export const ROWS_PER_PAGE = LIST_DEFAULT_ROWS
 
@@ -48,7 +48,7 @@ export default {
             getConversations({
                 subscriberId: context.getters.getSubscriberId,
                 page: 1,
-                rows: rows,
+                rows,
                 type: options.type,
                 no_count: true
             }).then((result) => {
@@ -91,7 +91,7 @@ export default {
         playVoiceMail(options).then((url) => {
             context.commit('playVoiceMailSucceeded', {
                 id: options.id,
-                url: url
+                url
             })
         }).catch((err) => {
             context.commit('playVoiceMailFailed', options.id, err.mesage)
@@ -207,7 +207,7 @@ export default {
         const outAction = context.getters.actionToToggleOutgoingNumber(options.number)
         context.commit('toggleBlockedRequesting')
         toggleNumberInBothLists({
-            id: id,
+            id,
             number: options.number,
             block_in_list: inAction,
             block_out_list: outAction

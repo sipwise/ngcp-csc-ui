@@ -73,13 +73,9 @@
 </template>
 
 <script>
-import CscCallInput from '../../form/CscCallInput'
-import {
-    showGlobalError
-} from 'src/helpers/ui'
-import {
-    Alert
-} from 'src/quasar-legacy'
+import CscCallInput from 'components/form/CscCallInput'
+import { showGlobalError } from 'src/helpers/ui'
+import { Alert } from 'src/quasar-legacy'
 
 export default {
     name: 'CscSpeedDialAddForm',

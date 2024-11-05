@@ -103,18 +103,14 @@
 </template>
 
 <script>
-import {
-    mapGetters,
-    mapActions
-} from 'vuex'
 import CscPage from 'components/CscPage'
-import {
-    showToast
-} from 'src/helpers/ui'
-import {
-    date
-} from 'quasar'
 import CscSpinner from 'components/CscSpinner'
+import { date } from 'quasar'
+import { showToast } from 'src/helpers/ui'
+import {
+    mapActions,
+    mapGetters
+} from 'vuex'
 
 export default {
     name: 'CscPageReminder',
@@ -157,9 +153,8 @@ export default {
         toggleLabel () {
             if (this.isReminderActive) {
                 return this.$t('Reminder is enabled')
-            } else {
-                return this.$t('Reminder is disabled')
             }
+            return this.$t('Reminder is disabled')
         }
     },
     watch: {

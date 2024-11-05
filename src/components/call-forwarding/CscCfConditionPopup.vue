@@ -13,13 +13,16 @@
 <script>
 import _ from 'lodash'
 import { v4 } from 'uuid'
-import { mapMutations, mapState } from 'vuex'
+import {
+    mapMutations,
+    mapState
+} from 'vuex'
 export default {
     name: 'CscCfConditionPopup',
     emits: ['open', 'close'],
     data () {
         return {
-            popupId: _.kebabCase(this.$options.name) + '-' + v4()
+            popupId: `${_.kebabCase(this.$options.name)}-${v4()}`
         }
     },
     computed: {

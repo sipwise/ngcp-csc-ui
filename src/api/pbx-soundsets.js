@@ -1,19 +1,17 @@
 import _ from 'lodash'
+import { Platform } from 'quasar'
 import {
-    getList,
-    patchReplaceFull,
-    getAsBlob,
     get,
-    post,
-    httpApi
-} from './common'
+    getAsBlob,
+    getList,
+    httpApi,
+    patchReplaceFull,
+    post
+} from 'src/api/common'
 import {
     PBX_CONFIG_ORDER_BY,
     PBX_CONFIG_ORDER_DIRECTION
-} from './pbx-config'
-import {
-    Platform
-} from 'quasar'
+} from 'src/api/pbx-config'
 import {
     getJwt,
     hasJwt
@@ -22,12 +20,11 @@ import { getCurrentLangAsV1Format } from 'src/i18n'
 
 export function getSoundSets (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             path: 'api/soundsets/',
             root: '_embedded.ngcp:soundsets'
         })
-        getList(options).then((list) => {
+        getList(mergedOptions).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -43,10 +40,10 @@ export function getSoundSetList (options) {
             order_by_direction: PBX_CONFIG_ORDER_DIRECTION
         }
         getSoundSets({
-            params: params
+            params
         }).then((soundSets) => {
             resolve({
-                soundSets: soundSets
+                soundSets
             })
         }).catch((err) => {
             reject(err)
@@ -66,7 +63,7 @@ export function createSoundSet (soundSet) {
 
 export function removeSoundSet (soundSetId) {
     return new Promise((resolve, reject) => {
-        httpApi.delete('api/soundsets/' + soundSetId).then(() => {
+        httpApi.delete(`api/soundsets/${soundSetId}`).then(() => {
             resolve()
         }).catch((err) => {
             if (err.response.status >= 400) {
@@ -81,9 +78,9 @@ export function removeSoundSet (soundSetId) {
 export function setSoundSetProperty (soundSetId, property, value) {
     return new Promise((resolve, reject) => {
         patchReplaceFull({
-            path: 'api/soundsets/' + soundSetId,
+            path: `api/soundsets/${soundSetId}`,
             fieldPath: property,
-            value: value
+            value
         }).then((soundSet) => {
             resolve(soundSet)
         }).catch((err) => {
@@ -114,12 +111,11 @@ export function setSoundSetParent (soundSetId, parentId) {
 
 export function getSoundHandles (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             path: 'api/soundhandles/',
             root: '_embedded.ngcp:soundhandles'
         })
-        getList(options).then((list) => {
+        getList(mergedOptions).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -129,11 +125,10 @@ export function getSoundHandles (options) {
 
 export function getAllSoundHandles (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             all: true
         })
-        getSoundHandles(options).then((list) => {
+        getSoundHandles(mergedOptions).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -143,12 +138,11 @@ export function getAllSoundHandles (options) {
 
 export function getSoundFiles (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const mergedOptions = _.merge(options || {}, {
             path: 'api/soundfiles/',
             root: '_embedded.ngcp:soundfiles'
         })
-        getList(options).then((list) => {
+        getList(mergedOptions).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -174,7 +168,7 @@ export function getAllSoundFilesBySoundSetId (soundSetId) {
 export function getSoundFile (options) {
     return new Promise((resolve, reject) => {
         getAsBlob({
-            path: 'api/soundfilerecordings/' + options.id,
+            path: `api/soundfilerecordings/${options.id}`,
             params: {
                 format: Platform.mozilla ? 'ogg' : 'mp3'
             }
@@ -198,38 +192,23 @@ export function uploadSoundFile (options) {
                 filename: options.soundFileData.name
             }))
             formData.append('soundfile', options.soundFileData)
-            const initializedSoundFiles = httpApi.interceptors.request.use(function (config) {
+            const initializedSoundFiles = httpApi.interceptors.request.use((config) => {
                 options.initialized(config)
-
+                const updatedConfig = config
                 if (hasJwt()) {
-                    if (config.headers) {
-                        config.headers = {
-                            ...config.headers,
-                            Authorization: 'Bearer ' + getJwt()
-                        }
-                    } else {
-                        config = {
-                            ...config,
-                            headers: {
-                                Authorization: 'Bearer ' + getJwt()
-                            }
-                        }
+                    updatedConfig.headers = {
+                        ...updatedConfig.headers,
+                        Authorization: `Bearer ${getJwt()}`
                     }
                 }
-                if (config.method === 'POST' && (config.data === undefined || config.data === null)) {
-                    config.data = {}
+                if (updatedConfig.method === 'POST' && (updatedConfig.data === undefined || updatedConfig.data === null)) {
+                    updatedConfig.data = {}
                 }
-                if (config.params) {
-                    config.params = {
-                        ...config.params,
-                        lang: getCurrentLangAsV1Format()
-                    }
-                } else {
-                    config.params = {
-                        lang: getCurrentLangAsV1Format()
-                    }
+                updatedConfig.params = {
+                    ...updatedConfig.params,
+                    lang: getCurrentLangAsV1Format()
                 }
-                return config
+                return updatedConfig
             })
             httpApi.post('api/soundfiles/', formData, {
                 onUploadProgress (progressEvent) {
@@ -240,7 +219,7 @@ export function uploadSoundFile (options) {
             }).then((res) => {
                 const fileId = _.last(res.headers.location.split(/\//))
                 return Promise.all([
-                    get({ path: 'api/soundfiles/' + fileId }),
+                    get({ path: `api/soundfiles/${fileId}` }),
                     getSoundFile({ id: fileId })
                 ])
             }).then((res) => {
@@ -278,7 +257,7 @@ export function uploadSoundFile (options) {
 export function getSoundFileById (options) {
     return new Promise((resolve, reject) => {
         get({
-            path: 'api/soundfiles/' + options.id
+            path: `api/soundfiles/${options.id}`
         }).then((soundfile) => {
             resolve(soundfile)
         }).catch((err) => {
@@ -290,7 +269,7 @@ export function getSoundFileById (options) {
 export function setLoopPlay (options) {
     return new Promise((resolve, reject) => {
         patchReplaceFull({
-            path: 'api/soundfiles/' + options.soundFileId,
+            path: `api/soundfiles/${options.soundFileId}`,
             fieldPath: 'loopplay',
             value: (options.loopPlay === true) ? 'true' : 'false'
         }).then((soundFile) => {
@@ -304,7 +283,7 @@ export function setLoopPlay (options) {
 export function setUseParent (options) {
     return new Promise((resolve, reject) => {
         patchReplaceFull({
-            path: 'api/soundfiles/' + options.soundFileId,
+            path: `api/soundfiles/${options.soundFileId}`,
             fieldPath: 'use_parent',
             value: options.useParent
         }).then((soundFile) => {
@@ -317,7 +296,7 @@ export function setUseParent (options) {
 
 export function removeSoundFile (soundFileId) {
     return new Promise((resolve, reject) => {
-        httpApi.delete('api/soundfiles/' + soundFileId).then(() => {
+        httpApi.delete(`api/soundfiles/${soundFileId}`).then(() => {
             resolve()
         }).catch((err) => {
             if (err.response.status >= 400) {

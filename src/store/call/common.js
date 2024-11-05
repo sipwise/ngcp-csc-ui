@@ -1,6 +1,4 @@
-import {
-    i18n
-} from 'boot/i18n'
+import { i18n } from 'boot/i18n'
 
 export const CallState = {
     input: 'input',

@@ -1,15 +1,11 @@
+import { i18n } from 'boot/i18n'
+import CscSpinner from 'components/CscSpinner'
 import _ from 'lodash'
 import {
     Loading,
     Notify
 } from 'quasar'
-import {
-    Alert
-} from 'src/quasar-legacy'
-import {
-    i18n
-} from 'src/boot/i18n'
-import CscSpinner from 'components/CscSpinner'
+import { Alert } from 'src/quasar-legacy'
 
 export function startLoading () {
     Loading.show({
@@ -67,7 +63,7 @@ export function showToast (message) {
     Notify.create({
         textColor: 'dark',
         color: 'primary',
-        message: message,
+        message,
         position: 'top'
     })
 }
@@ -90,7 +86,7 @@ export function askForNotificationPermission () {
     })
 }
 
-const serviceWorkerPath = document.location.pathname + '/statics/service-worker.js'
+const serviceWorkerPath = `${document.location.pathname}/statics/service-worker.js`
 export function enableIncomingCallNotifications () {
     return new Promise((resolve) => {
         Promise.resolve().then(() => {
@@ -104,6 +100,7 @@ export function enableIncomingCallNotifications () {
         }).then(() => {
             resolve()
         }).catch((err) => {
+            // eslint-disable-next-line no-console
             console.debug(err)
             showPermanentGlobalWarning(i18n.global.t('Could not enable incoming call notifications.'))
         })

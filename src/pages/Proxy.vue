@@ -19,12 +19,12 @@
 
 <script>
 import _ from 'lodash'
+import { showGlobalError } from 'src/helpers/ui'
+import { getCurrentLangAsV1Format } from 'src/i18n'
 import {
     mapActions,
     mapState
 } from 'vuex'
-import { showGlobalError } from 'src/helpers/ui'
-import { getCurrentLangAsV1Format } from 'src/i18n'
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'Proxy',
@@ -52,12 +52,11 @@ export default {
             if (this.$route?.meta?.proxyRewrite) {
                 return this.$route?.meta?.proxyRewrite({
                     route: this.$route,
-                    url: url
+                    url
                 }).toString()
-            } else {
-                url.pathname = this.$route.path
-                return url.toString()
             }
+            url.pathname = this.$route.path
+            return url.toString()
         }
     },
     watch: {
@@ -65,7 +64,7 @@ export default {
             const routeData = this.$router.resolve(path)
             if (!routeData?.meta?.proxy && !routeData?.meta?.proxyReverseInvisible) {
                 this.$router.push({
-                    path: path
+                    path
                 })
             }
         }
@@ -90,7 +89,9 @@ export default {
 
                 this.injectDarkUITheme()
             } catch (err) {
+                // eslint-disable-next-line no-console
                 console.debug('Session expiration detection is disabled')
+                // eslint-disable-next-line no-console
                 console.debug(err)
             } finally {
                 this.loaded = true

@@ -1,11 +1,10 @@
-
 import _ from 'lodash'
 import {
     get,
     getList,
-    patchReplace,
-    httpApi
-} from './common'
+    httpApi,
+    patchReplace
+} from 'src/api/common'
 
 export function getVoiceboxSettings (subscriberId) {
     return new Promise((resolve, reject) => {
@@ -34,9 +33,8 @@ export function setVoiceboxAttach (options) {
         Promise.resolve().then(() => {
             if (options.value === false) {
                 return setVoiceboxDelete(options)
-            } else {
-                return Promise.resolve()
             }
+            return Promise.resolve()
         }).then(() => {
             return patchReplace({
                 path: `api/voicemailsettings/${options.subscriberId}`,
@@ -139,7 +137,7 @@ export function uploadGreeting (options) {
 export function playGreeting (options) {
     return new Promise((resolve, reject) => {
         const params = { format: options.format }
-        httpApi.get(`api/voicemailgreetings/${options.id}`, { params: params, responseType: 'blob' })
+        httpApi.get(`api/voicemailgreetings/${options.id}`, { params, responseType: 'blob' })
             .then((res) => {
                 resolve(URL.createObjectURL(res.data))
             }).catch((err) => {

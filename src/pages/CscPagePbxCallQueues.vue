@@ -80,29 +80,29 @@
 </template>
 
 <script>
+import CscList from 'components/CscList'
+import CscListActionButton from 'components/CscListActionButton'
+import CscListActions from 'components/CscListActions'
+import CscListSpinner from 'components/CscListSpinner'
 import CscPage from 'components/CscPage'
+import CscRemoveDialog from 'components/CscRemoveDialog'
 import CscPbxCallQueue from 'components/pages/PbxConfiguration/CscPbxCallQueue'
 import CscPbxCallQueueAddForm from 'components/pages/PbxConfiguration/CscPbxCallQueueAddForm'
-import CscRemoveDialog from 'components/CscRemoveDialog'
-import CscListSpinner from 'components/CscListSpinner'
-import CscListActions from 'components/CscListActions'
+import CscFade from 'components/transitions/CscFade'
 import {
-    mapState,
-    mapActions,
-    mapGetters,
-    mapMutations
-} from 'vuex'
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
 import {
     CreationState,
     RequestState
 } from 'src/store/common'
 import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import CscList from 'components/CscList'
-import CscFade from 'components/transitions/CscFade'
-import CscListActionButton from 'components/CscListActionButton'
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 
 export default {
     name: 'CscPagePbxCallQueues',

@@ -1,7 +1,7 @@
 'use strict'
 
-import UserModule from '../../src/store/user'
 import { assert } from 'chai'
+import UserModule from 'src/store/user'
 
 describe('UserModule', () => {
     it('should login', () => {

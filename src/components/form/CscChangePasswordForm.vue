@@ -37,10 +37,10 @@
 </template>
 
 <script>
-import PasswordMeter from 'vue-simple-password-meter'
+import useValidate from '@vuelidate/core'
 import { maxLength, minLength, required } from '@vuelidate/validators'
 import CscInputPassword from 'components/form/CscInputPassword'
-import useValidate from '@vuelidate/core'
+import PasswordMeter from 'vue-simple-password-meter'
 import { mapGetters } from 'vuex'
 export default {
     name: 'CscChangePasswordForm',
@@ -155,7 +155,9 @@ export default {
             this.passwordStrengthScore = evt.score
         },
         resetForm () {
-            this.password = this.passwordRetype = this.passwordScored = ''
+            this.password = ''
+            this.passwordRetype = ''
+            this.passwordScored = ''
             this.passwordStrengthScore = null
             this.v$.$reset()
         },

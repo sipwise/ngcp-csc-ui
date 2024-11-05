@@ -60,13 +60,11 @@
 </template>
 
 <script>
-import {
-    mapState
-} from 'vuex'
-import CscListItem from '../../CscListItem'
-import CscListItemTitle from '../../CscListItemTitle'
-import CscListItemSubtitle from '../../CscListItemSubtitle'
-import CscListMenuItem from '../../CscListMenuItem'
+import CscListItem from 'components/CscListItem'
+import CscListItemSubtitle from 'components/CscListItemSubtitle'
+import CscListItemTitle from 'components/CscListItemTitle'
+import CscListMenuItem from 'components/CscListMenuItem'
+import { mapState } from 'vuex'
 
 export default {
     name: 'CscPbxSoundSet',
@@ -119,7 +117,7 @@ export default {
             this.$emit('remove', this.soundSet.id)
         },
         showSoundSetDetails () {
-            this.$router.push('/user/pbx-configuration/sound-sets/' + this.soundSet.id)
+            this.$router.push(`/user/pbx-configuration/sound-sets/${this.soundSet.id}`)
         }
     }
 }

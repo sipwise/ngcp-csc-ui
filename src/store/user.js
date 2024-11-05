@@ -1,46 +1,46 @@
 'use strict'
 import { i18n } from 'boot/i18n'
 import _ from 'lodash'
+import QRCode from 'qrcode'
+import { date } from 'quasar'
+import {
+    apiDownloadFile,
+    httpApi
+} from 'src/api/common'
+import { callInitialize } from 'src/api/ngcp-call'
 import {
     changePassword,
-    resetPassword,
-    recoverPassword,
-    getBrandingLogo,
-    getSubscriberRegistrations,
-    getSubscriberPhonebook,
-    getCustomerPhonebook,
-    getSubscriberProfile,
-    setValueShared,
-    setValueName,
-    setValueNameCustomer,
-    setValueNumberCustomer,
-    setValueNumber,
     changeSIPPassword,
-    createPhonebook,
     createCustomerPhonebook,
-    uploadCsv,
+    createPhonebook,
+    generateGeneralPassword,
+    getBrandingLogo,
+    getCustomerPhonebook,
     getNcosLevels,
     getNcosSet,
     getPreferences,
+    getSubscriberPhonebook,
+    getSubscriberProfile,
+    getSubscriberRegistrations,
+    recoverPassword,
+    resetPassword,
     setPreference,
-    generateGeneralPassword
-} from '../api/subscriber'
-import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
-import QRCode from 'qrcode'
+    setValueName,
+    setValueNameCustomer,
+    setValueNumber,
+    setValueNumberCustomer,
+    setValueShared,
+    uploadCsv
+} from 'src/api/subscriber'
+import { createAuthToken, getUserData, login } from 'src/api/user'
 import {
-    qrPayload
-} from 'src/helpers/qr'
-import { date } from 'quasar'
-import { callInitialize } from 'src/api/ngcp-call'
-import { setLocal } from 'src/storage'
-import { getSipInstanceId } from 'src/helpers/call-utils'
+    deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId
+} from 'src/auth'
 import { LICENSES, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
-import {
-    httpApi,
-    apiDownloadFile
-} from 'src/api/common'
-import { RequestState } from './common'
-import { login, getUserData, createAuthToken } from 'src/api/user'
+import { getSipInstanceId } from 'src/helpers/call-utils'
+import { qrPayload } from 'src/helpers/qr'
+import { setLocal } from 'src/storage'
+import { RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -86,9 +86,8 @@ export default {
                 return state.subscriber.display_name
             } else if (state.subscriber !== null) {
                 return state.subscriber.webusername
-            } else {
-                return ''
             }
+            return ''
         },
         isAdmin (state) {
             return state.subscriber !== null && state.subscriber.administrative
@@ -156,9 +155,8 @@ export default {
                     const timeLeft = Math.abs(timeDiff)
                     const timeLeftBuffer = Math.round(timeLeft * expirationBuffer)
                     return timeLeft - timeLeftBuffer
-                } else {
-                    return null
                 }
+                return null
             } catch (err) {
                 return null
             }
@@ -204,12 +202,29 @@ export default {
                     : true
             }
         },
+        hasSubscriberProfileAttributes: (state) => {
+            return (attributes) => {
+                return state.profile
+                    ? state.profile.attributes.some((item) => {
+                        return attributes.includes(item)
+                    })
+                    : true
+            }
+        },
         hasLicenses: (state) => {
             return (licenses) => {
                 if (!state?.platformInfo?.licenses) {
                     return false
                 }
                 return licenses?.every((license) => state?.platformInfo?.licenses?.includes(license))
+            }
+        },
+        isOldCSCProxyingAllowed (state, getters) {
+            return getters.isAdmin && state.platformInfo?.csc_v2_mode === 'mixed' && !!getters.getCustomerId
+        },
+        isLicenseActive: (state) => {
+            return (license) => {
+                return state?.platformInfo.licenses.includes(license)
             }
         },
         isPbxPilot (state) {
@@ -333,7 +348,9 @@ export default {
             state.qrExpiringTime = qrExpiringTime
         },
         setPhonebookShared (state, { id, value }) {
-            const index = state.subscriberPhonebook.findIndex(row => row.id === id)
+            const index = state.subscriberPhonebook.findIndex((row) => {
+                return row.id === id
+            })
             if (index > -1) {
                 state.subscriberPhonebook[index].shared = value
             }
@@ -381,16 +398,13 @@ export default {
                         context.commit('setProfile', profile)
                     }
                     if (context.getters.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls)) {
-                        try {
-                            await callInitialize({
-                                subscriber: userData.subscriber,
-                                instanceId: getSipInstanceId()
-                            })
-                        } catch (err) {
-                            console.log(err)
-                        }
+                        await callInitialize({
+                            subscriber: userData.subscriber,
+                            instanceId: getSipInstanceId()
+                        })
                     }
                 } catch (err) {
+                    // eslint-disable-next-line no-console
                     console.debug(err)
                     await context.dispatch('logout')
                 }
@@ -493,13 +507,13 @@ export default {
             })
         },
         async removeSubscriberRegistration (context, row) {
-            await httpApi.delete('api/subscriberregistrations/' + row.id)
+            await httpApi.delete(`api/subscriberregistrations/${row.id}`)
         },
         async removeSubscriberPhonebook (context, row) {
-            await httpApi.delete('api/subscriberphonebookentries/' + row.id)
+            await httpApi.delete(`api/subscriberphonebookentries/${row.id}`)
         },
         async removeCustomerPhonebook (context, row) {
-            await httpApi.delete('api/customerphonebookentries/' + row.id)
+            await httpApi.delete(`api/customerphonebookentries/${row.id}`)
         },
         async getNcosLevelsSubscriber () {
             const ncosLevel = []
@@ -537,11 +551,11 @@ export default {
             await setPreference(getSubscriberId(), 'ncos', value)
         },
         async getPhonebookDetails (context, id) {
-            const list = await httpApi.get('api/subscriberphonebookentries/' + id)
+            const list = await httpApi.get(`api/subscriberphonebookentries/${id}`)
             return list
         },
         async getPhonebookCustomerDetails (context, id) {
-            const list = await httpApi.get('api/customerphonebookentries/' + id)
+            const list = await httpApi.get(`api/customerphonebookentries/${id}`)
             return list
         },
         async getValueShared (context, options) {

@@ -1,11 +1,10 @@
-
 'use strict'
 
-import ConversationsModule from '../../src/store/conversations/conversations'
 import { assert } from 'chai'
+import ConversationsModule from 'src/store/conversations/conversations'
 
-describe('Conversations', function () {
-    it('should load next page of items', function () {
+describe('Conversations', () => {
+    it('should load next page of items', () => {
         const resultItems = []
         const state = {
             items: [
@@ -58,7 +57,7 @@ describe('Conversations', function () {
         assert.deepEqual(state.items, resultItems)
     })
 
-    it('should load reloaded items', function () {
+    it('should load reloaded items', () => {
         const state = {
             items: [
                 {
@@ -126,7 +125,7 @@ describe('Conversations', function () {
         assert.deepEqual(state.items, data.items)
     })
 
-    it('should load blocked numbers and mode', function () {
+    it('should load blocked numbers and mode', () => {
         const state = {
             blockedNumbersIncoming: new Set(),
             blockedModeIncoming: null,

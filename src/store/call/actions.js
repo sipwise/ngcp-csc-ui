@@ -1,38 +1,31 @@
+import { i18n } from 'boot/i18n'
 import {
-    callGetLocalMediaStreamId,
     callAccept,
-    callEnd,
-    callStart,
     callAddCamera,
     callAddScreen,
-    callRemoveVideo,
-    callHasLocalVideo,
-    callToggleMicrophone,
-    callToggleHold,
     callBlindTransfer,
-    callIsMuted,
-    callSendDTMF,
-    callToggleRemoteAudio,
-    callIsRemoteMuted,
+    callEnd,
+    callGetLocalMediaStreamId,
+    callHasLocalCamera,
     callHasLocalScreen,
-    callHasLocalCamera
+    callHasLocalVideo,
+    callIsMuted,
+    callIsRemoteMuted,
+    callRemoveVideo,
+    callSendDTMF,
+    callStart,
+    callToggleHold,
+    callToggleMicrophone,
+    callToggleRemoteAudio
 } from 'src/api/ngcp-call'
+import { showGlobalError } from 'src/helpers/ui'
 import { errorVisibilityTimeout } from 'src/store/call/common'
-import {
-    showGlobalError
-} from 'src/helpers/ui'
-import {
-    i18n
-} from 'boot/i18n'
 
 let errorVisibilityTimer = null
 
 export default {
     async start (context, localMedia) {
-        const number = context.getters.callNumberInput.replaceAll('(', '')
-            .replaceAll(')', '')
-            .replaceAll(' ', '')
-            .replaceAll('-', '')
+        const number = context.getters.callNumberInput.replaceAll('(', '').replaceAll(')', '').replaceAll(' ', '').replaceAll('-', '')
         context.commit('startCalling', number)
         const isStarted = await callStart({
             number,
@@ -66,6 +59,7 @@ export default {
                 context.dispatch('end')
             }
         } catch (error) {
+            // eslint-disable-next-line no-console
             console.error(error.message)
         }
     },

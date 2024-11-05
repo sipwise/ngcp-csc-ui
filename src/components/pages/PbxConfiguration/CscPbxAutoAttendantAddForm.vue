@@ -77,11 +77,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { required } from '@vuelidate/validators'
-import { mapWaitingActions } from 'vue-wait'
-import { showToast } from 'src/helpers/ui'
 import CscSelectLazy from 'components/form/CscSelectLazy'
+import { showToast } from 'src/helpers/ui'
+import { mapWaitingActions } from 'vue-wait'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPbxAutoAttendantAddForm',
     components: {
@@ -128,12 +128,10 @@ export default {
                         return true
                     }
                     return false
-                }).map((slot, index) => {
-                    return {
-                        slot: index,
-                        destination: slot
-                    }
-                })
+                }).map((slot, index) => ({
+                    slot: index,
+                    destination: slot
+                }))
             })
             showToast(this.$t('Slots successfully added'))
             this.$emit('newSubscriberSaved')

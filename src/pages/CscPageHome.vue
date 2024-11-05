@@ -48,14 +48,12 @@
 </template>
 
 <script>
-import platformMixin from 'src/mixins/platform'
-import {
-    mapGetters
-} from 'vuex'
 import CscCallDialpad from 'components/CscCallDialpad'
+import CscInlineAlertAlert from 'components/CscInlineAlertAlert'
 import CscPage from 'components/CscPage'
 import CscInput from 'components/form/CscInput'
-import CscInlineAlertAlert from 'components/CscInlineAlertAlert'
+import platformMixin from 'src/mixins/platform'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscPageHome',
@@ -105,7 +103,7 @@ export default {
         pageTitle () {
             let title = this.callStateTitle
             if (this.callStateSubtitle !== '') {
-                title += ' (' + this.callStateSubtitle + ')'
+                title += ` (${this.callStateSubtitle})`
             }
             return title
         }
