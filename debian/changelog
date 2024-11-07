@@ -1,3 +1,11 @@
+ngcp-csc-ui (12.5.1.10+0~mr12.5.1.10) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [6f4fa13] MT#60627 remove outdated caniuse-lite warning
+  * [1810ad5] MT#59555 Dependencies upgrade
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Nov 2024 11:26:34 +0100
+
 ngcp-csc-ui (12.5.1.9+0~mr12.5.1.9) unstable; urgency=medium
 
   [ Debora Crescenzo ]
