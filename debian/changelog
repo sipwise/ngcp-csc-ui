@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.9+0~mr12.5.1.9) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [cf93e66] MT#61228 Replace direct access to state with a getter
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Nov 2024 10:52:43 +0100
+
 ngcp-csc-ui (12.5.1.8+0~mr12.5.1.8) unstable; urgency=medium
 
   [ Hugo Zigha ]
