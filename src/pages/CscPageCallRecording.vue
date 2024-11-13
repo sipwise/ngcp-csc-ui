@@ -344,9 +344,10 @@ export default {
         confirmRowDeletion (rowId) {
             this.$q.dialog({
                 component: CscRemoveDialog,
-                parent: this,
-                title: this.$t('Delete recording'),
-                message: this.$t('You are about to delete recording #{id}', { id: rowId })
+                componentProps: {
+                    title: this.$t('Delete recording'),
+                    message: this.$t('You are about to delete recording #{id}', { id: rowId })
+                }
             }).onOk(() => {
                 this.deleteRecord(rowId)
             })
