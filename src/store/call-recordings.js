@@ -66,7 +66,7 @@ export default {
             })
         },
         async deleteRecording (context, recId) {
-            await httpApi.delete('api/callrecordings/' + recId + '?force_delete=1')
+            await httpApi.delete(`api/callrecordings/${recId}?subscriber_id=${context.getters.subscriberId}&force_delete=1`)
         },
         async downloadRecording (context, fileId) {
             const fileBody = await downloadRecordingStream(fileId)
