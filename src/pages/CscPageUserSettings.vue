@@ -87,8 +87,7 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'getSubscriber',
-            'passwordRequirements'
+            'getSubscriber'
         ]),
         ...mapWaitingGetters({
             processingChangeSIPPassword: WAIT_CHANGE_SIP_PASSWORD,
