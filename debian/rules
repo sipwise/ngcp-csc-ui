@@ -8,7 +8,7 @@ export NODE_PATH=/usr/lib/nodejs:/usr/share/nodejs
 # webpack 4.x compatibility, remove it when @quasar/app is upgraded and it uses webpack 5.x
 export NODE_OPTIONS=--openssl-legacy-provider
 
-YARN_BIN := ".yarn/releases/yarn-1.22.19.js"
+YARN_BIN := ".yarn/releases/yarn-1.22.22.js"
 
 %:
 	dh "$@"
