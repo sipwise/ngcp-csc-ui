@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.11+0~mr12.5.1.11) unstable; urgency=medium
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [567b605] MT#61397 Add German translation for the customer phonebook, customer preferences, and the related menu
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Nov 2024 17:51:26 +0100
+
 ngcp-csc-ui (12.5.1.10+0~mr12.5.1.10) unstable; urgency=medium
 
   [ Debora Crescenzo ]
