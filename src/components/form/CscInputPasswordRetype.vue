@@ -129,7 +129,10 @@ export default {
             'passwordRequirements'
         ]),
         areValidationsActive () {
-            return this.passwordType === 'web' ? this.passwordRequirements.web_validate : this.passwordRequirements.sip_validate
+            const webValidate = this.passwordRequirements?.web_validate || false
+            const sipValidate = this.passwordRequirements?.sip_validate || false
+
+            return this.passwordType === 'web' ? webValidate : sipValidate
         },
         passwordScoreMappedValue () {
             if (this.passwordScore === null || this.passwordScore === undefined) {
