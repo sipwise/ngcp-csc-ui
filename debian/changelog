@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.13+0~mr12.5.1.13) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [1e7a39b] MT#61536 Improve how password requirements are handled
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 26 Nov 2024 10:17:09 +0100
+
 ngcp-csc-ui (12.5.1.12+0~mr12.5.1.12) unstable; urgency=medium
 
   [ Debora Crescenzo ]
