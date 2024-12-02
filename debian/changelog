@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.5.1.20+0~mr11.5.1.20) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [e9f49ed] MT#61314 Change call recordings DELETE
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 02 Dec 2024 09:36:37 +0100
+
 ngcp-csc-ui (11.5.1.19+0~mr11.5.1.19) unstable; urgency=medium
 
   [ Nouhaila Idrissi Zouggari ]
