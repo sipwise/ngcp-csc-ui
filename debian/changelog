@@ -1,3 +1,22 @@
+ngcp-csc-ui (13.2.0.0+0~mr13.2.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [0b0846d] MT#60689 Dynamic password requirements
+  * [95e93e0] MT#61228 Replace direct access to state with a getter
+  * [4635763] MT#60689 Add change password page for CSC
+  * [3d0180e] MT#59555 Dependencies upgrade
+  * [24cda52] MT#61534 Improve bundling
+  * [499e89a] MT#61536 Improve how password requirements are handled
+  * [c64a062] MT#61314 Change call recordings DELETE
+
+  [ Hugo Zigha ]
+  * [13dbc46] MT#61128 APP Download button overlapping on main menu fixed
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [b3a1ffa] MT#61397 Add German translation for the customer phonebook, customer preferences, and the related menu
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Dec 2024 11:26:51 +0100
+
 ngcp-csc-ui (13.1.0.0+0~mr13.1.0.0) unstable; urgency=medium
 
   [ Hugo Zigha ]
