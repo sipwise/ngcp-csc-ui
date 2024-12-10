@@ -5,7 +5,7 @@ FROM docker.mgm.sipwise.com/sipwise-bookworm:latest
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2023-12-01
+ENV REFRESHED_AT 2024-12-10
 
 ENV NODE_PATH=/usr/lib/nodejs:/usr/share/nodejs
 ENV DEBIAN_FRONTEND noninteractive
@@ -26,7 +26,7 @@ RUN echo "cd /code && ./t/testrunner" >/root/.bash_history
 # we cannot use /code/ here otherwise it will be 'mounted over' with following 'docker run'
 COPY package.json /tmp/
 COPY yarn.lock /tmp/
-COPY .yarn/releases/yarn-1.22.19.js /tmp/yarn
+COPY .yarn/releases/yarn-1.22.22.js /tmp/yarn
 COPY README.md /tmp/
 WORKDIR /tmp
 RUN ./yarn install
