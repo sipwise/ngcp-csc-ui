@@ -27,14 +27,16 @@ export async function cfLoadDestinationSets (subscriberId) {
 export async function cfLoadSourceSets (subscriberId) {
     return getList({
         resource: 'cfsourcesets',
-        params: (subscriberId) ? { subscriber_id: subscriberId } : {}
+        params: (subscriberId) ? { subscriber_id: subscriberId } : {},
+        all: true
     })
 }
 
 export async function cfLoadTimeSets (subscriberId) {
     return getList({
         resource: 'cftimesets',
-        params: (subscriberId) ? { subscriber_id: subscriberId } : {}
+        params: (subscriberId) ? { subscriber_id: subscriberId } : {},
+        all: true
     })
 }
 

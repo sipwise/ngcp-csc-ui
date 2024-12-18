@@ -90,16 +90,12 @@
 </template>
 <script>
 import CscCfGroup from 'components/call-forwarding/CscCfGroup'
-import {
-    mapActions,
-    mapState,
-    mapGetters
-} from 'vuex'
-import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import CscPopupMenu from 'components/CscPopupMenu'
-import CscSpinner from 'components/CscSpinner'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
 import CscPageSticky from 'components/CscPageSticky'
+import CscPopupMenu from 'components/CscPopupMenu'
+import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscSpinner from 'components/CscSpinner'
+import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageCf',
     components: {
