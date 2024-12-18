@@ -242,6 +242,7 @@
         <csc-call-forward-details
             v-else
             :id="id"
+            :key="id"
         />
     </csc-page-sticky-tabs>
 </template>
@@ -373,6 +374,13 @@ export default {
         }
     },
     watch: {
+        async $route (to) {
+            if (this.id !== to.params.id) {
+                this.id = to.params.id
+                this.selectGroup(this.id)
+                await this.loadMappingsFull(this.id)
+            }
+        },
         groupSelected () {
             this.changes = this.getGroupData()
             this.soundSet = this.getSoundSetByGroupId(this.groupSelected.id)
@@ -385,9 +393,9 @@ export default {
             }
         }
     },
-    mounted () {
+    async mounted  () {
         this.selectGroup(this.id)
-        this.loadMappingsFull(this.id)
+        await this.loadMappingsFull(this.id)
     },
     beforeUnmount () {
         this.resetSelectedGroup()
