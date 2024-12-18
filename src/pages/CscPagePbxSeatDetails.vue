@@ -347,18 +347,22 @@
         <csc-call-forward-details
             v-if="selectedTab === 'callForwards'"
             :id="id"
+            :key="id"
         />
         <csc-page-voicebox
             v-if="selectedTab === 'voicebox'"
             :id="id"
+            :key="id"
         />
         <csc-fax-to-mail-settings
             v-if="selectedTab === 'fax2mail'"
             :id="id"
+            :key="id"
         />
         <csc-mail-to-fax-settings
             v-if="selectedTab === 'mail2fax'"
             :id="id"
+            :key="id"
         />
     </csc-page-sticky-tabs>
 </template>
@@ -476,6 +480,7 @@ export default {
             'getIntraPbx',
             'getSeatUpdateToastMessage',
             'isSeatLoading',
+            'isSeatMapByIdEmpty',
             'getAnnouncementCfu',
             'getAnnouncementCallSetup',
             'getAnnouncementToCallee',
@@ -588,6 +593,12 @@ export default {
         }
     },
     watch: {
+        async $route (to) {
+            if (this.id !== to.params.id) {
+                this.id = to.params.id
+                this.selectSeat(this.id)
+            }
+        },
         seatSelected () {
             this.soundSet = this.getSoundSetBySeatId(this.seatSelected.id)
             this.loadPreferences(this.seatSelected.id).then((preferences) => {
@@ -635,7 +646,11 @@ export default {
         }
     },
     async mounted () {
-        this.selectSeat(this.id)
+        if (this.isSeatMapByIdEmpty) {
+            await this.loadSeatListItems()
+        }
+
+        this.selectSeat(this.$route.params.id)
         await this.loadAnnouncements()
         await this.getNcosSetSubscriber()
     },
@@ -652,6 +667,7 @@ export default {
             'setIntraPbx',
             'setMusicOnHold',
             'setSeatSoundSet',
+            'loadSeatListItems',
             'loadPreferences',
             'setCli',
             'setNcosSet',
