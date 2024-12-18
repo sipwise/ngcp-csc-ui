@@ -117,6 +117,8 @@ export default {
                 id: this.timeSet.id,
                 subscriberId: this.subscriberId
             })
+
+            this.$emit('close')
         }
     }
 }

@@ -144,7 +144,6 @@
                     >
                         {{ $t('office hours are') }}
                         <span
-
                             :class="clickableClasses"
                         >
                             <q-icon
@@ -161,12 +160,15 @@
                             />
                         </span>
                     </template>
-                    <span
-                        v-else
-                        :class="clickableClasses"
-                    >
-                        {{ $filters.timeSetTimes(timeSet.times) }}
-                    </span>
+                    <template v-else>
+                        <span :class="clickableClasses">
+                            {{ $t('Custom time set') }}
+                            <csc-cf-condition-popup-custom
+                                data-cy="csc-condtion-custom"
+                                :times="$filters.timeSetTimes(timeSet.times)"
+                            />
+                        </span>
+                    </template>
                 </template>
                 <template
                     v-if="!sourceSet || !timeSet"
@@ -362,6 +364,7 @@ import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscCfConditionPopupAll from 'components/call-forwarding/CscCfConditionPopupAll'
 import CscCfConditionPopupCallFrom from 'components/call-forwarding/CscCfConditionPopupCallFrom'
 import CscCfConditionPopupCallNotFrom from 'components/call-forwarding/CscCfConditionPopupCallNotFrom'
+import CscCfConditionPopupCustom from 'components/call-forwarding/CscCfConditionPopupCustom'
 import CscCfConditionPopupDate from 'components/call-forwarding/CscCfConditionPopupDate'
 import CscCfConditionPopupDateRange from 'components/call-forwarding/CscCfConditionPopupDateRange'
 import CscCfConditionPopupOfficeHours from 'components/call-forwarding/CscCfConditionPopupOfficeHours'
@@ -374,6 +377,7 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscCfGroupTitle',
     components: {
+        CscCfConditionPopupCustom,
         CscCfConditionPopupOfficeHours,
         CscCfConditionPopupWeekdays,
         CscCfConditionPopupDateRange,

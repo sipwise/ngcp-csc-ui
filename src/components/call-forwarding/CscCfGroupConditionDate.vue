@@ -23,7 +23,7 @@
                 flat
                 color="negative"
                 icon="delete"
-                @click="deleteSourceSetEvent"
+                @click="deleteTimeSetEvent"
             />
             <q-btn
                 :label="$t('Save')"
@@ -129,12 +129,14 @@ export default {
             }
             this.$emit('close')
         },
-        async deleteSourceSetEvent () {
+        async deleteTimeSetEvent () {
             await this.deleteTimeSet({
                 mapping: this.mapping,
                 id: this.timeSet.id,
                 subscriberId: this.subscriberId
             })
+
+            this.$emit('close')
         }
     }
 }

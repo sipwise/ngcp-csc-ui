@@ -33,6 +33,25 @@ export function getDayNameByNumber (dayNumber, isShortName = false) {
     return isShortName ? daysShortNamesMap[dayNumber] : daysNamesMap[dayNumber]
 }
 
+export function getMonthNameByNumber (monthNumber) {
+    const monthsNamesMap = [
+        i18n.global.tc('January'),
+        i18n.global.tc('February'),
+        i18n.global.tc('March'),
+        i18n.global.tc('April'),
+        i18n.global.tc('May'),
+        i18n.global.tc('June'),
+        i18n.global.tc('July'),
+        i18n.global.tc('August'),
+        i18n.global.tc('September'),
+        i18n.global.tc('October'),
+        i18n.global.tc('November'),
+        i18n.global.tc('December')
+    ]
+
+    return monthsNamesMap[monthNumber]
+}
+
 export function timeSetDateExact (times) {
     return `${times[0].year}/${times[0].month}/${times[0].mday}`
 }
@@ -70,6 +89,67 @@ export function timeSetOfficeHoursSameTime (times) {
     return weekdaysStr
 }
 
-export function timeSetTimes () {
-    return '...'
+export function timeSetTimes (timeSets) {
+    return timeSets.map((timeSet) => {
+        const timeSetMap = createTimeSetMap(timeSet)
+
+        const from = formatTimeSetValues(timeSetMap, 'from')
+        const to = formatTimeSetValues(timeSetMap, 'to')
+
+        return {
+            from: formatTimeString(from),
+            to: formatTimeString(to)
+        }
+    })
+}
+
+function createTimeSetMap (timeSet) {
+    const timeSetMap = {
+        hour: { from: null, to: null },
+        mday: { from: null, to: null },
+        minute: { from: null, to: null },
+        month: { from: null, to: null },
+        wday: { from: null, to: null },
+        year: { from: null, to: null }
+    }
+
+    Object.keys(timeSet).forEach((key) => {
+        // 1. Case: not set
+        if (timeSet[key] === null) {
+            timeSetMap[key] = { from: null, to: null }
+        // 2. Case: range
+        } else if (timeSet[key].includes('-')) {
+            const [from, to] = timeSet[key].split('-')
+            timeSetMap[key] = { from, to }
+        // 3. Case: single value
+        } else {
+            timeSetMap[key] = { from: timeSet[key], to: null }
+        }
+    })
+
+    return timeSetMap
+}
+
+function formatTimeSetValues (timeSetMap, type) {
+    const defaultTime = '00'
+    const defaultDay = 'DD'
+    const defaultMonth = 'MM'
+    const defaultYear = 'YYYY'
+
+    return {
+        year: timeSetMap.year[type] || defaultYear,
+        month: getMonthNameByNumber(timeSetMap.month[type]) || defaultMonth,
+        wDay: getDayNameByNumber(timeSetMap.wday[type]) ? `${getDayNameByNumber(timeSetMap.wday[type])},` : '',
+        mDay: timeSetMap.mday[type] || defaultDay,
+        hour: formatTime(timeSetMap.hour[type]) || defaultTime,
+        minutes: formatTime(timeSetMap.minute[type]) || defaultTime
+    }
+}
+
+function formatTimeString (timeSetValues) {
+    return `${timeSetValues.mDay} ${timeSetValues.month} ${timeSetValues.year}, ${timeSetValues.wDay} ${timeSetValues.hour}:${timeSetValues.minutes}`
+}
+
+function formatTime (time) {
+    return (time !== null && time < 10) ? `0${time}` : time
 }

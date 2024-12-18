@@ -242,18 +242,22 @@
         <csc-call-forward-details
             v-if="selectedTab === 'callForwards'"
             :id="id"
+            :key="id"
         />
         <csc-page-voicebox
             v-if="selectedTab === 'voicebox'"
             :id="id"
+            :key="id"
         />
         <csc-fax-to-mail-settings
             v-if="selectedTab === 'fax2mail'"
             :id="id"
+            :key="id"
         />
         <csc-mail-to-fax-settings
             v-if="selectedTab === 'mail2fax'"
             :id="id"
+            :key="id"
         />
     </csc-page-sticky-tabs>
 </template>
@@ -400,6 +404,13 @@ export default {
         }
     },
     watch: {
+        async $route (to) {
+            if (this.id !== to.params.id) {
+                this.id = to.params.id
+                this.selectGroup(this.id)
+                await this.loadMappingsFull(this.id)
+            }
+        },
         groupSelected () {
             this.changes = this.getGroupData()
             this.soundSet = this.getSoundSetByGroupId(this.groupSelected.id)
@@ -412,9 +423,9 @@ export default {
             }
         }
     },
-    mounted () {
+    async mounted  () {
         this.selectGroup(this.id)
-        this.loadMappingsFull(this.id)
+        await this.loadMappingsFull(this.id)
     },
     beforeUnmount () {
         this.resetSelectedGroup()

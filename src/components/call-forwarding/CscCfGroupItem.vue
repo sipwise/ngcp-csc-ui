@@ -263,13 +263,20 @@ export default {
             }).onOk(async (data) => {
                 this.$wait.start(this.waitIdentifier)
                 if (this.destinationSet.destinations.length > 1) {
-                    await this.removeDestination(payload)
+                    await this.triggerRemoveDestination(payload)
                     this.setAnnouncement()
                 } else {
                     this.$emit('delete-last', payload)
                 }
                 this.$wait.end(this.waitIdentifier)
             })
+        },
+        async triggerRemoveDestination (payload) {
+            try {
+                await this.removeDestination(payload)
+            } catch (e) {
+                showGlobalError(e.message)
+            }
         },
         async updateDestinationTimeoutEvent (payload) {
             this.$wait.start(this.waitIdentifier)

@@ -469,15 +469,13 @@ export default {
             }
         },
         async deleteTimeSetEvent () {
-            try {
-                await this.deleteTimeSet({
-                    mapping: this.mapping,
-                    id: this.timeSet.id,
-                    subscriberId: this.subscriberId
-                })
-            } catch (e) {
-                showGlobalError(e)
-            }
+            await this.deleteTimeSet({
+                mapping: this.mapping,
+                id: this.timeSet.id,
+                subscriberId: this.subscriberId
+            })
+
+            this.$emit('close')
         }
     }
 }
