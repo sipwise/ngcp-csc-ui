@@ -1,4 +1,5 @@
-
+// ----  1. Implementation for Times ranges and day of the week  ----
+// ------------------------------------------
 /*
 humanReadableTimeset = [{
   weekday: 1..7,
@@ -72,7 +73,7 @@ export function validateHumanTimesets (hTimeset) {
 
 /**
  * Function resort timesets by "weekday" and "from" and combines closest timesets or duplicates
- * Important! Before use this function please validate you timeses for correctness.
+ * Important! Before use this function please validate you timesets for correctness.
  * @param hTimeset {humanReadableTimeset}
  * @returns {humanReadableTimeset}
  */
@@ -289,7 +290,11 @@ export function validateKamailioRange (kamailioRangeStr = '', minValue, maxValue
         }
     }
 }
-
+/**
+ * Validates Kamailio Timesets with day of week to human readable format
+ * @param kTimeset {Array} - Kamailio timeset with day of the week, hour and minute
+ * throws {Error} - if the Kamailio timeset has invalid format
+ */
 export function validateKamailioTimesets (kTimeset) {
     kTimeset.forEach(timesetItem => {
         let { wday, hour, minute } = timesetItem
@@ -318,11 +323,16 @@ export function validateKamailioTimesets (kTimeset) {
     })
 }
 
+/**
+* Converts Kamailio timeset with day of week to human readable format
+* @param kTimeset {Array} - Kamailio timeset with day of the week, hour and minute
+* retuns {Array} - human readable timeset with weekday, from and to
+*/
 export function kamailioTimesetToHuman (kTimeset = []) {
     validateKamailioTimesets(kTimeset)
 
-    // convert Kamailio timeset into Human readable format
-    const hTimesetRaw = kTimeset.map(timesetItem => {
+    // convert Kamailio timeset into human readable format
+    const hTimesetRaw = kTimeset.map((timesetItem) => {
         let { wday, hour, minute } = timesetItem
         hour = getAsTrimmedString(hour)
         minute = getAsTrimmedString(minute)
@@ -378,7 +388,7 @@ export function kamailioTimesetToHuman (kTimeset = []) {
     return res
 }
 
-// ----  implementation for date ranges  ----
+// ---- 2. Implementation for date ranges  ----
 // ------------------------------------------
 
 /*
@@ -672,7 +682,11 @@ export function humanDatesetToKamailio (hDateset = []) {
 
     return kamailioDateset
 }
-
+/**
+ * Validates Kamailio Datesets Ranges (Year, Month, Day)
+ * @param kDateset {Array} - Kamailio Dateset (Year, Month, Day)
+ * throws {Error} - if the Kamailio dateset has invalid format
+ */
 export function validateKamailioDatesets (kDateset) {
     kDateset.forEach(datesetItem => {
         let { year, month, mday } = datesetItem
@@ -700,12 +714,16 @@ export function validateKamailioDatesets (kDateset) {
             })
     })
 }
-
+/**
+* Converts Kamailio Dateset to human readable Date Range format
+* @param kDateset {Date} - Kamaillio Dateset with Year, Month and Day
+* retun {Array} - human readable data range with from and to year, month and day.
+*/
 export function kamailioDatesetToHuman (kDateset = []) {
     validateKamailioDatesets(kDateset)
 
-    // convert Kamailio dateset into Human readable format
-    const hDatesetRaw = kDateset.map(datesetItem => {
+    // convert Kamailio dateset into human readable format
+    const hDatesetRaw = kDateset.map((datesetItem) => {
         let { year, month, mday } = datesetItem
         year = getAsTrimmedString(year)
         month = getAsTrimmedString(month)
