@@ -56,6 +56,9 @@ export default {
         isSeatListEmpty (state) {
             return state.seatListItems.length && state.seatListItems.length === 0
         },
+        isSeatMapByIdEmpty (state) {
+            return Object.keys(state.seatMapById).length === 0
+        },
         isSeatListRequesting (state) {
             return state.seatListState === RequestState.requesting
         },

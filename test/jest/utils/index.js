@@ -2,8 +2,8 @@
 import { createLocalVue, shallowMount } from 'test-utils'
 
 import Vuex from 'vuex'
-import VueRouter from 'vue-router'
-import Quasar, { Cookies } from 'quasar'
+import * as VueRouter from 'vue-router'
+import { Cookies, Quasar } from 'quasar'
 
 const mockSsrContext = () => {
     return {
@@ -46,10 +46,10 @@ export const mountQuasar = (component, options = {}) => {
     }
 
     // mock vue-i18n
-    const $t = () => {}
-    const $tc = () => {}
-    const $n = () => {}
-    const $d = () => {}
+    const $t = () => { }
+    const $tc = () => { }
+    const $n = () => { }
+    const $d = () => { }
 
     return shallowMount(component, {
         localVue: localVue,
