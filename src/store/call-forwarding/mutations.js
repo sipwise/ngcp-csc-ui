@@ -6,6 +6,7 @@ export function dataSucceeded (state, res) {
             destinationSetMap[destinationSet.id] = destinationSet
         })
         state.destinationSetMap = destinationSetMap
+        state.destinationSets = res.destinationSets
     }
     if (res.sourceSets) {
         const sourceSetMap = {}

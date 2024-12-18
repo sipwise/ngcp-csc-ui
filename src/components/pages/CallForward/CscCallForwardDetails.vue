@@ -109,7 +109,7 @@ export default {
     props: {
         id: {
             type: String,
-            default: ''
+            required: true
         }
     },
     data () {
@@ -146,8 +146,8 @@ export default {
             return null
         }
     },
-    mounted () {
-        this.loadMappingsFull(this.id)
+    async mounted () {
+        await this.loadMappingsFull(this.id)
     },
     methods: {
         ...mapActions('callForwarding', [
