@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.1.2.0+0~mr13.1.2.0) unstable; urgency=medium
+
+  [ Mykola Malkov ]
+  * [47ca1a9] MT#61534 Fix yarn file name
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 24 Dec 2024 15:39:34 +0100
+
 ngcp-csc-ui (13.1.1.0+0~mr13.1.1.0) unstable; urgency=medium
 
   [ Debora Crescenzo ]
