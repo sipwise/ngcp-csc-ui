@@ -6,7 +6,7 @@
             class="q-mr-sm"
             data-cy="filter-from"
             dense
-            clearable
+            :clearable="false"
             :label="$t('From')"
             :disable="loading"
             @input="inputFrom"
@@ -15,7 +15,7 @@
             :value="value.to"
             data-cy="filter-to"
             dense
-            clearable
+            :clearable="false"
             :label="$t('To')"
             :disable="loading"
             @input="inputTo"

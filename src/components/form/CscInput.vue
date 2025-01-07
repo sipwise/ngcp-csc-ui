@@ -27,7 +27,7 @@
                 name="append"
             />
             <q-btn
-                v-if="$attrs.clearable !== undefined && value !== ''"
+                v-if="$attrs.clearable !== undefined && value !== undefined && value !== ''"
                 icon="backspace"
                 color="white"
                 flat
@@ -55,13 +55,6 @@ export default {
         }
     },
     emits: ['input', 'clear'],
-    date () {
-        return {
-
-        }
-    },
-    mounted () {
-    },
     methods: {
         clear () {
             this.$emit('input', '')
