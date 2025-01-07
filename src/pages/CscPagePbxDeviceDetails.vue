@@ -410,6 +410,6 @@ export default {
 </script>
 <style>
 .no-wrap {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 </style>

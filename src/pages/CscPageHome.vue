@@ -18,7 +18,7 @@
                 data-cy="csc-call-number-input"
                 :value="callNumberInput"
                 :readonly="dialpadOpened"
-                clearable
+                :clearable="false"
                 :disable="!isCallEnabled"
                 @keypress.space.prevent
                 @keydown.space.prevent
