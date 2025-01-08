@@ -1,4 +1,5 @@
 import {
+    cfCreateDestinationSet,
     cfCreateOfficeHours,
     cfCreateSourceSet,
     cfCreateTimeSetDate,
@@ -7,6 +8,7 @@ import {
     cfDeleteDestinationSet,
     cfDeleteSourceSet,
     cfDeleteTimeSet,
+    cfGetMostRecentDestinationSetByName,
     cfLoadDestinationSets,
     cfLoadMappingsFull,
     cfLoadSourceSets,
@@ -61,22 +63,27 @@ export async function loadMappingsFull ({ dispatch, commit, rootGetters }, subsc
 
 export async function createMapping ({ dispatch, commit, state, rootGetters }, payload) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
+    const name = 'csc-' + v4()
+    const subscriberId = (payload.subscriberId) ? (payload.subscriberId) : rootGetters['user/getSubscriberId']
+
+    await cfCreateDestinationSet({
+        name,
+        subscriber_id: subscriberId,
+        destinations: [createDefaultDestination()]
+    })
+
+    const destinationSet = await cfGetMostRecentDestinationSetByName({
+        name,
+        subscriberId: subscriberId
+    })
+
     let type = payload.type
     if (payload.type === 'cfu' && state.mappings.cft && state.mappings.cft.length > 0) {
         type = 'cft'
     }
-    const subscriberId = (payload.subscriberId) ? (payload.subscriberId) : rootGetters['user/getSubscriberId']
     const mappings = _.cloneDeep(state.mappings[type])
-    const destinationSetId = await post({
-        resource: 'cfdestinationsets',
-        body: {
-            name: 'csc-' + v4(),
-            subscriber_id: subscriberId,
-            destinations: [createDefaultDestination()]
-        }
-    })
     mappings.push({
-        destinationset_id: destinationSetId
+        destinationset_id: destinationSet.id
     })
     const res = await Promise.all([
         patchReplaceFull({
