@@ -138,6 +138,14 @@ export default {
             data: this.getDefaults(),
             languageOptions: [
                 {
+                    value: 'ar',
+                    label: 'Arabic'
+                },
+                {
+                    value: 'de',
+                    label: 'German'
+                },
+                {
                     value: 'en',
                     label: 'English'
                 },
@@ -146,36 +154,32 @@ export default {
                     label: 'Spanish'
                 },
                 {
-                    value: 'it',
-                    label: 'Italian'
-                },
-                {
-                    value: 'ro',
-                    label: 'Romanian'
-                },
-                {
-                    value: 'de',
-                    label: 'German'
-                },
-                {
                     value: 'fr',
                     label: 'French'
-                },
-                {
-                    value: 'ar',
-                    label: 'Arabic'
-                },
-                {
-                    value: 'nl',
-                    label: 'Dutch'
                 },
                 {
                     value: 'he',
                     label: 'Hebrew'
                 },
                 {
+                    value: 'it',
+                    label: 'Italian'
+                },
+                {
+                    value: 'nl',
+                    label: 'Dutch'
+                },
+                {
+                    value: 'pt',
+                    label: 'Portuguese'
+                },
+                {
                     value: 'pt_br',
-                    label: 'Brazialian'
+                    label: 'Brazilian'
+                },
+                {
+                    value: 'ro',
+                    label: 'Romanian'
                 }
             ],
             v$: useValidate()
