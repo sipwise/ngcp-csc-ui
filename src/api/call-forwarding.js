@@ -24,6 +24,20 @@ export async function cfLoadDestinationSets (subscriberId) {
     })
 }
 
+export async function cfGetMostRecentDestinationSetByName (params) {
+    const res = await getList({
+        resource: 'cfdestinationsets',
+        params: {
+            name: params.name,
+            subscriber_id: params.subscriberId,
+            order_by: 'id',
+            order_by_direction: 'desc'
+        }
+    })
+
+    return res.items[0]
+}
+
 export async function cfLoadSourceSets (subscriberId) {
     return getList({
         resource: 'cfsourcesets',
