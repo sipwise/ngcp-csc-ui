@@ -1,3 +1,15 @@
+ngcp-csc-ui (13.0.1.3+0~mr13.0.1.3) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [9025aa3] MT#59555 Dependencies upgrade
+  * [8461407] MT#61536 Improve how password requirements are handled
+  * [4cc4f85] MT#61534 Improve bundling
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [41aa6c7] MT#61397 Add German translation for the customer phonebook, customer preferences, and the related menu
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Jan 2025 16:24:53 +0100
+
 ngcp-csc-ui (13.0.1.2+0~mr13.0.1.2) unstable; urgency=medium
 
   [ Debora Crescenzo ]
