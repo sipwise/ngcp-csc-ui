@@ -1,3 +1,16 @@
+ngcp-csc-ui (11.5.1.21+0~mr11.5.1.21) unstable; urgency=medium
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [de0b22b] MT#61634 Logo disappears after refresh on CSC panel
+
+  [ Debora Crescenzo ]
+  * [22bf9f8] MT#61843 Create call forward bugfix
+  * [2069ad4] MT#61635 CF bugfixes
+  * [9e7519f] MT#61635 Amend translations for call forwarding
+  * [46679c7] MT#61635 Fix German translation for "custom time set"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 17 Jan 2025 09:16:00 +0100
+
 ngcp-csc-ui (11.5.1.20+0~mr11.5.1.20) unstable; urgency=medium
 
   [ Debora Crescenzo ]
