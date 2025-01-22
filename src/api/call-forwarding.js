@@ -29,7 +29,6 @@ export async function cfGetMostRecentDestinationSetByName (params) {
         resource: 'cfdestinationsets',
         params: {
             name: params.name,
-            subscriber_id: params.subscriberId,
             order_by: 'id',
             order_by_direction: 'desc'
         }

@@ -72,10 +72,7 @@ export async function createMapping ({ dispatch, commit, state, rootGetters }, p
         destinations: [createDefaultDestination()]
     })
 
-    const destinationSet = await cfGetMostRecentDestinationSetByName({
-        name,
-        subscriberId: subscriberId
-    })
+    const destinationSet = await cfGetMostRecentDestinationSetByName({ name })
 
     let type = payload.type
     if (payload.type === 'cfu' && state.mappings.cft && state.mappings.cft.length > 0) {
