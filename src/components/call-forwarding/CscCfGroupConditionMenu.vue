@@ -7,6 +7,22 @@
         >
             <csc-popup-menu-item
                 icon="person_add"
+                :label="$t('call to ...')"
+                data-cy="csc-condition-call-to"
+                :close-popup="false"
+                :disable="!!bNumberSet"
+                @click="$emit('step', 'call-to')"
+            />
+            <csc-popup-menu-item
+                icon="person_add_disabled"
+                :label="$t('call not to ...')"
+                data-cy="csc-condition-call-to"
+                :close-popup="false"
+                :disable="!!bNumberSet"
+                @click="$emit('step', 'call-not-to')"
+            />
+            <csc-popup-menu-item
+                icon="person_add"
                 :label="$t('call from ...')"
                 data-cy="csc-condtion-call-from"
                 :close-popup="false"
@@ -71,6 +87,10 @@ export default {
         destinationSet: {
             type: Object,
             required: true
+        },
+        bNumberSet: {
+            type: Object,
+            default: undefined
         },
         sourceSet: {
             type: Object,

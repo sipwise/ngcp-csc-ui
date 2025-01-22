@@ -17,6 +17,14 @@ export async function cfLoadMappings (subscriberId) {
     })
 }
 
+export async function cfLoadBNumberSets (subscriberId) {
+    return getList({
+        resource: 'cfbnumbersets',
+        all: true,
+        params: (subscriberId) ? { subscriber_id: subscriberId } : {}
+    })
+}
+
 export async function cfLoadDestinationSets (subscriberId) {
     return getList({
         resource: 'cfdestinationsets',
@@ -46,7 +54,8 @@ export async function cfLoadMappingsFull (subscriberId) {
         cfLoadMappings(subscriberId),
         cfLoadDestinationSets(),
         cfLoadSourceSets(),
-        cfLoadTimeSets()
+        cfLoadTimeSets(),
+        cfLoadBNumberSets()
     ])
 }
 
@@ -61,6 +70,60 @@ export async function cfDeleteDestinationSet (id) {
     return del({
         resource: 'cfdestinationsets',
         resourceId: id
+    })
+}
+
+export async function cfCreateBNumberSet (id, payload) {
+    const bNumbers = []
+    payload.numbers.forEach((number) => {
+        bNumbers.push({
+            bnumber: number
+        })
+    })
+    try {
+        const res = await post({
+            resource: 'cfbnumbersets',
+            body: {
+                name: payload.name,
+                subscriber_id: id,
+                is_regex: true,
+                bnumbers: bNumbers,
+                mode: payload.mode
+            }
+        })
+        if (!_.isString(res)) {
+            return `${res.id}`
+        }
+        return res
+    } catch (e) {
+        showGlobalError(e)
+    }
+}
+
+export async function cfDeleteBNumberSet (id) {
+    return del({
+        resource: 'cfbnumbersets',
+        resourceId: id
+    })
+}
+
+export async function cfUpdateBNumberSet (id, payload) {
+    const bnumbers = []
+    payload.numbers.forEach((number) => {
+        bnumbers.push({
+            bnumber: number
+        })
+    })
+    return putMinimal({
+        resource: 'cfbnumbersets',
+        resourceId: payload.id,
+        body: {
+            name: payload.name,
+            subscriber_id: id,
+            is_regex: true,
+            bnumbers,
+            mode: payload.mode
+        }
     })
 }
 

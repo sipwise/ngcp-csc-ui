@@ -1,17 +1,22 @@
 import _ from 'lodash'
 import {
+    cfCreateBNumberSet,
     cfCreateOfficeHours,
     cfCreateSourceSet,
     cfCreateTimeSetDate,
     cfCreateTimeSetDateRange,
     cfCreateTimeSetWeekdays,
+    cfDeleteBNumberSet,
     cfDeleteDestinationSet,
     cfDeleteSourceSet,
     cfDeleteTimeSet,
+    cfLoadBNumberSets,
     cfLoadDestinationSets,
     cfLoadMappingsFull,
     cfLoadSourceSets,
-    cfLoadTimeSets, cfUpdateOfficeHours,
+    cfLoadTimeSets,
+    cfUpdateBNumberSet,
+    cfUpdateOfficeHours,
     cfUpdateSourceSet,
     cfUpdateTimeSetDate,
     cfUpdateTimeSetDateRange,
@@ -54,7 +59,8 @@ export async function loadMappingsFull ({ dispatch, commit, rootGetters }, id) {
         mappings: mappingData[0],
         destinationSets: mappingData[1].items,
         sourceSets: mappingData[2].items,
-        timeSets: mappingData[3].items
+        timeSets: mappingData[3].items,
+        bNumberSets: mappingData[4].items
     })
     dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
 }
@@ -120,8 +126,8 @@ export async function deleteMapping ({ dispatch, commit, state, rootGetters }, p
         await cfDeleteDestinationSet(payload.destinationset_id)
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'cfdestinationset\' not found.') {
-            // This happens when CF was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity
+            // This happens when entity was set by Admin therefore current
+            // csc user doesn't have rights to delete the entity from DB.
             showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)
@@ -254,6 +260,135 @@ export async function loadSourceSets ({ dispatch, commit }) {
     dispatch('wait/end', 'csc-cf-sourcesets', { root: true })
 }
 
+export async function createBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
+    try {
+        dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
+        const bNumberSetId = await cfCreateBNumberSet(rootGetters['user/getSubscriberId'], payload)
+        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
+        updatedMapping[payload.mapping.index].bnumberset_id = bNumberSetId
+        const updatedMappings = await patchReplaceFull({
+            resource: 'cfmappings',
+            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            fieldPath: payload.mapping.type,
+            value: updatedMapping
+        })
+        const bNumberSets = await cfLoadBNumberSets()
+        commit('dataSucceeded', {
+            mappings: updatedMappings,
+            bNumberSets: bNumberSets.items
+        })
+    } finally {
+        dispatch('wait/end', 'csc-cf-b-number-set-create', { root: true })
+    }
+}
+
+export async function loadBNumberSets ({ dispatch, commit }) {
+    dispatch('wait/start', 'csc-cf-b-number-set', { root: true })
+    const bNumberSets = await cfLoadBNumberSets()
+    commit('dataSucceeded', {
+        bNumberSets: bNumberSets.items
+    })
+    dispatch('wait/end', 'csc-cf-b-number-set', { root: true })
+}
+
+export async function updateBNumberSet ({ dispatch, commit, rootGetters }, payload) {
+    try {
+        dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
+        await cfUpdateBNumberSet(rootGetters['user/getSubscriberId'], payload)
+        const bNumberSets = await cfLoadBNumberSets()
+        commit('dataSucceeded', {
+            bNumberSets: bNumberSets.items
+        })
+    } catch (e) {
+        if (e.code === 404 && e.message === 'Entity \'bnumberset\' not found.') {
+            // This happens when entity was set by Admin therefore current
+            // csc user doesn't have rights to edit the entity.
+            showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+        } else {
+            showGlobalError(e.message)
+        }
+    } finally {
+        dispatch('wait/end', 'csc-cf-b-number-set-create', { root: true })
+    }
+}
+
+export async function deleteBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
+    try {
+        dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
+        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
+        updatedMapping[payload.mapping.index].bnumberset_id = null
+        updatedMapping[payload.mapping.index].bnumberset = null
+        const updatedMappings = await patchReplaceFull({
+            resource: 'cfmappings',
+            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            fieldPath: payload.mapping.type,
+            value: updatedMapping
+        })
+
+        try {
+            await cfDeleteBNumberSet(payload.id)
+        } catch (e) {
+            if (e.code === 404 && e.message === 'Entity \'bnumberset\' not found.') {
+                // This happens when entity was set by Admin therefore current
+                // csc user doesn't have rights to delete the entity from DB.
+                // In this scenario the b-number is only removed from the mappings.
+                showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+            } else {
+                showGlobalError(e.message)
+            }
+        }
+
+        const bNumberSets = await cfLoadBNumberSets()
+        commit('dataSucceeded', {
+            mappings: updatedMappings,
+            bNumberSets: bNumberSets.items
+        })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', 'csc-cf-b-number-set-create', { root: true })
+    }
+}
+
+export async function assignBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
+    try {
+        dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
+        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
+        updatedMapping[payload.mapping.index].bnumberset_id = payload.id
+        const updatedMappings = await patchReplaceFull({
+            resource: 'cfmappings',
+            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            fieldPath: payload.mapping.type,
+            value: updatedMapping
+        })
+        commit('dataSucceeded', {
+            mappings: updatedMappings
+        })
+    } finally {
+        dispatch('wait/end', 'csc-cf-b-number-set-create', { root: true })
+    }
+}
+
+export async function unassignBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
+    try {
+        dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
+        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
+        updatedMapping[payload.mapping.index].bnumberset_id = null
+        updatedMapping[payload.mapping.index].bnumberset = null
+        const updatedMappings = await patchReplaceFull({
+            resource: 'cfmappings',
+            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            fieldPath: payload.mapping.type,
+            value: updatedMapping
+        })
+        commit('dataSucceeded', {
+            mappings: updatedMappings
+        })
+    } finally {
+        dispatch('wait/end', 'csc-cf-b-number-set-create', { root: true })
+    }
+}
+
 export async function createSourceSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-source-set-create', { root: true })
@@ -286,8 +421,8 @@ export async function updateSourceSet ({ dispatch, commit, rootGetters }, payloa
         })
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'sourceset\' not found.') {
-            // This happens when CF was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity
+            // This happens when entity was set by Admin therefore current
+            // csc user doesn't have rights to edit the entity.
             showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)
@@ -309,7 +444,21 @@ export async function deleteSourceSet ({ dispatch, commit, rootGetters, state },
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
-        await cfDeleteSourceSet(payload.id)
+
+        try {
+            await cfDeleteSourceSet(payload.id)
+        } catch (e) {
+            if (e.code === 404 && e.message === 'Entity \'sourceset\' not found.') {
+                // This happens when entity was set by Admin therefore current
+                // csc user doesn't have rights to delete the entity from DB.
+                // In this scenario the sources is only removed from the mappings.
+                showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+                // Force reload of SourceSets
+            } else {
+                throw e
+            }
+        }
+
         const sourceSets = await cfLoadSourceSets()
         commit('dataSucceeded', {
             mappings: updatedMappings,
@@ -410,8 +559,9 @@ export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, p
         await cfDeleteTimeSet(payload.id)
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'cftimeset\' not found.') {
-            // This happens when CF was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity
+            // This happens when entity was set by Admin therefore current
+            // csc user doesn't have rights to delete the entity from DB.
+            // In this case entity is only removed from the mappings.
             showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)
@@ -456,8 +606,6 @@ export async function doNotRingPrimaryNumber ({ commit, rootGetters, state }, pa
 }
 
 export async function updateRingTimeout ({ commit, rootGetters, state }, payload) {
-    // eslint-disable-next-line no-console
-    console.debug('aaa')
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
         resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
@@ -494,8 +642,8 @@ export async function updateTimeSetDateRange ({ dispatch, commit }, payload) {
         await cfUpdateTimeSetDateRange(payload.id, payload.date)
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'timeset\' not found.') {
-            // This happens when CF was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity
+            // This happens when entity was set by Admin therefore current
+            // csc user doesn't have rights to edit the entity
             showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)
@@ -534,8 +682,8 @@ export async function updateTimeSetWeekdays ({ dispatch, commit }, payload) {
         await cfUpdateTimeSetWeekdays(payload.id, payload.weekdays)
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'timeset\' not found.') {
-            // This happens when CF was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity
+            // This happens when entity was set by Admin therefore current
+            // csc user doesn't have rights to edit the entity
             showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)

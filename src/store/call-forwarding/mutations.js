@@ -1,4 +1,12 @@
 export function dataSucceeded (state, res) {
+    if (res.bNumberSets) {
+        const bNumberSetMap = {}
+        res.bNumberSets.forEach((bNumberSet) => {
+            bNumberSetMap[bNumberSet.id] = bNumberSet
+        })
+        state.bNumberSetMap = bNumberSetMap
+        state.bNumberSets = res.bNumberSets
+    }
     if (res.destinationSets) {
         const destinationSetMap = {}
         res.destinationSets.forEach((destinationSet) => {

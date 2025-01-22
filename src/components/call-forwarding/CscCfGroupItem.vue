@@ -181,14 +181,6 @@ export default {
             type: Object,
             required: true
         },
-        sourceSet: {
-            type: Object,
-            default: undefined
-        },
-        timeSet: {
-            type: Object,
-            default: undefined
-        },
         loading: {
             type: Boolean,
             default: false

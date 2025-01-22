@@ -79,6 +79,7 @@
                         class="q-mb-lg"
                         :loading="$wait.is('csc-cf-mappings-full')"
                         :mapping="group"
+                        :b-number-set="bNumberSetMap[group.bnumberset_id]"
                         :destination-set="destinationSetMap[group.destinationset_id]"
                         :source-set="sourceSetMap[group.sourceset_id]"
                         :time-set="timeSetMap[group.timeset_id]"
@@ -109,6 +110,7 @@ export default {
     computed: {
         ...mapState('callForwarding', [
             'mappings',
+            'bNumberSetMap',
             'destinationSetMap',
             'sourceSetMap',
             'timeSetMap'

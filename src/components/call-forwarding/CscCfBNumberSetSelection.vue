@@ -13,7 +13,7 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 export default {
-    name: 'CscCfSourceSetSelection',
+    name: 'CscCfBNumberSetSelection',
     props: {
         value: {
             type: [String, Number],
@@ -31,14 +31,14 @@ export default {
     },
     computed: {
         ...mapState('callForwarding', [
-            'sourceSets'
+            'bNumberSets'
         ]),
         allOptions () {
-            return this.sourceSets
-                .filter((sourceSet) => sourceSet.mode === this.mode)
-                .map((sourceSet) => ({
-                    value: sourceSet.id,
-                    label: sourceSet.name
+            return this.bNumberSets
+                .filter((bNumberSet) => bNumberSet.mode === this.mode)
+                .map((bNumberSet) => ({
+                    value: bNumberSet.id,
+                    label: bNumberSet.name
                 }))
         },
         filteredOptions () {
@@ -46,15 +46,15 @@ export default {
         }
     },
     async created () {
-        await this.loadSourceSets()
+        await this.loadBNumberSets()
         this.options = this.allOptions
     },
     methods: {
         ...mapActions('callForwarding', [
-            'loadSourceSets'
+            'loadBNumberSets'
         ]),
         async filter (value, update) {
-            await this.loadSourceSets()
+            await this.loadBNumberSets()
             update(() => {
                 if (!value) {
                     this.options = this.allOptions

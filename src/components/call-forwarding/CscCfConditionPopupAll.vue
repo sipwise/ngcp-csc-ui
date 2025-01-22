@@ -5,10 +5,65 @@
         <csc-cf-group-condition-menu
             v-if="internalStep === 'menu'"
             :mapping="mapping"
+            :b-number-set="bNumberSet"
             :destination-set="destinationSet"
             :source-set="sourceSet"
             :time-set="timeSet"
             @step="internalStep=$event"
+            @close="closePopup"
+        />
+        <csc-cf-group-condition-b-number-set-create
+            v-if="internalStep === 'call-to'"
+            mode="whitelist"
+            :title="$t('call to ...')"
+            icon="person_add"
+            :back-button="true"
+            :mapping="mapping"
+            :b-number-set="bNumberSet"
+            :subscriber-id="subscriberId"
+            @back="internalStep='menu'"
+            @select="internalStep='call-to-select'"
+            @close="closePopup"
+        />
+        <csc-cf-group-condition-b-number-set-select
+            v-if="internalStep === 'call-to-select'"
+            mode="whitelist"
+            :title="$t('call to ...')"
+            icon="person_add"
+            :create-label="$t('Create List')"
+            :back-button="true"
+            :mapping="mapping"
+            :b-number-set="bNumberSet"
+            :subscriber-id="subscriberId"
+            @back="internalStep='call-to'"
+            @create="internalStep='call-to'"
+            @close="closePopup"
+        />
+        <csc-cf-group-condition-b-number-set-create
+            v-if="internalStep === 'call-not-to'"
+            mode="blacklist"
+            :title="$t('call not to ...')"
+            icon="person_add_disabled"
+            :back-button="true"
+            :mapping="mapping"
+            :b-number-set="bNumberSet"
+            :subscriber-id="subscriberId"
+            @back="internalStep='menu'"
+            @select="internalStep='call-not-to-select'"
+            @close="closePopup"
+        />
+        <csc-cf-group-condition-b-number-set-select
+            v-if="internalStep === 'call-not-to-select'"
+            mode="blacklist"
+            :title="$t('call not to ...')"
+            icon="person_add_disabled"
+            :create-label="$t('Create List')"
+            :back-button="true"
+            :mapping="mapping"
+            :b-number-set="bNumberSet"
+            :subscriber-id="subscriberId"
+            @back="internalStep='call-not-to'"
+            @create="internalStep='call-not-to'"
             @close="closePopup"
         />
         <csc-cf-group-condition-source-set-create
@@ -123,6 +178,8 @@
 
 <script>
 import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
+import CscCfGroupConditionBNumberSetCreate from 'components/call-forwarding/CscCfGroupConditionBNumberSetCreate'
+import CscCfGroupConditionBNumberSetSelect from 'components/call-forwarding/CscCfGroupConditionBNumberSetSelect'
 import CscCfGroupConditionDate from 'components/call-forwarding/CscCfGroupConditionDate'
 import CscCfGroupConditionDateRange from 'components/call-forwarding/CscCfGroupConditionDateRange'
 import CscCfGroupConditionMenu from 'components/call-forwarding/CscCfGroupConditionMenu'
@@ -138,6 +195,8 @@ export default {
         CscCfGroupConditionWeekdays,
         CscCfGroupConditionDateRange,
         CscCfGroupConditionDate,
+        CscCfGroupConditionBNumberSetSelect,
+        CscCfGroupConditionBNumberSetCreate,
         CscCfGroupConditionSourceSetSelect,
         CscCfGroupConditionSourceSetCreate,
         CscCfGroupConditionMenu
@@ -154,6 +213,10 @@ export default {
         destinationSet: {
             type: Object,
             required: true
+        },
+        bNumberSet: {
+            type: Object,
+            default: undefined
         },
         sourceSet: {
             type: Object,

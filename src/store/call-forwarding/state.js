@@ -10,6 +10,8 @@ export default function () {
             cft_ringtimeout: null,
             cfu: []
         },
+        bNumberSets: null,
+        bNumberSetMap: {},
         destinationSets: null,
         destinationSetMap: {},
         sourceSets: null,

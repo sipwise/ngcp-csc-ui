@@ -23,9 +23,7 @@
                 >
                     {{ $t('If busy') }}
                 </template>
-                <template
-                    v-if="sourceSet"
-                >
+                <template v-if="sourceSet">
                     <template
                         v-if="sourceSet.mode === 'whitelist'"
                     >
@@ -65,6 +63,49 @@
                             :destination-set="destinationSet"
                             :source-set="sourceSet"
                             :time-set="timeSet"
+                            :subscriber-id="subscriberId"
+                        />
+                    </span>
+                </template>
+                <template v-if="bNumberSet">
+                    <span v-if="sourceSet">{{ ' ' + $t('or') + ' ' }} </span>
+                    <span v-else>{{ ' ' + $t('and') + ' ' }} </span>
+
+                    <template
+                        v-if="bNumberSet.mode === 'whitelist'"
+                    >
+                        {{ ' ' + $t('call to') + ' ' }}
+                    </template>
+                    <template
+                        v-else
+                    >
+                        {{ ' ' + $t('call not to') + ' ' }}
+                    </template>
+                    <span
+                        :class="clickableClasses"
+                        style="white-space: nowrap"
+                    >
+                        <q-icon
+                            v-if="bNumberSet.mode === 'whitelist'"
+                            name="person_add"
+                        />
+                        <q-icon
+                            v-else
+                            name="person_add_disabled"
+                        />
+                        {{ bNumberSet.name }}
+                        <csc-cf-condition-popup-call-to
+                            v-if="bNumberSet.mode === 'whitelist'"
+                            data-cy="csc-condition-call-to"
+                            :mapping="mapping"
+                            :b-number-set="bNumberSet"
+                            :subscriber-id="subscriberId"
+                        />
+                        <csc-cf-condition-popup-call-not-to
+                            v-else
+                            data-cy="csc-condition-call-not-to"
+                            :mapping="mapping"
+                            :b-number-set="bNumberSet"
                             :subscriber-id="subscriberId"
                         />
                     </span>
@@ -188,6 +229,7 @@
                             step="menu"
                             :mapping="mapping"
                             :destination-set="destinationSet"
+                            :b-number-set="bNumberSet"
                             :source-set="sourceSet"
                             :time-set="timeSet"
                             :subscriber-id="subscriberId"
@@ -364,6 +406,8 @@ import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscCfConditionPopupAll from 'components/call-forwarding/CscCfConditionPopupAll'
 import CscCfConditionPopupCallFrom from 'components/call-forwarding/CscCfConditionPopupCallFrom'
 import CscCfConditionPopupCallNotFrom from 'components/call-forwarding/CscCfConditionPopupCallNotFrom'
+import CscCfConditionPopupCallNotTo from 'components/call-forwarding/CscCfConditionPopupCallNotTo'
+import CscCfConditionPopupCallTo from 'components/call-forwarding/CscCfConditionPopupCallTo'
 import CscCfConditionPopupCustom from 'components/call-forwarding/CscCfConditionPopupCustom'
 import CscCfConditionPopupDate from 'components/call-forwarding/CscCfConditionPopupDate'
 import CscCfConditionPopupDateRange from 'components/call-forwarding/CscCfConditionPopupDateRange'
@@ -383,6 +427,8 @@ export default {
         CscCfConditionPopupDateRange,
         CscCfConditionPopupCallNotFrom,
         CscCfConditionPopupCallFrom,
+        CscCfConditionPopupCallNotTo,
+        CscCfConditionPopupCallTo,
         CscCfConditionPopupDate,
         CscCfConditionPopupAll,
         CscPopupMenuItem,
@@ -398,6 +444,10 @@ export default {
         destinationSet: {
             type: Object,
             required: true
+        },
+        bNumberSet: {
+            type: Object,
+            default: undefined
         },
         sourceSet: {
             type: Object,

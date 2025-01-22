@@ -9,6 +9,7 @@
             :loading="loading"
             :mapping="mapping"
             :destination-set="destinationSet"
+            :b-number-set="bNumberSet"
             :source-set="sourceSet"
             :time-set="timeSet"
             :subscriber-id="subscriberId"
@@ -31,6 +32,7 @@
                 :destination-index="destinationIndex"
                 :mapping="mapping"
                 :destination-set="destinationSet"
+                :b-number-set="bNumberSet"
                 :source-set="sourceSet"
                 :time-set="timeSet"
                 :subscriber-id="subscriberId"
@@ -69,6 +71,10 @@ export default {
         destinationSet: {
             type: Object,
             required: true
+        },
+        bNumberSet: {
+            type: Object,
+            default: undefined
         },
         sourceSet: {
             type: Object,
