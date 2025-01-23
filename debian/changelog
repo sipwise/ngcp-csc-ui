@@ -1,3 +1,13 @@
+ngcp-csc-ui (11.5.1.22+0~mr11.5.1.22) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [cfe9edb] MT#57568 add missing data-cy to reminders
+
+  [ Debora Crescenzo ]
+  * [6b5af64] MT#61843 remove subscriberId from GET destinations request after creating new mapping
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 23 Jan 2025 11:25:34 +0100
+
 ngcp-csc-ui (11.5.1.21+0~mr11.5.1.21) unstable; urgency=medium
 
   [ Nouhaila Idrissi Zouggari ]
