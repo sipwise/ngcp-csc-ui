@@ -63,7 +63,7 @@ const routes = [
                 component: CscPageDashboard,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Dashboard')
+                        return i18n.global.t('Dashboard')
                     }
                 }
             },
@@ -72,7 +72,7 @@ const routes = [
                 component: CscPageHome,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Start new call')
+                        return i18n.global.t('Start new call')
                     },
                     subscriberProfile: ['csc_calls']
                 }
@@ -84,10 +84,10 @@ const routes = [
                 props: true,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Conversations')
+                        return i18n.global.t('Conversations')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Calls, Faxes, VoiceMails')
+                        return i18n.global.t('Calls, Faxes, VoiceMails')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.conversations
                 }
@@ -98,7 +98,7 @@ const routes = [
                 component: CscPageSubscriberPhonebook,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Subscriber Phonebook')
+                        return i18n.global.t('Subscriber Phonebook')
                     },
                     license: LICENSES.phonebook
                 }
@@ -108,7 +108,7 @@ const routes = [
                 component: CscPageSubscriberPhonebookAdd,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Add Phonebook')
+                        return i18n.global.t('Add Phonebook')
                     }
                 }
             },
@@ -117,7 +117,7 @@ const routes = [
                 component: CscPageSubscriberPhonebookDetails,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Subscriber Phonebook')
+                        return i18n.global.t('Subscriber Phonebook')
                     }
                 }
             },
@@ -126,7 +126,7 @@ const routes = [
                 component: CscPageCf,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Call Forwarding')
+                        return i18n.global.t('Call Forwarding')
                     }
                 }
             },
@@ -135,10 +135,10 @@ const routes = [
                 component: CscPageCallBlockingIncoming,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Call Blocking')
+                        return i18n.global.t('Call Blocking')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Incoming')
+                        return i18n.global.t('Incoming')
                     },
                     profileAttributes: PROFILE_ATTRIBUTES_MAP.callBlockingIncoming
                 }
@@ -148,10 +148,10 @@ const routes = [
                 component: CscPageCallBlockingOutgoing,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Call Blocking')
+                        return i18n.global.t('Call Blocking')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Outgoing')
+                        return i18n.global.t('Outgoing')
                     },
                     profileAttributes: PROFILE_ATTRIBUTES_MAP.callBlockingOutgoing
                 }
@@ -161,10 +161,10 @@ const routes = [
                 component: CscPageCallBlockingPrivacy,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Call Blocking')
+                        return i18n.global.t('Call Blocking')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Privacy')
+                        return i18n.global.t('Privacy')
                     },
                     profileAttributes: PROFILE_ATTRIBUTES_MAP.callBlockingPrivacy
                 }
@@ -174,10 +174,10 @@ const routes = [
                 component: CscPageCallRecording,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Recordings')
+                        return i18n.global.t('Recordings')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Call recordings')
+                        return i18n.global.t('Call recordings')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.recordings
                 }
@@ -187,10 +187,10 @@ const routes = [
                 component: CscPageReminder,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Reminder')
+                        return i18n.global.t('Reminder')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Set your personal alarm')
+                        return i18n.global.t('Set your personal alarm')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.reminder
                 }
@@ -200,10 +200,10 @@ const routes = [
                 component: CscPageSpeedDial,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Speed Dial')
+                        return i18n.global.t('Speed Dial')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Set your speed dials')
+                        return i18n.global.t('Set your speed dials')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.speedDial
                 }
@@ -213,10 +213,10 @@ const routes = [
                 component: CscPagePbxStatisticsCdr,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Statistics')
+                        return i18n.global.t('PBX Statistics')
                     },
                     get subtitle () {
-                        return i18n.global.tc('CDR')
+                        return i18n.global.t('CDR')
                     }
                 },
                 license: LICENSES.pbx
@@ -226,10 +226,10 @@ const routes = [
                 component: CscPagePbxGroups,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Groups')
+                        return i18n.global.t('Groups')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.huntGroups
                 }
@@ -239,10 +239,10 @@ const routes = [
                 component: CscPagePbxGroupDetails,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Groups')
+                        return i18n.global.t('Groups')
                     }
                 }
             },
@@ -251,10 +251,10 @@ const routes = [
                 component: CscPagePbxSeats,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Seats')
+                        return i18n.global.t('Seats')
                     }
                 }
             },
@@ -263,10 +263,10 @@ const routes = [
                 component: CscPageCustomerPhonebook,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Customer Phonebook')
+                        return i18n.global.t('Customer Phonebook')
                     }
                 }
             },
@@ -275,7 +275,7 @@ const routes = [
                 component: CscPageCustomerPhonebookAdd,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Add Phonebook')
+                        return i18n.global.t('Add Phonebook')
                     }
                 }
             },
@@ -284,7 +284,7 @@ const routes = [
                 component: CscPageCustomerPhonebookUpload,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Upload CSV')
+                        return i18n.global.t('Upload CSV')
                     }
                 }
             },
@@ -293,7 +293,7 @@ const routes = [
                 component: CscPageCustomerPhonebookDetails,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Customer Phonebook')
+                        return i18n.global.t('Customer Phonebook')
                     }
                 }
             },
@@ -302,10 +302,10 @@ const routes = [
                 component: CscPagePbxDeviceDetails,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Devices')
+                        return i18n.global.t('Devices')
                     }
                 }
             },
@@ -314,10 +314,10 @@ const routes = [
                 component: CscPagePbxSeatDetails,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Seats')
+                        return i18n.global.t('Seats')
                     }
                 }
             },
@@ -326,10 +326,10 @@ const routes = [
                 component: CscPagePbxDevices,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Devices')
+                        return i18n.global.t('Devices')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.deviceProvisioning
                 }
@@ -339,10 +339,10 @@ const routes = [
                 component: CscPagePbxCallQueues,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Call Queues')
+                        return i18n.global.t('Call Queues')
                     },
                     profileAttributes: PROFILE_ATTRIBUTES_MAP.extSettingsCallQueue
                 }
@@ -352,10 +352,10 @@ const routes = [
                 component: CscPagePbxSoundSets,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Sound Sets')
+                        return i18n.global.t('Sound Sets')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.soundSet
                 }
@@ -365,10 +365,10 @@ const routes = [
                 component: CscPagePbxSoundSetDetails,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Sound Sets')
+                        return i18n.global.t('Sound Sets')
                     }
                 }
             },
@@ -377,10 +377,10 @@ const routes = [
                 component: CscPagePbxMsConfigs,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Manager Secretary')
+                        return i18n.global.t('Manager Secretary')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.manager_secretary
                 }
@@ -390,10 +390,10 @@ const routes = [
                 component: CscPagePbxAutoAttendant,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Auto Attendant')
+                        return i18n.global.t('Auto Attendant')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.auto_attendant
                 }
@@ -403,10 +403,10 @@ const routes = [
                 component: CscPageCustomerPreferences,
                 meta: {
                     get title () {
-                        return i18n.global.tc('PBX Configuration')
+                        return i18n.global.t('PBX Configuration')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Customer Preferences')
+                        return i18n.global.t('Customer Preferences')
                     }
                 }
             },
@@ -415,10 +415,10 @@ const routes = [
                 component: CscPageVoicebox,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Voicebox')
+                        return i18n.global.t('Voicebox')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Set your voicebox settings')
+                        return i18n.global.t('Set your voicebox settings')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.voiceMail
                 }
@@ -428,10 +428,10 @@ const routes = [
                 component: CscPageFaxSettings,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Fax Settings')
+                        return i18n.global.t('Fax Settings')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Set your fax settings')
+                        return i18n.global.t('Set your fax settings')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.faxServer,
                     license: LICENSES.fax
@@ -442,10 +442,10 @@ const routes = [
                 component: CscPageUserSettings,
                 meta: {
                     get title () {
-                        return i18n.global.tc('User settings')
+                        return i18n.global.t('User settings')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Change password')
+                        return i18n.global.t('Change password')
                     }
                 }
             },
@@ -454,10 +454,10 @@ const routes = [
                 component: CscPageCallSettings,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Call Settings')
+                        return i18n.global.t('Call Settings')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Call Settings')
+                        return i18n.global.t('Call Settings')
                     },
                     profileAttributes: PROFILE_ATTRIBUTES_MAP.callSettings
                 }
@@ -467,10 +467,10 @@ const routes = [
                 component: CscPagePbxSettingsCallQueues,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Extension Settings')
+                        return i18n.global.t('Extension Settings')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Call Queues')
+                        return i18n.global.t('Call Queues')
                     },
                     profileAttributes: PROFILE_ATTRIBUTES_MAP.extSettingsCallQueue
                 }
@@ -480,10 +480,10 @@ const routes = [
                 component: CscPagePbxSettingsMsConfigs,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Extension Settings')
+                        return i18n.global.t('Extension Settings')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Manager Secretary')
+                        return i18n.global.t('Manager Secretary')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.manager_secretary
                 }
@@ -493,10 +493,10 @@ const routes = [
                 component: CscPagePbxSettingsAutoAttendant,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Extension Settings')
+                        return i18n.global.t('Extension Settings')
                     },
                     get subtitle () {
-                        return i18n.global.tc('Auto Attendant')
+                        return i18n.global.t('Auto Attendant')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.auto_attendant
                 }
@@ -507,10 +507,10 @@ const routes = [
                 component: CscPageRegisteredDevices,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Registered Devices')
+                        return i18n.global.t('Registered Devices')
                     },
                     get subtitle () {
-                        return i18n.global.tc('List of registered devices for the subscriber')
+                        return i18n.global.t('List of registered devices for the subscriber')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.registeredDevices
                 }
@@ -519,8 +519,8 @@ const routes = [
                 path: '/customer/:pathMatch(.*)',
                 component: () => import('pages/Proxy'),
                 meta: {
-                    title: i18n.global.tc('Customer Details'),
-                    subtitle: i18n.global.tc('Customer Details')
+                    title: i18n.global.t('Customer Details'),
+                    subtitle: i18n.global.t('Customer Details')
                 }
             },
             {
@@ -528,7 +528,7 @@ const routes = [
                 component: CscPageError404,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Page not found')
+                        return i18n.global.t('Page not found')
                     }
                 }
             }
@@ -539,7 +539,7 @@ const routes = [
         component: CscPageLogin,
         meta: {
             get title () {
-                return i18n.global.tc('Subscriber Sign In')
+                return i18n.global.t('Subscriber Sign In')
             }
         }
     },
@@ -558,7 +558,7 @@ const routes = [
                 props: getToken,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Reset Password')
+                        return i18n.global.t('Reset Password')
                     },
                     permission: 'public'
                 }
@@ -580,7 +580,7 @@ const routes = [
                 component: CscPageError404,
                 meta: {
                     get title () {
-                        return i18n.global.tc('Page not found')
+                        return i18n.global.t('Page not found')
                     }
                 }
             }

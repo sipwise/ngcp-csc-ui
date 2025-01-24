@@ -153,10 +153,10 @@ function handleResponseError (err) {
     const code = _.get(err, 'response.data.code', null)
     let message = _.get(err, 'response.data.message', null)
     if (code === 403 && message === 'Invalid license') {
-        message = i18n.global.tc('Contact your administrator to activate this functionality')
+        message = i18n.global.t('Contact your administrator to activate this functionality')
     }
     if (code === 403 && message === 'Password expired') {
-        message = i18n.global.tc('Password Expired')
+        message = i18n.global.t('Password Expired')
         return this.$router.push({ path: PATH_CHANGE_PASSWORD })
     }
 

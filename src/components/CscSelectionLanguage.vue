@@ -51,23 +51,23 @@ export default {
             return [
                 {
                     value: 'en-US',
-                    label: this.$t('English', 'en-US')
+                    label: this.$t('English', {}, { locale: 'en-US' })
                 },
                 {
                     value: 'de',
-                    label: this.$t('German', 'de')
+                    label: this.$t('German', {}, { locale: 'de' })
                 },
                 {
                     value: 'es',
-                    label: this.$t('Spanish', 'es')
+                    label: this.$t('Spanish', {}, { locale: 'es' })
                 },
                 {
                     value: 'fr',
-                    label: this.$t('French', 'fr')
+                    label: this.$t('French', {}, { locale: 'fr' })
                 },
                 {
                     value: 'it',
-                    label: this.$t('Italian', 'it')
+                    label: this.$t('Italian', {}, { locale: 'it' })
                 }
             ]
         }

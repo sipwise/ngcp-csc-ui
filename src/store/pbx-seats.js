@@ -181,24 +181,24 @@ export default {
         },
         getSeatRemoveDialogMessage (state, getters) {
             if (state.seatRemoving !== null) {
-                return i18n.global.tc('You are about to remove seat {seat}', {
+                return i18n.global.t('You are about to remove seat {seat}', {
                     seat: getters.getSeatRemovingName
                 })
             }
             return ''
         },
         getSeatCreationToastMessage (state, getters) {
-            return i18n.global.tc('Added seat {seat}', {
+            return i18n.global.t('Added seat {seat}', {
                 seat: getters.getSeatCreatingName
             })
         },
         getSeatUpdateToastMessage (state, getters) {
-            return i18n.global.tc('Changed {field} successfully', {
+            return i18n.global.t('Changed {field} successfully', {
                 field: getters.getSeatUpdatingField
             })
         },
         getSeatRemovalToastMessage (state, getters) {
-            return i18n.global.tc('Removed seat {seat}', {
+            return i18n.global.t('Removed seat {seat}', {
                 seat: getters.getSeatRemovingName
             })
         },
@@ -387,7 +387,7 @@ export default {
         setSeatDisplayName (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.global.tc('Seat displayName')
+                seatField: i18n.global.t('Seat displayName')
             })
             setSeatDisplayName({
                 seatId: options.seatId,
@@ -401,7 +401,7 @@ export default {
         setSeatWebUsername (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.global.tc('Seat Web Username')
+                seatField: i18n.global.t('Seat Web Username')
             })
             setSeatWebUsername({
                 seatId: options.seatId,
@@ -415,7 +415,7 @@ export default {
         setSeatExtension (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.global.tc('Extension')
+                seatField: i18n.global.t('Extension')
             })
             setSeatExtension({
                 seatId: options.seatId,
@@ -429,7 +429,7 @@ export default {
         setSeatWebPassword (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.global.tc('Password')
+                seatField: i18n.global.t('Password')
             })
             setSeatWebPassword({
                 seatId: options.seatId,
@@ -443,7 +443,7 @@ export default {
         setSeatSIPPassword (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.global.tc('SIP Password')
+                seatField: i18n.global.t('SIP Password')
             })
             setSeatSIPPassword({
                 seatId: options.seatId,
@@ -457,7 +457,7 @@ export default {
         setSeatGroups (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.global.tc('Groups')
+                seatField: i18n.global.t('Groups')
             })
             setSeatGroups({
                 seatId: options.seatId,
@@ -471,7 +471,7 @@ export default {
         setSeatNumbers (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.global.tc('Alias Numbers')
+                seatField: i18n.global.t('Alias Numbers')
             })
             setSeatNumbers({
                 seatId: options.seatId,
@@ -489,7 +489,7 @@ export default {
         setSeatSoundSet (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.global.tc('Sound Set')
+                seatField: i18n.global.t('Sound Set')
             })
             setSeatSoundSet({
                 seatId: options.seatId,
@@ -503,7 +503,7 @@ export default {
         setNcosSet (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.global.tc('Ncos')
+                seatField: i18n.global.t('Ncos')
             })
             setNcosSet({
                 seatId: options.seatId,
@@ -517,7 +517,7 @@ export default {
         NcosSet (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.global.tc('Ncos Set')
+                seatField: i18n.global.t('Ncos Set')
             })
             NcosSet({
                 seatId: options.seatId,
@@ -531,7 +531,7 @@ export default {
         setNcosLevelSet (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: getSubscriberId(),
-                seatField: i18n.global.tc('Ncos')
+                seatField: i18n.global.t('Ncos')
             })
             setNcosLevelSets({
                 seatId: getSubscriberId(),
@@ -545,7 +545,7 @@ export default {
         setNcosSets (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: getSubscriberId(),
-                seatField: i18n.global.tc('Ncos Set')
+                seatField: i18n.global.t('Ncos Set')
             })
             NcosSets({
                 seatId: getSubscriberId(),
@@ -559,7 +559,7 @@ export default {
         async setIntraPbx (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.global.tc('the visibility of the number within own PBX')
+                seatField: options.message || i18n.global.t('the visibility of the number within own PBX')
             })
             try {
                 const result = await setSeatIntraPbx(options.seatId, options.intraPbx)
@@ -571,7 +571,7 @@ export default {
         async setMusicOnHold (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.global.tc('music on hold of the seat')
+                seatField: options.message || i18n.global.t('music on hold of the seat')
             })
             try {
                 const result = await setSeatMusicOnHold(options.seatId, options.musicOnHold)
@@ -583,7 +583,7 @@ export default {
         async setCli (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.global.tc('cli of the seat')
+                seatField: options.message || i18n.global.t('cli of the seat')
             })
             try {
                 const result = await setSeatCli(options.seatId, options.cli)
@@ -595,7 +595,7 @@ export default {
         async setAnnouncementCfu (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.global.tc('the playback announcement as early media before Call Forward Unconditional or Unavailable')
+                seatField: options.message || i18n.global.t('the playback announcement as early media before Call Forward Unconditional or Unavailable')
             })
             try {
                 const result = await setSeatAnnouncementCfu(options.seatId, options.announcementCfu)
@@ -607,7 +607,7 @@ export default {
         async setAnnouncementCallSetup (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.global.tc('the playback announcement as early media before send the call to callee')
+                seatField: options.message || i18n.global.t('the playback announcement as early media before send the call to callee')
             })
             try {
                 const result = await setSeatAnnouncementCallSetup(options.seatId, options.announcementCallSetup)
@@ -619,7 +619,7 @@ export default {
         async setAnnouncementToCallee (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.global.tc('the playback announcement to callee after he answered the call')
+                seatField: options.message || i18n.global.t('the playback announcement to callee after he answered the call')
             })
             try {
                 const result = await setSeatAnnouncementToCallee(options.seatId, options.announcementToCallee)
@@ -631,7 +631,7 @@ export default {
         async setIgnoreCfWhenHunting (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.global.tc('the behavior of the members call forwards from a Cloud PBX subscriber when it is called within a huntgroup')
+                seatField: options.message || i18n.global.t('the behavior of the members call forwards from a Cloud PBX subscriber when it is called within a huntgroup')
             })
             try {
                 const result = await setSeatIgnoreCfWhenHunting(options.seatId, options.ignoreCfWhenHunting)
@@ -643,7 +643,7 @@ export default {
         async setCstaClient (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.global.tc('the right of this subscriber to be controlled by a CTI subscriber within the same customer using uaCSTA via SIP')
+                seatField: options.message || i18n.global.t('the right of this subscriber to be controlled by a CTI subscriber within the same customer using uaCSTA via SIP')
             })
             try {
                 const result = await setSeatCstaClient(options.seatId, options.cstaClient)
@@ -655,7 +655,7 @@ export default {
         async setCstaController (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.global.tc('the right this subscriber to initiate CTI sessions to other subscribers within the same customer using uaCSTA via SIP')
+                seatField: options.message || i18n.global.t('the right this subscriber to initiate CTI sessions to other subscribers within the same customer using uaCSTA via SIP')
             })
             try {
                 const result = await setSeatCstaController(options.seatId, options.cstaController)

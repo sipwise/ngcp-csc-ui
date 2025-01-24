@@ -48,23 +48,23 @@ export default {
             return [
                 {
                     value: 'en-US',
-                    label: i18n.global.tc('English', 'en-US')
+                    label: i18n.global.t('English', 1, { locale: 'en-US' })
                 },
                 {
                     value: 'de',
-                    label: i18n.global.tc('German', 'de')
+                    label: i18n.global.t('German', 1, { locale: 'de' })
                 },
                 {
                     value: 'es',
-                    label: i18n.global.tc('Spanish', 'es')
+                    label: i18n.global.t('Spanish', 1, { locale: 'es' })
                 },
                 {
                     value: 'fr',
-                    label: i18n.global.tc('French', 'fr')
+                    label: i18n.global.t('French', 1, { locale: 'fr' })
                 },
                 {
                     value: 'it',
-                    label: i18n.global.tc('Italian', 'it')
+                    label: i18n.global.t('Italian', 1, { locale: 'it' })
                 }
             ]
         }

@@ -98,7 +98,7 @@ export default {
         },
         getSoundSetOptions (state) {
             const options = []
-            const defaultLabel = i18n.global.tc('Default')
+            const defaultLabel = i18n.global.t('Default')
             state.soundSetList.forEach((soundSet) => {
                 options.push({
                     label: soundSet.name,
@@ -124,7 +124,7 @@ export default {
         getSubscriberOptions (state) {
             const options = []
             options.push({
-                label: i18n.global.tc('Unassigned'),
+                label: i18n.global.t('Unassigned'),
                 icon: 'clear',
                 value: null,
                 type: null
@@ -166,15 +166,15 @@ export default {
             const min = getters.getMinAllowedExtension
             const max = getters.getMaxAllowedExtension
             if (min >= 0 && max === null) {
-                return i18n.global.tc('Minimum allowed extension is {min}', {
+                return i18n.global.t('Minimum allowed extension is {min}', {
                     min
                 })
             } else if (min < 0 && max) {
-                return i18n.global.tc('Maximum allowed extension is {max}', {
+                return i18n.global.t('Maximum allowed extension is {max}', {
                     max
                 })
             } else if (min >= 0 && max) {
-                return i18n.global.tc('Allowed extensions are between {min} and {max}', {
+                return i18n.global.t('Allowed extensions are between {min} and {max}', {
                     min,
                     max
                 })

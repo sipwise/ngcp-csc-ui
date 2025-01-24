@@ -22,7 +22,7 @@ export async function setFaxServerField (options) {
         // searching for duplicates
         const destinationsIds = options.value.map((d) => d.destination)
         if ((new Set(destinationsIds)).size !== destinationsIds.length) {
-            throw Error(i18n.global.tc('The Destination Email is already used'))
+            throw Error(i18n.global.t('The Destination Email is already used'))
         }
     }
     return patchReplaceFull({
@@ -49,7 +49,7 @@ export async function setMailToFaxSettingField (options) {
         // searching for duplicates
         const destinationsIds = options.value.map((d) => d.destination)
         if ((new Set(destinationsIds)).size !== destinationsIds.length) {
-            throw Error(i18n.global.tc('The Notify Email is already used'))
+            throw Error(i18n.global.t('The Notify Email is already used'))
         }
     }
     return patchReplaceFull({

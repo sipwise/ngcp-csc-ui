@@ -63,7 +63,7 @@ export default {
         },
         getMsConfigRemoveDialogMessage (state) {
             if (state.msConfigRemoving !== null) {
-                return i18n.global.tc('You are about to remove config for {msConfig}', {
+                return i18n.global.t('You are about to remove config for {msConfig}', {
                     msConfig: state.subscriberMap[state.msConfigRemoving.id].display_name
                 })
             }
@@ -85,18 +85,18 @@ export default {
             return state.msConfigUpdatingField
         },
         getMsConfigCreationToastMessage (state, getters) {
-            return i18n.global.tc('Created manager secretary config for {msConfig} successfully', {
+            return i18n.global.t('Created manager secretary config for {msConfig} successfully', {
                 msConfig: getters.getMsConfigCreatingName
             })
         },
         getMsConfigUpdateToastMessage (state, getters) {
-            return i18n.global.tc('Updated {field} for manager secretary config {msConfig} successfully', {
+            return i18n.global.t('Updated {field} for manager secretary config {msConfig} successfully', {
                 msConfig: getters.getMsConfigUpdatingName,
                 field: getters.getMsConfigUpdatingField
             })
         },
         getMsConfigRemovalToastMessage (state, getters) {
-            return i18n.global.tc('Removed manager secretary config for {msConfig} successfully', {
+            return i18n.global.t('Removed manager secretary config for {msConfig} successfully', {
                 msConfig: getters.getMsConfigRemovingName
             })
         }
@@ -237,7 +237,7 @@ export default {
         setSecretaryNumbers (context, options) {
             context.commit('msConfigUpdateRequesting', {
                 msConfigId: options.msConfigId,
-                field: i18n.global.tc('Secretary numbers')
+                field: i18n.global.t('Secretary numbers')
             })
             setSecretaryNumber(options).then((preferences) => {
                 context.commit('msConfigUpdateSucceeded', preferences)

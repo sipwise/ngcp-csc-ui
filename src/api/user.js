@@ -189,7 +189,7 @@ export function changeExpiredPassword (payload) {
             resolve(result)
         }).catch((err) => {
             if (err.response.status === 401) {
-                reject(new Error(`Unauthorized. ${i18n.global.tc('Wrong username or password')}`))
+                reject(new Error(`Unauthorized. ${i18n.global.t('Wrong username or password')}`))
             } else if (err.response.status === 422) {
                 reject(_formatPasswordError(err.response.data.message))
             } else {

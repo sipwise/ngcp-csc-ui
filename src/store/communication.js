@@ -17,7 +17,7 @@ export default {
         },
         createFaxError (state) {
             return state.createFaxError ||
-                i18n.global.tc('An error occured while trying to send the fax. Please try again')
+                i18n.global.t('An error occured while trying to send the fax. Please try again')
         }
     },
     mutations: {

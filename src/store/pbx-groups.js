@@ -89,24 +89,24 @@ export default {
         },
         getGroupRemoveDialogMessage (state, getters) {
             if (getters.isGroupRemoving) {
-                return i18n.global.tc('You are about to remove group {group}', {
+                return i18n.global.t('You are about to remove group {group}', {
                     group: getters.getGroupRemovingName
                 })
             }
             return ''
         },
         getGroupCreationToastMessage (state, getters) {
-            return i18n.global.tc('Added group {group}', {
+            return i18n.global.t('Added group {group}', {
                 group: getters.getGroupCreatingName
             })
         },
         getGroupUpdateToastMessage (state, getters) {
-            return i18n.global.tc('Changed {field} successfully', {
+            return i18n.global.t('Changed {field} successfully', {
                 field: getters.getGroupUpdatingField
             })
         },
         getGroupRemovalToastMessage (state, getters) {
-            return i18n.global.tc('Removed group {group}', {
+            return i18n.global.t('Removed group {group}', {
                 group: getters.getGroupRemovingName
             })
         },
@@ -123,19 +123,19 @@ export default {
         getHuntPolicyOptions () {
             return [
                 {
-                    label: i18n.global.tc('Serial Ringing'),
+                    label: i18n.global.t('Serial Ringing'),
                     value: 'serial'
                 },
                 {
-                    label: i18n.global.tc('Parallel Ringing'),
+                    label: i18n.global.t('Parallel Ringing'),
                     value: 'parallel'
                 },
                 {
-                    label: i18n.global.tc('Random Ringing'),
+                    label: i18n.global.t('Random Ringing'),
                     value: 'random'
                 },
                 {
-                    label: i18n.global.tc('Circular Ringing'),
+                    label: i18n.global.t('Circular Ringing'),
                     value: 'circular'
                 }
             ]
@@ -148,11 +148,11 @@ export default {
         getHuntCancelModeOptions () {
             return [
                 {
-                    label: i18n.global.tc('Using Cancel'),
+                    label: i18n.global.t('Using Cancel'),
                     value: 'cancel'
                 },
                 {
-                    label: i18n.global.tc('Using Bye'),
+                    label: i18n.global.t('Using Bye'),
                     value: 'bye'
                 }
             ]
@@ -318,7 +318,7 @@ export default {
         setGroupName (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.global.tc('Group Name')
+                groupField: i18n.global.t('Group Name')
             })
             setGroupName({
                 groupId: options.groupId,
@@ -332,7 +332,7 @@ export default {
         setGroupExtension (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.global.tc('Extension')
+                groupField: i18n.global.t('Extension')
             })
             setGroupExtension({
                 groupId: options.groupId,
@@ -346,7 +346,7 @@ export default {
         setGroupHuntPolicy (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.global.tc('Hunt Policy')
+                groupField: i18n.global.t('Hunt Policy')
             })
             setGroupHuntPolicy({
                 groupId: options.groupId,
@@ -360,7 +360,7 @@ export default {
         setGroupHuntTimeout (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.global.tc('Hunt Policy')
+                groupField: i18n.global.t('Hunt Policy')
             })
             setGroupHuntTimeout({
                 groupId: options.groupId,
@@ -374,7 +374,7 @@ export default {
         setGroupHuntCancelMode (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.global.tc('Hunt Cancel Mode')
+                groupField: i18n.global.t('Hunt Cancel Mode')
             })
             setGroupHuntCancelMode({
                 groupId: options.groupId,
@@ -388,7 +388,7 @@ export default {
         setGroupNumbers (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.global.tc('Alias Numbers')
+                groupField: i18n.global.t('Alias Numbers')
             })
             setGroupNumbers({
                 groupId: options.groupId,
@@ -404,7 +404,7 @@ export default {
         setGroupSeats (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.global.tc('Seats')
+                groupField: i18n.global.t('Seats')
             })
             setGroupSeats({
                 groupId: options.groupId,
@@ -418,7 +418,7 @@ export default {
         setGroupSoundSet (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.global.tc('Sound Set')
+                groupField: i18n.global.t('Sound Set')
             })
             setGroupSoundSet({
                 groupId: options.groupId,

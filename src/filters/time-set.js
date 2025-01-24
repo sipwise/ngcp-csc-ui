@@ -12,41 +12,41 @@ export const DEFAULT_WEEKDAYS = [
 
 export function getDayNameByNumber (dayNumber, isShortName = false) {
     const daysNamesMap = [
-        i18n.global.tc('Monday'),
-        i18n.global.tc('Tuesday'),
-        i18n.global.tc('Wednesday'),
-        i18n.global.tc('Thursday'),
-        i18n.global.tc('Friday'),
-        i18n.global.tc('Saturday'),
-        i18n.global.tc('Sunday')
+        i18n.global.t('Monday'),
+        i18n.global.t('Tuesday'),
+        i18n.global.t('Wednesday'),
+        i18n.global.t('Thursday'),
+        i18n.global.t('Friday'),
+        i18n.global.t('Saturday'),
+        i18n.global.t('Sunday')
     ]
     // NOTE: in some languages the short days names may be not just first two letters of the full day's name
     const daysShortNamesMap = [
-        i18n.global.tc('Mo'),
-        i18n.global.tc('Tu'),
-        i18n.global.tc('We'),
-        i18n.global.tc('Th'),
-        i18n.global.tc('Fr'),
-        i18n.global.tc('Sa'),
-        i18n.global.tc('Su')
+        i18n.global.t('Mo'),
+        i18n.global.t('Tu'),
+        i18n.global.t('We'),
+        i18n.global.t('Th'),
+        i18n.global.t('Fr'),
+        i18n.global.t('Sa'),
+        i18n.global.t('Su')
     ]
     return isShortName ? daysShortNamesMap[dayNumber] : daysNamesMap[dayNumber]
 }
 
 export function getMonthNameByNumber (monthNumber) {
     const monthsNamesMap = [
-        i18n.global.tc('January'),
-        i18n.global.tc('February'),
-        i18n.global.tc('March'),
-        i18n.global.tc('April'),
-        i18n.global.tc('May'),
-        i18n.global.tc('June'),
-        i18n.global.tc('July'),
-        i18n.global.tc('August'),
-        i18n.global.tc('September'),
-        i18n.global.tc('October'),
-        i18n.global.tc('November'),
-        i18n.global.tc('December')
+        i18n.global.t('January'),
+        i18n.global.t('February'),
+        i18n.global.t('March'),
+        i18n.global.t('April'),
+        i18n.global.t('May'),
+        i18n.global.t('June'),
+        i18n.global.t('July'),
+        i18n.global.t('August'),
+        i18n.global.t('September'),
+        i18n.global.t('October'),
+        i18n.global.t('November'),
+        i18n.global.t('December')
     ]
 
     return monthsNamesMap[monthNumber]
@@ -60,10 +60,10 @@ export function timeSetDateRange (times) {
     try {
         const hDateset = kamailioDatesetToHuman(times)
         return (hDateset.length === 0)
-            ? i18n.global.tc('empty')
+            ? i18n.global.t('empty')
             : hDateset.map((d) => (d.from === d.to) ? d.from : `${d.from}-${d.to}`).join(', ')
     } catch (e) {
-        return i18n.global.tc('data error')
+        return i18n.global.t('data error')
     }
 }
 

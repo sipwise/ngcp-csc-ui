@@ -20,27 +20,27 @@ export function smartTime ($date) {
     const diffMinutes = Math.floor(diffSeconds / 60)
     const momentDate = moment(date)
 
-    let seconds = i18n.global.tc('second')
+    let seconds = i18n.global.t('second')
     if (diffSeconds > 1) {
-        seconds = i18n.global.tc('seconds')
+        seconds = i18n.global.t('seconds')
     }
 
     let minutes = 'minute'
     if (diffSeconds > 120) {
-        minutes = i18n.global.tc('minutes')
+        minutes = i18n.global.t('minutes')
     }
 
     if (diffSeconds < 60) {
-        const descriptor = i18n.global.tc('ago')
+        const descriptor = i18n.global.t('ago')
         return `${diffSeconds} ${seconds} ${descriptor}`
     } else if (diffSeconds < 3600) {
-        const descriptor = i18n.global.tc('ago')
+        const descriptor = i18n.global.t('ago')
         return `${diffMinutes} ${minutes} ${descriptor}`
     } else if (isToday(date)) {
-        const descriptor = i18n.global.tc('Today')
+        const descriptor = i18n.global.t('Today')
         return `${descriptor}, ${momentDate.format('HH:mm')}`
     } else if (isYesterday(date)) {
-        const descriptor = i18n.global.tc('Yesterday')
+        const descriptor = i18n.global.t('Yesterday')
         return `${descriptor}, ${momentDate.format('HH:mm')}`
     } else if (isWithinLastWeek(date)) {
         return momentDate.format('dddd, HH:mm')
@@ -59,13 +59,13 @@ export const WeekdayMap = {
 }
 
 export const WeekdayTranslationMap = {
-    sunday: i18n.global.tc('Sunday'),
-    monday: i18n.global.tc('Monday'),
-    tuesday: i18n.global.tc('Tuesday'),
-    wednesday: i18n.global.tc('Wednesday'),
-    thursday: i18n.global.tc('Thursday'),
-    friday: i18n.global.tc('Friday'),
-    saturday: i18n.global.tc('Saturday')
+    sunday: i18n.global.t('Sunday'),
+    monday: i18n.global.t('Monday'),
+    tuesday: i18n.global.t('Tuesday'),
+    wednesday: i18n.global.t('Wednesday'),
+    thursday: i18n.global.t('Thursday'),
+    friday: i18n.global.t('Friday'),
+    saturday: i18n.global.t('Saturday')
 }
 
 export function weekday (weekdayNumber) {

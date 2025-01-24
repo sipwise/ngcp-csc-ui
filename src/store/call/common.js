@@ -12,25 +12,25 @@ export const CallState = {
 }
 export const CallStateTitle = {
     get input () {
-        return i18n.global.tc('Start new call')
+        return i18n.global.t('Start new call')
     },
     get initiating () {
-        return i18n.global.tc('Calling')
+        return i18n.global.t('Calling')
     },
     get ringing () {
-        return i18n.global.tc('Ringing at')
+        return i18n.global.t('Ringing at')
     },
     get incoming () {
-        return i18n.global.tc('Incoming call from')
+        return i18n.global.t('Incoming call from')
     },
     get established () {
-        return i18n.global.tc('In call with')
+        return i18n.global.t('In call with')
     },
     get ended () {
-        return i18n.global.tc('Call ended')
+        return i18n.global.t('Call ended')
     },
     get hold () {
-        return i18n.global.tc('Call holded')
+        return i18n.global.t('Call holded')
     }
 }
 

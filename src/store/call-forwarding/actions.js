@@ -126,9 +126,9 @@ export async function deleteMapping ({ dispatch, commit, state, rootGetters }, p
         await cfDeleteDestinationSet(payload.destinationset_id)
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'cfdestinationset\' not found.') {
-            // This happens when entity was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity from DB.
-            showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+            // This happens when CF was set by Admin therefore current
+            // csc user doesn't have rights to delete the entity
+            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)
         }
@@ -303,7 +303,7 @@ export async function updateBNumberSet ({ dispatch, commit, rootGetters }, paylo
         if (e.code === 404 && e.message === 'Entity \'bnumberset\' not found.') {
             // This happens when entity was set by Admin therefore current
             // csc user doesn't have rights to edit the entity.
-            showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)
         }
@@ -332,7 +332,7 @@ export async function deleteBNumberSet ({ dispatch, commit, rootGetters, state }
                 // This happens when entity was set by Admin therefore current
                 // csc user doesn't have rights to delete the entity from DB.
                 // In this scenario the b-number is only removed from the mappings.
-                showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+                showGlobalWarning(i18n.global.t('Entity belongs to admin'))
             } else {
                 showGlobalError(e.message)
             }
@@ -421,9 +421,9 @@ export async function updateSourceSet ({ dispatch, commit, rootGetters }, payloa
         })
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'sourceset\' not found.') {
-            // This happens when entity was set by Admin therefore current
-            // csc user doesn't have rights to edit the entity.
-            showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+            // This happens when CF was set by Admin therefore current
+            // csc user doesn't have rights to delete the entity
+            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)
         }
@@ -452,7 +452,7 @@ export async function deleteSourceSet ({ dispatch, commit, rootGetters, state },
                 // This happens when entity was set by Admin therefore current
                 // csc user doesn't have rights to delete the entity from DB.
                 // In this scenario the sources is only removed from the mappings.
-                showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+                showGlobalWarning(i18n.global.t('Entity belongs to admin'))
                 // Force reload of SourceSets
             } else {
                 throw e
@@ -559,10 +559,9 @@ export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, p
         await cfDeleteTimeSet(payload.id)
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'cftimeset\' not found.') {
-            // This happens when entity was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity from DB.
-            // In this case entity is only removed from the mappings.
-            showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+            // This happens when CF was set by Admin therefore current
+            // csc user doesn't have rights to delete the entity
+            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)
         }
@@ -642,9 +641,9 @@ export async function updateTimeSetDateRange ({ dispatch, commit }, payload) {
         await cfUpdateTimeSetDateRange(payload.id, payload.date)
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'timeset\' not found.') {
-            // This happens when entity was set by Admin therefore current
-            // csc user doesn't have rights to edit the entity
-            showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+            // This happens when CF was set by Admin therefore current
+            // csc user doesn't have rights to delete the entity
+            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)
         }
@@ -682,9 +681,9 @@ export async function updateTimeSetWeekdays ({ dispatch, commit }, payload) {
         await cfUpdateTimeSetWeekdays(payload.id, payload.weekdays)
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'timeset\' not found.') {
-            // This happens when entity was set by Admin therefore current
-            // csc user doesn't have rights to edit the entity
-            showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+            // This happens when CF was set by Admin therefore current
+            // csc user doesn't have rights to delete the entity
+            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
         } else {
             showGlobalError(e.message)
         }

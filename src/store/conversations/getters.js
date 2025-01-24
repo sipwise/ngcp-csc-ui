@@ -10,7 +10,7 @@ export default {
     },
     reloadItemsError (state) {
         return state.reloadItemsError ||
-            i18n.global.tc('Reloading conversation items failed')
+            i18n.global.t('Reloading conversation items failed')
     },
     playVoiceMailState (state) {
         return (id) => {

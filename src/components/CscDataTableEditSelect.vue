@@ -72,7 +72,7 @@ export default {
         },
         saveLabel: {
             type: String,
-            default: i18n.global.tc('Save')
+            default: i18n.global.t('Save')
         }
     },
     emits: ['saved'],
