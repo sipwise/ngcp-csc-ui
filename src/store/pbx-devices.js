@@ -57,12 +57,12 @@ export default {
             return _.get(state, 'deviceCreating.stationName', '')
         },
         getDeviceCreationToastMessage (state, getters) {
-            return i18n.global.tc('Created device {device} successfully', {
+            return i18n.global.t('Created device {device} successfully', {
                 device: getters.getDeviceCreatingName
             })
         },
         getDevicePreferencesUpdateToastMessage (state, getters) {
-            return i18n.global.tc('Updated {field} successfully', {
+            return i18n.global.t('Updated {field} successfully', {
                 field: getters.getDevicePreferencesUpdatingField
             })
         },
@@ -77,7 +77,7 @@ export default {
         },
         getDeviceRemoveDialogMessage (state, getters) {
             if (getters.isDeviceRemoving) {
-                return i18n.global.tc('You are about to remove device {device}', {
+                return i18n.global.t('You are about to remove device {device}', {
                     device: getters.getDeviceRemovingName
                 })
             }
@@ -87,12 +87,12 @@ export default {
             return _.get(state, 'deviceRemoving.station_name', '')
         },
         getDeviceRemovalToastMessage (state, getters) {
-            return i18n.global.tc('Removed device {device} successfully', {
+            return i18n.global.t('Removed device {device} successfully', {
                 device: getters.getDeviceRemovingName
             })
         },
         getDeviceUpdateToastMessage (state, getters) {
-            return i18n.global.tc('Updated {field} for device {device} successfully', {
+            return i18n.global.t('Updated {field} for device {device} successfully', {
                 device: getters.getDeviceUpdatingName,
                 field: getters.getDeviceUpdatingField
             })
@@ -364,7 +364,7 @@ export default {
         setDeviceStationName (context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: i18n.global.tc('Station name')
+                deviceField: i18n.global.t('Station name')
             })
             setDeviceStationName(options.deviceId, options.stationName).then((device) => {
                 context.commit('deviceUpdateSucceeded', device)
@@ -375,7 +375,7 @@ export default {
         setDeviceIdentifier (context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: i18n.global.tc('MAC address')
+                deviceField: i18n.global.t('MAC address')
             })
             setDeviceIdentifier(options.deviceId, options.identifier).then((device) => {
                 context.commit('deviceUpdateSucceeded', device)
@@ -386,7 +386,7 @@ export default {
         setDeviceProfile (context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: i18n.global.tc('Phone model')
+                deviceField: i18n.global.t('Phone model')
             })
             setDeviceProfile(options.deviceId, options.profileId).then((device) => {
                 context.commit('deviceUpdateSucceeded', device)
@@ -397,7 +397,7 @@ export default {
         setDeviceKeys (context, options) {
             context.commit('deviceUpdateRequesting', {
                 deviceId: options.deviceId,
-                deviceField: i18n.global.tc('Lamps/Keys')
+                deviceField: i18n.global.t('Lamps/Keys')
             })
             setDeviceKeys(options.deviceId, options.keys).then((device) => {
                 context.commit('deviceUpdateSucceeded', device)
@@ -408,7 +408,7 @@ export default {
         setAdminName (context, options) {
             context.commit('devicePreferencesUpdateRequesting', {
                 deviceId: options.deviceId,
-                devicePreferencesField: i18n.global.tc('Admin name')
+                devicePreferencesField: i18n.global.t('Admin name')
             })
             setPreferenceDevice(options.deviceId, options.adminName, 'admin_name').then((device) => {
                 context.commit('devicePreferencesUpdateSucceeded', device)
@@ -430,7 +430,7 @@ export default {
         setFW (context, options) {
             context.commit('devicePreferencesUpdateRequesting', {
                 deviceId: options.deviceId,
-                devicePreferencesField: i18n.global.t('Firmware Upgrade disable')
+                devicePreferencesField: i18n.global.t('FW Upgrade disable')
             })
             setPreferenceDevice(options.deviceId, options.FWupg, 'FW_upg_dis').then((device) => {
                 context.commit('devicePreferencesUpdateSucceeded', device)
@@ -441,7 +441,7 @@ export default {
         setGui (context, options) {
             context.commit('devicePreferencesUpdateRequesting', {
                 deviceId: options.deviceId,
-                devicePreferencesField: i18n.global.tc('Disable phone web interface')
+                devicePreferencesField: i18n.global.t('Disable phone web interface')
             })
             setPreferenceDevice(options.deviceId, options.webGui, 'web_gui_dis').then((device) => {
                 context.commit('devicePreferencesUpdateSucceeded', device)
@@ -452,7 +452,7 @@ export default {
         setUserConfig (context, options) {
             context.commit('devicePreferencesUpdateRequesting', {
                 deviceId: options.deviceId,
-                devicePreferencesField: i18n.global.tc('User config priority over provisioning')
+                devicePreferencesField: i18n.global.t('User config priority over provisioning')
             })
             setPreferenceDevice(options.deviceId, options.userConf, 'user_conf_priority').then((device) => {
                 context.commit('devicePreferencesUpdateSucceeded', device)

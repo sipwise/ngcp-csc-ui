@@ -1,36 +1,36 @@
 import { i18n } from 'boot/i18n'
 export const errorMessages = {
     integer () {
-        return i18n.global.tc('Only none decimal numbers are allowed')
+        return i18n.global.t('Only none decimal numbers are allowed')
     },
     numeric () {
-        return i18n.global.tc('Input must be a valid number')
+        return i18n.global.t('Input must be a valid number')
     },
     required () {
-        return i18n.global.tc('Input is required')
+        return i18n.global.t('Input is required')
     },
     passwordDigits () {
-        return i18n.global.tc('Password is not strong enough, add more digits')
+        return i18n.global.t('Password is not strong enough, add more digits')
     },
     passwordLowercase () {
-        return i18n.global.tc('Password is not strong enough, add more lowercase letters')
+        return i18n.global.t('Password is not strong enough, add more lowercase letters')
     },
     passwordMaxLength (param) {
-        return i18n.global.tc('Password must be at least {max} characters long', param)
+        return i18n.global.t('Password must be at least {max} characters long', param)
     },
     passwordMinLength (param) {
-        return i18n.global.tc('Password must be at least {min} characters long', param)
+        return i18n.global.t('Password must be at least {min} characters long', param)
     },
     passwordUppercase () {
-        return i18n.global.tc('Password is not strong enough, add more uppercase letters')
+        return i18n.global.t('Password is not strong enough, add more uppercase letters')
     },
     passwordChars () {
-        return i18n.global.tc('Password is not strong enough, add more special characters')
+        return i18n.global.t('Password is not strong enough, add more special characters')
     },
     passwordStrength () {
-        return i18n.global.tc('Password is considered weak')
+        return i18n.global.t('Password is considered weak')
     },
     sameAsPassword () {
-        return i18n.global.tc('Passwords must be equal')
+        return i18n.global.t('Passwords must be equal')
     }
 }

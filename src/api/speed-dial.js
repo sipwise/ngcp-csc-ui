@@ -29,7 +29,7 @@ export function getUnassignedSlots (id) {
             const slotOptions = []
             unassignedSlots.forEach((slot) => {
                 slotOptions.push({
-                    label: `${i18n.global.tc('Slot')} ${slot}`,
+                    label: `${i18n.global.t('Slot')} ${slot}`,
                     value: slot
                 })
             })

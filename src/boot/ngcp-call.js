@@ -32,8 +32,8 @@ export default async ({ app, store }) => {
     callEvent.on('disconnected', ({ error, code }) => {
         let errorMessage = null
         if (error) {
-            errorMessage = i18n.global.tc('WebSocket connection to kamailio lb failed with code {code}', {
-                code: code
+            errorMessage = i18n.global.t('WebSocket connection to kamailio lb failed with code {code}', {
+                code
             })
         }
         store.commit('call/disableCall', {

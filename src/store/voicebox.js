@@ -121,8 +121,8 @@ export default {
         },
         attachLabel (state, getters) {
             return state.attachValue
-                ? i18n.global.tc('Attach voicemail to email notification')
-                : i18n.global.tc('Attach voicemail to email notification')
+                ? i18n.global.t('Attach voicemail to email notification')
+                : i18n.global.t('Attach voicemail to email notification')
         },
 
         deleteLoading (state, getters) {
@@ -130,8 +130,8 @@ export default {
         },
         deleteLabel (state, getters) {
             return state.deleteValue
-                ? i18n.global.tc('Delete voicemail after email notification is delivered')
-                : i18n.global.tc('Delete voicemail after email notification is delivered')
+                ? i18n.global.t('Delete voicemail after email notification is delivered')
+                : i18n.global.t('Delete voicemail after email notification is delivered')
         },
 
         busyGreetingUploading (state) {
@@ -142,8 +142,8 @@ export default {
         },
         busyGreetingLabel (state) {
             return state.busyGreetingId
-                ? i18n.global.tc('Custom sound')
-                : i18n.global.tc('Default sound')
+                ? i18n.global.t('Custom sound')
+                : i18n.global.t('Default sound')
         },
         busyGreetingDeleting (state) {
             return state.busyGreetingDeletionState === RequestState.requesting
@@ -157,8 +157,8 @@ export default {
         },
         unavailableGreetingLabel (state) {
             return state.unavailableGreetingId
-                ? i18n.global.tc('Custom sound')
-                : i18n.global.tc('Default sound')
+                ? i18n.global.t('Custom sound')
+                : i18n.global.t('Default sound')
         },
         unavailableGreetingDeleting (state) {
             return state.unavailableGreetingDeletionState === RequestState.requesting
@@ -171,8 +171,8 @@ export default {
         },
         tempGreetingLabel (state) {
             return state.tempGreetingId
-                ? i18n.global.tc('Custom sound')
-                : i18n.global.tc('Default sound')
+                ? i18n.global.t('Custom sound')
+                : i18n.global.t('Default sound')
         },
         tempGreetingDeleting (state) {
             return state.tempGreetingDeletionState === RequestState.requesting
@@ -185,8 +185,8 @@ export default {
         },
         greetGreetingLabel (state) {
             return state.greetGreetingId
-                ? i18n.global.tc('Custom sound')
-                : i18n.global.tc('Default sound')
+                ? i18n.global.t('Custom sound')
+                : i18n.global.t('Default sound')
         },
         greetGreetingDeleting (state) {
             return state.greetGreetingDeletionState === RequestState.requesting

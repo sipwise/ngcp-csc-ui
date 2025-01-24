@@ -72,7 +72,7 @@ export default {
         },
         getCallQueueRemoveDialogMessage (state) {
             if (state.callQueueRemoving !== null) {
-                return i18n.global.tc('You are about to remove call queue for {subscriber}', {
+                return i18n.global.t('You are about to remove call queue for {subscriber}', {
                     subscriber: state.subscriberMap[state.callQueueRemoving.id].display_name
                 })
             }
@@ -94,18 +94,18 @@ export default {
             return state.callQueueUpdatingField
         },
         getCallQueueCreationToastMessage (state, getters) {
-            return i18n.global.tc('Created call queue for {callQueue} successfully', {
+            return i18n.global.t('Created call queue for {callQueue} successfully', {
                 callQueue: getters.getCallQueueCreatingName
             })
         },
         getCallQueueUpdateToastMessage (state, getters) {
-            return i18n.global.tc('Updated {field} for call queue {callQueue} successfully', {
+            return i18n.global.t('Updated {field} for call queue {callQueue} successfully', {
                 callQueue: getters.getCallQueueUpdatingName,
                 field: getters.getCallQueueUpdatingField
             })
         },
         getCallQueueRemovalToastMessage (state, getters) {
-            return i18n.global.tc('Removed call queue for {callQueue} successfully', {
+            return i18n.global.t('Removed call queue for {callQueue} successfully', {
                 callQueue: getters.getCallQueueRemovingName
             })
         }
