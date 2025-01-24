@@ -100,8 +100,8 @@ export default {
         getSoundSetRemoveDialogMessage (state) {
             if (state.soundSetRemoving !== null) {
                 const id = _.get(state, 'soundSetRemoving.id', null)
-                return i18n.global.tc('You are about to remove sound set {soundSetName}', {
-                    soundSetName: _.get(state, 'soundSetMap.' + id + '.name', null)
+                return i18n.global.t('You are about to remove sound set {soundSetName}', {
+                    soundSetName: _.get(state, `soundSetMap.${id}.name`, null)
                 })
             }
             return ''
@@ -119,18 +119,18 @@ export default {
             return state.soundSetUpdatingField
         },
         getSoundSetCreationToastMessage (state, getters) {
-            return i18n.global.tc('Created sound set {soundSet} successfully', {
+            return i18n.global.t('Created sound set {soundSet} successfully', {
                 soundSet: getters.getSoundSetCreatingName
             })
         },
         getSoundSetUpdateToastMessage (state, getters) {
-            return i18n.global.tc('Updated {field} for sound set {soundSet} successfully', {
+            return i18n.global.t('Updated {field} for sound set {soundSet} successfully', {
                 soundSet: getters.getSoundSetUpdatingName,
                 field: getters.getSoundSetUpdatingField
             })
         },
         getSoundSetRemovalToastMessage (state, getters) {
-            return i18n.global.tc('Removed sound set {soundSet} successfully', {
+            return i18n.global.t('Removed sound set {soundSet} successfully', {
                 soundSet: getters.getSoundSetRemovingName
             })
         },
@@ -407,7 +407,7 @@ export default {
         setAsDefaultSoundSet (context, options) {
             context.commit('soundSetUpdateRequesting', {
                 soundSetId: options.soundSetId,
-                field: i18n.global.tc('default option')
+                field: i18n.global.t('default option')
             })
             let func = setAsDefault
             if (options.contractDefault !== true) {
@@ -422,7 +422,7 @@ export default {
         setSoundSetName (context, options) {
             context.commit('soundSetUpdateRequesting', {
                 soundSetId: options.soundSetId,
-                field: i18n.global.tc('name')
+                field: i18n.global.t('name')
             })
             setSoundSetName(options.soundSetId, options.name).then((soundSet) => {
                 context.commit('soundSetUpdateSucceeded', soundSet)
@@ -433,7 +433,7 @@ export default {
         setSoundSetDescription (context, options) {
             context.commit('soundSetUpdateRequesting', {
                 soundSetId: options.soundSetId,
-                field: i18n.global.tc('description')
+                field: i18n.global.t('description')
             })
             setSoundSetDescription(options.soundSetId, options.description).then((soundSet) => {
                 context.commit('soundSetUpdateSucceeded', soundSet)
@@ -444,7 +444,7 @@ export default {
         setSoundSetParent (context, options) {
             context.commit('soundSetUpdateRequesting', {
                 soundSetId: options.soundSetId,
-                field: i18n.global.tc('parent')
+                field: i18n.global.t('parent')
             })
             setSoundSetParent(options.soundSetId, options.parent_id).then((soundSet) => {
                 context.commit('soundSetUpdateSucceeded', soundSet)

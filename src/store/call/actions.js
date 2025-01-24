@@ -42,7 +42,7 @@ export default {
             context.commit('localMediaSuccess', callGetLocalMediaStreamId())
         } else {
             context.commit('inputNumber')
-            showGlobalError(i18n.global.tc('No microphone authorized.'))
+            showGlobalError(i18n.global.t('No microphone authorized.'))
         }
     },
     async accept (context, localMedia) {
