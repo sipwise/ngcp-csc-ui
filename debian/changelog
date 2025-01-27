@@ -1,3 +1,13 @@
+ngcp-csc-ui (12.5.1.17+0~mr12.5.1.17) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [ff712ef] MT#61710 change inputs behavior
+
+  [ nidrissi-zouggari ]
+  * [770127b] MT#61841 Change translation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Jan 2025 10:46:13 +0100
+
 ngcp-csc-ui (12.5.1.16+0~mr12.5.1.16) unstable; urgency=medium
 
   [ Marco Capetta ]
