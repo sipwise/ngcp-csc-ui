@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.0.1.5+0~mr13.0.1.5) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [4b145c9] MT#61841 Change translation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Jan 2025 10:46:09 +0100
+
 ngcp-csc-ui (13.0.1.4+0~mr13.0.1.4) unstable; urgency=medium
 
   [ Marco Capetta ]
