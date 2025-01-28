@@ -1,3 +1,28 @@
+ngcp-csc-ui (13.2.1.0+0~mr13.2.1.0) unstable; urgency=medium
+
+  [ Mykola Malkov ]
+  * [ef04a7a] MT#61534 Fix yarn file name
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [e935071] MT#61209 Upgrade to eslint 9.14.0 and add JS Policy's rules
+
+  [ Debora Crescenzo ]
+  * [12043c5] MT#61635 CF bugfixes
+  * [e23fa2e] MT#61635 Amend translations for call forwarding
+  * [80fe606] MT#61635 Fix German translation for "custom time set"
+  * [09f639c] MT#61724 Dependencies upgrade January
+
+  [ Marco Capetta ]
+  * [d1f390e] MT#59913 Add new Portuguese language to soundset
+
+  [ nidrissi-zouggari ]
+  * [acd0da5] MT#61841 Change translation
+
+  [ Hugo Zigha ]
+  * [b13bf52] MT#61710 change inputs behavior
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 28 Jan 2025 15:14:44 +0100
+
 ngcp-csc-ui (13.2.0.0+0~mr13.2.0.0) unstable; urgency=medium
 
   [ Debora Crescenzo ]
