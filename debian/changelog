@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.18+0~mr12.5.1.18) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [f18bb1d] MT#62025 Send Fax 422 error bugfix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 03 Feb 2025 08:46:05 +0100
+
 ngcp-csc-ui (12.5.1.17+0~mr12.5.1.17) unstable; urgency=medium
 
   [ Hugo Zigha ]
