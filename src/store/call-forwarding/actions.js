@@ -309,7 +309,17 @@ export async function deleteSourceSet ({ dispatch, commit, rootGetters, state },
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
-        await cfDeleteSourceSet(payload.id)
+        try {
+            await cfDeleteSourceSet(payload.id)
+        } catch (e) {
+            if (e.code === 404 && e.message === 'Entity \'sourceset\' not found.') {
+                // This happens when entity was set by Admin therefore current
+                // csc user doesn't have rights to delete the entity from DB.
+                showGlobalWarning(i18n.global.tc('Entity belongs to admin'))
+            } else {
+                throw e
+            }
+        }
         const sourceSets = await cfLoadSourceSets()
         commit('dataSucceeded', {
             mappings: updatedMappings,
