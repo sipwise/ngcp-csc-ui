@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.1.1.6+0~mr13.1.1.6) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [d260edc] MT#62062 Reload CF after amending source set Bugfix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 05 Feb 2025 12:52:15 +0100
+
 ngcp-csc-ui (13.1.1.5+0~mr13.1.1.5) unstable; urgency=medium
 
   [ Debora Crescenzo ]
