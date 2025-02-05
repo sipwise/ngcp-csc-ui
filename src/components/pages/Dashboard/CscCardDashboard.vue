@@ -52,7 +52,7 @@
             class="csc-card-list"
         >
             <q-list
-                v-for="(item, index) in itemsList"
+                v-for="(item, index) in shortItemsList"
                 :key="item.id"
             >
                 <template v-if="useSlot">
@@ -95,12 +95,12 @@
                     </q-item>
                 </template>
                 <q-separator
-                    v-if="index !== itemsList.length-1"
+                    v-if="index !== shortItemsList.length-1"
                     spaced
                 />
             </q-list>
             <div
-                v-if="!loading && itemsList.length === 0"
+                v-if="!loading && shortItemsList.length === 0"
                 class="text-center"
             >
                 {{ error ? $t('Data loading error') : noItemsMessage }}
@@ -185,7 +185,12 @@ export default {
             default: false
         }
     },
-    emits: ['action']
+    emits: ['action'],
+    computed: {
+        shortItemsList () {
+            return this.itemsList.length >= 5 ? this.itemsList.slice(0, 5) : this.itemsList
+        }
+    }
 }
 </script>
 
@@ -201,7 +206,7 @@ export default {
     padding-bottom: 22px
 
 .csc-card-list
-    height: 400px
+    height:  450px
 
 .csc-card-footer
     height: 80px
