@@ -321,9 +321,6 @@ export default {
             } catch (e) {
                 this.reset()
                 this.invalidTimeset = true
-                // eslint-disable-next-line no-console
-                console.info(e)
-                return
             }
 
             if (humanTimeRanges.length === 0) {

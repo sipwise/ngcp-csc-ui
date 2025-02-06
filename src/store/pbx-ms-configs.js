@@ -215,8 +215,6 @@ export default {
             }).then(() => {
                 context.commit('msConfigCreationSucceeded')
             }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
                 context.commit('msConfigCreationFailed', err.message)
             })
         },
@@ -229,8 +227,6 @@ export default {
             }).then(() => {
                 context.commit('msConfigRemovalSucceeded')
             }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
                 context.commit('msConfigRemovalFailed', err.message)
             })
         },
@@ -242,8 +238,6 @@ export default {
             setSecretaryNumber(options).then((preferences) => {
                 context.commit('msConfigUpdateSucceeded', preferences)
             }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
                 context.commit('msConfigUpdateFailed', err.message)
             })
         },

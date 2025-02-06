@@ -374,9 +374,7 @@ export default {
                         page
                     })
                     resolve()
-                }).catch((err) => {
-                    // eslint-disable-next-line no-console
-                    console.debug(err)
+                }).catch(() => {
                     context.commit('soundSetListSucceeded', {
                         soundSets: []
                     })
@@ -458,9 +456,7 @@ export default {
                 context.commit('soundHandlesRequesting')
                 getAllSoundHandles().then((soundHandles) => {
                     context.commit('soundHandlesSucceeded', soundHandles)
-                }).catch((err) => {
-                    // eslint-disable-next-line no-console
-                    console.debug(err)
+                }).catch(() => {
                     context.commit('soundHandlesSucceeded', {
                         items: []
                     })
@@ -473,9 +469,7 @@ export default {
                         soundSetId,
                         soundFiles
                     })
-                }).catch((err) => {
-                    // eslint-disable-next-line no-console
-                    console.debug(err)
+                }).catch(() => {
                     context.commit('soundFilesSucceeded', {
                         soundSetId,
                         soundFiles: {
@@ -496,9 +490,7 @@ export default {
                     soundFile,
                     soundFileUrl
                 })
-            }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
+            }).catch(() => {
                 context.commit('soundFileFailed', {
                     soundFile
                 })
@@ -530,9 +522,7 @@ export default {
                 }
             }).then((res) => {
                 context.commit('soundFileUploadSucceeded', res)
-            }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
+            }).catch(() => {
                 context.commit('soundFileUploadAborted', {
                     soundFileId: toFileId({
                         soundSetId: options.soundSetId,
@@ -545,9 +535,7 @@ export default {
             context.commit('soundFileUpdateRequesting', options)
             setLoopPlay(options).then((soundFile) => {
                 context.commit('soundFileUpdateSucceeded', soundFile)
-            }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
+            }).catch(() => {
                 context.commit('soundFileUpdateFailed', options)
             })
         },
@@ -555,9 +543,7 @@ export default {
             context.commit('soundFileUpdateRequesting', options)
             setUseParent(options).then((soundFile) => {
                 context.commit('soundFileUpdateSucceeded', soundFile)
-            }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
+            }).catch(() => {
                 context.commit('soundFileUpdateFailed', options)
             })
         },
@@ -565,9 +551,7 @@ export default {
             context.commit('soundFileRemoveRequesting', options)
             removeSoundFile(options.soundFileId).then(() => {
                 context.commit('soundFileRemoveSucceeded', options)
-            }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
+            }).catch(() => {
                 context.commit('soundFileRemoveFailed', options)
             })
         }

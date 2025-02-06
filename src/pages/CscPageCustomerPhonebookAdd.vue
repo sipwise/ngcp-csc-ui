@@ -69,6 +69,7 @@
 <script>
 import useValidate from '@vuelidate/core'
 import CscPageSticky from 'components/CscPageSticky'
+import { showGlobalError } from 'src/helpers/ui'
 import { mapWaitingActions } from 'vue-wait'
 import { required } from 'vuelidate/lib/validators'
 export default {
@@ -144,8 +145,7 @@ export default {
                     this.numberError = true
                     this.numberErrorMessage = this.$t('This number is already in use.')
                 } else {
-                    // eslint-disable-next-line no-console
-                    console.error('An error occurred:', error)
+                    showGlobalError(this.$t('An error occurred:', error.response.data.message))
                 }
             }
         }

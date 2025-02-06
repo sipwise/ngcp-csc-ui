@@ -218,8 +218,6 @@ export default {
             }).then(() => {
                 context.commit('callQueueCreationSucceeded')
             }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
                 context.commit('callQueueCreationFailed', err.message)
             })
         },
@@ -232,8 +230,6 @@ export default {
             }).then(() => {
                 context.commit('callQueueRemovalSucceeded')
             }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
                 context.commit('callQueueRemovalFailed', err.message)
             })
         },
@@ -245,8 +241,6 @@ export default {
             setCallQueueMaxLength(options).then((preferences) => {
                 context.commit('callQueueUpdateSucceeded', preferences)
             }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
                 context.commit('callQueueUpdateFailed', err.message)
             })
         },
@@ -258,8 +252,6 @@ export default {
             setCallQueueWrapUpTime(options).then((preferences) => {
                 context.commit('callQueueUpdateSucceeded', preferences)
             }).catch((err) => {
-                // eslint-disable-next-line no-console
-                console.debug(err)
                 context.commit('callQueueUpdateFailed', err.message)
             })
         },

@@ -115,9 +115,6 @@ export default {
                     hDateset = kamailioDatesetToHuman(this.timeSet.times)
                 } catch (e) {
                     this.invalidDateset = true
-                    // eslint-disable-next-line no-console
-                    console.info(e)
-                    return
                 }
                 if (hDateset.length === 0) {
                     this.selectedDate = null

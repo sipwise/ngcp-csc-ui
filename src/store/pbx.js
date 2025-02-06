@@ -347,9 +347,7 @@ export default {
                     all: true
                 }).then((subscribers) => {
                     context.commit('subscribersSucceeded', subscribers)
-                }).catch((err) => {
-                    // eslint-disable-next-line no-console
-                    console.debug(err)
+                }).catch(() => {
                     context.commit('subscribersSucceeded', {
                         items: []
                     })
@@ -364,9 +362,7 @@ export default {
                     all: true
                 }).then((numbers) => {
                     context.commit('numbersSucceeded', numbers)
-                }).catch((err) => {
-                    // eslint-disable-next-line no-console
-                    console.debug(err)
+                }).catch(() => {
                     context.commit('numbersSucceeded', {
                         items: []
                     })

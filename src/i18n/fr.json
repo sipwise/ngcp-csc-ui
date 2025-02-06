@@ -186,7 +186,7 @@
     "Enable regex matching for \\\"Received from IP\\\" and \\\"Destination\\\" fields.": "Enable regex matching for \\\"Received from IP\\\" and \\\"Destination\\\" fields.",
     "Enable strict mode that requires all mail2fax emails to have the secret key as the very first line of the email + an empty line. The key is removed from the email once matched.": "Activez le mode strict qui exige que tous les e-mails de mail2fax aient la clé secrète comme toute première ligne de l'e-mail + une ligne vide. La clé est supprimée de l'e-mail une fois qu'elle a été trouvée.",
     "End time": "Date de fin",
-    "English": "Français",
+    "English": "Anglais",
     "Enter a number to dial": "Enter a number to dial",
     "Entity belongs to admin": "Cette entité appartient à l’administrateur",
     "Expires": "Expire",

@@ -131,8 +131,6 @@ export default {
             copyToClipboard(copyData).then(() => {
                 showToast(this.$t('Data is in the clipboard'))
             }).catch(() => {
-                // eslint-disable-next-line no-console
-                console.error(copyData)
                 showGlobalError(this.$t('Unable to copy data to clipboard'))
             })
         }

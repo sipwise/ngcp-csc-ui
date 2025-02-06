@@ -59,8 +59,7 @@ export default {
                 context.dispatch('end')
             }
         } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error(error.message)
+            showGlobalError(error.message)
         }
     },
     async toggleStateTransfer (context) {

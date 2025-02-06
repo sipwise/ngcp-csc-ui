@@ -383,9 +383,8 @@ export default {
                         })
                     }
                 } catch (err) {
-                    // eslint-disable-next-line no-console
-                    console.debug(err)
                     await context.dispatch('logout')
+                    throw err
                 }
             }
         },
