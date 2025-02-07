@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.0.1.8+0~mr13.0.1.8) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [5def805] MT#62025 Add multipart/form-data to api/faxes req
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 07 Feb 2025 08:11:32 +0100
+
 ngcp-csc-ui (13.0.1.7+0~mr13.0.1.7) unstable; urgency=medium
 
   [ Debora Crescenzo ]
