@@ -1,3 +1,13 @@
+ngcp-csc-ui (13.2.1.1+0~mr13.2.1.1) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [e350bb9] MT#62025 Send Fax 422 error bugfix
+  * [9d6483b] MT#62062 Reload CF after amending source set Bugfix
+  * [7391ca7] MT#62025 Add multipart/form-data to api/faxes req
+  * [25b866e] MT#62070 Fix Dashboard Containers Overflow Issue
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 12 Feb 2025 07:37:14 +0100
+
 ngcp-csc-ui (13.2.1.0+0~mr13.2.1.0) unstable; urgency=medium
 
   [ Mykola Malkov ]
