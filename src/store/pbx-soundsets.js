@@ -30,6 +30,7 @@ export default {
     state: {
         soundSetListState: RequestState.initiated,
         soundSetListVisible: true,
+        soundSetListError: null,
         soundSetList: [],
         soundSetMap: {},
         soundSetListCurrentPage: 1,
@@ -47,13 +48,18 @@ export default {
         soundSetSelected: null,
         soundHandleList: {},
         soundHandleListState: RequestState.initiated,
+        soundHandleListError: null,
         soundFileMap: {},
         soundFileUrlMap: {},
         soundFileListStates: {},
         soundFileState: {},
+        soundFileError: null,
+        soundFileRemoveError: null,
         soundFileUploadState: {},
+        soundFileUploadError: null,
         soundFileUploadProgress: {},
         soundFileUpdateState: {},
+        soundFileUpdateError: null,
         soundFileRemoveState: {},
         soundHandleGroups: []
     },
@@ -160,6 +166,10 @@ export default {
                 state.soundSetMap[soundSet.id] = soundSet
             })
         },
+        soundSetListFailed (state, err) {
+            state.soundSetListState = RequestState.failed
+            state.soundSetListError = err
+        },
         soundSetCreationRequesting (state, options) {
             state.soundSetCreationState = CreationState.creating
             state.soundSetCreationData = options
@@ -238,6 +248,10 @@ export default {
                 return group
             })
         },
+        soundHandlesFailed (state, err) {
+            state.soundHandleListState = RequestState.failed
+            state.soundHandleListError = err
+        },
         soundFilesRequesting (state, soundSetId) {
             delete state.soundFileListStates[soundSetId]
             state.soundFileListStates[soundSetId] = RequestState.requesting
@@ -252,6 +266,11 @@ export default {
                     soundHandle: soundFile.handle
                 })] = soundFile
             })
+        },
+        soundFilesFailed (state, err, soundSetId) {
+            delete state.soundFileListStates[soundSetId]
+            state.soundFileListStates[soundSetId] = RequestState.failed
+            state.soundFileError = err
         },
         soundFileRequesting (state, options) {
             delete state.soundFileState[options.soundFile.id]
@@ -270,6 +289,7 @@ export default {
         soundFileFailed (state, options) {
             delete state.soundFileState[options.soundFile.id]
             state.soundFileState[options.soundFile.id] = RequestState.failed
+            state.soundFileError = options.error
         },
         soundFileUploadRequesting (state, soundFileId) {
             delete state.soundFileUploadState[soundFileId]
@@ -296,6 +316,7 @@ export default {
         soundFileUploadAborted (state, options) {
             delete state.soundFileUploadState[options.soundFileId]
             state.soundFileUploadState[options.soundFileId] = RequestState.failed
+            state.soundFileUploadError = options.error
         },
         soundFileUpdateRequesting (state, options) {
             const soundFileIntId = toFileId({
@@ -324,6 +345,7 @@ export default {
             })
             delete state.soundFileUpdateState[soundFileIntId]
             state.soundFileUpdateState[soundFileIntId] = RequestState.failed
+            state.soundFileUpdateError = options.error
         },
         soundFileRemoveRequesting (state, options) {
             const soundFileIntId = toFileId({
@@ -349,6 +371,7 @@ export default {
             })
             delete state.soundFileRemoveState[soundFileIntId]
             state.soundFileRemoveState[soundFileIntId] = RequestState.failed
+            state.soundFileRemoveError = options.error
         },
         selectSoundSet (state, soundSetId) {
             state.soundSetSelected = state.soundSetMap[soundSetId]
@@ -358,29 +381,20 @@ export default {
         }
     },
     actions: {
-        loadSoundSetList (context, options) {
-            return new Promise((resolve) => {
-                const listVisible = _.get(options, 'listVisible', false)
-                context.commit('soundSetListRequesting', {
-                    listVisible
-                })
-                let page = _.get(options, 'page', context.state.soundSetListCurrentPage)
-                page = (page === null) ? 1 : page
-                getSoundSetList({
+        async loadSoundSetList (context, options) {
+            const listVisible = _.get(options, 'listVisible', false)
+            context.commit('soundSetListRequesting', { listVisible })
+            let page = _.get(options, 'page', context.state.soundSetListCurrentPage)
+            page = (page === null) ? 1 : page
+            try {
+                const soundSetList = await getSoundSetList({ page })
+                context.commit('soundSetListSucceeded', {
+                    soundSets: soundSetList.soundSets,
                     page
-                }).then((soundSetList) => {
-                    context.commit('soundSetListSucceeded', {
-                        soundSets: soundSetList.soundSets,
-                        page
-                    })
-                    resolve()
-                }).catch(() => {
-                    context.commit('soundSetListSucceeded', {
-                        soundSets: []
-                    })
-                    resolve()
                 })
-            })
+            } catch (err) {
+                context.commit('soundSetListFailed', err.message)
+            }
         },
         createSoundSet (context, options) {
             context.commit('soundSetCreationRequesting', options)
@@ -456,10 +470,8 @@ export default {
                 context.commit('soundHandlesRequesting')
                 getAllSoundHandles().then((soundHandles) => {
                     context.commit('soundHandlesSucceeded', soundHandles)
-                }).catch(() => {
-                    context.commit('soundHandlesSucceeded', {
-                        items: []
-                    })
+                }).catch((err) => {
+                    context.commit('soundHandlesFailed', err.message)
                 })
             }
             if (context.state.soundFileListStates[soundSetId] !== RequestState.succeeded) {
@@ -469,13 +481,8 @@ export default {
                         soundSetId,
                         soundFiles
                     })
-                }).catch(() => {
-                    context.commit('soundFilesSucceeded', {
-                        soundSetId,
-                        soundFiles: {
-                            items: []
-                        }
-                    })
+                }).catch((err) => {
+                    context.commit('soundFilesFailed', err.message, soundSetId)
                 })
             }
         },
@@ -490,9 +497,10 @@ export default {
                     soundFile,
                     soundFileUrl
                 })
-            }).catch(() => {
+            }).catch((err) => {
                 context.commit('soundFileFailed', {
-                    soundFile
+                    soundFile,
+                    error: err.message
                 })
             })
         },
@@ -522,12 +530,13 @@ export default {
                 }
             }).then((res) => {
                 context.commit('soundFileUploadSucceeded', res)
-            }).catch(() => {
+            }).catch((err) => {
                 context.commit('soundFileUploadAborted', {
                     soundFileId: toFileId({
                         soundSetId: options.soundSetId,
                         soundHandle: options.soundHandle
-                    })
+                    }),
+                    error: err.message
                 })
             })
         },
@@ -535,24 +544,24 @@ export default {
             context.commit('soundFileUpdateRequesting', options)
             setLoopPlay(options).then((soundFile) => {
                 context.commit('soundFileUpdateSucceeded', soundFile)
-            }).catch(() => {
-                context.commit('soundFileUpdateFailed', options)
+            }).catch((err) => {
+                context.commit('soundFileUpdateFailed', { ...options, error: err.message })
             })
         },
         setUseParent (context, options) {
             context.commit('soundFileUpdateRequesting', options)
             setUseParent(options).then((soundFile) => {
                 context.commit('soundFileUpdateSucceeded', soundFile)
-            }).catch(() => {
-                context.commit('soundFileUpdateFailed', options)
+            }).catch((err) => {
+                context.commit('soundFileUpdateFailed', { ...options, error: err.message })
             })
         },
         removeSoundFile (context, options) {
             context.commit('soundFileRemoveRequesting', options)
             removeSoundFile(options.soundFileId).then(() => {
                 context.commit('soundFileRemoveSucceeded', options)
-            }).catch(() => {
-                context.commit('soundFileRemoveFailed', options)
+            }).catch((err) => {
+                context.commit('soundFileRemoveFailed', { ...options, error: err.message })
             })
         }
     }

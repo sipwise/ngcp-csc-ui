@@ -135,7 +135,16 @@ export default {
             'msConfigRemovalState',
             'msConfigCreationError',
             'msConfigUpdateError',
-            'msConfigRemovalError'
+            'msConfigRemovalError',
+            'msConfigListState',
+            'msConfigListError'
+        ]),
+        ...mapState('pbx', [
+            'numberListState',
+            'numberListError',
+            'subcriberListState',
+            'subcriberListError'
+
         ]),
         ...mapGetters('pbxMsConfigs', [
             'isMsConfigListEmpty',
@@ -172,6 +181,21 @@ export default {
                 showToast(this.getMsConfigRemovalToastMessage)
             } else if (state === RequestState.failed) {
                 showGlobalError(this.msConfigRemovalError)
+            }
+        },
+        msConfigListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.msConfigListError)
+            }
+        },
+        numberListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.numberListError)
+            }
+        },
+        subcriberListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.subcriberListError)
             }
         }
     },

@@ -170,7 +170,11 @@ export default {
             'deviceModelMap',
             'deviceModelImageMap',
             'subscriberList',
-            'subscriberMap'
+            'subscriberMap',
+            'deviceModelListState',
+            'deviceModelError',
+            'deviceProfileListState',
+            'deviceProfileListError'
         ]),
         ...mapGetters('pbx', [
             'getSubscriberOptions',
@@ -183,7 +187,9 @@ export default {
             'deviceListLastPage',
             'deviceListVisibility',
             'deviceCreationState',
-            'deviceRemovalState'
+            'deviceRemovalState',
+            'deviceListState',
+            'deviceListError'
         ]),
         ...mapGetters('pbxDevices', [
             'isDeviceListEmpty',
@@ -219,6 +225,21 @@ export default {
                 showToast(this.getDeviceRemovalToastMessage)
             } else if (state === RequestState.failed) {
                 showGlobalError(this.deviceRemovalError)
+            }
+        },
+        deviceListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deviceListError)
+            }
+        },
+        deviceModelListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deviceModelError)
+            }
+        },
+        deviceProfileListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deviceProfileListError)
             }
         }
     },

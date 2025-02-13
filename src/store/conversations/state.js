@@ -32,5 +32,7 @@ export default {
     toggleBlockedError: null,
     lastToggledType: null,
     deletionState: RequestState.initiated,
-    deletionError: null
+    deletionError: null,
+    conversationState: RequestState.initiated,
+    conversationError: null
 }

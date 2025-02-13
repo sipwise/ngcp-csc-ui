@@ -19,6 +19,7 @@ export default {
         numberList: [],
         numberMapById: {},
         numberListState: RequestState.initiated,
+        numberListError: null,
         groupList: [],
         groupMapById: {},
         seatList: [],
@@ -29,13 +30,17 @@ export default {
         deviceProfileList: [],
         deviceProfileMap: {},
         deviceModelList: [],
+        deviceModelListState: RequestState.initiated,
         deviceModelMap: {},
         deviceModelImageMap: {},
         deviceModelImageSmallMap: {},
         subscriberList: [],
         subscriberListState: RequestState.initiated,
+        subcriberListError: null,
         subscriberMap: {},
-        ncosMapByName: {}
+        ncosMapByName: {},
+        deviceProfileListState: RequestState.initiated,
+        deviceProfileListError: null
     },
     getters: {
         pilot (state) {
@@ -204,6 +209,10 @@ export default {
                 state.numberMapById[number.id] = number
             })
         },
+        numbersFailed (state, err) {
+            state.numberListState = RequestState.failed
+            state.numberListError = err
+        },
         seatsSucceeded (state, seatList) {
             state.seatList = _.get(seatList, 'items', [])
             state.seatMapById = {}
@@ -251,6 +260,7 @@ export default {
             state.deviceProfilesListState = RequestState.failed
         },
         deviceModelSucceeded (state, deviceModel) {
+            state.deviceModelListState = RequestState.succeeded
             const model = _.get(deviceModel, 'model', null)
             const modelImage = _.get(deviceModel, 'modelImage', null)
             const modelImageThumbnail = _.get(deviceModel, 'modelImageThumbnail', null)
@@ -264,10 +274,15 @@ export default {
                 state.deviceModelImageSmallMap[modelImageThumbnail.id] = modelImageThumbnail
             }
         },
-        deviceModelFailed (state, deviceModelId) {
-            delete state.deviceModelMap[deviceModelId]
-            delete state.deviceModelImageMap[deviceModelId]
-            delete state.deviceModelImageSmallMap[deviceModelId]
+        deviceModelRequesting (state) {
+            state.deviceModelListState = RequestState.requesting
+        },
+        deviceModelFailed (state, options) {
+            state.deviceModelListState = RequestState.failed
+            delete state.deviceModelMap[options.deviceModelId]
+            delete state.deviceModelImageMap[options.deviceModelId]
+            delete state.deviceModelImageSmallMap[options.deviceModelId]
+            state.deviceModelError = options.error
         },
         subscribersRequesting (state) {
             state.subcriberListState = RequestState.requesting
@@ -279,24 +294,23 @@ export default {
             state.subscriberList.forEach((subscriber) => {
                 state.subscriberMap[subscriber.id] = subscriber
             })
+        },
+        subscribersFailed (state, err) {
+            state.subcriberListState = RequestState.failed
+            state.subcriberListError = err
         }
     },
     actions: {
-        loadProfiles (context) {
-            return new Promise((resolve, reject) => {
+        async loadProfiles (context) {
+            if (context.state.deviceProfileList.length === 0) {
                 context.commit('deviceProfilesListStateRequesting')
-                if (context.state.deviceProfileList.length === 0) {
-                    getAllProfiles().then((profiles) => {
-                        context.commit('deviceProfilesListSucceeded', profiles)
-                        resolve(profiles)
-                    }).catch((err) => {
-                        context.commit('deviceProfilesListFailed')
-                        reject(err)
-                    })
-                } else {
-                    resolve()
+                try {
+                    const profiles = await getAllProfiles()
+                    context.commit('deviceProfilesListSucceeded', profiles)
+                } catch (err) {
+                    context.commit('deviceProfilesListFailed', err.message)
                 }
-            })
+            }
         },
         async loadProfileById (context, deviceId) {
             context.commit('deviceProfileRequesting')
@@ -319,6 +333,7 @@ export default {
                 }
                 const requests = []
                 let isFrontImageRequested = false
+                context.commit('deviceModelRequesting')
                 if (!isFrontCached && (payload.type === 'front' || payload.type === 'all')) {
                     requests.push(getModelFrontImage(payload.deviceId))
                     isFrontImageRequested = true
@@ -358,7 +373,10 @@ export default {
                 }
                 context.commit('deviceModelSucceeded', deviceModel)
             } catch (err) {
-                context.commit('deviceModelFailed', payload.deviceId)
+                context.commit('deviceModelFailed', {
+                    deviceModelId: payload.deviceId,
+                    error: err.message
+                })
             }
         },
         async loadDeviceModels (context, imageType) {
@@ -378,10 +396,8 @@ export default {
                     all: true
                 }).then((subscribers) => {
                     context.commit('subscribersSucceeded', subscribers)
-                }).catch(() => {
-                    context.commit('subscribersSucceeded', {
-                        items: []
-                    })
+                }).catch((err) => {
+                    context.commit('subscribersFailed', err.message)
                 })
             }
         },
@@ -393,10 +409,8 @@ export default {
                     all: true
                 }).then((numbers) => {
                     context.commit('numbersSucceeded', numbers)
-                }).catch(() => {
-                    context.commit('numbersSucceeded', {
-                        items: []
-                    })
+                }).catch((err) => {
+                    context.commit('numbersFailed', err.message)
                 })
             }
         }

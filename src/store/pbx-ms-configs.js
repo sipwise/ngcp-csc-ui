@@ -13,6 +13,7 @@ export default {
     state: {
         msConfigListState: RequestState.initiated,
         msConfigListVisible: true,
+        msConfigListError: null,
         msConfigList: [],
         msConfigMap: {},
         msConfigSelected: null,
@@ -123,6 +124,10 @@ export default {
             })
             state.msConfigListVisible = true
         },
+        msConfigListFailed (state, err) {
+            state.msConfigListState = RequestState.failed
+            state.msConfigListError = err
+        },
         msConfigCreationRequesting (state, data) {
             state.msConfigCreationState = CreationState.creating
             state.msConfigCreationData = data
@@ -186,25 +191,20 @@ export default {
         }
     },
     actions: {
-        loadMsConfigList (context, options) {
-            return new Promise((resolve) => {
-                const listVisible = _.get(options, 'listVisible', false)
-                const selectedId = _.get(options, 'selectedId', null)
-                context.commit('msConfigListRequesting', {
-                    listVisible
-                })
-                getMsConfigList().then((msConfigList) => {
-                    context.commit('msConfigListSucceeded', msConfigList)
-                    if (selectedId !== null) {
-                        context.commit('expandMsConfig', msConfigList)
-                        context.commit('highlightMsConfig', msConfigList)
-                    }
-                    resolve()
-                }).catch(() => {
-                    resolve()
-                    context.commit('msConfigListSucceeded')
-                })
-            })
+        async loadMsConfigList (context, options) {
+            const listVisible = _.get(options, 'listVisible', false)
+            const selectedId = _.get(options, 'selectedId', null)
+            context.commit('msConfigListRequesting', { listVisible })
+            try {
+                const msConfigList = await getMsConfigList()
+                context.commit('msConfigListSucceeded', msConfigList)
+                if (selectedId !== null) {
+                    context.commit('expandMsConfig', msConfigList)
+                    context.commit('highlightMsConfig', msConfigList)
+                }
+            } catch (err) {
+                context.commit('msConfigListFailed', err.message)
+            }
         },
         createMsConfig (context, msConfigData) {
             context.commit('msConfigCreationRequesting', msConfigData)

@@ -131,7 +131,9 @@ export default {
             'soundSetRemovalState',
             'soundSetRemovalError',
             'soundSetUpdateState',
-            'soundSetUpdateError'
+            'soundSetUpdateError',
+            'soundSetListState',
+            'soundSetListError'
         ]),
         ...mapGetters('pbxSoundSets', [
             'isSoundSetListEmpty',
@@ -170,6 +172,11 @@ export default {
                 showToast(this.getSoundSetRemovalToastMessage)
             } else if (state === RequestState.failed) {
                 showGlobalError(this.soundSetRemovalError)
+            }
+        },
+        soundSetListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.soundSetListError)
             }
         }
     },

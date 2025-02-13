@@ -106,10 +106,12 @@
 import CscPage from 'components/CscPage'
 import CscSpinner from 'components/CscSpinner'
 import { date } from 'quasar'
-import { showToast } from 'src/helpers/ui'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
 import {
     mapActions,
-    mapGetters
+    mapGetters,
+    mapState
 } from 'vuex'
 
 export default {
@@ -132,6 +134,9 @@ export default {
             'reminderError',
             'isReminderLoading',
             'reminderUpdated'
+        ]),
+        ...mapState('reminder', [
+            'reminderLoadingState'
         ]),
         recurrenceOptions () {
             return [
@@ -171,6 +176,11 @@ export default {
                 showToast(this.$t('Reminder: Recurrence changed to "{recurrence}"', {
                     recurrence: this.mapRecurrence(this.reminderRecurrence)
                 }))
+            }
+        },
+        reminderLoadingState () {
+            if (this.reminderLoadingState === RequestState.failed) {
+                showGlobalError(this.reminderError)
             }
         }
     },

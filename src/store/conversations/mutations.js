@@ -68,10 +68,10 @@ export default {
         state.playVoiceMailStates[options.id] = RequestState.succeeded
         state.playVoiceMailErrors[options.id] = null
     },
-    playVoiceMailFailed (state, id, err) {
-        state.playVoiceMailUrls[id] = null
-        state.playVoiceMailStates[id] = RequestState.failed
-        state.playVoiceMailErrors[id] = err
+    playVoiceMailFailed (state, options) {
+        state.playVoiceMailUrls[options.id] = null
+        state.playVoiceMailStates[options.id] = RequestState.failed
+        state.playVoiceMailErrors[options.id] = options.error
     },
     resetList (state) {
         state.items = []
@@ -154,7 +154,15 @@ export default {
         state.deletionState = RequestState.failed
         state.deletionError = err
     },
-    setConversations (state, value) {
+    loadConversationsSucceeded (state, value) {
+        state.conversationState = RequestState.succeeded
         state.conversations = value
+    },
+    loadConversationsRequesting (state) {
+        state.conversationState = RequestState.requesting
+    },
+    loadConversationsFailed (state, err) {
+        state.conversationState = RequestState.failed
+        state.conversationError = err
     }
 }

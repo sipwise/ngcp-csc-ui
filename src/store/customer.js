@@ -39,17 +39,14 @@ export default {
         }
     },
     actions: {
-        loadCustomerPreferences (context, customerId) {
-            return new Promise((resolve, reject) => {
-                context.commit('customerPreferencesLoading')
-                getCustomerPreference(customerId).then((customerPreferences) => {
-                    context.commit('customerPreferencesLoaded', customerPreferences)
-                    resolve()
-                }).catch((err) => {
-                    reject(err)
-                    context.commit('customerPreferencesLoadingFailed', err.message)
-                })
-            })
+        async loadCustomerPreferences (context, customerId) {
+            context.commit('customerPreferencesLoading')
+            try {
+                const customerPreferences = await getCustomerPreference(customerId)
+                context.commit('customerPreferencesLoaded', customerPreferences)
+            } catch (err) {
+                context.commit('customerPreferencesLoadingFailed', err.message)
+            }
         },
         updateIgnoreMembers (context, options) {
             setCustomerPreference(options.customerId, options.ignore_cf, 'ignore_cf_when_hunting').then((customerPreference) => {

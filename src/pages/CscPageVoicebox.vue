@@ -219,6 +219,7 @@ import {
     showGlobalError,
     showToast
 } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
 import { mapWaitingActions } from 'vue-wait'
 import {
     mapActions,
@@ -283,7 +284,35 @@ export default {
             'tempGreetingUploadProgress',
             'greetGreetingId',
             'greetGreetingUrl',
-            'greetGreetingUploadProgress'
+            'greetGreetingUploadProgress',
+            'attachUpdateState',
+            'attachUpdateError',
+            'deleteUpdateState',
+            'deleteUpdateError',
+            'busyGreetingUploadState',
+            'busyGreetingUploadError',
+            'unavailableGreetingUploadState',
+            'unavailableGreetingUploadError',
+            'tempGreetingUploadState',
+            'tempGreetingUploadError',
+            'greetGreetingUploadState',
+            'greetGreetingUploadError',
+            'busyGreetingLoadState',
+            'busyGreetingLoadError',
+            'unavailableGreetingLoadState',
+            'unavailableGreetingLoadError',
+            'tempGreetingLoadState',
+            'tempGreetingLoadError',
+            'greetGreetingLoadState',
+            'greetGreetingLoadError',
+            'busyGreetingDeletionState',
+            'busyGreetingDeletionError',
+            'unavailableGreetingDeletionState',
+            'unavailableGreetingDeletionError',
+            'tempGreetingdeletionState',
+            'tempGreetingDeletionError',
+            'greetGreetingDeletionState',
+            'greetGreetingDeletionError'
         ]),
         ...mapGetters('voicebox', [
             'settingsLoading',
@@ -388,6 +417,76 @@ export default {
         },
         deleteValue (value) {
             this.formData.delete = value
+        },
+        attachUpdateState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.attachUpdateError)
+            }
+        },
+        deleteUpdateState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deleteUpdateError)
+            }
+        },
+        busyGreetingUploadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.busyGreetingUploadError)
+            }
+        },
+        unavailableGreetingUploadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.unavailableGreetingUploadError)
+            }
+        },
+        tempGreetingUploadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.tempGreetingUploadError)
+            }
+        },
+        greetGreetingUploadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.greetGreetingUploadError)
+            }
+        },
+        busyGreetingLoadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.busyGreetingLoadError)
+            }
+        },
+        unavailableGreetingLoadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.unavailableGreetingLoadError)
+            }
+        },
+        tempGreetingLoadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.tempGreetingLoadError)
+            }
+        },
+        greetGreetingLoadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.greetGreetingLoadError)
+            }
+        },
+        busyGreetingDeletionState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.busyGreetingDeletionError)
+            }
+        },
+        unavailableGreetingDeletionState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.unavailableGreetingDeletionError)
+            }
+        },
+        tempGreetingDeletionState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.tempGreetingDeletionError)
+            }
+        },
+        greetGreetingDeletionState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.greetGreetingDeletionError)
+            }
         }
     },
     async mounted () {

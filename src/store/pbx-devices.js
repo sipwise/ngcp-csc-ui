@@ -27,6 +27,8 @@ export default {
         deviceListVisibility: 'visible',
         deviceMapById: {},
         devicePreferencesList: [],
+        deviceListError: null,
+        deviceMap: {},
         devicePreferencesListState: RequestState.initiated,
         devicePreferencesMap: {},
         devicePreferencesRemovalState: RequestState.initiated,
@@ -36,6 +38,7 @@ export default {
         devicePreferencesUpdateState: RequestState.initiated,
         devicePreferencesUpdating: null,
         devicePreferencesUpdatingField: null,
+        devicePreferencesError: null,
         deviceRemovalError: null,
         deviceRemovalState: RequestState.initiated,
         deviceRemoving: null,
@@ -194,11 +197,13 @@ export default {
                 state.devicePreferencesMap[devicePreferences.id] = devicePreferences
             })
         },
-        deviceListFailed (state) {
+        deviceListFailed (state, err) {
             state.deviceListState = RequestState.failed
+            state.deviceListError = err
         },
-        devicePreferencesListFailed (state) {
+        devicePreferencesListFailed (state, err) {
             state.devicePreferencesListState = RequestState.failed
+            state.devicePreferencesError = err
         },
         deviceCreationRequesting (state, device) {
             state.deviceCreationState = CreationState.creating

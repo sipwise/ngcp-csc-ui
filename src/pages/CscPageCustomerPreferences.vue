@@ -126,6 +126,8 @@ import CscPage from 'components/CscPage'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import _ from 'lodash'
+import { showGlobalError } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
 import {
     mapActions,
     mapGetters,
@@ -163,7 +165,9 @@ export default {
         ]),
         ...mapState('customer', [
             'customerPreferences',
-            'customerPreferencesSelected'
+            'customerPreferencesSelected',
+            'customerPreferencesLoadingState',
+            'customerPreferencesError'
         ]),
         hasBlockOutOverridePinChanged () {
             return this.changes.block_out_override_pin !== this.customerPreferences.block_out_override_pin
@@ -172,6 +176,11 @@ export default {
     watch: {
         customerPreferences () {
             this.changes = this.getCustomerPreferencesData()
+        },
+        customerPreferencesLoadingState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.customerPreferencesError)
+            }
         }
     },
     mounted () {

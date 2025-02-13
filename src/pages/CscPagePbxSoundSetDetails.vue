@@ -221,7 +221,17 @@ export default {
             'soundFileUploadState',
             'soundFileUploadProgress',
             'soundFileUpdateState',
-            'soundHandleGroups'
+            'soundHandleGroups',
+            'soundHandleListState',
+            'soundHandleListError',
+            'soundFileListStates',
+            'soundFileError',
+            'soundFileRemoveError',
+            'soundFileState',
+            'soundFileUploadState',
+            'soundFileUploadError',
+            'soundFileUpdateError',
+            'soundFileRemoveState'
         ]),
         ...mapGetters('pbxSoundSets', [
             'isSoundFileListRequesting',
@@ -278,6 +288,51 @@ export default {
                     _.set(this.expanded, group, false)
                     return group
                 })
+            }
+        },
+        soundHandleListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.soundHandleListError)
+            }
+        },
+        soundFileListStates: {
+            deep: true,
+            handler (state) {
+                if (state[state.soundSetId] === RequestState.failed) {
+                    showGlobalError(this.soundFileError)
+                }
+            }
+        },
+        soundFileState: {
+            deep: true,
+            handler (state) {
+                if (state[this.soundSetSelected.id] === RequestState.failed) {
+                    showGlobalError(this.soundFileError)
+                }
+            }
+        },
+        soundFileUploadState: {
+            deep: true,
+            handler (state) {
+                if (Object.values(state).includes(RequestState.failed)) {
+                    showGlobalError(this.soundFileUploadError)
+                }
+            }
+        },
+        soundFileUpdateState: {
+            deep: true,
+            handler (state) {
+                if (Object.values(state).includes(RequestState.failed)) {
+                    showGlobalError(this.soundFileUpdateError)
+                }
+            }
+        },
+        soundFileRemoveState: {
+            deep: true,
+            handler (state) {
+                if (Object.values(state).includes(RequestState.failed)) {
+                    showGlobalError(this.soundFileRemoveError)
+                }
             }
         }
     },

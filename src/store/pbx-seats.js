@@ -37,6 +37,7 @@ export default {
     state: {
         seatListState: RequestState.initiated,
         seatListVisibility: 'visible',
+        seatListError: null,
         seatListItems: [],
         seatListCurrentPage: 1,
         seatListLastPage: null,
@@ -247,8 +248,9 @@ export default {
                 state.seatListVisibility = 'visible'
             }
         },
-        seatListItemsFailed (state) {
+        seatListItemsFailed (state, err) {
             state.seatListState = RequestState.failed
+            state.seatListError = err
         },
         seatCreationRequesting (state, seat) {
             state.seatCreationState = CreationState.creating
@@ -324,39 +326,34 @@ export default {
         loadPreferences (context, seatId) {
             return getSeatPreferences(seatId)
         },
-        loadSeatListItems (context, options) {
-            return new Promise((resolve, reject) => {
-                const page = _.get(options, 'page', context.state.seatListCurrentPage)
-                const clearList = _.get(options, 'clearList', true)
-                const displayName = _.get(options, 'display_name', null)
-                const pbxExtension = _.get(options, 'pbx_extension', null)
-                const primaryNumber = _.get(options, 'primary_number', null)
-                const aliasNumber = _.get(options, 'alias_number', null)
-                context.commit('seatListItemsRequesting', {
-                    clearList
-                })
-                getSeatList({
+        async loadSeatListItems (context, options) {
+            const page = _.get(options, 'page', context.state.seatListCurrentPage)
+            const clearList = _.get(options, 'clearList', true)
+            const displayName = _.get(options, 'display_name', null)
+            const pbxExtension = _.get(options, 'pbx_extension', null)
+            const primaryNumber = _.get(options, 'primary_number', null)
+            const aliasNumber = _.get(options, 'alias_number', null)
+            context.commit('seatListItemsRequesting', { clearList })
+            try {
+                const seatList = await getSeatList({
                     page,
                     display_name: displayName,
                     pbx_extension: pbxExtension,
                     primary_number: primaryNumber,
                     alias_number: aliasNumber
-                }).then((seatList) => {
-                    context.commit('pbx/pilotSucceeded', seatList.pilot, { root: true })
-                    context.commit('pbx/numbersSucceeded', seatList.numbers, { root: true })
-                    context.commit('pbx/soundSetsSucceeded', seatList.soundSets, { root: true })
-                    context.commit('pbx/groupsSucceeded', seatList.groups, { root: true })
-                    context.commit('seatListItemsSucceeded', {
-                        seats: seatList.seats,
-                        preferences: seatList.preferences,
-                        page
-                    })
-                    resolve()
-                }).catch((err) => {
-                    context.commit('seatListItemsFailed', err.message)
-                    reject(err)
                 })
-            })
+                context.commit('pbx/pilotSucceeded', seatList.pilot, { root: true })
+                context.commit('pbx/numbersSucceeded', seatList.numbers, { root: true })
+                context.commit('pbx/soundSetsSucceeded', seatList.soundSets, { root: true })
+                context.commit('pbx/groupsSucceeded', seatList.groups, { root: true })
+                context.commit('seatListItemsSucceeded', {
+                    seats: seatList.seats,
+                    preferences: seatList.preferences,
+                    page
+                })
+            } catch (err) {
+                context.commit('seatListItemsFailed', err.message)
+            }
         },
         createSeat (context, seatData) {
             context.commit('seatCreationRequesting', seatData)
@@ -468,23 +465,22 @@ export default {
                 context.commit('seatUpdateFailed', err.message)
             })
         },
-        setSeatNumbers (context, options) {
+        async setSeatNumbers (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
                 seatField: i18n.global.t('Alias Numbers')
             })
-            setSeatNumbers({
-                seatId: options.seatId,
-                pilotId: context.rootGetters['pbx/pilot'].id,
-                assignedNumbers: options.assignedNumbers,
-                unassignedNumbers: options.unassignedNumbers
-            }).then((result) => {
-                return Promise.resolve(result)
-            }).then((result) => {
+            try {
+                const result = await setSeatNumbers({
+                    seatId: options.seatId,
+                    pilotId: context.rootGetters['pbx/pilot'].id,
+                    assignedNumbers: options.assignedNumbers,
+                    unassignedNumbers: options.unassignedNumbers
+                })
                 context.commit('seatUpdateSucceeded', result)
-            }).catch((err) => {
+            } catch (err) {
                 context.commit('seatUpdateFailed', err.message)
-            })
+            }
         },
         setSeatSoundSet (context, options) {
             context.commit('seatUpdateRequesting', {

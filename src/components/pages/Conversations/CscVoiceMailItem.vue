@@ -90,7 +90,9 @@ import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
-import { mapGetters } from 'vuex'
+import { showGlobalError } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
     name: 'CscVoiceMailItem',
@@ -138,6 +140,10 @@ export default {
             'playVoiceMailState',
             'playVoiceMailUrl'
         ]),
+        ...mapState('conversations', [
+            'playVoiceMailErrors',
+            'playVoiceMailStates'
+        ]),
         direction () {
             if (this.voiceMail.direction === 'out') {
                 return 'to'
@@ -153,6 +159,16 @@ export default {
         },
         voiceMailLoaded () {
             return this.playVoiceMailState(this.voiceMail.id) === 'succeeded'
+        }
+    },
+    watch: {
+        playVoiceMailStates: {
+            deep: true,
+            handler (state) {
+                if (state[this.voiceMail.id] === RequestState.failed) {
+                    showGlobalError(this.playVoiceMailErrors[this.voiceMail.id])
+                }
+            }
         }
     },
     methods: {

@@ -76,17 +76,14 @@ export default {
         }
     },
     actions: {
-        loadReminder (context) {
-            return new Promise((resolve, reject) => {
-                context.commit('reminderLoading')
-                getReminder(context.getters.subscriberId).then((reminder) => {
-                    context.commit('reminderLoaded', reminder)
-                    resolve()
-                }).catch((err) => {
-                    reject(err)
-                    context.commit('reminderLoadingFailed', err.message)
-                })
-            })
+        async loadReminder (context) {
+            context.commit('reminderLoading')
+            try {
+                const reminder = await getReminder(context.getters.subscriberId)
+                context.commit('reminderLoaded', reminder)
+            } catch (err) {
+                context.commit('reminderLoadingFailed', err.message)
+            }
         },
         toggleReminder (context) {
             context.commit('reminderUpdating', 'active')

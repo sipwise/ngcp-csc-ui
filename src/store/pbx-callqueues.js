@@ -14,6 +14,7 @@ export default {
     state: {
         callQueueListState: RequestState.initiated,
         callQueueListVisible: true,
+        callQueueListError: null,
         callQueueList: [],
         callQueueMap: {},
         callQueueSelected: null,
@@ -126,6 +127,10 @@ export default {
             })
             state.callQueueListVisible = true
         },
+        callQueueListFailed (state, err) {
+            state.callQueueListState = RequestState.failed
+            state.callQueueListError = err
+        },
         callQueueCreationRequesting (state, data) {
             state.callQueueCreationState = CreationState.creating
             state.callQueueCreationData = data
@@ -189,25 +194,20 @@ export default {
         }
     },
     actions: {
-        loadCallQueueList (context, options) {
-            return new Promise((resolve) => {
-                const listVisible = _.get(options, 'listVisible', false)
-                const selectedId = _.get(options, 'selectedId', null)
-                context.commit('callQueueListRequesting', {
-                    listVisible
-                })
-                getCallQueueList().then((callQueueList) => {
-                    context.commit('callQueueListSucceeded', callQueueList)
-                    if (selectedId !== null) {
-                        context.commit('expandCallQueue', callQueueList)
-                        context.commit('highlightCallQueue', callQueueList)
-                    }
-                    resolve()
-                }).catch(() => {
-                    resolve()
-                    context.commit('callQueueListSucceeded')
-                })
-            })
+        async loadCallQueueList (context, options) {
+            const listVisible = _.get(options, 'listVisible', false)
+            const selectedId = _.get(options, 'selectedId', null)
+            context.commit('callQueueListRequesting', { listVisible })
+            try {
+                const callQueueList = await getCallQueueList()
+                context.commit('callQueueListSucceeded', callQueueList)
+                if (selectedId !== null) {
+                    context.commit('expandCallQueue', callQueueList)
+                    context.commit('highlightCallQueue', callQueueList)
+                }
+            } catch (err) {
+                context.commit('callQueueListFailed', err.message)
+            }
         },
         createCallQueue (context, callQueueData) {
             context.commit('callQueueCreationRequesting', callQueueData)

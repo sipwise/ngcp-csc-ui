@@ -67,6 +67,7 @@ import {
     callIconColor
 } from 'src/helpers/call-utils'
 import { showGlobalError } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
 import { mapWaitingActions } from 'vue-wait'
 import { mapGetters, mapState } from 'vuex'
 export default {
@@ -93,6 +94,10 @@ export default {
         ...mapState('call', [
             'callEnabled'
         ]),
+        ...mapState('conversations', [
+            'downloadVoiceMailState',
+            'downloadVoiceMailError'
+        ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute'
         ]),
@@ -111,6 +116,11 @@ export default {
             } catch (err) {
                 this.registeredDevicesError = true
                 showGlobalError(err.message)
+            }
+        },
+        downloadVoiceMailState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.downloadVoiceMailError)
             }
         }
     },

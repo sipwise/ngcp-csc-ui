@@ -20,6 +20,7 @@ export default {
     state: {
         groupListState: RequestState.initiated,
         groupListVisibility: 'visible',
+        groupListError: null,
         groupListItems: [],
         groupListCurrentPage: 1,
         groupListLastPage: null,
@@ -187,8 +188,9 @@ export default {
                 state.groupListVisibility = 'visible'
             }
         },
-        groupListItemsFailed (state) {
+        groupListItemsFailed (state, err) {
             state.groupListState = RequestState.failed
+            state.groupListError = err
         },
         groupCreationRequesting (state, group) {
             state.groupCreationState = CreationState.creating
@@ -261,33 +263,25 @@ export default {
         }
     },
     actions: {
-        loadGroupListItems (context, options) {
-            return new Promise((resolve, reject) => {
-                const page = _.get(options, 'page', context.state.groupListCurrentPage)
-                const filters = _.get(options, 'filters', {})
-                const clearList = _.get(options, 'clearList', true)
-                context.commit('groupListItemsRequesting', {
-                    clearList
+        async loadGroupListItems (context, options) {
+            const page = _.get(options, 'page', context.state.groupListCurrentPage)
+            const filters = _.get(options, 'filters', {})
+            const clearList = _.get(options, 'clearList', true)
+            context.commit('groupListItemsRequesting', { clearList })
+            try {
+                const groupList = await getGroupList({ page, filters })
+                context.commit('pbx/pilotSucceeded', groupList.pilot, { root: true })
+                context.commit('pbx/numbersSucceeded', groupList.numbers, { root: true })
+                context.commit('pbx/soundSetsSucceeded', groupList.soundSets, { root: true })
+                context.commit('pbx/seatsSucceeded', groupList.seats, { root: true })
+                context.commit('groupListItemsSucceeded', {
+                    groups: groupList.groups,
+                    preferences: groupList.preferences,
+                    page
                 })
-                getGroupList({
-                    page,
-                    filters
-                }).then((groupList) => {
-                    context.commit('pbx/pilotSucceeded', groupList.pilot, { root: true })
-                    context.commit('pbx/numbersSucceeded', groupList.numbers, { root: true })
-                    context.commit('pbx/soundSetsSucceeded', groupList.soundSets, { root: true })
-                    context.commit('pbx/seatsSucceeded', groupList.seats, { root: true })
-                    context.commit('groupListItemsSucceeded', {
-                        groups: groupList.groups,
-                        preferences: groupList.preferences,
-                        page
-                    })
-                    resolve()
-                }).catch((err) => {
-                    context.commit('groupListItemsFailed', err.message)
-                    reject(err)
-                })
-            })
+            } catch (err) {
+                context.commit('groupListItemsFailed', err.message)
+            }
         },
         createGroup (context, groupData) {
             context.commit('groupCreationRequesting', groupData)

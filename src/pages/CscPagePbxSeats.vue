@@ -159,7 +159,9 @@ export default {
             'seatRemoving',
             'seatRemovalState',
             'seatRemovalError',
-            'seatListVisibility'
+            'seatListVisibility',
+            'seatListState',
+            'seatListError'
         ]),
         ...mapGetters('pbx', [
             'getNumberOptions',
@@ -206,6 +208,11 @@ export default {
                 showToast(this.getSeatRemovalToastMessage)
             } else if (state === RequestState.failed) {
                 showGlobalError(this.seatRemovalError)
+            }
+        },
+        seatListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.seatListError)
             }
         }
     },

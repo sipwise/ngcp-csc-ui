@@ -50,6 +50,7 @@ export default {
         busyGreetingUploadProgress: 0,
         busyGreetingDeletionState: RequestState.initiated,
         busyGreetingDeletionError: null,
+        busyGreetingLoadError: null,
 
         unavailableGreetingId: null,
         unavailableGreetingUrl: null,
@@ -59,6 +60,7 @@ export default {
         unavailableGreetingUploadProgress: 0,
         unavailableGreetingDeletionState: RequestState.initiated,
         unavailableGreetingDeletionError: null,
+        unavailableGreetingLoadError: null,
 
         uploadCancelActions: {},
 
@@ -70,6 +72,7 @@ export default {
         tempGreetingUploadProgress: 0,
         tempGreetingDeletionState: RequestState.initiated,
         tempGreetingDeletionError: null,
+        tempGreetingLoadError: null,
 
         greetGreetingId: null,
         greetGreetingUrl: null,
@@ -78,7 +81,8 @@ export default {
         greetGreetingUploadError: null,
         greetGreetingUploadProgress: 0,
         greetGreetingDeletionState: RequestState.initiated,
-        greetGreetingDeletionError: null
+        greetGreetingDeletionError: null,
+        greetGreetingLoadError: null
     },
     getters: {
         subscriberId (state, getters, rootState, rootGetters) {
@@ -296,9 +300,10 @@ export default {
             state.busyGreetingLoadState = RequestState.succeeded
             state.busyGreetingUrl = url
         },
-        busyGreetingPlayFailed (state) {
+        busyGreetingPlayFailed (state, err) {
             state.busyGreetingLoadState = RequestState.failed
             state.busyGreetingUrl = null
+            state.busyGreetingLoadError = err
         },
         busyGreetingDeletionRequesting (state) {
             state.busyGreetingDeletionState = RequestState.requesting
@@ -342,9 +347,10 @@ export default {
             state.unavailableGreetingLoadState = RequestState.succeeded
             state.unavailableGreetingUrl = url
         },
-        unavailableGreetingPlayFailed (state) {
+        unavailableGreetingPlayFailed (state, err) {
             state.unavailableGreetingLoadState = RequestState.failed
             state.unavailableGreetingUrl = null
+            state.unavailableGreetingLoadError = err
         },
         unavailableGreetingDeletionRequesting (state) {
             state.unavailableGreetingDeletionState = RequestState.requesting
@@ -390,9 +396,10 @@ export default {
             state.tempGreetingLoadState = RequestState.succeeded
             state.tempGreetingUrl = url
         },
-        tempGreetingPlayFailed (state) {
+        tempGreetingPlayFailed (state, err) {
             state.tempGreetingLoadState = RequestState.failed
             state.tempGreetingUrl = null
+            state.tempGreetingLoadError = err
         },
         tempGreetingDeletionRequesting (state) {
             state.tempGreetingDeletionState = RequestState.requesting
@@ -435,9 +442,10 @@ export default {
             state.greetGreetingLoadState = RequestState.succeeded
             state.greetGreetingUrl = url
         },
-        greetGreetingPlayFailed (state) {
-            state.tgreetGreetingLoadState = RequestState.failed
+        greetGreetingPlayFailed (state, err) {
+            state.greetGreetingLoadState = RequestState.failed
             state.greetGreetingUrl = null
+            state.greetGreetingLoadError = err
         },
         greetGreetingDeletionRequesting (state) {
             state.greetGreetingDeletionState = RequestState.requesting

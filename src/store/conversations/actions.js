@@ -28,14 +28,14 @@ const ReloadConfig = {
 export default {
     async loadConversations ({ commit, dispatch, state, rootGetters }, options) {
         try {
+            commit('loadConversationsRequesting')
             const list = await getConversations({
                 ...options
             })
-            commit('setConversations', list.items)
+            commit('loadConversationsSucceeded', list.items)
             return list.totalCount
         } catch (err) {
-            commit('setConversations', [])
-            throw err
+            commit('loadConversationsFailed', err.message)
         }
     },
     reloadItems (context, options) {
@@ -75,7 +75,7 @@ export default {
         downloadVoiceMail(id).then(() => {
             context.commit('downloadVoiceMailSucceeded')
         }).catch((err) => {
-            context.commit('downloadVoiceMailFailed', err.response.data.message)
+            context.commit('downloadVoiceMailFailed', err.message)
         })
     },
     downloadFax (context, id) {
@@ -83,7 +83,7 @@ export default {
         downloadFax(id).then(() => {
             context.commit('downloadFaxSucceeded')
         }).catch((err) => {
-            context.commit('downloadFaxFailed', err.response.data.message)
+            context.commit('downloadFaxFailed', err.message)
         })
     },
     playVoiceMail (context, options) {
@@ -94,7 +94,10 @@ export default {
                 url
             })
         }).catch((err) => {
-            context.commit('playVoiceMailFailed', options.id, err.mesage)
+            context.commit('playVoiceMailFailed', {
+                id: options.id,
+                error: err.message
+            })
         })
     },
     async nextPage (context, options) {

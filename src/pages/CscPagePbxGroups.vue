@@ -187,7 +187,9 @@ export default {
             'groupRemoving',
             'groupRemovalState',
             'groupRemovalError',
-            'groupListVisibility'
+            'groupListVisibility',
+            'groupListState',
+            'groupListError'
         ]),
         ...mapGetters('pbx', [
             'getNumberOptions',
@@ -230,6 +232,11 @@ export default {
                 showToast(this.getGroupRemovalToastMessage)
             } else if (state === RequestState.failed) {
                 showGlobalError(this.groupRemovalError)
+            }
+        },
+        groupListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.groupListError)
             }
         }
     },

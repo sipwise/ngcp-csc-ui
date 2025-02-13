@@ -242,7 +242,9 @@ export default {
             'devicePreferencesUpdateError',
             'deviceUpdateState',
             'devicePreferencesUpdateState',
-            'devicePreferencesSelected'
+            'devicePreferencesSelected',
+            'devicePreferencesListState',
+            'devicePreferencesError'
         ]),
         ...mapState('pbx', [
             'deviceProfileList',
@@ -250,7 +252,9 @@ export default {
             'deviceModelImageMap',
             'deviceModelMap',
             'subscriberList',
-            'subscriberMap'
+            'subscriberMap',
+            'subcriberListState',
+            'subcriberListError'
         ]),
         ...mapGetters('pbx', [
             'getSubscriberOptions',
@@ -334,6 +338,16 @@ export default {
                 showToast(this.getDevicePreferencesUpdateToastMessage)
             } else if (state === RequestState.failed) {
                 showGlobalError(this.devicePreferencesUpdateError)
+            }
+        },
+        devicePreferencesListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.devicePreferencesError)
+            }
+        },
+        subcriberListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.subcriberListError)
             }
         }
     },

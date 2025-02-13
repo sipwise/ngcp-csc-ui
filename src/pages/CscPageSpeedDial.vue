@@ -102,7 +102,8 @@ import {
     showGlobalError,
     showToast
 } from 'src/helpers/ui'
-import { mapGetters } from 'vuex'
+import { RequestState } from 'src/store/common'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
     name: 'CscPageSpeedDial',
@@ -131,17 +132,33 @@ export default {
             'assignSlotError',
             'lastAssignedSlot',
             'isAdding'
+        ]),
+        ...mapState('speedDial', [
+            'speedDialLoadingState',
+            'speedDialLoadingError',
+            'unassignSlotState',
+            'unassignSlotError'
         ])
     },
     watch: {
         assignSlotState (state) {
-            if (state === 'failed') {
+            if (state === RequestState.failed) {
                 showGlobalError(this.assignSlotError)
             } else if (state === 'succeeded') {
                 this.$refs.addForm.cancel()
                 showToast(this.$t('Assigned slot {slot}', {
                     slot: this.lastAssignedSlot
                 }))
+            }
+        },
+        speedDialLoadingState () {
+            if (this.speedDialLoadingState === RequestState.failed) {
+                showGlobalError(this.speedDialLoadingError)
+            }
+        },
+        unassignSlotState () {
+            if (this.unassignSlotState === RequestState.failed) {
+                showGlobalError(this.unassignSlotError)
             }
         }
     },

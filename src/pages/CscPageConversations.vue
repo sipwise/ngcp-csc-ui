@@ -118,7 +118,9 @@ import CscConversationItem from 'components/pages/Conversations/CscConversationI
 import CscConversationsCallsFilter from 'components/pages/Conversations/CscConversationsCallsFilter'
 import CscConversationsFilter from 'components/pages/Conversations/CscConversationsFilter'
 import { LICENSES } from 'src/constants'
+import { showGlobalError } from 'src/helpers/ui'
 import platformMixin from 'src/mixins/platform'
+import { RequestState } from 'src/store/common'
 import { mapWaitingActions } from 'vue-wait'
 import {
     mapGetters, mapMutations,
@@ -151,7 +153,19 @@ export default {
             'isLicenseActive'
         ]),
         ...mapState('conversations', [
-            'reachedLastPage'
+            'reachedLastPage',
+            'downloadVoiceMailState',
+            'downloadVoiceMailError',
+            'downloadFaxState',
+            'downloadFaxError',
+            'blockedIncomingState',
+            'blockedIncomingError',
+            'blockedOutgoingState',
+            'blockedOutgoingError',
+            'toggleBlockedState',
+            'toggleBlockedError',
+            'deletionState',
+            'deletionError'
         ]),
         ...mapGetters('conversations', [
             'items',
@@ -230,6 +244,38 @@ export default {
         },
         listLoading () {
             return this.$wait.is('csc-conversations')
+        }
+    },
+    watch: {
+        downloadVoiceMailState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.downloadVoiceMailError)
+            }
+        },
+        downloadFaxState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.downloadFaxError)
+            }
+        },
+        blockedIncomingState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.blockedIncomingError)
+            }
+        },
+        blockedOutgoingState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.blockedOutgoingError)
+            }
+        },
+        toggleBlockedState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.toggleBlockedError)
+            }
+        },
+        deletionState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deletionError)
+            }
         }
     },
     async mounted () {

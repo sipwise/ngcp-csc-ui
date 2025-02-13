@@ -77,6 +77,8 @@ import CscSpinner from 'components/CscSpinner'
 import CscCdrFilters from 'components/pages/PbxStatistics/CscCdrFilters'
 import _ from 'lodash'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { showGlobalError } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
 import { mapWaitingActions } from 'vue-wait'
 import { mapState } from 'vuex'
 export default {
@@ -107,7 +109,9 @@ export default {
     },
     computed: {
         ...mapState('conversations', [
-            'conversations'
+            'conversations',
+            'conversationError',
+            'conversationState'
         ]),
         columns () {
             return [
@@ -168,6 +172,13 @@ export default {
                     sortable: true
                 }
             ]
+        }
+    },
+    watch: {
+        conversationState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.conversationError)
+            }
         }
     },
     async mounted () {
