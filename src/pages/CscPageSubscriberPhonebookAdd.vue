@@ -41,9 +41,9 @@
                 <q-input
                     v-model="formData.number"
                     :label="$t('Number')"
-                    :error="v$.formData.number.$errors.length > 0"
+                    :error="numberError"
                     :error-message="numberErrorMessage"
-                    @update:model-value="v$.formData.number.$touch()"
+                    @update:model-value="numberUpdated()"
                 />
                 <q-toggle
                     v-model="formData.shared"
@@ -62,6 +62,7 @@
             <q-btn
                 icon="check"
                 :label="$t('Confirm')"
+                :disable="disableSaveButton()"
                 unelevated
                 text-color="primary"
                 @click="confirm"
@@ -92,7 +93,9 @@ export default {
     data () {
         return {
             formData: this.getDefaultFormData(),
-            v$: useValidate()
+            v$: useValidate(),
+            numberErrorMessage: '',
+            numberError: false
         }
     },
     computed: {
@@ -101,15 +104,6 @@ export default {
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Name')
-                })
-            }
-            return ''
-        },
-        numberErrorMessage () {
-            const errorsTab = this.v$.formData.number.$errors
-            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
-                return this.$t('{field} is required', {
-                    field: this.$t('Number')
                 })
             }
             return ''
@@ -126,13 +120,39 @@ export default {
                 shared: false
             }
         },
+        disableSaveButton () {
+            return this.v$.formData.$invalid
+        },
+        numberUpdated () {
+            this.v$.formData.number.$touch()
+            const errorsTab = this.v$.formData.number.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
+                this.numberErrorMessage = this.$t('{field} is required', {
+                    field: this.$t('Number')
+                })
+                this.numberError = true
+            } else {
+                this.numberErrorMessage = ''
+                this.numberError = false
+            }
+        },
         cancel () {
             this.$router.push('/user/subscriber-phonebook/')
             this.$emit('cancel')
         },
         async confirm () {
-            await this.createPhonebookSubscriber(this.formData)
-            await this.$router.push('/user/subscriber-phonebook/')
+            try {
+                await this.createPhonebookSubscriber(this.formData)
+                await this.$router.push('/user/subscriber-phonebook/')
+            } catch (error) {
+                if (error.response && error.response.status === 422) {
+                    this.numberError = true
+                    this.numberErrorMessage = this.$t('This number is already in use.')
+                } else {
+                    // eslint-disable-next-line no-console
+                    console.error('An error occurred:', error)
+                }
+            }
         }
     }
 }
