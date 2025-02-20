@@ -43,7 +43,7 @@
                     :label="$t('Number')"
                     :error="numberError"
                     :error-message="numberErrorMessage"
-                    @update:model-value="v$.formData.number.$touch()"
+                    @update:model-value="numberUpdated()"
                 />
             </q-list>
         </q-item>
@@ -58,6 +58,7 @@
             <q-btn
                 icon="check"
                 :label="$t('Confirm')"
+                :disable="disableSaveButton()"
                 unelevated
                 text-color="primary"
                 @click="confirm"
@@ -70,6 +71,7 @@ import { required } from 'vuelidate/lib/validators'
 import { mapWaitingActions } from 'vue-wait'
 import CscPageSticky from 'components/CscPageSticky'
 import useValidate from '@vuelidate/core'
+import { showGlobalError } from 'src/helpers/ui'
 export default {
     name: 'CscPageCustomerPhonebookAdd',
     components: {
@@ -119,6 +121,22 @@ export default {
             this.$router.push('/user/pbx-configuration/customer-phonebook/')
             this.$emit('cancel')
         },
+        disableSaveButton () {
+            return this.v$.formData.$invalid
+        },
+        numberUpdated () {
+            this.v$.formData.number.$touch()
+            const errorsTab = this.v$.formData.number.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
+                this.numberErrorMessage = this.$t('{field} is required', {
+                    field: this.$t('Number')
+                })
+                this.numberError = true
+            } else {
+                this.numberErrorMessage = ''
+                this.numberError = false
+            }
+        },
         async confirm () {
             try {
                 await this.createPhonebookCustomer(this.formData)
@@ -128,7 +146,7 @@ export default {
                     this.numberError = true
                     this.numberErrorMessage = this.$t('This number is already in use.')
                 } else {
-                    console.error('An error occurred:', error)
+                    showGlobalError(this.$t('An error occurred:', error.response.data.message))
                 }
             }
         }
