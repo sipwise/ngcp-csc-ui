@@ -1,4 +1,5 @@
 'use strict'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
     RequestState
@@ -340,6 +341,9 @@ export default {
                 await this.$router.push({ name: 'dashboard' })
             } catch (err) {
                 context.commit('loginFailed', err.message)
+                if (err.message === 'Banned') {
+                    context.commit('loginFailed', i18n.global.t('There is a problem with your account, please contact support'))
+                }
             }
         },
         logout () {

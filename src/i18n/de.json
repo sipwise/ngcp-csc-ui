@@ -520,7 +520,7 @@
     "The Destination Email is already used": "Die Ziel-E-Mail-Adresse wird bereits verwendet",
     "The Notify Email is already used": "Diese E-Mail-Adresse wird bereits zur Benachrichtigung verwendet",
     "There are no ACLs yet": "Es wurden noch keine ACLs erstellt",
-    "There are no Key Renew Notify Emails yet": "Es wurden noch keine E-Mail-Adressen zum Senden von Benachrichtigungen zur Schlüsselerneuerung eingetragen",
+    "There is a problem with your account, please contact support": "Es gibt ein Problem mit deinem Konto, bitte kontaktiere den Support",
     "There was an error, please retry later": "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut",
     "This number is already in use.": "This number is already in use.",
     "Thursday": "Donnerstag",
