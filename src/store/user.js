@@ -1,4 +1,5 @@
 'use strict'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import QRCode from 'qrcode'
 import { date } from 'quasar'
@@ -353,6 +354,8 @@ export default {
                 context.commit('loginFailed', err.message)
                 if (err.message === 'Password expired') {
                     this.$router.push({ path: PATH_CHANGE_PASSWORD })
+                } else if (err.message === 'Banned') {
+                    context.commit('loginFailed', i18n.global.t('There is a problem with your account, please contact support'))
                 }
             }
         },
