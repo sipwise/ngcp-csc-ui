@@ -38,13 +38,13 @@
             />
         </template>
 
-        <q-item
+        <div
             v-if="selectedTab === 'preferences'"
-            class="col col-xs-12 col-md-6"
+            class="col-12 column"
         >
-            <q-list
+            <div
                 v-if="changes"
-                class="col-xs-12 col-md-6 q-mr-xl"
+                class="col-12 col-md-6 q-pa-lg"
                 side
                 top
             >
@@ -104,13 +104,6 @@
                         />
                     </template>
                 </csc-pbx-model-select>
-            </q-list>
-            <q-list
-                v-if="changes"
-                class="col-xs-12 col-md-5 q-mr-xl"
-                side
-                top
-            >
                 <q-input
                     v-model="changes.admin_name"
                     :label="$t('Admin name')"
@@ -129,32 +122,36 @@
                         />
                     </template>
                 </q-input>
-                <q-toggle
-                    v-model="changes.web_gui_dis"
-                    class="q-pa-sm"
-                    :label="$t('Disable phone web interface')"
-                    :disable="isLoadingPreferences"
-                    @update:model-value="changeGui"
-                />
-                <q-toggle
-                    v-model="changes.user_conf_priority"
-                    class="q-pa-sm"
-                    :label="$t('User config priority over provisioning')"
-                    :disable="isLoadingPreferences"
-                    @update:model-value="changeUserConfig"
-                />
-                <q-toggle
-                    v-model="changes.FW_upg_dis"
-                    class="q-pa-sm"
-                    :label="$t('FW Upgrade disable')"
-                    :disable="isLoadingPreferences"
-                    @update:model-value="changeFW"
-                />
-            </q-list>
-            <q-list
-                v-if="changes"
-                class="col-xs-12 col-md-16 q-mr-xl"
-            >
+
+                <q-list>
+                    <q-item class="q-pb-sm q-mt-md">
+                        <q-toggle
+                            v-model="changes.web_gui_dis"
+                            :label="$t('Disable phone web interface')"
+                            :disable="isLoadingPreferences"
+                            @update:model-value="changeGui"
+                        />
+                    </q-item>
+                    <q-item class="q-pb-sm">
+                        <q-toggle
+                            v-model="changes.user_conf_priority"
+                            :label="$t('User config priority over provisioning')"
+                            :disable="isLoadingPreferences"
+                            @update:model-value="changeUserConfig"
+                        />
+                    </q-item>
+                    <q-item class="q-pb-sm">
+                        <q-toggle
+                            v-model="changes.FW_upg_dis"
+                            :label="$t('FW Upgrade disable')"
+                            :disable="isLoadingPreferences"
+                            @update:model-value="changeFW"
+                        />
+                    </q-item>
+                </q-list>
+            </div>
+
+            <div class="col-12 col-md-6 q-pa-lg">
                 <csc-pbx-device-config
                     v-if="deviceModelImageMap[deviceProfileMap[deviceSelected.profile_id].device_id]"
                     :device="deviceSelected"
@@ -166,8 +163,8 @@
                     :device-preferences="true"
                     @keysChanged="keysSave"
                 />
-            </q-list>
-        </q-item>
+            </div>
+        </div>
     </csc-page-sticky-tabs>
 </template>
 
