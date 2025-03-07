@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.2.1.2+0~mr13.2.1.2) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [103864c] MT#62251 Device Alignment Image Bugfix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 07 Mar 2025 09:00:30 +0100
+
 ngcp-csc-ui (13.2.1.1+0~mr13.2.1.1) unstable; urgency=medium
 
   [ Debora Crescenzo ]
