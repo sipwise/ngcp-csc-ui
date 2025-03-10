@@ -102,7 +102,7 @@
                         <q-toggle
                             v-model="changes.musicOnHold"
                             class="q-pa-sm"
-                            :label="$t('Music on hold')"
+                            :label="$t('Music on Hold')"
                             :disable="loading"
                             @update:model-value="changeMusicOnHold"
                         />

@@ -143,7 +143,7 @@
                     <q-item class="q-pb-sm">
                         <q-toggle
                             v-model="changes.FW_upg_dis"
-                            :label="$t('FW Upgrade disable')"
+                            :label="$t('Firmware Upgrade disable')"
                             :disable="isLoadingPreferences"
                             @update:model-value="changeFW"
                         />
