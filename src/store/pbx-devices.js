@@ -401,7 +401,7 @@ export default {
         setFW (context, options) {
             context.commit('devicePreferencesUpdateRequesting', {
                 deviceId: options.deviceId,
-                devicePreferencesField: i18n.global.tc('FW Upgrade disable')
+                devicePreferencesField: i18n.global.t('Firmware Upgrade disable')
             })
             setPreferenceDevice(options.deviceId, options.FWupg, 'FW_upg_dis').then((device) => {
                 context.commit('devicePreferencesUpdateSucceeded', device)
