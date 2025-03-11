@@ -1,3 +1,16 @@
+ngcp-csc-ui (12.5.1.23+0~mr12.5.1.23) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [682baf5] MT#62145 Fix error handling in CscPageCustomerPhonebookAdd and in CscPageSubscriberPhonebookAdd
+
+  [ nidrissi-zouggari ]
+  * [e7072a9] MT#62117 Handle ban error
+
+  [ Debora Crescenzo ]
+  * [54fcbb2] MT#62324 Improve PBX translations
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 11 Mar 2025 12:50:09 +0100
+
 ngcp-csc-ui (12.5.1.22+0~mr12.5.1.22) unstable; urgency=medium
 
   [ Debora Crescenzo ]
