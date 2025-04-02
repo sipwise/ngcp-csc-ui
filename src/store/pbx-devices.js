@@ -30,7 +30,7 @@ export default {
         deviceListLastPage: null,
         deviceListState: RequestState.initiated,
         deviceListVisibility: 'visible',
-        deviceMap: {},
+        deviceMapById: {},
         devicePreferencesListItems: [],
         devicePreferencesListState: RequestState.initiated,
         devicePreferencesMap: {},
@@ -69,6 +69,9 @@ export default {
         },
         getDevicePreferencesUpdatingName (state) {
             return _.get(state, 'devicePreferencesUpdating.admin_name', '')
+        },
+        getDevicePreferencesUpdatingPassword (state) {
+            return _.get(state, 'devicePreferencesUpdating.admin_pass', '')
         },
         getDeviceRemoveDialogMessage (state, getters) {
             if (getters.isDeviceRemoving) {
@@ -113,6 +116,9 @@ export default {
         isDeviceListEmpty (state) {
             return Array.isArray(state.deviceListItems) && state.deviceListItems.length === 0
         },
+        isDeviceMapByIdEmpty (state) {
+            return Object.keys(state.deviceMapById).length === 0
+        },
         isDeviceListPaginationActive (state, getters) {
             const requesting = !getters.isDeviceListRequesting || getters.isDeviceCreating ||
                 getters.isDeviceRemoving || getters.isDeviceUpdating
@@ -154,7 +160,7 @@ export default {
             if (clearList) {
                 state.deviceListVisibility = 'hidden'
                 state.deviceListItems = []
-                state.deviceMap = {}
+                state.deviceMapById = {}
             } else {
                 state.deviceListVisibility = 'visible'
             }
@@ -164,9 +170,9 @@ export default {
             state.deviceListCurrentPage = _.get(options, 'page', 1)
             state.deviceListItems = _.get(options, 'devices.items', [])
             state.deviceListLastPage = _.get(options, 'devices.lastPage', 1)
-            state.deviceMap = {}
+            state.deviceMapById = {}
             state.deviceListItems.forEach((device) => {
-                state.deviceMap[device.id] = device
+                state.deviceMapById[device.id] = device
             })
             state.deviceListVisibility = 'visible'
         },
@@ -196,7 +202,7 @@ export default {
             state.deviceCreationError = err
         },
         deviceUpdateRequesting (state, options) {
-            state.deviceUpdating = state.deviceMap[options.deviceId]
+            state.deviceUpdating = state.deviceMapById[options.deviceId]
             state.deviceUpdatingField = options.deviceField
             state.deviceUpdateState = RequestState.requesting
         },
@@ -207,8 +213,8 @@ export default {
         },
         deviceUpdateSucceeded (state, device) {
             state.deviceUpdateState = RequestState.succeeded
-            delete state.deviceMap[device.id]
-            state.deviceMap[device.id] = device
+            delete state.deviceMapById[device.id]
+            state.deviceMapById[device.id] = device
             for (let i = 0; i < state.deviceListItems.length; i++) {
                 if (state.deviceListItems[i].id === device.id) {
                     state.deviceListItems[i] = device
@@ -243,7 +249,7 @@ export default {
         },
         deviceRemovalRequesting (state, id) {
             state.deviceRemovalState = RequestState.requesting
-            state.deviceRemoving = state.deviceMap[id]
+            state.deviceRemoving = state.deviceMapById[id]
         },
         deviceRemovalCanceled (state) {
             state.deviceRemovalState = RequestState.initiated
@@ -257,7 +263,7 @@ export default {
             state.deviceRemovalError = err
         },
         expandDevice (state, deviceId) {
-            state.deviceSelected = state.deviceMap[deviceId]
+            state.deviceSelected = state.deviceMapById[deviceId]
         },
         expandDevicePreferences (state, devicePreferencesId) {
             state.devicePreferencesSelected = state.devicePreferencesMap[devicePreferencesId]
@@ -393,6 +399,17 @@ export default {
                 devicePreferencesField: i18n.global.tc('Admin name')
             })
             setPreferenceDevice(options.deviceId, options.adminName, 'admin_name').then((device) => {
+                context.commit('devicePreferencesUpdateSucceeded', device)
+            }).catch((err) => {
+                context.commit('devicePreferencesUpdateFailed', err.message)
+            })
+        },
+        setAdminPassword (context, options) {
+            context.commit('devicePreferencesUpdateRequesting', {
+                deviceId: options.deviceId,
+                devicePreferencesField: i18n.global.t('Admin password')
+            })
+            setPreferenceDevice(options.deviceId, options.adminPassword, 'admin_pass').then((device) => {
                 context.commit('devicePreferencesUpdateSucceeded', device)
             }).catch((err) => {
                 context.commit('devicePreferencesUpdateFailed', err.message)

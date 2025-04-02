@@ -123,6 +123,25 @@
                     </template>
                 </q-input>
 
+                <q-input
+                    v-model="changes.admin_pass"
+                    :label="$t('Admin password')"
+                    :disable="isLoadingPreferences"
+                    @keyup.enter="save"
+                >
+                    <template
+                        v-if="hasAdminPasswordChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetAdminPassword"
+                        />
+                    </template>
+                </q-input>
+
                 <q-list>
                     <q-item class="q-pb-sm q-mt-md">
                         <q-toggle
@@ -153,7 +172,7 @@
 
             <div class="col-12 col-md-6 q-pa-lg">
                 <csc-pbx-device-config
-                    v-if="deviceModelImageMap[deviceProfileMap[deviceSelected.profile_id].device_id]"
+                    v-if="deviceSelected && deviceModelImageMap[deviceProfileMap[deviceSelected?.profile_id].device_id]"
                     :device="deviceSelected"
                     :model="deviceModelMap[deviceProfileMap[deviceSelected.profile_id].device_id]"
                     :model-image="deviceModelImageMap[deviceProfileMap[deviceSelected.profile_id].device_id]"
@@ -169,12 +188,13 @@
 </template>
 
 <script>
+import useValidate from '@vuelidate/core'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscPbxDeviceConfig from 'components/pages/PbxConfiguration/CscPbxDeviceConfig'
 import CscPbxModelSelect from 'components/pages/PbxConfiguration/CscPbxModelSelect'
-import useValidate from '@vuelidate/core'
+import { showGlobalError, showToast } from 'src/helpers/ui'
 import {
     mapActions,
     mapGetters,
@@ -182,10 +202,6 @@ import {
     mapState
 } from 'vuex'
 import { RequestState } from 'src/store/common'
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
 export default {
     name: 'CscPagePbxDeviceDetails',
     components: {
@@ -250,19 +266,19 @@ export default {
             ]
         },
         isLoading () {
-            return this.isDeviceLoading(this.deviceSelected.id)
+            return this.isDeviceLoading(this.deviceSelected?.id)
         },
         isLoadingPreferences () {
-            return this.isDevicePreferencesLoading(this.devicePreferencesSelected.id)
+            return this.isDevicePreferencesLoading(this.devicePreferencesSelected?.id)
         },
         hasStationNameChanged () {
-            return this.changes.station_name !== this.deviceSelected.station_name
+            return this.changes.station_name !== this.deviceSelected?.station_name
         },
         hasIdentifierChanged () {
-            return this.changes.identifier !== this.deviceSelected.identifier
+            return this.changes.identifier !== this.deviceSelected?.identifier
         },
         hasProfileChanged () {
-            return this.changes.profile_id !== this.deviceSelected.profile_id
+            return this.changes.profile_id !== this.deviceSelected?.profile_id
         },
         imageUrl () {
             if (this.modelImage && this.modelImage.url) {
@@ -271,10 +287,19 @@ export default {
             return null
         },
         hasAdminNameChanged () {
-            return this.changes.admin_name !== this.devicePreferencesSelected.admin_name
+            return this.changes.admin_name !== this.devicePreferencesSelected?.admin_name
+        },
+        hasAdminPasswordChanged () {
+            return this.changes.admin_pass !== this.devicePreferencesSelected?.admin_pass
         }
     },
     watch: {
+        async $route (to) {
+            if (this.id !== to.params.id) {
+                this.id = to.params.id
+                this.expandDevice(this.id)
+            }
+        },
         deviceSelected () {
             this.changes = this.getDeviceData()
         },
@@ -293,10 +318,14 @@ export default {
             }
         }
     },
-    mounted () {
+    async created () {
+        await this.loadDeviceListItems()
+        if (this.isDeviceMapByIdEmpty) {
+            await this.loadDeviceListItems()
+        }
         this.expandDevice(this.id)
         this.expandDevicePreferences(this.id)
-        this.loadSubscribers()
+        await this.loadSubscribers()
     },
     methods: {
         ...mapMutations('pbxDevices', [
@@ -304,11 +333,13 @@ export default {
             'expandDevicePreferences'
         ]),
         ...mapActions('pbxDevices', [
+            'loadDeviceListItems',
             'setDeviceKeys',
             'setDeviceStationName',
             'setDeviceIdentifier',
             'setDeviceProfile',
             'setAdminName',
+            'setAdminPassword',
             'setGui',
             'setUserConfig',
             'setFW'
@@ -323,6 +354,7 @@ export default {
                     identifier: this.deviceSelected.identifier,
                     profile_id: this.deviceSelected.profile_id,
                     admin_name: this.devicePreferencesSelected.admin_name ? this.devicePreferencesSelected.admin_name : undefined,
+                    admin_pass: this.devicePreferencesSelected.admin_pass ? this.devicePreferencesSelected.admin_pass : undefined,
                     web_gui_dis: this.devicePreferencesSelected.web_gui_dis ? this.devicePreferencesSelected.web_gui_dis : false,
                     user_conf_priority: this.devicePreferencesSelected.user_conf_priority ? this.devicePreferencesSelected.user_conf_priority : false,
                     FW_upg_dis: this.devicePreferencesSelected.FW_upg_dis ? this.devicePreferencesSelected.FW_upg_dis : false
@@ -330,19 +362,22 @@ export default {
                 : null
         },
         resetStationName () {
-            this.changes.station_name = this.deviceSelected.station_name
+            this.changes.station_name = this.deviceSelected?.station_name
         },
         resetIdentifier () {
-            this.changes.identifier = this.deviceSelected.identifier
+            this.changes.identifier = this.deviceSelected?.identifier
         },
         resetAdminName () {
-            this.changes.admin_name = this.devicePreferencesSelected.admin_name
+            this.changes.admin_name = this.devicePreferencesSelected?.admin_name
+        },
+        resetAdminPassword () {
+            this.changes.admin_pass = this.devicePreferencesSelected?.admin_pass
         },
         selectedProfile (profileId) {
             this.changes.profile_id = profileId
         },
         resetProfile () {
-            this.changes.profile_id = this.deviceSelected.profile_id
+            this.changes.profile_id = this.deviceSelected?.profile_id
         },
         selectTab (tabName) {
             if (this.selectedTab !== tabName) {
@@ -354,51 +389,57 @@ export default {
         },
         keysSave (keys) {
             this.setDeviceKeys({
-                deviceId: this.deviceSelected.id,
-                keys: keys
+                deviceId: this.deviceSelected?.id,
+                keys
             })
         },
         save () {
             if (this.hasStationNameChanged) {
                 this.setDeviceStationName({
-                    deviceId: this.deviceSelected.id,
+                    deviceId: this.deviceSelected?.id,
                     stationName: this.changes.station_name
                 })
             }
             if (this.hasIdentifierChanged) {
                 this.setDeviceIdentifier({
-                    deviceId: this.deviceSelected.id,
+                    deviceId: this.deviceSelected?.id,
                     identifier: this.changes.identifier
                 })
             }
             if (this.hasProfileChanged) {
                 this.setDeviceProfile({
-                    deviceId: this.deviceSelected.id,
+                    deviceId: this.deviceSelected?.id,
                     profileId: this.changes.profile_id
                 })
             }
             if (this.hasAdminNameChanged) {
                 this.setAdminName({
-                    deviceId: this.devicePreferencesSelected.id,
+                    deviceId: this.devicePreferencesSelected?.id,
                     adminName: this.changes.admin_name
+                })
+            }
+            if (this.hasAdminPasswordChanged) {
+                this.setAdminPassword({
+                    deviceId: this.devicePreferencesSelected?.id,
+                    adminPassword: this.changes.admin_pass
                 })
             }
         },
         changeGui () {
             this.setGui({
-                deviceId: this.devicePreferencesSelected.id,
+                deviceId: this.devicePreferencesSelected?.id,
                 webGui: this.changes.web_gui_dis
             })
         },
         changeUserConfig () {
             this.setUserConfig({
-                deviceId: this.devicePreferencesSelected.id,
+                deviceId: this.devicePreferencesSelected?.id,
                 userConf: this.changes.user_conf_priority
             })
         },
         changeFW () {
             this.setFW({
-                deviceId: this.devicePreferencesSelected.id,
+                deviceId: this.devicePreferencesSelected?.id,
                 FWupg: this.changes.FW_upg_dis
             })
         }
