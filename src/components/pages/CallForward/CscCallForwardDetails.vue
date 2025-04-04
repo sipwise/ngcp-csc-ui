@@ -67,6 +67,10 @@
                         :primary-number-source="getPrimaryNumberSource"
                     />
                 </q-list>
+                <csc-popup-menu-ring-timeout
+                    v-if="isRingTimeoutVisible"
+                    :ring-timeout="ringTimeout"
+                />
                 <div
                     v-for="group in groups"
                     :key="group.cfm_id"
@@ -89,6 +93,7 @@
 <script>
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscPopupMenuRingTimeout from 'components/CscPopupMenuRingTimeout'
 import CscSpinner from 'components/CscSpinner'
 import CscCfGroup from 'components/call-forwarding/CscCfGroup'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
@@ -98,6 +103,7 @@ export default {
     components: {
         CscPopupMenu,
         CscPopupMenuItem,
+        CscPopupMenuRingTimeout,
         CscCfGroup,
         CscCfGroupItemPrimaryNumber,
         CscSpinner
@@ -126,7 +132,8 @@ export default {
             'hasSubscriberProfileAttributes'
         ]),
         ...mapGetters('callForwarding', [
-            'groups'
+            'groups',
+            'ringTimeout'
         ]),
         ...mapState('callForwarding', [
             'destinationSetMap',
@@ -140,6 +147,9 @@ export default {
                 return this.seatSelected
             }
             return null
+        },
+        isRingTimeoutVisible () {
+            return this.ringTimeout && this.groups.some((group) => group.type === 'cft')
         }
     },
     async mounted () {

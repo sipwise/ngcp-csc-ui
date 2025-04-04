@@ -29,27 +29,7 @@
                         />
                         {{ ringTimeout }}
                         {{ $t('seconds') }}
-                        <q-popup-edit
-                            v-slot="scope"
-                            v-model="changedDestinationTimeout"
-                            buttons
-                            @before-show="$store.commit('callForwarding/popupShow', null)"
-                            @save="updateRingTimeoutEvent($event)"
-                        >
-                            <csc-input
-                                v-model="scope.value"
-                                type="number"
-                                dense
-                            >
-                                <template
-                                    #prepend
-                                >
-                                    <q-icon
-                                        name="access_time"
-                                    />
-                                </template>
-                            </csc-input>
-                        </q-popup-edit>
+                        <q-tooltip class="text-dark">{{ $t('This setting is synced with "After Ring Timeout", which can be edited above.') }}</q-tooltip>
                     </span>
                     {{ $t('forwarded to') }}
                 </template>
@@ -152,10 +132,7 @@ import CscInput from 'components/form/CscInput'
 import _ from 'lodash'
 import { showGlobalError } from 'src/helpers/ui'
 import destination from 'src/mixins/destination'
-import {
-    mapActions,
-    mapGetters
-} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupItem',
     components: { CscCfDestinationNumber, CscCfDestinationCustomAnnouncement, CscCfDestination, CscSpinner, CscInput, CscPopupMenuItemDelete, CscMoreMenu },
@@ -226,8 +203,12 @@ export default {
         }
     },
     async mounted () {
+        // For the first destination in a call forwarding with timeout
+        // use the global ringTimeout value.
         if (this.mapping.type === 'cft' && this.destinationIndex === 0) {
             this.changedDestinationTimeout = this.ringTimeout
+            // For subsequent destinations, use the timeout
+            // from the previous destination in the chain.
         } else if (this.destinationPrevious) {
             this.changedDestinationTimeout = this.destinationPrevious.timeout
         }
