@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.24+0~mr12.5.1.24) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [5cc6dfe] MT#62377 Change German translation for banned profiles
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 04 Apr 2025 09:17:48 +0200
+
 ngcp-csc-ui (12.5.1.23+0~mr12.5.1.23) unstable; urgency=medium
 
   [ Hugo Zigha ]
