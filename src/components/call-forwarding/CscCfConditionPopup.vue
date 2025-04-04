@@ -12,13 +12,8 @@
 
 <script>
 import _ from 'lodash'
-import {
-    v4
-} from 'uuid'
-import {
-    mapState,
-    mapMutations
-} from 'vuex'
+import { v4 } from 'uuid'
+import { mapMutations, mapState } from 'vuex'
 export default {
     name: 'CscCfConditionPopup',
     emits: ['open', 'close'],
