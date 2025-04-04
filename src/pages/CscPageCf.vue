@@ -71,6 +71,10 @@
                     </q-item>
                     <csc-cf-group-item-primary-number />
                 </q-list>
+                <csc-popup-menu-ring-timeout
+                    v-if="isRingTimeoutVisible"
+                    :ring-timeout="ringTimeout"
+                />
                 <div
                     v-for="group in groups"
                     :key="group.cfm_id"
@@ -93,6 +97,7 @@
 import CscPageSticky from 'components/CscPageSticky'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscPopupMenuRingTimeout from 'components/CscPopupMenuRingTimeout'
 import CscSpinner from 'components/CscSpinner'
 import CscCfGroup from 'components/call-forwarding/CscCfGroup'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
@@ -105,6 +110,7 @@ export default {
         CscSpinner,
         CscPopupMenu,
         CscPopupMenuItem,
+        CscPopupMenuRingTimeout,
         CscCfGroup
     },
     computed: {
@@ -116,12 +122,16 @@ export default {
             'timeSetMap'
         ]),
         ...mapGetters('callForwarding', [
-            'groups'
+            'groups',
+            'ringTimeout'
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
             'hasSubscriberProfileAttributes'
-        ])
+        ]),
+        isRingTimeoutVisible () {
+            return this.ringTimeout && this.groups.some((group) => group.type === 'cft')
+        }
     },
     async mounted () {
         await this.loadAnnouncements()
