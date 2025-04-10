@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.26+0~mr12.5.1.26) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [f0eaf62] MT#62359 Improve "After Ring Timeout" Settings
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 10 Apr 2025 14:31:51 +0200
+
 ngcp-csc-ui (12.5.1.25+0~mr12.5.1.25) unstable; urgency=medium
 
   [ Debora Crescenzo ]
