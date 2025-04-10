@@ -1,3 +1,27 @@
+ngcp-csc-ui (13.4.0.0+0~mr13.4.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [47d4627] MT#62025 Send Fax 422 error bugfix
+  * [1697c9e] MT#61777 Introduce B-number set in CF
+  * [3daeb26] MT#62025 Add multipart/form-data to api/faxes req
+  * [1b70f20] MT#62070 Fix Dashboard Containers Overflow Issue
+  * [9b2b811] MT#62251 Device Alignment Image Bugfix
+  * [8fc6b2c] MT#62324 Improve PBX translations
+  * [194f180] MT#62377 Change German translation for banned profiles
+  * [291de45] MT#62343 Resolve vulnerabilities
+  * [30d4b44] MT#62495  Add devices admin password input
+  * [6bd7d47] MT#62359 Improve "After Ring Timeout" Settings
+
+  [ Hugo Zigha ]
+  * [b0ba5c9] MT#61834 Upgrade vue-i18n to v11
+  * [b6445fb] MT#62145 Fix error handling in CscPageCustomerPhonebookAdd and in CscPageSubscriberPhonebookAdd
+
+  [ nidrissi-zouggari ]
+  * [61ffb5a] MT#61580 Review all the console in CSC repo
+  * [d0308ac] MT#62117 Handle ban error
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 10 Apr 2025 08:27:46 +0200
+
 ngcp-csc-ui (13.3.0.0+0~mr13.3.0.0) unstable; urgency=medium
 
   [ Mykola Malkov ]
