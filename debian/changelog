@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.2.1.6+0~mr13.2.1.6) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [ef24a96] MT#62495  Add devices admin password input
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 10 Apr 2025 09:13:13 +0200
+
 ngcp-csc-ui (13.2.1.5+0~mr13.2.1.5) unstable; urgency=medium
 
   [ Debora Crescenzo ]
