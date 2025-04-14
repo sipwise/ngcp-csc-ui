@@ -12,18 +12,21 @@
                     <span>{{ $t('After Ring Timeout') }} : </span>
                     <span
                         class="q-pl-xs q-pr-xs text-primary text-weight-bold cursor-pointer"
+                        data-cy="csc-forwarding-ring-timeout-global-edit"
                     >
                         {{ ringTimeout }} {{ $t('seconds') }}
                         <q-popup-edit
                             v-slot="scope"
                             v-model="timeout"
                             buttons
+                            data-cy="csc-forwarding-ring-timeout-global-editbox"
                             @before-show="$store.commit('callForwarding/popupShow','after-ring-timeout')"
                             @save="updateRingTimeoutEvent($event)"
                         >
                             <csc-input
                                 v-model="scope.value"
                                 type="number"
+                                data-cy="csc-forwarding-ring-timeout-global-input"
                                 dense
                                 autofocus
                             >
