@@ -114,7 +114,7 @@ export default {
                         {
                             to: '/user/call-blocking/outgoing',
                             icon: 'call_made',
-                            label: this.$t('Block outgoing'),
+                            label: this.$t('Block Outgoing'),
                             visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingOutgoing)
                         },
                         {
