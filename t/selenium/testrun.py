@@ -125,7 +125,7 @@ class testrun(unittest.TestCase):
             "Number was not deleted")
         """
         print("Go to 'Block Outgoing' page...", end="")
-        driver.find_element(By.XPATH, '//*[@id="csc-main-menu-top"]//div/a[contains(., "Block outgoing")]').click()
+        driver.find_element(By.XPATH, '//*[@id="csc-main-menu-top"]//div/a[contains(., "Block Outgoing")]').click()
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '//*[@id="csc-page-call-blocking-outgoing"]')) > 0, "'Block Outgoing' page wasnt opened")
         print("OK")
