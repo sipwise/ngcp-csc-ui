@@ -265,20 +265,20 @@ export default {
             const errorsTab = this.v$.data.huntTimeout.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
-                    field: this.$t('Hunt timeout')
+                    field: this.$t('Hunt Timeout')
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
-                    field: this.$t('Hunt timeout')
+                    field: this.$t('Hunt Timeout')
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
-                    field: this.$t('Hunt timeout'),
+                    field: this.$t('Hunt Timeout'),
                     minValue: this.v$.data.huntTimeout.minValue.$params.min
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
-                    field: this.$t('Hunt timeout'),
+                    field: this.$t('Hunt Timeout'),
                     maxValue: this.v$.data.huntTimeout.maxValue.$params.max
                 })
             } else {

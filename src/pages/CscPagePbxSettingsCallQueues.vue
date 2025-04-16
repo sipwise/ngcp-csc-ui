@@ -147,16 +147,16 @@ export default {
             const errorsTab = this.v$.changes.queue_wrap_up_time.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
-                    field: this.$t('Wrap Up Time')
+                    field: this.$t('Wrap up time')
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
-                    field: this.$t('Wrap Up Time'),
+                    field: this.$t('Wrap up time'),
                     minValue: this.v$.changes.queue_wrap_up_time.minValue.$params.min
                 })
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
-                    field: this.$t('Wrap Up Time'),
+                    field: this.$t('Wrap up time'),
                     maxValue: this.v$.changes.queue_wrap_up_time.maxValue.$params.max
                 })
             } else {
