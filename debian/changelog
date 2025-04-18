@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.2.1.8+0~mr13.2.1.8) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [312a829] MT#62533 add data-cy to global call forward after ring timeout
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 18 Apr 2025 12:35:55 +0200
+
 ngcp-csc-ui (13.2.1.7+0~mr13.2.1.7) unstable; urgency=medium
 
   [ Debora Crescenzo ]
