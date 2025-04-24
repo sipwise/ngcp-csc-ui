@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import {
+    get,
     getList,
     httpApi,
     patchAdd,
@@ -7,12 +8,7 @@ import {
     patchReplace,
     patchReplaceFull
 } from 'src/api/common'
-import {
-    PBX_CONFIG_ORDER_BY,
-    PBX_CONFIG_ORDER_DIRECTION,
-    getModel,
-    getModelFrontImage
-} from 'src/api/pbx-config'
+import { PBX_CONFIG_ORDER_BY, PBX_CONFIG_ORDER_DIRECTION } from 'src/api/pbx-config'
 
 export function getDevices (options) {
     return new Promise((resolve, reject) => {
@@ -25,6 +21,12 @@ export function getDevices (options) {
         }).catch((err) => {
             reject(err)
         })
+    })
+}
+
+export function getDevice (id) {
+    return get({
+        path: `api/pbxdevices/${id}`
     })
 }
 export function getDevicesPreferences (options) {
@@ -176,22 +178,6 @@ export function setDeviceKeys (deviceId, keys) {
             })
         }).then((device) => {
             resolve(device)
-        }).catch((err) => {
-            reject(err)
-        })
-    })
-}
-
-export async function loadDeviceModel (modelId) {
-    return new Promise((resolve, reject) => {
-        Promise.all([
-            getModel(modelId),
-            getModelFrontImage(modelId)
-        ]).then((res) => {
-            resolve({
-                model: res[0],
-                modelImage: res[1]
-            })
         }).catch((err) => {
             reject(err)
         })
