@@ -171,8 +171,11 @@
             </div>
 
             <div class="col-12 col-md-6 q-pa-lg">
+                <csc-list-spinner
+                    v-if="!deviceSelected"
+                />
                 <csc-pbx-device-config
-                    v-if="deviceSelected && deviceModelImageMap[deviceProfileMap[deviceSelected?.profile_id].device_id]"
+                    v-if="deviceSelected && hasDeviceModelImage"
                     :device="deviceSelected"
                     :model="deviceModelMap[deviceProfileMap[deviceSelected.profile_id].device_id]"
                     :model-image="deviceModelImageMap[deviceProfileMap[deviceSelected.profile_id].device_id]"
@@ -189,6 +192,7 @@
 
 <script>
 import useValidate from '@vuelidate/core'
+import CscListSpinner from 'components/CscListSpinner'
 import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
@@ -209,7 +213,9 @@ export default {
         CscInputButtonSave,
         CscInputButtonReset,
         CscPbxModelSelect,
-        CscPbxDeviceConfig
+        CscPbxDeviceConfig,
+        CscListSpinner
+
     },
     props: {
         initialTab: {
@@ -248,13 +254,16 @@ export default {
         ]),
         ...mapGetters('pbx', [
             'getSubscriberOptions',
-            'isSubscribersRequesting'
+            'isSubscribersRequesting',
+            'isDeviceInModelMap'
         ]),
         ...mapGetters('pbxDevices', [
             'getDeviceUpdateToastMessage',
             'getDevicePreferencesUpdateToastMessage',
             'isDeviceLoading',
-            'isDevicePreferencesLoading'
+            'isDevicePreferencesLoading',
+            'isDeviceInMapBy',
+            'isDeviceInPreferencesMap'
         ]),
         tabs () {
             return [
@@ -280,6 +289,18 @@ export default {
         hasProfileChanged () {
             return this.changes.profile_id !== this.deviceSelected?.profile_id
         },
+        hasDeviceModelImage () {
+            if (!this.deviceSelected || !this.deviceSelected.profile_id) {
+                return false
+            }
+
+            const profileMap = this.deviceProfileMap[this.deviceSelected.profile_id]
+            if (!profileMap || !profileMap.device_id) {
+                return false
+            }
+
+            return !!this.deviceModelImageMap[profileMap.device_id]
+        },
         imageUrl () {
             if (this.modelImage && this.modelImage.url) {
                 return this.modelImage.url
@@ -295,10 +316,8 @@ export default {
     },
     watch: {
         async $route (to) {
-            if (this.id !== to.params.id) {
-                this.id = to.params.id
-                this.expandDevice(this.id)
-            }
+            this.id = to.params.id
+            await this.getData(this.id)
         },
         deviceSelected () {
             this.changes = this.getDeviceData()
@@ -319,13 +338,8 @@ export default {
         }
     },
     async created () {
-        await this.loadDeviceListItems()
-        if (this.isDeviceMapByIdEmpty) {
-            await this.loadDeviceListItems()
-        }
-        this.expandDevice(this.id)
-        this.expandDevicePreferences(this.id)
-        await this.loadSubscribers()
+        const deviceId = this.deviceSelected?.id || this.id
+        await this.getData(deviceId)
     },
     methods: {
         ...mapMutations('pbxDevices', [
@@ -333,7 +347,6 @@ export default {
             'expandDevicePreferences'
         ]),
         ...mapActions('pbxDevices', [
-            'loadDeviceListItems',
             'setDeviceKeys',
             'setDeviceStationName',
             'setDeviceIdentifier',
@@ -342,11 +355,35 @@ export default {
             'setAdminPassword',
             'setGui',
             'setUserConfig',
-            'setFW'
+            'setFW',
+            'loadDevicePreferencesList',
+            'loadDevice'
         ]),
         ...mapActions('pbx', [
-            'loadSubscribers'
+            'loadSubscribers',
+            'loadDeviceModel'
+
         ]),
+        async getData (deviceId) {
+            if (!this.isDeviceInMapBy(deviceId)) {
+                await this.loadDevice(deviceId)
+            }
+
+            if (!this.isDeviceInModelMap(deviceId)) {
+                await this.loadDeviceModel({
+                    type: 'all',
+                    deviceId
+                })
+            }
+
+            if (!this.isDeviceInPreferencesMap(deviceId)) {
+                await this.loadDevicePreferencesList()
+            }
+
+            this.expandDevice(deviceId)
+            this.expandDevicePreferences(deviceId)
+            this.loadSubscribers()
+        },
         getDeviceData () {
             return (this.deviceSelected && this.devicePreferencesSelected)
                 ? {

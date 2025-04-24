@@ -2,6 +2,7 @@ import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
     createDevice,
+    getDevice,
     getDeviceList,
     getDevicesPreferences,
     removeDevice,
@@ -20,12 +21,12 @@ export default {
         deviceCreationError: null,
         deviceCreationState: CreationState.initiated,
         deviceListCurrentPage: 1,
-        deviceListItems: [],
+        deviceList: [],
         deviceListLastPage: null,
         deviceListState: RequestState.initiated,
         deviceListVisibility: 'visible',
         deviceMapById: {},
-        devicePreferencesListItems: [],
+        devicePreferencesList: [],
         devicePreferencesListState: RequestState.initiated,
         devicePreferencesMap: {},
         devicePreferencesRemovalState: RequestState.initiated,
@@ -108,10 +109,17 @@ export default {
             }
         },
         isDeviceListEmpty (state) {
-            return Array.isArray(state.deviceListItems) && state.deviceListItems.length === 0
+            return Array.isArray(state.deviceList) && state.deviceList.length === 0
         },
-        isDeviceMapByIdEmpty (state) {
-            return Object.keys(state.deviceMapById).length === 0
+        isDeviceInMapBy (state) {
+            return (deviceId) => {
+                return state.deviceMapById[deviceId] !== undefined
+            }
+        },
+        isDeviceInPreferencesMap (state) {
+            return (deviceId) => {
+                return state.devicePreferencesMap[deviceId] !== undefined
+            }
         },
         isDeviceListPaginationActive (state, getters) {
             const requesting = !getters.isDeviceListRequesting || getters.isDeviceCreating ||
@@ -147,41 +155,49 @@ export default {
         }
     },
     mutations: {
-        deviceListItemsRequesting (state, options) {
+        deviceListRequesting (state, options) {
             const clearList = _.get(options, 'clearList', true)
             state.deviceListState = RequestState.requesting
             state.deviceListLastPage = null
             if (clearList) {
                 state.deviceListVisibility = 'hidden'
-                state.deviceListItems = []
+                state.deviceList = []
                 state.deviceMapById = {}
             } else {
                 state.deviceListVisibility = 'visible'
             }
         },
-        deviceListItemsSucceeded (state, options) {
+        deviceListSucceeded (state, options) {
             state.deviceListState = RequestState.succeeded
             state.deviceListCurrentPage = _.get(options, 'page', 1)
-            state.deviceListItems = _.get(options, 'devices.items', [])
+            state.deviceList = _.get(options, 'devices.items', [])
             state.deviceListLastPage = _.get(options, 'devices.lastPage', 1)
             state.deviceMapById = {}
-            state.deviceListItems.forEach((device) => {
+            state.deviceList.forEach((device) => {
                 state.deviceMapById[device.id] = device
             })
             state.deviceListVisibility = 'visible'
         },
-        devicePreferencesListItemsSucceeded (state, options) {
+        deviceSucceeded (state, device) {
+            state.deviceListState = RequestState.succeeded
+            state.deviceList = [...state.deviceList, device]
+            state.deviceMapById[device.id] = device
+        },
+        devicePreferencesListRequesting (state) {
+            state.devicePreferencesListState = RequestState.requesting
+        },
+        devicePreferencesListSucceeded (state, options) {
             state.devicePreferencesListState = RequestState.succeeded
-            state.devicePreferencesListItems = _.get(options, 'devicesPreferences', [])
+            state.devicePreferencesList = _.get(options, 'devicesPreferences', [])
             state.devicePreferencesMap = {}
-            state.devicePreferencesListItems.forEach((devicePreferences) => {
+            state.devicePreferencesList.forEach((devicePreferences) => {
                 state.devicePreferencesMap[devicePreferences.id] = devicePreferences
             })
         },
-        deviceListItemsFailed (state) {
+        deviceListFailed (state) {
             state.deviceListState = RequestState.failed
         },
-        devicePreferencesListItemsFailed (state) {
+        devicePreferencesListFailed (state) {
             state.devicePreferencesListState = RequestState.failed
         },
         deviceCreationRequesting (state, device) {
@@ -209,11 +225,11 @@ export default {
             state.deviceUpdateState = RequestState.succeeded
             delete state.deviceMapById[device.id]
             state.deviceMapById[device.id] = device
-            for (let i = 0; i < state.deviceListItems.length; i++) {
-                if (state.deviceListItems[i].id === device.id) {
-                    state.deviceListItems[i] = device
+            state.deviceList.forEach((item, index) => {
+                if (item.id === device.id) {
+                    state.deviceList[index] = device
                 }
-            }
+            })
             if (state.deviceSelected !== null && state.deviceSelected.id === device.id) {
                 state.deviceSelected = device
             }
@@ -222,11 +238,11 @@ export default {
             state.devicePreferencesUpdateState = RequestState.succeeded
             delete state.devicePreferencesMap[device.id]
             state.devicePreferencesMap[device.id] = device
-            for (let i = 0; i < state.devicePreferencesListItems.length; i++) {
-                if (state.devicePreferencesListItems[i].id === device.id) {
-                    state.devicePreferencesListItems[i] = device
+            state.devicePreferencesList.forEach((item, index) => {
+                if (item.id === device.id) {
+                    state.devicePreferencesList[index] = device
                 }
-            }
+            })
             if (state.devicePreferencesSelected !== null && state.devicePreferencesSelected.id === device.id) {
                 state.devicePreferencesSelected = device
             }
@@ -274,56 +290,54 @@ export default {
         }
     },
     actions: {
-        loadDeviceListItems (context, options) {
-            return new Promise((resolve, reject) => {
-                const page = _.get(options, 'page', context.state.deviceListCurrentPage)
-                const clearList = _.get(options, 'clearList', true)
-                const filters = _.get(options, 'filters', {})
-                context.commit('deviceListItemsRequesting', {
-                    clearList
-                })
-                Promise.resolve().then(() => {
-                    return context.dispatch('pbx/loadProfiles', null, { root: true })
-                }).then(() => {
-                    return getDeviceList({
-                        page,
-                        filters
-                    })
-                }).then((devices) => {
-                    context.commit('deviceListItemsSucceeded', {
-                        devices,
-                        page
-                    })
-                    resolve()
-                }).catch((err) => {
-                    context.commit('deviceListItemsFailed', err.message)
-                    reject(err)
-                })
-            })
+        async loadDeviceList (context, options) {
+            const page = _.get(options, 'page', context.state.deviceListCurrentPage)
+            const clearList = _.get(options, 'clearList', true)
+            const filters = _.get(options, 'filters', {})
+
+            context.commit('deviceListRequesting', { clearList })
+
+            try {
+                // Ensure profiles are loaded before fetching devices
+                await context.dispatch('pbx/loadProfiles', null, { root: true })
+                const devices = await getDeviceList({ page, filters })
+                context.commit('deviceListSucceeded', { devices, page })
+            } catch (err) {
+                context.commit('deviceListFailed', err.message)
+                throw err
+            }
         },
-        loadDevicePreferencesListItems (context) {
-            return new Promise((resolve, reject) => {
-                Promise.resolve().then(() => {
-                    return getDevicesPreferences()
-                }).then((devicesPreferences) => {
-                    context.commit('devicePreferencesListItemsSucceeded', {
-                        devicesPreferences: devicesPreferences.items
-                    })
-                    resolve()
-                }).catch((err) => {
-                    context.commit('devicePreferencesListItemsFailed', err.message)
-                    reject(err)
+        async loadDevice (context, deviceId) {
+            context.commit('deviceListRequesting', { clearList: false })
+            try {
+                // Ensure profiles are loaded before fetching devices
+                await context.dispatch('pbx/loadProfileById', deviceId, { root: true })
+                const device = await getDevice(deviceId)
+                context.commit('deviceSucceeded', device)
+            } catch (err) {
+                context.commit('deviceListFailed', err.message)
+                throw err
+            }
+        },
+        async loadDevicePreferencesList (context) {
+            context.commit('devicePreferencesListRequesting')
+            try {
+                const devicesPreferences = await getDevicesPreferences()
+                context.commit('devicePreferencesListSucceeded', {
+                    devicesPreferences: devicesPreferences.items
                 })
-            })
+            } catch (err) {
+                context.commit('devicePreferencesListFailed', err.message)
+            }
         },
         createDevice (context, deviceData) {
             context.commit('deviceCreationRequesting', deviceData)
             createDevice(deviceData).then(() => {
-                context.dispatch('loadDeviceListItems', {
+                context.dispatch('loadDeviceList', {
                     page: 1,
                     clearList: false
                 })
-                context.dispatch('loadDevicePreferencesListItems')
+                context.dispatch('loadDevicePreferencesList')
             }).then(() => {
                 context.commit('deviceCreationSucceeded')
             }).catch((err) => {
@@ -333,7 +347,7 @@ export default {
         removeDevice (context, deviceId) {
             context.commit('deviceRemovalRequesting', deviceId)
             removeDevice(deviceId).then(() => {
-                return context.dispatch('loadDeviceListItems', {
+                return context.dispatch('loadDeviceList', {
                     page: context.state.deviceListCurrentPage,
                     clearList: false
                 })

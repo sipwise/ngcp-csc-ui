@@ -4,7 +4,8 @@ import {
     getAllProfiles,
     getModel,
     getModelFrontImage,
-    getModelFrontThumbnailImage
+    getModelFrontThumbnailImage,
+    getProfile
 } from 'src/api/pbx-config'
 import { getSubscribers } from 'src/api/subscriber'
 import { getNumbers } from 'src/api/user'
@@ -24,6 +25,7 @@ export default {
         seatMapById: {},
         soundSetList: [],
         soundSetMapByName: {},
+        deviceProfilesListState: RequestState.initiated,
         deviceProfileList: [],
         deviceProfileMap: {},
         deviceModelList: [],
@@ -148,6 +150,11 @@ export default {
             })
             return options
         },
+        isDeviceInModelMap (state) {
+            return (deviceId) => {
+                return state.deviceModelMap[deviceId] !== undefined
+            }
+        },
         isSubscribersRequesting (state) {
             return state.subscriberListState === RequestState.requesting
         },
@@ -218,16 +225,30 @@ export default {
                 state.soundSetMapByName[soundSet.name] = soundSet
             })
         },
-        deviceProfilesSucceeded (state, deviceProfileList) {
+        deviceProfilesListStateRequesting (state) {
+            state.deviceProfilesListState = RequestState.requesting
+        },
+        deviceProfilesListSucceeded (state, deviceProfileList) {
+            state.deviceProfilesListState = RequestState.succeeded
             state.deviceProfileList = _.get(deviceProfileList, 'items', [])
             state.deviceProfileMap = {}
             state.deviceProfileList.forEach((deviceProfile) => {
                 state.deviceProfileMap[deviceProfile.id] = deviceProfile
             })
         },
-        deviceProfilesFailed (state) {
-            state.deviceProfileList = []
-            state.deviceProfileMap = {}
+        deviceProfilesListFailed (state) {
+            state.deviceProfilesListState = RequestState.failed
+        },
+        deviceProfileRequesting (state) {
+            state.deviceProfilesListState = RequestState.requesting
+        },
+        deviceProfileSucceeded (state, deviceProfile) {
+            state.deviceProfilesListState = RequestState.succeeded
+            state.deviceProfileList = [...state.deviceProfileList, deviceProfile]
+            state.deviceProfileMap[deviceProfile.id] = deviceProfile
+        },
+        deviceProfileFailed (state) {
+            state.deviceProfilesListState = RequestState.failed
         },
         deviceModelSucceeded (state, deviceModel) {
             const model = _.get(deviceModel, 'model', null)
@@ -263,18 +284,28 @@ export default {
     actions: {
         loadProfiles (context) {
             return new Promise((resolve, reject) => {
+                context.commit('deviceProfilesListStateRequesting')
                 if (context.state.deviceProfileList.length === 0) {
                     getAllProfiles().then((profiles) => {
-                        context.commit('deviceProfilesSucceeded', profiles)
+                        context.commit('deviceProfilesListSucceeded', profiles)
                         resolve(profiles)
                     }).catch((err) => {
-                        context.commit('deviceProfilesFailed')
+                        context.commit('deviceProfilesListFailed')
                         reject(err)
                     })
                 } else {
                     resolve()
                 }
             })
+        },
+        async loadProfileById (context, deviceId) {
+            context.commit('deviceProfileRequesting')
+            try {
+                const profile = await getProfile(deviceId)
+                context.commit('deviceProfileSucceeded', profile)
+            } catch (err) {
+                context.commit('deviceProfileFailed')
+            }
         },
         async loadDeviceModel (context, payload) {
             try {
@@ -331,13 +362,13 @@ export default {
             }
         },
         async loadDeviceModels (context, imageType) {
-            const requests = []
-            for (let i = 0; i < context.state.deviceProfileList.length; i++) {
-                requests.push(context.dispatch('loadDeviceModel', {
-                    deviceId: context.state.deviceProfileList[i].device_id,
+            const requests = context.state.deviceProfileList.map((deviceProfile) => {
+                return context.dispatch('loadDeviceModel', {
+                    deviceId: deviceProfile.device_id,
                     type: imageType
-                }))
-            }
+                })
+            })
+
             await Promise.all(requests)
         },
         loadSubscribers (context) {
