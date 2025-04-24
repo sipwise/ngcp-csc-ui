@@ -11,7 +11,7 @@
                 <span
                     v-if="mapping.type === 'cfu' || mapping.type === 'cft'"
                 >
-                    {{ $t('If available') }}
+                    {{ $t('Always') }}
                 </span>
                 <template
                     v-else-if="mapping.type === 'cfna'"
