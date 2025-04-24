@@ -20,7 +20,7 @@
                     <csc-popup-menu-item
                         v-if="hasSubscriberProfileAttribute('cfu')"
                         color="primary"
-                        :label="$t('If available')"
+                        :label="$t('Always')"
                         data-cy="csc-add-forwarding-available"
                         @click="createMapping({ type: 'cfu'})"
                     />
