@@ -36,7 +36,7 @@
             <csc-pbx-device-config-key-form
                 :selected-line="selectedLine"
                 :selected-key="selectedKey"
-                :subsriber-map="subscriberMap"
+                :subscriber-map="subscriberMap"
                 :loading="isDeviceLoading(device.id)"
                 @closeKeyOverlay="keyOverlayActive = false"
                 @onSave="onSave"

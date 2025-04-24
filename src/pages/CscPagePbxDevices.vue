@@ -73,7 +73,7 @@
             <q-pagination
                 :model-value="deviceListCurrentPage"
                 :max="deviceListLastPage"
-                @update:model-value="loadDeviceListItemsFiltered"
+                @update:model-value="loadDeviceListFiltered"
             />
         </div>
         <csc-list-spinner
@@ -84,12 +84,12 @@
             class="row justify-start items-start"
         >
             <csc-fade
-                v-for="(device, index) in deviceListItems"
+                v-for="(device, index) in deviceList"
                 :key="'csc-fade-' + device.id"
             >
                 <csc-pbx-device
                     :key="device.id"
-                    :loading="isDeviceLoading(device.id)"
+                    :loading="isDeviceLoading(device.id) || isDeviceListRequesting"
                     :device="device"
                     :class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
                     :profile="deviceProfileMap[device.profile_id]"
@@ -140,15 +140,10 @@ import CscListActions from 'components/CscListActions'
 import CscListActionButton from 'components/CscListActionButton'
 import CscPbxDeviceFilters from 'components/pages/PbxConfiguration/CscPbxDeviceFilters'
 import CscPbxDeviceAddForm from 'components/pages/PbxConfiguration/CscPbxDeviceAddForm'
-import CscRemoveDialog from 'components/CscRemoveDialog'
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import {
-    CreationState,
-    RequestState
-} from 'src/store/common'
+import CscRemoveDialog from 'components/CscRemoveDialog' // Add this import
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { CreationState, RequestState } from 'src/store/common'
+
 export default {
     name: 'CscPagePbxDevices',
     components: {
@@ -184,7 +179,7 @@ export default {
         ]),
         ...mapState('pbxDevices', [
             'deviceRemoving',
-            'deviceListItems',
+            'deviceList',
             'deviceListCurrentPage',
             'deviceListLastPage',
             'deviceListVisibility',
@@ -230,8 +225,8 @@ export default {
     },
     mounted () {
         this.$scrollTo(this.$parent.$el)
-        this.loadDeviceListItemsFiltered()
-        this.loadDevicePreferencesListItems()
+        this.loadDeviceListFiltered()
+        this.loadDevicePreferencesList()
     },
     methods: {
         ...mapActions('pbx', [
@@ -247,8 +242,8 @@ export default {
             'deviceRemovalCanceled'
         ]),
         ...mapActions('pbxDevices', [
-            'loadDeviceListItems',
-            'loadDevicePreferencesListItems',
+            'loadDeviceList',
+            'loadDevicePreferencesList',
             'createDevice',
             'removeDevice',
             'setDeviceStationName',
@@ -256,8 +251,8 @@ export default {
             'setDeviceProfile',
             'setDeviceKeys'
         ]),
-        loadDeviceListItemsFiltered (page) {
-            this.loadDeviceListItems({
+        loadDeviceListFiltered (page) {
+            this.loadDeviceList({
                 page: page || 1,
                 filters: this.filters
             })
@@ -272,7 +267,7 @@ export default {
         },
         applyFilter (filterData) {
             this.filters = filterData
-            this.loadDeviceListItemsFiltered()
+            this.loadDeviceListFiltered()
         },
         closeFilters () {
             this.filtersEnabled = false
@@ -281,7 +276,7 @@ export default {
         resetFilters () {
             if (this.hasFilters) {
                 this.filters = {}
-                this.loadDeviceListItemsFiltered()
+                this.loadDeviceListFiltered()
             }
         },
         openDeviceRemovalDialog (deviceId) {

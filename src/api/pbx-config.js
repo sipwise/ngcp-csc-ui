@@ -57,17 +57,15 @@ export function getAllProfiles () {
     })
 }
 
+export function getProfile (id) {
+    return get({
+        path: `api/pbxdeviceprofiles/${id}`
+    })
+}
+
 export function getModel (id) {
-    return new Promise((resolve, reject) => {
-        Promise.resolve().then(() => {
-            return get({
-                path: 'api/pbxdevicemodels/' + id
-            })
-        }).then((model) => {
-            resolve(model)
-        }).catch((err) => {
-            reject(err)
-        })
+    return get({
+        path: `api/pbxdevicemodels/${id}`
     })
 }
 
