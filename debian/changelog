@@ -1,3 +1,11 @@
+ngcp-csc-ui (13.3.1.3+0~mr13.3.1.3) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [1fc2496] MT#62617 Add missing Italian translations
+  * [3a4eed3] MT#62500 Refactor logic of PBx Devices pages
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 02 May 2025 09:59:39 +0200
+
 ngcp-csc-ui (13.3.1.2+0~mr13.3.1.2) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
