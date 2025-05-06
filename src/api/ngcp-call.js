@@ -462,8 +462,12 @@ export function callBlindTransfer (numberToTransfer) {
             }
         }
         try {
+            const uriString = `Referred-By: <sip:${rtcSession.local_identity.uri.user}@${rtcSession.local_identity.uri.host}>`
             rtcSession.refer(numberToTransfer, {
-                eventHandlers
+                eventHandlers,
+                extraHeaders: [
+                    uriString
+                ]
             })
         } catch (err) {
             reject(err)
