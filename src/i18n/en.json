@@ -663,7 +663,7 @@
     "weekdays are ...": "weekdays are ...",
     "{fieldOne} or {fieldTwo} is required": "{fieldOne} or {fieldTwo} is required",
     "{field} is required": "{field} is required",
-    "{field} must be at least {minValue} second": "{field} must be at least {minValue} second",
+    "{field} must be at least {minValue} second": "{field} must be at least {minValue} second(s)",
     "{field} must be maximum of {maxValue} seconds": "{field} must be maximum of {maxValue} seconds",
     "{field} must consist of numeric characters only": "{field} must consist of numeric characters only",
     "{field} must consist only of numeric characters or the symbols +, * or #.": "{field} must consist only of numeric characters or the symbols +, * or #.",
