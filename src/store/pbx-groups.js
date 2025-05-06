@@ -8,6 +8,8 @@ import {
     createGroup,
     removeGroup,
     setGroupName,
+    setGroupAnnouncementCallSetup,
+    setGroupAnnouncementCfu,
     setGroupExtension,
     setGroupHuntPolicy,
     setGroupHuntTimeout,
@@ -162,6 +164,18 @@ export default {
                     value: 'bye'
                 }
             ]
+        },
+        getAnnouncementCfu (state) {
+            return (id) => {
+                const groupPreferences = state.preferenceMapById[id]
+                return groupPreferences && groupPreferences.play_announce_before_cf ? state.preferenceMapById[id].play_announce_before_cf : false
+            }
+        },
+        getAnnouncementCallSetup (state) {
+            return (id) => {
+                const groupPreferences = state.preferenceMapById[id]
+                return groupPreferences && groupPreferences.play_announce_before_call_setup ? state.preferenceMapById[id].play_announce_before_call_setup : false
+            }
         }
     },
     mutations: {
@@ -434,6 +448,30 @@ export default {
             }).catch((err) => {
                 context.commit('groupUpdateFailed', err.message)
             })
+        },
+        async setAnnouncementCfu (context, options) {
+            context.commit('groupUpdateRequesting', {
+                groupId: options.groupId,
+                groupField: options.message || i18n.global.t('the playback announcement as early media before Call Forward Unconditional or Unavailable')
+            })
+            try {
+                const result = await setGroupAnnouncementCfu(options.groupId, options.announcementCfu)
+                context.commit('groupUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('groupUpdateFailed', err.message)
+            }
+        },
+        async setAnnouncementCallSetup (context, options) {
+            context.commit('groupUpdateRequesting', {
+                groupId: options.groupId,
+                groupField: options.message || i18n.global.t('the playback announcement as early media before send the call to callee')
+            })
+            try {
+                const result = await setGroupAnnouncementCallSetup(options.groupId, options.announcementCallSetup)
+                context.commit('groupUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('groupUpdateFailed', err.message)
+            }
         }
     }
 }
