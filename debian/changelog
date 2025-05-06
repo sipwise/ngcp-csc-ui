@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.29+0~mr12.5.1.29) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [5e93b4d] MT#62500 Refactor logic of PBx Devices pages
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 06 May 2025 09:33:18 +0200
+
 ngcp-csc-ui (12.5.1.28+0~mr12.5.1.28) unstable; urgency=medium
 
   [ Debora Crescenzo ]
