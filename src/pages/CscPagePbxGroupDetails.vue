@@ -237,6 +237,28 @@
                     @click="jumpToCallQueueInternal"
                 />
             </q-list>
+            <q-list
+                v-if="changes"
+                class="column"
+                side
+                top
+                no-wrap
+            >
+                <q-toggle
+                    v-model="changes.announcementCfu"
+                    class="q-pa-sm"
+                    :label="$t('Play announcement before routing to CFU/CFNA')"
+                    :disable="isLoading"
+                    @update:model-value="changeAnnouncementCfu"
+                />
+                <q-toggle
+                    v-model="changes.announcementCallSetup"
+                    class="q-pa-sm"
+                    :label="$t('Play announcement before call setup')"
+                    :disable="isLoading"
+                    @update:model-value="changeAnnouncementCallSetup"
+                />
+            </q-list>
         </q-item>
 
         <csc-call-forward-details
@@ -362,7 +384,9 @@ export default {
             'getGroupUpdateToastMessage',
             'getSoundSetByGroupId',
             'isGroupLoading',
-            'getHuntCancelModeOptions'
+            'getHuntCancelModeOptions',
+            'getAnnouncementCfu',
+            'getAnnouncementCallSetup'
         ]),
         ...mapGetters('callForwarding', [
             'groups'
@@ -454,7 +478,9 @@ export default {
             'setGroupHuntCancelMode',
             'setGroupSeats',
             'setGroupNumbers',
-            'setGroupSoundSet'
+            'setGroupSoundSet',
+            'setAnnouncementCallSetup',
+            'setAnnouncementCfu'
         ]),
         ...mapActions('pbxCallQueues', [
             'jumpToCallQueue'
@@ -478,7 +504,9 @@ export default {
                     huntCancelMode: this.groupSelected.pbx_hunt_cancel_mode,
                     aliasNumbers: this.getAliasNumberIds(),
                     seats: this.getSeatIds(),
-                    soundSet: this.getSoundSetId()
+                    soundSet: this.getSoundSetId(),
+                    announcementCallSetup: this.getAnnouncementCallSetup(this.groupSelected.id),
+                    announcementCfu: this.getAnnouncementCfu(this.groupSelected.id)
                 }
                 : null
         },
@@ -584,6 +612,18 @@ export default {
         },
         forceTabReload (tabName) {
             this.selectedTab = tabName
+        },
+        changeAnnouncementCfu () {
+            this.setAnnouncementCfu({
+                groupId: this.groupSelected.id,
+                announcementCfu: this.changes.announcementCfu
+            })
+        },
+        changeAnnouncementCallSetup () {
+            this.setAnnouncementCallSetup({
+                groupId: this.groupSelected.id,
+                announcementCallSetup: this.changes.announcementCallSetup
+            })
         }
     }
 }

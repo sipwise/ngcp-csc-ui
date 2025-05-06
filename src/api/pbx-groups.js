@@ -10,7 +10,9 @@ import {
     setPbxHuntPolicy,
     setPbxHuntTimeout, setSubscriberNumbers,
     setPbxHuntCancelMode,
-    generateGeneralPassword
+    generateGeneralPassword,
+    setPreferenceAnnouncementCallSetup,
+    setPreferenceAnnouncementCfu
 } from './subscriber'
 import {
     getAllSoundSets,
@@ -20,6 +22,7 @@ import {
     PBX_CONFIG_ORDER_DIRECTION,
     setSubscriberSoundSet
 } from './pbx-config'
+
 import {
     assignNumbers,
     getNumbers
@@ -304,6 +307,22 @@ export function setGroupSoundSet (options) {
             reject(err)
         })
     })
+}
+
+/**
+ * @param groupId
+ * @param announcementCfu
+ */
+export function setGroupAnnouncementCfu (groupId, announcementCfu) {
+    return setPreferenceAnnouncementCfu(groupId, announcementCfu)
+}
+
+/**
+ * @param groupId
+ * @param announcementCallSetup
+ */
+export function setGroupAnnouncementCallSetup (groupId, announcementCallSetup) {
+    return setPreferenceAnnouncementCallSetup(groupId, announcementCallSetup)
 }
 
 // This mirrors the logic we use in ngcp-admin to handle the pbx groups creation
