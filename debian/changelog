@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.5.1.23+0~mr11.5.1.23) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [5cb3cec] MT#62617 Add missing Italian translations
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 08 May 2025 09:10:37 +0200
+
 ngcp-csc-ui (11.5.1.22+0~mr11.5.1.22) unstable; urgency=medium
 
   [ Nico Schedel ]
