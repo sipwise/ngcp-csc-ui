@@ -123,7 +123,12 @@ module.exports = function (ctx) {
             // extractCSS: false,
 
             // https://quasar.dev/quasar-cli/handling-webpack
-            extendWebpack (cfg) {
+            extendWebpack(cfg) {
+                cfg.resolve.fallback = {
+                    crypto: 'crypto-browserify',
+                    stream: 'stream-browserify',
+                    vm: false
+                }
                 cfg.plugins.push(
                     new ESLintPlugin({ extensions: ['js', 'vue'] })
                 )
