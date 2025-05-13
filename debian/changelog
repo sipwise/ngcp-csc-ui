@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.30+0~mr12.5.1.30) unstable; urgency=medium
+
+  [ Alessio Garzi ]
+  * [f5acf9e] MT#62756 CSC now sends Referred-By with callee local data in blind xfer
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 13 May 2025 09:07:22 +0200
+
 ngcp-csc-ui (12.5.1.29+0~mr12.5.1.29) unstable; urgency=medium
 
   [ Debora Crescenzo ]
