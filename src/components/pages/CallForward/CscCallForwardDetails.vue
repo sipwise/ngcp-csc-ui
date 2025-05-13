@@ -70,6 +70,7 @@
                 <csc-popup-menu-ring-timeout
                     v-if="isRingTimeoutVisible"
                     :ring-timeout="ringTimeout"
+                    :subscriber-id="id"
                 />
                 <div
                     v-for="group in groups"
