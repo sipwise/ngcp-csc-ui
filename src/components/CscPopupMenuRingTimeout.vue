@@ -47,6 +47,7 @@
 
 <script>
 import CscInput from 'components/form/CscInput'
+import { showGlobalError } from 'src/helpers/ui'
 import { mapActions } from 'vuex'
 export default {
     name: 'CscPopupMenuRingTimeout',
@@ -54,6 +55,10 @@ export default {
     props: {
         ringTimeout: {
             type: Number,
+            required: true
+        },
+        subscriberId: {
+            type: [Number, String],
             required: true
         }
     },
@@ -70,8 +75,13 @@ export default {
         ]),
         async updateRingTimeoutEvent (event) {
             this.$wait.start('csc-cf-mappings-full')
-            await this.updateRingTimeout({ ringTimeout: event, subscriberId: this.subscriberId })
-            this.$wait.end('csc-cf-mappings-full')
+            try {
+                await this.updateRingTimeout({ ringTimeout: event, subscriberId: this.subscriberId })
+            } catch (err) {
+                showGlobalError(err.message)
+            } finally {
+                this.$wait.end('csc-cf-mappings-full')
+            }
         }
     }
 }
