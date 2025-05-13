@@ -275,6 +275,7 @@
             v-if="selectedTab === 'fax2mail'"
             :id="id"
             :key="id"
+            :is-pbx-configuration-context="true"
         />
         <csc-mail-to-fax-settings
             v-if="selectedTab === 'mail2fax'"

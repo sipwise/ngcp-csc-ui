@@ -51,7 +51,9 @@ export default {
             context.commit('settingsSucceeded', {
                 faxServerSettings
             })
-            context.commit('user/updateFaxActiveCapabilityState', faxServerSettings.active, { root: true })
+            if (!options.fromPbxConfiguration) {
+                context.commit('user/updateFaxActiveCapabilityState', faxServerSettings.active, { root: true })
+            }
         },
 
         async loadMailToFaxSettingsAction (context, id) {
