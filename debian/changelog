@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.31+0~mr12.5.1.31) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [0077bc0] MT#62751 Backport Dep upgrade commit
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 14 May 2025 10:25:59 +0200
+
 ngcp-csc-ui (12.5.1.30+0~mr12.5.1.30) unstable; urgency=medium
 
   [ Alessio Garzi ]
