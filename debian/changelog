@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.32+0~mr12.5.1.32) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [3d86575] MT#62703 CSC Translation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 15 May 2025 13:53:08 +0200
+
 ngcp-csc-ui (12.5.1.31+0~mr12.5.1.31) unstable; urgency=medium
 
   [ Debora Crescenzo ]
