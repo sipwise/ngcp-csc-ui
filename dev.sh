@@ -53,7 +53,7 @@ case "$1" in
             exit 1;
         fi
 
-        if [ ! -L "$CSC_SYS_PATH" -a ! -d "$CSC_TMP_PATH" ]; then
+        if [ ! -L "$CSC_SYS_PATH" ] && [ ! -d "$CSC_TMP_PATH" ]; then
             mv "$CSC_SYS_PATH" "$CSC_TMP_PATH"
             ln -s -f "$CSC_PATH" "$CSC_SYS_PATH"
         fi
