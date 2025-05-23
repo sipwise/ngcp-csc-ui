@@ -45,12 +45,10 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'getCustomerId',
             'hasFaxCapability',
             'hasSubscriberProfileAttribute',
             'hasSubscriberProfileAttributes',
             'isLicenseActive',
-            'isOldCSCProxyingAllowed',
             'isPbxEnabled',
             'isSpCe'
         ]),
@@ -260,12 +258,6 @@ export default {
                     icon: 'devices',
                     label: this.$t('Registered Devices'),
                     visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.registeredDevices)
-                },
-                {
-                    to: `/customer/${this.getCustomerId}/details`,
-                    icon: 'far fa-address-card',
-                    label: this.$t('Customer Details'),
-                    visible: this.isOldCSCProxyingAllowed
                 }
             ]
         }

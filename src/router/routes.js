@@ -516,14 +516,6 @@ const routes = [
                 }
             },
             {
-                path: '/customer/:pathMatch(.*)',
-                component: () => import('pages/Proxy'),
-                meta: {
-                    title: i18n.global.t('Customer Details'),
-                    subtitle: i18n.global.t('Customer Details')
-                }
-            },
-            {
                 path: '*',
                 component: CscPageError404,
                 meta: {

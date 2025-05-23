@@ -16,7 +16,6 @@ import {
     getJwt,
     hasJwt
 } from 'src/auth'
-import { getCurrentLangAsV1Format } from 'src/i18n'
 
 export function getSoundSets (options) {
     return new Promise((resolve, reject) => {
@@ -204,10 +203,7 @@ export function uploadSoundFile (options) {
                 if (updatedConfig.method === 'POST' && (updatedConfig.data === undefined || updatedConfig.data === null)) {
                     updatedConfig.data = {}
                 }
-                updatedConfig.params = {
-                    ...updatedConfig.params,
-                    lang: getCurrentLangAsV1Format()
-                }
+
                 return updatedConfig
             })
             httpApi.post('api/soundfiles/', formData, {

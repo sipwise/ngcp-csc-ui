@@ -67,28 +67,6 @@ export async function setLanguage (locale) {
     // Note: please extend "reloadLanguageRelatedData" action in the store if you are using language related API endpoints
 }
 
-/**
- * It converts language code from V2 (new CSC) to V1 UI (old Panel CSC) format
- * @param {string} lang
- * @returns {string}
- */
-export function convertLangV2toV1 (lang) {
-    return lang === 'en-US' ? 'en' : lang
-}
-
-/**
- * It converts language code from V1 (old Panel CSC) to V2 UI (new CSC) format
- * @param {string} lang
- * @returns {string}
- */
-export function convertLangV1toV2 (lang) {
-    return ['en', 'i-default'].includes(lang) ? 'en-US' : lang
-}
-
-export function getCurrentLangAsV1Format () {
-    return convertLangV2toV1(i18n.locale)
-}
-
 export function normalizeLocaleCode (locale) {
     const shortLangCode = String(locale || 'en-US').substring(0, 2).toLowerCase()
     const langCodeInV2Format = (shortLangCode === 'en') ? 'en-US' : shortLangCode

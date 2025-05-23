@@ -204,9 +204,6 @@ export default {
                     : true
             }
         },
-        isOldCSCProxyingAllowed (state, getters) {
-            return getters.isAdmin && state.platformInfo?.csc_v2_mode === 'mixed' && !!getters.getCustomerId
-        },
         isLicenseActive: (state) => {
             return (license) => {
                 return state?.platformInfo.licenses.includes(license)

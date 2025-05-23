@@ -4,7 +4,6 @@ import saveAs from 'file-saver'
 import _ from 'lodash'
 import { getJsonBody } from 'src/api/utils'
 import { getJwt, hasJwt } from 'src/auth'
-import { getCurrentLangAsV1Format } from 'src/i18n'
 import { PATH_CHANGE_PASSWORD } from 'src/router/routes'
 export const LIST_DEFAULT_PAGE = 1
 export const LIST_DEFAULT_ROWS = 24
@@ -68,12 +67,6 @@ export function initAPI ({ baseURL }) {
             }
             if (config.method === 'POST' && (config.data === undefined || config.data === null)) {
                 config.data = {}
-            }
-            if (!config.url?.includes('v2')) {
-                config.params = {
-                    ...config.params,
-                    lang: getCurrentLangAsV1Format()
-                }
             }
 
             return config
