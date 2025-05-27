@@ -49,10 +49,11 @@
                 >
                     <q-avatar
                         square
+                        size="32px"
                     >
-                        <img
+                        <q-img
                             :src="deviceModelImageSmallMap[scope.opt.model].url"
-                        >
+                        />
                     </q-avatar>
                 </q-item-section>
                 <q-item-section>
@@ -118,15 +119,11 @@ export default {
             return _.get(this.deviceModelImageSmallMap, `${deviceModelId}.url`, null)
         },
         options () {
-            const options = []
-            this.profiles.forEach((profile) => {
-                options.push({
-                    label: profile.name,
-                    value: profile.id,
-                    model: profile.device_id
-                })
-            })
-            return options
+            return this.profiles.map((profile) => ({
+                label: profile.name,
+                value: profile.id,
+                model: profile.device_id
+            }))
         }
     },
     watch: {

@@ -150,6 +150,10 @@ export default {
             'getCallQueueCreationToastMessage',
             'getCallQueueUpdateToastMessage',
             'getCallQueueRemovalToastMessage'
+        ]),
+        ...mapState('pbx', [
+            'subscriberListState',
+            'subscriberListError'
         ])
     },
     watch: {
@@ -174,6 +178,16 @@ export default {
                 showToast(this.getCallQueueRemovalToastMessage)
             } else if (state === RequestState.failed) {
                 showGlobalError(this.callQueueRemovalError)
+            }
+        },
+        callQueueListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.callQueueListError)
+            }
+        },
+        subscriberListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.subscriberListError)
             }
         }
     },

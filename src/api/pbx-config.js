@@ -48,8 +48,10 @@ export function getProfiles (options) {
 }
 
 export function getAllProfiles () {
+    // Replace 1000 rows with 300 as we expect to have max 150 profiles.
     return getProfiles({
-        all: true
+        page: 1,
+        rows: 300
     })
 }
 
