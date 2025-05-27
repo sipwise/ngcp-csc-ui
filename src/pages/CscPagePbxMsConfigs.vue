@@ -142,8 +142,8 @@ export default {
         ...mapState('pbx', [
             'numberListState',
             'numberListError',
-            'subcriberListState',
-            'subcriberListError'
+            'subscriberListState',
+            'subscriberListError'
 
         ]),
         ...mapGetters('pbxMsConfigs', [
@@ -193,9 +193,9 @@ export default {
                 showGlobalError(this.numberListError)
             }
         },
-        subcriberListState (state) {
+        subscriberListState (state) {
             if (state === RequestState.failed) {
-                showGlobalError(this.subcriberListError)
+                showGlobalError(this.subscriberListError)
             }
         }
     },

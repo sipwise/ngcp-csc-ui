@@ -175,10 +175,11 @@
                     v-if="!deviceSelected"
                 />
                 <csc-pbx-device-config
-                    v-if="deviceSelected && hasDeviceModelImage"
+                    v-else
+                    :id="deviceSelected?.id"
                     :device="deviceSelected"
-                    :model="deviceModelMap[deviceProfileMap[deviceSelected.profile_id].device_id]"
-                    :model-image="deviceModelImageMap[deviceProfileMap[deviceSelected.profile_id].device_id]"
+                    :model="deviceModel"
+                    :model-image="deviceModelImage"
                     :loading="isSubscribersRequesting"
                     :subscribers="subscriberList"
                     :subscriber-map="subscriberMap"
@@ -244,22 +245,23 @@ export default {
             'devicePreferencesUpdateState',
             'devicePreferencesSelected',
             'devicePreferencesListState',
-            'devicePreferencesError'
+            'devicePreferencesError',
+            'deviceMapById'
         ]),
         ...mapState('pbx', [
             'deviceProfileList',
             'deviceProfileMap',
+            'deviceProfileListState',
             'deviceModelImageMap',
             'deviceModelMap',
             'subscriberList',
             'subscriberMap',
-            'subcriberListState',
-            'subcriberListError'
+            'subscriberListState',
+            'subscriberListError'
         ]),
         ...mapGetters('pbx', [
             'getSubscriberOptions',
-            'isSubscribersRequesting',
-            'isDeviceInModelMap'
+            'isSubscribersRequesting'
         ]),
         ...mapGetters('pbxDevices', [
             'getDeviceUpdateToastMessage',
@@ -269,6 +271,55 @@ export default {
             'isDeviceInMapBy',
             'isDeviceInPreferencesMap'
         ]),
+        deviceModel () {
+            if (!this.deviceSelected?.profile_id) {
+                return {}
+            }
+
+            const profileId = this.deviceSelected.profile_id
+            const deviceProfile = this.deviceProfileMap[profileId]
+
+            if (!deviceProfile) {
+                return {}
+            }
+
+            if (!deviceProfile.device_id) {
+                return {}
+            }
+
+            const deviceId = deviceProfile.device_id
+            const deviceModel = this.deviceModelMap[deviceId]
+
+            if (!deviceModel) {
+                return {}
+            }
+
+            return deviceModel
+        },
+        deviceModelImage () {
+            if (!this.deviceSelected?.profile_id) {
+                return null
+            }
+
+            const profileId = this.deviceSelected.profile_id
+            const deviceProfile = this.deviceProfileMap[profileId]
+            if (!deviceProfile) {
+                return null
+            }
+
+            if (!deviceProfile.device_id) {
+                return null
+            }
+
+            const deviceId = deviceProfile.device_id
+            const deviceModelImage = this.deviceModelImageMap[deviceId]
+
+            if (!deviceModelImage) {
+                return null
+            }
+
+            return deviceModelImage
+        },
         tabs () {
             return [
                 {
@@ -279,7 +330,7 @@ export default {
             ]
         },
         isLoading () {
-            return this.isDeviceLoading(this.deviceSelected?.id)
+            return this.isDeviceLoading(this.id)
         },
         isLoadingPreferences () {
             return this.isDevicePreferencesLoading(this.devicePreferencesSelected?.id)
@@ -319,9 +370,11 @@ export default {
         }
     },
     watch: {
-        async $route (to) {
-            this.id = to.params.id
-            await this.getData(this.id)
+        $route: {
+            async handler (to) {
+                this.id = to.params.id
+                await this.getData(this.id)
+            }
         },
         deviceSelected () {
             this.changes = this.getDeviceData()
@@ -345,15 +398,19 @@ export default {
                 showGlobalError(this.devicePreferencesError)
             }
         },
-        subcriberListState (state) {
+        subscriberListState (state) {
             if (state === RequestState.failed) {
-                showGlobalError(this.subcriberListError)
+                showGlobalError(this.subscriberListError)
             }
         }
     },
     async created () {
-        const deviceId = this.deviceSelected?.id || this.id
-        await this.getData(deviceId)
+        if (this.deviceProfileList.length === 0) {
+            await this.loadProfiles()
+            await this.loadProfileThumbnails()
+        }
+
+        await this.getData(this.id)
     },
     methods: {
         ...mapMutations('pbxDevices', [
@@ -375,7 +432,9 @@ export default {
         ]),
         ...mapActions('pbx', [
             'loadSubscribers',
-            'loadDeviceModel'
+            'loadDeviceModel',
+            'loadProfiles',
+            'loadProfileThumbnails'
 
         ]),
         async getData (deviceId) {
@@ -383,10 +442,13 @@ export default {
                 await this.loadDevice(deviceId)
             }
 
-            if (!this.isDeviceInModelMap(deviceId)) {
+            const deviceProfileId = this.deviceMapById[deviceId].profile_id
+            const deviceProfile = this.deviceProfileMap[deviceProfileId]
+
+            if (deviceProfile.device_id) {
                 await this.loadDeviceModel({
                     type: 'all',
-                    deviceId
+                    deviceId: deviceProfile.device_id
                 })
             }
 
@@ -461,6 +523,14 @@ export default {
                 this.setDeviceProfile({
                     deviceId: this.deviceSelected?.id,
                     profileId: this.changes.profile_id
+                }).then(() => {
+                    const newProfile = this.deviceProfileMap[this.changes.profile_id]
+                    if (newProfile && newProfile.device_id) {
+                        this.loadDeviceModel({
+                            type: 'all',
+                            deviceId: newProfile.device_id
+                        })
+                    }
                 })
             }
             if (this.hasAdminNameChanged) {

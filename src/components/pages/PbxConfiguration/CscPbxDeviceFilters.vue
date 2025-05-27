@@ -119,8 +119,8 @@ export default {
             'deviceProfileMap',
             'deviceProfileList',
             'subscriberList',
-            'subcriberListState',
-            'subcriberListError'
+            'subscriberListState',
+            'subscriberListError'
         ]),
         subscribersOptions () {
             const options = []
@@ -196,9 +196,9 @@ export default {
         filterTypeModel () {
             this.typedFilter = null
         },
-        subcriberListState (state) {
+        subscriberListState (state) {
             if (state === RequestState.failed) {
-                showGlobalError(this.subcriberListError)
+                showGlobalError(this.subscriberListError)
             }
         }
     },

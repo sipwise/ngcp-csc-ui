@@ -154,8 +154,8 @@ export default {
             'getCallQueueRemovalToastMessage'
         ]),
         ...mapState('pbx', [
-            'subcriberListState',
-            'subcriberListError'
+            'subscriberListState',
+            'subscriberListError'
         ])
     },
     watch: {
@@ -187,9 +187,9 @@ export default {
                 showGlobalError(this.callQueueListError)
             }
         },
-        subcriberListState (state) {
+        subscriberListState (state) {
             if (state === RequestState.failed) {
-                showGlobalError(this.subcriberListError)
+                showGlobalError(this.subscriberListError)
             }
         }
     },
