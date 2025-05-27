@@ -90,6 +90,8 @@ import _ from 'lodash'
 import CscPbxModelSelect from '../PbxConfiguration/CscPbxModelSelect'
 import CscPbxAutoAttendantSelection from './CscPbxAutoAttendantSelection'
 import { mapActions, mapState } from 'vuex'
+import { RequestState } from 'src/store/common'
+import { showGlobalError } from 'src/helpers/ui'
 
 export default {
     name: 'CscPbxDeviceFilters',
@@ -116,7 +118,9 @@ export default {
         ...mapState('pbx', [
             'deviceProfileMap',
             'deviceProfileList',
-            'subscriberList'
+            'subscriberList',
+            'subscriberListState',
+            'subscriberListError'
         ]),
         subscribersOptions () {
             const options = []
@@ -191,6 +195,11 @@ export default {
     watch: {
         filterTypeModel () {
             this.typedFilter = null
+        },
+        subscriberListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.subscriberListError)
+            }
         }
     },
     mounted () {

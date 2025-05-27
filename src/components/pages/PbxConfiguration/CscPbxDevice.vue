@@ -9,10 +9,21 @@
             center
             no-wrap
         >
-            <img
-                class="csc-list-item-head-image"
-                :src="imageUrl"
+            <q-icon
+                v-if="!imageUrl"
+                name="fas fa-fax"
+                size="24px"
+            />
+
+            <q-avatar
+                v-else
+                square
             >
+                <q-img
+                    class="csc-list-item-head-image"
+                    :src="imageUrl"
+                />
+            </q-avatar>
         </q-item-section>
         <q-item-section>
             <csc-list-item-title>
