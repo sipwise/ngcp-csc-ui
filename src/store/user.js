@@ -2,14 +2,6 @@
 import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
-    RequestState
-} from './common'
-import {
-    login,
-    getUserData,
-    createAuthToken
-} from '../api/user'
-import {
     changePassword,
     resetPassword,
     recoverPassword,
@@ -47,6 +39,8 @@ import {
     httpApi,
     apiDownloadFile
 } from 'src/api/common'
+import { RequestState } from './common'
+import { login, getUserData, createAuthToken } from 'src/api/user'
 
 export default {
     namespaced: true,

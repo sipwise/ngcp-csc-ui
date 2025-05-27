@@ -116,8 +116,8 @@ export async function getList (options) {
     options = _.merge({
         all: false,
         params: {
-            page: LIST_DEFAULT_PAGE,
-            rows: LIST_DEFAULT_ROWS
+            page: options.page || LIST_DEFAULT_PAGE,
+            rows: options.rows || LIST_DEFAULT_ROWS
         },
         headers: GET_HEADERS
     }, options)

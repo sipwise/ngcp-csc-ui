@@ -3,9 +3,7 @@
         id="csc-page-pbx-devices"
         class="q-pa-lg"
     >
-        <csc-list-actions
-            class="row justify-center q-mb-xs"
-        >
+        <csc-list-actions class="row justify-center q-mb-xs">
             <template
                 v-if="isDeviceAddFormDisabled"
                 #slot1
@@ -18,9 +16,7 @@
                     @click="enableAddForm"
                 />
             </template>
-            <template
-                #slot2
-            >
+            <template #slot2>
                 <csc-list-action-button
                     v-if="!filtersEnabled"
                     icon="filter_alt"
@@ -53,7 +49,7 @@
                     :model-image-map="deviceModelImageMap"
                     @cancel="disableDeviceAddForm"
                     @submit="createDevice"
-                    @model-select-opened="loadDeviceModels('front_thumb')"
+                    @model-select-opened="loadProfileThumbnails()"
                 />
             </div>
         </q-slide-transition>
@@ -63,7 +59,7 @@
                 :loading="isDeviceListRequesting"
                 class="q-pb-md"
                 @filter="applyFilter"
-                @model-select-opened="loadDeviceModels('front_thumb')"
+                @model-select-opened="loadProfileThumbnails()"
             />
         </q-slide-transition>
         <div
@@ -76,11 +72,9 @@
                 @update:model-value="loadDeviceListFiltered"
             />
         </div>
-        <csc-list-spinner
-            v-if="isDeviceListRequesting && !(isDeviceCreating || isDeviceRemoving || isDeviceUpdating)"
-        />
+        <csc-list-spinner v-if="showSpinner" />
         <q-list
-            v-if="!isDeviceListEmpty && deviceListVisibility === 'visible'"
+            v-if="!showSpinner && !isDeviceListEmpty && deviceListVisibility === 'visible'"
             class="row justify-start items-start"
         >
             <csc-fade
@@ -89,15 +83,15 @@
             >
                 <csc-pbx-device
                     :key="device.id"
-                    :loading="isDeviceLoading(device.id) || isDeviceListRequesting"
+                    :loading="isItemLoading(device.id)"
                     :device="device"
                     :class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
-                    :profile="deviceProfileMap[device.profile_id]"
-                    :model="deviceModelMap[deviceProfileMap[device.profile_id].device_id]"
-                    :model-image="deviceModelImageMap[deviceProfileMap[device.profile_id].device_id]"
+                    :profile="getDeviceProfile(device.profile_id)"
+                    :model="getDeviceModel(device.profile_id)"
+                    :model-image="getDeviceModelImage(device.profile_id)"
                     @load-model="loadDeviceModel({
                         type: 'all',
-                        deviceId: deviceProfileMap[device.profile_id].device_id
+                        deviceId: device.profile_id ? getDeviceProfile(device.profile_id).device_id : null
                     })"
                     @remove="openDeviceRemovalDialog(device.id)"
                 />
@@ -170,12 +164,11 @@ export default {
             'deviceModelList',
             'deviceModelMap',
             'deviceModelImageMap',
-            'subscriberList',
-            'subscriberMap'
-        ]),
-        ...mapGetters('pbx', [
-            'getSubscriberOptions',
-            'isSubscribersRequesting'
+            'deviceModelListState',
+            'isDeviceModelListStateRequesting',
+            'deviceModelError',
+            'deviceProfileListState',
+            'deviceProfileListError'
         ]),
         ...mapState('pbxDevices', [
             'deviceRemoving',
@@ -184,12 +177,14 @@ export default {
             'deviceListLastPage',
             'deviceListVisibility',
             'deviceCreationState',
-            'deviceRemovalState'
+            'deviceRemovalState',
+            'deviceListState',
+            'deviceListError',
+            'deviceCreationError'
         ]),
         ...mapGetters('pbxDevices', [
             'isDeviceListEmpty',
             'isDeviceListRequesting',
-            'isDeviceExpanded',
             'isDeviceListPaginationActive',
             'isDeviceAddFormDisabled',
             'isDeviceCreating',
@@ -203,6 +198,75 @@ export default {
         ]),
         hasFilters () {
             return Object.keys(this.filters).length > 0
+        },
+        getDeviceIdFromProfile () {
+            return (profileId) => {
+                const profile = this.getDeviceProfile(profileId)
+                return profile && profile.device_id ? profile.device_id : null
+            }
+        },
+        getDeviceProfile () {
+            return (profileId) => {
+                if (!profileId) {
+                    return {}
+                }
+                return this.deviceProfileMap[profileId] || {}
+            }
+        },
+        getDeviceModel () {
+            return (profileId) => {
+                if (!profileId) {
+                    return {}
+                }
+
+                const deviceProfile = this.deviceProfileMap[profileId]
+                if (!deviceProfile) {
+                    return {}
+                }
+
+                if (!deviceProfile.device_id) {
+                    return {}
+                }
+
+                const deviceModel = this.deviceModelMap[deviceProfile.device_id]
+                if (!deviceModel) {
+                    return {}
+                }
+
+                return deviceModel
+            }
+        },
+        getDeviceModelImage () {
+            return (profileId) => {
+                if (!profileId) {
+                    return null
+                }
+
+                const deviceProfile = this.deviceProfileMap[profileId]
+                if (!deviceProfile) {
+                    return null
+                }
+
+                if (!deviceProfile.device_id) {
+                    return null
+                }
+
+                const deviceModelImage = this.deviceModelImageMap[deviceProfile.device_id]
+                if (!deviceModelImage) {
+                    return null
+                }
+
+                return deviceModelImage
+            }
+        },
+        isItemLoading () {
+            return (deviceId) => this.isDeviceLoading(deviceId) ||
+                this.isDeviceListRequesting ||
+                this.isDeviceModelListStateRequesting
+        },
+        showSpinner () {
+            const deviceListDataIsNotReady = this.isDeviceListRequesting && !(this.isDeviceCreating || this.isDeviceRemoving || this.isDeviceUpdating)
+            return this.deviceProfileListState === RequestState.requesting || deviceListDataIsNotReady
         }
     },
     watch: {
@@ -221,7 +285,25 @@ export default {
             } else if (state === RequestState.failed) {
                 showGlobalError(this.deviceRemovalError)
             }
+        },
+        deviceListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deviceListError)
+            }
+        },
+        deviceModelListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deviceModelError)
+            }
+        },
+        deviceProfileListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deviceProfileListError)
+            }
         }
+    },
+    async created () {
+        await this.loadProfiles()
     },
     mounted () {
         this.$scrollTo(this.$parent.$el)
@@ -231,11 +313,10 @@ export default {
     methods: {
         ...mapActions('pbx', [
             'loadDeviceModel',
-            'loadDeviceModels'
+            'loadProfileThumbnails',
+            'loadProfiles'
         ]),
         ...mapMutations('pbxDevices', [
-            'expandDevice',
-            'collapseDevice',
             'enableDeviceAddForm',
             'disableDeviceAddForm',
             'deviceRemovalRequesting',
@@ -245,11 +326,7 @@ export default {
             'loadDeviceList',
             'loadDevicePreferencesList',
             'createDevice',
-            'removeDevice',
-            'setDeviceStationName',
-            'setDeviceIdentifier',
-            'setDeviceProfile',
-            'setDeviceKeys'
+            'removeDevice'
         ]),
         loadDeviceListFiltered (page) {
             this.loadDeviceList({

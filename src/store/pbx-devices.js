@@ -28,6 +28,7 @@ export default {
         deviceCreationState: CreationState.initiated,
         deviceListCurrentPage: 1,
         deviceList: [],
+        deviceListError: null,
         deviceListLastPage: null,
         deviceListState: RequestState.initiated,
         deviceListVisibility: 'visible',
@@ -304,8 +305,6 @@ export default {
             context.commit('deviceListRequesting', { clearList })
 
             try {
-                // Ensure profiles are loaded before fetching devices
-                await context.dispatch('pbx/loadProfiles', null, { root: true })
                 const devices = await getDeviceList({ page, filters })
                 context.commit('deviceListSucceeded', { devices, page })
             } catch (err) {
@@ -316,7 +315,6 @@ export default {
         async loadDevice (context, deviceId) {
             context.commit('deviceListRequesting', { clearList: false })
             try {
-                // Ensure profiles are loaded before fetching devices
                 await context.dispatch('pbx/loadProfileById', deviceId, { root: true })
                 const device = await getDevice(deviceId)
                 context.commit('deviceSucceeded', device)
