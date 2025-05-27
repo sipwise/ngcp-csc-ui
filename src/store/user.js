@@ -3,10 +3,7 @@ import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import QRCode from 'qrcode'
 import { date } from 'quasar'
-import {
-    apiDownloadFile,
-    httpApi
-} from 'src/api/common'
+import { apiDownloadFile, httpApi } from 'src/api/common'
 import { callInitialize } from 'src/api/ngcp-call'
 import {
     changePassword,

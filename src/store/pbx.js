@@ -10,6 +10,7 @@ import {
 import { getSubscribers } from 'src/api/subscriber'
 import { getNumbers } from 'src/api/user'
 import numberFilter from 'src/filters/number'
+import { showGlobalError } from 'src/helpers/ui'
 import { RequestState } from 'src/store/common'
 
 export default {
@@ -25,7 +26,8 @@ export default {
         seatMapById: {},
         soundSetList: [],
         soundSetMapByName: {},
-        deviceProfilesListState: RequestState.initiated,
+        deviceProfileListState: RequestState.initiated,
+        deviceProfileListError: null,
         deviceProfileList: [],
         deviceProfileMap: {},
         deviceModelList: [],
@@ -34,6 +36,7 @@ export default {
         deviceModelImageSmallMap: {},
         subscriberList: [],
         subscriberListState: RequestState.initiated,
+        subscriberListError: null,
         subscriberMap: {},
         ncosMapByName: {}
     },
@@ -155,6 +158,9 @@ export default {
                 return state.deviceModelMap[deviceId] !== undefined
             }
         },
+        isDeviceModelListStateRequesting (state) {
+            return state.deviceModelListState === RequestState.requesting
+        },
         isSubscribersRequesting (state) {
             return state.subscriberListState === RequestState.requesting
         },
@@ -225,30 +231,39 @@ export default {
                 state.soundSetMapByName[soundSet.name] = soundSet
             })
         },
-        deviceProfilesListStateRequesting (state) {
-            state.deviceProfilesListState = RequestState.requesting
+        deviceProfileListStateRequesting (state) {
+            state.deviceProfileListState = RequestState.requesting
         },
-        deviceProfilesListSucceeded (state, deviceProfileList) {
-            state.deviceProfilesListState = RequestState.succeeded
-            state.deviceProfileList = _.get(deviceProfileList, 'items', [])
+        deviceProfileListSucceeded (state, deviceProfileList) {
+            const newList = _.get(deviceProfileList, 'items', [])
+
+            // First remove existing items that we're about to replace with newer versions
+            // and keep only items whoseIds are not in the updated list
+            const existingIds = newList.map((item) => item.id)
+            const filteredExistingList = state.deviceProfileList.filter(
+                (existingItem) => !existingIds.includes(existingItem.id)
+            )
+
+            state.deviceProfileList = [...filteredExistingList, ...newList]
+            state.deviceProfileListState = RequestState.succeeded
             state.deviceProfileMap = {}
             state.deviceProfileList.forEach((deviceProfile) => {
                 state.deviceProfileMap[deviceProfile.id] = deviceProfile
             })
         },
-        deviceProfilesListFailed (state) {
-            state.deviceProfilesListState = RequestState.failed
+        deviceProfileListFailed (state) {
+            state.deviceProfileListState = RequestState.failed
         },
         deviceProfileRequesting (state) {
-            state.deviceProfilesListState = RequestState.requesting
+            state.deviceProfileListState = RequestState.requesting
         },
         deviceProfileSucceeded (state, deviceProfile) {
-            state.deviceProfilesListState = RequestState.succeeded
+            state.deviceProfileListState = RequestState.succeeded
             state.deviceProfileList = [...state.deviceProfileList, deviceProfile]
             state.deviceProfileMap[deviceProfile.id] = deviceProfile
         },
         deviceProfileFailed (state) {
-            state.deviceProfilesListState = RequestState.failed
+            state.deviceProfileListState = RequestState.failed
         },
         deviceModelSucceeded (state, deviceModel) {
             const model = _.get(deviceModel, 'model', null)
@@ -270,7 +285,7 @@ export default {
             delete state.deviceModelImageSmallMap[deviceModelId]
         },
         subscribersRequesting (state) {
-            state.subcriberListState = RequestState.requesting
+            state.subscriberListState = RequestState.requesting
             state.subscriberList = []
         },
         subscribersSucceeded (state, subscribers) {
@@ -279,24 +294,21 @@ export default {
             state.subscriberList.forEach((subscriber) => {
                 state.subscriberMap[subscriber.id] = subscriber
             })
+        },
+        subscribersFailed (state, err) {
+            state.subscriberListState = RequestState.failed
+            state.subscriberListError = err
         }
     },
     actions: {
-        loadProfiles (context) {
-            return new Promise((resolve, reject) => {
-                context.commit('deviceProfilesListStateRequesting')
-                if (context.state.deviceProfileList.length === 0) {
-                    getAllProfiles().then((profiles) => {
-                        context.commit('deviceProfilesListSucceeded', profiles)
-                        resolve(profiles)
-                    }).catch((err) => {
-                        context.commit('deviceProfilesListFailed')
-                        reject(err)
-                    })
-                } else {
-                    resolve()
-                }
-            })
+        async loadProfiles (context) {
+            context.commit('deviceProfileListStateRequesting')
+            try {
+                const profiles = await getAllProfiles()
+                context.commit('deviceProfileListSucceeded', profiles)
+            } catch (err) {
+                context.commit('deviceProfileListFailed', err.message)
+            }
         },
         async loadProfileById (context, deviceId) {
             context.commit('deviceProfileRequesting')
@@ -305,6 +317,47 @@ export default {
                 context.commit('deviceProfileSucceeded', profile)
             } catch (err) {
                 context.commit('deviceProfileFailed')
+            }
+        },
+        async loadProfileThumbnails (context) {
+            const requests = []
+
+            context.state.deviceProfileList.forEach((deviceProfile) => {
+                const isFrontThumbnailCached = context.state.deviceModelImageSmallMap[deviceProfile.device_id] !== undefined
+                if (!isFrontThumbnailCached) {
+                    requests.push(
+                        getModelFrontThumbnailImage(deviceProfile.device_id)
+                            .then((thumbnail) => ({
+                                deviceId: deviceProfile.device_id,
+                                thumbnail
+                            }))
+                            .catch((error) => ({
+                                deviceId: deviceProfile.device_id,
+                                error
+                            }))
+                    )
+                }
+            })
+
+            if (requests.length > 0) {
+                try {
+                    const results = await Promise.all(requests)
+
+                    results.forEach((result) => {
+                        if (result.thumbnail) {
+                            context.commit('deviceModelSucceeded', {
+                                modelImageThumbnail: result.thumbnail
+                            })
+                        } else if (result.error) {
+                            // Silent warning as it's not a critical error
+                            // and we can still use the device profile without the thumbnail
+                            // eslint-disable-next-line no-console
+                            console.warn(`Failed to load thumbnail for device ${result.deviceId}:`, result.error)
+                        }
+                    })
+                } catch (error) {
+                    showGlobalError('Failed to load profile thumbnails:', error)
+                }
             }
         },
         async loadDeviceModel (context, payload) {
@@ -358,7 +411,14 @@ export default {
                 }
                 context.commit('deviceModelSucceeded', deviceModel)
             } catch (err) {
-                context.commit('deviceModelFailed', payload.deviceId)
+                // Note: the way it is implemented at the moment
+                // if any of the promises fails, the whole action fails
+                // and only the first error is reported. This needs refactoring
+                // to handle each request separately and report errors accordingly.
+                context.commit('deviceModelFailed', {
+                    deviceModelId: payload.deviceId,
+                    error: err.message
+                })
             }
         },
         async loadDeviceModels (context, imageType) {
