@@ -12,6 +12,7 @@ export async function createFax (options) {
     }
     return await post({
         resource: 'faxes',
+        headers: { 'Content-Type': 'multipart/form-data' },
         body: formData
     })
 }
