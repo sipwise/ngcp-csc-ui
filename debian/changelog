@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.2.1.12+0~mr13.2.1.12) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [9ebbb89] MT#62769 The sendFax icon appears in the PBX Configuration even if the functionality is not enabled
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 03 Jun 2025 09:41:57 +0200
+
 ngcp-csc-ui (13.2.1.11+0~mr13.2.1.11) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
