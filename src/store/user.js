@@ -81,7 +81,8 @@ export default {
         phonebookMap: {},
         platformInfo: null,
         qrCode: null,
-        qrExpiringTime: null
+        qrExpiringTime: null,
+        numberInput: ''
     },
     getters: {
         isLogged (state) {
@@ -229,6 +230,9 @@ export default {
         },
         isSpCe (state) {
             return state.platformInfo.type === 'spce'
+        },
+        prefilledNumber (state) {
+            return state.numberInput
         }
     },
     mutations: {
@@ -354,6 +358,9 @@ export default {
             state.loginWaitingOTPCode = true
             state.OTPSecret = payload
             state.loginRequesting = false
+        },
+        setPhonebookNumber (state, numberInput) {
+            state.numberInput = numberInput
         }
     },
     actions: {

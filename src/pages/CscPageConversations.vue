@@ -70,6 +70,7 @@
                         @toggle-block-incoming="toggleBlockIncomingAction"
                         @toggle-block-outgoing="toggleBlockOutgoingAction"
                         @toggle-block-both="toggleBlockBothAction"
+                        @add-to-phonebook="addToPhonebookAction"
                         @delete-voicemail="$refs.confirmDeletionDialog.show();deletionId=$event.id"
                         @delete-fax="$refs.confirmDeletionFaxDialog.show();deletionId=$event.id"
                     />
@@ -420,6 +421,10 @@ export default {
             this.$scrollTo(this.$parent.$el)
             this.filterDirection = filter
             this.forceReload()
+        },
+        addToPhonebookAction (number) {
+            this.$store.commit('user/setPhonebookNumber', number)
+            this.$router.push('subscriber-phonebook/create')
         }
     }
 }

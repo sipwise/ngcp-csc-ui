@@ -73,6 +73,12 @@
                     :label="blockBothLabel"
                     @click="toggleBlockBoth"
                 />
+                <csc-popup-menu-item
+                    icon="fas fa-address-book"
+                    color="primary"
+                    :label="$t('Add to phonebook')"
+                    @click="addToPhonebook"
+                />
             </csc-more-menu>
         </q-item-section>
     </q-item>
@@ -121,7 +127,7 @@ export default {
             default: false
         }
     },
-    emits: ['toggle-block-both', 'toggle-block-outgoing', 'toggle-block-incoming', 'start-call'],
+    emits: ['toggle-block-both', 'toggle-block-outgoing', 'toggle-block-incoming', 'start-call', 'add-to-phonebook'],
     data () {
         return {}
     },
@@ -182,6 +188,9 @@ export default {
         },
         toggleBlockBoth () {
             this.$emit('toggle-block-both')
+        },
+        addToPhonebook () {
+            this.$emit('add-to-phonebook', this.numberDialBack)
         }
     }
 }

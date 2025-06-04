@@ -75,6 +75,7 @@ import useValidate from '@vuelidate/core'
 import CscPageSticky from 'components/CscPageSticky'
 import { mapWaitingActions } from 'vue-wait'
 import { required } from 'vuelidate/lib/validators'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPageSubscriberPhonebookAdd',
     components: {
@@ -99,6 +100,9 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('user', [
+            'prefilledNumber'
+        ]),
         nameErrorMessage () {
             const errorsTab = this.v$.formData.name.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
@@ -107,6 +111,12 @@ export default {
                 })
             }
             return ''
+        }
+    },
+    mounted () {
+        if (this.prefilledNumber) {
+            this.formData.number = this.prefilledNumber
+            this.$store.commit('user/setPhonebookNumber', '')
         }
     },
     methods: {

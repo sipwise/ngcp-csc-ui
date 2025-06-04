@@ -11,6 +11,7 @@
         @toggle-block-incoming="toggleBlockIncoming"
         @toggle-block-outgoing="toggleBlockOutgoing"
         @toggle-block-both="toggleBlockBoth"
+        @add-to-phonebook="toggleAddToPhonebook"
     />
     <csc-fax-item
         v-else-if="item.type === 'fax'"
@@ -74,6 +75,7 @@ export default {
         'toggle-block-outgoing',
         'toggle-block-incoming',
         'start-call',
+        'add-to-phonebook',
         'download-voice-mail',
         'play-voice-mail',
         'delete-fax'
@@ -151,6 +153,9 @@ export default {
                 number: this.number,
                 type: this.toggleActionIncoming
             })
+        },
+        toggleAddToPhonebook (number) {
+            this.$emit('add-to-phonebook', number)
         }
     }
 }
