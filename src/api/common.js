@@ -404,7 +404,7 @@ export async function apiGet (options = {
     resourceId: undefined,
     config: {}
 }) {
-    let path = options
+    let path = options.path
     if (options.resource && options.resourceId) {
         path = `api/${options.resource}/${options.resourceId}`
     } else if (options.resource) {
@@ -417,7 +417,7 @@ export async function apiPost (options = {
     data: undefined,
     config: {}
 }) {
-    let path = options
+    let path = options.path
     if (options.resource) {
         path = `${options.resource}/`
     }
