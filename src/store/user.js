@@ -3,7 +3,7 @@ import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import QRCode from 'qrcode'
 import { date } from 'quasar'
-import { apiDownloadFile, httpApi } from 'src/api/common'
+import { apiDownloadFile, apiGet, httpApi } from 'src/api/common'
 import { callInitialize } from 'src/api/ngcp-call'
 import {
     changePassword,
@@ -41,6 +41,7 @@ import {
 } from 'src/auth'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { getSipInstanceId } from 'src/helpers/call-utils'
+import { parseBlobToObject } from 'src/helpers/parse-blob-to-object'
 import { qrPayload } from 'src/helpers/qr'
 import { PATH_CHANGE_PASSWORD } from 'src/router/routes'
 import { setLocal } from 'src/storage'
@@ -61,6 +62,8 @@ export default {
         loginRequesting: false,
         loginSucceeded: false,
         loginError: null,
+        loginWaitingOTPCode: false,
+        OTPSecret: null,
         userDataRequesting: false,
         userDataSucceeded: false,
         userDataError: null,
@@ -134,6 +137,12 @@ export default {
         },
         loginError (state) {
             return state.loginError
+        },
+        loginWaitingOTPCode (state) {
+            return state.loginWaitingOTPCode
+        },
+        OTPSecret (state) {
+            return state.OTPSecret
         },
         passwordRequirements (state) {
             return state.platformInfo?.security?.password || []
@@ -227,6 +236,8 @@ export default {
             state.loginRequesting = true
             state.loginSucceeded = false
             state.loginError = null
+            state.loginWaitingOTPCode = false
+            state.OTPSecret = null
         },
         loginSucceeded (state, options) {
             state.jwt = options.jwt
@@ -234,11 +245,15 @@ export default {
             state.loginRequesting = false
             state.loginSucceeded = true
             state.loginError = null
+            state.loginWaitingOTPCode = false
+            state.OTPSecret = null
         },
         loginFailed (state, error) {
             state.loginRequesting = false
             state.loginSucceeded = false
             state.loginError = error
+            state.loginWaitingOTPCode = false
+            state.OTPSecret = null
         },
         userDataRequesting (state) {
             state.resellerBranding = null
@@ -329,13 +344,27 @@ export default {
             if (index > -1) {
                 state.subscriberPhonebook[index].shared = value
             }
+        },
+        loginWaitingForOTPCode (state) {
+            state.loginWaitingOTPCode = true
+            state.OTPSecret = null
+            state.loginRequesting = false
+        },
+        storeOTPSecret (state, payload) {
+            state.loginWaitingOTPCode = true
+            state.OTPSecret = payload
+            state.loginRequesting = false
         }
     },
     actions: {
         async login (context, options) {
             context.commit('loginRequesting')
             try {
-                const result = await login(options.username, options.password)
+                const result = await login({
+                    username: options.username,
+                    password: options.password,
+                    ...(options.otp && { otp: options.otp })
+                })
                 setJwt(result.jwt)
                 setSubscriberId(result.subscriberId)
                 context.commit('loginSucceeded', {
@@ -345,6 +374,16 @@ export default {
                 await context.dispatch('initUser')
                 await this.$router.push({ name: 'dashboard' })
             } catch (err) {
+                if (err.message === 'Invalid OTP') {
+                    if (context.state.loginWaitingOTPCode) {
+                        context.commit('loginFailed', i18n.global.t('Invalid OTP Code'))
+                        throw err
+                    }
+                    return context.dispatch('getOTPSecret', {
+                        username: options.username,
+                        password: options.password
+                    })
+                }
                 context.commit('loginFailed', err.message)
                 if (err.message === 'Password expired') {
                     this.$router.push({ path: PATH_CHANGE_PASSWORD })
@@ -356,6 +395,64 @@ export default {
         logout () {
             deleteJwt()
             document.location.href = document.location.pathname
+        },
+        async getOTPSecret ({ commit }, options) {
+            try {
+                const token = `${options.username}:${options.password}`
+                const encodedToken = btoa(token).toString('base64')
+                const headers = {
+                    Authorization: `Basic ${encodedToken}`,
+                    'Cache-Control': 'no-cache',
+                    Accept: 'image/png'
+                }
+                const res = await apiGet(
+                    {
+                        path: 'api/otpsecret',
+                        config: {
+                            responseType: 'blob',
+                            headers
+                        }
+                    })
+                const url = URL.createObjectURL(res.data)
+                commit('storeOTPSecret', { type: 'qr', data: url })
+            } catch (err) {
+                try {
+                    const errorData = await parseBlobToObject(err.response.data)
+                    if ([400].includes(errorData?.code) && ['no OTP'].includes(errorData?.message)) {
+                        return commit('loginWaitingForOTPCode')
+                    }
+                } catch (err) {
+                    commit('loginFailed', i18n.global.t('Unexpected error'))
+                    throw err
+                }
+            }
+        },
+        async getOTPSecretAsText ({ commit }, options) {
+            try {
+                const token = `${options.username}:${options.password}`
+                const encodedToken = btoa(token).toString('base64')
+                const headers = {
+                    Authorization: `Basic ${encodedToken}`,
+                    'Cache-Control': 'no-cache',
+                    Accept: 'text/plain'
+                }
+                const res = await apiGet(
+                    {
+                        path: 'api/otpsecret',
+                        config: { headers }
+                    })
+                commit('storeOTPSecret', { type: 'text', data: res.data })
+            } catch (err) {
+                try {
+                    const errorData = await parseBlobToObject(err.response.data)
+                    if ([400].includes(errorData?.code) && ['no OTP'].includes(errorData?.message)) {
+                        return commit('loginWaitingForOTPCode')
+                    }
+                } catch (err) {
+                    commit('loginFailed', i18n.global.t('Unexpected error'))
+                    throw err
+                }
+            }
         },
         async initUser (context) {
             if (!context.getters.userDataSucceeded) {

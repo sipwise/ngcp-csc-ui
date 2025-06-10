@@ -9,13 +9,14 @@ import {
 } from 'src/api/common'
 import { getFaxServerSettings } from 'src/api/fax'
 
-export function login (username, password) {
+export function login ({ username, password, otp = null }) {
     return new Promise((resolve, reject) => {
         let jwt = null
         let subscriberId = null
         httpApi.post('login_jwt', {
             username,
-            password
+            password,
+            ...(otp && { otp })
         }).then((result) => {
             jwt = result.data.jwt
             subscriberId = `${result.data.subscriber_id}`
