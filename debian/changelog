@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.3.1.9+0~mr13.3.1.9) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [4013516] MT#62983 bugfix apiGet and apiPost
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Jun 2025 15:40:31 +0200
+
 ngcp-csc-ui (13.3.1.8+0~mr13.3.1.8) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
