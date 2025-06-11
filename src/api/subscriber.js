@@ -779,6 +779,7 @@ export async function getSubscriberPhonebook (options) {
         delete options.order_by
         delete options.order_by_direction
     }
+    options.include = 'all'
     const list = await getList({
         resource: 'subscriberphonebookentries',
         all,

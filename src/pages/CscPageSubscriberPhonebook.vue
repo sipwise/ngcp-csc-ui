@@ -58,6 +58,7 @@
                     <td>
                         <q-toggle
                             :model-value="row.shared"
+                            :disable="isLevelEntry(row.id)"
                             @update:model-value="toggleShared(row)"
                         />
                     </td>
@@ -75,12 +76,14 @@
                                 icon="fas fa-pen"
                                 color="primary"
                                 :label="$t('Edit')"
+                                :disable="isLevelEntry(row.id)"
                                 @click="showPhonebookDetails(row)"
                             />
                             <csc-popup-menu-item
                                 icon="delete"
                                 color="negative"
                                 :label="$t('Delete')"
+                                :disable="isLevelEntry(row.id)"
                                 @click="deleteRow(row)"
                             />
                         </csc-more-menu>
@@ -126,18 +129,11 @@ export default {
             'subscriberPhonebook'
         ]),
         ...mapGetters('user', [
-            'isPbxEnabled'
+            'isPbxEnabled',
+            'getSubscriberId'
         ]),
         columns () {
             return [
-                {
-                    name: 'id',
-                    required: true,
-                    label: this.$t('Id'),
-                    align: 'left',
-                    field: (row) => row.id,
-                    sortable: true
-                },
                 {
                     name: 'name',
                     required: true,
@@ -192,7 +188,8 @@ export default {
                 page,
                 rows: rowsPerPage,
                 order_by: sortBy,
-                order_by_direction: descending ? 'desc' : 'asc'
+                order_by_direction: descending ? 'desc' : 'asc',
+                subscriber_id: this.getSubscriberId
             })
             this.pagination = { ...props.pagination }
             this.pagination.rowsNumber = count
@@ -229,6 +226,10 @@ export default {
         },
         async toggleShared (row) {
             await this.updateValueShared(row)
+        },
+        isLevelEntry (id) {
+        // Entries with composite Ids are considered "level entries", must not be modified (no edit or delete allowed)
+            return /[a-z]/.test(id)
         },
         openSeatTable () {
             this.$router.push('/user/seats')
