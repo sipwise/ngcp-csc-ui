@@ -284,6 +284,21 @@ export default {
             } else if (state === RequestState.failed) {
                 showGlobalError(this.deviceRemovalError)
             }
+        },
+        deviceListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deviceListError)
+            }
+        },
+        deviceModelListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deviceModelError)
+            }
+        },
+        deviceProfileListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deviceProfileListError)
+            }
         }
     },
     async created () {
