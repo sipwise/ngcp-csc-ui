@@ -155,7 +155,7 @@
                                                     class="q-mt-md full-width"
                                                     @click="getOTPAsText"
                                                 >
-                                                    {{ $t('Display as text') }}
+                                                    {{ $t('Display as setup key') }}
                                                 </q-btn>
                                             </div>
                                             <div
