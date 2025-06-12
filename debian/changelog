@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.36+0~mr12.5.1.36) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [9049820] MT#62916 Pbx Devices Bugfix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 12 Jun 2025 17:38:35 +0200
+
 ngcp-csc-ui (12.5.1.35+0~mr12.5.1.35) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
