@@ -19,6 +19,7 @@ import {
     getSubscriberPhonebook,
     getSubscriberProfile,
     getSubscriberRegistrations,
+    getSubscriberSeats,
     recoverPassword,
     resetPassword,
     setPreference,
@@ -77,6 +78,7 @@ export default {
         defaultBranding: {},
         subscriberRegistrations: [],
         subscriberPhonebook: [],
+        subscriberSeats: [],
         customerPhonebook: [],
         phonebookMap: {},
         platformInfo: null,
@@ -328,6 +330,9 @@ export default {
         },
         setSubscriberPhonebook (state, value) {
             state.subscriberPhonebook = value
+        },
+        setSubscriberSeats (state, value) {
+            state.subscriberSeats = value
         },
         setCustomerPhonebook (state, value) {
             state.customerPhonebook = value
@@ -700,6 +705,17 @@ export default {
             const password = await generateGeneralPassword()
 
             return password
+        },
+        async loadSubscriberSeats ({ commit }, options) {
+            try {
+                const list = await getSubscriberSeats({
+                    ...options
+                })
+                commit('setSubscriberSeats', list.items)
+            } catch (err) {
+                commit('setSubscriberSeats', [])
+                throw err
+            }
         }
     }
 }

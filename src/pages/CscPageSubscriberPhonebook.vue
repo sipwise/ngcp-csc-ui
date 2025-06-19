@@ -14,6 +14,14 @@
                 :label="$t('Add Phonebook')"
                 @click="openAddPhonebook()"
             />
+            <q-btn
+                v-if="isPbxEnabled"
+                icon="person"
+                color="primary"
+                flat
+                :label="$t('Seats')"
+                @click="openSeatTable"
+            />
         </template>
         <csc-page
             class="q-pa-lg"
@@ -91,7 +99,7 @@ import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscSpinner from 'components/CscSpinner'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import { mapWaitingActions } from 'vue-wait'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageSubscriberPhonebook',
     components: {
@@ -116,6 +124,9 @@ export default {
     computed: {
         ...mapState('user', [
             'subscriberPhonebook'
+        ]),
+        ...mapGetters('user', [
+            'isPbxEnabled'
         ]),
         columns () {
             return [
@@ -218,6 +229,9 @@ export default {
         },
         async toggleShared (row) {
             await this.updateValueShared(row)
+        },
+        openSeatTable () {
+            this.$router.push('/user/seats')
         }
     }
 }

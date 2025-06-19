@@ -945,3 +945,10 @@ export async function generateGeneralPassword () {
 
     return password
 }
+export async function getSubscriberSeats (options) {
+    const list = await getList({
+        resource: 'pbxusers',
+        params: options
+    })
+    return list
+}

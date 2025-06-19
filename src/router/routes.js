@@ -36,6 +36,7 @@ import CscPagePbxSoundSets from 'pages/CscPagePbxSoundSets'
 import CscPagePbxStatisticsCdr from 'pages/CscPagePbxStatisticsCdr'
 import CscPageRegisteredDevices from 'pages/CscPageRegisteredDevices'
 import CscPageReminder from 'pages/CscPageReminder'
+import CscPageSeats from 'pages/CscPageSeats'
 import CscPageSpeedDial from 'pages/CscPageSpeedDial'
 import CscPageSubscriberPhonebook from 'pages/CscPageSubscriberPhonebook'
 import CscPageSubscriberPhonebookAdd from 'pages/CscPageSubscriberPhonebookAdd'
@@ -118,6 +119,15 @@ const routes = [
                 meta: {
                     get title () {
                         return i18n.global.t('Subscriber Phonebook')
+                    }
+                }
+            },
+            {
+                path: 'seats',
+                component: CscPageSeats,
+                meta: {
+                    get title () {
+                        return i18n.global.t('Seats')
                     }
                 }
             },
