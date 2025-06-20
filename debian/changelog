@@ -1,3 +1,39 @@
+ngcp-csc-ui (13.4.1.0+0~mr13.4.1.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [25cadea] MT#62533 add data-cy to global call forward after ring timeout
+
+  [ Debora Crescenzo ]
+  * [c91b61a] MT#62541 Dependencies upgrade April
+  * [e314c96] MT#62500 Refactor logic of PBx Devices pages
+  * [34bcb13] MT#62617 Add missing Italian translations
+  * [f80f597] MT#62760 After Ring timeout CFSeat bugfix
+  * [a1f165d] MT#62617 Add missing German translations
+  * [38c2f37] MT#62983 bugfix apiGet and apiPost
+  * [d8c1f09] MT#62916 Pbx Devices Bugfix
+  * [7651502] MT#62982 Add 2FA for Subscribers
+  * [5a15543] MT#62982 Improve 2FA setup text
+
+  [ nidrissi-zouggari ]
+  * [1bff29a] MT#62363 CSC Translation
+  * [9911ccd] MT#62151 Improve error handling in src/store files
+  * [ec610a9] MT#62703 CSC Translation
+  * [dcfecc4] MT#62769 The sendFax icon appears in the PBX Configuration even if the functionality is not enabled
+
+  [ Alessio Garzi ]
+  * [ad870c2] MT#62756 CSC now sends Referred-By with callee local data in blind xfer
+
+  [ Hugo Zigha ]
+  * [6e70eb8] MT#62713 Added missing announce preferences for Groups Menu in CSC
+
+  [ Guillem Jover ]
+  * [257ae09] MT#62763 Fix shellcheck issues
+
+  [ Marco Capetta ]
+  * [8fc8a99] MT#61427 Remove access to the OLD Customer Details page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Jun 2025 10:43:32 +0200
+
 ngcp-csc-ui (13.4.0.0+0~mr13.4.0.0) unstable; urgency=medium
 
   [ Debora Crescenzo ]
