@@ -53,9 +53,8 @@ export default async ({ app, store }) => {
     callEvent.on('outgoingEnded', callFailed)
     callEvent.on('incomingEnded', callFailed)
     callEvent.on('incoming', (session) => {
-        store.commit('call/incomingCall', {
-            number: _.get(session, 'remote_identity.uri.user', 'Unknown')
-        })
+        const number = _.get(session, 'remote_identity.uri.user', 'Unknown')
+        store.dispatch('call/processIncomingCall', number)
     })
     callEvent.on('localStream', (stream) => {
         if (store.state.call.microphoneEnabled) {

@@ -190,6 +190,7 @@
             ref="call"
             :call-state="callState"
             :call-number="number"
+            :phonebook-entry-name="phonebookEntryName"
             :number-input="numberInput"
             :ended-reason="endedReason"
             :full-view="isFullView"
@@ -313,6 +314,7 @@ export default {
             'callState',
             'number',
             'numberInput',
+            'phonebookEntryName',
             'endedReason',
             'localMediaStream',
             'remoteMediaStream',
@@ -445,7 +447,7 @@ export default {
             return ''
         },
         callNumberFormatted () {
-            return normalizeDestination(this.number)
+            return this.phonebookEntryName || normalizeDestination(this.number)
         },
         callEndedReasonFormatted () {
             return startCase(this.endedReason)

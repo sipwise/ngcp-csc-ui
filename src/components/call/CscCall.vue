@@ -47,21 +47,21 @@
                             <span
                                 v-if="isInitiating"
                             >
-                                {{ $t('Calling {number}...', {number: callNumberFormatted || callNumberQuery }) }}</span>
+                                {{ $t('Calling {number}...', { number: callDisplayName}) }}</span>
                             <span
                                 v-else-if="isRinging"
                             >
-                                {{ $t('Ringing at {number}...', {number: callNumberFormatted || callNumberQuery }) }}</span>
+                                {{ $t('Ringing at {number}...', { number: callDisplayName}) }}</span>
                             <span
                                 v-else-if="isIncoming"
                             >
-                                {{ $t('Incoming call from {number}...', {number: callNumberFormatted || callNumberQuery }) }}</span>
+                                {{ $t('Incoming call from {number}...', { number: callDisplayName}) }}</span>
                         </div>
                         <div
                             v-else-if="isEnded"
                             class="csc-call-error"
                         >
-                            {{ $filters.startCase(endedReason) }} ({{ callNumberFormatted || callNumberQuery }})
+                            {{ $filters.startCase(endedReason) }} ({{ callDisplayName }})
                         </div>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                         size="24px"
                     />
                     <div>
-                        {{ $t('In call with {number}', {number: callNumberFormatted || callNumberQuery }) }}
+                        {{ $t('In call with {number}', { number: callDisplayName}) }}
                     </div>
                     <q-btn
                         v-if="!dialpadOpened"
@@ -181,7 +181,7 @@
                         class="q-mr-sm"
                         round
                         size="large"
-                        :disable="islocalOnHold || isremoteOnHold || transferEnabled"
+                        :disable="isLocalOnHold || isRemoteOnHold || transferEnabled"
                         @click="toggleHold()"
                     />
 
@@ -193,7 +193,7 @@
                         text-color="dark"
                         round
                         size="large"
-                        :disable="islocalOnHold || isremoteOnHold"
+                        :disable="isLocalOnHold || isRemoteOnHold"
                         @click="initiateTransfer()"
                     />
                 </div>
@@ -323,7 +323,7 @@
                         <div
                             class="csc-call-info-number"
                         >
-                            {{ callNumberFormatted || callNumberQuery }}
+                            {{ callDisplayName }}
                         </div>
                     </div>
                 </div>
@@ -339,7 +339,7 @@
                     <div
                         class="csc-call-info-number"
                     >
-                        {{ callNumberFormatted || callNumberQuery }}
+                        {{ callDisplayName }}
                     </div>
                 </div>
             </div>
@@ -367,7 +367,7 @@
 <script>
 import CscCallDialpad from 'components/CscCallDialpad'
 import CscMedia from 'components/CscMedia'
-import numberFormat, { normalizeDestination } from 'src/filters/number-format'
+import { normalizeDestination } from 'src/filters/number-format'
 import { showCallNotification } from 'src/helpers/ui'
 import platformMixin from 'src/mixins/platform'
 import { CallStateTitle } from 'src/store/call/common'
@@ -388,6 +388,10 @@ export default {
             required: true
         },
         callNumber: {
+            type: String,
+            required: true
+        },
+        phonebookEntryName: {
             type: String,
             required: true
         },
@@ -548,6 +552,9 @@ export default {
         callNumberQuery () {
             return normalizeDestination(this.$route.query.number)
         },
+        callDisplayName () {
+            return this.phonebookEntryName || this.callNumberFormatted || this.callNumberQuery
+        },
         iconToggleMicrophone () {
             if (this.microphoneEnabled) {
                 return 'mic'
@@ -608,10 +615,10 @@ export default {
         isNumberInputDefined () {
             return this.numberInput !== '' && this.numberInput !== null
         },
-        islocalOnHold () {
+        isLocalOnHold () {
             return this.localOnHold
         },
-        isremoteOnHold () {
+        isRemoteOnHold () {
             return this.remoteOnHold
         }
     },
@@ -620,10 +627,17 @@ export default {
             if (state === 'ringing' || state === 'incoming') {
                 this.playCallSound()
                 if (state === 'incoming') {
-                    showCallNotification(numberFormat(this.callNumber))
+                    showCallNotification(this.callDisplayName)
                 }
             } else {
                 this.stopCallSound()
+            }
+        },
+        phonebookEntryName (name, oldName) {
+            if (oldName !== name) {
+                this.$nextTick(() => {
+                    showCallNotification(name)
+                })
             }
         },
         closed (closed) {

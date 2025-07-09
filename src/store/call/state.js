@@ -6,6 +6,7 @@ export default {
     endedReason: null,
     callState: CallState.input,
     number: '',
+    phonebookEntryName: null,
     numberInput: '',
     localMediaStream: null,
     remoteMediaStream: null,

@@ -1,4 +1,5 @@
 import { i18n } from 'boot/i18n'
+import { fetchPhonebookEntries } from 'src/api/call'
 import {
     callAccept,
     callAddCamera,
@@ -26,6 +27,7 @@ let errorVisibilityTimer = null
 export default {
     async start (context, localMedia) {
         const number = context.getters.callNumberInput.replaceAll('(', '').replaceAll(')', '').replaceAll(' ', '').replaceAll('-', '')
+        context.dispatch('fetchPhonebookEntryName', number)
         context.commit('startCalling', number)
         const isStarted = await callStart({
             number,
@@ -37,6 +39,23 @@ export default {
             context.commit('inputNumber')
             showGlobalError(i18n.global.t('No microphone authorized.'))
         }
+    },
+    async fetchPhonebookEntryName (context, number) {
+        try {
+            const phoneBookEntryArray = await fetchPhonebookEntries(number)
+            const phoneBookEntry = phoneBookEntryArray?.items[0] || null
+            if (phoneBookEntry) {
+                context.commit('fetchPhonebookEntrySuccess', phoneBookEntry.name)
+            }
+        } catch (err) {
+            context.commit('fetchPhonebookEntryFailure')
+        }
+    },
+    async processIncomingCall (context, number) {
+        await context.dispatch('fetchPhonebookEntryName', number)
+        context.commit('incomingCall', {
+            number
+        })
     },
     async accept (context, localMedia) {
         await callAccept({

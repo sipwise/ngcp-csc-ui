@@ -70,6 +70,7 @@ export default {
         state.remoteVideoEnabled = false
         state.localMediaStream = null
         state.remoteMediaStream = null
+        state.newPhonebookEntryName = null
     },
     toggleMicrophone (state, enabled) {
         state.microphoneEnabled = enabled
@@ -129,5 +130,11 @@ export default {
         } else {
             state.transferEnabled = false
         }
+    },
+    fetchPhonebookEntrySuccess (state, phonebookEntryName) {
+        state.phonebookEntryName = phonebookEntryName
+    },
+    fetchPhonebookEntryFailure (state) {
+        state.phonebookEntryName = null
     }
 }
