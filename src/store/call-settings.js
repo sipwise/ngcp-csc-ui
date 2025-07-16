@@ -19,6 +19,9 @@ export default {
         musicOnHold (state) {
             return state.subscriberPreferences?.music_on_hold
         },
+        dnd (state) {
+            return state.subscriberPreferences?.dnd
+        },
         language (state) {
             return state.subscriberPreferences.language
         },
@@ -65,6 +68,9 @@ export default {
         },
         async setMusicOnHold (context, value) {
             await context.dispatch('fieldUpdateAction', { field: 'music_on_hold', value })
+        },
+        async setDnd (context, value) {
+            await context.dispatch('fieldUpdateAction', { field: 'dnd', value })
         },
         async setLanguage (context, options) {
             const subscriberId = options.subscriberId || context.getters.subscriberId

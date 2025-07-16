@@ -11,7 +11,7 @@
             >
                 <q-item-section>
                     <q-toggle
-                        :model-value="musicOnHold"
+                        :model-value="musicOnHoldValue"
                         :disable="dataLoading"
                         :label="$t('Music on Hold')"
                         :title="$t('&quot;Music on Hold&quot; - if set to true and a music on hold file is provided, a calling party gets that file played when put on hold')"
@@ -19,6 +19,14 @@
                         checked-icon="audiotrack"
                         unchecked-icon="audiotrack"
                         @update:model-value="toggleMusicOnHold"
+                    />
+                    <q-toggle
+                        :model-value="dndValue"
+                        :disable="dataLoading"
+                        :label="$t('DND')"
+                        :title="$t('If activated the subscriber will not receive any call. The call forwards will not be taken into account.')"
+                        data-cy="do-not-disturb"
+                        @update:model-value="toggleDnd"
                     />
                 </q-item-section>
                 <q-item-section
@@ -57,7 +65,8 @@ export default {
             'subscriberPreferencesInitialized'
         ]),
         ...mapGetters('callSettings', [
-            'musicOnHold'
+            'musicOnHold',
+            'dnd'
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute'
@@ -67,6 +76,12 @@ export default {
         }),
         dataLoading () {
             return !this.subscriberPreferencesInitialized || this.processingSubscriberPreferences
+        },
+        musicOnHoldValue () {
+            return this.musicOnHold || false
+        },
+        dndValue () {
+            return this.dnd || false
         }
     },
     async mounted () {
@@ -82,11 +97,19 @@ export default {
         ...mapWaitingActions('callSettings', {
             loadPreferencesDefsAction: 'processing subscriberPreferences',
             loadSubscriberPreferencesAction: 'processing subscriberPreferences',
-            setMusicOnHold: 'processing subscriberPreferences'
+            setMusicOnHold: 'processing subscriberPreferences',
+            setDnd: 'dnd'
         }),
         async toggleMusicOnHold () {
             try {
                 await this.setMusicOnHold(!this.musicOnHold)
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
+        async toggleDnd () {
+            try {
+                await this.setDnd(!this.dnd)
             } catch (err) {
                 showGlobalError(err?.message || this.$t('Unknown error'))
             }
