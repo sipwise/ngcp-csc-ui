@@ -26,6 +26,38 @@
         <csc-page
             class="q-pa-lg"
         >
+            <csc-list-actions
+                class="row justify-center q-mb-xs"
+            >
+                <template
+                    #slot1
+                >
+                    <csc-list-action-button
+                        v-if="!showFilters"
+                        icon="filter_alt"
+                        color="primary"
+                        :label="$t('Search Contact')"
+                        data-cy="groups-filter-open"
+                        @click="openSearchFilters"
+                    />
+                    <csc-list-action-button
+                        v-if="showFilters"
+                        icon="clear"
+                        color="negative"
+                        :label="$t('Close')"
+                        data-cy="groups-filter-close"
+                        @click="closeFilters"
+                    />
+                </template>
+            </csc-list-actions>
+
+            <csc-subscriber-filters
+                v-if="showFilters"
+                ref="filters"
+                class="q-mb-md q-pa-md"
+                @filter="applyFilter"
+            />
+
             <q-table
                 v-model:pagination="pagination"
                 class="no-shadow"
@@ -65,28 +97,32 @@
                 </template>
                 <template #body-cell-menu="{ row }">
                     <td>
-                        <csc-more-menu>
-                            <csc-popup-menu-item
+                        <div class="q-gutter-x-sm">
+                            <csc-more-menu>
+                                <csc-popup-menu-item
+                                    icon="fas fa-pen"
+                                    color="primary"
+                                    :label="$t('Edit')"
+                                    :disable="isLevelEntry(row.id)"
+                                    @click="showPhonebookDetails(row)"
+                                />
+                                <csc-popup-menu-item
+                                    icon="delete"
+                                    color="negative"
+                                    :label="$t('Delete')"
+                                    :disable="isLevelEntry(row.id)"
+                                    @click="deleteRow(row)"
+                                />
+                            </csc-more-menu>
+                            <q-btn
                                 icon="fas fa-phone-alt"
                                 color="primary"
+                                size="sm"
+                                flat
                                 :label="$t('Call back')"
                                 @click="homePageCall(row)"
                             />
-                            <csc-popup-menu-item
-                                icon="fas fa-pen"
-                                color="primary"
-                                :label="$t('Edit')"
-                                :disable="isLevelEntry(row.id)"
-                                @click="showPhonebookDetails(row)"
-                            />
-                            <csc-popup-menu-item
-                                icon="delete"
-                                color="negative"
-                                :label="$t('Delete')"
-                                :disable="isLevelEntry(row.id)"
-                                @click="deleteRow(row)"
-                            />
-                        </csc-more-menu>
+                        </div>
                     </td>
                 </template>
             </q-table>
@@ -95,11 +131,14 @@
 </template>
 
 <script>
+import CscListActionButton from 'components/CscListActionButton'
+import CscListActions from 'components/CscListActions'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPage from 'components/CscPage'
 import CscPageSticky from 'components/CscPageSticky'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscSpinner from 'components/CscSpinner'
+import CscSubscriberFilters from 'components/pages/SubscriberPhonebook/CscSubscriberFilters'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import { mapWaitingActions } from 'vue-wait'
 import { mapGetters, mapState } from 'vuex'
@@ -110,7 +149,10 @@ export default {
         CscPage,
         CscMoreMenu,
         CscPopupMenuItem,
-        CscPageSticky
+        CscPageSticky,
+        CscListActionButton,
+        CscListActions,
+        CscSubscriberFilters
     },
     data () {
         return {
@@ -121,7 +163,9 @@ export default {
                 page: 1,
                 rowsPerPage: LIST_DEFAULT_ROWS,
                 rowsNumber: 0
-            }
+            },
+            filters: {},
+            showFilters: false
         }
     },
     computed: {
@@ -166,6 +210,9 @@ export default {
                     sortable: true
                 }
             ]
+        },
+        hasFilters () {
+            return Object.keys(this.filters).length > 0
         }
     },
     async mounted () {
@@ -233,6 +280,44 @@ export default {
         },
         openSeatTable () {
             this.$router.push('/user/seats')
+        },
+        applyFilter (filters) {
+            this.filters = filters
+            // Add wildcards to make search more extensive
+            if (filters?.name) {
+                this.filters.name = `*${filters.name}*`
+            }
+            if (filters?.number) {
+                this.filters.number = `*${filters.number}*`
+            }
+
+            this.pagination.page = 1 // Reset to first page on filter change
+
+            this.$scrollTo(this.$parent.$el)
+            const payload = this.filters
+            payload.page = 1
+            payload.subscriber_id = this.getSubscriberId
+
+            this.loadSubscriberPhonebook(payload)
+        },
+        closeFilters () {
+            this.showFilters = false
+            this.resetFilters()
+        },
+        openSearchFilters () {
+            this.showFilters = true
+        },
+        resetFilters () {
+            if (this.hasFilters) {
+                this.filters = {}
+                this.loadSubscriberPhonebook({
+                    page: this.pagination.page,
+                    rows: this.pagination.rowsPerPage,
+                    order_by: this.pagination.sortBy,
+                    order_by_direction: this.pagination.descending ? 'desc' : 'asc',
+                    subscriber_id: this.getSubscriberId
+                })
+            }
         }
     }
 }
