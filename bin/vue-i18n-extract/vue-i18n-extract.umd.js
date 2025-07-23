@@ -3,10 +3,10 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('path'), require('is-valid-glob'), require('glob'), require('fs'), require('dot-object'), require('js-yaml')) :
   typeof define === 'function' && define.amd ? define(['exports', 'path', 'is-valid-glob', 'glob', 'fs', 'dot-object', 'js-yaml'], factory) :
   (global = global || self, factory(global.vueI18NExtract = {}, global.path, global.isValidGlob, global.glob, global.fs, global.dotObject, global.jsYaml));
-}(this, (function (exports, path, isValidGlob, glob, fs, dot, yaml) {
+}(this, (function (exports, path, isValidGlob, globModule, fs, dot, yaml) {
   path = path && Object.prototype.hasOwnProperty.call(path, 'default') ? path['default'] : path;
   isValidGlob = isValidGlob && Object.prototype.hasOwnProperty.call(isValidGlob, 'default') ? isValidGlob['default'] : isValidGlob;
-  glob = glob && Object.prototype.hasOwnProperty.call(glob, 'default') ? glob['default'] : glob;
+  const { globSync } = globModule;
   fs = fs && Object.prototype.hasOwnProperty.call(fs, 'default') ? fs['default'] : fs;
   dot = dot && Object.prototype.hasOwnProperty.call(dot, 'default') ? dot['default'] : dot;
   yaml = yaml && Object.prototype.hasOwnProperty.call(yaml, 'default') ? yaml['default'] : yaml;
@@ -36,7 +36,7 @@
       throw new Error(`vueFiles isn't a valid glob pattern.`);
     }
 
-    const targetFiles = glob.sync(src);
+    const targetFiles = globSync(src);
 
     if (targetFiles.length === 0) {
       throw new Error('vueFiles glob has no files.');
@@ -127,7 +127,7 @@
       throw new Error(`languageFiles isn't a valid glob pattern.`);
     }
 
-    const targetFiles = glob.sync(src);
+    const targetFiles = globSync(src);
 
     if (targetFiles.length === 0) {
       throw new Error('languageFiles glob has no files.');

@@ -2,8 +2,9 @@
 // vim: set filetype=javascript:
 /* eslint-disable */
 'use strict';
-const program = require('commander');
+const { Command } = require('commander');
 const { reportCommand } = require('./vue-i18n-extract.umd.js');
+const program = new Command();
 
 function increaseDynamic(dummyValue, previous) {
   return previous + 1;

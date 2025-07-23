@@ -59,6 +59,7 @@ export default {
             type: Boolean,
             default: false
         }
-    }
+    },
+    emits: ['input']
 }
 </script>

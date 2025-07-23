@@ -30,7 +30,7 @@
             clearable
             :error="v$.password.$errors.length > 0"
             :error-message="$errMsg(v$.password.$errors)"
-            :label="passwordLabel"
+            :label="translatedPasswordLabel"
             @update:model-value="inputPassword"
             @blur="v$.password.$touch()"
             @generated="passwordGenerated"
@@ -50,7 +50,7 @@
             ref="passwordRetype"
             v-model="passwordRetype"
             v-bind="$attrs"
-            :label="passwordConfirmLabel"
+            :label="translatedPasswordConfirmLabel"
             :error="v$.passwordRetype.$errors.length > 0"
             :error-message="$errMsg(v$.passwordRetype.$errors)"
             clearable
@@ -91,21 +91,15 @@ export default {
         },
         passwordLabel: {
             type: String,
-            default () {
-                return this.$t('Password')
-            }
+            default: undefined
         },
         passwordConfirmLabel: {
             type: String,
-            default () {
-                return this.$t('Password Retype')
-            }
+            default: undefined
         },
         passwordType: {
             type: String,
-            default () {
-                return 'web'
-            }
+            default: 'web'
         }
     },
     emits: ['validation-failed', 'validation-succeeded', 'update:modelValue', 'score'],
@@ -131,6 +125,12 @@ export default {
         ...mapGetters('user', [
             'passwordRequirements'
         ]),
+        translatedPasswordLabel () {
+            return this.$t(this.passwordLabel || this.$t('Password'))
+        },
+        translatedPasswordConfirmLabel () {
+            return this.$t(this.passwordConfirmLabel || this.$t('Password Retype'))
+        },
         areValidationsActive () {
             const webValidate = this.passwordRequirements?.web_validate || false
             const sipValidate = this.passwordRequirements?.sip_validate || false

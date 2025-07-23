@@ -184,7 +184,7 @@
                     :subscribers="subscriberList"
                     :subscriber-map="subscriberMap"
                     :device-preferences="true"
-                    @keysChanged="keysSave"
+                    @keys-changed="keysSave"
                 />
             </div>
         </div>
@@ -231,6 +231,7 @@ export default {
             default: null
         }
     },
+    emits: ['model-select-opened'],
     data () {
         return {
             changes: null,
