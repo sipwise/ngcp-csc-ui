@@ -38,8 +38,8 @@
                 :selected-key="selectedKey"
                 :subscriber-map="subscriberMap"
                 :loading="isDeviceLoading(device.id)"
-                @closeKeyOverlay="keyOverlayActive = false"
-                @onSave="onSave"
+                @close-key-overlay="keyOverlayActive = false"
+                @on-save="onSave"
             />
         </div>
         <q-resize-observer

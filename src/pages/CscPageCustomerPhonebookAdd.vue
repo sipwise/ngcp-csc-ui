@@ -87,6 +87,7 @@ export default {
             }
         }
     },
+    emits: ['cancel'],
     data () {
         return {
             formData: this.getDefaultFormData(),

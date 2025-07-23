@@ -393,7 +393,8 @@ export default {
         },
         phonebookEntryName: {
             type: String,
-            required: true
+            required: false,
+            default: null
         },
         numberInput: {
             type: String,
