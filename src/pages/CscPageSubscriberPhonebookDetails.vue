@@ -75,6 +75,7 @@ export default {
     components: {
         CscPageSticky
     },
+    emits: ['cancel'],
     data () {
         return {
             id: this.$route.params.id,
