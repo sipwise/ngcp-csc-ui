@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.37+0~mr12.5.1.37) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [47fd85a] MT#63292 Remove stylus
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 28 Jul 2025 11:33:48 +0200
+
 ngcp-csc-ui (12.5.1.36+0~mr12.5.1.36) unstable; urgency=medium
 
   [ Debora Crescenzo ]
