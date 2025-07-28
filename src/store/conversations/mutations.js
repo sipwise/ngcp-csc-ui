@@ -19,6 +19,18 @@ function linkCallsWithSameId (state) {
 }
 
 export default {
+    downloadCsvRequesting (state) {
+        state.downloadCsvState = RequestState.requesting
+        state.downloadCsvError = null
+    },
+    downloadCsvSucceeded (state) {
+        state.downloadCsvState = RequestState.succeeded
+        state.downloadCsvError = null
+    },
+    downloadCsvFailed (state, error) {
+        state.downloadCsvState = RequestState.failed
+        state.downloadCsvError = error
+    },
     downloadVoiceMailRequesting (state) {
         state.downloadVoiceMailState = RequestState.requesting
         state.downloadVoiceMailError = null

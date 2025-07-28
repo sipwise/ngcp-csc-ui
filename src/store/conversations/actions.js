@@ -10,6 +10,7 @@ import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import {
     deleteFax,
     deleteVoicemail,
+    downloadCsv,
     downloadFax,
     downloadVoiceMail,
     getConversations,
@@ -68,6 +69,15 @@ export default {
             }).catch((err) => {
                 context.commit('reloadItemsFailed', err.message)
             })
+        }
+    },
+    async downloadCsv (context, options) {
+        context.commit('downloadCsvRequesting')
+        try {
+            await downloadCsv(options)
+            context.commit('downloadCsvSucceeded')
+        } catch (err) {
+            context.commit('downloadCsvFailed', err.message)
         }
     },
     downloadVoiceMail (context, id) {

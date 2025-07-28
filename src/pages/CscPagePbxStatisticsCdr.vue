@@ -64,6 +64,14 @@
                         >
                             {{ $t('Refresh') }}
                         </q-btn>
+                        <q-btn
+                            flat
+                            size="sm"
+                            :loading="$wait.is('loadConversations')"
+                            @click="triggerDownloadCsv"
+                        >
+                            {{ $t('Download CSV') }}
+                        </q-btn>
                     </template>
                 </q-table>
             </div>
@@ -186,7 +194,9 @@ export default {
     },
     methods: {
         ...mapWaitingActions('conversations', {
-            loadConversations: 'loadConversations'
+            loadConversations: 'loadConversations',
+            downloadCsv: 'loadConversations'
+
         }),
         async refresh () {
             await this.fetchPaginatedConversations({
@@ -223,6 +233,24 @@ export default {
             this.filter = filter
             this.fetchPaginatedConversations({
                 pagination: this.pagination
+            })
+        },
+        triggerDownloadCsv () {
+            const { page, rowsPerPage, sortBy, descending } = this.pagination
+            const { startTime, endTime, direction, type } = this.filter
+
+            this.downloadCsv({
+                page,
+                rows: rowsPerPage,
+                order_by: sortBy,
+                direction,
+                order_by_direction: descending ? 'desc' : 'asc',
+                ...(startTime !== null ? { from: startTime } : {}),
+                ...(endTime !== null ? { to: endTime } : {}),
+                ...(type !== null ? { type } : {}),
+                tz: 'UTC'
+            }).catch((error) => {
+                showGlobalError(error)
             })
         }
     }

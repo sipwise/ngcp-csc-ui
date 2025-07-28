@@ -6,6 +6,7 @@ import {
 } from 'src/api/call-blocking'
 import {
     LIST_DEFAULT_ROWS,
+    apiDownloadFile,
     getList,
     httpApi
 } from 'src/api/common'
@@ -53,6 +54,28 @@ export function getConversations (options) {
         }).catch((err) => {
             reject(err)
         })
+    })
+}
+
+export function downloadCsv (options) {
+    const apiGetOptions = {
+        resource: 'conversations',
+        config: {
+            headers: {
+                Accept: 'text/csv'
+            },
+            params: {
+                ...options
+            }
+        }
+    }
+
+    const defaultFileName = apiGetOptions.config.params.type ? `conversations-${apiGetOptions.config.params.type}.csv` : 'conversations.csv'
+
+    return apiDownloadFile({
+        apiGetOptions,
+        defaultFileName,
+        defaultContentType: 'text/csv'
     })
 }
 
