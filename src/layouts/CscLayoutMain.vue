@@ -110,7 +110,7 @@
             class="bg-main-menu"
             :behavior="drawerBehavior"
             show-if-above
-            :width="280"
+            :width="316"
             @mouseleave="minimizeMenu"
             @mouseenter="maximizeMenu"
             @on-layout="layoutResized"

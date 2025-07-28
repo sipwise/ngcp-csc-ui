@@ -8,7 +8,7 @@
                 :key="index + '_childs'"
                 :label="item.label"
                 :icon="item.icon"
-                :content-inset-level="1"
+                :content-inset-level="0.5"
                 group="cscMainMenu"
                 class="text-weight-bold"
             >
