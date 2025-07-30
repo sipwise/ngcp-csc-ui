@@ -13,13 +13,27 @@ export const CallState = {
     unhold: 'unhold'
 }
 export const CallStateTitle = {
-    get input () { return i18n.global.tc('Start new call') },
-    get initiating () { return i18n.global.tc('Calling') },
-    get ringing () { return i18n.global.tc('Ringing at') },
-    get incoming () { return i18n.global.tc('Incoming call from') },
-    get established () { return i18n.global.tc('In call with') },
-    get ended () { return i18n.global.tc('Call ended') },
-    get hold () { return i18n.global.tc('Call holded') }
+    get input () {
+        return i18n.global.t('Start new call')
+    },
+    get initiating () {
+        return i18n.global.t('Calling')
+    },
+    get ringing () {
+        return i18n.global.t('Ringing at')
+    },
+    get incoming () {
+        return i18n.global.t('Incoming call from')
+    },
+    get established () {
+        return i18n.global.t('In call with')
+    },
+    get ended () {
+        return i18n.global.t('Call ended')
+    },
+    get hold () {
+        return i18n.global.t('Call on hold')
+    }
 }
 
 export const MediaType = {
