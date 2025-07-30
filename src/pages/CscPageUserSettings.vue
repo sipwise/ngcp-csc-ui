@@ -12,7 +12,7 @@
                 :btn-label="$t('Change Web Password')"
                 :password-label="$t('New Web Password')"
                 :password-confirm-label="$t('New Web Password confirm')"
-                :save-conformation-text="$t('You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password. ')"
+                :save-conformation-text="$t('You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password.')"
                 :loading="processingChangeWebPassword"
                 @change="requestWebPasswordChange"
             />
