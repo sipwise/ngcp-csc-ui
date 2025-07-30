@@ -133,7 +133,7 @@ export default {
         openConfirmDialog () {
             this.$q.dialog({
                 title: this.$t('Change login password'),
-                message: this.$t('You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password. '),
+                message: this.$t('You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password.'),
                 color: 'primary',
                 cancel: true,
                 persistent: true
