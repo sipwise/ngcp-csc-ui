@@ -30,7 +30,7 @@ export const CallStateTitle = {
         return i18n.global.t('Call ended')
     },
     get hold () {
-        return i18n.global.t('Call holded')
+        return i18n.global.t('Call hold')
     }
 }
 
