@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.4.1.3+0~mr13.4.1.3) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [eb446cf] MT#63310 Improve handling of long words in main menu
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 31 Jul 2025 12:53:13 +0200
+
 ngcp-csc-ui (13.4.1.2+0~mr13.4.1.2) unstable; urgency=medium
 
   [ Debora Crescenzo ]
