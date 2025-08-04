@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.3.1.11+0~mr13.3.1.11) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [7797b18] MT#62617 Add missing translations
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 04 Aug 2025 16:53:34 +0200
+
 ngcp-csc-ui (13.3.1.10+0~mr13.3.1.10) unstable; urgency=medium
 
   [ Debora Crescenzo ]
