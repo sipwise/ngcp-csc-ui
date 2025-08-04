@@ -1,3 +1,13 @@
+ngcp-csc-ui (12.5.1.39+0~mr12.5.1.39) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [1a11c27] MT#62617 Add missing translations
+
+  [ Debora Crescenzo ]
+  * [0a30fae] MT#62617 Add missing Spanish translations
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 04 Aug 2025 16:53:30 +0200
+
 ngcp-csc-ui (12.5.1.38+0~mr12.5.1.38) unstable; urgency=medium
 
   [ Debora Crescenzo ]
