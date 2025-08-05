@@ -15,7 +15,7 @@ import { assignNumbers } from 'src/api/user'
 import { getJsonBody } from 'src/api/utils'
 
 const minValue = 3
-const generateSymbols = '!@#$%^&*()_+~`|}{[]:;?><,./-='
+const generateSymbols = '!@#$%^*()_+~`|}{[]:;?><,./-='
 const generateNumbers = '0123456789'
 const generateLowercase = 'abcdefghijklmnopqrstuvwxyz'
 const generateUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
