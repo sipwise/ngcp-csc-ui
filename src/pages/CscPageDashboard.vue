@@ -4,7 +4,7 @@
         class="row justify-center"
     >
         <csc-card-dashboard
-            v-if="showConversationsCard"
+            v-if="showVoicemailCard"
             :title="$t('Voicebox Messages')"
             :count="voicemailsCount"
             :count-title="$t('Messages')"
@@ -103,6 +103,10 @@ export default {
         ]),
         showConversationsCard () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
+        },
+        showVoicemailCard () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations) &&
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail)
         },
         showRegDevices () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.registeredDevices)

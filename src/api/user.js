@@ -8,6 +8,7 @@ import {
     post
 } from 'src/api/common'
 import { getFaxServerSettings } from 'src/api/fax'
+import { LICENSES } from 'src/constants'
 
 export function login ({ username, password, otp = null }) {
     return new Promise((resolve, reject) => {
@@ -70,17 +71,21 @@ export async function getUserData (id) {
     ])
 
     try {
+        let isFaxServerSettingsActive = false
         const [subscriber, capabilities, resellerBranding, platformInfo] = await allPromise
-        if (capabilities.faxserver && platformInfo.licenses.find((license) => license === 'fax')) {
-            const faxServerSettings = await getFaxServerSettings(id)
-            capabilities.faxactive = faxServerSettings.active
+        if (capabilities.faxserver && platformInfo.licenses.find((license) => license === LICENSES.fax)) {
+            // Note that isFaxServerSettingsActive determines if the menu has been enabled by admin
+            // or, in other words, if the relevant toggle is on/off.
+            const responseFaxServerSettings = await getFaxServerSettings(id)
+            isFaxServerSettingsActive = responseFaxServerSettings.active
         }
 
         return {
             subscriber,
             capabilities,
             resellerBranding: resellerBranding?.items[0] || null,
-            platformInfo
+            platformInfo,
+            isFaxServerSettingsActive
         }
     } catch (error) {
         throw new Error(error.response.data.message)
@@ -99,6 +104,11 @@ export function getSubscriberById (id) {
     })
 }
 
+/**
+ * Determines if specific users should have access to features based on their roles and profiles.
+ * Retrieves a list of capabilities and their enabled status from the API.
+ * @returns {Promise<Object>} A promise that resolves to an object of capabilities with their enabled status
+ */
 export function getCapabilities () {
     return new Promise((resolve, reject) => {
         getList({

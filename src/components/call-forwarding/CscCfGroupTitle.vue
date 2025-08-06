@@ -271,7 +271,7 @@
                         })"
                     />
                     <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('voice_mail')"
+                        v-if="showVoicebox"
                         :icon="destinationIconByType('VoiceBox')"
                         :label="$t('Forward to Voicebox')"
                         data-cy="csc-forwarding-to-voicebox"
@@ -293,7 +293,7 @@
                         })"
                     />
                     <csc-popup-menu-item
-                        v-if="platformInfo.faxserver"
+                        v-if="isFaxFeatureEnabled"
                         :icon="destinationIconByType('Fax2Mail')"
                         :label="$t('Forward to Fax2Mail')"
                         data-cy="csc-forwarding-to-fax2mail"
@@ -304,7 +304,7 @@
                         })"
                     />
                     <csc-popup-menu-item
-                        v-if="platformInfo.manager_secretary"
+                        v-if="showManagerSecretary"
                         :icon="destinationIconByType('ManagerSecretary')"
                         :label="$t('Forward to Manager Secretary')"
                         data-cy="csc-forwarding-to-manager-secretary"
@@ -329,7 +329,7 @@
                     #grid-column-2
                 >
                     <csc-popup-menu-item
-                        v-if="isPbxAttendant && platformInfo.cloudpbx"
+                        v-if="isPbxAttendant && isPbxEnabled"
                         :icon="destinationIconByType('AutoAttendant')"
                         :label="$t('Forward to Auto Attendant')"
                         data-cy="csc-forwarding-to-auto-attendant"
@@ -340,7 +340,7 @@
                         })"
                     />
                     <csc-popup-menu-item
-                        v-if="isPbxAttendant && platformInfo.cloudpbx"
+                        v-if="isPbxAttendant && isPbxEnabled"
                         :icon="destinationIconByType('OfficeHoursAnnouncement')"
                         :label="$t('Forward to Office Hours Announcement')"
                         data-cy="csc-forwarding-to-office-hours-announcement"
@@ -414,6 +414,7 @@ import CscCfConditionPopupDateRange from 'components/call-forwarding/CscCfCondit
 import CscCfConditionPopupOfficeHours from 'components/call-forwarding/CscCfConditionPopupOfficeHours'
 import CscCfConditionPopupWeekdays from 'components/call-forwarding/CscCfConditionPopupWeekdays'
 import _ from 'lodash'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import numberFilter from 'src/filters/number'
 import destination from 'src/mixins/destination'
 import { mapActions, mapGetters, mapState } from 'vuex'
@@ -475,7 +476,9 @@ export default {
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
-            'isPbxAttendant'
+            'isFaxFeatureEnabled',
+            'isPbxAttendant',
+            'isPbxEnabled'
         ]),
         ...mapState('user', [
             'platformInfo'
@@ -497,6 +500,13 @@ export default {
                 _.endsWith(lastDestination, 'managersecretary.local') ||
                 _.endsWith(lastDestination, 'conference.local') ||
                 (_.endsWith(lastDestination, 'app.local') && !lastDestinationId)
+        },
+        showVoicebox () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail)
+        },
+        showManagerSecretary () {
+            return this.platformInfo.manager_secretary &&
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.managerSecretary)
         }
     },
     methods: {

@@ -117,7 +117,7 @@ import CscRemoveDialog from 'components/CscRemoveDialog'
 import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
 import CscConversationsCallsFilter from 'components/pages/Conversations/CscConversationsCallsFilter'
 import CscConversationsFilter from 'components/pages/Conversations/CscConversationsFilter'
-import { LICENSES } from 'src/constants'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { showGlobalError } from 'src/helpers/ui'
 import platformMixin from 'src/mixins/platform'
 import { RequestState } from 'src/store/common'
@@ -150,7 +150,8 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'isLicenseActive'
+            'isFaxFeatureEnabled',
+            'hasSubscriberProfileAttribute'
         ]),
         ...mapState('conversations', [
             'reachedLastPage',
@@ -176,7 +177,7 @@ export default {
             'isCallEnabled'
         ]),
         tabs () {
-            return [
+            const tabs = [
                 {
                     label: this.$t('All'),
                     value: 'call-fax-voicemail',
@@ -187,19 +188,23 @@ export default {
                     value: 'call',
                     icon: 'call'
                 },
-                {
+                ...(this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail) ? [{
                     label: this.$t('Voicemails'),
                     value: 'voicemail',
                     icon: 'voicemail'
-                },
-                this.isLicenseActive(LICENSES.fax)
-                    ? {
-                        label: this.$t('Faxes'),
-                        value: 'fax',
-                        icon: 'description'
-                    }
-                    : null
-            ].filter((label) => label !== null)
+                }] : []),
+                ...(this.isFaxFeatureEnabled ? [{
+                    label: this.$t('Faxes'),
+                    value: 'fax',
+                    icon: 'description'
+                }] : [])
+            ]
+
+            if (tabs.length === 2) {
+                return tabs.filter((tab) => tab.value !== 'call-fax-voicemail')
+            }
+
+            return tabs
         },
         pageStyle () {
             return {
