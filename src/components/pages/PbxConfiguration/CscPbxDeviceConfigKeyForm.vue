@@ -117,7 +117,8 @@ import CscInput from 'components/form/CscInput'
 import CscPbxAutoAttendantSelection from 'components/pages/PbxConfiguration/CscPbxAutoAttendantSelection'
 import _ from 'lodash'
 import { Platform } from 'quasar'
-import { mapState } from 'vuex'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
     name: 'CscPbxDeviceConfigKeyForm',
@@ -168,6 +169,9 @@ export default {
     computed: {
         ...mapState('pbx', [
             'subscriberList'
+        ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
         ]),
         hasSubscriberChanged () {
             return this.keyData.subscriber_id !== this.changes.subscriber_id
@@ -257,7 +261,7 @@ export default {
                     value: 'shared'
                 })
             }
-            if (this.selectedKey !== null && this.selectedKey.keySet.can_speeddial) {
+            if (this.selectedKey !== null && this.selectedKey.keySet.can_speeddial && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.speedDial)) {
                 options.push({
                     label: this.$t('Speed Dial'),
                     value: 'speeddial'

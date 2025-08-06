@@ -150,7 +150,8 @@
 
 <script>
 import _ from 'lodash'
-import { mapGetters } from 'vuex'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
     name: 'CscCdrFilters',
@@ -174,6 +175,14 @@ export default {
     computed: {
         ...mapGetters([
             'getCurrentFormattedDateWithDash'
+        ]),
+        ...mapGetters('user', [
+            'isFaxFeatureEnabled',
+            'hasSubscriberProfileAttribute',
+            'isSmsEnabled'
+        ]),
+        ...mapState('user', [
+            'platformInfo'
         ]),
         filterType () {
             return this.filterTypeModel && this.filterTypeModel.value
@@ -212,18 +221,18 @@ export default {
                     label: this.$t('Call'),
                     value: 'call'
                 },
-                {
+                ...(this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail) ? [{
                     label: this.$t('Voicemail'),
                     value: 'voicemail'
-                },
-                {
+                }] : []),
+                ...(this.isSmsEnabled ? [{
                     label: this.$t('Sms'),
                     value: 'sms'
-                },
-                {
+                }] : []),
+                ...(this.isFaxFeatureEnabled ? [{
                     label: this.$t('Fax'),
                     value: 'fax'
-                }
+                }] : [])
             ]
         },
         filtersList () {

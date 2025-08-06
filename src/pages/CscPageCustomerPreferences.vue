@@ -10,6 +10,7 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
+                        v-if="showIgnoreMembersCFWhenHunting"
                         v-model="changes.ignore_cf_when_hunting"
                         class="q-pa-sm"
                         :label="$t('Ignore Members Call Forwards when Hunting')"
@@ -20,6 +21,7 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
+                        v-if="showBlockModeForInboundCalls"
                         v-model="changes.block_in_mode"
                         class="q-pa-sm"
                         :label="$t('Block Mode for inbound calls')"
@@ -30,6 +32,7 @@
             <q-item>
                 <q-item-section>
                     <csc-input-chips
+                        v-if="showBlockListForInboundCalls"
                         :value="changes.block_in_list"
                         :label="$t('Block List for inbound calls')"
                         :emit-array="true"
@@ -41,6 +44,7 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
+                        v-if="showBlockAnonymousInboundCalls"
                         v-model="changes.block_in_clir"
                         class="q-pa-sm"
                         :label="$t('Block anonymous inbound calls')"
@@ -51,6 +55,7 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
+                        v-if="showBlockModeForOutboundCalls"
                         v-model="changes.block_out_mode"
                         class="q-pa-sm"
                         :label="$t('Block Mode for outbounds calls')"
@@ -61,6 +66,7 @@
             <q-item>
                 <q-item-section>
                     <csc-input-chips
+                        v-if="showBlockListForOutboundCalls"
                         :value="changes.block_out_list"
                         :label="$t('Block List for outbounds calls')"
                         :emit-array="true"
@@ -72,6 +78,7 @@
             <q-item>
                 <q-item-section>
                     <q-input
+                        v-if="showBlockOutOverridePin"
                         v-model.trim="changes.block_out_override_pin"
                         :label="$t('PIN to bypass outbound Block List')"
                         clearable
@@ -97,6 +104,7 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
+                        v-if="showPlayAnnounceBeforeCallSetup"
                         v-model="changes.play_announce_before_call_setup"
                         class="q-pa-sm"
                         :label="$t('Play announcement before call setup')"
@@ -107,6 +115,7 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
+                        v-if="showPlayAnnounceToCallee"
                         v-model="changes.play_announce_to_callee"
                         class="q-pa-sm"
                         :label="$t('Play announcement to callee after answer')"
@@ -126,6 +135,7 @@ import CscPage from 'components/CscPage'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import _ from 'lodash'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { showGlobalError } from 'src/helpers/ui'
 import { RequestState } from 'src/store/common'
 import {
@@ -161,7 +171,8 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'getCustomerId'
+            'getCustomerId',
+            'hasSubscriberProfileAttribute'
         ]),
         ...mapState('customer', [
             'customerPreferences',
@@ -171,6 +182,33 @@ export default {
         ]),
         hasBlockOutOverridePinChanged () {
             return this.changes.block_out_override_pin !== this.customerPreferences.block_out_override_pin
+        },
+        showBlockAnonymousInboundCalls () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockInClir)
+        },
+        showBlockListForInboundCalls () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockInList)
+        },
+        showBlockListForOutboundCalls () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockOutList)
+        },
+        showBlockModeForInboundCalls () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockInMode)
+        },
+        showBlockModeForOutboundCalls () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockOutMode)
+        },
+        showBlockOutOverridePin () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockOutOverridePin)
+        },
+        showIgnoreMembersCFWhenHunting () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.huntGroups)
+        },
+        showPlayAnnounceBeforeCallSetup () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCallSetup)
+        },
+        showPlayAnnounceToCallee () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceToCallee)
         }
     },
     watch: {

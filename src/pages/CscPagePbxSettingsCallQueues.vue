@@ -25,7 +25,7 @@
                             :value-changed="hasMaxQueueLengthChanged"
                             :error="v$.changes.max_queue_length.$errors.length > 0"
                             :error-message="queueMaxLengthErrorMessage"
-                            :disable="isLoading || !cloud_pbx_callqueue"
+                            :disable="disableMaxQueueLength || isLoading"
                             @undo="resetMaxQueueLength"
                             @save="save"
                             @update:model-value="v$.changes.max_queue_length.$touch()"
@@ -43,7 +43,7 @@
                             :value-changed="hasQueueWrapUpTimeChanged"
                             :error="v$.changes.queue_wrap_up_time.$errors.length > 0"
                             :error-message="queueWrapUpTimeErrorMessage"
-                            :disable="isLoading || !cloud_pbx_callqueue"
+                            :disable="disableQueueWrapUpTime || isLoading"
                             @undo="resetQueueWrapUpTime"
                             @save="save"
                             @update:model-value="v$.changes.queue_wrap_up_time.$touch()"
@@ -69,6 +69,7 @@ import CscPage from 'components/CscPage'
 import CscSpinner from 'components/CscSpinner'
 import CscInputSaveable from 'components/form/CscInputSaveable'
 import { getSubscriberId } from 'src/auth'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { showToast } from 'src/helpers/ui'
 import { mapWaitingActions } from 'vue-wait'
 import {
@@ -86,7 +87,7 @@ export default {
         return {
             callQueue: null,
             changes: null,
-            cloud_pbx_callqueue: false,
+            cloud_pbx_callqueue: null,
             v$: useValidate()
         }
     },
@@ -113,8 +114,15 @@ export default {
             'subscriberPreferences'
         ]),
         ...mapGetters('user', [
-            'getUsername'
+            'getUsername',
+            'hasSubscriberProfileAttribute'
         ]),
+        disableMaxQueueLength () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.maxQueueLength)
+        },
+        disableQueueWrapUpTime () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.queueWrapUpTime)
+        },
         hasMaxQueueLengthChanged () {
             return this.callQueue.max_queue_length !== this.changes.max_queue_length
         },
