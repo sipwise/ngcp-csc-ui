@@ -163,10 +163,6 @@ export default {
         id: {
             type: String,
             default: ''
-        },
-        isPbxConfigurationContext: {
-            type: Boolean,
-            default: false
         }
     },
     data () {
@@ -216,7 +212,7 @@ export default {
         },
         async setChangedData (field, value) {
             try {
-                await this.faxServerSettingsUpdateAction({ field, value, id: this.id, fromPbxConfiguration: this.isPbxConfigurationContext })
+                await this.faxServerSettingsUpdateAction({ field, value, id: this.id })
                 this.updateDataFromStore()
             } catch (err) {
                 showGlobalError(err?.message)

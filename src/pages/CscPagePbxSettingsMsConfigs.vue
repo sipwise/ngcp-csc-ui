@@ -16,7 +16,7 @@
                 v-if="isLoading || !msConfig || !changes"
                 class="q-ml-xl"
             />
-            <q-item v-if="msConfig && changes">
+            <q-item v-if="msConfig && changes && showSecretaryNumbers">
                 <q-item-section>
                     <q-select
                         v-model="changes.secretaryNumbers"
@@ -48,6 +48,7 @@
 
 <script>
 import _ from 'lodash'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import {
     mapGetters,
     mapState
@@ -85,7 +86,8 @@ export default {
             'subscriberPreferences'
         ]),
         ...mapGetters('user', [
-            'getUsername'
+            'getUsername',
+            'hasSubscriberProfileAttribute'
         ]),
         hasSecretaryNumbersChanged () {
             const changedSecretaryNumbers = _.clone(_.get(this.changes, 'secretaryNumbers', []))
@@ -95,6 +97,9 @@ export default {
         isLoading () {
             return this.$wait.is('csc-pbx-manager-secretary-numbers') || this.$wait.is('csc-pbx-call-settings-load-preferences') ||
                 this.$wait.is('csc-pbx-call-settings-update-preferences')
+        },
+        showSecretaryNumbers () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.secretaryNumbers)
         }
     },
     async mounted () {

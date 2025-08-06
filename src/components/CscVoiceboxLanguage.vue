@@ -5,8 +5,8 @@
                 :model-value="value"
                 emit-value
                 map-options
-                :disable="loading"
-                :readonly="loading"
+                :disable="disabled || loading"
+                :readonly="disabled || loading"
                 :label="$t('Language for voicemail and app server')"
                 data-cy="voicebox-change-language"
                 :title="$t('Voice prompts language for voicemail, conference and application server')"
@@ -52,6 +52,10 @@ export default {
             default: null
         },
         loading: {
+            type: Boolean,
+            default: false
+        },
+        disabled: {
             type: Boolean,
             default: false
         }

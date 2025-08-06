@@ -40,6 +40,10 @@ export default {
             context.commit('settingsSucceeded', {
                 faxServerSettings
             })
+
+            if (String(subscriberId) === String(context.getters.subscriberId)) {
+                context.commit('user/updateIsFaxServerSettingsActive', faxServerSettings.active, { root: true })
+            }
         },
         async faxServerSettingsUpdateAction (context, options) {
             const subscriberId = options.id || context.getters.subscriberId
@@ -51,8 +55,9 @@ export default {
             context.commit('settingsSucceeded', {
                 faxServerSettings
             })
-            if (!options.fromPbxConfiguration) {
-                context.commit('user/updateFaxActiveCapabilityState', faxServerSettings.active, { root: true })
+
+            if (String(subscriberId) === String(context.getters.subscriberId)) {
+                context.commit('user/updateIsFaxServerSettingsActive', faxServerSettings.active, { root: true })
             }
         },
 

@@ -13,17 +13,16 @@
             v-model="data.max_queue_length"
             :error="v$.data.max_queue_length.$errors.length > 0"
             :error-message="maxQueueLengthErrorMessage"
-            :disable="loading"
+            :disable="disableMaxQueueLength || loading"
             :readonly="loading"
             :label="$t('Queue Length')"
-            default="3"
             @update:model-value="v$.data.max_queue_length.$touch()"
         />
         <q-input
             v-model="data.queue_wrap_up_time"
             :error="v$.data.queue_wrap_up_time.$errors.length > 0"
             :error-message="wrapUpTimeErrorMessage"
-            :disable="loading"
+            :disable="disableQueueWrapUpTime || loading"
             :readonly="loading"
             :label="$t('Wrap up time')"
             :suffix="$t('seconds')"
@@ -67,6 +66,8 @@ import {
     numeric
 } from '@vuelidate/validators'
 import CscObjectSpinner from '../../CscObjectSpinner'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { mapGetters } from 'vuex'
 import useValidate from '@vuelidate/core'
 
 export default {
@@ -123,6 +124,15 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
+        ]),
+        disableMaxQueueLength () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.maxQueueLength)
+        },
+        disableQueueWrapUpTime () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.queueWrapUpTime)
+        },
         maxQueueLengthErrorMessage () {
             const errorsTab = this.v$.data.max_queue_length.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
@@ -172,7 +182,7 @@ export default {
             return {
                 subscriber_id: null,
                 max_queue_length: this.defaultMaxQueueLength,
-                queue_wrap_up_time: this.defaultWrapUpTime
+                queue_wrap_up_time: this.defaultQueueWrapUpTime
             }
         },
         cancel () {
