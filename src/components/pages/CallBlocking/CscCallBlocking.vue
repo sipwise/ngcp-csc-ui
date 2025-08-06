@@ -25,7 +25,7 @@
             </q-item>
         </q-list>
         <csc-ncos
-            v-if="pageName === 'outgoing'"
+            v-if="pageName === 'outgoing' && showNcosMenus"
         />
         <div
             v-if="hasSubscriberProfileAttribute(blockMode)"
@@ -129,6 +129,7 @@
 
 <script>
 import _ from 'lodash'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import CscSpinner from '../../CscSpinner'
 import {
     mapGetters
@@ -184,7 +185,8 @@ export default {
             'isAnonymousBlockRequesting'
         ]),
         ...mapGetters('user', [
-            'hasSubscriberProfileAttribute'
+            'hasSubscriberProfileAttribute',
+            'hasSomeSubscriberProfileAttributes'
         ]),
         toggleButtonLabel () {
             if (!this.enabled) {
@@ -218,6 +220,9 @@ export default {
                 classes.push('csc-toggle-disabled')
             }
             return classes
+        },
+        showNcosMenus () {
+            return this.hasSomeSubscriberProfileAttributes([PROFILE_ATTRIBUTE_MAP.ncos, PROFILE_ATTRIBUTE_MAP.ncosSet])
         }
     },
     watch: {

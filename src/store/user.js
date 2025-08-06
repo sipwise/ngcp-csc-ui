@@ -34,7 +34,7 @@ import { date } from 'quasar'
 import { callInitialize } from 'src/api/ngcp-call'
 import { setLocal } from 'src/storage'
 import { getSipInstanceId } from 'src/helpers/call-utils'
-import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { LICENSES, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import {
     httpApi,
     apiDownloadFile
@@ -50,10 +50,6 @@ export default {
         subscriber: null,
         capabilities: null,
         profile: null,
-        features: {
-            sendFax: true,
-            sendSms: false
-        },
         loginRequesting: false,
         loginSucceeded: false,
         loginError: null,
@@ -74,7 +70,9 @@ export default {
         phonebookMap: {},
         platformInfo: null,
         qrCode: null,
-        qrExpiringTime: null
+        qrExpiringTime: null,
+        numberInput: '',
+        isFaxServerSettingsActive: false
     },
     getters: {
         isLogged (state) {
@@ -95,30 +93,37 @@ export default {
         isAdmin (state) {
             return state.subscriber !== null && state.subscriber.administrative
         },
-        isPbxAdmin (state, getters) {
-            return getters.isAdmin && state.capabilities !== null && state.capabilities.cloudpbx
+        isPbxAdmin (_, getters) {
+            return getters.isAdmin && getters.isPbxEnabled
         },
         isPbxEnabled (state) {
-            return state.capabilities !== null && state.capabilities.cloudpbx
+            return state?.capabilities?.cloudpbx &&
+                state?.platformInfo?.cloudpbx &&
+            state.platformInfo.licenses.includes(LICENSES.pbx)
         },
-        hasSmsCapability (state) {
-            return state.capabilities !== null &&
-                state.capabilities.sms === true
+        hasCapability (state) {
+            return (capability) => {
+                return state?.capabilities?.[capability]
+            }
         },
-        hasSendSmsFeature (state) {
-            return state.features.sendSms
+        hasPlatformFeature (state) {
+            return (feature) => {
+                return state?.platformInfo?.[feature]
+            }
         },
-        hasSendFaxFeature (state) {
-            return state.features.sendFax
+        isSmsEnabled (state) {
+            return state?.platformInfo?.sms &&
+                state?.capabilities?.sms &&
+            state?.platformInfo?.licenses?.includes(LICENSES.sms)
         },
-        hasFaxCapability (state) {
-            return state.capabilities !== null &&
-                state.capabilities.faxserver
+        isFaxFeatureEnabled (state, getters) {
+            return state?.capabilities?.faxserver &&
+                state?.platformInfo?.faxserver &&
+                getters.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.faxServer) &&
+                state?.platformInfo?.licenses?.includes(LICENSES.fax)
         },
-        hasFaxCapabilityAndFaxActive (state) {
-            return state.capabilities !== null &&
-                state.capabilities.faxserver &&
-                state.capabilities.faxactive
+        isFaxServerSettingsActive (state) {
+            return state?.isFaxServerSettingsActive
         },
         getSubscriberId (state) {
             return state.subscriberId
@@ -185,17 +190,27 @@ export default {
         isLogoRequested (state) {
             return state.logoRequested
         },
-        hasSubscriberProfileAttribute: (state) => (attribute) => {
-            return state.profile ? state.profile.attributes.includes(attribute) : true
+        hasSubscriberProfileAttribute: (state) => {
+            return (attribute) => {
+                return state?.profile ? state?.profile?.attributes?.includes(attribute) : true
+            }
         },
-        hasSubscriberProfileAttributes: (state) => (attributes) => {
-            return state.profile ? state.profile.attributes.some(item => attributes.includes(item)) : true
+        hasSomeSubscriberProfileAttributes: (state) => {
+            return (attributes) => {
+                return state?.profile
+                    ? state.profile.attributes?.some((item) => {
+                        return attributes?.includes(item)
+                    })
+                    : true
+            }
         },
-        isOldCSCProxyingAllowed (state, getters) {
-            return getters.isAdmin && state.platformInfo?.csc_v2_mode === 'mixed' && !!getters.getCustomerId
-        },
-        isLicenseActive: (state) => (license) => {
-            return state?.platformInfo.licenses.includes(license)
+        hasLicenses: (state) => {
+            return (licenses) => {
+                if (!state?.platformInfo?.licenses) {
+                    return false
+                }
+                return licenses?.every((license) => state?.platformInfo?.licenses?.includes(license))
+            }
         },
         isPbxPilot (state) {
             return !!state.subscriber?.is_pbx_pilot
@@ -210,7 +225,10 @@ export default {
             return getters.isPbxPilot || getters.isPbxGroup || getters.isPbxSeat
         },
         isSpCe (state) {
-            return state.platformInfo.type === 'spce'
+            return state?.platformInfo?.type === 'spce'
+        },
+        prefilledNumber (state) {
+            return state.numberInput
         }
     },
     mutations: {
@@ -242,6 +260,7 @@ export default {
             state.capabilities = options.capabilities
             state.resellerBranding = options.resellerBranding
             state.platformInfo = options.platformInfo
+            state.isFaxServerSettingsActive = options.isFaxServerSettingsActive
 
             state.userDataSucceeded = true
             state.userDataRequesting = false
@@ -285,8 +304,8 @@ export default {
         updateLogo (state, value) {
             state.logo = value
         },
-        updateFaxActiveCapabilityState (state, value) {
-            state.capabilities.faxactive = value
+        updateIsFaxServerSettingsActive (state, value) {
+            state.isFaxServerSettingsActive = value
         },
         updateLogoRequestState (state, isRequesting) {
             state.logoRequesting = isRequesting
@@ -350,6 +369,7 @@ export default {
                     context.commit('userDataRequesting')
                     const userData = await getUserData(getSubscriberId())
                     context.commit('userDataSucceeded', userData)
+
                     if (_.isNumber(context.getters.jwtTTL)) {
                         setTimeout(() => {
                             setLocal('show_session_expired_msg', true)

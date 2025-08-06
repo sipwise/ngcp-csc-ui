@@ -4,7 +4,7 @@
         class="q-pa-lg"
     >
         <template
-            v-if="hasSubscriberProfileAttributes(['cfu', 'cfna', 'cfb'])"
+            v-if="hasSomeSubscriberProfileAttributes(['cfu', 'cfna', 'cfb'])"
             #header
         >
             <q-btn
@@ -125,7 +125,7 @@ export default {
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
-            'hasSubscriberProfileAttributes'
+            'hasSomeSubscriberProfileAttributes'
         ]),
         isRingTimeoutVisible () {
             return this.ringTimeout && this.groups.some((group) => group.type === 'cft')

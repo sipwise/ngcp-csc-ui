@@ -47,6 +47,7 @@
                 :label="$t('Maximum calls in queue')"
                 :error="v$.changes.max_queue_length.$errors.length > 0"
                 :error-message="queueMaxLengthErrorMessage"
+                :disable="disableMaxQueueLength"
                 @update:model-value="v$.changes.max_queue_length.$touch()"
                 @keyup.enter="save"
             >
@@ -69,6 +70,7 @@
                 :label="$t('Wrap up time')"
                 :error="v$.changes.queue_wrap_up_time.$errors.length > 0"
                 :error-message="queueWrapUpTimeErrorMessage"
+                :disable="disableQueueWrapUpTime"
                 @update:model-value="v$.changes.queue_wrap_up_time.$touch()"
                 @keyup.enter="save"
             >
@@ -102,6 +104,8 @@ import CscListMenuItem from '../../CscListMenuItem'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import useValidate from '@vuelidate/core'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPbxCallQueue',
     components: {
@@ -164,6 +168,15 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
+        ]),
+        disableMaxQueueLength () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.maxQueueLength)
+        },
+        disableQueueWrapUpTime () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.queueWrapUpTime)
+        },
         getTitleIcon () {
             let icon = 'person'
             if (this.subscriber.is_pbx_group) {

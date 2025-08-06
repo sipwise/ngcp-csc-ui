@@ -6,10 +6,10 @@
         <q-list
             class="col col-xs-12 col-md-6"
         >
-            <q-item
-                v-if="hasSubscriberProfileAttribute('music_on_hold')"
-            >
-                <q-item-section>
+            <q-item>
+                <q-item-section
+                    v-if="showToggles"
+                >
                     <q-toggle
                         :model-value="musicOnHold"
                         :disable="dataLoading"
@@ -35,10 +35,8 @@
 </template>
 
 <script>
-import {
-    mapGetters,
-    mapState
-} from 'vuex'
+import { mapGetters, mapState } from 'vuex'
+import { PROFILE_ATTRIBUTES_MAP } from 'src/constants'
 import {
     mapWaitingActions,
     mapWaitingGetters
@@ -62,13 +60,22 @@ export default {
             'musicOnHold'
         ]),
         ...mapGetters('user', [
-            'hasSubscriberProfileAttribute'
+            'hasSomeSubscriberProfileAttributes'
         ]),
         ...mapWaitingGetters({
             processingSubscriberPreferences: 'processing subscriberPreferences'
         }),
         dataLoading () {
             return !this.subscriberPreferencesInitialized || this.processingSubscriberPreferences
+        },
+        showToggles () {
+            return this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings)
+        },
+        musicOnHoldValue () {
+            return this.musicOnHold || false
+        },
+        dndValue () {
+            return this.dnd || false
         }
     },
     async mounted () {

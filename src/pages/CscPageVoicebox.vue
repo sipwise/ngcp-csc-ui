@@ -14,6 +14,7 @@
                     label: defaultLanguage,
                     value: defaultLanguage
                 }"
+                :disabled="disableLanguage"
                 :loading="$wait.is('processing subscriberPreferences')"
                 @input="selectLanguage"
             />
@@ -224,6 +225,7 @@ import {
 } from '@vuelidate/validators'
 import CscSpinner from 'components/CscSpinner'
 import CscVoiceboxLanguage from 'components/CscVoiceboxLanguage'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { mapWaitingActions } from 'vue-wait'
 import useValidate from '@vuelidate/core'
 export default {
@@ -319,6 +321,12 @@ export default {
             'defaultLanguage',
             'languages'
         ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
+        ]),
+        disableLanguage () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.language)
+        },
         soundFileIcon () {
             return 'music_note'
         },

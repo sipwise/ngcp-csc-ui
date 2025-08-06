@@ -292,6 +292,7 @@ export default {
         },
         subscribersSucceeded (state, subscribers) {
             state.subscriberList = _.get(subscribers, 'items', [])
+            state.subscriberListState = RequestState.succeeded
             state.subscriberMap = {}
             state.subscriberList.forEach((subscriber) => {
                 state.subscriberMap[subscriber.id] = subscriber

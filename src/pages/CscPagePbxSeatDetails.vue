@@ -223,6 +223,7 @@
                     </template>
                 </q-select>
                 <q-select
+                    v-if="showNcos"
                     v-model="changes.ncos"
                     use-chips
                     radio
@@ -246,6 +247,7 @@
                     </template>
                 </q-select>
                 <q-select
+                    v-if="showNcosSet"
                     v-model="changes.ncosSet"
                     use-chips
                     radio
@@ -286,6 +288,7 @@
                 no-wrap
             >
                 <q-toggle
+                    v-if="showClirIntraPbx"
                     v-model="changes.clirIntrapbx"
                     class="q-pa-sm"
                     :label="$t('Hide number within own PBX')"
@@ -293,6 +296,7 @@
                     @update:model-value="changeIntraPbx"
                 />
                 <q-toggle
+                    v-if="showMusicOnHold"
                     v-model="changes.musicOnHold"
                     class="q-pa-sm"
                     :label="$t('Music on Hold')"
@@ -300,6 +304,7 @@
                     @update:model-value="changeMusicOnHold"
                 />
                 <q-toggle
+                    v-if="showPlayAnnounceBeforeCF"
                     v-model="changes.announcementCfu"
                     class="q-pa-sm"
                     :label="$t('Play announcement before routing to CFU/CFNA')"
@@ -307,6 +312,7 @@
                     @update:model-value="changeAnnouncementCfu"
                 />
                 <q-toggle
+                    v-if="showPlayAnnounceBeforeCallSetup"
                     v-model="changes.announcementCallSetup"
                     class="q-pa-sm"
                     :label="$t('Play announcement before call setup')"
@@ -314,6 +320,7 @@
                     @update:model-value="changeAnnouncementCallSetup"
                 />
                 <q-toggle
+                    v-if="showPlayAnnounceToCallee"
                     v-model="changes.announcementToCallee"
                     class="q-pa-sm"
                     :label="$t('Play announcement to callee after answer')"
@@ -321,6 +328,7 @@
                     @update:model-value="changeAnnouncementToCallee"
                 />
                 <q-toggle
+                    v-if="showHuntGroups"
                     v-model="changes.ignoreCfWhenHunting"
                     class="q-pa-sm"
                     :label="$t('Ignore Members Call Forwards when Hunting')"
@@ -328,6 +336,7 @@
                     @update:model-value="changeIgnoreCfWhenHunting"
                 />
                 <q-toggle
+                    v-if="showCstaClient"
                     v-model="changes.cstaClient"
                     class="q-pa-sm"
                     :label="$t('CSTA Client')"
@@ -335,6 +344,7 @@
                     @update:model-value="changeCstaClient"
                 />
                 <q-toggle
+                    v-if="showCstaController"
                     v-model="changes.cstaController"
                     class="q-pa-sm"
                     :label="$t('CSTA Controller')"
@@ -391,6 +401,7 @@ import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDe
 import CscFaxToMailSettings from 'components/pages/FaxSettings/CscFaxToMailSettings'
 import CscMailToFaxSettings from 'components/pages/FaxSettings/CscMailToFaxSettings'
 import CscPageVoicebox from 'src/pages/CscPageVoicebox.vue'
+import { PROFILE_ATTRIBUTES_MAP, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { inRange } from 'src/helpers/validation'
 import numberFilter from '../filters/number'
 import useValidate from '@vuelidate/core'
@@ -436,26 +447,35 @@ export default {
                     value: 'preferences',
                     icon: 'perm_phone_msg'
                 },
-                {
-                    label: this.$t('Call Forwards'),
-                    value: 'callForwards',
-                    icon: 'forward_to_inbox'
-                },
-                {
-                    label: this.$t('Voicebox'),
-                    value: 'voicebox',
-                    icon: 'voicemail'
-                },
-                {
-                    label: this.$t('Fax to mail and sendfax'),
-                    value: 'fax2mail',
-                    icon: 'perm_phone_msg'
-                },
-                {
-                    label: this.$t('Mail to Fax'),
-                    value: 'mail2fax',
-                    icon: 'forward_to_inbox'
-                }
+                ...(this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callForwarding)
+                    ? [{
+                        label: this.$t('Call Forwards'),
+                        value: 'callForwards',
+                        icon: 'forward_to_inbox'
+                    }]
+                    : []
+                ),
+                ...(this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail)
+                    ? [{
+                        label: this.$t('Voicebox'),
+                        value: 'voicebox',
+                        icon: 'voicemail'
+                    }]
+                    : []),
+                ...(this.isFaxFeatureEnabled
+                    ? [{
+                        label: this.$t('Fax to mail and sendfax'),
+                        value: 'fax2mail',
+                        icon: 'perm_phone_msg'
+                    }]
+                    : []),
+                ...(this.isFaxFeatureEnabled
+                    ? [{
+                        label: this.$t('Mail to Fax'),
+                        value: 'mail2fax',
+                        icon: 'forward_to_inbox'
+                    }]
+                    : [])
             ]
         },
         ...mapState('pbxSeats', [
@@ -467,8 +487,9 @@ export default {
             'groups'
         ]),
         ...mapGetters('user', [
+            'isFaxFeatureEnabled',
             'hasSubscriberProfileAttribute',
-            'hasSubscriberProfileAttributes'
+            'hasSomeSubscriberProfileAttributes'
         ]),
         ...mapGetters('pbxSeats', [
             'getSoundSetBySeatId',
@@ -564,6 +585,36 @@ export default {
             } else {
                 return ''
             }
+        },
+        showClirIntraPbx () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.clir_intrapbx)
+        },
+        showCstaClient () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cstaClient)
+        },
+        showCstaController () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cstaController)
+        },
+        showHuntGroups () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.huntGroups)
+        },
+        showMusicOnHold () {
+            return this.hasSomeSubscriberProfileAttributes([PROFILE_ATTRIBUTES_MAP.callSettings])
+        },
+        showNcos () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.ncos)
+        },
+        showNcosSet () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.ncosSet)
+        },
+        showPlayAnnounceBeforeCallSetup () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCallSetup)
+        },
+        showPlayAnnounceBeforeCF () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCF)
+        },
+        showPlayAnnounceToCallee () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceToCallee)
         },
         internalSoundSetOptions () {
             const items = []
