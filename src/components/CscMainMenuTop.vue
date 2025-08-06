@@ -45,14 +45,33 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'hasFaxCapability',
+            'isFaxFeatureEnabled',
             'hasSubscriberProfileAttribute',
-            'hasSubscriberProfileAttributes',
-            'isLicenseActive',
+            'hasSomeSubscriberProfileAttributes',
+            'hasLicenses',
             'isPbxEnabled',
             'isSpCe'
         ]),
         items () {
+            const hasCallSettingsSubmenus = this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings) ||
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail) ||
+                this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callForwarding) ||
+                this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingIncoming) ||
+                this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingOutgoing) ||
+                this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingPrivacy) ||
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.speedDial) ||
+                (this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings) &&
+                (this.isSpCe || this.hasLicenses([LICENSES.call_recording])))
+
+            const hasCustomerPreferenceSubmenus = this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockInClir) ||
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockInList) ||
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockOutList) ||
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockInMode) ||
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockOutMode) ||
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockOutOverridePin) ||
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.huntGroups) ||
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCallSetup) ||
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceToCallee)
             return [
                 {
                     to: '/user/dashboard',
@@ -65,7 +84,8 @@ export default {
                     icon: 'call',
                     label: this.callStateTitle,
                     sublabel: this.callStateSubtitle,
-                    visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls && (this.isSpCe || this.isLicenseActive(LICENSES.csc_calls)))
+                    visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls) &&
+                        (this.isSpCe || this.hasLicenses([LICENSES.csc_calls]))
                 },
                 {
                     to: '/user/conversations',
@@ -78,18 +98,18 @@ export default {
                     to: '/user/subscriber-phonebook',
                     icon: 'fas fa-user',
                     label: this.$t('Subscriber Phonebook'),
-                    visible: this.isLicenseActive(LICENSES.phonebook)
+                    visible: this.hasLicenses([LICENSES.phonebook])
                 },
                 {
                     icon: 'settings_phone',
                     label: this.$t('Call Settings'),
-                    visible: true,
+                    visible: hasCallSettingsSubmenus,
                     children: [
                         {
                             to: '/user/call-settings',
                             icon: 'settings',
                             label: this.$t('General'),
-                            visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings)
+                            visible: this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings)
                         },
                         {
                             to: '/user/voicebox',
@@ -101,25 +121,25 @@ export default {
                             to: '/user/call-forwarding',
                             icon: 'phone_forwarded',
                             label: this.$t('Forwarding'),
-                            visible: true
+                            visible: this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callForwarding)
                         },
                         {
                             to: '/user/call-blocking/incoming',
                             icon: 'call_received',
                             label: this.$t('Block Incoming'),
-                            visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingIncoming)
+                            visible: this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingIncoming)
                         },
                         {
                             to: '/user/call-blocking/outgoing',
                             icon: 'call_made',
                             label: this.$t('Block Outgoing'),
-                            visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingOutgoing)
+                            visible: this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingOutgoing)
                         },
                         {
                             to: '/user/call-blocking/privacy',
                             icon: 'fas fa-user-secret',
                             label: this.$t('Privacy'),
-                            visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingPrivacy)
+                            visible: this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingPrivacy)
                         },
                         {
                             to: '/user/speeddial',
@@ -137,7 +157,8 @@ export default {
                             to: '/user/recordings',
                             icon: 'play_circle',
                             label: this.$t('Recordings'),
-                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings) && (this.isSpCe || this.isLicenseActive(LICENSES.call_recording))
+                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings) &&
+                                (this.isSpCe || this.hasLicenses([LICENSES.call_recording]))
                         }
                     ]
                 },
@@ -145,84 +166,84 @@ export default {
                     to: '/user/fax-settings',
                     icon: 'fas fa-fax',
                     label: this.$t('Fax Settings'),
-                    visible: this.hasFaxCapability &&
-                        this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.faxServer) &&
-                        this.isLicenseActive(LICENSES.fax)
+                    visible: this.isFaxFeatureEnabled
 
                 },
                 {
                     icon: 'fas fa-chart-line',
                     label: this.$t('PBX Statistics'),
-                    visible: this.isPbxAdmin && this.isLicenseActive(LICENSES.pbx),
+                    visible: this.isPbxAdmin,
                     opened: this.isPbxConfiguration,
                     children: [
                         {
                             to: '/user/pbx-statistics/cdr',
                             icon: 'fas fa-table',
                             label: this.$t('Cdr'),
-                            visible: true
+                            visible: this.isPbxAdmin
                         }
                     ]
                 },
                 {
                     icon: 'miscellaneous_services',
                     label: this.$t('PBX Configuration'),
-                    visible: this.isPbxAdmin && this.isLicenseActive(LICENSES.pbx),
+                    visible: this.isPbxAdmin,
                     opened: this.isPbxConfiguration,
                     children: [
                         {
                             to: '/user/pbx-configuration/seats',
                             icon: 'person',
                             label: this.$t('Seats'),
-                            visible: true
+                            visible: this.isPbxAdmin
                         },
                         {
                             to: '/user/pbx-configuration/groups',
                             icon: 'group',
                             label: this.$t('Groups'),
-                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.huntGroups)
+                            visible: this.isPbxAdmin && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.huntGroups)
                         },
                         {
                             to: '/user/pbx-configuration/devices',
                             icon: 'fas fa-fax',
                             label: this.$t('Devices'),
-                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.deviceProvisioning) && this.isLicenseActive(LICENSES.device_provisioning)
+                            visible: this.isPbxAdmin &&
+                                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.deviceProvisioning) &&
+                                this.hasLicenses([LICENSES.device_provisioning])
                         },
                         {
                             to: '/user/pbx-configuration/call-queues',
                             icon: 'filter_none',
                             label: this.$t('Call Queues'),
-                            visible: this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettingsCallQueue)
+                            visible: this.isPbxAdmin && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cloudPbxCallQueue)
                         },
                         {
                             to: '/user/pbx-configuration/sound-sets',
                             icon: 'queue_music',
                             label: this.$t('Sound Sets'),
-                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.soundSet)
+                            visible: this.isPbxAdmin && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.soundSet)
                         },
                         {
                             to: '/user/pbx-configuration/ms-configs',
                             icon: 'arrow_forward',
                             label: this.$t('Manager Secretary'),
-                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.manager_secretary)
+                            visible: this.isPbxAdmin && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.managerSecretary)
                         },
                         {
                             to: '/user/pbx-configuration/auto-attendant',
                             icon: 'dialpad',
                             label: this.$t('Auto Attendant'),
-                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.auto_attendant)
+                            visible: this.isPbxAdmin && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.autoAttendant)
                         },
                         {
                             to: '/user/pbx-configuration/customer-phonebook',
                             icon: 'person',
                             label: this.$t('Customer Phonebook'),
-                            visible: this.isLicenseActive(LICENSES.phonebook)
+                            visible: this.isPbxAdmin && this.hasLicenses([LICENSES.phonebook])
                         },
                         {
                             to: '/user/pbx-configuration/customer-preferences',
                             icon: 'fas fa-user-cog',
                             label: this.$t('Customer Preferences'),
-                            visible: true
+                            visible: this.isPbxAdmin && this.hasLicenses([LICENSES.phonebook]) && hasCustomerPreferenceSubmenus
                         }
                     ]
                 },
@@ -230,26 +251,25 @@ export default {
                     icon: 'settings',
                     label: this.$t('Extension Settings'),
                     visible: this.isPbxEnabled &&
-                        this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettings) &&
-                        this.isLicenseActive(LICENSES.pbx),
+                        this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettings),
                     children: [
                         {
                             to: '/user/extension-settings/call-queues',
                             icon: 'filter_none',
                             label: this.$t('Call Queues'),
-                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettingsCallQueue)
+                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cloudPbxCallQueue)
                         },
                         {
                             to: '/user/extension-settings/ms-configs',
                             icon: 'arrow_forward',
                             label: this.$t('Manager Secretary'),
-                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.manager_secretary)
+                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTES_MAP.manager_secretary)
                         },
                         {
                             to: '/user/extension-settings/auto-attendant',
                             icon: 'dialpad',
                             label: this.$t('Auto Attendant'),
-                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.auto_attendant)
+                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTES_MAP.autoAttendant)
                         }
                     ]
                 },

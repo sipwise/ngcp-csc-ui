@@ -81,8 +81,9 @@
                 <csc-popup-menu-item-delete
                     @click="deleteSeat"
                 />
-                <q-separator />
+                <q-separator v-if="showClirIntraPbx || showMusicOnHold" />
                 <q-item
+                    v-if="showClirIntraPbx"
                     class="no-padding"
                 >
                     <q-item-section>
@@ -96,6 +97,7 @@
                     </q-item-section>
                 </q-item>
                 <q-item
+                    v-if="showMusicOnHold"
                     class="no-padding"
                 >
                     <q-item-section>
@@ -119,6 +121,8 @@ import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import _ from 'lodash'
+import { PROFILE_ATTRIBUTES_MAP, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPbxSeat',
     components: {
@@ -152,6 +156,18 @@ export default {
     data () {
         return {
             changes: this.getSeatData()
+        }
+    },
+    computed: {
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute',
+            'hasSomeSubscriberProfileAttributes'
+        ]),
+        showClirIntraPbx () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.clir_intrapbx)
+        },
+        showMusicOnHold () {
+            return this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings)
         }
     },
     watch: {

@@ -21,7 +21,7 @@
                     @click="$refs.mainMenu.show()"
                 />
                 <q-btn
-                    v-if="hasFaxCapabilityAndFaxActive && hasSendFaxFeature"
+                    v-if="isFaxFeatureEnabled && isFaxServerSettingsActive"
                     class="q-mr-sm"
                     flat
                     dense
@@ -330,17 +330,11 @@ export default {
             'remoteOnHold'
         ]),
         ...mapGetters('user', [
-            'isLogged',
-            'hasUser',
             'getUsername',
             'isPbxAdmin',
-            'hasSmsCapability',
-            'hasFaxCapabilityAndFaxActive',
-            'hasSendSmsFeature',
-            'hasSendFaxFeature',
-            'userDataRequesting',
+            'isFaxFeatureEnabled',
+            'isFaxServerSettingsActive',
             'userDataSucceeded',
-            'isLogoRequesting',
             'isLogoRequested',
             'hasSubscriberProfileAttribute'
         ]),

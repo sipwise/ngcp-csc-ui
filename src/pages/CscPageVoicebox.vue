@@ -14,6 +14,7 @@
                     label: defaultLanguage,
                     value: defaultLanguage
                 }"
+                :disabled="disableLanguage"
                 :loading="$wait.is('processing subscriberPreferences')"
                 @input="selectLanguage"
             />
@@ -215,6 +216,7 @@ import CscSpinner from 'components/CscSpinner'
 import CscVoiceboxLanguage from 'components/CscVoiceboxLanguage'
 import CscInputSaveable from 'components/form/CscInputSaveable'
 import CscSoundFileUpload from 'components/form/CscSoundFileUpload'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import {
     showGlobalError,
     showToast
@@ -348,6 +350,12 @@ export default {
             'defaultLanguage',
             'languages'
         ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
+        ]),
+        disableLanguage () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.language)
+        },
         soundFileIcon () {
             return 'music_note'
         },

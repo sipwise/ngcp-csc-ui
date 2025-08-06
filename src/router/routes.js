@@ -44,7 +44,12 @@ import CscPageSubscriberPhonebookDetails from 'pages/CscPageSubscriberPhonebookD
 import CscPageUserSettings from 'pages/CscPageUserSettings'
 import CscPageVoicebox from 'pages/CscPageVoicebox'
 import CscRecoverPassword from 'pages/CscRecoverPassword'
-import { LICENSES, PROFILE_ATTRIBUTES_MAP, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import {
+    FEATURES,
+    LICENSES,
+    PROFILE_ATTRIBUTES_MAP,
+    PROFILE_ATTRIBUTE_MAP
+} from 'src/constants'
 
 export const PATH_CHANGE_PASSWORD = '/changepassword'
 
@@ -75,7 +80,8 @@ const routes = [
                     get title () {
                         return i18n.global.t('Start new call')
                     },
-                    subscriberProfile: ['csc_calls']
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.cscCalls,
+                    allowCE: true
                 }
             },
             {
@@ -101,7 +107,7 @@ const routes = [
                     get title () {
                         return i18n.global.t('Subscriber Phonebook')
                     },
-                    license: LICENSES.phonebook
+                    licenses: [LICENSES.phonebook]
                 }
             },
             {
@@ -110,7 +116,8 @@ const routes = [
                 meta: {
                     get title () {
                         return i18n.global.t('Add Phonebook')
-                    }
+                    },
+                    licenses: [LICENSES.phonebook]
                 }
             },
             {
@@ -119,7 +126,8 @@ const routes = [
                 meta: {
                     get title () {
                         return i18n.global.t('Subscriber Phonebook')
-                    }
+                    },
+                    licenses: [LICENSES.phonebook]
                 }
             },
             {
@@ -128,7 +136,11 @@ const routes = [
                 meta: {
                     get title () {
                         return i18n.global.t('Seats')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -137,7 +149,8 @@ const routes = [
                 meta: {
                     get title () {
                         return i18n.global.t('Call Forwarding')
-                    }
+                    },
+                    profileAttributes: PROFILE_ATTRIBUTES_MAP.callForwarding
                 }
             },
             {
@@ -189,7 +202,9 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Call recordings')
                     },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.recordings
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.recordings,
+                    licenses: [LICENSES.recordings],
+                    allowCE: true
                 }
             },
             {
@@ -227,9 +242,12 @@ const routes = [
                     },
                     get subtitle () {
                         return i18n.global.t('CDR')
-                    }
-                },
-                license: LICENSES.pbx
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
+                }
             },
             {
                 path: 'pbx-configuration/groups',
@@ -241,7 +259,11 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Groups')
                     },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.huntGroups
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.huntGroups,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -253,7 +275,12 @@ const routes = [
                     },
                     get subtitle () {
                         return i18n.global.t('Groups')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.huntGroups,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -265,7 +292,11 @@ const routes = [
                     },
                     get subtitle () {
                         return i18n.global.t('Seats')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -277,7 +308,11 @@ const routes = [
                     },
                     get subtitle () {
                         return i18n.global.t('Customer Phonebook')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx, LICENSES.phonebook]
                 }
             },
             {
@@ -286,7 +321,11 @@ const routes = [
                 meta: {
                     get title () {
                         return i18n.global.t('Add Phonebook')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx, LICENSES.phonebook]
                 }
             },
             {
@@ -295,7 +334,11 @@ const routes = [
                 meta: {
                     get title () {
                         return i18n.global.t('Upload CSV')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx, LICENSES.phonebook]
                 }
             },
             {
@@ -304,7 +347,11 @@ const routes = [
                 meta: {
                     get title () {
                         return i18n.global.t('Customer Phonebook')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx, LICENSES.phonebook]
                 }
             },
             {
@@ -316,7 +363,12 @@ const routes = [
                     },
                     get subtitle () {
                         return i18n.global.t('Devices')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.deviceProvisioning,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx, LICENSES.device_provisioning]
                 }
             },
             {
@@ -328,7 +380,11 @@ const routes = [
                     },
                     get subtitle () {
                         return i18n.global.t('Seats')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -341,7 +397,11 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Devices')
                     },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.deviceProvisioning
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.deviceProvisioning,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx, LICENSES.device_provisioning]
                 }
             },
             {
@@ -354,7 +414,11 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Call Queues')
                     },
-                    profileAttributes: PROFILE_ATTRIBUTES_MAP.extSettingsCallQueue
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttributes: PROFILE_ATTRIBUTE_MAP.cloudPbxCallQueue,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -367,7 +431,11 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Sound Sets')
                     },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.soundSet
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.soundSet,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -379,7 +447,12 @@ const routes = [
                     },
                     get subtitle () {
                         return i18n.global.t('Sound Sets')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.soundSet,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -392,7 +465,11 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Manager Secretary')
                     },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.manager_secretary
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.managerSecretary,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -405,7 +482,11 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Auto Attendant')
                     },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.auto_attendant
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.autoAttendant,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -417,8 +498,13 @@ const routes = [
                     },
                     get subtitle () {
                         return i18n.global.t('Customer Preferences')
-                    }
+                    },
+                    adminOnly: true,
+                    platformFeature: FEATURES.cloudPbx,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx, LICENSES.phonebook]
                 }
+
             },
             {
                 path: 'voicebox',
@@ -443,8 +529,10 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Set your fax settings')
                     },
+                    platformFeature: FEATURES.faxServer,
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.faxServer,
-                    license: LICENSES.fax
+                    capability: FEATURES.faxServer,
+                    licenses: [LICENSES.fax]
                 }
             },
             {
@@ -482,7 +570,10 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Call Queues')
                     },
-                    profileAttributes: PROFILE_ATTRIBUTES_MAP.extSettingsCallQueue
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttributes: PROFILE_ATTRIBUTE_MAP.cloudPbxCallQueue,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -495,7 +586,10 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Manager Secretary')
                     },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.manager_secretary
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.managerSecretary,
+                    platformFeature: FEATURES.cloudPbx,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {
@@ -508,7 +602,10 @@ const routes = [
                     get subtitle () {
                         return i18n.global.t('Auto Attendant')
                     },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.auto_attendant
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.autoAttendant,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
                 }
             },
             {

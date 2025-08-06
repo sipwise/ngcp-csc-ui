@@ -6,10 +6,10 @@
         <q-list
             class="col col-xs-12 col-md-6"
         >
-            <q-item
-                v-if="hasSubscriberProfileAttribute('music_on_hold')"
-            >
-                <q-item-section>
+            <q-item>
+                <q-item-section
+                    v-if="showToggles"
+                >
                     <q-toggle
                         :model-value="musicOnHoldValue"
                         :disable="dataLoading"
@@ -45,6 +45,7 @@
 <script>
 import CscPage from 'components/CscPage'
 import CscSpinner from 'components/CscSpinner'
+import { PROFILE_ATTRIBUTES_MAP } from 'src/constants'
 import { showGlobalError } from 'src/helpers/ui'
 import {
     mapWaitingActions,
@@ -69,13 +70,16 @@ export default {
             'dnd'
         ]),
         ...mapGetters('user', [
-            'hasSubscriberProfileAttribute'
+            'hasSomeSubscriberProfileAttributes'
         ]),
         ...mapWaitingGetters({
             processingSubscriberPreferences: 'processing subscriberPreferences'
         }),
         dataLoading () {
             return !this.subscriberPreferencesInitialized || this.processingSubscriberPreferences
+        },
+        showToggles () {
+            return this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings)
         },
         musicOnHoldValue () {
             return this.musicOnHold || false

@@ -5,6 +5,7 @@ import {
     setFaxServerField,
     setMailToFaxSettingField
 } from 'src/api/fax'
+import { getSubscriberId } from 'src/auth'
 
 export default {
     namespaced: true,
@@ -40,6 +41,10 @@ export default {
             context.commit('settingsSucceeded', {
                 faxServerSettings
             })
+
+            if (toString(subscriberId) === toString(getSubscriberId())) {
+                context.commit('user/updateIsFaxServerSettingsActive', faxServerSettings.active, { root: true })
+            }
         },
         async faxServerSettingsUpdateAction (context, options) {
             const subscriberId = options.id || context.getters.subscriberId
@@ -51,8 +56,9 @@ export default {
             context.commit('settingsSucceeded', {
                 faxServerSettings
             })
-            if (!options.fromPbxConfiguration) {
-                context.commit('user/updateFaxActiveCapabilityState', faxServerSettings.active, { root: true })
+
+            if (toString(subscriberId) === toString(getSubscriberId())) {
+                context.commit('user/updateIsFaxServerSettingsActive', faxServerSettings.active, { root: true })
             }
         },
 

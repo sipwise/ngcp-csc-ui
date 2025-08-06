@@ -131,7 +131,7 @@ export default {
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
-            'hasSubscriberProfileAttributes'
+            'hasSomeSubscriberProfileAttributes'
         ]),
         ...mapGetters('callForwarding', [
             'groups',

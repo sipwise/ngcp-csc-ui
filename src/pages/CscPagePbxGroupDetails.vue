@@ -207,6 +207,7 @@
                     </template>
                 </q-select>
                 <q-select
+                    v-if="showSoundSet"
                     v-model="changes.soundSet"
                     emit-value
                     map-options
@@ -245,6 +246,7 @@
                 no-wrap
             >
                 <q-toggle
+                    v-if="showPlayAnnounceBeforeCF"
                     v-model="changes.announcementCfu"
                     class="q-pa-sm"
                     :label="$t('Play announcement before routing to CFU/CFNA')"
@@ -252,6 +254,7 @@
                     @update:model-value="changeAnnouncementCfu"
                 />
                 <q-toggle
+                    v-if="showPlayAnnounceBeforeCallSetup"
                     v-model="changes.announcementCallSetup"
                     class="q-pa-sm"
                     :label="$t('Play announcement before call setup')"
@@ -295,6 +298,7 @@ import CscFaxToMailSettings from 'components/pages/FaxSettings/CscFaxToMailSetti
 import CscMailToFaxSettings from 'components/pages/FaxSettings/CscMailToFaxSettings'
 import _ from 'lodash'
 import CscPageVoicebox from 'pages/CscPageVoicebox'
+import { PROFILE_ATTRIBUTES_MAP, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import numberFilter from 'src/filters/number'
 import { showGlobalError, showToast } from 'src/helpers/ui'
 import { inRange } from 'src/helpers/validation'
@@ -339,26 +343,26 @@ export default {
                     value: 'preferences',
                     icon: 'perm_phone_msg'
                 },
-                {
+                ...(this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callForwarding) ? [{
                     label: this.$t('Call Forwards'),
                     value: 'callForwards',
                     icon: 'forward_to_inbox'
-                },
-                {
+                }] : []),
+                ...(this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail) ? [{
                     label: this.$t('Voicebox'),
                     value: 'voicebox',
                     icon: 'voicemail'
-                },
-                {
+                }] : []),
+                ...(this.isFaxFeatureEnabled ? [{
                     label: this.$t('Fax to mail and sendfax'),
                     value: 'fax2mail',
                     icon: 'perm_phone_msg'
-                },
-                {
+                }] : []),
+                ...(this.isFaxFeatureEnabled ? [{
                     label: this.$t('Mail to Fax'),
                     value: 'mail2fax',
                     icon: 'forward_to_inbox'
-                }
+                }] : [])
             ]
         },
         ...mapState('pbxGroups', [
@@ -386,6 +390,11 @@ export default {
         ]),
         ...mapGetters('callForwarding', [
             'groups'
+        ]),
+        ...mapGetters('user', [
+            'isFaxFeatureEnabled',
+            'hasSubscriberProfileAttribute',
+            'hasSomeSubscriberProfileAttributes'
         ]),
         hasNameChanged () {
             return this.changes.name !== this.groupSelected.display_name
@@ -426,6 +435,15 @@ export default {
         },
         isLoading () {
             return this.isGroupLoading(this.groupSelected.id)
+        },
+        showPlayAnnounceBeforeCallSetup () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCallSetup)
+        },
+        showPlayAnnounceBeforeCF () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCF)
+        },
+        showSoundSet () {
+            return this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.soundSet)
         }
     },
     watch: {
