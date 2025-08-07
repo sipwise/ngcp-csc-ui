@@ -1,3 +1,13 @@
+ngcp-csc-ui (13.4.1.5+0~mr13.4.1.5) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [fbc6d32] MT#63340 Fix generate password
+
+  [ Debora Crescenzo ]
+  * [8a3ea1b] MT#63310 Adapt csc_call bar
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 07 Aug 2025 13:29:32 +0200
+
 ngcp-csc-ui (13.4.1.4+0~mr13.4.1.4) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
