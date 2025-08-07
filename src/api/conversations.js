@@ -62,7 +62,8 @@ export function downloadCsv (options) {
         resource: 'conversations',
         config: {
             headers: {
-                Accept: 'text/csv'
+                Accept: 'text/csv',
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
             },
             params: {
                 ...options
