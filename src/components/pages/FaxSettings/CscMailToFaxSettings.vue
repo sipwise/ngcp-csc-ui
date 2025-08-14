@@ -1,5 +1,17 @@
 <template>
-    <div>
+    <div
+        v-if="!mailToFaxSettingsModel.active"
+        class="q-pa-md"
+    >
+        <csc-spinner
+            v-if="loadingMail2FaxSettings"
+            class="self-center"
+        />
+        <div v-else>
+            {{ $t('Mail To Fax feature is not active') }}
+        </div>
+    </div>
+    <div v-else>
         <q-list
             class="col col-xs-12 col-md-6"
             dense
@@ -9,8 +21,7 @@
                     <q-toggle
                         :model-value="mailToFaxSettingsModel.active"
                         :label="$t('Active')"
-                        :disable="disableToggle"
-                        @update:model-value="setChangedData('active', !mailToFaxSettingsModel.active)"
+                        :disable="true"
                     />
                 </q-item-section>
                 <q-item-section
@@ -200,7 +211,7 @@
 
 <script>
 import _ from 'lodash'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
 import { showGlobalError } from 'src/helpers/ui'
 import CscSpinner from 'components/CscSpinner'
@@ -241,23 +252,11 @@ export default {
             'mailToFaxSettings',
             'mailToFaxSettingsInitialized'
         ]),
-        ...mapGetters('user', [
-            'getSubscriber'
-        ]),
         ...mapWaitingGetters({
             loadingMail2FaxSettings: 'loading mail2faxSettings'
         }),
         dataLoaded () {
             return this.mailToFaxSettingsInitialized && !this.loadingMail2FaxSettings
-        },
-        disableToggle () {
-            if (!this.isAdministrator) {
-                return true
-            }
-            return !this.dataLoaded
-        },
-        isAdministrator () {
-            return this.getSubscriber?.administrative || false
         },
         secretKeyFieldLabel () {
             let label = this.$t('Secret Key (empty=disabled)')
