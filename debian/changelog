@@ -1,3 +1,13 @@
+ngcp-csc-ui (12.5.1.41+0~mr12.5.1.41) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [13db81e] MT#61383 Allow admin PBX users to toggle Mail2Fax feature
+
+  [ Crescenzo Debora ]
+  * [22a0697] Revert "MT#61383 Allow admin PBX users to toggle Mail2Fax feature"
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 15 Aug 2025 09:21:03 +0200
+
 ngcp-csc-ui (12.5.1.40+0~mr12.5.1.40) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
