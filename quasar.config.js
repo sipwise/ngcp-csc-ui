@@ -5,17 +5,21 @@
  */
 
 // Configuration for your app
-// https://quasar.dev/quasar-cli/quasar-conf-js
+// https://quasar.dev/quasar-cli-webpack/quasar-config-file
 
-const ESLintPlugin = require('eslint-webpack-plugin')
-const webpack = require('webpack')
+import ESLintPlugin from 'eslint-webpack-plugin'
+import webpack from 'webpack'
 
-module.exports = function (ctx) {
+export default async function (ctx) {
     let devServerConfig = {}
     try {
-        devServerConfig = (ctx.dev) ? require('./quasar.conf.dev') : {}
+        if (ctx.dev) {
+            // Use dynamic import for the dev config
+            const devConfig = await import('./quasar.config.dev.proxy')
+            devServerConfig = devConfig
+        }
     } catch (e) {
-        if (e.code === 'MODULE_NOT_FOUND') {
+        if (e.code === 'MODULE_NOT_FOUND' || e.code === 'ERR_MODULE_NOT_FOUND') {
             devServerConfig = {}
         } else {
             throw e
@@ -30,6 +34,7 @@ module.exports = function (ctx) {
         // --> boot files are part of "main.js"
         // https://quasar.dev/quasar-cli/boot-files
         boot: [
+            'store',
             'appConfig',
             'i18n',
             'api',
@@ -105,7 +110,11 @@ module.exports = function (ctx) {
                 ...process.env
             },
             vueRouterMode: 'hash', // available values: 'hash', 'history'
-
+            // It affects how URLs for bundled assets are generated in the final build.
+            // This determines the base path where the bundled JavaScript, CSS, and other assets will be served from.
+            publicPath: process.env.NODE_ENV === 'production'
+                ? '/v2/'
+                : (devServerConfig.publicPath || '/v2/'),
             // transpile: false,
 
             // Add dependencies for transpiling with Babel (Array of string/regex)
@@ -123,7 +132,7 @@ module.exports = function (ctx) {
             // extractCSS: false,
 
             // https://quasar.dev/quasar-cli/handling-webpack
-            extendWebpack(cfg) {
+            extendWebpack (cfg) {
                 cfg.resolve.fallback = {
                     crypto: 'crypto-browserify',
                     stream: 'stream-browserify',
@@ -152,8 +161,9 @@ module.exports = function (ctx) {
         devServer: {
             https: false,
             port: 8080,
-            open: true, // opens browser window automatically,
+            open: true,
             devMiddleware: {
+                // It determines the URL path where the webpack-dev-server will serve the development version of the application.
                 publicPath: devServerConfig.publicPath,
                 ...(!devServerConfig.proxyAPI2localhost
                     ? {}
@@ -166,19 +176,24 @@ module.exports = function (ctx) {
                 ? {}
                 : {
                     https: true,
-                    proxy: {
-                        [`!${devServerConfig.publicPath || '/v2/'}`]: {
+                    proxy: [
+                        {
+                            context: [`!${devServerConfig.publicPath || '/v2/'}`],
                             target: devServerConfig.proxyAPIFromURL,
                             secure: false
                         }
-                    },
-                    onBeforeSetupMiddleware: (devServer) => {
+                    ],
+                    setupMiddlewares: (middlewares, devServer) => {
+                        // Create a constant path value to prevent reactivity issues
+                        const basePath = devServerConfig.publicPath || '/v2/'
+
+                        // Use once-only redirect handler
                         devServer.app.get('/', (req, res) => {
-                            res.redirect(301, devServerConfig.publicPath || '/v2/')
+                            res.redirect(301, basePath)
                         })
+                        return middlewares
                     }
-                }
-            )
+                })
         },
 
         // animations: 'all', // --- includes all animations

@@ -12,8 +12,9 @@ import {
     callUnMute,
     callUnMuteRemote
 } from 'src/api/ngcp-call'
+import { store } from 'src/boot/store'
 
-export default async ({ app, store }) => {
+export default async ({ app }) => {
     callConfigure({
         baseWebSocketUrl: `${app.config.globalProperties.$appConfig.baseWsUrl}/wss/sip`
     })
