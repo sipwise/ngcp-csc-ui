@@ -1,6 +1,6 @@
 import emitter from 'tiny-emitter/instance'
 
-export default async ({ app, store }) => {
+export default async ({ app }) => {
     app.config.globalProperties.emitter = {
         $on: (...args) => emitter.on(...args),
         $once: (...args) => emitter.once(...args),
