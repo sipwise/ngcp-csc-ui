@@ -261,6 +261,7 @@ export default {
             } else if (line !== null) {
                 _.set(lines, `${line.index}.subscriber_id`, newLine.subscriber_id)
                 _.set(lines, `${line.index}.target_number`, newLine.target_number)
+                _.set(lines, `${line.index}.label`, newLine.label)
                 _.set(lines, `${line.index}.type`, newLine.type)
             } else {
                 newLines.push(newLine)
@@ -272,7 +273,8 @@ export default {
                     subscriber_id: line.subscriber_id,
                     linerange: line.linerange,
                     type: line.type,
-                    target_number: line.target_number
+                    target_number: line.target_number,
+                    label: line.label
                 })
             })
             this.$emit('keysChanged', newLines)

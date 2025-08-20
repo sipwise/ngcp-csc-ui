@@ -66,6 +66,17 @@
             :label="$t('Number')"
             @update:model-value="v$.changes.target_number.$touch()"
         />
+        <csc-input
+            v-if="showCustomNumberToggle && hasTargetNumber"
+            v-model="changes.label"
+            :disable="loading"
+            clearable
+            dense
+            hide-bottom-space
+            hide-hint
+            :label="$t('Label')"
+            @update:model-value="v$.changes.label.$touch()"
+        />
         <csc-list-spinner
             v-if="loading"
         />
@@ -86,7 +97,7 @@
                     {{ $t('Close') }}
                 </q-btn>
                 <q-btn
-                    v-if="hasTypeChanged || hasSubscriberChanged || hasTargetNumberChanged"
+                    v-if="hasTypeChanged || hasSubscriberChanged || hasTargetNumberChanged || hasLabelChanged"
                     flat
                     icon="undo"
                     color="white"
@@ -96,7 +107,7 @@
                     {{ $t('Reset') }}
                 </q-btn>
                 <q-btn
-                    v-if="hasTypeChanged || hasSubscriberChanged || hasTargetNumberChanged"
+                    v-if="hasTypeChanged || hasSubscriberChanged || hasTargetNumberChanged || hasLabelChanged"
                     :label="$t('Save')"
                     :disable="(v$.changes.$invalid && hasTargetNumber) || loading"
                     flat
@@ -162,6 +173,7 @@ export default {
             keyData: this.getKeyData(),
             changes: this.getKeyData(),
             hasTargetNumber: !!this.selectedLine?.target_number,
+            hasLabel: !!this.selectedLine?.label,
             v$: useValidate()
         }
     },
@@ -177,6 +189,9 @@ export default {
         },
         hasTargetNumberChanged () {
             return this.keyData.target_number !== this.changes.target_number
+        },
+        hasLabelChanged () {
+            return this.keyData.label !== this.changes.label
         },
         subscriberOptions () {
             const options = []
@@ -302,19 +317,22 @@ export default {
             this.changes = this.getKeyData()
             this.keyData = this.getKeyData()
             this.hasTargetNumber = !!this.selectedLine?.target_number
+            this.hasLabel = !!this.selectedLine?.label
         }
     },
     methods: {
         getKeyData () {
             if (this.selectedLine) {
                 this.hasTargetNumber = !!this.selectedLine.target_number
+                this.hasLabel = !!this.selectedLine.label
                 return {
                     extension_unit: this.selectedLine.extension_unit,
                     key_num: this.selectedLine.key_num,
                     subscriber_id: this.selectedLine.subscriber_id,
                     linerange: this.selectedLine.linerange,
                     type: this.selectedLine.type,
-                    target_number: this.selectedLine.target_number
+                    target_number: this.selectedLine.target_number,
+                    label: this.selectedLine.label
                 }
             }
             return {
@@ -323,7 +341,8 @@ export default {
                 subscriber_id: null,
                 linerange: this.selectedKey.keySet.name,
                 type: null,
-                target_number: null
+                target_number: null,
+                label: null
             }
         },
         closeKeyOverlay () {
@@ -337,11 +356,15 @@ export default {
             if (this.changes.type === null) {
                 this.changes.subscriber_id = null
                 this.changes.target_number = null
+                this.changes.label = null
                 this.hasTargetNumber = false
+                this.hasLabel = false
             }
             if (!this.showCustomNumberToggle) {
                 this.changes.target_number = null
+                this.changes.label = null
                 this.hasTargetNumber = false
+                this.hasLabel = false
             }
         },
         keySubscriberChanged ({ value: subscriberId }) {
@@ -350,6 +373,7 @@ export default {
         targetNumberToggleChanged () {
             if (!this.hasTargetNumber) {
                 this.changes.target_number = null
+                this.changes.label = null
             } else {
                 const pbxPilot = this.subscriberList.find((subscriber) => subscriber.is_pbx_pilot)
                 this.changes.subscriber_id = pbxPilot ? pbxPilot.id : this.subscriberList[0].id
@@ -358,6 +382,7 @@ export default {
         resetData () {
             this.changes = _.clone(this.keyData)
             this.hasTargetNumber = !!this.selectedLine?.target_number
+            this.hasLabel = !!this.selectedLine?.label
         },
         onSave () {
             this.$emit('onSave', this.changes)
