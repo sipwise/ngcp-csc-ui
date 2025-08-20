@@ -34,6 +34,9 @@ export function getDayNameByNumber (dayNumber, isShortName = false) {
     return isShortName ? daysShortNamesMap[dayNumber] : daysNamesMap[dayNumber]
 }
 
+// This logic is aligned with admin-ui where
+// * January has value 1
+// * December has value 12
 export function getMonthNameByNumber (monthNumber) {
     const monthsNamesMap = [
         i18n.global.tc('January'),
@@ -50,7 +53,24 @@ export function getMonthNameByNumber (monthNumber) {
         i18n.global.tc('December')
     ]
 
-    return monthsNamesMap[monthNumber]
+    return monthsNamesMap[monthNumber - 1]
+}
+
+// This logic is aligned with admin-ui where
+// * Sunday has value 1
+// * Saturday has value 7
+function getWeekDayByNumber (dayNumber) {
+    const daysNamesMap = [
+        i18n.global.t('Sunday'),
+        i18n.global.t('Monday'),
+        i18n.global.t('Tuesday'),
+        i18n.global.t('Wednesday'),
+        i18n.global.t('Thursday'),
+        i18n.global.t('Friday'),
+        i18n.global.t('Saturday')
+    ]
+
+    return daysNamesMap[dayNumber - 1]
 }
 
 export function timeSetDateExact (times) {
@@ -142,7 +162,7 @@ function formatTimeSetValues (timeSetMap, type) {
     return {
         year: timeSetMap.year[type] || defaultYear,
         month: getMonthNameByNumber(timeSetMap.month[type]) || defaultMonth,
-        wDay: getDayNameByNumber(timeSetMap.wday[type]) ? `${getDayNameByNumber(timeSetMap.wday[type])},` : '',
+        wDay: getWeekDayByNumber(timeSetMap.wday[type]) || '',
         mDay: timeSetMap.mday[type] || defaultDay,
         hour: formatTime(timeSetMap.hour[type]) || defaultTime,
         minutes: formatTime(timeSetMap.minute[type]) || defaultTime
