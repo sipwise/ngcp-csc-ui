@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.4.1.7+0~mr13.4.1.7) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [45c8203] MT#63428 align day and month values with admin-ui
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 26 Aug 2025 10:12:59 +0200
+
 ngcp-csc-ui (13.4.1.6+0~mr13.4.1.6) unstable; urgency=medium
 
   [ Debora Crescenzo ]
