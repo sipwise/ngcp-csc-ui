@@ -123,11 +123,6 @@ export default {
                 return state?.platformInfo?.[feature]
             }
         },
-        isSmsEnabled (state) {
-            return state?.platformInfo?.sms &&
-                state?.capabilities?.sms &&
-            state?.platformInfo?.licenses?.includes(LICENSES.sms)
-        },
         isFaxFeatureEnabled (state, getters) {
             return state?.capabilities?.faxserver &&
                 state?.platformInfo?.faxserver &&

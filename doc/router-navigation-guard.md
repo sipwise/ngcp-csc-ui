@@ -148,7 +148,6 @@ Each menu item includes a `visible` property that determines whether it should b
 3. **Platform and User Capability Checks** - Verifies that the ngcp platform has the necessary modules activated and that the module is enabled for the user. This check also incudes the license check for the feature:
   - `this.isFaxFeatureEnabled()` checks if the fax feature is enabled in the platform, if it is enabled for the user and if the license fax is active. Note, this doesn't include the checks about fax server settings.
   - `this.isPbxEnabled()` checks if the pbx feature is enabled in the platform, if it's enabled for the user and if the license pbx is active.
-  - `this.isSmsEnabled()` checks if the sms feature is enabled in the platform, if it's enabled for the user and if the license sms is active.
 
 **IMPORTANT** The Menu Item Visibility Logic needs to be aligned with with Route Guards
 

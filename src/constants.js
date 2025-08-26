@@ -50,7 +50,7 @@ export const PROFILE_ATTRIBUTES_MAP = {
     callSettings: ['music_on_hold', 'language'],
     pbxSettings: ['auto_attendant', 'cloud_pbx_callqueue', 'max_queue_length', 'queue_wrap_up_time', 'manager_secretary'],
     pbxSettingsCallQueue: ['cloud_pbx_callqueue', 'max_queue_length', 'queue_wrap_up_time'],
-    callForwarding: ['cfu', 'cfb', 'cfna', 'cft', 'cfs', 'cfo', 'cfr', 'rerouting_mode', 'rerouting_codes']
+    callForwarding: ['cfu', 'cfb', 'cfna', 'cft', 'cfs', 'cfo', 'cfr']
 }
 
 export const LICENSES = {
@@ -66,6 +66,5 @@ export const FEATURES = {
     cloudPbx: 'cloudpbx',
     sms: 'sms',
     faxServer: 'faxserver',
-    fileShare: 'fileshare',
     mobilePush: 'mobilepush'
 }

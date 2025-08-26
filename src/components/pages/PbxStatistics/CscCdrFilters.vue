@@ -178,8 +178,7 @@ export default {
         ]),
         ...mapGetters('user', [
             'isFaxFeatureEnabled',
-            'hasSubscriberProfileAttribute',
-            'isSmsEnabled'
+            'hasSubscriberProfileAttribute'
         ]),
         ...mapState('user', [
             'platformInfo'
@@ -225,10 +224,10 @@ export default {
                     label: this.$t('Voicemail'),
                     value: 'voicemail'
                 }] : []),
-                ...(this.isSmsEnabled ? [{
+                {
                     label: this.$t('Sms'),
                     value: 'sms'
-                }] : []),
+                },
                 ...(this.isFaxFeatureEnabled ? [{
                     label: this.$t('Fax'),
                     value: 'fax'
