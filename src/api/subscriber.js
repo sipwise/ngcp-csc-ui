@@ -41,9 +41,17 @@ export async function setPreference (id, field, value) {
         await removePreference(id, field)
     } else {
         try {
-            await addPreference(id, field, value)
+            await replacePreference(id, field, value)
         } catch (err) {
-            if (err) {
+            const errCode = `${err.status}`
+            if (errCode === '422') {
+                // eslint-disable-next-line no-useless-catch
+                try {
+                    await addPreference(id, field, value)
+                } catch (innerErr) {
+                    throw innerErr
+                }
+            } else {
                 throw err
             }
         }
