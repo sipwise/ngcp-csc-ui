@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.43+0~mr12.5.1.43) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [5dfc2c4] MT#63356 Align CSC route guards with menu visibility
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 29 Aug 2025 11:07:06 +0200
+
 ngcp-csc-ui (12.5.1.42+0~mr12.5.1.42) unstable; urgency=medium
 
   [ Debora Crescenzo ]
