@@ -15,7 +15,7 @@
             >
                 {{ $t('Voicemail') }}
                 {{ direction }}
-                {{ $filters.destinationFormat(voiceMail.caller) }}
+                {{ $filters.destinationFormat(voicemailCaller) }}
             </q-item-label>
             <q-item-label
                 caption
@@ -149,6 +149,9 @@ export default {
                 return 'to'
             }
             return 'from'
+        },
+        voicemailCaller () {
+            return this.voiceMail.caller_phonebook_name || this.voiceMail.caller
         },
         soundFileFormat () {
             return this.platform.mozilla ? 'ogg' : 'mp3'

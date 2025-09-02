@@ -177,7 +177,7 @@ export default {
                         id: item.id,
                         icon: { name: 'download', color: 'primary' },
                         clickable_icon: true,
-                        title: item.caller,
+                        title: item.caller_phonebook_name || item.caller,
                         sub_title: date.formatDate(item.start_time, INTERNAL_DATE_FORMAT_DASH_HOUR),
                         extra_text: new Date(item.duration * 1000).toISOString().substr(11, 8)
                     }
@@ -208,9 +208,9 @@ export default {
                 call.call_type === 'cfb' || call.call_type === 'cft') {
                 return `vmu${call.caller}`
             } else if (call.direction === 'out') {
-                return call.callee
+                return call.callee_phonebook_name || call.callee
             } else if (call.direction === 'in') {
-                return call.caller
+                return call.caller_phonebook_name || call.caller
             }
             return call.caller
         },

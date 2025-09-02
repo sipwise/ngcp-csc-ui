@@ -134,9 +134,9 @@ export default {
     computed: {
         number () {
             if (this.call.direction === 'out') {
-                return this.call.callee
+                return this.call.callee_phonebook_name || this.call.callee
             }
-            return this.call.caller
+            return this.call.caller_phonebook_name || this.call.caller
         },
         totalCustomerCostRounded () {
             const formatter = new Intl.NumberFormat('en-US', {

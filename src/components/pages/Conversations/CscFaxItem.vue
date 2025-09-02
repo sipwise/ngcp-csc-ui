@@ -97,9 +97,9 @@ export default {
         },
         number () {
             if (this.fax.direction === 'out') {
-                return this.fax.callee
+                return this.fax.callee_phonebook_name || this.fax.callee
             }
-            return this.fax.caller
+            return this.fax.caller_phonebook_name || this.fax.caller
         }
     },
     methods: {
