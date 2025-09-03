@@ -278,21 +278,23 @@ export default {
     },
     watch: {
         recordings () {
-            this.data = this.recordings
-            this.data.forEach((recording) => {
+            this.data = this.recordings.map((recording) => {
+                const recordingCopy = { ...recording }
+
                 const user = this.getSubscriber()
                 const userCli = user.primary_number.cc + user.primary_number.ac + user.primary_number.sn
-                if (recording.caller) {
-                    if (recording.caller === userCli) {
-                        recording.callerName = this.$t('Me')
-                    }
+
+                if (recordingCopy.caller && recordingCopy.caller === userCli) {
+                    recordingCopy.callerName = this.$t('Me')
                 }
-                if (recording.callee) {
-                    if (recording.callee === userCli) {
-                        recording.calleeName = this.$t('Me')
-                    }
+
+                if (recordingCopy.callee && recordingCopy.callee === userCli) {
+                    recordingCopy.calleeName = this.$t('Me')
                 }
+
+                return recordingCopy
             })
+
             this.rowStatus = this.recordings.map((rec) => {
                 return {
                     id: rec.id,
@@ -373,13 +375,20 @@ export default {
             return rowStatus && rowStatus.expanded
         },
         async updateCollapseArray (id) {
-            const recording = this.recordings.filter((rec) => rec.id === id)[0]
+            // Find the recording in our local data copy, not the store
+            const recording = this.data.filter((rec) => rec.id === id)[0]
             const rowStatus = this.rowStatus.filter((row) => row.id === id)[0]
             rowStatus.expanded = !rowStatus.expanded
             if (rowStatus.expanded && recording.files.length === 0) {
                 this.$wait.start(`loading-stream-${id}`)
                 try {
                     await this.fetchStreams(id)
+                    // After fetching streams, we need to update our local copy
+                    // since the store has been updated
+                    const updatedRecording = this.recordings.find((rec) => rec.id === id)
+                    if (updatedRecording) {
+                        recording.files = [...updatedRecording.files]
+                    }
                 } finally {
                     this.$wait.end(`loading-stream-${id}`)
                 }
