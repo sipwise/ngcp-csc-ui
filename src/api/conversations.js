@@ -7,6 +7,7 @@ import {
 import {
     LIST_DEFAULT_ROWS,
     apiDownloadFile,
+    get,
     getList,
     httpApi
 } from 'src/api/common'
@@ -137,6 +138,13 @@ export function getOutgoingBlocked (id) {
         }).catch((err) => {
             reject(err)
         })
+    })
+}
+
+export async function getVoicemail (voicemailId) {
+    return await get({
+        resource: 'voicemails',
+        resourceId: voicemailId
     })
 }
 

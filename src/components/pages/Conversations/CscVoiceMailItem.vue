@@ -1,5 +1,13 @@
 <template>
     <q-item>
+        <csc-dialog-transcript
+            ref="transcriptDialog"
+            :full-width="isTranscriptReady"
+            :text="getTranscriptText"
+            :status="getTranscriptStatus"
+            :is-loading="isLoadingTranscript"
+            @hide="hideTranscriptDialog"
+        />
         <q-item-section
             side
             top
@@ -54,6 +62,12 @@
                     :label="$t('Download voicemail')"
                     @click="downloadVoiceMail"
                 />
+                <csc-popup-menu-item
+                    icon="description"
+                    color="primary"
+                    :label="$t('Transcript')"
+                    @click="getVoicemailTranscript"
+                />
                 <csc-popup-menu-item-start-call
                     v-if="callAvailable"
                     @click="startCall"
@@ -86,13 +100,14 @@
 
 <script>
 import CscAudioPlayer from 'components/CscAudioPlayer'
+import CscDialogTranscript from 'components/CscDialogTranscript'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
 import { showGlobalError } from 'src/helpers/ui'
 import { RequestState } from 'src/store/common'
-import { mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 export default {
     name: 'CscVoiceMailItem',
@@ -101,7 +116,8 @@ export default {
         CscPopupMenuItemStartCall,
         CscPopupMenuItem,
         CscMoreMenu,
-        CscAudioPlayer
+        CscAudioPlayer,
+        CscDialogTranscript
     },
     props: {
         voiceMail: {
@@ -129,7 +145,16 @@ export default {
             default: false
         }
     },
-    emits: ['delete-voicemail', 'toggle-block-both', 'toggle-block-outgoing', 'toggle-block-incoming', 'start-call', 'download-voice-mail', 'play-voice-mail'],
+    emits: [
+        'delete-voicemail',
+        'toggle-block-both',
+        'toggle-block-outgoing',
+        'toggle-block-incoming',
+        'start-call',
+        'download-voice-mail',
+        'play-voice-mail',
+        'get-voicemail-transcript'
+    ],
     data () {
         return {
             platform: this.$q.platform.is
@@ -144,11 +169,26 @@ export default {
             'playVoiceMailErrors',
             'playVoiceMailStates'
         ]),
+        ...mapGetters('transcriptions', [
+            'getTranscriptText',
+            'getTranscriptStatus'
+        ]),
+        ...mapState('transcriptions', [
+            'transcriptState',
+            'transcript',
+            'transcriptError'
+        ]),
         direction () {
             if (this.voiceMail.direction === 'out') {
                 return 'to'
             }
             return 'from'
+        },
+        isLoadingTranscript () {
+            return this.transcriptState === 'requesting'
+        },
+        isTranscriptReady () {
+            return this.getTranscriptStatus === 'done'
         },
         voicemailCaller () {
             return this.voiceMail.caller_phonebook_name || this.voiceMail.caller
@@ -163,6 +203,7 @@ export default {
         voiceMailLoaded () {
             return this.playVoiceMailState(this.voiceMail.id) === 'succeeded'
         }
+
     },
     watch: {
         playVoiceMailStates: {
@@ -172,9 +213,17 @@ export default {
                     showGlobalError(this.playVoiceMailErrors[this.voiceMail.id])
                 }
             }
+        },
+        transcriptState (state) {
+            if (state === RequestState.failed) {
+                return showGlobalError(this.transcriptError)
+            }
         }
     },
     methods: {
+        ...mapActions('transcriptions', [
+            'clearTranscriptData'
+        ]),
         playVoiceMail () {
             this.$emit('play-voice-mail', {
                 id: this.voiceMail.id,
@@ -188,6 +237,14 @@ export default {
             this.playVoiceMail()
             this.$refs.voicemailPlayer.setPlayingTrue()
             this.$refs.voicemailPlayer.setPausedFalse()
+        },
+        getVoicemailTranscript () {
+            this.$emit('get-voicemail-transcript', this.voiceMail.id)
+            this.$refs.transcriptDialog.show()
+        },
+        hideTranscriptDialog () {
+            this.$refs.transcriptDialog.hide()
+            this.clearTranscriptData()
         },
         startCall () {
             this.$emit('start-call', this.voiceMail.callee)

@@ -64,6 +64,7 @@
                         :blocked-incoming="blockedIncoming(item)"
                         :blocked-outgoing="blockedOutgoing(item)"
                         @start-call="startCall"
+                        @get-voicemail-transcript="getVoicemailTranscription"
                         @download-fax="downloadFax"
                         @download-voice-mail="downloadVoiceMail"
                         @play-voice-mail="playVoiceMail"
@@ -294,10 +295,14 @@ export default {
         ...mapWaitingActions('conversations', {
             nextPage: 'csc-conversations',
             deleteVoicemail: 'csc-conversations',
+            getVoicemailTranscript: 'csc-conversations',
             toggleBlockIncoming: 'csc-conversations',
             toggleBlockOutgoing: 'csc-conversations',
             toggleBlockBoth: 'csc-conversations',
             deleteFax: 'csc-conversations'
+        }),
+        ...mapWaitingActions('transcriptions', {
+            getVoicemailTranscript: 'csc-transcriptions'
         }),
         ...mapMutations('conversations', [
             'resetList'
@@ -426,6 +431,9 @@ export default {
             this.$scrollTo(this.$parent.$el)
             this.filterDirection = filter
             this.forceReload()
+        },
+        async getVoicemailTranscription (voicemailId) {
+            await this.getVoicemailTranscript(voicemailId)
         },
         addToPhonebookAction (number) {
             this.$store.commit('user/setPhonebookNumber', number)

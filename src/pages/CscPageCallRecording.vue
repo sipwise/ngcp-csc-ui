@@ -3,6 +3,14 @@
     <csc-page-sticky
         id="csc-page-call-recording"
     >
+        <csc-dialog-transcript
+            ref="transcriptDialog"
+            :full-width="isTranscriptReady"
+            :text="getTranscriptText"
+            :status="getTranscriptStatus"
+            :is-loading="isLoadingTranscript"
+            @hide="hideTranscriptDialog"
+        />
         <template
             #header
         >
@@ -138,6 +146,15 @@
                                             <q-td
                                                 class="row justify-end table-td-action-cont"
                                             >
+                                                <q-btn
+                                                    size="md"
+                                                    color="primary"
+                                                    icon="description"
+                                                    dense
+                                                    class="download-btn"
+                                                    flat
+                                                    @click="getTranscript(innerProps.row)"
+                                                />
                                                 <csc-audio-player
                                                     :pausable="true"
                                                     class="player-btns"
@@ -171,6 +188,7 @@
 
 <script>
 import CscAudioPlayer from 'components/CscAudioPlayer'
+import CscDialogTranscript from 'components/CscDialogTranscript'
 import CscPageSticky from 'components/CscPageSticky'
 import CscRemoveDialog from 'components/CscRemoveDialog'
 import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
@@ -179,13 +197,14 @@ import moment from 'moment'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import { showGlobalError, showToast } from 'src/helpers/ui'
 import { mapWaitingActions } from 'vue-wait'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageCallRecording',
     components: {
         CscAudioPlayer,
         CscPageSticky,
-        CscCallRecordingFilters
+        CscCallRecordingFilters,
+        CscDialogTranscript
     },
     data () {
         return {
@@ -274,7 +293,22 @@ export default {
     computed: {
         ...mapGetters('callRecordings', [
             'recordings'
-        ])
+        ]),
+        ...mapGetters('transcriptions', [
+            'getTranscriptText',
+            'getTranscriptStatus'
+        ]),
+        ...mapState('transcriptions', [
+            'transcriptState',
+            'transcript',
+            'transcriptError'
+        ]),
+        isLoadingTranscript () {
+            return this.transcriptState === 'requesting'
+        },
+        isTranscriptReady () {
+            return this.getTranscriptStatus === 'done'
+        }
     },
     watch: {
         recordings () {
@@ -318,6 +352,10 @@ export default {
             playStreamFile: 'csc-call-recordings',
             fetchFile: 'csc-call-recordings'
         }),
+        ...mapActions('transcriptions', [
+            'clearTranscriptData',
+            'getCallRecordingsTranscript'
+        ]),
         ...mapGetters('user', [
             'getSubscriber'
         ]),
@@ -370,6 +408,17 @@ export default {
                 showGlobalError(this.$t('Something went wrong. Please retry later'))
             }
         },
+        getTranscript (data) {
+            this.getCallRecordingsTranscript({
+                transcript: data.transcript,
+                transcriptStatus: data.transcript_status
+            })
+            this.$refs.transcriptDialog.show()
+        },
+        hideTranscriptDialog () {
+            this.$refs.transcriptDialog.hide()
+            this.clearTranscriptData()
+        },
         isRowExpanded (id) {
             const rowStatus = this.rowStatus.filter((row) => row.id === id)[0] || null
             return rowStatus && rowStatus.expanded
@@ -416,7 +465,7 @@ export default {
 .table-td-no-padding
     padding: 0px !important // needed to override .q-table td
 .table-td-action-cont
-    min-width: 140px
+    min-width: 170px
     .player-btns
         bottom: 9px
         left: 8px

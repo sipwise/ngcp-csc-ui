@@ -20,6 +20,7 @@ import PbxSeatsModule from 'src/store/pbx-seats'
 import PbxSoundSetsModule from 'src/store/pbx-soundsets'
 import ReminderModule from 'src/store/reminder'
 import SpeedDialModule from 'src/store/speed-dial'
+import TranscriptionsModule from 'src/store/transcriptions'
 import UserModule from 'src/store/user'
 import VoiceboxModule from 'src/store/voicebox'
 import { createStore } from 'vuex'
@@ -57,7 +58,8 @@ export default function (/* { ssrContext } */) {
             callForwarding: CallForwardingModule,
             pbxAutoAttendants: PbxAutoAttendants,
             dashboard: DashboardModule,
-            customer: Customer
+            customer: Customer,
+            transcriptions: TranscriptionsModule
         },
         state: {
             route: null

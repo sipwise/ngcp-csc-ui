@@ -30,6 +30,7 @@
         :block-both-label="blockBothLabel"
         :block-both-possible="unblockedBoth || blockedBoth"
         @download-voice-mail="downloadVoiceMail"
+        @get-voicemail-transcript="getVoicemailTranscript"
         @play-voice-mail="playVoiceMail"
         @start-call="startCall"
         @toggle-block-incoming="toggleBlockIncoming"
@@ -71,6 +72,7 @@ export default {
     emits: [
         'download-fax',
         'delete-voicemail',
+        'get-voicemail-transcript',
         'toggle-block-both',
         'toggle-block-outgoing',
         'toggle-block-incoming',
@@ -132,6 +134,9 @@ export default {
         },
         downloadVoiceMail (voiceMail) {
             this.$emit('download-voice-mail', voiceMail)
+        },
+        getVoicemailTranscript (voiceMail) {
+            this.$emit('get-voicemail-transcript', voiceMail)
         },
         playVoiceMail (voiceMail) {
             this.$emit('play-voice-mail', voiceMail)
