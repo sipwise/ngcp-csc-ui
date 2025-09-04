@@ -150,7 +150,7 @@ function handleResponseError (err) {
     }
     if (code === 403 && message === 'Password expired') {
         message = i18n.global.t('Password Expired')
-        return this.$router.push({ path: PATH_CHANGE_PASSWORD })
+        return this.$router?.push({ path: PATH_CHANGE_PASSWORD })
     }
 
     if (code !== null && message !== null) {

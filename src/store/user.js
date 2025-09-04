@@ -391,7 +391,7 @@ export default {
                     subscriberId: getSubscriberId()
                 })
                 await context.dispatch('initUser')
-                await this.$router.push({ name: 'dashboard' })
+                await this.$router?.push({ name: 'dashboard' })
             } catch (err) {
                 if (err.message === 'Invalid OTP') {
                     if (context.state.loginWaitingOTPCode) {
@@ -405,7 +405,7 @@ export default {
                 }
                 context.commit('loginFailed', err.message)
                 if (err.message === 'Password expired') {
-                    this.$router.push({ path: PATH_CHANGE_PASSWORD })
+                    this.$router?.push({ path: PATH_CHANGE_PASSWORD })
                 } else if (err.message === 'Banned') {
                     context.commit('loginFailed', i18n.global.t('There is a problem with your account, please contact support'))
                 }

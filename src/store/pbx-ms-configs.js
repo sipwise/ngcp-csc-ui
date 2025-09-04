@@ -242,7 +242,7 @@ export default {
             })
         },
         jumpToMsConfig (context, subscriber) {
-            this.$router.push({ path: '/user/pbx-configuration/ms-configs' })
+            this.$router?.push({ path: '/user/pbx-configuration/ms-configs' })
             context.commit('expandMsConfig', subscriber.id)
         }
     }

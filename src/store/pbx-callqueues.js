@@ -256,7 +256,7 @@ export default {
             })
         },
         jumpToCallQueue (context, subscriber) {
-            this.$router.push({ path: '/user/pbx-configuration/call-queues' })
+            this.$router?.push({ path: '/user/pbx-configuration/call-queues' })
             context.commit('expandCallQueue', subscriber.id)
         }
     }
