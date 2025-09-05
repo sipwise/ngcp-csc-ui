@@ -34,17 +34,20 @@
                 <q-input
                     v-model="name"
                     :label="$t('Name')"
+                    data-cy="csc-phonebook-details-name"
                 />
 
                 <q-input
                     v-model="number"
                     :required="true"
                     :label="$t('Number')"
+                    data-cy="csc-phonebook-details-number"
                 />
 
                 <q-toggle
                     v-model="shared"
                     :label="$t('Shared')"
+                    data-cy="csc-phonebook-details-shared"
                 />
             </q-list>
         </q-item>
@@ -54,11 +57,13 @@
                 color="white"
                 flat
                 :label="$t('Cancel')"
+                data-cy="csc-phonebook-details-cancel"
                 @click="cancel"
             />
             <q-btn
                 icon="check"
                 :label="$t('Confirm')"
+                data-cy="csc-phonebook-details-confirm"
                 unelevated
                 text-color="primary"
                 @click="confirm"

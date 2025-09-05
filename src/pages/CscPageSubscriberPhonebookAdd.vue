@@ -34,6 +34,7 @@
                 <q-input
                     v-model="formData.name"
                     :label="$t('Name')"
+                    data-cy="csc-phonebook-add-name"
                     :error="v$.formData.name.$errors.length > 0"
                     :error-message="nameErrorMessage"
                     @update:model-value="v$.formData.name.$touch()"
@@ -41,6 +42,7 @@
                 <q-input
                     v-model="formData.number"
                     :label="$t('Number')"
+                    data-cy="csc-phonebook-add-number"
                     :error="numberError"
                     :error-message="numberErrorMessage"
                     @update:model-value="numberUpdated()"
@@ -48,6 +50,7 @@
                 <q-toggle
                     v-model="formData.shared"
                     :label="$t('Shared')"
+                    data-cy="csc-phonebook-add-shared"
                 />
             </q-list>
         </q-item>
@@ -57,11 +60,13 @@
                 color="white"
                 flat
                 :label="$t('Cancel')"
+                data-cy="csc-phonebook-add-cancel"
                 @click="cancel"
             />
             <q-btn
                 icon="check"
                 :label="$t('Confirm')"
+                data-cy="csc-phonebook-add-confirm"
                 :disable="disableSaveButton()"
                 unelevated
                 text-color="primary"

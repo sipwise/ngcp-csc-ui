@@ -13,6 +13,7 @@
                     dense
                     :options="filterTypeOptions"
                     :label="$t('Filter by')"
+                    data-cy="csc-phonebook-search-filter"
                 />
             </div>
             <div
@@ -25,6 +26,7 @@
                     dense
                     :disable="filterType === null"
                     :label="$t('Is shared?')"
+                    data-cy="csc-phonebook-search-shared"
                     @update:model-value="triggerFilter"
                 />
                 <q-input
@@ -34,6 +36,7 @@
                     dense
                     :disable="filterType === null"
                     :label="$t('Type something')"
+                    data-cy="csc-phonebook-entry-search-input"
                     @keypress.enter="triggerFilter"
                 >
                     <template
