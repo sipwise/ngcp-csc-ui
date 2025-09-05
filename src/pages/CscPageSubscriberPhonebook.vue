@@ -12,6 +12,7 @@
                 color="primary"
                 flat
                 :label="$t('Add Phonebook')"
+                data-cy="csc-phonebook-add"
                 @click="openAddPhonebook()"
             />
             <q-btn
@@ -20,6 +21,7 @@
                 color="primary"
                 flat
                 :label="$t('Seats')"
+                data-cy="csc-phonebook-seats"
                 @click="openSeatTable"
             />
         </template>
@@ -103,6 +105,7 @@
                                     icon="fas fa-pen"
                                     color="primary"
                                     :label="$t('Edit')"
+                                    data-cy="csc-phonebook-entry-edit"
                                     :disable="isLevelEntry(row.id)"
                                     @click="showPhonebookDetails(row)"
                                 />
@@ -110,6 +113,7 @@
                                     icon="delete"
                                     color="negative"
                                     :label="$t('Delete')"
+                                    data-cy="csc-phonebook-entry-delete"
                                     :disable="isLevelEntry(row.id)"
                                     @click="deleteRow(row)"
                                 />
@@ -120,6 +124,7 @@
                                 size="sm"
                                 flat
                                 :label="$t('Call back')"
+                                data-cy="csc-phonebook-entry-callback"
                                 @click="homePageCall(row)"
                             />
                         </div>
