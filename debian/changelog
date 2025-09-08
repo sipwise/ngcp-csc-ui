@@ -1,3 +1,38 @@
+ngcp-csc-ui (14.0.0.0+0~mr14.0.0.0) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [9fdd2c1] MT#62722 Add "Add to Phonebook" action to call list entries
+  * [e05a3a2] MT#62259 Add "Seats" button in subscriber phonebook for callback
+  * [c5e6b23] MT#61614 Display phonebook entries with edit restriction
+  * [716d45f] MT#63228 Add new button for the DND activation/de-activation
+  * [da266b7] MT#62617 Add missing translations
+  * [2c54841] MT#63340 Fix generate password
+
+  [ Debora Crescenzo ]
+  * [543fa01] MT#63292 Remove stylus
+  * [0340bd7] MT#63310 Improve handling of long words in main menu
+  * [8b4f8b2] MT#62260 Add Phonebook search bar
+  * [837de61] MT#63089 Match the calling/called number into the phonebook
+  * [43456c9] MT#62617 Add missing Spanish translations
+  * [998ed04] MT#62617 Fix typo "Call on hold"
+  * [1a9a18b] MT#61674 Add download CSV of PBx statistics
+  * [22e602b] MT#63363 Prevent CSV download from breaking CDR table
+  * [b503fe9] MT#63310 Adapt csc_call bar
+  * [bc75777] MT#63046 Upgrade libs to latest
+  * [bd086f4] MT#61383 Allow admin PBX users to toggle Mail2Fax feature
+  * [2afefb8] MT#63428 align day and month values with admin-ui
+  * [973b448] MT#63432 Add support for "label" definition in the Device provisioning
+  * [2b46170] MT#63356 Align CSC route guards with menu visibility
+  * [72d36d2] MT#63046 Update @quasar/app-webpack and relevant libs
+  * [8f721d2] MT#63399 Remove Obsolete Subscriber Profile Attributes
+  * [09f40c3] MT#63228 Restore setPreference behavior to pre-716d45f6 state
+  * [a9c9073] MT#63174 Add phonebook name matching into call list
+  * [abc25dc] MT#63508 Avoid direct Vuex state mutation in CscPageCallRecording
+  * [88aacb7] MT#63513 this.$router.push bugfix
+  * [8aa3c27] MT#63449 Add voicemail and call recordings transcript
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 08 Sep 2025 11:44:35 +0200
+
 ngcp-csc-ui (13.5.0.0+0~mr13.5.0.0) unstable; urgency=medium
 
   [ Nico Schedel ]
