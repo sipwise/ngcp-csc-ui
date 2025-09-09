@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.44+0~mr12.5.1.44) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [e6d6cc8] MT#63508 Avoid direct Vuex state mutation in CscPageCallRecording
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 09 Sep 2025 10:52:26 +0200
+
 ngcp-csc-ui (12.5.1.43+0~mr12.5.1.43) unstable; urgency=medium
 
   [ Debora Crescenzo ]
