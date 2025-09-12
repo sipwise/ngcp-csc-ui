@@ -107,12 +107,16 @@ export function getNcosLevels (options) {
     })
 }
 export async function getNcosSet () {
-    let streams = []
-    const res = await httpApi.get('api/v2/ncos/sets/')
-    if (res.data.total_count > 0) {
-        streams = getJsonBody(res.data)._embedded['ngcp:ncos/sets']
+    try {
+        let streams = []
+        const res = await get({ path: 'api/v2/ncos/sets/' })
+        if (res?.data?.total_count > 0) {
+            streams = getJsonBody(res.data)._embedded['ngcp:ncos/sets']
+        }
+        return streams
+    } catch (err) {
+        return []
     }
-    return streams
 }
 export async function removePreference (id, field) {
     return await patchRemove({
