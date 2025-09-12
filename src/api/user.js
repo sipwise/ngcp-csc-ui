@@ -134,7 +134,8 @@ export function assignNumber (numberId, subscriberId) {
         patchReplace({
             path: `api/numbers/${numberId}`,
             fieldPath: 'subscriber_id',
-            value: subscriberId
+            value: subscriberId,
+            params: { create_primary_acli: false }
         }).then(() => {
             resolve()
         }).catch((err) => {
