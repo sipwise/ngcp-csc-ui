@@ -200,10 +200,14 @@ export async function patch (operation, options) {
     if (requestConfig.resource !== undefined && requestConfig.resourceId !== undefined) {
         path = `api/${requestConfig.resource}/${requestConfig.resourceId}`
     }
+
+    const config = {
+        headers: requestConfig.headers,
+        ...(requestConfig.params ? { params: requestConfig.params } : {})
+    }
+
     try {
-        return await httpApi.patch(path, [body], {
-            headers: requestConfig.headers
-        })
+        return await httpApi.patch(path, [body], config)
     } catch (err) {
         handleResponseError(err)
     }
