@@ -611,7 +611,7 @@ export default {
         async getNcosSetSubscriber () {
             const ncosSet = []
             const list = await getNcosSet()
-            list.forEach((setNcos) => {
+            list?.forEach((setNcos) => {
                 ncosSet.push({
                     label: setNcos.name,
                     value: setNcos.id
