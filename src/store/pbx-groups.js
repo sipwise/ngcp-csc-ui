@@ -57,6 +57,9 @@ export default {
                 getters.isGroupRemoving || getters.isGroupUpdating
             return !getters.isGroupListEmpty && requesting && state.groupListLastPage > 1
         },
+        isGroupMapByIdEmpty (state) {
+            return Object.keys(state.groupMapById).length === 0
+        },
         isGroupAddFormDisabled (state) {
             return state.groupCreationState === CreationState.initiated ||
                 state.groupCreationState === CreationState.created
