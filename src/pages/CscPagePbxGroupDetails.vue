@@ -399,7 +399,8 @@ export default {
             'isGroupLoading',
             'getHuntCancelModeOptions',
             'getAnnouncementCfu',
-            'getAnnouncementCallSetup'
+            'getAnnouncementCallSetup',
+            'isGroupMapByIdEmpty'
         ]),
         ...mapGetters('callForwarding', [
             'groups'
@@ -480,7 +481,10 @@ export default {
             }
         }
     },
-    async mounted  () {
+    async mounted () {
+        if (this.isGroupMapByIdEmpty) {
+            await this.loadGroupListItems()
+        }
         this.selectGroup(this.id)
         await this.loadMappingsFull(this.id)
     },
@@ -507,7 +511,8 @@ export default {
             'setGroupNumbers',
             'setGroupSoundSet',
             'setAnnouncementCallSetup',
-            'setAnnouncementCfu'
+            'setAnnouncementCfu',
+            'loadGroupListItems'
         ]),
         ...mapActions('pbxCallQueues', [
             'jumpToCallQueue'
