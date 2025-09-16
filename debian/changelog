@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.45+0~mr12.5.1.45) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [70fccff] MT#63561 Fix crash on PBX seat page due to unauthorized error
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 16 Sep 2025 09:37:20 +0200
+
 ngcp-csc-ui (12.5.1.44+0~mr12.5.1.44) unstable; urgency=medium
 
   [ Debora Crescenzo ]
