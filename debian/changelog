@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.46+0~mr12.5.1.46) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [6ccaba5] MT#63384 Fix Group Details page crash upon refresh
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 17 Sep 2025 09:30:19 +0200
+
 ngcp-csc-ui (12.5.1.45+0~mr12.5.1.45) unstable; urgency=medium
 
   [ Debora Crescenzo ]
