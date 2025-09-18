@@ -106,7 +106,8 @@ const routes = [
                     get title () {
                         return i18n.global.t('Subscriber Phonebook')
                     },
-                    licenses: [LICENSES.phonebook]
+                    licenses: [LICENSES.phonebook],
+                    allowCE: false
                 }
             },
             {
@@ -126,7 +127,8 @@ const routes = [
                     get title () {
                         return i18n.global.t('Subscriber Phonebook')
                     },
-                    licenses: [LICENSES.phonebook]
+                    licenses: [LICENSES.phonebook],
+                    allowCE: false
                 }
             },
             {

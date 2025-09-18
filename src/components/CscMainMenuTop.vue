@@ -98,7 +98,7 @@ export default {
                     to: '/user/subscriber-phonebook',
                     icon: 'fas fa-user',
                     label: this.$t('Subscriber Phonebook'),
-                    visible: this.hasLicenses([LICENSES.phonebook])
+                    visible: !this.isSpCe && this.hasLicenses([LICENSES.phonebook])
                 },
                 {
                     icon: 'settings_phone',
