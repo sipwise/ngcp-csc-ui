@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.47+0~mr12.5.1.47) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [3c9098e] MT#63591 Disable subscriber phonebook menu in CE platforms
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 22 Sep 2025 08:58:54 +0200
+
 ngcp-csc-ui (12.5.1.46+0~mr12.5.1.46) unstable; urgency=medium
 
   [ Debora Crescenzo ]
