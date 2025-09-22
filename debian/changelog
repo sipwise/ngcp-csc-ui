@@ -1,3 +1,11 @@
+ngcp-csc-ui (13.4.1.11+0~mr13.4.1.11) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [61834cc] MT#63356 Align CSC route guards with menu visibility
+  * [10f63a7] MT#63591 Disable subscriber phonebook menu in CE platforms
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 22 Sep 2025 08:58:46 +0200
+
 ngcp-csc-ui (13.4.1.10+0~mr13.4.1.10) unstable; urgency=medium
 
   [ Debora Crescenzo ]
