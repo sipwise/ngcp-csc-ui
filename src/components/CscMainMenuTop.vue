@@ -246,7 +246,7 @@ export default {
                             to: '/user/pbx-configuration/customer-preferences',
                             icon: 'fas fa-user-cog',
                             label: this.$t('Customer Preferences'),
-                            visible: this.isPbxAdmin && this.hasLicenses([LICENSES.phonebook]) && hasCustomerPreferenceSubmenus
+                            visible: this.isPbxAdmin && hasCustomerPreferenceSubmenus
                         }
                     ]
                 },
