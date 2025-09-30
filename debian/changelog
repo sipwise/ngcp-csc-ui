@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.4.1.12+0~mr13.4.1.12) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [f4c3caa] MT#63627 remove unnecessary licence check
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 30 Sep 2025 14:46:36 +0200
+
 ngcp-csc-ui (13.4.1.11+0~mr13.4.1.11) unstable; urgency=medium
 
   [ Debora Crescenzo ]
