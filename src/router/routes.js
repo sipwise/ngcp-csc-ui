@@ -139,7 +139,6 @@ const routes = [
                     get title () {
                         return i18n.global.t('Seats')
                     },
-                    adminOnly: true,
                     platformFeature: FEATURES.cloudPbx,
                     capability: FEATURES.cloudPbx,
                     licenses: [LICENSES.pbx]
