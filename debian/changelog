@@ -1,3 +1,18 @@
+ngcp-csc-ui (13.5.2.0+0~mr13.5.2.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [f0cfb99] MT#63561 Fix crash on PBX seat page due to unauthorized error
+  * [66144ef] MT#63384 Fix Group Details page crash upon refresh
+  * [cee74ca] MT#59078 Disable Primary Acli Creation
+  * [b5ec15a] MT#63591 Disable subscriber phonebook menu in CE platforms
+  * [433f346] MT#63627 remove unnecessary licence check
+  * [155143b] MT#63673 Remove adminOnly check from /user/seats
+
+  [ Nico Schedel ]
+  * [acdfc0c] MT#63526 add data-cy to subscriber phonebook page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 02 Oct 2025 10:54:02 +0200
+
 ngcp-csc-ui (13.5.1.0+0~mr13.5.1.0) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
