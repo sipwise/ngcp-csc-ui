@@ -192,13 +192,13 @@ export default {
         },
         hasSubscriberProfileAttribute: (state) => {
             return (attribute) => {
-                return state?.profile ? state?.profile?.attributes?.includes(attribute) : true
+                return state?.profile ? state.profile?.attributes?.includes(attribute) : true
             }
         },
         hasSomeSubscriberProfileAttributes: (state) => {
             return (attributes) => {
                 return state?.profile
-                    ? state.profile.attributes?.some((item) => {
+                    ? state.profile?.attributes?.some((item) => {
                         return attributes?.includes(item)
                     })
                     : true
