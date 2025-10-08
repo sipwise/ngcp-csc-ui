@@ -417,7 +417,7 @@ const routes = [
                     },
                     adminOnly: true,
                     platformFeature: FEATURES.cloudPbx,
-                    profileAttributes: PROFILE_ATTRIBUTE_MAP.cloudPbxCallQueue,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.cloudPbxCallQueue,
                     capability: FEATURES.cloudPbx,
                     licenses: [LICENSES.pbx]
                 }
@@ -503,7 +503,7 @@ const routes = [
                     adminOnly: true,
                     platformFeature: FEATURES.cloudPbx,
                     capability: FEATURES.cloudPbx,
-                    licenses: [LICENSES.pbx, LICENSES.phonebook]
+                    licenses: [LICENSES.pbx]
                 }
 
             },
@@ -572,7 +572,7 @@ const routes = [
                         return i18n.global.t('Call Queues')
                     },
                     platformFeature: FEATURES.cloudPbx,
-                    profileAttributes: PROFILE_ATTRIBUTE_MAP.cloudPbxCallQueue,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.cloudPbxCallQueue,
                     capability: FEATURES.cloudPbx,
                     licenses: [LICENSES.pbx]
                 }
