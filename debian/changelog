@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.5.1.2+0~mr13.5.1.2) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [d36b2bc] MT#63627 Call queue route access bugfix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 09 Oct 2025 16:14:15 +0200
+
 ngcp-csc-ui (13.5.1.1+0~mr13.5.1.1) unstable; urgency=medium
 
   [ Debora Crescenzo ]
