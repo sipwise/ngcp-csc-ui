@@ -13,6 +13,8 @@ let $localMediaStream = null
 let $remoteMediaStream = null
 let $videoTransceiver = null
 let $audioTransceiver = null
+let $iceServers = []
+let $pendingIceCandidates = []
 
 const TERMINATION_OPTIONS = {
     status_code: 603,
@@ -97,19 +99,140 @@ function getSubscriberUri () {
     return `sip:${$subscriber.username}@${$subscriber.domain}`
 }
 
+function createTrickleIceSdpFragment (candidateInfo) {
+    /**
+     * Convert ICE candidate to SDP fragment format (RFC 8840)
+     * Must include m= line, a=mid: line, and a=candidate: line
+     * RFC Rules:
+     * The media field is set to 'audio'.
+     * The port value is set to '9'.
+     * The proto value is set to 'RTP/AVP'.
+     * The fmt field MUST appear only once and is set to '0'.
+
+     * Example output:
+     * m=audio 9 RTP/AVP 0
+     * a=mid:0
+     * a=candidate:foundation 1 udp 2113667326 192.168.1.100 54400 typ host
+     */
+    let sdpFragment = ''
+
+    sdpFragment += 'm=audio 9 RTP/AVP 0\r\n'
+
+    // Include media ID if we have it
+    if (candidateInfo.sdpMid) {
+        sdpFragment += `a=mid:${candidateInfo.sdpMid}\r\n`
+    }
+
+    // The actual ICE candidate
+    sdpFragment += `a=${candidateInfo.candidate}`
+
+    return sdpFragment
+}
+
+/**
+ * Send any ICE candidates we collected before the call was fully established.
+ *
+ * Problem: ICE candidates start showing up immediately when we create the peer connection,
+ * but we can't send SIP INFO messages until the call is actually confirmed. So we queue
+ * them up and send them all at once when the call is ready.
+ *
+ * This fixes issues with video calls where we get important candidates
+ * after the initial call setup.
+ */
+function sendQueuedIceCandidates (rtcSession) {
+    if ($pendingIceCandidates.length === 0) {
+        return
+    }
+
+    const candidates = [...$pendingIceCandidates]
+    $pendingIceCandidates = []
+
+    candidates.forEach((candidateInfo, index) => {
+        try {
+            const sdpFragment = createTrickleIceSdpFragment(candidateInfo)
+
+            rtcSession.sendInfo('application/trickle-ice-sdpfrag', sdpFragment, {
+                extraHeaders: [
+                    'Info-Package: trickle-ice',
+                    'Content-Disposition: Info-Package'
+                ],
+                eventHandlers: {
+                    succeeded: () => {
+                        callEvent.emit('iceCandidateSent', candidateInfo)
+                    },
+                    failed: (e) => {
+                        callEvent.emit('iceCandidateFailed', { candidate: candidateInfo, error: e })
+                    }
+                }
+            })
+        } catch (error) {
+            callEvent.emit('iceCandidateFailed', { candidate: candidateInfo, error })
+        }
+    })
+}
+
+function handleIceCandidate (event, rtcSession) {
+    if (event.candidate) {
+        // Got a new ICE candidate - send it to the other side via SIP INFO
+        try {
+            const candidateInfo = {
+                candidate: event.candidate.candidate,
+                sdpMid: event.candidate.sdpMid,
+                sdpMLineIndex: event.candidate.sdpMLineIndex
+            }
+
+            /**
+             * Status 9 = confirmed, 12 = ended
+             *
+             * Why did we include 12?
+             * It handles the gap between "SIP says the call is over"
+             * and "WebRTC finishes cleaning up the connection."
+             */
+            if (rtcSession.status === 9 || rtcSession.status === 12) {
+                const sdpFragment = createTrickleIceSdpFragment(candidateInfo)
+
+                rtcSession.sendInfo('application/trickle-ice-sdpfrag', sdpFragment, {
+                    extraHeaders: [
+                        'Info-Package: trickle-ice',
+                        'Content-Disposition: Info-Package'
+                    ],
+                    eventHandlers: {
+                        succeeded: () => {
+                            callEvent.emit('iceCandidateSent', candidateInfo)
+                        },
+                        failed: (e) => {
+                            callEvent.emit('iceCandidateFailed', { candidate: candidateInfo, error: e })
+                        }
+                    }
+                })
+            } else {
+                $pendingIceCandidates.push(candidateInfo)
+            }
+        } catch (error) {
+            callEvent.emit('iceCandidateError', error)
+        }
+    } else {
+        callEvent.emit('iceGatheringComplete')
+    }
+}
+
+// WebSocket Authentication to Kamailio
 function callCreateSocket () {
     return new jssip.WebSocketInterface(`${$baseWebSocketUrl}/${$subscriber.username}`)
 }
 
-export function callConfigure ({ baseWebSocketUrl }) {
+export function callConfigure ({ baseWebSocketUrl, iceServers }) {
     $baseWebSocketUrl = baseWebSocketUrl
+    if (iceServers && Array.isArray(iceServers)) {
+        $iceServers = iceServers
+    }
 }
 
 export async function callInitialize ({ subscriber, instanceId }) {
     $subscriber = subscriber
     callRegister({ instanceId })
 }
-
+// Set up SIP connection and register with server
 export function callRegister ({ instanceId }) {
     if (!$socket) {
         $socket = callCreateSocket()
@@ -117,7 +240,14 @@ export function callRegister ({ instanceId }) {
             sockets: [$socket],
             uri: getSubscriberUri(),
             password: $subscriber.password,
-            instance_id: instanceId
+            instance_id: instanceId,
+            // WebRTC settings for proper ICE handling
+            pcConfig: {
+                iceServers: $iceServers,
+                iceCandidatePoolSize: 10,
+                bundlePolicy: 'max-bundle',
+                rtcpMuxPolicy: 'require'
+            }
         }
         $userAgent = new jssip.UA(config)
         const delegateEvent = (eventName) => {
@@ -130,6 +260,59 @@ export function callRegister ({ instanceId }) {
         delegateEvent('registered')
         delegateEvent('unregistered')
         delegateEvent('registrationFailed')
+
+        // Handle incoming ICE candidates via SIP INFO messages
+        $userAgent.on('newMessage', (event) => {
+            if (event.request.getHeader('Content-Type') === 'application/trickle-ice-sdpfrag') {
+                try {
+                    const sdpFragment = event.request.body
+
+                    // Extract candidate from SDP fragment format: a=candidate:...
+                    const candidateMatch = sdpFragment.match(/a=candidate:(.+)/)
+                    if (candidateMatch) {
+                        const candidateString = `candidate:${candidateMatch[1]}`
+
+                        // Extract sdpMid from a=mid: line
+                        const midMatch = sdpFragment.match(/a=mid:(.+)/)
+                        const sdpMid = midMatch ? midMatch[1].trim() : null
+
+                        // Extract sdpMLineIndex from m= line position
+                        // Parse media type to determine line index (audio=0, video=1)
+                        const mediaMatch = sdpFragment.match(/m=(\w+)/)
+                        let sdpMLineIndex = null
+                        if (mediaMatch) {
+                            const mediaType = mediaMatch[1]
+                            sdpMLineIndex = mediaType === 'video' ? 1 : 0
+                        }
+
+                        const rtcSession = callGetRtcSession()
+                        if (rtcSession && rtcSession.connection) {
+                            const candidate = new RTCIceCandidate({
+                                candidate: candidateString,
+                                sdpMid,
+                                sdpMLineIndex
+                            })
+
+                            rtcSession.connection.addIceCandidate(candidate)
+                                .then(() => {
+                                    callEvent.emit('iceCandidateReceived', {
+                                        candidate: candidateString,
+                                        sdpMid,
+                                        sdpMLineIndex
+                                    })
+                                })
+                                .catch((error) => {
+                                    callEvent.emit('iceCandidateAddError', error)
+                                })
+                        }
+                    }
+                    event.reply(200, 'OK')
+                } catch (error) {
+                    callEvent.emit('iceCandidateParseError', error)
+                    event.reply(400, 'Bad Request')
+                }
+            }
+        })
         $userAgent.on('newRTCSession', (event) => {
             if (event.originator === 'remote') {
                 if ($incomingRtcSession || $outgoingRtcSession) {
@@ -141,6 +324,10 @@ export function callRegister ({ instanceId }) {
                     $incomingRtcSession = event.session
                     $incomingRtcSession.on('peerconnection', () => {
                         $incomingRtcSession.connection.ontrack = handleRemoteMediaStream
+                        // Handle trickle ICE for incoming calls
+                        $incomingRtcSession.connection.onicecandidate = (candidateEvent) => {
+                            handleIceCandidate(candidateEvent, $incomingRtcSession)
+                        }
                     })
                     $incomingRtcSession.on('failed', (failedEvent) => {
                         callEvent.emit('incomingFailed', failedEvent)
@@ -174,6 +361,7 @@ export function callUnregister () {
     }
 }
 
+// SIP INVITE - Start call request
 export async function callStart ({ number }) {
     try {
         $localMediaStream = await callCreateLocalAudioStream()
@@ -192,6 +380,8 @@ export async function callStart ({ number }) {
                 },
                 confirmed (event) {
                     callEvent.emit('outgoingConfirmed', event)
+                    // Send any queued ICE candidates now that session is confirmed
+                    sendQueuedIceCandidates($outgoingRtcSession)
                 },
                 ended (event) {
                     callEvent.emit('outgoingEnded', event)
@@ -219,6 +409,10 @@ export async function callStart ({ number }) {
             mediaStream: $localMediaStream
         })
         $outgoingRtcSession.connection.ontrack = handleRemoteMediaStream
+        // Handle trickle ICE for outgoing calls
+        $outgoingRtcSession.connection.onicecandidate = (candidateEvent) => {
+            handleIceCandidate(candidateEvent, $outgoingRtcSession)
+        }
         return true
     } catch (e) {
         return false
@@ -226,12 +420,16 @@ export async function callStart ({ number }) {
 }
 
 export async function callAccept () {
-    $localMediaStream = await callCreateLocalAudioStream()
-    callEvent.emit('localStream', $localMediaStream)
-    if ($incomingRtcSession) {
-        $incomingRtcSession.answer({
-            mediaStream: $localMediaStream
-        })
+    try {
+        $localMediaStream = await callCreateLocalAudioStream()
+        callEvent.emit('localStream', $localMediaStream)
+        if ($incomingRtcSession) {
+            $incomingRtcSession.answer({
+                mediaStream: $localMediaStream
+            })
+        }
+    } catch (e) {
+        callEvent.emit('incomingFailed', { cause: e })
     }
 }
 
@@ -280,7 +478,7 @@ async function callStopVideo () {
     }
 }
 
-export async function callSendVideo (stream, audioMuted) {
+export async function callSendVideo (stream) {
     const videoTrack = stream.getVideoTracks()[0]
     if ($videoTransceiver?.sender?.track) {
         $localMediaStream.removeTrack($videoTransceiver.sender.track)
@@ -308,11 +506,20 @@ export async function callAddCamera () {
 }
 
 export async function callAddScreen () {
-    $isVideoScreen = true
-    await callSendVideo(await navigator.mediaDevices.getDisplayMedia({
-        video: callGetScreenConstraints(),
-        audio: false
-    }))
+    const originalVideoScreenState = $isVideoScreen
+    try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+            video: callGetScreenConstraints(),
+            audio: false
+        })
+        $isVideoScreen = true
+        await callSendVideo(stream)
+    } catch (error) {
+        // Reset state to original value if screen sharing fails
+        // and throw a error that can be displayed in UI
+        $isVideoScreen = originalVideoScreenState
+        throw error
+    }
 }
 
 export async function callRemoveVideo () {
