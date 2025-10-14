@@ -99,13 +99,17 @@ export default {
         }
     },
     async toggleScreen (context) {
-        if (!callHasLocalVideo() || callHasLocalCamera()) {
-            await callAddScreen()
-            context.commit('disableVideo')
-            context.commit('enableScreen')
-        } else {
-            await callRemoveVideo()
-            context.commit('disableVideo')
+        try {
+            if (!callHasLocalVideo() || callHasLocalCamera()) {
+                await callAddScreen()
+                context.commit('disableVideo')
+                context.commit('enableScreen')
+            } else {
+                await callRemoveVideo()
+                context.commit('disableVideo')
+            }
+        } catch (error) {
+            showGlobalError(error.message || i18n.global.t('Failed to toggle screen sharing'))
         }
     },
     end (context, options = { cause: null }) {
