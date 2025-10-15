@@ -80,7 +80,7 @@
                 />
             </q-toolbar>
             <q-toolbar
-                v-if="menuMinimized"
+                v-show="!menuPinned"
                 inset
             >
                 <q-item
