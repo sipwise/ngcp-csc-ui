@@ -241,6 +241,7 @@ export default {
                 rows: rowsPerPage,
                 order_by: sortBy,
                 order_by_direction: descending ? 'desc' : 'asc',
+                include: 'customer',
                 subscriber_id: this.getSubscriberId
             })
             this.pagination = { ...props.pagination }
@@ -272,7 +273,10 @@ export default {
                 cancel: true,
                 persistent: true
             }).onOk(async (data) => {
-                await this.removeSubscriberPhonebook(row)
+                await this.removeSubscriberPhonebook({
+                    row,
+                    subscriberId: this.getSubscriberId
+                })
                 await this.refresh()
             })
         },
@@ -320,6 +324,7 @@ export default {
                     rows: this.pagination.rowsPerPage,
                     order_by: this.pagination.sortBy,
                     order_by_direction: this.pagination.descending ? 'desc' : 'asc',
+                    include: 'customer',
                     subscriber_id: this.getSubscriberId
                 })
             }

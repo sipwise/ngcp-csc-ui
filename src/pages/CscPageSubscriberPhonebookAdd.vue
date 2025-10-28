@@ -107,7 +107,8 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'prefilledNumber'
+            'prefilledNumber',
+            'getSubscriberId'
         ]),
         nameErrorMessage () {
             const errorsTab = this.v$.formData.name.$errors
@@ -158,6 +159,7 @@ export default {
         },
         async confirm () {
             try {
+                this.formData.subscriber_id = this.getSubscriberId
                 await this.createPhonebookSubscriber(this.formData)
                 await this.$router.push('/user/subscriber-phonebook/')
             } catch (error) {

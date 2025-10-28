@@ -75,6 +75,7 @@
 <script>
 import CscPageSticky from 'components/CscPageSticky'
 import { mapWaitingActions } from 'vue-wait-vue3'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPageSubscriberPhonebookDetails',
     components: {
@@ -92,6 +93,11 @@ export default {
     async mounted () {
         await this.getPhonebook(this.id)
     },
+    computed: {
+        ...mapGetters('user', [
+            'getSubscriberId'
+        ])
+    },
     methods: {
         ...mapWaitingActions('user', {
             getPhonebookDetails: 'getPhonebookDetails',
@@ -100,7 +106,7 @@ export default {
             getValueNumber: 'getValueNumber'
         }),
         async getPhonebook (id) {
-            const response = await this.getPhonebookDetails(id)
+            const response = await this.getPhonebookDetails({ phonebookId: id, subscriberId: this.getSubscriberId })
             this.name = response.data.name
             this.number = response.data.number
             this.shared = response.data.shared

@@ -773,20 +773,8 @@ export async function getSubscriberRegistrations (options) {
     return list
 }
 export async function getSubscriberPhonebook (options) {
-    let all = false
-    if (options.rows === 0) {
-        delete options.rows
-        delete options.page
-        all = true
-    }
-    if (!options.order_by) {
-        delete options.order_by
-        delete options.order_by_direction
-    }
-    options.include = 'all'
-    const list = await getList({
-        resource: 'subscriberphonebookentries',
-        all,
+    const list = await get({
+        path: `api/v2/subscribers/${options.subscriber_id}/phonebook`,
         params: options
     })
     return list
@@ -813,9 +801,10 @@ export async function createPhonebook (data) {
     const payLoad = {
         name: data.name,
         number: data.number,
-        shared: data.shared
+        shared: data.shared,
+        subscriber_id: Number(data.subscriber_id)
     }
-    return await httpApi.post('api/subscriberphonebookentries/', payLoad)
+    return await httpApi.post(`api/v2/subscribers/${data.subscriber_id}/phonebook`, payLoad)
 }
 export async function createCustomerPhonebook (data) {
     const payLoad = {

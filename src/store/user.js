@@ -571,7 +571,7 @@ export default {
                 const list = await getSubscriberPhonebook({
                     ...options
                 })
-                commit('setSubscriberPhonebook', list.items)
+                commit('setSubscriberPhonebook', list.data)
                 return list.totalCount
             } catch (err) {
                 commit('setSubscriberPhonebook', [])
@@ -611,8 +611,8 @@ export default {
         async removeSubscriberRegistration (context, row) {
             await httpApi.delete(`api/subscriberregistrations/${row.id}`)
         },
-        async removeSubscriberPhonebook (context, row) {
-            await httpApi.delete(`api/subscriberphonebookentries/${row.id}`)
+        async removeSubscriberPhonebook (context, { row, subscriberId }) {
+            await httpApi.delete(`api/v2/subscribers/${subscriberId}/phonebook/${row.id}`)
         },
         async removeCustomerPhonebook (context, row) {
             await httpApi.delete(`api/customerphonebookentries/${row.id}`)
@@ -652,8 +652,8 @@ export default {
         async setNcosLevelsSubscriber (value) {
             await setPreference(getSubscriberId(), 'ncos', value)
         },
-        async getPhonebookDetails (context, id) {
-            const list = await httpApi.get(`api/subscriberphonebookentries/${id}`)
+        async getPhonebookDetails (context, { phonebookId, subscriberId }) {
+            const list = await httpApi.get(`api/v2/subscribers/${subscriberId}/phonebook/${phonebookId}`)
             return list
         },
         async getPhonebookCustomerDetails (context, id) {
