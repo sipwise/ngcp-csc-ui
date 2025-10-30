@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.50+0~mr12.5.1.50) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [456abbd] MT#63772 Update docs
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 30 Oct 2025 15:57:10 +0100
+
 ngcp-csc-ui (12.5.1.49+0~mr12.5.1.49) unstable; urgency=medium
 
   [ Debora Crescenzo ]
