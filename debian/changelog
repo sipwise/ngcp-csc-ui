@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.51+0~mr12.5.1.51) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [14f8914] MT#63758 Fix 'ResizeObserver loop' Error
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 04 Nov 2025 10:09:04 +0100
+
 ngcp-csc-ui (12.5.1.50+0~mr12.5.1.50) unstable; urgency=medium
 
   [ Debora Crescenzo ]
