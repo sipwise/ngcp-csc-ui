@@ -34,7 +34,7 @@
                 caption
             >
                 <span>
-                    {{ $t('Cost') }}
+                    {{ $t('Cost') + ": " }}
                 </span>
                 <span>
                     {{ $filters.wholeCurrency(totalCustomerCostRounded) }}
