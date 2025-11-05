@@ -215,6 +215,9 @@ export default {
         },
         noResultsMessage () {
             if (this.selectedTab === 'call-fax-voicemail') {
+                if (!this.isFaxFeatureEnabled) {
+                    return this.$t('No Calls or Voicemails found')
+                }
                 return this.$t('No Calls, Voicemails or Faxes found')
             } else if (this.selectedTab === 'call') {
                 return this.$t('No Calls found')
