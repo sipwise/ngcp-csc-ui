@@ -91,7 +91,7 @@ export default {
                     to: '/user/conversations',
                     icon: 'question_answer',
                     label: this.$t('Conversations'),
-                    sublabel: this.$t('Calls, Faxes, VoiceMails'),
+                    sublabel: this.isFaxFeatureEnabled ? this.$t('Calls, Faxes, VoiceMails') : this.$t('Calls, VoiceMails'),
                     visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
                 },
                 {
