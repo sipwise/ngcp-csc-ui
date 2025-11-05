@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.52+0~mr12.5.1.52) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [c07e255] MT#63511 Fix Faxes tab visibility
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 05 Nov 2025 16:45:16 +0100
+
 ngcp-csc-ui (12.5.1.51+0~mr12.5.1.51) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
