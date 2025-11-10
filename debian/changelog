@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.53+0~mr12.5.1.53) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [cb921f8] MT#63823 Upgrade Axios library
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 10 Nov 2025 09:02:52 +0100
+
 ngcp-csc-ui (12.5.1.52+0~mr12.5.1.52) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
