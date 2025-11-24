@@ -1,3 +1,28 @@
+ngcp-csc-ui (14.0.1.0+0~mr14.0.1.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [f34d8e1] MT#63561 Fix crash on PBX seat page due to unauthorized error
+  * [4e72e67] MT#63384 Fix Group Details page crash upon refresh
+  * [7cb3add] MT#59078 Disable Primary Acli Creation
+  * [31fa24a] MT#63591 Disable subscriber phonebook menu in CE platforms
+  * [dfe30b2] MT#63627 remove unnecessary licence check
+  * [f0bc845] MT#63673 Remove adminOnly check from /user/seats
+  * [c764dfc] MT#63627 Call queue route access bugfix
+  * [1c047f5] MT#63772 Update docs
+  * [ed162e8] MT#63734 Activate ICE configuration
+
+  [ Nico Schedel ]
+  * [05854f4] MT#63526 add data-cy to subscriber phonebook page
+
+  [ nidrissi-zouggari ]
+  * [69e43c8] MT#63758 Fix 'ResizeObserver loop' Error
+  * [3a6f992] MT#63823 Upgrade Axios library
+
+  [ Giancarlo Errigo Mattos ]
+  * [4d92ef0] MT#63511 Fix Faxes tab visibility
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Nov 2025 16:56:05 +0100
+
 ngcp-csc-ui (14.0.0.0+0~mr14.0.0.0) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
