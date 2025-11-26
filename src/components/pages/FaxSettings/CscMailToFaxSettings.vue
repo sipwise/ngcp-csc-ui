@@ -208,7 +208,7 @@ import CscMailToFaxRenewNotifyEmail from 'components/pages/FaxSettings/CscMailTo
 import CscMailToFaxRenewNotifyEmailForm from 'components/pages/FaxSettings/CscMailToFaxRenewNotifyEmailForm'
 import _ from 'lodash'
 import { showGlobalError } from 'src/helpers/ui'
-import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
+import { mapWaitingActions, mapWaitingGetters } from 'vue-wait-vue3'
 import { mapGetters, mapState } from 'vuex'
 
 export default {

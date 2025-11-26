@@ -80,7 +80,7 @@
 import { required } from '@vuelidate/validators'
 import CscSelectLazy from 'components/form/CscSelectLazy'
 import { showToast } from 'src/helpers/ui'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 export default {
     name: 'CscPbxAutoAttendantAddForm',

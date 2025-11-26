@@ -49,7 +49,7 @@ domain wrappers: `src/api/*.js` (e.g., `src/api/communication.js::createFax`) â€
    - Otherwise throws new ApiResponseError(code, message) (class includes code, status, message).
 
    SCENARIO 2 - Error is not present: rethrow original err.
-   Many domain API helpers call handleResponseError(err) when catching axios errors; some API wrappers return or rethrow the result so callers (store actions) get the transformed error.
+   Many domain API helpers call `handleResponseError(err)` when catching axios errors; some API wrappers return or rethrow the result so callers (store actions) get the transformed error.
 
 3. axios cancellation detection
 

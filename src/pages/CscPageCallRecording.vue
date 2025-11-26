@@ -196,7 +196,7 @@ import { saveAs } from 'file-saver'
 import moment from 'moment'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import { showGlobalError, showToast } from 'src/helpers/ui'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageCallRecording',

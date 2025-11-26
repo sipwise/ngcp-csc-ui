@@ -149,7 +149,7 @@ import CscFaxToMailDestination from 'components/pages/FaxSettings/CscFaxToMailDe
 import CscFaxToMailDestinationForm from 'components/pages/FaxSettings/CscFaxToMailDestinationForm'
 import _ from 'lodash'
 import { showGlobalError } from 'src/helpers/ui'
-import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
+import { mapWaitingActions, mapWaitingGetters } from 'vue-wait-vue3'
 import { mapState } from 'vuex'
 export default {
     name: 'CscFaxToMailSettings',

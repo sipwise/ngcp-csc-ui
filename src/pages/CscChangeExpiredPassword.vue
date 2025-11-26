@@ -150,7 +150,7 @@ import CscSelectionLanguage from 'components/CscSelectionLanguage'
 import CscInput from 'components/form/CscInput'
 import CscInputPassword from 'components/form/CscInputPassword'
 import { RequestState } from 'src/store/common'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapActions, mapState } from 'vuex'
 
 export default {

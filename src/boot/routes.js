@@ -32,7 +32,7 @@ export default ({ app, router }) => {
                 break
             default: {
                 // 1. Admin check
-                if (to.meta?.adminOnly && !store.getters['user/isAdmin']) {
+               if (to.meta?.adminOnly && !store.getters['user/isAdmin']) {
                     return next('/')
                 }
 

@@ -52,7 +52,7 @@
 import CscPage from 'components/CscPage'
 import CscSpinner from 'components/CscSpinner'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapState } from 'vuex'
 export default {
     name: 'CscPageRegisteredDevices',

@@ -123,7 +123,7 @@ import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { showGlobalError } from 'src/helpers/ui'
 import platformMixin from 'src/mixins/platform'
 import { RequestState } from 'src/store/common'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import {
     mapGetters, mapMutations,
     mapState

@@ -67,9 +67,9 @@
 
 <script>
 import useValidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
 import CscPageSticky from 'components/CscPageSticky'
-import { mapWaitingActions } from 'vue-wait'
-import { required } from 'vuelidate/lib/validators'
+import { mapWaitingActions } from 'vue-wait-vue3'
 export default {
     name: 'CscPageCustomerPhonebookDetails',
     components: {

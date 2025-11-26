@@ -68,7 +68,7 @@ import CscInputPassword from 'components/form/CscInputPassword'
 import CscChangePasswordEmbedded from 'components/pages/UserSettings/CscChangePasswordEmbeded'
 import { copyToClipboard } from 'quasar'
 import { showGlobalError, showToast } from 'src/helpers/ui'
-import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
+import { mapWaitingActions, mapWaitingGetters } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 
 const WAIT_CHANGE_WEB_PASSWORD = 'processing-changeWebPassword'

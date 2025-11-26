@@ -87,7 +87,7 @@ import _ from 'lodash'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import { showGlobalError } from 'src/helpers/ui'
 import { RequestState } from 'src/store/common'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapState } from 'vuex'
 export default {
     name: 'CscPagePbxStatisticsCdr',

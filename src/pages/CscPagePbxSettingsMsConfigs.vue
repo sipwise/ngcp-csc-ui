@@ -55,7 +55,7 @@ import _ from 'lodash'
 import { getSubscriberId } from 'src/auth'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { showToast } from 'src/helpers/ui'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import {
     mapGetters,
     mapState

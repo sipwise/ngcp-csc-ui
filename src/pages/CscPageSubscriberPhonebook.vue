@@ -145,7 +145,7 @@ import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscSpinner from 'components/CscSpinner'
 import CscSubscriberFilters from 'components/pages/SubscriberPhonebook/CscSubscriberFilters'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageSubscriberPhonebook',

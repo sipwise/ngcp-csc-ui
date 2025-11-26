@@ -98,7 +98,7 @@ import CscPbxAutoAttendantSlotsTable from 'components/pages/PbxConfiguration/Csc
 import _ from 'lodash'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import { displayName } from 'src/filters/subscriber'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 export default {
     name: 'CscPagePbxAutoAttendant',

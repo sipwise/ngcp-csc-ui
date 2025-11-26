@@ -116,7 +116,7 @@ import CscDataTableEditInput from 'components/CscDataTableEditInput'
 import CscRemoveDialog from 'components/CscRemoveDialog'
 import _ from 'lodash'
 import { showGlobalError, showToast } from 'src/helpers/ui'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 
 export default {

@@ -50,7 +50,7 @@ import { showGlobalError } from 'src/helpers/ui'
 import {
     mapWaitingActions,
     mapWaitingGetters
-} from 'vue-wait'
+} from 'vue-wait-vue3'
 import {
     mapGetters,
     mapState

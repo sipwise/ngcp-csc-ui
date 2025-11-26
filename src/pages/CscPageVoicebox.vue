@@ -222,7 +222,7 @@ import {
     showToast
 } from 'src/helpers/ui'
 import { RequestState } from 'src/store/common'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import {
     mapActions,
     mapGetters,

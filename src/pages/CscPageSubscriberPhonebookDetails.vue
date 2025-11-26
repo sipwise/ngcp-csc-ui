@@ -74,7 +74,7 @@
 
 <script>
 import CscPageSticky from 'components/CscPageSticky'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 export default {
     name: 'CscPageSubscriberPhonebookDetails',
     components: {

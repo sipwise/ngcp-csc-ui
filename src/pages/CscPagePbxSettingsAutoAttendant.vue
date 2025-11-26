@@ -79,7 +79,7 @@ import CscFade from 'components/transitions/CscFade'
 import _ from 'lodash'
 import { getSubscriberId } from 'src/auth'
 import { showGlobalError, showToast } from 'src/helpers/ui'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 export default {
     name: 'CscPagePbxSettingsAutoAttendant',

@@ -1,4 +1,4 @@
-import { createVueWait } from 'vue-wait'
+import { createVueWait } from 'vue-wait-vue3'
 
 export default ({ app }) => {
     app.config.globalProperties.$initWait = () => {

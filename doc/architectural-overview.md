@@ -5,8 +5,9 @@ This document describes the architecture of the ngcp-csc-ui project (Customer Se
 
 ## High-level summary
 
-- SPA built with Vue 2 + Quasar (see `package.json`).
-- Migration to Vue 3 was started but was left unfinished.
+- SPA built with Vue + Quasar (see `package.json`).
+- Migration to Vue 3 has been started. So far we have upgraded Quasar to v2 (which uses Vue 3) and updated most dependencies. Some legacy code still uses Vue 2 syntax and APIs, which will be refactored in future iterations.
+- Uses Vue Router 4 for client-side routing (`src/router/`).
 - Uses Vuex 4 for centralized state management (`src/store/index.js` + many modules under `src/store/`).
 - Communicates with a REST backend via an axios wrapper in `src/api/common.js`.
 - Integrates real-time VoIP (SIP) using JsSIP over WebSocket (see `src/api/ngcp-call.js` and `src/boot/ngcp-call.js`).
@@ -15,7 +16,7 @@ This document describes the architecture of the ngcp-csc-ui project (Customer Se
 
 ## Build and runtime
 
-- Project scripts are defined in `package.json`. Development: `quasar dev`. Production build: `quasar build`.
+- Project scripts are defined in `package.json`.
 - App configuration (base HTTP/WS URLs) is provided via `src/config/app.template.js` / `src/config/app.template.root.js` and runtime-injected `appConfig` (used in `src/boot/ngcp-call.js` and `src/boot/api.js`).
 
 ## Application structure
@@ -96,7 +97,7 @@ VoIP notes and constraints:
 
 ## Deployment and environment
 
-- The app is built with Quasar using the Webpack-based CLI (the project depends on `@quasar/app-webpack`), running the `quasar build` script (`npm run build` / `yarn build`) produces a production bundle.
+- The app is built with Quasar using the Webpack-based CLI (the project depends on `@quasar/app-webpack`), running the `quasar build` script (`yarn build`) produces a production bundle.
 - Runtime configuration for backend endpoints (HTTP + WebSocket) is provided by `src/config/app.template.js` and `src/config/app.template.root.js`. These templates are used and can be manipulated at runtime by helper scripts such as `bin/config-create.sh` / `bin/config-create.js` and `env/run_csc_ui`.
 - Docker helper artifacts exist in the repo (`env/Dockerfile`, `bin/run-docker.sh`) and there are package scripts that assist with Docker-related tasks (for example `dev:docker`, `docker:rebuild:local`, `docker:run:local` in `package.json`).
 

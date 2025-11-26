@@ -48,7 +48,7 @@
 
 <script>
 import CscInput from 'components/form/CscInput'
-import { mapWaitingActions } from 'vue-wait'
+import { mapWaitingActions } from 'vue-wait-vue3'
 export default {
     name: 'CscInputPassword',
     components: { CscInput },
