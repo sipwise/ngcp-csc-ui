@@ -1,3 +1,12 @@
+ngcp-csc-ui (12.5.1.55+0~mr12.5.1.55) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [de8159f] MT#63046 Upgrade libs to latest
+  * [133c161] MT#63046 Update @quasar/app-webpack and relevant libs
+  * [ba2e366] MT#63734 Activate ICE configuration
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 26 Nov 2025 10:22:19 +0100
+
 ngcp-csc-ui (12.5.1.54+0~mr12.5.1.54) unstable; urgency=medium
 
   [ Hugo Zigha ]
