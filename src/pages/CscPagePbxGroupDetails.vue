@@ -473,6 +473,7 @@ export default {
         }
         this.selectGroup(this.id)
         await this.loadMappingsFull(this.id)
+        await this.loadAnnouncements()
     },
     beforeUnmount () {
         this.resetSelectedGroup()
@@ -505,7 +506,8 @@ export default {
         ]),
         ...mapActions('callForwarding', [
             'loadMappingsFull',
-            'createMapping'
+            'createMapping',
+            'loadAnnouncements'
         ]),
         ...mapMutations('pbxGroups', [
             'selectGroup',
