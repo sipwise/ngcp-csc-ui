@@ -54,6 +54,13 @@ export class ApiResponseError extends Error {
     }
 }
 
+// Store router reference for API layer
+let routerInstance = null
+
+export function setRouter (router) {
+    routerInstance = router
+}
+
 export function initAPI ({ baseURL }) {
     httpApi.defaults.baseURL = baseURL
 
@@ -150,7 +157,10 @@ function handleResponseError (err) {
     }
     if (code === 403 && message === 'Password expired') {
         message = i18n.global.t('Password Expired')
-        return this.$router?.push({ path: PATH_CHANGE_PASSWORD })
+        if (routerInstance) {
+            routerInstance.push({ path: PATH_CHANGE_PASSWORD })
+        }
+        return
     }
 
     if (code !== null && message !== null) {

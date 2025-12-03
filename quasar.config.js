@@ -48,7 +48,8 @@ export default async function (ctx) {
             'vue-wait',
             'e2e-testing',
             'branding',
-            'event-bus'
+            'event-bus',
+            'error-handler'
         ],
 
         // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

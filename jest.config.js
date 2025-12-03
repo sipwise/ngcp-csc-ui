@@ -42,7 +42,7 @@ module.exports = {
     moduleNameMapper: {
         '^vue$': '<rootDir>/node_modules/vue/dist/vue.common.js',
         '^test-utils$': '<rootDir>/node_modules/@vue/test-utils/dist/vue-test-utils.js',
-        '^quasar$': '<rootDir>/node_modules/quasar/dist/quasar.common.js',
+        // '^quasar$': '<rootDir>/node_modules/quasar/dist/quasar.common.js',
         '^~/(.*)$': '<rootDir>/$1',
         '^src/(.*)$': '<rootDir>/src/$1',
         '.*css$': '<rootDir>/test/jest/utils/stub.css'

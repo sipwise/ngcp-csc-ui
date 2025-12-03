@@ -1,13 +1,12 @@
-import { Platform } from 'quasar'
+import { isDesktop, isMobile } from 'src/helpers/platform'
 
 export default {
-
     computed: {
         isMobile () {
-            return Platform.is.mobile
+            return isMobile()
         },
         isDesktop () {
-            return Platform.is.platform
+            return isDesktop()
         }
     }
 }

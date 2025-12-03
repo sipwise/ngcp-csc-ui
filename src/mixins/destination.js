@@ -1,7 +1,6 @@
-import _ from 'lodash'
-import sipUriParse from 'src/sip-uri-parse'
+import * as DestinationHelpers from 'src/helpers/destination'
 
-const DestinationType = {
+export const DestinationType = {
     VoiceBox: 'VoiceBox',
     Conference: 'Conference',
     Fax2Mail: 'Fax2Mail',
@@ -16,144 +15,147 @@ const DestinationType = {
     Number: 'Number'
 }
 
-function parseSipUri (sipUri) {
-    const parsedUri = sipUriParse(sipUri)
-    const host = parsedUri.host
-    const username = parsedUri.username
-    let destinationType
-    if (host.endsWith('voicebox.local')) {
-        destinationType = DestinationType.VoiceBox
-    } else if (host.endsWith('conference.local')) {
-        destinationType = DestinationType.Conference
-    } else if (host.endsWith('fax2mail.local')) {
-        destinationType = DestinationType.Fax2Mail
-    } else if (username === 'callingcard' && host.endsWith('app.local')) {
-        destinationType = DestinationType.CallingCard
-    } else if (username === 'callthrough' && host.endsWith('app.local')) {
-        destinationType = DestinationType.CallThrough
-    } else if (username === 'auto-attendant' && host.endsWith('app.local')) {
-        destinationType = DestinationType.AutoAttendant
-    } else if (username === 'office-hours' && host.endsWith('app.local')) {
-        destinationType = DestinationType.OfficeHoursAnnouncement
-    } else if (username === 'custom-hours' && host.endsWith('app.local')) {
-        destinationType = DestinationType.CustomAnnouncement
-    } else if (username === 'localuser' && host.endsWith('local')) {
-        destinationType = DestinationType.LocalSubscriber
-    } else if (host.endsWith('managersecretary.local')) {
-        destinationType = DestinationType.ManagerSecretary
-    } else if (host.endsWith('app.local')) {
-        destinationType = DestinationType.Application
-    } else {
-        destinationType = DestinationType.Number
-    }
+export function parseSipUri (sipUri) {
+    const parsedUri = DestinationHelpers.parseSipUri(sipUri)
     return {
-        destinationType,
+        destinationType: parsedUri.destinationType,
         parsedUri
     }
+}
+
+export function isDestinationType (sipUri, destinationType) {
+    return DestinationHelpers.isDestinationType(sipUri, destinationType)
+}
+
+export function isDestinationTypeVoiceBox (sipUri) {
+    return DestinationHelpers.isDestinationTypeVoiceBox(sipUri)
+}
+
+export function isDestinationTypeConference (sipUri) {
+    return DestinationHelpers.isDestinationTypeConference(sipUri)
+}
+
+export function isDestinationTypeFax2Mail (sipUri) {
+    return DestinationHelpers.isDestinationTypeFax2Mail(sipUri)
+}
+
+export function isDestinationTypeCallingCard (sipUri) {
+    return DestinationHelpers.isDestinationTypeCallingCard(sipUri)
+}
+
+export function isDestinationTypeCallThrough (sipUri) {
+    return DestinationHelpers.isDestinationTypeCallThrough(sipUri)
+}
+
+export function isDestinationTypeAutoAttendant (sipUri) {
+    return DestinationHelpers.isDestinationTypeAutoAttendant(sipUri)
+}
+
+export function isDestinationTypeOfficeHoursAnnouncement (sipUri) {
+    return DestinationHelpers.isDestinationTypeOfficeHoursAnnouncement(sipUri)
+}
+
+export function isDestinationTypeCustomAnnouncement (sipUri) {
+    return DestinationHelpers.isDestinationTypeCustomAnnouncement(sipUri)
+}
+
+export function isDestinationTypeLocalSubscriber (sipUri) {
+    return DestinationHelpers.isDestinationTypeLocalSubscriber(sipUri)
+}
+
+export function isDestinationTypeManagerSecretary (sipUri) {
+    return DestinationHelpers.isDestinationTypeManagerSecretary(sipUri)
+}
+
+export function isDestinationTypeApplication (sipUri) {
+    return DestinationHelpers.isDestinationTypeApplication(sipUri)
+}
+
+export function isDestinationTypeNumber (sipUri) {
+    return DestinationHelpers.isDestinationTypeNumber(sipUri)
+}
+
+export function getDestinationIcon (destinationType) {
+    return DestinationHelpers.getDestinationIcon(destinationType)
 }
 
 export default {
     methods: {
         isDestinationType (sipUri, destinationType) {
-            const parsedSipUri = parseSipUri(sipUri)
-            return parsedSipUri.destinationType === destinationType
+            return DestinationHelpers.isDestinationType(sipUri, destinationType)
         },
         isDestinationTypeVoiceBox (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.VoiceBox)
+            return DestinationHelpers.isDestinationTypeVoiceBox(sipUri)
         },
         isDestinationTypeConference (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.Conference)
+            return DestinationHelpers.isDestinationTypeConference(sipUri)
         },
         isDestinationTypeFax2Mail (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.Fax2Mail)
+            return DestinationHelpers.isDestinationTypeFax2Mail(sipUri)
         },
         isDestinationTypeCallingCard (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.CallingCard)
+            return DestinationHelpers.isDestinationTypeCallingCard(sipUri)
         },
         isDestinationTypeCallThrough (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.CallThrough)
+            return DestinationHelpers.isDestinationTypeCallThrough(sipUri)
         },
         isDestinationTypeAutoAttendant (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.AutoAttendant)
+            return DestinationHelpers.isDestinationTypeAutoAttendant(sipUri)
         },
         isDestinationTypeOfficeHoursAnnouncement (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.OfficeHoursAnnouncement)
+            return DestinationHelpers.isDestinationTypeOfficeHoursAnnouncement(sipUri)
         },
         isDestinationTypeCustomAnnouncement (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.CustomAnnouncement)
+            return DestinationHelpers.isDestinationTypeCustomAnnouncement(sipUri)
         },
         isDestinationTypeLocalSubscriber (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.LocalSubscriber)
+            return DestinationHelpers.isDestinationTypeLocalSubscriber(sipUri)
         },
         isDestinationTypeManagerSecretary (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.ManagerSecretary)
+            return DestinationHelpers.isDestinationTypeManagerSecretary(sipUri)
         },
         isDestinationTypeApplication (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.Application)
+            return DestinationHelpers.isDestinationTypeApplication(sipUri)
         },
         isDestinationTypeNumber (sipUri) {
-            return this.isDestinationType(sipUri, DestinationType.Number)
+            return DestinationHelpers.isDestinationTypeNumber(sipUri)
         },
         destinationIconBySipUri (sipUri) {
-            const parsedSipUri = parseSipUri(sipUri)
+            const parsedSipUri = DestinationHelpers.parseSipUri(sipUri)
             return this.destinationIconByType(parsedSipUri.destinationType)
         },
         destinationIconByType (destinationType) {
-            switch (destinationType) {
-            case DestinationType.VoiceBox:
-                return 'voicemail'
-            case DestinationType.Conference:
-                return 'groups'
-            case DestinationType.Fax2Mail:
-                return 'email'
-            case DestinationType.CallingCard:
-                return 'credit_card'
-            case DestinationType.CallThrough:
-                return 'double_arrow'
-            case DestinationType.AutoAttendant:
-                return 'dialpad'
-            case DestinationType.OfficeHoursAnnouncement:
-                return 'schedule'
-            case DestinationType.CustomAnnouncement:
-                return 'music_note'
-            case DestinationType.LocalSubscriber:
-                return 'person_pin'
-            case DestinationType.ManagerSecretary:
-                return 'support_agent'
-            case DestinationType.Application:
-                return 'apps'
-            case DestinationType.Number:
-                return 'phone_forwarded'
-            }
+            return DestinationHelpers.getDestinationIcon(destinationType)
         },
         destinationFormattedBySipUri (sipUri) {
-            const parsedSipUri = parseSipUri(sipUri)
+            const parsedSipUri = DestinationHelpers.parseSipUri(sipUri)
             switch (parsedSipUri.destinationType) {
-            case DestinationType.VoiceBox:
-                return this.$t('Voicebox')
-            case DestinationType.Conference:
-                return this.$t('Conference')
-            case DestinationType.Fax2Mail:
-                return this.$t('Fax2Mail')
-            case DestinationType.CallingCard:
-                return this.$t('Calling Card')
-            case DestinationType.CallThrough:
-                return this.$t('Call Through')
-            case DestinationType.AutoAttendant:
-                return this.$t('Auto Attendant')
-            case DestinationType.OfficeHoursAnnouncement:
-                return this.$t('Office Hours Announcement')
-            case DestinationType.CustomAnnouncement:
-                return this.$t('Custom Announcement')
-            case DestinationType.LocalSubscriber:
-                return this.$t('Local Subscriber')
-            case DestinationType.ManagerSecretary:
-                return this.$t('Manager Secretary')
-            case DestinationType.Application:
-                return _.words(parsedSipUri.parsedUri.username).map((word) => _.upperFirst(word)).join(' ')
-            case DestinationType.Number:
-            default:
-                return parsedSipUri.parsedUri.username
+                case DestinationHelpers.DestinationType.VoiceBox:
+                    return this.$t('Voicebox')
+                case DestinationHelpers.DestinationType.Conference:
+                    return this.$t('Conference')
+                case DestinationHelpers.DestinationType.Fax2Mail:
+                    return this.$t('Fax2Mail')
+                case DestinationHelpers.DestinationType.CallingCard:
+                    return this.$t('CallingCard')
+                case DestinationHelpers.DestinationType.CallThrough:
+                    return this.$t('CallThrough')
+                case DestinationHelpers.DestinationType.AutoAttendant:
+                    return this.$t('AutoAttendant')
+                case DestinationHelpers.DestinationType.OfficeHoursAnnouncement:
+                    return this.$t('OfficeHoursAnnouncement')
+                case DestinationHelpers.DestinationType.CustomAnnouncement:
+                    return this.$t('CustomAnnouncement')
+                case DestinationHelpers.DestinationType.LocalSubscriber:
+                    return this.$t('LocalSubscriber')
+                case DestinationHelpers.DestinationType.ManagerSecretary:
+                    return this.$t('ManagerSecretary')
+                case DestinationHelpers.DestinationType.Application:
+                    return this.$t('Application')
+                case DestinationHelpers.DestinationType.Number:
+                    return this.$t('Number')
+                default:
+                    return this.$t('Unknown')
             }
         }
     }

@@ -149,3 +149,257 @@ if (apiIsCanceledRequest(err)) {
 ## Caching and invalidation
 
 - The codebase currently does not implement a client-side cache layer (beyond Vuex state). For lists, the store is the cache.
+
+## Composables for State Access
+
+Starting with the migration to Vue 3 Composition API, the application introduces composables as a layer between components and Vuex store:
+
+1. **Purpose**: Composables provide reactive access to store state and actions without direct store coupling in components.
+
+2. **Pattern** (based on `src/composables/useUser.js`):
+   - Import store and computed from Vue
+   - Define reactive refs using `computed(() => store.state/getters.xxx)`
+   - Wrap store actions in simple functions
+   - Return an object with all reactive properties and methods
+
+3. **Example**:
+   ```javascript
+   import { computed } from 'vue'
+   import { store } from 'src/boot/store'
+
+   export function useUser() {
+       const isAdmin = computed(() => store.getters['user/isAdmin'])
+       const login = (credentials) => store.dispatch('user/login', credentials)
+
+       return { isAdmin, login }
+   }
+   ```
+
+## Store Access Patterns
+
+### Options API (Legacy)
+
+```javascript
+import { mapState, mapGetters, mapActions } from 'vuex'
+
+export default {
+  computed: {
+    ...mapState('user', ['subscriber']),
+    ...mapGetters('user', ['isLogged', 'isAdmin'])
+  },
+  methods: {
+    ...mapActions('user', ['login', 'logout'])
+  }
+}
+```
+
+### Composition API with `<script setup>` (Recommended)
+
+For components using `<script setup>`, use store composables:
+
+```vue
+<script setup>
+import { useUser } from 'src/composables/useUser'
+
+const {
+  subscriber,      // reactive state (computed ref)
+  isLogged,        // reactive getter (computed ref)
+  isAdmin,         // reactive getter (computed ref)
+  login,           // action function
+  logout           // action function
+} = useUser()
+
+// Use them directly
+const handleLogin = async () => {
+  await login({ username: 'test', password: 'pass' })
+  if (isLogged.value) {
+    console.log('Welcome', subscriber.value.username)
+  }
+}
+</script>
+
+<template>
+  <div>
+    <button @click="handleLogin">Login</button>
+    <div v-if="isLogged">Welcome {{ subscriber.username }}</div>
+  </div>
+</template>
+```
+
+**Note**: Composables return computed refs, so access values with `.value` in script, but not in template.
+
+### Direct Store Access (Services/Utilities)
+
+For non-component files:
+
+```javascript
+import { store } from 'src/boot/store'
+
+export function someService() {
+  const user = store.state.user.subscriber
+  const isLogged = store.getters['user/isLogged']
+  store.dispatch('user/login', credentials)
+}
+```
+
+### Generic Store Helpers (useStore)
+
+For modules without dedicated composables, use generic helpers:
+
+```vue
+<script setup>
+import { useState, useGetters, useActions } from 'src/composables/useStore'
+
+// Map state
+const { myData } = useState('myModule', ['myData'])
+
+// Map getters
+const { isValid } = useGetters('myModule', ['isValid'])
+
+// Map actions
+const { loadData, saveData } = useActions('myModule', ['loadData', 'saveData'])
+
+const handleLoad = async () => {
+  await loadData({ id: 1 })
+  if (isValid.value) {
+    console.log('Data:', myData.value)
+  }
+}
+</script>
+```
+
+## Store Helpers
+
+### Request State Management
+
+Located in `src/store/common.js`:
+
+- `RequestState` — Standard state values (initiated, requesting, succeeded, failed)
+- `createRequestState()` — Creates standard request state object
+- `createRequestMutations()` — Generates standard mutations for request lifecycle
+- `isRequesting()`, `isSucceeded()`, `isFailed()` — Helper functions
+
+**Example**:
+
+```javascript
+import { RequestState, createRequestMutations } from './common'
+
+const state = {
+  user: null,
+  loadUserState: RequestState.initiated,
+  loadUserError: null
+}
+
+const mutations = {
+  ...createRequestMutations('loadUser', 'user')
+}
+```
+
+### API Action Wrapper
+
+Located in `src/store/apiHelper.js`:
+
+- `withApiCall()` — Wraps API calls with automatic mutation handling
+- `createLoadingAction()` — Generates action with loading/error states
+
+**Example**:
+
+```javascript
+import { createLoadingAction } from './apiHelper'
+import { getUser } from 'src/api/user'
+
+const actions = {
+  // Automatically handles requesting/succeeded/failed mutations
+  loadUser: createLoadingAction('loadUser', getUser, {
+    showError: true,
+    errorMessage: 'Failed to load user'
+  })
+}
+```
+
+## Using Store Data in `<script setup>` Components
+
+### Complete Example: User Profile Component
+
+```vue
+<script setup>
+import { ref, computed } from 'vue'
+import { useUser } from 'src/composables/useUser'
+import { useActions } from 'src/composables/useStore'
+
+// Get user state and actions
+const { subscriber, isLogged, isAdmin } = useUser()
+
+// Get profile actions
+const { loadProfile, updateProfile } = useActions('profile', [
+  'loadProfile',
+  'updateProfile'
+])
+
+// Local state
+const editing = ref(false)
+const formData = ref({})
+
+// Computed values
+const displayName = computed(() =>
+  subscriber.value ? `${subscriber.value.firstname} ${subscriber.value.lastname}` : ''
+)
+
+// Methods
+const startEdit = () => {
+  formData.value = { ...subscriber.value }
+  editing.value = true
+}
+
+const saveChanges = async () => {
+  await updateProfile(formData.value)
+  editing.value = false
+}
+
+// Load data on mount
+await loadProfile()
+</script>
+
+<template>
+  <div v-if="isLogged">
+    <h1>{{ displayName }}</h1>
+    <div v-if="isAdmin" class="admin-badge">Admin</div>
+
+    <button v-if="!editing" @click="startEdit">Edit</button>
+    <button v-else @click="saveChanges">Save</button>
+  </div>
+</template>
+```
+
+### Handling Errors in `<script setup>`
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { useState, useActions } from 'src/composables/useStore'
+
+const { loadUserError } = useState('user', ['loadUserError'])
+const { loadUser } = useActions('user', ['loadUser'])
+
+const loading = ref(false)
+
+const handleLoad = async () => {
+  try {
+    loading.value = true
+    await loadUser()
+  } catch (err) {
+    console.error('Load failed:', err)
+    // Error already in store via loadUserError
+  } finally {
+    loading.value = false
+  }
+}
+</script>
+
+<template>
+  <div>
+    <button @click="handleLoad" :disabled="loading">Load User</button>
+    <div v-if="loadUserError" class="error">{{ loadUserError }}</div>
+  </div>
+</template>
+```
