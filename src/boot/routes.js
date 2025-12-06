@@ -3,9 +3,8 @@ import {
     getJwt, getSubscriberId,
     hasJwt
 } from 'src/auth'
-import { store } from 'src/boot/store'
 
-export default ({ app, router }) => {
+export default ({ app, router, store }) => {
     router.beforeEach((to, from, next) => {
         const publicUrls = ['/login', '/recoverpassword']
         // not authorized user

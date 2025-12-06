@@ -40,4 +40,4 @@ yarn-error.log*
 /junit.xml
 /test/jest/coverage
 
-quasar.config.dev.js
+quasar.conf.dev.js
