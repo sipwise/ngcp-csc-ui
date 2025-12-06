@@ -5,21 +5,17 @@
  */
 
 // Configuration for your app
-// https://quasar.dev/quasar-cli-webpack/quasar-config-file
+// https://quasar.dev/quasar-cli/quasar-conf-js
 
-import ESLintPlugin from 'eslint-webpack-plugin'
-import webpack from 'webpack'
+const ESLintPlugin = require('eslint-webpack-plugin')
+const webpack = require('webpack')
 
-export default async function (ctx) {
+module.exports = function (ctx) {
     let devServerConfig = {}
     try {
-        if (ctx.dev) {
-            // Use dynamic import for the dev config
-            const devConfig = await import('./quasar.config.dev.proxy')
-            devServerConfig = devConfig
-        }
+        devServerConfig = (ctx.dev) ? require('./quasar.conf.dev') : {}
     } catch (e) {
-        if (e.code === 'MODULE_NOT_FOUND' || e.code === 'ERR_MODULE_NOT_FOUND') {
+        if (e.code === 'MODULE_NOT_FOUND') {
             devServerConfig = {}
         } else {
             throw e
@@ -34,7 +30,6 @@ export default async function (ctx) {
         // --> boot files are part of "main.js"
         // https://quasar.dev/quasar-cli/boot-files
         boot: [
-            'store',
             'appConfig',
             'i18n',
             'api',
@@ -110,11 +105,7 @@ export default async function (ctx) {
                 ...process.env
             },
             vueRouterMode: 'hash', // available values: 'hash', 'history'
-            // It affects how URLs for bundled assets are generated in the final build.
-            // This determines the base path where the bundled JavaScript, CSS, and other assets will be served from.
-            publicPath: process.env.NODE_ENV === 'production'
-                ? '/v2/'
-                : (devServerConfig.publicPath || '/v2/'),
+
             // transpile: false,
 
             // Add dependencies for transpiling with Babel (Array of string/regex)
@@ -132,7 +123,7 @@ export default async function (ctx) {
             // extractCSS: false,
 
             // https://quasar.dev/quasar-cli/handling-webpack
-            extendWebpack (cfg) {
+            extendWebpack(cfg) {
                 cfg.resolve.fallback = {
                     crypto: 'crypto-browserify',
                     stream: 'stream-browserify',
@@ -161,9 +152,8 @@ export default async function (ctx) {
         devServer: {
             https: false,
             port: 8080,
-            open: true,
+            open: true, // opens browser window automatically,
             devMiddleware: {
-                // It determines the URL path where the webpack-dev-server will serve the development version of the application.
                 publicPath: devServerConfig.publicPath,
                 ...(!devServerConfig.proxyAPI2localhost
                     ? {}
@@ -176,24 +166,19 @@ export default async function (ctx) {
                 ? {}
                 : {
                     https: true,
-                    proxy: [
-                        {
-                            context: [`!${devServerConfig.publicPath || '/v2/'}`],
+                    proxy: {
+                        [`!${devServerConfig.publicPath || '/v2/'}`]: {
                             target: devServerConfig.proxyAPIFromURL,
                             secure: false
                         }
-                    ],
-                    setupMiddlewares: (middlewares, devServer) => {
-                        // Create a constant path value to prevent reactivity issues
-                        const basePath = devServerConfig.publicPath || '/v2/'
-
-                        // Use once-only redirect handler
+                    },
+                    onBeforeSetupMiddleware: (devServer) => {
                         devServer.app.get('/', (req, res) => {
-                            res.redirect(301, basePath)
+                            res.redirect(301, devServerConfig.publicPath || '/v2/')
                         })
-                        return middlewares
                     }
-                })
+                }
+            )
         },
 
         // animations: 'all', // --- includes all animations

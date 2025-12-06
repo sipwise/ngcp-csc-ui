@@ -1,7 +1,6 @@
 import { getCssVar } from 'quasar'
-import { store } from 'src/boot/store'
 
-export default async ({ Vue, app }) => {
+export default async ({ Vue, store, app }) => {
     await store.dispatch('user/setDefaultBranding', {
         primaryColor: getCssVar('primary'),
         secondaryColor: getCssVar('secondary')

@@ -1,8 +1,7 @@
 import { loginByExchangeToken } from 'src/api/user'
 import { hasJwt, setJwt, setSubscriberId } from 'src/auth'
-import { store } from 'src/boot/store'
 
-export default async () => {
+export default async ({ store }) => {
     // Todo: Use "URL" shim to hide workaround
     const linkDomNode = document.createElement('a')
     linkDomNode.href = document.location.href
