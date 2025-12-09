@@ -1,3 +1,10 @@
+ngcp-csc-ui (14.0.2.0+0~mr14.0.2.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [d9c6a8f] MT#64037 PBXGroup Custom Announcements Bugfix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 09 Dec 2025 15:32:20 +0100
+
 ngcp-csc-ui (14.0.1.0+0~mr14.0.1.0) unstable; urgency=medium
 
   [ Debora Crescenzo ]
