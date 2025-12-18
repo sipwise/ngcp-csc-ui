@@ -134,6 +134,7 @@ export default {
         }
     },
     async mounted () {
+        await this.resetCallForwardingState()
         await this.loadAnnouncements()
         await this.loadMappingsFull()
     },
@@ -141,7 +142,8 @@ export default {
         ...mapActions('callForwarding', [
             'loadMappingsFull',
             'createMapping',
-            'loadAnnouncements'
+            'loadAnnouncements',
+            'resetCallForwardingState'
         ])
     }
 }

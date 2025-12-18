@@ -4,12 +4,15 @@ export function groups (state) {
     const types = ['cfu', 'cft', 'cfna', 'cfb']
     const mappings = []
     types.forEach((type) => {
-        state.mappings[type].forEach((mapping, index) => {
-            const clonedMapping = _.clone(mapping)
-            clonedMapping.type = type
-            clonedMapping.index = index
-            mappings.push(clonedMapping)
-        })
+        const typeMapping = state.mappings?.[type]
+        if (Array.isArray(typeMapping)) {
+            typeMapping.forEach((mapping, index) => {
+                const clonedMapping = _.clone(mapping)
+                clonedMapping.type = type
+                clonedMapping.index = index
+                mappings.push(clonedMapping)
+            })
+        }
     })
     return mappings
 }

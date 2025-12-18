@@ -43,3 +43,21 @@ export function popupShow (state, popupId) {
 export function setAnnouncements (state, announcements) {
     state.announcements = announcements
 }
+export function resetState (state) {
+    state.mappings = {
+        cfu: [],
+        cft: [],
+        cfna: [],
+        cfb: [],
+        cft_ringtimeout: null
+    }
+    state.bNumberSetMap = {}
+    state.destinationSetMap = {}
+    state.sourceSetMap = {}
+    state.timeSetMap = {}
+    state.bNumberSets = null
+    state.destinationSets = null
+    state.sourceSets = null
+    state.timeSets = null
+    state.announcements = []
+}

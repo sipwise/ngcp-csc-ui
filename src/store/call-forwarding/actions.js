@@ -780,3 +780,6 @@ export async function updateAnnouncement ({ dispatch, commit, state }, payload) 
         destinationSets: destinationSets.items
     })
 }
+export function resetCallForwardingState ({ commit }) {
+        commit('resetState')
+}
