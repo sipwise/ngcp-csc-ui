@@ -1,12 +1,12 @@
 #!/usr/bin/make -f
 
 # Uncomment this to turn on verbose mode.
-# export DH_VERBOSE=1
+#export DH_VERBOSE = 1
 
-export NODE_PATH=/usr/lib/nodejs:/usr/share/nodejs
+export NODE_PATH = /usr/lib/nodejs:/usr/share/nodejs
 
 # webpack 4.x compatibility, remove it when @quasar/app is upgraded and it uses webpack 5.x
-export NODE_OPTIONS=--openssl-legacy-provider
+export NODE_OPTIONS = --openssl-legacy-provider
 
 YARN_BIN := ".yarn/releases/yarn-1.22.22.js"
 
