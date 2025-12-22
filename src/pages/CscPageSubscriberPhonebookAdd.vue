@@ -163,7 +163,7 @@ export default {
                 await this.createPhonebookSubscriber(this.formData)
                 await this.$router.push('/user/subscriber-phonebook/')
             } catch (error) {
-                if (error.response && error.response.status === 422) {
+                if (error.response && error.response.data.message === "Duplicate entry 'subscriber_id-number") {
                     this.numberError = true
                     this.numberErrorMessage = this.$t('This number is already in use.')
                 } else {
