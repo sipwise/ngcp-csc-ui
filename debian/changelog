@@ -1,3 +1,10 @@
+ngcp-csc-ui (14.0.1.2+0~mr14.0.1.2) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [656790f] MT#63983 Upgrade libraries
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 02 Jan 2026 19:19:31 +0100
+
 ngcp-csc-ui (14.0.1.1+0~mr14.0.1.1) unstable; urgency=medium
 
   [ Debora Crescenzo ]
