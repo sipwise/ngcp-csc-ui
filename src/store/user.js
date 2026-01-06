@@ -583,22 +583,19 @@ export default {
                 const list = await getCustomerPhonebook({
                     ...options
                 })
-                commit('setCustomerPhonebook', list.items)
+                commit('setCustomerPhonebook', list.data)
                 return list.totalCount
             } catch (err) {
                 commit('setCustomerPhonebook', [])
                 throw err
             }
         },
-        async ajaxDownloadPhonebookCSV ({ commit }, customerId = 0) {
+        async downloadPhonebookAsCSV ({ commit }, customerId) {
             const apiGetOptions = {
-                resource: 'customerphonebookentries',
+                resource: `v2/customers/${customerId}/phonebook`,
                 config: {
                     headers: {
                         Accept: 'text/csv'
-                    },
-                    params: {
-                        customer_id: customerId
                     }
                 }
             }
@@ -614,8 +611,8 @@ export default {
         async removeSubscriberPhonebook (context, { row, subscriberId }) {
             await httpApi.delete(`api/v2/subscribers/${subscriberId}/phonebook/${row.id}`)
         },
-        async removeCustomerPhonebook (context, row) {
-            await httpApi.delete(`api/customerphonebookentries/${row.id}`)
+        async removeCustomerPhonebook (context, { row, customerId }) {
+            await httpApi.delete(`api/v2/customers/${customerId}/phonebook/${row.id}`)
         },
         async getNcosLevelsSubscriber () {
             const ncosLevel = []
@@ -656,28 +653,28 @@ export default {
             const list = await httpApi.get(`api/v2/subscribers/${subscriberId}/phonebook/${phonebookId}`)
             return list
         },
-        async getPhonebookCustomerDetails (context, id) {
-            const list = await httpApi.get(`api/customerphonebookentries/${id}`)
+        async getPhonebookCustomerDetails (context, { phonebookId, customerId }) {
+            const list = await httpApi.get(`api/v2/customers/${customerId}/phonebook/${phonebookId}`)
             return list
         },
         async getValueShared (context, options) {
-            await setValueShared(options.phonebookId, options.shared)
+            await setValueShared(options.subscriberId, options.phonebookId, options.shared)
         },
         async updateValueShared (context, row) {
             context.commit('setPhonebookShared', { id: row.id, value: !row.shared })
-            await setValueShared(row.id, row.shared)
+            await setValueShared(row.subscriber_id, row.id, row.shared)
         },
         async getValueName (context, options) {
-            await setValueName(options.phonebookId, options.name)
+            await setValueName(options.subscriberId, options.phonebookId, options.name)
         },
         async getValueNameCustomer (context, options) {
-            await setValueNameCustomer(options.phonebookId, options.name)
+            await setValueNameCustomer(options.customerId, options.phonebookId, options.name)
         },
         async getValueNumber (context, options) {
-            await setValueNumber(options.phonebookId, options.number)
+            await setValueNumber(options.subscriberId, options.phonebookId, options.number)
         },
         async getValueNumberCustomer (context, options) {
-            await setValueNumberCustomer(options.phonebookId, options.number)
+            await setValueNumberCustomer(options.customerId, options.phonebookId, options.number)
         },
         async createPhonebookSubscriber (context, data) {
             await createPhonebook(data)

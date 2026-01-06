@@ -19,6 +19,7 @@ import {
     callToggleMicrophone,
     callToggleRemoteAudio
 } from 'src/api/ngcp-call'
+import { getSubscriberId } from 'src/auth'
 import { showGlobalError } from 'src/helpers/ui'
 import { errorVisibilityTimeout } from 'src/store/call/common'
 
@@ -42,8 +43,9 @@ export default {
     },
     async fetchPhonebookEntryName (context, number) {
         try {
-            const phoneBookEntryArray = await fetchPhonebookEntries(number)
-            const phoneBookEntry = phoneBookEntryArray?.items[0] || null
+            const subscriberId = getSubscriberId()
+            const phoneBookEntryArray = await fetchPhonebookEntries(subscriberId, number)
+            const phoneBookEntry = phoneBookEntryArray?.data[0] || null
             if (phoneBookEntry) {
                 context.commit('fetchPhonebookEntrySuccess', phoneBookEntry.name)
             }

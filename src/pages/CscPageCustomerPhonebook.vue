@@ -169,7 +169,7 @@ export default {
         ...mapWaitingActions('user', {
             loadCustomerPhonebook: 'loadCustomerPhonebook',
             removeCustomerPhonebook: 'removeCustomerPhonebook',
-            ajaxDownloadPhonebookCSV: 'ajaxDownloadPhonebookCSV'
+            downloadPhonebookAsCSV: 'downloadPhonebookAsCSV'
         }),
         async refresh () {
             await this.fetchPaginatedRegistrations({
@@ -179,6 +179,7 @@ export default {
         async fetchPaginatedRegistrations (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
             const count = await this.loadCustomerPhonebook({
+                customer_id: this.getCustomerId,
                 page,
                 rows: rowsPerPage,
                 order_by: sortBy,
@@ -216,12 +217,15 @@ export default {
                 cancel: true,
                 persistent: true
             }).onOk(async (data) => {
-                await this.removeCustomerPhonebook(row)
+                await this.removeCustomerPhonebook({
+                    row,
+                    customerId: this.getCustomerId
+                })
                 await this.refresh()
             })
         },
         async downloadCSV () {
-            await this.ajaxDownloadPhonebookCSV(this.getCustomerId)
+            await this.downloadPhonebookAsCSV(this.getCustomerId)
         }
     }
 }

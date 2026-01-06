@@ -70,6 +70,7 @@ import useValidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import CscPageSticky from 'components/CscPageSticky'
 import { mapWaitingActions } from 'vue-wait-vue3'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPageCustomerPhonebookDetails',
     components: {
@@ -98,6 +99,11 @@ export default {
     async mounted () {
         await this.getPhonebook(this.id)
     },
+    computed: {
+        ...mapGetters('user', [
+            'getCustomerId'
+        ])
+    },
     methods: {
         ...mapWaitingActions('user', {
             getPhonebookCustomerDetails: 'getPhonebookCustomerDetails',
@@ -105,7 +111,7 @@ export default {
             getValueNumberCustomer: 'getValueNumberCustomer'
         }),
         async getPhonebook (id) {
-            const response = await this.getPhonebookCustomerDetails(id)
+            const response = await this.getPhonebookCustomerDetails({ phonebookId: id, customerId: this.getCustomerId })
             this.formData.name = response.data.name
             this.formData.number = response.data.number
         },
@@ -121,12 +127,14 @@ export default {
         },
         async changeValueName () {
             await this.getValueNameCustomer({
+                customerId: this.getCustomerId,
                 phonebookId: this.id,
                 name: this.formData.name
             })
         },
         async changeValueNumber () {
             await this.getValueNumberCustomer({
+                customerId: this.getCustomerId,
                 phonebookId: this.id,
                 number: this.formData.number
             })

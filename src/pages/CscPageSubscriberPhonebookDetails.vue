@@ -117,18 +117,21 @@ export default {
         },
         async changeValueName () {
             await this.getValueName({
+                subscriberId: this.getSubscriberId,
                 phonebookId: this.id,
                 name: this.name
             })
         },
         changeValueShared () {
             this.getValueShared({
+                subscriberId: this.getSubscriberId,
                 phonebookId: this.id,
                 shared: this.shared
             })
         },
         changeValueNumber () {
             this.getValueNumber({
+                subscriberId: this.getSubscriberId,
                 phonebookId: this.id,
                 number: this.number
             })

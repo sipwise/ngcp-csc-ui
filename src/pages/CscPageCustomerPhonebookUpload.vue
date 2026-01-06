@@ -99,7 +99,7 @@ export default {
             return {
                 file: null,
                 purge_existing: false,
-                customer_id: this.getCustomerId()
+                customerId: this.getCustomerId()
             }
         },
         cancel () {

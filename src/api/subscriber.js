@@ -66,12 +66,12 @@ export async function setPreferenceCallBlocking (id, field, value) {
     await addPreference(id, field, value)
 }
 
-export async function setPreferencePhonebook (id, field, value) {
+export async function setPreferencePhonebook (subscriberId, phonebookId, field, value) {
     if (value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)) {
-        await removePreferencePhonebook(id, field)
+        await removePreferencePhonebook(subscriberId, phonebookId, field)
     } else {
         try {
-            await replacePreferencePhonebook(id, field, value)
+            await replacePreferencePhonebook(subscriberId, phonebookId, field, value)
         } catch (err) {
             if (err) {
                 throw err
@@ -79,12 +79,12 @@ export async function setPreferencePhonebook (id, field, value) {
         }
     }
 }
-export async function setPreferencePhonebookCustomer (id, field, value) {
+export async function setPreferencePhonebookCustomer (customerId, phonebookId, field, value) {
     if (value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)) {
-        await removePreferencePhonebookCustomer(id, field)
+        await removePreferencePhonebookCustomer(customerId, phonebookId, field)
     } else {
         try {
-            await replacePreferencePhonebookCustomer(id, field, value)
+            await replacePreferencePhonebookCustomer(customerId, phonebookId, field, value)
         } catch (err) {
             if (err) {
                 throw err
@@ -124,15 +124,15 @@ export async function removePreference (id, field) {
         fieldPath: field
     })
 }
-export async function removePreferencePhonebook (id, field) {
+export async function removePreferencePhonebook (subscriberId, phonebookId, field) {
     return await patchRemove({
-        path: `api/subscriberphonebookentries/${id}`,
+        path: `api/v2/subscribers/${subscriberId}/phonebook/${phonebookId}`,
         fieldPath: field
     })
 }
-export async function removePreferencePhonebookCustomer (id, field) {
+export async function removePreferencePhonebookCustomer (customerId, phonebookId, field) {
     return await patchRemove({
-        path: `api/customerphonebookentries/${id}`,
+        path: `api/v2/customers/${customerId}/phonebook/${phonebookId}`,
         fieldPath: field
     })
 }
@@ -176,10 +176,10 @@ export function replacePreference (id, field, value) {
         })
     })
 }
-export function replacePreferencePhonebook (id, field, value) {
+export function replacePreferencePhonebook (subscriberId, phonebookId, field, value) {
     return new Promise((resolve, reject) => {
         patchReplace({
-            path: `api/subscriberphonebookentries/${id}`,
+            path: `api/v2/subscribers/${subscriberId}/phonebook/${phonebookId}`,
             fieldPath: field,
             value
         }).then(() => {
@@ -189,10 +189,10 @@ export function replacePreferencePhonebook (id, field, value) {
         })
     })
 }
-export function replacePreferencePhonebookCustomer (id, field, value) {
+export function replacePreferencePhonebookCustomer (customerId, phonebookId, field, value) {
     return new Promise((resolve, reject) => {
         patchReplace({
-            path: `api/customerphonebookentries/${id}`,
+            path: `api/v2/customers/${customerId}/phonebook/${phonebookId}`,
             fieldPath: field,
             value
         }).then(() => {
@@ -780,19 +780,8 @@ export async function getSubscriberPhonebook (options) {
     return list
 }
 export async function getCustomerPhonebook (options) {
-    let all = false
-    if (options.rows === 0) {
-        delete options.rows
-        delete options.page
-        all = true
-    }
-    if (!options.order_by) {
-        delete options.order_by
-        delete options.order_by_direction
-    }
-    const list = await getList({
-        resource: 'customerphonebookentries',
-        all,
+    const list = await get({
+        path: `api/v2/customers/${options.customer_id}/phonebook`,
         params: options
     })
     return list
@@ -809,37 +798,44 @@ export async function createPhonebook (data) {
 export async function createCustomerPhonebook (data) {
     const payLoad = {
         name: data.name,
-        number: data.number
+        number: data.number,
+        customer_id: Number(data.customer_id)
     }
-    return await httpApi.post('api/customerphonebookentries/', payLoad)
+    return await httpApi.post(`api/v2/customers/${data.customer_id}/phonebook`, payLoad)
+}
+function createFormDataFromFile (payload) {
+    const formData = new FormData()
+    formData.append('file', payload.file)
+    return formData
 }
 export async function uploadCsv (context, formData) {
+    const payload = createFormDataFromFile(formData)
     const config = {
         headers: {
-            'Content-Type': 'text/csv'
+            'Content-Type': 'multipart/form-data'
         }
     }
-    const purgeExistingValue = formData?.purge_existing ? '1' : '0'
+    const purgeExistingValue = formData?.purge_existing ? 'true' : 'false'
     await apiUploadCsv({
-        path: 'api/customerphonebookentries' + `/?purge_existing=${purgeExistingValue}&customer_id=${formData.customer_id}`,
-        data: formData.file,
+        path: `api/v2/customers/${formData?.customerId}/phonebook/?purge_existing=${purgeExistingValue}`,
+        data: payload,
         config
     })
 }
-export function setValueShared (id, value) {
-    return setPreferencePhonebook(id, 'shared', value)
+export function setValueShared (subscriberId, phonebookId, value) {
+    return setPreferencePhonebook(subscriberId, phonebookId, 'shared', value)
 }
-export function setValueName (id, value) {
-    return setPreferencePhonebook(id, 'name', value)
+export function setValueName (subscriberId, phonebookId, value) {
+    return setPreferencePhonebook(subscriberId, phonebookId, 'name', value)
 }
-export function setValueNameCustomer (id, value) {
-    return setPreferencePhonebookCustomer(id, 'name', value)
+export function setValueNameCustomer (customerId, phonebookId, value) {
+    return setPreferencePhonebookCustomer(customerId, phonebookId, 'name', value)
 }
-export function setValueNumber (id, value) {
-    return setPreferencePhonebook(id, 'number', value)
+export function setValueNumber (subscriberId, phonebookId, value) {
+    return setPreferencePhonebook(subscriberId, phonebookId, 'number', value)
 }
-export function setValueNumberCustomer (id, value) {
-    return setPreferencePhonebookCustomer(id, 'number', value)
+export function setValueNumberCustomer (customerId, phonebookId, value) {
+    return setPreferencePhonebookCustomer(customerId, phonebookId, 'number', value)
 }
 export async function getRecordingStream (fileId) {
     return await getAsBlob({

@@ -72,6 +72,7 @@ import { required } from '@vuelidate/validators'
 import CscPageSticky from 'components/CscPageSticky'
 import { showGlobalError } from 'src/helpers/ui'
 import { mapWaitingActions } from 'vue-wait-vue3'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPageCustomerPhonebookAdd',
     components: {
@@ -97,6 +98,9 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('user', [
+            'getCustomerId'
+        ]),
         nameErrorMessage () {
             const errorsTab = this.v$.formData.name.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
@@ -139,6 +143,7 @@ export default {
         },
         async confirm () {
             try {
+                this.formData.customer_id = this.getCustomerId
                 await this.createPhonebookCustomer(this.formData)
                 this.$router.push('/user/pbx-configuration/customer-phonebook/')
             } catch (error) {

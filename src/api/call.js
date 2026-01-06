@@ -1,8 +1,8 @@
-import { getList } from 'src/api/common'
+import { get } from 'src/api/common'
 
-export async function fetchPhonebookEntries (number) {
-    return getList({
-        resource: 'subscriberphonebookentries',
+export async function fetchPhonebookEntries (subscriberId, number) {
+    return get({
+        path: `api/v2/subscribers/${subscriberId}/phonebook`,
         params: { number }
     })
 }
