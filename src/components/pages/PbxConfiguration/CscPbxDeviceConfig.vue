@@ -105,12 +105,12 @@ export default {
         },
         keys () {
             const keys = []
-            this.keySets.forEach(($keySet) => {
+            this.keySets.forEach(($keySet, $keySetIndex) => {
                 const $keys = _.get($keySet, 'keys', [])
                 $keys.forEach(($key, $index) => {
                     const key = _.clone($key)
                     key.keySet = $keySet
-                    key.index = $index
+                    key.index = $index + $keySetIndex
                     keys.push(key)
                 })
             })
