@@ -9,6 +9,7 @@
             <csc-change-password-embedded
                 ref="changeWebPasswordSection"
                 class="q-mb-md"
+                data-cy="change-web-password"
                 :btn-label="$t('Change Web Password')"
                 :password-label="$t('New Web Password')"
                 :password-confirm-label="$t('New Web Password confirm')"
@@ -20,6 +21,7 @@
                 v-if="isAdministrative"
                 ref="changeSipPasswordSection"
                 class="q-mb-md"
+                data-cy="change-sip-password"
                 :btn-label="$t('Change SIP Password')"
                 :password-label="$t('New SIP Password')"
                 :password-confirm-label="$t('New SIP Password confirm')"
@@ -30,11 +32,13 @@
             <q-input
                 :model-value="currentSIPURI"
                 :label="$t('SIP URI')"
+                data-cy="sip-uri-field"
                 readonly
             >
                 <template #append>
                     <q-btn
                         icon="content_copy"
+                        data-cy="sip-uri-field-copy"
                         color="primary"
                         flat
                         dense
@@ -46,11 +50,13 @@
                 v-if="isAdministrative"
                 :value="currentSIPPassword"
                 :label="$t('SIP Password')"
+                data-cy="sip-password-field"
                 readonly
             >
                 <template #append>
                     <q-btn
                         icon="content_copy"
+                        data-cy="sip-password-field-copy"
                         color="primary"
                         flat
                         dense

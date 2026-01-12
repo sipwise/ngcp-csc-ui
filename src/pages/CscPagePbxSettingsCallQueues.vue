@@ -9,6 +9,7 @@
             <q-toggle
                 v-model="cloud_pbx_callqueue"
                 :label="$t('Call Queue feature')"
+                data-cy="csc-call-queue-feature-switch"
                 :disable="isLoading"
                 @update:model-value="addOrRemoveCallQueue()"
             />
@@ -22,6 +23,7 @@
                         <csc-input-saveable
                             v-model="changes.max_queue_length"
                             :label="$t('Queue Length')"
+                            data-cy="csc-call-queue-length"
                             :value-changed="hasMaxQueueLengthChanged"
                             :error="v$.changes.max_queue_length.$errors.length > 0"
                             :error-message="queueMaxLengthErrorMessage"
@@ -40,6 +42,7 @@
                         <csc-input-saveable
                             v-model="changes.queue_wrap_up_time"
                             :label="$t('Wrap up time')"
+                            data-cy="csc-call-queue-wrapup-time"
                             :value-changed="hasQueueWrapUpTimeChanged"
                             :error="v$.changes.queue_wrap_up_time.$errors.length > 0"
                             :error-message="queueWrapUpTimeErrorMessage"
