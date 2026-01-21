@@ -302,7 +302,7 @@ export default {
             },
             mobileMenu: null,
             customLogo: null,
-            menuPinnedBBeforeCall: true
+            menuPinnedBeforeCall: true
         }
     },
     computed: {
@@ -470,18 +470,10 @@ export default {
     watch: {
         callState (state) {
             if (state === 'established') {
-                this.menuPinnedBBeforeCall = this.menuPinned
-                this.menuPinned = false
+                this.menuPinnedBeforeCall = this.menuPinned
                 this.menuMinimized = true
-                this.header = true
             } else if (state === 'ended') {
-                if (this.menuPinnedBBeforeCall) {
-                    this.menuPinned = true
-                    this.menuMinimized = false
-                }
-                this.header = true
-            } else {
-                this.header = true
+                this.menuMinimized = !this.menuPinnedBeforeCall
             }
         },
         route: {
@@ -554,7 +546,7 @@ export default {
         layoutResized () {
             if (this.$refs.call) {
                 this.$nextTick(() => {
-                    this.$refs.call.fitMedia()
+                        this.$refs.call.fitMedia()
                 })
             }
         },
@@ -595,11 +587,7 @@ export default {
         },
         endCall () {
             this.$store.dispatch('call/end')
-            if (this.menuPinnedBBeforeCall) {
-                this.menuPinned = true
-                this.menuMinimized = false
-                this.header = true
-            }
+            this.menuMinimized = !this.menuPinnedBeforeCall
         },
         clickDialpad (value) {
             this.$store.dispatch('call/sendDTMF', value)
