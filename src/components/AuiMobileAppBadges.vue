@@ -51,32 +51,17 @@
     </q-list>
 </template>
 
-<script>
+<script setup>
 import AppBadgeApple from 'components/AppBadgeApple'
 import AppBadgeGoogle from 'components/AppBadgeGoogle'
-import { mapState } from 'vuex'
-export default {
-    name: 'AuiMobileAppBadges',
-    components: { AppBadgeApple, AppBadgeGoogle },
-    computed: {
-        ...mapState('user', [
-            'platformInfo'
-        ]),
-        appNameAndroid () {
-            return this.platformInfo?.app?.android?.name
-        },
-        appNameApple () {
-            return this.platformInfo?.app?.apple?.name
-        },
-        appUrlAndroid () {
-            return this.platformInfo?.app?.android?.url
-        },
-        appUrlApple () {
-            return this.platformInfo?.app?.apple?.url
-        },
-        appName () {
-            return this.appNameAndroid || this.appNameApple
-        }
-    }
-}
+import { useUser } from 'src/composables/useUser'
+import { computed } from 'vue'
+
+const { platformInfo } = useUser()
+
+const appNameAndroid = computed(() => platformInfo.value?.app?.android?.name)
+const appNameApple = computed(() => platformInfo.value?.app?.apple?.name)
+const appUrlAndroid = computed(() => platformInfo.value?.app?.android?.url)
+const appUrlApple = computed(() => platformInfo.value?.app?.apple?.url)
+const appName = computed(() => appNameAndroid.value || appNameApple.value)
 </script>

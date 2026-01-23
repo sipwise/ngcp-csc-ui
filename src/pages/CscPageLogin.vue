@@ -374,6 +374,5 @@ export default {
     width: 200px
     height: 200px
 .app-badge
-    height: 50px
     object-fit: contain
 </style>

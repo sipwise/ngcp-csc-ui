@@ -6,6 +6,9 @@ export function useUser () {
 
     // State
     const subscriber = computed(() => store.state.user.subscriber)
+    const platformInfo = computed(() => store.state.user.platformInfo)
+
+    // Getters
     const isLogged = computed(() => store.getters['user/isLogged'])
     const username = computed(() => store.getters['user/getUsername'])
     const isAdmin = computed(() => store.getters['user/isAdmin'])
@@ -30,6 +33,9 @@ export function useUser () {
     return {
         // State
         subscriber,
+        platformInfo,
+
+        // Getters
         isLogged,
         username,
         isAdmin,
@@ -45,7 +51,7 @@ export function useUser () {
         changeSIPPassword,
         initUser,
 
-        // Getters
+        // Getters with parameters
         hasCapability,
         hasPlatformFeature,
         hasSubscriberProfileAttribute

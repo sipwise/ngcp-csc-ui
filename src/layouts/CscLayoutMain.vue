@@ -464,7 +464,7 @@ export default {
             if (copyrightIsDisplayed) {
                 return '45px'
             }
-            return '0px'
+            return '15px'
         }
     },
     watch: {
