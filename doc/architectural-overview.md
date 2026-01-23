@@ -100,9 +100,37 @@ VoIP notes and constraints:
 Starting with Vue 3 migration, the application introduces composables (`src/composables/`) as an optional layer for accessing Vuex store in Composition API components:
 
 - **Purpose**: Provide reactive, encapsulated access to store state and actions
-- **Available composables**: `useStore.js` (generic), `useUser.js` (authentication), `usePbx.js` (PBX features), `useGlobals.js` (global properties)
+- **Available composables**: `useStore.js` (generic), `useUser.js` (authentication), `usePbx.js` (PBX features), `useGlobals.js` (global properties), `useWait.js` (loading states)
 - **Coexistence**: Options API components continue using `mapState`/`mapGetters`/`mapActions`; composables are used when converting to Composition API
 - **Details**: See `migration-guide.md` for usage patterns and `composables.md` for API reference
+
+## Loading State Management (vue-wait)
+
+The application uses `vue-wait-vue3` to manage loading states across the application:
+
+- **Initialization**: `vue-wait` is initialized during the Quasar boot phase in `src/boot/vue-wait.js`, making the `$wait` instance globally available before any components mount
+- **Integration**: Integrated with Vuex store (module name: `wait`) to provide reactive loading state management
+- **Vue 2 compatibility**: Existing components using Options API can access loading states via `this.$wait.start()`, `this.$wait.end()`, and `this.$wait.is()` without any changes
+
+```js
+export default {
+  mounted() {
+    this.$wait.start('loading')
+  }
+}
+```
+
+- **Vue 3 support**: New Composition API components can use the `useWait()` composable from `src/composables/useWait.js` to access the same functionality
+
+```js
+import { useWait } from 'src/composables/useWait'
+
+const wait = useWait()
+wait.start('loading')
+```
+
+- **Usage pattern**: Call `this.$wait.start('action-name')` before async operations, `this.$wait.end('action-name')` after completion, and check state with `this.$wait.is('action-name')` or `$wait.is('action-name')` in templates
+- **Migration note**: Both patterns work simultaneously, allowing gradual migration from Vue 2 to Vue 3 syntax without breaking existing functionality
 
 ## Store Infrastructure
 
