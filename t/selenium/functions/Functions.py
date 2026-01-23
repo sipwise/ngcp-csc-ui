@@ -25,7 +25,7 @@ def click_js(driver, element):
     if element[:1] == "/":
         webelement = driver.find_element(By.XPATH, element)
     else:
-        webelement = driver.find_element(By.LINK_TEXT ,element)
+        webelement = driver.find_element(By.LINK_TEXT, element)
     driver.execute_script("arguments[0].click();", webelement)
 
 

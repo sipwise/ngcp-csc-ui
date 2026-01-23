@@ -31,7 +31,7 @@ def login_panel(driver):
         driver.implicitly_wait(1)
         driver.find_element(By.XPATH, '//*[@id="q-app"]/div/footer/div/button/span[2]/span').click()
         driver.implicitly_wait(10)
-    except:
+    except Exception:
         pass
     finally:
         driver.implicitly_wait(10)

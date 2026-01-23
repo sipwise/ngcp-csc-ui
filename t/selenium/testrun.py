@@ -46,7 +46,7 @@ def preparation():
         del i
         for customer in customers.keys():
             create_subscriber(driver, customer, customers[customer])
-        if os.environ.get('vmtype') == None:
+        if os.environ.get('vmtype') is None:
             os.environ['vmtype'] = "CE"
         driver.quit()
     except Exception:
@@ -625,19 +625,19 @@ class testrun(unittest.TestCase):
         wait_for_invisibility(driver, '//*[@id="csc-page-call-forwarding"]//button[contains(., "Add forwarding")]/span/svg')
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div[1]//div/span[contains(., "Number")]').click()
-        fill_element(driver, "/html/body//label//div//input", "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\|}{;'\":,./?><EOL")
+        fill_element(driver, "/html/body//label//div//input", "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\\|}{;'\":,./?><EOL")
         driver.find_element(By.XPATH, '/html/body//div/button[contains(., "Set")]').click()
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '/html/body//div[@role="alert"]//div[contains(., "Failed to create cfdestinationset.")]')) > 0, "Illegal call foward was created")
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div[2]//div/span[contains(., "Number")]').click()
-        fill_element(driver, "/html/body//label//div//input", "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\|}{;'\":,./?><EOL")
+        fill_element(driver, "/html/body//label//div//input", "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\\|}{;'\":,./?><EOL")
         driver.find_element(By.XPATH, '/html/body//div/button[contains(., "Set")]').click()
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '/html/body//div[@role="alert"]//div[contains(., "Failed to create cfdestinationset.")]')) > 0, "Illegal call foward was created")
         wait_for_invisibility(driver, '//*[@id="csc-wrapper-call-forwarding"]/div/div[2]/div[4]/svg')
         driver.find_element(By.XPATH, '//*[@id="csc-wrapper-call-forwarding"]/div[3]//div/span[contains(., "Number")]').click()
-        fill_element(driver, "/html/body//label//div//input", "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\|}{;'\":,./?><EOL")
+        fill_element(driver, "/html/body//label//div//input", "checking <script>alert('test')</script> asdфывфів123!@#$%^&*()_+[]\\|}{;'\":,./?><EOL")
         driver.find_element(By.XPATH, '/html/body//div/button[contains(., "Set")]').click()
         self.assertTrue(
             len(driver.find_elements(By.XPATH, '/html/body//div[@role="alert"]//div[contains(., "Failed to create cfdestinationset.")]')) > 0, "Illegal call foward was created")
