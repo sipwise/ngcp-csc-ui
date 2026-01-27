@@ -26,23 +26,21 @@
     </q-banner>
 </template>
 
-<script>
-export default {
-    name: 'CscInlineAlert',
-    props: {
-        icon: {
-            type: String,
-            default: null
-        },
-        color: {
-            type: String,
-            default: 'primary'
-        }
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+    icon: {
+        type: String,
+        default: null
     },
-    computed: {
-        bannerClasses () {
-            return ['text-weight-bold', 'text-dark', `bg-${this.color}`, 'content-start']
-        }
+    color: {
+        type: String,
+        default: 'primary'
     }
-}
+})
+
+const bannerClasses = computed(() => {
+    return ['text-weight-bold', 'text-dark', `bg-${props.color}`, 'content-start']
+})
 </script>

@@ -15,12 +15,6 @@
     </csc-inline-alert>
 </template>
 
-<script>
+<script setup>
 import CscInlineAlert from 'components/CscInlineAlert'
-export default {
-    name: 'CscInlineAlertAlert',
-    components: {
-        CscInlineAlert
-    }
-}
 </script>

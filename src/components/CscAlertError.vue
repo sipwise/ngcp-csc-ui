@@ -19,15 +19,6 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'CscAlertError',
-    data () {
-        return {}
-    }
-}
-</script>
-
 <style lang="sass" rel="stylesheet/sass">
     .csc-alert-error
         background-color: $negative

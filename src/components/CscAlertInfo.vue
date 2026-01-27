@@ -19,15 +19,6 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'CscAlertInfo',
-    data () {
-        return {}
-    }
-}
-</script>
-
 <style lang="sass" rel="stylesheet/sass">
     .csc-alert-info
         background-color: $info
