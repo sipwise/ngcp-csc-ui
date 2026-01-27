@@ -24,23 +24,16 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'CscListActions',
-    props: {
-        label: {
-            type: String,
-            default: ''
-        }
-    },
-    data () {
-        return {}
+<script setup>
+defineProps({
+    label: {
+        type: String,
+        default: ''
     }
-}
+})
 </script>
 
 <style lang="sass" rel="stylesheet/sass">
-
 .csc-list-actions
     margin-bottom: $flex-gutter-sm
 </style>

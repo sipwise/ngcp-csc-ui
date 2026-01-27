@@ -78,66 +78,63 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import CscObjectSpinner from 'components/CscObjectSpinner'
-export default {
-    name: 'CscListItem',
-    components: {
-        CscObjectSpinner
+import { computed, ref } from 'vue'
+
+const props = defineProps({
+    icon: {
+        type: String,
+        default: ''
     },
-    props: {
-        icon: {
-            type: String,
-            default: ''
-        },
-        image: {
-            type: String,
-            default: ''
-        },
-        expanded: {
-            type: Boolean,
-            default: false
-        },
-        loading: {
-            type: Boolean,
-            default: false
-        },
-        odd: {
-            type: Boolean,
-            default: false
-        },
-        showMoreMenu: {
-            type: Boolean,
-            default: true
-        }
+    image: {
+        type: String,
+        default: ''
     },
-    emits: ['toggle'],
-    data () {
-        return {
-            moreMenu: false
-        }
+    expanded: {
+        type: Boolean,
+        default: false
     },
-    computed: {
-        itemClasses () {
-            const classes = ['csc-list-item', 'transition-generic']
-            if (this.expanded) {
-                classes.push('csc-list-item-expanded')
-            }
-            if (this.odd) {
-                classes.push('csc-list-item-background')
-            }
-            return classes
-        }
+    loading: {
+        type: Boolean,
+        default: false
     },
-    methods: {
-        toggle () {
-            this.$emit('toggle', !this.expanded)
-        },
-        closePopoverMenu () {
-            this.moreMenu = false
-        }
+    odd: {
+        type: Boolean,
+        default: false
+    },
+    showMoreMenu: {
+        type: Boolean,
+        default: true
     }
+})
+
+const emit = defineEmits(['toggle'])
+
+const moreMenu = ref(false)
+
+const itemClasses = computed(() => {
+    const classes = ['csc-list-item', 'transition-generic']
+    if (props.expanded) {
+        classes.push('csc-list-item-expanded')
+    }
+    if (props.odd) {
+        classes.push('csc-list-item-background')
+    }
+    return classes
+})
+
+const toggle = () => {
+    emit('toggle', !props.expanded)
 }
+
+const closePopoverMenu = () => {
+    moreMenu.value = false
+}
+
+defineExpose({
+    closePopoverMenu
+})
 </script>
 
 <style lang="sass" rel="stylesheet/sass">

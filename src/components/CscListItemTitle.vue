@@ -12,23 +12,17 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'CscListItemTitle',
-    props: {
-        icon: {
-            type: String,
-            default: ''
-        },
-        iconColor: {
-            type: String,
-            default: ''
-        }
+<script setup>
+defineProps({
+    icon: {
+        type: String,
+        default: ''
     },
-    data () {
-        return {}
+    iconColor: {
+        type: String,
+        default: ''
     }
-}
+})
 </script>
 
 <style lang="sass" rel="stylesheet/sass">

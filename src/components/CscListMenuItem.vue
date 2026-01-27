@@ -3,7 +3,7 @@
         v-close-popup
         clickable
         v-bind="$attrs"
-        @click="click"
+        @click="$emit('click')"
     >
         <q-item-section
             side
@@ -19,29 +19,19 @@
     </q-item>
 </template>
 
-<script>
-export default {
-    name: 'CscListMenuItem',
-    props: {
-        icon: {
-            type: String,
-            default: ''
-        },
-        iconColor: {
-            type: String,
-            default: ''
-        }
+<script setup>
+defineProps({
+    icon: {
+        type: String,
+        default: ''
     },
-    emits: ['click'],
-    data () {
-        return {}
-    },
-    methods: {
-        click () {
-            this.$emit('click')
-        }
+    iconColor: {
+        type: String,
+        default: ''
     }
-}
+})
+
+defineEmits(['click'])
 </script>
 
 <style lang="sass" rel="stylesheet/sass">

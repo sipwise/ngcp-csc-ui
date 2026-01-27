@@ -7,7 +7,7 @@
                 color="primary"
                 icon="add"
                 flat
-                @click="click"
+                @click="$emit('click')"
             >
                 {{ label }}
             </q-btn>
@@ -15,23 +15,13 @@
     </q-slide-transition>
 </template>
 
-<script>
-export default {
-    name: 'CscListAddButton',
-    props: {
-        label: {
-            type: String,
-            default: ''
-        }
-    },
-    emits: ['click'],
-    data () {
-        return {}
-    },
-    methods: {
-        click () {
-            this.$emit('click')
-        }
+<script setup>
+defineProps({
+    label: {
+        type: String,
+        default: ''
     }
-}
+})
+
+defineEmits(['click'])
 </script>

@@ -10,17 +10,11 @@
     </q-inner-loading>
 </template>
 
-<script>
-export default {
-    name: 'CscObjectSpinner',
-    props: {
-        loading: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data () {
-        return {}
+<script setup>
+defineProps({
+    loading: {
+        type: Boolean,
+        default: false
     }
-}
+})
 </script>
