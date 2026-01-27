@@ -1,6 +1,7 @@
 const esModules = ['quasar/lang', 'lodash-es', 'quasar'].join('|')
 
 module.exports = {
+    testEnvironment: 'jsdom',
     globals: {
         __DEV__: true
     },
@@ -41,6 +42,7 @@ module.exports = {
     ],
     moduleNameMapper: {
         '^vue$': 'vue',
+        '^@vue/test-utils$': '<rootDir>/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js',
         '^test-utils$': '@vue/test-utils',
         // '^quasar$': '<rootDir>/node_modules/quasar/dist/quasar.common.js',
         '^~/(.*)$': '<rootDir>/$1',
