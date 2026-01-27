@@ -40,11 +40,12 @@ module.exports = {
         'json'
     ],
     moduleNameMapper: {
-        '^vue$': '<rootDir>/node_modules/vue/dist/vue.common.js',
-        '^test-utils$': '<rootDir>/node_modules/@vue/test-utils/dist/vue-test-utils.js',
+        '^vue$': 'vue',
+        '^test-utils$': '@vue/test-utils',
         // '^quasar$': '<rootDir>/node_modules/quasar/dist/quasar.common.js',
         '^~/(.*)$': '<rootDir>/$1',
         '^src/(.*)$': '<rootDir>/src/$1',
+        '^components/(.*)$': '<rootDir>/src/components/$1',
         '.*css$': '<rootDir>/test/jest/utils/stub.css'
     },
     transform: {
