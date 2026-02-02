@@ -129,7 +129,7 @@ export default {
             this.$store.commit('call/numberInputChanged', '')
         },
         startCall () {
-            if (this.callNumberInput && this.callNumberInput !== '') {
+            if (this.callNumberNormalized && this.callNumberNormalized !== '') {
                 this.$store.dispatch('call/start', 'audioOnly')
             }
         }
