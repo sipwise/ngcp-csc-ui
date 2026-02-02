@@ -27,7 +27,7 @@ let errorVisibilityTimer = null
 
 export default {
     async start (context, localMedia) {
-        const number = context.getters.callNumberInput.replaceAll('(', '').replaceAll(')', '').replaceAll(' ', '').replaceAll('-', '')
+        const number = context.getters.callNumberNormalized.replaceAll('(', '').replaceAll(')', '').replaceAll(' ', '').replaceAll('-', '')
         context.dispatch('fetchPhonebookEntryName', number)
         context.commit('startCalling', number)
         const isStarted = await callStart({
