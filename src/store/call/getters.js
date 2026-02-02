@@ -9,6 +9,9 @@ export default {
         return state.callEnabled
     },
     callNumberInput (state) {
+        return state.numberInput
+    },
+    callNumberNormalized (state) {
         let inputNumber = ''
         if (state.numberInput.includes('@')) {
             inputNumber = state.numberInput.split('@')[0]
