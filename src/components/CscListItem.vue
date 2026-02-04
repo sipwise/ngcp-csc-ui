@@ -39,10 +39,9 @@
                     color="primary"
                     flat
                     dense
-                    @click.stop="moreMenu=true"
+                    @click.stop="openMoreMenu"
                 />
                 <q-menu
-                    ref="moreMenu"
                     v-model="moreMenu"
                 >
                     <q-list>
@@ -126,6 +125,9 @@ const itemClasses = computed(() => {
 
 const toggle = () => {
     emit('toggle', !props.expanded)
+}
+const openMoreMenu = () => {
+    moreMenu.value = true
 }
 
 const closePopoverMenu = () => {
