@@ -1,3 +1,34 @@
+ngcp-csc-ui (14.2.0.0+0~mr14.2.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [acd9d84] MT#64037 PBXGroup Custom Announcements Bugfix
+  * [c403dc3] MT#63999 Update Build Configuration for vue3
+  * [3f9ebb6] MT#64044 add Vue 2/3 compatibility layer and migration infrastructure
+  * [d575fe2] MT#64314 Update jest config to use vue3
+  * [db5e5b5] MT#64292 Migrate App.Vue and vue-wait to Vue 3
+  * [6f57bd1] MT#64293 Migrate AppBadge components to Vue 3 Composition API
+  * [04c3d71] MT#64314 Fix jest tests
+  * [3d66a41] MT#64311 Migrate Alert Components to Vue3
+  * [ffefd1b] MT#64318 Migrate CSCList Components to vue3 syntax
+  * [cecc11a] MT#64368 Fix vuln deps with yarn resolutions
+
+  [ nidrissi-zouggari ]
+  * [5f2c950] MT#63983 Upgrade libraries
+  * [ee99017] MT#64124 Refresh Call Forwarding component on page change
+  * [ec97299] MT#62578 Migrate api v1 to v2 for subscriber phonebook
+  * [43aadbc] MT#64156 Phonebook error bugfix
+  * [518912b] MT#64194 Migrate customer phonebook to api v2
+  * [cf15c25] MT#64237 Fix resizeObserver loop error
+  * [696f269] MT#64381 fax settings destinations menu doesn't open properly
+
+  [ Guillem Jover ]
+  * [5a9fa7d] MT#62899 Update packaging for Debian trixie
+
+  [ Giancarlo Errigo Mattos ]
+  * [31ffb28] MT#63433 -  PBX device page improvements
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 05 Feb 2026 10:22:55 +0100
+
 ngcp-csc-ui (14.1.0.0+0~mr14.1.0.0) unstable; urgency=medium
 
   [ Debora Crescenzo ]
