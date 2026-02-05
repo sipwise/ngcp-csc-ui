@@ -1,3 +1,10 @@
+ngcp-csc-ui (14.0.1.3+0~mr14.0.1.3) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [284514d] MT#63433 -  PBX device page improvements
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 05 Feb 2026 09:14:01 +0100
+
 ngcp-csc-ui (14.0.1.2+0~mr14.0.1.2) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
