@@ -81,6 +81,8 @@
 import CscObjectSpinner from 'components/CscObjectSpinner'
 import { computed, ref } from 'vue'
 
+defineOptions({ name: 'CscListItem' })
+
 const props = defineProps({
     icon: {
         type: String,

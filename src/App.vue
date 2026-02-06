@@ -8,6 +8,8 @@ import { APP_NAME } from 'src/constants'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
+defineOptions({ name: 'App' })
+
 const route = useRoute()
 const pageTitle = ref('')
 

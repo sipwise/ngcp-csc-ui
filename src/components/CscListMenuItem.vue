@@ -20,6 +20,8 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'CscListMenuItem' })
+
 defineProps({
     icon: {
         type: String,

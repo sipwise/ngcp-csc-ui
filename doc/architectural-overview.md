@@ -27,6 +27,7 @@ This document describes the architecture of the ngcp-csc-ui project (Customer Se
 		- `src/boot/ngcp-call.js` — wires the JsSIP-based call module into the store and configures the WebSocket URL used for SIP registration.
 		- `src/boot/i18n.js` — creates and registers `vue-i18n` and watches for language changes to reload language-dependent store data.
 		- `src/boot/store.js` — creates and registers the Vuex store instance with the app.
+		- `src/boot/e2e-testing.js` - Automatically generates `data-cy` attributes for all Vue components to facilitate Cypress end-to-end testing. This eliminates the need to manually add data-cy attributes to every component.
 	- `store/`: Vuex modules (split by feature). The store is assembled in `src/store/index.js` and has modules such as `call`, `conversations`, `pbx*`, `user`, `communication`, `fax`, `voicebox`, etc.
 	- `api/`: small wrappers for domain APIs and a robust HTTP API layer in `src/api/common.js`.
 	- `router/`: route definitions and meta configuration in `src/router/routes.js`.

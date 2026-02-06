@@ -57,6 +57,8 @@ import AppBadgeGoogle from 'components/AppBadgeGoogle'
 import { useUser } from 'src/composables/useUser'
 import { computed } from 'vue'
 
+defineOptions({ name: 'AuiMobileAppBadges' })
+
 const { platformInfo } = useUser()
 
 const appNameAndroid = computed(() => platformInfo.value?.app?.android?.name)

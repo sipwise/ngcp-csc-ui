@@ -19,6 +19,10 @@
     </div>
 </template>
 
+<script setup>
+defineOptions({ name: 'CscAlertError' })
+</script>
+
 <style lang="sass" rel="stylesheet/sass">
     .csc-alert-error
         background-color: $negative

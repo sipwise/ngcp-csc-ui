@@ -10,4 +10,6 @@
 
 <script setup>
 import CscSpinner from 'components/CscSpinner'
+
+defineOptions({ name: 'CscListSpinner' })
 </script>

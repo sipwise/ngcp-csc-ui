@@ -1,6 +1,21 @@
 import _ from 'lodash'
 import { getCurrentInstance } from 'vue'
 
+/**
+ * E2E Testing Boot File
+ *
+ * Automatically generates `data-cy` attributes for all Vue components to facilitate
+ * Cypress end-to-end testing. This eliminates the need to manually add data-cy
+ * attributes to every component.
+ *
+ * Compatibility:
+ * - Works with Vue 3 (both Options API and Composition API)
+ * - Components must have a `name` property defined for this to work
+ *
+ * Development mode:
+ * - Logs a warning if a component name cannot be determined
+ * - Only applies to elements that don't already have a data-cy attribute
+ */
 export default ({ app }) => {
     app.mixin({
         mounted () {

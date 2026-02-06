@@ -15,6 +15,8 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'AppBadgeApple' })
+
 defineProps({
     href: {
         type: String,

@@ -11,6 +11,8 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'CscObjectSpinner' })
+
 defineProps({
     loading: {
         type: Boolean,
