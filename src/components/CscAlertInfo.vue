@@ -19,6 +19,10 @@
     </div>
 </template>
 
+<script setup>
+defineOptions({ name: 'CscAlertInfo' })
+</script>
+
 <style lang="sass" rel="stylesheet/sass">
     .csc-alert-info
         background-color: $info

@@ -17,4 +17,6 @@
 
 <script setup>
 import CscInlineAlert from 'components/CscInlineAlert'
+
+defineOptions({ name: 'CscInlineAlertInfo' })
 </script>

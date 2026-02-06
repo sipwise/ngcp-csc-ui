@@ -25,6 +25,8 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'CscListActions' })
+
 defineProps({
     label: {
         type: String,

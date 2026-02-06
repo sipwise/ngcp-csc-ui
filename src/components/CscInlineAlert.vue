@@ -29,6 +29,8 @@
 <script setup>
 import { computed } from 'vue'
 
+defineOptions({ name: 'CscInlineAlert' })
+
 const props = defineProps({
     icon: {
         type: String,

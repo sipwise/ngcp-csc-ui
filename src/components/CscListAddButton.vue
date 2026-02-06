@@ -16,6 +16,8 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'CscListAddButton' })
+
 defineProps({
     label: {
         type: String,

@@ -13,6 +13,9 @@
 </template>
 
 <script setup>
+
+defineOptions({ name: 'CscListItemTitle' })
+
 defineProps({
     icon: {
         type: String,

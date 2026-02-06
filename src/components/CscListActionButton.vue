@@ -10,6 +10,9 @@
 </template>
 
 <script setup>
+
+defineOptions({ name: 'CscListActionButton' })
+
 defineProps({
     disable: {
         type: Boolean,
