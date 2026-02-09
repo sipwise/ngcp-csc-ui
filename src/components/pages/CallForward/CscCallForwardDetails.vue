@@ -79,6 +79,7 @@
                     <csc-cf-group
                         class="q-mb-lg"
                         :loading="$wait.is('csc-cf-mappings-full')"
+                        :class="{ 'cf-group-disabled': !group.enabled }"
                         :mapping="group"
                         :b-number-set="bNumberSetMap[group.bnumberset_id]"
                         :destination-set="destinationSetMap[group.destinationset_id]"
@@ -166,3 +167,12 @@ export default {
     }
 }
 </script>
+<style lang="sass" scoped>
+.cf-group-disabled
+    opacity: 0.6
+    filter: grayscale(30%)
+
+    :deep(*)
+        pointer-events: auto !important
+        cursor: pointer !important
+</style>

@@ -8,6 +8,11 @@
             <q-item-label
                 class="text-weight-bold"
             >
+                <q-toggle
+                    :model-value="mapping.enabled"
+                    data-cy="csc-forwarding-toggle"
+                    @update:model-value="toggleMappingEvent(mapping)"
+                />
                 <span
                     v-if="mapping.type === 'cfu' || mapping.type === 'cft'"
                 >
@@ -382,12 +387,6 @@
                             destination: 'localuser',
                             destinationSetId: destinationSet.id
                         })"
-                    />
-                    <csc-popup-menu-item
-                        :icon="(mapping.enabled)?'toggle_on':'toggle_off'"
-                        :label="(mapping.enabled)?$t('Disable'):$t('Enable')"
-                        data-cy="csc-forwarding-disable"
-                        @click="toggleMappingEvent(mapping)"
                     />
                     <csc-popup-menu-item-delete
                         data-cy="csc-forwarding-delete"

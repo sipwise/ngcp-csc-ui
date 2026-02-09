@@ -84,7 +84,8 @@ export async function createMapping ({ dispatch, commit, state, rootGetters }, p
         })
 
         mappings.push({
-            destinationset_id: destinationSet.id
+            destinationset_id: destinationSet.id,
+            enabled: false
         })
 
         const patchedMappings = await patchReplaceFull({

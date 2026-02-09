@@ -8,7 +8,7 @@
             />
         </q-item-section>
         <q-item-section
-            :class="loading || !mapping.enabled ? 'disabled' : ''"
+            :class="loading"
         >
             <q-item-label>
                 <template
