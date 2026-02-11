@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.5.1.12+0~mr13.5.1.12) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [24957bb] MT#64368 Fix vuln deps with yarn resolutions
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 11 Feb 2026 08:51:39 +0100
+
 ngcp-csc-ui (13.5.1.11+0~mr13.5.1.11) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
