@@ -439,7 +439,7 @@ export default {
             await this.getVoicemailTranscript(voicemailId)
         },
         addToPhonebookAction (number) {
-            this.$store.commit('user/setPhonebookNumber', number)
+            this.$store.commit('subscriber-phonebook/setNumber', number)
             this.$router.push('subscriber-phonebook/create')
         }
     }

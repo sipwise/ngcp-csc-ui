@@ -9,25 +9,20 @@ import {
     changePassword,
     changeSIPPassword,
     createCustomerPhonebook,
-    createPhonebook,
     generateGeneralPassword,
     getBrandingLogo,
     getCustomerPhonebook,
     getNcosLevels,
     getNcosSet,
     getPreferences,
-    getSubscriberPhonebook,
     getSubscriberProfile,
     getSubscriberRegistrations,
     getSubscriberSeats,
     recoverPassword,
     resetPassword,
     setPreference,
-    setValueName,
     setValueNameCustomer,
-    setValueNumber,
     setValueNumberCustomer,
-    setValueShared,
     uploadCsv
 } from 'src/api/subscriber'
 import {
@@ -77,10 +72,8 @@ export default {
         resellerBranding: null,
         defaultBranding: {},
         subscriberRegistrations: [],
-        subscriberPhonebook: [],
         subscriberSeats: [],
         customerPhonebook: [],
-        phonebookMap: {},
         platformInfo: null,
         qrCode: null,
         qrExpiringTime: null,
@@ -238,9 +231,6 @@ export default {
         },
         isSpCe (state) {
             return state?.platformInfo?.type === 'spce'
-        },
-        prefilledNumber (state) {
-            return state.numberInput
         }
     },
     mutations: {
@@ -335,9 +325,6 @@ export default {
         setSubscriberRegistrations (state, value) {
             state.subscriberRegistrations = value
         },
-        setSubscriberPhonebook (state, value) {
-            state.subscriberPhonebook = value
-        },
         setSubscriberSeats (state, value) {
             state.subscriberSeats = value
         },
@@ -353,14 +340,6 @@ export default {
         setQrExpiringTime (state, qrExpiringTime) {
             state.qrExpiringTime = qrExpiringTime
         },
-        setPhonebookShared (state, { id, value }) {
-            const index = state.subscriberPhonebook.findIndex((row) => {
-                return row.id === id
-            })
-            if (index > -1) {
-                state.subscriberPhonebook[index].shared = value
-            }
-        },
         loginWaitingForOTPCode (state) {
             state.loginWaitingOTPCode = true
             state.OTPSecret = null
@@ -370,9 +349,6 @@ export default {
             state.loginWaitingOTPCode = true
             state.OTPSecret = payload
             state.loginRequesting = false
-        },
-        setPhonebookNumber (state, numberInput) {
-            state.numberInput = numberInput
         }
     },
     actions: {
@@ -566,18 +542,6 @@ export default {
                 throw err
             }
         },
-        async loadSubscriberPhonebook ({ commit, dispatch, state, rootGetters }, options) {
-            try {
-                const list = await getSubscriberPhonebook({
-                    ...options
-                })
-                commit('setSubscriberPhonebook', list.items)
-                return list.totalCount
-            } catch (err) {
-                commit('setSubscriberPhonebook', [])
-                throw err
-            }
-        },
         async loadCustomerPhonebook ({ commit, dispatch, state, rootGetters }, options) {
             try {
                 const list = await getCustomerPhonebook({
@@ -611,11 +575,8 @@ export default {
         async removeSubscriberRegistration (context, row) {
             await httpApi.delete(`api/subscriberregistrations/${row.id}`)
         },
-        async removeSubscriberPhonebook (context, row) {
-            await httpApi.delete(`api/subscriberphonebookentries/${row.id}`)
-        },
-        async removeCustomerPhonebook (context, row) {
-            await httpApi.delete(`api/customerphonebookentries/${row.id}`)
+        async removeCustomerPhonebook (context, { row, customerId }) {
+            await httpApi.delete(`api/v2/customers/${customerId}/phonebook/${row.id}`)
         },
         async getNcosLevelsSubscriber () {
             const ncosLevel = []
@@ -652,35 +613,15 @@ export default {
         async setNcosLevelsSubscriber (value) {
             await setPreference(getSubscriberId(), 'ncos', value)
         },
-        async getPhonebookDetails (context, id) {
-            const list = await httpApi.get(`api/subscriberphonebookentries/${id}`)
+        async getPhonebookCustomerDetails (context, { phonebookId, customerId }) {
+            const list = await httpApi.get(`api/v2/customers/${customerId}/phonebook/${phonebookId}`)
             return list
-        },
-        async getPhonebookCustomerDetails (context, id) {
-            const list = await httpApi.get(`api/customerphonebookentries/${id}`)
-            return list
-        },
-        async getValueShared (context, options) {
-            await setValueShared(options.phonebookId, options.shared)
-        },
-        async updateValueShared (context, row) {
-            context.commit('setPhonebookShared', { id: row.id, value: !row.shared })
-            await setValueShared(row.id, row.shared)
-        },
-        async getValueName (context, options) {
-            await setValueName(options.phonebookId, options.name)
         },
         async getValueNameCustomer (context, options) {
             await setValueNameCustomer(options.phonebookId, options.name)
         },
-        async getValueNumber (context, options) {
-            await setValueNumber(options.phonebookId, options.number)
-        },
         async getValueNumberCustomer (context, options) {
-            await setValueNumberCustomer(options.phonebookId, options.number)
-        },
-        async createPhonebookSubscriber (context, data) {
-            await createPhonebook(data)
+            await setValueNumberCustomer(options.customerId, options.phonebookId, options.number)
         },
         async createPhonebookCustomer (context, data) {
             await createCustomerPhonebook(data)
