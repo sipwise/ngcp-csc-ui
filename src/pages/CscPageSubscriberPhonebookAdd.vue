@@ -107,7 +107,10 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-            'prefilledNumber'
+            'getSubscriberId'
+        ]),
+        ...mapGetters('subscriber-phonebook', [
+            'getPrefilledNumber'
         ]),
         nameErrorMessage () {
             const errorsTab = this.v$.formData.name.$errors
@@ -120,14 +123,14 @@ export default {
         }
     },
     mounted () {
-        if (this.prefilledNumber) {
-            this.formData.number = this.prefilledNumber
-            this.$store.commit('user/setPhonebookNumber', '')
+        if (this.getPrefilledNumber) {
+            this.formData.number = this.getPrefilledNumber
+            this.$store.commit('subscriber-phonebook/setNumber', '')
         }
     },
     methods: {
-        ...mapWaitingActions('user', {
-            createPhonebookSubscriber: 'createPhonebookSubscriber'
+        ...mapWaitingActions('subscriber-phonebook', {
+            createPhonebook: 'createPhonebook'
         }),
         getDefaultFormData () {
             return {
@@ -158,7 +161,8 @@ export default {
         },
         async confirm () {
             try {
-                await this.createPhonebookSubscriber(this.formData)
+                this.formData.subscriber_id = this.getSubscriberId
+                await this.createPhonebook(this.formData)
                 await this.$router.push('/user/subscriber-phonebook/')
             } catch (error) {
                 if (error.response && error.response.status === 422) {
