@@ -7,7 +7,7 @@ import { getJwt, hasJwt } from 'src/auth'
 import { getCurrentLangAsV1Format } from 'src/i18n'
 
 export const LIST_DEFAULT_PAGE = 1
-export const LIST_DEFAULT_ROWS = 24
+export const LIST_DEFAULT_ROWS = 20
 export const LIST_ALL_ROWS = 1000
 export const API_REQUEST_DEFAULT_TIMEOUT = 30000
 
@@ -101,6 +101,7 @@ export async function getList (options) {
     }, options)
     if (requestConfig.all === true) {
         requestConfig.params.rows = LIST_ALL_ROWS
+        requestConfig.params.page = LIST_DEFAULT_PAGE
     }
     if (requestConfig.resource !== undefined) {
         requestConfig.path = `api/${requestConfig.resource}/`
@@ -135,7 +136,12 @@ export async function getList (options) {
     if (lastPage === 0) {
         lastPage = null
     }
-    let items = _.get(body, requestConfig.root, [])
+
+    let items = requestConfig.root
+        // This gets the results for the API V1 which has the list in the root of the response, and if not found it tries to get it from the API V2 response format
+        ? _.get(body, requestConfig.root, [])
+        // This gets the results for the API V2 which has the list in the data field, and if not found it tries to get it from the root of the response (for backward compatibility with API V1)
+        : _.get(body, 'data', [])
     if (!Array.isArray(items)) {
         items = [items]
     }
@@ -149,12 +155,40 @@ export async function getList (options) {
     }
 }
 
+function extractMessages (messageArray) {
+    const messages = []
+    if (Array.isArray(messageArray)) {
+        messageArray.forEach((item) => {
+            Object.keys(item).forEach((fieldName) => {
+                const fieldErrors = item[fieldName]
+                if (Array.isArray(fieldErrors)) {
+                    fieldErrors.forEach((errorObject) => {
+                        Object.values(errorObject).forEach((errorMsg) => {
+                            messages.push(errorMsg)
+                        })
+                    })
+                }
+            })
+        })
+    }
+    return messages.join(', ')
+}
+
 function handleResponseError (err) {
-    const code = _.get(err, 'response.data.code', null)
+    let code = _.get(err, 'response.data.code', null)
     let message = _.get(err, 'response.data.message', null)
+
     if (code === 403 && message === 'Invalid license') {
         message = i18n.global.t('Contact your administrator to activate this functionality')
     }
+
+    // API V2 returns an array of messages rather than a string
+    // and the code is available in the response status
+    if (Array.isArray(message)) {
+        message = extractMessages(message)
+        code = _.get(err, 'response.status', null)
+    }
+
     if (code !== null && message !== null) {
         throw new ApiResponseError(code, message)
     }
@@ -287,7 +321,8 @@ export async function put (options) {
         path = `api/${requestConfig.resource}/${requestConfig.resourceId}`
     }
     try {
-        const res = await httpApi.put(path, requestConfig.body, {
+        const payload = requestConfig.body || requestConfig.data
+        const res = await httpApi.put(path, payload, {
             headers: requestConfig.headers
         })
         if (requestConfig.headers.Prefer === Prefer.representation) {

@@ -22,8 +22,8 @@
                 v-model:pagination="pagination"
                 class="no-shadow"
                 :columns="columns"
-                :rows="subscriberPhonebook"
-                :loading="$wait.is('loadSubscriberPhonebook')"
+                :rows="phonebookRows"
+                :loading="$wait.is('loadPhonebook')"
                 row-key="id"
                 @request="fetchPaginatedRegistrations"
             >
@@ -89,9 +89,8 @@ import CscPage from 'components/CscPage'
 import CscPageSticky from 'components/CscPageSticky'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscSpinner from 'components/CscSpinner'
-import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import { mapWaitingActions } from 'vue-wait'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageSubscriberPhonebook',
     components: {
@@ -101,21 +100,14 @@ export default {
         CscPopupMenuItem,
         CscPageSticky
     },
-    data () {
-        return {
-            data: [],
-            pagination: {
-                sortBy: 'id',
-                descending: false,
-                page: 1,
-                rowsPerPage: LIST_DEFAULT_ROWS,
-                rowsNumber: 0
-            }
-        }
-    },
     computed: {
-        ...mapState('user', [
-            'subscriberPhonebook'
+        ...mapState('subscriber-phonebook', {
+            phonebookRows: 'phonebookRows',
+            pagination: 'pagination'
+        }),
+        ...mapGetters('user', [
+            'isPbxEnabled',
+            'getSubscriberId'
         ]),
         columns () {
             return [
@@ -165,10 +157,10 @@ export default {
         await this.refresh()
     },
     methods: {
-        ...mapWaitingActions('user', {
-            loadSubscriberPhonebook: 'loadSubscriberPhonebook',
-            removeSubscriberPhonebook: 'removeSubscriberPhonebook',
-            updateValueShared: 'updateValueShared'
+        ...mapWaitingActions('subscriber-phonebook', {
+            loadPhonebook: 'loadPhonebook',
+            removeEntry: 'removeEntry',
+            updateSharedValue: 'updateSharedValue'
         }),
         async refresh () {
             await this.fetchPaginatedRegistrations({
@@ -177,14 +169,13 @@ export default {
         },
         async fetchPaginatedRegistrations (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
-            const count = await this.loadSubscriberPhonebook({
+            await this.loadPhonebook({
+                subscriber_id: this.getSubscriberId,
                 page,
                 rows: rowsPerPage,
                 order_by: sortBy,
                 order_by_direction: descending ? 'desc' : 'asc'
             })
-            this.pagination = { ...props.pagination }
-            this.pagination.rowsNumber = count
         },
         async showPhonebookDetails (row) {
             this.$router.push(`/user/subscriber-phonebook/${row.id}`)
@@ -206,18 +197,18 @@ export default {
         },
         async deleteRow (row) {
             this.$q.dialog({
-                title: this.$t('Delete subscriber phonebook'),
-                message: this.$t('You are about to delete this phonebook'),
+                title: this.$t('Delete subscriber phonebook entry'),
+                message: this.$t('You are about to delete this phonebook entry'),
                 color: 'negative',
                 cancel: true,
                 persistent: true
             }).onOk(async (data) => {
-                await this.removeSubscriberPhonebook(row)
+                await this.removeEntry(row.id)
                 await this.refresh()
             })
         },
         async toggleShared (row) {
-            await this.updateValueShared(row)
+            await this.updateSharedValue(row)
         }
     }
 }

@@ -57,19 +57,7 @@ export async function setPreference (id, field, value) {
         }
     }
 }
-export async function setPreferencePhonebook (id, field, value) {
-    if (value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)) {
-        await removePreferencePhonebook(id, field)
-    } else {
-        try {
-            await replacePreferencePhonebook(id, field, value)
-        } catch (err) {
-            if (err) {
-                throw err
-            }
-        }
-    }
-}
+
 export async function setPreferencePhonebookCustomer (id, field, value) {
     if (value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)) {
         await removePreferencePhonebookCustomer(id, field)
@@ -83,6 +71,7 @@ export async function setPreferencePhonebookCustomer (id, field, value) {
         }
     }
 }
+
 export function getNcosLevels (options) {
     return new Promise((resolve, reject) => {
         const mergedOptions = _.merge(options || {}, {
@@ -115,12 +104,7 @@ export async function removePreference (id, field) {
         fieldPath: field
     })
 }
-export async function removePreferencePhonebook (id, field) {
-    return await patchRemove({
-        path: `api/subscriberphonebookentries/${id}`,
-        fieldPath: field
-    })
-}
+
 export async function removePreferencePhonebookCustomer (id, field) {
     return await patchRemove({
         path: `api/customerphonebookentries/${id}`,
@@ -167,19 +151,7 @@ export function replacePreference (id, field, value) {
         })
     })
 }
-export function replacePreferencePhonebook (id, field, value) {
-    return new Promise((resolve, reject) => {
-        patchReplace({
-            path: `api/subscriberphonebookentries/${id}`,
-            fieldPath: field,
-            value
-        }).then(() => {
-            resolve()
-        }).catch((err) => {
-            reject(err)
-        })
-    })
-}
+
 export function replacePreferencePhonebookCustomer (id, field, value) {
     return new Promise((resolve, reject) => {
         patchReplace({
@@ -763,24 +735,7 @@ export async function getSubscriberRegistrations (options) {
     })
     return list
 }
-export async function getSubscriberPhonebook (options) {
-    let all = false
-    if (options.rows === 0) {
-        delete options.rows
-        delete options.page
-        all = true
-    }
-    if (!options.order_by) {
-        delete options.order_by
-        delete options.order_by_direction
-    }
-    const list = await getList({
-        resource: 'subscriberphonebookentries',
-        all,
-        params: options
-    })
-    return list
-}
+
 export async function getCustomerPhonebook (options) {
     let all = false
     if (options.rows === 0) {
@@ -799,14 +754,7 @@ export async function getCustomerPhonebook (options) {
     })
     return list
 }
-export async function createPhonebook (data) {
-    const payLoad = {
-        name: data.name,
-        number: data.number,
-        shared: data.shared
-    }
-    return await httpApi.post('api/subscriberphonebookentries/', payLoad)
-}
+
 export async function createCustomerPhonebook (data) {
     const payLoad = {
         name: data.name,
@@ -827,17 +775,8 @@ export async function uploadCsv (context, formData) {
         config
     })
 }
-export function setValueShared (id, value) {
-    return setPreferencePhonebook(id, 'shared', value)
-}
-export function setValueName (id, value) {
-    return setPreferencePhonebook(id, 'name', value)
-}
 export function setValueNameCustomer (id, value) {
     return setPreferencePhonebookCustomer(id, 'name', value)
-}
-export function setValueNumber (id, value) {
-    return setPreferencePhonebook(id, 'number', value)
 }
 export function setValueNumberCustomer (id, value) {
     return setPreferencePhonebookCustomer(id, 'number', value)
