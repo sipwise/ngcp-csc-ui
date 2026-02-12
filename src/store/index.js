@@ -20,6 +20,7 @@ import PbxSeatsModule from 'src/store/pbx-seats'
 import PbxSoundSetsModule from 'src/store/pbx-soundsets'
 import ReminderModule from 'src/store/reminder'
 import SpeedDialModule from 'src/store/speed-dial'
+import SubscriberPhonebookModule from 'src/store/subscriber-phonebook'
 import TranscriptionsModule from 'src/store/transcriptions'
 import UserModule from 'src/store/user'
 import VoiceboxModule from 'src/store/voicebox'
@@ -59,7 +60,8 @@ export default function (/* { ssrContext } */) {
             pbxAutoAttendants: PbxAutoAttendants,
             dashboard: DashboardModule,
             customer: Customer,
-            transcriptions: TranscriptionsModule
+            transcriptions: TranscriptionsModule,
+            'subscriber-phonebook': SubscriberPhonebookModule
         },
         state: {
             route: null
