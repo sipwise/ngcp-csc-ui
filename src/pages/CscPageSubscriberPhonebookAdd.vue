@@ -76,6 +76,7 @@ import CscPageSticky from 'components/CscPageSticky'
 import { showGlobalError } from 'src/helpers/ui'
 import { mapWaitingActions } from 'vue-wait'
 import { required } from 'vuelidate/lib/validators'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPageSubscriberPhonebookAdd',
     components: {
@@ -101,6 +102,12 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('user', [
+            'getSubscriberId'
+        ]),
+        ...mapGetters('subscriber-phonebook', [
+            'getPrefilledNumber'
+        ]),
         nameErrorMessage () {
             const errorsTab = this.v$.formData.name.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
@@ -111,9 +118,15 @@ export default {
             return ''
         }
     },
+    mounted () {
+        if (this.getPrefilledNumber) {
+            this.formData.number = this.getPrefilledNumber
+            this.$store.commit('subscriber-phonebook/setNumber', '')
+        }
+    },
     methods: {
-        ...mapWaitingActions('user', {
-            createPhonebookSubscriber: 'createPhonebookSubscriber'
+        ...mapWaitingActions('subscriber-phonebook', {
+            createPhonebook: 'createPhonebook'
         }),
         getDefaultFormData () {
             return {
@@ -144,7 +157,8 @@ export default {
         },
         async confirm () {
             try {
-                await this.createPhonebookSubscriber(this.formData)
+                this.formData.subscriber_id = this.getSubscriberId
+                await this.createPhonebook(this.formData)
                 await this.$router.push('/user/subscriber-phonebook/')
             } catch (error) {
                 if (error.response && error.response.status === 422) {

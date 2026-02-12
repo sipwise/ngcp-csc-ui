@@ -387,6 +387,10 @@ export default {
             this.$scrollTo(this.$parent.$el)
             this.filterDirection = filter
             this.forceReload()
+        },
+        addToPhonebookAction (number) {
+            this.$store.commit('subscriber-phonebook/setNumber', number)
+            this.$router.push('subscriber-phonebook/create')
         }
     }
 }

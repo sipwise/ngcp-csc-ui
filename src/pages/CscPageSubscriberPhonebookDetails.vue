@@ -70,6 +70,7 @@
 <script>
 import CscPageSticky from 'components/CscPageSticky'
 import { mapWaitingActions } from 'vue-wait'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPageSubscriberPhonebookDetails',
     components: {
@@ -84,49 +85,34 @@ export default {
             shared: false
         }
     },
+    computed: {
+        ...mapGetters('user', [
+            'getSubscriberId'
+        ])
+    },
     async mounted () {
-        await this.getPhonebook(this.id)
+        const response = await this.getEntry(this.id)
+        this.name = response.name
+        this.number = response.number
+        this.shared = response.shared
     },
     methods: {
-        ...mapWaitingActions('user', {
-            getPhonebookDetails: 'getPhonebookDetails',
-            getValueShared: 'getValueShared',
-            getValueName: 'getValueName',
-            getValueNumber: 'getValueNumber'
+        ...mapWaitingActions('subscriber-phonebook', {
+            getEntry: 'getEntry',
+            updateEntry: 'updateEntry'
         }),
-        async getPhonebook (id) {
-            const response = await this.getPhonebookDetails(id)
-            this.name = response.data.name
-            this.number = response.data.number
-            this.shared = response.data.shared
-        },
         cancel () {
             this.$router.push('/user/subscriber-phonebook/')
             this.$emit('cancel')
         },
-        async changeValueName () {
-            await this.getValueName({
-                phonebookId: this.id,
+        async confirm () {
+            await this.updateEntry({
+                id: this.id,
+                number: this.number,
+                shared: this.shared,
                 name: this.name
             })
-        },
-        changeValueShared () {
-            this.getValueShared({
-                phonebookId: this.id,
-                shared: this.shared
-            })
-        },
-        changeValueNumber () {
-            this.getValueNumber({
-                phonebookId: this.id,
-                number: this.number
-            })
-        },
-        async confirm () {
-            await this.changeValueName()
-            await this.changeValueShared()
-            await this.changeValueNumber()
-            await this.$router.push('/user/subscriber-phonebook/')
+            this.$router.push('/user/subscriber-phonebook/')
         }
     }
 }
