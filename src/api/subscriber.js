@@ -66,19 +66,6 @@ export async function setPreferenceCallBlocking (id, field, value) {
     await addPreference(id, field, value)
 }
 
-export async function setPreferencePhonebook (subscriberId, phonebookId, field, value) {
-    if (value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)) {
-        await removePreferencePhonebook(subscriberId, phonebookId, field)
-    } else {
-        try {
-            await replacePreferencePhonebook(subscriberId, phonebookId, field, value)
-        } catch (err) {
-            if (err) {
-                throw err
-            }
-        }
-    }
-}
 export async function setPreferencePhonebookCustomer (customerId, phonebookId, field, value) {
     if (value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)) {
         await removePreferencePhonebookCustomer(customerId, phonebookId, field)
@@ -92,6 +79,7 @@ export async function setPreferencePhonebookCustomer (customerId, phonebookId, f
         }
     }
 }
+
 export function getNcosLevels (options) {
     return new Promise((resolve, reject) => {
         const mergedOptions = _.merge(options || {}, {
@@ -124,12 +112,7 @@ export async function removePreference (id, field) {
         fieldPath: field
     })
 }
-export async function removePreferencePhonebook (subscriberId, phonebookId, field) {
-    return await patchRemove({
-        path: `api/v2/subscribers/${subscriberId}/phonebook/${phonebookId}`,
-        fieldPath: field
-    })
-}
+
 export async function removePreferencePhonebookCustomer (customerId, phonebookId, field) {
     return await patchRemove({
         path: `api/v2/customers/${customerId}/phonebook/${phonebookId}`,
@@ -176,19 +159,7 @@ export function replacePreference (id, field, value) {
         })
     })
 }
-export function replacePreferencePhonebook (subscriberId, phonebookId, field, value) {
-    return new Promise((resolve, reject) => {
-        patchReplace({
-            path: `api/v2/subscribers/${subscriberId}/phonebook/${phonebookId}`,
-            fieldPath: field,
-            value
-        }).then(() => {
-            resolve()
-        }).catch((err) => {
-            reject(err)
-        })
-    })
-}
+
 export function replacePreferencePhonebookCustomer (customerId, phonebookId, field, value) {
     return new Promise((resolve, reject) => {
         patchReplace({
@@ -772,13 +743,7 @@ export async function getSubscriberRegistrations (options) {
     })
     return list
 }
-export async function getSubscriberPhonebook (options) {
-    const list = await get({
-        path: `api/v2/subscribers/${options.subscriber_id}/phonebook`,
-        params: options
-    })
-    return list
-}
+
 export async function getCustomerPhonebook (options) {
     const list = await get({
         path: `api/v2/customers/${options.customer_id}/phonebook`,
@@ -786,15 +751,7 @@ export async function getCustomerPhonebook (options) {
     })
     return list
 }
-export async function createPhonebook (data) {
-    const payLoad = {
-        name: data.name,
-        number: data.number,
-        shared: data.shared,
-        subscriber_id: Number(data.subscriber_id)
-    }
-    return await httpApi.post(`api/v2/subscribers/${data.subscriber_id}/phonebook`, payLoad)
-}
+
 export async function createCustomerPhonebook (data) {
     const payLoad = {
         name: data.name,
@@ -822,18 +779,10 @@ export async function uploadCsv (context, formData) {
         config
     })
 }
-export function setValueShared (subscriberId, phonebookId, value) {
-    return setPreferencePhonebook(subscriberId, phonebookId, 'shared', value)
-}
-export function setValueName (subscriberId, phonebookId, value) {
-    return setPreferencePhonebook(subscriberId, phonebookId, 'name', value)
-}
 export function setValueNameCustomer (customerId, phonebookId, value) {
     return setPreferencePhonebookCustomer(customerId, phonebookId, 'name', value)
 }
-export function setValueNumber (subscriberId, phonebookId, value) {
-    return setPreferencePhonebook(subscriberId, phonebookId, 'number', value)
-}
+
 export function setValueNumberCustomer (customerId, phonebookId, value) {
     return setPreferencePhonebookCustomer(customerId, phonebookId, 'number', value)
 }
