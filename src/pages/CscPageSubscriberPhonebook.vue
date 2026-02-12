@@ -64,8 +64,8 @@
                 v-model:pagination="pagination"
                 class="no-shadow"
                 :columns="columns"
-                :rows="subscriberPhonebook"
-                :loading="$wait.is('loadSubscriberPhonebook')"
+                :rows="phonebookRows"
+                :loading="$wait.is('loadPhonebook')"
                 row-key="id"
                 @request="fetchPaginatedRegistrations"
             >
@@ -144,7 +144,6 @@ import CscPageSticky from 'components/CscPageSticky'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscSpinner from 'components/CscSpinner'
 import CscSubscriberFilters from 'components/pages/SubscriberPhonebook/CscSubscriberFilters'
-import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters, mapState } from 'vuex'
 export default {
@@ -161,22 +160,15 @@ export default {
     },
     data () {
         return {
-            data: [],
-            pagination: {
-                sortBy: 'id',
-                descending: false,
-                page: 1,
-                rowsPerPage: LIST_DEFAULT_ROWS,
-                rowsNumber: 0
-            },
             filters: {},
             showFilters: false
         }
     },
     computed: {
-        ...mapState('user', [
-            'subscriberPhonebook'
-        ]),
+        ...mapState('subscriber-phonebook', {
+            phonebookRows: 'phonebookRows',
+            pagination: 'pagination'
+        }),
         ...mapGetters('user', [
             'isPbxEnabled',
             'getSubscriberId'
@@ -224,10 +216,10 @@ export default {
         await this.refresh()
     },
     methods: {
-        ...mapWaitingActions('user', {
-            loadSubscriberPhonebook: 'loadSubscriberPhonebook',
-            removeSubscriberPhonebook: 'removeSubscriberPhonebook',
-            updateValueShared: 'updateValueShared'
+            ...mapWaitingActions('subscriber-phonebook', {
+            loadPhonebook: 'loadPhonebook',
+            removeEntry: 'removeEntry',
+            updateSharedValue: 'updateSharedValue'
         }),
         async refresh () {
             await this.fetchPaginatedRegistrations({
@@ -236,16 +228,14 @@ export default {
         },
         async fetchPaginatedRegistrations (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
-            const count = await this.loadSubscriberPhonebook({
+            await this.loadPhonebook({
+                include: 'customer',
+                subscriber_id: this.getSubscriberId,
                 page,
                 rows: rowsPerPage,
                 order_by: sortBy,
-                order_by_direction: descending ? 'desc' : 'asc',
-                include: 'customer',
-                subscriber_id: this.getSubscriberId
+                order_by_direction: descending ? 'desc' : 'asc'
             })
-            this.pagination = { ...props.pagination }
-            this.pagination.rowsNumber = count
         },
         async showPhonebookDetails (row) {
             this.$router.push(`/user/subscriber-phonebook/${row.id}`)
@@ -267,13 +257,13 @@ export default {
         },
         async deleteRow (row) {
             this.$q.dialog({
-                title: this.$t('Delete subscriber phonebook'),
-                message: this.$t('You are about to delete this phonebook'),
+                title: this.$t('Delete subscriber phonebook entry'),
+                message: this.$t('You are about to delete this phonebook entry'),
                 color: 'negative',
                 cancel: true,
                 persistent: true
             }).onOk(async (data) => {
-                await this.removeSubscriberPhonebook({
+                await this.removeEntry({
                     row,
                     subscriberId: this.getSubscriberId
                 })
@@ -281,7 +271,7 @@ export default {
             })
         },
         async toggleShared (row) {
-            await this.updateValueShared(row)
+            await this.updateSharedValue(row)
         },
         isLevelEntry (id) {
         // Entries with composite Ids are considered "level entries", must not be modified (no edit or delete allowed)
@@ -290,7 +280,7 @@ export default {
         openSeatTable () {
             this.$router.push('/user/seats')
         },
-        applyFilter (filters) {
+        async applyFilter (filters) {
             this.filters = filters
             // Add wildcards to make search more extensive
             if (filters?.name) {
@@ -300,14 +290,13 @@ export default {
                 this.filters.number = `*${filters.number}*`
             }
 
-            this.pagination.page = 1 // Reset to first page on filter change
-
             this.$scrollTo(this.$parent.$el)
-            const payload = this.filters
-            payload.page = 1
-            payload.subscriber_id = this.getSubscriberId
-
-            this.loadSubscriberPhonebook(payload)
+            await this.loadPhonebook({
+                ...this.filters,
+                page: 1,
+                rows: this.pagination.rowsPerPage,
+                subscriber_id: this.getSubscriberId
+            })
         },
         closeFilters () {
             this.showFilters = false
@@ -316,10 +305,10 @@ export default {
         openSearchFilters () {
             this.showFilters = true
         },
-        resetFilters () {
+        async resetFilters () {
             if (this.hasFilters) {
                 this.filters = {}
-                this.loadSubscriberPhonebook({
+                await this.loadPhonebook({
                     page: this.pagination.page,
                     rows: this.pagination.rowsPerPage,
                     order_by: this.pagination.sortBy,

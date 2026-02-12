@@ -91,7 +91,13 @@ export default {
         }
     },
     async mounted () {
-        await this.getPhonebook(this.id)
+        const response = await this.getEntry({
+            id: this.id,
+            subscriberId: this.getSubscriberId
+        })
+        this.name = response.name
+        this.number = response.number
+        this.shared = response.shared
     },
     computed: {
         ...mapGetters('user', [
@@ -99,48 +105,23 @@ export default {
         ])
     },
     methods: {
-        ...mapWaitingActions('user', {
-            getPhonebookDetails: 'getPhonebookDetails',
-            getValueShared: 'getValueShared',
-            getValueName: 'getValueName',
-            getValueNumber: 'getValueNumber'
+        ...mapWaitingActions('subscriber-phonebook', {
+            getEntry: 'getEntry',
+            updateEntry: 'updateEntry'
         }),
-        async getPhonebook (id) {
-            const response = await this.getPhonebookDetails({ phonebookId: id, subscriberId: this.getSubscriberId })
-            this.name = response.data.name
-            this.number = response.data.number
-            this.shared = response.data.shared
-        },
         cancel () {
             this.$router.push('/user/subscriber-phonebook/')
             this.$emit('cancel')
         },
-        async changeValueName () {
-            await this.getValueName({
+        async confirm () {
+            await this.updateEntry({
                 subscriberId: this.getSubscriberId,
-                phonebookId: this.id,
+                id: this.id,
+                number: this.number,
+                shared: this.shared,
                 name: this.name
             })
-        },
-        changeValueShared () {
-            this.getValueShared({
-                subscriberId: this.getSubscriberId,
-                phonebookId: this.id,
-                shared: this.shared
-            })
-        },
-        changeValueNumber () {
-            this.getValueNumber({
-                subscriberId: this.getSubscriberId,
-                phonebookId: this.id,
-                number: this.number
-            })
-        },
-        async confirm () {
-            await this.changeValueName()
-            await this.changeValueShared()
-            await this.changeValueNumber()
-            await this.$router.push('/user/subscriber-phonebook/')
+            this.$router.push('/user/subscriber-phonebook/')
         }
     }
 }
