@@ -37,13 +37,6 @@ export default {
             state.pagination = { ...state.pagination, ...pagination }
         },
         setSharedValue (state, { id, value }) {
-            const index = state.phonebookRows.findIndex((row) => {
-                return row.id === id
-            })
-            if (index > -1) {
-                state.phonebookRows[index].shared = value
-            }
-            // Also update in phonebookRows if present
             const rowIndex = state.phonebookRows.findIndex((row) => row.id === id)
             if (rowIndex > -1) {
                 state.phonebookRows[rowIndex].shared = value
