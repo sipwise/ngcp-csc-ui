@@ -1,3 +1,10 @@
+ngcp-csc-ui (11.5.1.32+0~mr11.5.1.32) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [c0506e2] MT#64416 Fix axios vulnerability
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 13 Feb 2026 10:44:39 +0100
+
 ngcp-csc-ui (11.5.1.31+0~mr11.5.1.31) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
