@@ -101,6 +101,7 @@ export async function getList (options) {
     }, options)
     if (requestConfig.all === true) {
         requestConfig.params.rows = LIST_ALL_ROWS
+        requestConfig.params.page = LIST_DEFAULT_PAGE
     }
     if (requestConfig.resource !== undefined) {
         requestConfig.path = `api/${requestConfig.resource}/`
