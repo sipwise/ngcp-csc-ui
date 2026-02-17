@@ -87,7 +87,7 @@ export default {
         async updateSharedValue (context, row) {
             const newValue = !row.shared
             context.commit('setSharedValue', { id: row.id, value: newValue })
-            await setSharedValue(row.id, newValue)
+            await setSharedValue(row, newValue)
         }
     }
 }

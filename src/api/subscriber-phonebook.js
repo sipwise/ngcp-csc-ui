@@ -32,16 +32,16 @@ export async function getEntryById (subscriberId, id) {
     })
 }
 
-export async function getPhonebook (options) {
+export async function getPhonebook (data) {
     return getList({
-        path: `api/v2/subscribers/${options.subscriber_id}/phonebook`,
-        params: options
+        path: `api/v2/subscribers/${data.subscriber_id}/phonebook`,
+        params: data
     })
 }
 
-export function setSharedValue (subscriberId, phonebookId, value) {
+export function setSharedValue (data, value) {
      return patchReplace({
-            path: `api/v2/subscribers/${subscriberId}/phonebook/${phonebookId}`,
+            path: `api/v2/subscribers/${data.subscriber_id}/phonebook/${data.id}`,
             fieldPath: 'shared',
             value
         })
