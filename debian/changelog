@@ -1,3 +1,16 @@
+ngcp-csc-ui (14.1.1.1+0~mr14.1.1.1) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [ba960b4] MT#64397 Restore component names for Cypress data-cy generation
+  * [859227c] MT#64416 Fix axios vulnerability
+  * [b8e0346] MT#64432 Refactor Subscriber Phonebook
+  * [5335731] MT#64432 Refactor updateSharedValue and getList
+
+  [ nidrissi-zouggari ]
+  * [8fac7f7] MT#64240 Fix call page input bug
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 17 Feb 2026 09:10:01 +0100
+
 ngcp-csc-ui (14.1.1.0+0~mr14.1.1.0) unstable; urgency=medium
 
   [ Debora Crescenzo ]
