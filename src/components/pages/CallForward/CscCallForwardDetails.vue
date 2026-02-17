@@ -32,6 +32,12 @@
                         :label="$t('If busy')"
                         @click="createMapping({ type: 'cfb', subscriberId: id})"
                     />
+                    <csc-popup-menu-item
+                        v-if="hasSubscriberProfileAttribute('cft')"
+                        color="primary"
+                        :label="$t('On no answer')"
+                        @click="createMapping({ type: 'cft', subscriberId: id})"
+                    />
                 </csc-popup-menu>
                 <template
                     #loading

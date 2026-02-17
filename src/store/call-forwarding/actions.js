@@ -27,8 +27,7 @@ import {
     getList,
     patchReplace,
     patchReplaceFull,
-    post,
-    put
+    post
 } from 'src/api/common'
 import { i18n } from 'src/boot/i18n'
 import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
@@ -68,12 +67,19 @@ export async function loadMappingsFull ({ dispatch, commit, rootGetters }, id) {
 export async function createMapping ({ dispatch, commit, state, rootGetters }, payload) {
     try {
         dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
-        let type = payload.type
-        if (payload.type === 'cfu' && state.mappings.cft && state.mappings.cft.length > 0) {
-            type = 'cft'
-        }
+        const type = payload.type
         const subscriberId = payload.subscriberId ? payload.subscriberId : rootGetters['user/getSubscriberId']
         const mappings = _.cloneDeep(state.mappings[type])
+
+        if (type === 'cft' && state.mappings.cft_ringtimeout === null) {
+            await patchReplaceFull({
+                resource: 'cfmappings',
+                resourceId: subscriberId,
+                fieldPath: 'cft_ringtimeout',
+                value: DEFAULT_RING_TIMEOUT
+            })
+        }
+
         const destinationSet = await post({
             resource: 'cfdestinationsets',
             body: {
@@ -110,18 +116,28 @@ export async function createMapping ({ dispatch, commit, state, rootGetters }, p
 export async function deleteMapping ({ dispatch, commit, state, rootGetters }, payload) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     const mappings = _.cloneDeep(state.mappings[payload.type])
+    const subscriberId = (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId']
     const updatedMappings = mappings.reduce(($updatedMappings, value, index) => {
         if (index !== payload.index) {
             $updatedMappings.push(value)
         }
         return $updatedMappings
     }, [])
-    const patchRes = await patchReplaceFull({
+    let patchRes = await patchReplaceFull({
         resource: 'cfmappings',
-        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+        resourceId: subscriberId,
         fieldPath: payload.type,
         value: updatedMappings
     })
+
+    if (payload.type === 'cft' && updatedMappings.length === 0) {
+        patchRes = await patchReplaceFull({
+            resource: 'cfmappings',
+            resourceId: subscriberId,
+            fieldPath: 'cft_ringtimeout',
+            value: null
+        })
+    }
 
     try {
         await cfDeleteDestinationSet(payload.destinationset_id)
@@ -575,36 +591,6 @@ export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, p
     dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
 
-export async function ringPrimaryNumber ({ commit, rootGetters, state }, payload) {
-    const mappings = _.cloneDeep(state.mappings)
-    mappings.cft = mappings.cfu
-    mappings.cfu = []
-    mappings.cft_ringtimeout = 60
-    const updatedMappings = await put({
-        resource: 'cfmappings',
-        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
-        body: mappings
-    })
-    commit('dataSucceeded', {
-        mappings: updatedMappings
-    })
-}
-
-export async function doNotRingPrimaryNumber ({ commit, rootGetters, state }, payload) {
-    const mappings = _.cloneDeep(state.mappings)
-    mappings.cfu = mappings.cft
-    mappings.cft = []
-    mappings.cft_ringtimeout = null
-    const updatedMappings = await put({
-        resource: 'cfmappings',
-        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
-        body: mappings
-    })
-    commit('dataSucceeded', {
-        mappings: updatedMappings
-    })
-}
-
 export async function updateRingTimeout ({ commit, rootGetters, state }, payload) {
     const updatedMappings = await patchReplaceFull({
         resource: 'cfmappings',
@@ -781,6 +767,7 @@ export async function updateAnnouncement ({ dispatch, commit, state }, payload) 
         destinationSets: destinationSets.items
     })
 }
+
 export function resetCallForwardingState ({ commit }) {
         commit('resetState')
 }

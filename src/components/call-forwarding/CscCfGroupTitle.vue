@@ -14,7 +14,7 @@
                     @update:model-value="toggleMappingEvent(mapping)"
                 />
                 <span
-                    v-if="mapping.type === 'cfu' || mapping.type === 'cft'"
+                    v-if="mapping.type === 'cfu'"
                 >
                     {{ $t('Always') }}
                 </span>
@@ -27,6 +27,11 @@
                     v-else-if="mapping.type === 'cfb'"
                 >
                     {{ $t('If busy') }}
+                </template>
+                <template
+                    v-else-if="mapping.type === 'cft'"
+                >
+                    {{ $t('On no answer') }}
                 </template>
                 <template v-if="sourceSet">
                     <template
@@ -252,20 +257,6 @@
                 <template
                     #grid-column-1
                 >
-                    <csc-popup-menu-item
-                        v-if="mapping.type === 'cfu' && hasSubscriberProfileAttribute('cft')"
-                        icon="ring_volume"
-                        :label="$t('Ring primary number')"
-                        data-cy="csc-forwarding-ring-primary"
-                        @click="ringPrimaryNumberEvent"
-                    />
-                    <csc-popup-menu-item
-                        v-if="mapping.type === 'cft'"
-                        icon="phone_disabled"
-                        :label="$t('Do not ring primary number')"
-                        data-cy="csc-forwarding-do-not-ring-primary"
-                        @click="doNotRingPrimaryNumberEvent"
-                    />
                     <csc-popup-menu-item
                         :icon="destinationIconByType('Number')"
                         :label="$t('Forward to Number')"
@@ -512,9 +503,7 @@ export default {
         ...mapActions('callForwarding', [
             'deleteMapping',
             'toggleMapping',
-            'addDestination',
-            'ringPrimaryNumber',
-            'doNotRingPrimaryNumber'
+            'addDestination'
         ]),
         async addDestinationEvent (originalPayload) {
             this.$wait.start(this.waitIdentifier)
@@ -549,16 +538,6 @@ export default {
                 await this.deleteMapping(mappingWithSubscriberId)
                 this.$wait.end(this.waitIdentifier)
             })
-        },
-        async ringPrimaryNumberEvent () {
-            this.$wait.start('csc-cf-mappings-full')
-            await this.ringPrimaryNumber({ subscriberId: this.subscriberId })
-            this.$wait.end('csc-cf-mappings-full')
-        },
-        async doNotRingPrimaryNumberEvent () {
-            this.$wait.start('csc-cf-mappings-full')
-            await this.doNotRingPrimaryNumber({ subscriberId: this.subscriberId })
-            this.$wait.end('csc-cf-mappings-full')
         },
         createSpecificDestination (payload) {
             const newPayload = { ...payload }

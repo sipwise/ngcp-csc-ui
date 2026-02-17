@@ -38,6 +38,13 @@
                         data-cy="csc-add-forwarding-busy"
                         @click="createMapping({ type: 'cfb'})"
                     />
+                    <csc-popup-menu-item
+                        v-if="hasSubscriberProfileAttribute('cft')"
+                        color="primary"
+                        :label="$t('On no answer')"
+                        data-cy="csc-add-forwarding-no-answer"
+                        @click="createMapping({ type: 'cft'})"
+                    />
                 </csc-popup-menu>
                 <template
                     #loading
@@ -53,6 +60,7 @@
                 id="csc-wrapper-call-forwarding"
                 class="col-xs-12 col-lg-8"
             >
+
                 <q-list
                     v-if="groups.length === 0 && !$wait.is('csc-cf-mappings-full')"
                     dense
@@ -134,8 +142,10 @@ export default {
             return this.ringTimeout && this.groups.some((group) => group.type === 'cft')
         }
     },
+    created () {
+        this.resetCallForwardingState()
+    },
     async mounted () {
-        await this.resetCallForwardingState()
         await this.loadAnnouncements()
         await this.loadMappingsFull()
     },
