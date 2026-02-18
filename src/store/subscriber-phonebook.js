@@ -52,6 +52,7 @@ export default {
         async loadPhonebook ({ commit }, options) {
             try {
                 const list = await getPhonebook({
+                    include: 'customer',
                     ...options
                 })
                 commit('setPhonebookRows', list.items || [])
