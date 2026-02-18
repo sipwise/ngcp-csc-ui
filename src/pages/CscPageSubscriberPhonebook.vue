@@ -229,7 +229,6 @@ export default {
         async fetchPaginatedRegistrations (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
             await this.loadPhonebook({
-                include: 'customer',
                 subscriber_id: this.getSubscriberId,
                 page,
                 rows: rowsPerPage,
@@ -313,7 +312,6 @@ export default {
                     rows: this.pagination.rowsPerPage,
                     order_by: this.pagination.sortBy,
                     order_by_direction: this.pagination.descending ? 'desc' : 'asc',
-                    include: 'customer',
                     subscriber_id: this.getSubscriberId
                 })
             }
