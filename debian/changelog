@@ -1,3 +1,11 @@
+ngcp-csc-ui (14.1.1.2+0~mr14.1.1.2) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [363229e] MT#64432 Fix typo
+  * [e9ce70f] MT#64432 Enxtract include: customer param
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Feb 2026 16:07:35 +0100
+
 ngcp-csc-ui (14.1.1.1+0~mr14.1.1.1) unstable; urgency=medium
 
   [ Debora Crescenzo ]
