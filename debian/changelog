@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.63+0~mr12.5.1.63) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [5183692] MT#64432 Refactor Subscriber Phonebook
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Feb 2026 16:07:50 +0100
+
 ngcp-csc-ui (12.5.1.62+0~mr12.5.1.62) unstable; urgency=medium
 
   [ Debora Crescenzo ]
