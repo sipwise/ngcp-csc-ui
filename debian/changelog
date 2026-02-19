@@ -1,3 +1,13 @@
+ngcp-csc-ui (14.0.1.7+0~mr14.0.1.7) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [8165192] MT#64432 Refactor Subscriber Phonebook
+  * [2bccbbf] MT#64432 Refactor updateSharedValue and getList
+  * [a114b26] MT#64432 Fix typo
+  * [e42c799] MT#64432 Enxtract include: customer param
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 19 Feb 2026 16:07:38 +0100
+
 ngcp-csc-ui (14.0.1.6+0~mr14.0.1.6) unstable; urgency=medium
 
   [ Debora Crescenzo ]
