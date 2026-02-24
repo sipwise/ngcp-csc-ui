@@ -82,7 +82,7 @@ export default {
     emits: ['filter'],
     data () {
         return {
-            filterType: null,
+            filterType: 'name',
             typedFilter: '',
             filters: []
         }
