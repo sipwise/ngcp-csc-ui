@@ -1,3 +1,10 @@
+ngcp-csc-ui (14.1.1.4+0~mr14.1.1.4) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [1755187] MT#64501 Subscriber phonebook default filter
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 26 Feb 2026 09:42:15 +0100
+
 ngcp-csc-ui (14.1.1.3+0~mr14.1.1.3) unstable; urgency=medium
 
   * New release.
