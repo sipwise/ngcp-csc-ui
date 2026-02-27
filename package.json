@@ -14,7 +14,7 @@
     "build": "quasar build",
     "dev": "quasar dev",
     "dev:docker": "sh ./bin/run-docker.sh",
-    "docker:rebuild:local": "docker build -f env/Dockerfile . -t ngcp-csc-ui-env-buster",
+    "docker:rebuild:local": "docker build -f t/Dockerfile . -t ngcp-csc-ui-trixie",
     "docker:run:local": "sh ./bin/run-docker.sh local",
     "test:unit": "jest --updateSnapshot",
     "test:unit:coverage": "jest --coverage",

@@ -2,8 +2,8 @@
 
 set -e
 
-readonly DOCKER_GLOBAL_IMAGE_NAME='docker.mgm.sipwise.com/ngcp-csc-ui-env-buster:latest'
-readonly DOCKER_LOCAL_IMAGE_NAME='ngcp-csc-ui-env-buster:latest'
+readonly DOCKER_GLOBAL_IMAGE_NAME='docker.mgm.sipwise.com/ngcp-csc-ui-trixie:latest'
+readonly DOCKER_LOCAL_IMAGE_NAME='ngcp-csc-ui-trixie:latest'
 
 echo "Running CSC UI dev environment in Docker"
 
