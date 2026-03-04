@@ -1,11 +1,19 @@
+import { sortDestinationsByPriority } from 'src/helpers/call-forwarding-destinations'
+
 export function dataSucceeded (state, res) {
     if (res.destinationSets) {
         const destinationSetMap = {}
-        res.destinationSets.forEach((destinationSet) => {
+        const orderedDestinationSets = res.destinationSets.map((destinationSet) => {
+            return {
+                ...destinationSet,
+                destinations: sortDestinationsByPriority(destinationSet.destinations)
+            }
+        })
+        orderedDestinationSets.forEach((destinationSet) => {
             destinationSetMap[destinationSet.id] = destinationSet
         })
         state.destinationSetMap = destinationSetMap
-        state.destinationSets = res.destinationSets
+        state.destinationSets = orderedDestinationSets
     }
     if (res.sourceSets) {
         const sourceSetMap = {}
