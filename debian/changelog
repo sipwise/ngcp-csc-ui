@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.64+0~mr12.5.1.64) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [730c3fd] MT#59078 Disable Primary Acli Creation
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 04 Mar 2026 12:51:49 +0100
+
 ngcp-csc-ui (12.5.1.63+0~mr12.5.1.63) unstable; urgency=medium
 
   [ Debora Crescenzo ]
