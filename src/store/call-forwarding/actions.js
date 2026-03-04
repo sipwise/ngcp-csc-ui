@@ -24,6 +24,7 @@ import {
     post, put
 } from 'src/api/common'
 import { i18n } from 'src/boot/i18n'
+import { normalizePriorities } from 'src/helpers/call-forwarding-destinations'
 import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
 import { v4 } from 'uuid'
 
@@ -31,10 +32,10 @@ const DEFAULT_RING_TIMEOUT = 60
 const DEFAULT_PRIORITY = 0
 const WAIT_IDENTIFIER = 'csc-cf-mappings-full'
 
-function createDefaultDestination (destination, defaultAnnouncementId) {
+function createDefaultDestination (destination, defaultAnnouncementId, priority = DEFAULT_PRIORITY) {
     const payload = {
         destination: destination || ' ',
-        priority: DEFAULT_PRIORITY,
+        priority,
         timeout: DEFAULT_RING_TIMEOUT
     }
     if (destination === 'customhours') {
@@ -47,10 +48,12 @@ export async function loadMappingsFull ({ dispatch, commit, rootGetters }, id) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     const subscriberId = id || rootGetters['user/getSubscriberId']
     const mappingData = await cfLoadMappingsFull(subscriberId)
+    const mappings = mappingData[0]
+    const destinationSets = mappingData[1].items
 
     commit('dataSucceeded', {
-        mappings: mappingData[0],
-        destinationSets: mappingData[1].items,
+        mappings,
+        destinationSets,
         sourceSets: mappingData[2].items,
         timeSets: mappingData[3].items
     })
@@ -154,11 +157,12 @@ export async function updateDestination ({ dispatch, commit, state }, payload) {
     dispatch('wait/start', 'csc-cf-destination-set-update', { root: true })
     const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
     destinations[payload.destinationIndex].destination = payload.destination
+    const normalizedDestinations = normalizePriorities(destinations)
     await patchReplace({
         resource: 'cfdestinationsets',
         resourceId: payload.destinationSetId,
         fieldPath: 'destinations',
-        value: destinations
+        value: normalizedDestinations
     })
     const destinationSets = await cfLoadDestinationSets()
     commit('dataSucceeded', {
@@ -170,12 +174,17 @@ export async function updateDestination ({ dispatch, commit, state }, payload) {
 export async function addDestination ({ dispatch, commit, state, rootGetters }, payload) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
-    destinations.push(createDefaultDestination(payload.destination, payload.defaultAnnouncementId))
+    const normalizedDestinations = normalizePriorities(destinations)
+    normalizedDestinations.push(createDefaultDestination(
+        payload.destination,
+        payload.defaultAnnouncementId,
+        normalizedDestinations.length
+    ))
     await patchReplace({
         resource: 'cfdestinationsets',
         resourceId: payload.destinationSetId,
         fieldPath: 'destinations',
-        value: destinations
+        value: normalizedDestinations
     })
     const destinationSets = await cfLoadDestinationSets()
     commit('dataSucceeded', {
@@ -209,11 +218,12 @@ export async function removeDestination ({ dispatch, commit, state }, payload) {
         }
         return $updatedDestinations
     }, [])
+    const normalizedDestinations = normalizePriorities(updatedDestinations)
     await patchReplace({
         resource: 'cfdestinationsets',
         resourceId: payload.destinationSetId,
         fieldPath: 'destinations',
-        value: updatedDestinations
+        value: normalizedDestinations
     })
     const destinationSets = await cfLoadDestinationSets()
     commit('dataSucceeded', {
@@ -226,12 +236,13 @@ export async function updateDestinationTimeout ({ dispatch, commit, state }, pay
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
     destinations[payload.destinationIndex].timeout = payload.destinationTimeout
+    const normalizedDestinations = normalizePriorities(destinations)
     try {
         await patchReplace({
             resource: 'cfdestinationsets',
             resourceId: payload.destinationSetId,
             fieldPath: 'destinations',
-            value: destinations
+            value: normalizedDestinations
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -628,11 +639,12 @@ export async function updateAnnouncement ({ dispatch, commit, state }, payload) 
     try {
         const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
         destinations[payload.destinationIndex].announcement_id = payload.announcementId
+        const normalizedDestinations = normalizePriorities(destinations)
         await patchReplace({
             resource: 'cfdestinationsets',
             resourceId: payload.destinationSetId,
             fieldPath: 'destinations',
-            value: destinations
+            value: normalizedDestinations
         })
     } catch (e) {
         showGlobalError(e.message)
