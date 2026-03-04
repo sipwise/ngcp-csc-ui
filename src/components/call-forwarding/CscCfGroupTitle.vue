@@ -331,17 +331,6 @@
                         })"
                     />
                     <csc-popup-menu-item
-                        v-if="platformInfo.callthrough || platformInfo.callingcard"
-                        :icon="destinationIconByType('LocalSubscriber')"
-                        :label="$t('Forward to Local Subscriber')"
-                        data-cy="csc-forwarding-to-local-subscriber"
-                        :disable="hasTermination"
-                        @click="addDestinationEvent({
-                            destination: 'localuser',
-                            destinationSetId: destinationSet.id
-                        })"
-                    />
-                    <csc-popup-menu-item
                         :icon="(mapping.enabled)?'toggle_on':'toggle_off'"
                         :label="(mapping.enabled)?$t('Disable'):$t('Enable')"
                         data-cy="csc-forwarding-disable"
