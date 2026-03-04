@@ -1,56 +1,5 @@
 import _ from 'lodash'
-import sipUriParse from 'src/sip-uri-parse'
-
-const DestinationType = {
-    VoiceBox: 'VoiceBox',
-    Conference: 'Conference',
-    Fax2Mail: 'Fax2Mail',
-    CallingCard: 'CallingCard',
-    CallThrough: 'CallThrough',
-    AutoAttendant: 'AutoAttendant',
-    OfficeHoursAnnouncement: 'OfficeHoursAnnouncement',
-    CustomAnnouncement: 'CustomAnnouncement',
-    LocalSubscriber: 'LocalSubscriber',
-    ManagerSecretary: 'ManagerSecretary',
-    Application: 'Application',
-    Number: 'Number'
-}
-
-function parseSipUri (sipUri) {
-    const parsedUri = sipUriParse(sipUri)
-    const host = parsedUri.host
-    const username = parsedUri.username
-    let destinationType
-    if (host.endsWith('voicebox.local')) {
-        destinationType = DestinationType.VoiceBox
-    } else if (host.endsWith('conference.local')) {
-        destinationType = DestinationType.Conference
-    } else if (host.endsWith('fax2mail.local')) {
-        destinationType = DestinationType.Fax2Mail
-    } else if (username === 'callingcard' && host.endsWith('app.local')) {
-        destinationType = DestinationType.CallingCard
-    } else if (username === 'callthrough' && host.endsWith('app.local')) {
-        destinationType = DestinationType.CallThrough
-    } else if (username === 'auto-attendant' && host.endsWith('app.local')) {
-        destinationType = DestinationType.AutoAttendant
-    } else if (username === 'office-hours' && host.endsWith('app.local')) {
-        destinationType = DestinationType.OfficeHoursAnnouncement
-    } else if (username === 'custom-hours' && host.endsWith('app.local')) {
-        destinationType = DestinationType.CustomAnnouncement
-    } else if (username === 'localuser' && host.endsWith('local')) {
-        destinationType = DestinationType.LocalSubscriber
-    } else if (host.endsWith('managersecretary.local')) {
-        destinationType = DestinationType.ManagerSecretary
-    } else if (host.endsWith('app.local')) {
-        destinationType = DestinationType.Application
-    } else {
-        destinationType = DestinationType.Number
-    }
-    return {
-        destinationType,
-        parsedUri
-    }
-}
+import { DestinationType, parseSipUri } from 'src/helpers/call-forwarding-destinations'
 
 export default {
     methods: {
