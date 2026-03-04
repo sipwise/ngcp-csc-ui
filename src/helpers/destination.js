@@ -9,7 +9,6 @@ export const DestinationType = {
     AutoAttendant: 'AutoAttendant',
     OfficeHoursAnnouncement: 'OfficeHoursAnnouncement',
     CustomAnnouncement: 'CustomAnnouncement',
-    LocalSubscriber: 'LocalSubscriber',
     ManagerSecretary: 'ManagerSecretary',
     Application: 'Application',
     Number: 'Number'
@@ -37,8 +36,6 @@ export function parseSipUri (sipUri) {
         destinationType = DestinationType.OfficeHoursAnnouncement
     } else if (username === 'custom-hours' && host.endsWith('app.local')) {
         destinationType = DestinationType.CustomAnnouncement
-    } else if (username === 'localuser' && host.endsWith('local')) {
-        destinationType = DestinationType.LocalSubscriber
     } else if (host.endsWith('managersecretary.local')) {
         destinationType = DestinationType.ManagerSecretary
     } else if (host.endsWith('app.local')) {
@@ -90,10 +87,6 @@ export function isDestinationTypeCustomAnnouncement (sipUri) {
     return isDestinationType(sipUri, DestinationType.CustomAnnouncement)
 }
 
-export function isDestinationTypeLocalSubscriber (sipUri) {
-    return isDestinationType(sipUri, DestinationType.LocalSubscriber)
-}
-
 export function isDestinationTypeManagerSecretary (sipUri) {
     return isDestinationType(sipUri, DestinationType.ManagerSecretary)
 }
@@ -116,7 +109,6 @@ export function getDestinationIcon (destinationType) {
         case DestinationType.AutoAttendant: return 'dialpad'
         case DestinationType.OfficeHoursAnnouncement: return 'schedule'
         case DestinationType.CustomAnnouncement: return 'music_note'
-        case DestinationType.LocalSubscriber: return 'person_pin'
         case DestinationType.ManagerSecretary: return 'support_agent'
         case DestinationType.Application: return 'apps'
         case DestinationType.Number: return 'phone_forwarded'
