@@ -9,6 +9,7 @@
             <q-toggle
                 v-model="manager_secretary"
                 :label="$t('Manager Secretary feature')"
+                data-cy="csc-manager-secretary-toggle"
                 :disable="isNumbersRequesting || isLoading"
                 @update:model-value="addOrRemoveMs()"
             />
@@ -26,6 +27,7 @@
                         chips
                         :disable="isNumbersRequesting || isLoading || !manager_secretary"
                         :label="$t('Select secretary numbers')"
+                        data-cy="csc-manager-secretary-dropdown"
                         :options="getFullNumberOptions"
                     >
                         <template
