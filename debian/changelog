@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.5.1.17+0~mr13.5.1.17) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [fbf0ace] MT#64585 Remove the CF to Local Subscriber feature
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Mar 2026 12:08:33 +0100
+
 ngcp-csc-ui (13.5.1.16+0~mr13.5.1.16) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
