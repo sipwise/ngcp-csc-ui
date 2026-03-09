@@ -1,4 +1,5 @@
 import { sortDestinationsByPriority } from 'src/helpers/call-forwarding-destinations'
+import { CreationState } from 'src/store/common'
 
 export function dataSucceeded (state, res) {
     if (res.bNumberSets) {
@@ -60,9 +61,23 @@ export function resetState (state) {
     state.destinationSetMap = {}
     state.sourceSetMap = {}
     state.timeSetMap = {}
-    state.bNumberSets = null
-    state.destinationSets = null
-    state.sourceSets = null
-    state.timeSets = null
     state.announcements = []
+}
+
+export function cfCreationRequesting (state, cf) {
+    state.cfCreationState = CreationState.creating
+    state.cfCreating = cf
+}
+
+export function cfCreationSucceeded (state) {
+    state.cfCreationState = CreationState.created
+}
+
+export function enableCfAddForm (state) {
+    state.cfCreationState = CreationState.input
+    state.cfCreating = null
+}
+
+export function disableCfAddForm (state) {
+    state.cfCreationState = CreationState.initiated
 }

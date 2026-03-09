@@ -14,6 +14,7 @@ export function useUser () {
     const isAdmin = computed(() => store.getters['user/isAdmin'])
     const isPbxAdmin = computed(() => store.getters['user/isPbxAdmin'])
     const isPbxEnabled = computed(() => store.getters['user/isPbxEnabled'])
+    const isSpCe = computed(() => store.getters['user/isSpCe'])
     const loginRequesting = computed(() => store.getters['user/loginRequesting'])
     const isPasswordChanging = computed(() => store.getters['user/isPasswordChanging'])
 
@@ -41,6 +42,7 @@ export function useUser () {
         isAdmin,
         isPbxAdmin,
         isPbxEnabled,
+        isSpCe,
         loginRequesting,
         isPasswordChanging,
 

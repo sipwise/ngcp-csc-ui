@@ -4,7 +4,7 @@
         class="q-pa-lg"
     >
         <template
-            v-if="hasSomeSubscriberProfileAttributes(['cfu', 'cfna', 'cfb'])"
+            v-if="hasSomeSubscriberProfileAttributes(['cfu', 'cfna', 'cfb', 'cft'])"
             #header
         >
             <q-btn
@@ -15,43 +15,26 @@
                 data-cy="csc-add-forwarding"
                 :disable="$wait.is('csc-cf-mappings-full')"
                 :loading="$wait.is('csc-cf-mappings-full')"
+                @click=" this.enableCfAddForm()"
             >
-                <csc-popup-menu>
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cfu')"
-                        color="primary"
-                        :label="$t('Always')"
-                        data-cy="csc-add-forwarding-available"
-                        @click="createMapping({ type: 'cfu'})"
-                    />
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cfna')"
-                        color="primary"
-                        :label="$t('If not available')"
-                        data-cy="csc-add-forwarding-not-available"
-                        @click="createMapping({ type: 'cfna'})"
-                    />
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cfb')"
-                        color="primary"
-                        :label="$t('If busy')"
-                        data-cy="csc-add-forwarding-busy"
-                        @click="createMapping({ type: 'cfb'})"
-                    />
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cft')"
-                        color="primary"
-                        :label="$t('On no answer')"
-                        data-cy="csc-add-forwarding-no-answer"
-                        @click="createMapping({ type: 'cft'})"
-                    />
-                </csc-popup-menu>
                 <template
                     #loading
                 >
                     <csc-spinner />
                 </template>
             </q-btn>
+        </template>
+        <template
+            #toolbar
+        >
+            <csc-cf-add-form
+                v-if="!isCfAddFormDisabled"
+                ref="addCfForm"
+                class="q-mb-md q-pa-md"
+                :loading="$wait.is('csc-cf-mappings-full')"
+                @save="createCf($event)"
+                @cancel="disableCfAddForm"
+            />
         </template>
         <div
             class="row justify-center q-pt-lg"
@@ -109,9 +92,15 @@ import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuRingTimeout from 'components/CscPopupMenuRingTimeout'
 import CscSpinner from 'components/CscSpinner'
+import CscCfAddForm from 'components/call-forwarding/CscCfAddForm'
 import CscCfGroup from 'components/call-forwarding/CscCfGroup'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
-import { mapActions, mapGetters, mapState } from 'vuex'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 export default {
     name: 'CscPageCf',
     components: {
@@ -121,7 +110,8 @@ export default {
         CscPopupMenu,
         CscPopupMenuItem,
         CscPopupMenuRingTimeout,
-        CscCfGroup
+        CscCfGroup,
+        CscCfAddForm
     },
     computed: {
         ...mapState('callForwarding', [
@@ -133,7 +123,8 @@ export default {
         ]),
         ...mapGetters('callForwarding', [
             'groups',
-            'ringTimeout'
+            'ringTimeout',
+            'isCfAddFormDisabled'
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
@@ -146,9 +137,10 @@ export default {
     },
     async created () {
         await this.loadAnnouncements()
-        await this.loadMappingsFull()
+        await this.loadMappingsFull(this.getSubscriberId)
     },
     beforeUnmount () {
+        this.disableCfAddForm()
         this.resetCallForwardingState()
     },
     methods: {
@@ -157,7 +149,15 @@ export default {
             'createMapping',
             'loadAnnouncements',
             'resetCallForwardingState'
-        ])
+        ]),
+        ...mapMutations('callForwarding', [
+            'enableCfAddForm',
+            'disableCfAddForm'
+        ]),
+        async createCf (data) {
+            await this.createMapping(data)
+            this.disableCfAddForm()
+        }
     }
 }
 </script>

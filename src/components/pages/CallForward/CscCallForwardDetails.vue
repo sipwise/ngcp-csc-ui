@@ -9,42 +9,31 @@
                 flat
                 icon="add"
                 color="primary"
+                data-cy="csc-add-pbx-forwarding"
                 :label="$t('Add forwarding')"
                 :disable="$wait.is('csc-cf-mappings-full')"
                 :loading="$wait.is('csc-cf-mappings-full')"
+                @click="this.enableCfAddForm()"
             >
-                <csc-popup-menu>
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cfu')"
-                        color="primary"
-                        :label="$t('Always')"
-                        @click="createMapping({ type: 'cfu', subscriberId: id})"
-                    />
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cfna')"
-                        color="primary"
-                        :label="$t('If not available')"
-                        @click="createMapping({ type: 'cfna', subscriberId: id})"
-                    />
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cfb')"
-                        color="primary"
-                        :label="$t('If busy')"
-                        @click="createMapping({ type: 'cfb', subscriberId: id})"
-                    />
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cft')"
-                        color="primary"
-                        :label="$t('On no answer')"
-                        @click="createMapping({ type: 'cft', subscriberId: id})"
-                    />
-                </csc-popup-menu>
                 <template
                     #loading
                 >
                     <csc-spinner />
                 </template>
             </q-btn>
+        </q-item>
+        <q-item
+            class="row justify-center"
+            v-if="!isCfAddFormDisabled"
+        >
+            <div class="csc-cf-form-wrap">
+                <csc-cf-add-form
+                    ref="addCfForm"
+                    :loading="$wait.is('csc-cf-mappings-full')"
+                    @save="createCf($event)"
+                    @cancel="disableCfAddForm"
+                />
+            </div>
         </q-item>
         <q-item
             class="row justify-center q-pt-lg"
@@ -104,9 +93,15 @@ import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuRingTimeout from 'components/CscPopupMenuRingTimeout'
 import CscSpinner from 'components/CscSpinner'
+import CscCfAddForm from 'components/call-forwarding/CscCfAddForm'
 import CscCfGroup from 'components/call-forwarding/CscCfGroup'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
-import { mapActions, mapGetters, mapState } from 'vuex'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 export default {
     name: 'CscCallForwardDetails',
     components: {
@@ -115,6 +110,7 @@ export default {
         CscPopupMenuRingTimeout,
         CscCfGroup,
         CscCfGroupItemPrimaryNumber,
+        CscCfAddForm,
         CscSpinner
     },
     props: {
@@ -142,7 +138,8 @@ export default {
         ]),
         ...mapGetters('callForwarding', [
             'groups',
-            'ringTimeout'
+            'ringTimeout',
+            'isCfAddFormDisabled'
         ]),
         ...mapState('callForwarding', [
             'bNumberSetMap',
@@ -163,21 +160,36 @@ export default {
         }
     },
     async created () {
+        await this.loadAnnouncements()
         await this.loadMappingsFull(this.id)
     },
     beforeUnmount () {
+        this.disableCfAddForm()
         this.resetCallForwardingState()
     },
     methods: {
         ...mapActions('callForwarding', [
             'loadMappingsFull',
+            'loadAnnouncements',
             'createMapping',
             'resetCallForwardingState'
-        ])
+        ]),
+        ...mapMutations('callForwarding', [
+            'enableCfAddForm',
+            'disableCfAddForm'
+        ]),
+        async createCf (data) {
+            await this.createMapping({ ...data, subscriberId: this.id })
+            this.disableCfAddForm()
+        }
     }
 }
 </script>
 <style lang="sass" scoped>
+.csc-cf-form-wrap
+    width: 100%
+    max-width: 800px
+
 .cf-group-disabled
     opacity: 0.6
     filter: grayscale(30%)

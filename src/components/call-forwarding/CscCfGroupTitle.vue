@@ -500,7 +500,9 @@ export default {
             if (_.isArray(this.announcements) && this.announcements.length > 0) {
                 payload.defaultAnnouncementId = this.announcements[0].value
             }
-            if (this.subscriberId && this.subscriberId !== '') {
+
+            const isGroupOrSeatSubscriber = this.subscriberId && this.subscriberId !== ''
+            if (isGroupOrSeatSubscriber) {
                 payload = this.resolveSubscriberDestination(payload)
             }
             await this.addDestination(payload)

@@ -1,5 +1,9 @@
+import { CreationState } from 'src/store/common'
+
 export default function () {
     return {
+        cfCreating: null,
+        cfCreationState: CreationState.initiated,
         mappings: {
             cfb: [],
             cfna: [],

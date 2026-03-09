@@ -47,15 +47,13 @@ function createDefaultDestination (destination, defaultAnnouncementId, priority 
     return payload
 }
 
-export async function loadMappingsFull ({ dispatch, commit, rootGetters }, id) {
+export async function loadMappingsFull ({ dispatch, commit, rootGetters }, subscriberId) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     try {
-        const subscriberId = id || rootGetters['user/getSubscriberId']
         const mappingData = await cfLoadMappingsFull(subscriberId)
-        const mappings = mappingData[0]
 
         commit('dataSucceeded', {
-            mappings,
+            mappings: mappingData[0],
             destinationSets: mappingData[1].items,
             sourceSets: mappingData[2].items,
             timeSets: mappingData[3].items,
@@ -70,16 +68,29 @@ export async function loadMappingsFull ({ dispatch, commit, rootGetters }, id) {
 
 export async function createMapping ({ dispatch, commit, state, rootGetters }, payload) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
+    const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+    const currentMappings = { ...state.mappings }
+
     try {
-        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
-        const currentMappings = { ...state.mappings }
+        let validatedDestination = null
+        if (payload.simple_destination) {
+            validatedDestination = await dispatch('rewriteDestination', payload.destination)
+        }
+
+        const newDestination = {
+            destination: validatedDestination || payload.destination,
+            priority: DEFAULT_PRIORITY,
+            timeout: DEFAULT_RING_TIMEOUT,
+            announcement_id: payload.announcementId,
+            ...(payload.simple_destination ? { simple_destination: payload.simple_destination } : {})
+        }
 
         const destinationSet = await cfCreateDestinationSet({
             subscriber_id: subscriberId,
-            destinations: [createDefaultDestination()]
+            destinations: [newDestination]
         })
 
-         if (!destinationSet.id) {
+        if (!destinationSet.id) {
             throw new Error('Something went wrong. Please retry later')
         }
 
@@ -96,8 +107,9 @@ export async function createMapping ({ dispatch, commit, state, rootGetters }, p
             mappings: patchedMappings,
             destinationSets: latestDestinationSets.items
         })
-    } catch (error) {
-        showGlobalError(error.message)
+        commit('cfCreationSucceeded')
+    } catch (e) {
+        showGlobalError(e.message)
     } finally {
         dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
     }
@@ -179,7 +191,10 @@ async function updateMapping (
         subscriberId,
         body: {
             ...currentMappings,
-            [type]: [...currentMappings[type], newMapping]
+            [type]: [
+                ...currentMappings[type],
+                newMapping
+            ]
         }
     })
 }
