@@ -29,6 +29,7 @@ import {
     setPreferenceAnnouncementCfu,
     setPreferenceAnnouncementToCallee,
     setPreferenceCli,
+    setPreferenceClir,
     setPreferenceCstaClient,
     setPreferenceCstaController,
     setPreferenceIgnoreCfWhenHunting,
@@ -287,6 +288,14 @@ export function setSeatSIPPassword (options) {
             reject(err)
         })
     })
+}
+
+/**
+ * @param seatId
+ * @param clir
+ */
+export function setSeatClir (seatId, clir) {
+    return setPreferenceClir(seatId, clir)
 }
 
 /**

@@ -407,6 +407,10 @@ export function setPbxGroupIds (id, ids) {
     return setField(id, 'pbx_group_ids', ids)
 }
 
+export function setPreferenceClir (id, value) {
+    return setPreference(id, 'clir', value)
+}
+
 export function setPreferenceIntraPbx (id, value) {
     return setPreference(id, 'clir_intrapbx', value)
 }

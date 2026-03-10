@@ -15,6 +15,7 @@ import {
     setSeatAnnouncementCfu,
     setSeatAnnouncementToCallee,
     setSeatCli,
+    setSeatClir,
     setSeatCstaClient,
     setSeatCstaController,
     setSeatDisplayName,
@@ -123,6 +124,12 @@ export default {
             return (id) => {
                 const seatPreferences = state.preferenceMapById[id]
                 return seatPreferences && seatPreferences.clir_intrapbx ? state.preferenceMapById[id].clir_intrapbx : false
+            }
+        },
+        getClir (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.clir ? state.preferenceMapById[id].clir : false
             }
         },
         getAnnouncementCfu (state) {
@@ -552,10 +559,22 @@ export default {
                 context.commit('seatUpdateFailed', err.message)
             })
         },
+        async setClir (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('The visibility of the number to the callee')
+            })
+            try {
+                const result = await setSeatClir(options.seatId, options.clir)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
         async setIntraPbx (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.global.t('the visibility of the number within own PBX')
+                seatField: options.message || i18n.global.t('The visibility of the number within own PBX')
             })
             try {
                 const result = await setSeatIntraPbx(options.seatId, options.intraPbx)

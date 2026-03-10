@@ -288,6 +288,14 @@
                 no-wrap
             >
                 <q-toggle
+                    v-if="showClir"
+                    v-model="changes.clir"
+                    class="q-pa-sm"
+                    :label="$t('Hide number to the callee')"
+                    :disable="isLoading"
+                    @update:model-value="changeClir"
+                />
+                <q-toggle
                     v-if="showClirIntraPbx"
                     v-model="changes.clirIntrapbx"
                     class="q-pa-sm"
@@ -485,6 +493,7 @@ export default {
             'getDefaultNcosSet',
             'getCurrentCli',
             'getIntraPbx',
+            'getClir',
             'getSeatUpdateToastMessage',
             'isSeatLoading',
             'isSeatMapByIdEmpty',
@@ -567,6 +576,9 @@ export default {
                 })
             }
             return ''
+        },
+        showClir () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.clir)
         },
         showClirIntraPbx () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.clir_intrapbx)
@@ -700,6 +712,7 @@ export default {
             'setSeatNumbers',
             'setSeatGroups',
             'setIntraPbx',
+            'setClir',
             'setMusicOnHold',
             'setSeatSoundSet',
             'loadSeatListItems',
@@ -777,6 +790,7 @@ export default {
                     aliasNumbers: this.getAliasNumberIds(),
                     webPassword: this.seatSelected.webpassword,
                     clirIntrapbx: this.getIntraPbx(this.seatSelected.id),
+                    clir: this.getClir(this.seatSelected.id),
                     announcementCfu: this.getAnnouncementCfu(this.seatSelected.id),
                     announcementCallSetup: this.getAnnouncementCallSetup(this.seatSelected.id),
                     announcementToCallee: this.getAnnouncementToCallee(this.seatSelected.id),
@@ -875,6 +889,12 @@ export default {
                     ncosSetId: this.changes.ncosSet
                 })
             }
+        },
+        changeClir () {
+            this.setClir({
+                seatId: this.seatSelected.id,
+                clir: this.changes.clir
+            })
         },
         changeIntraPbx () {
             this.setIntraPbx({
