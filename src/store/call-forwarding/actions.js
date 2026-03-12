@@ -1,38 +1,35 @@
-import _ from 'lodash'
 import {
     cfCreateBNumberSet,
+    cfCreateDestinationSet,
     cfCreateOfficeHours,
     cfCreateSourceSet,
     cfCreateTimeSetDate,
     cfCreateTimeSetDateRange,
     cfCreateTimeSetWeekdays,
     cfDeleteBNumberSet,
-    cfDeleteDestinationSet,
     cfDeleteSourceSet,
     cfDeleteTimeSet,
+    cfGetAnnouncement,
+    cfLoadAnnouncements,
     cfLoadBNumberSets,
     cfLoadDestinationSets,
     cfLoadMappingsFull,
     cfLoadSourceSets,
     cfLoadTimeSets,
+    cfRewriteDestination,
     cfUpdateBNumberSet,
+    cfUpdateDestinationSets,
+    cfUpdateFullMapping,
+    cfUpdateMappingField,
     cfUpdateOfficeHours,
     cfUpdateSourceSet,
     cfUpdateTimeSetDate,
     cfUpdateTimeSetDateRange,
     cfUpdateTimeSetWeekdays
 } from 'src/api/call-forwarding'
-import {
-    get,
-    getList,
-    patchReplace,
-    patchReplaceFull,
-    post
-} from 'src/api/common'
 import { i18n } from 'src/boot/i18n'
 import { normalizePriorities } from 'src/helpers/call-forwarding-destinations'
 import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
-import { v4 } from 'uuid'
 
 const DEFAULT_RING_TIMEOUT = 60
 const DEFAULT_PRIORITY = 0
@@ -52,57 +49,47 @@ function createDefaultDestination (destination, defaultAnnouncementId, priority 
 
 export async function loadMappingsFull ({ dispatch, commit, rootGetters }, id) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
-    const subscriberId = id || rootGetters['user/getSubscriberId']
-    const mappingData = await cfLoadMappingsFull(subscriberId)
-    const mappings = mappingData[0]
-    const destinationSets = mappingData[1].items
+    try {
+        const subscriberId = id || rootGetters['user/getSubscriberId']
+        const mappingData = await cfLoadMappingsFull(subscriberId)
+        const mappings = mappingData[0]
 
-    commit('dataSucceeded', {
-        mappings,
-        destinationSets,
-        sourceSets: mappingData[2].items,
-        timeSets: mappingData[3].items,
-        bNumberSets: mappingData[4].items
-    })
-    dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
+        commit('dataSucceeded', {
+            mappings,
+            destinationSets: mappingData[1].items,
+            sourceSets: mappingData[2].items,
+            timeSets: mappingData[3].items,
+            bNumberSets: mappingData[4].items
+        })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
+    }
 }
 
 export async function createMapping ({ dispatch, commit, state, rootGetters }, payload) {
+    dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     try {
-        dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
-        const type = payload.type
-        const subscriberId = payload.subscriberId ? payload.subscriberId : rootGetters['user/getSubscriberId']
-        const mappings = _.cloneDeep(state.mappings[type])
+        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+        const currentMappings = { ...state.mappings }
 
-        if (type === 'cft' && state.mappings.cft_ringtimeout === null) {
-            await patchReplaceFull({
-                resource: 'cfmappings',
-                resourceId: subscriberId,
-                fieldPath: 'cft_ringtimeout',
-                value: DEFAULT_RING_TIMEOUT
-            })
+        const destinationSet = await cfCreateDestinationSet({
+            subscriber_id: subscriberId,
+            destinations: [createDefaultDestination()]
+        })
+
+         if (!destinationSet.id) {
+            throw new Error('Something went wrong. Please retry later')
         }
 
-        const destinationSet = await post({
-            resource: 'cfdestinationsets',
-            body: {
-                name: `csc-${v4()}`,
-                subscriber_id: subscriberId,
-                destinations: [createDefaultDestination()]
-            }
-        })
+        const patchedMappings = await updateMapping(
+            subscriberId,
+            payload.type,
+            currentMappings,
+            destinationSet.id
+        )
 
-        mappings.push({
-            destinationset_id: destinationSet.id,
-            enabled: false
-        })
-
-        const patchedMappings = await patchReplaceFull({
-            resource: 'cfmappings',
-            resourceId: subscriberId,
-            fieldPath: type,
-            value: mappings
-        })
         const latestDestinationSets = await cfLoadDestinationSets()
 
         commit('dataSucceeded', {
@@ -118,156 +105,184 @@ export async function createMapping ({ dispatch, commit, state, rootGetters }, p
 
 export async function deleteMapping ({ dispatch, commit, state, rootGetters }, payload) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
-    const mappings = _.cloneDeep(state.mappings[payload.type])
-    const subscriberId = (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId']
-    const updatedMappings = mappings.reduce(($updatedMappings, value, index) => {
-        if (index !== payload.index) {
-            $updatedMappings.push(value)
-        }
-        return $updatedMappings
-    }, [])
-    let patchRes = await patchReplaceFull({
-        resource: 'cfmappings',
-        resourceId: subscriberId,
-        fieldPath: payload.type,
-        value: updatedMappings
-    })
-
-    if (payload.type === 'cft' && updatedMappings.length === 0) {
-        patchRes = await patchReplaceFull({
-            resource: 'cfmappings',
-            resourceId: subscriberId,
-            fieldPath: 'cft_ringtimeout',
-            value: null
-        })
-    }
-
     try {
-        await cfDeleteDestinationSet(payload.destinationset_id)
-    } catch (e) {
-        if (e.code === 404 && e.message === 'Entity \'cfdestinationset\' not found.') {
-            // This happens when CF was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity
-            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
-        } else {
-            showGlobalError(e.message)
-        }
-    }
+        const currentMappings = { ...state.mappings }
+        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+        const type = payload.type
 
-    const destinationSets = await cfLoadDestinationSets()
-    commit('dataSucceeded', {
-        mappings: patchRes,
-        destinationSets: destinationSets.items
-    })
-    dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
+        const draftMappingsByType = currentMappings[type].filter((item) => item.cfm_id !== payload.cfm_id)
+
+        if (type === 'cft' && draftMappingsByType.length === 0) {
+            currentMappings.cft_ringtimeout = DEFAULT_RING_TIMEOUT
+        }
+
+        const updatedMappings = await cfUpdateFullMapping({
+            subscriberId,
+            body: {
+                ...currentMappings,
+                [type]: draftMappingsByType
+            }
+        })
+
+        commit('dataSucceeded', {
+            mappings: updatedMappings
+        })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
+    }
 }
 
-export async function toggleMapping ({ dispatch, commit, state, rootGetters }, payload) {
-    dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
-    const updatedMappings = _.cloneDeep(state.mappings[payload.type])
-    updatedMappings[payload.index].enabled = !updatedMappings[payload.index].enabled
-    const patchRes = await patchReplaceFull({
-        resource: 'cfmappings',
-        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
-        fieldPath: payload.type,
-        value: updatedMappings
+export async function setMappingEnabled ({ dispatch, commit, state, rootGetters }, payload) {
+    try {
+        dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
+        const resourceId = payload.subscriberId || rootGetters['user/getSubscriberId']
+        const mappingsByType = [...state.mappings[payload.type]]
+
+        mappingsByType[payload.index] = {
+            ...mappingsByType[payload.index],
+            enabled: !mappingsByType[payload.index].enabled
+        }
+
+        const updatedMappings = await cfUpdateMappingField({
+            resource: 'cfmappings',
+            resourceId,
+            fieldPath: payload.type,
+            value: mappingsByType
+        })
+
+        commit('dataSucceeded', { mappings: updatedMappings })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
+    }
+}
+
+async function updateMapping (
+    subscriberId,
+    type,
+    currentMappings,
+    destinationSetId
+) {
+    const newMapping = {
+        destinationset_id: destinationSetId,
+        enabled: false
+    }
+
+    if (type === 'cft' && currentMappings.cft_ringtimeout === null) {
+        currentMappings.cft_ringtimeout = DEFAULT_RING_TIMEOUT
+    }
+
+    return cfUpdateFullMapping({
+        subscriberId,
+        body: {
+            ...currentMappings,
+            [type]: [...currentMappings[type], newMapping]
+        }
     })
-    commit('dataSucceeded', {
-        mappings: patchRes
-    })
-    dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
 }
 
 export async function updateDestination ({ dispatch, commit, state }, payload) {
     dispatch('wait/start', 'csc-cf-destination-set-update', { root: true })
-    const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
-    destinations[payload.destinationIndex].destination = payload.destination
-    const normalizedDestinations = normalizePriorities(destinations)
-    await patchReplace({
-        resource: 'cfdestinationsets',
-        resourceId: payload.destinationSetId,
-        fieldPath: 'destinations',
-        value: normalizedDestinations
-    })
-    const destinationSets = await cfLoadDestinationSets()
-    commit('dataSucceeded', {
-        destinationSets: destinationSets.items
-    })
-    dispatch('wait/end', 'csc-cf-destination-set-update', { root: true })
-}
-
-export async function addDestination ({ dispatch, commit, state, rootGetters }, payload) {
-    dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
-    const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
-    const normalizedDestinations = normalizePriorities(destinations)
-    normalizedDestinations.push(createDefaultDestination(
-        payload.destination,
-        payload.defaultAnnouncementId,
-        normalizedDestinations.length
-    ))
-    await patchReplace({
-        resource: 'cfdestinationsets',
-        resourceId: payload.destinationSetId,
-        fieldPath: 'destinations',
-        value: normalizedDestinations
-    })
-    const destinationSets = await cfLoadDestinationSets()
-    commit('dataSucceeded', {
-        destinationSets: destinationSets.items
-    })
-    dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
-}
-
-export async function rewriteDestination ({ dispatch, commit, state, rootGetters }, destination) {
     try {
-        const req = await post({
-            resource: 'applyrewrites',
-            body: {
-                direction: 'callee_in',
-                subscriber_id: rootGetters['user/getSubscriberId'],
-                numbers: [_.trim(destination)]
-            }
+        const destinations = [...state.destinationSetMap[payload.destinationSetId].destinations]
+        destinations[payload.destinationIndex] = {
+            ...destinations[payload.destinationIndex],
+            destination: payload.destination
+        }
+
+        await cfUpdateDestinationSets({
+            resourceId: payload.destinationSetId,
+            value: destinations
+        })
+
+        const destinationSets = await cfLoadDestinationSets()
+        commit('dataSucceeded', {
+            destinationSets: destinationSets.items
+        })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', 'csc-cf-destination-set-update', { root: true })
+    }
+}
+
+export async function addDestination ({ dispatch, commit, state }, payload) {
+    dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
+    try {
+        const destinations = [...state.destinationSetMap[payload.destinationSetId].destinations]
+        const normalizedDestinations = normalizePriorities(destinations)
+        normalizedDestinations.push(createDefaultDestination(
+            payload.destination,
+            payload.defaultAnnouncementId,
+            normalizedDestinations.length
+        ))
+
+        await cfUpdateDestinationSets({
+        resourceId: payload.destinationSetId,
+        value: normalizedDestinations
+        })
+
+        const destinationSets = await cfLoadDestinationSets()
+        commit('dataSucceeded', {
+            destinationSets: destinationSets.items
+        })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
+    }
+}
+
+export async function rewriteDestination ({ rootGetters }, destination) {
+    try {
+        const req = await cfRewriteDestination({
+                subscriberId: rootGetters['user/getSubscriberId'],
+                numbers: [destination?.trim()]
         })
         return req.result
     } catch (err) {
-        return destination
+        return destination.trim()
     }
 }
 
 export async function removeDestination ({ dispatch, commit, state }, payload) {
     dispatch('wait/start', 'csc-cf-destination-set-remove', { root: true })
-    const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
-    const updatedDestinations = destinations.reduce(($updatedDestinations, value, index) => {
-        if (index !== payload.destinationIndex) {
-            $updatedDestinations.push(value)
-        }
-        return $updatedDestinations
-    }, [])
-    const normalizedDestinations = normalizePriorities(updatedDestinations)
-    await patchReplace({
-        resource: 'cfdestinationsets',
-        resourceId: payload.destinationSetId,
-        fieldPath: 'destinations',
-        value: normalizedDestinations
-    })
-    const destinationSets = await cfLoadDestinationSets()
-    commit('dataSucceeded', {
-        destinationSets: destinationSets.items
-    })
-    dispatch('wait/end', 'csc-cf-destination-set-remove', { root: true })
+    try {
+        const destinations = [...state.destinationSetMap[payload.destinationSetId].destinations]
+        const updatedDestinations = normalizePriorities(
+            destinations.filter((_, index) => index !== payload.destinationIndex)
+        )
+
+        await cfUpdateDestinationSets({
+            resourceId: payload.destinationSetId,
+            value: updatedDestinations
+        })
+
+        const destinationSets = await cfLoadDestinationSets()
+        commit('dataSucceeded', {
+            destinationSets: destinationSets.items
+        })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', 'csc-cf-destination-set-remove', { root: true })
+    }
 }
 
 export async function updateDestinationTimeout ({ dispatch, commit, state }, payload) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
-    const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
-    destinations[payload.destinationIndex].timeout = payload.destinationTimeout
-    const normalizedDestinations = normalizePriorities(destinations)
+    const destinations = [...state.destinationSetMap[payload.destinationSetId].destinations]
+    destinations[payload.destinationIndex] = {
+        ...destinations[payload.destinationIndex],
+        timeout: payload.destinationTimeout
+    }
     try {
-        await patchReplace({
-            resource: 'cfdestinationsets',
+        await cfUpdateDestinationSets({
             resourceId: payload.destinationSetId,
-            fieldPath: 'destinations',
-            value: normalizedDestinations
+            value: destinations
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -281,21 +296,28 @@ export async function updateDestinationTimeout ({ dispatch, commit, state }, pay
 
 export async function loadSourceSets ({ dispatch, commit }) {
     dispatch('wait/start', 'csc-cf-sourcesets', { root: true })
-    const sourceSets = await cfLoadSourceSets()
-    commit('dataSucceeded', {
-        sourceSets: sourceSets.items
-    })
-    dispatch('wait/end', 'csc-cf-sourcesets', { root: true })
+    try {
+        const sourceSets = await cfLoadSourceSets()
+        commit('dataSucceeded', {
+            sourceSets: sourceSets.items
+        })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', 'csc-cf-sourcesets', { root: true })
+    }
 }
 
 export async function createBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
         const bNumberSetId = await cfCreateBNumberSet(rootGetters['user/getSubscriberId'], payload)
-        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-        updatedMapping[payload.mapping.index].bnumberset_id = bNumberSetId
-        const updatedMappings = await patchReplaceFull({
-            resource: 'cfmappings',
+        const updatedMapping = [...state.mappings[payload.mapping.type]]
+        updatedMapping[payload.mapping.index] = {
+            ...updatedMapping[payload.mapping.index],
+            bnumberset_id: bNumberSetId
+        }
+        const updatedMappings = await cfUpdateMappingField({
             resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
@@ -305,6 +327,8 @@ export async function createBNumberSet ({ dispatch, commit, rootGetters, state }
             mappings: updatedMappings,
             bNumberSets: bNumberSets.items
         })
+    } catch (e) {
+        showGlobalError(e.message)
     } finally {
         dispatch('wait/end', 'csc-cf-b-number-set-create', { root: true })
     }
@@ -312,11 +336,16 @@ export async function createBNumberSet ({ dispatch, commit, rootGetters, state }
 
 export async function loadBNumberSets ({ dispatch, commit }) {
     dispatch('wait/start', 'csc-cf-b-number-set', { root: true })
-    const bNumberSets = await cfLoadBNumberSets()
-    commit('dataSucceeded', {
-        bNumberSets: bNumberSets.items
-    })
-    dispatch('wait/end', 'csc-cf-b-number-set', { root: true })
+    try {
+        const bNumberSets = await cfLoadBNumberSets()
+        commit('dataSucceeded', {
+            bNumberSets: bNumberSets.items
+        })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', 'csc-cf-b-number-set', { root: true })
+    }
 }
 
 export async function updateBNumberSet ({ dispatch, commit, rootGetters }, payload) {
@@ -328,10 +357,10 @@ export async function updateBNumberSet ({ dispatch, commit, rootGetters }, paylo
             bNumberSets: bNumberSets.items
         })
     } catch (e) {
-        if (e.code === 404 && e.message === 'Entity \'bnumberset\' not found.') {
+        if (e.code === 404 && e.message === 'Entity \'cfbnumberset\' not found.') {
             // This happens when entity was set by Admin therefore current
             // csc user doesn't have rights to edit the entity.
-            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
+            showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
         } else {
             showGlobalError(e.message)
         }
@@ -343,11 +372,13 @@ export async function updateBNumberSet ({ dispatch, commit, rootGetters }, paylo
 export async function deleteBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
-        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-        updatedMapping[payload.mapping.index].bnumberset_id = null
-        updatedMapping[payload.mapping.index].bnumberset = null
-        const updatedMappings = await patchReplaceFull({
-            resource: 'cfmappings',
+        const updatedMapping = [...state.mappings[payload.mapping.type]]
+        updatedMapping[payload.mapping.index] = {
+            ...updatedMapping[payload.mapping.index],
+            bnumberset_id: null,
+            bnumberset: null
+        }
+        const updatedMappings = await cfUpdateMappingField({
             resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
@@ -356,11 +387,11 @@ export async function deleteBNumberSet ({ dispatch, commit, rootGetters, state }
         try {
             await cfDeleteBNumberSet(payload.id)
         } catch (e) {
-            if (e.code === 404 && e.message === 'Entity \'bnumberset\' not found.') {
+            if (e.code === 404 && e.message === 'Entity \'cfbnumberset\' not found.') {
                 // This happens when entity was set by Admin therefore current
                 // csc user doesn't have rights to delete the entity from DB.
                 // In this scenario the b-number is only removed from the mappings.
-                showGlobalWarning(i18n.global.t('Entity belongs to admin'))
+                showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
             } else {
                 showGlobalError(e.message)
             }
@@ -381,10 +412,12 @@ export async function deleteBNumberSet ({ dispatch, commit, rootGetters, state }
 export async function assignBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
-        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-        updatedMapping[payload.mapping.index].bnumberset_id = payload.id
-        const updatedMappings = await patchReplaceFull({
-            resource: 'cfmappings',
+        const updatedMapping = [...state.mappings[payload.mapping.type]]
+        updatedMapping[payload.mapping.index] = {
+            ...updatedMapping[payload.mapping.index],
+            bnumberset_id: payload.id
+        }
+        const updatedMappings = await cfUpdateMappingField({
             resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
@@ -400,11 +433,13 @@ export async function assignBNumberSet ({ dispatch, commit, rootGetters, state }
 export async function unassignBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
-        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-        updatedMapping[payload.mapping.index].bnumberset_id = null
-        updatedMapping[payload.mapping.index].bnumberset = null
-        const updatedMappings = await patchReplaceFull({
-            resource: 'cfmappings',
+        const updatedMapping = [...state.mappings[payload.mapping.type]]
+        updatedMapping[payload.mapping.index] = {
+            ...updatedMapping[payload.mapping.index],
+            bnumberset_id: null,
+            bnumberset: null
+        }
+        const updatedMappings = await cfUpdateMappingField({
             resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
@@ -421,10 +456,12 @@ export async function createSourceSet ({ dispatch, commit, rootGetters, state },
     try {
         dispatch('wait/start', 'csc-cf-source-set-create', { root: true })
         const sourceSetId = await cfCreateSourceSet(rootGetters['user/getSubscriberId'], payload)
-        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-        updatedMapping[payload.mapping.index].sourceset_id = sourceSetId
-        const updatedMappings = await patchReplaceFull({
-            resource: 'cfmappings',
+        const updatedMapping = [...state.mappings[payload.mapping.type]]
+        updatedMapping[payload.mapping.index] = {
+            ...updatedMapping[payload.mapping.index],
+            sourceset_id: sourceSetId
+        }
+        const updatedMappings = await cfUpdateMappingField({
             resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
@@ -434,6 +471,8 @@ export async function createSourceSet ({ dispatch, commit, rootGetters, state },
             mappings: updatedMappings,
             sourceSets: sourceSets.items
         })
+    } catch (e) {
+        showGlobalError(e.message)
     } finally {
         dispatch('wait/end', 'csc-cf-source-set-create', { root: true })
     }
@@ -448,10 +487,10 @@ export async function updateSourceSet ({ dispatch, commit, rootGetters }, payloa
             sourceSets: sourceSets.items
         })
     } catch (e) {
-        if (e.code === 404 && e.message === 'Entity \'sourceset\' not found.') {
+        if (e.code === 404 && e.message === 'Entity \'cfsourceset\' not found.') {
             // This happens when CF was set by Admin therefore current
             // csc user doesn't have rights to delete the entity
-            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
+            showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
         } else {
             showGlobalError(e.message)
         }
@@ -463,11 +502,13 @@ export async function updateSourceSet ({ dispatch, commit, rootGetters }, payloa
 export async function deleteSourceSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-source-set-create', { root: true })
-        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-        updatedMapping[payload.mapping.index].sourceset_id = null
-        updatedMapping[payload.mapping.index].sourceset = null
-        const updatedMappings = await patchReplaceFull({
-            resource: 'cfmappings',
+        const updatedMapping = [...state.mappings[payload.mapping.type]]
+        updatedMapping[payload.mapping.index] = {
+            ...updatedMapping[payload.mapping.index],
+            sourceset_id: null,
+            sourceset: null
+        }
+        const updatedMappings = await cfUpdateMappingField({
             resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
@@ -476,11 +517,11 @@ export async function deleteSourceSet ({ dispatch, commit, rootGetters, state },
         try {
             await cfDeleteSourceSet(payload.id)
         } catch (e) {
-            if (e.code === 404 && e.message === 'Entity \'sourceset\' not found.') {
+            if (e.code === 404 && e.message === 'Entity \'cfsourceset\' not found.') {
                 // This happens when entity was set by Admin therefore current
                 // csc user doesn't have rights to delete the entity from DB.
                 // In this scenario the sources is only removed from the mappings.
-                showGlobalWarning(i18n.global.t('Entity belongs to admin'))
+                showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
                 // Force reload of SourceSets
             } else {
                 throw e
@@ -502,10 +543,12 @@ export async function deleteSourceSet ({ dispatch, commit, rootGetters, state },
 export async function assignSourceSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-source-set-create', { root: true })
-        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-        updatedMapping[payload.mapping.index].sourceset_id = payload.id
-        const updatedMappings = await patchReplaceFull({
-            resource: 'cfmappings',
+        const updatedMapping = [...state.mappings[payload.mapping.type]]
+        updatedMapping[payload.mapping.index] = {
+            ...updatedMapping[payload.mapping.index],
+            sourceset_id: payload.id
+        }
+        const updatedMappings = await cfUpdateMappingField({
             resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
@@ -521,11 +564,13 @@ export async function assignSourceSet ({ dispatch, commit, rootGetters, state },
 export async function unassignSourceSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-source-set-create', { root: true })
-        const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-        updatedMapping[payload.mapping.index].sourceset_id = null
-        updatedMapping[payload.mapping.index].sourceset = null
-        const updatedMappings = await patchReplaceFull({
-            resource: 'cfmappings',
+        const updatedMapping = [...state.mappings[payload.mapping.type]]
+        updatedMapping[payload.mapping.index] = {
+            ...updatedMapping[payload.mapping.index],
+            sourceset_id: null,
+            sourceset: null
+        }
+        const updatedMappings = await cfUpdateMappingField({
             resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
@@ -541,10 +586,12 @@ export async function unassignSourceSet ({ dispatch, commit, rootGetters, state 
 export async function createTimeSetDate ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     const timeSetId = await cfCreateTimeSetDate(rootGetters['user/getSubscriberId'], payload.date)
-    const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-    updatedMapping[payload.mapping.index].timeset_id = timeSetId.id
-    const updatedMappings = await patchReplaceFull({
-        resource: 'cfmappings',
+    const updatedMapping = [...state.mappings[payload.mapping.type]]
+    updatedMapping[payload.mapping.index] = {
+        ...updatedMapping[payload.mapping.index],
+        timeset_id: timeSetId.id
+    }
+    const updatedMappings = await cfUpdateMappingField({
         resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.mapping.type,
         value: updatedMapping
@@ -574,11 +621,13 @@ export async function updateTimeSetDate ({ dispatch, commit }, payload) {
 
 export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
-    const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-    updatedMapping[payload.mapping.index].timeset_id = null
-    updatedMapping[payload.mapping.index].timeset = null
-    const updatedMappings = await patchReplaceFull({
-        resource: 'cfmappings',
+    const updatedMapping = [...state.mappings[payload.mapping.type]]
+    updatedMapping[payload.mapping.index] = {
+        ...updatedMapping[payload.mapping.index],
+        timeset_id: null,
+        timeset: null
+    }
+    const updatedMappings = await cfUpdateMappingField({
         resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.mapping.type,
         value: updatedMapping
@@ -589,7 +638,7 @@ export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, p
         if (e.code === 404 && e.message === 'Entity \'cftimeset\' not found.') {
             // This happens when CF was set by Admin therefore current
             // csc user doesn't have rights to delete the entity
-            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
+            showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
         } else {
             showGlobalError(e.message)
         }
@@ -603,8 +652,7 @@ export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, p
 }
 
 export async function updateRingTimeout ({ commit, rootGetters, state }, payload) {
-    const updatedMappings = await patchReplaceFull({
-        resource: 'cfmappings',
+    const updatedMappings = await cfUpdateMappingField({
         resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: 'cft_ringtimeout',
         value: payload.ringTimeout
@@ -617,10 +665,12 @@ export async function updateRingTimeout ({ commit, rootGetters, state }, payload
 export async function createTimeSetDateRange ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     const timeSetId = await cfCreateTimeSetDateRange(rootGetters['user/getSubscriberId'], payload.date)
-    const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-    updatedMapping[payload.mapping.index].timeset_id = timeSetId.id
-    const updatedMappings = await patchReplaceFull({
-        resource: 'cfmappings',
+    const updatedMapping = [...state.mappings[payload.mapping.type]]
+    updatedMapping[payload.mapping.index] = {
+        ...updatedMapping[payload.mapping.index],
+        timeset_id: timeSetId.id
+    }
+    const updatedMappings = await cfUpdateMappingField({
         resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.mapping.type,
         value: updatedMapping
@@ -638,10 +688,10 @@ export async function updateTimeSetDateRange ({ dispatch, commit }, payload) {
     try {
         await cfUpdateTimeSetDateRange(payload.id, payload.date)
     } catch (e) {
-        if (e.code === 404 && e.message === 'Entity \'timeset\' not found.') {
+        if (e.code === 404 && e.message === 'Entity \'cftimeset\' not found.') {
             // This happens when CF was set by Admin therefore current
             // csc user doesn't have rights to delete the entity
-            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
+            showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
         } else {
             showGlobalError(e.message)
         }
@@ -657,10 +707,12 @@ export async function updateTimeSetDateRange ({ dispatch, commit }, payload) {
 export async function createTimeSetWeekdays ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     const timeSetId = await cfCreateTimeSetWeekdays(rootGetters['user/getSubscriberId'], payload.weekdays)
-    const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-    updatedMapping[payload.mapping.index].timeset_id = timeSetId.id
-    const updatedMappings = await patchReplaceFull({
-        resource: 'cfmappings',
+    const updatedMapping = [...state.mappings[payload.mapping.type]]
+    updatedMapping[payload.mapping.index] = {
+        ...updatedMapping[payload.mapping.index],
+        timeset_id: timeSetId.id
+    }
+    const updatedMappings = await cfUpdateMappingField({
         resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
         fieldPath: payload.mapping.type,
         value: updatedMapping
@@ -678,10 +730,10 @@ export async function updateTimeSetWeekdays ({ dispatch, commit }, payload) {
     try {
         await cfUpdateTimeSetWeekdays(payload.id, payload.weekdays)
     } catch (e) {
-        if (e.code === 404 && e.message === 'Entity \'timeset\' not found.') {
+        if (e.code === 404 && e.message === 'Entity \'cftimeset\' not found.') {
             // This happens when CF was set by Admin therefore current
             // csc user doesn't have rights to delete the entity
-            showGlobalWarning(i18n.global.t('Entity belongs to admin'))
+            showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
         } else {
             showGlobalError(e.message)
         }
@@ -696,24 +748,34 @@ export async function updateTimeSetWeekdays ({ dispatch, commit }, payload) {
 
 export async function createOfficeHours ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
-    const timeSetId = await cfCreateOfficeHours(rootGetters['user/getSubscriberId'], payload.times)
-    const updatedMapping = _.cloneDeep(state.mappings[payload.mapping.type])
-    updatedMapping[payload.mapping.index].timeset_id = timeSetId.id
-    const updatedMappings = await patchReplaceFull({
-        resource: 'cfmappings',
-        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
-        fieldPath: payload.mapping.type,
-        value: updatedMapping
-    })
-    if (payload.id) {
-        await cfDeleteTimeSet(payload.id)
+    try {
+        const timeSetId = await cfCreateOfficeHours(rootGetters['user/getSubscriberId'], payload.times)
+        const updatedMapping = [...state.mappings[payload.mapping.type]]
+        updatedMapping[payload.mapping.index] = {
+            ...updatedMapping[payload.mapping.index],
+            timeset_id: timeSetId.id
+        }
+
+        const updatedMappings = await cfUpdateMappingField({
+            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            fieldPath: payload.mapping.type,
+            value: updatedMapping
+        })
+        if (payload.id) {
+            await cfDeleteTimeSet(payload.id)
+        }
+
+        const timeSets = await cfLoadTimeSets()
+
+        commit('dataSucceeded', {
+            mappings: updatedMappings,
+            timeSets: timeSets.items
+        })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
     }
-    const timeSets = await cfLoadTimeSets()
-    commit('dataSucceeded', {
-        mappings: updatedMappings,
-        timeSets: timeSets.items
-    })
-    dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
 
 export async function updateOfficeHours ({ dispatch, commit, rootGetters, state }, payload) {
@@ -732,52 +794,53 @@ export async function updateOfficeHours ({ dispatch, commit, rootGetters, state 
 }
 
 export async function loadAnnouncements ({ dispatch, commit }) {
+    dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     try {
-        const announcements = await getList({
-            resource: 'soundhandles',
-            all: true,
-            params: {
-                group: 'custom_announcements'
-            }
-        })
+        const announcements = await cfLoadAnnouncements()
         commit('setAnnouncements', announcements.items.map((item) => {
             return { label: item.handle, value: item.id }
         }))
     } catch (err) {
         commit('setAnnouncements', [])
+    } finally {
+        dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
     }
 }
 
-export async function getAnnouncementById ({ dispatch, commit, rootGetters, state }, announcementId) {
-    const announcement = await get({
-        resource: 'soundhandles',
-        resourceId: announcementId
-    })
-    return {
-        value: announcement.id,
-        label: announcement.handle
+export async function getAnnouncementById (_, announcementId) {
+    try {
+        const announcement = await cfGetAnnouncement(announcementId)
+        return {
+            value: announcement.id,
+            label: announcement.handle
+        }
+    } catch (e) {
+        showGlobalError(e.message)
     }
 }
 
 export async function updateAnnouncement ({ dispatch, commit, state }, payload) {
+    dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     try {
-        const destinations = _.cloneDeep(state.destinationSetMap[payload.destinationSetId].destinations)
-        destinations[payload.destinationIndex].announcement_id = payload.announcementId
-        const normalizedDestinations = normalizePriorities(destinations)
-        await patchReplace({
-            resource: 'cfdestinationsets',
+        const destinations = [...state.destinationSetMap[payload.destinationSetId].destinations]
+        destinations[payload.destinationIndex] = {
+            ...destinations[payload.destinationIndex],
+            announcement_id: payload.announcementId
+        }
+        await cfUpdateDestinationSets({
             resourceId: payload.destinationSetId,
-            fieldPath: 'destinations',
-            value: normalizedDestinations
+            value: destinations
+        })
+
+        const destinationSets = await cfLoadDestinationSets()
+        commit('dataSucceeded', {
+            destinationSets: destinationSets.items
         })
     } catch (e) {
         showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
     }
-
-    const destinationSets = await cfLoadDestinationSets()
-    commit('dataSucceeded', {
-        destinationSets: destinationSets.items
-    })
 }
 
 export function resetCallForwardingState ({ commit }) {

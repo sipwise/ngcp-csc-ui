@@ -468,7 +468,8 @@ export default {
             'seatUpdateError'
         ]),
         ...mapGetters('callForwarding', [
-            'groups'
+            'groups',
+            'announcements'
         ]),
         ...mapGetters('user', [
             'isFaxFeatureEnabled',
@@ -660,6 +661,16 @@ export default {
     async created () {
         await this.getNcosSubscriber()
         await this.getNcosSetsSubscriber()
+
+        if (!this.announcements.length) {
+            await this.loadAnnouncements()
+        }
+
+        if (this.isSeatMapByIdEmpty) {
+            await this.loadSeatListItems()
+        }
+
+        this.selectSeat(this.$route.params.id)
     },
     validations: {
         changes: {
@@ -677,15 +688,6 @@ export default {
                 maxLength: maxLength(64)
             }
         }
-    },
-    async mounted () {
-        if (this.isSeatMapByIdEmpty) {
-            await this.loadSeatListItems()
-        }
-
-        this.selectSeat(this.$route.params.id)
-        await this.loadAnnouncements()
-        await this.getNcosSetSubscriber()
     },
     beforeUnmount () {
         this.resetSelectedSeat()

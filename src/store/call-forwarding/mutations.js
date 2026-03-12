@@ -7,7 +7,6 @@ export function dataSucceeded (state, res) {
             bNumberSetMap[bNumberSet.id] = bNumberSet
         })
         state.bNumberSetMap = bNumberSetMap
-        state.bNumberSets = res.bNumberSets
     }
     if (res.destinationSets) {
         const destinationSetMap = {}
@@ -21,7 +20,6 @@ export function dataSucceeded (state, res) {
             destinationSetMap[destinationSet.id] = destinationSet
         })
         state.destinationSetMap = destinationSetMap
-        state.destinationSets = orderedDestinationSets
     }
     if (res.sourceSets) {
         const sourceSetMap = {}
@@ -29,7 +27,6 @@ export function dataSucceeded (state, res) {
             sourceSetMap[sourceSet.id] = sourceSet
         })
         state.sourceSetMap = sourceSetMap
-        state.sourceSets = res.sourceSets
     }
     if (res.timeSets) {
         const timeSetMap = {}
@@ -37,7 +34,6 @@ export function dataSucceeded (state, res) {
             timeSetMap[timeSet.id] = timeSet
         })
         state.timeSetMap = timeSetMap
-        state.timeSets = res.timeSets
     }
     if (res.mappings) {
         state.mappings = res.mappings
@@ -51,6 +47,7 @@ export function popupShow (state, popupId) {
 export function setAnnouncements (state, announcements) {
     state.announcements = announcements
 }
+
 export function resetState (state) {
     state.mappings = {
         cfu: [],

@@ -1,5 +1,6 @@
 <template>
     <q-btn
+        :disabled="$wait.is('csc-cf-mappings-full')"
         icon="more_vert"
         color="primary"
         flat

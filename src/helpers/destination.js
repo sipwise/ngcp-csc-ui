@@ -10,7 +10,6 @@ export const DestinationType = {
     OfficeHoursAnnouncement: 'OfficeHoursAnnouncement',
     CustomAnnouncement: 'CustomAnnouncement',
     ManagerSecretary: 'ManagerSecretary',
-    Application: 'Application',
     Number: 'Number'
 }
 
@@ -38,8 +37,6 @@ export function parseSipUri (sipUri) {
         destinationType = DestinationType.CustomAnnouncement
     } else if (host.endsWith('managersecretary.local')) {
         destinationType = DestinationType.ManagerSecretary
-    } else if (host.endsWith('app.local')) {
-        destinationType = DestinationType.Application
     } else {
         destinationType = DestinationType.Number
     }
@@ -91,10 +88,6 @@ export function isDestinationTypeManagerSecretary (sipUri) {
     return isDestinationType(sipUri, DestinationType.ManagerSecretary)
 }
 
-export function isDestinationTypeApplication (sipUri) {
-    return isDestinationType(sipUri, DestinationType.Application)
-}
-
 export function isDestinationTypeNumber (sipUri) {
     return isDestinationType(sipUri, DestinationType.Number)
 }
@@ -110,11 +103,7 @@ export function getDestinationIcon (destinationType) {
         case DestinationType.OfficeHoursAnnouncement: return 'schedule'
         case DestinationType.CustomAnnouncement: return 'music_note'
         case DestinationType.ManagerSecretary: return 'support_agent'
-        case DestinationType.Application: return 'apps'
         case DestinationType.Number: return 'phone_forwarded'
         default: return 'phone_forwarded'
     }
 }
-
-// Note: This needs i18n, so it stays in the mixin
-// export function formatDestination(sipUri, t) { ... }

@@ -390,7 +390,8 @@ export default {
             'isGroupMapByIdEmpty'
         ]),
         ...mapGetters('callForwarding', [
-            'groups'
+            'groups',
+            'announcements'
         ]),
         ...mapGetters('user', [
             'isFaxFeatureEnabled',
@@ -467,13 +468,16 @@ export default {
             }
         }
     },
-    async mounted () {
+    async created () {
+        if (!this.announcements.length) {
+            await this.loadAnnouncements()
+        }
+
         if (this.isGroupMapByIdEmpty) {
             await this.loadGroupListItems()
         }
         this.selectGroup(this.id)
         await this.loadMappingsFull(this.id)
-        await this.loadAnnouncements()
     },
     beforeUnmount () {
         this.resetSelectedGroup()
@@ -506,7 +510,6 @@ export default {
         ]),
         ...mapActions('callForwarding', [
             'loadMappingsFull',
-            'createMapping',
             'loadAnnouncements'
         ]),
         ...mapMutations('pbxGroups', [

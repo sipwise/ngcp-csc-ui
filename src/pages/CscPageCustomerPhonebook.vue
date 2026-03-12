@@ -212,7 +212,7 @@ export default {
         async deleteRow (row) {
             this.$q.dialog({
                 title: this.$t('Delete customer phonebook'),
-                message: this.$t('You are about to delete this phonebook'),
+                message: this.$t('You are about to delete this phonebook entry'),
                 color: 'negative',
                 cancel: true,
                 persistent: true

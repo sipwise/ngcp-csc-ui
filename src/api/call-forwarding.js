@@ -1,13 +1,13 @@
-import _ from 'lodash'
 import {
     del,
     get,
     getList,
     patchReplace,
+    patchReplaceFull,
     post,
+    put,
     putMinimal
 } from 'src/api/common'
-import { showGlobalError } from 'src/helpers/ui'
 import { v4 } from 'uuid'
 
 export async function cfLoadMappings (subscriberId) {
@@ -49,9 +49,14 @@ export async function cfLoadTimeSets (subscriberId) {
     })
 }
 
-export async function cfLoadMappingsFull (subscriberId) {
+/* Note: It needs to retrieve all Sets (DestinationSets, SourceSets,
+** TimeSets, and BNumberSets) without filtering by subscriberId
+** because some sets might belong to the admin subscriber
+** and would not appear in the seats/groups CF.
+*/
+export async function cfLoadMappingsFull (mappingId) {
     return await Promise.all([
-        cfLoadMappings(subscriberId),
+        cfLoadMappings(mappingId),
         cfLoadDestinationSets(),
         cfLoadSourceSets(),
         cfLoadTimeSets(),
@@ -59,10 +64,23 @@ export async function cfLoadMappingsFull (subscriberId) {
     ])
 }
 
+export async function cfLoadAnnouncements () {
+    return await getList({
+        resource: 'soundhandles',
+        all: true,
+        params: {
+            group: 'custom_announcements'
+        }
+    })
+}
+
 export async function cfCreateDestinationSet (payload) {
     return post({
         resource: 'cfdestinationsets',
-        body: payload
+        body: {
+            ...payload,
+            name: `csc-${v4()}`
+        }
     })
 }
 
@@ -73,6 +91,43 @@ export async function cfDeleteDestinationSet (id) {
     })
 }
 
+export async function cfRewriteDestination (payload) {
+    return post({
+        resource: 'applyrewrites',
+        body: {
+            direction: 'callee_in',
+            subscriber_id: payload.subscriberId,
+            numbers: payload.numbers
+        }
+    })
+}
+
+export async function cfUpdateDestinationSets (payload) {
+    return patchReplace({
+            resource: 'cfdestinationsets',
+            resourceId: payload.resourceId,
+            fieldPath: 'destinations',
+            value: payload.value
+        })
+}
+
+export async function cfUpdateFullMapping (payload) {
+    return await put({
+        resource: 'cfmappings',
+        resourceId: payload.subscriberId,
+        body: payload.body
+    })
+}
+
+export async function cfUpdateMappingField (payload) {
+    return await patchReplaceFull({
+        resource: 'cfmappings',
+        resourceId: payload.resourceId,
+        fieldPath: payload.fieldPath,
+        value: payload.value
+    })
+}
+
 export async function cfCreateBNumberSet (id, payload) {
     const bNumbers = []
     payload.numbers.forEach((number) => {
@@ -80,24 +135,20 @@ export async function cfCreateBNumberSet (id, payload) {
             bnumber: number
         })
     })
-    try {
-        const res = await post({
-            resource: 'cfbnumbersets',
-            body: {
-                name: payload.name,
-                subscriber_id: id,
-                is_regex: true,
-                bnumbers: bNumbers,
-                mode: payload.mode
-            }
-        })
-        if (!_.isString(res)) {
-            return `${res.id}`
+    const res = await post({
+        resource: 'cfbnumbersets',
+        body: {
+            name: payload.name,
+            subscriber_id: id,
+            is_regex: true,
+            bnumbers: bNumbers,
+            mode: payload.mode
         }
-        return res
-    } catch (e) {
-        showGlobalError(e)
+    })
+    if (!(typeof res === 'string')) {
+        return `${res.id}`
     }
+    return res
 }
 
 export async function cfDeleteBNumberSet (id) {
@@ -134,24 +185,20 @@ export async function cfCreateSourceSet (id, payload) {
             source: number
         })
     })
-    try {
-        const res = await post({
-            resource: 'cfsourcesets',
-            body: {
-                name: payload.name,
-                subscriber_id: id,
-                is_regex: true,
-                sources,
-                mode: payload.mode
-            }
-        })
-        if (!_.isString(res)) {
-            return `${res.id}`
+    const res = await post({
+        resource: 'cfsourcesets',
+        body: {
+            name: payload.name,
+            subscriber_id: id,
+            is_regex: true,
+            sources,
+            mode: payload.mode
         }
-        return res
-    } catch (e) {
-        showGlobalError(e)
+    })
+    if (!(typeof res === 'string')) {
+        return `${res.id}`
     }
+    return res
 }
 
 export async function cfUpdateSourceSet (id, payload) {
@@ -305,5 +352,12 @@ export async function cfUpdateOfficeHours (timeSetId, times) {
         resourceId: timeSetId,
         fieldPath: 'times',
         value: times
+    })
+}
+
+export async function cfGetAnnouncement (id) {
+    return get({
+        resource: 'soundhandles',
+        resourceId: id
     })
 }

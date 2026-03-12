@@ -491,7 +491,7 @@ export default {
     methods: {
         ...mapActions('callForwarding', [
             'deleteMapping',
-            'toggleMapping',
+            'setMappingEnabled',
             'addDestination'
         ]),
         async addDestinationEvent (originalPayload) {
@@ -501,16 +501,14 @@ export default {
                 payload.defaultAnnouncementId = this.announcements[0].value
             }
             if (this.subscriberId && this.subscriberId !== '') {
-                payload = this.createSpecificDestination(payload)
+                payload = this.resolveSubscriberDestination(payload)
             }
             await this.addDestination(payload)
             this.$wait.end(this.waitIdentifier)
         },
         async toggleMappingEvent (mapping) {
             this.$wait.start(this.waitIdentifier)
-            const mappingWithSubscriberId = { ...mapping }
-            mappingWithSubscriberId.subscriberId = this.subscriberId
-            await this.toggleMapping(mappingWithSubscriberId)
+            await this.setMappingEnabled({ ...mapping, subscriberId: this.subscriberId })
             this.$wait.end(this.waitIdentifier)
         },
         async deleteMappingEvent (mapping) {
@@ -522,13 +520,13 @@ export default {
                 persistent: true
             }).onOk(async (data) => {
                 this.$wait.start(this.waitIdentifier)
-                const mappingWithSubscriberId = { ...mapping }
-                mappingWithSubscriberId.subscriberId = this.subscriberId
-                await this.deleteMapping(mappingWithSubscriberId)
+                await this.deleteMapping({ ...mapping, subscriberId: this.subscriberId })
                 this.$wait.end(this.waitIdentifier)
             })
         },
-        createSpecificDestination (payload) {
+        // For PBX seat/group subscribers, convert abstract destination types
+        // into concrete SIP URIs that include the subscriber primary number.
+        resolveSubscriberDestination (payload) {
             const newPayload = { ...payload }
             if (newPayload.destination) {
                 switch (newPayload.destination) {

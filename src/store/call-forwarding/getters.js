@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 export function groups (state) {
     const types = ['cfu', 'cft', 'cfna', 'cfb']
     const mappings = []
@@ -7,7 +5,7 @@ export function groups (state) {
         const typeMapping = state.mappings?.[type]
         if (Array.isArray(typeMapping)) {
             typeMapping.forEach((mapping, index) => {
-                const clonedMapping = _.clone(mapping)
+                const clonedMapping = { ...mapping }
                 clonedMapping.type = type
                 clonedMapping.index = index
                 mappings.push(clonedMapping)
@@ -23,4 +21,12 @@ export function ringTimeout (state) {
 
 export function announcements (state) {
     return state.announcements
+}
+
+export function bNumberSets (state) {
+    return state.bNumberSetMap ? Object.values(state.bNumberSetMap) : []
+}
+
+export function sourceSets (state) {
+    return state.sourceSetMap ? Object.values(state.sourceSetMap) : []
 }

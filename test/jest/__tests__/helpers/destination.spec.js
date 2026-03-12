@@ -2,14 +2,12 @@ import {
     DestinationType,
     getDestinationIcon,
     isDestinationType,
-    isDestinationTypeApplication,
     isDestinationTypeAutoAttendant,
     isDestinationTypeCallThrough,
     isDestinationTypeCallingCard,
     isDestinationTypeConference,
     isDestinationTypeCustomAnnouncement,
     isDestinationTypeFax2Mail,
-    isDestinationTypeLocalSubscriber,
     isDestinationTypeManagerSecretary,
     isDestinationTypeNumber,
     isDestinationTypeOfficeHoursAnnouncement,
@@ -29,12 +27,11 @@ describe('Destination Helpers', () => {
             expect(DestinationType.OfficeHoursAnnouncement).toBe('OfficeHoursAnnouncement')
             expect(DestinationType.CustomAnnouncement).toBe('CustomAnnouncement')
             expect(DestinationType.ManagerSecretary).toBe('ManagerSecretary')
-            expect(DestinationType.Application).toBe('Application')
             expect(DestinationType.Number).toBe('Number')
         })
 
-        it('should have 11 destination types', () => {
-            expect(Object.keys(DestinationType)).toHaveLength(11)
+        it('should have 10 destination types', () => {
+            expect(Object.keys(DestinationType)).toHaveLength(10)
         })
     })
 
@@ -93,12 +90,6 @@ describe('Destination Helpers', () => {
             const result = parseSipUri('sip:ms@managersecretary.local')
             expect(result.destinationType).toBe(DestinationType.ManagerSecretary)
             expect(result.parsedUri.host).toBe('managersecretary.local')
-        })
-
-        it('should parse generic Application URI', () => {
-            const result = parseSipUri('sip:anyapp@app.local')
-            expect(result.destinationType).toBe(DestinationType.Application)
-            expect(result.parsedUri.host).toBe('app.local')
         })
 
         it('should parse regular Number URI', () => {
@@ -182,11 +173,6 @@ describe('Destination Helpers', () => {
             expect(isDestinationTypeManagerSecretary('sip:ms@example.com')).toBe(false)
         })
 
-        it('isDestinationTypeApplication should work correctly', () => {
-            expect(isDestinationTypeApplication('sip:anyapp@app.local')).toBe(true)
-            expect(isDestinationTypeApplication('sip:anyapp@example.com')).toBe(false)
-        })
-
         it('isDestinationTypeNumber should work correctly', () => {
             expect(isDestinationTypeNumber('sip:1234567890@example.com')).toBe(true)
             expect(isDestinationTypeNumber('sip:123@voicebox.local')).toBe(false)
@@ -228,10 +214,6 @@ describe('Destination Helpers', () => {
 
         it('should return correct icon for ManagerSecretary', () => {
             expect(getDestinationIcon(DestinationType.ManagerSecretary)).toBe('support_agent')
-        })
-
-        it('should return correct icon for Application', () => {
-            expect(getDestinationIcon(DestinationType.Application)).toBe('apps')
         })
 
         it('should return correct icon for Number', () => {
@@ -287,7 +269,6 @@ describe('Destination Helpers', () => {
                 'sip:office-hours@app.local',
                 'sip:custom-hours@app.local',
                 'sip:ms@managersecretary.local',
-                'sip:anyapp@app.local',
                 'sip:1234567890@example.com'
             ]
 
@@ -301,7 +282,6 @@ describe('Destination Helpers', () => {
                 DestinationType.OfficeHoursAnnouncement,
                 DestinationType.CustomAnnouncement,
                 DestinationType.ManagerSecretary,
-                DestinationType.Application,
                 DestinationType.Number
             ]
 

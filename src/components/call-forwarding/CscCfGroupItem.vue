@@ -212,19 +212,13 @@ export default {
             'updateDestinationTimeout',
             'updateRingTimeout',
             'rewriteDestination',
-            'getAnnouncementById',
             'updateAnnouncement'
         ]),
         async updateDestinationEvent (payload, newDestination) {
             this.$wait.start(this.waitIdentifier)
-            try {
-                const validatedDest = await this.rewriteDestination(newDestination)
-                await this.updateDestination({ ...payload, destination: validatedDest })
-            } catch (err) {
-                showGlobalError(err.message)
-            } finally {
-                this.$wait.end(this.waitIdentifier)
-            }
+            const validatedDest = await this.rewriteDestination(newDestination)
+            await this.updateDestination({ ...payload, destination: validatedDest })
+            this.$wait.end(this.waitIdentifier)
         },
         async removeDestinationEvent (payload) {
             this.$q.dialog({
@@ -245,11 +239,7 @@ export default {
             })
         },
         async triggerRemoveDestination (payload) {
-            try {
-                await this.removeDestination(payload)
-            } catch (e) {
-                showGlobalError(e.message)
-            }
+            await this.removeDestination(payload)
         },
         async updateDestinationTimeoutEvent (payload) {
             this.$wait.start(this.waitIdentifier)
@@ -266,14 +256,9 @@ export default {
         },
         async updateAnnouncementEvent (payload, newAnnouncement) {
             this.$wait.start(this.waitIdentifier)
-            try {
-                await this.updateAnnouncement({ ...payload, announcementId: newAnnouncement.value })
-                this.setAnnouncement()
-            } catch (err) {
-                showGlobalError(err.message)
-            } finally {
-                this.$wait.end(this.waitIdentifier)
-            }
+            await this.updateAnnouncement({ ...payload, announcementId: newAnnouncement.value })
+            this.setAnnouncement()
+            this.$wait.end(this.waitIdentifier)
         },
         checkAnnouncement () {
             const fieldFilled = this.announcement > 0

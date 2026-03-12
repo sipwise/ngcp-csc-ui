@@ -82,6 +82,7 @@
                 <csc-popup-menu-ring-timeout
                     v-if="isRingTimeoutVisible"
                     :ring-timeout="ringTimeout"
+                    :subscriber-id="getSubscriberId"
                 />
                 <div
                     v-for="group in groups"
@@ -136,18 +137,19 @@ export default {
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
-            'hasSomeSubscriberProfileAttributes'
+            'hasSomeSubscriberProfileAttributes',
+            'getSubscriberId'
         ]),
         isRingTimeoutVisible () {
             return this.ringTimeout && this.groups.some((group) => group.type === 'cft')
         }
     },
-    created () {
-        this.resetCallForwardingState()
-    },
-    async mounted () {
+    async created () {
         await this.loadAnnouncements()
         await this.loadMappingsFull()
+    },
+    beforeUnmount () {
+        this.resetCallForwardingState()
     },
     methods: {
         ...mapActions('callForwarding', [

@@ -162,13 +162,17 @@ export default {
             return this.ringTimeout && this.groups.some((group) => group.type === 'cft')
         }
     },
-    async mounted () {
+    async created () {
         await this.loadMappingsFull(this.id)
+    },
+    beforeUnmount () {
+        this.resetCallForwardingState()
     },
     methods: {
         ...mapActions('callForwarding', [
             'loadMappingsFull',
-            'createMapping'
+            'createMapping',
+            'resetCallForwardingState'
         ])
     }
 }

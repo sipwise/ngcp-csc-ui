@@ -11,7 +11,7 @@
     />
 </template>
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfSourceSetSelection',
     props: {
@@ -30,7 +30,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('callForwarding', [
+        ...mapGetters('callForwarding', [
             'sourceSets'
         ]),
         allOptions () {

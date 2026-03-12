@@ -198,7 +198,7 @@ import {
     humanTimesetToKamailio, isTimeStrValid,
     kamailioTimesetToHuman, timeStrToMinutes
 } from 'src/helpers/kamailio-timesets-converter'
-import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
+import { showGlobalWarning } from 'src/helpers/ui'
 import { mapActions } from 'vuex'
 function isTimeStrEmpty (val) {
     return val === '' || val === '__:__'
@@ -441,28 +441,24 @@ export default {
             return hTimeSets
         },
         async createTimeSetOfficeHoursEvent () {
-            try {
-                const payload = {
-                    mapping: this.mapping,
-                    subscriberId: this.subscriberId
-                }
+            const payload = {
+                mapping: this.mapping,
+                subscriberId: this.subscriberId
+            }
+            if (this.timeSet) {
+                payload.id = this.timeSet.id
+            }
+            payload.times = humanTimesetToKamailio(this.getDataAsHumanReadableTimeSets())
+            if (payload.times.length > 0) {
                 if (this.timeSet) {
-                    payload.id = this.timeSet.id
-                }
-                payload.times = humanTimesetToKamailio(this.getDataAsHumanReadableTimeSets())
-                if (payload.times.length > 0) {
-                    if (this.timeSet) {
-                        await this.updateOfficeHours(payload)
-                    } else {
-                        await this.createOfficeHours(payload)
-                    }
-
-                    this.$emit('close')
+                    await this.updateOfficeHours(payload)
                 } else {
-                    showGlobalWarning(this.$t('No data to save. Please provide at least one time range.'))
+                    await this.createOfficeHours(payload)
                 }
-            } catch (e) {
-                showGlobalError(e)
+
+                this.$emit('close')
+            } else {
+                showGlobalWarning(this.$t('No data to save. Please provide at least one time range.'))
             }
         },
         async deleteTimeSetEvent () {

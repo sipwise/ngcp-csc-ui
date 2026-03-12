@@ -1,20 +1,5 @@
 import * as DestinationHelpers from 'src/helpers/destination'
 
-export const DestinationType = {
-    VoiceBox: 'VoiceBox',
-    Conference: 'Conference',
-    Fax2Mail: 'Fax2Mail',
-    CallingCard: 'CallingCard',
-    CallThrough: 'CallThrough',
-    AutoAttendant: 'AutoAttendant',
-    OfficeHoursAnnouncement: 'OfficeHoursAnnouncement',
-    CustomAnnouncement: 'CustomAnnouncement',
-    LocalSubscriber: 'LocalSubscriber',
-    ManagerSecretary: 'ManagerSecretary',
-    Application: 'Application',
-    Number: 'Number'
-}
-
 export function parseSipUri (sipUri) {
     const parsedUri = DestinationHelpers.parseSipUri(sipUri)
     return {
@@ -59,16 +44,8 @@ export function isDestinationTypeCustomAnnouncement (sipUri) {
     return DestinationHelpers.isDestinationTypeCustomAnnouncement(sipUri)
 }
 
-export function isDestinationTypeLocalSubscriber (sipUri) {
-    return DestinationHelpers.isDestinationTypeLocalSubscriber(sipUri)
-}
-
 export function isDestinationTypeManagerSecretary (sipUri) {
     return DestinationHelpers.isDestinationTypeManagerSecretary(sipUri)
-}
-
-export function isDestinationTypeApplication (sipUri) {
-    return DestinationHelpers.isDestinationTypeApplication(sipUri)
 }
 
 export function isDestinationTypeNumber (sipUri) {
@@ -108,14 +85,8 @@ export default {
         isDestinationTypeCustomAnnouncement (sipUri) {
             return DestinationHelpers.isDestinationTypeCustomAnnouncement(sipUri)
         },
-        isDestinationTypeLocalSubscriber (sipUri) {
-            return DestinationHelpers.isDestinationTypeLocalSubscriber(sipUri)
-        },
         isDestinationTypeManagerSecretary (sipUri) {
             return DestinationHelpers.isDestinationTypeManagerSecretary(sipUri)
-        },
-        isDestinationTypeApplication (sipUri) {
-            return DestinationHelpers.isDestinationTypeApplication(sipUri)
         },
         isDestinationTypeNumber (sipUri) {
             return DestinationHelpers.isDestinationTypeNumber(sipUri)
@@ -146,12 +117,8 @@ export default {
                     return this.$t('OfficeHoursAnnouncement')
                 case DestinationHelpers.DestinationType.CustomAnnouncement:
                     return this.$t('CustomAnnouncement')
-                case DestinationHelpers.DestinationType.LocalSubscriber:
-                    return this.$t('LocalSubscriber')
                 case DestinationHelpers.DestinationType.ManagerSecretary:
                     return this.$t('ManagerSecretary')
-                case DestinationHelpers.DestinationType.Application:
-                    return this.$t('Application')
                 case DestinationHelpers.DestinationType.Number:
                     return this.$t('Number')
                 default:
