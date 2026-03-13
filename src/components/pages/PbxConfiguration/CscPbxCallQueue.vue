@@ -48,7 +48,7 @@
                 :error="v$.changes.max_queue_length.$errors.length > 0"
                 :error-message="queueMaxLengthErrorMessage"
                 @update:model-value="v$.changes.max_queue_length.$touch()"
-                @keyup.enter="save"
+                @keyup.enter="saveMaxQueueLength"
             >
                 <template
                     v-if="hasMaxQueueLengthChanged"
@@ -56,7 +56,7 @@
                 >
                     <csc-input-button-save
                         v-if="v$.changes.max_queue_length.$errors.length <= 0"
-                        @click.stop="save"
+                        @click.stop="saveMaxQueueLength"
                     />
                     <csc-input-button-reset
                         @click.stop="resetMaxQueueLength"
@@ -70,7 +70,7 @@
                 :error="v$.changes.queue_wrap_up_time.$errors.length > 0"
                 :error-message="queueWrapUpTimeErrorMessage"
                 @update:model-value="v$.changes.queue_wrap_up_time.$touch()"
-                @keyup.enter="save"
+                @keyup.enter="saveQueueWrapUpTime"
             >
                 <template
                     v-if="hasQueueWrapUpTimeChanged"
@@ -78,7 +78,7 @@
                 >
                     <csc-input-button-save
                         v-if="v$.changes.queue_wrap_up_time.$errors.length <= 0"
-                        @click.stop="save"
+                        @click.stop="saveQueueWrapUpTime"
                     />
                     <csc-input-button-reset
                         @click.stop="resetQueueWrapUpTime"
@@ -139,7 +139,7 @@ export default {
         },
         defaultQueueWrapUpTime: {
             type: Number,
-            default: 300
+            default: 10
         }
     },
     emits: ['save-queue-wrap-up-time', 'save-max-queue-length', 'expand', 'collapse', 'remove'],
@@ -251,13 +251,15 @@ export default {
                 queue_wrap_up_time: this.callQueue.queue_wrap_up_time || this.defaultQueueWrapUpTime
             }
         },
-        save () {
+        saveMaxQueueLength () {
             if (this.hasMaxQueueLengthChanged && this.v$.changes.max_queue_length.$errors.length <= 0) {
                 this.$emit('save-max-queue-length', {
                     callQueueId: this.callQueue.id,
                     maxQueueLength: this.changes.max_queue_length
                 })
             }
+        },
+        saveQueueWrapUpTime () {
             if (this.hasQueueWrapUpTimeChanged && this.v$.changes.queue_wrap_up_time.$errors.length <= 0) {
                 this.$emit('save-queue-wrap-up-time', {
                     callQueueId: this.callQueue.id,
