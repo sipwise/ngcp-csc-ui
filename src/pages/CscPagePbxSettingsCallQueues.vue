@@ -87,7 +87,7 @@ export default {
         return {
             callQueue: null,
             changes: null,
-            cloud_pbx_callqueue: null,
+            cloud_pbx_callqueue: false,
             v$: useValidate()
         }
     },
