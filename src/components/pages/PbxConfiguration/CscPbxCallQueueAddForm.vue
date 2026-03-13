@@ -95,7 +95,7 @@ export default {
         },
         defaultQueueWrapUpTime: {
             type: Number,
-            default: 300
+            default: 10
         }
     },
     emits: ['submit', 'cancel', 'ready'],
