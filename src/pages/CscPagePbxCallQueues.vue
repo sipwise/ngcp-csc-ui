@@ -29,7 +29,7 @@
                     :options="getSubscriberOptions"
                     :subscriber-options-loading="isSubscribersRequesting"
                     :default-max-queue-length="defaultMaxQueueLength"
-                    :default-wrap-up-time="defaultQueueWrapUpTime"
+                    :default-queue-wrap-up-time="defaultQueueWrapUpTime"
                     @cancel="disableCallQueueAddForm"
                     @submit="createCallQueue"
                     @ready="loadSubscribers"
@@ -89,6 +89,7 @@ import CscRemoveDialog from 'components/CscRemoveDialog'
 import CscPbxCallQueue from 'components/pages/PbxConfiguration/CscPbxCallQueue'
 import CscPbxCallQueueAddForm from 'components/pages/PbxConfiguration/CscPbxCallQueueAddForm'
 import CscFade from 'components/transitions/CscFade'
+import { getSubscriberId } from 'src/auth'
 import {
     showGlobalError,
     showToast
@@ -194,7 +195,7 @@ export default {
         }
     },
     mounted () {
-        this.loadCallQueueList()
+        this.loadCallQueueList({ subscriberId: getSubscriberId() })
     },
     methods: {
         ...mapActions('pbx', [
