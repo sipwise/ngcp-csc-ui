@@ -7,6 +7,7 @@ import {
     setCallQueueMaxLength,
     setCallQueueWrapUpTime
 } from 'src/api/pbx-callqueues'
+import { getPreferences } from 'src/api/subscriber'
 import { CreationState, RequestState } from 'src/store/common'
 
 export default {
@@ -186,28 +187,32 @@ export default {
         },
         collapseCallQueue (state) {
             state.callQueueSelected = null
+        },
+        setDefaultQueueWrapUpTime (state, value) {
+            state.defaultQueueWrapUpTime = value
         }
     },
     actions: {
-        loadCallQueueList (context, options) {
-            return new Promise((resolve) => {
-                const listVisible = _.get(options, 'listVisible', false)
-                const selectedId = _.get(options, 'selectedId', null)
-                context.commit('callQueueListRequesting', {
-                    listVisible
-                })
-                getCallQueueList().then((callQueueList) => {
-                    context.commit('callQueueListSucceeded', callQueueList)
-                    if (selectedId !== null) {
-                        context.commit('expandCallQueue', callQueueList)
-                        context.commit('highlightCallQueue', callQueueList)
-                    }
-                    resolve()
-                }).catch(() => {
-                    resolve()
-                    context.commit('callQueueListSucceeded')
-                })
-            })
+        async loadCallQueueList (context, options) {
+            const subscriberId = _.get(options, 'subscriberId', null)
+            const listVisible = _.get(options, 'listVisible', false)
+            const selectedId = _.get(options, 'selectedId', null)
+            context.commit('callQueueListRequesting', { listVisible })
+            try {
+                const callQueueList = await getCallQueueList()
+                context.commit('callQueueListSucceeded', callQueueList)
+
+                const subscriberPreferences = await getPreferences(subscriberId)
+                const wrapUpTime = _.get(subscriberPreferences, 'queue_wrap_up_time', 10)
+                context.commit('setDefaultQueueWrapUpTime', wrapUpTime)
+
+                if (selectedId !== null) {
+                    context.commit('expandCallQueue', callQueueList)
+                    context.commit('highlightCallQueue', callQueueList)
+                }
+            } catch (err) {
+                context.commit('callQueueListFailed', err.message)
+            }
         },
         createCallQueue (context, callQueueData) {
             context.commit('callQueueCreationRequesting', callQueueData)
