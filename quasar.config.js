@@ -134,7 +134,6 @@ export default async function (ctx) {
             // https://quasar.dev/quasar-cli/handling-webpack
             extendWebpack (cfg) {
                 cfg.resolve.fallback = {
-                    crypto: 'crypto-browserify',
                     stream: 'stream-browserify',
                     vm: false
                 }
