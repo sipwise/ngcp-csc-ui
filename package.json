@@ -34,7 +34,6 @@
     "axios": "1.13.5",
     "content-disposition": "^1.0.1",
     "core-js": "^3.47.0",
-    "crypto-browserify": "3.12.1",
     "decode-uri-component": "^0.4.0",
     "eslint-plugin-no-relative-import-paths": "1.6.1",
     "eslint-plugin-unused-imports": "4.3.0",
@@ -64,7 +63,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.28.5",
     "@babel/plugin-transform-private-methods": "7.27.1",
-    "@quasar/app-webpack": "4.3.1",
+    "@quasar/app-webpack": "4.4.1",
     "@quasar/cli": "2.5.0",
     "@quasar/quasar-app-extension-testing": "2.2.0",
     "@quasar/quasar-app-extension-testing-unit-jest": "3.0.3",
@@ -84,21 +83,20 @@
     "eslint-plugin-quasar": "1.1.0",
     "eslint-plugin-vue": "10.6.2",
     "eslint-webpack-plugin": "5.0.2",
-    "glob": "13.0.1",
-    "globals": "16.5.0",
+    "glob": "13.0.6",
+    "globals": "17.4.0",
     "is-valid-glob": "1.0.0",
-    "jest": "30.2.0",
+    "jest": "30.3.0",
     "jest-serializer-vue": "3.1.0",
     "js-yaml": "4.1.1",
     "uuid": "13.0.0",
     "vue-wait-vue3": "1.5.3"
   },
   "resolutions": {
-    "@isaacs/brace-expansion": "5.0.1",
-    "qs": "6.14.1",
-    "tar": "7.5.7",
-    "lodash": "4.17.23",
-    "lodash-es": "4.17.23"
+    "serialize-javascript": "^7.0.3",
+    "**/postcss-svgo/svgo": "^4.0.1",
+    "dot-object/minimatch": "^3.1.2",
+     "**/flatted": "3.4.0"
   },
   "browserslist": [
     "last 10 Chrome versions",
