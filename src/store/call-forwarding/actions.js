@@ -28,7 +28,7 @@ import {
     cfUpdateTimeSetWeekdays
 } from 'src/api/call-forwarding'
 import { i18n } from 'src/boot/i18n'
-import { normalizePriorities } from 'src/helpers/call-forwarding-destinations'
+import { canMoveDestination, normalizePriorities } from 'src/helpers/call-forwarding-destinations'
 import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
 
 const DEFAULT_RING_TIMEOUT = 60
@@ -284,6 +284,43 @@ export async function removeDestination ({ dispatch, commit, state }, payload) {
         showGlobalError(e.message)
     } finally {
         dispatch('wait/end', 'csc-cf-destination-set-remove', { root: true })
+    }
+}
+
+export async function moveDestination ({ dispatch, commit, state }, payload) {
+    dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
+    try {
+        const destinations = [...state.destinationSetMap[payload.destinationSetId].destinations]
+        if (payload.destinationFromIndex < 0 ||
+            payload.destinationToIndex < 0 ||
+            payload.destinationFromIndex >= destinations.length ||
+            payload.destinationToIndex >= destinations.length) {
+            return
+        }
+        if (!canMoveDestination(destinations, payload.destinationFromIndex, payload.destinationToIndex)) {
+            return
+        }
+
+        const [movedDestination] = destinations.splice(payload.destinationFromIndex, 1)
+        destinations.splice(payload.destinationToIndex, 0, movedDestination)
+        const reorderedDestinations = destinations.map((destination, index) => ({
+            ...destination,
+            priority: index
+        }))
+
+        await cfUpdateDestinationSets({
+            resourceId: payload.destinationSetId,
+            value: reorderedDestinations
+        })
+
+        const destinationSets = await cfLoadDestinationSets()
+        commit('dataSucceeded', {
+            destinationSets: destinationSets.items
+        })
+    } catch (e) {
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
     }
 }
 

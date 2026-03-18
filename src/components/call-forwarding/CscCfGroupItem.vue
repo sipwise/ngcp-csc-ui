@@ -103,6 +103,20 @@
             side
         >
             <csc-more-menu>
+                <csc-popup-menu-item
+                    v-if="canMoveUp"
+                    icon="arrow_upward"
+                    :label="$t('Move up')"
+                    data-cy="csc-cf-destination-move-up"
+                    @click="moveDestinationEvent('up')"
+                />
+                <csc-popup-menu-item
+                    v-if="canMoveDown"
+                    icon="arrow_downward"
+                    :label="$t('Move down')"
+                    data-cy="csc-cf-destination-move-down"
+                    @click="moveDestinationEvent('down')"
+                />
                 <csc-popup-menu-item-delete
                     @click="removeDestinationEvent({
                         destinationIndex: destinationIndex,
@@ -123,6 +137,7 @@
 
 <script>
 import CscMoreMenu from 'components/CscMoreMenu'
+import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscSpinner from 'components/CscSpinner'
 import CscCfDestination from 'components/call-forwarding/CscCfDestination'
@@ -130,12 +145,13 @@ import CscCfDestinationCustomAnnouncement from 'components/call-forwarding/CscCf
 import CscCfDestinationNumber from 'components/call-forwarding/CscCfDestinationNumber'
 import CscInput from 'components/form/CscInput'
 import _ from 'lodash'
+import { canMoveDestination } from 'src/helpers/call-forwarding-destinations'
 import { showGlobalError } from 'src/helpers/ui'
 import destination from 'src/mixins/destination'
 import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupItem',
-    components: { CscCfDestinationNumber, CscCfDestinationCustomAnnouncement, CscCfDestination, CscSpinner, CscInput, CscPopupMenuItemDelete, CscMoreMenu },
+    components: { CscCfDestinationNumber, CscCfDestinationCustomAnnouncement, CscCfDestination, CscSpinner, CscInput, CscPopupMenuItemDelete, CscPopupMenuItem, CscMoreMenu },
     mixins: [destination],
     props: {
         mapping: {
@@ -180,6 +196,20 @@ export default {
             'ringTimeout',
             'announcements'
         ]),
+        canMoveUp () {
+            return canMoveDestination(
+                this.destinationSet.destinations,
+                this.destinationIndex,
+                this.destinationIndex - 1
+            )
+        },
+        canMoveDown () {
+            return canMoveDestination(
+                this.destinationSet.destinations,
+                this.destinationIndex,
+                this.destinationIndex + 1
+            )
+        },
         waitIdentifier () {
             return `csc-cf-group-item-${this.destinationSet.id}-${this.destinationIndex}`
         }
@@ -209,11 +239,25 @@ export default {
         ...mapActions('callForwarding', [
             'updateDestination',
             'removeDestination',
+            'moveDestination',
             'updateDestinationTimeout',
             'updateRingTimeout',
             'rewriteDestination',
             'updateAnnouncement'
         ]),
+        async moveDestinationEvent (direction) {
+            const targetIndex = direction === 'up' ? this.destinationIndex - 1 : this.destinationIndex + 1
+            if (!canMoveDestination(this.destinationSet.destinations, this.destinationIndex, targetIndex)) {
+                return
+            }
+            this.$wait.start(this.waitIdentifier)
+            await this.moveDestination({
+                destinationSetId: this.destinationSet.id,
+                destinationFromIndex: this.destinationIndex,
+                destinationToIndex: targetIndex
+            })
+            this.$wait.end(this.waitIdentifier)
+        },
         async updateDestinationEvent (payload, newDestination) {
             this.$wait.start(this.waitIdentifier)
             const validatedDest = await this.rewriteDestination(newDestination)

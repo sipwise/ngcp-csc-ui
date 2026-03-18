@@ -5,9 +5,13 @@ function toNumericPriority (destination) {
     return Number.isFinite(parsed) ? parsed : 0
 }
 
-function isTerminalDestination (destination) {
+function isMovableDestination (destination) {
     const destinationType = parseSipUri(destination?.destination || '').destinationType
-    return destinationType !== DestinationType.Number
+    return destinationType === DestinationType.Number
+}
+
+function isTerminalDestination (destination) {
+    return !isMovableDestination(destination)
 }
 
 function allDestinationsSharePriority (destinations) {
@@ -59,6 +63,33 @@ export function sortDestinationsByPriority (destinations) {
         return [...destinations]
     }
     return getPrioritySortedIndexEntries(destinations).map((entry) => entry.destination)
+}
+
+export function canMoveDestination (destinations, fromIndex, toIndex) {
+    if (!Array.isArray(destinations) ||
+        fromIndex < 0 ||
+        toIndex < 0 ||
+        fromIndex >= destinations.length ||
+        toIndex >= destinations.length ||
+        fromIndex === toIndex ||
+        Math.abs(toIndex - fromIndex) !== 1) {
+        return false
+    }
+
+    const movingDestination = destinations[fromIndex]
+    const targetDestination = destinations[toIndex]
+
+    if (toIndex < fromIndex && isTerminalDestination(movingDestination)) {
+        return false
+    }
+
+    if (toIndex > fromIndex &&
+        isMovableDestination(movingDestination) &&
+        isTerminalDestination(targetDestination)) {
+        return false
+    }
+
+    return true
 }
 
 export function normalizePriorities (destinations) {
