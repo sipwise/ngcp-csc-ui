@@ -259,7 +259,7 @@ export default {
         ignoreMembers () {
             this.updateIgnoreMembers({
                 customerId: this.getCustomerId,
-                ignore_cf: this.changes.ignore_cf_when_hunting
+                ignore_cf_when_hunting: this.changes.ignore_cf_when_hunting
             })
         },
         blockInMode () {
