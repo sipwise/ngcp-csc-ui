@@ -8,6 +8,7 @@ import {
     patchAdd,
     patchAddFull,
     patchRemove,
+    patchRemoveFull,
     patchReplace,
     patchReplaceFull
 } from 'src/api/common'
@@ -800,49 +801,31 @@ export async function getSubscriberProfile (id) {
 }
 
 export function getCustomerPreference (id) {
-    return new Promise((resolve, reject) => {
-        get({
-            path: `api/customerpreferences/${id}`
-        }).then((customerPreferences) => {
-            resolve(customerPreferences)
-        }).catch((err) => {
-            reject(err)
-        })
+    return get({
+        path: `api/customerpreferences/${id}`
     })
 }
 
-export function setCustomerPreference (customerId, customerValue, fieldName) {
-    return new Promise((resolve, reject) => {
-        Promise.resolve().then(() => {
-            if (customerValue === undefined || customerValue === null || customerValue === '' || (Array.isArray(customerValue) && !customerValue.length)) {
-                return patchRemove({
-                    path: `api/customerpreferences/${customerId}`,
-                    fieldPath: fieldName
-                }).then((customer) => {
-                    resolve(customer.data)
-                })
-            }
-            return patchReplaceFull({
-                path: `api/customerpreferences/${customerId}`,
-                fieldPath: fieldName,
-                value: customerValue
-            })
-        }).then((customer) => {
-            resolve(customer)
-        }).catch((err) => {
-            const errCode = `${err.status}`
-            if (errCode === '422') {
-                return patchAdd({
-                    path: `api/customerpreferences/${customerId}`,
-                    fieldPath: fieldName,
-                    value: customerValue
-                })
-            }
-        }).then((customer) => {
-            resolve(customer.data)
-        }).catch((err) => {
-            reject(err)
-        })
+export async function addCustomerPreference (customerId, fieldPath, value) {
+    return patchAddFull({
+        path: `api/customerpreferences/${customerId}`,
+        fieldPath,
+        value
+    })
+}
+
+export async function removeCustomerPreference (customerId, fieldPath) {
+    return patchRemoveFull({
+        path: `api/customerpreferences/${customerId}`,
+        fieldPath
+    })
+}
+
+export async function setCustomerPreference (customerId, fieldPath, value) {
+    return patchReplaceFull({
+        path: `api/customerpreferences/${customerId}`,
+        fieldPath,
+        value
     })
 }
 
