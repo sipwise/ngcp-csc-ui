@@ -13,6 +13,7 @@ import {
     cfLoadAnnouncements,
     cfLoadBNumberSets,
     cfLoadDestinationSets,
+    cfLoadMappings,
     cfLoadMappingsFull,
     cfLoadSourceSets,
     cfLoadTimeSets,
@@ -157,12 +158,14 @@ export async function setMappingEnabled ({ dispatch, commit, state, rootGetters 
             enabled: !mappingsByType[payload.index].enabled
         }
 
-        const updatedMappings = await cfUpdateMappingField({
+        await cfUpdateMappingField({
             resource: 'cfmappings',
             resourceId,
             fieldPath: payload.type,
             value: mappingsByType
         })
+
+        const updatedMappings = await cfLoadMappings(resourceId)
 
         commit('dataSucceeded', { mappings: updatedMappings })
     } catch (e) {

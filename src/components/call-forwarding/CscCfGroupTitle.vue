@@ -10,6 +10,7 @@
             >
                 <q-toggle
                     :model-value="mapping.enabled"
+                    :disable="loading || $wait.is(waitIdentifier)"
                     data-cy="csc-forwarding-toggle"
                     @update:model-value="toggleMappingEvent(mapping)"
                 />
