@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.5.1.18+0~mr13.5.1.18) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [8c9e822] MT#64569 -  Destination priority improvements
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 Mar 2026 15:59:02 +0100
+
 ngcp-csc-ui (13.5.1.17+0~mr13.5.1.17) unstable; urgency=medium
 
   [ Debora Crescenzo ]
