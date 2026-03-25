@@ -1,9 +1,11 @@
 import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
+    addGroupPreferenceField,
     createGroup,
     getGroupList,
     removeGroup,
+    removeGroupPreferenceField,
     setGroupAnnouncementCallSetup,
     setGroupAnnouncementCfu,
     setGroupExtension,
@@ -12,6 +14,7 @@ import {
     setGroupHuntTimeout,
     setGroupName,
     setGroupNumbers,
+    setGroupPreferenceField,
     setGroupSeats,
     setGroupSoundSet
 } from 'src/api/pbx-groups'
@@ -173,6 +176,20 @@ export default {
             return (id) => {
                 const groupPreferences = state.preferenceMapById[id]
                 return groupPreferences && groupPreferences.play_announce_before_call_setup ? state.preferenceMapById[id].play_announce_before_call_setup : false
+            }
+        },
+        getConferenceMaxParticipants (state) {
+            return (id) => {
+                const groupPreferences = state.preferenceMapById[id]
+                const value = groupPreferences?.conference_max_participants ?? ''
+                return value === null || value === undefined ? '' : value.toString()
+            }
+        },
+        getConferencePin (state) {
+            return (id) => {
+                const groupPreferences = state.preferenceMapById[id]
+                const value = groupPreferences?.conference_pin ?? ''
+                return value === null || value === undefined ? '' : value.toString()
             }
         }
     },
@@ -439,6 +456,72 @@ export default {
             }).catch((err) => {
                 context.commit('groupUpdateFailed', err.message)
             })
+        },
+        async setConferenceMaxParticipants (context, options) {
+            context.commit('groupUpdateRequesting', {
+                groupId: options.groupId,
+                groupField: i18n.global.t('Maximum Conference Participants')
+            })
+
+            const groupPreferencesList = Object.keys(context.state.preferenceMapById[options.groupId] || {})
+            const hasConferenceMaxParticipants = groupPreferencesList.includes('conference_max_participants')
+            const group = context.state.groupMapById[options.groupId]
+
+            if (hasConferenceMaxParticipants && options.conferenceMaxParticipants === '') {
+                await removeGroupPreferenceField(options.groupId, 'conference_max_participants')
+                const preferences = { ...context.state.preferenceMapById[options.groupId] }
+                delete preferences.conference_max_participants
+                return context.commit('groupUpdateSucceeded', { group, preferences })
+            }
+
+            if (hasConferenceMaxParticipants) {
+                await setGroupPreferenceField(options.groupId, 'conference_max_participants', options.conferenceMaxParticipants)
+                const preferences = {
+                    ...context.state.preferenceMapById[options.groupId],
+                    conference_max_participants: options.conferenceMaxParticipants
+                }
+                return context.commit('groupUpdateSucceeded', { group, preferences })
+            }
+
+            await addGroupPreferenceField(options.groupId, 'conference_max_participants', options.conferenceMaxParticipants)
+            const preferences = {
+                ...context.state.preferenceMapById[options.groupId],
+                conference_max_participants: options.conferenceMaxParticipants
+            }
+            context.commit('groupUpdateSucceeded', { group, preferences })
+        },
+        async setConferencePin (context, options) {
+            context.commit('groupUpdateRequesting', {
+                groupId: options.groupId,
+                groupField: i18n.global.t('Conference PIN')
+            })
+
+            const groupPreferencesList = Object.keys(context.state.preferenceMapById[options.groupId] || {})
+            const hasConferencePin = groupPreferencesList.includes('conference_pin')
+            const group = context.state.groupMapById[options.groupId]
+
+            if (hasConferencePin && options.conferencePin === '') {
+                await removeGroupPreferenceField(options.groupId, 'conference_pin')
+                const preferences = { ...context.state.preferenceMapById[options.groupId] }
+                delete preferences.conference_pin
+                return context.commit('groupUpdateSucceeded', { group, preferences })
+            }
+
+            if (hasConferencePin) {
+                await setGroupPreferenceField(options.groupId, 'conference_pin', options.conferencePin)
+                const preferences = {
+                    ...context.state.preferenceMapById[options.groupId],
+                    conference_pin: options.conferencePin
+                }
+                return context.commit('groupUpdateSucceeded', { group, preferences })
+            }
+
+            await addGroupPreferenceField(options.groupId, 'conference_pin', options.conferencePin)
+            const preferences = {
+                ...context.state.preferenceMapById[options.groupId],
+                conference_pin: options.conferencePin
+            }
+            context.commit('groupUpdateSucceeded', { group, preferences })
         },
         async setAnnouncementCfu (context, options) {
             context.commit('groupUpdateRequesting', {

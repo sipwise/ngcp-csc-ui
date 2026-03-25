@@ -237,6 +237,56 @@
                     :disable="isLoading"
                     @click="jumpToCallQueueInternal"
                 />
+                <q-input
+                    v-model="changes.conferenceMaxParticipants"
+                    :label="$t('Maximum Conference Participants')"
+                    :disable="isLoading"
+                    :error="v$.changes.conferenceMaxParticipants.$errors.length > 0"
+                    :error-message="conferenceMaxParticipantsErrorMessage"
+                    @update:model-value="v$.changes.conferenceMaxParticipants.$touch()"
+                    @keyup.enter="save"
+                    @keypress.space.prevent
+                    @keydown.space.prevent
+                    @keyup.space.prevent
+                >
+                    <template
+                        v-if="hasConferenceMaxParticipantsChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            v-if="v$.changes.conferenceMaxParticipants.$errors.length <= 0"
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetConferenceMaxParticipants"
+                        />
+                    </template>
+                </q-input>
+                <q-input
+                    v-model="changes.conferencePin"
+                    :label="$t('Conference PIN')"
+                    :disable="isLoading"
+                    :error="v$.changes.conferencePin.$errors.length > 0"
+                    :error-message="conferencePinErrorMessage"
+                    @update:model-value="v$.changes.conferencePin.$touch()"
+                    @keyup.enter="save"
+                    @keypress.space.prevent
+                    @keydown.space.prevent
+                    @keyup.space.prevent
+                >
+                    <template
+                        v-if="hasConferencePinChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            v-if="v$.changes.conferencePin.$errors.length <= 0"
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetConferencePin"
+                        />
+                    </template>
+                </q-input>
             </q-list>
             <q-list
                 v-if="changes"
@@ -290,6 +340,7 @@
 
 <script>
 import useValidate from '@vuelidate/core'
+import { numeric } from '@vuelidate/validators'
 import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
@@ -387,6 +438,8 @@ export default {
             'getHuntCancelModeOptions',
             'getAnnouncementCfu',
             'getAnnouncementCallSetup',
+            'getConferenceMaxParticipants',
+            'getConferencePin',
             'isGroupMapByIdEmpty'
         ]),
         ...mapGetters('callForwarding', [
@@ -425,6 +478,12 @@ export default {
         hasSoundSetChanged () {
             return this.changes.soundSet !== this.getSoundSetId()
         },
+        hasConferenceMaxParticipantsChanged () {
+            return this.changes.conferenceMaxParticipants !== this.getConferenceMaxParticipants(this.groupSelected.id)
+        },
+        hasConferencePinChanged () {
+            return this.changes.conferencePin !== this.getConferencePin(this.groupSelected.id)
+        },
         getPrimaryNumber () {
             return numberFilter(this.groupSelected.primary_number)
         },
@@ -432,6 +491,24 @@ export default {
             const errorsTab = this.v$.changes.extension.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
                 return this.getExtensionHint
+            }
+            return ''
+        },
+        conferenceMaxParticipantsErrorMessage () {
+            const errorsTab = this.v$.changes.conferenceMaxParticipants.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
+                return this.$t('{field} must consist of numeric characters only', {
+                    field: this.$t('Maximum Conference Participants')
+                })
+            }
+            return ''
+        },
+        conferencePinErrorMessage () {
+            const errorsTab = this.v$.changes.conferencePin.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
+                return this.$t('{field} must consist of numeric characters only', {
+                    field: this.$t('Conference PIN')
+                })
             }
             return ''
         },
@@ -488,6 +565,12 @@ export default {
                 isInRange: function (value) {
                     return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension)
                 }
+            },
+            conferenceMaxParticipants: {
+                numeric
+            },
+            conferencePin: {
+                numeric
             }
         }
     },
@@ -501,6 +584,8 @@ export default {
             'setGroupSeats',
             'setGroupNumbers',
             'setGroupSoundSet',
+            'setConferenceMaxParticipants',
+            'setConferencePin',
             'setAnnouncementCallSetup',
             'setAnnouncementCfu',
             'loadGroupListItems'
@@ -528,6 +613,8 @@ export default {
                     aliasNumbers: this.getAliasNumberIds(),
                     seats: this.getSeatIds(),
                     soundSet: this.getSoundSetId(),
+                    conferenceMaxParticipants: this.getConferenceMaxParticipants(this.groupSelected.id),
+                    conferencePin: this.getConferencePin(this.groupSelected.id),
                     announcementCallSetup: this.getAnnouncementCallSetup(this.groupSelected.id),
                     announcementCfu: this.getAnnouncementCfu(this.groupSelected.id)
                 }
@@ -573,6 +660,12 @@ export default {
         },
         resetSoundSet () {
             this.changes.soundSet = this.getSoundSetId()
+        },
+        resetConferenceMaxParticipants () {
+            this.changes.conferenceMaxParticipants = this.getConferenceMaxParticipants(this.groupSelected.id)
+        },
+        resetConferencePin () {
+            this.changes.conferencePin = this.getConferencePin(this.groupSelected.id)
         },
         jumpToCallQueueInternal () {
             this.jumpToCallQueue(this.groupSelected)
@@ -625,6 +718,18 @@ export default {
                 this.setGroupSoundSet({
                     groupId: this.groupSelected.id,
                     soundSetId: this.changes.soundSet
+                })
+            }
+            if (this.hasConferenceMaxParticipantsChanged) {
+                this.setConferenceMaxParticipants({
+                    groupId: this.groupSelected.id,
+                    conferenceMaxParticipants: this.changes.conferenceMaxParticipants
+                })
+            }
+            if (this.hasConferencePinChanged) {
+                this.setConferencePin({
+                    groupId: this.groupSelected.id,
+                    conferencePin: this.changes.conferencePin
                 })
             }
         },

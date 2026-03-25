@@ -13,6 +13,7 @@ import {
 } from 'src/api/pbx-config'
 import { getGroupsOnly } from 'src/api/pbx-groups'
 import {
+    addPreference,
     createSubscriber,
     deleteSubscriber,
     generateGeneralPassword,
@@ -20,6 +21,8 @@ import {
     getPreferences,
     getSubscriberAndPreferences,
     getSubscribers,
+    removePreference,
+    replacePreference,
     setDisplayName,
     setPbxExtension,
     setPbxGroupIds,
@@ -381,6 +384,18 @@ export function setSeatCstaClient (seatId, cstaClient) {
  */
 export function setSeatCstaController (seatId, cstaController) {
     return setPreferenceCstaController(seatId, cstaController)
+}
+
+export function setSeatPreferenceField (seatId, field, value) {
+    return replacePreference(seatId, field, value)
+}
+
+export function addSeatPreferenceField (seatId, field, value) {
+    return addPreference(seatId, field, value)
+}
+
+export function removeSeatPreferenceField (seatId, field) {
+    return removePreference(seatId, field)
 }
 
 /**

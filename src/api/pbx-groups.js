@@ -9,12 +9,15 @@ import {
 } from 'src/api/pbx-config'
 import { getSeatsOnly } from 'src/api/pbx-seats'
 import {
+    addPreference,
     createSubscriber,
     deleteSubscriber,
     generateGeneralPassword,
     getFullSubscribers,
     getSubscriberAndPreferences,
     getSubscribers,
+    removePreference,
+    replacePreference,
     setDisplayName,
     setPbxExtension, setPbxGroupMemberIds,
     setPbxHuntCancelMode,
@@ -319,6 +322,18 @@ export function setGroupAnnouncementCfu (groupId, announcementCfu) {
  */
 export function setGroupAnnouncementCallSetup (groupId, announcementCallSetup) {
     return setPreferenceAnnouncementCallSetup(groupId, announcementCallSetup)
+}
+
+export function setGroupPreferenceField (groupId, field, value) {
+    return replacePreference(groupId, field, value)
+}
+
+export function addGroupPreferenceField (groupId, field, value) {
+    return addPreference(groupId, field, value)
+}
+
+export function removeGroupPreferenceField (groupId, field) {
+    return removePreference(groupId, field)
 }
 
 // This mirrors the logic we use in ngcp-admin to handle the pbx groups creation

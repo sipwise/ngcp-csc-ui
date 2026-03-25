@@ -279,6 +279,56 @@
                     :disable="isLoading"
                     @click="goToCallQueue"
                 />
+                <q-input
+                    v-model="changes.conferenceMaxParticipants"
+                    :label="$t('Maximum Conference Participants')"
+                    :disable="isLoading"
+                    :error="v$.changes.conferenceMaxParticipants.$errors.length > 0"
+                    :error-message="conferenceMaxParticipantsErrorMessage"
+                    @update:model-value="v$.changes.conferenceMaxParticipants.$touch()"
+                    @keyup.enter="save"
+                    @keypress.space.prevent
+                    @keydown.space.prevent
+                    @keyup.space.prevent
+                >
+                    <template
+                        v-if="hasConferenceMaxParticipantsChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            v-if="v$.changes.conferenceMaxParticipants.$errors.length <= 0"
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetConferenceMaxParticipants"
+                        />
+                    </template>
+                </q-input>
+                <q-input
+                    v-model="changes.conferencePin"
+                    :label="$t('Conference PIN')"
+                    :disable="isLoading"
+                    :error="v$.changes.conferencePin.$errors.length > 0"
+                    :error-message="conferencePinErrorMessage"
+                    @update:model-value="v$.changes.conferencePin.$touch()"
+                    @keyup.enter="save"
+                    @keypress.space.prevent
+                    @keydown.space.prevent
+                    @keyup.space.prevent
+                >
+                    <template
+                        v-if="hasConferencePinChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            v-if="v$.changes.conferencePin.$errors.length <= 0"
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetConferencePin"
+                        />
+                    </template>
+                </q-input>
             </q-list>
             <q-list
                 v-if="changes"
@@ -388,7 +438,11 @@
 
 <script>
 import useValidate from '@vuelidate/core'
-import { maxLength, required } from '@vuelidate/validators'
+import {
+    maxLength,
+    numeric,
+    required
+} from '@vuelidate/validators'
 import CscChangePasswordDialog from 'components/CscChangePasswordDialog'
 import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
@@ -491,6 +545,8 @@ export default {
             'getMusicOnHold',
             'getDefaultNcos',
             'getDefaultNcosSet',
+            'getConferenceMaxParticipants',
+            'getConferencePin',
             'getCurrentCli',
             'getIntraPbx',
             'getClir',
@@ -542,6 +598,12 @@ export default {
         hasNcosSetChanged () {
             return this.changes.ncosSet !== this.getDefaultNcosSet(this.seatSelected.id)
         },
+        hasConferenceMaxParticipantsChanged () {
+            return this.changes.conferenceMaxParticipants !== this.getConferenceMaxParticipants(this.seatSelected.id)
+        },
+        hasConferencePinChanged () {
+            return this.changes.conferencePin !== this.getConferencePin(this.seatSelected.id)
+        },
         extensionErrorMessage () {
             const errorsTab = this.v$.changes.extension.$errors
             if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
@@ -579,6 +641,24 @@ export default {
         },
         showClir () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.clir)
+        },
+        conferenceMaxParticipantsErrorMessage () {
+            const errorsTab = this.v$.changes.conferenceMaxParticipants.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
+                return this.$t('{field} must consist of numeric characters only', {
+                    field: this.$t('Maximum Conference Participants')
+                })
+            }
+            return ''
+        },
+        conferencePinErrorMessage () {
+            const errorsTab = this.v$.changes.conferencePin.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
+                return this.$t('{field} must consist of numeric characters only', {
+                    field: this.$t('Conference PIN')
+                })
+            }
+            return ''
         },
         showClirIntraPbx () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.clir_intrapbx)
@@ -698,6 +778,12 @@ export default {
             webUsername: {
                 required,
                 maxLength: maxLength(64)
+            },
+            conferenceMaxParticipants: {
+                numeric
+            },
+            conferencePin: {
+                numeric
             }
         }
     },
@@ -725,7 +811,9 @@ export default {
             'setAnnouncementToCallee',
             'setIgnoreCfWhenHunting',
             'setCstaClient',
-            'setCstaController'
+            'setCstaController',
+            'setConferenceMaxParticipants',
+            'setConferencePin'
         ]),
         ...mapActions('user', [
             'getNcosLevelsSubscriber',
@@ -802,7 +890,9 @@ export default {
                     soundSet: this.getSoundSetId(),
                     cliNumber: this.getCliNumberId(),
                     ncos: this.getDefaultNcos(this.seatSelected.id),
-                    ncosSet: this.getDefaultNcosSet(this.seatSelected.id)
+                    ncosSet: this.getDefaultNcosSet(this.seatSelected.id),
+                    conferenceMaxParticipants: this.getConferenceMaxParticipants(this.seatSelected.id),
+                    conferencePin: this.getConferencePin(this.seatSelected.id)
                 }
                 : null
         },
@@ -832,6 +922,12 @@ export default {
         },
         resetNcosSet () {
             this.changes.ncosSet = this.getDefaultNcosSet(this.seatSelected.id)
+        },
+        resetConferenceMaxParticipants () {
+            this.changes.conferenceMaxParticipants = this.getConferenceMaxParticipants(this.seatSelected.id)
+        },
+        resetConferencePin () {
+            this.changes.conferencePin = this.getConferencePin(this.seatSelected.id)
         },
         save () {
             if (this.hasDisplayNameChanged) {
@@ -887,6 +983,18 @@ export default {
                 this.NcosSet({
                     seatId: this.seatSelected.id,
                     ncosSetId: this.changes.ncosSet
+                })
+            }
+            if (this.hasConferenceMaxParticipantsChanged && this.v$.changes.conferenceMaxParticipants.$errors.length <= 0) {
+                this.setConferenceMaxParticipants({
+                    seatId: this.seatSelected.id,
+                    conferenceMaxParticipants: this.changes.conferenceMaxParticipants
+                })
+            }
+            if (this.hasConferencePinChanged && this.v$.changes.conferencePin.$errors.length <= 0) {
+                this.setConferencePin({
+                    seatId: this.seatSelected.id,
+                    conferencePin: this.changes.conferencePin
                 })
             }
         },

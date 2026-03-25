@@ -5,10 +5,12 @@ import _ from 'lodash'
 import {
     NcosSet,
     NcosSets,
+    addSeatPreferenceField,
     createSeat,
     getSeatList,
     getSeatPreferences,
     removeSeat,
+    removeSeatPreferenceField,
     setNcosLevelSets,
     setNcosSet,
     setSeatAnnouncementCallSetup,
@@ -25,6 +27,7 @@ import {
     setSeatIntraPbx,
     setSeatMusicOnHold,
     setSeatNumbers,
+    setSeatPreferenceField,
     setSeatSIPPassword,
     setSeatSoundSet,
     setSeatWebPassword,
@@ -176,6 +179,20 @@ export default {
         getCurrentCli (state) {
             return (id) => {
                 return state?.preferenceMapById[id]?.cli || false
+            }
+        },
+        getConferenceMaxParticipants (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                const value = seatPreferences?.conference_max_participants ?? ''
+                return value === null || value === undefined ? '' : value.toString()
+            }
+        },
+        getConferencePin (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                const value = seatPreferences?.conference_pin ?? ''
+                return value === null || value === undefined ? '' : value.toString()
             }
         },
         getSeatCreatingName (state) {
@@ -678,6 +695,72 @@ export default {
             } catch (err) {
                 context.commit('seatUpdateFailed', err.message)
             }
+        },
+        async setConferenceMaxParticipants (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.global.t('Maximum Conference Participants')
+            })
+
+            const seatPreferencesList = Object.keys(context.state.preferenceMapById[options.seatId] || {})
+            const hasConferenceMaxParticipants = seatPreferencesList.includes('conference_max_participants')
+            const seat = context.state.seatMapById[options.seatId]
+
+            if (hasConferenceMaxParticipants && options.conferenceMaxParticipants === '') {
+                await removeSeatPreferenceField(options.seatId, 'conference_max_participants')
+                const preferences = { ...context.state.preferenceMapById[options.seatId] }
+                delete preferences.conference_max_participants
+                return context.commit('seatUpdateSucceeded', { seat, preferences })
+            }
+
+            if (hasConferenceMaxParticipants) {
+                await setSeatPreferenceField(options.seatId, 'conference_max_participants', options.conferenceMaxParticipants)
+                const preferences = {
+                    ...context.state.preferenceMapById[options.seatId],
+                    conference_max_participants: options.conferenceMaxParticipants
+                }
+                return context.commit('seatUpdateSucceeded', { seat, preferences })
+            }
+
+            await addSeatPreferenceField(options.seatId, 'conference_max_participants', options.conferenceMaxParticipants)
+            const preferences = {
+                ...context.state.preferenceMapById[options.seatId],
+                conference_max_participants: options.conferenceMaxParticipants
+            }
+            context.commit('seatUpdateSucceeded', { seat, preferences })
+        },
+        async setConferencePin (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.conferencePin
+            })
+
+            const seatPreferencesList = Object.keys(context.state.preferenceMapById[options.seatId] || {})
+            const hasConferencePin = seatPreferencesList.includes('conference_pin')
+            const seat = context.state.seatMapById[options.seatId]
+
+            if (hasConferencePin && options.conferencePin === '') {
+                await removeSeatPreferenceField(options.seatId, 'conference_pin')
+                const preferences = { ...context.state.preferenceMapById[options.seatId] }
+                delete preferences.conference_pin
+                return context.commit('seatUpdateSucceeded', { seat, preferences })
+            }
+
+            if (hasConferencePin) {
+                await setSeatPreferenceField(options.seatId, 'conference_pin', options.conferencePin)
+                const preferences = {
+                    ...context.state.preferenceMapById[options.seatId],
+                    conference_pin: options.conferencePin
+                }
+                return context.commit('seatUpdateSucceeded', { seat, preferences })
+            }
+
+            await addSeatPreferenceField(options.seatId, 'conference_pin', options.conferencePin)
+            const preferences = {
+                ...context.state.preferenceMapById[options.seatId],
+                conference_pin: options.conferencePin
+            }
+            return context.commit('seatUpdateSucceeded', { seat, preferences })
         }
     }
 }
