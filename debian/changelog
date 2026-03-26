@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.5.1.19+0~mr13.5.1.19) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [1e83c73] MT#64726 Refactor customer preferences actions
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 26 Mar 2026 16:34:34 +0100
+
 ngcp-csc-ui (13.5.1.18+0~mr13.5.1.18) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
