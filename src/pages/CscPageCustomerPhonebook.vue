@@ -216,7 +216,7 @@ export default {
                 cancel: true,
                 persistent: true
             }).onOk(async (data) => {
-                await this.removeCustomerPhonebook(row)
+                await this.removeCustomerPhonebook({ row, customerId: this.getCustomerId })
                 await this.refresh()
             })
         },
