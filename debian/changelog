@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.68+0~mr12.5.1.68) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [60da536] MT#64630 remove selenium from mr12.5+
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Apr 2026 11:06:34 +0200
+
 ngcp-csc-ui (12.5.1.67+0~mr12.5.1.67) unstable; urgency=medium
 
   [ Debora Crescenzo ]
