@@ -1,3 +1,47 @@
+ngcp-csc-ui (26.1.0.0+0~mr26.1.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [a06aeb6] MT#64397 Restore component names for Cypress data-cy generation
+  * [d62d29b] MT#64416 Fix axios vulnerability
+  * [ff40864] MT#64432 Refactor Subscriber Phonebook
+  * [19f2e6c] MT#64432 Delete redundant code
+  * [9db53bc] MT#64432 Refactor updateSharedValue and getList
+  * [df136f7] MT#64432 Fix typo
+  * [a1c595e] MT#64432 Enxtract include: customer param
+  * [8c51d8f] MT#64585 Remove the CF to Local Subscriber feature
+  * [088a351] MT#64705 Refactoring and cleanup
+  * [1ebe3c0] MT#64579 Reduce npm audit vulnerabilities from 132 to 30
+  * [849f19d] MT#64752 switch to nodejs v24
+  * [be59b85] MT#64377 Improve CF creation flow and Vue actions
+  * [bc231de] MT#64804 CF toggle bugfix
+  * [58e7a88] MT#64726 Refactor customer preferences actions
+
+  [ nidrissi-zouggari ]
+  * [afd3e09] MT#64240 Fix call page input bug
+  * [546429a] MT#64363 CF improvement
+  * [5c64406] MT#64372 Add possiblity to create CFT
+  * [45131fd] MT#64501 Subscriber phonebook default filter
+  * [33aad6a] MT#64565 Subscriber Admin user should be able to configure CLIR per seat
+
+  [ Nico Schedel ]
+  * [ccc9b6a] MT#63705 add data-cy for csc roles tests
+  * [1ff59b3] MT#64596 add missing data-cy for auto attendant and manager secretary
+  * [e2a6349] MT#64630 remove selenium from mr12.5+
+
+  [ Guillem Jover ]
+  * [8e50b38] MT#62763 Fix pycodestyle issues
+
+  [ Michael Prokop ]
+  * [e4b533b] MT#64366 Switch Dockerfile from Debian buster/bookworm to trixie
+
+  [ Giancarlo Errigo Mattos ]
+  * [38d6e20] MT#64569 -  Destination priority improvements
+  * [83a5878] MT#64430 Call forwarding destination reordering
+  * [d798bae] MT#64806 Adds conference preferences for PBX seats/groups
+  * [b9fab7d] MT#64829 German mistranslation fix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Apr 2026 12:57:08 +0200
+
 ngcp-csc-ui (14.2.0.0+0~mr14.2.0.0) unstable; urgency=medium
 
   [ Debora Crescenzo ]
