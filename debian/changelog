@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.5.1.21+0~mr13.5.1.21) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [4bcd7fb] MT#64876 delete customer phonebook entry bugfix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Apr 2026 17:36:38 +0200
+
 ngcp-csc-ui (13.5.1.20+0~mr13.5.1.20) unstable; urgency=medium
 
   [ Nico Schedel ]
