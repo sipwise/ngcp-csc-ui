@@ -9,6 +9,7 @@
                     <q-toggle
                         :model-value="mailToFaxSettingsModel.active"
                         :label="$t('Active')"
+                        data-cy="csc-mailtofax-active"
                         :disable="disableToggle"
                         @update:model-value="setChangedData('active', !mailToFaxSettingsModel.active)"
                     />
@@ -27,6 +28,7 @@
                     <csc-input-saveable
                         v-model.trim="mailToFaxSettingsModel.secret_key"
                         :label="secretKeyFieldLabel"
+                        data-cy="csc-mailtofax-secretkey"
                         :disable="!dataLoaded"
                         :loading="loadingMail2FaxSettings"
                         :value-changed="mailToFaxSettingsModel.secret_key !== mailToFaxSettings.secret_key"
@@ -48,6 +50,7 @@
                         :disable="!dataLoaded"
                         :readonly="!dataLoaded"
                         :label="$t('Secret Key Renew')"
+                        data-cy="csc-mailtofax-secretkey-renew"
                         :options="secretKeyRenewOptions"
                         @update:model-value="setChangedData('secret_key_renew', mailToFaxSettingsModel.secret_key_renew)"
                     >
@@ -77,6 +80,7 @@
                             flat
                             color="primary"
                             icon="add"
+                            data-cy="csc-mailtofax-secretnotify-add"
                             :disable="!dataLoaded || showAddNewRenewEmail"
                             @click="openAddNewRenewEmail"
                         >
@@ -96,6 +100,7 @@
                             class="col"
                             :loading="!dataLoaded"
                             :is-add-new-mode="true"
+                            data-cy="csc-mailtofax-secretnotify-form"
                             @save="addNewRenewEmail"
                             @cancel="closeAddNewRenewEmail"
                         />
@@ -115,6 +120,7 @@
                                 v-for="renewEmail in mailToFaxSettingsModel.secret_renew_notify"
                                 :key="renewEmail.destination"
                                 :value="renewEmail.destination"
+                                data-cy="csc-mailtofax-secretnotify-element"
                                 @save="updateRenewEmailItem(renewEmail.destination, $event)"
                                 @remove="deleteRenewEmailItem(renewEmail.destination)"
                             />
@@ -139,6 +145,7 @@
                             flat
                             color="primary"
                             icon="add"
+                            data-cy="csc-mailtofax-acl-add"
                             :disable="!dataLoaded || showAddNewACL"
                             @click="openAddNewACL"
                         >
@@ -158,6 +165,7 @@
                             class="col"
                             :loading="!dataLoaded"
                             :is-add-new-mode="true"
+                            data-cy="csc-mailtofax-acl-form"
                             @save="addNewACL"
                             @cancel="closeAddNewACL"
                         />
@@ -178,6 +186,7 @@
                                 :key="index"
                                 :acl="acl"
                                 :expanded="index === expandedACLId"
+                                data-cy="csc-mailtofax-acl-element"
                                 @expand="expandedACLId = index"
                                 @collapse="expandedACLId = null"
                                 @update-property="updateACL(index, $event)"
