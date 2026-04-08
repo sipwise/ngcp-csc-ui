@@ -4,6 +4,7 @@
             v-model="data.destination"
             icon="email"
             :label="$t('Renew Notify Email')"
+            data-cy="csc-mailtofax-secretkey-renew-email"
             :disable="disabled"
             :readonly="loading"
             :error="v$.data.destination.$errors.length > 0"
@@ -29,6 +30,7 @@
                 color="default"
                 icon="clear"
                 :disable="loading"
+                data-cy="csc-mailtofax-secretkey-renew-cancelbutton"
                 :label="$t('Cancel')"
                 @click="cancel()"
             />
@@ -38,6 +40,7 @@
                 icon="done"
                 :loading="loading"
                 :disable="v$.data.$invalid || loading"
+                data-cy="csc-mailtofax-secretkey-renew-createbutton"
                 :label="$t('Add email')"
                 @click="save()"
             />
