@@ -52,6 +52,7 @@
                 <q-input
                     v-model="changes.name"
                     :label="$t('Name')"
+                    data-cy="csc-group-name"
                     :disable="isLoading"
                     @keyup.enter="save"
                 >
@@ -72,6 +73,7 @@
                     disable
                     :model-value="changes.sipUsername"
                     :label="$t('SIP Username')"
+                    data-cy="csc-group-sip-username"
                 />
                 <q-input
                     v-model="changes.extension"
@@ -79,6 +81,7 @@
                     :error="v$.changes.extension.$errors.length > 0"
                     :error-message="extensionErrorMessage"
                     :label="$t('Extension')"
+                    data-cy="csc-group-extension"
                     :hint="getExtensionHint"
                     :disable="isLoading"
                     @keyup.enter="save"
@@ -101,6 +104,7 @@
                     disable
                     :model-value="getPrimaryNumber"
                     :label="$t('Primary Number')"
+                    data-cy="csc-group-primary-number"
                 />
                 <q-select
                     v-model="changes.huntPolicy"
@@ -108,6 +112,7 @@
                     map-options
                     radio
                     :label="$t('Hunt Policy')"
+                    data-cy="csc-group-hunt-policy"
                     :disable="isLoading"
                     :options="getHuntPolicyOptions"
                 >
@@ -126,6 +131,7 @@
                 <q-input
                     v-model="changes.huntTimeout"
                     :label="$t('Hunt Timeout')"
+                    data-cy="csc-group-hunt-timeout"
                     :disable="isLoading"
                     @keyup.enter="save"
                 >
@@ -147,6 +153,7 @@
                     map-options
                     radio
                     :label="$t('Cancel Mode')"
+                    data-cy="csc-group-cancel-mode"
                     :disable="isLoading"
                     :options="getHuntCancelModeOptions"
                 >
@@ -170,6 +177,7 @@
                     multiple
                     :disable="isLoading"
                     :label="$t('Alias Numbers')"
+                    data-cy="csc-group-alias-numbers"
                     :options="getNumberOptions"
                 >
                     <template
@@ -192,6 +200,7 @@
                     multiple
                     :disable="isLoading"
                     :label="$t('Seats')"
+                    data-cy="csc-group-seats"
                     :options="getSeatOptions"
                 >
                     <template
@@ -214,6 +223,7 @@
                     radio
                     :disable="isLoading"
                     :label="$t('Sound Set')"
+                    data-cy="csc-group-soundset"
                     :options="getSoundSetOptions"
                 >
                     <template
@@ -234,12 +244,14 @@
                     flat
                     color="primary"
                     :label="$t('Call Queue')"
+                    data-cy="csc-group-call-queue"
                     :disable="isLoading"
                     @click="jumpToCallQueueInternal"
                 />
                 <q-input
                     v-model="changes.conferenceMaxParticipants"
                     :label="$t('Maximum Conference Participants')"
+                    data-cy="csc-group-max-conference-participants"
                     :disable="isLoading"
                     :error="v$.changes.conferenceMaxParticipants.$errors.length > 0"
                     :error-message="conferenceMaxParticipantsErrorMessage"
@@ -265,6 +277,7 @@
                 <q-input
                     v-model="changes.conferencePin"
                     :label="$t('Conference PIN')"
+                    data-cy="csc-group-conference-pin"
                     :disable="isLoading"
                     :error="v$.changes.conferencePin.$errors.length > 0"
                     :error-message="conferencePinErrorMessage"
@@ -300,6 +313,7 @@
                     v-model="changes.announcementCfu"
                     class="q-pa-sm"
                     :label="$t('Play announcement before routing to CFU/CFNA')"
+                    data-cy="csc-group-announcement-cfucfna"
                     :disable="isLoading"
                     @update:model-value="changeAnnouncementCfu"
                 />
@@ -308,6 +322,7 @@
                     v-model="changes.announcementCallSetup"
                     class="q-pa-sm"
                     :label="$t('Play announcement before call setup')"
+                    data-cy="csc-group-announcement-callsetup"
                     :disable="isLoading"
                     @update:model-value="changeAnnouncementCallSetup"
                 />

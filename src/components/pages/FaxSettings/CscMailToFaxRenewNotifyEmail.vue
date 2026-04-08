@@ -20,6 +20,7 @@
                 ref="emailInput"
                 v-model="newEmail"
                 :label="$t('Renew Notify Email')"
+                data-cy="csc-mailtofax-secretkey-renew-email"
                 :value-changed="isChanged"
                 :error="v$.newEmail.$errors.length > 0"
                 :error-message="newEmailErrorMessage"
@@ -43,6 +44,7 @@
                 icon="delete"
                 text-color="negative"
                 :title="$t('Remove')"
+                data-cy="csc-mailtofax-secretkey-renew-remove"
                 :disable="isChanged"
                 @click="remove"
             />

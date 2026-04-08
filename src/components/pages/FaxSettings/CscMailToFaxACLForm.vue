@@ -8,6 +8,7 @@
                     v-model="data.from_email"
                     icon="email"
                     :label="$t('From email')"
+                    data-cy="csc-mailtofax-acl-email"
                     :disable="disabled"
                     :readonly="loading"
                     :value-changed="!isAddNewMode && data.from_email !== initialData.from_email"
@@ -24,6 +25,7 @@
                 <csc-input-saveable
                     v-model="data.received_from"
                     :label="$t('Received from IP')"
+                    data-cy="csc-mailtofax-acl-ip"
                     :disable="disabled"
                     :readonly="loading"
                     :value-changed="!isAddNewMode && data.received_from !== initialData.received_from"
@@ -40,6 +42,7 @@
                 <csc-input-saveable
                     v-model="data.destination"
                     :label="$t('Destination')"
+                    data-cy="csc-mailtofax-acl-destination"
                     :disable="disabled"
                     :readonly="loading"
                     :value-changed="!isAddNewMode && data.destination !== initialData.destination"
@@ -57,6 +60,7 @@
                 <q-toggle
                     v-model="data.use_regex"
                     :label="$t('Use RegExp')"
+                    data-cy="csc-mailtofax-acl-regex"
                     :hint="$t('Enable regex matching for &quot;Received from IP&quot; and &quot;Destination&quot; fields.')"
                     :disable="loading"
                     @update:model-value="updatePropertyData('use_regex')"
@@ -76,6 +80,7 @@
                 color="default"
                 icon="clear"
                 :disable="loading"
+                data-cy="csc-mailtofax-acl-cancelbutton"
                 :label="$t('Cancel')"
                 @click="cancel()"
             />
@@ -85,6 +90,7 @@
                 icon="person"
                 :loading="loading"
                 :disable="loading"
+                data-cy="csc-mailtofax-acl-createbutton"
                 :label="$t('Create ACL')"
                 @click="save()"
             />
