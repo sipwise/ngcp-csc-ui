@@ -476,8 +476,8 @@ export default {
         async removeSubscriberRegistration (context, row) {
             await httpApi.delete(`api/subscriberregistrations/${row.id}`)
         },
-        async removeCustomerPhonebook (context, { row, customerId }) {
-            await httpApi.delete(`api/v2/customers/${customerId}/phonebook/${row.id}`)
+        async removeCustomerPhonebook (context, row) {
+            await httpApi.delete(`api/customerphonebookentries/${row.id}`)
         },
         async getNcosLevelsSubscriber () {
             const ncosLevel = []
@@ -514,15 +514,15 @@ export default {
         async setNcosLevelsSubscriber (value) {
             await setPreference(getSubscriberId(), 'ncos', value)
         },
-        async getPhonebookCustomerDetails (context, { phonebookId, customerId }) {
-            const list = await httpApi.get(`api/v2/customers/${customerId}/phonebook/${phonebookId}`)
+        async getPhonebookCustomerDetails (context, id) {
+            const list = await httpApi.get(`api/customerphonebookentries/${id}`)
             return list
         },
         async getValueNameCustomer (context, options) {
             await setValueNameCustomer(options.phonebookId, options.name)
         },
         async getValueNumberCustomer (context, options) {
-            await setValueNumberCustomer(options.customerId, options.phonebookId, options.number)
+            await setValueNumberCustomer(options.phonebookId, options.number)
         },
         async createPhonebookCustomer (context, data) {
             await createCustomerPhonebook(data)

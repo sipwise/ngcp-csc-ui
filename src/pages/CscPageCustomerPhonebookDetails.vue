@@ -99,11 +99,11 @@ export default {
         await this.getPhonebook(this.id)
     },
     methods: {
-        ...mapWaitingActions('user', {
-            getPhonebookCustomerDetails: 'getPhonebookCustomerDetails',
-            getValueNameCustomer: 'getValueNameCustomer',
-            getValueNumberCustomer: 'getValueNumberCustomer'
-        }),
+        ...mapWaitingActions('user', [
+            'getPhonebookCustomerDetails',
+            'getValueNameCustomer',
+            'getValueNumberCustomer'
+        ]),
         async getPhonebook (id) {
             const response = await this.getPhonebookCustomerDetails(id)
             this.formData.name = response.data.name
