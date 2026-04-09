@@ -166,11 +166,11 @@ export default {
         await this.refresh()
     },
     methods: {
-        ...mapWaitingActions('user', {
-            loadCustomerPhonebook: 'loadCustomerPhonebook',
-            removeCustomerPhonebook: 'removeCustomerPhonebook',
-            ajaxDownloadPhonebookCSV: 'ajaxDownloadPhonebookCSV'
-        }),
+        ...mapWaitingActions('user', [
+            'loadCustomerPhonebook',
+            'removeCustomerPhonebook',
+            'ajaxDownloadPhonebookCSV'
+        ]),
         async refresh () {
             await this.fetchPaginatedRegistrations({
                 pagination: this.pagination
@@ -216,7 +216,7 @@ export default {
                 cancel: true,
                 persistent: true
             }).onOk(async (data) => {
-                await this.removeCustomerPhonebook({ row, customerId: this.getCustomerId })
+                await this.removeCustomerPhonebook(row)
                 await this.refresh()
             })
         },
