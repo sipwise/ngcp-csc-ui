@@ -784,12 +784,12 @@ export async function uploadCsv (context, formData) {
         config
     })
 }
-export function setValueNameCustomer (customerId, phonebookId, value) {
-    return setPreferencePhonebookCustomer(customerId, phonebookId, 'name', value)
+export function setValueNameCustomer (phonebookId, value) {
+    return setPreferencePhonebookCustomer(phonebookId, 'name', value)
 }
 
-export function setValueNumberCustomer (customerId, phonebookId, value) {
-    return setPreferencePhonebookCustomer(customerId, phonebookId, 'number', value)
+export function setValueNumberCustomer (phonebookId, value) {
+    return setPreferencePhonebookCustomer(phonebookId, 'number', value)
 }
 export async function getRecordingStream (fileId) {
     return await getAsBlob({
