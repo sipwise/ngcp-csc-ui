@@ -31,8 +31,8 @@ export default [
     },
     ...compat.extends(
         'standard',
-        'plugin:vue/recommended'
     ),
+    ...vue.configs['flat/recommended'],
     {
         plugins: {
             vue,
