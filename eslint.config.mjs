@@ -29,10 +29,8 @@ export default [
             '**/.*'
         ]
     },
-    ...compat.extends(
-        'standard',
-        'plugin:vue/recommended'
-    ),
+    ...compat.extends('standard'),
+    ...vue.configs['flat/recommended'],
     {
         plugins: {
             vue,
