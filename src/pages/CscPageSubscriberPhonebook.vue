@@ -98,8 +98,17 @@
                     </td>
                 </template>
                 <template #body-cell-menu="{ row }">
-                    <td>
-                        <div class="q-gutter-x-sm">
+                    <td class="table-td-action-cont">
+                        <div class="row items-center justify-between no-wrap full-width">
+                            <q-btn
+                                icon="fas fa-phone-alt"
+                                color="primary"
+                                size="sm"
+                                flat
+                                :label="$t('Call back')"
+                                data-cy="csc-phonebook-entry-callback"
+                                @click="homePageCall(row)"
+                            />
                             <csc-more-menu>
                                 <csc-popup-menu-item
                                     icon="fas fa-pen"
@@ -118,15 +127,6 @@
                                     @click="deleteRow(row)"
                                 />
                             </csc-more-menu>
-                            <q-btn
-                                icon="fas fa-phone-alt"
-                                color="primary"
-                                size="sm"
-                                flat
-                                :label="$t('Call back')"
-                                data-cy="csc-phonebook-entry-callback"
-                                @click="homePageCall(row)"
-                            />
                         </div>
                     </td>
                 </template>
@@ -202,9 +202,8 @@ export default {
                 {
                     name: 'menu',
                     required: true,
-                    align: 'left',
-                    label: '',
-                    sortable: true
+                    align: 'right',
+                    label: ''
                 }
             ]
         },
@@ -319,3 +318,8 @@ export default {
     }
 }
 </script>
+
+<style lang="sass" rel="stylesheet/sass" scoped>
+.table-td-action-cont
+    min-width: 170px
+</style>
