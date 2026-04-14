@@ -19,6 +19,7 @@
             :disable="loading || numberOptionsLoading"
             :readonly="loading"
             :label="$t('Select secretary numbers')"
+            data-cy="csc-manager-secretary-dropdown"
             :options="numberOptions"
         />
         <div
