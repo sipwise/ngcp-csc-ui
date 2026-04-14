@@ -1,3 +1,11 @@
+ngcp-csc-ui (13.5.1.23+0~mr13.5.1.23) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [822155c] MT#64579 Reduce npm audit vulnerabilities from 132 to 30
+  * [b792303] MT#64899 April Security Updates
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Apr 2026 10:36:45 +0200
+
 ngcp-csc-ui (13.5.1.22+0~mr13.5.1.22) unstable; urgency=medium
 
   [ Debora Crescenzo ]
