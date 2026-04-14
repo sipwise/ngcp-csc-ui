@@ -81,35 +81,6 @@
                 <csc-popup-menu-item-delete
                     @click="deleteSeat"
                 />
-                <q-separator v-if="showClirIntraPbx || showMusicOnHold" />
-                <q-item
-                    v-if="showClirIntraPbx"
-                    class="no-padding"
-                >
-                    <q-item-section>
-                        <q-toggle
-                            v-model="changes.clirIntrapbx"
-                            class="q-pa-sm"
-                            :label="$t('Hide number within own PBX')"
-                            :disable="loading"
-                            @update:model-value="changeIntraPbx"
-                        />
-                    </q-item-section>
-                </q-item>
-                <q-item
-                    v-if="showMusicOnHold"
-                    class="no-padding"
-                >
-                    <q-item-section>
-                        <q-toggle
-                            v-model="changes.musicOnHold"
-                            class="q-pa-sm"
-                            :label="$t('Music on Hold')"
-                            :disable="loading"
-                            @update:model-value="changeMusicOnHold"
-                        />
-                    </q-item-section>
-                </q-item>
             </csc-more-menu>
         </q-item-section>
     </q-item>
@@ -121,8 +92,6 @@ import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import _ from 'lodash'
-import { PROFILE_ATTRIBUTES_MAP, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
-import { mapGetters } from 'vuex'
 export default {
     name: 'CscPbxSeat',
     components: {
@@ -146,28 +115,12 @@ export default {
         loading: {
             type: Boolean,
             default: undefined
-        },
-        musicOnHold: {
-            type: Boolean,
-            default: undefined
         }
     },
     emits: ['save-intra-pbx', 'save-music-on-hold', 'remove'],
     data () {
         return {
             changes: this.getSeatData()
-        }
-    },
-    computed: {
-        ...mapGetters('user', [
-            'hasSubscriberProfileAttribute',
-            'hasSomeSubscriberProfileAttributes'
-        ]),
-        showClirIntraPbx () {
-            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.clir_intrapbx)
-        },
-        showMusicOnHold () {
-            return this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings)
         }
     },
     watch: {
@@ -184,8 +137,6 @@ export default {
                 name: this.seat.display_name,
                 extension: this.seat.pbx_extension,
                 webPassword: this.seat.webpassword,
-                clirIntrapbx: this.intraPbx,
-                musicOnHold: this.musicOnHold,
                 groups: this.getGroupIds()
             }
         },
@@ -229,18 +180,6 @@ export default {
             await this.$store.dispatch('pbxSeats/setSeatSIPPassword', {
                 seatId: this.seat.id,
                 seatSIPPassword: password
-            })
-        },
-        changeIntraPbx () {
-            this.$emit('save-intra-pbx', {
-                seatId: this.seat.id,
-                intraPbx: this.changes.clirIntrapbx
-            })
-        },
-        changeMusicOnHold () {
-            this.$emit('save-music-on-hold', {
-                seatId: this.seat.id,
-                musicOnHold: this.changes.musicOnHold
             })
         },
         showSeatDetails () {
