@@ -28,7 +28,6 @@
                 :key="destinationIndex"
                 :loading="loading"
                 :destination="destination"
-                :destination-previous="(destinationIndex > 0)?destinationSet.destinations[destinationIndex - 1]:null"
                 :destination-index="destinationIndex"
                 :mapping="mapping"
                 :destination-set="destinationSet"
