@@ -111,13 +111,6 @@
                         />
                     </template>
                 </q-select>
-                <q-toggle
-                    v-model="data.clirIntrapbx"
-                    :label="$t('Hide number within own PBX')"
-                    :disable="loading"
-                    class="q-pa-md"
-                    dense
-                />
             </div>
             <div
                 class="col-xs-12 col-lg-3"
@@ -374,8 +367,7 @@ export default {
                 },
                 aliasNumbers: [],
                 groups: [],
-                soundSet: null,
-                clirIntrapbx: false
+                soundSet: null
             }
         },
         cancel () {
@@ -398,8 +390,7 @@ export default {
                 sipPassword: this.data.sipPassword.password,
                 aliasNumbers: this.data.aliasNumbers,
                 groups: this.data.groups,
-                soundSet: this.data.soundSet,
-                clirIntrapbx: this.data.clirIntrapbx
+                soundSet: this.data.soundSet
             })
         },
         reset () {
