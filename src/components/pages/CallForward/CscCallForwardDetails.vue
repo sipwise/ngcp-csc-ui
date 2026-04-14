@@ -60,6 +60,7 @@
                     </q-item>
                     <csc-cf-group-item-primary-number
                         :primary-number-source="getPrimaryNumberSource"
+                        :show-timeout-info="false"
                     />
                 </q-list>
                 <csc-popup-menu-ring-timeout

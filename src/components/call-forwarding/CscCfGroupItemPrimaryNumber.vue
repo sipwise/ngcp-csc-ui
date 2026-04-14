@@ -20,6 +20,22 @@
                     />
                     {{ getPrimaryNumber }}
                 </span>
+                <template
+                    v-if="showTimeoutInfo"
+                >
+                    {{ ' ' + $t('for') + ' ' }}
+                    <span
+                        class="q-pl-xs q-pr-xs text-primary text-weight-bold cursor-pointer"
+                        style="white-space: nowrap"
+                    >
+                        <q-icon
+                            name="access_time"
+                        />
+                        {{ ringTimeout }}
+                        {{ $t('seconds') }}
+                        <q-tooltip class="text-dark">{{ $t('This setting is synced with "After Ring Timeout", which can be edited above.') }}</q-tooltip>
+                    </span>
+                </template>
             </q-item-label>
         </q-item-section>
         <q-inner-loading
@@ -51,6 +67,10 @@ export default {
         primaryNumberSource: {
             type: Object,
             default: undefined
+        },
+        showTimeoutInfo: {
+            type: Boolean,
+            default: true
         }
     },
     data () {
@@ -58,6 +78,9 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('callForwarding', [
+            'ringTimeout'
+        ]),
         ...mapGetters('user', [
             'primaryNumber'
         ]),

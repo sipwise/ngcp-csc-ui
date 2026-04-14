@@ -60,7 +60,9 @@
                             </q-item-label>
                         </q-item-section>
                     </q-item>
-                    <csc-cf-group-item-primary-number />
+                    <csc-cf-group-item-primary-number
+                        :show-timeout-info="false"
+                    />
                 </q-list>
                 <csc-popup-menu-ring-timeout
                     v-if="isRingTimeoutVisible"

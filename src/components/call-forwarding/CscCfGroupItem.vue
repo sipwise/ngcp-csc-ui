@@ -11,32 +11,36 @@
             :class="loading"
         >
             <q-item-label>
-                <template
-                    v-if="destinationIndex === 0 && mapping.type !== 'cft'"
-                >
-                    {{ $t('Forwarded to') }}
-                </template>
-                <template
-                    v-else-if="destinationIndex === 0 && mapping.type === 'cft'"
-                >
-                    {{ $t('After') }}
-                    <span
-                        class="q-pl-xs q-pr-xs text-primary text-weight-bold cursor-pointer"
-                        style="white-space: nowrap"
-                    >
-                        <q-icon
-                            name="access_time"
-                        />
-                        {{ ringTimeout }}
-                        {{ $t('seconds') }}
-                        <q-tooltip class="text-dark">{{ $t('This setting is synced with "After Ring Timeout", which can be edited above.') }}</q-tooltip>
-                    </span>
-                    {{ $t('forwarded to') }}
-                </template>
-                <template
+                {{ $t('Forwarded to') + ' ' }}
+                <csc-cf-destination-custom-announcement
+                    class="q-pr-xs"
+                    v-if="isDestinationTypeCustomAnnouncement(destination.destination) && destination.announcement_id"
+                    :value="announcement"
+                    :destination="destination"
+                    :announcements="announcements"
+                    @input="updateAnnouncementEvent({
+                        destinationIndex: destinationIndex,
+                        destinationSetId: destinationSet.id
+                    }, $event)"
+                />
+                <csc-cf-destination-number
+                    class="q-pr-xs"
+                    v-else-if="isDestinationTypeNumber(destination.destination)"
+                    :value="changedDestination"
+                    :destination="destination"
+                    @input="updateDestinationEvent({
+                        destinationIndex: destinationIndex,
+                        destinationSetId: destinationSet.id
+                    }, $event)"
+                />
+                <csc-cf-destination
                     v-else
+                    :model-value="destination"
+                />
+                <template
+                    v-if="hasDestinationDuration"
                 >
-                    {{ $t('After') }}
+                    {{ ' ' + $t('for') + ' ' }}
                     <span
                         class="q-pl-xs q-pr-xs text-primary text-weight-bold cursor-pointer"
                         style="white-space: nowrap"
@@ -44,7 +48,7 @@
                         <q-icon
                             name="access_time"
                         />
-                        {{ destinationPrevious.timeout }}
+                        {{ currentDestinationTimeout }}
                         {{ $t('seconds') }}
                         <q-popup-edit
                             v-slot="scope"
@@ -53,7 +57,7 @@
                             @before-show="$store.commit('callForwarding/popupShow', null)"
                             @save="updateDestinationTimeoutEvent({
                                 destinationTimeout: $event,
-                                destinationIndex: destinationIndex - 1,
+                                destinationIndex: destinationIndex,
                                 destinationSetId: destinationSet.id
                             })"
                         >
@@ -72,31 +76,7 @@
                             </csc-input>
                         </q-popup-edit>
                     </span>
-                    {{ $t('forwarded to') }}
                 </template>
-                <csc-cf-destination-custom-announcement
-                    v-if="isDestinationTypeCustomAnnouncement(destination.destination) && destination.announcement_id"
-                    :value="announcement"
-                    :destination="destination"
-                    :announcements="announcements"
-                    @input="updateAnnouncementEvent({
-                        destinationIndex: destinationIndex,
-                        destinationSetId: destinationSet.id
-                    }, $event)"
-                />
-                <csc-cf-destination-number
-                    v-else-if="isDestinationTypeNumber(destination.destination)"
-                    :value="changedDestination"
-                    :destination="destination"
-                    @input="updateDestinationEvent({
-                        destinationIndex: destinationIndex,
-                        destinationSetId: destinationSet.id
-                    }, $event)"
-                />
-                <csc-cf-destination
-                    v-else
-                    :model-value="destination"
-                />
             </q-item-label>
         </q-item-section>
         <q-item-section
@@ -162,10 +142,6 @@ export default {
             type: Object,
             required: true
         },
-        destinationPrevious: {
-            type: Object,
-            default: null
-        },
         destinationIndex: {
             type: Number,
             required: true
@@ -187,15 +163,24 @@ export default {
     data () {
         return {
             changedDestination: this.destination.simple_destination,
-            changedDestinationTimeout: 0,
+            changedDestinationTimeout: this.destination.timeout,
             announcement: null
         }
     },
     computed: {
         ...mapGetters('callForwarding', [
-            'ringTimeout',
             'announcements'
         ]),
+        hasDestinationDuration () {
+            return this.isDestinationTypeNumber(this.destination.destination)
+        },
+        currentDestinationTimeout () {
+            if (!this.hasDestinationDuration) {
+                return null
+            }
+
+            return this.destination.timeout
+        },
         canMoveUp () {
             return canMoveDestination(
                 this.destinationSet.destinations,
@@ -217,22 +202,17 @@ export default {
     watch: {
         destination () {
             this.changedDestination = this.destination.simple_destination
+        },
+        currentDestinationTimeout: {
+            handler (timeout) {
+                this.changedDestinationTimeout = timeout
+            },
+            immediate: true
         }
     },
     beforeMount () {
         if (this.destination.announcement_id) {
             this.setAnnouncement()
-        }
-    },
-    async mounted () {
-        // For the first destination in a call forwarding with timeout
-        // use the global ringTimeout value.
-        if (this.mapping.type === 'cft' && this.destinationIndex === 0) {
-            this.changedDestinationTimeout = this.ringTimeout
-            // For subsequent destinations, use the timeout
-            // from the previous destination in the chain.
-        } else if (this.destinationPrevious) {
-            this.changedDestinationTimeout = this.destinationPrevious.timeout
         }
     },
     methods: {
@@ -241,7 +221,6 @@ export default {
             'removeDestination',
             'moveDestination',
             'updateDestinationTimeout',
-            'updateRingTimeout',
             'rewriteDestination',
             'updateAnnouncement'
         ]),
@@ -289,11 +268,6 @@ export default {
             this.$wait.start(this.waitIdentifier)
             await this.updateDestinationTimeout(payload)
             this.$wait.end(this.waitIdentifier)
-        },
-        async updateRingTimeoutEvent (event) {
-            this.$wait.start('csc-cf-mappings-full')
-            await this.updateRingTimeout({ ringTimeout: event, subscriberId: this.subscriberId })
-            this.$wait.end('csc-cf-mappings-full')
         },
         setAnnouncement () {
             this.announcement = _.first(this.announcements.filter((announcement) => announcement.value === this.destination.announcement_id))
