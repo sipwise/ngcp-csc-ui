@@ -77,7 +77,6 @@
                 :class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
                 :seat="seat"
                 :intra-pbx="getIntraPbx(seat.id)"
-                :music-on-hold="getMusicOnHold(seat.id)"
                 :groups="groupMapById"
                 :loading="isSeatLoading(seat.id)"
                 @remove="openSeatRemovalDialog(seat.id)"
@@ -178,7 +177,6 @@ export default {
             'isSeatRemoving',
             'isSeatLoading',
             'getIntraPbx',
-            'getMusicOnHold',
             'getSeatRemoveDialogMessage',
             'getSeatCreationToastMessage',
             'getSeatRemovalToastMessage',
