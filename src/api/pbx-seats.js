@@ -154,7 +154,6 @@ export async function createSeat (seat) {
             }, { forceCli: seat.forceCli })
         }).then(($subscriberId) => {
             subscriberId = $subscriberId
-            setSeatIntraPbx(subscriberId, seat.clirIntrapbx)
             if (seat.soundSet !== null && seat.soundSet !== undefined) {
                 return getSoundSet(seat.soundSet)
             }
