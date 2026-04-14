@@ -152,7 +152,6 @@ export function createSeat (seat) {
             })
         }).then(($subscriberId) => {
             subscriberId = $subscriberId
-            setSeatIntraPbx(subscriberId, seat.clirIntrapbx)
             if (seat.soundSet !== null && seat.soundSet !== undefined) {
                 return getSoundSet(seat.soundSet)
             } else {
