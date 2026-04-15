@@ -72,6 +72,8 @@ export default {
                 this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.huntGroups) ||
                 this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCallSetup) ||
                 this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceToCallee)
+            const hasExtensionSettingsSubmenus = this.isPbxEnabled &&
+                this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxExtensionSettings)
             return [
                 {
                     to: '/user/dashboard',
@@ -250,8 +252,7 @@ export default {
                 {
                     icon: 'settings',
                     label: this.$t('Extension Settings'),
-                    visible: this.isPbxEnabled &&
-                        this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettings),
+                    visible: hasExtensionSettingsSubmenus,
                     children: [
                         {
                             to: '/user/extension-settings/call-queues',
@@ -270,6 +271,13 @@ export default {
                             icon: 'dialpad',
                             label: this.$t('Auto Attendant'),
                             visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.autoAttendant)
+                        },
+                        {
+                            to: '/user/extension-settings/conference',
+                            icon: 'groups',
+                            label: this.$t('Conference'),
+                            visible: this.isPbxAdmin &&
+                                this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxSettingsConference)
                         }
                     ]
                 },

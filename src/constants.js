@@ -26,6 +26,8 @@ export const PROFILE_ATTRIBUTE_MAP = {
     clir_intrapbx: 'clir_intrapbx',
     cstaClient: 'csta_client',
     cstaController: 'csta_controller',
+    conferenceMaxParticipants: 'conference_max_participants',
+    conferencePin: 'conference_pin',
     faxServer: 'fax_server',
     cscCalls: 'csc_calls',
     managerSecretary: 'manager_secretary',
@@ -48,7 +50,8 @@ export const PROFILE_ATTRIBUTES_MAP = {
     callBlockingOutgoing: ['block_out_mode', 'block_out_list', 'ncos', 'ncos_set'],
     callBlockingPrivacy: ['clir', 'clir_intrapbx'],
     callSettings: ['music_on_hold', 'language'],
-    pbxSettings: ['auto_attendant', 'cloud_pbx_callqueue', 'max_queue_length', 'queue_wrap_up_time', 'manager_secretary'],
+    pbxExtensionSettings: ['auto_attendant', 'manager_secretary', 'conference_max_participants', 'conference_pin'],
+    pbxSettingsConference: ['conference_max_participants', 'conference_pin'],
     pbxSettingsCallQueue: ['cloud_pbx_callqueue', 'max_queue_length', 'queue_wrap_up_time'],
     callForwarding: ['cfu', 'cfb', 'cfna', 'cft', 'cfs', 'cfo', 'cfr']
 }

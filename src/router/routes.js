@@ -30,6 +30,7 @@ import CscPagePbxSeatDetails from 'pages/CscPagePbxSeatDetails'
 import CscPagePbxSeats from 'pages/CscPagePbxSeats'
 import CscPagePbxSettingsAutoAttendant from 'pages/CscPagePbxSettingsAutoAttendant'
 import CscPagePbxSettingsCallQueues from 'pages/CscPagePbxSettingsCallQueues'
+import CscPagePbxSettingsConference from 'pages/CscPagePbxSettingsConference'
 import CscPagePbxSettingsMsConfigs from 'pages/CscPagePbxSettingsMsConfigs'
 import CscPagePbxSoundSetDetails from 'pages/CscPagePbxSoundSetDetails'
 import CscPagePbxSoundSets from 'pages/CscPagePbxSoundSets'
@@ -605,6 +606,22 @@ const routes = [
                     },
                     platformFeature: FEATURES.cloudPbx,
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.autoAttendant,
+                    capability: FEATURES.cloudPbx,
+                    licenses: [LICENSES.pbx]
+                }
+            },
+            {
+                path: 'extension-settings/conference',
+                component: CscPagePbxSettingsConference,
+                meta: {
+                    get title () {
+                        return i18n.global.t('Extension Settings')
+                    },
+                    get subtitle () {
+                        return i18n.global.t('Conference')
+                    },
+                    platformFeature: FEATURES.cloudPbx,
+                    profileAttributes: PROFILE_ATTRIBUTES_MAP.pbxSettingsConference,
                     capability: FEATURES.cloudPbx,
                     licenses: [LICENSES.pbx]
                 }
