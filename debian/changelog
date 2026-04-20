@@ -1,3 +1,16 @@
+ngcp-csc-ui (26.0.0.1+0~mr26.0.0.1) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [e868d08] MT#64899 April Security Updates
+
+  [ nidrissi-zouggari ]
+  * [a007090] MT#64519 Fix default value for Call Queue
+
+  [ Giancarlo Errigo Mattos ]
+  * [302b41c] MT#64902 Rewording of CF group item timeout information
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 Apr 2026 10:30:54 +0200
+
 ngcp-csc-ui (26.0.0.0+0~mr26.0.0.0) unstable; urgency=medium
 
   * New release.
