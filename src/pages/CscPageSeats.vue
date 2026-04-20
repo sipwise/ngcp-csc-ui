@@ -52,6 +52,7 @@ import CscPageSticky from 'components/CscPageSticky'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscSpinner from 'components/CscSpinner'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { normalizePrimaryNumber } from 'src/helpers/call-forwarding-destinations'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters, mapState } from 'vuex'
 export default {
@@ -99,7 +100,7 @@ export default {
                     align: 'left',
                     label: this.$t('Display Name'),
                     field: (row) => {
-                        return row.display_name ? row.display_name : this.formatPhoneNumber(row.primary_number)
+                        return row.display_name ? row.display_name : normalizePrimaryNumber(row.primary_number)
                     },
                     sortable: true
                 },
@@ -107,7 +108,7 @@ export default {
                     name: 'primary_number',
                     align: 'left',
                     label: this.$t('Number'),
-                    field: (row) => this.formatPhoneNumber(row.primary_number),
+                    field: (row) => normalizePrimaryNumber(row.primary_number),
                     sortable: true
                 },
                 {
@@ -151,14 +152,11 @@ export default {
         openSubscriberPhonebookTable () {
             this.$router.push('/user/subscriber-phonebook')
         },
-        formatPhoneNumber (pn) {
-            return `${pn.cc}${pn.ac}${pn.sn}`
-        },
         async homePageCall (row) {
             const pn = row.primary_number
             this.$router.push({
                 path: '/user/home',
-                query: { number: this.formatPhoneNumber(pn) }
+                query: { number: normalizePrimaryNumber(pn) }
             })
         }
     }

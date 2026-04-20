@@ -8,7 +8,7 @@
             />
         </q-item-section>
         <q-item-section
-            :class="loading"
+            :class="loading ? 'disabled' : '' "
         >
             <q-item-label>
                 {{ $t('Forwarded to') + ' ' }}
@@ -23,8 +23,7 @@
                         destinationSetId: destinationSet.id
                     }, $event)"
                 />
-                <csc-cf-destination-number
-                    class="q-pr-xs"
+                <csc-cf-destination-number-or-seat
                     v-else-if="isDestinationTypeNumber(destination.destination)"
                     :value="changedDestination"
                     :destination="destination"
@@ -122,22 +121,26 @@ import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscSpinner from 'components/CscSpinner'
 import CscCfDestination from 'components/call-forwarding/CscCfDestination'
 import CscCfDestinationCustomAnnouncement from 'components/call-forwarding/CscCfDestinationCustomAnnouncement'
-import CscCfDestinationNumber from 'components/call-forwarding/CscCfDestinationNumber'
+import CscCfDestinationNumberOrSeat from 'components/call-forwarding/CscCfDestinationNumberOrSeat'
 import CscInput from 'components/form/CscInput'
 import _ from 'lodash'
 import { canMoveDestination } from 'src/helpers/call-forwarding-destinations'
-import { showGlobalError } from 'src/helpers/ui'
 import destination from 'src/mixins/destination'
 import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupItem',
-    components: { CscCfDestinationNumber, CscCfDestinationCustomAnnouncement, CscCfDestination, CscSpinner, CscInput, CscPopupMenuItemDelete, CscPopupMenuItem, CscMoreMenu },
+    components: {
+        CscCfDestinationNumberOrSeat,
+        CscCfDestinationCustomAnnouncement,
+        CscCfDestination,
+        CscSpinner,
+        CscInput,
+        CscPopupMenuItemDelete,
+        CscPopupMenuItem,
+        CscMoreMenu
+    },
     mixins: [destination],
     props: {
-        mapping: {
-            type: Object,
-            required: true
-        },
         destination: {
             type: Object,
             required: true
@@ -153,10 +156,6 @@ export default {
         loading: {
             type: Boolean,
             default: false
-        },
-        subscriberId: {
-            type: String,
-            default: ''
         }
     },
     emits: ['delete-last'],
@@ -277,13 +276,6 @@ export default {
             await this.updateAnnouncement({ ...payload, announcementId: newAnnouncement.value })
             this.setAnnouncement()
             this.$wait.end(this.waitIdentifier)
-        },
-        checkAnnouncement () {
-            const fieldFilled = this.announcement > 0
-            if (!fieldFilled) {
-                showGlobalError(this.$t('Please select an option'))
-            }
-            return fieldFilled
         }
     }
 }

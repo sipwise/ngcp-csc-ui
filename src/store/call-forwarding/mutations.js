@@ -1,5 +1,12 @@
-import { sortDestinationsByPriority } from 'src/helpers/call-forwarding-destinations'
+import { normalizePrimaryNumber, sortDestinationsByPriority } from 'src/helpers/call-forwarding-destinations'
 import { CreationState } from 'src/store/common'
+
+function getSeatPrimaryNumber (seat) {
+    if (!seat?.primary_number) {
+        return null
+    }
+    return normalizePrimaryNumber(seat.primary_number)
+}
 
 export function dataSucceeded (state, res) {
     if (res.bNumberSets) {
@@ -49,6 +56,19 @@ export function setAnnouncements (state, announcements) {
     state.announcements = announcements
 }
 
+export function seatsSucceeded (state, seats) {
+    const seatMapByPrimaryNumber = { ...state.seatMapByPrimaryNumber }
+
+    seats.forEach((seat) => {
+        const primaryNumber = getSeatPrimaryNumber(seat)
+        if (primaryNumber) {
+            seatMapByPrimaryNumber[primaryNumber] = seat
+        }
+    })
+
+    state.seatMapByPrimaryNumber = seatMapByPrimaryNumber
+}
+
 export function resetState (state) {
     state.mappings = {
         cfu: [],
@@ -61,6 +81,7 @@ export function resetState (state) {
     state.destinationSetMap = {}
     state.sourceSetMap = {}
     state.timeSetMap = {}
+    state.seatMapByPrimaryNumber = {}
     state.announcements = []
 }
 

@@ -29,12 +29,10 @@
                 :loading="loading"
                 :destination="destination"
                 :destination-index="destinationIndex"
-                :mapping="mapping"
                 :destination-set="destinationSet"
                 :b-number-set="bNumberSet"
                 :source-set="sourceSet"
                 :time-set="timeSet"
-                :subscriber-id="subscriberId"
                 @delete-last="$refs.cfGroupTitle.deleteMappingEvent(mapping)"
             />
         </template>

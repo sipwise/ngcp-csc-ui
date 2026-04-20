@@ -4,9 +4,7 @@
     >
         <csc-cf-group-condition-menu
             v-if="internalStep === 'menu'"
-            :mapping="mapping"
             :b-number-set="bNumberSet"
-            :destination-set="destinationSet"
             :source-set="sourceSet"
             :time-set="timeSet"
             @step="internalStep=$event"

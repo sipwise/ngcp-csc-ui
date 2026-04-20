@@ -18,6 +18,8 @@ export default function () {
         destinationSetMap: {},
         sourceSetMap: {},
         timeSetMap: {},
+        seats: [],
+        seatMapByPrimaryNumber: {},
         popupCurrent: null,
         announcements: []
     }

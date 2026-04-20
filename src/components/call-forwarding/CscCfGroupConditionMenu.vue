@@ -80,14 +80,6 @@ export default {
     name: 'CscCfGroupConditionMenu',
     components: { CscCfGroupCondition, CscPopupMenuItem },
     props: {
-        mapping: {
-            type: Object,
-            required: true
-        },
-        destinationSet: {
-            type: Object,
-            required: true
-        },
         bNumberSet: {
             type: Object,
             default: undefined

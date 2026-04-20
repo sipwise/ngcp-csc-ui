@@ -28,6 +28,7 @@ import {
     cfUpdateTimeSetDateRange,
     cfUpdateTimeSetWeekdays
 } from 'src/api/call-forwarding'
+import { getSubscriberSeats } from 'src/api/subscriber'
 import { i18n } from 'src/boot/i18n'
 import { canMoveDestination, normalizePriorities } from 'src/helpers/call-forwarding-destinations'
 import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
@@ -65,6 +66,14 @@ export async function loadMappingsFull ({ dispatch, commit, rootGetters }, subsc
     } finally {
         dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
     }
+}
+
+export async function loadSeats ({ commit }, options = {}) {
+    const seatList = await getSubscriberSeats({
+        ...options
+    })
+    commit('seatsSucceeded', seatList.items || [])
+    return seatList
 }
 
 export async function createMapping ({ dispatch, commit, state, rootGetters }, payload) {
@@ -232,6 +241,7 @@ export async function addDestination ({ dispatch, commit, state }, payload) {
     try {
         const destinations = [...state.destinationSetMap[payload.destinationSetId].destinations]
         const normalizedDestinations = normalizePriorities(destinations)
+
         normalizedDestinations.push(createDefaultDestination(
             payload.destination,
             payload.defaultAnnouncementId,

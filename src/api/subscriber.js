@@ -871,10 +871,13 @@ export async function generateGeneralPassword () {
 
     return password
 }
-export async function getSubscriberSeats (options) {
+export async function getSubscriberSeats ({ page, rows, all, ...params } = {}) {
     const list = await getList({
         resource: 'pbxusers',
-        params: options
+        page,
+        rows,
+        all,
+        params
     })
     return list
 }

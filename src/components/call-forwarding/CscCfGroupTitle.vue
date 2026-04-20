@@ -300,6 +300,13 @@
                             destinationSetId: destinationSet.id
                         })"
                     />
+                    <csc-cf-popup-menu-item-seat-select
+                        v-if="isPbxEnabled"
+                        :label="$t('Seat')"
+                        data-cy="csc-forwarding-to-seat"
+                        :disable="hasTermination"
+                        @select="addSeatDestinationEvent"
+                    />
                     <csc-popup-menu-item
                         v-if="showManagerSecretary"
                         :icon="destinationIconByType('ManagerSecretary')"
@@ -393,6 +400,7 @@ import CscCfConditionPopupDate from 'components/call-forwarding/CscCfConditionPo
 import CscCfConditionPopupDateRange from 'components/call-forwarding/CscCfConditionPopupDateRange'
 import CscCfConditionPopupOfficeHours from 'components/call-forwarding/CscCfConditionPopupOfficeHours'
 import CscCfConditionPopupWeekdays from 'components/call-forwarding/CscCfConditionPopupWeekdays'
+import CscCfPopupMenuItemSeatSelect from 'components/call-forwarding/CscCfPopupMenuItemSeatSelect'
 import _ from 'lodash'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import numberFilter from 'src/filters/number'
@@ -412,6 +420,7 @@ export default {
         CscCfConditionPopupCallTo,
         CscCfConditionPopupDate,
         CscCfConditionPopupAll,
+        CscCfPopupMenuItemSeatSelect,
         CscPopupMenuItem,
         CscPopupMenuItemDelete,
         CscMoreMenu
@@ -508,6 +517,12 @@ export default {
             }
             await this.addDestination(payload)
             this.$wait.end(this.waitIdentifier)
+        },
+        async addSeatDestinationEvent (seatOption) {
+            await this.addDestinationEvent({
+                destination: seatOption.value,
+                destinationSetId: this.destinationSet.id
+            })
         },
         async toggleMappingEvent (mapping) {
             this.$wait.start(this.waitIdentifier)

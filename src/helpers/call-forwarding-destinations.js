@@ -113,3 +113,22 @@ export function normalizePriorities (destinations) {
     }
     return normalizedDestinations
 }
+
+export function normalizePrimaryNumber (primaryNumber) {
+    return `${primaryNumber.cc}${primaryNumber.ac}${primaryNumber.sn}`
+}
+
+export function createSeatOption (seat) {
+    const primaryNumber = normalizePrimaryNumber(seat?.primary_number)
+
+    return {
+        label: seat?.display_name || primaryNumber,
+        value: primaryNumber
+    }
+}
+
+export function mapSeatOptions (seats = []) {
+    return seats
+        .map(createSeatOption)
+        .filter((seatOption) => seatOption !== null)
+}

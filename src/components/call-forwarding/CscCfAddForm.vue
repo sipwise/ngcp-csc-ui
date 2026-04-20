@@ -64,6 +64,15 @@
                         data-cy="csc-cf-custom-announcement"
                     />
                 </q-slide-transition>
+                <q-slide-transition
+                    v-else-if="isDestinationSeat"
+                    class="col-xs-12 col-md-3">
+                    <csc-cf-seat-select
+                        v-model="seatOption"
+                        class="col-xs-12 col-md-3"
+                        data-cy="csc-cf-seat-select"
+                    />
+                </q-slide-transition>
             </div>
         </div>
 
@@ -96,6 +105,7 @@
 <script setup>
 import { useVuelidate } from '@vuelidate/core'
 import { required, requiredIf } from '@vuelidate/validators'
+import CscCfSeatSelect from 'components/call-forwarding/CscCfSeatSelect'
 import CscInput from 'src/components/form/CscInput'
 import { useUser } from 'src/composables/useUser'
 import { DestinationType, getDestinationIcon } from 'src/helpers/destination'
@@ -121,12 +131,14 @@ const cfType = ref('cfu')
 const destinationType = ref(null)
 const destinationNumber = ref(null)
 const customAnnouncement = ref(null)
+const seatOption = ref(null)
 
 const announcements = computed(() => store.state.callForwarding.announcements)
 
 const { isSpCe, isPbxEnabled } = useUser()
 const isDestinationNumber = computed(() => destinationType.value === 'number')
 const isDestinationCustomAnnouncement = computed(() => destinationType.value === 'customhours')
+const isDestinationSeat = computed(() => destinationType.value === 'seat')
 
 // Rules and Validations
 
@@ -138,6 +150,9 @@ const rules = computed(() => ({
     },
     customAnnouncement: {
         required: requiredIf(isDestinationCustomAnnouncement)
+    },
+    seatOption: {
+        required: requiredIf(isDestinationSeat)
     }
 }))
 
@@ -147,7 +162,8 @@ const v$ = useVuelidate(
         destinationType,
         cfType,
         destinationNumber,
-        customAnnouncement
+        customAnnouncement,
+        seatOption
     })
 
 // Computed properties
@@ -174,6 +190,7 @@ const destinationTypeOptions = computed(() => {
     ]
 
     const pbxOptions = [
+        { label: t('Seat'), icon: 'person', value: 'seat' },
         { label: t('Manager Secretary'), icon: getDestinationIcon(DestinationType.ManagerSecretary), value: 'managersecretary' },
         { label: t('Auto Attendant'), icon: getDestinationIcon(DestinationType.AutoAttendant), value: 'autoattendant' },
         { label: t('Office Hours Announcement'), icon: getDestinationIcon(DestinationType.OfficeHoursAnnouncement), value: 'officehours' }
@@ -196,16 +213,23 @@ function disableSaveButton () {
     return v$.value.$invalid
 }
 
-function save () {
-    const destination = isDestinationNumber.value
-        ? destinationNumber.value
-        : destinationType.value
+function resolveDestination () {
+    if (isDestinationNumber.value) {
+        return destinationNumber.value
+    }
+    if (isDestinationSeat.value) {
+        return seatOption.value?.value
+    }
 
+    return destinationType.value
+}
+
+function save () {
     emit('save', {
+        destination: resolveDestination(),
         announcementId: isDestinationCustomAnnouncement.value ? customAnnouncement.value : null,
-        destination,
         type: cfType.value,
-        ...(isDestinationNumber.value ? { simple_destination: ' ' } : {})
+        destinationType: destinationType.value
     })
 }
 </script>

@@ -33,6 +33,14 @@ export function sourceSets (state) {
     return state.sourceSetMap ? Object.values(state.sourceSetMap) : []
 }
 
+export function seats (state) {
+    return Object.keys(state.seatMapByPrimaryNumber) || []
+}
+
+export function seatByPrimaryNumber (state) {
+    return (primaryNumber) => state.seatMapByPrimaryNumber?.[primaryNumber] || null
+}
+
 export function isCfAddFormDisabled (state) {
     return state.cfCreationState === CreationState.initiated ||
     state.cfCreationState === CreationState.created
