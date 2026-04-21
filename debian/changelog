@@ -1,3 +1,10 @@
+ngcp-csc-ui (14.1.1.11+0~mr14.1.1.11) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [70a221f] MT#64862 Minor CSC bug fixes
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 21 Apr 2026 10:03:47 +0200
+
 ngcp-csc-ui (14.1.1.10+0~mr14.1.1.10) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
