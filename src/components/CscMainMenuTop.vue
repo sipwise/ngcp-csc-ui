@@ -267,13 +267,13 @@ export default {
                             to: '/user/extension-settings/ms-configs',
                             icon: 'arrow_forward',
                             label: this.$t('Manager Secretary'),
-                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTES_MAP.manager_secretary)
+                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.managerSecretary)
                         },
                         {
                             to: '/user/extension-settings/auto-attendant',
                             icon: 'dialpad',
                             label: this.$t('Auto Attendant'),
-                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTES_MAP.autoAttendant)
+                            visible: this.isPbxEnabled && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.autoAttendant)
                         }
                     ]
                 },
