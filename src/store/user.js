@@ -43,6 +43,7 @@ import { LICENSES, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { getSipInstanceId } from 'src/helpers/call-utils'
 import { parseBlobToObject } from 'src/helpers/parse-blob-to-object'
 import { qrPayload } from 'src/helpers/qr'
+import { showGlobalError, showToast } from 'src/helpers/ui'
 import { PATH_CHANGE_PASSWORD } from 'src/router/routes'
 import { setLocal } from 'src/storage'
 import { RequestState } from 'src/store/common'
@@ -499,10 +500,15 @@ export default {
             context.commit('subscriberUpdateSucceeded', subscriberData)
         },
         async resetPassword ({ commit }, data) {
-            commit('newPasswordRequesting', true)
-            const response = await resetPassword(data)
-            commit('newPasswordRequesting', false)
-            return response
+            try {
+                commit('newPasswordRequesting', true)
+                const res = await resetPassword(data)
+                showToast(res.data.message)
+            } catch (err) {
+                showGlobalError(i18n.global.t('There was an error, please retry later'))
+            } finally {
+                commit('newPasswordRequesting', false)
+            }
         },
         async recoverPassword ({ commit, dispatch, state, rootGetters }, data) {
             commit('userPasswordRequesting')

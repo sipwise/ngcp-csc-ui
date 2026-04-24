@@ -27,50 +27,46 @@
     </csc-dialog>
 </template>
 
-<script>
+<script setup>
 import CscDialog from 'components/CscDialog'
-export default {
-    name: 'CscRemoveDialog',
-    components: {
-        CscDialog
-    },
-    props: {
-        title: {
-            type: String,
-            default: ''
-        },
-        titleIcon: {
-            type: String,
-            default: ''
-        },
-        message: {
-            type: String,
-            default: ''
-        },
-        opened: {
-            type: Boolean,
-            default: false
-        }
-    },
-    emits: ['ok', 'remove', 'cancel'],
-    data () {
-        return {
-        }
-    },
-    methods: {
-        show () {
-            this.$refs.dialogComp.show()
-        },
-        hide () {
-            this.$refs.dialogComp.hide()
-        },
-        remove () {
-            this.$emit('remove')
-            this.$emit('ok')
-        }
-    }
-}
-</script>
+import { ref } from 'vue'
 
-<style lang="sass" rel="stylesheet/sass">
-</style>
+defineOptions({ name: 'CscRemoveDialog' })
+
+defineProps({
+    title: {
+        type: String,
+        default: ''
+    },
+    titleIcon: {
+        type: String,
+        default: ''
+    },
+    message: {
+        type: String,
+        default: ''
+    }
+})
+
+const emit = defineEmits(['ok', 'remove'])
+
+const dialogComp = ref(null)
+
+const show = () => {
+    dialogComp.value?.show()
+}
+
+const hide = () => {
+    dialogComp.value?.hide()
+}
+
+const remove = () => {
+    emit('remove')
+    emit('ok')
+}
+
+defineExpose({
+    show,
+    hide
+})
+</script>

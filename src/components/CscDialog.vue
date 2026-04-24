@@ -1,6 +1,6 @@
 <template>
     <q-dialog
-        ref="dialog"
+        ref="dialogRef"
         v-bind="$attrs"
     >
         <q-card
@@ -55,30 +55,38 @@
     </q-dialog>
 </template>
 
-<script>
-export default {
-    name: 'CscDialog',
-    props: {
-        title: {
-            type: String,
-            required: true
-        },
-        titleIcon: {
-            type: String,
-            default: undefined
-        },
-        titleIconColor: {
-            type: String,
-            default: 'primary'
-        }
+<script setup>
+import { ref } from 'vue'
+
+defineOptions({ name: 'CscDialog' })
+
+defineProps({
+    title: {
+        type: String,
+        required: true
     },
-    methods: {
-        show () {
-            this.$refs.dialog.show()
-        },
-        hide () {
-            this.$refs.dialog.hide()
-        }
+    titleIcon: {
+        type: String,
+        default: undefined
+    },
+    titleIconColor: {
+        type: String,
+        default: 'primary'
     }
+})
+
+const dialogRef = ref(null)
+
+const show = () => {
+    dialogRef.value?.show()
 }
+
+const hide = () => {
+    dialogRef.value?.hide()
+}
+
+defineExpose({
+    show,
+    hide
+})
 </script>
