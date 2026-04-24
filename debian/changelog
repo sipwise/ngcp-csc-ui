@@ -1,3 +1,13 @@
+ngcp-csc-ui (14.1.1.12+0~mr14.1.1.12) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [27d7959] MT#64825 Erroneous Manager Secretary and Auto Attendant checks
+
+  [ nidrissi-zouggari ]
+  * [4c1a526] MT#64678 Remove unnecessary preferences from PBX Seats creation form and actions menu
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 24 Apr 2026 16:48:08 +0200
+
 ngcp-csc-ui (14.1.1.11+0~mr14.1.1.11) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
