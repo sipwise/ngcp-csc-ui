@@ -75,7 +75,6 @@
             hide-bottom-space
             hide-hint
             :label="$t('Label')"
-            @update:model-value="v$.changes.label.$touch()"
         />
         <csc-list-spinner
             v-if="loading"
