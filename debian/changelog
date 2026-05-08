@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.0.1.5+0~mr26.0.1.5) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [2febd86] MT#64825 Add conference settings to Extension Settings
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 May 2026 14:58:41 +0200
+
 ngcp-csc-ui (26.0.1.4+0~mr26.0.1.4) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
