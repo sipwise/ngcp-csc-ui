@@ -8,7 +8,7 @@
             v-slot="scope"
             v-model="number"
             buttons
-            @before-show="$store.commit('callForwarding/popupShow', null)"
+            @before-show="setPopupShow(null)"
             @save="$emit('input', $event)"
         >
             <csc-input
@@ -30,6 +30,7 @@
 <script>
 import CscCfDestination from 'components/call-forwarding/CscCfDestination'
 import CscInput from 'components/form/CscInput'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfDestinationNumber',
     components: { CscInput, CscCfDestination },
@@ -44,6 +45,9 @@ export default {
         return {
             number: this.$attrs.value
         }
+    },
+    methods: {
+        ...mapActions('callForwarding', ['setPopupShow'])
     },
     watch: {
         '$attrs.value' (value) {

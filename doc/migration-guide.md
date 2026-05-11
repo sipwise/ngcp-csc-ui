@@ -21,7 +21,7 @@
 | **Boot Files** | `event-bus.js`, `filters.js`, `constants.js`, `appConfig.js`, `vuelidate.js` | Enhanced | None - new features available |
 | **API Layer** | `api/common.js` | Fixed | None - transparent fix |
 | **Store** | `store/common.js`, `store/apiHelper.js` | New helpers | Optional - use in new code |
-| **Composables** | `useStore.js`, `useUser.js`, `usePbx.js`, `useGlobals.js` | New patterns | Use when converting to Composition API |
+| **Composables** | `useStore.js`, `useGlobals.js` | Store access helpers | Use when converting to Composition API |
 
 ---
 
@@ -59,11 +59,11 @@ export default {
 }
 
 // New Composition API
-import { useUser } from 'src/composables/useUser'
+import { useGetters } from 'src/composables/useStore'
 
 export default {
   setup() {
-    const { isLogged, username } = useUser()
+    const { isLogged, username } = useGetters('user', ['isLogged', 'getUsername'])
     return { isLogged, username }
   }
 }
@@ -95,9 +95,9 @@ When converting components to Composition API:
 
 | Composable | Purpose | Use When |
 |------------|---------|----------|
-| `useUser()` | User auth, permissions | Checking login, admin, capabilities |
-| `usePbx()` | PBX configuration | Managing seats, groups, devices |
-| `useStore()` | Generic store access | Need custom store logic |
+| `useGetters(module, keys)` | Access store getters | Need reactive computed state |
+| `useActions(module, keys)` | Access store actions | Need to dispatch actions |
+| `useState(module, keys)` | Access store state | Need raw state values |
 | `useFilters()` | Formatting functions | Dates, numbers, currencies |
 | `useAppConfig()` | App configuration | Need API URLs, settings |
 | `useValidationErrors()` | Form validation | Vuelidate error messages |
@@ -116,7 +116,7 @@ computed: {
 }
 
 // After (Composition API)
-const { subscriber } = useUser()
+const { subscriber } = useState('user', ['subscriber'])
 ```
 
 ### Pattern 2: Actions with Loading State
@@ -130,7 +130,8 @@ methods: {
 }
 
 // After
-const { loginRequesting, login } = useUser()
+const { loginRequesting } = useGetters('user', ['loginRequesting'])
+const { login } = useActions('user', ['login'])
 ```
 
 ### Pattern 3: Filters
@@ -149,6 +150,61 @@ const formatted = filters.readableDate(new Date())
 
 ---
 
+## Future-Proofing: Pinia Migration
+
+The composable helper pattern is designed to make eventual Pinia migration as easy as possible.
+
+### Why Avoid `useMutations`
+
+**Pinia has no mutations!** In Pinia, actions can directly modify state:
+
+```javascript
+// ❌ AVOID: useMutations (won't work with Pinia)
+import { useMutations } from 'src/composables/useStore'
+const { setProfile } = useMutations('user', ['setProfile'])
+
+// ✅ USE: useActions instead (works with both Vuex & Pinia)
+import { useActions } from 'src/composables/useStore'
+const { setProfile } = useActions('user', ['setProfile'])
+```
+
+### Vuex Store Pattern (Transition-Ready)
+
+Wrap mutations in actions, even for simple setters:
+
+```javascript
+// Vuex store (current)
+export default {
+  state: { profile: null },
+  mutations: {
+    setProfile(state, data) {
+      state.profile = data
+    }
+  },
+  actions: {
+    setProfile({ commit }, data) {
+      commit('setProfile', data)  // Action wraps mutation
+    }
+  }
+}
+```
+
+When migrating to Pinia later, only the store changes and components stay identical:
+
+```javascript
+// Pinia store (future)
+export const useUserStore = defineStore('user', {
+  state: () => ({ profile: null }),
+  actions: {
+    setProfile(data) {
+      this.profile = data  // Direct assignment
+    }
+  }
+})
+```
+
+---
+
 ## Migration Checklist
 
 When converting a component to Composition API:
@@ -156,6 +212,7 @@ When converting a component to Composition API:
 - [ ] Replace `mapState` with composable state access
 - [ ] Replace `mapGetters` with composable getters
 - [ ] Replace `mapActions` with composable actions
+- [ ] **Avoid `useMutations`** - use `useActions` instead (Pinia-ready pattern)
 - [ ] Replace `this.$filters` with direct imports or `useFilters()`
 - [ ] Replace `this.$appConfig` with `useAppConfig()` or direct import
 - [ ] Replace `this.emitter.$emit` with `eventBus.$emit` or direct import
@@ -169,7 +226,7 @@ When converting a component to Composition API:
 ## Next Steps
 
 1. **Read this guide**
-2. **Review example composables**: `src/composables/useUser.js`, `src/composables/usePbx.js`
+2. **Review composables documentation**: `doc/composables.md`
 3. **Try converting one simple component** to get familiar with patterns
 4. **Ask questions** if stuck
 

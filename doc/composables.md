@@ -16,6 +16,8 @@ Generic helpers for accessing Vuex store. It's a wrapper around Vuex that makes 
 *Problem it solves*:
 In Composition API, you can't use `mapState`, `mapGetters`, `mapActions` like in Options API. You need a different approach to access store state, getters, and actions reactively.
 
+> ⚠️ Use `useState`, `useGetters`, and `useActions` helpers. **Avoid `useMutations` if possible** — wrap mutations in actions instead. Pinia has no mutations, so using `useActions` now makes future migration easier.
+
 ### Functions
 
 #### `useStore()`
@@ -85,10 +87,11 @@ await login({ username: 'test', password: 'pass' })
 </script>
 ```
 
-#### `useMutations(moduleName, keys)`
+#### `useMutations(moduleName, keys)` **Avoid unless it's absolutely necessary**
 
 Map mutations from a module to functions.
-*Use when*: You need to commit store mutations (rarely needed - prefer actions).
+
+Remember, Pinia has no mutations. Create an action in your store that calls the mutation, then use `useActions` to access it.This helper remains in case the mutation needs to be accessed directly for some reason.
 
 ```vue
 <script setup>
@@ -212,81 +215,203 @@ const formatPhone = (number) => filters.numberFormat(number)
 
 ## Creating New Composables
 
-Template for creating module-specific composables:
+### When to Create a Composable
+
+**Create composables for:**
+- Feature-specific logic that doesn't need global state (phonebook, NCOS, registrations)
+- Reusable business logic across components
+- Local state management with associated operations
+- API operations that don't affect global app state
+
+### Template for Feature Composables
+
+Create composables that manage their own local state and business logic:
 
 ```javascript
-import { computed } from 'vue'
-import { useStore } from './useStore'
+import { ref, computed } from 'vue'
+import { getNcosLevels, getNcosSet, setPreference } from 'src/api/subscriber'
+import { getSubscriberId } from 'src/auth'
 
-export function useMyModule() {
-  const store = useStore()
+/**
+ * Composable for managing NCOS (Network Class of Service) levels and sets.
+ * Manages local state and provides API operations.
+ */
+export function useNcos() {
+  // Local reactive state
+  const levels = ref([])
+  const sets = ref([])
+  const loading = ref(false)
+  const error = ref(null)
 
-  // Map state
-  const myData = computed(() => store.state.myModule.data)
-  const loading = computed(() => store.state.myModule.loading)
+  // Computed properties
+  const hasLevels = computed(() => levels.value.length > 0)
+  const hasSets = computed(() => sets.value.length > 0)
 
-  // Map getters
-  const isValid = computed(() => store.getters['myModule/isValid'])
+  // Business logic functions
+  const loadLevels = async () => {
+    loading.value = true
+    error.value = null
+    try {
+      const list = await getNcosLevels()
+      levels.value = list.items.map(ncos => ({
+        label: ncos.level,
+        value: ncos.id
+      }))
+    } catch (err) {
+      error.value = err.message
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
 
-  // Map actions
-  const loadData = (payload) => store.dispatch('myModule/loadData', payload)
-  const saveData = (payload) => store.dispatch('myModule/saveData', payload)
+  const loadSets = async () => {
+    loading.value = true
+    error.value = null
+    try {
+      const list = await getNcosSet()
+      sets.value = list.map(setNcos => ({
+        label: setNcos.name,
+        value: setNcos.id
+      }))
+    } catch (err) {
+      error.value = err.message
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
 
-  // Map mutations
-  const reset = () => store.commit('myModule/reset')
+  const updateLevel = async (value) => {
+    loading.value = true
+    error.value = null
+    try {
+      await setPreference(getSubscriberId(), 'ncos', value)
+    } catch (err) {
+      error.value = err.message
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const reset = () => {
+    levels.value = []
+    sets.value = []
+    error.value = null
+  }
 
   return {
     // State
-    myData,
+    levels,
+    sets,
     loading,
+    error,
 
-    // Getters
-    isValid,
+    // Computed
+    hasLevels,
+    hasSets,
 
     // Actions
-    loadData,
-    saveData,
-
-    // Mutations
+    loadLevels,
+    loadSets,
+    updateLevel,
     reset
   }
 }
 ```
 
-### Using the Custom Composable
+### Using the Feature Composable
 
 ```vue
 <script setup>
-import { useMyModule } from 'src/composables/useMyModule'
+import { onMounted } from 'vue'
+import { useNcos } from 'src/composables/useNcos'
 
 const {
-  myData,
+  levels,
+  sets,
   loading,
-  isValid,
-  loadData,
-  saveData,
-  reset
-} = useMyModule()
+  error,
+  hasLevels,
+  loadLevels,
+  loadSets,
+  updateLevel
+} = useNcos()
 
-// Use the composable
-const handleLoad = async () => {
-  await loadData({ id: 1 })
-  if (isValid.value) {
-    console.log('Data loaded:', myData.value)
+// Load data on mount
+onMounted(async () => {
+  await loadLevels()
+  await loadSets()
+})
+
+const handleUpdateLevel = async (levelId) => {
+  try {
+    await updateLevel(levelId)
+    // Show success message
+  } catch (err) {
+    // Error already set in composable
+    console.error('Failed to update level:', error.value)
   }
-}
-
-const handleSave = async () => {
-  await saveData({ ...myData.value, updated: true })
 }
 </script>
 
 <template>
   <div>
-    <button @click="handleLoad" :disabled="loading">Load Data</button>
-    <button @click="handleSave" :disabled="!isValid">Save Data</button>
-    <button @click="reset">Reset</button>
-    <div v-if="myData">{{ myData }}</div>
+    <div v-if="loading">Loading...</div>
+    <div v-else-if="error" class="error">{{ error }}</div>
+    <div v-else>
+      <select
+        @change="handleUpdateLevel($event.target.value)"
+        :disabled="!hasLevels"
+      >
+        <option value="">Select NCOS Level</option>
+        <option
+          v-for="level in levels"
+          :key="level.value"
+          :value="level.value"
+        >
+          {{ level.label }}
+        </option>
+      </select>
+    </div>
   </div>
 </template>
+```
+
+### Accessing Store Within a Composable
+
+If your composable needs global store state, use `useGetters` or `useActions`:
+
+```javascript
+import { ref } from 'vue'
+import { useGetters } from 'src/composables/useStore'
+import { getCustomerPhonebook } from 'src/api/subscriber'
+
+export function useCustomerPhonebook() {
+  // Access global state
+  const { getCustomerId } = useGetters('user', ['getCustomerId'])
+
+  // Local state
+  const phonebook = ref([])
+  const loading = ref(false)
+
+  const loadPhonebook = async () => {
+    loading.value = true
+    try {
+      const list = await getCustomerPhonebook({
+        customerId: getCustomerId.value
+      })
+      phonebook.value = list.data
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return {
+    phonebook,
+    loading,
+    loadPhonebook
+  }
+}
 ```

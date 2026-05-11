@@ -97,11 +97,10 @@
 import { useVuelidate } from '@vuelidate/core'
 import { required, requiredIf } from '@vuelidate/validators'
 import CscInput from 'src/components/form/CscInput'
-import { useUser } from 'src/composables/useUser'
+import { useGetters, useState } from 'src/composables/useStore'
 import { DestinationType, getDestinationIcon } from 'src/helpers/destination'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useStore } from 'vuex'
 
 defineOptions({ name: 'CscCfAddForm' })
 
@@ -115,16 +114,15 @@ defineProps({
 const emit = defineEmits(['save', 'cancel'])
 
 const { t } = useI18n()
-const store = useStore()
 
 const cfType = ref('cfu')
 const destinationType = ref(null)
 const destinationNumber = ref(null)
 const customAnnouncement = ref(null)
 
-const announcements = computed(() => store.state.callForwarding.announcements)
+const { announcements } = useState('callForwarding', ['announcements'])
 
-const { isSpCe, isPbxEnabled } = useUser()
+const { isSpCe, isPbxEnabled } = useGetters('user', ['isSpCe', 'isPbxEnabled'])
 const isDestinationNumber = computed(() => destinationType.value === 'number')
 const isDestinationCustomAnnouncement = computed(() => destinationType.value === 'customhours')
 

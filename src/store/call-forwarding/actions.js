@@ -901,3 +901,7 @@ export async function updateAnnouncement ({ dispatch, commit, state }, payload) 
 export function resetCallForwardingState ({ commit }) {
         commit('resetState')
 }
+
+export function setPopupShow ({ commit }, popupId) {
+    commit('popupShow', popupId)
+}
