@@ -1,6 +1,6 @@
 <template>
     <q-popup-proxy
-        @before-show="$store.commit('callForwarding/popupShow', null)"
+        @before-show="setPopupShow(null)"
     >
         <q-list
             v-if="!gridView"
@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
     name: 'CscPopupMenu',
     props: {
@@ -46,6 +47,9 @@ export default {
             type: Boolean,
             default: false
         }
+    },
+    methods: {
+        ...mapActions('callForwarding', ['setPopupShow'])
     }
 }
 </script>

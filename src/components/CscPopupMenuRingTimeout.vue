@@ -20,7 +20,7 @@
                             v-model="timeout"
                             buttons
                             data-cy="csc-forwarding-ring-timeout-global-editbox"
-                            @before-show="$store.commit('callForwarding/popupShow','after-ring-timeout')"
+                            @before-show="setPopupShow('after-ring-timeout')"
                             @save="updateRingTimeoutEvent($event)"
                         >
                             <csc-input
@@ -70,7 +70,8 @@ export default {
     },
     methods: {
         ...mapActions('callForwarding', [
-            'updateRingTimeout'
+            'updateRingTimeout',
+            'setPopupShow'
         ]),
         async updateRingTimeoutEvent (event) {
             this.$wait.start('csc-cf-mappings-full')

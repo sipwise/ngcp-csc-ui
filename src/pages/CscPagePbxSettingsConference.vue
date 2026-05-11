@@ -55,6 +55,7 @@ import { useVuelidate } from '@vuelidate/core'
 import { helpers, numeric } from '@vuelidate/validators'
 import CscPage from 'components/CscPage'
 import CscInputSaveable from 'components/form/CscInputSaveable'
+import { useActions, useGetters, useState } from 'src/composables/useStore'
 import { useWait } from 'src/composables/useWait'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { showToast } from 'src/helpers/ui'
@@ -65,7 +66,6 @@ import {
     ref
 } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useStore } from 'vuex'
 
 defineOptions({ name: 'CscPagePbxSettingsConference' })
 
@@ -79,7 +79,12 @@ const WAITERS = {
     updateConferencePin: 'csc-pbx-call-settings-update-conference-pin'
 }
 
-const store = useStore()
+const { subscriberPreferences } = useState('callSettings', ['subscriberPreferences'])
+const { hasSubscriberProfileAttribute } = useGetters('user', ['hasSubscriberProfileAttribute'])
+const { loadSubscriberPreferencesAction, fieldUpdateAction } = useActions('callSettings', [
+    'loadSubscriberPreferencesAction',
+    'fieldUpdateAction'
+])
 const wait = useWait()
 const { t } = useI18n()
 
@@ -88,9 +93,6 @@ const changes = reactive({
     conferenceMaxParticipants: '',
     conferencePin: ''
 })
-
-const subscriberPreferences = computed(() => store.state.callSettings.subscriberPreferences)
-const hasSubscriberProfileAttribute = computed(() => store.getters['user/hasSubscriberProfileAttribute'])
 
 const rules = computed(() => ({
     conferenceMaxParticipants: {
@@ -138,7 +140,7 @@ async function saveConferenceMaxParticipants () {
     if (hasConferenceMaxParticipantsChanged.value && v$.value.conferenceMaxParticipants.$errors.length <= 0) {
         wait.start(WAITERS.updateConferenceMaxParticipants)
         try {
-            await store.dispatch('callSettings/fieldUpdateAction', {
+            await fieldUpdateAction({
                 field: 'conference_max_participants',
                 value: changes.conferenceMaxParticipants
             })
@@ -156,7 +158,7 @@ async function saveConferencePin () {
     if (hasConferencePinChanged.value && v$.value.conferencePin.$errors.length <= 0) {
         wait.start(WAITERS.updateConferencePin)
         try {
-            await store.dispatch('callSettings/fieldUpdateAction', {
+            await fieldUpdateAction({
                 field: 'conference_pin',
                 value: changes.conferencePin
             })
@@ -173,7 +175,7 @@ async function saveConferencePin () {
 onMounted(async () => {
     wait.start(WAITERS.loadPreferences)
     try {
-        await store.dispatch('callSettings/loadSubscriberPreferencesAction')
+        await loadSubscriberPreferencesAction()
         applyDefaultData()
         isInitialized.value = true
     } finally {

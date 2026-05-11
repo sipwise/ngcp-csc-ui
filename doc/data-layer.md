@@ -152,27 +152,25 @@ if (apiIsCanceledRequest(err)) {
 
 ## Composables for State Access
 
-Starting with the migration to Vue 3 Composition API, the application introduces composables as a layer between components and Vuex store:
+Starting with the migration to Vue 3 Composition API, the application uses composables for accessing Vuex store:
 
-1. **Purpose**: Composables provide reactive access to store state and actions without direct store coupling in components.
+1. **Purpose**: Composables provide reactive access to store state, getters, and actions in Composition API components.
 
-2. **Pattern** (based on `src/composables/useUser.js`):
-   - Import store and computed from Vue
-   - Define reactive refs using `computed(() => store.state/getters.xxx)`
-   - Wrap store actions in simple functions
-   - Return an object with all reactive properties and methods
+2. **Pattern** (using `src/composables/useStore.js` helpers):
+   - Import the store helpers (`useState`, `useGetters`, `useActions`)
+   - Map state, getters, or actions from specific store modules
+   - All returned values are reactive computed refs
 
 3. **Example**:
    ```javascript
-   import { computed } from 'vue'
-   import { store } from 'src/boot/store'
+   import { useGetters, useActions } from 'src/composables/useStore'
 
-   export function useUser() {
-       const isAdmin = computed(() => store.getters['user/isAdmin'])
-       const login = (credentials) => store.dispatch('user/login', credentials)
+   // In your component setup
+   const { isAdmin, isLogged } = useGetters('user', ['isAdmin', 'isLogged'])
+   const { login, logout } = useActions('user', ['login', 'logout'])
 
-       return { isAdmin, login }
-   }
+   // isAdmin and isLogged are computed refs
+   // login and logout are action functions
    ```
 
 ## Store Access Patterns
@@ -195,19 +193,15 @@ export default {
 
 ### Composition API with `<script setup>` (Recommended)
 
-For components using `<script setup>`, use store composables:
+For components using `<script setup>`, use store helpers:
 
 ```vue
 <script setup>
-import { useUser } from 'src/composables/useUser'
+import { useState, useGetters, useActions } from 'src/composables/useStore'
 
-const {
-  subscriber,      // reactive state (computed ref)
-  isLogged,        // reactive getter (computed ref)
-  isAdmin,         // reactive getter (computed ref)
-  login,           // action function
-  logout           // action function
-} = useUser()
+const { subscriber } = useState('user', ['subscriber'])
+const { isLogged, isAdmin } = useGetters('user', ['isLogged', 'isAdmin'])
+const { login, logout } = useActions('user', ['login', 'logout'])
 
 // Use them directly
 const handleLogin = async () => {
@@ -226,7 +220,7 @@ const handleLogin = async () => {
 </template>
 ```
 
-**Note**: Composables return computed refs, so access values with `.value` in script, but not in template.
+**Note**: Store helpers return computed refs, so access values with `.value` in script, but not in template.
 
 ### Direct Store Access (Services/Utilities)
 
@@ -324,11 +318,11 @@ const actions = {
 ```vue
 <script setup>
 import { ref, computed } from 'vue'
-import { useUser } from 'src/composables/useUser'
-import { useActions } from 'src/composables/useStore'
+import { useState, useGetters, useActions } from 'src/composables/useStore'
 
-// Get user state and actions
-const { subscriber, isLogged, isAdmin } = useUser()
+// Get user state and getters
+const { subscriber } = useState('user', ['subscriber'])
+const { isLogged, isAdmin } = useGetters('user', ['isLogged', 'isAdmin'])
 
 // Get profile actions
 const { loadProfile, updateProfile } = useActions('profile', [

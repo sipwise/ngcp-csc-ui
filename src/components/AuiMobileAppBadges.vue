@@ -54,12 +54,12 @@
 <script setup>
 import AppBadgeApple from 'components/AppBadgeApple'
 import AppBadgeGoogle from 'components/AppBadgeGoogle'
-import { useUser } from 'src/composables/useUser'
+import { useState } from 'src/composables/useStore'
 import { computed } from 'vue'
 
 defineOptions({ name: 'AuiMobileAppBadges' })
 
-const { platformInfo } = useUser()
+const { platformInfo } = useState('user', ['platformInfo'])
 
 const appNameAndroid = computed(() => platformInfo.value?.app?.android?.name)
 const appNameApple = computed(() => platformInfo.value?.app?.apple?.name)

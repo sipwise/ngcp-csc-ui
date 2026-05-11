@@ -33,8 +33,8 @@ This document describes the architecture of the ngcp-csc-ui project (Customer Se
 	- `router/`: route definitions and meta configuration in `src/router/routes.js`.
 	- `components/`, `pages/`, `layouts/`: UI building blocks and pages organized by feature.
 	- `assets/`, `helpers/`, `mixins/`, `validators/`: supporting libraries and utilities.
-	- `composables/`: Reusable composition functions that encapsulate state management logic and provide reactive access to Vuex store. Notable files:
-		- `src/composables/useUser.js` — provides reactive access to user state, authentication actions, and permission checks (capabilities, platform features, profile attributes).
+	- `composables/`: Reusable composition functions that encapsulate logic and provide reactive access to Vuex store. Notable files:
+		- `src/composables/useStore.js` — provides helpers (`useState`, `useGetters`, `useActions`) for accessing Vuex store modules in Composition API components. **Note: `useMutations` is available but should be avoided. Use `useActions` instead for Pinia migration compatibility.**
 
 ## HTTP API layer (src/api/common.js)
 
@@ -98,10 +98,11 @@ VoIP notes and constraints:
 
 ## Composables Layer
 
-Starting with Vue 3 migration, the application introduces composables (`src/composables/`) as an optional layer for accessing Vuex store in Composition API components:
+Starting with Vue 3 migration, the application uses composables (`src/composables/`) for accessing Vuex store in Composition API components:
 
 - **Purpose**: Provide reactive, encapsulated access to store state and actions
-- **Available composables**: `useStore.js` (generic), `useUser.js` (authentication), `usePbx.js` (PBX features), `useGlobals.js` (global properties), `useWait.js` (loading states)
+- **Available composables**: `useStore.js` (generic helpers), `useWait.js` (loading states)
+- **Recommended pattern**: Use `useState`, `useGetters`, and `useActions` helpers. Avoid `useMutations` and instead wrap mutations in actions for Pinia migration compatibility (Pinia has no mutations).
 - **Coexistence**: Options API components continue using `mapState`/`mapGetters`/`mapActions`; composables are used when converting to Composition API
 - **Details**: See `migration-guide.md` for usage patterns and `composables.md` for API reference
 

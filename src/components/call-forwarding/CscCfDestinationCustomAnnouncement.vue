@@ -9,7 +9,7 @@
             v-model="announcement"
             buttons
             anchor="top left"
-            @before-show="$store.commit('callForwarding/popupShow', null)"
+            @before-show="setPopupShow(null)"
             @save="$emit('input', $event)"
         >
             <q-select
@@ -26,6 +26,7 @@
 <script>
 import CscCfDestination from 'components/call-forwarding/CscCfDestination'
 import { showGlobalError } from 'src/helpers/ui'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfDestinationCustomAnnouncement',
     components: { CscCfDestination },
@@ -51,6 +52,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions('callForwarding', ['setPopupShow']),
         checkAnnouncement () {
             const fieldFilled = this.announcement
             if (!fieldFilled) {
