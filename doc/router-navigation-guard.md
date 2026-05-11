@@ -163,14 +163,18 @@ export default {
 ```vue
 <script setup>
 import { computed } from 'vue'
-import { useUser } from 'src/composables/useUser'
+import { useGetters } from 'src/composables/useStore'
 import { PROFILE_ATTRIBUTE_MAP, LICENSES } from 'src/constants'
 
 const {
   hasSubscriberProfileAttribute,
   hasLicenses,
   isSpCe
-} = useUser()
+} = useGetters('user', [
+  'hasSubscriberProfileAttribute',
+  'hasLicenses',
+  'isSpCe'
+])
 
 const menuItems = [
   {
@@ -178,8 +182,8 @@ const menuItems = [
     icon: 'call',
     label: 'Calls',
     visible: computed(() =>
-      hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls) &&
-      (isSpCe.value || hasLicenses([LICENSES.csc_calls]))
+      hasSubscriberProfileAttribute.value(PROFILE_ATTRIBUTE_MAP.cscCalls) &&
+      (isSpCe.value || hasLicenses.value([LICENSES.csc_calls]))
     )
   },
   ...
@@ -187,7 +191,7 @@ const menuItems = [
 </script>
 ```
 
-**Note**: When using composables, getters return `computed` refs, so access the value with `.value` when needed in computed expressions.
+**Note**: When using store helpers, getters return `computed` refs, so access the value with `.value` when needed in computed expressions.
 
 ### Menu Hierarchy and Nested Items
 

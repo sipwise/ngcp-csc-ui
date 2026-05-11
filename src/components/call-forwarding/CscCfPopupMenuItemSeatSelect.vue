@@ -29,7 +29,7 @@
             v-model="showSeatMenu"
             anchor="top end"
             self="top start"
-            @before-show="store.commit('callForwarding/popupShow', null)"
+            @before-show="setPopupShow(null)"
             @hide="reset"
         >
             <div class="q-pa-md csc-cf-seat-menu">
@@ -58,8 +58,8 @@
 
 <script setup>
 import CscCfSeatSelect from 'components/call-forwarding/CscCfSeatSelect'
+import { useActions } from 'src/composables/useStore'
 import { ref, useAttrs } from 'vue'
-import { useStore } from 'vuex'
 
 defineOptions({
     name: 'CscCfPopupMenuItemSeatSelect',
@@ -84,7 +84,7 @@ defineProps({
 const emit = defineEmits(['select'])
 
 const attrs = useAttrs()
-const store = useStore()
+const { setPopupShow } = useActions('callForwarding', ['setPopupShow'])
 
 const showSeatMenu = ref(false)
 const seatOption = ref(null)

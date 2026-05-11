@@ -9,7 +9,7 @@
             v-slot="scope"
             v-model="seatOption"
             anchor="top left"
-            @before-show="store.commit('callForwarding/popupShow', null)"
+            @before-show="setPopupShow(null)"
             @save="emit('input', $event.value)"
         >
             <csc-cf-seat-select
@@ -37,13 +37,13 @@
 <script setup>
 import CscCfDestination from 'components/call-forwarding/CscCfDestination'
 import CscCfSeatSelect from 'components/call-forwarding/CscCfSeatSelect'
+import { useActions } from 'src/composables/useStore'
 import { createSeatOption } from 'src/helpers/call-forwarding-destinations'
 import {
     computed,
     useAttrs
 } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useStore } from 'vuex'
 
 defineOptions(
     { name: 'CscCfDestinationSeat' }
@@ -64,7 +64,7 @@ const emit = defineEmits(['input'])
 
 const attrs = useAttrs()
 const { t } = useI18n()
-const store = useStore()
+const { setPopupShow } = useActions('callForwarding', ['setPopupShow'])
 
 const seatOption = computed(() => createSeatOption(props.seatItem) || { label: props.destination?.simple_destination, value: props.destination?.simple_destination })
 

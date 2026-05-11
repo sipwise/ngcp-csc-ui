@@ -53,7 +53,7 @@
                             v-slot="scope"
                             v-model="changedDestinationTimeout"
                             buttons
-                            @before-show="$store.commit('callForwarding/popupShow', null)"
+                            @before-show="setPopupShow(null)"
                             @save="updateDestinationTimeoutEvent({
                                 destinationTimeout: $event,
                                 destinationIndex: destinationIndex,
@@ -221,7 +221,8 @@ export default {
             'moveDestination',
             'updateDestinationTimeout',
             'rewriteDestination',
-            'updateAnnouncement'
+            'updateAnnouncement',
+            'setPopupShow'
         ]),
         async moveDestinationEvent (direction) {
             const targetIndex = direction === 'up' ? this.destinationIndex - 1 : this.destinationIndex + 1

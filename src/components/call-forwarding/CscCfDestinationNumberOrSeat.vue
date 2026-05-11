@@ -21,12 +21,12 @@
 <script setup>
 import CscCfDestinationNumber from 'components/call-forwarding/CscCfDestinationNumber'
 import CscCfDestinationSeat from 'components/call-forwarding/CscCfDestinationSeat'
+import { useActions, useGetters } from 'src/composables/useStore'
 import {
     onMounted,
     ref,
     watch
 } from 'vue'
-import { useStore } from 'vuex'
 
 defineOptions({ name: 'CscCfDestinationNumberOrSeat' })
 
@@ -46,7 +46,9 @@ defineEmits(['input'])
 const checking = ref(true)
 const isSeatDestination = ref(false)
 const seatItem = ref(null)
-const store = useStore()
+
+const { seatByPrimaryNumber } = useGetters('callForwarding', ['seatByPrimaryNumber'])
+const { loadSeats } = useActions('callForwarding', ['loadSeats'])
 
 async function checkIfSeat (simpleDestination) {
     if (!simpleDestination) {
@@ -55,14 +57,14 @@ async function checkIfSeat (simpleDestination) {
     }
 
     try {
-        const cachedSeat = store.getters['callForwarding/seatByPrimaryNumber'](simpleDestination)
+        const cachedSeat = seatByPrimaryNumber.value(simpleDestination)
         if (cachedSeat) {
             isSeatDestination.value = true
             seatItem.value = cachedSeat
             return
         }
 
-        const response = await store.dispatch('callForwarding/loadSeats', {
+        const response = await loadSeats({
             page: 1,
             rows: 1,
             primary_number: simpleDestination
