@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.75+0~mr12.5.1.75) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [169cc62] MT#65075 Upgrade Axios to 1.16.0
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 13 May 2026 15:00:58 +0200
+
 ngcp-csc-ui (12.5.1.74+0~mr12.5.1.74) unstable; urgency=medium
 
   [ nidrissi-zouggari ]
