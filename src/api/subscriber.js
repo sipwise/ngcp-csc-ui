@@ -21,6 +21,11 @@ const generateNumbers = '0123456789'
 const generateLowercase = 'abcdefghijklmnopqrstuvwxyz'
 const generateUppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const generateLength = 12
+export const CALL_QUEUE_PREFERENCE_FIELDS = [
+    'cloud_pbx_callqueue',
+    'max_queue_length',
+    'queue_wrap_up_time'
+]
 
 export function getPreferences (id) {
     return new Promise((resolve, reject) => {
@@ -581,9 +586,10 @@ export function setWrapUpTime (id, wrapUpTime) {
     return editCallQueuePreference(id, { queue_wrap_up_time: wrapUpTime })
 }
 
-export function removeCallQueueConfig (subscriberId) {
-    const param = { cloud_pbx_callqueue: false }
-    return httpApi.put(`api/subscriberpreferences/${subscriberId}`, param)
+export async function removeCallQueueConfig (subscriberId) {
+    const preferences = await getPreferences(subscriberId)
+    const fields = CALL_QUEUE_PREFERENCE_FIELDS.filter((field) => Object.hasOwn(preferences, field))
+    await Promise.all(fields.map((field) => removePreference(subscriberId, field)))
 }
 
 export function getAllPreferences (options) {
