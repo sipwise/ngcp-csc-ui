@@ -52,7 +52,7 @@
                     :loading="isCallQueueLoading(callQueue.id)"
                     :expanded="isCallQueueExpanded(callQueue.id)"
                     :call-queue="callQueue"
-                    :subscriber="subscriberMap[callQueue.id]"
+                    :subscriber="subscriberMap[callQueue.subscriber_id]"
                     :default-max-queue-length="defaultMaxQueueLength"
                     :default-queue-wrap-up-time="defaultQueueWrapUpTime"
                     @remove="openCallQueueRemovalDialog"
@@ -89,7 +89,6 @@ import CscRemoveDialog from 'components/CscRemoveDialog'
 import CscPbxCallQueue from 'components/pages/PbxConfiguration/CscPbxCallQueue'
 import CscPbxCallQueueAddForm from 'components/pages/PbxConfiguration/CscPbxCallQueueAddForm'
 import CscFade from 'components/transitions/CscFade'
-import { getSubscriberId } from 'src/auth'
 import {
     showGlobalError,
     showToast
@@ -195,7 +194,7 @@ export default {
         }
     },
     mounted () {
-        this.loadCallQueueList({ subscriberId: getSubscriberId() })
+        this.loadCallQueueList()
     },
     methods: {
         ...mapActions('pbx', [
