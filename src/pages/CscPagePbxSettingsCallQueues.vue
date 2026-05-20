@@ -180,7 +180,8 @@ export default {
     methods: {
         ...mapWaitingActions('callSettings', {
             loadSubscriberPreferencesAction: 'csc-pbx-call-settings-load-preferences',
-            fieldUpdateAction: 'csc-pbx-call-settings-update-preferences'
+            fieldUpdateAction: 'csc-pbx-call-settings-update-preferences',
+            removeCallQueueAction: 'csc-pbx-call-settings-update-preferences'
         }),
         resetMaxQueueLength () {
             this.changes.max_queue_length = this.getDefaultData().max_queue_length
@@ -219,10 +220,16 @@ export default {
                 queue_wrap_up_time: this.subscriberPreferences.queue_wrap_up_time || this.defaultQueueWrapUpTime.toString(),
                 subscriber_id: getSubscriberId()
             }
-            this.cloud_pbx_callqueue = this.subscriberPreferences.cloud_pbx_callqueue ? this.subscriberPreferences.cloud_pbx_callqueue : this.cloud_pbx_callqueue
+            this.cloud_pbx_callqueue = this.subscriberPreferences.cloud_pbx_callqueue === true
         },
-        addOrRemoveCallQueue () {
-            this.fieldUpdateAction({ field: 'cloud_pbx_callqueue', value: this.cloud_pbx_callqueue })
+        async addOrRemoveCallQueue () {
+            if (this.cloud_pbx_callqueue) {
+                await this.fieldUpdateAction({ field: 'cloud_pbx_callqueue', value: true })
+            } else {
+                await this.removeCallQueueAction()
+                this.getCallQueue()
+                this.changes = this.getDefaultData()
+            }
         }
     }
 }
