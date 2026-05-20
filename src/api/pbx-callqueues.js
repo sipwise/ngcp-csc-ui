@@ -1,9 +1,10 @@
 import _ from 'lodash'
 import {
-    addPreference,
     addPreferenceFull,
     getAllPreferences,
-    getSubscriber
+    getSubscriber,
+    removeCallQueueConfig,
+    setPreference
 } from 'src/api/subscriber'
 
 export function getCallQueues () {
@@ -24,63 +25,29 @@ export function getCallQueues () {
     })
 }
 
-export function getCallQueueList () {
-    return new Promise((resolve, reject) => {
-        let callQueues = []
-        Promise.resolve().then(() => {
-            return getCallQueues()
-        }).then(($callQueues) => {
-            callQueues = $callQueues
-            const subscriberPromises = []
-            callQueues.items.forEach((callQueue) => {
-                subscriberPromises.push(getSubscriber(callQueue.id))
-            })
-            return Promise.all(subscriberPromises)
-        }).then((subscribers) => {
-            resolve({
-                subscribers: {
-                    items: subscribers
-                },
-                callQueues
-            })
-        }).catch((err) => {
-            reject(err)
-        })
-    })
+export async function getCallQueueList () {
+    const callQueues = await getCallQueues()
+    const subscribers = await Promise.all(
+        callQueues.items.map((callQueue) => getSubscriber(callQueue.subscriber_id))
+    )
+    return {
+        subscribers: {
+            items: subscribers
+        },
+        callQueues
+    }
 }
 
-/**
- * @param options.subscriber_id
- * @param options.max_queue_length
- * @param options.queue_wrap_up_time
- * @return {Promise}
- */
-export function createCallQueue (options) {
-    return new Promise((resolve, reject) => {
-        Promise.resolve().then(() => {
-            return Promise.all([
-                addPreference(options.subscriber_id, 'cloud_pbx_callqueue', true),
-                addPreference(options.subscriber_id, 'max_queue_length', options.max_queue_length),
-                addPreference(options.subscriber_id, 'queue_wrap_up_time', options.queue_wrap_up_time)
-            ])
-        }).then(() => {
-            resolve()
-        }).catch((err) => {
-            reject(err)
-        })
-    })
+export async function createCallQueue ({ subscriberId, maxQueueLength, queueWrapUpTime }) {
+    await Promise.all([
+        setPreference(subscriberId, 'cloud_pbx_callqueue', true),
+        setPreference(subscriberId, 'max_queue_length', maxQueueLength),
+        setPreference(subscriberId, 'queue_wrap_up_time', queueWrapUpTime)
+    ])
 }
 
-export function removeCallQueue (subscriberId) {
-    return new Promise((resolve, reject) => {
-        Promise.resolve().then(() => {
-            return addPreference(subscriberId, 'cloud_pbx_callqueue', false)
-        }).then(() => {
-            resolve()
-        }).catch((err) => {
-            reject(err)
-        })
-    })
+export async function removeCallQueue (callQueueId) {
+    await removeCallQueueConfig(callQueueId)
 }
 
 export function setCallQueueMaxLength (options) {
