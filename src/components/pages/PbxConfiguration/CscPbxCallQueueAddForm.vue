@@ -186,7 +186,11 @@ export default {
             this.$emit('cancel')
         },
         save () {
-            this.$emit('submit', this.data)
+            this.$emit('submit', {
+                subscriberId: this.data.subscriber_id,
+                maxQueueLength: this.data.max_queue_length,
+                queueWrapUpTime: this.data.queue_wrap_up_time
+            })
         },
         reset () {
             this.data = this.getDefaults()

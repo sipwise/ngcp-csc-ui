@@ -266,6 +266,7 @@ export default {
             if (this.hasMaxQueueLengthChanged && this.v$.changes.max_queue_length.$errors.length <= 0) {
                 this.$emit('save-max-queue-length', {
                     callQueueId: this.callQueue.id,
+                    subscriberId: this.callQueue.subscriber_id,
                     maxQueueLength: this.changes.max_queue_length
                 })
             }
@@ -274,6 +275,7 @@ export default {
             if (this.hasQueueWrapUpTimeChanged && this.v$.changes.queue_wrap_up_time.$errors.length <= 0) {
                 this.$emit('save-queue-wrap-up-time', {
                     callQueueId: this.callQueue.id,
+                    subscriberId: this.callQueue.subscriber_id,
                     queueWrapUpTime: this.changes.queue_wrap_up_time
                 })
             }
