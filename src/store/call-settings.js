@@ -1,6 +1,8 @@
 import {
+    CALL_QUEUE_PREFERENCE_FIELDS,
     getPreferences,
     getPreferencesDefs,
+    removeCallQueueConfig,
     removePreference,
     setPreference
 } from 'src/api/subscriber'
@@ -42,6 +44,9 @@ export default {
         subscriberPreferencesUpdate (state, { field, value }) {
             state.subscriberPreferences[field] = value
         },
+        subscriberPreferencesRemove (state, field) {
+            delete state.subscriberPreferences[field]
+        },
         preferencesDefsSucceeded (state, res) {
             state.preferencesDefs = res
         }
@@ -57,6 +62,12 @@ export default {
             context.commit('subscriberPreferencesUpdate', {
                 field: options.field,
                 value: options.value
+            })
+        },
+        async removeCallQueueAction (context) {
+            await removeCallQueueConfig(context.getters.subscriberId)
+            CALL_QUEUE_PREFERENCE_FIELDS.forEach((field) => {
+                context.commit('subscriberPreferencesRemove', field)
             })
         },
         async loadPreferencesDefsAction (context) {

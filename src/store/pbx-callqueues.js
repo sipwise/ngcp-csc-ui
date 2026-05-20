@@ -1,5 +1,4 @@
 import { i18n } from 'boot/i18n'
-import _ from 'lodash'
 import {
     createCallQueue,
     getCallQueueList,
@@ -7,7 +6,6 @@ import {
     setCallQueueMaxLength,
     setCallQueueWrapUpTime
 } from 'src/api/pbx-callqueues'
-import { getPreferences } from 'src/api/subscriber'
 import { CreationState, RequestState } from 'src/store/common'
 
 export default {
@@ -50,40 +48,40 @@ export default {
             return state.callQueueUpdateState === RequestState.requesting
         },
         isCallQueueRemoving (state) {
-            return state.callQueueRemoving === RequestState.requesting
+            return state.callQueueRemovalState === RequestState.requesting
         },
         isCallQueueLoading (state) {
-            return (id) => {
+            return (callQueueId) => {
                 return (state.callQueueRemovalState === RequestState.requesting &&
-                    state.callQueueRemoving !== null && state.callQueueRemoving.id === id) ||
+                    state.callQueueRemoving !== null && state.callQueueRemoving.id === callQueueId) ||
                     (state.callQueueUpdateState === RequestState.requesting &&
-                    state.callQueueUpdating !== null && state.callQueueUpdating.id === id)
+                    state.callQueueUpdating !== null && state.callQueueUpdating.id === callQueueId)
             }
         },
         isCallQueueExpanded (state) {
-            return (id) => {
-                return state.callQueueSelected !== null && state.callQueueSelected.id === id
+            return (callQueueId) => {
+                return state.callQueueSelected !== null && state.callQueueSelected.id === callQueueId
             }
         },
         getCallQueueRemoveDialogMessage (state) {
             if (state.callQueueRemoving !== null) {
                 return i18n.global.t('You are about to remove call queue for {subscriber}', {
-                    subscriber: state.subscriberMap[state.callQueueRemoving.id].display_name
+                    subscriber: state.subscriberMap[state.callQueueRemoving.subscriber_id]?.display_name ?? ''
                 })
             }
             return ''
         },
         getCallQueueRemovingName (state) {
-            const subscriber = _.get(state.subscriberMap, _.get(state.callQueueRemoving, 'id', null), null)
-            return _.get(subscriber, 'display_name', '')
+            const subscriber = state.subscriberMap[state.callQueueRemoving?.subscriber_id]
+            return subscriber?.display_name ?? ''
         },
         getCallQueueCreatingName (state) {
-            const subscriber = _.get(state.subscriberMap, _.get(state.callQueueCreationData, 'subscriber_id', null), null)
-            return _.get(subscriber, 'display_name', '')
+            const subscriber = state.subscriberMap[state.callQueueCreationData?.subscriberId]
+            return subscriber?.display_name ?? ''
         },
         getCallQueueUpdatingName (state) {
-            const subscriber = _.get(state.subscriberMap, _.get(state.callQueueUpdating, 'id', null), null)
-            return _.get(subscriber, 'display_name', '')
+            const subscriber = state.subscriberMap[state.callQueueUpdating?.subscriber_id]
+            return subscriber?.display_name ?? ''
         },
         getCallQueueUpdatingField (state) {
             return state.callQueueUpdatingField
@@ -118,11 +116,14 @@ export default {
         },
         callQueueListSucceeded (state, callQueueList) {
             state.callQueueListState = RequestState.succeeded
-            state.callQueueList = _.get(callQueueList, 'callQueues.items', [])
+            state.callQueueList = callQueueList?.callQueues?.items ?? []
+            state.callQueueMap = {}
             state.callQueueList.forEach((callQueue) => {
                 state.callQueueMap[callQueue.id] = callQueue
             })
-            _.get(callQueueList, 'subscribers.items', []).forEach((subscriber) => {
+            state.subscriberMap = {}
+            const subscribers = callQueueList?.subscribers?.items ?? []
+            subscribers.forEach((subscriber) => {
                 state.subscriberMap[subscriber.id] = subscriber
             })
             state.callQueueListVisible = true
@@ -162,15 +163,15 @@ export default {
         },
         callQueueUpdateSucceeded (state, preferences) {
             state.callQueueUpdateState = RequestState.succeeded
-            if (preferences) {
-                for (let i = 0; i < state.callQueueList.length; i++) {
-                    if (state.callQueueList[i].id === preferences.id) {
-                        state.callQueueList[i] = preferences
-                    }
-                }
-                delete state.callQueueMap[preferences.id]
-                state.callQueueMap[preferences.id] = preferences
+            if (!preferences) {
+                return
             }
+            const callQueueId = preferences.id
+            const index = state.callQueueList.findIndex((callQueue) => callQueue.id === callQueueId)
+            if (index !== -1) {
+                state.callQueueList[index] = preferences
+            }
+            state.callQueueMap[callQueueId] = preferences
         },
         callQueueUpdateFailed (state, err) {
             state.callQueueUpdateState = RequestState.failed
@@ -185,30 +186,29 @@ export default {
         expandCallQueue (state, callQueueId) {
             state.callQueueSelected = state.callQueueMap[callQueueId]
         },
+        expandCallQueueBySubscriberId (state, subscriberId) {
+            state.callQueueSelected = state.callQueueList.find((callQueue) => {
+                return callQueue.subscriber_id === subscriberId
+            }) || null
+        },
         collapseCallQueue (state) {
             state.callQueueSelected = null
-        },
-        setDefaultQueueWrapUpTime (state, value) {
-            state.defaultQueueWrapUpTime = value
         }
     },
     actions: {
         async loadCallQueueList (context, options) {
-            const subscriberId = _.get(options, 'subscriberId', null)
-            const listVisible = _.get(options, 'listVisible', false)
-            const selectedId = _.get(options, 'selectedId', null)
+            const listVisible = options?.listVisible ?? false
+            const selectedId = options?.selectedId ?? null
+            const selectedSubscriberId = options?.selectedSubscriberId ?? null
             context.commit('callQueueListRequesting', { listVisible })
             try {
                 const callQueueList = await getCallQueueList()
                 context.commit('callQueueListSucceeded', callQueueList)
 
-                const subscriberPreferences = await getPreferences(subscriberId)
-                const wrapUpTime = _.get(subscriberPreferences, 'queue_wrap_up_time', 10)
-                context.commit('setDefaultQueueWrapUpTime', wrapUpTime)
-
                 if (selectedId !== null) {
-                    context.commit('expandCallQueue', callQueueList)
-                    context.commit('highlightCallQueue', callQueueList)
+                    context.commit('expandCallQueue', selectedId)
+                } else if (selectedSubscriberId !== null) {
+                    context.commit('expandCallQueueBySubscriberId', selectedSubscriberId)
                 }
             } catch (err) {
                 context.commit('callQueueListFailed', err.message)
@@ -218,7 +218,8 @@ export default {
             context.commit('callQueueCreationRequesting', callQueueData)
             createCallQueue(callQueueData).then(() => {
                 return context.dispatch('loadCallQueueList', {
-                    listVisible: true
+                    listVisible: true,
+                    selectedSubscriberId: callQueueData.subscriberId
                 })
             }).then(() => {
                 context.commit('callQueueCreationSucceeded')
@@ -269,8 +270,8 @@ export default {
             })
         },
         jumpToCallQueue (context, subscriber) {
-            this.$router.push({ path: '/user/pbx-configuration/call-queues' })
-            context.commit('expandCallQueue', subscriber.id)
+            this.$router?.push({ path: '/user/pbx-configuration/call-queues' })
+            context.commit('expandCallQueueBySubscriberId', subscriber.id)
         }
     }
 }
