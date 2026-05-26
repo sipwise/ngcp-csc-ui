@@ -248,7 +248,7 @@
     "Id": "ID",
     "If busy": "Wenn besetzt",
     "If not available": "Wenn nicht verfügbar",
-    "Ignore Members Call Forwards when Hunting": "Anrufweiterleitung bei Anrufen von Mitgliedern einer Gruppe ignorieren",
+    "Ignore Members Call Forwards when Hunting": "Anrufweiterleitungen von Gruppenmitgliedern beim Suchen ignorieren",
     "In": "In",
     "In call with": "In Anruf mit",
     "In call with {number}": "In Anruf mit {number}",
