@@ -10,7 +10,7 @@ function isMovableDestination (destination) {
     return destinationType === DestinationType.Number
 }
 
-function isTerminalDestination (destination) {
+export function isTerminalDestination (destination) {
     return !isMovableDestination(destination)
 }
 

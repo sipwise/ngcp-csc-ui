@@ -401,9 +401,9 @@ import CscCfConditionPopupDateRange from 'components/call-forwarding/CscCfCondit
 import CscCfConditionPopupOfficeHours from 'components/call-forwarding/CscCfConditionPopupOfficeHours'
 import CscCfConditionPopupWeekdays from 'components/call-forwarding/CscCfConditionPopupWeekdays'
 import CscCfPopupMenuItemSeatSelect from 'components/call-forwarding/CscCfPopupMenuItemSeatSelect'
-import _ from 'lodash'
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import numberFilter from 'src/filters/number'
+import { isTerminalDestination } from 'src/helpers/call-forwarding-destinations'
 import destination from 'src/mixins/destination'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
@@ -482,13 +482,7 @@ export default {
             return `csc-cf-group-${this.destinationSet.id}`
         },
         hasTermination () {
-            const lastDestination = _.last(this.destinationSet.destinations).destination
-            const lastDestinationId = _.last(this.destinationSet.destinations).announcement_id
-            return _.endsWith(lastDestination, 'voicebox.local') ||
-                _.endsWith(lastDestination, 'fax2mail.local') ||
-                _.endsWith(lastDestination, 'managersecretary.local') ||
-                _.endsWith(lastDestination, 'conference.local') ||
-                (_.endsWith(lastDestination, 'app.local') && !lastDestinationId)
+            return isTerminalDestination(this.destinationSet.destinations?.at(-1))
         },
         showVoicebox () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail)
@@ -507,7 +501,7 @@ export default {
         async addDestinationEvent (originalPayload) {
             this.$wait.start(this.waitIdentifier)
             let payload = { ...originalPayload, defaultAnnouncementId: null }
-            if (_.isArray(this.announcements) && this.announcements.length > 0) {
+            if (Array.isArray(this.announcements) && this.announcements.length > 0) {
                 payload.defaultAnnouncementId = this.announcements[0].value
             }
 
