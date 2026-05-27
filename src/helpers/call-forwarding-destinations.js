@@ -56,9 +56,13 @@ function toNumericPriority (destination) {
     return Number.isFinite(parsed) ? parsed : 0
 }
 
-function isTerminalDestination (destination) {
+function isMovableDestination (destination) {
     const destinationType = parseSipUri(destination?.destination || '').destinationType
-    return destinationType !== DestinationType.Number
+    return destinationType === DestinationType.Number
+}
+
+export function isTerminalDestination (destination) {
+    return !isMovableDestination(destination)
 }
 
 function allDestinationsSharePriority (destinations) {
