@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.0.1.9+0~mr26.0.1.9) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [cad3d08] MT#65172 German translation fix for Call Forwarding options
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 28 May 2026 15:09:28 +0200
+
 ngcp-csc-ui (26.0.1.8+0~mr26.0.1.8) unstable; urgency=medium
 
   [ Debora Crescenzo ]
