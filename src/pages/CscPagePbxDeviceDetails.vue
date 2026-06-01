@@ -42,132 +42,136 @@
             v-if="selectedTab === 'preferences'"
             class="col-12 column"
         >
-            <div
-                v-if="changes"
-                class="col-12 col-md-6 q-pa-lg"
-                side
-                top
-            >
-                <q-input
-                    v-model="changes.station_name"
-                    :label="$t('Station name')"
-                    :disable="isLoading"
-                    @keyup.enter="save"
+            <div class="col-12 col-md-6 q-pa-lg">
+                <csc-list-spinner
+                    v-if="!deviceSelected || !changes"
+                />
+                <div
+                    v-else
+                    side
+                    top
                 >
-                    <template
-                        v-if="hasStationNameChanged"
-                        #append
+                    <q-input
+                        v-model="changes.station_name"
+                        :label="$t('Station name')"
+                        :disable="isLoading"
+                        @keyup.enter="save"
                     >
-                        <csc-input-button-save
-                            @click.stop="save"
-                        />
-                        <csc-input-button-reset
-                            @click.stop="resetStationName"
-                        />
-                    </template>
-                </q-input>
-                <q-input
-                    v-model="changes.identifier"
-                    :disable="isLoading"
-                    :label="$t('MAC address')"
-                    @keyup.enter="save"
-                >
-                    <template
-                        v-if="hasIdentifierChanged"
-                        #append
+                        <template
+                            v-if="hasStationNameChanged"
+                            #append
+                        >
+                            <csc-input-button-save
+                                @click.stop="save"
+                            />
+                            <csc-input-button-reset
+                                @click.stop="resetStationName"
+                            />
+                        </template>
+                    </q-input>
+                    <q-input
+                        v-model="changes.identifier"
+                        :disable="isLoading"
+                        :label="$t('MAC address')"
+                        @keyup.enter="save"
                     >
-                        <csc-input-button-save
-                            @click.stop="save"
-                        />
-                        <csc-input-button-reset
-                            @click.stop="resetIdentifier"
-                        />
-                    </template>
-                </q-input>
-                <csc-pbx-model-select
-                    v-model="changes.profile_id"
-                    :profiles="deviceProfileList"
-                    :profile-map="deviceProfileMap"
-                    :has-reset-button="false"
-                    @opened="$emit('model-select-opened')"
-                    @input="selectedProfile"
-                >
-                    <template
-                        v-if="hasProfileChanged"
-                        #append
+                        <template
+                            v-if="hasIdentifierChanged"
+                            #append
+                        >
+                            <csc-input-button-save
+                                @click.stop="save"
+                            />
+                            <csc-input-button-reset
+                                @click.stop="resetIdentifier"
+                            />
+                        </template>
+                    </q-input>
+                    <csc-pbx-model-select
+                        v-model="changes.profile_id"
+                        :profiles="deviceProfileList"
+                        :profile-map="deviceProfileMap"
+                        :has-reset-button="false"
+                        @opened="$emit('model-select-opened')"
+                        @input="selectedProfile"
                     >
-                        <csc-input-button-save
-                            @click.stop="save"
-                        />
-                        <csc-input-button-reset
-                            @click.stop="resetProfile"
-                        />
-                    </template>
-                </csc-pbx-model-select>
-                <q-input
-                    v-model="changes.admin_name"
-                    :label="$t('Admin name')"
-                    :disable="isLoadingPreferences"
-                    @keyup.enter="save"
-                >
-                    <template
-                        v-if="hasAdminNameChanged"
-                        #append
+                        <template
+                            v-if="hasProfileChanged"
+                            #append
+                        >
+                            <csc-input-button-save
+                                @click.stop="save"
+                            />
+                            <csc-input-button-reset
+                                @click.stop="resetProfile"
+                            />
+                        </template>
+                    </csc-pbx-model-select>
+                    <q-input
+                        v-model="changes.admin_name"
+                        :label="$t('Admin name')"
+                        :disable="isLoadingPreferences"
+                        @keyup.enter="save"
                     >
-                        <csc-input-button-save
-                            @click.stop="save"
-                        />
-                        <csc-input-button-reset
-                            @click.stop="resetAdminName"
-                        />
-                    </template>
-                </q-input>
+                        <template
+                            v-if="hasAdminNameChanged"
+                            #append
+                        >
+                            <csc-input-button-save
+                                @click.stop="save"
+                            />
+                            <csc-input-button-reset
+                                @click.stop="resetAdminName"
+                            />
+                        </template>
+                    </q-input>
 
-                <q-input
-                    v-model="changes.admin_pass"
-                    :label="$t('Admin password')"
-                    :disable="isLoadingPreferences"
-                    @keyup.enter="save"
-                >
-                    <template
-                        v-if="hasAdminPasswordChanged"
-                        #append
+                    <q-input
+                        v-model="changes.admin_pass"
+                        :label="$t('Admin password')"
+                        :disable="isLoadingPreferences"
+                        @keyup.enter="save"
                     >
-                        <csc-input-button-save
-                            @click.stop="save"
-                        />
-                        <csc-input-button-reset
-                            @click.stop="resetAdminPassword"
-                        />
-                    </template>
-                </q-input>
+                        <template
+                            v-if="hasAdminPasswordChanged"
+                            #append
+                        >
+                            <csc-input-button-save
+                                @click.stop="save"
+                            />
+                            <csc-input-button-reset
+                                @click.stop="resetAdminPassword"
+                            />
+                        </template>
+                    </q-input>
 
-                <q-list>
-                    <q-item class="q-pb-sm q-mt-md">
-                        <q-toggle
-                            v-model="changes.web_gui_dis"
-                            :label="$t('Disable phone web interface')"
-                            :disable="isLoadingPreferences"
-                            @update:model-value="changeGui"
-                        />
-                    </q-item>
-                    <q-item class="q-pb-sm">
-                        <q-toggle
-                            v-model="changes.user_conf_priority"
-                            :label="$t('User config priority over provisioning')"
-                            :disable="isLoadingPreferences"
-                            @update:model-value="changeUserConfig"
-                        />
-                    </q-item>
-                    <q-item class="q-pb-sm">
-                        <q-toggle
-                            v-model="changes.FW_upg_dis"
-                            :label="$t('Firmware Upgrade disable')"
-                            :disable="isLoadingPreferences"
-                            @update:model-value="changeFW"
-                        />
-                    </q-item>
-                </q-list>
+                    <q-list>
+                        <q-item class="q-pb-sm q-mt-md">
+                            <q-toggle
+                                v-model="changes.web_gui_dis"
+                                :label="$t('Disable phone web interface')"
+                                :disable="isLoadingPreferences"
+                                @update:model-value="changeGui"
+                            />
+                        </q-item>
+                        <q-item class="q-pb-sm">
+                            <q-toggle
+                                v-model="changes.user_conf_priority"
+                                :label="$t('User config priority over provisioning')"
+                                :disable="isLoadingPreferences"
+                                @update:model-value="changeUserConfig"
+                            />
+                        </q-item>
+                        <q-item class="q-pb-sm">
+                            <q-toggle
+                                v-model="changes.FW_upg_dis"
+                                :label="$t('Firmware Upgrade disable')"
+                                :disable="isLoadingPreferences"
+                                @update:model-value="changeFW"
+                            />
+                        </q-item>
+                    </q-list>
+                </div>
             </div>
 
             <div class="col-12 col-md-6 q-pa-lg">
@@ -374,10 +378,15 @@ export default {
         $route: {
             async handler (to) {
                 this.id = to.params.id
+                this.changes = null
+                this.collapseDevice()
                 await this.getData(this.id)
             }
         },
         deviceSelected () {
+            this.changes = this.getDeviceData()
+        },
+        devicePreferencesSelected () {
             this.changes = this.getDeviceData()
         },
         deviceUpdateState (state) {
@@ -416,7 +425,8 @@ export default {
     methods: {
         ...mapMutations('pbxDevices', [
             'expandDevice',
-            'expandDevicePreferences'
+            'expandDevicePreferences',
+            'collapseDevice'
         ]),
         ...mapActions('pbxDevices', [
             'setDeviceKeys',
@@ -443,10 +453,15 @@ export default {
                 await this.loadDevice(deviceId)
             }
 
-            const deviceProfileId = this.deviceMapById[deviceId].profile_id
+            const device = this.deviceMapById[deviceId]
+            if (!device) {
+                return
+            }
+
+            const deviceProfileId = device.profile_id
             const deviceProfile = this.deviceProfileMap[deviceProfileId]
 
-            if (deviceProfile.device_id) {
+            if (deviceProfile && deviceProfile.device_id) {
                 await this.loadDeviceModel({
                     type: 'all',
                     deviceId: deviceProfile.device_id
@@ -462,18 +477,20 @@ export default {
             this.loadSubscribers()
         },
         getDeviceData () {
-            return (this.deviceSelected && this.devicePreferencesSelected)
-                ? {
-                    station_name: this.deviceSelected.station_name,
-                    identifier: this.deviceSelected.identifier,
-                    profile_id: this.deviceSelected.profile_id,
-                    admin_name: this.devicePreferencesSelected.admin_name ? this.devicePreferencesSelected.admin_name : undefined,
-                    admin_pass: this.devicePreferencesSelected.admin_pass ? this.devicePreferencesSelected.admin_pass : undefined,
-                    web_gui_dis: this.devicePreferencesSelected.web_gui_dis ? this.devicePreferencesSelected.web_gui_dis : false,
-                    user_conf_priority: this.devicePreferencesSelected.user_conf_priority ? this.devicePreferencesSelected.user_conf_priority : false,
-                    FW_upg_dis: this.devicePreferencesSelected.FW_upg_dis ? this.devicePreferencesSelected.FW_upg_dis : false
-                }
-                : null
+            if (!this.deviceSelected) {
+                return null
+            }
+
+            return {
+                station_name: this.deviceSelected.station_name,
+                identifier: this.deviceSelected.identifier,
+                profile_id: this.deviceSelected.profile_id,
+                admin_name: this.devicePreferencesSelected?.admin_name || undefined,
+                admin_pass: this.devicePreferencesSelected?.admin_pass || undefined,
+                web_gui_dis: this.devicePreferencesSelected?.web_gui_dis || false,
+                user_conf_priority: this.devicePreferencesSelected?.user_conf_priority || false,
+                FW_upg_dis: this.devicePreferencesSelected?.FW_upg_dis || false
+            }
         },
         resetStationName () {
             this.changes.station_name = this.deviceSelected?.station_name
