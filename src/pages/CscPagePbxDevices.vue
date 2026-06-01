@@ -308,12 +308,13 @@ export default {
         }
     },
     async created () {
-        await this.loadProfiles()
+        if (this.deviceProfileList.length === 0) {
+            await this.loadProfiles()
+        }
     },
     mounted () {
         this.$scrollTo(this.$parent.$el)
-        this.loadDeviceListFiltered()
-        this.loadDevicePreferencesList()
+        this.loadDeviceListFiltered(this.deviceListCurrentPage || 1)
     },
     methods: {
         ...mapActions('pbx', [
@@ -329,7 +330,6 @@ export default {
         ]),
         ...mapActions('pbxDevices', [
             'loadDeviceList',
-            'loadDevicePreferencesList',
             'createDevice',
             'removeDevice'
         ]),
