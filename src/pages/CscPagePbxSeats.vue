@@ -33,10 +33,12 @@
         <template
             #toolbar
         >
-            <csc-pbx-seat-filters
+            <csc-search-filters
                 v-if="showFilters"
                 ref="filters"
                 class="q-mb-md q-pa-md"
+                :filter-options="seatFilterOptions"
+                data-cy-prefix="csc-pbx-seat-search"
                 @filter="filterEvent"
             />
             <csc-pbx-seat-add-form
@@ -103,10 +105,10 @@
 <script>
 import CscPageSticky from 'components/CscPageSticky'
 import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscSearchFilters from 'components/CscSearchFilters'
 import CscSpinner from 'components/CscSpinner'
 import CscPbxSeat from 'components/pages/PbxConfiguration/CscPbxSeat'
 import CscPbxSeatAddForm from 'components/pages/PbxConfiguration/CscPbxSeatAddForm'
-import CscPbxSeatFilters from 'components/pages/PbxConfiguration/CscPbxSeatFilters'
 import _ from 'lodash'
 import {
     showGlobalError,
@@ -127,7 +129,7 @@ import {
 export default {
     name: 'CscPagePbxSeats',
     components: {
-        CscPbxSeatFilters,
+        CscSearchFilters,
         CscPageSticky,
         CscSpinner,
         CscPbxSeat,
@@ -181,7 +183,15 @@ export default {
             'getSeatCreationToastMessage',
             'getSeatRemovalToastMessage',
             'getSeatUpdateToastMessage'
-        ])
+        ]),
+        seatFilterOptions () {
+    return [
+        { label: this.$t('Name'), value: 'display_name' },
+        { label: this.$t('Extension'), value: 'pbx_extension' },
+        { label: this.$t('Primary Number'), value: 'primary_number' },
+        { label: this.$t('Alias Number'), value: 'alias_number' }
+    ]
+}
     },
     watch: {
         seatCreationState (state) {
