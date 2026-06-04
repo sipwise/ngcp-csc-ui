@@ -32,6 +32,38 @@
         <csc-page
             class="q-pa-lg"
         >
+            <csc-list-actions
+                class="row justify-center q-mb-xs"
+            >
+                <template
+                    #slot1
+                >
+                    <csc-list-action-button
+                        v-if="!showFilters"
+                        icon="filter_alt"
+                        color="primary"
+                        :label="$t('Search Contact')"
+                        data-cy="groups-filter-open"
+                        @click="openSearchFilters"
+                    />
+                    <csc-list-action-button
+                        v-if="showFilters"
+                        icon="clear"
+                        color="negative"
+                        :label="$t('Close')"
+                        data-cy="groups-filter-close"
+                        @click="closeFilters"
+                    />
+                </template>
+            </csc-list-actions>
+            <csc-search-filters
+                v-if="showFilters"
+                ref="filters"
+                class="q-mb-md q-pa-md"
+                :filter-options="customerPhonebookFilterOptions"
+                data-cy-prefix="csc-customer-phonebook-search"
+                @filter="applyFilter"
+            />
             <q-table
                 v-model:pagination="pagination"
                 class="no-shadow"
@@ -95,10 +127,13 @@
 </template>
 
 <script>
+import CscListActionButton from 'components/CscListActionButton'
+import CscListActions from 'components/CscListActions'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPage from 'components/CscPage'
 import CscPageSticky from 'components/CscPageSticky'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscSearchFilters from 'components/CscSearchFilters'
 import CscSpinner from 'components/CscSpinner'
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import { mapWaitingActions } from 'vue-wait-vue3'
@@ -110,7 +145,10 @@ export default {
         CscPage,
         CscMoreMenu,
         CscPopupMenuItem,
-        CscPageSticky
+        CscPageSticky,
+        CscListActionButton,
+        CscListActions,
+        CscSearchFilters
     },
     data () {
         return {
@@ -121,7 +159,9 @@ export default {
                 page: 1,
                 rowsPerPage: LIST_DEFAULT_ROWS,
                 rowsNumber: 0
-            }
+            },
+            filters: {},
+            showFilters: false
         }
     },
     computed: {
@@ -165,6 +205,15 @@ export default {
                     sortable: true
                 }
             ]
+        },
+        customerPhonebookFilterOptions () {
+            return [
+                { label: this.$t('Name'), value: 'name' },
+                { label: this.$t('Number'), value: 'number' }
+            ]
+        },
+        hasFilters () {
+            return Object.keys(this.filters).length > 0
         }
     },
     async mounted () {
@@ -231,6 +280,38 @@ export default {
         },
         async downloadCSV () {
             await this.downloadPhonebookAsCSV(this.getCustomerId)
+        },
+        openSearchFilters () {
+            this.showFilters = true
+        },
+        closeFilters () {
+            this.showFilters = false
+            this.resetFilters()
+        },
+        async resetFilters () {
+            if (this.hasFilters) {
+                this.filters = {}
+                await this.fetchPaginatedRegistrations({ pagination: this.pagination })
+            }
+        },
+        async applyFilter (filters) {
+            this.filters = filters
+            // Add wildcards to make search more extensive
+            if (filters?.name) {
+                this.filters.name = `*${filters.name}*`
+            }
+            if (filters?.number) {
+                this.filters.number = `*${filters.number}*`
+            }
+            this.$scrollTo(this.$parent.$el)
+            await this.loadCustomerPhonebook({
+                ...this.filters,
+                customer_id: this.getCustomerId,
+                page: 1,
+                rows: this.pagination.rowsPerPage,
+                order_by: this.pagination.sortBy,
+                order_by_direction: this.pagination.descending ? 'desc' : 'asc'
+            })
         }
     }
 }
