@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.0.1.11+0~mr26.0.1.11) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [a465c58] MT#65163 Improve device page performance and handle missing preferences
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 05 Jun 2026 09:48:17 +0200
+
 ngcp-csc-ui (26.0.1.10+0~mr26.0.1.10) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
