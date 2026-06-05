@@ -81,6 +81,7 @@ export default {
         ...mapGetters('call', [
             'callState',
             'callNumberInput',
+            'callNumberNormalized',
             'isCallEnabled',
             'callStateTitle',
             'callStateSubtitle',
