@@ -3,11 +3,10 @@ import {
     getJwt, getSubscriberId,
     hasJwt
 } from 'src/auth'
+
 import { store } from 'src/boot/store'
 
 export default ({ app, router }) => {
-    store.$router = router
-
     router.beforeEach((to, from, next) => {
         const publicUrls = ['/login', '/recoverpassword', '/changepassword']
         // not authorized user
@@ -34,7 +33,7 @@ export default ({ app, router }) => {
                 break
             default: {
                 // 1. Admin check
-               if (to.meta?.adminOnly && !store.getters['user/isAdmin']) {
+                if (to.meta?.adminOnly && !store.getters['user/isAdmin']) {
                     return next('/')
                 }
 
