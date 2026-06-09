@@ -30,14 +30,14 @@
                 </template>
                 <template #body-cell-menu="{ row }">
                     <td>
-                        <csc-more-menu>
-                            <csc-popup-menu-item
-                                icon="fas fa-phone-alt"
-                                color="primary"
-                                :label="$t('Call back')"
-                                @click="homePageCall(row)"
-                            />
-                        </csc-more-menu>
+                        <q-btn
+                            icon="fas fa-phone-alt"
+                            color="primary"
+                            size="sm"
+                            flat
+                            :label="$t('Call back')"
+                            @click="homePageCall(row)"
+                        />
                     </td>
                 </template>
             </q-table>

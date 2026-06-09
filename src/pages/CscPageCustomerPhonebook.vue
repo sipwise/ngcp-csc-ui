@@ -62,26 +62,31 @@
                 </template>
                 <template #body-cell-menu="{ row }">
                     <td>
-                        <csc-more-menu>
-                            <csc-popup-menu-item
+                        <div class="row items-center justify-between no-wrap full-width">
+                            <q-btn
                                 icon="fas fa-phone-alt"
                                 color="primary"
+                                size="sm"
+                                flat
                                 :label="$t('Call back')"
+                                data-cy="csc-customer-phonebook-entry-callback"
                                 @click="homePageCall(row)"
                             />
-                            <csc-popup-menu-item
-                                icon="fas fa-pen"
-                                color="primary"
-                                :label="$t('Edit')"
-                                @click="showPhonebookDetails(row)"
-                            />
-                            <csc-popup-menu-item
-                                icon="delete"
-                                color="negative"
-                                :label="$t('Delete')"
-                                @click="deleteRow(row)"
-                            />
-                        </csc-more-menu>
+                            <csc-more-menu>
+                                <csc-popup-menu-item
+                                    icon="fas fa-pen"
+                                    color="primary"
+                                    :label="$t('Edit')"
+                                    @click="showPhonebookDetails(row)"
+                                />
+                                <csc-popup-menu-item
+                                    icon="delete"
+                                    color="negative"
+                                    :label="$t('Delete')"
+                                    @click="deleteRow(row)"
+                                />
+                            </csc-more-menu>
+                        </div>
                     </td>
                 </template>
             </q-table>
