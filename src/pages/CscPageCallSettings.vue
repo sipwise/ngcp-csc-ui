@@ -8,9 +8,9 @@
         >
             <q-item>
                 <q-item-section
-                    v-if="showToggles"
                 >
                     <q-toggle
+                        v-if="showMusicOnHold"
                         :model-value="musicOnHoldValue"
                         :disable="dataLoading"
                         :label="$t('Music on Hold')"
@@ -21,6 +21,7 @@
                         @update:model-value="toggleMusicOnHold"
                     />
                     <q-toggle
+                        v-if="showDnd"
                         :model-value="dndValue"
                         :disable="dataLoading"
                         :label="$t('DND')"
@@ -45,7 +46,7 @@
 <script>
 import CscPage from 'components/CscPage'
 import CscSpinner from 'components/CscSpinner'
-import { PROFILE_ATTRIBUTES_MAP } from 'src/constants'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { showGlobalError } from 'src/helpers/ui'
 import {
     mapWaitingActions,
@@ -70,7 +71,7 @@ export default {
             'dnd'
         ]),
         ...mapGetters('user', [
-            'hasSomeSubscriberProfileAttributes'
+            'hasSubscriberProfileAttribute'
         ]),
         ...mapWaitingGetters({
             processingSubscriberPreferences: 'processing subscriberPreferences'
@@ -78,8 +79,11 @@ export default {
         dataLoading () {
             return !this.subscriberPreferencesInitialized || this.processingSubscriberPreferences
         },
-        showToggles () {
-            return this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings)
+        showDnd () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.dnd)
+        },
+        showMusicOnHold () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.musicOnHold)
         },
         musicOnHoldValue () {
             return this.musicOnHold || false
