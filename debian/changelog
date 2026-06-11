@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.5.1.33+0~mr13.5.1.33) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [78faec4] MT#65048 Fix music on hold and DND guards in call settings
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 11 Jun 2026 10:56:12 +0200
+
 ngcp-csc-ui (13.5.1.32+0~mr13.5.1.32) unstable; urgency=medium
 
   [ Debora Crescenzo ]
