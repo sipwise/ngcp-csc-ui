@@ -1,3 +1,11 @@
+ngcp-csc-ui (13.5.1.34+0~mr13.5.1.34) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [bc08e09] MT#65122 Fix incorrect store import in boot/routes.js
+  * [c1ae2d1] MT#64801 Make custom announcements terminal destinations
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Jun 2026 09:26:59 +0200
+
 ngcp-csc-ui (13.5.1.33+0~mr13.5.1.33) unstable; urgency=medium
 
   [ Debora Crescenzo ]
