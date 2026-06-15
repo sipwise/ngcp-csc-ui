@@ -1,3 +1,38 @@
+ngcp-csc-ui (26.1.1.0+0~mr26.1.1.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [9973928] MT#64899 April Security Updates
+  * [74b8a4e] MT#65069 PBX device labels bugfix
+  * [86b4399] MT#65075 Upgrade Axios to 1.16.0
+  * [e64887e] MT#65003 Use composable helpers instead of direct Vuex store access
+  * [5544666] MT#65163 Improve device page performance and handle missing preferences
+  * [0155c58] MT#65048 Fix music on hold and DND guards in call settings
+
+  [ Giancarlo Errigo Mattos ]
+  * [397d6bd] MT#64862 Minor CSC bug fixes
+  * [205bbe3] MT#64902 Rewording of CF group item timeout information
+  * [628f6f2]   MT#64825 Erroneous Manager Secretary and Auto Attendant checks
+  * [4bbbe8f] MT#64379 New Seat CF destination option
+  * [589140c]   MT#64825 Add conference settings to Extension Settings
+  * [e6c277b] MT#65172 German translation fix for Call Forwarding options
+  * [d5e1f72] MT#65122 Refactor PBX call queue ownership flow
+  * [ad7498f] MT#64801 Make custom announcements terminal destinations
+  * [280eccb] MT#65122 Fix incorrect store import in boot/routes.js
+
+  [ nidrissi-zouggari ]
+  * [6e11407] MT#64519 Fix default value for Call Queue
+  * [2971827] MT#64678 Remove unnecessary preferences from PBX Seats creation form and actions menu
+  * [13c943c] MT#65237 Start call with key enter
+  * [5b8f161] MT#65240 Move Call back buttons in the table
+  * [c6a244e] MT#65049 Seats new Search Input
+  * [b3cfdc4] MT#65238 Add new search input for customer phonebook
+
+  [ Nico Schedel ]
+  * [f72586d] MT#64596 add missing data-cy for manager secretary dropdown
+  * [67b1cdd] MT#64394 add missing data-cy for pbx groups details && mail2fax
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Jun 2026 15:32:01 +0200
+
 ngcp-csc-ui (26.1.0.0+0~mr26.1.0.0) unstable; urgency=medium
 
   [ Debora Crescenzo ]
