@@ -22,19 +22,19 @@ export default ({ app }) => {
         faxQualityOptions: [
             {
                 get label () {
-                    return app.config.globalProperties.$t('Normal')
+                    return app.i18n.global.t('Normal')
                 },
                 value: 'normal'
             },
             {
                 get label () {
-                    return app.config.globalProperties.$t('Fine')
+                    return app.i18n.global.t('Fine')
                 },
                 value: 'fine'
             },
             {
                 get label () {
-                    return app.config.globalProperties.$t('Super')
+                    return app.i18n.global.t('Super')
                 },
                 value: 'super'
             }
