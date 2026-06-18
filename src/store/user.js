@@ -402,7 +402,7 @@ export default {
                 }
                 const res = await apiGet(
                     {
-                        path: 'api/otpsecret',
+                        resource: 'otpsecret',
                         config: {
                             responseType: 'blob',
                             headers
@@ -433,7 +433,7 @@ export default {
                 }
                 const res = await apiGet(
                     {
-                        path: 'api/otpsecret',
+                        resource: 'otpsecret',
                         config: { headers }
                     })
                 commit('storeOTPSecret', { type: 'text', data: res.data })
