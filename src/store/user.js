@@ -3,7 +3,7 @@ import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import QRCode from 'qrcode'
 import { date } from 'quasar'
-import { apiDownloadFile, apiGet, httpApi } from 'src/api/common'
+import { apiDownloadFile, get, httpApi } from 'src/api/common'
 import { callInitialize } from 'src/api/ngcp-call'
 import {
     changePassword,
@@ -41,7 +41,8 @@ import {
 } from 'src/auth'
 import { LICENSES, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { getSipInstanceId } from 'src/helpers/call-utils'
-import { parseBlobToObject } from 'src/helpers/parse-blob-to-object'
+import { getHttpErrorMessage } from 'src/helpers/http-error'
+import { parseErrorPayload, resolveBlobPayload } from 'src/helpers/parse-error-payload'
 import { qrPayload } from 'src/helpers/qr'
 import { showGlobalError, showToast } from 'src/helpers/ui'
 import { PATH_CHANGE_PASSWORD } from 'src/router/routes'
@@ -239,8 +240,6 @@ export default {
             state.loginRequesting = true
             state.loginSucceeded = false
             state.loginError = null
-            state.loginWaitingOTPCode = false
-            state.OTPSecret = null
         },
         loginSucceeded (state, options) {
             state.jwt = options.jwt
@@ -256,7 +255,6 @@ export default {
             state.loginSucceeded = false
             state.loginError = error
             state.loginWaitingOTPCode = false
-            state.OTPSecret = null
         },
         userDataRequesting (state) {
             state.resellerBranding = null
@@ -291,6 +289,8 @@ export default {
             state.loginRequesting = false
             state.loginSucceeded = false
             state.loginError = null
+            state.loginWaitingOTPCode = false
+            state.OTPSecret = null
             state.userDataRequesting = false
             state.userDataSucceeded = false
             state.userDataError = null
@@ -343,7 +343,6 @@ export default {
         },
         loginWaitingForOTPCode (state) {
             state.loginWaitingOTPCode = true
-            state.OTPSecret = null
             state.loginRequesting = false
         },
         storeOTPSecret (state, payload) {
@@ -354,6 +353,7 @@ export default {
     },
     actions: {
         async login (context, options) {
+            const wasWaitingForOTP = context.state.loginWaitingOTPCode
             context.commit('loginRequesting')
             try {
                 const result = await login({
@@ -371,9 +371,9 @@ export default {
                 await this.$router?.push({ name: 'dashboard' })
             } catch (err) {
                 if (err.message === 'Invalid OTP') {
-                    if (context.state.loginWaitingOTPCode) {
+                    if (wasWaitingForOTP) {
                         context.commit('loginFailed', i18n.global.t('Invalid OTP Code'))
-                        throw err
+                        return
                     }
                     return context.dispatch('getOTPSecret', {
                         username: options.username,
@@ -392,7 +392,7 @@ export default {
             deleteJwt()
             document.location.href = document.location.pathname
         },
-        async getOTPSecret ({ commit }, options) {
+        async getOTPSecret ({ commit, state }, options) {
             try {
                 const token = `${options.username}:${options.password}`
                 const encodedToken = btoa(token).toString('base64')
@@ -401,26 +401,32 @@ export default {
                     'Cache-Control': 'no-cache',
                     Accept: 'image/png'
                 }
-                const res = await apiGet(
-                    {
-                        resource: 'otpsecret',
-                        config: {
-                            responseType: 'blob',
-                            headers
-                        }
-                    })
+                // Bypasses get()/apiGet(): handleResponseError strips err.response
+                // for structured error bodies, but detecting "no OTP yet" below needs the raw response
+                // that is why we bypass it.
+                const res = await httpApi.get('api/otpsecret/', {
+                    responseType: 'blob',
+                    headers
+                })
                 const url = URL.createObjectURL(res.data)
                 commit('storeOTPSecret', { type: 'qr', data: url })
             } catch (err) {
-                try {
-                    const errorData = await parseBlobToObject(err.response.data)
-                    if ([400].includes(errorData?.code) && ['no OTP'].includes(errorData?.message)) {
-                        return commit('loginWaitingForOTPCode')
+                // This block covers logins after the Authenticator has been set up
+                if (err?.response?.status === 400) {
+                    try {
+                        const errorData = await parseErrorPayload(err.response.data)
+                        if (errorData.message.includes('no OTP') && !(state.loginWaitingOTPCode)) {
+                            return commit('loginWaitingForOTPCode', errorData)
+                        }
+                        commit('loginFailed', errorData.message)
+                    } catch (parseErr) {
+                        return commit('loginFailed', i18n.global.t('Unexpected error'))
                     }
-                } catch (err) {
-                    commit('loginFailed', i18n.global.t('Unexpected error'))
-                    throw err
                 }
+                if (err?.response?.data) {
+                    err.response.data = await resolveBlobPayload(err.response.data)
+                }
+                commit('loginFailed', getHttpErrorMessage(err, i18n.global.t('Unexpected error')))
             }
         },
         async getOTPSecretAsText ({ commit }, options) {
@@ -432,22 +438,10 @@ export default {
                     'Cache-Control': 'no-cache',
                     Accept: 'text/plain'
                 }
-                const res = await apiGet(
-                    {
-                        resource: 'otpsecret',
-                        config: { headers }
-                    })
-                commit('storeOTPSecret', { type: 'text', data: res.data })
+                const data = await get({ path: 'api/otpsecret/', headers })
+                commit('storeOTPSecret', { type: 'text', data })
             } catch (err) {
-                try {
-                    const errorData = await parseBlobToObject(err.response.data)
-                    if ([400].includes(errorData?.code) && ['no OTP'].includes(errorData?.message)) {
-                        return commit('loginWaitingForOTPCode')
-                    }
-                } catch (err) {
-                    commit('loginFailed', i18n.global.t('Unexpected error'))
-                    throw err
-                }
+                commit('loginFailed', err.message)
             }
         },
         async initUser (context) {
@@ -505,7 +499,7 @@ export default {
                 const res = await resetPassword(data)
                 showToast(res.data.message)
             } catch (err) {
-                showGlobalError(i18n.global.t('There was an error, please retry later'))
+                showGlobalError(err)
             } finally {
                 commit('newPasswordRequesting', false)
             }

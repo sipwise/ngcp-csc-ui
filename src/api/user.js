@@ -9,6 +9,7 @@ import {
 } from 'src/api/common'
 import { getFaxServerSettings } from 'src/api/fax'
 import { LICENSES } from 'src/constants'
+import { getHttpErrorMessage } from 'src/helpers/http-error'
 
 export function login ({ username, password, otp = null }) {
     return new Promise((resolve, reject) => {
@@ -27,7 +28,7 @@ export function login ({ username, password, otp = null }) {
             })
         }).catch((err) => {
             if (err.response) {
-                reject(new Error(err.response.data.message))
+                reject(new Error(getHttpErrorMessage(err, i18n.global.t('Unexpected error'))))
             } else {
                 reject(err)
             }
@@ -45,8 +46,9 @@ export async function loginByExchangeToken (token) {
             subscriberId: `${res.data?.subscriber_id}`
         }
     } catch (err) {
-        if (err.response.status && err.response.status >= 400) {
-            throw new Error(err.response.data.message)
+        const status = err?.response?.status
+        if (status && status >= 400) {
+            throw new Error(getHttpErrorMessage(err, i18n.global.t('Unexpected error')))
         } else {
             throw err
         }
@@ -58,7 +60,7 @@ export async function getPreLoginPasswordInfo () {
         const res = await httpApi.get('api/platforminfo')
         return res.data.security.password
     } catch (err) {
-        throw new Error(err.response.data.message)
+        throw new Error(getHttpErrorMessage(err, i18n.global.t('Unexpected error')))
     }
 }
 
@@ -88,7 +90,7 @@ export async function getUserData (id) {
             isFaxServerSettingsActive
         }
     } catch (error) {
-        throw new Error(error.response.data.message)
+        throw new Error(getHttpErrorMessage(error, i18n.global.t('Unexpected error')))
     }
 }
 
@@ -200,12 +202,13 @@ export function changeExpiredPassword (payload) {
         }).then((result) => {
             resolve(result)
         }).catch((err) => {
-            if (err.response.status === 401) {
+            const status = err?.response?.status
+            if (status === 401) {
                 reject(new Error(`Unauthorized. ${i18n.global.t('Wrong username or password')}`))
-            } else if (err.response.status === 422) {
+            } else if (status === 422) {
                 reject(_formatPasswordError(err.response.data.message))
             } else {
-                reject(new Error('Unexpected error'))
+                reject(new Error(getHttpErrorMessage(err, i18n.global.t('Unexpected error'))))
             }
         })
     })
