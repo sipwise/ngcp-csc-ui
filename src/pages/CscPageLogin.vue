@@ -307,7 +307,7 @@ export default {
             return this.loginWaitingOTPCode || this.loginError === 'Invalid OTP Code'
         },
         showOTPSecret () {
-            return this.OTPSecret !== null || (this.OTPSecret !== null && this.loginError === 'Invalid OTP Code')
+            return this.OTPSecret !== null
         }
     },
     watch: {

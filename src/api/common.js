@@ -4,6 +4,7 @@ import saveAs from 'file-saver'
 import _ from 'lodash'
 import { getJsonBody } from 'src/api/utils'
 import { getJwt, hasJwt } from 'src/auth'
+import { getHttpErrorMessage } from 'src/helpers/http-error'
 import { PATH_CHANGE_PASSWORD } from 'src/router/routes'
 export const LIST_DEFAULT_PAGE = 1
 export const LIST_DEFAULT_ROWS = 20
@@ -103,7 +104,7 @@ export async function getList (options) {
     const firstRes = await httpApi.get(requestConfig.path, {
         headers: requestConfig.headers,
         params: requestConfig.params
-    })
+    }).catch(handleResponseError)
     let secondRes = null
     const firstResBody = getJsonBody(firstRes.data)
     if (requestConfig.all === true && firstResBody.total_count > LIST_ALL_ROWS) {
@@ -113,7 +114,7 @@ export async function getList (options) {
         secondRes = await httpApi.get(requestConfig.path, {
             headers: requestConfig.headers,
             params: newParams
-        })
+        }).catch(handleResponseError)
     }
     let res = firstRes
     let body = firstResBody
@@ -189,6 +190,10 @@ function handleResponseError (err) {
 
     if (code !== null && message !== null) {
         throw new ApiResponseError(code, message)
+    }
+
+    if (err?.response) {
+        err.message = getHttpErrorMessage(err, i18n.global.t('Unexpected error'))
     }
 
     throw err

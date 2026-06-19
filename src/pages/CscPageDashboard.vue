@@ -150,7 +150,7 @@ export default {
         manageCallsData (calls) {
             if (calls.status === 'rejected') {
                 this.callsError = true
-                showGlobalError(calls?.reason?.data?.message)
+                showGlobalError(calls?.reason?.message)
             } else {
                 this.callsCount = calls.value.totalCount
                 this.callItems = calls.value.items.slice(0, 5).map((item) => {
@@ -169,7 +169,7 @@ export default {
         manageVoicemailsData (voicemails) {
             if (voicemails.status === 'rejected') {
                 this.voicemailsError = true
-                showGlobalError(voicemails?.reason?.data?.message)
+                showGlobalError(voicemails?.reason?.message)
             } else {
                 this.voicemailsCount = voicemails.value.totalCount
                 this.voicemailItems = voicemails.value.items.map((item) => {
@@ -187,7 +187,7 @@ export default {
         manageDevicesData (devices) {
             if (devices?.status === 'rejected') {
                 this.registeredDevicesError = true
-                showGlobalError(devices?.reason?.data?.message)
+                showGlobalError(devices?.reason?.message)
             } else {
                 const registeredDevices = devices?.value || devices
                 this.registeredDevicesCount = registeredDevices.totalCount

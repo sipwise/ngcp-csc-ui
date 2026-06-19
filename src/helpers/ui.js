@@ -5,6 +5,7 @@ import {
     Loading,
     Notify
 } from 'quasar'
+import { getHttpErrorMessage } from 'src/helpers/http-error'
 import { Alert } from 'src/quasar-legacy'
 
 export function startLoading () {
@@ -21,8 +22,7 @@ export function stopLoading () {
 export function showGlobalError (messageOrException, timeout = 3000) {
     let errorMessage = messageOrException
     if (typeof messageOrException === 'object') {
-        // trying to get error message from the Axios response otherwise from the error itself
-        errorMessage = messageOrException?.response?.data?.message || messageOrException?.message
+        errorMessage = getHttpErrorMessage(messageOrException, messageOrException?.message)
     }
     if (errorMessage === '' || errorMessage === undefined || errorMessage === null) {
         errorMessage = i18n.global.t('Unknown error')
