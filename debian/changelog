@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.0.1.14+0~mr26.0.1.14) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [b0e7392] MT#65331 fix i18n import
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 19 Jun 2026 10:19:10 +0200
+
 ngcp-csc-ui (26.0.1.13+0~mr26.0.1.13) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
