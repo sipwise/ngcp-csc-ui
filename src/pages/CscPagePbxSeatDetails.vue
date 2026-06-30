@@ -362,6 +362,14 @@
                     @update:model-value="changeMusicOnHold"
                 />
                 <q-toggle
+                    v-if="showDnd"
+                    v-model="changes.dnd"
+                    class="q-pa-sm"
+                    :label="$t('DND')"
+                    :disable="isLoading"
+                    @update:model-value="changeDnd"
+                />
+                <q-toggle
                     v-if="showPlayAnnounceBeforeCF"
                     v-model="changes.announcementCfu"
                     class="q-pa-sm"
@@ -543,6 +551,7 @@ export default {
             'getNcosBySeatId',
             'hasCallQueue',
             'getMusicOnHold',
+            'getDnd',
             'getDefaultNcos',
             'getDefaultNcosSet',
             'getConferenceMaxParticipants',
@@ -675,6 +684,9 @@ export default {
         showMusicOnHold () {
             return this.hasSomeSubscriberProfileAttributes([PROFILE_ATTRIBUTES_MAP.callSettings])
         },
+        showDnd () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.dnd)
+        },
         showNcos () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.ncos)
         },
@@ -800,6 +812,7 @@ export default {
             'setIntraPbx',
             'setClir',
             'setMusicOnHold',
+            'setDnd',
             'setSeatSoundSet',
             'loadSeatListItems',
             'loadPreferences',
@@ -886,6 +899,7 @@ export default {
                     cstaClient: this.getCstaClient(this.seatSelected.id),
                     cstaController: this.getCstaController(this.seatSelected.id),
                     musicOnHold: this.getMusicOnHold(this.seatSelected.id),
+                    dnd: this.getDnd(this.seatSelected.id),
                     groups: this.getGroupIds(),
                     soundSet: this.getSoundSetId(),
                     cliNumber: this.getCliNumberId(),
@@ -1020,6 +1034,12 @@ export default {
                 showGlobalError(err?.message || this.$t('Unknown error'))
                 this.changes.musicOnHold = !this.changes.musicOnHold
             }
+        },
+        changeDnd () {
+            this.setDnd({
+                seatId: this.seatSelected.id,
+                dnd: this.changes.dnd
+            })
         },
         changeAnnouncementCfu () {
             this.setAnnouncementCfu({
