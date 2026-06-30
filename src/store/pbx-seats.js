@@ -33,6 +33,7 @@ import {
     setSeatWebPassword,
     setSeatWebUsername
 } from 'src/api/pbx-seats'
+import { setPreference } from 'src/api/subscriber'
 import { getSubscriberId } from 'src/auth'
 import { CreationState, RequestState } from 'src/store/common'
 
@@ -144,6 +145,11 @@ export default {
         getMusicOnHold (state) {
             return (id) => {
                 return state?.preferenceMapById[id]?.music_on_hold || false
+            }
+        },
+        getDnd (state) {
+            return (id) => {
+                return state?.preferenceMapById[id]?.dnd || false
             }
         },
         getAnnouncementCallSetup (state) {
@@ -608,6 +614,18 @@ export default {
             try {
                 const result = await setSeatMusicOnHold(options.seatId, options.musicOnHold)
                 context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setDnd (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('DND')
+            })
+            try {
+                await setPreference(options.seatId, 'dnd', options.dnd)
+                context.commit('seatUpdateSucceeded')
             } catch (err) {
                 context.commit('seatUpdateFailed', err.message)
             }
