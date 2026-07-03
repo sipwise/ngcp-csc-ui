@@ -7,7 +7,7 @@
             #header
         >
             <q-breadcrumbs
-                class="absolute-left q-ml-md text-weight-light"
+                class="absolute-left q-ml-md q-mb-lg text-weight-light"
                 active-color="primary"
                 separator-color="primary"
             >
@@ -19,30 +19,71 @@
                 />
             </q-breadcrumbs>
         </template>
-        <q-item
-            class="col col-xs-12"
+        <div
+            class="row q-col-gutter-md q-pa-md"
         >
-            <q-list
-                class="col col-xs-12"
-                side
-                top
-                no-wrap
+            <q-item
+                class="col-12 col-md-7"
             >
-                <csc-input-file
-                    accept=".csv"
-                    data-cy="sendfax-fileinput"
-                    @file-selected="toggleFileSelected"
-                />
-                <br>
-                <q-toggle
-                    v-model="formData.purge_existing"
-                    dense
-                    :label="$t('Purge existing')"
-                    data-cy="phonebook-purge"
-                    :disable="loading"
-                />
-            </q-list>
-        </q-item>
+                <q-list
+                    class="col col-xs-12"
+                    side
+                    top
+                    no-wrap
+                >
+                    <csc-input-file
+                        accept=".csv"
+                        data-cy="sendfax-fileinput"
+                        @file-selected="toggleFileSelected"
+                    />
+                    <br>
+                    <q-toggle
+                        v-model="formData.purge_existing"
+                        dense
+                        :label="$t('Purge existing')"
+                        data-cy="phonebook-purge"
+                        :disable="loading"
+                    />
+                </q-list>
+            </q-item>
+            <div
+                class="col-12 col-md-5 q-pb-lg"
+            >
+                <q-card
+                    flat
+                    bordered
+                    class="full-height"
+                >
+                    <q-card-section>
+                        <div
+                            class="text-subtitle1 text-weight-medium q-mb-sm"
+                        >
+                            {{ csvFormatTitle }}
+                        </div>
+                        <div
+                            class="text-body2 text-weight-bold"
+                        >
+                            {{ csvExpectedFileFormatLabel }}
+                        </div>
+                        <div
+                            class="q-mb-md"
+                        >
+                            <pre
+                                class="q-ma-none text-body2 text-left"
+                            >{{ csvFileName }}</pre>
+                        </div>
+                        <div
+                            class="text-body2 text-weight-bold"
+                        >
+                            {{ csvBodyLabel }}
+                        </div>
+                        <pre
+                            class="q-ma-none text-body2 text-left"
+                        >{{ csvFormatBody }}</pre>
+                    </q-card-section>
+                </q-card>
+            </div>
+        </div>
         <div class="text-center">
             <q-btn
                 icon="clear"
@@ -86,6 +127,28 @@ export default {
         return {
             formData: this.getDefaultFormData(),
             v$: useValidate()
+        }
+    },
+    computed: {
+        csvFormatTitle () {
+            return 'CSV formatting guide'
+        },
+        csvExpectedFileFormatLabel () {
+            return 'Expected file format'
+        },
+        csvFileName () {
+            return 'filename.csv'
+        },
+        csvBodyLabel () {
+            return 'Body'
+        },
+        csvFormatBody () {
+            return [
+                'name,number',
+                'Alice, 111',
+                'Bob, 222',
+                'Carol, 333'
+            ].join('\n')
         }
     },
     methods: {
