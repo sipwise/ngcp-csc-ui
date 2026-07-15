@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.0.1.17+0~mr26.0.1.17) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [c5848a4] MT#65172 Correct German call-forwarding option labels
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 15 Jul 2026 11:00:12 +0200
+
 ngcp-csc-ui (26.0.1.16+0~mr26.0.1.16) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
