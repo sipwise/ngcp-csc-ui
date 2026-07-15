@@ -5,7 +5,7 @@
 
 export NODE_PATH = /usr/lib/nodejs:/usr/share/nodejs
 
-YARN_BIN := ".yarn/releases/yarn-1.22.22.js"
+YARN_BIN := ".yarn/releases/yarn-4.17.1.cjs"
 
 %:
 	dh "$@"

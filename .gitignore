@@ -2,6 +2,7 @@
 .thumbs.db
 node_modules
 __pycache__
+.yarn/install-state.gz
 
 # Quasar core related directories
 .quasar
