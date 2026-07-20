@@ -1,6 +1,7 @@
 <template>
     <csc-page
         :style="pageStyle"
+        class="sticky-page"
     >
         <q-page-sticky
             ref="pageSticky"
@@ -74,3 +75,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+.sticky-page {
+  transition: padding-top 250ms ease;
+}
+</style>

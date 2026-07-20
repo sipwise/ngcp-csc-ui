@@ -49,19 +49,12 @@ export async function cfLoadTimeSets (subscriberId) {
     })
 }
 
-/* Note: It needs to retrieve all Sets (DestinationSets, SourceSets,
-** TimeSets, and BNumberSets) without filtering by subscriberId
-** because some sets might belong to the admin subscriber
-** and would not appear in the seats/groups CF.
-*/
 export async function cfLoadMappingsFull (mappingId) {
-    return await Promise.all([
-        cfLoadMappings(mappingId),
-        cfLoadDestinationSets(),
-        cfLoadSourceSets(),
-        cfLoadTimeSets(),
-        cfLoadBNumberSets()
-    ])
+    return get({
+        resource: 'cfmappings',
+        params: { expand: 'all' },
+        resourceId: mappingId
+    })
 }
 
 export async function cfLoadAnnouncements () {
@@ -102,6 +95,7 @@ export async function cfRewriteDestination (payload) {
     })
 }
 
+// Note this doesn't return any data in the response.
 export async function cfUpdateDestinationSets (payload) {
     return patchReplace({
             resource: 'cfdestinationsets',

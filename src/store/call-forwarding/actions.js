@@ -13,7 +13,6 @@ import {
     cfLoadAnnouncements,
     cfLoadBNumberSets,
     cfLoadDestinationSets,
-    cfLoadMappings,
     cfLoadMappingsFull,
     cfLoadSourceSets,
     cfLoadTimeSets,
@@ -31,7 +30,14 @@ import {
 import { getSubscriberSeats } from 'src/api/subscriber'
 import { i18n } from 'src/boot/i18n'
 import { canMoveDestination, normalizePriorities } from 'src/helpers/call-forwarding-destinations'
+import { normalizeFullMappingsResponse } from 'src/helpers/normalize-mappings-response'
 import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
+import {
+    buildBNumberSetMap,
+    buildDestinationMap,
+    buildSourceSetMap,
+    buildTimeSetMap
+} from 'src/store/call-forwarding/normalizers'
 
 const DEFAULT_RING_TIMEOUT = 60
 const DEFAULT_PRIORITY = 0
@@ -49,18 +55,12 @@ function createDefaultDestination (destination, defaultAnnouncementId, priority 
     return payload
 }
 
-export async function loadMappingsFull ({ dispatch, commit, rootGetters }, subscriberId) {
+export async function loadMappingsFull ({ dispatch, commit }, subscriberId) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
-    try {
-        const mappingData = await cfLoadMappingsFull(subscriberId)
 
-        commit('dataSucceeded', {
-            mappings: mappingData[0],
-            destinationSets: mappingData[1].items,
-            sourceSets: mappingData[2].items,
-            timeSets: mappingData[3].items,
-            bNumberSets: mappingData[4].items
-        })
+    try {
+        const mappings = await cfLoadMappingsFull(subscriberId)
+        commit('dataSucceeded', normalizeFullMappingsResponse(mappings))
     } catch (e) {
         showGlobalError(e.message)
     } finally {
@@ -100,23 +100,19 @@ export async function createMapping ({ dispatch, commit, state, rootGetters }, p
             destinations: [newDestination]
         })
 
-        if (!destinationSet.id) {
+        if (!destinationSet || !destinationSet.id) {
             throw new Error('Something went wrong. Please retry later')
         }
 
-        const patchedMappings = await updateMapping(
+        await updateMapping(
             subscriberId,
             payload.type,
             currentMappings,
             destinationSet.id
         )
 
-        const latestDestinationSets = await cfLoadDestinationSets()
-
-        commit('dataSucceeded', {
-            mappings: patchedMappings,
-            destinationSets: latestDestinationSets.items
-        })
+        const updatedMapping = await cfLoadMappingsFull(subscriberId)
+        commit('dataSucceeded', normalizeFullMappingsResponse(updatedMapping))
         commit('cfCreationSucceeded')
     } catch (e) {
         showGlobalError(e.message)
@@ -138,7 +134,7 @@ export async function deleteMapping ({ dispatch, commit, state, rootGetters }, p
             currentMappings.cft_ringtimeout = DEFAULT_RING_TIMEOUT
         }
 
-        const updatedMappings = await cfUpdateFullMapping({
+        await cfUpdateFullMapping({
             subscriberId,
             body: {
                 ...currentMappings,
@@ -146,9 +142,8 @@ export async function deleteMapping ({ dispatch, commit, state, rootGetters }, p
             }
         })
 
-        commit('dataSucceeded', {
-            mappings: updatedMappings
-        })
+        const newMappings = await cfLoadMappingsFull(subscriberId)
+        commit('dataSucceeded', normalizeFullMappingsResponse(newMappings))
     } catch (e) {
         showGlobalError(e.message)
     } finally {
@@ -167,14 +162,12 @@ export async function setMappingEnabled ({ dispatch, commit, state, rootGetters 
             enabled: !mappingsByType[payload.index].enabled
         }
 
-        await cfUpdateMappingField({
+        const updatedMappings = await cfUpdateMappingField({
             resource: 'cfmappings',
             resourceId,
             fieldPath: payload.type,
             value: mappingsByType
         })
-
-        const updatedMappings = await cfLoadMappings(resourceId)
 
         commit('dataSucceeded', { mappings: updatedMappings })
     } catch (e) {
@@ -183,6 +176,10 @@ export async function setMappingEnabled ({ dispatch, commit, state, rootGetters 
         dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
     }
 }
+
+/**
+ * Helper function
+ */
 
 async function updateMapping (
     subscriberId,
@@ -227,7 +224,7 @@ export async function updateDestination ({ dispatch, commit, state }, payload) {
 
         const destinationSets = await cfLoadDestinationSets()
         commit('dataSucceeded', {
-            destinationSets: destinationSets.items
+            destinationSetMap: buildDestinationMap(destinationSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -254,8 +251,9 @@ export async function addDestination ({ dispatch, commit, state }, payload) {
         })
 
         const destinationSets = await cfLoadDestinationSets()
+
         commit('dataSucceeded', {
-            destinationSets: destinationSets.items
+            destinationSetMap: buildDestinationMap(destinationSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -291,7 +289,7 @@ export async function removeDestination ({ dispatch, commit, state }, payload) {
 
         const destinationSets = await cfLoadDestinationSets()
         commit('dataSucceeded', {
-            destinationSets: destinationSets.items
+            destinationSetMap: buildDestinationMap(destinationSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -328,7 +326,7 @@ export async function moveDestination ({ dispatch, commit, state }, payload) {
 
         const destinationSets = await cfLoadDestinationSets()
         commit('dataSucceeded', {
-            destinationSets: destinationSets.items
+            destinationSetMap: buildDestinationMap(destinationSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -354,7 +352,7 @@ export async function updateDestinationTimeout ({ dispatch, commit, state }, pay
     }
     const destinationSets = await cfLoadDestinationSets()
     commit('dataSucceeded', {
-        destinationSets: destinationSets.items
+        destinationSetMap: buildDestinationMap(destinationSets.items)
     })
     dispatch('wait/end', WAIT_IDENTIFIER, { root: true })
 }
@@ -364,7 +362,7 @@ export async function loadSourceSets ({ dispatch, commit }) {
     try {
         const sourceSets = await cfLoadSourceSets()
         commit('dataSucceeded', {
-            sourceSets: sourceSets.items
+            sourceSetMap: buildSourceSetMap(sourceSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -376,6 +374,7 @@ export async function loadSourceSets ({ dispatch, commit }) {
 export async function createBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
+        const resourceId = (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId']
         const bNumberSetId = await cfCreateBNumberSet(rootGetters['user/getSubscriberId'], payload)
         const updatedMapping = [...state.mappings[payload.mapping.type]]
         updatedMapping[payload.mapping.index] = {
@@ -383,14 +382,15 @@ export async function createBNumberSet ({ dispatch, commit, rootGetters, state }
             bnumberset_id: bNumberSetId
         }
         const updatedMappings = await cfUpdateMappingField({
-            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            resourceId,
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
+
         const bNumberSets = await cfLoadBNumberSets()
         commit('dataSucceeded', {
             mappings: updatedMappings,
-            bNumberSets: bNumberSets.items
+            bNumberSetMap: buildBNumberSetMap(bNumberSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -404,7 +404,7 @@ export async function loadBNumberSets ({ dispatch, commit }) {
     try {
         const bNumberSets = await cfLoadBNumberSets()
         commit('dataSucceeded', {
-            bNumberSets: bNumberSets.items
+            bNumberSetMap: buildBNumberSetMap(bNumberSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -414,13 +414,13 @@ export async function loadBNumberSets ({ dispatch, commit }) {
 }
 
 export async function updateBNumberSet ({ dispatch, commit, rootGetters }, payload) {
+    dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
     try {
-        dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
-        await cfUpdateBNumberSet(rootGetters['user/getSubscriberId'], payload)
-        const bNumberSets = await cfLoadBNumberSets()
-        commit('dataSucceeded', {
-            bNumberSets: bNumberSets.items
-        })
+        const subscriberId = rootGetters['user/getSubscriberId']
+        await cfUpdateBNumberSet(subscriberId, payload)
+
+        const updatedMapping = await cfLoadMappingsFull(subscriberId)
+        commit('dataSucceeded', normalizeFullMappingsResponse(updatedMapping))
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'cfbnumberset\' not found.') {
             // This happens when entity was set by Admin therefore current
@@ -437,14 +437,15 @@ export async function updateBNumberSet ({ dispatch, commit, rootGetters }, paylo
 export async function deleteBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
+        const resourceId = (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId']
         const updatedMapping = [...state.mappings[payload.mapping.type]]
         updatedMapping[payload.mapping.index] = {
             ...updatedMapping[payload.mapping.index],
             bnumberset_id: null,
             bnumberset: null
         }
-        const updatedMappings = await cfUpdateMappingField({
-            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+        await cfUpdateMappingField({
+            resourceId,
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
@@ -462,11 +463,8 @@ export async function deleteBNumberSet ({ dispatch, commit, rootGetters, state }
             }
         }
 
-        const bNumberSets = await cfLoadBNumberSets()
-        commit('dataSucceeded', {
-            mappings: updatedMappings,
-            bNumberSets: bNumberSets.items
-        })
+        const latestMappings = await cfLoadMappingsFull(resourceId)
+        commit('dataSucceeded', normalizeFullMappingsResponse(latestMappings))
     } catch (e) {
         showGlobalError(e.message)
     } finally {
@@ -534,7 +532,7 @@ export async function createSourceSet ({ dispatch, commit, rootGetters, state },
         const sourceSets = await cfLoadSourceSets()
         commit('dataSucceeded', {
             mappings: updatedMappings,
-            sourceSets: sourceSets.items
+            sourceSetMap: buildSourceSetMap(sourceSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -549,7 +547,7 @@ export async function updateSourceSet ({ dispatch, commit, rootGetters }, payloa
         await cfUpdateSourceSet(rootGetters['user/getSubscriberId'], payload)
         const sourceSets = await cfLoadSourceSets()
         commit('dataSucceeded', {
-            sourceSets: sourceSets.items
+            sourceSetMap: buildSourceSetMap(sourceSets.items)
         })
     } catch (e) {
         if (e.code === 404 && e.message === 'Entity \'cfsourceset\' not found.') {
@@ -567,13 +565,14 @@ export async function updateSourceSet ({ dispatch, commit, rootGetters }, payloa
 export async function deleteSourceSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-source-set-create', { root: true })
+        const resourceId = (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId']
         const updatedMapping = [...state.mappings[payload.mapping.type]]
         updatedMapping[payload.mapping.index] = {
             ...updatedMapping[payload.mapping.index],
             sourceset_id: null,
             sourceset: null
         }
-        const updatedMappings = await cfUpdateMappingField({
+        await cfUpdateMappingField({
             resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
@@ -593,11 +592,8 @@ export async function deleteSourceSet ({ dispatch, commit, rootGetters, state },
             }
         }
 
-        const sourceSets = await cfLoadSourceSets()
-        commit('dataSucceeded', {
-            mappings: updatedMappings,
-            sourceSets: sourceSets.items
-        })
+        const latestMappings = await cfLoadMappingsFull(resourceId)
+        commit('dataSucceeded', normalizeFullMappingsResponse(latestMappings))
     } catch (e) {
         showGlobalError(e.message)
     } finally {
@@ -664,7 +660,7 @@ export async function createTimeSetDate ({ dispatch, commit, rootGetters, state 
     const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
-        timeSets: timeSets.items
+        timeSetMap: buildTimeSetMap(timeSets.items)
     })
     dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
@@ -675,7 +671,7 @@ export async function updateTimeSetDate ({ dispatch, commit }, payload) {
         await cfUpdateTimeSetDate(payload.id, payload.date)
         const timeSets = await cfLoadTimeSets()
         commit('dataSucceeded', {
-            timeSets: timeSets.items
+            timeSetMap: buildTimeSetMap(timeSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -711,7 +707,7 @@ export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, p
     const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
-        timeSets: timeSets.items
+        timeSetMap: buildTimeSetMap(timeSets.items)
     })
     dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
@@ -743,7 +739,7 @@ export async function createTimeSetDateRange ({ dispatch, commit, rootGetters, s
     const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
-        timeSets: timeSets.items
+        timeSetMap: buildTimeSetMap(timeSets.items)
     })
     dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
@@ -764,7 +760,7 @@ export async function updateTimeSetDateRange ({ dispatch, commit }, payload) {
 
     const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
-        timeSets: timeSets.items
+        timeSetMap: buildTimeSetMap(timeSets.items)
     })
     dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
@@ -785,7 +781,7 @@ export async function createTimeSetWeekdays ({ dispatch, commit, rootGetters, st
     const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
-        timeSets: timeSets.items
+        timeSetMap: buildTimeSetMap(timeSets.items)
     })
     dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
@@ -806,7 +802,7 @@ export async function updateTimeSetWeekdays ({ dispatch, commit }, payload) {
 
     const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
-        timeSets: timeSets.items
+        timeSetMap: buildTimeSetMap(timeSets.items)
     })
     dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
@@ -834,7 +830,7 @@ export async function createOfficeHours ({ dispatch, commit, rootGetters, state 
 
         commit('dataSucceeded', {
             mappings: updatedMappings,
-            timeSets: timeSets.items
+            timeSetMap: buildTimeSetMap(timeSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)
@@ -853,7 +849,7 @@ export async function updateOfficeHours ({ dispatch, commit, rootGetters, state 
 
     const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
-        timeSets: timeSets.items
+        timeSetMap: buildTimeSetMap(timeSets.items)
     })
     dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
@@ -899,7 +895,7 @@ export async function updateAnnouncement ({ dispatch, commit, state }, payload) 
 
         const destinationSets = await cfLoadDestinationSets()
         commit('dataSucceeded', {
-            destinationSets: destinationSets.items
+            destinationSetMap: buildDestinationMap(destinationSets.items)
         })
     } catch (e) {
         showGlobalError(e.message)

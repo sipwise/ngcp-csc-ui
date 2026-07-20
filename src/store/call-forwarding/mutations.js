@@ -1,4 +1,4 @@
-import { normalizePrimaryNumber, sortDestinationsByPriority } from 'src/helpers/call-forwarding-destinations'
+import { normalizePrimaryNumber } from 'src/helpers/call-forwarding-destinations'
 import { CreationState } from 'src/store/common'
 
 function getSeatPrimaryNumber (seat) {
@@ -8,43 +8,25 @@ function getSeatPrimaryNumber (seat) {
     return normalizePrimaryNumber(seat.primary_number)
 }
 
-export function dataSucceeded (state, res) {
-    if (res.bNumberSets) {
-        const bNumberSetMap = {}
-        res.bNumberSets.forEach((bNumberSet) => {
-            bNumberSetMap[bNumberSet.id] = bNumberSet
-        })
-        state.bNumberSetMap = bNumberSetMap
+export function dataSucceeded (state, payload) {
+    if (payload.bNumberSetMap) {
+        state.bNumberSetMap = payload.bNumberSetMap
     }
-    if (res.destinationSets) {
-        const destinationSetMap = {}
-        const orderedDestinationSets = res.destinationSets.map((destinationSet) => {
-            return {
-                ...destinationSet,
-                destinations: sortDestinationsByPriority(destinationSet.destinations)
-            }
-        })
-        orderedDestinationSets.forEach((destinationSet) => {
-            destinationSetMap[destinationSet.id] = destinationSet
-        })
-        state.destinationSetMap = destinationSetMap
+
+    if (payload.destinationSetMap) {
+        state.destinationSetMap = payload.destinationSetMap
     }
-    if (res.sourceSets) {
-        const sourceSetMap = {}
-        res.sourceSets.forEach((sourceSet) => {
-            sourceSetMap[sourceSet.id] = sourceSet
-        })
-        state.sourceSetMap = sourceSetMap
+
+    if (payload.sourceSetMap) {
+        state.sourceSetMap = payload.sourceSetMap
     }
-    if (res.timeSets) {
-        const timeSetMap = {}
-        res.timeSets.forEach((timeSet) => {
-            timeSetMap[timeSet.id] = timeSet
-        })
-        state.timeSetMap = timeSetMap
+
+    if (payload.timeSetMap) {
+        state.timeSetMap = payload.timeSetMap
     }
-    if (res.mappings) {
-        state.mappings = res.mappings
+
+    if (payload.mappings) {
+        state.mappings = payload.mappings
     }
 }
 

@@ -24,17 +24,21 @@
                 </template>
             </q-btn>
         </template>
-        <template
-            #toolbar
-        >
-            <csc-cf-add-form
-                v-if="!isCfAddFormDisabled"
-                ref="addCfForm"
-                class="q-mb-md q-pa-md"
-                :loading="$wait.is('csc-cf-mappings-full')"
-                @save="createCf($event)"
-                @cancel="disableCfAddForm"
-            />
+        <template #toolbar>
+            <q-slide-transition>
+                <div
+                    v-if="!isCfAddFormDisabled"
+                    class="q-mb-md"
+                >
+                    <csc-cf-add-form
+                        ref="addCfForm"
+                        class="q-pa-md"
+                        :loading="$wait.is('csc-cf-mappings-full')"
+                        @save="createCf($event)"
+                        @cancel="disableCfAddForm"
+                    />
+                </div>
+            </q-slide-transition>
         </template>
         <div
             class="row justify-center q-pt-lg"

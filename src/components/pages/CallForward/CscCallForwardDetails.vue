@@ -22,19 +22,21 @@
                 </template>
             </q-btn>
         </q-item>
-        <q-item
-            class="row justify-center"
-            v-if="!isCfAddFormDisabled"
-        >
-            <div class="csc-cf-form-wrap">
-                <csc-cf-add-form
-                    ref="addCfForm"
-                    :loading="$wait.is('csc-cf-mappings-full')"
-                    @save="createCf($event)"
-                    @cancel="disableCfAddForm"
-                />
-            </div>
-        </q-item>
+        <q-slide-transition>
+            <q-item
+                class="row justify-center"
+                v-if="!isCfAddFormDisabled"
+            >
+                <div class="csc-cf-form-wrap">
+                    <csc-cf-add-form
+                        ref="addCfForm"
+                        :loading="$wait.is('csc-cf-mappings-full')"
+                        @save="createCf($event)"
+                        @cancel="disableCfAddForm"
+                    />
+                </div>
+            </q-item>
+        </q-slide-transition>
         <q-item
             class="row justify-center q-pt-lg"
         >
