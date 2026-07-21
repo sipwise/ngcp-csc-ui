@@ -435,18 +435,30 @@ export async function updateBNumberSet ({ dispatch, commit, rootGetters }, paylo
 }
 
 export async function deleteBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
+    dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
     try {
-        dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
-        const updatedMapping = [...state.mappings[payload.mapping.type]]
-        updatedMapping[payload.mapping.index] = {
-            ...updatedMapping[payload.mapping.index],
-            bnumberset_id: null,
-            bnumberset: null
-        }
-        const updatedMappings = await cfUpdateMappingField({
-            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
-            fieldPath: payload.mapping.type,
-            value: updatedMapping
+        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+        const currentMappings = { ...state.mappings }
+        const mappingTypes = Object.keys(currentMappings).filter((key) => key !== 'cft_ringtimeout' && key !== 'id')
+
+        mappingTypes.forEach((type) => {
+            if (currentMappings[type]) {
+                currentMappings[type] = currentMappings[type].map((mapping) => {
+                    if (mapping.bnumberset_id === payload.id) {
+                        return {
+                            ...mapping,
+                            bnumberset_id: null,
+                            bnumberset: null
+                        }
+                    }
+                    return mapping
+                })
+            }
+        })
+
+        const updatedMappings = await cfUpdateFullMapping({
+            subscriberId,
+            body: currentMappings
         })
 
         try {
@@ -567,16 +579,26 @@ export async function updateSourceSet ({ dispatch, commit, rootGetters }, payloa
 export async function deleteSourceSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-source-set-create', { root: true })
-        const updatedMapping = [...state.mappings[payload.mapping.type]]
-        updatedMapping[payload.mapping.index] = {
-            ...updatedMapping[payload.mapping.index],
-            sourceset_id: null,
-            sourceset: null
-        }
-        const updatedMappings = await cfUpdateMappingField({
-            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
-            fieldPath: payload.mapping.type,
-            value: updatedMapping
+        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+        const currentMappings = { ...state.mappings }
+        const mappingTypes = Object.keys(currentMappings).filter((key) => key !== 'cft_ringtimeout' && key !== 'id')
+
+        mappingTypes.forEach((type) => {
+            currentMappings[type] = currentMappings[type].map((mapping) => {
+                if (mapping.sourceset_id === payload.id) {
+                    return {
+                        ...mapping,
+                        sourceset_id: null,
+                        sourceset: null
+                    }
+                }
+                return mapping
+            })
+        })
+
+        const updatedMappings = await cfUpdateFullMapping({
+            subscriberId,
+            body: currentMappings
         })
 
         try {
@@ -686,17 +708,28 @@ export async function updateTimeSetDate ({ dispatch, commit }, payload) {
 
 export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
-    const updatedMapping = [...state.mappings[payload.mapping.type]]
-    updatedMapping[payload.mapping.index] = {
-        ...updatedMapping[payload.mapping.index],
-        timeset_id: null,
-        timeset: null
-    }
-    const updatedMappings = await cfUpdateMappingField({
-        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
-        fieldPath: payload.mapping.type,
-        value: updatedMapping
+    const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+    const currentMappings = { ...state.mappings }
+    const mappingTypes = Object.keys(currentMappings).filter((key) => key !== 'cft_ringtimeout' && key !== 'id')
+
+    mappingTypes.forEach((type) => {
+        currentMappings[type] = currentMappings[type].map((mapping) => {
+            if (mapping.timeset_id === payload.id) {
+                return {
+                    ...mapping,
+                    timeset_id: null,
+                    timeset: null
+                }
+            }
+            return mapping
+        })
     })
+
+    const updatedMappings = await cfUpdateFullMapping({
+        subscriberId,
+        body: currentMappings
+    })
+
     try {
         await cfDeleteTimeSet(payload.id)
     } catch (e) {

@@ -217,7 +217,8 @@ export default {
             if (this.bNumberSet) {
                 await this.deleteBNumberSet({
                     mapping: this.mapping,
-                    id: this.bNumberSet.id
+                    id: this.bNumberSet.id,
+                    subscriberId: this.subscriberId
                 })
             }
         },
