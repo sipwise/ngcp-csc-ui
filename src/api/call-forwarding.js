@@ -5,6 +5,7 @@ import {
     getList,
     patchReplace,
     post,
+    put,
     putMinimal
 } from 'src/api/common'
 import { showGlobalError } from 'src/helpers/ui'
@@ -14,6 +15,14 @@ export async function cfLoadMappings (subscriberId) {
     return get({
         resource: 'cfmappings',
         resourceId: subscriberId
+    })
+}
+
+export async function cfUpdateFullMapping (payload) {
+    return await put({
+        resource: 'cfmappings',
+        resourceId: payload.subscriberId,
+        body: payload.body
     })
 }
 
