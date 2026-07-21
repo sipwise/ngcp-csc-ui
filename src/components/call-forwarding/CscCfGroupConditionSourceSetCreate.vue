@@ -225,7 +225,8 @@ export default {
             if (this.sourceSet) {
                 await this.deleteSourceSet({
                     mapping: this.mapping,
-                    id: this.sourceSet.id
+                    id: this.sourceSet.id,
+                    subscriberId: this.subscriberId
                 })
             }
         },
