@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.5.1.37+0~mr13.5.1.37) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [16a46aa] MT#65546 Fix resource deletion across all CF types
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 27 Jul 2026 10:47:45 +0200
+
 ngcp-csc-ui (13.5.1.36+0~mr13.5.1.36) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
