@@ -27,6 +27,7 @@
                 v-for="(destination, destinationIndex) in destinationSet.destinations"
                 :key="destinationIndex"
                 :loading="loading"
+                :editable="destinationSet.own"
                 :destination="destination"
                 :destination-index="destinationIndex"
                 :destination-set="destinationSet"

@@ -20,6 +20,7 @@
             #actions
         >
             <q-btn
+                v-if="!sourceSet || sourceSet.own"
                 :label="createLabel"
                 flat
                 color="primary"

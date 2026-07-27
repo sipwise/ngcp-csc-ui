@@ -20,6 +20,7 @@
             #actions
         >
             <q-btn
+                v-if="!bNumberSet || bNumberSet.own"
                 :label="createLabel"
                 flat
                 color="primary"

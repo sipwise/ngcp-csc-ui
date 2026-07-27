@@ -12,9 +12,14 @@
         >
             <q-item-label>
                 {{ $t('Forwarded to') + ' ' }}
+                <csc-cf-destination
+                    v-if="!editable"
+                    :model-value="destination"
+                    :label="readOnlyDestinationLabel"
+                />
                 <csc-cf-destination-custom-announcement
+                    v-else-if="isDestinationTypeCustomAnnouncement(destination.destination) && destination.announcement_id"
                     class="q-pr-xs"
-                    v-if="isDestinationTypeCustomAnnouncement(destination.destination) && destination.announcement_id"
                     :value="announcement"
                     :destination="destination"
                     :announcements="announcements"
@@ -41,7 +46,8 @@
                 >
                     {{ ' ' + $t('for') + ' ' }}
                     <span
-                        class="q-pl-xs q-pr-xs text-primary text-weight-bold cursor-pointer"
+                        :class="{ 'text-primary cursor-pointer': editable }"
+                        class="q-pl-xs q-pr-xs text-weight-bold"
                         style="white-space: nowrap"
                     >
                         <q-icon
@@ -50,6 +56,7 @@
                         {{ currentDestinationTimeout }}
                         {{ $t('seconds') }}
                         <q-popup-edit
+                            v-if="editable"
                             v-slot="scope"
                             v-model="changedDestinationTimeout"
                             buttons
@@ -79,6 +86,7 @@
             </q-item-label>
         </q-item-section>
         <q-item-section
+            v-if="editable"
             side
         >
             <csc-more-menu>
@@ -156,6 +164,10 @@ export default {
         loading: {
             type: Boolean,
             default: false
+        },
+        editable: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['delete-last'],
@@ -179,6 +191,9 @@ export default {
             }
 
             return this.destination.timeout
+        },
+        readOnlyDestinationLabel () {
+            return this.announcement?.label || this.destination.simple_destination
         },
         canMoveUp () {
             return canMoveDestination(

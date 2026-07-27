@@ -28,9 +28,8 @@ import {
     cfUpdateTimeSetWeekdays
 } from 'src/api/call-forwarding'
 import { getSubscriberSeats } from 'src/api/subscriber'
-import { i18n } from 'src/boot/i18n'
 import { canMoveDestination, normalizePriorities } from 'src/helpers/call-forwarding-destinations'
-import { showGlobalError, showGlobalWarning } from 'src/helpers/ui'
+import { showGlobalError } from 'src/helpers/ui'
 import {
     buildBNumberSetMap,
     buildDestinationMap,
@@ -425,13 +424,7 @@ export async function updateBNumberSet ({ dispatch, commit, rootGetters }, paylo
         const updatedMapping = await cfLoadMappingsFull(subscriberId)
         commit('dataSucceeded', normalizeFullMappingsResponse(updatedMapping))
     } catch (e) {
-        if (e.code === 404 && e.message === 'Entity \'cfbnumberset\' not found.') {
-            // This happens when entity was set by Admin therefore current
-            // csc user doesn't have rights to edit the entity.
-            showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
-        } else {
-            showGlobalError(e.message)
-        }
+        showGlobalError(e.message)
     } finally {
         dispatch('wait/end', 'csc-cf-b-number-set-create', { root: true })
     }
@@ -464,18 +457,7 @@ export async function deleteBNumberSet ({ dispatch, commit, rootGetters, state }
             body: currentMappings
         })
 
-        try {
-            await cfDeleteBNumberSet(payload.id)
-        } catch (e) {
-            if (e.code === 404 && e.message === 'Entity \'cfbnumberset\' not found.') {
-                // This happens when entity was set by Admin therefore current
-                // csc user doesn't have rights to delete the entity from DB.
-                // In this scenario the b-number is only removed from the mappings.
-                showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
-            } else {
-                showGlobalError(e.message)
-            }
-        }
+        await cfDeleteBNumberSet(payload.id)
 
         const latestMappings = await cfLoadMappingsFull(subscriberId)
         commit('dataSucceeded', normalizeFullMappingsResponse(latestMappings))
@@ -573,13 +555,7 @@ export async function updateSourceSet ({ dispatch, commit, rootGetters }, payloa
             sourceSetMap: buildSourceSetMap(sourceSets.items)
         })
     } catch (e) {
-        if (e.code === 404 && e.message === 'Entity \'cfsourceset\' not found.') {
-            // This happens when CF was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity
-            showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
-        } else {
-            showGlobalError(e.message)
-        }
+        showGlobalError(e.message)
     } finally {
         dispatch('wait/end', 'csc-cf-source-set-create', { root: true })
     }
@@ -610,19 +586,7 @@ export async function deleteSourceSet ({ dispatch, commit, rootGetters, state },
             body: currentMappings
         })
 
-        try {
-            await cfDeleteSourceSet(payload.id)
-        } catch (e) {
-            if (e.code === 404 && e.message === 'Entity \'cfsourceset\' not found.') {
-                // This happens when entity was set by Admin therefore current
-                // csc user doesn't have rights to delete the entity from DB.
-                // In this scenario the sources is only removed from the mappings.
-                showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
-                // Force reload of SourceSets
-            } else {
-                throw e
-            }
-        }
+        await cfDeleteSourceSet(payload.id)
 
         const latestMappings = await cfLoadMappingsFull(subscriberId)
         commit('dataSucceeded', normalizeFullMappingsResponse(latestMappings))
@@ -721,45 +685,40 @@ export async function updateTimeSetDate ({ dispatch, commit }, payload) {
 
 export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
-    const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
-    const currentMappings = { ...state.mappings }
-    const mappingTypes = Object.keys(currentMappings).filter((key) => key !== 'cft_ringtimeout' && key !== 'id')
-
-    mappingTypes.forEach((type) => {
-        currentMappings[type] = currentMappings[type].map((mapping) => {
-            if (mapping.timeset_id === payload.id) {
-                return {
-                    ...mapping,
-                    timeset_id: null,
-                    timeset: null
-                }
-            }
-            return mapping
-        })
-    })
-
-    const updatedMappings = await cfUpdateFullMapping({
-        subscriberId,
-        body: currentMappings
-    })
-
     try {
+        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+        const currentMappings = { ...state.mappings }
+        const mappingTypes = Object.keys(currentMappings).filter((key) => key !== 'cft_ringtimeout' && key !== 'id')
+
+        mappingTypes.forEach((type) => {
+            currentMappings[type] = currentMappings[type].map((mapping) => {
+                if (mapping.timeset_id === payload.id) {
+                    return {
+                        ...mapping,
+                        timeset_id: null,
+                        timeset: null
+                    }
+                }
+                return mapping
+            })
+        })
+
+        const updatedMappings = await cfUpdateFullMapping({
+            subscriberId,
+            body: currentMappings
+        })
+
         await cfDeleteTimeSet(payload.id)
+        const timeSets = await cfLoadTimeSets()
+        commit('dataSucceeded', {
+            mappings: updatedMappings,
+            timeSetMap: buildTimeSetMap(timeSets.items)
+        })
     } catch (e) {
-        if (e.code === 404 && e.message === 'Entity \'cftimeset\' not found.') {
-            // This happens when CF was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity
-            showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
-        } else {
-            showGlobalError(e.message)
-        }
+        showGlobalError(e.message)
+    } finally {
+        dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
     }
-    const timeSets = await cfLoadTimeSets()
-    commit('dataSucceeded', {
-        mappings: updatedMappings,
-        timeSetMap: buildTimeSetMap(timeSets.items)
-    })
-    dispatch('wait/end', 'csc-cf-time-set-create', { root: true })
 }
 
 export async function updateRingTimeout ({ commit, rootGetters, state }, payload) {
@@ -802,13 +761,7 @@ export async function updateTimeSetDateRange ({ dispatch, commit }, payload) {
     try {
         await cfUpdateTimeSetDateRange(payload.id, payload.date)
     } catch (e) {
-        if (e.code === 404 && e.message === 'Entity \'cftimeset\' not found.') {
-            // This happens when CF was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity
-            showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
-        } else {
-            showGlobalError(e.message)
-        }
+        showGlobalError(e.message)
     }
 
     const timeSets = await cfLoadTimeSets()
@@ -849,13 +802,7 @@ export async function updateTimeSetWeekdays ({ dispatch, commit }, payload) {
     try {
         await cfUpdateTimeSetWeekdays(payload.id, payload.weekdays)
     } catch (e) {
-        if (e.code === 404 && e.message === 'Entity \'cftimeset\' not found.') {
-            // This happens when CF was set by Admin therefore current
-            // csc user doesn't have rights to delete the entity
-            showGlobalWarning(i18n.global.t('Entity is restricted or no longer exists.'))
-        } else {
-            showGlobalError(e.message)
-        }
+        showGlobalError(e.message)
     }
 
     const timeSets = await cfLoadTimeSets()

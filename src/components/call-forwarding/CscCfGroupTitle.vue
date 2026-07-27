@@ -9,6 +9,7 @@
                 class="text-weight-bold"
             >
                 <q-toggle
+                    v-if="destinationSet.own"
                     :model-value="mapping.enabled"
                     :disable="loading || $wait.is(waitIdentifier)"
                     data-cy="csc-forwarding-toggle"
@@ -130,14 +131,14 @@
                     >
                         {{ $t('date is') }}
                         <span
-
-                            :class="clickableClasses"
+                            :class="timeSet.own ? clickableClasses : undefined"
                         >
                             <q-icon
                                 name="today"
                             />
                             {{ $filters.timeSetDateExact(timeSet.times) }}
                             <csc-cf-condition-popup-date
+                                v-if="timeSet.own"
                                 data-cy="csc-condtion-date"
                                 :mapping="mapping"
                                 :destination-set="destinationSet"
@@ -152,14 +153,14 @@
                     >
                         {{ $t('date range is') }}
                         <span
-
-                            :class="clickableClasses"
+                            :class="timeSet.own ? clickableClasses : undefined"
                         >
                             <q-icon
                                 name="book_online"
                             />
                             {{ $filters.timeSetDateRange(timeSet.times) }}
                             <csc-cf-condition-popup-date-range
+                                v-if="timeSet.own"
                                 data-cy="csc-condtion-date-range"
                                 :mapping="mapping"
                                 :destination-set="destinationSet"
@@ -174,14 +175,14 @@
                     >
                         {{ $t('weekdays are') }}
                         <span
-
-                            :class="clickableClasses"
+                            :class="timeSet.own ? clickableClasses : undefined"
                         >
                             <q-icon
                                 name="calendar_today"
                             />
                             {{ $filters.timeSetWeekdays(timeSet.times) }}
                             <csc-cf-condition-popup-weekdays
+                                v-if="timeSet.own"
                                 data-cy="csc-condtion-weekdays"
                                 :mapping="mapping"
                                 :destination-set="destinationSet"
@@ -196,13 +197,14 @@
                     >
                         {{ $t('office hours are') }}
                         <span
-                            :class="clickableClasses"
+                            :class="timeSet.own ? clickableClasses : undefined"
                         >
                             <q-icon
                                 name="access_time"
                             />
                             {{ $filters.timeSetOfficeHoursSameTime(timeSet.times) }}
                             <csc-cf-condition-popup-office-hours
+                                v-if="timeSet.own"
                                 data-cy="csc-condtion-office-hours"
                                 :mapping="mapping"
                                 :destination-set="destinationSet"
@@ -229,7 +231,7 @@
                         {{ ' ' + $t('and') + ' ' }}
                     </span>
                     <span
-                        :class="clickableClasses"
+                        :class="destinationSet.own ? clickableClasses : undefined"
                         style="white-space: nowrap"
                     >
                         <q-icon
@@ -237,6 +239,7 @@
                         />
                         {{ $t('condition') }}
                         <csc-cf-condition-popup-all
+                            v-if="destinationSet.own"
                             step="menu"
                             :mapping="mapping"
                             :destination-set="destinationSet"
@@ -250,6 +253,7 @@
             </q-item-label>
         </q-item-section>
         <q-item-section
+            v-if="destinationSet.own"
             side
         >
             <csc-more-menu

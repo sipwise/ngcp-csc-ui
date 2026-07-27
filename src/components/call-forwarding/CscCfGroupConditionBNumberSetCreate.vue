@@ -16,7 +16,8 @@
                     <csc-input
                         v-model="bNumberSetNameInternal"
                         dense
-                        clearable
+                        :clearable="editable"
+                        :readonly="!editable"
                         :label="$t('Number list name')"
                         data-cy="csc-call-select-number-list"
                     />
@@ -31,12 +32,13 @@
                     <csc-input
                         v-model="bNumberSetNumbersInternal[index]"
                         dense
-                        clearable
+                        :clearable="editable"
+                        :readonly="!editable"
                         :label="$t('Number')"
                         data-cy="csc-call-select-number"
                     >
                         <template
-                            v-if="index > 0"
+                            v-if="editable && index > 0"
                         >
                             <q-btn
                                 flat
@@ -51,6 +53,7 @@
                 </q-item-section>
             </q-item>
             <q-item
+                v-if="editable"
                 class="no-margin no-padding"
             >
                 <q-item-section>
@@ -69,7 +72,7 @@
             #actions
         >
             <q-btn
-                v-if="deleteButton"
+                v-if="deleteButton && editable"
                 :label="$t('Delete')"
                 data-cy="csc-call-select-delete"
                 flat
@@ -95,6 +98,7 @@
                 @click="$emit('select')"
             />
             <q-btn
+                v-if="editable"
                 :label="$t('Save')"
                 data-cy="csc-call-select-save"
                 flat
@@ -157,6 +161,9 @@ export default {
         }
     },
     computed: {
+        editable () {
+            return !this.bNumberSet || this.bNumberSet.own
+        },
         bNumberSetNumbers () {
             const bnumbers = []
             if (this.bNumberSet && this.bNumberSet.bnumbers) {
