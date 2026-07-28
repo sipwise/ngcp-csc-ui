@@ -374,15 +374,18 @@ export async function loadSourceSets ({ dispatch, commit }) {
 export async function createBNumberSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
-        const resourceId = (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId']
-        const bNumberSetId = await cfCreateBNumberSet(rootGetters['user/getSubscriberId'], payload)
+        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+
+        const bNumberSetId = await cfCreateBNumberSet(subscriberId, payload)
+
         const updatedMapping = [...state.mappings[payload.mapping.type]]
         updatedMapping[payload.mapping.index] = {
             ...updatedMapping[payload.mapping.index],
             bnumberset_id: bNumberSetId
         }
+
         const updatedMappings = await cfUpdateMappingField({
-            resourceId,
+            resourceId: subscriberId,
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
@@ -416,7 +419,7 @@ export async function loadBNumberSets ({ dispatch, commit }) {
 export async function updateBNumberSet ({ dispatch, commit, rootGetters }, payload) {
     dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
     try {
-        const subscriberId = rootGetters['user/getSubscriberId']
+        const subscriberId = payload.subscriber || rootGetters['user/getSubscriberId']
         await cfUpdateBNumberSet(subscriberId, payload)
 
         const updatedMapping = await cfLoadMappingsFull(subscriberId)
@@ -491,8 +494,9 @@ export async function assignBNumberSet ({ dispatch, commit, rootGetters, state }
             ...updatedMapping[payload.mapping.index],
             bnumberset_id: payload.id
         }
+
         const updatedMappings = await cfUpdateMappingField({
-            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            resourceId: payload.subscriberId || rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
@@ -514,7 +518,7 @@ export async function unassignBNumberSet ({ dispatch, commit, rootGetters, state
             bnumberset: null
         }
         const updatedMappings = await cfUpdateMappingField({
-            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            resourceId: payload.subscriberId || rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
@@ -529,17 +533,22 @@ export async function unassignBNumberSet ({ dispatch, commit, rootGetters, state
 export async function createSourceSet ({ dispatch, commit, rootGetters, state }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-source-set-create', { root: true })
-        const sourceSetId = await cfCreateSourceSet(rootGetters['user/getSubscriberId'], payload)
+        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+
+        const sourceSetId = await cfCreateSourceSet(subscriberId, payload)
+
         const updatedMapping = [...state.mappings[payload.mapping.type]]
         updatedMapping[payload.mapping.index] = {
             ...updatedMapping[payload.mapping.index],
             sourceset_id: sourceSetId
         }
+
         const updatedMappings = await cfUpdateMappingField({
-            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            resourceId: subscriberId,
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
+
         const sourceSets = await cfLoadSourceSets()
         commit('dataSucceeded', {
             mappings: updatedMappings,
@@ -555,8 +564,11 @@ export async function createSourceSet ({ dispatch, commit, rootGetters, state },
 export async function updateSourceSet ({ dispatch, commit, rootGetters }, payload) {
     try {
         dispatch('wait/start', 'csc-cf-source-set-create', { root: true })
-        await cfUpdateSourceSet(rootGetters['user/getSubscriberId'], payload)
+        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+
+        await cfUpdateSourceSet(subscriberId, payload)
         const sourceSets = await cfLoadSourceSets()
+
         commit('dataSucceeded', {
             sourceSetMap: buildSourceSetMap(sourceSets.items)
         })
@@ -629,8 +641,9 @@ export async function assignSourceSet ({ dispatch, commit, rootGetters, state },
             ...updatedMapping[payload.mapping.index],
             sourceset_id: payload.id
         }
+
         const updatedMappings = await cfUpdateMappingField({
-            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            resourceId: payload.subscriberId || rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
@@ -651,8 +664,9 @@ export async function unassignSourceSet ({ dispatch, commit, rootGetters, state 
             sourceset_id: null,
             sourceset: null
         }
+
         const updatedMappings = await cfUpdateMappingField({
-            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            resourceId: payload.subscriberId || rootGetters['user/getSubscriberId'],
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })
@@ -666,17 +680,22 @@ export async function unassignSourceSet ({ dispatch, commit, rootGetters, state 
 
 export async function createTimeSetDate ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
-    const timeSetId = await cfCreateTimeSetDate(rootGetters['user/getSubscriberId'], payload.date)
+    const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+
+    const timeSetId = await cfCreateTimeSetDate(subscriberId, payload.date)
+
     const updatedMapping = [...state.mappings[payload.mapping.type]]
     updatedMapping[payload.mapping.index] = {
         ...updatedMapping[payload.mapping.index],
         timeset_id: timeSetId.id
     }
+
     const updatedMappings = await cfUpdateMappingField({
-        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+        resourceId: subscriberId,
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
+
     const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
@@ -745,7 +764,7 @@ export async function deleteTimeSet ({ dispatch, commit, rootGetters, state }, p
 
 export async function updateRingTimeout ({ commit, rootGetters, state }, payload) {
     const updatedMappings = await cfUpdateMappingField({
-        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+        resourceId: payload.subscriberId || rootGetters['user/getSubscriberId'],
         fieldPath: 'cft_ringtimeout',
         value: payload.ringTimeout
     })
@@ -756,14 +775,17 @@ export async function updateRingTimeout ({ commit, rootGetters, state }, payload
 
 export async function createTimeSetDateRange ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
-    const timeSetId = await cfCreateTimeSetDateRange(rootGetters['user/getSubscriberId'], payload.date)
+    const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+
+    const timeSetId = await cfCreateTimeSetDateRange(subscriberId, payload.date)
+
     const updatedMapping = [...state.mappings[payload.mapping.type]]
     updatedMapping[payload.mapping.index] = {
         ...updatedMapping[payload.mapping.index],
         timeset_id: timeSetId.id
     }
     const updatedMappings = await cfUpdateMappingField({
-        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+        resourceId: subscriberId,
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
@@ -798,17 +820,22 @@ export async function updateTimeSetDateRange ({ dispatch, commit }, payload) {
 
 export async function createTimeSetWeekdays ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
-    const timeSetId = await cfCreateTimeSetWeekdays(rootGetters['user/getSubscriberId'], payload.weekdays)
+    const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+
+    const timeSetId = await cfCreateTimeSetWeekdays(subscriberId, payload.weekdays)
+
     const updatedMapping = [...state.mappings[payload.mapping.type]]
     updatedMapping[payload.mapping.index] = {
         ...updatedMapping[payload.mapping.index],
         timeset_id: timeSetId.id
     }
+
     const updatedMappings = await cfUpdateMappingField({
-        resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+        resourceId: subscriberId,
         fieldPath: payload.mapping.type,
         value: updatedMapping
     })
+
     const timeSets = await cfLoadTimeSets()
     commit('dataSucceeded', {
         mappings: updatedMappings,
@@ -841,7 +868,10 @@ export async function updateTimeSetWeekdays ({ dispatch, commit }, payload) {
 export async function createOfficeHours ({ dispatch, commit, rootGetters, state }, payload) {
     dispatch('wait/start', 'csc-cf-time-set-create', { root: true })
     try {
-        const timeSetId = await cfCreateOfficeHours(rootGetters['user/getSubscriberId'], payload.times)
+        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
+
+        const timeSetId = await cfCreateOfficeHours(subscriberId, payload.times)
+
         const updatedMapping = [...state.mappings[payload.mapping.type]]
         updatedMapping[payload.mapping.index] = {
             ...updatedMapping[payload.mapping.index],
@@ -849,7 +879,7 @@ export async function createOfficeHours ({ dispatch, commit, rootGetters, state 
         }
 
         const updatedMappings = await cfUpdateMappingField({
-            resourceId: (payload.subscriberId) ? payload.subscriberId : rootGetters['user/getSubscriberId'],
+            resourceId: subscriberId,
             fieldPath: payload.mapping.type,
             value: updatedMapping
         })

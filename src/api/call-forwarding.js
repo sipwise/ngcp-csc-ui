@@ -122,7 +122,7 @@ export async function cfUpdateMappingField (payload) {
     })
 }
 
-export async function cfCreateBNumberSet (id, payload) {
+export async function cfCreateBNumberSet (subscriberId, payload) {
     const bNumbers = []
     payload.numbers.forEach((number) => {
         bNumbers.push({
@@ -133,7 +133,7 @@ export async function cfCreateBNumberSet (id, payload) {
         resource: 'cfbnumbersets',
         body: {
             name: payload.name,
-            subscriber_id: id,
+            subscriber_id: subscriberId,
             is_regex: true,
             bnumbers: bNumbers,
             mode: payload.mode
@@ -152,7 +152,7 @@ export async function cfDeleteBNumberSet (id) {
     })
 }
 
-export async function cfUpdateBNumberSet (id, payload) {
+export async function cfUpdateBNumberSet (subscriberId, payload) {
     const bnumbers = []
     payload.numbers.forEach((number) => {
         bnumbers.push({
@@ -164,7 +164,7 @@ export async function cfUpdateBNumberSet (id, payload) {
         resourceId: payload.id,
         body: {
             name: payload.name,
-            subscriber_id: id,
+            subscriber_id: subscriberId,
             is_regex: true,
             bnumbers,
             mode: payload.mode
@@ -172,7 +172,7 @@ export async function cfUpdateBNumberSet (id, payload) {
     })
 }
 
-export async function cfCreateSourceSet (id, payload) {
+export async function cfCreateSourceSet (subscriberId, payload) {
     const sources = []
     payload.numbers.forEach((number) => {
         sources.push({
@@ -183,7 +183,7 @@ export async function cfCreateSourceSet (id, payload) {
         resource: 'cfsourcesets',
         body: {
             name: payload.name,
-            subscriber_id: id,
+            subscriber_id: subscriberId,
             is_regex: true,
             sources,
             mode: payload.mode
@@ -195,7 +195,7 @@ export async function cfCreateSourceSet (id, payload) {
     return res
 }
 
-export async function cfUpdateSourceSet (id, payload) {
+export async function cfUpdateSourceSet (subscriberId, payload) {
     const sources = []
     payload.numbers.forEach((number) => {
         sources.push({
@@ -207,7 +207,7 @@ export async function cfUpdateSourceSet (id, payload) {
         resourceId: payload.id,
         body: {
             name: payload.name,
-            subscriber_id: id,
+            subscriber_id: subscriberId,
             is_regex: true,
             sources,
             mode: payload.mode
