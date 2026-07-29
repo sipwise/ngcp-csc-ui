@@ -419,7 +419,7 @@ export async function loadBNumberSets ({ dispatch, commit }) {
 export async function updateBNumberSet ({ dispatch, commit, rootGetters }, payload) {
     dispatch('wait/start', 'csc-cf-b-number-set-create', { root: true })
     try {
-        const subscriberId = payload.subscriber || rootGetters['user/getSubscriberId']
+        const subscriberId = payload.subscriberId || rootGetters['user/getSubscriberId']
         await cfUpdateBNumberSet(subscriberId, payload)
 
         const updatedMapping = await cfLoadMappingsFull(subscriberId)
