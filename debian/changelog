@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.1.1.5+0~mr26.1.1.5) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [32bc50f] MT#65604 Fix resource ownership when created from Seat page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 Jul 2026 18:29:52 +0200
+
 ngcp-csc-ui (26.1.1.4+0~mr26.1.1.4) unstable; urgency=medium
 
   [ Debora Crescenzo ]
