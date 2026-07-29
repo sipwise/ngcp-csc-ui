@@ -453,7 +453,7 @@ export default {
                 if (this.timeSet) {
                     await this.updateOfficeHours(payload)
                 } else {
-                    await this.createOfficeHours({ ...payload, subscriberId: this.subscriberId })
+                    await this.createOfficeHours(payload)
                 }
 
                 this.$emit('close')

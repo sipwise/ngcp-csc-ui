@@ -107,7 +107,7 @@ export default {
                 payload.id = this.timeSet.id
                 await this.updateTimeSetWeekdays(payload)
             } else {
-                await this.createTimeSetWeekdays({ ...payload, subscriberId: this.subscriberId })
+                await this.createTimeSetWeekdays(payload)
             }
             this.$emit('close')
         },
