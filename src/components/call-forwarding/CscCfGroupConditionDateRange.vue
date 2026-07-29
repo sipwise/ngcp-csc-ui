@@ -138,7 +138,7 @@ export default {
                 payload.id = this.timeSet.id
                 await this.updateTimeSetDateRange(payload)
             } else {
-                await this.createTimeSetDateRange({ ...payload, subscriberId: this.subscriberId })
+                await this.createTimeSetDateRange(payload)
             }
             this.$emit('close')
         },
