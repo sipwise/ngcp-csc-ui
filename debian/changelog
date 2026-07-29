@@ -1,3 +1,11 @@
+ngcp-csc-ui (26.0.1.19+0~mr26.0.1.19) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [0551907] MT#65604 Fix resource ownership when created from Seat page
+  * [7e6737a] MT#65604 Fix typo in updateBNumberSet
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 Jul 2026 18:29:55 +0200
+
 ngcp-csc-ui (26.0.1.18+0~mr26.0.1.18) unstable; urgency=medium
 
   [ Debora Crescenzo ]
