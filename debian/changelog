@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.0.1.20+0~mr26.0.1.20) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [f58267c] MT#65609 Fix Firefox popup positioning race in CscMoreMenu
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 03 Aug 2026 15:42:34 +0200
+
 ngcp-csc-ui (26.0.1.19+0~mr26.0.1.19) unstable; urgency=medium
 
   [ Debora Crescenzo ]
