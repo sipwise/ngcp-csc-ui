@@ -400,10 +400,13 @@ export default {
             context.commit('subscriberUpdateSucceeded', subscriberData)
         },
         async resetPassword ({ commit }, data) {
-            commit('newPasswordRequesting', true)
-            const response = await resetPassword(data)
-            commit('newPasswordRequesting', false)
-            return response
+            try {
+                commit('newPasswordRequesting', true)
+                const response = await resetPassword(data)
+                return response
+            } finally {
+                commit('newPasswordRequesting', false)
+            }
         },
         async recoverPassword ({ commit, dispatch, state, rootGetters }, data) {
             commit('userPasswordRequesting')
