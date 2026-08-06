@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.83+0~mr12.5.1.83) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [236cd5f] MT#65653 Fix Retrieve password stuck on loading
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 06 Aug 2026 09:21:31 +0200
+
 ngcp-csc-ui (12.5.1.82+0~mr12.5.1.82) unstable; urgency=medium
 
   [ Debora Crescenzo ]
