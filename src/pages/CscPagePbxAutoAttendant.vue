@@ -46,6 +46,7 @@
                                 size="md"
                                 color="primary"
                                 :label="$t('Add slot')"
+                                data-cy="csc-pbx-auto-attendant-add-slot"
                                 :disabled="getAvailableSlots(props.row.slots, props.row.subscriber_id).length === 0"
                                 icon="add"
                                 dropdown-icon=" "
