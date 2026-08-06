@@ -40,6 +40,7 @@
                     <csc-data-table-edit-input
                         :column="{name:'destination', label: $t('Destination'), componentValidations: [getDestinationValidation()]}"
                         :row="{slot: row.slot, destination: row.destination}"
+                        data-cy="csc-pbx-auto-attendant-input"
                         :value="row.destination"
                         :save-label="$t('Add')"
                         @changed="updateNewSlotDestination(index, $event.value)"
@@ -49,6 +50,7 @@
                     <q-btn
                         icon="delete"
                         color="negative"
+                        data-cy="csc-pbx-auto-attendant-input-reset"
                         flat
                         dense
                         @click="resetNewSlot(index)"
@@ -58,6 +60,7 @@
                         icon="check"
                         color="primary"
                         :label="$t('Save')"
+                        data-cy="csc-pbx-auto-attendant-input-save"
                         flat
                         dense
                         @click="saveSlots"

@@ -23,6 +23,7 @@
             <csc-list-menu-item
                 icon="delete"
                 icon-color="negative"
+                data-cy="csc-pbx-auto-attendant-delete"
                 @click="confirmRowDeletion"
             >
                 {{ $t('Remove') }}
@@ -34,6 +35,7 @@
             <q-input
                 v-model="newDestination"
                 :label="$t('Destination')"
+                data-cy="csc-pbx-auto-attendant-destination"
                 :error="v$.newDestination.$errors.length > 0"
                 :error-message="errorMessage"
                 @keyup.enter="save"
@@ -45,10 +47,12 @@
                 >
                     <csc-input-button-save
                         v-if="newDestination !== '' && newDestination !== null"
+                        data-cy="csc-pbx-auto-attendant-input-save"
                         @click.stop="save"
                     />
                     <csc-input-button-reset
                         v-if="!addNewSlot"
+                        data-cy="csc-pbx-auto-attendant-input-reset"
                         @click.stop="resetSlotDestination"
                     />
                 </template>
