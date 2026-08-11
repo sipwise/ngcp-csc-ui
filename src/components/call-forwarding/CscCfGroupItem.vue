@@ -86,7 +86,7 @@
             </q-item-label>
         </q-item-section>
         <q-item-section
-            v-if="editable"
+            v-if="editable && destinationIndex < destinationSet.destinations.length - 1"
             side
         >
             <csc-more-menu>
@@ -170,7 +170,6 @@ export default {
             default: false
         }
     },
-    emits: ['delete-last'],
     data () {
         return {
             changedDestination: this.destination.simple_destination,
@@ -265,19 +264,12 @@ export default {
                 color: 'negative',
                 cancel: true,
                 persistent: true
-            }).onOk(async (data) => {
+            }).onOk(async () => {
                 this.$wait.start(this.waitIdentifier)
-                if (this.destinationSet.destinations.length > 1) {
-                    await this.triggerRemoveDestination(payload)
-                    this.setAnnouncement()
-                } else {
-                    this.$emit('delete-last', payload)
-                }
+                await this.removeDestination(payload)
+                this.setAnnouncement()
                 this.$wait.end(this.waitIdentifier)
             })
-        },
-        async triggerRemoveDestination (payload) {
-            await this.removeDestination(payload)
         },
         async updateDestinationTimeoutEvent (payload) {
             this.$wait.start(this.waitIdentifier)

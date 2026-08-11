@@ -5,7 +5,6 @@
         separator
     >
         <csc-cf-group-title
-            ref="cfGroupTitle"
             :loading="loading"
             :mapping="mapping"
             :destination-set="destinationSet"
@@ -34,7 +33,6 @@
                 :b-number-set="bNumberSet"
                 :source-set="sourceSet"
                 :time-set="timeSet"
-                @delete-last="$refs.cfGroupTitle.deleteMappingEvent(mapping)"
             />
         </template>
         <q-inner-loading
