@@ -1,3 +1,34 @@
+ngcp-csc-ui (26.2.1.0+0~mr26.2.1.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [fd5dcf0] MT#64383 Migrate Dialog Components
+  * [2bb7fc5] MT#65331 fix i18n import
+  * [716e0e8] MT#65343 Use "resource" for API request 'otpsecret'
+  * [d5c2e22] MT#64739 Replace cfLoadMappingFull
+  * [b7230e3] MT#65546 Fix resource deletion across all CF types
+  * [84ef158] MT#65604 Fix resource ownership when created from Seat page
+  * [c03ff3f] MT#65604 Remove redundant subscriberId
+  * [9968fde] MT#65609 Fix Firefox popup positioning race in CscMoreMenu
+  * [e1733cd] MT#65604 Fix typo in updateBNumberSet
+
+  [ Giancarlo Errigo Mattos ]
+  * [f9353d5] MT#65337 Add DND toggle for selected PBX seat preferences
+  * [4d763b9] MT#65291 CSV formatting help message
+  * [f661e88] MT#65172 Correct German call-forwarding option labels
+  * [c1d85eb] MT#65241 Respect ownership of call forwarding resources
+  * [ebafb9c] MT#65072 Surface real server errors instead of generic/blank messages
+
+  [ Kirill Solomko ]
+  * [73858b0] MT#65507 migration to yarn v4 (4.17.1)
+
+  [ nidrissi-zouggari ]
+  * [aa63503] MT#65093 Fix security vulnerabilities via dependency updates and resolutions
+
+  [ Nico Schedel ]
+  * [6873d6c] MT#65155 add missing data-cy to auto attendant page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 11 Aug 2026 14:19:51 +0200
+
 ngcp-csc-ui (26.2.0.0+0~mr26.2.0.0) unstable; urgency=medium
 
   [ Debora Crescenzo ]
