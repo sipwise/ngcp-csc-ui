@@ -546,22 +546,22 @@ export default {
             const newPayload = { ...payload }
             if (newPayload.destination) {
                 switch (newPayload.destination) {
-                case 'voicebox':
-                    if (this.mapping.type === 'cfb') {
-                        newPayload.destination = `sip:vmb${this.getPrimaryNumber()}@voicebox.local`
-                    } else {
-                        newPayload.destination = `sip:vmu${this.getPrimaryNumber()}@voicebox.local`
-                    }
-                    break
-                case 'fax2mail':
-                    newPayload.destination = `sip:fax=${this.getPrimaryNumber()}@fax2mail.local`
-                    break
-                case 'conference':
-                    newPayload.destination = `sip:conf=${this.getPrimaryNumber()}@conference.local`
-                    break
-                case 'managersecretary':
-                    newPayload.destination = `sip:${this.getPrimaryNumber()}@managersecretary.local`
-                    break
+                    case 'voicebox':
+                        if (this.mapping.type === 'cfb') {
+                            newPayload.destination = `sip:vmb${this.getPrimaryNumber()}@voicebox.local`
+                        } else {
+                            newPayload.destination = `sip:vmu${this.getPrimaryNumber()}@voicebox.local`
+                        }
+                        break
+                    case 'fax2mail':
+                        newPayload.destination = `sip:fax=${this.getPrimaryNumber()}@fax2mail.local`
+                        break
+                    case 'conference':
+                        newPayload.destination = `sip:conf=${this.getPrimaryNumber()}@conference.local`
+                        break
+                    case 'managersecretary':
+                        newPayload.destination = `sip:${this.getPrimaryNumber()}@managersecretary.local`
+                        break
                 }
             }
             return newPayload

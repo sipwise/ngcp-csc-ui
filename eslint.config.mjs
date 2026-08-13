@@ -1,23 +1,11 @@
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { FlatCompat } from '@eslint/eslintrc'
-import js from '@eslint/js'
-import stylistic from '@stylistic/eslint-plugin'
 import importPlugin from 'eslint-plugin-import'
 import jest from 'eslint-plugin-jest'
 import noRelativeImportPaths from 'eslint-plugin-no-relative-import-paths'
 import unusedImports from 'eslint-plugin-unused-imports'
 import vue from 'eslint-plugin-vue'
 import globals from 'globals'
+import neostandard, { plugins } from 'neostandard'
 import vueParser from 'vue-eslint-parser'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-})
 
 export default [
     {
@@ -32,8 +20,8 @@ export default [
         ]
     },
 
-    // legacy configs: "standard" converted to flat config
-    ...compat.extends('standard'),
+    // replaces `...compat.extends('standard')` — ESLint-9-native successor
+    ...neostandard(),
 
     {
         ...vue.configs['vue3-recommended']
@@ -46,7 +34,7 @@ export default [
             'unused-imports': unusedImports,
             'no-relative-import-paths': noRelativeImportPaths,
             import: importPlugin,
-            stylistic
+            '@stylistic': plugins['@stylistic']
         },
         files: ['**/*.vue', '**/*.js', '**/*.ts', '**/*.mjs'],
         ignores: ['src/store/store-flag.d.ts'],
@@ -74,30 +62,23 @@ export default [
         },
         rules: {
             // JS styling (indent, spaces, etc.)
-            'stylistic/arrow-parens': 'error',
-            'stylistic/arrow-spacing': 'error',
-            'stylistic/brace-style': 'error',
-            'stylistic/newline-per-chained-call': 'off',
-            'stylistic/nonblock-statement-body-position': ['error', 'below'],
-            'stylistic/object-curly-newline': [
+            '@stylistic/arrow-parens': 'error',
+            '@stylistic/arrow-spacing': 'error',
+            '@stylistic/brace-style': 'error',
+            '@stylistic/indent': ['error', 4],
+            '@stylistic/newline-per-chained-call': 'off',
+            '@stylistic/nonblock-statement-body-position': ['error', 'below'],
+            '@stylistic/object-curly-newline': [
                 'error',
                 {
                     ImportDeclaration: { multiline: true, minProperties: 4 }
                 }
             ],
-            'stylistic/object-curly-spacing': ['error', 'always'],
-
-            // turn off base rules duplicated by stylistic
-            'arrow-spacing': 'off',
-            'brace-style': 'off',
-            indent: 'off',
-            'object-curly-newline': 'off',
-            'object-curly-spacing': 'off',
+            '@stylistic/object-curly-spacing': ['error', 'always'],
+            '@stylistic/no-trailing-spaces': 'error',
 
             // usual JS best practices
             'default-param-last': 'error',
-            'no-trailing-spaces': 'error',
-            'stylistic/no-trailing-spaces': 'error',
             eqeqeq: ['error', 'always'],
             'import/default': 'error',
             'import/extensions': 'error',
@@ -125,8 +106,8 @@ export default [
                     }
                 }
             ],
+            '@stylistic/multiline-ternary': 'off',
             'import/prefer-default-export': [0],
-            'multiline-ternary': 'off',
             'no-console': 'error',
             'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
             'no-duplicate-imports': 'error',
