@@ -44,7 +44,7 @@ const WAIT_IDENTIFIER = 'csc-cf-mappings-full'
 
 function createDefaultDestination (destination, defaultAnnouncementId, priority = DEFAULT_PRIORITY) {
     const payload = {
-        destination: destination || ' ',
+        destination,
         priority,
         timeout: DEFAULT_RING_TIMEOUT
     }
@@ -210,6 +210,9 @@ async function updateMapping (
 export async function updateDestination ({ dispatch, commit, state }, payload) {
     dispatch('wait/start', 'csc-cf-destination-set-update', { root: true })
     try {
+        if (typeof payload.destination !== 'string' || !payload.destination.trim()) {
+            throw new Error('Destination must not be empty')
+        }
         const destinations = [...state.destinationSetMap[payload.destinationSetId].destinations]
         destinations[payload.destinationIndex] = {
             ...destinations[payload.destinationIndex],
@@ -235,6 +238,9 @@ export async function updateDestination ({ dispatch, commit, state }, payload) {
 export async function addDestination ({ dispatch, commit, state }, payload) {
     dispatch('wait/start', WAIT_IDENTIFIER, { root: true })
     try {
+        if (typeof payload.destination !== 'string' || !payload.destination.trim()) {
+            throw new Error('Destination must not be empty')
+        }
         const destinations = [...state.destinationSetMap[payload.destinationSetId].destinations]
         const normalizedDestinations = normalizePriorities(destinations)
 

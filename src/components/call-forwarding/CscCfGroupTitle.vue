@@ -267,9 +267,7 @@
                         :label="$t('Forward to Number')"
                         data-cy="csc-forwarding-to-number"
                         :disable="hasTermination"
-                        @click="addDestinationEvent({
-                            destinationSetId: destinationSet.id
-                        })"
+                        @click="addNumberDestinationEvent"
                     />
                     <csc-popup-menu-item
                         v-if="showVoicebox"
@@ -408,6 +406,7 @@ import CscCfPopupMenuItemSeatSelect from 'components/call-forwarding/CscCfPopupM
 import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import numberFilter from 'src/filters/number'
 import { isTerminalDestination } from 'src/helpers/call-forwarding-destinations'
+import { userInfo } from 'src/helpers/validation'
 import destination from 'src/mixins/destination'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
@@ -500,8 +499,31 @@ export default {
         ...mapActions('callForwarding', [
             'deleteMapping',
             'setMappingEnabled',
-            'addDestination'
+            'addDestination',
+            'rewriteDestination'
         ]),
+        addNumberDestinationEvent () {
+            this.$q.dialog({
+                title: this.$t('Forward to Number'),
+                color: 'primary',
+                prompt: {
+                    model: '',
+                    type: 'tel',
+                    label: this.$t('Number'),
+                    maxlength: 64,
+                    'data-cy': 'csc-forwarding-number-input',
+                    isValid: (value) => userInfo(value?.trim())
+                },
+                cancel: true,
+                persistent: true
+            }).onOk(async (number) => {
+                const destination = await this.rewriteDestination(number.trim())
+                await this.addDestinationEvent({
+                    destination,
+                    destinationSetId: this.destinationSet.id
+                })
+            })
+        },
         async addDestinationEvent (originalPayload) {
             this.$wait.start(this.waitIdentifier)
             let payload = { ...originalPayload, defaultAnnouncementId: null }
