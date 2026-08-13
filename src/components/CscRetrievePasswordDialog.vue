@@ -83,10 +83,10 @@ const { resetPassword } = useActions('user', ['resetPassword'])
 const submit = async () => {
     v$.value.$touch()
     if (!v$.value.$invalid) {
-            await resetPassword({
-                username: username.value,
-                domain: appConfig.baseHttpUrl.replace(/(^\w+:|^)\/\//, '')
-            })
+        await resetPassword({
+            username: username.value,
+            domain: appConfig.baseHttpUrl.replace(/(^\w+:|^)\/\//, '')
+        })
         emit('close')
         resetForm()
     }

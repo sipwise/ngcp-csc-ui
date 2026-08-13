@@ -40,11 +40,11 @@ export async function getPhonebook (data) {
 }
 
 export function setSharedValue (data, value) {
-     return patchReplace({
-            path: `api/v2/subscribers/${data.subscriber_id}/phonebook/${data.id}`,
-            fieldPath: 'shared',
-            value
-        })
+    return patchReplace({
+        path: `api/v2/subscribers/${data.subscriber_id}/phonebook/${data.id}`,
+        fieldPath: 'shared',
+        value
+    })
 }
 
 export async function updateEntry (data) {

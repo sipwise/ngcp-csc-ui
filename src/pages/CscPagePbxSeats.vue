@@ -185,13 +185,13 @@ export default {
             'getSeatUpdateToastMessage'
         ]),
         seatFilterOptions () {
-    return [
-        { label: this.$t('Name'), value: 'display_name' },
-        { label: this.$t('Extension'), value: 'pbx_extension' },
-        { label: this.$t('Primary Number'), value: 'primary_number' },
-        { label: this.$t('Alias Number'), value: 'alias_number' }
-    ]
-}
+            return [
+                { label: this.$t('Name'), value: 'display_name' },
+                { label: this.$t('Extension'), value: 'pbx_extension' },
+                { label: this.$t('Primary Number'), value: 'primary_number' },
+                { label: this.$t('Alias Number'), value: 'alias_number' }
+            ]
+        }
     },
     watch: {
         seatCreationState (state) {

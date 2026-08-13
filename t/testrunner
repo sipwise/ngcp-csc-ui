@@ -9,9 +9,8 @@ set -e
 set -u
 
 echo "### Copying and moving files"
-cp -Rf . /tmp/code
-ln -s /tmp/node_modules /tmp/code/node_modules
-cd /tmp/code/
+cp -Rf . /tmp/
+cd /tmp/
 
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
@@ -19,7 +18,7 @@ echo "Finished main setup, now running tests ..."
 yarn test:unit
 
 echo "### Moving JUnit XML files to /results"
-cp /tmp/code/junit.xml /results/
+cp /tmp/junit.xml /results/
 
 echo "Finished test execution, test execution returned with exit code."
 echo "################################################################################"
