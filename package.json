@@ -46,7 +46,7 @@
     "moment": "^2.29.4",
     "path": "0.12.7",
     "qrcode": "1.5.4",
-    "quasar": "2.21.2",
+    "quasar": "2.22.0",
     "stream-browserify": "^3.0.0",
     "terser": "^5.49.0",
     "tiny-emitter": "2.1.0",
