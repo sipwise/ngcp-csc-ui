@@ -1,34 +1,27 @@
-
 import _ from 'lodash'
-import Vue from 'vue'
 import {
-    getSubscribers
-} from './subscriber'
-import {
-    v4
-} from 'uuid'
-import {
-    getList,
     get,
+    getList,
+    httpApi,
     patchAdd,
     patchRemove
-} from './common'
+} from 'src/api/common'
+import { getSubscribers } from 'src/api/subscriber'
 
-export const createId = v4
 export const PBX_CONFIG_ORDER_BY = 'create_timestamp'
 export const PBX_CONFIG_ORDER_DIRECTION = 'desc'
 
 export function getPilot (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const requestConfig = _.merge(options, {
             params: {
                 is_pbx_group: 0,
                 is_pbx_pilot: 1,
                 rows: 1
             }
         })
-        getSubscribers(options).then((subscribers) => {
+
+        getSubscribers(requestConfig).then((subscribers) => {
             if (subscribers.items.length === 1) {
                 resolve(subscribers.items[0])
             } else {
@@ -42,12 +35,11 @@ export function getPilot (options) {
 
 export function getProfiles (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const requestConfig = _.merge(options, {
             path: 'api/pbxdeviceprofiles/',
             root: '_embedded.ngcp:pbxdeviceprofiles'
         })
-        getList(options).then((list) => {
+        getList(requestConfig).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -56,41 +48,41 @@ export function getProfiles (options) {
 }
 
 export function getAllProfiles () {
+    // Replace 1000 rows with 300 as we expect to have max 150 profiles.
     return getProfiles({
-        all: true
+        page: 1,
+        rows: 300
+    })
+}
+
+export function getProfile (id) {
+    return get({
+        path: `api/pbxdeviceprofiles/${id}`
     })
 }
 
 export function getModel (id) {
-    return new Promise((resolve, reject) => {
-        Promise.resolve().then(() => {
-            return get({
-                path: 'api/pbxdevicemodels/' + id
-            })
-        }).then((model) => {
-            resolve(model)
-        }).catch((err) => {
-            reject(err)
-        })
+    return get({
+        path: `api/pbxdevicemodels/${id}`
     })
 }
 
 export async function getModelImage (id, type) {
     try {
-        const res = await Vue.http.get('api/pbxdevicemodelimages/' + id, {
+        const res = await httpApi.get(`api/pbxdevicemodelimages/${id}`, {
             responseType: 'blob',
             params: {
-                type: type
+                type
             }
         })
         return {
-            id: id,
-            url: URL.createObjectURL(res.body),
-            blob: res.body
+            id,
+            url: URL.createObjectURL(res.data),
+            blob: res.data
         }
     } catch (err) {
         return {
-            id: id,
+            id,
             url: null,
             blob: null
         }
@@ -107,13 +99,12 @@ export async function getModelFrontThumbnailImage (id) {
 
 export function getAllSoundSets (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const requestConfig = _.merge(options, {
             path: 'api/soundsets/',
             root: '_embedded.ngcp:soundsets',
             all: true
         })
-        getList(options).then((list) => {
+        getList(requestConfig).then((list) => {
             resolve(list)
         }).catch((err) => {
             reject(err)
@@ -122,13 +113,13 @@ export function getAllSoundSets (options) {
 }
 
 export function removeSoundSet (id) {
-    return Vue.http.delete('api/soundsets/' + id)
+    return httpApi.delete(`api/soundsets/${id}`)
 }
 
 export function getSoundSet (id) {
     return new Promise((resolve, reject) => {
         get({
-            path: 'api/soundsets/' + id
+            path: `api/soundsets/${id}`
         }).then((soundSet) => {
             resolve(soundSet)
         }).catch((err) => {
@@ -144,7 +135,7 @@ export function editSoundSetFields (id, fields) {
         }).then((result) => {
             const prefs = Object.assign(result, fields)
             delete fields._links
-            return Vue.http.put('api/soundsets/' + id, prefs)
+            return httpApi.put(`api/soundsets/${id}`, prefs)
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -155,7 +146,7 @@ export function editSoundSetFields (id, fields) {
 
 export function createSoundSet (soundSet) {
     return new Promise((resolve, reject) => {
-        Vue.http.post('api/soundsets/', soundSet).then(() => {
+        httpApi.post('api/soundsets/', soundSet).then(() => {
             resolve()
         }).catch((err) => {
             reject(err)
@@ -174,9 +165,9 @@ export function setSoundSetDescription (id, value) {
 export function playSoundFile (options) {
     return new Promise((resolve, reject) => {
         const params = { format: options.format }
-        Vue.http.get(`api/soundfilerecordings/${options.id}`, { params: params, responseType: 'blob' })
+        httpApi.get(`api/soundfilerecordings/${options.id}`, { params, responseType: 'blob' })
             .then((res) => {
-                resolve(URL.createObjectURL(res.body))
+                resolve(URL.createObjectURL(res.data))
             }).catch((err) => {
                 reject(err)
             })
@@ -188,22 +179,18 @@ export function uploadSoundFile (options, onProgress) {
         const formData = new FormData()
         const loopplay = options.item.loopplay ? 1 : 2
         const fields = {
-            loopplay: loopplay,
+            loopplay,
             filename: options.file.name,
             set_id: options.item.set_id,
             handle: options.item.handle
         }
         const json = JSON.stringify(fields)
-        const requestKey = `previous-${options.item.handle}-request`
         formData.append('json', json)
         if (options.file) {
             formData.append('soundfile', options.file)
         }
-        Vue.http.post('api/soundfiles/', formData, {
-            before (request) {
-                Vue[requestKey] = request
-            },
-            progress (e) {
+        httpApi.post('api/soundfiles/', formData, {
+            onUploadProgress (e) {
                 if (e.lengthComputable) {
                     onProgress(Math.ceil((e.loaded / e.total) * 100))
                 }
@@ -219,18 +206,88 @@ export function uploadSoundFile (options, onProgress) {
 export function setSubscriberSoundSet (id, soundSet) {
     return new Promise((resolve, reject) => {
         let promise
-        const path = 'api/subscriberpreferences/' + id
+        const path = `api/subscriberpreferences/${id}`
         const fieldPath = 'contract_sound_set'
         if (soundSet === null || soundSet === undefined) {
             promise = patchRemove({
-                path: path,
+                path,
                 fieldPath: 'contract_sound_set'
             })
         } else {
             promise = patchAdd({
-                path: path,
-                fieldPath: fieldPath,
+                path,
+                fieldPath,
                 value: soundSet
+            })
+        }
+        promise.then(() => {
+            resolve()
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+export function getNcos (id) {
+    return new Promise((resolve, reject) => {
+        get({
+            path: `api/ncoslevels/${id}`
+        }).then((ncos) => {
+            resolve(ncos)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+export function getNcosSet (id) {
+    return new Promise((resolve, reject) => {
+        get({
+            path: `api/v2/ncos/sets/${id}`
+        }).then((ncosSet) => {
+            resolve(ncosSet)
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+export function setSubscriberNcos (id, ncos) {
+    return new Promise((resolve, reject) => {
+        let promise
+        const path = `api/subscriberpreferences/${id}`
+        const fieldPath = 'ncos'
+        if (ncos === null || ncos === undefined) {
+            promise = patchRemove({
+                path,
+                fieldPath: 'ncos'
+            })
+        } else {
+            promise = patchAdd({
+                path,
+                fieldPath,
+                value: ncos
+            })
+        }
+        promise.then(() => {
+            resolve()
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+export function setSubscriberNcosSet (id, ncosSet) {
+    return new Promise((resolve, reject) => {
+        let promise
+        const path = `api/subscriberpreferences/${id}`
+        const fieldPath = 'ncos_set'
+        if (ncosSet === null || ncosSet === undefined) {
+            promise = patchRemove({
+                path,
+                fieldPath: 'ncos_set'
+            })
+        } else {
+            promise = patchAdd({
+                path,
+                fieldPath,
+                value: ncosSet
             })
         }
         promise.then(() => {

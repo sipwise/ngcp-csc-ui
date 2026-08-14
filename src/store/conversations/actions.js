@@ -1,12 +1,3 @@
-import {
-    deleteVoicemail,
-    downloadFax,
-    downloadVoiceMail,
-    getConversations,
-    getIncomingBlocked,
-    getOutgoingBlocked,
-    playVoiceMail
-} from 'src/api/conversations'
 import _ from 'lodash'
 import {
     addNumberToIncomingList,
@@ -15,8 +6,20 @@ import {
     removeFromOutgoingListByNumber,
     toggleNumberInBothLists
 } from 'src/api/call-blocking'
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import {
+    deleteFax,
+    deleteVoicemail,
+    downloadCsv,
+    downloadFax,
+    downloadVoiceMail,
+    getConversations,
+    getIncomingBlocked,
+    getOutgoingBlocked,
+    playVoiceMail
+} from 'src/api/conversations'
 
-export const ROWS_PER_PAGE = 15
+export const ROWS_PER_PAGE = LIST_DEFAULT_ROWS
 
 const ReloadConfig = {
     retryLimit: 5,
@@ -24,20 +27,35 @@ const ReloadConfig = {
 }
 
 export default {
+    async loadConversations ({ commit, dispatch, state, rootGetters }, options) {
+        try {
+            commit('loadConversationsRequesting')
+            const list = await getConversations({
+                ...options
+            })
+            commit('loadConversationsSucceeded', list.items)
+            return list.totalCount
+        } catch (err) {
+            commit('loadConversationsFailed', err.message)
+        }
+    },
     reloadItems (context, options) {
         context.commit('reloadItemsRequesting')
         const rows = context.state.currentPage * ROWS_PER_PAGE
         const firstStateItemTimestamp = context.state.items[0]
-            ? context.state.items[0].start_time : null
+            ? context.state.items[0].start_time
+            : null
         if (options.retryCount < ReloadConfig.retryLimit) {
             getConversations({
                 subscriberId: context.getters.getSubscriberId,
                 page: 1,
-                rows: rows,
-                type: options.type
+                rows,
+                type: options.type,
+                no_count: true
             }).then((result) => {
                 const firstResultItemTimestamp = result.items[0]
-                    ? result.items[0].start_time : null
+                    ? result.items[0].start_time
+                    : null
                 if (_.isEqual(firstStateItemTimestamp, firstResultItemTimestamp)) {
                     setTimeout(() => {
                         context.dispatch('reloadItems', {
@@ -53,12 +71,21 @@ export default {
             })
         }
     },
+    async downloadCsv (context, options) {
+        context.commit('downloadCsvRequesting')
+        try {
+            await downloadCsv(options)
+            context.commit('downloadCsvSucceeded')
+        } catch (err) {
+            context.commit('downloadCsvFailed', err.message)
+        }
+    },
     downloadVoiceMail (context, id) {
         context.commit('downloadVoiceMailRequesting')
         downloadVoiceMail(id).then(() => {
             context.commit('downloadVoiceMailSucceeded')
         }).catch((err) => {
-            context.commit('downloadVoiceMailFailed', err.body.message)
+            context.commit('downloadVoiceMailFailed', err.message)
         })
     },
     downloadFax (context, id) {
@@ -66,7 +93,7 @@ export default {
         downloadFax(id).then(() => {
             context.commit('downloadFaxSucceeded')
         }).catch((err) => {
-            context.commit('downloadFaxFailed', err.body.message)
+            context.commit('downloadFaxFailed', err.message)
         })
     },
     playVoiceMail (context, options) {
@@ -74,10 +101,13 @@ export default {
         playVoiceMail(options).then((url) => {
             context.commit('playVoiceMailSucceeded', {
                 id: options.id,
-                url: url
+                url
             })
         }).catch((err) => {
-            context.commit('playVoiceMailFailed', options.id, err.mesage)
+            context.commit('playVoiceMailFailed', {
+                id: options.id,
+                error: err.message
+            })
         })
     },
     async nextPage (context, options) {
@@ -90,7 +120,12 @@ export default {
                 rows: ROWS_PER_PAGE,
                 type: options.type,
                 from: _.get(options, 'filter.from', ''),
-                to: _.get(options, 'filter.to', '')
+                to: _.get(options, 'filter.to', ''),
+                direction: _.get(options, 'filter.direction', ''),
+                caller: _.get(options, 'filter.caller', ''),
+                callee: _.get(options, 'filter.callee', ''),
+                wildcards: true,
+                no_count: true
             })
             context.commit('nextPageSucceeded', res)
         } catch (err) {
@@ -185,7 +220,7 @@ export default {
         const outAction = context.getters.actionToToggleOutgoingNumber(options.number)
         context.commit('toggleBlockedRequesting')
         toggleNumberInBothLists({
-            id: id,
+            id,
             number: options.number,
             block_in_list: inAction,
             block_out_list: outAction
@@ -202,6 +237,15 @@ export default {
         context.commit('deletionRequesting')
         try {
             await deleteVoicemail(options.id)
+            context.commit('deletionSucceeded')
+        } catch (err) {
+            context.commit('deletionFailed', err.message)
+        }
+    },
+    async deleteFax (context, options) {
+        context.commit('deletionRequesting')
+        try {
+            await deleteFax(options.id)
             context.commit('deletionSucceeded')
         } catch (err) {
             context.commit('deletionFailed', err.message)

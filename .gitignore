@@ -1,6 +1,8 @@
 .DS_Store
 .thumbs.db
 node_modules
+__pycache__
+.yarn/install-state.gz
 
 # Quasar core related directories
 .quasar
@@ -39,4 +41,4 @@ yarn-error.log*
 /junit.xml
 /test/jest/coverage
 
-quasar.conf.dev.js
+quasar.config.dev.js

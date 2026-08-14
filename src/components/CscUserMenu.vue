@@ -40,6 +40,7 @@
             v-ripple
             clickable
             to="/user/settings"
+            data-cy="user-settings"
         >
             <q-item-section
                 side
@@ -56,6 +57,7 @@
         <q-item
             v-ripple
             clickable
+            data-cy="user-logout"
             @click="logout"
         >
             <q-item-section
@@ -74,11 +76,8 @@
 </template>
 
 <script>
-import numberFilter from '../filters/number'
-import {
-    mapState,
-    mapActions
-} from 'vuex'
+import numberFilter from 'src/filters/number'
+import { mapActions, mapState } from 'vuex'
 export default {
     name: 'CscUserMenu',
     props: {
@@ -97,9 +96,8 @@ export default {
         primaryNumberFormatted () {
             if (this.subscriber && this.subscriber.primary_number) {
                 return numberFilter(this.subscriber.primary_number)
-            } else {
-                return ''
             }
+            return ''
         },
         aliasNumbersFormatted () {
             const numbers = []
@@ -122,5 +120,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

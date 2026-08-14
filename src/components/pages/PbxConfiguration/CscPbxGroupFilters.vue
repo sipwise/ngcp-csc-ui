@@ -28,7 +28,7 @@
                     @keypress.enter="triggerFilter"
                 >
                     <template
-                        v-slot:append
+                        #append
                     >
                         <q-btn
                             icon="search"
@@ -77,6 +77,7 @@ export default {
             default: false
         }
     },
+    emits: ['filter'],
     data () {
         return {
             filterTypeModel: null,
@@ -113,7 +114,7 @@ export default {
                 const filterDisplayValue = filterItem.value
                 return {
                     id: filterItem.name,
-                    filterInfo: this.filterTypeOptions.find(option => option.value === filterItem.name).label + ': ' + filterDisplayValue
+                    filterInfo: `${this.filterTypeOptions.find((option) => option.value === filterItem.name).label}: ${filterDisplayValue}`
                 }
             })
         }
@@ -128,7 +129,7 @@ export default {
             this.addFilter(this.filterTypeModel?.value, this.typedFilter)
         },
         removeFilter (name) {
-            this.filters = this.filters.filter(item => item.name !== name)
+            this.filters = this.filters.filter((item) => item.name !== name)
             this.filter()
         },
         removeFilters () {
@@ -141,9 +142,9 @@ export default {
             const valueTrimmed = _.trim(value)
             if (valueTrimmed) {
                 this.typedFilter = null
-                this.filters = this.filters.filter(item => item.name !== name)
+                this.filters = this.filters.filter((item) => item.name !== name)
                 const filter = {
-                    name: name,
+                    name,
                     value: valueTrimmed
                 }
                 this.filters.push(filter)
@@ -152,7 +153,7 @@ export default {
         },
         filter () {
             const params = {}
-            this.filters.forEach(filter => {
+            this.filters.forEach((filter) => {
                 params[filter.name] = filter.value
             })
             this.$emit('filter', params)

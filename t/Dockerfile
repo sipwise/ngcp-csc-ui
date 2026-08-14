@@ -1,11 +1,13 @@
-# DOCKER_NAME=ngcp-csc-ui-bullseye
-FROM docker.mgm.sipwise.com/sipwise-bullseye:latest
+# DOCKER_NAME=ngcp-csc-ui-trixie
+FROM docker.mgm.sipwise.com/sipwise-trixie:latest
 
 # Important! Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2021-09-27
+ENV REFRESHED_AT=2026-08-13
+
+ENV NODE_PATH=/usr/lib/nodejs:/usr/share/nodejs
 ENV DEBIAN_FRONTEND noninteractive
 ENV DISPLAY=:0
 
@@ -14,17 +16,24 @@ COPY t/sources.list.d/builddeps.list /etc/apt/sources.list.d/
 COPY t/sources.list.d/preferences /etc/apt/preferences.d/
 
 RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
+    g++ \
+    make \
     nodejs \
-    yarnpkg
+    python3
 
 RUN echo "cd /code && ./t/testrunner" >/root/.bash_history
 
 # we cannot use /code/ here otherwise it will be 'mounted over' with following 'docker run'
-ADD package.json /tmp/
-ADD yarn.lock /tmp/
-ADD README.md /tmp/
+COPY package.json /tmp/
+COPY yarn.lock /tmp/
+COPY .yarnrc.yml /tmp/
+COPY .yarn /tmp/.yarn/
+COPY README.md /tmp/
+
 WORKDIR /tmp
-RUN yarnpkg install
+
+RUN corepack enable
+RUN yarn install
 
 WORKDIR /code
 
@@ -36,16 +45,16 @@ WORKDIR /code
 #
 # you need to put the proper NGCP sources at t/sources.list.d/builddeps.list
 # for instance, trunk:
-# echo "deb https://deb.sipwise.com/autobuild/ release-trunk-bullseye main" > t/sources.list.d/builddeps.list
+# echo "deb https://deb.sipwise.com/autobuild/ release-trunk-trixie main" > t/sources.list.d/builddeps.list
 #
 # NOTE: run the following command from root folder of git repository:
-# % docker build --tag="ngcp-csc-ui-bullseye" -f ./t/Dockerfile .
-# % docker run --rm -i -t -v $(pwd):/code:ro ngcp-csc-ui-bullseye:latest bash
+# % docker build --tag="ngcp-csc-ui-trixie" -f ./t/Dockerfile .
+# % docker run --rm -i -t -v $(pwd):/code:ro ngcp-csc-ui-trixie:latest bash
 #
 # Use the existing docker image:
-# % docker pull docker.mgm.sipwise.com/ngcp-csc-ui-bullseye
+# % docker pull docker.mgm.sipwise.com/ngcp-csc-ui-trixie
 # NOTE: run the following command from root folder of git repository:
-# % docker run --rm -i -t -v $(pwd):/code:ro -v /results docker.mgm.sipwise.com/ngcp-csc-ui-bullseye:latest bash
+# % docker run --rm -i -t -v $(pwd):/code:ro -v /results docker.mgm.sipwise.com/ngcp-csc-ui-trixie:latest bash
 #
 # Inside docker:
 #   cd /code && ./t/testrunner

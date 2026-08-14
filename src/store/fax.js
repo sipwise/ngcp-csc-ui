@@ -1,10 +1,11 @@
 import _ from 'lodash'
 import {
     getFaxServerSettings,
-    setFaxServerField,
     getMailToFaxSettings,
+    setFaxServerField,
     setMailToFaxSettingField
-} from '../api/fax'
+} from 'src/api/fax'
+import { getSubscriberId } from 'src/auth'
 
 export default {
     namespaced: true,
@@ -34,33 +35,44 @@ export default {
         }
     },
     actions: {
-        async loadFaxSettingsAction (context) {
-            const faxServerSettings = await getFaxServerSettings(context.getters.subscriberId)
+        async loadFaxSettingsAction (context, id) {
+            const subscriberId = id || context.getters.subscriberId
+            const faxServerSettings = await getFaxServerSettings(subscriberId)
             context.commit('settingsSucceeded', {
                 faxServerSettings
             })
+
+            if (toString(subscriberId) === toString(getSubscriberId())) {
+                context.commit('user/updateIsFaxServerSettingsActive', faxServerSettings.active, { root: true })
+            }
         },
         async faxServerSettingsUpdateAction (context, options) {
+            const subscriberId = options.id || context.getters.subscriberId
             const faxServerSettings = await setFaxServerField({
-                subscriberId: context.getters.subscriberId,
+                subscriberId,
                 field: options.field,
                 value: options.value
             })
             context.commit('settingsSucceeded', {
                 faxServerSettings
             })
-            context.commit('user/updateFaxActiveCapabilityState', faxServerSettings.active, { root: true })
+
+            if (toString(subscriberId) === toString(getSubscriberId())) {
+                context.commit('user/updateIsFaxServerSettingsActive', faxServerSettings.active, { root: true })
+            }
         },
 
-        async loadMailToFaxSettingsAction (context) {
-            const mailToFaxSettings = await getMailToFaxSettings(context.getters.subscriberId)
+        async loadMailToFaxSettingsAction (context, id) {
+            const subscriberId = id || context.getters.subscriberId
+            const mailToFaxSettings = await getMailToFaxSettings(subscriberId)
             context.commit('settingsSucceeded', {
                 mailToFaxSettings
             })
         },
         async mailToFaxSettingsUpdateAction (context, options) {
+            const subscriberId = options.id || context.getters.subscriberId
             const mailToFaxSettings = await setMailToFaxSettingField({
-                subscriberId: context.getters.subscriberId,
+                subscriberId,
                 field: options.field,
                 value: options.value
             })

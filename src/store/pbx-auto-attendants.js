@@ -1,5 +1,5 @@
-import { getAutoAttendants, editSubscriberSlots } from '../api/pbx-auto-attendants'
-import { getSubscribers } from '../api/subscriber'
+import { editSubscriberSlots, getAutoAttendants } from 'src/api/pbx-auto-attendants'
+import { getSubscribers } from 'src/api/subscriber'
 import { displayName } from 'src/filters/subscriber'
 
 export default {
@@ -21,7 +21,7 @@ export default {
             return state.newSlots
         },
         subscribers (state) {
-            return state.subscribers.map(subscriber => {
+            return state.subscribers.map((subscriber) => {
                 return {
                     label: displayName(subscriber),
                     value: subscriber.id
@@ -42,26 +42,26 @@ export default {
             }
         },
         subscriberSlots (state, data) {
-            const subscriberSlots = state.slots.filter(slot => slot.subscriber_id === data.subscriberId)[0]
+            const subscriberSlots = state.slots.filter((slot) => slot.subscriber_id === data.subscriberId)[0]
             subscriberSlots.slots = data.slots
         },
         createNewSlot (state, data) {
-            const subscriberSlots = state.newSlots.filter(slot => slot.subscriber_id === data.subscriberId)[0]
+            const subscriberSlots = state.newSlots.filter((slot) => slot.subscriber_id === data.subscriberId)[0]
             subscriberSlots.slots.push({
                 slot: data.slot,
                 destination: null
             })
         },
         editNewSlot (state, data) {
-            const subscriberSlots = state.newSlots.filter(slot => slot.subscriber_id === data.subscriberId)[0]
+            const subscriberSlots = state.newSlots.filter((slot) => slot.subscriber_id === data.subscriberId)[0]
             subscriberSlots.slots[data.index].destination = data.destination
         },
         deleteNewSlot (state, data) {
-            const subscriberSlots = state.newSlots.filter(slot => slot.subscriber_id === data.subscriberId)[0]
+            const subscriberSlots = state.newSlots.filter((slot) => slot.subscriber_id === data.subscriberId)[0]
             subscriberSlots.slots.splice(data.index, 1)
         },
         resetNewSlots (state, subscriberId) {
-            const subscriberSlots = state.newSlots.filter(slot => slot.subscriber_id === subscriberId)[0]
+            const subscriberSlots = state.newSlots.filter((slot) => slot.subscriber_id === subscriberId)[0]
             subscriberSlots.slots.splice(0, subscriberSlots.slots.length)
         },
         subscribers (state, subscribers) {
@@ -87,7 +87,7 @@ export default {
             const slots = await editSubscriberSlots(options)
             context.commit('subscriberSlots', {
                 subscriberId: options.subscriberId,
-                slots: slots
+                slots
             })
         },
         createNewSlot (context, options) {

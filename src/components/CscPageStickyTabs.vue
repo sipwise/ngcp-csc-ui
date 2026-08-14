@@ -14,14 +14,14 @@
                     class="full-width"
                 >
                     <q-tabs
-                        :value="value"
+                        :model-value="value"
                         style="z-index: 11"
                         align="center"
                         inline-label
                         active-color="primary"
                         dense
                         mobile-arrows
-                        @input="input"
+                        @update:model-value="input"
                     >
                         <slot
                             name="tabs"
@@ -50,29 +50,36 @@ export default {
             default: ''
         }
     },
+    emits: ['input'],
     data () {
         return {
             topMargin: 0,
-            currentTab: ''
+            currentTab: '',
+            observer: null
         }
     },
     computed: {
         pageStyle () {
             return {
-                paddingTop: this.topMargin + 'px'
+                paddingTop: `${this.topMargin}px`
             }
         }
     },
     mounted () {
         this.computeTopMargin()
+        const observer = new MutationObserver(this.computeTopMargin)
+        observer.observe(this.$refs.pageSticky.$el, {
+            childList: true,
+            subtree: true
+        })
+        this.observer = observer
+    },
+    beforeUnmount () {
+        this.observer.disconnect()
     },
     methods: {
-        input ($event) {
+        async input ($event) {
             this.$emit('input', $event)
-            this.computeTopMargin()
-            this.$nextTick(() => {
-                this.computeTopMargin()
-            })
         },
         computeTopMargin () {
             this.topMargin = this.$refs.pageSticky.$el.offsetHeight

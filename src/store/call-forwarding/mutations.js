@@ -1,30 +1,32 @@
+import { normalizePrimaryNumber } from 'src/helpers/call-forwarding-destinations'
+import { CreationState } from 'src/store/common'
 
-export function dataSucceeded (state, res) {
-    if (res.destinationSets) {
-        const destinationSetMap = {}
-        res.destinationSets.forEach((destinationSet) => {
-            destinationSetMap[destinationSet.id] = destinationSet
-        })
-        state.destinationSetMap = destinationSetMap
+function getSeatPrimaryNumber (seat) {
+    if (!seat?.primary_number) {
+        return null
     }
-    if (res.sourceSets) {
-        const sourceSetMap = {}
-        res.sourceSets.forEach((sourceSet) => {
-            sourceSetMap[sourceSet.id] = sourceSet
-        })
-        state.sourceSetMap = sourceSetMap
-        state.sourceSets = res.sourceSets
+    return normalizePrimaryNumber(seat.primary_number)
+}
+
+export function dataSucceeded (state, payload) {
+    if (payload.bNumberSetMap) {
+        state.bNumberSetMap = payload.bNumberSetMap
     }
-    if (res.timeSets) {
-        const timeSetMap = {}
-        res.timeSets.forEach((timeSet) => {
-            timeSetMap[timeSet.id] = timeSet
-        })
-        state.timeSetMap = timeSetMap
-        state.timeSets = res.timeSets
+
+    if (payload.destinationSetMap) {
+        state.destinationSetMap = payload.destinationSetMap
     }
-    if (res.mappings) {
-        state.mappings = res.mappings
+
+    if (payload.sourceSetMap) {
+        state.sourceSetMap = payload.sourceSetMap
+    }
+
+    if (payload.timeSetMap) {
+        state.timeSetMap = payload.timeSetMap
+    }
+
+    if (payload.mappings) {
+        state.mappings = payload.mappings
     }
 }
 
@@ -34,4 +36,51 @@ export function popupShow (state, popupId) {
 
 export function setAnnouncements (state, announcements) {
     state.announcements = announcements
+}
+
+export function seatsSucceeded (state, seats) {
+    const seatMapByPrimaryNumber = { ...state.seatMapByPrimaryNumber }
+
+    seats.forEach((seat) => {
+        const primaryNumber = getSeatPrimaryNumber(seat)
+        if (primaryNumber) {
+            seatMapByPrimaryNumber[primaryNumber] = seat
+        }
+    })
+
+    state.seatMapByPrimaryNumber = seatMapByPrimaryNumber
+}
+
+export function resetState (state) {
+    state.mappings = {
+        cfu: [],
+        cft: [],
+        cfna: [],
+        cfb: [],
+        cft_ringtimeout: null
+    }
+    state.bNumberSetMap = {}
+    state.destinationSetMap = {}
+    state.sourceSetMap = {}
+    state.timeSetMap = {}
+    state.seatMapByPrimaryNumber = {}
+    state.announcements = []
+}
+
+export function cfCreationRequesting (state, cf) {
+    state.cfCreationState = CreationState.creating
+    state.cfCreating = cf
+}
+
+export function cfCreationSucceeded (state) {
+    state.cfCreationState = CreationState.created
+}
+
+export function enableCfAddForm (state) {
+    state.cfCreationState = CreationState.input
+    state.cfCreating = null
+}
+
+export function disableCfAddForm (state) {
+    state.cfCreationState = CreationState.initiated
 }

@@ -6,6 +6,7 @@
         <csc-call-input
             v-model="number"
             :label="$t('Number')"
+            data-cy="csc-block-number-input"
             @submit="save"
             @error="error"
         />
@@ -16,7 +17,8 @@
                 flat
                 color="default"
                 icon="clear"
-                @mousedown.native="cancel()"
+                data-cy="csc-block-number-cancel"
+                @mousedown="cancel()"
             >
                 {{ $t('Cancel') }}
             </q-btn>
@@ -25,6 +27,7 @@
                 flat
                 color="primary"
                 icon="done"
+                data-cy="csc-block-number-save"
                 :disable="saveDisabled"
                 @click="save()"
             >
@@ -46,6 +49,7 @@
             flat
             color="primary"
             icon="add"
+            data-cy="csc-add-number"
             @click="add()"
         >
             {{ $t('Add number') }}
@@ -54,11 +58,10 @@
 </template>
 
 <script>
-import CscCallInput from '../../form/CscCallInput'
-import CscSpinner from '../../CscSpinner'
-import {
-    showGlobalError
-} from 'src/helpers/ui'
+
+import CscSpinner from 'components/CscSpinner'
+import CscCallInput from 'components/form/CscCallInput'
+import { showGlobalError } from 'src/helpers/ui'
 export default {
     name: 'CscCallBlockingAddForm',
     components: {
@@ -75,6 +78,7 @@ export default {
             default: false
         }
     },
+    emits: ['save'],
     data () {
         return {
             enabled: false,
@@ -113,5 +117,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

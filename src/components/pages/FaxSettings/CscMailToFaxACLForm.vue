@@ -8,12 +8,10 @@
                     v-model="data.from_email"
                     icon="email"
                     :label="$t('From email')"
+                    data-cy="csc-mailtofax-acl-email"
                     :disable="disabled"
                     :readonly="loading"
-                    :error="$v.data.from_email.$error"
-                    :error-message="fromEmailErrorMessage"
                     :value-changed="!isAddNewMode && data.from_email !== initialData.from_email"
-                    @input="$v.data.from_email.$touch"
                     @keypress.space.prevent
                     @keydown.space.prevent
                     @keyup.space.prevent
@@ -27,6 +25,7 @@
                 <csc-input-saveable
                     v-model="data.received_from"
                     :label="$t('Received from IP')"
+                    data-cy="csc-mailtofax-acl-ip"
                     :disable="disabled"
                     :readonly="loading"
                     :value-changed="!isAddNewMode && data.received_from !== initialData.received_from"
@@ -37,12 +36,13 @@
                     @save="updatePropertyData('received_from')"
                 >
                     <csc-tooltip>
-                        {{ $t('Allow mail2fax emails only to this IP (the IP or hostname is present in the &quot;Received&quot; header).') }}
+                        {{ $t('Allow mail2fax emails only to this IP (the IP or hostname is present in the \"Received\" header).') }}
                     </csc-tooltip>
                 </csc-input-saveable>
                 <csc-input-saveable
                     v-model="data.destination"
                     :label="$t('Destination')"
+                    data-cy="csc-mailtofax-acl-destination"
                     :disable="disabled"
                     :readonly="loading"
                     :value-changed="!isAddNewMode && data.destination !== initialData.destination"
@@ -60,12 +60,13 @@
                 <q-toggle
                     v-model="data.use_regex"
                     :label="$t('Use RegExp')"
+                    data-cy="csc-mailtofax-acl-regex"
                     :hint="$t('Enable regex matching for &quot;Received from IP&quot; and &quot;Destination&quot; fields.')"
                     :disable="loading"
-                    @input="updatePropertyData('use_regex')"
+                    @update:model-value="updatePropertyData('use_regex')"
                 >
                     <csc-tooltip>
-                        {{ $t('Enable regex matching for &quot;Received from IP&quot; and &quot;Destination&quot; fields.') }}
+                        {{ $t('Enable regex matching for \"Received from IP\" and \"Destination\" fields.') }}
                     </csc-tooltip>
                 </q-toggle>
             </div>
@@ -79,6 +80,7 @@
                 color="default"
                 icon="clear"
                 :disable="loading"
+                data-cy="csc-mailtofax-acl-cancelbutton"
                 :label="$t('Cancel')"
                 @click="cancel()"
             />
@@ -87,7 +89,8 @@
                 color="primary"
                 icon="person"
                 :loading="loading"
-                :disable="$v.data.$invalid || loading"
+                :disable="loading"
+                data-cy="csc-mailtofax-acl-createbutton"
                 :label="$t('Create ACL')"
                 @click="save()"
             />
@@ -96,10 +99,8 @@
 </template>
 
 <script>
-import { email } from 'vuelidate/lib/validators'
-import CscInputSaveable from 'components/form/CscInputSaveable'
 import CscTooltip from 'components/CscTooltip'
-
+import CscInputSaveable from 'components/form/CscInputSaveable'
 export default {
     name: 'CscMailToFaxACLForm',
     components: {
@@ -118,9 +119,9 @@ export default {
         initialData: {
             type: Object,
             default: () => ({
-                destination: '',
-                from_email: '',
-                received_from: '',
+                destination: null,
+                from_email: null,
+                received_from: null,
                 use_regex: false
             })
         },
@@ -129,25 +130,10 @@ export default {
             default: false
         }
     },
+    emits: ['save', 'cancel', 'update-property'],
     data () {
         return {
             data: this.getDefaults()
-        }
-    },
-    validations: {
-        data: {
-            from_email: {
-                email
-            }
-        }
-    },
-    computed: {
-        fromEmailErrorMessage () {
-            if (!this.$v.data.from_email.email) {
-                return this.$t('Input a valid email address')
-            } else {
-                return ''
-            }
         }
     },
     methods: {
@@ -164,9 +150,11 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
         },
         updatePropertyData (propertyName) {
+            if (['from_email', 'received_from', 'destination'].includes(propertyName)) {
+                this.data[propertyName] = this.data[propertyName] === '' ? null : this.data[propertyName]
+            }
             this.$emit('update-property', {
                 name: propertyName,
                 value: this.data[propertyName]

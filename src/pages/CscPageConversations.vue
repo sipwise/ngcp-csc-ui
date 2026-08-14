@@ -5,7 +5,7 @@
         :value="selectedTab"
     >
         <template
-            v-slot:tabs
+            #tabs
         >
             <q-tab
                 v-for="tab in tabs"
@@ -16,19 +16,25 @@
                 :default="tab.value === selectedTab"
                 :disable="listLoading"
                 @click="selectTab(tab.value)"
-            />       
-                
+            />
         </template>
         <template
-            v-slot:toolbar
+            #toolbar
         >
             <csc-conversations-filter
                 id="csc-conversations-filter"
-                v-model="filter"
+                :value="filter"
                 class="q-pb-sm"
                 :loading="listLoading"
                 :disable="listLoading"
-                @input="filterTab(selectedTab)"
+                @input="filterTab($event, selectedTab)"
+            />
+            <csc-conversations-calls-filter
+                v-if="selectedTab === 'call'"
+                id="csc-conversations-calls-filter"
+                class="q-pb-sm"
+                :loading="listLoading"
+                @filter="filterCallDirectionEvent"
             />
         </template>
         <q-infinite-scroll
@@ -37,7 +43,7 @@
             @load="loadNextPage"
         >
             <template
-                slot="loading"
+                #loading
             >
                 <div />
             </template>
@@ -58,18 +64,22 @@
                         :blocked-incoming="blockedIncoming(item)"
                         :blocked-outgoing="blockedOutgoing(item)"
                         @start-call="startCall"
+                        @get-voicemail-transcript="getVoicemailTranscription"
                         @download-fax="downloadFax"
                         @download-voice-mail="downloadVoiceMail"
                         @play-voice-mail="playVoiceMail"
                         @toggle-block-incoming="toggleBlockIncomingAction"
                         @toggle-block-outgoing="toggleBlockOutgoingAction"
                         @toggle-block-both="toggleBlockBothAction"
-                        @delete-voicemail="$refs.confirmDeletionDialog.open();deletionId=$event.id"
+                        @add-to-phonebook="addToPhonebookAction"
+                        @delete-voicemail="$refs.confirmDeletionDialog.show();deletionId=$event.id"
+                        @delete-fax="$refs.confirmDeletionFaxDialog.show();deletionId=$event.id"
                     />
                 </q-list>
                 <div
                     v-else-if="!listLoading && items.length === 0"
                     class="col-xs-12 col-md-8 q-pa-lg text-center"
+                    data-cy="conversations-empty"
                 >
                     {{ noResultsMessage }}
                 </div>
@@ -90,26 +100,40 @@
             @remove="deleteVoicemailConfirmed({id:deletionId, tab: selectedTab})"
             @cancel="deletionId=null"
         />
+        <csc-remove-dialog
+            ref="confirmDeletionFaxDialog"
+            title-icon="delete"
+            title-icon-color="negative"
+            :title="$t('Remove Fax')"
+            :message="$t('You are about to remove this Fax')"
+            @remove="deleteFaxConfirmed({id:deletionId, tab: selectedTab})"
+            @cancel="deletionId=null"
+        />
     </csc-page-sticky-tabs>
 </template>
 
 <script>
+import CscListSpinner from 'components/CscListSpinner'
+import CscPageStickyTabs from 'components/CscPageStickyTabs'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
+import CscConversationsCallsFilter from 'components/pages/Conversations/CscConversationsCallsFilter'
+import CscConversationsFilter from 'components/pages/Conversations/CscConversationsFilter'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { showGlobalError } from 'src/helpers/ui'
 import platformMixin from 'src/mixins/platform'
+import { RequestState } from 'src/store/common'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import {
     mapGetters, mapMutations,
     mapState
 } from 'vuex'
-import CscPageStickyTabs from 'components/CscPageStickyTabs'
-import CscListSpinner from 'components/CscListSpinner'
-import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
-import CscConversationsFilter from 'components/pages/Conversations/CscConversationsFilter'
-import CscRemoveDialog from 'components/CscRemoveDialog'
-import { mapWaitingActions } from 'vue-wait'
 export default {
-    name: 'CscConversations',
+    name: 'CscPageConversations',
     components: {
         CscRemoveDialog,
         CscConversationsFilter,
+        CscConversationsCallsFilter,
         CscConversationItem,
         CscListSpinner,
         CscPageStickyTabs
@@ -117,23 +141,45 @@ export default {
     mixins: [
         platformMixin
     ],
-    props: {
-        initialTab: {
-            type: String,
-            default: 'call-fax-voicemail'
-        }
-    },
     data () {
         return {
             filter: undefined,
+            filterDirection: undefined,
             topMargin: 0,
             deletionId: null,
-            selectedTab: this.initialTab
+            selectedTab: window.history.state.initialTab || 'call-fax-voicemail'
         }
     },
     computed: {
+        ...mapGetters('user', [
+            'isFaxFeatureEnabled',
+            'hasSubscriberProfileAttribute'
+        ]),
+        ...mapState('conversations', [
+            'reachedLastPage',
+            'downloadVoiceMailState',
+            'downloadVoiceMailError',
+            'downloadFaxState',
+            'downloadFaxError',
+            'blockedIncomingState',
+            'blockedIncomingError',
+            'blockedOutgoingState',
+            'blockedOutgoingError',
+            'toggleBlockedState',
+            'toggleBlockedError',
+            'deletionState',
+            'deletionError'
+        ]),
+        ...mapGetters('conversations', [
+            'items',
+            'isNumberIncomingBlocked',
+            'isNumberOutgoingBlocked'
+        ]),
+        ...mapGetters('call', [
+            'isCallEnabled'
+        ]),
         tabs () {
-            return [
+            const tabs = [
                 {
                     label: this.$t('All'),
                     value: 'call-fax-voicemail',
@@ -144,36 +190,34 @@ export default {
                     value: 'call',
                     icon: 'call'
                 },
-                {
+                ...(this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail) ? [{
                     label: this.$t('Voicemails'),
                     value: 'voicemail',
                     icon: 'voicemail'
-                },
-                {
+                }] : []),
+                ...(this.isFaxFeatureEnabled ? [{
                     label: this.$t('Faxes'),
                     value: 'fax',
                     icon: 'description'
-                }
+                }] : [])
             ]
+
+            if (tabs.length === 2) {
+                return tabs.filter((tab) => tab.value !== 'call-fax-voicemail')
+            }
+
+            return tabs
         },
-        ...mapState('conversations', [
-            'reachedLastPage'
-        ]),
-        ...mapGetters('conversations', [
-            'items',
-            'isNumberIncomingBlocked',
-            'isNumberOutgoingBlocked'
-        ]),
-        ...mapGetters('call', [
-            'isCallEnabled'
-        ]),
         pageStyle () {
             return {
-                paddingTop: this.topMargin + 'px'
+                paddingTop: `${this.topMargin}px`
             }
         },
         noResultsMessage () {
             if (this.selectedTab === 'call-fax-voicemail') {
+                if (!this.isFaxFeatureEnabled) {
+                    return this.$t('No Calls or Voicemails found')
+                }
                 return this.$t('No Calls, Voicemails or Faxes found')
             } else if (this.selectedTab === 'call') {
                 return this.$t('No Calls found')
@@ -181,40 +225,67 @@ export default {
                 return this.$t('No Faxes found')
             } else if (this.selectedTab === 'voicemail') {
                 return this.$t('No Voicemails found')
-            } else {
-                return ''
             }
+            return ''
         },
         labelAll () {
             if (this.isMobile) {
                 return ''
-            } else {
-                return this.$t('All')
             }
+            return this.$t('All')
         },
         labelCalls () {
             if (this.isMobile) {
                 return ''
-            } else {
-                return this.$t('Calls')
             }
+            return this.$t('Calls')
         },
         labelFaxes () {
             if (this.isMobile) {
                 return ''
-            } else {
-                return this.$t('Faxes')
             }
+            return this.$t('Faxes')
         },
         labelVoicemails () {
             if (this.isMobile) {
                 return ''
-            } else {
-                return this.$t('Voicemails')
             }
+            return this.$t('Voicemails')
         },
         listLoading () {
             return this.$wait.is('csc-conversations')
+        }
+    },
+    watch: {
+        downloadVoiceMailState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.downloadVoiceMailError)
+            }
+        },
+        downloadFaxState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.downloadFaxError)
+            }
+        },
+        blockedIncomingState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.blockedIncomingError)
+            }
+        },
+        blockedOutgoingState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.blockedOutgoingError)
+            }
+        },
+        toggleBlockedState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.toggleBlockedError)
+            }
+        },
+        deletionState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deletionError)
+            }
         }
     },
     async mounted () {
@@ -227,9 +298,14 @@ export default {
         ...mapWaitingActions('conversations', {
             nextPage: 'csc-conversations',
             deleteVoicemail: 'csc-conversations',
+            getVoicemailTranscript: 'csc-conversations',
             toggleBlockIncoming: 'csc-conversations',
             toggleBlockOutgoing: 'csc-conversations',
-            toggleBlockBoth: 'csc-conversations'
+            toggleBlockBoth: 'csc-conversations',
+            deleteFax: 'csc-conversations'
+        }),
+        ...mapWaitingActions('transcriptions', {
+            getVoicemailTranscript: 'csc-transcriptions'
         }),
         ...mapMutations('conversations', [
             'resetList'
@@ -239,17 +315,26 @@ export default {
             if (this.selectedTab === 'call-fax-voicemail') {
                 type = null
             }
+            const fullFilters = {}
+            if (this.filter) {
+                Object.assign(fullFilters, this.filter)
+            }
+            if (this.filterDirection) {
+                Object.assign(fullFilters, this.filterDirection)
+            }
+
             await this.nextPage({
-                type: type,
-                index: index,
-                filter: this.filter,
-                done: done
+                type,
+                index,
+                filter: fullFilters,
+                done
             }).finally(() => {
                 this.$wait.end('csc-conversations')
             })
         },
         selectTab (tabName) {
             if (this.selectedTab !== tabName) {
+                this.filterDirection = undefined
                 this.forceTabReload(tabName)
             }
         },
@@ -270,12 +355,16 @@ export default {
         forceReload () {
             this.forceTabReload(this.selectedTab)
         },
-        filterTab (tabName) {
+        filterTab (data, tabName) {
+            this.filter = {
+                from: data.from,
+                to: data.to
+            }
             this.forceTabReload(tabName)
         },
         startCall (number) {
             this.$store.commit('call/numberInputChanged', number)
-            this.$root.$emit('start-call', 'audioOnly')
+            this.emitter.$emit('start-call', 'audioOnly')
             this.$router.push('home')
         },
         downloadFax (fax) {
@@ -322,19 +411,37 @@ export default {
                 this.forceReload()
             }
         },
+        async deleteFaxConfirmed (payload) {
+            this.resetList()
+            try {
+                await this.deleteFax(payload)
+            } finally {
+                this.forceReload()
+            }
+        },
         blockedIncoming (item) {
             if (item.direction === 'out') {
                 return this.isNumberIncomingBlocked(item.callee)
-            } else {
-                return this.isNumberIncomingBlocked(item.caller)
             }
+            return this.isNumberIncomingBlocked(item.caller)
         },
         blockedOutgoing (item) {
             if (item.direction === 'out') {
                 return this.isNumberOutgoingBlocked(item.callee)
-            } else {
-                return this.isNumberOutgoingBlocked(item.caller)
             }
+            return this.isNumberOutgoingBlocked(item.caller)
+        },
+        filterCallDirectionEvent (filter) {
+            this.$scrollTo(this.$parent.$el)
+            this.filterDirection = filter
+            this.forceReload()
+        },
+        async getVoicemailTranscription (voicemailId) {
+            await this.getVoicemailTranscript(voicemailId)
+        },
+        addToPhonebookAction (number) {
+            this.$store.commit('subscriber-phonebook/setNumber', number)
+            this.$router.push('subscriber-phonebook/create')
         }
     }
 }

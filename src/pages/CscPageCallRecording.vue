@@ -1,9 +1,18 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 <template>
     <csc-page-sticky
         id="csc-page-call-recording"
     >
+        <csc-dialog-transcript
+            ref="transcriptDialog"
+            :full-width="isTranscriptReady"
+            :text="getTranscriptText"
+            :status="getTranscriptStatus"
+            :is-loading="isLoadingTranscript"
+            @hide="hideTranscriptDialog"
+        />
         <template
-            v-slot:header
+            #header
         >
             <q-btn
                 v-if="!showFilters"
@@ -23,7 +32,7 @@
             />
         </template>
         <template
-            v-slot:toolbar
+            #toolbar
         >
             <csc-call-recording-filters
                 v-if="showFilters"
@@ -32,19 +41,19 @@
                 @filter="filterEvent"
             />
         </template>
-        <template>
+        <div>
             <div class="q-pa-md">
                 <q-table
+                    v-model:pagination="pagination"
                     class="no-shadow"
-                    :data="data"
+                    :rows="data"
                     :columns="columns"
                     :loading="$wait.is('csc-call-recordings')"
                     row-key="name"
                     flat
-                    :pagination.sync="pagination"
                     @request="fetchPaginatedRecordings"
                 >
-                    <template v-slot:header="props">
+                    <template #header="props">
                         <q-tr :props="props">
                             <q-th auto-width />
                             <q-th
@@ -59,7 +68,7 @@
                         </q-tr>
                     </template>
                     <template
-                        v-slot:body="props"
+                        #body="props"
                     >
                         <q-tr
                             :props="props"
@@ -98,20 +107,20 @@
                                 class="table-td-no-padding"
                             >
                                 <q-table
-                                    :data="props.row.files"
+                                    :rows="props.row.files"
                                     :columns="filesColumns"
                                     :loading="$wait.is('csc-call-recordings') && $wait.is('loading-stream-' + props.row.id)"
                                     :hide-pagination="true"
                                     row-key="name"
                                     class="csc-item-odd no-shadow"
                                 >
-                                    <template v-slot:loading>
+                                    <template #loading>
                                         <q-inner-loading
                                             showing
                                             color="primary"
                                         />
                                     </template>
-                                    <template v-slot:header="innerProps">
+                                    <template #header="innerProps">
                                         <q-tr :props="innerProps">
                                             <q-th auto-width />
                                             <q-th
@@ -124,7 +133,7 @@
                                             <q-th auto-width />
                                         </q-tr>
                                     </template>
-                                    <template v-slot:body="innerProps">
+                                    <template #body="innerProps">
                                         <q-tr :props="innerProps">
                                             <q-td auto-width />
                                             <q-td
@@ -137,6 +146,15 @@
                                             <q-td
                                                 class="row justify-end table-td-action-cont"
                                             >
+                                                <q-btn
+                                                    size="md"
+                                                    color="primary"
+                                                    icon="description"
+                                                    dense
+                                                    class="download-btn"
+                                                    flat
+                                                    @click="getTranscript(innerProps.row)"
+                                                />
                                                 <csc-audio-player
                                                     :pausable="true"
                                                     class="player-btns"
@@ -164,25 +182,29 @@
                     </template>
                 </q-table>
             </div>
-        </template>
+        </div>
     </csc-page-sticky>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { mapWaitingActions } from 'vue-wait'
-import { saveAs } from 'file-saver'
-import { showGlobalError, showToast } from 'src/helpers/ui'
 import CscAudioPlayer from 'components/CscAudioPlayer'
+import CscDialogTranscript from 'components/CscDialogTranscript'
 import CscPageSticky from 'components/CscPageSticky'
-import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
 import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
+import { saveAs } from 'file-saver'
+import moment from 'moment'
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { mapWaitingActions } from 'vue-wait-vue3'
+import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
-    name: 'CscCallBlocking',
+    name: 'CscPageCallRecording',
     components: {
         CscAudioPlayer,
         CscPageSticky,
-        CscCallRecordingFilters
+        CscCallRecordingFilters,
+        CscDialogTranscript
     },
     data () {
         return {
@@ -192,8 +214,8 @@ export default {
                     required: true,
                     label: this.$t('Id'),
                     align: 'left',
-                    field: row => row.id,
-                    format: val => `${val}`,
+                    field: (row) => row.id,
+                    format: (val) => `${val}`,
                     sortable: true
                 },
                 {
@@ -201,7 +223,26 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Time'),
-                    field: row => row.time,
+                    field: (row) => {
+                        const momentDate = moment.utc(row.time, 'YYYY-MM-DD HH:mm:SS')
+                        return momentDate.format('LLL')
+                    },
+                    sortable: true
+                },
+                {
+                    name: 'caller',
+                    required: true,
+                    align: 'left',
+                    label: this.$t('Caller'),
+                    field: (row) => (!row.callerName) ? row.caller : row.callerName,
+                    sortable: true
+                },
+                {
+                    name: 'callee',
+                    required: true,
+                    align: 'left',
+                    label: this.$t('Callee'),
+                    field: (row) => (!row.calleeName) ? row.callee : row.calleeName,
                     sortable: true
                 }
             ],
@@ -211,22 +252,22 @@ export default {
                     required: true,
                     label: '#',
                     align: 'left',
-                    field: row => row.id,
-                    format: val => `${val}`
+                    field: (row) => row.id,
+                    format: (val) => `${val}`
                 },
                 {
                     name: 'type',
                     required: true,
                     align: 'left',
                     label: this.$t('Type'),
-                    field: row => row.type
+                    field: (row) => row.type
                 },
                 {
                     name: 'format',
                     required: true,
                     align: 'left',
                     label: this.$t('Format'),
-                    field: row => row.format
+                    field: (row) => row.format
                 }
 
             ],
@@ -235,7 +276,7 @@ export default {
                 sortBy: 'id',
                 descending: false,
                 page: 1,
-                rowsPerPage: 5,
+                rowsPerPage: LIST_DEFAULT_ROWS,
                 rowsNumber: 0
             },
             rowStatus: [],
@@ -252,12 +293,43 @@ export default {
     computed: {
         ...mapGetters('callRecordings', [
             'recordings'
-        ])
+        ]),
+        ...mapGetters('transcriptions', [
+            'getTranscriptText',
+            'getTranscriptStatus'
+        ]),
+        ...mapState('transcriptions', [
+            'transcriptState',
+            'transcript',
+            'transcriptError'
+        ]),
+        isLoadingTranscript () {
+            return this.transcriptState === 'requesting'
+        },
+        isTranscriptReady () {
+            return this.getTranscriptStatus === 'done'
+        }
     },
     watch: {
         recordings () {
-            this.data = this.recordings
-            this.rowStatus = this.recordings.map(rec => {
+            this.data = this.recordings.map((recording) => {
+                const recordingCopy = { ...recording }
+
+                const user = this.getSubscriber()
+                const userCli = user.primary_number.cc + user.primary_number.ac + user.primary_number.sn
+
+                if (recordingCopy.caller && recordingCopy.caller === userCli) {
+                    recordingCopy.callerName = this.$t('Me')
+                }
+
+                if (recordingCopy.callee && recordingCopy.callee === userCli) {
+                    recordingCopy.calleeName = this.$t('Me')
+                }
+
+                return recordingCopy
+            })
+
+            this.rowStatus = this.recordings.map((rec) => {
                 return {
                     id: rec.id,
                     expanded: false
@@ -280,19 +352,26 @@ export default {
             playStreamFile: 'csc-call-recordings',
             fetchFile: 'csc-call-recordings'
         }),
+        ...mapActions('transcriptions', [
+            'clearTranscriptData',
+            'getCallRecordingsTranscript'
+        ]),
+        ...mapGetters('user', [
+            'getSubscriber'
+        ]),
         async fetchPaginatedRecordings (props) {
             const { page, rowsPerPage, sortBy, descending } = props.pagination
             const { startTime, endTime, caller, callee, callId } = this.filter
             const count = await this.fetchRecordings({
-                page: page,
+                page,
                 rows: rowsPerPage,
                 order_by: sortBy,
                 order_by_direction: descending ? 'desc' : 'asc',
                 start_time: startTime,
                 end_time: endTime,
-                caller: caller ? '*' + caller + '*' : undefined,
-                callee: callee ? '*' + callee + '*' : undefined,
-                call_id: callId ? '*' + callId + '*' : undefined
+                caller: caller ? `*${caller}*` : undefined,
+                callee: callee ? `*${callee}*` : undefined,
+                call_id: callId ? `*${callId}*` : undefined
             })
             this.pagination = { ...props.pagination }
             this.pagination.rowsNumber = count
@@ -309,9 +388,10 @@ export default {
         confirmRowDeletion (rowId) {
             this.$q.dialog({
                 component: CscRemoveDialog,
-                parent: this,
-                title: this.$t('Delete recording'),
-                message: this.$t('You are about to delete recording #{id}', { id: rowId })
+                componentProps: {
+                    title: this.$t('Delete recording'),
+                    message: this.$t('You are about to delete recording #{id}', { id: rowId })
+                }
             }).onOk(() => {
                 this.deleteRecord(rowId)
             })
@@ -328,26 +408,44 @@ export default {
                 showGlobalError(this.$t('Something went wrong. Please retry later'))
             }
         },
+        getTranscript (data) {
+            this.getCallRecordingsTranscript({
+                transcript: data.transcript,
+                transcriptStatus: data.transcript_status
+            })
+            this.$refs.transcriptDialog.show()
+        },
+        hideTranscriptDialog () {
+            this.$refs.transcriptDialog.hide()
+            this.clearTranscriptData()
+        },
         isRowExpanded (id) {
-            const rowStatus = this.rowStatus.filter(row => row.id === id)[0] || null
+            const rowStatus = this.rowStatus.filter((row) => row.id === id)[0] || null
             return rowStatus && rowStatus.expanded
         },
         async updateCollapseArray (id) {
-            const recording = this.recordings.filter(rec => rec.id === id)[0]
-            const rowStatus = this.rowStatus.filter(row => row.id === id)[0]
+            // Find the recording in our local data copy, not the store
+            const recording = this.data.filter((rec) => rec.id === id)[0]
+            const rowStatus = this.rowStatus.filter((row) => row.id === id)[0]
             rowStatus.expanded = !rowStatus.expanded
             if (rowStatus.expanded && recording.files.length === 0) {
-                this.$wait.start('loading-stream-' + id)
+                this.$wait.start(`loading-stream-${id}`)
                 try {
                     await this.fetchStreams(id)
+                    // After fetching streams, we need to update our local copy
+                    // since the store has been updated
+                    const updatedRecording = this.recordings.find((rec) => rec.id === id)
+                    if (updatedRecording) {
+                        recording.files = [...updatedRecording.files]
+                    }
                 } finally {
-                    this.$wait.end('loading-stream-' + id)
+                    this.$wait.end(`loading-stream-${id}`)
                 }
             }
         },
         async saveFile (fileId) {
             const file = await this.downloadRecording(fileId)
-            saveAs(file, 'call-recording-' + fileId + '.wav')
+            saveAs(file, `call-recording-${fileId}.wav`)
         },
         filterEvent (filter) {
             this.$scrollTo(this.$parent.$el)
@@ -361,17 +459,17 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="sass" rel="stylesheet/sass" scoped>
 .table-th
-    font-size 15px
+    font-size: 15px
 .table-td-no-padding
-    padding 0px !important // needed to override .q-table td
+    padding: 0px !important // needed to override .q-table td
 .table-td-action-cont
-    min-width 140px
+    min-width: 170px
     .player-btns
-        bottom 9px
-        left 8px
+        bottom: 9px
+        left: 8px
     .download-btn
-        height 30px
+        height: 30px
 
 </style>

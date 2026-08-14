@@ -8,12 +8,12 @@
         @toggle="toggle"
     >
         <template
-            slot="title"
+            #title
         >
             <csc-list-item-title
                 :icon="getTitleIcon"
             >
-                {{ subscriber | displayName }}
+                {{ $filters.displayName(subscriber) }}
             </csc-list-item-title>
             <q-slide-transition>
                 <csc-list-item-subtitle
@@ -50,7 +50,7 @@
                 </csc-list-item-subtitle>
             </q-slide-transition>
         </template>
-        <template slot="menu">
+        <template #menu>
             <csc-list-menu-item
                 icon="delete"
                 icon-color="negative"
@@ -60,7 +60,7 @@
             </csc-list-menu-item>
         </template>
         <template
-            slot="body"
+            #body
         >
             <q-select
                 v-model="changes.secretaryNumbers"
@@ -71,11 +71,12 @@
                 :disable="loading || numberOptionsLoading"
                 :readonly="loading"
                 :label="$t('Select secretary numbers')"
+                data-cy="csc-manager-secretary-dropdown"
                 :options="numberOptions"
             >
                 <template
                     v-if="hasSecretaryNumbersChanged"
-                    v-slot:append
+                    #append
                 >
                     <csc-input-button-save
                         @click.stop="saveSecretaryNumbers"
@@ -90,13 +91,13 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import CscListItem from '../../CscListItem'
-import CscListItemTitle from '../../CscListItemTitle'
-import CscListItemSubtitle from '../../CscListItemSubtitle'
-import CscListMenuItem from '../../CscListMenuItem'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import CscListItem from 'components/CscListItem'
+import CscListItemSubtitle from 'components/CscListItemSubtitle'
+import CscListItemTitle from 'components/CscListItemTitle'
+import CscListMenuItem from 'components/CscListMenuItem'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import _ from 'lodash'
 export default {
     name: 'CscPbxMsConfig',
     components: {
@@ -137,6 +138,7 @@ export default {
             default: false
         }
     },
+    emits: ['save-secretary-numbers', 'expand', 'collapse', 'remove', 'ready'],
     data () {
         return {
             changes: this.getDefaultData()

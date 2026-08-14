@@ -52,46 +52,55 @@
             class="csc-card-list"
         >
             <q-list
-                v-for="(item, index) in itemsList"
+                v-for="(item, index) in shortItemsList"
                 :key="item.id"
             >
-                <q-item>
-                    <q-item-section avatar>
-                        <q-icon
-                            v-if="!item.clickable_icon"
-                            :color="item.icon.color"
-                            clickable
-                            :name="item.icon.name"
-                        />
-                        <q-btn
-                            v-if="item.clickable_icon"
-                            flat
-                            :color="item.icon.color"
-                            :icon="item.icon.name"
-                            @click="$emit('action', item.id)"
-                        />
-                    </q-item-section>
+                <template v-if="useSlot">
+                    <slot
+                        name="listItems"
+                        :call="item.call"
+                        :index="index"
+                    />
+                </template>
+                <template v-else>
+                    <q-item>
+                        <q-item-section avatar>
+                            <q-icon
+                                v-if="!item.clickable_icon"
+                                :color="item.icon.color"
+                                clickable
+                                :name="item.icon.name"
+                            />
+                            <q-btn
+                                v-if="item.clickable_icon"
+                                flat
+                                :color="item.icon.color"
+                                :icon="item.icon.name"
+                                @click="$emit('action', item.id)"
+                            />
+                        </q-item-section>
 
-                    <q-item-section>
-                        <q-item-label>{{ item.title }}</q-item-label>
-                        <q-item-label caption>
-                            {{ item.sub_title }}
-                        </q-item-label>
-                    </q-item-section>
+                        <q-item-section>
+                            <q-item-label>{{ item.title }}</q-item-label>
+                            <q-item-label caption>
+                                {{ item.sub_title }}
+                            </q-item-label>
+                        </q-item-section>
 
-                    <q-item-section side>
-                        <q-item-label caption>
-                            {{ item.extra_text }}
-                        </q-item-label>
-                    </q-item-section>
-                </q-item>
+                        <q-item-section side>
+                            <q-item-label caption>
+                                {{ item.extra_text }}
+                            </q-item-label>
+                        </q-item-section>
+                    </q-item>
+                </template>
                 <q-separator
-                    v-if="index !== itemsList.length-1"
+                    v-if="index !== shortItemsList.length-1"
                     spaced
                 />
             </q-list>
             <div
-                v-if="!loading && itemsList.length === 0"
+                v-if="!loading && shortItemsList.length === 0"
                 class="text-center"
             >
                 {{ error ? $t('Data loading error') : noItemsMessage }}
@@ -111,7 +120,7 @@
         />
 
         <q-card-section
-            class="text-center"
+            class="csc-card-footer text-center justify-center"
         >
             <q-btn
                 color="primary"
@@ -119,6 +128,7 @@
                 flat
                 :label="buttonTitle"
                 :to="routeTo"
+                class="vertical-middle  justify-center"
             />
         </q-card-section>
     </q-card>
@@ -169,22 +179,35 @@ export default {
         noItemsMessage: {
             type: String,
             default: ''
+        },
+        useSlot: {
+            type: Boolean,
+            default: false
+        }
+    },
+    emits: ['action'],
+    computed: {
+        shortItemsList () {
+            return this.itemsList.length >= 5 ? this.itemsList.slice(0, 5) : this.itemsList
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-card-style
-        margin 10px
-        width 30%
-        height max-content
-        min-width 284px
+<style lang="sass" rel="stylesheet/sass">
+.csc-card-style
+    margin: 10px
+    width: 30%
+    height: max-content
+    min-width: 284px
 
-    .csc-card-data-error
-        color: $negative
-        padding-bottom: 22px
+.csc-card-data-error
+    color: $negative
+    padding-bottom: 22px
 
-    .csc-card-list
-        min-height: 359px
+.csc-card-list
+    height:  450px
+
+.csc-card-footer
+    height: 80px
 </style>

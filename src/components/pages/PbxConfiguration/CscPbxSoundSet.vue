@@ -4,107 +4,50 @@
         icon="queue_music"
         :odd="odd"
         :loading="loading"
-        :expanded="expanded"
-        @toggle="toggle"
+        :show-more-menu="showMoreMenu"
+        @click="showSoundSetDetails"
     >
         <template
-            slot="title"
+            #title
         >
             <csc-list-item-title>
                 {{ soundSet.name }}
             </csc-list-item-title>
             <q-slide-transition>
                 <csc-list-item-subtitle
-                    v-if="!expanded && soundSet.description"
+                    v-if="soundSet.description"
                 >
                     {{ soundSet.description }}
                 </csc-list-item-subtitle>
             </q-slide-transition>
             <q-slide-transition>
                 <csc-list-item-subtitle
-                    v-if="!expanded"
+                    v-if="soundSet.parent_id && parent"
                 >
+                    {{ $t('Parent') + ': ' + parent.name }}
+                </csc-list-item-subtitle>
+                <csc-list-item-subtitle
+                    v-else
+                >
+                    {{ $t('No parents assigned') }}
+                </csc-list-item-subtitle>
+            </q-slide-transition>
+            <q-slide-transition>
+                <csc-list-item-subtitle>
                     <q-checkbox
-                        :value="soundSet.contract_default"
+                        :model-value="soundSet.contract_default"
                         :label="$t('Default')"
+                        :disable="!soundSet.customer_id"
                         :left-label="true"
-                        @input="saveAsDefault"
+                        @update:model-value="saveAsDefault"
                     />
                 </csc-list-item-subtitle>
             </q-slide-transition>
         </template>
         <template
-            slot="body"
+            v-if="soundSet.customer_id"
+            #menu
         >
-            <q-input
-                v-model="changes.name"
-                :error="$v.changes.name.$error"
-                :label="$t('Name')"
-                @input="$v.changes.name.$touch"
-                @keyup.enter="save"
-            >
-                <template
-                    v-if="hasNameChanged"
-                    v-slot:append
-                >
-                    <csc-input-button-save
-                        v-if="!$v.changes.name.$error"
-                        @click.stop="save"
-                    />
-                    <csc-input-button-reset
-                        @click.stop="resetName"
-                    />
-                </template>
-            </q-input>
-            <q-input
-                v-model="changes.description"
-                :error="$v.changes.description.$error"
-                :label="$t('Description')"
-                @input="$v.changes.description.$touch"
-                @keyup.enter="save"
-            >
-                <template
-                    v-if="hasDescriptionChanged"
-                    v-slot:append
-                >
-                    <csc-input-button-save
-                        v-if="!$v.changes.description.$error"
-                        @click.stop="save"
-                    />
-                    <csc-input-button-reset
-                        @click.stop="resetDescription"
-                    />
-                </template>
-            </q-input>
-            <q-checkbox
-                :label="$t('Default sound set for all seats and groups')"
-                :value="soundSet.contract_default"
-                @input="saveAsDefault"
-            />
-            <csc-list-spinner
-                v-if="soundHandlesLoading || soundFilesLoading"
-            />
-            <div
-                v-if="!soundHandlesLoading && soundHandles.length > 0 && !soundFilesLoading"
-                class="csc-pbx-sound-set-sound-list"
-            >
-                <csc-pbx-sound-set-sound
-                    v-for="(soundHandle, index) in soundHandles"
-                    :key="soundHandle.id"
-                    :odd="(index % 2) === 0"
-                    :sound-handle="soundHandle"
-                    :sound-file="soundFileMap[soundSet.id + '-' + soundHandle.handle]"
-                    :sound-file-url="soundFileUrlMap[soundSet.id + '-' + soundHandle.handle]"
-                    :sound-file-upload-state="soundFileUploadState[soundSet.id + '-' + soundHandle.handle]"
-                    :sound-file-upload-progress="soundFileUploadProgress[soundSet.id + '-' + soundHandle.handle]"
-                    :sound-file-update-state="soundFileUpdateState[soundSet.id + '-' + soundHandle.handle]"
-                    @play="playSoundFile"
-                    @upload="uploadSoundFile"
-                    @toggle-loop-play="toggleLoopPlay"
-                />
-            </div>
-        </template>
-        <template slot="menu">
             <csc-list-menu-item
                 icon="delete"
                 icon-color="negative"
@@ -117,25 +60,15 @@
 </template>
 
 <script>
-import {
-    maxLength
-} from 'vuelidate/lib/validators'
-import CscListItem from '../../CscListItem'
-import CscListItemTitle from '../../CscListItemTitle'
-import CscListItemSubtitle from '../../CscListItemSubtitle'
-import CscListMenuItem from '../../CscListMenuItem'
-import CscPbxSoundSetSound from './CscPbxSoundSetSound'
-import CscListSpinner from '../../CscListSpinner'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscListItem from 'components/CscListItem'
+import CscListItemSubtitle from 'components/CscListItemSubtitle'
+import CscListItemTitle from 'components/CscListItemTitle'
+import CscListMenuItem from 'components/CscListMenuItem'
+import { mapState } from 'vuex'
 
 export default {
     name: 'CscPbxSoundSet',
     components: {
-        CscInputButtonReset,
-        CscInputButtonSave,
-        CscListSpinner,
-        CscPbxSoundSetSound,
         CscListMenuItem,
         CscListItemSubtitle,
         CscListItemTitle,
@@ -150,75 +83,24 @@ export default {
             type: Boolean,
             default: false
         },
-        expanded: {
-            type: Boolean,
-            default: false
-        },
         soundSet: {
             type: Object,
             default: null
-        },
-        soundHandles: {
-            type: Array,
-            default: () => []
-        },
-        soundHandlesLoading: {
-            type: Boolean,
-            default: false
-        },
-        soundFileMap: {
-            type: Object,
-            default: null
-        },
-        soundFilesLoading: {
-            type: Boolean,
-            default: false
-        },
-        soundFileUrlMap: {
-            type: Object,
-            default: null
-        },
-        soundFileUploadState: {
-            type: Object,
-            default: null
-        },
-        soundFileUploadProgress: {
-            type: Object,
-            default: null
-        },
-        soundFileUpdateState: {
-            type: Object,
-            default: null
         }
     },
-    data () {
-        return {
-            changes: this.getDefaultData()
-        }
-    },
-    validations: {
-        changes: {
-            name: {
-                maxLength: maxLength(64)
-            },
-            description: {
-                maxLength: maxLength(255)
-            }
-        }
-    },
+    emits: ['save-as-default', 'remove'],
     computed: {
-        hasNameChanged () {
-            return this.changes.name !== this.getDefaultData().name
+        ...mapState('pbxSoundSets', [
+            'soundSetList'
+        ]),
+        parent () {
+            return this.soundSet.parent_id ? this.soundSetList.find((soundSet) => this.soundSet.parent_id === soundSet.id) : null
         },
-        hasDescriptionChanged () {
-            return this.changes.description !== this.getDefaultData().description
-        }
-    },
-    watch: {
-        expanded (expanded) {
-            if (expanded) {
-                this.$emit('require-sound-handles')
+        showMoreMenu () {
+            if (this.soundSet.customer_id) {
+                return true
             }
+            return false
         }
     },
     methods: {
@@ -234,58 +116,15 @@ export default {
             }
             this.$emit('remove', this.soundSet.id)
         },
-        toggle () {
-            if (this.expanded) {
-                this.$emit('collapse')
-            } else {
-                this.$emit('expand')
-            }
-        },
-        getDefaultData () {
-            return {
-                name: this.soundSet.name,
-                description: this.soundSet.description,
-                contract_default: this.soundSet.contract_default
-            }
-        },
-        resetName () {
-            this.changes.name = this.getDefaultData().name
-        },
-        resetDescription () {
-            this.changes.description = this.getDefaultData().description
-        },
-        playSoundFile (data) {
-            this.$emit('play-sound-file', data)
-        },
-        uploadSoundFile (options) {
-            this.$emit('upload-sound-file', {
-                soundSetId: this.soundSet.id,
-                soundHandle: options.soundHandle,
-                soundFileData: options.soundFileData
-            })
-        },
-        toggleLoopPlay (options) {
-            this.$emit('toggle-loop-play', options)
-        },
-        save () {
-            if (this.hasNameChanged) {
-                this.$emit('save-name', {
-                    soundSetId: this.soundSet.id,
-                    name: this.changes.name
-                })
-            }
-            if (this.hasDescriptionChanged) {
-                this.$emit('save-description', {
-                    soundSetId: this.soundSet.id,
-                    description: this.changes.description
-                })
-            }
+        showSoundSetDetails () {
+            this.$router.push(`/user/pbx-configuration/sound-sets/${this.soundSet.id}`)
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-pbx-sound-set-sound-list
-        margin-top $flex-gutter-sm
+<style lang="sass" rel="stylesheet/sass">
+
+.csc-pbx-sound-set-sound-list
+    margin-top: $flex-gutter-sm
 </style>

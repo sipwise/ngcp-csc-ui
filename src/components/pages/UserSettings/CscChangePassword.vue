@@ -27,7 +27,7 @@
                         :label="$t('New password')"
                     >
                         <template
-                            v-slot:prepend
+                            #prepend
                         >
                             <q-icon
                                 name="lock"
@@ -41,7 +41,7 @@
                         :label="$t('New password retyped')"
                     >
                         <template
-                            v-slot:prepend
+                            #prepend
                         >
                             <q-icon
                                 name="lock"
@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import CscObjectSpinner from '../../CscObjectSpinner'
+import CscObjectSpinner from 'components/pages/components/CscObjectSpinner'
 
 export default {
     name: 'CscChangePassword',
@@ -97,6 +97,7 @@ export default {
             default: false
         }
     },
+    emits: ['change'],
     data () {
         return {
             inputEnabled: false,
@@ -132,11 +133,11 @@ export default {
         openConfirmDialog () {
             this.$q.dialog({
                 title: this.$t('Change login password'),
-                message: this.$t('You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password. '),
+                message: this.$t('You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password.'),
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.submit()
             })
         }

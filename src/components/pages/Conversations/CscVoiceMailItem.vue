@@ -1,5 +1,13 @@
 <template>
     <q-item>
+        <csc-dialog-transcript
+            ref="transcriptDialog"
+            :full-width="isTranscriptReady"
+            :text="getTranscriptText"
+            :status="getTranscriptStatus"
+            :is-loading="isLoadingTranscript"
+            @hide="hideTranscriptDialog"
+        />
         <q-item-section
             side
             top
@@ -15,12 +23,12 @@
             >
                 {{ $t('Voicemail') }}
                 {{ direction }}
-                {{ voiceMail.caller | destinationFormat }}
+                {{ $filters.destinationFormat(voicemailCaller) }}
             </q-item-label>
             <q-item-label
                 caption
             >
-                {{ voiceMail.start_time | smartTime }}
+                {{ $filters.smartTime(voiceMail.start_time) }}
             </q-item-label>
             <q-item-label
                 caption
@@ -28,6 +36,13 @@
                 {{ $t('Duration') }}
                 {{ voiceMail.duration }}
                 {{ $t('seconds') }}
+            </q-item-label>
+            <q-item-label
+                v-if="voiceMail.folder"
+                caption
+            >
+                {{ $t('Folder : ') }}
+                {{ voiceMail.folder.toUpperCase() }}
             </q-item-label>
             <csc-audio-player
                 ref="voicemailPlayer"
@@ -46,6 +61,12 @@
                     color="primary"
                     :label="$t('Download voicemail')"
                     @click="downloadVoiceMail"
+                />
+                <csc-popup-menu-item
+                    icon="description"
+                    color="primary"
+                    :label="$t('Transcript')"
+                    @click="getVoicemailTranscript"
                 />
                 <csc-popup-menu-item-start-call
                     v-if="callAvailable"
@@ -78,14 +99,16 @@
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
-import CscAudioPlayer from '../../CscAudioPlayer'
+import CscAudioPlayer from 'components/CscAudioPlayer'
+import CscDialogTranscript from 'components/CscDialogTranscript'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
+import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
+import { showGlobalError } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
+import { mapActions, mapGetters, mapState } from 'vuex'
+
 export default {
     name: 'CscVoiceMailItem',
     components: {
@@ -93,7 +116,8 @@ export default {
         CscPopupMenuItemStartCall,
         CscPopupMenuItem,
         CscMoreMenu,
-        CscAudioPlayer
+        CscAudioPlayer,
+        CscDialogTranscript
     },
     props: {
         voiceMail: {
@@ -121,6 +145,16 @@ export default {
             default: false
         }
     },
+    emits: [
+        'delete-voicemail',
+        'toggle-block-both',
+        'toggle-block-outgoing',
+        'toggle-block-incoming',
+        'start-call',
+        'download-voice-mail',
+        'play-voice-mail',
+        'get-voicemail-transcript'
+    ],
     data () {
         return {
             platform: this.$q.platform.is
@@ -131,12 +165,33 @@ export default {
             'playVoiceMailState',
             'playVoiceMailUrl'
         ]),
+        ...mapState('conversations', [
+            'playVoiceMailErrors',
+            'playVoiceMailStates'
+        ]),
+        ...mapGetters('transcriptions', [
+            'getTranscriptText',
+            'getTranscriptStatus'
+        ]),
+        ...mapState('transcriptions', [
+            'transcriptState',
+            'transcript',
+            'transcriptError'
+        ]),
         direction () {
             if (this.voiceMail.direction === 'out') {
                 return 'to'
-            } else {
-                return 'from'
             }
+            return 'from'
+        },
+        isLoadingTranscript () {
+            return this.transcriptState === 'requesting'
+        },
+        isTranscriptReady () {
+            return this.getTranscriptStatus === 'done'
+        },
+        voicemailCaller () {
+            return this.voiceMail.caller_phonebook_name || this.voiceMail.caller
         },
         soundFileFormat () {
             return this.platform.mozilla ? 'ogg' : 'mp3'
@@ -148,8 +203,27 @@ export default {
         voiceMailLoaded () {
             return this.playVoiceMailState(this.voiceMail.id) === 'succeeded'
         }
+
+    },
+    watch: {
+        playVoiceMailStates: {
+            deep: true,
+            handler (state) {
+                if (state[this.voiceMail.id] === RequestState.failed) {
+                    showGlobalError(this.playVoiceMailErrors[this.voiceMail.id])
+                }
+            }
+        },
+        transcriptState (state) {
+            if (state === RequestState.failed) {
+                return showGlobalError(this.transcriptError)
+            }
+        }
     },
     methods: {
+        ...mapActions('transcriptions', [
+            'clearTranscriptData'
+        ]),
         playVoiceMail () {
             this.$emit('play-voice-mail', {
                 id: this.voiceMail.id,
@@ -163,6 +237,14 @@ export default {
             this.playVoiceMail()
             this.$refs.voicemailPlayer.setPlayingTrue()
             this.$refs.voicemailPlayer.setPausedFalse()
+        },
+        getVoicemailTranscript () {
+            this.$emit('get-voicemail-transcript', this.voiceMail.id)
+            this.$refs.transcriptDialog.show()
+        },
+        hideTranscriptDialog () {
+            this.$refs.transcriptDialog.hide()
+            this.clearTranscriptData()
         },
         startCall () {
             this.$emit('start-call', this.voiceMail.callee)

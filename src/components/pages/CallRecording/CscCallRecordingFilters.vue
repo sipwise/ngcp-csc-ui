@@ -11,6 +11,7 @@
                     dense
                     :options="filterTypeOptions"
                     :label="$t('Filter by')"
+                    data-cy="csc-recording-filter"
                     :disable="loading"
                 />
             </div>
@@ -24,8 +25,9 @@
                     dense
                     :disable="loading || filterType === null"
                     :label="$t('Start time')"
+                    data-cy="csc-recording-filter-time-start"
                 >
-                    <template v-slot:prepend>
+                    <template #prepend>
                         <q-icon
                             name="event"
                             class="cursor-pointer"
@@ -54,7 +56,7 @@
                         </q-icon>
                     </template>
 
-                    <template v-slot:append>
+                    <template #append>
                         <q-icon
                             name="access_time"
                             class="cursor-pointer"
@@ -88,9 +90,10 @@
                     dense
                     :disable="loading || filterType === null"
                     :label="$t('End time')"
+                    data-cy="csc-recording-filter-time-end"
                     @input="triggerFilter"
                 >
-                    <template v-slot:prepend>
+                    <template #prepend>
                         <q-icon
                             name="event"
                             class="cursor-pointer"
@@ -118,7 +121,7 @@
                         </q-icon>
                     </template>
 
-                    <template v-slot:append>
+                    <template #append>
                         <q-icon
                             name="access_time"
                             class="cursor-pointer"
@@ -157,10 +160,11 @@
                     dense
                     :disable="loading || filterType === null"
                     :label="(filterType === null) ? $t('Type something') : filterTypeModel.label"
+                    data-cy="csc-recording-filter-input"
                     @keypress.enter="triggerFilter"
                     @keydown.space.prevent
                 >
-                    <template v-slot:append>
+                    <template #append>
                         <q-icon
                             name="search"
                             class="cursor-pointer"
@@ -205,6 +209,7 @@ export default {
             default: false
         }
     },
+    emits: ['filter'],
     data () {
         return {
             filterTypeModel: null,
@@ -246,18 +251,18 @@ export default {
                 const filterDisplayValue = filterItem.value
                 let filterName
                 switch (filterItem.name) {
-                case 'startTime':
-                    filterName = this.$t('Start time')
-                    break
-                case 'endTime' :
-                    filterName = this.$t('End time')
-                    break
-                default:
-                    filterName = this.filterTypeOptions.find(option => option.value === filterItem.name).label
+                    case 'startTime':
+                        filterName = this.$t('Start time')
+                        break
+                    case 'endTime' :
+                        filterName = this.$t('End time')
+                        break
+                    default:
+                        filterName = this.filterTypeOptions.find((option) => option.value === filterItem.name).label
                 }
                 return {
                     id: filterItem.name,
-                    filterInfo: filterName + ': ' + filterDisplayValue
+                    filterInfo: `${filterName}: ${filterDisplayValue}`
                 }
             })
         }
@@ -272,7 +277,7 @@ export default {
             this.addFilter(this.filterTypeModel?.value, this.typedFilter)
         },
         removeFilter (name) {
-            this.filters = this.filters.filter(item => item.name !== name)
+            this.filters = this.filters.filter((item) => item.name !== name)
             this.filter()
         },
         removeFilters () {
@@ -285,9 +290,9 @@ export default {
             const valueTrimmed = _.trim(value)
             if (valueTrimmed) {
                 this.resetFilters()
-                this.filters = this.filters.filter(item => item.name !== name)
+                this.filters = this.filters.filter((item) => item.name !== name)
                 const filter = {
-                    name: name,
+                    name,
                     value: valueTrimmed
                 }
                 this.filters.push(filter)
@@ -296,7 +301,7 @@ export default {
         },
         filter () {
             const params = {}
-            this.filters.forEach(filter => {
+            this.filters.forEach((filter) => {
                 params[filter.name] = filter.value
             })
             this.$emit('filter', params)

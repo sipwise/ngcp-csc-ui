@@ -2,23 +2,32 @@
     <div>
         <q-input
             v-model="data.name"
-            :error="$v.data.name.$error"
+            :error="v$.data.name.$errors.length > 0"
             :error-message="nameErrorMessage"
             :disable="loading"
             :readonly="loading"
             :label="$t('Name')"
             hide-bottom-space
-            @input="$v.data.name.$touch"
+            @update:model-value="v$.data.name.$touch()"
         />
         <q-input
             v-model="data.description"
-            :error="$v.data.description.$error"
+            :error="v$.data.description.$errors.length > 0"
             :error-message="descriptionErrorMessage"
             :disable="loading"
             :readonly="loading"
             :label="$t('Description')"
             hide-bottom-space
-            @input="$v.data.description.$touch"
+            @update:model-value="v$.data.description.$touch()"
+        />
+        <q-select
+            v-model="data.parent_id"
+            emit-value
+            map-options
+            :disable="loading"
+            :readonly="loading"
+            :options="getParentOptions"
+            :label="$t('Parent')"
         />
         <div
             class="q-mb-sm q-mt-sm"
@@ -34,7 +43,7 @@
                 v-model="data.copy_from_default"
                 :disable="loading"
                 :label="$t('Use language specific preset')"
-                @input="toggleLoadFiles"
+                @update:model-value="toggleLoadFiles"
             />
         </div>
         <q-select
@@ -76,7 +85,7 @@
                 flat
                 color="primary"
                 icon="queue_music"
-                :disable="$v.data.$invalid || !data.language"
+                :disable="v$.data.$invalid || !data.language"
                 @click="save()"
             >
                 {{ $t('Create sound set') }}
@@ -90,11 +99,13 @@
 </template>
 
 <script>
+import useValidate from '@vuelidate/core'
 import {
-    required,
-    maxLength
-} from 'vuelidate/lib/validators'
-import CscObjectSpinner from '../../CscObjectSpinner'
+    maxLength,
+    required
+} from '@vuelidate/validators'
+import CscObjectSpinner from 'components/CscObjectSpinner'
+import { mapState } from 'vuex'
 
 export default {
     name: 'CscPbxSoundSetAddForm',
@@ -107,6 +118,7 @@ export default {
             default: false
         }
     },
+    emits: ['save', 'cancel'],
     validations: {
         data: {
             name: {
@@ -124,6 +136,14 @@ export default {
             data: this.getDefaults(),
             languageOptions: [
                 {
+                    value: 'ar',
+                    label: 'Arabic'
+                },
+                {
+                    value: 'de',
+                    label: 'German'
+                },
+                {
                     value: 'en',
                     label: 'English'
                 },
@@ -132,48 +152,68 @@ export default {
                     label: 'Spanish'
                 },
                 {
+                    value: 'fr',
+                    label: 'French'
+                },
+                {
+                    value: 'he',
+                    label: 'Hebrew'
+                },
+                {
                     value: 'it',
                     label: 'Italian'
                 },
                 {
-                    value: 'ro',
-                    label: 'Romanian'
+                    value: 'nl',
+                    label: 'Dutch'
                 },
                 {
-                    value: 'de',
-                    label: 'German'
+                    value: 'pt',
+                    label: 'Portuguese'
+                },
+                {
+                    value: 'pt_br',
+                    label: 'Brazilian'
+                },
+                {
+                    value: 'ro',
+                    label: 'Romanian'
                 }
-            ]
+            ],
+            v$: useValidate()
         }
     },
     computed: {
+        ...mapState('pbxSoundSets', [
+            'soundSetList'
+        ]),
         nameErrorMessage () {
-            if (!this.$v.data.name.required) {
+            const errorsTab = this.v$.data.name.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Name')
                 })
-            } else if (!this.$v.data.name.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Name'),
-                    maxLength: this.$v.data.name.$params.maxLength.max
+                    maxLength: this.v$.data.name.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         descriptionErrorMessage () {
-            if (!this.$v.data.description.required) {
+            const errorsTab = this.v$.data.description.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
                 return this.$t('{field} is required', {
                     field: this.$t('Description')
                 })
-            } else if (!this.$v.data.description.maxLength) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Description'),
-                    maxLength: this.$v.data.description.$params.maxLength.max
+                    maxLength: this.v$.data.description.maxLength.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         contractDefaultClasses () {
             const classes = []
@@ -201,6 +241,22 @@ export default {
                 classes.push('csc-toggle-disabled')
             }
             return classes
+        },
+        getParentOptions () {
+            const parentOptions = [
+                {
+                    label: this.$t('Unassigned'),
+                    value: null
+                }
+            ]
+            this.soundSetList.map((soundSet) => {
+                parentOptions.push({
+                    label: soundSet.name,
+                    value: soundSet.id
+                })
+                return soundSet
+            })
+            return parentOptions
         }
     },
     methods: {
@@ -212,7 +268,8 @@ export default {
                 language: 'en',
                 contract_default: false,
                 copy_from_default: false,
-                description: ''
+                description: '',
+                parent_id: null
             }
         },
         cancel () {
@@ -223,7 +280,7 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
+            this.v$.$reset()
         },
         toggleLoadFiles () {
             this.data.language = 'en'

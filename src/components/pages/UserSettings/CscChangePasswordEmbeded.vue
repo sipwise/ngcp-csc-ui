@@ -8,7 +8,7 @@
                     icon="lock"
                     flat
                     color="primary"
-                    :label="btnLabel"
+                    :label="buttonLabel"
                     @click="enableInput"
                 />
             </div>
@@ -19,8 +19,9 @@
             >
                 <csc-input-password-retype
                     v-model="passwordConfirmed"
-                    :password-label="passwordLabel"
-                    :password-confirm-label="passwordConfirmLabel"
+                    :password-label="passLabel"
+                    :password-confirm-label="passConfirmLabel"
+                    :password-type="passwordType"
                     @validation-failed="isValid=false"
                     @validation-succeeded="isValid=true"
                 />
@@ -42,7 +43,7 @@
                         :disable="!isValid"
                         @click="openConfirmDialog"
                     >
-                        {{ saveButtonLabel }}
+                        {{ saveLabel }}
                     </q-btn>
                 </div>
             </div>
@@ -57,8 +58,8 @@
 
 <script>
 
-import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
 import CscSpinner from 'components/CscSpinner'
+import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
 export default {
     name: 'CscChangePasswordEmbedded',
     components: { CscSpinner, CscInputPasswordRetype },
@@ -70,25 +71,25 @@ export default {
         saveButtonLabel: {
             type: String,
             default () {
-                return this.$t('Save')
+                return ''
             }
         },
         btnLabel: {
             type: String,
             default () {
-                return this.$t('Change password')
+                return ''
             }
         },
         passwordLabel: {
             type: String,
             default () {
-                return this.$t('Password')
+                return ''
             }
         },
         passwordConfirmLabel: {
             type: String,
             default () {
-                return this.$t('Password confirm')
+                return ''
             }
         },
         saveConformationText: {
@@ -98,8 +99,13 @@ export default {
         password: {
             type: String,
             default: ''
+        },
+        passwordType: {
+            type: String,
+            default: 'web'
         }
     },
+    emits: ['change'],
     data () {
         return {
             inputEnabled: false,
@@ -108,6 +114,20 @@ export default {
                 passwordRetype: ''
             },
             isValid: false
+        }
+    },
+    computed: {
+        saveLabel () {
+            return this.saveButtonLabel === '' ? this.$t('Save') : this.saveButtonLabel
+        },
+        buttonLabel () {
+            return this.btnLabel === '' ? this.$t('Change password') : this.btnLabel
+        },
+        passLabel () {
+            return this.passwordLabel === '' ? this.$t('Password') : this.passwordLabel
+        },
+        passConfirmLabel () {
+            return this.passwordConfirmLabel === '' ? this.$t('Password confirm') : this.passwordConfirmLabel
         }
     },
     methods: {
@@ -129,12 +149,12 @@ export default {
         openConfirmDialog () {
             if (this.saveConformationText) {
                 this.$q.dialog({
-                    title: this.btnLabel,
+                    title: this.buttonLabel,
                     message: this.saveConformationText,
                     color: 'primary',
                     cancel: true,
                     persistent: true
-                }).onOk(data => {
+                }).onOk((data) => {
                     this.submit()
                 })
             } else {

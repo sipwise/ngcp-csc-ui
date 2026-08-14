@@ -7,12 +7,14 @@
             class="col col-xs-12 col-md-6"
         >
             <csc-voicebox-language
+                v-if="defaultLanguage"
                 :value="language"
                 :language-options="languages"
                 :default-language-option="{
                     label: defaultLanguage,
                     value: defaultLanguage
                 }"
+                :disabled="disableLanguage"
                 :loading="$wait.is('processing subscriberPreferences')"
                 @input="selectLanguage"
             />
@@ -21,6 +23,7 @@
                     <csc-input-saveable
                         v-model="formData.pin"
                         icon="lock"
+                        data-cy="voicebox-change-pin"
                         :label="$t('Change PIN')"
                         :loading="pinLoading"
                         :value-changed="pinHasChanged"
@@ -41,6 +44,7 @@
                         v-model="formData.email"
                         icon="email"
                         :label="$t('Change Email')"
+                        data-cy="voicebox-change-email"
                         :loading="emailLoading"
                         :value-changed="emailHasChanged"
                         :error="emailHasError"
@@ -57,13 +61,17 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        v-model="formData.attach"
+                        :model-value="formData.attach"
                         :loading="attachLoading"
                         :disable="attachLoading"
                         :label="attachLabel"
+                        data-cy="voicebox-attach-file"
                         checked-icon="attach_file"
                         unchecked-icon="attach_file"
-                        @input="attachToggleAction(!attachValue)"
+                        @update:model-value="attachToggleAction({
+                            attachValue: !attachValue,
+                            subscriberId: id
+                        })"
                     />
                 </q-item-section>
                 <q-item-section
@@ -78,13 +86,17 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        v-model="formData.delete"
+                        :model-value="formData.delete"
                         :loading="deleteLoading"
                         :disable="deleteLoading || !attachValue"
                         :label="deleteLabel"
+                        data-cy="voicebox-delete-file"
                         checked-icon="delete"
                         unchecked-icon="delete"
-                        @input="deleteToggleAction(!deleteValue)"
+                        @update:model-value="deleteToggleAction({
+                            deleteValue: !deleteValue,
+                            subscriberId: id
+                        })"
                     />
                 </q-item-section>
                 <q-item-section
@@ -110,10 +122,11 @@
                         :uploaded="busyGreetingId !== null"
                         :file-url="busyGreetingUrl"
                         :loaded="busyGreetingFileLoaded"
+                        data-cy="voicebox-busy-greeting"
                         delete-term="revert"
                         @init="busyGreetingInitAudio"
                         @remove="busyGreetingDeletionConfirmation"
-                        @upload="busyGreetingUpload"
+                        @upload="selectFileBusyGreeting"
                         @abort="busyGreetingUploadAbort"
                     />
                 </q-item-section>
@@ -132,11 +145,58 @@
                         :updating="unavailableGreetingUploading || unavailableGreetingDeleting || settingsLoading"
                         :file-url="unavailableGreetingUrl"
                         :loaded="unavailableGreetingFileLoaded"
+                        data-cy="voicebox-unavailable-greeting"
                         delete-term="revert"
                         @init="unavailableGreetingInitAudio"
                         @remove="unavailableGreetingDeletionConfirmation"
-                        @upload="unavailableGreetingUpload"
+                        @upload="selectFileUnavailableGreeting"
                         @abort="unavailableGreetingUploadAbort"
+                    />
+                </q-item-section>
+            </q-item>
+            <q-item>
+                <q-item-section>
+                    <csc-sound-file-upload
+                        ref="uploadTemp"
+                        :icon="soundFileIcon"
+                        :file-types="soundFileTypes"
+                        :float-label="$t('Temp Greeting')"
+                        :value="tempGreetingLabel"
+                        :progress="tempGreetingUploadProgress"
+                        :uploading="tempGreetingUploading"
+                        :uploaded="tempGreetingId !== null"
+                        :updating="tempGreetingUploading || tempGreetingDeleting || settingsLoading"
+                        :file-url="tempGreetingUrl"
+                        :loaded="tempGreetingFileLoaded"
+                        data-cy="voicebox-temp-greeting"
+                        delete-term="revert"
+                        @init="tempGreetingInitAudio"
+                        @remove="tempGreetingDeletionConfirmation"
+                        @upload="selectFileTempGreeting"
+                        @abort="tempGreetingUploadAbort"
+                    />
+                </q-item-section>
+            </q-item>
+            <q-item>
+                <q-item-section>
+                    <csc-sound-file-upload
+                        ref="uploadGreet"
+                        :icon="soundFileIcon"
+                        :file-types="soundFileTypes"
+                        :float-label="$t('Greet Greeting')"
+                        :value="greetGreetingLabel"
+                        :progress="greetGreetingUploadProgress"
+                        :uploading="greetGreetingUploading"
+                        :uploaded="greetGreetingId !== null"
+                        :updating="greetGreetingUploading || greetGreetingDeleting || settingsLoading"
+                        :file-url="greetGreetingUrl"
+                        :loaded="greetGreetingFileLoaded"
+                        data-cy="voicebox-greet-greeting"
+                        delete-term="revert"
+                        @init="greetGreetingInitAudio"
+                        @remove="greetGreetingDeletionConfirmation"
+                        @upload="selectFileGreetGreeting"
+                        @abort="greetGreetingUploadAbort"
                     />
                 </q-item-section>
             </q-item>
@@ -145,34 +205,44 @@
 </template>
 
 <script>
-import {
-    mapMutations,
-    mapActions,
-    mapGetters,
-    mapState
-} from 'vuex'
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import CscPage from 'components/CscPage'
-import CscInputSaveable from 'components/form/CscInputSaveable'
-import CscSoundFileUpload from 'components/form/CscSoundFileUpload'
+import useValidate from '@vuelidate/core'
 import {
     email,
     maxLength,
     numeric
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
+import CscPage from 'components/CscPage'
 import CscSpinner from 'components/CscSpinner'
 import CscVoiceboxLanguage from 'components/CscVoiceboxLanguage'
-import { mapWaitingActions } from 'vue-wait'
+import CscInputSaveable from 'components/form/CscInputSaveable'
+import CscSoundFileUpload from 'components/form/CscSoundFileUpload'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import {
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
+import { mapWaitingActions } from 'vue-wait-vue3'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 export default {
+    name: 'CscPageVoicebox',
     components: {
         CscVoiceboxLanguage,
         CscSpinner,
         CscPage,
         CscInputSaveable,
         CscSoundFileUpload
+    },
+    props: {
+        id: {
+            type: String,
+            default: ''
+        }
     },
     data () {
         return {
@@ -182,7 +252,8 @@ export default {
                 attach: this.attachValue,
                 delete: this.deleteValue
             },
-            platform: this.$q.platform.is
+            platform: this.$q.platform.is,
+            v$: useValidate()
         }
     },
     validations: {
@@ -209,7 +280,41 @@ export default {
             'busyGreetingUploadProgress',
             'unavailableGreetingId',
             'unavailableGreetingUrl',
-            'unavailableGreetingUploadProgress'
+            'unavailableGreetingUploadProgress',
+            'tempGreetingId',
+            'tempGreetingUrl',
+            'tempGreetingUploadProgress',
+            'greetGreetingId',
+            'greetGreetingUrl',
+            'greetGreetingUploadProgress',
+            'attachUpdateState',
+            'attachUpdateError',
+            'deleteUpdateState',
+            'deleteUpdateError',
+            'busyGreetingUploadState',
+            'busyGreetingUploadError',
+            'unavailableGreetingUploadState',
+            'unavailableGreetingUploadError',
+            'tempGreetingUploadState',
+            'tempGreetingUploadError',
+            'greetGreetingUploadState',
+            'greetGreetingUploadError',
+            'busyGreetingLoadState',
+            'busyGreetingLoadError',
+            'unavailableGreetingLoadState',
+            'unavailableGreetingLoadError',
+            'tempGreetingLoadState',
+            'tempGreetingLoadError',
+            'greetGreetingLoadState',
+            'greetGreetingLoadError',
+            'busyGreetingDeletionState',
+            'busyGreetingDeletionError',
+            'unavailableGreetingDeletionState',
+            'unavailableGreetingDeletionError',
+            'tempGreetingdeletionState',
+            'tempGreetingDeletionError',
+            'greetGreetingDeletionState',
+            'greetGreetingDeletionError'
         ]),
         ...mapGetters('voicebox', [
             'settingsLoading',
@@ -230,18 +335,32 @@ export default {
             'unavailableGreetingUploading',
             'unavailableGreetingFileLoaded',
             'unavailableGreetingLabel',
-            'unavailableGreetingDeleting'
+            'unavailableGreetingDeleting',
+            'tempGreetingUploading',
+            'tempGreetingFileLoaded',
+            'tempGreetingLabel',
+            'tempGreetingDeleting',
+            'greetGreetingUploading',
+            'greetGreetingFileLoaded',
+            'greetGreetingLabel',
+            'greetGreetingDeleting'
         ]),
         ...mapGetters('callSettings', [
             'language',
             'defaultLanguage',
             'languages'
         ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
+        ]),
+        disableLanguage () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.language)
+        },
         soundFileIcon () {
             return 'music_note'
         },
         soundFileTypes () {
-            return '.wav,.mp3,.ogg'
+            return '.wav'
         },
         soundFileFormat () {
             return this.platform.mozilla ? 'ogg' : 'mp3'
@@ -250,38 +369,38 @@ export default {
             return this.pinValue !== this.formData.pin
         },
         pinHasError () {
-            return this.$v.formData.pin.$error || this.pinUpdateFailed
+            return this.v$.formData.pin.$errors.length > 0 || this.pinUpdateFailed
         },
         pinErrorMessage () {
-            if (!this.$v.formData.pin.maxLength) {
+            const errorsTab = this.v$.formData.pin.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('PIN'),
-                    maxLength: this.$v.formData.pin.$params.maxLength.max
+                    maxLength: this.v$.formData.pin.maxLength.$params.max
                 })
-            } else if (!this.$v.formData.pin.numeric) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('PIN')
                 })
             } else if (this.pinUpdateFailed) {
                 return this.pinUpdateError
-            } else {
-                return ''
             }
+            return ''
         },
         emailHasChanged () {
             return this.emailValue !== this.formData.email
         },
         emailHasError () {
-            return this.$v.formData.email.$error || this.emailUpdateFailed
+            return this.v$.formData.email.$errors.length > 0 || this.emailUpdateFailed
         },
         emailErrorMessage () {
-            if (!this.$v.formData.email.email) {
+            const errorsTab = this.v$.formData.email.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'email') {
                 return this.$t('Input a valid email address')
             } else if (this.emailUpdateFailed) {
                 return this.emailUpdateError
-            } else {
-                return ''
             }
+            return ''
         }
     },
     watch: {
@@ -306,13 +425,83 @@ export default {
         },
         deleteValue (value) {
             this.formData.delete = value
+        },
+        attachUpdateState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.attachUpdateError)
+            }
+        },
+        deleteUpdateState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.deleteUpdateError)
+            }
+        },
+        busyGreetingUploadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.busyGreetingUploadError)
+            }
+        },
+        unavailableGreetingUploadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.unavailableGreetingUploadError)
+            }
+        },
+        tempGreetingUploadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.tempGreetingUploadError)
+            }
+        },
+        greetGreetingUploadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.greetGreetingUploadError)
+            }
+        },
+        busyGreetingLoadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.busyGreetingLoadError)
+            }
+        },
+        unavailableGreetingLoadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.unavailableGreetingLoadError)
+            }
+        },
+        tempGreetingLoadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.tempGreetingLoadError)
+            }
+        },
+        greetGreetingLoadState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.greetGreetingLoadError)
+            }
+        },
+        busyGreetingDeletionState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.busyGreetingDeletionError)
+            }
+        },
+        unavailableGreetingDeletionState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.unavailableGreetingDeletionError)
+            }
+        },
+        tempGreetingDeletionState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.tempGreetingDeletionError)
+            }
+        },
+        greetGreetingDeletionState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.greetGreetingDeletionError)
+            }
         }
     },
     async mounted () {
         await Promise.all([
             this.loadPreferencesDefsAction(),
-            this.loadSubscriberPreferencesAction(),
-            this.settingsLoadAction()
+            this.loadSubscriberPreferencesAction(this.id),
+            this.settingsLoadAction(this.id)
         ])
         this.formData.pin = this.pinValue
         this.formData.email = this.emailValue
@@ -337,7 +526,15 @@ export default {
             'unavailableGreetingUpload',
             'unavailableGreetingUploadAbort',
             'unavailableGreetingPlay',
-            'unavailableGreetingDelete'
+            'unavailableGreetingDelete',
+            'tempGreetingUpload',
+            'tempGreetingUploadAbort',
+            'tempGreetingPlay',
+            'tempGreetingDelete',
+            'greetGreetingUpload',
+            'greetGreetingUploadAbort',
+            'greetGreetingPlay',
+            'greetGreetingDelete'
         ]),
         ...mapWaitingActions('callSettings', {
             loadPreferencesDefsAction: 'processing subscriberPreferences',
@@ -346,38 +543,67 @@ export default {
         }),
         async selectLanguage (language) {
             try {
-                await this.setLanguage(language)
+                await this.setLanguage({
+                    language,
+                    subscriberId: this.id
+                })
                 showToast(this.$t('Language changed successfully'))
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
+        async selectFileBusyGreeting (file) {
+            try {
+                await this.busyGreetingUpload({
+                    file,
+                    subscriberId: this.id
+                })
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
+        async selectFileUnavailableGreeting (file) {
+            try {
+                await this.unavailableGreetingUpload({
+                    file,
+                    subscriberId: this.id
+                })
             } catch (err) {
                 showGlobalError(err?.message || this.$t('Unknown error'))
             }
         },
         pinInput () {
             this.pinInitialize()
-            this.$v.formData.pin.$touch()
+            this.v$.formData.pin.$touch()
         },
         pinUndo (oldPin) {
             this.formData.pin = oldPin
             this.pinInitialize()
         },
         pinUpdate (newPin) {
-            this.$v.formData.pin.$touch()
+            this.v$.formData.pin.$touch()
             if (this.pinHasChanged && !this.pinHasError) {
-                this.pinUpdateAction(newPin)
+                this.pinUpdateAction({
+                    pin: newPin,
+                    subscriberId: this.id
+                })
             }
         },
         emailInput () {
             this.emailInitialize()
-            this.$v.formData.email.$touch()
+            this.v$.formData.email.$touch()
         },
         emailUndo (oldEmail) {
             this.emailInitialize()
             this.formData.email = oldEmail
         },
         emailUpdate (newEmail) {
-            this.$v.formData.email.$touch()
+            this.v$.formData.email.$touch()
             if (this.emailHasChanged && !this.emailHasError) {
-                this.emailUpdateAction(newEmail)
+                this.emailUpdateAction({
+                    email: newEmail,
+                    subscriberId: this.id
+                })
             }
         },
         busyGreetingInitAudio () {
@@ -394,7 +620,7 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.busyGreetingDelete()
             })
         },
@@ -412,8 +638,64 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.unavailableGreetingDelete()
+            })
+        },
+        async selectFileTempGreeting (file) {
+            try {
+                await this.tempGreetingUpload({
+                    file,
+                    subscriberId: this.id
+                })
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
+        async selectFileGreetGreeting (file) {
+            try {
+                await this.greetGreetingUpload({
+                    file,
+                    subscriberId: this.id
+                })
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
+        tempGreetingInitAudio () {
+            this.tempGreetingPlay(this.soundFileFormat)
+            this.$refs.uploadTemp.setPlayingTrue()
+            this.$refs.uploadTemp.setPausedFalse()
+        },
+        tempGreetingDeletionConfirmation () {
+            this.$q.dialog({
+                title: this.$t('Reset greeting sound'),
+                message: this.$t('You are about to reset the custom {type} greeting sound to defaults', {
+                    type: this.$t('temp')
+                }),
+                color: 'primary',
+                cancel: true,
+                persistent: true
+            }).onOk((data) => {
+                this.tempGreetingDelete()
+            })
+        },
+        greetGreetingInitAudio () {
+            this.greetGreetingPlay(this.soundFileFormat)
+            this.$refs.uploadGreet.setPlayingTrue()
+            this.$refs.uploadGreet.setPausedFalse()
+        },
+        greetGreetingDeletionConfirmation () {
+            this.$q.dialog({
+                title: this.$t('Reset greeting sound'),
+                message: this.$t('You are about to reset the custom {type} greeting sound to defaults', {
+                    type: this.$t('greet')
+                }),
+                color: 'primary',
+                cancel: true,
+                persistent: true
+            }).onOk((data) => {
+                this.greetGreetingDelete()
             })
         }
     }

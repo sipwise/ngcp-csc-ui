@@ -9,29 +9,28 @@
     />
 </template>
 
-<script>
-export default {
-    name: 'CscListActionButton',
-    props: {
-        disable: {
-            type: Boolean,
-            default: false
-        },
-        icon: {
-            type: String,
-            default: ''
-        },
-        color: {
-            type: String,
-            default: ''
-        },
-        label: {
-            type: String,
-            default: ''
-        }
+<script setup>
+
+defineOptions({ name: 'CscListActionButton' })
+
+defineProps({
+    disable: {
+        type: Boolean,
+        default: false
     },
-    data () {
-        return {}
+    icon: {
+        type: String,
+        default: ''
+    },
+    color: {
+        type: String,
+        default: ''
+    },
+    label: {
+        type: String,
+        default: ''
     }
-}
+})
+
+defineEmits(['click'])
 </script>

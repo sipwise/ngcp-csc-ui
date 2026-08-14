@@ -9,11 +9,10 @@
         input-debounce="500"
         :loading="$wait.is(waitIdentifier) || $attrs.loading"
         v-bind="$attrs"
-        v-on="$listeners"
         @filter="filter"
     >
         <template
-            v-slot:prepend
+            #prepend
         >
             <slot
                 name="prepend"
@@ -24,14 +23,14 @@
             />
         </template>
         <template
-            v-slot:append
+            #append
         >
             <slot
                 name="append"
             />
         </template>
         <template
-            v-slot:after
+            #after
         >
             <slot
                 name="after"

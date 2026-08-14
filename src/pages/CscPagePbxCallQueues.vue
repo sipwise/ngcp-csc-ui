@@ -6,14 +6,17 @@
         <csc-list-actions
             class="row justify-center q-mb-lg"
         >
-            <csc-list-action-button
+            <template
                 v-if="!isCallQueueAddFormEnabled"
-                slot="slot1"
-                icon="add"
-                color="primary"
-                :label="$t('Add call queue')"
-                @click="enableCallQueueAddForm"
-            />
+                #slot1
+            >
+                <csc-list-action-button
+                    icon="add"
+                    color="primary"
+                    :label="$t('Add call queue')"
+                    @click="enableCallQueueAddForm"
+                />
+            </template>
         </csc-list-actions>
         <q-slide-transition>
             <div
@@ -26,7 +29,7 @@
                     :options="getSubscriberOptions"
                     :subscriber-options-loading="isSubscribersRequesting"
                     :default-max-queue-length="defaultMaxQueueLength"
-                    :default-wrap-up-time="defaultQueueWrapUpTime"
+                    :default-queue-wrap-up-time="defaultQueueWrapUpTime"
                     @cancel="disableCallQueueAddForm"
                     @submit="createCallQueue"
                     @ready="loadSubscribers"
@@ -49,7 +52,7 @@
                     :loading="isCallQueueLoading(callQueue.id)"
                     :expanded="isCallQueueExpanded(callQueue.id)"
                     :call-queue="callQueue"
-                    :subscriber="subscriberMap[callQueue.id]"
+                    :subscriber="subscriberMap[callQueue.subscriber_id]"
                     :default-max-queue-length="defaultMaxQueueLength"
                     :default-queue-wrap-up-time="defaultQueueWrapUpTime"
                     @remove="openCallQueueRemovalDialog"
@@ -77,31 +80,32 @@
 </template>
 
 <script>
+import CscList from 'components/CscList'
+import CscListActionButton from 'components/CscListActionButton'
+import CscListActions from 'components/CscListActions'
+import CscListSpinner from 'components/CscListSpinner'
 import CscPage from 'components/CscPage'
+import CscRemoveDialog from 'components/CscRemoveDialog'
 import CscPbxCallQueue from 'components/pages/PbxConfiguration/CscPbxCallQueue'
 import CscPbxCallQueueAddForm from 'components/pages/PbxConfiguration/CscPbxCallQueueAddForm'
-import CscRemoveDialog from 'components/CscRemoveDialog'
-import CscListSpinner from 'components/CscListSpinner'
-import CscListActions from 'components/CscListActions'
+import CscFade from 'components/transitions/CscFade'
 import {
-    mapState,
-    mapActions,
-    mapGetters,
-    mapMutations
-} from 'vuex'
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
 import {
     CreationState,
     RequestState
 } from 'src/store/common'
 import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import CscList from 'components/CscList'
-import CscFade from 'components/transitions/CscFade'
-import CscListActionButton from 'components/CscListActionButton'
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 
 export default {
+    name: 'CscPagePbxCallQueues',
     components: {
         CscListActionButton,
         CscFade,
@@ -133,7 +137,9 @@ export default {
             'callQueueRemovalState',
             'callQueueCreationError',
             'callQueueUpdateError',
-            'callQueueRemovalError'
+            'callQueueRemovalError',
+            'callQueueListState',
+            'callQueueListError'
         ]),
         ...mapGetters('pbxCallQueues', [
             'isCallQueueListEmpty',
@@ -146,6 +152,10 @@ export default {
             'getCallQueueCreationToastMessage',
             'getCallQueueUpdateToastMessage',
             'getCallQueueRemovalToastMessage'
+        ]),
+        ...mapState('pbx', [
+            'subscriberListState',
+            'subscriberListError'
         ])
     },
     watch: {
@@ -170,6 +180,16 @@ export default {
                 showToast(this.getCallQueueRemovalToastMessage)
             } else if (state === RequestState.failed) {
                 showGlobalError(this.callQueueRemovalError)
+            }
+        },
+        callQueueListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.callQueueListError)
+            }
+        },
+        subscriberListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.subscriberListError)
             }
         }
     },
@@ -197,13 +217,13 @@ export default {
         ]),
         openCallQueueRemovalDialog (callQueueId) {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
             }
             this.callQueueRemovalRequesting(callQueueId)
         },
         closeCallQueueRemovalDialog () {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.close()
+                this.$refs.removeDialog.hide()
             }
             this.callQueueRemovalCanceled()
         }

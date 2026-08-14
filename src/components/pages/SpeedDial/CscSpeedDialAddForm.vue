@@ -7,6 +7,7 @@
                 v-model="slot"
                 emit-value
                 map-options
+                data-cy="csc-speeddial-slot"
                 :disable="loading"
                 :readonly="loading"
                 :label="$t('Slot')"
@@ -14,6 +15,7 @@
             />
             <csc-call-input
                 v-model="destination"
+                data-cy="csc-speeddial-destination"
                 :label="$t('Destination')"
                 @submit="save"
                 @error="error"
@@ -26,7 +28,8 @@
                     flat
                     color="default"
                     icon="clear"
-                    @mousedown.native="cancel()"
+                    data-cy="csc-speeddial-cancel"
+                    @mousedown="cancel()"
                 >
                     {{ $t('Cancel') }}
                 </q-btn>
@@ -35,6 +38,7 @@
                     flat
                     color="primary"
                     icon="done"
+                    data-cy="csc-speeddial-save"
                     :disable="destinationError"
                     @click="save()"
                 >
@@ -50,6 +54,7 @@
                 color="primary"
                 icon="add"
                 flat
+                data-cy="csc-speeddial-add"
                 @click="enableForm()"
             >
                 {{ $t('Add Speed Dial') }}
@@ -68,13 +73,9 @@
 </template>
 
 <script>
-import CscCallInput from '../../form/CscCallInput'
-import {
-    showGlobalError
-} from 'src/helpers/ui'
-import {
-    Alert
-} from 'src/quasar-legacy'
+import CscCallInput from 'components/form/CscCallInput'
+import { showGlobalError } from 'src/helpers/ui'
+import { Alert } from 'src/quasar-legacy'
 
 export default {
     name: 'CscSpeedDialAddForm',
@@ -91,6 +92,7 @@ export default {
             default: false
         }
     },
+    emits: ['save'],
     data () {
         return {
             formEnabled: false,
@@ -139,8 +141,8 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
     .form-actions
-        margin-top 16px
-        margin-bottom 8px
+        margin-top: 16px
+        margin-bottom: 8px
 </style>

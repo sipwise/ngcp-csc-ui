@@ -1,6 +1,4 @@
-import {
-    CallState
-} from 'src/store/call/common'
+import { CallState } from 'src/store/call/common'
 
 export default {
     numberInputChanged (state, numberInput) {
@@ -58,6 +56,10 @@ export default {
     endCall (state, reason) {
         if (reason) {
             state.callState = CallState.ended
+            state.holdEnabled = false
+            state.remoteOnHold = false
+            state.localOnHold = false
+            state.transferEnabled = false
             state.endedReason = reason
         }
         state.dialpadOpened = false
@@ -68,6 +70,7 @@ export default {
         state.remoteVideoEnabled = false
         state.localMediaStream = null
         state.remoteMediaStream = null
+        state.newPhonebookEntryName = null
     },
     toggleMicrophone (state, enabled) {
         state.microphoneEnabled = enabled
@@ -103,5 +106,35 @@ export default {
     disableCall (state, options = { error: null }) {
         state.callEnabled = false
         state.connectionError = options.error
+    },
+    toggleHold (state) {
+        state.holdEnabled = !state.holdEnabled
+        if (state.holdEnabled) {
+            state.callState = CallState.hold
+            state.holdEnabled = true
+        } else {
+            state.callState = CallState.established
+            state.holdEnabled = false
+        }
+    },
+    setLocalOnHold (state, value) {
+        state.localOnHold = value
+    },
+    setRemoteOnHold (state, value) {
+        state.remoteOnHold = value
+    },
+    toggleTransfer (state) {
+        state.transferEnabled = !state.transferEnabled
+        if (state.transferEnabled) {
+            state.transferEnabled = true
+        } else {
+            state.transferEnabled = false
+        }
+    },
+    fetchPhonebookEntrySuccess (state, phonebookEntryName) {
+        state.phonebookEntryName = phonebookEntryName
+    },
+    fetchPhonebookEntryFailure (state) {
+        state.phonebookEntryName = null
     }
 }

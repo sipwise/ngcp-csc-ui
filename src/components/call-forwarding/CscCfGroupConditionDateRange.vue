@@ -4,7 +4,7 @@
         icon="book_online"
         :loading="$wait.is('csc-cf-time-set-create')"
         v-bind="$attrs"
-        v-on="$listeners"
+        @close="$emit('close')"
     >
         <template
             v-if="invalidDateset"
@@ -14,7 +14,7 @@
                 dense
                 class="bg-red-8 text-white q-pt-md q-ma-md half-screen-width"
             >
-                <template v-slot:avatar>
+                <template #avatar>
                     <q-icon name="date_range" />
                 </template>
                 {{ $t('The "{timeset}" timeset contains incompatible values. You can resolve this by deleting it and recreating from the scratch.', { timeset: timeSet.name }) }}
@@ -33,19 +33,21 @@
             />
         </template>
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
+                data-cy="csc-group-date-range-delete"
                 flat
                 color="negative"
                 icon="delete"
-                @click="deleteSourceSetEvent"
+                @click="deleteTimeSetEvent"
             />
             <q-btn
                 v-if="!invalidDateset"
                 :label="$t('Save')"
+                data-cy="csc-group-date-range-save"
                 flat
                 color="primary"
                 icon="check"
@@ -57,8 +59,8 @@
 </template>
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
-import { mapActions } from 'vuex'
 import { humanDatesetToKamailio, kamailioDatesetToHuman } from 'src/helpers/kamailio-timesets-converter'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfGroupConditionDateRange',
     components: {
@@ -84,8 +86,13 @@ export default {
         deleteButton: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
+    emits: ['close'],
     data () {
         return {
             invalidDateset: false,
@@ -108,8 +115,6 @@ export default {
                     hDateset = kamailioDatesetToHuman(this.timeSet.times)
                 } catch (e) {
                     this.invalidDateset = true
-                    console.info(e)
-                    return
                 }
                 if (hDateset.length === 0) {
                     this.selectedDate = null
@@ -126,7 +131,8 @@ export default {
             const kamilioTimesets = humanDatesetToKamailio([{ from: dateFrom, to: dateTo }])
             const payload = {
                 mapping: this.mapping,
-                date: kamilioTimesets
+                date: kamilioTimesets,
+                subscriberId: this.subscriberId
             }
             if (this.timeSet) {
                 payload.id = this.timeSet.id
@@ -136,11 +142,14 @@ export default {
             }
             this.$emit('close')
         },
-        async deleteSourceSetEvent () {
+        async deleteTimeSetEvent () {
             await this.deleteTimeSet({
                 mapping: this.mapping,
-                id: this.timeSet.id
+                id: this.timeSet.id,
+                subscriberId: this.subscriberId
             })
+
+            this.$emit('close')
         }
     }
 }

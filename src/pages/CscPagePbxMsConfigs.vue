@@ -6,14 +6,17 @@
         <csc-list-actions
             class="row justify-center q-mb-lg"
         >
-            <csc-list-action-button
+            <template
                 v-if="!isMsConfigAddFormEnabled"
-                slot="slot1"
-                icon="add"
-                color="primary"
-                :label="$t('Add Config')"
-                @click="enableMsConfigAddForm"
-            />
+                #slot1
+            >
+                <csc-list-action-button
+                    icon="add"
+                    color="primary"
+                    :label="$t('Add Config')"
+                    @click="enableMsConfigAddForm"
+                />
+            </template>
         </csc-list-actions>
         <div
             v-if="isMsConfigAddFormEnabled"
@@ -75,31 +78,32 @@
 </template>
 
 <script>
+import CscList from 'components/CscList'
+import CscListActionButton from 'components/CscListActionButton'
+import CscListActions from 'components/CscListActions'
+import CscListSpinner from 'components/CscListSpinner'
+import CscPage from 'components/CscPage'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscPbxMsConfig from 'components/pages/PbxConfiguration/CscPbxMsConfig'
+import CscPbxMsConfigAddForm from 'components/pages/PbxConfiguration/CscPbxMsConfigAddForm'
+import CscFade from 'components/transitions/CscFade'
 import {
-    mapState,
-    mapActions,
-    mapGetters,
-    mapMutations
-} from 'vuex'
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
 import {
     CreationState,
     RequestState
 } from 'src/store/common'
 import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import CscPage from 'components/CscPage'
-import CscPbxMsConfig from 'components/pages/PbxConfiguration/CscPbxMsConfig'
-import CscPbxMsConfigAddForm from 'components/pages/PbxConfiguration/CscPbxMsConfigAddForm'
-import CscRemoveDialog from 'components/CscRemoveDialog'
-import CscListSpinner from 'components/CscListSpinner'
-import CscListActions from 'components/CscListActions'
-import CscList from 'components/CscList'
-import CscFade from 'components/transitions/CscFade'
-import CscListActionButton from 'components/CscListActionButton'
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 
 export default {
+    name: 'CscPagePbxMsConfigs',
     components: {
         CscListActionButton,
         CscFade,
@@ -131,7 +135,16 @@ export default {
             'msConfigRemovalState',
             'msConfigCreationError',
             'msConfigUpdateError',
-            'msConfigRemovalError'
+            'msConfigRemovalError',
+            'msConfigListState',
+            'msConfigListError'
+        ]),
+        ...mapState('pbx', [
+            'numberListState',
+            'numberListError',
+            'subscriberListState',
+            'subscriberListError'
+
         ]),
         ...mapGetters('pbxMsConfigs', [
             'isMsConfigListEmpty',
@@ -169,6 +182,21 @@ export default {
             } else if (state === RequestState.failed) {
                 showGlobalError(this.msConfigRemovalError)
             }
+        },
+        msConfigListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.msConfigListError)
+            }
+        },
+        numberListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.numberListError)
+            }
+        },
+        subscriberListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.subscriberListError)
+            }
         }
     },
     mounted () {
@@ -195,13 +223,13 @@ export default {
         ]),
         openMsConfigRemovalDialog (msConfigId) {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
             }
             this.msConfigRemovalRequesting(msConfigId)
         },
         closeMsConfigRemovalDialog () {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.close()
+                this.$refs.removeDialog.hide()
             }
             this.msConfigRemovalCanceled()
         },

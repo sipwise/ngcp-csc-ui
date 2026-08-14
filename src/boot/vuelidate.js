@@ -1,15 +1,25 @@
-import Vuelidate from 'vuelidate'
-import _ from 'lodash'
+import { errorMessages } from 'src/validators'
 
-export default ({ Vue, app }) => {
-    Vue.use(Vuelidate)
-    Vue.prototype.$errorMessage = (def) => {
-        let message = null
-        _.forEach(def.$params, (param, paramName) => {
-            if (def[paramName] === false) {
-                message = app.i18n.t('validators.' + paramName) // TODO: does it work? we should recheck translations
-            }
-        })
-        return message
+export const getErrorMessage = (v$) => {
+    if (v$ && v$.length) {
+        if (v$[0].$validator && errorMessages[v$[0].$validator]) {
+            return errorMessages[v$[0].$validator](v$[0].$params, v$[0])
+        }
     }
+    return ''
+}
+
+// Composable for Composition API
+export function useValidationErrors () {
+    return {
+        getErrorMessage
+    }
+}
+
+export default ({ app }) => {
+    // Add to global properties for Options API
+    app.config.globalProperties.$errMsg = getErrorMessage
+
+    // Provide for Composition API
+    app.provide('validationErrors', { getErrorMessage })
 }

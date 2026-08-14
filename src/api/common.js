@@ -1,13 +1,15 @@
-
+import axios from 'axios'
+import { i18n } from 'boot/i18n'
+import saveAs from 'file-saver'
 import _ from 'lodash'
-import Vue from 'vue'
-import {
-    getJsonBody
-} from './utils'
-
+import { getJsonBody } from 'src/api/utils'
+import { getJwt, hasJwt } from 'src/auth'
+import { getHttpErrorMessage } from 'src/helpers/http-error'
+import { PATH_CHANGE_PASSWORD } from 'src/router/routes'
 export const LIST_DEFAULT_PAGE = 1
-export const LIST_DEFAULT_ROWS = 25
+export const LIST_DEFAULT_ROWS = 20
 export const LIST_ALL_ROWS = 1000
+export const API_REQUEST_DEFAULT_TIMEOUT = 30000
 
 export const ContentType = {
     json: 'application/json',
@@ -18,6 +20,10 @@ export const Prefer = {
     minimal: 'return=minimal',
     representation: 'return=representation'
 }
+
+export const httpApi = axios.create({
+    timeout: API_REQUEST_DEFAULT_TIMEOUT
+})
 
 const PATCH_HEADERS = {
     'Content-Type': ContentType.jsonPatch,
@@ -49,95 +55,178 @@ export class ApiResponseError extends Error {
     }
 }
 
+// Store router reference for API layer
+let routerInstance = null
+
+export function setRouter (router) {
+    routerInstance = router
+}
+
+export function initAPI ({ baseURL }) {
+    httpApi.defaults.baseURL = baseURL
+
+    httpApi.interceptors.request.use((config) => {
+        if (config) {
+            if (hasJwt()) {
+                config.headers = {
+                    ...config.headers,
+                    Authorization: `Bearer ${getJwt()}`
+                }
+            }
+            if (config.method === 'POST' && (config.data === undefined || config.data === null)) {
+                config.data = {}
+            }
+
+            return config
+        }
+    })
+}
+
+export function apiCreateCancelObject () {
+    const CancelToken = axios.CancelToken
+    return CancelToken.source()
+}
+
+export function apiIsCanceledRequest (exception) {
+    return axios.isCancel(exception)
+}
+
 export async function getList (options) {
-    options = options || {}
-    options = _.merge({
+    const requestConfig = _.merge({
         all: false,
         params: {
-            page: LIST_DEFAULT_PAGE,
-            rows: LIST_DEFAULT_ROWS
+            page: options.page || LIST_DEFAULT_PAGE,
+            rows: options.rows || LIST_DEFAULT_ROWS
         },
         headers: GET_HEADERS
     }, options)
-    if (options.all === true) {
-        options.params.rows = LIST_ALL_ROWS
+    if (requestConfig.all === true) {
+        requestConfig.params.rows = LIST_ALL_ROWS
+        requestConfig.params.page = LIST_DEFAULT_PAGE
     }
-    if (options.resource !== undefined) {
-        options.path = 'api/' + options.resource + '/'
-        options.root = '_embedded.ngcp:' + options.resource
+    if (requestConfig.resource !== undefined) {
+        requestConfig.path = `api/${requestConfig.resource}/`
+        requestConfig.root = `_embedded.ngcp:${requestConfig.resource}`
     }
-    const firstRes = await Vue.http.get(options.path, {
-        params: options.params,
-        headers: options.headers
-    })
+    const firstRes = await httpApi.get(requestConfig.path, {
+        headers: requestConfig.headers,
+        params: requestConfig.params
+    }).catch(handleResponseError)
     let secondRes = null
-    const firstResBody = getJsonBody(firstRes.body)
-    if (options.all === true && firstResBody.total_count > LIST_ALL_ROWS) {
-        secondRes = await Vue.http.get(options.path, {
-            params: _.merge(options.params, {
-                rows: firstResBody.total_count
-            }),
-            headers: options.headers
+    const firstResBody = getJsonBody(firstRes.data)
+    if (requestConfig.all === true && firstResBody.total_count > LIST_ALL_ROWS) {
+        const newParams = _.merge(requestConfig.params, {
+            rows: firstResBody.total_count
         })
+        secondRes = await httpApi.get(requestConfig.path, {
+            headers: requestConfig.headers,
+            params: newParams
+        }).catch(handleResponseError)
     }
     let res = firstRes
     let body = firstResBody
     if (secondRes !== null) {
         res = secondRes
-        body = getJsonBody(res.body)
+        body = getJsonBody(res.data)
     }
     const totalCount = _.get(body, 'total_count', 0)
-    let lastPage = Math.ceil(totalCount / options.params.rows)
-    if (options.all === true) {
+    let lastPage = Math.ceil(totalCount / requestConfig.params.rows)
+    if (requestConfig.all === true) {
         lastPage = 1
     }
     if (lastPage === 0) {
         lastPage = null
     }
-    const items = _.get(body, options.root, [])
+
+    let items = requestConfig.root
+        // This gets the results for the API V1 which has the list in the root of the response, and if not found it tries to get it from the API V2 response format
+        ? _.get(body, requestConfig.root, [])
+        // This gets the results for the API V2 which has the list in the data field, and if not found it tries to get it from the root of the response (for backward compatibility with API V1)
+        : _.get(body, 'data', [])
+    if (!Array.isArray(items)) {
+        items = [items]
+    }
     for (let i = 0; i < items.length; i++) {
         items[i] = normalizeEntity(items[i])
     }
     return {
-        items: items,
-        lastPage: lastPage,
+        items,
+        lastPage,
         totalCount
     }
 }
 
-function handleResponseError (err) {
-    const code = _.get(err, 'body.code', null)
-    const message = _.get(err, 'body.message', null)
-    if (code !== null && message !== null) {
-        throw new ApiResponseError(err.body.code, err.body.message)
-    } else {
-        throw err
+function extractMessages (messageArray) {
+    const messages = []
+    if (Array.isArray(messageArray)) {
+        messageArray.forEach((item) => {
+            Object.keys(item).forEach((fieldName) => {
+                const fieldErrors = item[fieldName]
+                if (Array.isArray(fieldErrors)) {
+                    fieldErrors.forEach((errorObject) => {
+                        Object.values(errorObject).forEach((errorMsg) => {
+                            messages.push(errorMsg)
+                        })
+                    })
+                }
+            })
+        })
     }
+    return messages.join(', ')
+}
+
+function handleResponseError (err) {
+    let code = _.get(err, 'response.data.code', null)
+    let message = _.get(err, 'response.data.message', null)
+
+    if (code === 403 && message === 'Invalid license') {
+        message = i18n.global.t('Contact your administrator to activate this functionality')
+    }
+
+    if (code === 403 && message === 'Password expired') {
+        message = i18n.global.t('Password Expired')
+        if (routerInstance) {
+            routerInstance.push({ path: PATH_CHANGE_PASSWORD })
+        }
+        return
+    }
+
+    // API V2 returns an array of messages rather than a string
+    // and the code is available in the response status
+    if (Array.isArray(message)) {
+        message = extractMessages(message)
+        code = _.get(err, 'response.status', null)
+    }
+
+    if (code !== null && message !== null) {
+        throw new ApiResponseError(code, message)
+    }
+
+    if (err?.response) {
+        err.message = getHttpErrorMessage(err, i18n.global.t('Unexpected error'))
+    }
+
+    throw err
 }
 
 export async function get (options) {
-    options = options || {}
-    options = _.merge({
+    const requestConfig = _.merge({
         headers: GET_HEADERS
     }, options)
-    const requestOptions = {
-        headers: options.headers,
-        params: options.params
+    if (requestConfig.blob === true) {
+        requestConfig.responseType = 'blob'
     }
-    if (options.blob === true) {
-        requestOptions.responseType = 'blob'
-    }
-    let path = options.path
-    if (options.resource !== undefined && options.resourceId !== undefined) {
-        path = 'api/' + options.resource + '/' + options.resourceId
+    let path = requestConfig.path
+    if (requestConfig.resource !== undefined && requestConfig.resourceId !== undefined) {
+        path = `api/${requestConfig.resource}/${requestConfig.resourceId}`
     }
     try {
-        const res = await Vue.http.get(path, requestOptions)
+        const res = await httpApi.get(path, requestConfig)
         let body = null
-        if (options.blob === true) {
-            body = URL.createObjectURL(res.body)
+        if (requestConfig.blob === true) {
+            body = URL.createObjectURL(res.data)
         } else {
-            body = normalizeEntity(getJsonBody(res.body))
+            body = normalizeEntity(getJsonBody(res.data))
         }
         return body
     } catch (err) {
@@ -146,25 +235,28 @@ export async function get (options) {
 }
 
 export async function patch (operation, options) {
-    options = options || {}
-    options = _.merge({
+    const requestConfig = _.merge({
         headers: PATCH_HEADERS
     }, options)
     const body = {
         op: operation,
-        path: '/' + options.fieldPath
+        path: `/${requestConfig.fieldPath}`
     }
-    if (options.value !== undefined) {
-        body.value = options.value
+    if (requestConfig.value !== undefined) {
+        body.value = requestConfig.value
     }
-    let path = options.path
-    if (options.resource !== undefined && options.resourceId !== undefined) {
-        path = 'api/' + options.resource + '/' + options.resourceId
+    let path = requestConfig.path
+    if (requestConfig.resource !== undefined && requestConfig.resourceId !== undefined) {
+        path = `api/${requestConfig.resource}/${requestConfig.resourceId}`
     }
+
+    const config = {
+        headers: requestConfig.headers,
+        ...(requestConfig.params ? { params: requestConfig.params } : {})
+    }
+
     try {
-        return await Vue.http.patch(path, [body], {
-            headers: options.headers
-        })
+        return await httpApi.patch(path, [body], config)
     } catch (err) {
         handleResponseError(err)
     }
@@ -183,14 +275,13 @@ export function patchRemove (options) {
 }
 
 export async function patchFull (operation, options) {
-    options = options || {}
-    options = _.merge(options, {
+    const requestConfig = _.merge({
         headers: {
             Prefer: 'return=representation'
         }
-    })
-    const res = await patch(operation, options)
-    return normalizeEntity(getJsonBody(res.body))
+    }, options)
+    const res = await patch(operation, requestConfig)
+    return normalizeEntity(getJsonBody(res.data))
 }
 
 export function patchReplaceFull (options) {
@@ -206,89 +297,80 @@ export function patchRemoveFull (options) {
 }
 
 export async function post (options) {
-    options = options || {}
-    options = _.merge({
+    const requestOptions = _.merge({
         headers: POST_HEADERS
     }, options)
-    let path = options.path
-    if (options.resource !== undefined) {
-        path = 'api/' + options.resource + '/'
+    let path = requestOptions.path
+    if (requestOptions.resource !== undefined) {
+        path = `api/${requestOptions.resource}/`
     }
     try {
-        const res = await Vue.http.post(path, options.body, {
-            headers: options.headers
+        const res = await httpApi.post(path, requestOptions.body, {
+            headers: requestOptions.headers
         })
-        const hasBody = res.body !== undefined && res.body !== null && res.body !== ''
+        const hasBody = res.data !== undefined && res.data !== null && res.data !== ''
         if (hasBody) {
-            return normalizeEntity(getJsonBody(res.body))
-        } else if (!hasBody && res.headers.has('Location')) {
-            return _.last(res.headers.get('Location').split('/'))
-        } else {
-            return null
+            return normalizeEntity(getJsonBody(res.data))
+        } else if (!hasBody && res?.headers?.location) {
+            return _.last(res.headers.location.split('/'))
         }
+        return null
     } catch (err) {
         handleResponseError(err)
     }
 }
 
 export async function postMinimal (options) {
-    options = options || {}
-    options = _.merge(options, {
+    const requestConfig = _.merge({
         headers: {
             Prefer: 'return=representation'
         }
-    })
-    await post(options)
+    }, options)
+    await post(requestConfig)
 }
 
 export async function put (options) {
-    options = options || {}
-    options = _.merge({
+    const requestConfig = _.merge({
         headers: PUT_HEADERS
     }, options)
-    let path = options.path
-    if (options.resource !== undefined && options.resourceId !== undefined) {
-        path = 'api/' + options.resource + '/' + options.resourceId
+    let path = requestConfig.path
+    if (requestConfig.resource !== undefined && requestConfig.resourceId !== undefined) {
+        path = `api/${requestConfig.resource}/${requestConfig.resourceId}`
     }
     try {
-        const res = await Vue.http.put(path, options.body, {
-            headers: options.headers
+        const payload = requestConfig.body || requestConfig.data
+        const res = await httpApi.put(path, payload, {
+            headers: requestConfig.headers
         })
-        if (options.headers.Prefer === Prefer.representation) {
-            return normalizeEntity(getJsonBody(res.body))
-        } else {
-            return null
+        if (requestConfig.headers.Prefer === Prefer.representation) {
+            return normalizeEntity(getJsonBody(res.data))
         }
+        return null
     } catch (err) {
         handleResponseError(err)
     }
 }
 
 export async function putMinimal (options) {
-    options = options || {}
-    options = _.merge(options, {
+    const requestConfig = _.merge({
         headers: {
             Prefer: 'return=representation'
         }
-    })
-    await put(options)
+    }, options)
+    await put(requestConfig)
 }
 
 export async function del (options) {
-    options = options || {}
-    options = _.merge({
+    const requestConfig = _.merge({
         headers: GET_HEADERS
     }, options)
-    const requestOptions = {
-        headers: options.headers,
-        params: options.params
-    }
-    let path = options.path
-    if (options.resource !== undefined && options.resourceId !== undefined) {
-        path = 'api/' + options.resource + '/' + options.resourceId
+
+    let path = requestConfig.path
+    if (requestConfig.resource !== undefined && requestConfig.resourceId !== undefined) {
+        path = `api/${requestConfig.resource}/${requestConfig.resourceId}`
     }
     try {
-        await Vue.http.delete(path, requestOptions)
+        await httpApi.delete(path, requestConfig)
     } catch (err) {
         handleResponseError(err)
     }
@@ -296,14 +378,13 @@ export async function del (options) {
 
 export function getFieldList (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge({
+        const requestConfig = _.merge({
             headers: GET_HEADERS
         }, options)
-        Vue.http.get(options.path, {
-            headers: options.headers
+        httpApi.get(requestConfig.path, {
+            headers: requestConfig.headers
         }).then((result) => {
-            const fieldList = getJsonBody(result.body)[options.field]
+            const fieldList = getJsonBody(result.data)[requestConfig.field]
             resolve(fieldList)
         }).catch((err) => {
             reject(err)
@@ -320,14 +401,51 @@ export function normalizeEntity (entity) {
 
 export function getAsBlob (options) {
     return new Promise((resolve, reject) => {
-        options = options || {}
-        options = _.merge(options, {
+        const requestConfig = _.merge({
             blob: true
-        })
-        get(options).then((body) => {
+        }, options)
+        get(requestConfig).then((body) => {
             resolve(body)
         }).catch((err) => {
             reject(err)
         })
     })
+}
+export async function apiGet (options = {
+    path: undefined,
+    resource: undefined,
+    resourceId: undefined,
+    config: {}
+}) {
+    let path = options.path
+    if (options.resource && options.resourceId) {
+        path = `api/${options.resource}/${options.resourceId}`
+    } else if (options.resource) {
+        path = `api/${options.resource}/`
+    }
+    return httpApi.get(path, options.config).catch(handleResponseError)
+}
+export async function apiPost (options = {
+    resource: undefined,
+    data: undefined,
+    config: {}
+}) {
+    let path = options.path
+    if (options.resource) {
+        path = `${options.resource}/`
+    }
+    return httpApi.post(path, options.data, _.merge({
+        headers: {
+            Prefer: 'return=representation'
+        }
+    }, options.config)).catch(handleResponseError)
+}
+export async function apiDownloadFile ({ apiGetOptions, defaultFileName, defaultContentType }) {
+    const res = await apiGet(apiGetOptions)
+    const fileName = defaultFileName
+    saveAs(new Blob([res.data], { type: res.headers['content-type'] || defaultContentType }), fileName)
+}
+export async function apiUploadCsv (options) {
+    const res = await apiPost(options)
+    return res
 }

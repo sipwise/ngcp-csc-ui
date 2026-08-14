@@ -1,0 +1,773 @@
+<template>
+    <csc-page-sticky-tabs
+        id="csc-page-pbx-groups-details"
+        ref="pageSticky"
+        :value="selectedTab"
+    >
+        <template
+            #tabs
+        >
+            <q-breadcrumbs
+                class="q-item absolute absolute-left text-weight-light"
+                active-color="primary"
+                separator-color="primary"
+            >
+                <q-breadcrumbs-el
+                    key="groups"
+                    class="cursor-pointer"
+                    to="/user/pbx-configuration/groups"
+                    :label="$t('Groups')"
+                    icon="group"
+                />
+                <q-breadcrumbs-el
+                    v-if="groupSelected"
+                    key="group"
+                    :label="groupSelected.display_name"
+                />
+            </q-breadcrumbs>
+
+            <q-tab
+                v-for="tab in tabs"
+                :key="tab.value"
+                class="d-flex justify-content-center"
+                :name="tab.value"
+                :icon="tab.icon"
+                :label="tab.label"
+                :default="tab.value === selectedTab"
+                @click="selectTab(tab.value)"
+            />
+        </template>
+
+        <q-item
+            v-if="selectedTab === 'preferences'"
+            class="col col-xs-12 col-md-6"
+        >
+            <q-list
+                v-if="changes"
+                class="col col-xs-12 col-md-6"
+                side
+                top
+                no-wrap
+            >
+                <q-input
+                    v-model="changes.name"
+                    :label="$t('Name')"
+                    data-cy="csc-group-name"
+                    :disable="isLoading"
+                    @keyup.enter="save"
+                >
+                    <template
+                        v-if="hasNameChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetName"
+                        />
+                    </template>
+                </q-input>
+                <q-input
+                    readonly
+                    disable
+                    :model-value="changes.sipUsername"
+                    :label="$t('SIP Username')"
+                    data-cy="csc-group-sip-username"
+                />
+                <q-input
+                    v-model="changes.extension"
+                    hide-hint
+                    :error="v$.changes.extension.$errors.length > 0"
+                    :error-message="extensionErrorMessage"
+                    :label="$t('Extension')"
+                    data-cy="csc-group-extension"
+                    :hint="getExtensionHint"
+                    :disable="isLoading"
+                    @keyup.enter="save"
+                    @update:model-value="v$.changes.extension.$touch()"
+                >
+                    <template
+                        v-if="hasExtensionChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetExtension"
+                        />
+                    </template>
+                </q-input>
+                <q-input
+                    readonly
+                    disable
+                    :model-value="getPrimaryNumber"
+                    :label="$t('Primary Number')"
+                    data-cy="csc-group-primary-number"
+                />
+                <q-select
+                    v-model="changes.huntPolicy"
+                    emit-value
+                    map-options
+                    radio
+                    :label="$t('Hunt Policy')"
+                    data-cy="csc-group-hunt-policy"
+                    :disable="isLoading"
+                    :options="getHuntPolicyOptions"
+                >
+                    <template
+                        v-if="hasHuntPolicyChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetHuntPolicy"
+                        />
+                    </template>
+                </q-select>
+                <q-input
+                    v-model="changes.huntTimeout"
+                    :label="$t('Hunt Timeout')"
+                    data-cy="csc-group-hunt-timeout"
+                    :disable="isLoading"
+                    @keyup.enter="save"
+                >
+                    <template
+                        v-if="hasHuntTimeoutChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetHuntTimeout"
+                        />
+                    </template>
+                </q-input>
+                <q-select
+                    v-model="changes.huntCancelMode"
+                    emit-value
+                    map-options
+                    radio
+                    :label="$t('Cancel Mode')"
+                    data-cy="csc-group-cancel-mode"
+                    :disable="isLoading"
+                    :options="getHuntCancelModeOptions"
+                >
+                    <template
+                        v-if="hasHuntCancelModeChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetHuntCancelMode"
+                        />
+                    </template>
+                </q-select>
+                <q-select
+                    v-model="changes.aliasNumbers"
+                    emit-value
+                    map-options
+                    use-chips
+                    multiple
+                    :disable="isLoading"
+                    :label="$t('Alias Numbers')"
+                    data-cy="csc-group-alias-numbers"
+                    :options="getNumberOptions"
+                >
+                    <template
+                        v-if="hasAliasNumbersChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetAliasNumbers"
+                        />
+                    </template>
+                </q-select>
+                <q-select
+                    v-model="changes.seats"
+                    emit-value
+                    map-options
+                    use-chips
+                    multiple
+                    :disable="isLoading"
+                    :label="$t('Seats')"
+                    data-cy="csc-group-seats"
+                    :options="getSeatOptions"
+                >
+                    <template
+                        v-if="hasSeatsChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetSeats"
+                        />
+                    </template>
+                </q-select>
+                <q-select
+                    v-if="showSoundSet"
+                    v-model="changes.soundSet"
+                    emit-value
+                    map-options
+                    radio
+                    :disable="isLoading"
+                    :label="$t('Sound Set')"
+                    data-cy="csc-group-soundset"
+                    :options="getSoundSetOptions"
+                >
+                    <template
+                        v-if="hasSoundSetChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetSoundSet"
+                        />
+                    </template>
+                </q-select>
+                <q-btn
+                    v-if="hasCallQueue(id)"
+                    icon="filter_none"
+                    flat
+                    color="primary"
+                    :label="$t('Call Queue')"
+                    data-cy="csc-group-call-queue"
+                    :disable="isLoading"
+                    @click="jumpToCallQueueInternal"
+                />
+                <q-input
+                    v-model="changes.conferenceMaxParticipants"
+                    :label="$t('Maximum Conference Participants')"
+                    data-cy="csc-group-max-conference-participants"
+                    :disable="isLoading"
+                    :error="v$.changes.conferenceMaxParticipants.$errors.length > 0"
+                    :error-message="conferenceMaxParticipantsErrorMessage"
+                    @update:model-value="v$.changes.conferenceMaxParticipants.$touch()"
+                    @keyup.enter="save"
+                    @keypress.space.prevent
+                    @keydown.space.prevent
+                    @keyup.space.prevent
+                >
+                    <template
+                        v-if="hasConferenceMaxParticipantsChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            v-if="v$.changes.conferenceMaxParticipants.$errors.length <= 0"
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetConferenceMaxParticipants"
+                        />
+                    </template>
+                </q-input>
+                <q-input
+                    v-model="changes.conferencePin"
+                    :label="$t('Conference PIN')"
+                    data-cy="csc-group-conference-pin"
+                    :disable="isLoading"
+                    :error="v$.changes.conferencePin.$errors.length > 0"
+                    :error-message="conferencePinErrorMessage"
+                    @update:model-value="v$.changes.conferencePin.$touch()"
+                    @keyup.enter="save"
+                    @keypress.space.prevent
+                    @keydown.space.prevent
+                    @keyup.space.prevent
+                >
+                    <template
+                        v-if="hasConferencePinChanged"
+                        #append
+                    >
+                        <csc-input-button-save
+                            v-if="v$.changes.conferencePin.$errors.length <= 0"
+                            @click.stop="save"
+                        />
+                        <csc-input-button-reset
+                            @click.stop="resetConferencePin"
+                        />
+                    </template>
+                </q-input>
+            </q-list>
+            <q-list
+                v-if="changes"
+                class="column"
+                side
+                top
+                no-wrap
+            >
+                <q-toggle
+                    v-if="showPlayAnnounceBeforeCF"
+                    v-model="changes.announcementCfu"
+                    class="q-pa-sm"
+                    :label="$t('Play announcement before routing to CFU/CFNA')"
+                    data-cy="csc-group-announcement-cfucfna"
+                    :disable="isLoading"
+                    @update:model-value="changeAnnouncementCfu"
+                />
+                <q-toggle
+                    v-if="showPlayAnnounceBeforeCallSetup"
+                    v-model="changes.announcementCallSetup"
+                    class="q-pa-sm"
+                    :label="$t('Play announcement before call setup')"
+                    data-cy="csc-group-announcement-callsetup"
+                    :disable="isLoading"
+                    @update:model-value="changeAnnouncementCallSetup"
+                />
+            </q-list>
+        </q-item>
+
+        <csc-call-forward-details
+            v-if="selectedTab === 'callForwards'"
+            :id="id"
+            :key="id"
+        />
+        <csc-page-voicebox
+            v-if="selectedTab === 'voicebox'"
+            :id="id"
+            :key="id"
+        />
+        <csc-fax-to-mail-settings
+            v-if="selectedTab === 'fax2mail'"
+            :id="id"
+            :key="id"
+            :is-pbx-configuration-context="true"
+        />
+        <csc-mail-to-fax-settings
+            v-if="selectedTab === 'mail2fax'"
+            :id="id"
+            :key="id"
+        />
+    </csc-page-sticky-tabs>
+</template>
+
+<script>
+import useValidate from '@vuelidate/core'
+import { numeric } from '@vuelidate/validators'
+import CscPageStickyTabs from 'components/CscPageStickyTabs'
+import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import CscCallForwardDetails from 'components/pages/CallForward/CscCallForwardDetails'
+import CscFaxToMailSettings from 'components/pages/FaxSettings/CscFaxToMailSettings'
+import CscMailToFaxSettings from 'components/pages/FaxSettings/CscMailToFaxSettings'
+import _ from 'lodash'
+import CscPageVoicebox from 'pages/CscPageVoicebox'
+import { PROFILE_ATTRIBUTES_MAP, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import numberFilter from 'src/filters/number'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { inRange } from 'src/helpers/validation'
+import { RequestState } from 'src/store/common'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
+export default {
+    name: 'CscPagePbxGroupDetails',
+    components: {
+        CscInputButtonReset,
+        CscInputButtonSave,
+        CscPageStickyTabs,
+        CscCallForwardDetails,
+        CscPageVoicebox,
+        CscFaxToMailSettings,
+        CscMailToFaxSettings
+    },
+    props: {
+        initialTab: {
+            type: String,
+            default: 'preferences'
+        }
+    },
+    data () {
+        return {
+            changes: null,
+            id: this.$route.params.id,
+            soundSet: null,
+            selectedTab: this.initialTab,
+            v$: useValidate()
+        }
+    },
+    computed: {
+        tabs () {
+            return [
+                {
+                    label: this.$t('Preferences'),
+                    value: 'preferences',
+                    icon: 'perm_phone_msg'
+                },
+                ...(this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callForwarding) ? [{
+                    label: this.$t('Call Forwards'),
+                    value: 'callForwards',
+                    icon: 'forward_to_inbox'
+                }] : []),
+                ...(this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail) ? [{
+                    label: this.$t('Voicebox'),
+                    value: 'voicebox',
+                    icon: 'voicemail'
+                }] : []),
+                ...(this.isFaxFeatureEnabled ? [{
+                    label: this.$t('Fax to mail and sendfax'),
+                    value: 'fax2mail',
+                    icon: 'perm_phone_msg'
+                }] : []),
+                ...(this.isFaxFeatureEnabled ? [{
+                    label: this.$t('Mail to Fax'),
+                    value: 'mail2fax',
+                    icon: 'forward_to_inbox'
+                }] : [])
+            ]
+        },
+        ...mapState('pbxGroups', [
+            'groupSelected',
+            'groupUpdateState',
+            'groupUpdateError'
+        ]),
+        ...mapGetters('pbx', [
+            'getSeatOptions',
+            'getExtensionHint',
+            'getMinAllowedExtension',
+            'getMaxAllowedExtension',
+            'getNumberOptions',
+            'getSoundSetOptions'
+        ]),
+        ...mapGetters('pbxGroups', [
+            'getHuntPolicyOptions',
+            'hasCallQueue',
+            'getGroupUpdateToastMessage',
+            'getSoundSetByGroupId',
+            'isGroupLoading',
+            'getHuntCancelModeOptions',
+            'getAnnouncementCfu',
+            'getAnnouncementCallSetup',
+            'getConferenceMaxParticipants',
+            'getConferencePin',
+            'isGroupMapByIdEmpty'
+        ]),
+        ...mapGetters('callForwarding', [
+            'groups',
+            'announcements'
+        ]),
+        ...mapGetters('user', [
+            'isFaxFeatureEnabled',
+            'hasSubscriberProfileAttribute',
+            'hasSomeSubscriberProfileAttributes'
+        ]),
+        hasNameChanged () {
+            return this.changes.name !== this.groupSelected.display_name
+        },
+        hasExtensionChanged () {
+            return this.changes.extension !== this.groupSelected.pbx_extension
+        },
+        hasHuntPolicyChanged () {
+            return this.changes.huntPolicy !== this.groupSelected.pbx_hunt_policy
+        },
+        hasHuntTimeoutChanged () {
+            return this.changes.huntTimeout !== this.groupSelected.pbx_hunt_timeout
+        },
+        hasHuntCancelModeChanged () {
+            return this.changes.huntCancelMode !== this.groupSelected.pbx_hunt_cancel_mode
+        },
+        hasAliasNumbersChanged () {
+            const aliasNumbers = _.clone(this.changes.aliasNumbers)
+            return !_.isEqual(aliasNumbers.sort(), this.getAliasNumberIds().sort())
+        },
+        hasSeatsChanged () {
+            const seatIds1 = _.clone(this.changes.seats)
+            const seatIds2 = _.clone(this.groupSelected.pbx_groupmember_ids)
+            return !_.isEqual(seatIds1.sort(), seatIds2.sort())
+        },
+        hasSoundSetChanged () {
+            return this.changes.soundSet !== this.getSoundSetId()
+        },
+        hasConferenceMaxParticipantsChanged () {
+            return this.changes.conferenceMaxParticipants !== this.getConferenceMaxParticipants(this.groupSelected.id)
+        },
+        hasConferencePinChanged () {
+            return this.changes.conferencePin !== this.getConferencePin(this.groupSelected.id)
+        },
+        getPrimaryNumber () {
+            return numberFilter(this.groupSelected.primary_number)
+        },
+        extensionErrorMessage () {
+            const errorsTab = this.v$.changes.extension.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
+                return this.getExtensionHint
+            }
+            return ''
+        },
+        conferenceMaxParticipantsErrorMessage () {
+            const errorsTab = this.v$.changes.conferenceMaxParticipants.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
+                return this.$t('{field} must consist of numeric characters only', {
+                    field: this.$t('Maximum Conference Participants')
+                })
+            }
+            return ''
+        },
+        conferencePinErrorMessage () {
+            const errorsTab = this.v$.changes.conferencePin.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
+                return this.$t('{field} must consist of numeric characters only', {
+                    field: this.$t('Conference PIN')
+                })
+            }
+            return ''
+        },
+        isLoading () {
+            return this.isGroupLoading(this.groupSelected.id)
+        },
+        showPlayAnnounceBeforeCallSetup () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCallSetup)
+        },
+        showPlayAnnounceBeforeCF () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCF)
+        },
+        showSoundSet () {
+            return this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.soundSet)
+        }
+    },
+    watch: {
+        async $route (to) {
+            if (this.id !== to.params.id) {
+                this.id = to.params.id
+                this.selectGroup(this.id)
+                await this.loadMappingsFull(this.id)
+            }
+        },
+        groupSelected () {
+            this.changes = this.getGroupData()
+            this.soundSet = this.getSoundSetByGroupId(this.groupSelected.id)
+        },
+        groupUpdateState (state) {
+            if (state === RequestState.succeeded) {
+                showToast(this.getGroupUpdateToastMessage)
+            } else if (state === RequestState.failed) {
+                showGlobalError(this.groupUpdateError)
+            }
+        }
+    },
+    async created () {
+        if (!this.announcements.length) {
+            await this.loadAnnouncements()
+        }
+
+        if (this.isGroupMapByIdEmpty) {
+            await this.loadGroupListItems()
+        }
+        this.selectGroup(this.id)
+        await this.loadMappingsFull(this.id)
+    },
+    beforeUnmount () {
+        this.resetSelectedGroup()
+    },
+    validations: {
+        changes: {
+            extension: {
+                isInRange: function (value) {
+                    return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension)
+                }
+            },
+            conferenceMaxParticipants: {
+                numeric
+            },
+            conferencePin: {
+                numeric
+            }
+        }
+    },
+    methods: {
+        ...mapActions('pbxGroups', [
+            'setGroupName',
+            'setGroupExtension',
+            'setGroupHuntPolicy',
+            'setGroupHuntTimeout',
+            'setGroupHuntCancelMode',
+            'setGroupSeats',
+            'setGroupNumbers',
+            'setGroupSoundSet',
+            'setConferenceMaxParticipants',
+            'setConferencePin',
+            'setAnnouncementCallSetup',
+            'setAnnouncementCfu',
+            'loadGroupListItems'
+        ]),
+        ...mapActions('pbxCallQueues', [
+            'jumpToCallQueue'
+        ]),
+        ...mapActions('callForwarding', [
+            'loadMappingsFull',
+            'loadAnnouncements'
+        ]),
+        ...mapMutations('pbxGroups', [
+            'selectGroup',
+            'resetSelectedGroup'
+        ]),
+        getGroupData () {
+            return (this.groupSelected)
+                ? {
+                    name: this.groupSelected.display_name,
+                    sipUsername: this.groupSelected.username,
+                    extension: this.groupSelected.pbx_extension,
+                    huntPolicy: this.groupSelected.pbx_hunt_policy,
+                    huntTimeout: this.groupSelected.pbx_hunt_timeout,
+                    huntCancelMode: this.groupSelected.pbx_hunt_cancel_mode,
+                    aliasNumbers: this.getAliasNumberIds(),
+                    seats: this.getSeatIds(),
+                    soundSet: this.getSoundSetId(),
+                    conferenceMaxParticipants: this.getConferenceMaxParticipants(this.groupSelected.id),
+                    conferencePin: this.getConferencePin(this.groupSelected.id),
+                    announcementCallSetup: this.getAnnouncementCallSetup(this.groupSelected.id),
+                    announcementCfu: this.getAnnouncementCfu(this.groupSelected.id)
+                }
+                : null
+        },
+        getAliasNumberIds () {
+            const numberIds = []
+            this.groupSelected.alias_numbers.forEach((number) => {
+                numberIds.push(number.number_id)
+            })
+            return numberIds
+        },
+        getSeatIds () {
+            return _.clone(this.groupSelected.pbx_groupmember_ids)
+        },
+        getSoundSetId () {
+            const soundSet = this.getSoundSetByGroupId(this.groupSelected.id)
+            if (soundSet !== null) {
+                return soundSet.id
+            }
+            return null
+        },
+        resetName () {
+            this.changes.name = this.groupSelected.display_name
+        },
+        resetExtension () {
+            this.changes.extension = this.groupSelected.pbx_extension
+        },
+        resetHuntPolicy () {
+            this.changes.huntPolicy = this.groupSelected.pbx_hunt_policy
+        },
+        resetHuntTimeout () {
+            this.changes.huntTimeout = this.groupSelected.pbx_hunt_timeout
+        },
+        resetHuntCancelMode () {
+            this.changes.huntCancelMode = this.groupSelected.pbx_hunt_cancel_mode
+        },
+        resetAliasNumbers () {
+            this.changes.aliasNumbers = this.getAliasNumberIds()
+        },
+        resetSeats () {
+            this.changes.seats = this.getSeatIds()
+        },
+        resetSoundSet () {
+            this.changes.soundSet = this.getSoundSetId()
+        },
+        resetConferenceMaxParticipants () {
+            this.changes.conferenceMaxParticipants = this.getConferenceMaxParticipants(this.groupSelected.id)
+        },
+        resetConferencePin () {
+            this.changes.conferencePin = this.getConferencePin(this.groupSelected.id)
+        },
+        jumpToCallQueueInternal () {
+            this.jumpToCallQueue(this.groupSelected)
+        },
+        save () {
+            if (this.hasNameChanged) {
+                this.setGroupName({
+                    groupId: this.groupSelected.id,
+                    groupName: this.changes.name
+                })
+            }
+            if (this.hasExtensionChanged) {
+                this.setGroupExtension({
+                    groupId: this.groupSelected.id,
+                    groupExtension: this.changes.extension
+                })
+            }
+            if (this.hasHuntPolicyChanged) {
+                this.setGroupHuntPolicy({
+                    groupId: this.groupSelected.id,
+                    groupHuntPolicy: this.changes.huntPolicy
+                })
+            }
+            if (this.hasHuntTimeoutChanged) {
+                this.setGroupHuntTimeout({
+                    groupId: this.groupSelected.id,
+                    groupHuntTimeout: this.changes.huntTimeout
+                })
+            }
+            if (this.hasHuntCancelModeChanged) {
+                this.setGroupHuntCancelMode({
+                    groupId: this.groupSelected.id,
+                    groupHuntCancelMode: this.changes.huntCancelMode
+                })
+            }
+            if (this.hasAliasNumbersChanged) {
+                this.setGroupNumbers({
+                    groupId: this.groupSelected.id,
+                    assignedNumbers: _.difference(this.changes.aliasNumbers, this.getAliasNumberIds()),
+                    unassignedNumbers: _.difference(this.getAliasNumberIds(), this.changes.aliasNumbers)
+                })
+            }
+            if (this.hasSeatsChanged) {
+                this.setGroupSeats({
+                    groupId: this.groupSelected.id,
+                    seatIds: this.changes.seats
+                })
+            }
+            if (this.hasSoundSetChanged) {
+                this.setGroupSoundSet({
+                    groupId: this.groupSelected.id,
+                    soundSetId: this.changes.soundSet
+                })
+            }
+            if (this.hasConferenceMaxParticipantsChanged) {
+                this.setConferenceMaxParticipants({
+                    groupId: this.groupSelected.id,
+                    conferenceMaxParticipants: this.changes.conferenceMaxParticipants
+                })
+            }
+            if (this.hasConferencePinChanged) {
+                this.setConferencePin({
+                    groupId: this.groupSelected.id,
+                    conferencePin: this.changes.conferencePin
+                })
+            }
+        },
+        selectTab (tabName) {
+            if (this.selectedTab !== tabName) {
+                this.forceTabReload(tabName)
+            }
+        },
+        forceTabReload (tabName) {
+            this.selectedTab = tabName
+        },
+        changeAnnouncementCfu () {
+            this.setAnnouncementCfu({
+                groupId: this.groupSelected.id,
+                announcementCfu: this.changes.announcementCfu
+            })
+        },
+        changeAnnouncementCallSetup () {
+            this.setAnnouncementCallSetup({
+                groupId: this.groupSelected.id,
+                announcementCallSetup: this.changes.announcementCallSetup
+            })
+        }
+    }
+}
+</script>

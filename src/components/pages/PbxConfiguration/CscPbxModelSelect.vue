@@ -1,17 +1,16 @@
 <template>
     <q-select
-        :value="value"
+        :model-value="value"
         :options="options"
         :label="$t('Phone model')"
         emit-value
         map-options
         v-bind="$attrs"
-        v-on="$listeners"
-        @input="$emit('input', $event)"
+        @update:model-value="$emit('input', $event)"
         @popup-show="$emit('opened', $event)"
     >
         <template
-            v-slot:prepend
+            #prepend
         >
             <q-icon
                 v-if="!selectedProfileImageUrl"
@@ -29,7 +28,7 @@
             </q-avatar>
         </template>
         <template
-            v-slot:option="scope"
+            #option="scope"
         >
             <q-item
                 v-bind="scope.itemProps"
@@ -50,10 +49,11 @@
                 >
                     <q-avatar
                         square
+                        size="32px"
                     >
-                        <img
+                        <q-img
                             :src="deviceModelImageSmallMap[scope.opt.model].url"
-                        >
+                        />
                     </q-avatar>
                 </q-item-section>
                 <q-item-section>
@@ -62,8 +62,8 @@
             </q-item>
         </template>
         <template
-            v-for="(_, slot) of $scopedSlots"
-            v-slot:[slot]="scope"
+            v-for="(_, slot) of $slots"
+            #[slot]="scope"
         >
             <slot
                 v-if="slot !== 'prepend' && slot !== 'option'"
@@ -72,97 +72,11 @@
             />
         </template>
     </q-select>
-    <!--    <div class="csc-pbx-model-select row items-end xs-gutter">-->
-    <!--        <div-->
-    <!--            v-if="selectedProfile !== null"-->
-    <!--            class="col-auto"-->
-    <!--        >-->
-    <!--            <q-icon-->
-    <!--                v-if="selectedProfileImageUrl === null"-->
-    <!--                class="csc-pbx-device-model-icon"-->
-    <!--                size="24px"-->
-    <!--                name="fa-fax"-->
-    <!--                color="white"-->
-    <!--            />-->
-    <!--            <div-->
-    <!--                v-else-->
-    <!--                class="csc-pbx-device-model-image"-->
-    <!--            >-->
-    <!--                <img-->
-    <!--                    :src="selectedProfileImageUrl"-->
-    <!--                >-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--        <div-->
-    <!--            class="col-grow"-->
-    <!--        >-->
-    <!--            <q-input-->
-    <!--                readonly-->
-    <!--                class="cursor-pointer"-->
-    <!--                label="Device Model"-->
-    <!--                :value="selectedProfileName"-->
-    <!--                :disable="disable"-->
-    <!--            />-->
-    <!--        </div>-->
-    <!--        <q-menu-->
-    <!--            ref="popover"-->
-    <!--            fit-->
-    <!--            @open="$emit('opened')"-->
-    <!--        >-->
-    <!--            <q-list>-->
-    <!--                <q-item-->
-    <!--                    v-for="profileItem in profiles"-->
-    <!--                    :key="profileItem.id"-->
-    <!--                    class="cursor-pointer"-->
-    <!--                    @click="selectProfile(profileItem)"-->
-    <!--                >-->
-    <!--                    <q-item-section-->
-    <!--                        v-if="!modelImageMap[profileItem.device_id]"-->
-    <!--                        side-->
-    <!--                    >-->
-    <!--                        <q-icon-->
-    <!--                            size="24px"-->
-    <!--                            name="fax"-->
-    <!--                            color="white"-->
-    <!--                        />-->
-    <!--                    </q-item-section>-->
-    <!--                    <q-item-section-->
-    <!--                        v-else-->
-    <!--                        side-->
-    <!--                        avatar-->
-    <!--                    >-->
-    <!--                        <img-->
-    <!--                            :src="modelImageMap[profileItem.device_id].url"-->
-    <!--                        >-->
-    <!--                    </q-item-section>-->
-    <!--                    <q-item-section>-->
-    <!--                        <q-item-label>-->
-    <!--                            {{ profileItem.name }}-->
-    <!--                        </q-item-label>-->
-    <!--                    </q-item-section>-->
-    <!--                </q-item>-->
-    <!--            </q-list>-->
-    <!--        </q-menu>-->
-    <!--        <div-->
-    <!--            class="col-auto"-->
-    <!--        >-->
-    <!--            <q-btn-->
-    <!--                v-if="selectedProfile !== null && hasResetButton"-->
-    <!--                icon="clear"-->
-    <!--                color="white"-->
-    <!--                flat-->
-    <!--                small-->
-    <!--                @click="resetProfile"-->
-    <!--            />-->
-    <!--        </div>-->
-    <!--    </div>-->
 </template>
 
 <script>
 import _ from 'lodash'
-import {
-    mapState
-} from 'vuex'
+import { mapState } from 'vuex'
 export default {
     name: 'CscPbxModelSelect',
     props: {
@@ -187,6 +101,7 @@ export default {
             default: false
         }
     },
+    emits: ['reset', 'selected', 'opened', 'input'],
     data () {
         return {
             selectedProfile: this.getProfileById(this.value)
@@ -201,18 +116,14 @@ export default {
         },
         selectedProfileImageUrl () {
             const deviceModelId = _.get(this.selectedProfile, 'device_id', null)
-            return _.get(this.deviceModelImageSmallMap, deviceModelId + '.url', null)
+            return _.get(this.deviceModelImageSmallMap, `${deviceModelId}.url`, null)
         },
         options () {
-            const options = []
-            this.profiles.forEach((profile) => {
-                options.push({
-                    label: profile.name,
-                    value: profile.id,
-                    model: profile.device_id
-                })
-            })
-            return options
+            return this.profiles.map((profile) => ({
+                label: profile.name,
+                value: profile.id,
+                model: profile.device_id
+            }))
         }
     },
     watch: {
@@ -239,24 +150,24 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-pbx-model-select
-        .q-input
-            margin 0
-        .q-btn
-            padding-left $flex-gutter-xs
-            padding-right $flex-gutter-xs
-            .q-btn-inner
-                i
-                    margin 0
-    .csc-pbx-device-model-image
-        position relative
-        width 32px
-        height 32px
-        overflow hidden
-        img
-            position absolute
-            width 32px
-            left 0
-            top 0
+<style lang="sass" rel="stylesheet/sass">
+.csc-pbx-model-select
+    .q-input
+        margin: 0
+    .q-btn
+        padding-left: $flex-gutter-xs
+        padding-right: $flex-gutter-xs
+        .q-btn-inner
+            i
+                margin: 0
+.csc-pbx-device-model-image
+    position: relative
+    width: 32px
+    height: 32px
+    overflow: hidden
+    img
+        position: absolute
+        width: 32px
+        left: 0
+        top: 0
 </style>

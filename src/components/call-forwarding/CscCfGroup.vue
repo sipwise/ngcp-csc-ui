@@ -5,12 +5,13 @@
         separator
     >
         <csc-cf-group-title
-            ref="cfGroupTitle"
             :loading="loading"
             :mapping="mapping"
             :destination-set="destinationSet"
+            :b-number-set="bNumberSet"
             :source-set="sourceSet"
             :time-set="timeSet"
+            :subscriber-id="subscriberId"
         />
         <template
             v-if="destinationSet"
@@ -19,22 +20,19 @@
                 v-if="mapping.type === 'cft'"
                 :loading="loading"
                 :mapping="mapping"
-                :destination-set="destinationSet"
-                :source-set="sourceSet"
-                :time-set="timeSet"
+                :primary-number-source="getPrimaryNumberSource"
             />
             <csc-cf-group-item
                 v-for="(destination, destinationIndex) in destinationSet.destinations"
                 :key="destinationIndex"
                 :loading="loading"
+                :editable="destinationSet.own"
                 :destination="destination"
-                :destination-previous="(destinationIndex > 0)?destinationSet.destinations[destinationIndex - 1]:null"
                 :destination-index="destinationIndex"
-                :mapping="mapping"
                 :destination-set="destinationSet"
+                :b-number-set="bNumberSet"
                 :source-set="sourceSet"
                 :time-set="timeSet"
-                @delete-last="$refs.cfGroupTitle.deleteMappingEvent(mapping)"
             />
         </template>
         <q-inner-loading
@@ -47,10 +45,11 @@
     </q-list>
 </template>
 <script>
-import CscCfGroupTitle from 'components/call-forwarding/CscCfGroupTitle'
-import CscCfGroupItem from 'components/call-forwarding/CscCfGroupItem'
 import CscSpinner from 'components/CscSpinner'
+import CscCfGroupItem from 'components/call-forwarding/CscCfGroupItem'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
+import CscCfGroupTitle from 'components/call-forwarding/CscCfGroupTitle'
+import { mapState } from 'vuex'
 
 export default {
     name: 'CscCfGroup',
@@ -69,6 +68,10 @@ export default {
             type: Object,
             required: true
         },
+        bNumberSet: {
+            type: Object,
+            default: undefined
+        },
         sourceSet: {
             type: Object,
             default: undefined
@@ -80,11 +83,29 @@ export default {
         loading: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     computed: {
+        ...mapState('pbxGroups', [
+            'groupSelected'
+        ]),
+        ...mapState('pbxSeats', [
+            'seatSelected'
+        ]),
         waitIdentifier () {
-            return 'csc-cf-group-' + this.destinationSet.id
+            return `csc-cf-group-${this.destinationSet.id}`
+        },
+        getPrimaryNumberSource () {
+            if (this.groupSelected) {
+                return this.groupSelected
+            } else if (this.seatSelected) {
+                return this.seatSelected
+            }
+            return null
         }
     }
 }

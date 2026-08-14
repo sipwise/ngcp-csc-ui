@@ -11,6 +11,7 @@
         @toggle-block-incoming="toggleBlockIncoming"
         @toggle-block-outgoing="toggleBlockOutgoing"
         @toggle-block-both="toggleBlockBoth"
+        @add-to-phonebook="toggleAddToPhonebook"
     />
     <csc-fax-item
         v-else-if="item.type === 'fax'"
@@ -18,6 +19,7 @@
         :call-available="callAvailable"
         @download-fax="downloadFax"
         @start-call="startCall"
+        @delete-fax="$emit('delete-fax', $event)"
     />
     <csc-voice-mail-item
         v-else-if="item.type === 'voicemail'"
@@ -28,6 +30,7 @@
         :block-both-label="blockBothLabel"
         :block-both-possible="unblockedBoth || blockedBoth"
         @download-voice-mail="downloadVoiceMail"
+        @get-voicemail-transcript="getVoicemailTranscript"
         @play-voice-mail="playVoiceMail"
         @start-call="startCall"
         @toggle-block-incoming="toggleBlockIncoming"
@@ -38,9 +41,9 @@
 </template>
 
 <script>
-import CscCallItem from './CscCallItem'
-import CscFaxItem from './CscFaxItem'
-import CscVoiceMailItem from './CscVoiceMailItem'
+import CscCallItem from 'components/pages/Conversations/CscCallItem'
+import CscFaxItem from 'components/pages/Conversations/CscFaxItem'
+import CscVoiceMailItem from 'components/pages/Conversations/CscVoiceMailItem'
 export default {
     name: 'CscConversationItem',
     components: {
@@ -66,6 +69,19 @@ export default {
             default: false
         }
     },
+    emits: [
+        'download-fax',
+        'delete-voicemail',
+        'get-voicemail-transcript',
+        'toggle-block-both',
+        'toggle-block-outgoing',
+        'toggle-block-incoming',
+        'start-call',
+        'add-to-phonebook',
+        'download-voice-mail',
+        'play-voice-mail',
+        'delete-fax'
+    ],
     data () {
         return {}
     },
@@ -73,9 +89,8 @@ export default {
         number () {
             if (this.item.direction === 'out') {
                 return this.item.callee
-            } else {
-                return this.item.caller
             }
+            return this.item.caller
         },
         toggleActionIncoming () {
             return this.blockedIncoming ? 'unblock' : 'block'
@@ -86,25 +101,22 @@ export default {
         blockIncomingLabel () {
             if (this.blockedIncoming) {
                 return this.$t('Unblock Incoming')
-            } else {
-                return this.$t('Block Incoming')
             }
+            return this.$t('Block Incoming')
         },
         blockOutgoingLabel () {
             if (this.blockedOutgoing) {
                 return this.$t('Unblock Outgoing')
-            } else {
-                return this.$t('Block Outgoing')
             }
+            return this.$t('Block Outgoing')
         },
         blockBothLabel () {
             if (this.blockedBoth) {
                 return this.$t('Unblock Incoming/Outgoing')
             } else if (this.unblockedBoth) {
                 return this.$t('Block Incoming/Outgoing')
-            } else {
-                return ''
             }
+            return ''
         },
         blockedBoth () {
             return this.blockedIncoming && this.blockedOutgoing
@@ -122,6 +134,9 @@ export default {
         },
         downloadVoiceMail (voiceMail) {
             this.$emit('download-voice-mail', voiceMail)
+        },
+        getVoicemailTranscript (voiceMail) {
+            this.$emit('get-voicemail-transcript', voiceMail)
         },
         playVoiceMail (voiceMail) {
             this.$emit('play-voice-mail', voiceMail)
@@ -143,10 +158,13 @@ export default {
                 number: this.number,
                 type: this.toggleActionIncoming
             })
+        },
+        toggleAddToPhonebook (number) {
+            this.$emit('add-to-phonebook', number)
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

@@ -10,11 +10,11 @@
             hide-bottom-space
             :label="$t('Password')"
             :disable="loading"
-            :error="$v.password.$error"
-            :error-message="errorMessagePass"
-            @blur="$v.password.$touch()"
+            :error="v$.password.$errors.length > 0"
+            :error-message="$errMsg(v$.password.$errors)"
+            @blur="v$.password.$touch()"
         />
-        <password-strength-meter
+        <password-meter
             v-model="passwordScored"
             class="full-width"
             style="max-width: none;"
@@ -29,24 +29,24 @@
             hide-bottom-space
             :label="$t('Password Retype')"
             :disable="loading"
-            :error="$v.passwordRetype.$error"
-            :error-message="errorMessagePassRetype"
-            @blur="$v.passwordRetype.$touch();onRetypeBlur()"
+            :error="v$.passwordRetype.$errors.length > 0"
+            :error-message="$errMsg(v$.passwordRetype.$errors)"
+            @blur="v$.passwordRetype.$touch();onRetypeBlur()"
         />
     </div>
 </template>
 
 <script>
-import PasswordStrengthMeter from 'vue-password-strength-meter'
-import {
-    required
-} from 'vuelidate/lib/validators'
+import useValidate from '@vuelidate/core'
+import { maxLength, minLength, required } from '@vuelidate/validators'
 import CscInputPassword from 'components/form/CscInputPassword'
+import PasswordMeter from 'vue-simple-password-meter'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscChangePasswordForm',
     components: {
         CscInputPassword,
-        PasswordStrengthMeter
+        PasswordMeter
     },
     props: {
         noSubmit: {
@@ -58,43 +58,32 @@ export default {
             default: false
         }
     },
+    emits: ['validation-succeeded', 'validation-failed'],
     data () {
         return {
             password: '',
             passwordRetype: '',
             passwordScored: '',
-            passwordStrengthScore: null
+            passwordStrengthScore: null,
+            v$: useValidate(),
+            messages: []
         }
     },
-    validations: {
-        password: {
-            required,
-            passwordStrength () {
-                return this.passwordStrengthScore >= 2
-            }
-        },
-        passwordRetype: {
-            required,
-            sameAsPassword (val) {
-                return val === this.password
+    validations () {
+        return {
+            password: { ...this.getPasswordValidations() },
+            passwordRetype: {
+                required,
+                sameAsPassword (val) {
+                    return val === this.password
+                }
             }
         }
     },
     computed: {
-        errorMessagePass () {
-            if (!this.$v.password.passwordStrength) {
-                return this.$t('Password is not strong enough')
-            } else {
-                return ''
-            }
-        },
-        errorMessagePassRetype () {
-            if (!this.$v.passwordRetype.sameAsPassword) {
-                return this.$t('Passwords must be equal')
-            } else {
-                return ''
-            }
-        }
+        ...mapGetters('user', [
+            'passwordRequirements'
+        ])
     },
     watch: {
         password (value) {
@@ -105,18 +94,76 @@ export default {
             }
         }
     },
+    mounted () {
+        this.messages = this.getPasswordRequirementsMessages()
+    },
     methods: {
-        strengthMeterScoreUpdate (score) {
-            this.passwordStrengthScore = score
+        getPasswordRequirementsMessages () {
+            if (!this.passwordRequirements?.web_validate) {
+                return
+            }
+
+            const lengthMessage = this.passwordRequirements.min_length > 0
+                ? `must be between ${this.passwordRequirements.min_length} and ${this.passwordRequirements.max_length} characters long`
+                : null
+            const digitsMessage = this.passwordRequirements.musthave_digit > 0
+                ? `must contain at least ${this.passwordRequirements.musthave_digit} digits`
+                : null
+            const lowercaseMessage = this.passwordRequirements.musthave_lowercase > 0
+                ? `must contain at least ${this.passwordRequirements.musthave_lowercase} lowercase`
+                : null
+            const uppercaseReq = this.passwordRequirements.musthave_uppercase > 0
+                ? `must contain at least ${this.passwordRequirements.musthave_uppercase} uppercase`
+                : null
+            const specialCharReq = this.passwordRequirements.musthave_specialchar > 0
+                ? `must contain at least ${this.passwordRequirements.musthave_specialchar} special characters`
+                : null
+
+            return [lengthMessage, digitsMessage, lowercaseMessage, uppercaseReq, specialCharReq].filter((message) => message !== null)
+        },
+        getPasswordValidations () {
+            if (this.passwordRequirements?.web_validate) {
+                return {
+                    required,
+                    passwordMaxLength: maxLength(this.passwordRequirements.max_length),
+                    passwordMinLength: minLength(this.passwordRequirements.min_length),
+                    passwordDigits () {
+                        const digitPattern = /\d/g
+                        return (this.password.match(digitPattern) || []).length >= this.passwordRequirements.musthave_digit
+                    },
+                    passwordLowercase () {
+                        const lowercasePattern = /[a-z]/g
+                        return (this.password.match(lowercasePattern) || []).length >= this.passwordRequirements.musthave_lowercase
+                    },
+                    passwordUppercase () {
+                        const uppercasePattern = /[A-Z]/g
+                        return (this.password.match(uppercasePattern) || []).length >= this.passwordRequirements.musthave_uppercase
+                    },
+                    passwordChars () {
+                        const specialCharPattern = /[\W_]/g
+                        return (this.password.match(specialCharPattern) || []).length >= this.passwordRequirements.musthave_specialchar
+                    },
+                    passwordStrength () {
+                        return this.passwordScore >= 2
+                    }
+                }
+            }
+
+            return { required }
+        },
+        strengthMeterScoreUpdate (evt) {
+            this.passwordStrengthScore = evt.score
         },
         resetForm () {
-            this.password = this.passwordRetype = this.passwordScored = ''
+            this.password = ''
+            this.passwordRetype = ''
+            this.passwordScored = ''
             this.passwordStrengthScore = null
-            this.$v.$reset()
+            this.v$.$reset()
         },
         submit () {
-            this.$v.$touch()
-            if (this.$v.$invalid) {
+            this.v$.$touch()
+            if (this.v$.$invalid) {
                 this.$emit('validation-failed')
             } else {
                 this.$emit('validation-succeeded', {
@@ -126,7 +173,7 @@ export default {
             }
         },
         onRetypeBlur () {
-            if (this.noSubmit && !this.$v.$invalid) {
+            if (this.noSubmit && !this.v$.$invalid) {
                 this.$emit('validation-succeeded', {
                     password: this.password,
                     strengthScore: this.passwordStrengthScore
@@ -136,3 +183,14 @@ export default {
     }
 }
 </script>
+
+<style lang="sass" rel="stylesheet/sass">
+.po-password-strength-bar
+    border-radius: 2px
+    transition: all 0.2s linear
+    height: 6px
+    margin-bottom: 12px
+    margin-top: 3px
+    background-color: #ddd
+    max-width: none
+</style>

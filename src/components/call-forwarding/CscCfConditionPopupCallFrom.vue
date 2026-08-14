@@ -14,6 +14,7 @@
             :destination-set="destinationSet"
             :source-set="sourceSet"
             :time-set="timeSet"
+            :subscriber-id="subscriberId"
             @select="internalStep='call-from-select'"
             @close="closePopup"
         />
@@ -28,6 +29,7 @@
             :destination-set="destinationSet"
             :source-set="sourceSet"
             :time-set="timeSet"
+            :subscriber-id="subscriberId"
             @back="internalStep='call-from'"
             @create="internalStep='call-from'"
             @close="closePopup"
@@ -36,9 +38,9 @@
 </template>
 
 <script>
+import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
 import CscCfGroupConditionSourceSetCreate from 'components/call-forwarding/CscCfGroupConditionSourceSetCreate'
 import CscCfGroupConditionSourceSetSelect from 'components/call-forwarding/CscCfGroupConditionSourceSetSelect'
-import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
 export default {
     name: 'CscCfConditionPopupCallFrom',
     components: {
@@ -62,6 +64,10 @@ export default {
         timeSet: {
             type: Object,
             default: undefined
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     data () {

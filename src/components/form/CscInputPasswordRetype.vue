@@ -2,21 +2,43 @@
     <div
         class="csc-input-password-retype"
     >
+        <q-tooltip v-if="messages.length > 0">
+            <div class="tooltip-message q-pa-md text-body2">
+                Password requirements:
+                <q-item
+                    v-for="(message, index) in messages"
+                    :key="index"
+                    dense
+                >
+                    <q-item-section>
+                        <span>
+                            <q-icon
+                                name="lock"
+                                size="1em"
+                                class="q-pa-xs"
+                            /> {{ message }}
+                        </span>
+                    </q-item-section>
+                </q-item>
+            </div>
+        </q-tooltip>
         <csc-input-password
             ref="password"
             v-model="password"
             v-bind="$attrs"
             generate
             clearable
-            :label="passwordLabel"
-            @input="inputPassword"
+            :error="v$.password.$errors.length > 0"
+            :error-message="$errMsg(v$.password.$errors)"
+            :label="translatedPasswordLabel"
+            @update:model-value="inputPassword"
+            @blur="v$.password.$touch()"
             @generated="passwordGenerated"
             @clear="passwordClear"
         />
-        <password-strength-meter
+        <password-meter
             v-show="false"
-            v-model="password"
-            :strength-meter-only="true"
+            :password="password"
             @score="strengthMeterScoreUpdate"
         />
         <q-linear-progress
@@ -28,41 +50,37 @@
             ref="passwordRetype"
             v-model="passwordRetype"
             v-bind="$attrs"
-            :label="passwordConfirmLabel"
-            :error="$v.passwordRetype.$error"
-            :error-message="errorMessagePasswordRetype"
+            :label="translatedPasswordConfirmLabel"
+            :error="v$.passwordRetype.$errors.length > 0"
+            :error-message="$errMsg(v$.passwordRetype.$errors)"
             clearable
-            :disable="passwordScore < 2 || $attrs.disable"
-            @clear="$v.passwordRetype.$reset"
+            :disable="$attrs.disable"
+            @clear="v$.passwordRetype.$reset()"
             @blur="passwordRetypeBlur"
-            @input="inputRetypePassword"
+            @update:model-value="inputRetypePassword"
         />
     </div>
 </template>
 <script>
+
+import useValidate from '@vuelidate/core'
 import {
-    sameAs,
-    required
-} from 'vuelidate/lib/validators'
+    maxLength,
+    minLength,
+    required,
+    sameAs
+} from '@vuelidate/validators'
 import CscInputPassword from 'components/form/CscInputPassword'
-import PasswordStrengthMeter from 'vue-password-strength-meter'
+import PasswordMeter from 'vue-simple-password-meter'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscInputPasswordRetype',
     components: {
         CscInputPassword,
-        PasswordStrengthMeter
-    },
-    validations: {
-        password: {
-            required
-        },
-        passwordRetype: {
-            required,
-            sameAsPassword: sameAs('password')
-        }
+        PasswordMeter
     },
     props: {
-        value: {
+        modelValue: {
             type: Object,
             default () {
                 return {
@@ -73,31 +91,51 @@ export default {
         },
         passwordLabel: {
             type: String,
-            default () {
-                return this.$t('Password')
-            }
+            default: undefined
         },
         passwordConfirmLabel: {
             type: String,
-            default () {
-                return this.$t('Password Retype')
-            }
+            default: undefined
+        },
+        passwordType: {
+            type: String,
+            default: 'web'
         }
     },
+    emits: ['validation-failed', 'validation-succeeded', 'update:modelValue', 'score'],
     data () {
         return {
-            password: this.value.password,
-            passwordRetype: this.value.passwordRetype,
-            passwordScore: null
+            password: this.modelValue.password,
+            passwordRetype: this.modelValue.passwordRetype,
+            passwordScore: null,
+            v$: useValidate(),
+            messages: []
+        }
+    },
+    validations () {
+        return {
+            password: { ...this.getPasswordValidations() },
+            passwordRetype: {
+                required,
+                sameAsPassword: sameAs(this.password)
+            }
         }
     },
     computed: {
-        errorMessagePasswordRetype () {
-            if (!this.$v.passwordRetype.sameAsPassword) {
-                return this.$t('Passwords must be equal')
-            } else {
-                return ''
-            }
+        ...mapGetters('user', [
+            'passwordRequirements'
+        ]),
+        translatedPasswordLabel () {
+            return this.$t(this.passwordLabel || this.$t('Password'))
+        },
+        translatedPasswordConfirmLabel () {
+            return this.$t(this.passwordConfirmLabel || this.$t('Password Retype'))
+        },
+        areValidationsActive () {
+            const webValidate = this.passwordRequirements?.web_validate || false
+            const sipValidate = this.passwordRequirements?.sip_validate || false
+
+            return this.passwordType === 'web' ? webValidate : sipValidate
         },
         passwordScoreMappedValue () {
             if (this.passwordScore === null || this.passwordScore === undefined) {
@@ -110,46 +148,98 @@ export default {
                 return 'negative'
             } else if (this.passwordScore === 2) {
                 return 'warning'
-            } else {
-                return 'primary'
             }
+            return 'primary'
         }
     },
     watch: {
-        value (value) {
+        modelValue (value) {
             this.password = value.password
             this.passwordRetype = value.passwordRetype
         },
         passwordScore (score) {
             if (score < 2) {
                 this.$refs.passwordRetype.clear()
-                this.$v.$reset()
+                this.v$.$reset()
             }
         }
     },
     mounted () {
-        this.$v.$reset()
+        this.v$.$reset()
         this.$refs.passwordRetype.clear()
         this.$refs.password.clear()
+        this.messages = this.getPasswordRequirementsMessages()
     },
     methods: {
-        strengthMeterScoreUpdate (score) {
-            this.passwordScore = score
-            this.$emit('score', score)
+        strengthMeterScoreUpdate (evt) {
+            this.passwordScore = evt.score
+            this.$emit('score', evt.score)
+        },
+        getPasswordRequirementsMessages () {
+            if (!this.areValidationsActive) {
+                return []
+            }
+
+            const lengthMessage = this.passwordRequirements.minLength > 0
+                ? `must be between ${this.passwordRequirements.min_length} and ${this.passwordRequirements.max_length} characters long`
+                : null
+            const digitsMessage = this.passwordRequirements.musthave_digit > 0
+                ? `must contain at least ${this.passwordRequirements.musthave_digit} digits`
+                : null
+            const lowercaseMessage = this.passwordRequirements.musthave_lowercase > 0
+                ? `must contain at least ${this.passwordRequirements.musthave_lowercase} lowercase`
+                : null
+            const uppercaseReq = this.passwordRequirements.musthave_uppercase > 0
+                ? `must contain at least ${this.passwordRequirements.musthave_uppercase} uppercase`
+                : null
+            const specialCharReq = this.passwordRequirements.musthave_specialchar > 0
+                ? `must contain at least ${this.passwordRequirements.musthave_specialchar} special characters`
+                : null
+
+            return [lengthMessage, digitsMessage, lowercaseMessage, uppercaseReq, specialCharReq].filter((message) => message !== null)
+        },
+        getPasswordValidations () {
+            if (this.areValidationsActive) {
+                return {
+                    required,
+                    passwordMaxLength: maxLength(this.passwordRequirements.max_length),
+                    passwordMinLength: minLength(this.passwordRequirements.min_length),
+                    passwordDigits () {
+                        const digitPattern = /\d/g
+                        return (this.password.match(digitPattern) || []).length >= this.passwordRequirements.musthave_digit
+                    },
+                    passwordLowercase () {
+                        const lowercasePattern = /[a-z]/g
+                        return (this.password.match(lowercasePattern) || []).length >= this.passwordRequirements.musthave_lowercase
+                    },
+                    passwordUppercase () {
+                        const uppercasePattern = /[A-Z]/g
+                        return (this.password.match(uppercasePattern) || []).length >= this.passwordRequirements.musthave_uppercase
+                    },
+                    passwordChars () {
+                        const specialCharPattern = /[\W_]/g
+                        return (this.password.match(specialCharPattern) || []).length >= this.passwordRequirements.musthave_specialchar
+                    },
+                    passwordStrength () {
+                        return this.passwordScore >= 2
+                    }
+                }
+            }
+
+            return { required }
         },
         inputPassword () {
-            this.$emit('input', {
+            this.$emit('update:modelValue', {
                 password: this.password,
                 passwordRetype: this.passwordRetype
             })
         },
         inputRetypePassword () {
-            this.validate()
             this.inputPassword()
         },
         passwordGenerated (password) {
-            this.$emit('input', {
-                password: password,
+            this.$emit('update:modelValue', {
+                password,
                 passwordRetype: password
             })
             this.$nextTick(() => {
@@ -159,14 +249,14 @@ export default {
         passwordClear () {
             this.$refs.passwordRetype.clear()
             this.validate()
-            this.$v.$reset()
+            this.v$.$reset()
         },
         passwordRetypeBlur () {
             this.validate()
         },
         validate () {
-            this.$v.$touch()
-            if (!this.$v.$invalid) {
+            this.v$.$touch()
+            if (!this.v$.$invalid) {
                 this.$emit('validation-succeeded')
             } else {
                 this.$emit('validation-failed')
@@ -176,10 +266,13 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 .csc-input-password-retype
-    .Password__strength-meter
-        margin 0
-        margin-top 16px !important
-        margin-bottom 16px !important
+    .po-password-strength-bar
+        border-radius: 2px
+        transition: all 0.2s linear
+        height: 6px
+        margin-bottom: 16px !important
+        margin-top: 16px !important
+        background-color: #ddd
 </style>

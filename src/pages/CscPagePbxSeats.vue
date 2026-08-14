@@ -3,7 +3,7 @@
         id="csc-page-pbx-seats"
     >
         <template
-            v-slot:header
+            #header
         >
             <q-btn
                 icon="add"
@@ -31,12 +31,14 @@
             />
         </template>
         <template
-            v-slot:toolbar
+            #toolbar
         >
-            <csc-pbx-seat-filters
+            <csc-search-filters
                 v-if="showFilters"
                 ref="filters"
                 class="q-mb-md q-pa-md"
+                :filter-options="seatFilterOptions"
+                data-cy-prefix="csc-pbx-seat-search"
                 @filter="filterEvent"
             />
             <csc-pbx-seat-add-form
@@ -56,9 +58,9 @@
             class="row justify-center"
         >
             <q-pagination
-                :value="seatListCurrentPage"
+                :model-value="seatListCurrentPage"
                 :max="seatListLastPage"
-                @input="loadSeatListItemsPaginated"
+                @update:model-value="loadSeatListItemsPaginated"
             />
         </div>
         <div
@@ -77,27 +79,11 @@
                 :class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
                 :seat="seat"
                 :intra-pbx="getIntraPbx(seat.id)"
-                :music-on-hold="getMusicOnHold(seat.id)"
                 :groups="groupMapById"
-                :expanded="isSeatExpanded(seat.id)"
                 :loading="isSeatLoading(seat.id)"
-                :alias-number-options="getNumberOptions"
-                :group-options="getGroupOptions"
-                :sound-set-options="getSoundSetOptions"
-                :sound-set="getSoundSetBySeatId(seat.id)"
-                :label-width="4"
-                :has-call-queue="hasCallQueue(seat.id)"
-                @expand="expandSeat(seat.id)"
-                @collapse="collapseSeat(seat.id)"
                 @remove="openSeatRemovalDialog(seat.id)"
-                @save-name="setSeatName"
-                @save-extension="setSeatExtension"
-                @save-alias-numbers="setSeatNumbers"
-                @save-groups="setSeatGroups"
-                @save-sound-set="setSeatSoundSet"
                 @save-intra-pbx="setIntraPbx"
                 @save-music-on-hold="setMusicOnHold"
-                @jump-to-call-queue="jumpToCallQueue"
             />
         </q-list>
         <div
@@ -117,32 +103,33 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import CscPbxSeatAddForm from 'components/pages/PbxConfiguration/CscPbxSeatAddForm'
-import CscPbxSeat from 'components/pages/PbxConfiguration/CscPbxSeat'
+import CscPageSticky from 'components/CscPageSticky'
 import CscRemoveDialog from 'components/CscRemoveDialog'
-import {
-    mapState,
-    mapGetters,
-    mapActions,
-    mapMutations
-} from 'vuex'
+import CscSearchFilters from 'components/CscSearchFilters'
+import CscSpinner from 'components/CscSpinner'
+import CscPbxSeat from 'components/pages/PbxConfiguration/CscPbxSeat'
+import CscPbxSeatAddForm from 'components/pages/PbxConfiguration/CscPbxSeatAddForm'
+import _ from 'lodash'
 import {
     showGlobalError,
     showToast
 } from 'src/helpers/ui'
-import CscSpinner from 'components/CscSpinner'
+import platform from 'src/mixins/platform'
 import {
     CreationState,
     RequestState
 } from 'src/store/common'
-import platform from 'src/mixins/platform'
-import CscPageSticky from 'components/CscPageSticky'
-import CscPbxSeatFilters from 'components/pages/PbxConfiguration/CscPbxSeatFilters'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 
 export default {
+    name: 'CscPagePbxSeats',
     components: {
-        CscPbxSeatFilters,
+        CscSearchFilters,
         CscPageSticky,
         CscSpinner,
         CscPbxSeat,
@@ -173,7 +160,9 @@ export default {
             'seatRemoving',
             'seatRemovalState',
             'seatRemovalError',
-            'seatListVisibility'
+            'seatListVisibility',
+            'seatListState',
+            'seatListError'
         ]),
         ...mapGetters('pbx', [
             'getNumberOptions',
@@ -188,20 +177,21 @@ export default {
             'isSeatCreating',
             'isSeatUpdating',
             'isSeatRemoving',
-            'isSeatExpanded',
             'isSeatLoading',
             'getIntraPbx',
-            'getMusicOnHold',
-            'getSoundSetBySeatId',
-            'getSeatCreatingName',
-            'getSeatUpdatingField',
-            'getSeatRemovingName',
             'getSeatRemoveDialogMessage',
             'getSeatCreationToastMessage',
-            'getSeatUpdateToastMessage',
             'getSeatRemovalToastMessage',
-            'hasCallQueue'
-        ])
+            'getSeatUpdateToastMessage'
+        ]),
+        seatFilterOptions () {
+            return [
+                { label: this.$t('Name'), value: 'display_name' },
+                { label: this.$t('Extension'), value: 'pbx_extension' },
+                { label: this.$t('Primary Number'), value: 'primary_number' },
+                { label: this.$t('Alias Number'), value: 'alias_number' }
+            ]
+        }
     },
     watch: {
         seatCreationState (state) {
@@ -227,6 +217,11 @@ export default {
             } else if (state === RequestState.failed) {
                 showGlobalError(this.seatRemovalError)
             }
+        },
+        seatListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.seatListError)
+            }
         }
     },
     mounted () {
@@ -239,24 +234,14 @@ export default {
             'loadSeatListItems',
             'createSeat',
             'removeSeat',
-            'setSeatName',
-            'setSeatExtension',
-            'setSeatGroups',
-            'setSeatNumbers',
-            'setSeatSoundSet',
             'setIntraPbx',
             'setMusicOnHold'
         ]),
         ...mapMutations('pbxSeats', [
             'enableSeatAddForm',
             'disableSeatAddForm',
-            'expandSeat',
-            'collapseSeat',
             'seatRemovalRequesting',
             'seatRemovalCanceled'
-        ]),
-        ...mapActions('pbxCallQueues', [
-            'jumpToCallQueue'
         ]),
         resetSeatAddForm () {
             if (this.$refs.addForm) {
@@ -265,7 +250,7 @@ export default {
         },
         openSeatRemovalDialog (seatId) {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
                 this.seatRemovalRequesting(seatId)
             }
         },
@@ -275,7 +260,7 @@ export default {
         loadSeatListItemsPaginated (page) {
             this.$scrollTo(this.$parent.$el)
             this.loadSeatListItems({
-                page: page
+                page
             })
         },
         openAddForm () {

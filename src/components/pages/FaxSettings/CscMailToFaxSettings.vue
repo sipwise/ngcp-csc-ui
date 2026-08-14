@@ -1,17 +1,5 @@
 <template>
-    <div
-        v-if="!mailToFaxSettingsModel.active"
-        class="q-pa-md"
-    >
-        <csc-spinner
-            v-if="loadingMail2FaxSettings"
-            class="self-center"
-        />
-        <div v-else>
-            {{ $t('Mail To Fax feature is not active') }}
-        </div>
-    </div>
-    <div v-else>
+    <div>
         <q-list
             class="col col-xs-12 col-md-6"
             dense
@@ -19,9 +7,11 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        :value="mailToFaxSettingsModel.active"
+                        :model-value="mailToFaxSettingsModel.active"
                         :label="$t('Active')"
-                        :disable="true"
+                        data-cy="csc-mailtofax-active"
+                        :disable="disableToggle"
+                        @update:model-value="setChangedData('active', !mailToFaxSettingsModel.active)"
                     />
                 </q-item-section>
                 <q-item-section
@@ -38,6 +28,7 @@
                     <csc-input-saveable
                         v-model.trim="mailToFaxSettingsModel.secret_key"
                         :label="secretKeyFieldLabel"
+                        data-cy="csc-mailtofax-secretkey"
                         :disable="!dataLoaded"
                         :loading="loadingMail2FaxSettings"
                         :value-changed="mailToFaxSettingsModel.secret_key !== mailToFaxSettings.secret_key"
@@ -59,8 +50,9 @@
                         :disable="!dataLoaded"
                         :readonly="!dataLoaded"
                         :label="$t('Secret Key Renew')"
+                        data-cy="csc-mailtofax-secretkey-renew"
                         :options="secretKeyRenewOptions"
-                        @input="setChangedData('secret_key_renew', mailToFaxSettingsModel.secret_key_renew)"
+                        @update:model-value="setChangedData('secret_key_renew', mailToFaxSettingsModel.secret_key_renew)"
                     >
                         <csc-tooltip>
                             {{ $t('Interval when the secret key is automatically renewed.') }}
@@ -88,6 +80,7 @@
                             flat
                             color="primary"
                             icon="add"
+                            data-cy="csc-mailtofax-secretnotify-add"
                             :disable="!dataLoaded || showAddNewRenewEmail"
                             @click="openAddNewRenewEmail"
                         >
@@ -107,6 +100,7 @@
                             class="col"
                             :loading="!dataLoaded"
                             :is-add-new-mode="true"
+                            data-cy="csc-mailtofax-secretnotify-form"
                             @save="addNewRenewEmail"
                             @cancel="closeAddNewRenewEmail"
                         />
@@ -126,7 +120,8 @@
                                 v-for="renewEmail in mailToFaxSettingsModel.secret_renew_notify"
                                 :key="renewEmail.destination"
                                 :value="renewEmail.destination"
-                                @save="updateRenewEmailItem(renewEmail.destination, ...arguments)"
+                                data-cy="csc-mailtofax-secretnotify-element"
+                                @save="updateRenewEmailItem(renewEmail.destination, $event)"
                                 @remove="deleteRenewEmailItem(renewEmail.destination)"
                             />
                         </q-list>
@@ -150,6 +145,7 @@
                             flat
                             color="primary"
                             icon="add"
+                            data-cy="csc-mailtofax-acl-add"
                             :disable="!dataLoaded || showAddNewACL"
                             @click="openAddNewACL"
                         >
@@ -169,6 +165,7 @@
                             class="col"
                             :loading="!dataLoaded"
                             :is-add-new-mode="true"
+                            data-cy="csc-mailtofax-acl-form"
                             @save="addNewACL"
                             @cancel="closeAddNewACL"
                         />
@@ -189,9 +186,10 @@
                                 :key="index"
                                 :acl="acl"
                                 :expanded="index === expandedACLId"
+                                data-cy="csc-mailtofax-acl-element"
                                 @expand="expandedACLId = index"
                                 @collapse="expandedACLId = null"
-                                @update-property="updateACL(index, ...arguments)"
+                                @update-property="updateACL(index, $event)"
                                 @remove="deleteACL(index)"
                             />
                         </q-list>
@@ -210,17 +208,17 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { mapState } from 'vuex'
-import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
-import { showGlobalError } from 'src/helpers/ui'
 import CscSpinner from 'components/CscSpinner'
-import CscInputSaveable from 'components/form/CscInputSaveable'
-import CscMailToFaxRenewNotifyEmail from 'components/pages/FaxSettings/CscMailToFaxRenewNotifyEmail'
-import CscMailToFaxACL from 'components/pages/FaxSettings/CscMailToFaxACL'
-import CscMailToFaxRenewNotifyEmailForm from 'components/pages/FaxSettings/CscMailToFaxRenewNotifyEmailForm'
-import CscMailToFaxACLForm from 'components/pages/FaxSettings/CscMailToFaxACLForm'
 import CscTooltip from 'components/CscTooltip'
+import CscInputSaveable from 'components/form/CscInputSaveable'
+import CscMailToFaxACL from 'components/pages/FaxSettings/CscMailToFaxACL'
+import CscMailToFaxACLForm from 'components/pages/FaxSettings/CscMailToFaxACLForm'
+import CscMailToFaxRenewNotifyEmail from 'components/pages/FaxSettings/CscMailToFaxRenewNotifyEmail'
+import CscMailToFaxRenewNotifyEmailForm from 'components/pages/FaxSettings/CscMailToFaxRenewNotifyEmailForm'
+import _ from 'lodash'
+import { showGlobalError } from 'src/helpers/ui'
+import { mapWaitingActions, mapWaitingGetters } from 'vue-wait-vue3'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
     name: 'CscMailToFaxSettings',
@@ -232,6 +230,12 @@ export default {
         CscMailToFaxRenewNotifyEmail,
         CscInputSaveable,
         CscSpinner
+    },
+    props: {
+        id: {
+            type: String,
+            default: ''
+        }
     },
     data () {
         return {
@@ -246,19 +250,31 @@ export default {
             'mailToFaxSettings',
             'mailToFaxSettingsInitialized'
         ]),
+        ...mapGetters('user', [
+            'getSubscriber'
+        ]),
         ...mapWaitingGetters({
             loadingMail2FaxSettings: 'loading mail2faxSettings'
         }),
         dataLoaded () {
             return this.mailToFaxSettingsInitialized && !this.loadingMail2FaxSettings
         },
+        disableToggle () {
+            if (!this.isAdministrator) {
+                return true
+            }
+            return !this.dataLoaded
+        },
+        isAdministrator () {
+            return this.getSubscriber?.administrative || false
+        },
         secretKeyFieldLabel () {
             let label = this.$t('Secret Key (empty=disabled)')
-            label += ' (' + this.$t('Last Modify Time') + ': '
+            label += ` (${this.$t('Last Modify Time')}: `
             if (this.mailToFaxSettings.last_secret_key_modify) {
-                label += this.mailToFaxSettings.last_secret_key_modify + ')'
+                label += `${this.mailToFaxSettings.last_secret_key_modify})`
             } else {
-                label += this.$t('Not modified yet') + ')'
+                label += `${this.$t('Not modified yet')})`
             }
             return label
         },
@@ -272,7 +288,7 @@ export default {
         }
     },
     mounted () {
-        this.loadMailToFaxSettings()
+        this.loadMailToFaxSettings(this.id)
     },
     methods: {
         ...mapWaitingActions('fax', {
@@ -281,7 +297,7 @@ export default {
         }),
         async loadMailToFaxSettings () {
             try {
-                await this.loadMailToFaxSettingsAction()
+                await this.loadMailToFaxSettingsAction(this.id)
                 this.updateDataFromStore()
             } catch (err) {
                 if (String(err.code) === '403') {
@@ -301,7 +317,11 @@ export default {
         },
         async setChangedData (field, value, beforeUpdateUI = () => {}) {
             try {
-                await this.mailToFaxSettingsUpdateAction({ field, value })
+                let newValue = value
+                if (field === 'secret_key') {
+                    newValue = newValue === '' ? null : newValue
+                }
+                await this.mailToFaxSettingsUpdateAction({ field, value: newValue, id: this.id })
                 beforeUpdateUI()
                 this.updateDataFromStore()
             } catch (err) {
@@ -324,7 +344,7 @@ export default {
         },
         updateRenewEmailItem (itemId, data) {
             const renewEmailItems = _.cloneDeep(this.mailToFaxSettingsModel.secret_renew_notify)
-            const renewEmailItemIndex = renewEmailItems.findIndex(d => d.destination === itemId)
+            const renewEmailItemIndex = renewEmailItems.findIndex((d) => d.destination === itemId)
             if (renewEmailItemIndex >= 0) {
                 renewEmailItems[renewEmailItemIndex].destination = data.value
             }
@@ -332,7 +352,7 @@ export default {
             this.setChangedData('secret_renew_notify', renewEmailItems)
         },
         deleteRenewEmailItem (itemId) {
-            const renewEmailItems = this.mailToFaxSettingsModel.secret_renew_notify.filter(d => d.destination !== itemId)
+            const renewEmailItems = this.mailToFaxSettingsModel.secret_renew_notify.filter((d) => d.destination !== itemId)
             this.setChangedData('secret_renew_notify', renewEmailItems)
         },
 
@@ -368,6 +388,6 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="sass" rel="stylesheet/sass" scoped>
 
 </style>

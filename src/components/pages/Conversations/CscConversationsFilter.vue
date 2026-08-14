@@ -2,18 +2,20 @@
     <q-toolbar>
         <q-space />
         <csc-input-date
-            v-model="value.from"
+            :value="value.from"
             class="q-mr-sm"
+            data-cy="filter-from"
             dense
-            clearable
+            :clearable="false"
             :label="$t('From')"
             :disable="loading"
             @input="inputFrom"
         />
         <csc-input-date
-            v-model="value.to"
+            :value="value.to"
+            data-cy="filter-to"
             dense
-            clearable
+            :clearable="false"
             :label="$t('To')"
             :disable="loading"
             @input="inputTo"
@@ -48,17 +50,18 @@ export default {
             default: false
         }
     },
+    emits: ['input'],
     methods: {
         inputFrom (from) {
             this.$emit('input', {
-                from: from,
+                from,
                 to: this.value.to
             })
         },
         inputTo (to) {
             this.$emit('input', {
                 from: this.value.from,
-                to: to
+                to
             })
         }
     }

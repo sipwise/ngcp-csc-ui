@@ -5,10 +5,10 @@
         >
             <q-expansion-item
                 v-if="item.visible && item.children && item.children.length > 0"
-                :key="index"
+                :key="index + '_childs'"
                 :label="item.label"
                 :icon="item.icon"
-                :content-inset-level="1"
+                :content-inset-level="0.5"
                 group="cscMainMenu"
                 class="text-weight-bold"
             >
@@ -94,7 +94,7 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 .csc-word-space
-    white-space normal
+    white-space: normal
 </style>

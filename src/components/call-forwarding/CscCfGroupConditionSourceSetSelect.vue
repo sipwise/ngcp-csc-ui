@@ -3,7 +3,7 @@
         :title="title"
         :loading="$wait.is('csc-cf-source-set-create')"
         v-bind="$attrs"
-        v-on="$listeners"
+        @close="$emit('close')"
     >
         <div
             class="no-margin q-pa-md"
@@ -13,20 +13,24 @@
                 :mode="mode"
                 dense
                 :label="$t('Number list')"
+                data-cy="csc-call-select-number-list"
             />
         </div>
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
+                v-if="!sourceSet || sourceSet.own"
                 :label="createLabel"
                 flat
                 color="primary"
                 icon="source"
+                data-cy="csc-call-select-edit-list"
                 @click="$emit('create')"
             />
             <q-btn
                 :label="$t('Save')"
+                data-cy="csc-call-selection-save"
                 flat
                 color="primary"
                 icon="check"
@@ -38,11 +42,9 @@
 </template>
 
 <script>
-import {
-    mapActions
-} from 'vuex'
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
 import CscCfSourceSetSelection from 'components/call-forwarding/CscCfSourceSetSelection'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfGroupConditionSourceSetSelect',
     components: {
@@ -80,8 +82,13 @@ export default {
         createLabel: {
             type: String,
             required: true
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
+    emits: ['close', 'create'],
     data () {
         return {
             selectedSourceSet: null
@@ -94,7 +101,8 @@ export default {
         async selectSourceSetEvent () {
             await this.assignSourceSet({
                 mapping: this.mapping,
-                id: this.selectedSourceSet
+                id: this.selectedSourceSet,
+                subscriberId: this.subscriberId
             })
             this.$emit('close')
         }

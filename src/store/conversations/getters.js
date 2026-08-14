@@ -1,10 +1,5 @@
-
-import {
-    RequestState
-} from '../common'
-import {
-    i18n
-} from 'src/boot/i18n'
+import { i18n } from 'boot/i18n'
+import { RequestState } from 'src/store/common'
 
 export default {
     getSubscriberId (state, getters, rootState, rootGetters) {
@@ -15,7 +10,7 @@ export default {
     },
     reloadItemsError (state) {
         return state.reloadItemsError ||
-            i18n.t('Reloading conversation items failed')
+            i18n.global.t('Reloading conversation items failed')
     },
     playVoiceMailState (state) {
         return (id) => {
@@ -61,18 +56,16 @@ export default {
         return (number) => {
             if (state.blockedModeIncoming === 'whitelist') {
                 return !state.blockedNumbersIncoming.has(number)
-            } else {
-                return state.blockedNumbersIncoming.has(number)
             }
+            return state.blockedNumbersIncoming.has(number)
         }
     },
     isNumberOutgoingBlocked (state) {
         return (number) => {
             if (state.blockedModeOutgoing === 'whitelist') {
                 return !state.blockedNumbersOutgoing.has(number)
-            } else {
-                return state.blockedNumbersOutgoing.has(number)
             }
+            return state.blockedNumbersOutgoing.has(number)
         }
     },
     blockedNumbersIncoming (state) {
@@ -97,18 +90,16 @@ export default {
         return (number) => {
             if (state.blockedNumbersIncoming.has(number)) {
                 return 'remove'
-            } else {
-                return 'add'
             }
+            return 'add'
         }
     },
     actionToToggleOutgoingNumber (state) {
         return (number) => {
             if (state.blockedNumbersOutgoing.has(number)) {
                 return 'remove'
-            } else {
-                return 'add'
             }
+            return 'add'
         }
     },
     toggleBlockedState (state) {

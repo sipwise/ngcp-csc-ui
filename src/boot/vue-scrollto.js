@@ -1,6 +1,5 @@
-
 import VueScrollTo from 'vue-scrollto'
 
-export default ({ Vue }) => {
-    Vue.use(VueScrollTo)
+export default ({ app }) => {
+    app.use(VueScrollTo)
 }

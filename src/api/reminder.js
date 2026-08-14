@@ -1,20 +1,19 @@
-
 import _ from 'lodash'
-import Vue from 'vue'
 import {
     getList,
+    httpApi,
     patchReplace
-} from './common'
+} from 'src/api/common'
 
 export function createReminder (subscriberId) {
     return new Promise((resolve, reject) => {
-        Vue.http.post('api/reminders/', {
+        httpApi.post('api/reminders/', {
             subscriber_id: subscriberId,
             time: '00:00',
             recur: 'never',
             active: false
         }).then((result) => {
-            const parts = result.headers.get('Location').split('/')
+            const parts = result.headers.location.split('/')
             resolve(_.last(parts))
         }).catch((err) => {
             reject(err)
@@ -47,9 +46,8 @@ export function getReminder (subscriberId) {
         }).then((reminder) => {
             if (reminder === null) {
                 return createAndGetReminder(subscriberId)
-            } else {
-                return Promise.resolve(reminder)
             }
+            return Promise.resolve(reminder)
         }).then((reminder) => {
             resolve(reminder)
         }).catch((err) => {
@@ -74,7 +72,7 @@ export function createAndGetReminder (subscriberId) {
 
 export function setReminderActive (reminderId, active) {
     return patchReplace({
-        path: 'api/reminders/' + reminderId,
+        path: `api/reminders/${reminderId}`,
         fieldPath: 'active',
         value: active
     })
@@ -82,7 +80,7 @@ export function setReminderActive (reminderId, active) {
 
 export function setReminderTime (reminderId, time) {
     return patchReplace({
-        path: 'api/reminders/' + reminderId,
+        path: `api/reminders/${reminderId}`,
         fieldPath: 'time',
         value: time
     })
@@ -90,7 +88,7 @@ export function setReminderTime (reminderId, time) {
 
 export function setReminderRecurrence (reminderId, reccurence) {
     return patchReplace({
-        path: 'api/reminders/' + reminderId,
+        path: `api/reminders/${reminderId}`,
         fieldPath: 'recur',
         value: reccurence
     })

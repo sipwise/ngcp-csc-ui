@@ -9,30 +9,36 @@
             <csc-change-password-embedded
                 ref="changeWebPasswordSection"
                 class="q-mb-md"
+                data-cy="change-web-password"
                 :btn-label="$t('Change Web Password')"
                 :password-label="$t('New Web Password')"
                 :password-confirm-label="$t('New Web Password confirm')"
-                :save-conformation-text="$t('You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password. ')"
+                :save-conformation-text="$t('You are about to change your login password. After the password was changed successfully, you get automatically logged out to authenticate with the new password.')"
                 :loading="processingChangeWebPassword"
                 @change="requestWebPasswordChange"
             />
             <csc-change-password-embedded
+                v-if="isAdministrative"
                 ref="changeSipPasswordSection"
                 class="q-mb-md"
+                data-cy="change-sip-password"
                 :btn-label="$t('Change SIP Password')"
                 :password-label="$t('New SIP Password')"
                 :password-confirm-label="$t('New SIP Password confirm')"
+                :password-type="'sip'"
                 :loading="processingChangeSIPPassword"
                 @change="requestSIPPasswordChange"
             />
             <q-input
-                :value="currentSIPURI"
+                :model-value="currentSIPURI"
                 :label="$t('SIP URI')"
+                data-cy="sip-uri-field"
                 readonly
             >
-                <template v-slot:append>
+                <template #append>
                     <q-btn
                         icon="content_copy"
+                        data-cy="sip-uri-field-copy"
                         color="primary"
                         flat
                         dense
@@ -41,13 +47,16 @@
                 </template>
             </q-input>
             <csc-input-password
+                v-if="isAdministrative"
                 :value="currentSIPPassword"
                 :label="$t('SIP Password')"
+                data-cy="sip-password-field"
                 readonly
             >
-                <template v-slot:append>
+                <template #append>
                     <q-btn
                         icon="content_copy"
+                        data-cy="sip-password-field-copy"
                         color="primary"
                         flat
                         dense
@@ -60,18 +69,13 @@
 </template>
 
 <script>
-import {
-    showGlobalError,
-    showToast
-} from 'src/helpers/ui'
-import {
-    mapGetters
-} from 'vuex'
 import CscPage from 'components/CscPage'
-import CscChangePasswordEmbedded from 'components/pages/UserSettings/CscChangePasswordEmbeded'
-import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
-import { copyToClipboard } from 'quasar'
 import CscInputPassword from 'components/form/CscInputPassword'
+import CscChangePasswordEmbedded from 'components/pages/UserSettings/CscChangePasswordEmbeded'
+import { copyToClipboard } from 'quasar'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { mapWaitingActions, mapWaitingGetters } from 'vue-wait-vue3'
+import { mapGetters } from 'vuex'
 
 const WAIT_CHANGE_WEB_PASSWORD = 'processing-changeWebPassword'
 const WAIT_CHANGE_SIP_PASSWORD = 'processing-changeSIPPassword'
@@ -98,9 +102,12 @@ export default {
         currentSIPPassword () {
             return this.getSubscriber?.password || ''
         },
+        isAdministrative () {
+            return this.getSubscriber?.administrative || false
+        },
         currentSIPURI () {
             const subscriberData = this.getSubscriber
-            return subscriberData?.username + '@' + subscriberData?.domain
+            return `${subscriberData?.username}@${subscriberData?.domain}`
         }
     },
     methods: {
@@ -127,14 +134,11 @@ export default {
             }
         },
         copy2clipboard (copyData) {
-            copyToClipboard(copyData)
-                .then(() => {
-                    showToast(this.$t('Data is in the clipboard'))
-                })
-                .catch(() => {
-                    console.error(copyData)
-                    showGlobalError(this.$t('Unable to copy data to clipboard'))
-                })
+            copyToClipboard(copyData).then(() => {
+                showToast(this.$t('Data is in the clipboard'))
+            }).catch(() => {
+                showGlobalError(this.$t('Unable to copy data to clipboard'))
+            })
         }
     }
 }

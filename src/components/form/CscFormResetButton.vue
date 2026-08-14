@@ -12,6 +12,7 @@
 <script>
 export default {
     name: 'CscFormResetButton',
+    emits: ['click'],
     data () {
         return {}
     },
@@ -23,5 +24,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

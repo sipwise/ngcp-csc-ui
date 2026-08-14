@@ -11,23 +11,22 @@
         />
         <q-input
             v-model="data.max_queue_length"
-            :error="$v.data.max_queue_length.$error"
+            :error="v$.data.max_queue_length.$errors.length > 0"
             :error-message="maxQueueLengthErrorMessage"
-            :disable="loading"
+            :disable="disableMaxQueueLength || loading"
             :readonly="loading"
             :label="$t('Queue Length')"
-            default="3"
-            @input="$v.data.max_queue_length.$touch"
+            @update:model-value="v$.data.max_queue_length.$touch()"
         />
         <q-input
             v-model="data.queue_wrap_up_time"
-            :error="$v.data.queue_wrap_up_time.$error"
+            :error="v$.data.queue_wrap_up_time.$errors.length > 0"
             :error-message="wrapUpTimeErrorMessage"
-            :disable="loading"
+            :disable="disableQueueWrapUpTime || loading"
             :readonly="loading"
-            :label="$t('Wrap Up Time')"
+            :label="$t('Wrap up time')"
             :suffix="$t('seconds')"
-            @input="$v.data.queue_wrap_up_time.$touch"
+            @update:model-value="v$.data.queue_wrap_up_time.$touch()"
         />
         <div
             class="csc-form-actions row justify-center"
@@ -44,7 +43,7 @@
             <q-btn
                 v-if="!loading"
                 flat
-                :disable="$v.data.$invalid"
+                :disable="v$.data.$invalid"
                 color="primary"
                 icon="filter_none"
                 @click="save()"
@@ -60,13 +59,16 @@
 </template>
 
 <script>
+import useValidate from '@vuelidate/core'
 import {
-    required,
     maxValue,
     minValue,
-    numeric
-} from 'vuelidate/lib/validators'
-import CscObjectSpinner from '../../CscObjectSpinner'
+    numeric,
+    required
+} from '@vuelidate/validators'
+import CscObjectSpinner from 'components/CscObjectSpinner'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscPbxCallQueueAddForm',
@@ -94,9 +96,10 @@ export default {
         },
         defaultQueueWrapUpTime: {
             type: Number,
-            default: 300
+            default: 10
         }
     },
+    emits: ['submit', 'cancel', 'ready'],
     validations: {
         data: {
             subscriber_id: {
@@ -116,47 +119,57 @@ export default {
     },
     data () {
         return {
-            data: this.getDefaults()
+            data: this.getDefaults(),
+            v$: useValidate()
         }
     },
     computed: {
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
+        ]),
+        disableMaxQueueLength () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.maxQueueLength)
+        },
+        disableQueueWrapUpTime () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.queueWrapUpTime)
+        },
         maxQueueLengthErrorMessage () {
-            if (!this.$v.data.max_queue_length.numeric) {
+            const errorsTab = this.v$.data.max_queue_length.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('Queue Length')
                 })
-            } else if (!this.$v.data.max_queue_length.minValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
                     field: this.$t('Queue Length'),
-                    minValue: this.$v.data.max_queue_length.$params.minValue.min
+                    minValue: this.v$.data.max_queue_length.minValue.$params.min
                 })
-            } else if (!this.$v.data.max_queue_length.maxValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
                     field: this.$t('Queue Length'),
-                    maxValue: this.$v.data.max_queue_length.$params.maxValue.max
+                    maxValue: this.v$.data.max_queue_length.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         wrapUpTimeErrorMessage () {
-            if (!this.$v.data.queue_wrap_up_time.numeric) {
+            const errorsTab = this.v$.data.queue_wrap_up_time.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
-                    field: this.$t('Wrap Up Time')
+                    field: this.$t('Wrap up time')
                 })
-            } else if (!this.$v.data.queue_wrap_up_time.minValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
-                    field: this.$t('Wrap Up Time'),
-                    minValue: this.$v.data.queue_wrap_up_time.$params.minValue.min
+                    field: this.$t('Wrap up time'),
+                    minValue: this.v$.data.queue_wrap_up_time.minValue.$params.min
                 })
-            } else if (!this.$v.data.queue_wrap_up_time.maxValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
-                    field: this.$t('Wrap Up Time'),
-                    maxValue: this.$v.data.queue_wrap_up_time.$params.maxValue.max
+                    field: this.$t('Wrap up time'),
+                    maxValue: this.v$.data.queue_wrap_up_time.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         }
     },
     mounted () {
@@ -167,18 +180,22 @@ export default {
             return {
                 subscriber_id: null,
                 max_queue_length: this.defaultMaxQueueLength,
-                queue_wrap_up_time: this.defaultWrapUpTime
+                queue_wrap_up_time: this.defaultQueueWrapUpTime
             }
         },
         cancel () {
             this.$emit('cancel')
         },
         save () {
-            this.$emit('submit', this.data)
+            this.$emit('submit', {
+                subscriberId: this.data.subscriber_id,
+                maxQueueLength: this.data.max_queue_length,
+                queueWrapUpTime: this.data.queue_wrap_up_time
+            })
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
+            this.v$.$reset()
         }
     }
 }

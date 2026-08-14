@@ -4,17 +4,21 @@
         class="q-pa-lg"
     >
         <csc-list-actions
-            class="row justify-center q-mb-lg"
+            class="row justify-center q-mb-xs"
         >
-            <csc-list-action-button
+            <template
                 v-if="!isSoundSetAddFormEnabled"
-                slot="slot1"
-                icon="add"
-                color="primary"
-                :label="$t('Add Sound Set')"
-                @click="enableSoundSetAddForm"
-            />
+                #slot1
+            >
+                <csc-list-action-button
+                    icon="add"
+                    color="primary"
+                    :label="$t('Add Sound Set')"
+                    @click="enableSoundSetAddForm"
+                />
+            </template>
         </csc-list-actions>
+        <q-separator />
         <q-slide-transition>
             <div
                 v-if="isSoundSetAddFormEnabled"
@@ -33,16 +37,17 @@
             class="row justify-center"
         >
             <q-pagination
-                :value="soundSetListCurrentPage"
+                :model-value="soundSetListCurrentPage"
                 :max="soundSetListLastPage"
-                @input="loadSoundSetListPaginated"
+                @update:model-value="loadSoundSetListPaginated"
             />
         </div>
         <csc-list-spinner
-            v-if="isSoundSetListRequesting && !soundSetListVisible"
+            v-if="isSoundSetListRequesting || isSoundSetUpdating || isSoundSetRemoving || isSoundSetCreating"
         />
-        <csc-list
-            v-if="!isSoundSetListRequesting || soundSetListVisible"
+        <q-list
+            v-if="!isSoundSetListRequesting && soundSetListVisible && !isSoundSetCreating"
+            class="row justify-start items-start"
         >
             <csc-fade
                 v-for="(soundSet, index) in soundSetList"
@@ -50,31 +55,15 @@
             >
                 <csc-pbx-sound-set
                     :key="soundSet.id"
+                    :class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
                     :odd="(index % 2) === 0"
-                    :expanded="isSoundSetExpanded(soundSet.id)"
-                    :loading="isSoundSetLoading(soundSet.id)"
+                    :loading="isSoundSetLoading(soundSet.id) || isSoundSetUpdating || isSoundSetRemoving"
                     :sound-set="soundSet"
-                    :sound-handles="soundHandleList"
-                    :sound-handles-loading="isSoundHandleListRequesting"
-                    :sound-files-loading="isSoundFileListRequesting(soundSet.id)"
-                    :sound-file-map="soundFileMap"
-                    :sound-file-url-map="soundFileUrlMap"
-                    :sound-file-upload-state="soundFileUploadState"
-                    :sound-file-upload-progress="soundFileUploadProgress"
-                    :sound-file-update-state="soundFileUpdateState"
-                    @require-sound-handles="loadSoundSetResources(soundSet.id)"
-                    @remove="openSoundSetRemovalDialog(soundSet.id)"
                     @save-as-default="setAsDefaultSoundSet"
-                    @save-name="setSoundSetName"
-                    @save-description="setSoundSetDescription"
-                    @expand="expandSoundSet(soundSet.id)"
-                    @collapse="collapseSoundSet"
-                    @play-sound-file="playSoundFile"
-                    @upload-sound-file="uploadSoundFile"
-                    @toggle-loop-play="setLoopPlay"
+                    @remove="openSoundSetRemovalDialog(soundSet.id)"
                 />
             </csc-fade>
-        </csc-list>
+        </q-list>
         <div
             v-if="isSoundSetListEmpty && !isSoundSetListRequesting"
             class="row justify-center csc-no-entities"
@@ -92,6 +81,14 @@
 </template>
 
 <script>
+import CscListActionButton from 'components/CscListActionButton'
+import CscListActions from 'components/CscListActions'
+import CscListSpinner from 'components/CscListSpinner'
+import CscPage from 'components/CscPage'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscPbxSoundSet from 'components/pages/PbxConfiguration/CscPbxSoundSet'
+import CscPbxSoundSetAddForm from 'components/pages/PbxConfiguration/CscPbxSoundSetAddForm'
+import CscFade from 'components/transitions/CscFade'
 import {
     showGlobalError,
     showToast
@@ -101,22 +98,14 @@ import {
     RequestState
 } from 'src/store/common'
 import {
-    mapMutations,
     mapActions,
-    mapState,
-    mapGetters
+    mapGetters,
+    mapMutations,
+    mapState
 } from 'vuex'
-import CscPage from 'components/CscPage'
-import CscList from 'components/CscList'
-import CscFade from 'components/transitions/CscFade'
-import CscListActions from 'components/CscListActions'
-import CscListActionButton from 'components/CscListActionButton'
-import CscPbxSoundSet from 'components/pages/PbxConfiguration/CscPbxSoundSet'
-import CscListSpinner from 'components/CscListSpinner'
-import CscPbxSoundSetAddForm from 'components/pages/PbxConfiguration/CscPbxSoundSetAddForm'
-import CscRemoveDialog from 'components/CscRemoveDialog'
 
 export default {
+    name: 'CscPagePbxSoundSets',
     components: {
         CscRemoveDialog,
         CscPbxSoundSetAddForm,
@@ -125,7 +114,6 @@ export default {
         CscListActionButton,
         CscListActions,
         CscFade,
-        CscList,
         CscPage
     },
     data () {
@@ -138,18 +126,14 @@ export default {
             'soundSetList',
             'soundSetListCurrentPage',
             'soundSetListLastPage',
-            'soundHandleList',
-            'soundFileMap',
-            'soundFileUrlMap',
-            'soundFileUploadState',
-            'soundFileUploadProgress',
-            'soundFileUpdateState',
             'soundSetCreationState',
             'soundSetCreationError',
+            'soundSetRemovalState',
+            'soundSetRemovalError',
             'soundSetUpdateState',
             'soundSetUpdateError',
-            'soundSetRemovalState',
-            'soundSetRemovalError'
+            'soundSetListState',
+            'soundSetListError'
         ]),
         ...mapGetters('pbxSoundSets', [
             'isSoundSetListEmpty',
@@ -157,15 +141,13 @@ export default {
             'isSoundSetAddFormEnabled',
             'isSoundSetListPaginationActive',
             'isSoundSetCreating',
-            'isSoundSetUpdating',
             'isSoundSetLoading',
-            'isSoundSetExpanded',
             'getSoundSetRemoveDialogMessage',
-            'isSoundHandleListRequesting',
-            'isSoundFileListRequesting',
             'getSoundSetCreationToastMessage',
+            'getSoundSetRemovalToastMessage',
             'getSoundSetUpdateToastMessage',
-            'getSoundSetRemovalToastMessage'
+            'isSoundSetUpdating',
+            'isSoundSetRemoving'
         ])
     },
     watch: {
@@ -191,6 +173,11 @@ export default {
             } else if (state === RequestState.failed) {
                 showGlobalError(this.soundSetRemovalError)
             }
+        },
+        soundSetListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.soundSetListError)
+            }
         }
     },
     mounted () {
@@ -201,30 +188,22 @@ export default {
             'enableSoundSetAddForm',
             'disableSoundSetAddForm',
             'soundSetRemovalRequesting',
-            'soundSetRemovalCanceled',
-            'expandSoundSet',
-            'collapseSoundSet'
+            'soundSetRemovalCanceled'
         ]),
         ...mapActions('pbxSoundSets', [
             'loadSoundSetList',
             'createSoundSet',
             'removeSoundSet',
-            'setAsDefaultSoundSet',
-            'setSoundSetName',
-            'setSoundSetDescription',
-            'loadSoundSetResources',
-            'playSoundFile',
-            'uploadSoundFile',
-            'setLoopPlay'
+            'setAsDefaultSoundSet'
         ]),
         loadSoundSetListPaginated (page) {
             this.loadSoundSetList({
-                page: page
+                page
             })
         },
         openSoundSetRemovalDialog (soundSetId) {
             if (this.$refs.removeDialog) {
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
             }
             this.soundSetRemovalRequesting(soundSetId)
         },

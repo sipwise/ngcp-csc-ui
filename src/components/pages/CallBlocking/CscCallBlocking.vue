@@ -11,11 +11,12 @@
             >
                 <q-toggle
                     :label="$t('All anonymous incoming calls are blocked')"
-                    :value="isAnonymousBlocked"
+                    :model-value="isAnonymousBlocked"
                     :disable="isAnonymousBlockRequesting"
+                    data-cy="csc-enable-incoming"
                     checked-icon="block"
                     unchecked-icon="block"
-                    @input="toggleBlockAnonymous()"
+                    @update:model-value="toggleBlockAnonymous()"
                 />
                 <csc-spinner
                     v-if="isAnonymousBlockRequesting"
@@ -23,6 +24,9 @@
                 />
             </q-item>
         </q-list>
+        <csc-ncos
+            v-if="pageName === 'outgoing' && showNcosMenus"
+        />
         <div
             v-if="hasSubscriberProfileAttribute(blockMode)"
             class="row q-mb-lg"
@@ -34,11 +38,12 @@
                 <q-item>
                     <q-item-section>
                         <q-radio
-                            :value="listMode"
+                            :model-value="listMode"
                             :label="getTranslation('toggleDisableLabel')"
+                            data-cy="csc-block-all"
                             val="blacklist"
                             color="primary"
-                            @input="updateListMode"
+                            @update:model-value="updateListMode"
                         />
                     </q-item-section>
                     <q-item-section
@@ -52,11 +57,12 @@
                 <q-item>
                     <q-item-section>
                         <q-radio
-                            :value="listMode"
+                            :model-value="listMode"
                             :label="getTranslation('toggleEnableLabel')"
+                            data-cy="csc-block-listed"
                             val="whitelist"
                             color="primary"
-                            @input="updateListMode"
+                            @update:model-value="updateListMode"
                         />
                     </q-item-section>
                     <q-item-section
@@ -122,18 +128,20 @@
 </template>
 
 <script>
+import CscNcos from 'components/CscNcos'
+import CscPage from 'components/CscPage'
+import CscSpinner from 'components/CscSpinner'
+import CscBlockedNumber from 'components/pages/CallBlocking/CscBlockedNumber'
+import CscCallBlockingAddForm from 'components/pages/CallBlocking/CscCallBlockingAddForm'
 import _ from 'lodash'
-import CscSpinner from '../../CscSpinner'
-import {
-    mapGetters
-} from 'vuex'
-import CscPage from '../../CscPage'
-import CscCallBlockingAddForm from '../../pages/CallBlocking/CscCallBlockingAddForm'
-import CscBlockedNumber from '../../pages/CallBlocking/CscBlockedNumber'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { mapGetters } from 'vuex'
+
 export default {
     name: 'CscCallBlocking',
     components: {
         CscPage,
+        CscNcos,
         CscCallBlockingAddForm,
         CscBlockedNumber,
         CscSpinner
@@ -176,21 +184,20 @@ export default {
             'isAnonymousBlockRequesting'
         ]),
         ...mapGetters('user', [
-            'hasSubscriberProfileAttribute'
+            'hasSubscriberProfileAttribute',
+            'hasSomeSubscriberProfileAttributes'
         ]),
         toggleButtonLabel () {
             if (!this.enabled) {
                 return this.getTranslation('toggleEnableLabel')
-            } else {
-                return this.getTranslation('toggleDisableLabel')
             }
+            return this.getTranslation('toggleDisableLabel')
         },
         toggleToastMessage () {
             if (this.mode) {
                 return this.getTranslation('toggleEnabledToast')
-            } else {
-                return this.getTranslation('toggleDisabledToast')
             }
+            return this.getTranslation('toggleDisabledToast')
         },
         suffix () {
             return _.upperFirst(this.pageName)
@@ -200,9 +207,8 @@ export default {
                 return this.getTranslation('removeDialogText', {
                     number: this.numbers[this.currentRemovingIndex]
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         blockAnonymousClasses () {
             const classes = ['csc-block-anonymous']
@@ -210,6 +216,9 @@ export default {
                 classes.push('csc-toggle-disabled')
             }
             return classes
+        },
+        showNcosMenus () {
+            return this.hasSomeSubscriberProfileAttributes([PROFILE_ATTRIBUTE_MAP.ncos, PROFILE_ATTRIBUTE_MAP.ncosSet])
         }
     },
     watch: {
@@ -223,23 +232,23 @@ export default {
         }
     },
     mounted () {
-        this.$store.dispatch('callBlocking/load' + this.suffix)
+        this.$store.dispatch(`callBlocking/load${this.suffix}`)
     },
     methods: {
         addNumber (number) {
-            this.$store.dispatch('callBlocking/addNumber' + this.suffix, number)
+            this.$store.dispatch(`callBlocking/addNumber${this.suffix}`, number)
         },
         saveNumber (data) {
-            this.$store.dispatch('callBlocking/editNumber' + this.suffix, data)
+            this.$store.dispatch(`callBlocking/editNumber${this.suffix}`, data)
         },
         removeNumber () {
             if (this.currentRemovingIndex !== null) {
-                this.$store.dispatch('callBlocking/removeNumber' + this.suffix, this.currentRemovingIndex)
+                this.$store.dispatch(`callBlocking/removeNumber${this.suffix}`, this.currentRemovingIndex)
                 this.currentRemovingIndex = null
             }
         },
         updateListMode (listMode) {
-            this.$store.dispatch('callBlocking/toggle' + this.suffix, listMode === 'whitelist')
+            this.$store.dispatch(`callBlocking/toggle${this.suffix}`, listMode === 'whitelist')
         },
         toggleBlockAnonymous () {
             this.$store.dispatch('callBlocking/toggleBlockAnonymous', !this.isAnonymousBlocked)
@@ -252,33 +261,33 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.removeNumber()
             })
         },
         getTranslation (key, params) {
             let translationsMap
             switch (this.suffix) {
-            case 'Incoming':
-                translationsMap = {
-                    toggleEnableLabel: this.$t('Only incoming calls from listed numbers are allowed'),
-                    toggleDisableLabel: this.$t('All incoming calls from listed numbers are blocked'),
-                    toggleEnabledToast: this.$t('All listed numbers are allowed'),
-                    toggleDisabledToast: this.$t('All listed numbers are blocked'),
-                    removeDialogTitle: this.$t('Remove number'),
-                    removeDialogText: this.$t('You are about to remove the number {number}', params)
-                }
-                break
-            case 'Outgoing':
-                translationsMap = {
-                    toggleEnableLabel: this.$t('Only outgoing calls to listed numbers are allowed'),
-                    toggleDisableLabel: this.$t('All outgoing calls to listed numbers are blocked'),
-                    toggleEnabledToast: this.$t('All listed numbers are allowed'),
-                    toggleDisabledToast: this.$t('All listed numbers are blocked'),
-                    removeDialogTitle: this.$t('Remove number'),
-                    removeDialogText: this.$t('You are about to remove the number {number}', params)
-                }
-                break
+                case 'Incoming':
+                    translationsMap = {
+                        toggleEnableLabel: this.$t('Only incoming calls from listed numbers are allowed'),
+                        toggleDisableLabel: this.$t('All incoming calls from listed numbers are blocked'),
+                        toggleEnabledToast: this.$t('All listed numbers are allowed'),
+                        toggleDisabledToast: this.$t('All listed numbers are blocked'),
+                        removeDialogTitle: this.$t('Remove number'),
+                        removeDialogText: this.$t('You are about to remove the number {number}', params)
+                    }
+                    break
+                case 'Outgoing':
+                    translationsMap = {
+                        toggleEnableLabel: this.$t('Only outgoing calls to listed numbers are allowed'),
+                        toggleDisableLabel: this.$t('All outgoing calls to listed numbers are blocked'),
+                        toggleEnabledToast: this.$t('All listed numbers are allowed'),
+                        toggleDisabledToast: this.$t('All listed numbers are blocked'),
+                        removeDialogTitle: this.$t('Remove number'),
+                        removeDialogText: this.$t('You are about to remove the number {number}', params)
+                    }
+                    break
             }
             return translationsMap[key]
         }
@@ -286,26 +295,26 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    #toggle-call-blocking
-        margin-bottom 60px
+<style lang="sass" rel="stylesheet/sass">
+#toggle-call-blocking
+    margin-bottom: 60px
 
-    #add-number-form
-        margin-bottom 15px
+#add-number-form
+    margin-bottom: 15px
 
-    .blocked-number .q-input
-        margin 0
+.blocked-number .q-input
+    margin: 0
 
-    .blocked-number-title
-        padding-left 8px
+.blocked-number-title
+    padding-left: 8px
 
-    .mode-list
-        margin-bottom 30px
+.mode-list
+    margin-bottom: 30px
 
-    .csc-list-item.q-item.csc-blocked-number
-        padding-top $flex-gutter-xs
-        padding-bottom $flex-gutter-xs
-    .csc-block-anonymous
-        margin-bottom $flex-gutter-md
+.csc-list-item.q-item.csc-blocked-number
+    padding-top: $flex-gutter-xs
+    padding-bottom: $flex-gutter-xs
+.csc-block-anonymous
+    margin-bottom: $flex-gutter-md
 
 </style>

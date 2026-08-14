@@ -6,18 +6,28 @@
         <q-list
             class="col col-xs-12 col-md-6"
         >
-            <q-item
-                v-if="hasSubscriberProfileAttribute('music_on_hold')"
-            >
-                <q-item-section>
+            <q-item>
+                <q-item-section
+                >
                     <q-toggle
-                        :value="musicOnHold"
+                        v-if="showMusicOnHold"
+                        :model-value="musicOnHoldValue"
                         :disable="dataLoading"
                         :label="$t('Music on Hold')"
                         :title="$t('&quot;Music on Hold&quot; - if set to true and a music on hold file is provided, a calling party gets that file played when put on hold')"
+                        data-cy="music-on-hold"
                         checked-icon="audiotrack"
                         unchecked-icon="audiotrack"
-                        @input="toggleMusicOnHold"
+                        @update:model-value="toggleMusicOnHold"
+                    />
+                    <q-toggle
+                        v-if="showDnd"
+                        :model-value="dndValue"
+                        :disable="dataLoading"
+                        :label="$t('DND')"
+                        :title="$t('If activated the subscriber will not receive any call. The call forwards will not be taken into account.')"
+                        data-cy="do-not-disturb"
+                        @update:model-value="toggleDnd"
                     />
                 </q-item-section>
                 <q-item-section
@@ -34,19 +44,12 @@
 </template>
 
 <script>
-import {
-    mapGetters,
-    mapState
-} from 'vuex'
-import {
-    mapWaitingActions,
-    mapWaitingGetters
-} from 'vue-wait'
-import {
-    showGlobalError
-} from 'src/helpers/ui'
 import CscPage from 'components/CscPage'
 import CscSpinner from 'components/CscSpinner'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { showGlobalError } from 'src/helpers/ui'
+import { mapWaitingActions, mapWaitingGetters } from 'vue-wait-vue3'
+import { mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageCallSettings',
     components: {
@@ -58,7 +61,8 @@ export default {
             'subscriberPreferencesInitialized'
         ]),
         ...mapGetters('callSettings', [
-            'musicOnHold'
+            'musicOnHold',
+            'dnd'
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute'
@@ -68,6 +72,18 @@ export default {
         }),
         dataLoading () {
             return !this.subscriberPreferencesInitialized || this.processingSubscriberPreferences
+        },
+        showDnd () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.dnd)
+        },
+        showMusicOnHold () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.musicOnHold)
+        },
+        musicOnHoldValue () {
+            return this.musicOnHold || false
+        },
+        dndValue () {
+            return this.dnd || false
         }
     },
     async mounted () {
@@ -83,11 +99,19 @@ export default {
         ...mapWaitingActions('callSettings', {
             loadPreferencesDefsAction: 'processing subscriberPreferences',
             loadSubscriberPreferencesAction: 'processing subscriberPreferences',
-            setMusicOnHold: 'processing subscriberPreferences'
+            setMusicOnHold: 'processing subscriberPreferences',
+            setDnd: 'dnd'
         }),
         async toggleMusicOnHold () {
             try {
                 await this.setMusicOnHold(!this.musicOnHold)
+            } catch (err) {
+                showGlobalError(err?.message || this.$t('Unknown error'))
+            }
+        },
+        async toggleDnd () {
+            try {
+                await this.setDnd(!this.dnd)
             } catch (err) {
                 showGlobalError(err?.message || this.$t('Unknown error'))
             }

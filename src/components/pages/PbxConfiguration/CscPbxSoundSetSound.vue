@@ -9,7 +9,7 @@
                 class="csc-pbx-sound-set-sound-icon"
                 name="music_note"
                 size="24px"
-            />{{ soundHandle.group }} {{ soundHandle.handle }}
+            />{{ soundHandle.handle }}
         </div>
         <div
             class="col-grow"
@@ -28,7 +28,7 @@
                         @input="selectFile"
                     >
                     <q-icon
-                        v-if="soundFile || selectedFile"
+                        v-if="(soundFile && soundFile.filename) || selectedFile"
                         name="insert_drive_file"
                         class="csc-pbx-sound-set-sound-icon"
                         size="24px"
@@ -53,13 +53,24 @@
                     class="col-grow text-right"
                 >
                     <q-btn
-                        v-if="!selectedFile"
+                        v-if="!selectedFile && !readOnly"
                         flat
                         color="primary"
                         icon="folder"
+                        :disable="isUpdating || isUploading || isSoundFileRemoving"
                         @click="openFileSelectionDialog"
                     >
                         Select file
+                    </q-btn>
+                    <q-btn
+                        v-if="soundFile && !selectedFile && !readOnly"
+                        flat
+                        color="negative"
+                        icon="delete"
+                        :disable="isUpdating || isSoundFileRemoving"
+                        @click="removeUploadedFile"
+                    >
+                        {{ $t('Remove') }}
                     </q-btn>
                     <q-btn
                         v-if="selectedFile && !isUploading"
@@ -88,38 +99,53 @@
                 <div
                     class="csc-progress-col col-grow"
                 >
-                    <q-progress
-                        :percentage="soundFileUploadProgress"
+                    <q-linear-progress
+                        :buffer="soundFileUploadProgress * 0.01"
                         color="primary"
                         stripe
-                        animate
                         height="24px"
                     />
                 </div>
             </div>
             <div
-                v-if="soundFile && !selectedFile"
                 class="row items-center"
             >
                 <div
+                    v-if="hasParent"
                     class="col-auto"
                 >
                     <q-checkbox
-                        :value="soundFileLoopplay"
-                        :label="$t('Loop')"
+                        :model-value="soundFileUseparent"
+                        :disable="readOnly || isUploading || isUpdating || isSoundFileRemoving"
+                        :label="$t('Use Parent')"
                         left-label
-                        @input="toggleLoopPlay"
+                        @update:model-value="toggleUseParent"
                     />
                 </div>
-                <div
-                    class="csc-col-right col-grow"
+                <template
+                    v-if="soundFile && !selectedFile && soundFile.filename"
                 >
-                    <csc-audio-player
-                        v-if="soundFileFilename"
-                        :file-url="soundFileUrl"
-                        @load="loadPlay"
-                    />
-                </div>
+                    <div
+                        class="col-auto"
+                    >
+                        <q-checkbox
+                            :model-value="soundFileLoopplay"
+                            :label="$t('Loop')"
+                            :disable="readOnly || isUpdating || isSoundFileRemoving"
+                            left-label
+                            @update:model-value="toggleLoopPlay"
+                        />
+                    </div>
+                    <div
+                        class="csc-col-right col-grow"
+                    >
+                        <csc-audio-player
+                            v-if="soundFile && soundFile.filename"
+                            :file-url="soundFileUrl"
+                            @load="loadPlay"
+                        />
+                    </div>
+                </template>
             </div>
         </div>
         <csc-object-spinner
@@ -130,11 +156,10 @@
 </template>
 
 <script>
-import {
-    RequestState
-} from 'src/store/common'
-import CscAudioPlayer from '../../CscAudioPlayer'
-import CscObjectSpinner from '../../CscObjectSpinner'
+import CscAudioPlayer from 'components/CscAudioPlayer'
+import CscObjectSpinner from 'components/CscObjectSpinner'
+import { RequestState } from 'src/store/common'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscPbxSoundSetSound',
@@ -170,8 +195,17 @@ export default {
         soundFileUpdateState: {
             type: String,
             default: null
+        },
+        hasParent: {
+            type: Number,
+            default: null
+        },
+        readOnly: {
+            type: Boolean,
+            default: false
         }
     },
+    emits: ['play', 'upload', 'toggle-loop-play', 'toggle-use-parent', 'remove-uploaded-file'],
     data () {
         return {
             selectedFile: null,
@@ -179,6 +213,9 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('pbxSoundSets', [
+            'isSoundFileRemoving'
+        ]),
         soundFileLoopplay () {
             if (this.soundFile && this.soundFile.loopplay) {
                 return this.soundFile.loopplay
@@ -188,6 +225,8 @@ export default {
         soundFileFilename () {
             if (this.soundFile && this.soundFile.filename) {
                 return this.soundFile.filename
+            } else if (this.soundFile && !this.soundFile.filename) {
+                return this.$t('(empty)')
             }
             return ''
         },
@@ -196,6 +235,12 @@ export default {
                 return this.soundFile.id
             }
             return null
+        },
+        soundFileUseparent () {
+            if (this.soundFile) {
+                return this.soundFile.use_parent
+            }
+            return true
         },
         itemClasses () {
             const classes = ['csc-pbx-sound-set-sound', 'row', 'items-center']
@@ -251,32 +296,56 @@ export default {
                 soundFileId: this.soundFile.id,
                 loopPlay: !this.soundFileLoopplay
             })
+        },
+        toggleUseParent () {
+            if (!this.soundFile) {
+                this.$emit('upload', {
+                    soundHandle: this.soundHandle.handle,
+                    soundFileData: null,
+                    useParent: false
+                })
+            } else {
+                this.$emit('toggle-use-parent', {
+                    soundSetId: this.soundFile.set_id,
+                    soundHandle: this.soundFile.handle,
+                    soundFileId: this.soundFile.id,
+                    useParent: !this.soundFileUseparent
+                })
+            }
+        },
+        removeUploadedFile () {
+            this.$emit('remove-uploaded-file', {
+                soundFileId: this.soundFile.id,
+                soundSetId: this.soundFile.set_id,
+                soundHandle: this.soundFile.handle
+            })
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-progress-col
-        margin-top $flex-gutter-xs
-        .q-progress
-            height 24px
-    .csc-pbx-sound-set-sound.csc-pbx-sound-set-sound-odd
-        background-color $item-stripe-color
-    .csc-pbx-sound-set-sound
-        position relative
-        padding $flex-gutter-xs
-        .csc-col-right
-            padding-left $flex-gutter-sm
-        .csc-pbx-sound-set-sound-icon
-            margin-right $flex-gutter-xs
-        .csc-pbx-sound-set-sound-player
-            padding-left $flex-gutter-md
-            .q-input
-                margin 0
-        .csc-pbx-sound-set-sound-label
-            color alpha($white, 0.6)
-        .audio-player
-            .progress-bar
-                margin-right 0
+<style lang="sass" rel="stylesheet/sass">
+
+.csc-progress-col
+    margin-top: $flex-gutter-xs
+    .q-progress
+        height: 24px
+.csc-pbx-sound-set-sound.csc-pbx-sound-set-sound-odd
+    background-color: $item-stripe-color
+.csc-pbx-sound-set-sound
+    position: relative
+    padding: $flex-gutter-xs
+    .csc-col-right
+        padding-left: $flex-gutter-sm
+    .csc-pbx-sound-set-sound-icon
+        margin-right: $flex-gutter-xs
+    .csc-pbx-sound-set-sound-player
+        padding-left: $flex-gutter-md
+        .q-input
+            margin: 0
+    .csc-pbx-sound-set-sound-label
+        color: rgba($white, 60%)
+    .audio-player
+        .progress-bar
+            margin-right: 0
 </style>

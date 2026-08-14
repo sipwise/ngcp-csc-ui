@@ -1,24 +1,20 @@
-
 'use strict'
 
+import { assert } from 'chai'
+import {
+    getVoiceboxGreetingByType,
+    getVoiceboxSettings
+} from 'src/api/voicebox'
+// eslint-disable-next-line import/default
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import {
-    get,
-    getList
-} from '../../src/api/common'
-import {
-    getVoiceboxSettings,
-    getVoiceboxGreetingByType
-} from '../../src/api/voicebox'
-import { assert } from 'chai'
 
 Vue.use(VueResource)
 
-describe('Voicebox', function () {
+describe('Voicebox', () => {
     const subscriberId = 123
 
-    it('should get subscriber\'s voicebox settings', function (done) {
+    it('should get subscriber\'s voicebox settings', (done) => {
         const data = {
             _links: {
                 collection: {
@@ -77,7 +73,7 @@ describe('Voicebox', function () {
         })
     })
 
-    it('should get subscriber\'s busy greeting', function (done) {
+    it('should get subscriber\'s busy greeting', (done) => {
         const data = {
             _embedded: {
                 'ngcp:voicemailgreetings': [
@@ -111,7 +107,7 @@ describe('Voicebox', function () {
         })
     })
 
-    it('should get subscriber\'s unavailable greeting', function (done) {
+    it('should get subscriber\'s unavailable greeting', (done) => {
         const data = {
             _embedded: {
                 'ngcp:voicemailgreetings': [

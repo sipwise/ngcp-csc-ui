@@ -4,7 +4,6 @@
         :delay="delay"
         :content-class="contentClass"
         v-bind="$attrs"
-        v-on="$listeners"
         @show="autoHide"
         @hide="cancelAutoHide"
     >
@@ -34,7 +33,7 @@ export default {
             autoHideHandler: undefined
         }
     },
-    beforeDestroy () {
+    beforeUnmount () {
         this.cancelAutoHide()
     },
     methods: {

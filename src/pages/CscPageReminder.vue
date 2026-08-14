@@ -11,10 +11,11 @@
                     <q-toggle
                         :disable="isReminderLoading"
                         :label="toggleLabel"
-                        :value="isReminderActive"
+                        :model-value="isReminderActive"
+                        data-cy="csc-reminder-toggle"
                         checked-icon="notifications_active"
                         unchecked-icon="notifications_off"
-                        @input="toggleReminder"
+                        @update:model-value="toggleReminder"
                     />
                 </q-item-section>
                 <q-item-section
@@ -34,10 +35,11 @@
                         <q-radio
                             v-for="(recurrenceOption, index) in recurrenceOptions"
                             :key="index"
-                            :value="reminderRecurrence"
+                            :model-value="reminderRecurrence"
                             :val="recurrenceOption.value"
                             :label="recurrenceOption.label"
-                            @input="updateRecurrence"
+                            data-cy="csc-reminder-occurance"
+                            @update:model-value="updateRecurrence"
                         />
                     </div>
                 </q-item-section>
@@ -45,26 +47,27 @@
             <q-item>
                 <q-item-section>
                     <q-input
-                        :value="reminderTime"
+                        v-model="reminderTime"
                         :loading="isReminderLoading"
+                        data-cy="csc-reminder-time"
                         fill-mask="_"
                         mask="##:##"
                         dense
-                        @focus="$refs.timePopup.show()"
                     >
                         <template
-                            v-slot:loading
+                            #loading
                         >
                             <q-spinner-dots
                                 color="primary"
                             />
                         </template>
                         <template
-                            v-slot:prepend
+                            #prepend
                         >
                             <q-btn
                                 icon="access_alarm"
                                 color="primary"
+                                data-cy="csc-reminder-show-timeselector"
                                 flat
                                 dense
                             >
@@ -72,14 +75,23 @@
                                     ref="timePopup"
                                 >
                                     <q-time
-                                        :value="reminderTime"
+                                        v-model="reminderTime"
                                         format24h
                                         now-btn
                                         flat
                                         mask="HH:mm"
                                         color="primary"
-                                        @input="timeUpdate"
-                                    />
+                                        data-cy="csc-reminder-timeselector"
+                                        @update:model-value="timeUpdate"
+                                    >
+                                        <q-btn
+                                            v-close-popup
+                                            :label="$t('Close')"
+                                            data-cy="csc-reminder-timeseletor-close"
+                                            color="primary"
+                                            flat
+                                        />
+                                    </q-time>
                                 </q-popup-proxy>
                             </q-btn>
                         </template>
@@ -91,18 +103,16 @@
 </template>
 
 <script>
-import {
-    mapGetters,
-    mapActions
-} from 'vuex'
 import CscPage from 'components/CscPage'
-import {
-    showToast
-} from 'src/helpers/ui'
-import {
-    date
-} from 'quasar'
 import CscSpinner from 'components/CscSpinner'
+import { date } from 'quasar'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
+import {
+    mapActions,
+    mapGetters,
+    mapState
+} from 'vuex'
 
 export default {
     name: 'CscPageReminder',
@@ -125,6 +135,9 @@ export default {
             'isReminderLoading',
             'reminderUpdated'
         ]),
+        ...mapState('reminder', [
+            'reminderLoadingState'
+        ]),
         recurrenceOptions () {
             return [
                 {
@@ -145,9 +158,8 @@ export default {
         toggleLabel () {
             if (this.isReminderActive) {
                 return this.$t('Reminder is enabled')
-            } else {
-                return this.$t('Reminder is disabled')
             }
+            return this.$t('Reminder is disabled')
         }
     },
     watch: {
@@ -165,6 +177,11 @@ export default {
                     recurrence: this.mapRecurrence(this.reminderRecurrence)
                 }))
             }
+        },
+        reminderLoadingState () {
+            if (this.reminderLoadingState === RequestState.failed) {
+                showGlobalError(this.reminderError)
+            }
         }
     },
     mounted () {
@@ -178,17 +195,16 @@ export default {
             'updateRecurrence'
         ]),
         timeUpdate (time) {
-            this.$refs.timePopup.hide()
             this.updateTime(time)
         },
         mapRecurrence (recurrence) {
             switch (recurrence) {
-            case 'never':
-                return this.$t('Only once')
-            case 'weekdays':
-                return this.$t('On weekdays')
-            case 'always':
-                return this.$t('Always')
+                case 'never':
+                    return this.$t('Only once')
+                case 'weekdays':
+                    return this.$t('On weekdays')
+                case 'always':
+                    return this.$t('Always')
             }
         },
         dateFormat (dateTime, format) {

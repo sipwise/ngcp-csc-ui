@@ -3,11 +3,10 @@
         icon="info"
         color="info"
         v-bind="$attrs"
-        v-on="$listeners"
     >
         <slot />
         <template
-            v-slot:action
+            #action
         >
             <slot
                 name="action"
@@ -16,12 +15,8 @@
     </csc-inline-alert>
 </template>
 
-<script>
+<script setup>
 import CscInlineAlert from 'components/CscInlineAlert'
-export default {
-    name: 'CscInlineAlertInfo',
-    components: {
-        CscInlineAlert
-    }
-}
+
+defineOptions({ name: 'CscInlineAlertInfo' })
 </script>

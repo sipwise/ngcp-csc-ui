@@ -1,20 +1,21 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 <template>
     <q-table
-        :data="data"
+        v-model:pagination="pagination"
+        :rows="data"
         :columns="columns"
         :loading="$wait.is('csc-pbx-autoattendant-slots-table')"
-        :pagination.sync="pagination"
         :hide-pagination="true"
         row-key="name"
         class="csc-item-odd no-shadow"
     >
-        <template v-slot:loading>
+        <template #loading>
             <q-inner-loading
                 showing
                 color="primary"
             />
         </template>
-        <template v-slot:header="props">
+        <template #header="props">
             <q-tr>
                 <q-th auto-width />
                 <q-th
@@ -39,6 +40,7 @@
                     <csc-data-table-edit-input
                         :column="{name:'destination', label: $t('Destination'), componentValidations: [getDestinationValidation()]}"
                         :row="{slot: row.slot, destination: row.destination}"
+                        data-cy="csc-pbx-auto-attendant-input"
                         :value="row.destination"
                         :save-label="$t('Add')"
                         @changed="updateNewSlotDestination(index, $event.value)"
@@ -48,6 +50,7 @@
                     <q-btn
                         icon="delete"
                         color="negative"
+                        data-cy="csc-pbx-auto-attendant-input-reset"
                         flat
                         dense
                         @click="resetNewSlot(index)"
@@ -57,6 +60,7 @@
                         icon="check"
                         color="primary"
                         :label="$t('Save')"
+                        data-cy="csc-pbx-auto-attendant-input-save"
                         flat
                         dense
                         @click="saveSlots"
@@ -65,7 +69,7 @@
                 <q-td auto-width />
             </q-tr>
         </template>
-        <template v-slot:body="props">
+        <template #body="props">
             <q-tr>
                 <q-td auto-width />
                 <q-td
@@ -110,13 +114,13 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { mapWaitingActions } from 'vue-wait'
-import { mapGetters } from 'vuex'
-import { required } from 'vuelidate/lib/validators'
-import { showGlobalError, showToast } from 'src/helpers/ui'
+import { required } from '@vuelidate/validators'
 import CscDataTableEditInput from 'components/CscDataTableEditInput'
 import CscRemoveDialog from 'components/CscRemoveDialog'
+import _ from 'lodash'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { mapWaitingActions } from 'vue-wait-vue3'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscPbxAutoAttendantSlotsTable',
@@ -143,14 +147,14 @@ export default {
                     name: 'slot',
                     align: 'left',
                     label: this.$t('Slot'),
-                    field: row => row.slot,
+                    field: (row) => row.slot,
                     componentOptions: this.slotsNumbers
                 },
                 {
                     name: 'destination',
                     align: 'left',
                     label: this.$t('Destination'),
-                    field: row => row.destination,
+                    field: (row) => row.destination,
                     componentValidations: [this.getDestinationValidation()]
                 }
             ],
@@ -165,9 +169,7 @@ export default {
             'slotsNumbers',
             'newSlots'
         ]),
-        isRowDirty: (state) => (rowIndex) => {
-            return state.dirtySlots.includes(rowIndex)
-        }
+        isRowDirty: (state) => (rowIndex) => state.dirtySlots.includes(rowIndex)
     },
     watch: {
         data () {
@@ -186,20 +188,20 @@ export default {
         }),
         initTable () {
             this.slots = _.cloneDeep(this.data)
-            this.unsavedSlots = this.newSlots.filter(slot => slot.subscriber_id === this.subscriberId)[0].slots
+            this.unsavedSlots = this.newSlots.filter((slot) => slot.subscriber_id === this.subscriberId)[0].slots
             this.dirtySlots = []
         },
         updateNewSlotDestination (index, value) {
             this.editNewSlot({
                 subscriberId: this.subscriberId,
-                index: index,
+                index,
                 destination: value
             })
         },
         resetNewSlot (index) {
             this.deleteNewSlot({
                 subscriberId: this.subscriberId,
-                index: index
+                index
             })
         },
         async editDestination (rowIndex, value) {
@@ -208,15 +210,16 @@ export default {
                 this.slots[rowIndex].destination = value
                 this.dirtySlots.push(rowIndex)
             } else {
-                this.dirtySlots = this.dirtySlots.filter(item => item !== rowIndex)
+                this.dirtySlots = this.dirtySlots.filter((item) => item !== rowIndex)
             }
         },
         confirmRowDeletion (slot, rowIndex) {
             this.$q.dialog({
                 component: CscRemoveDialog,
-                parent: this,
-                title: this.$t('Delete slot?'),
-                message: this.$t('You are about to delete slot {slot}', { slot: slot })
+                componentProps: {
+                    title: this.$t('Delete slot?'),
+                    message: this.$t('You are about to delete slot {slot}', { slot })
+                }
             }).onOk(() => {
                 this.deleteSlot(rowIndex)
             })

@@ -1,6 +1,6 @@
 'use strict'
 
-import { showGlobalError } from '../helpers/ui'
+import { showGlobalError } from 'src/helpers/ui'
 import { mapGetters } from 'vuex'
 
 export default {

@@ -1,36 +1,30 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import _ from 'lodash'
 import { date } from 'quasar'
-
-import CallBlockingModule from './call-blocking'
-import CallForwardingModule from './call-forwarding'
+import CommunicationModule from 'src/communication'
+import { INTERNAL_DATE_FORMAT_DASH, INTERNAL_DATE_FORMAT_DASH_HOUR, INTERNAL_DATE_FORMAT_SLASH } from 'src/constants'
 import CallModule from 'src/store/call'
-import CallRecordingsModule from './call-recordings'
-import CallSettingsModule from './call-settings'
-import ConversationsModule from './conversations'
-
-import PbxModule from './pbx'
-import PbxSeatsModule from './pbx-seats'
-import PbxGroupsModule from './pbx-groups'
-import PbxDevicesModule from './pbx-devices'
-import PbxCallQueuesModule from './pbx-callqueues'
-import PbxSoundSetsModule from './pbx-soundsets'
-import PbxMsConfigsModule from './pbx-ms-configs'
-import PbxAutoAttendants from './pbx-auto-attendants'
-
-import ReminderModule from './reminder'
-import SpeedDialModule from './speed-dial'
-import UserModule from './user'
-import CommunicationModule from './communication'
-import FaxModule from './fax'
-import VoiceboxModule from './voicebox'
-import ConferenceModule from './conference'
-import DashboardModule from './dashboard'
-
-import { INTERNAL_DATE_FORMAT_SLASH, INTERNAL_DATE_FORMAT_DASH, INTERNAL_DATE_FORMAT_DASH_HOUR } from 'src/constants'
-
-Vue.use(Vuex)
+import CallBlockingModule from 'src/store/call-blocking'
+import CallForwardingModule from 'src/store/call-forwarding'
+import CallRecordingsModule from 'src/store/call-recordings'
+import CallSettingsModule from 'src/store/call-settings'
+import ConversationsModule from 'src/store/conversations'
+import Customer from 'src/store/customer'
+import DashboardModule from 'src/store/dashboard'
+import FaxModule from 'src/store/fax'
+import PbxModule from 'src/store/pbx'
+import PbxAutoAttendants from 'src/store/pbx-auto-attendants'
+import PbxCallQueuesModule from 'src/store/pbx-callqueues'
+import PbxDevicesModule from 'src/store/pbx-devices'
+import PbxGroupsModule from 'src/store/pbx-groups'
+import PbxMsConfigsModule from 'src/store/pbx-ms-configs'
+import PbxSeatsModule from 'src/store/pbx-seats'
+import PbxSoundSetsModule from 'src/store/pbx-soundsets'
+import ReminderModule from 'src/store/reminder'
+import SpeedDialModule from 'src/store/speed-dial'
+import SubscriberPhonebookModule from 'src/store/subscriber-phonebook'
+import TranscriptionsModule from 'src/store/transcriptions'
+import UserModule from 'src/store/user'
+import VoiceboxModule from 'src/store/voicebox'
+import { createStore } from 'vuex'
 
 /*
  * If not building with SSR mode, you can
@@ -42,7 +36,7 @@ Vue.use(Vuex)
  */
 
 export default function (/* { ssrContext } */) {
-    const Store = new Vuex.Store({
+    const Store = createStore({
         modules: {
             callBlocking: CallBlockingModule,
             callRecordings: CallRecordingsModule,
@@ -55,7 +49,6 @@ export default function (/* { ssrContext } */) {
             communication: CommunicationModule,
             fax: FaxModule,
             voicebox: VoiceboxModule,
-            conference: ConferenceModule,
             pbx: PbxModule,
             pbxSeats: PbxSeatsModule,
             pbxGroups: PbxGroupsModule,
@@ -65,35 +58,15 @@ export default function (/* { ssrContext } */) {
             pbxMsConfigs: PbxMsConfigsModule,
             callForwarding: CallForwardingModule,
             pbxAutoAttendants: PbxAutoAttendants,
-            dashboard: DashboardModule
+            dashboard: DashboardModule,
+            customer: Customer,
+            transcriptions: TranscriptionsModule,
+            'subscriber-phonebook': SubscriberPhonebookModule
         },
         state: {
             route: null
         },
         getters: {
-            conferenceId (state) {
-                return _.get(state, 'route.params.id', null)
-            },
-            conferenceUrl (state) {
-                // eslint-disable-next-line no-unused-vars
-                const id = _.get(state, 'route.params.id', null)
-                return window.location.href
-            },
-            hasConferenceId (state, getters) {
-                return getters.conferenceId !== null && getters.conferenceId !== undefined
-            },
-            isCallForward (state) {
-                return _.startsWith(_.get(state, 'route.path', ''), '/user/call-forward')
-            },
-            isCallBlocking (state) {
-                return _.startsWith(_.get(state, 'route.path', ''), '/user/call-blocking')
-            },
-            isPbxConfiguration (state) {
-                return _.startsWith(_.get(state, 'route.path', ''), '/user/pbx-configuration')
-            },
-            isHome (state) {
-                return _.get(state, 'route.path', '') === '/user/home'
-            },
             getCurrentFormattedDateWithDash () {
                 const currentDate = Date.now()
                 return date.formatDate(currentDate, INTERNAL_DATE_FORMAT_DASH)

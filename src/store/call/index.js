@@ -1,12 +1,12 @@
-import state from './state'
-import getters from './getters'
-import mutations from './mutations'
-import actions from './actions'
+import actions from 'src/store/call/actions'
+import getters from 'src/store/call/getters'
+import mutations from 'src/store/call/mutations'
+import state from 'src/store/call/state'
 
 export default {
     namespaced: true,
-    state: state,
-    getters: getters,
-    mutations: mutations,
-    actions: actions
+    state,
+    getters,
+    mutations,
+    actions
 }

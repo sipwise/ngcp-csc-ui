@@ -1,3 +1,649 @@
+ngcp-csc-ui (26.3.0.0+0~mr26.3.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [fd5dcf0] MT#64383 Migrate Dialog Components
+  * [2bb7fc5] MT#65331 fix i18n import
+  * [716e0e8] MT#65343 Use "resource" for API request 'otpsecret'
+  * [d5c2e22] MT#64739 Replace cfLoadMappingFull
+  * [b7230e3] MT#65546 Fix resource deletion across all CF types
+  * [84ef158] MT#65604 Fix resource ownership when created from Seat page
+  * [c03ff3f] MT#65604 Remove redundant subscriberId
+  * [9968fde] MT#65609 Fix Firefox popup positioning race in CscMoreMenu
+  * [e1733cd] MT#65604 Fix typo in updateBNumberSet
+
+  [ Giancarlo Errigo Mattos ]
+  * [f9353d5] MT#65337 Add DND toggle for selected PBX seat preferences
+  * [4d763b9] MT#65291 CSV formatting help message
+  * [f661e88] MT#65172 Correct German call-forwarding option labels
+  * [c1d85eb] MT#65241 Respect ownership of call forwarding resources
+  * [ebafb9c] MT#65072 Surface real server errors instead of generic/blank messages
+
+  [ Kirill Solomko ]
+  * [73858b0] MT#65507 migration to yarn v4 (4.17.1)
+
+  [ nidrissi-zouggari ]
+  * [aa63503] MT#65093 Fix security vulnerabilities via dependency updates and resolutions
+
+  [ Nico Schedel ]
+  * [6873d6c] MT#65155 add missing data-cy to auto attendant page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 11 Aug 2026 14:19:53 +0200
+
+ngcp-csc-ui (26.2.0.0+0~mr26.2.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [9973928] MT#64899 April Security Updates
+  * [74b8a4e] MT#65069 PBX device labels bugfix
+  * [86b4399] MT#65075 Upgrade Axios to 1.16.0
+  * [e64887e] MT#65003 Use composable helpers instead of direct Vuex store access
+  * [5544666] MT#65163 Improve device page performance and handle missing preferences
+  * [0155c58] MT#65048 Fix music on hold and DND guards in call settings
+
+  [ Giancarlo Errigo Mattos ]
+  * [397d6bd] MT#64862 Minor CSC bug fixes
+  * [205bbe3] MT#64902 Rewording of CF group item timeout information
+  * [628f6f2]   MT#64825 Erroneous Manager Secretary and Auto Attendant checks
+  * [4bbbe8f] MT#64379 New Seat CF destination option
+  * [589140c]   MT#64825 Add conference settings to Extension Settings
+  * [e6c277b] MT#65172 German translation fix for Call Forwarding options
+  * [d5e1f72] MT#65122 Refactor PBX call queue ownership flow
+  * [ad7498f] MT#64801 Make custom announcements terminal destinations
+  * [280eccb] MT#65122 Fix incorrect store import in boot/routes.js
+
+  [ nidrissi-zouggari ]
+  * [6e11407] MT#64519 Fix default value for Call Queue
+  * [2971827] MT#64678 Remove unnecessary preferences from PBX Seats creation form and actions menu
+  * [13c943c] MT#65237 Start call with key enter
+  * [5b8f161] MT#65240 Move Call back buttons in the table
+  * [c6a244e] MT#65049 Seats new Search Input
+  * [b3cfdc4] MT#65238 Add new search input for customer phonebook
+
+  [ Nico Schedel ]
+  * [f72586d] MT#64596 add missing data-cy for manager secretary dropdown
+  * [67b1cdd] MT#64394 add missing data-cy for pbx groups details && mail2fax
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Jun 2026 15:32:04 +0200
+
+ngcp-csc-ui (26.1.0.0+0~mr26.1.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [a06aeb6] MT#64397 Restore component names for Cypress data-cy generation
+  * [d62d29b] MT#64416 Fix axios vulnerability
+  * [ff40864] MT#64432 Refactor Subscriber Phonebook
+  * [19f2e6c] MT#64432 Delete redundant code
+  * [9db53bc] MT#64432 Refactor updateSharedValue and getList
+  * [df136f7] MT#64432 Fix typo
+  * [a1c595e] MT#64432 Enxtract include: customer param
+  * [8c51d8f] MT#64585 Remove the CF to Local Subscriber feature
+  * [088a351] MT#64705 Refactoring and cleanup
+  * [1ebe3c0] MT#64579 Reduce npm audit vulnerabilities from 132 to 30
+  * [849f19d] MT#64752 switch to nodejs v24
+  * [be59b85] MT#64377 Improve CF creation flow and Vue actions
+  * [bc231de] MT#64804 CF toggle bugfix
+  * [58e7a88] MT#64726 Refactor customer preferences actions
+
+  [ nidrissi-zouggari ]
+  * [afd3e09] MT#64240 Fix call page input bug
+  * [546429a] MT#64363 CF improvement
+  * [5c64406] MT#64372 Add possiblity to create CFT
+  * [45131fd] MT#64501 Subscriber phonebook default filter
+  * [33aad6a] MT#64565 Subscriber Admin user should be able to configure CLIR per seat
+
+  [ Nico Schedel ]
+  * [ccc9b6a] MT#63705 add data-cy for csc roles tests
+  * [1ff59b3] MT#64596 add missing data-cy for auto attendant and manager secretary
+  * [e2a6349] MT#64630 remove selenium from mr12.5+
+
+  [ Guillem Jover ]
+  * [8e50b38] MT#62763 Fix pycodestyle issues
+
+  [ Michael Prokop ]
+  * [e4b533b] MT#64366 Switch Dockerfile from Debian buster/bookworm to trixie
+
+  [ Giancarlo Errigo Mattos ]
+  * [38d6e20] MT#64569 -  Destination priority improvements
+  * [83a5878] MT#64430 Call forwarding destination reordering
+  * [d798bae] MT#64806 Adds conference preferences for PBX seats/groups
+  * [b9fab7d] MT#64829 German mistranslation fix
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Apr 2026 12:57:08 +0200
+
+ngcp-csc-ui (14.2.0.0+0~mr14.2.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [acd9d84] MT#64037 PBXGroup Custom Announcements Bugfix
+  * [c403dc3] MT#63999 Update Build Configuration for vue3
+  * [3f9ebb6] MT#64044 add Vue 2/3 compatibility layer and migration infrastructure
+  * [d575fe2] MT#64314 Update jest config to use vue3
+  * [db5e5b5] MT#64292 Migrate App.Vue and vue-wait to Vue 3
+  * [6f57bd1] MT#64293 Migrate AppBadge components to Vue 3 Composition API
+  * [04c3d71] MT#64314 Fix jest tests
+  * [3d66a41] MT#64311 Migrate Alert Components to Vue3
+  * [ffefd1b] MT#64318 Migrate CSCList Components to vue3 syntax
+  * [cecc11a] MT#64368 Fix vuln deps with yarn resolutions
+
+  [ nidrissi-zouggari ]
+  * [5f2c950] MT#63983 Upgrade libraries
+  * [ee99017] MT#64124 Refresh Call Forwarding component on page change
+  * [ec97299] MT#62578 Migrate api v1 to v2 for subscriber phonebook
+  * [43aadbc] MT#64156 Phonebook error bugfix
+  * [518912b] MT#64194 Migrate customer phonebook to api v2
+  * [cf15c25] MT#64237 Fix resizeObserver loop error
+  * [696f269] MT#64381 fax settings destinations menu doesn't open properly
+
+  [ Guillem Jover ]
+  * [5a9fa7d] MT#62899 Update packaging for Debian trixie
+
+  [ Giancarlo Errigo Mattos ]
+  * [31ffb28] MT#63433 -  PBX device page improvements
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 05 Feb 2026 10:22:55 +0100
+
+ngcp-csc-ui (14.1.0.0+0~mr14.1.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [f34d8e1] MT#63561 Fix crash on PBX seat page due to unauthorized error
+  * [4e72e67] MT#63384 Fix Group Details page crash upon refresh
+  * [7cb3add] MT#59078 Disable Primary Acli Creation
+  * [31fa24a] MT#63591 Disable subscriber phonebook menu in CE platforms
+  * [dfe30b2] MT#63627 remove unnecessary licence check
+  * [f0bc845] MT#63673 Remove adminOnly check from /user/seats
+  * [c764dfc] MT#63627 Call queue route access bugfix
+  * [1c047f5] MT#63772 Update docs
+  * [ed162e8] MT#63734 Activate ICE configuration
+
+  [ Nico Schedel ]
+  * [05854f4] MT#63526 add data-cy to subscriber phonebook page
+
+  [ nidrissi-zouggari ]
+  * [69e43c8] MT#63758 Fix 'ResizeObserver loop' Error
+  * [3a6f992] MT#63823 Upgrade Axios library
+
+  [ Giancarlo Errigo Mattos ]
+  * [4d92ef0] MT#63511 Fix Faxes tab visibility
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Nov 2025 16:56:07 +0100
+
+ngcp-csc-ui (14.0.0.0+0~mr14.0.0.0) unstable; urgency=medium
+
+  [ nidrissi-zouggari ]
+  * [9fdd2c1] MT#62722 Add "Add to Phonebook" action to call list entries
+  * [e05a3a2] MT#62259 Add "Seats" button in subscriber phonebook for callback
+  * [c5e6b23] MT#61614 Display phonebook entries with edit restriction
+  * [716d45f] MT#63228 Add new button for the DND activation/de-activation
+  * [da266b7] MT#62617 Add missing translations
+  * [2c54841] MT#63340 Fix generate password
+
+  [ Debora Crescenzo ]
+  * [543fa01] MT#63292 Remove stylus
+  * [0340bd7] MT#63310 Improve handling of long words in main menu
+  * [8b4f8b2] MT#62260 Add Phonebook search bar
+  * [837de61] MT#63089 Match the calling/called number into the phonebook
+  * [43456c9] MT#62617 Add missing Spanish translations
+  * [998ed04] MT#62617 Fix typo "Call on hold"
+  * [1a9a18b] MT#61674 Add download CSV of PBx statistics
+  * [22e602b] MT#63363 Prevent CSV download from breaking CDR table
+  * [b503fe9] MT#63310 Adapt csc_call bar
+  * [bc75777] MT#63046 Upgrade libs to latest
+  * [bd086f4] MT#61383 Allow admin PBX users to toggle Mail2Fax feature
+  * [2afefb8] MT#63428 align day and month values with admin-ui
+  * [973b448] MT#63432 Add support for "label" definition in the Device provisioning
+  * [2b46170] MT#63356 Align CSC route guards with menu visibility
+  * [72d36d2] MT#63046 Update @quasar/app-webpack and relevant libs
+  * [8f721d2] MT#63399 Remove Obsolete Subscriber Profile Attributes
+  * [09f40c3] MT#63228 Restore setPreference behavior to pre-716d45f6 state
+  * [a9c9073] MT#63174 Add phonebook name matching into call list
+  * [abc25dc] MT#63508 Avoid direct Vuex state mutation in CscPageCallRecording
+  * [88aacb7] MT#63513 this.$router.push bugfix
+  * [8aa3c27] MT#63449 Add voicemail and call recordings transcript
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 08 Sep 2025 11:44:35 +0200
+
+ngcp-csc-ui (13.5.0.0+0~mr13.5.0.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [25cadea] MT#62533 add data-cy to global call forward after ring timeout
+
+  [ Debora Crescenzo ]
+  * [c91b61a] MT#62541 Dependencies upgrade April
+  * [e314c96] MT#62500 Refactor logic of PBx Devices pages
+  * [34bcb13] MT#62617 Add missing Italian translations
+  * [f80f597] MT#62760 After Ring timeout CFSeat bugfix
+  * [a1f165d] MT#62617 Add missing German translations
+  * [38c2f37] MT#62983 bugfix apiGet and apiPost
+  * [d8c1f09] MT#62916 Pbx Devices Bugfix
+  * [7651502] MT#62982 Add 2FA for Subscribers
+  * [5a15543] MT#62982 Improve 2FA setup text
+
+  [ nidrissi-zouggari ]
+  * [1bff29a] MT#62363 CSC Translation
+  * [9911ccd] MT#62151 Improve error handling in src/store files
+  * [ec610a9] MT#62703 CSC Translation
+  * [dcfecc4] MT#62769 The sendFax icon appears in the PBX Configuration even if the functionality is not enabled
+
+  [ Alessio Garzi ]
+  * [ad870c2] MT#62756 CSC now sends Referred-By with callee local data in blind xfer
+
+  [ Hugo Zigha ]
+  * [6e70eb8] MT#62713 Added missing announce preferences for Groups Menu in CSC
+
+  [ Guillem Jover ]
+  * [257ae09] MT#62763 Fix shellcheck issues
+
+  [ Marco Capetta ]
+  * [8fc8a99] MT#61427 Remove access to the OLD Customer Details page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Jun 2025 10:43:34 +0200
+
+ngcp-csc-ui (13.4.0.0+0~mr13.4.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [47d4627] MT#62025 Send Fax 422 error bugfix
+  * [1697c9e] MT#61777 Introduce B-number set in CF
+  * [3daeb26] MT#62025 Add multipart/form-data to api/faxes req
+  * [1b70f20] MT#62070 Fix Dashboard Containers Overflow Issue
+  * [9b2b811] MT#62251 Device Alignment Image Bugfix
+  * [8fc6b2c] MT#62324 Improve PBX translations
+  * [194f180] MT#62377 Change German translation for banned profiles
+  * [291de45] MT#62343 Resolve vulnerabilities
+  * [30d4b44] MT#62495  Add devices admin password input
+  * [6bd7d47] MT#62359 Improve "After Ring Timeout" Settings
+
+  [ Hugo Zigha ]
+  * [b0ba5c9] MT#61834 Upgrade vue-i18n to v11
+  * [b6445fb] MT#62145 Fix error handling in CscPageCustomerPhonebookAdd and in CscPageSubscriberPhonebookAdd
+
+  [ nidrissi-zouggari ]
+  * [61ffb5a] MT#61580 Review all the console in CSC repo
+  * [d0308ac] MT#62117 Handle ban error
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 10 Apr 2025 08:27:46 +0200
+
+ngcp-csc-ui (13.3.0.0+0~mr13.3.0.0) unstable; urgency=medium
+
+  [ Mykola Malkov ]
+  * [ef04a7a] MT#61534 Fix yarn file name
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [e935071] MT#61209 Upgrade to eslint 9.14.0 and add JS Policy's rules
+
+  [ Debora Crescenzo ]
+  * [12043c5] MT#61635 CF bugfixes
+  * [e23fa2e] MT#61635 Amend translations for call forwarding
+  * [80fe606] MT#61635 Fix German translation for "custom time set"
+  * [09f639c] MT#61724 Dependencies upgrade January
+
+  [ Marco Capetta ]
+  * [d1f390e] MT#59913 Add new Portuguese language to soundset
+
+  [ nidrissi-zouggari ]
+  * [acd0da5] MT#61841 Change translation
+
+  [ Hugo Zigha ]
+  * [b13bf52] MT#61710 change inputs behavior
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 28 Jan 2025 15:14:45 +0100
+
+ngcp-csc-ui (13.2.0.0+0~mr13.2.0.0) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [0b0846d] MT#60689 Dynamic password requirements
+  * [95e93e0] MT#61228 Replace direct access to state with a getter
+  * [4635763] MT#60689 Add change password page for CSC
+  * [3d0180e] MT#59555 Dependencies upgrade
+  * [24cda52] MT#61534 Improve bundling
+  * [499e89a] MT#61536 Improve how password requirements are handled
+  * [c64a062] MT#61314 Change call recordings DELETE
+
+  [ Hugo Zigha ]
+  * [13dbc46] MT#61128 APP Download button overlapping on main menu fixed
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [b3a1ffa] MT#61397 Add German translation for the customer phonebook, customer preferences, and the related menu
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Dec 2024 11:26:51 +0100
+
+ngcp-csc-ui (13.1.0.0+0~mr13.1.0.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [faf4499] MT#60578 Navigates to /dashboard on refresh
+  * [51bc01a] MT#60711 removing lang parameter when we use api v2
+
+  [ Debora Crescenzo ]
+  * [a0b6a35] MT#60545 Block outg/incom calls refactoring
+  * [98eee9c] MT#60583 Amend Login API calls and 403 Invalid Licence err
+  * [7c9a494] MT#60627 remove outdated caniuse-lite warning
+  * [2d1ec7c] MT#60623 Hide features not covered by the license
+  * [f301d02] MT#60623 Add translations for invalid license error message
+  * [90eb5ec] MT#60860 Update new sipwise logo in CSC
+
+  [ Marco Capetta ]
+  * [4f8015c] MT#60613 Fix NCOS and NCOS Sets visibility in Block Outgoing page
+  * [bc1b4f3] MT#60674 Fix page permission for CE users
+  * [a6fd358] MT#59449 Fix selenium tests after password enforcements
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [abf1d52] MT#60641  Adapt random password generator to the new security standards
+
+  [ Nico Schedel ]
+  * [c0cd3f0] MT#60625 add data-cy to outgoing cf ncos selection
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 01 Oct 2024 09:59:47 +0200
+
+ngcp-csc-ui (13.0.0.0+0~mr13.0.0.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [a66dff2] MT#60161 add an error message and stop the loading on network error
+  * [de247fa] MT#60288 Changing Language in Voicebox shows "Path not found" error
+
+  [ Debora Crescenzo ]
+  * [35a4b26] MT#60068 Add ¨force CLI¨ checkbox to csc add pbx seat form
+  * [ccf2b82] MT#60150 sip username changes in pbx group creation
+  * [668e23d] MT#60289 Uploading greeeting files in voicebox bug fix
+  * [c78df75] MT#60187 bugfixes on call forwarding
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [f11e898] MT#58736 Improve Cloud PBX Device configuration adding some preferences
+  * [99fa8dd] MT#58738 add possibility to configure fax and voicebox for seats/groups
+  * [aff80a1] MT#60292 Selection for announcements missing : temp & greet
+  * [0cb6554] MT#58743 Create a new Pbx Configuration -> Customer Preferences page
+  * [93cbfb6] MT#60527 CSC-UI has the APP download button overlapping Dashboard
+
+  [ Marco Capetta ]
+  * [0c602b0] MT#60292 Fix German translation for new greeting messages
+
+  [ Nico Schedel ]
+  * [f8056e0] MT#56388 fix failing call blocking selenium tests
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 28 Jul 2024 12:02:44 +0200
+
+ngcp-csc-ui (12.5.0.0+0~mr12.5.0.0) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [41f3ab7] MT#59624 update firefox in docker to fix segfaults
+  * [37e582f] MT#56388 fix failing selenium csc tests
+
+  [ Hugo Zigha ]
+  * [eceac96] MT#57754 ACL is buggy on CSC
+  * [d79b656] MT#59800 Impossible to go to next page for seat configuration
+  * [56bf301] MT#59848 Cannot use callback/ Rückruf option from Phonebook + call history isn't linking the no. that called with the Phonebook
+  * [dac5941] MT#58744 Add some new subscriber's preferences in the 'pbx configuration > seats' page
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [6b7d53e] MT#59888 Call back without domain
+  * [89507f5] MT#58739 Add possibility to configure the customer phonebook
+
+  [ Debora Crescenzo ]
+  * [762256c] MT#60094 Add "no-trailing-spaces" rule in linter
+  * [3508a11] MT#60094 Lint review
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 22 May 2024 14:31:32 +0200
+
+ngcp-csc-ui (12.4.0.0+0~mr12.4.0.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [d810727] MT#59145 When Chrome browser is set to Czech language the CSC throws a Javascript error
+
+  [ Nico Schedel ]
+  * [4d6ad4a] MT#57568 add data-cy to privacy page
+
+  [ Rene Krenn ]
+  * [cd25874] MT#56239 enable caller/callee wildcards for conversations and recordings
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [03a494b] MT#58958 Add support to call hold/unhold to the webrtc client
+  * [dc1d714] MT#59231 let the user know when it has been put on hold
+  * [9008ae2] MT#59358 HOLD button available only for PRO customers and hidden for CE customers
+  * [ef05bdf] MT#59232 add blind transfer feature
+  * [30470ef] MT#59450 Add a banner to CE UI to suggest to buy the PRO version
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 15 Mar 2024 08:48:16 +0100
+
+ngcp-csc-ui (12.3.0.0+0~mr12.3.0.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [8975d78] MT#58893 Fix build failures for missing jest module
+  * [8d73ce0] MT#57752 Removing SecretKey for mail2fax doesn't work
+  * [598bf48] MT#58355 call forwarding to fax2mail for a subs. does not work when configured with admin account - the fax arrives in admin account
+
+  [ Marco Capetta ]
+  * [1f3fb41] MT#58591 Fix 'Subscriber' tranlation in German
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 15 Jan 2024 14:47:10 +0100
+
+ngcp-csc-ui (12.2.0.0+0~mr12.2.0.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [0bb677f] MT#58391 Chaijs/get-func-name vulnerable to ReDoS - CVE-2023-43646
+  * [1bb32f5] MT#58605 CSC Administrative subscriber cannot create Seats or Group if ext_range_min specified in Customer prefs
+  * [6e33e2d] MT#58500 [CSC]Cannot assign seat on SNOM D865 devices
+  * [52beb5f] MT#58597 CSC does not allow to modify CF ring timeout
+
+  [ Nico Schedel ]
+  * [074d7d7] MT#56388 fix all selenium csc tests
+  * [30d8240] MT#58591 Add missing german translations
+  * [2ebd1ee] MT#57568 add missing data-cy to reminders
+
+  [ Marco Capetta ]
+  * [5bd459c] MT#58591 Update all the language files
+
+  [ Nouhaila Idrissi Zouggari ]
+  * [77ef397] MT#58686 fix the phonebook access after having update the API endpoints
+  * [64fecf2] MT#58658 After creating a new subscriber, visiting the reminders page doesnt let you enable reminders initially
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 Nov 2023 13:36:47 +0100
+
+ngcp-csc-ui (12.1.0.0+0~mr12.1.0.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [c833595] MT#52919 CSC: QuasarMigration - Migrate Quasar from v1 to v2
+  * [74ff3a2] MT#58239 time selector of the REMINDER page doesn't allow to select minutes
+  * [785a8c7] MT#58235 it is possible to press the GREEN dial button even without entering the number to dial
+  * [57d4c4a] MT#58237 setting/unsetting a soundset as Default for subscribers return an error code
+  * [140dc86] MT#53022 QuasarMigration - Remove all commented code
+  * [6dd98b6] MT#53027 QuasarMigration - All components must have "name" property
+  * [3aef140] MT#57030 Update AUI and CSC to fix latest security warnings
+  * [276ebf3] MT#56937 Don't allow CSC starting calls without any microphone enabled
+  * [8e7c0ad] MT#58238 CSC: selected NCOS/NCOSset cannot be removed
+  * [177f01d] MT#58289 add possibility to view the CDRs of the customer
+
+  [ Marco Capetta ]
+  * [4d76a53] MT#58236 Add missing soundset languanges
+
+  [ Author: Nouhaila Idrissi Zouggari ]
+  * [e10c356] MT#58240 there is no possibility to delete phonebook entries
+
+  [ Guillem Jover ]
+  * [9aed064] MT#58356 Update packaging for bookworm
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sun, 15 Oct 2023 08:23:49 +0200
+
+ngcp-csc-ui (12.0.1.0+0~mr12.0.1.0) unstable; urgency=medium
+
+  [ Mykola Malkov ]
+  * [6767abe] MT#57453 Switch docker image to bookworm
+
+  [ Nico Schedel ]
+  * [0536822] MT#57776 update dockerfile to make python csc tests work on debian 12
+  * [a618ad9] MT#57776 fix csc test preperation
+  * [90387d0] MT#57776 fix csc security tests
+  * [a511196] MT#57776 fix csc test preperation on jenkins side
+  * [fdee658] MT#57776 fix csc test preperation on jenkins side (again)
+
+  [ Hugo Zigha ]
+  * [a72696e] MT#57783 HG master data: add new preference `pbx_hunt_cancel_mode`
+  * [3e3e123] MT#55674 We cannot remove fax files from the CSC
+
+  [ nouhaila ]
+  * [37a807d] MT#57080 Expose Phonebook in the CSC
+
+  [ Author: Nouhaila Idrissi Zouggari ]
+  * [6822e7c] MT#57750 Tooltip for mail2fax ACL is not translated to German
+  * [1406526] MT#57750 Tooltip for mail2fax ACL is not translated to German
+  * [e02805e] MT#57577 subscriber's administrator should be able to configure NCOS and NCOS_SET of seats
+
+  [ Marco Capetta ]
+  * [f81267e] MT#57577 Make ncos and ncos_set visibile accordingly to profile
+  * [e5b0fb3] MT#58074 Allow the selection of all the aliases as cli
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 30 Aug 2023 18:04:23 +0200
+
+ngcp-csc-ui (11.5.0.0+0~mr11.5.0.0) unstable; urgency=medium
+
+  [ Hugo Zigha ]
+  * [87d31b2] MT#56986 [CSC] Add possibility to select parent soundset when creating/editing a soundset
+  * [d45f67b] MT#56987 Add possibility to select for each soundset announcement if the parent soundset has to be used or not
+  * [9ca8d4b] MT#56989 Soundset page general UI improvements
+  * [68f189b] MT#57030 Update AUI and CSC to fix latest security warnings
+  * [8ee50d2] MT#57588 [CSC-UI] Dashboard Call List is showing received calls with wrong time
+
+  [ Nico Schedel ]
+  * [b6f1e44] MT#56388 fix call forwards csc test
+  * [db1df27] MT#55492 add data-cy to call forward page
+  * [1e39ce3] MT#55492 add data-cy to reminder page
+  * [39adcab] MT#55492 add data-cy to speed dial page
+
+  [ Marco Capetta ]
+  * [b925553] MT#57183 Rename 'PBX Settings' to 'Extension Settings'
+  * [04d9274] MT#57240 Allow '+' char in device line number definition
+  * [21f9d8a] MT#57273 MT#57274 Update german translation
+  * [a2cc142] MT#57338 Remove preferences when set to false or empty array value
+  * [f2d08d8] MT#57305 Fix ringtimeout configuration on CFT for seats/groups
+  * [7849c0d] MT#57305 CSC CFT feature requires +E.164 number format
+  * [d53f9f1] MT#57604 Show all registered devices for subscriber's admin
+  * [7e58437] MT#57605 Remove username indication in registered devices
+
+  [ Georges Francisco ]
+  * [7395ef0] MT#57195 move clir_intrapbx setting to privacy page
+
+  [ Guillem Jover ]
+  * [bba8cab] TT#175000 Remove rtcengine support
+
+  [ nouhaila ]
+  * [b9c1320] MT#57605 allow the deletion of current registered devices
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 26 Jun 2023 14:10:37 +0200
+
+ngcp-csc-ui (11.4.0.0+0~mr11.4.0.0) unstable; urgency=medium
+
+  [ Georges Francisco ]
+  * [3f298e0] MT#54861 Configure sip username, display-names and web username independently in CSC
+  * [6d58d48] MT#56506 [CSC] The primary number reported in CF setting of a seat is not correct
+  * [88925a2] MT#56962 [CSC] Align the code if Call forwards setup for seats to the one used for Groups
+  * [f30a830] MT#56954 [CSC] fix Call forward configuration UI issues
+
+  [ Marco Capetta ]
+  * [64e8ff3] MT#55940 Add new speeddial, forward, transfer device buttons
+  * [cc3c5bd] MT#56783 Show SIP password only to administrative subscribers
+  * [2f415cf] MT#56403 Align PBX Configuration visibility with assigned profile
+  * [c3a912f] MT#55336 Add support for items that returned from a non array API
+  * [9e6597f] MT#56505 [CSC] Add possibility to configure call forwards also for groups
+  * [45d9967] MT#56403 Add new internal preferences to show/hide CSC menus
+
+  [ CORP\franci11 ]
+  * [58361b0] MT#32999 Customer admin must be able to configure seat's call forward
+
+  [ nouhaila ]
+  * [4c80215] MT#56399 Give option to disable SIP-password-change in CSC
+
+  [ Hugo Zigha ]
+  * [0308c9e] MT#55940 Add possibility to configure "user defined buttons" on phones via CSC panel
+
+  [ Nico Schedel ]
+  * [5202a81] MT#55492 add data-cy for music on hold
+  * [c092c29] MT#56388 fix selenium csc tests
+  * [60889fb] MT#55492 add data-cy to voicebox page
+  * [28b12bf] MT#55492 add data-cy to call blocking pages
+  * [02903fa] MT#55492 add data-cy to privacy page
+  * [01c7d81] MT#55492 add data-cy to call recording page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 24 Mar 2023 13:04:01 +0100
+
+ngcp-csc-ui (11.3.0.0+0~mr11.3.0.0) unstable; urgency=medium
+
+  [ Mykola Malkov ]
+  * [c97988e] MT#55391 Add NODE_PATH variable to Dockerfile
+
+  [ Nico Schedel ]
+  * [11b4a0f] MT#55492 add data-cy for login page
+  * [24397c8] MT#55492 add data-cy for user menu
+  * [9446710] MT#55492 add data-cy for call page
+  * [d66f815] MT#55492 add data-cy to conversations page
+  * [af558c2] MT#55492 add data-cy for empty list in conversations page
+  * [3cdcf00] MT#55492 add data-cy for dashboard links to other pages
+  * [48993e8] MT#55492 add data-cy for fax settings, sendfax and destination creation
+  * [5d7e407] MT#55492 add data-cy for destinations list
+  * [9dfcfff] MT#55492 add data-cy for deletion dialog
+
+  [ Michael Prokop ]
+  * [bd8a150] MT#55813 MT#55391 Use bundled yarn
+
+  [ CORP\franci11 ]
+  * [63a0099] MT#32998 Customer admin user should be able to open seats configuration in a separated page
+  * [d83cb7f] MT#54497 do not change options 'description' on option change
+  * [8c6405b] MT#53842 CSC: voicemail page doesn't report in which folder the messages are
+  * [25fa549] MT#53860 Fix seat NameSyntax when creating a new subscriber
+  * [9d84761] MT#56138 Call Recording in CSC and AUI does not show who is the caller/callee
+  * [8030e05] MT#56083 [CSC] PBX Configuration > Groups configuration should be displayed like Seats
+  * [168f403] MT#33001 Configure subscriber's CLI via CSC panel
+  * [d772832] MT#53076 CSC: missing time/filter/search on Conversations page (comparing to v1 CSC)
+
+  [ Hugo Zigha ]
+  * [7f1094b] MT#55682 When uploading greeting files in CSC, filter shows unsupported options.
+  * [ab8e008] MT#55676 Call to the webRTC not working properly
+  * [c75aef6] MT#56003 update modules reported as critical
+  * [dcb49eb] MT#56343 WebRTC calls stuck on CSC interface
+  * [175c344] MT#56085 Reply with 486 from WebRTC when the user is busy in another conversation
+  * [256332c] MT#56339 update modules reported as critical
+  * [169cfa8] MT#53241 The last state of the "Main menu" is not restored after RTCengine call
+
+  [ Marco Capetta ]
+  * [2867213] MT#56307 PBX settings visible only if clir_intrapbx is enabled
+
+  [ Georges Francisco ]
+  * [c6613b0] MT#54808 Calls to Voicebox signed differently on Call list and Dashboard
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 17 Jan 2023 17:43:09 +0100
+
+ngcp-csc-ui (11.2.0.0+0~mr11.2.0.0) unstable; urgency=medium
+
+  [ hherzog ]
+  * [f81eb4d] TT#189650 Normalise item counts of all lists and set it to a value that fits all styles
+
+  [ Nico Schedel ]
+  * [7e42c96] TT#70901 fix voicebox test
+
+  [ Kirill Solomko ]
+  * [4b03168] MT#55391 update package to be build with node 18
+
+  [ Daniel Grotti ]
+  * [d8ee133] MT#55460 Stop ringing on CSC when call is connected or in progress
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 04 Oct 2022 13:50:48 +0200
+
+ngcp-csc-ui (11.1.0.0+0~mr11.1.0.0) unstable; urgency=medium
+
+  [ Hans-Peter Herzog ]
+  * [0894dfe] TT#179952 Call - Hide "CSC Calls" functionality if subscriber profile csc_calls is not set
+  * [9f0d279] TT#177101 Issue - PBXConfiguration - PBXSeats - Show SoundSet name if selected
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 22 Aug 2022 20:01:33 +0200
+
+ngcp-csc-ui (11.0.0.0+0~mr11.0.0.0) unstable; urgency=medium
+
+  [ Sergii Leonenko ]
+  * [d33c931] TT#157152 Maintenance - Fix vulnerabilities in dependencies
+  * [76abadf] TT#163513 Issue - CallForwarding - JS error on Forwarding tab after re-adding already deleted rule
+  * [9da0c00] TT#174850 Trim leading, tailing whitespaces from login username
+
+  [ Hans-Peter Herzog ]
+  * [1746a7f] TT#164702 Branding - CSS customization for CSC-UI v2
+  * [0c394be] TT#173850 Add permanent instance_id to SIP UA config
+  * [73ba4fa] TT#175000 Remove RTCEngine related components
+  * [666b7d1] TT#164701 CallForwarding - CustomAnnouncements - Removed id for default custom announcement
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 07 Jun 2022 11:43:35 +0200
+
 ngcp-csc-ui (10.5.0.0+0~mr10.5.0.0) unstable; urgency=medium
 
   [ Sergii Leonenko ]

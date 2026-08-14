@@ -1,11 +1,11 @@
 'use strict'
 
-import UserModule from '../../src/store/user'
 import { assert } from 'chai'
+import UserModule from 'src/store/user'
 
 describe('UserModule', () => {
     it('should login', () => {
-        var state = {}
+        const state = {}
         UserModule.mutations.loginSucceeded(state, {
             jwt: 'abc123',
             subscriberId: 123

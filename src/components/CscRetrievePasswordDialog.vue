@@ -1,13 +1,13 @@
 <template>
     <csc-dialog
-        :value="value"
+        :model-value="modelValue"
         title-icon="vpn_key"
         :title="$t('Forgot password?')"
-        @input="$emit('input')"
-        @hide="resetForm()"
+        @update:model-value="emit('update:modelValue', $event)"
+        @hide="resetForm"
     >
         <template
-            v-slot:content
+            #content
         >
             <q-form>
                 <q-item>
@@ -18,12 +18,12 @@
                             dense
                             :label="$t('Username')"
                             type="text"
-                            :error="$v.username.$error"
-                            :error-message="$errorMessage($v.username)"
-                            @blur="$v.username.$touch()"
+                            :error="v$.username.$errors.length > 0"
+                            :error-message="$errMsg(v$.username.$errors)"
+                            @blur="v$.username.$touch()"
                         >
                             <template
-                                v-slot:prepend
+                                #prepend
                             >
                                 <q-icon
                                     name="fas fa-user-cog"
@@ -35,7 +35,7 @@
             </q-form>
         </template>
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 icon="check"
@@ -43,82 +43,57 @@
                 color="primary"
                 :label="$t('Send')"
                 :loading="newPasswordRequesting"
-                :disable="!username || username.length < 1 || newPasswordRequesting"
+                :disable="!username || newPasswordRequesting"
                 @click="submit()"
             />
         </template>
     </csc-dialog>
 </template>
 
-<script>
-import {
-    required
-} from 'vuelidate/lib/validators'
-import {
-    mapActions,
-    mapState
-} from 'vuex'
-import CscDialog from './CscDialog'
-export default {
-    name: 'CscRetrievePasswordDialog',
-    components: {
-        CscDialog
-    },
-    props: {
-        value: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data () {
-        return {
-            username: ''
-        }
-    },
-    validations: {
-        username: {
-            required
-        }
-    },
-    computed: {
-        ...mapState('user', [
-            'newPasswordRequesting'
-        ])
-    },
-    methods: {
-        ...mapActions('user', [
-            'resetPassword'
-        ]),
-        async submit () {
-            this.$v.$touch()
-            if (!this.$v.$invalid) {
-                try {
-                    const res = await this.resetPassword({
-                        username: this.username,
-                        domain: this.$appConfig.baseHttpUrl.replace(/(^\w+:|^)\/\//, '')
-                    })
-                    this.$q.notify({
-                        position: 'top',
-                        color: 'positive',
-                        icon: 'check',
-                        message: res.data.message
-                    })
-                } catch (err) {
-                    this.$q.notify({
-                        position: 'top',
-                        color: 'negative',
-                        icon: 'error',
-                        message: this.$t('There was an error, please retry later')
-                    })
-                } finally {
-                    this.$emit('close')
-                }
-            }
-        },
-        resetForm () {
-            this.$v.$reset()
-            this.username = ''
-        }
+<script setup>
+import { useVuelidate } from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
+import { appConfig } from 'boot/appConfig'
+import CscDialog from 'components/CscDialog'
+import { useActions, useState } from 'src/composables/useStore'
+import { computed, ref } from 'vue'
+
+defineOptions({ name: 'CscRetrievePasswordDialog' })
+
+defineProps({
+    modelValue: {
+        type: Boolean,
+        default: false
     }
+})
+
+const emit = defineEmits(['update:modelValue', 'close'])
+
+const username = ref('')
+const rules = computed(() => ({
+    username: {
+        required
+    }
+}))
+const v$ = useVuelidate(rules, { username })
+
+const { newPasswordRequesting } = useState('user', ['newPasswordRequesting'])
+const { resetPassword } = useActions('user', ['resetPassword'])
+
+const submit = async () => {
+    v$.value.$touch()
+    if (!v$.value.$invalid) {
+        await resetPassword({
+            username: username.value,
+            domain: appConfig.baseHttpUrl.replace(/(^\w+:|^)\/\//, '')
+        })
+        emit('close')
+        resetForm()
+    }
+}
+
+const resetForm = () => {
+    v$.value.$reset()
+    username.value = ''
 }
 </script>

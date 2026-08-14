@@ -1,19 +1,20 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 <template>
     <csc-page
         class="q-pa-lg"
     >
         <div class="q-pa-md">
             <q-table
+                v-model:pagination="pagination"
                 class="no-shadow"
-                :data="data"
+                :rows="data"
                 :columns="columns"
                 :loading="$wait.is('csc-pbx-auto-attendant')"
                 row-key="name"
                 flat
-                :pagination.sync="pagination"
                 @request="fetchWithPagination"
             >
-                <template v-slot:header="props">
+                <template #header="props">
                     <q-tr :props="props">
                         <q-th auto-width />
                         <q-th
@@ -29,7 +30,7 @@
                     </q-tr>
                 </template>
                 <template
-                    v-slot:body="props"
+                    #body="props"
                 >
                     <q-tr>
                         <q-td auto-width />
@@ -44,6 +45,7 @@
                                 size="md"
                                 color="primary"
                                 :label="$t('Add slot')"
+                                data-cy="csc-auto-attendant-add-slot"
                                 :disabled="getAvailableSlots(props.row.slots, props.row.subscriber_id).length === 0"
                                 icon="add"
                                 dropdown-icon=" "
@@ -91,13 +93,14 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { mapGetters } from 'vuex'
-import { mapWaitingActions } from 'vue-wait'
-import { displayName } from 'src/filters/subscriber'
 import CscPage from 'components/CscPage'
-import CscPbxAutoAttendantSlotsTable from 'components/pages/PbxConfiguration/CscPbxAutoAttendantSlotsTable'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscPbxAutoAttendantSlotsTable from 'components/pages/PbxConfiguration/CscPbxAutoAttendantSlotsTable'
+import _ from 'lodash'
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { displayName } from 'src/filters/subscriber'
+import { mapWaitingActions } from 'vue-wait-vue3'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPagePbxAutoAttendant',
     components: {
@@ -115,20 +118,20 @@ export default {
                     required: true,
                     label: this.$t('Id'),
                     align: 'left',
-                    field: row => row.subscriber_id,
-                    format: val => `${val}`
+                    field: (row) => row.subscriber_id,
+                    format: (val) => `${val}`
                 },
                 {
                     name: 'Name',
                     required: true,
                     align: 'left',
                     label: this.$t('Name'),
-                    field: row => displayName(row.subscriber_id_expand)
+                    field: (row) => displayName(row.subscriber_id_expand)
                 }
             ],
             pagination: {
                 page: 1,
-                rowsPerPage: 5,
+                rowsPerPage: LIST_DEFAULT_ROWS,
                 rowsNumber: 0
             }
         }
@@ -143,7 +146,7 @@ export default {
     watch: {
         slots () {
             this.data = this.slots
-            this.rowStatus = this.slots.map(slot => {
+            this.rowStatus = this.slots.map((slot) => {
                 return {
                     subscriber_id: slot.subscriber_id,
                     expanded: false
@@ -164,7 +167,7 @@ export default {
         async fetchWithPagination (props) {
             const { page, rowsPerPage } = props.pagination
             const count = await this.fetchAutoAttendants({
-                page: page,
+                page,
                 rows: rowsPerPage
             })
             this.pagination = { ...props.pagination }
@@ -172,30 +175,30 @@ export default {
         },
         async addSlot (subscriberId, slot) {
             this.createNewSlot({
-                subscriberId: subscriberId,
-                slot: slot
+                subscriberId,
+                slot
             })
             this.expandRow(subscriberId)
         },
         isRowExpanded (subscriberId) {
-            const rowStatus = this.rowStatus.filter(row => row.subscriber_id === subscriberId)[0] || null
+            const rowStatus = this.rowStatus.filter((row) => row.subscriber_id === subscriberId)[0] || null
             return rowStatus && rowStatus.expanded
         },
         updateCollapseArray (subscriberId) {
-            const rowStatus = this.rowStatus.filter(row => row.subscriber_id === subscriberId)[0]
+            const rowStatus = this.rowStatus.filter((row) => row.subscriber_id === subscriberId)[0]
             rowStatus.expanded = !rowStatus.expanded
         },
         getAvailableSlots (subscriberSlots, subscriberId) {
-            const subscriberSavedSlots = subscriberSlots.map(item => item.slot)
-            const subscriberNewSlots = this.newSlots.filter(item => item.subscriber_id === subscriberId)
-            subscriberSlots = subscriberNewSlots.length > 0
-                ? [...subscriberSavedSlots, ...subscriberNewSlots[0].slots.map(item => item.slot)]
+            const subscriberSavedSlots = subscriberSlots.map((item) => item.slot)
+            const subscriberNewSlots = this.newSlots.filter((item) => item.subscriber_id === subscriberId)
+            const combinedSubscriberSlots = subscriberNewSlots.length > 0
+                ? [...subscriberSavedSlots, ...subscriberNewSlots[0].slots.map((item) => item.slot)]
                 : subscriberSavedSlots
-            const availableSlots = this.slotsNumbers.filter(slot => !subscriberSlots.includes(slot))
+            const availableSlots = this.slotsNumbers.filter((slot) => !combinedSubscriberSlots.includes(slot))
             return availableSlots
         },
         expandRow (subscriberId) {
-            const status = this.rowStatus.filter(row => row.subscriber_id === subscriberId)[0]
+            const status = this.rowStatus.filter((row) => row.subscriber_id === subscriberId)[0]
             status.expanded = true
         },
         sortedSlots (slots) {
@@ -205,9 +208,9 @@ export default {
     }
 }
 </script>
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="sass" rel="stylesheet/sass" scoped>
 .table-header
-    font-size 15px
+    font-size: 15px
 .table-cell
-    padding 0
+    padding: 0
 </style>

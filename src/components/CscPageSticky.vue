@@ -1,6 +1,7 @@
 <template>
     <csc-page
         :style="pageStyle"
+        class="sticky-page"
     >
         <q-page-sticky
             ref="pageSticky"
@@ -13,6 +14,11 @@
                 <div class="row justify-center">
                     <slot
                         name="header"
+                    />
+                </div>
+                <div class="row q-ml-sm q-mb-sm">
+                    <slot
+                        name="header-align-left"
                     />
                 </div>
                 <q-separator />
@@ -39,6 +45,7 @@ export default {
     components: {
         CscPage
     },
+    emits: ['input'],
     data () {
         return {
             topMargin: 0
@@ -47,7 +54,7 @@ export default {
     computed: {
         pageStyle () {
             return {
-                paddingTop: this.topMargin + 'px'
+                paddingTop: `${this.topMargin}px`
             }
         }
     },
@@ -68,3 +75,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+.sticky-page {
+  transition: padding-top 250ms ease;
+}
+</style>

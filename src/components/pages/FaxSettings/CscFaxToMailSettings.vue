@@ -7,10 +7,11 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        v-model="faxToMailSettings.active"
+                        :model-value="faxToMailSettings.active"
                         :label="$t('Active')"
+                        data-cy="faxtomail-enable"
                         :disable="!dataLoaded"
-                        @input="setChangedData('active', !faxServerSettings.active)"
+                        @update:model-value="setChangedData('active', !faxServerSettings.active)"
                     />
                 </q-item-section>
                 <q-item-section
@@ -27,6 +28,7 @@
                     <csc-input-saveable
                         v-model.trim="faxToMailSettings.name"
                         :label="$t('Name in Fax Header for Sendfax')"
+                        data-cy="sendfax-faxheader-name"
                         :disable="!dataLoaded"
                         :loading="loadingFaxServerSettings"
                         :value-changed="nameChanged"
@@ -38,10 +40,11 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        v-model="faxToMailSettings.t38"
+                        :model-value="faxToMailSettings.t38"
                         :label="$t('T38')"
+                        data-cy="faxtomail-t38"
                         :disable="!dataLoaded"
-                        @input="setChangedData('t38', !faxServerSettings.t38)"
+                        @update:model-value="setChangedData('t38', !faxServerSettings.t38)"
                     />
                 </q-item-section>
                 <q-item-section
@@ -56,10 +59,11 @@
             <q-item>
                 <q-item-section>
                     <q-toggle
-                        v-model="faxToMailSettings.ecm"
+                        :model-value="faxToMailSettings.ecm"
                         :label="$t('ECM')"
+                        data-cy="faxtomail-ecm"
                         :disable="!dataLoaded"
-                        @input="setChangedData('ecm', !faxServerSettings.ecm)"
+                        @update:model-value="setChangedData('ecm', !faxServerSettings.ecm)"
                     />
                 </q-item-section>
                 <q-item-section
@@ -85,6 +89,7 @@
                         flat
                         color="primary"
                         icon="add"
+                        data-cy="destination-add"
                         :disable="!dataLoaded || showAddNewDestination"
                         @click="openAddNewDestination"
                     >
@@ -129,7 +134,7 @@
                     @collapse="expandedDestinationId = null"
                     @expand="expandedDestinationId = destinationItem.destination"
                     @remove="openDeleteDestinationDialog(destinationItem.destination)"
-                    @update-property="updateDestinationItemProperty(destinationItem.destination, ...arguments)"
+                    @update-property="updateDestinationItemProperty(destinationItem.destination, $event)"
                 />
             </q-list>
         </div>
@@ -137,15 +142,15 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { mapState } from 'vuex'
-import CscInputSaveable from 'components/form/CscInputSaveable'
-import CscSpinner from 'components/CscSpinner'
-import { mapWaitingActions, mapWaitingGetters } from 'vue-wait'
-import CscFaxToMailDestinationForm from 'components/pages/FaxSettings/CscFaxToMailDestinationForm'
-import CscFaxToMailDestination from 'components/pages/FaxSettings/CscFaxToMailDestination'
 import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscSpinner from 'components/CscSpinner'
+import CscInputSaveable from 'components/form/CscInputSaveable'
+import CscFaxToMailDestination from 'components/pages/FaxSettings/CscFaxToMailDestination'
+import CscFaxToMailDestinationForm from 'components/pages/FaxSettings/CscFaxToMailDestinationForm'
+import _ from 'lodash'
 import { showGlobalError } from 'src/helpers/ui'
+import { mapWaitingActions, mapWaitingGetters } from 'vue-wait-vue3'
+import { mapState } from 'vuex'
 export default {
     name: 'CscFaxToMailSettings',
     components: {
@@ -153,6 +158,12 @@ export default {
         CscFaxToMailDestinationForm,
         CscSpinner,
         CscInputSaveable
+    },
+    props: {
+        id: {
+            type: String,
+            default: ''
+        }
     },
     data () {
         return {
@@ -190,7 +201,7 @@ export default {
         }),
         async loadFaxServerSettings () {
             try {
-                await this.loadFaxSettingsAction()
+                await this.loadFaxSettingsAction(this.id)
                 this.updateDataFromStore()
             } catch (err) {
                 showGlobalError(err?.message)
@@ -201,7 +212,7 @@ export default {
         },
         async setChangedData (field, value) {
             try {
-                await this.faxServerSettingsUpdateAction({ field, value })
+                await this.faxServerSettingsUpdateAction({ field, value, id: this.id })
                 this.updateDataFromStore()
             } catch (err) {
                 showGlobalError(err?.message)
@@ -214,7 +225,8 @@ export default {
             try {
                 await this.faxServerSettingsUpdateAction({
                     field: 'destinations',
-                    value: destinationItems
+                    value: destinationItems,
+                    id: this.id
                 })
                 beforeUpdateUI()
                 this.updateDataFromStore()
@@ -237,10 +249,11 @@ export default {
             })
         },
         deleteDestination (destinationId) {
-            const destinationItems = this.faxToMailSettings.destinations.filter(d => d.destination !== destinationId)
+            const destinationItems = this.faxToMailSettings.destinations.filter((d) => d.destination !== destinationId)
             this.faxServerSettingsUpdateAction({
                 field: 'destinations',
-                value: destinationItems
+                value: destinationItems,
+                id: this.id
             }).then(() => {
                 if (this.expandedDestinationId === destinationId) {
                     this.expandedDestinationId = null
@@ -251,16 +264,17 @@ export default {
         openDeleteDestinationDialog (destinationId) {
             this.$q.dialog({
                 component: CscRemoveDialog,
-                parent: this,
-                title: this.$t('Remove Destination'),
-                message: this.$t('You are about to remove destination {destination}', { destination: destinationId })
+                componentProps: {
+                    title: this.$t('Remove Destination'),
+                    message: this.$t('You are about to remove destination {destination}', { destination: destinationId })
+                }
             }).onOk(() => {
                 this.deleteDestination(destinationId)
             })
         },
         updateDestinationItemProperty (destinationId, data) {
             const destinationItems = _.cloneDeep(this.faxToMailSettings.destinations)
-            const destinationItemIndex = destinationItems.findIndex(d => d.destination === destinationId)
+            const destinationItemIndex = destinationItems.findIndex((d) => d.destination === destinationId)
             if (destinationItemIndex >= 0) {
                 destinationItems[destinationItemIndex][data.name] = data.value
             }

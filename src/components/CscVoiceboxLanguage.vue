@@ -2,15 +2,16 @@
     <q-item>
         <q-item-section>
             <q-select
-                v-model="selectedLanguage"
+                :model-value="value"
                 emit-value
                 map-options
-                :disable="loading"
-                :readonly="loading"
+                :disable="disabled || loading"
+                :readonly="disabled || loading"
                 :label="$t('Language for voicemail and app server')"
+                data-cy="voicebox-change-language"
                 :title="$t('Voice prompts language for voicemail, conference and application server')"
                 :options="languageOptions"
-                v-on="$listeners"
+                @update:model-value="$emit('input', $event)"
             >
                 <template
                     #prepend
@@ -35,6 +36,7 @@
 <script>
 import CscSpinner from 'components/CscSpinner'
 export default {
+    name: 'CscVoiceboxLanguage',
     components: { CscSpinner },
     props: {
         defaultLanguageOption: {
@@ -52,21 +54,12 @@ export default {
         loading: {
             type: Boolean,
             default: false
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         }
     },
-    data () {
-        return {
-            selectedLanguage: null
-        }
-    },
-    watch: {
-        value (newLanguage) {
-            if (this.defaultLanguageOption && newLanguage === undefined) {
-                this.selectedLanguage = this.defaultLanguageOption.value
-            } else {
-                this.selectedLanguage = newLanguage
-            }
-        }
-    }
+    emits: ['input']
 }
 </script>

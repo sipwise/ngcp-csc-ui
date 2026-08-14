@@ -1,32 +1,53 @@
 'use strict'
-
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
-import {
-    RequestState
-} from './common'
-import {
-    login,
-    getUserData,
-    createAuthToken
-} from '../api/user'
+import QRCode from 'qrcode'
+import { date } from 'quasar'
+import { apiDownloadFile, get, httpApi } from 'src/api/common'
+import { callInitialize } from 'src/api/ngcp-call'
 import {
     changePassword,
-    resetPassword,
-    recoverPassword,
+    changeSIPPassword,
+    createCustomerPhonebook,
+    generateGeneralPassword,
     getBrandingLogo,
-    getSubscriberRegistrations,
+    getCustomerPhonebook,
+    getNcosLevels,
+    getNcosSet,
+    getPreferences,
     getSubscriberProfile,
-    changeSIPPassword
-} from '../api/subscriber'
-import { deleteJwt, getJwt, getSubscriberId, setJwt, setSubscriberId } from 'src/auth'
-import QRCode from 'qrcode'
+    getSubscriberRegistrations,
+    getSubscriberSeats,
+    recoverPassword,
+    resetPassword,
+    setPreference,
+    setValueNameCustomer,
+    setValueNumberCustomer,
+    uploadCsv
+} from 'src/api/subscriber'
 import {
-    qrPayload
-} from 'src/helpers/qr'
-import { date } from 'quasar'
-import { callInitialize } from 'src/api/ngcp-call'
-import { setLocal } from 'src/storage'
+    changeExpiredPassword,
+    createAuthToken,
+    getPreLoginPasswordInfo,
+    getUserData,
+    login
+} from 'src/api/user'
+import {
+    deleteJwt,
+    getJwt,
+    getSubscriberId,
+    setJwt,
+    setSubscriberId
+} from 'src/auth'
+import { LICENSES, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { getSipInstanceId } from 'src/helpers/call-utils'
+import { getHttpErrorMessage } from 'src/helpers/http-error'
+import { parseErrorPayload, resolveBlobPayload } from 'src/helpers/parse-error-payload'
+import { qrPayload } from 'src/helpers/qr'
+import { showGlobalError, showToast } from 'src/helpers/ui'
+import { PATH_CHANGE_PASSWORD } from 'src/router/routes'
+import { setLocal } from 'src/storage'
+import { RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -36,18 +57,14 @@ export default {
         subscriber: null,
         capabilities: null,
         profile: null,
-        features: {
-            sendFax: true,
-            sendSms: false
-        },
         loginRequesting: false,
         loginSucceeded: false,
         loginError: null,
+        loginWaitingOTPCode: false,
+        OTPSecret: null,
         userDataRequesting: false,
         userDataSucceeded: false,
         userDataError: null,
-        rtcEngineInitState: RequestState.initiated,
-        rtcEngineInitError: null,
         changePasswordState: RequestState.initiated,
         changePasswordError: null,
         newPasswordRequesting: false,
@@ -57,9 +74,13 @@ export default {
         resellerBranding: null,
         defaultBranding: {},
         subscriberRegistrations: [],
+        subscriberSeats: [],
+        customerPhonebook: [],
         platformInfo: null,
         qrCode: null,
-        qrExpiringTime: null
+        qrExpiringTime: null,
+        numberInput: '',
+        isFaxServerSettingsActive: false
     },
     getters: {
         isLogged (state) {
@@ -73,46 +94,38 @@ export default {
                 return state.subscriber.display_name
             } else if (state.subscriber !== null) {
                 return state.subscriber.webusername
-            } else {
-                return ''
             }
+            return ''
         },
         isAdmin (state) {
             return state.subscriber !== null && state.subscriber.administrative
         },
-        isPbxAdmin (state, getters) {
-            return getters.isAdmin && state.capabilities !== null && state.capabilities.cloudpbx
+        isPbxAdmin (_, getters) {
+            return getters.isAdmin && getters.isPbxEnabled
         },
         isPbxEnabled (state) {
-            return state.capabilities !== null && state.capabilities.cloudpbx
+            return state?.capabilities?.cloudpbx &&
+                state?.platformInfo?.cloudpbx &&
+            state.platformInfo.licenses.includes(LICENSES.pbx)
         },
-        hasSmsCapability (state) {
-            return state.capabilities !== null &&
-                state.capabilities.sms === true
+        hasCapability (state) {
+            return (capability) => {
+                return state?.capabilities?.[capability]
+            }
         },
-        hasSendSmsFeature (state) {
-            return state.features.sendSms
+        hasPlatformFeature (state) {
+            return (feature) => {
+                return state?.platformInfo?.[feature]
+            }
         },
-        hasSendFaxFeature (state) {
-            return state.features.sendFax
+        isFaxFeatureEnabled (state, getters) {
+            return state?.capabilities?.faxserver &&
+                state?.platformInfo?.faxserver &&
+                getters.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.faxServer) &&
+                state?.platformInfo?.licenses?.includes(LICENSES.fax)
         },
-        hasFaxCapability (state) {
-            return state.capabilities !== null &&
-                state.capabilities.faxserver
-        },
-        hasFaxCapabilityAndFaxActive (state) {
-            return state.capabilities !== null &&
-                state.capabilities.faxserver &&
-                state.capabilities.faxactive
-        },
-        hasRtcEngineCapability (state) {
-            return state.capabilities !== null && _.has(state.capabilities, 'rtcengine')
-        },
-        hasRtcEngineCapabilityEnabled (state, getters) {
-            return getters.hasRtcEngineCapability && state.capabilities.rtcengine === true
-        },
-        isRtcEngineUiVisible (state) {
-            return (state.capabilities !== null && state.capabilities.csc_show_rtcengine_features === true)
+        isFaxServerSettingsActive (state) {
+            return state?.isFaxServerSettingsActive
         },
         getSubscriberId (state) {
             return state.subscriberId
@@ -125,6 +138,15 @@ export default {
         },
         loginError (state) {
             return state.loginError
+        },
+        loginWaitingOTPCode (state) {
+            return state.loginWaitingOTPCode
+        },
+        OTPSecret (state) {
+            return state.OTPSecret
+        },
+        passwordRequirements (state) {
+            return state.platformInfo?.security?.password || []
         },
         userDataRequesting (state) {
             return state.userDataRequesting
@@ -142,9 +164,8 @@ export default {
                     const timeLeft = Math.abs(timeDiff)
                     const timeLeftBuffer = Math.round(timeLeft * expirationBuffer)
                     return timeLeft - timeLeftBuffer
-                } else {
-                    return null
                 }
+                return null
             } catch (err) {
                 return null
             }
@@ -176,14 +197,27 @@ export default {
         isLogoRequested (state) {
             return state.logoRequested
         },
-        hasSubscriberProfileAttribute: (state) => (attribute) => {
-            return state.profile ? state.profile.attributes.includes(attribute) : true
+        hasSubscriberProfileAttribute: (state) => {
+            return (attribute) => {
+                return state?.profile ? state.profile?.attributes?.includes(attribute) : true
+            }
         },
-        hasSubscriberProfileAttributes: (state) => (attributes) => {
-            return state.profile ? state.profile.attributes.some(item => attributes.includes(item)) : true
+        hasSomeSubscriberProfileAttributes: (state) => {
+            return (attributes) => {
+                return state?.profile
+                    ? state.profile?.attributes?.some((item) => {
+                        return attributes?.includes(item)
+                    })
+                    : true
+            }
         },
-        isOldCSCProxyingAllowed (state, getters) {
-            return getters.isAdmin && state.platformInfo?.csc_v2_mode === 'mixed' && !!getters.getCustomerId
+        hasLicenses: (state) => {
+            return (licenses) => {
+                if (!state?.platformInfo?.licenses) {
+                    return false
+                }
+                return licenses?.every((license) => state?.platformInfo?.licenses?.includes(license))
+            }
         },
         isPbxPilot (state) {
             return !!state.subscriber?.is_pbx_pilot
@@ -196,6 +230,9 @@ export default {
         },
         isPbxAttendant (state, getters) {
             return getters.isPbxPilot || getters.isPbxGroup || getters.isPbxSeat
+        },
+        isSpCe (state) {
+            return state?.platformInfo?.type === 'spce'
         }
     },
     mutations: {
@@ -210,11 +247,14 @@ export default {
             state.loginRequesting = false
             state.loginSucceeded = true
             state.loginError = null
+            state.loginWaitingOTPCode = false
+            state.OTPSecret = null
         },
         loginFailed (state, error) {
             state.loginRequesting = false
             state.loginSucceeded = false
             state.loginError = error
+            state.loginWaitingOTPCode = false
         },
         userDataRequesting (state) {
             state.resellerBranding = null
@@ -227,6 +267,7 @@ export default {
             state.capabilities = options.capabilities
             state.resellerBranding = options.resellerBranding
             state.platformInfo = options.platformInfo
+            state.isFaxServerSettingsActive = options.isFaxServerSettingsActive
 
             state.userDataSucceeded = true
             state.userDataRequesting = false
@@ -248,19 +289,11 @@ export default {
             state.loginRequesting = false
             state.loginSucceeded = false
             state.loginError = null
+            state.loginWaitingOTPCode = false
+            state.OTPSecret = null
             state.userDataRequesting = false
             state.userDataSucceeded = false
             state.userDataError = null
-        },
-        rtcEngineInitRequesting (state) {
-            state.rtcEngineInitState = RequestState.requesting
-        },
-        rtcEngineInitSucceeded (state) {
-            state.rtcEngineInitState = RequestState.succeeded
-        },
-        rtcEngineInitFailed (state, error) {
-            state.rtcEngineInitState = RequestState.failed
-            state.rtcEngineInitError = error
         },
         userPasswordRequesting (state) {
             state.changePasswordState = RequestState.requesting
@@ -280,8 +313,8 @@ export default {
         updateLogo (state, value) {
             state.logo = value
         },
-        updateFaxActiveCapabilityState (state, value) {
-            state.capabilities.faxactive = value
+        updateIsFaxServerSettingsActive (state, value) {
+            state.isFaxServerSettingsActive = value
         },
         updateLogoRequestState (state, isRequesting) {
             state.logoRequesting = isRequesting
@@ -293,6 +326,12 @@ export default {
         setSubscriberRegistrations (state, value) {
             state.subscriberRegistrations = value
         },
+        setSubscriberSeats (state, value) {
+            state.subscriberSeats = value
+        },
+        setCustomerPhonebook (state, value) {
+            state.customerPhonebook = value
+        },
         setProfile (state, value) {
             state.profile = value
         },
@@ -301,13 +340,27 @@ export default {
         },
         setQrExpiringTime (state, qrExpiringTime) {
             state.qrExpiringTime = qrExpiringTime
+        },
+        loginWaitingForOTPCode (state) {
+            state.loginWaitingOTPCode = true
+            state.loginRequesting = false
+        },
+        storeOTPSecret (state, payload) {
+            state.loginWaitingOTPCode = true
+            state.OTPSecret = payload
+            state.loginRequesting = false
         }
     },
     actions: {
         async login (context, options) {
+            const wasWaitingForOTP = context.state.loginWaitingOTPCode
             context.commit('loginRequesting')
             try {
-                const result = await login(options.username, options.password)
+                const result = await login({
+                    username: options.username,
+                    password: options.password,
+                    ...(options.otp && { otp: options.otp })
+                })
                 setJwt(result.jwt)
                 setSubscriberId(result.subscriberId)
                 context.commit('loginSucceeded', {
@@ -315,13 +368,81 @@ export default {
                     subscriberId: getSubscriberId()
                 })
                 await context.dispatch('initUser')
+                await this.$router?.push({ name: 'dashboard' })
             } catch (err) {
+                if (err.message === 'Invalid OTP') {
+                    if (wasWaitingForOTP) {
+                        context.commit('loginFailed', i18n.global.t('Invalid OTP Code'))
+                        return
+                    }
+                    return context.dispatch('getOTPSecret', {
+                        username: options.username,
+                        password: options.password
+                    })
+                }
                 context.commit('loginFailed', err.message)
+                if (err.message === 'Password expired') {
+                    this.$router?.push({ path: PATH_CHANGE_PASSWORD })
+                } else if (err.message === 'Banned') {
+                    context.commit('loginFailed', i18n.global.t('There is a problem with your account, please contact support'))
+                }
             }
         },
         logout () {
             deleteJwt()
             document.location.href = document.location.pathname
+        },
+        async getOTPSecret ({ commit, state }, options) {
+            try {
+                const token = `${options.username}:${options.password}`
+                const encodedToken = btoa(token).toString('base64')
+                const headers = {
+                    Authorization: `Basic ${encodedToken}`,
+                    'Cache-Control': 'no-cache',
+                    Accept: 'image/png'
+                }
+                // Bypasses get()/apiGet(): handleResponseError strips err.response
+                // for structured error bodies, but detecting "no OTP yet" below needs the raw response
+                // that is why we bypass it.
+                const res = await httpApi.get('api/otpsecret/', {
+                    responseType: 'blob',
+                    headers
+                })
+                const url = URL.createObjectURL(res.data)
+                commit('storeOTPSecret', { type: 'qr', data: url })
+            } catch (err) {
+                // This block covers logins after the Authenticator has been set up
+                if (err?.response?.status === 400) {
+                    try {
+                        const errorData = await parseErrorPayload(err.response.data)
+                        if (errorData.message.includes('no OTP') && !(state.loginWaitingOTPCode)) {
+                            return commit('loginWaitingForOTPCode', errorData)
+                        }
+                        commit('loginFailed', errorData.message)
+                    } catch (parseErr) {
+                        return commit('loginFailed', i18n.global.t('Unexpected error'))
+                    }
+                }
+                if (err?.response?.data) {
+                    err.response.data = await resolveBlobPayload(err.response.data)
+                }
+                commit('loginFailed', getHttpErrorMessage(err, i18n.global.t('Unexpected error')))
+            }
+        },
+        async getOTPSecretAsText ({ commit }, options) {
+            try {
+                const token = `${options.username}:${options.password}`
+                const encodedToken = btoa(token).toString('base64')
+                const headers = {
+                    Authorization: `Basic ${encodedToken}`,
+                    'Cache-Control': 'no-cache',
+                    Accept: 'text/plain'
+                }
+                const data = await get({ path: 'api/otpsecret/', headers })
+                commit('storeOTPSecret', { type: 'text', data })
+            } catch (err) {
+                commit('loginFailed', err.message)
+            }
         },
         async initUser (context) {
             if (!context.getters.userDataSucceeded) {
@@ -329,6 +450,7 @@ export default {
                     context.commit('userDataRequesting')
                     const userData = await getUserData(getSubscriberId())
                     context.commit('userDataSucceeded', userData)
+
                     if (_.isNumber(context.getters.jwtTTL)) {
                         setTimeout(() => {
                             setLocal('show_session_expired_msg', true)
@@ -339,22 +461,27 @@ export default {
                         const profile = await getSubscriberProfile(userData.subscriber.profile_id)
                         context.commit('setProfile', profile)
                     }
-                    try {
+                    if (context.getters.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cscCalls)) {
                         await callInitialize({
                             subscriber: userData.subscriber,
                             instanceId: getSipInstanceId()
                         })
-                    } catch (err) {
-                        console.log(err)
                     }
-                    await context.dispatch('forwardHome')
                 } catch (err) {
-                    console.debug(err)
                     await context.dispatch('logout')
+                    throw err
                 }
-            } else {
-                await context.dispatch('forwardHome')
             }
+        },
+        async changeExpiredPassword (context, newPassword) {
+            context.commit('userPasswordRequesting')
+            try {
+                await changeExpiredPassword(newPassword)
+            } catch (error) {
+                return context.commit('userPasswordFailed', error)
+            }
+
+            context.commit('userPasswordSucceeded')
         },
         async changePassword (context, newPassword) {
             const subscriberId = getSubscriberId()
@@ -367,10 +494,15 @@ export default {
             context.commit('subscriberUpdateSucceeded', subscriberData)
         },
         async resetPassword ({ commit }, data) {
-            commit('newPasswordRequesting', true)
-            const response = await resetPassword(data)
-            commit('newPasswordRequesting', false)
-            return response
+            try {
+                commit('newPasswordRequesting', true)
+                const res = await resetPassword(data)
+                showToast(res.data.message)
+            } catch (err) {
+                showGlobalError(err)
+            } finally {
+                commit('newPasswordRequesting', false)
+            }
         },
         async recoverPassword ({ commit, dispatch, state, rootGetters }, data) {
             commit('userPasswordRequesting')
@@ -383,11 +515,6 @@ export default {
                 }
             } catch (err) {
                 commit('userPasswordFailed', err.message)
-            }
-        },
-        async forwardHome (context) {
-            if (context.rootState.route?.path === '/user/dashboard' && !context.getters.isRtcEngineUiVisible) {
-                await this.$router.push({ path: '/user/conversations' })
             }
         },
         async getCustomLogo (context) {
@@ -406,8 +533,7 @@ export default {
         async loadSubscriberRegistrations ({ commit, dispatch, state, rootGetters }, options) {
             try {
                 const list = await getSubscriberRegistrations({
-                    ...options,
-                    subscriber_id: getSubscriberId()
+                    ...options
                 })
                 commit('setSubscriberRegistrations', list.items)
                 return list.totalCount
@@ -415,6 +541,90 @@ export default {
                 commit('setSubscriberRegistrations', [])
                 throw err
             }
+        },
+        async loadCustomerPhonebook ({ commit, dispatch, state, rootGetters }, options) {
+            try {
+                const list = await getCustomerPhonebook({
+                    ...options
+                })
+                commit('setCustomerPhonebook', list.data)
+                return list.totalCount
+            } catch (err) {
+                commit('setCustomerPhonebook', [])
+                throw err
+            }
+        },
+        async downloadPhonebookAsCSV ({ commit }, customerId) {
+            const apiGetOptions = {
+                resource: `v2/customers/${customerId}/phonebook`,
+                config: {
+                    headers: {
+                        Accept: 'text/csv'
+                    }
+                }
+            }
+            await apiDownloadFile({
+                apiGetOptions,
+                defaultFileName: 'customer_phonebook_entries.csv',
+                defaultContentType: 'text/csv'
+            })
+        },
+        async removeSubscriberRegistration (context, row) {
+            await httpApi.delete(`api/subscriberregistrations/${row.id}`)
+        },
+        async removeCustomerPhonebook (context, { row, customerId }) {
+            await httpApi.delete(`api/v2/customers/${customerId}/phonebook/${row.id}`)
+        },
+        async getNcosLevelsSubscriber () {
+            const ncosLevel = []
+            const list = await getNcosLevels()
+            list.items.forEach((ncos) => {
+                ncosLevel.push({
+                    label: ncos.level,
+                    value: ncos.id
+                })
+            })
+            return ncosLevel
+        },
+        async getNcosSetSubscriber () {
+            const ncosSet = []
+            const list = await getNcosSet()
+            list?.forEach((setNcos) => {
+                ncosSet.push({
+                    label: setNcos.name,
+                    value: setNcos.id
+                })
+            })
+            return ncosSet
+        },
+        async getCurrentNcosLevelsSubscriber () {
+            const list = await getPreferences(getSubscriberId())
+            const currentNcosLevel = list.ncos
+            return currentNcosLevel
+        },
+        async getCurrentNcosSetSubscriber () {
+            const list = await getPreferences(getSubscriberId())
+            const currentNcosSet = list.ncos_set
+            return currentNcosSet
+        },
+        async setNcosLevelsSubscriber (value) {
+            await setPreference(getSubscriberId(), 'ncos', value)
+        },
+        async getPhonebookCustomerDetails (context, { phonebookId, customerId }) {
+            const list = await httpApi.get(`api/v2/customers/${customerId}/phonebook/${phonebookId}`)
+            return list
+        },
+        async getValueNameCustomer (context, options) {
+            await setValueNameCustomer(options.customerId, options.phonebookId, options.name)
+        },
+        async getValueNumberCustomer (context, options) {
+            await setValueNumberCustomer(options.customerId, options.phonebookId, options.number)
+        },
+        async createPhonebookCustomer (context, data) {
+            await createCustomerPhonebook(data)
+        },
+        async uploadPhonebookCustomer (context, data) {
+            await uploadCsv(context, data)
         },
         async fetchAuthToken ({ commit, state, getters }, expiringTime = 300) {
             const subscriber = state.subscriber
@@ -432,6 +642,25 @@ export default {
                 commit('setQrCode', qrCode)
             } catch (err) {
                 commit('setQrCode', null)
+            }
+        },
+        async fetchPreLoginPasswordInfo () {
+            return await getPreLoginPasswordInfo()
+        },
+        async generatePasswordUser () {
+            const password = await generateGeneralPassword()
+
+            return password
+        },
+        async loadSubscriberSeats ({ commit }, options) {
+            try {
+                const list = await getSubscriberSeats({
+                    ...options
+                })
+                commit('setSubscriberSeats', list.items)
+            } catch (err) {
+                commit('setSubscriberSeats', [])
+                throw err
             }
         }
     }

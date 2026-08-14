@@ -14,14 +14,13 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'AppBadgeGoogle',
-    props: {
-        href: {
-            type: String,
-            required: true
-        }
+<script setup>
+defineOptions({ name: 'AppBadgeGoogle' })
+
+defineProps({
+    href: {
+        type: String,
+        required: true
     }
-}
+})
 </script>

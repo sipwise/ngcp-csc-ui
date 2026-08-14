@@ -1,25 +1,19 @@
-
-import Vue from 'vue'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
-    CreationState,
-    RequestState
-} from './common'
-import {
-    getMsConfigList,
     createMsConfig,
+    getMsConfigList,
     removeMsConfig,
     setSecretaryNumber
-} from '../api/pbx-ms-configs'
-import {
-    i18n
-} from 'src/boot/i18n'
+} from 'src/api/pbx-ms-configs'
+import { CreationState, RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
     state: {
         msConfigListState: RequestState.initiated,
         msConfigListVisible: true,
+        msConfigListError: null,
         msConfigList: [],
         msConfigMap: {},
         msConfigSelected: null,
@@ -70,7 +64,7 @@ export default {
         },
         getMsConfigRemoveDialogMessage (state) {
             if (state.msConfigRemoving !== null) {
-                return i18n.t('You are about to remove config for {msConfig}', {
+                return i18n.global.t('You are about to remove config for {msConfig}', {
                     msConfig: state.subscriberMap[state.msConfigRemoving.id].display_name
                 })
             }
@@ -92,18 +86,18 @@ export default {
             return state.msConfigUpdatingField
         },
         getMsConfigCreationToastMessage (state, getters) {
-            return i18n.t('Created manager secretary config for {msConfig} successfully', {
+            return i18n.global.t('Created manager secretary config for {msConfig} successfully', {
                 msConfig: getters.getMsConfigCreatingName
             })
         },
         getMsConfigUpdateToastMessage (state, getters) {
-            return i18n.t('Updated {field} for manager secretary config {msConfig} successfully', {
+            return i18n.global.t('Updated {field} for manager secretary config {msConfig} successfully', {
                 msConfig: getters.getMsConfigUpdatingName,
                 field: getters.getMsConfigUpdatingField
             })
         },
         getMsConfigRemovalToastMessage (state, getters) {
-            return i18n.t('Removed manager secretary config for {msConfig} successfully', {
+            return i18n.global.t('Removed manager secretary config for {msConfig} successfully', {
                 msConfig: getters.getMsConfigRemovingName
             })
         }
@@ -123,12 +117,16 @@ export default {
             state.msConfigListState = RequestState.succeeded
             state.msConfigList = _.get(msConfigList, 'msConfigs.items', [])
             state.msConfigList.forEach((msConfig) => {
-                Vue.set(state.msConfigMap, msConfig.id, msConfig)
+                state.msConfigMap[msConfig.id] = msConfig
             })
             _.get(msConfigList, 'subscribers.items', []).forEach((subscriber) => {
-                Vue.set(state.subscriberMap, subscriber.id, subscriber)
+                state.subscriberMap[subscriber.id] = subscriber
             })
             state.msConfigListVisible = true
+        },
+        msConfigListFailed (state, err) {
+            state.msConfigListState = RequestState.failed
+            state.msConfigListError = err
         },
         msConfigCreationRequesting (state, data) {
             state.msConfigCreationState = CreationState.creating
@@ -171,8 +169,8 @@ export default {
                         state.msConfigList[i] = preferences
                     }
                 }
-                Vue.delete(state.msConfigMap, preferences.id)
-                Vue.set(state.msConfigMap, preferences.id, preferences)
+                delete state.msConfigMap[preferences.id]
+                state.msConfigMap[preferences.id] = preferences
             }
         },
         msConfigUpdateFailed (state, err) {
@@ -193,25 +191,20 @@ export default {
         }
     },
     actions: {
-        loadMsConfigList (context, options) {
-            return new Promise((resolve) => {
-                const listVisible = _.get(options, 'listVisible', false)
-                const selectedId = _.get(options, 'selectedId', null)
-                context.commit('msConfigListRequesting', {
-                    listVisible: listVisible
-                })
-                getMsConfigList().then((msConfigList) => {
-                    context.commit('msConfigListSucceeded', msConfigList)
-                    if (selectedId !== null) {
-                        context.commit('expandMsConfig', msConfigList)
-                        context.commit('highlightMsConfig', msConfigList)
-                    }
-                    resolve()
-                }).catch(() => {
-                    resolve()
-                    context.commit('msConfigListSucceeded')
-                })
-            })
+        async loadMsConfigList (context, options) {
+            const listVisible = _.get(options, 'listVisible', false)
+            const selectedId = _.get(options, 'selectedId', null)
+            context.commit('msConfigListRequesting', { listVisible })
+            try {
+                const msConfigList = await getMsConfigList()
+                context.commit('msConfigListSucceeded', msConfigList)
+                if (selectedId !== null) {
+                    context.commit('expandMsConfig', msConfigList)
+                    context.commit('highlightMsConfig', msConfigList)
+                }
+            } catch (err) {
+                context.commit('msConfigListFailed', err.message)
+            }
         },
         createMsConfig (context, msConfigData) {
             context.commit('msConfigCreationRequesting', msConfigData)
@@ -222,7 +215,6 @@ export default {
             }).then(() => {
                 context.commit('msConfigCreationSucceeded')
             }).catch((err) => {
-                console.debug(err)
                 context.commit('msConfigCreationFailed', err.message)
             })
         },
@@ -235,24 +227,22 @@ export default {
             }).then(() => {
                 context.commit('msConfigRemovalSucceeded')
             }).catch((err) => {
-                console.debug(err)
                 context.commit('msConfigRemovalFailed', err.message)
             })
         },
         setSecretaryNumbers (context, options) {
             context.commit('msConfigUpdateRequesting', {
                 msConfigId: options.msConfigId,
-                field: i18n.t('Secretary numbers')
+                field: i18n.global.t('Secretary numbers')
             })
             setSecretaryNumber(options).then((preferences) => {
                 context.commit('msConfigUpdateSucceeded', preferences)
             }).catch((err) => {
-                console.debug(err)
                 context.commit('msConfigUpdateFailed', err.message)
             })
         },
         jumpToMsConfig (context, subscriber) {
-            this.$router.push({ path: '/user/pbx-configuration/ms-configs' })
+            this.$router?.push({ path: '/user/pbx-configuration/ms-configs' })
             context.commit('expandMsConfig', subscriber.id)
         }
     }

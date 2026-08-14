@@ -1,8 +1,5 @@
-import Vue from 'vue'
-import {
-    RequestState
-} from '../common'
-import { ROWS_PER_PAGE } from './actions'
+import { RequestState } from 'src/store/common'
+import { ROWS_PER_PAGE } from 'src/store/conversations/actions'
 
 function linkCallsWithSameId (state) {
     let callId = null
@@ -22,6 +19,18 @@ function linkCallsWithSameId (state) {
 }
 
 export default {
+    downloadCsvRequesting (state) {
+        state.downloadCsvState = RequestState.requesting
+        state.downloadCsvError = null
+    },
+    downloadCsvSucceeded (state) {
+        state.downloadCsvState = RequestState.succeeded
+        state.downloadCsvError = null
+    },
+    downloadCsvFailed (state, error) {
+        state.downloadCsvState = RequestState.failed
+        state.downloadCsvError = error
+    },
     downloadVoiceMailRequesting (state) {
         state.downloadVoiceMailState = RequestState.requesting
         state.downloadVoiceMailError = null
@@ -63,18 +72,18 @@ export default {
         state.reloadItemsError = error
     },
     playVoiceMailRequesting (state, id) {
-        Vue.set(state.playVoiceMailStates, id, RequestState.requesting)
-        Vue.set(state.playVoiceMailErrors, id, null)
+        state.playVoiceMailStates[id] = RequestState.requesting
+        state.playVoiceMailErrors[id] = null
     },
     playVoiceMailSucceeded (state, options) {
-        Vue.set(state.playVoiceMailUrls, options.id, options.url)
-        Vue.set(state.playVoiceMailStates, options.id, RequestState.succeeded)
-        Vue.set(state.playVoiceMailErrors, options.id, null)
+        state.playVoiceMailUrls[options.id] = options.url
+        state.playVoiceMailStates[options.id] = RequestState.succeeded
+        state.playVoiceMailErrors[options.id] = null
     },
-    playVoiceMailFailed (state, id, err) {
-        Vue.set(state.playVoiceMailUrls, id, null)
-        Vue.set(state.playVoiceMailStates, id, RequestState.failed)
-        Vue.set(state.playVoiceMailErrors, id, err)
+    playVoiceMailFailed (state, options) {
+        state.playVoiceMailUrls[options.id] = null
+        state.playVoiceMailStates[options.id] = RequestState.failed
+        state.playVoiceMailErrors[options.id] = options.error
     },
     resetList (state) {
         state.items = []
@@ -134,13 +143,13 @@ export default {
         state.toggleBlockedError = null
     },
     toggleBlockedSucceeded (state, type) {
-        const typePastTense = type ? type + 'ed' : 'toggled'
+        const typePastTense = type ? `${type}ed` : 'toggled'
         state.toggleBlockedState = RequestState.succeeded
         state.toggleBlockedError = null
         state.lastToggledType = typePastTense
     },
     toggleBlockedFailed (state, error, type) {
-        const typePastTense = type ? type + 'ed' : 'toggled'
+        const typePastTense = type ? `${type}ed` : 'toggled'
         state.toggleBlockedState = RequestState.failed
         state.toggleBlockedError = error
         state.lastToggledType = typePastTense
@@ -156,5 +165,16 @@ export default {
     deletionFailed (state, err) {
         state.deletionState = RequestState.failed
         state.deletionError = err
+    },
+    loadConversationsSucceeded (state, value) {
+        state.conversationState = RequestState.succeeded
+        state.conversations = value
+    },
+    loadConversationsRequesting (state) {
+        state.conversationState = RequestState.requesting
+    },
+    loadConversationsFailed (state, err) {
+        state.conversationState = RequestState.failed
+        state.conversationError = err
     }
 }

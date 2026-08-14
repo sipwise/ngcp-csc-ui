@@ -18,8 +18,24 @@
                     <q-icon
                         name="ring_volume"
                     />
-                    {{ primaryNumber | number }}
+                    {{ getPrimaryNumber }}
                 </span>
+                <template
+                    v-if="showTimeoutInfo"
+                >
+                    {{ ' ' + $t('for') + ' ' }}
+                    <span
+                        class="q-pl-xs q-pr-xs text-primary text-weight-bold cursor-pointer"
+                        style="white-space: nowrap"
+                    >
+                        <q-icon
+                            name="access_time"
+                        />
+                        {{ ringTimeout }}
+                        {{ $t('seconds') }}
+                        <q-tooltip class="text-dark">{{ $t('This setting is synced with "After Ring Timeout", which can be edited above.') }}</q-tooltip>
+                    </span>
+                </template>
             </q-item-label>
         </q-item-section>
         <q-inner-loading
@@ -33,10 +49,9 @@
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
 import CscSpinner from 'components/CscSpinner'
+import numberFilter from 'src/filters/number'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupItemPrimaryNumber',
     components: { CscSpinner },
@@ -45,21 +60,17 @@ export default {
             type: Object,
             default: undefined
         },
-        destinationSet: {
-            type: Object,
-            default: undefined
-        },
-        sourceSet: {
-            type: Object,
-            default: undefined
-        },
-        timeSet: {
-            type: Object,
-            default: undefined
-        },
         loading: {
             type: Boolean,
             default: false
+        },
+        primaryNumberSource: {
+            type: Object,
+            default: undefined
+        },
+        showTimeoutInfo: {
+            type: Boolean,
+            default: true
         }
     },
     data () {
@@ -67,11 +78,18 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('callForwarding', [
+            'ringTimeout'
+        ]),
         ...mapGetters('user', [
             'primaryNumber'
         ]),
         waitIdentifier () {
             return 'csc'
+        },
+        getPrimaryNumber () {
+            const resultNumber = (this.primaryNumberSource) ? numberFilter(this.primaryNumberSource.primary_number) : numberFilter(this.primaryNumber)
+            return resultNumber
         }
     }
 }

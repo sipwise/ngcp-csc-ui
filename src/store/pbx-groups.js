@@ -1,31 +1,31 @@
-
+import { i18n } from 'boot/i18n'
+import _ from 'lodash'
 import {
-    CreationState,
-    RequestState
-} from './common'
-import {
-    getGroupList,
+    addGroupPreferenceField,
     createGroup,
+    getGroupList,
     removeGroup,
-    setGroupName,
+    removeGroupPreferenceField,
+    setGroupAnnouncementCallSetup,
+    setGroupAnnouncementCfu,
     setGroupExtension,
+    setGroupHuntCancelMode,
     setGroupHuntPolicy,
     setGroupHuntTimeout,
+    setGroupName,
     setGroupNumbers,
+    setGroupPreferenceField,
     setGroupSeats,
     setGroupSoundSet
-} from '../api/pbx-groups'
-import _ from 'lodash'
-import Vue from 'vue'
-import {
-    i18n
-} from 'src/boot/i18n'
+} from 'src/api/pbx-groups'
+import { CreationState, RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
     state: {
         groupListState: RequestState.initiated,
         groupListVisibility: 'visible',
+        groupListError: null,
         groupListItems: [],
         groupListCurrentPage: 1,
         groupListLastPage: null,
@@ -55,6 +55,9 @@ export default {
                 getters.isGroupRemoving || getters.isGroupUpdating
             return !getters.isGroupListEmpty && requesting && state.groupListLastPage > 1
         },
+        isGroupMapByIdEmpty (state) {
+            return Object.keys(state.groupMapById).length === 0
+        },
         isGroupAddFormDisabled (state) {
             return state.groupCreationState === CreationState.initiated ||
                 state.groupCreationState === CreationState.created
@@ -67,11 +70,6 @@ export default {
         },
         isGroupUpdating (state) {
             return state.groupUpdateState === RequestState.requesting
-        },
-        isGroupExpanded (state) {
-            return (groupId) => {
-                return state.groupSelected !== null && state.groupSelected.id === groupId
-            }
         },
         isGroupLoading (state, getters) {
             return (groupId) => {
@@ -100,24 +98,24 @@ export default {
         },
         getGroupRemoveDialogMessage (state, getters) {
             if (getters.isGroupRemoving) {
-                return i18n.t('You are about to remove group {group}', {
+                return i18n.global.t('You are about to remove group {group}', {
                     group: getters.getGroupRemovingName
                 })
             }
             return ''
         },
         getGroupCreationToastMessage (state, getters) {
-            return i18n.t('Added group {group}', {
+            return i18n.global.t('Added group {group}', {
                 group: getters.getGroupCreatingName
             })
         },
         getGroupUpdateToastMessage (state, getters) {
-            return i18n.t('Changed {field} successfully', {
+            return i18n.global.t('Changed {field} successfully', {
                 field: getters.getGroupUpdatingField
             })
         },
         getGroupRemovalToastMessage (state, getters) {
-            return i18n.t('Removed group {group}', {
+            return i18n.global.t('Removed group {group}', {
                 group: getters.getGroupRemovingName
             })
         },
@@ -134,26 +132,64 @@ export default {
         getHuntPolicyOptions () {
             return [
                 {
-                    label: i18n.t('Serial Ringing'),
+                    label: i18n.global.t('Serial Ringing'),
                     value: 'serial'
                 },
                 {
-                    label: i18n.t('Parallel Ringing'),
+                    label: i18n.global.t('Parallel Ringing'),
                     value: 'parallel'
                 },
                 {
-                    label: i18n.t('Random Ringing'),
+                    label: i18n.global.t('Random Ringing'),
                     value: 'random'
                 },
                 {
-                    label: i18n.t('Circular Ringing'),
+                    label: i18n.global.t('Circular Ringing'),
                     value: 'circular'
                 }
             ]
         },
         hasCallQueue (state) {
             return (groupId) => {
-                return _.get(state, 'preferenceMapById.' + groupId + '.cloud_pbx_callqueue', false)
+                return _.get(state, `preferenceMapById.${groupId}.cloud_pbx_callqueue`, false)
+            }
+        },
+        getHuntCancelModeOptions () {
+            return [
+                {
+                    label: i18n.global.t('Using Cancel'),
+                    value: 'cancel'
+                },
+                {
+                    label: i18n.global.t('Using Bye'),
+                    value: 'bye'
+                }
+            ]
+        },
+        getAnnouncementCfu (state) {
+            return (id) => {
+                const groupPreferences = state.preferenceMapById[id]
+                return groupPreferences && groupPreferences.play_announce_before_cf ? state.preferenceMapById[id].play_announce_before_cf : false
+            }
+        },
+        getAnnouncementCallSetup (state) {
+            return (id) => {
+                const groupPreferences = state.preferenceMapById[id]
+                return groupPreferences && groupPreferences.play_announce_before_call_setup ? state.preferenceMapById[id].play_announce_before_call_setup : false
+            }
+        },
+        getConferenceMaxParticipants (state) {
+            return (id) => {
+                const groupPreferences = state.preferenceMapById[id]
+                const value = groupPreferences?.conference_max_participants ?? ''
+                return value === null || value === undefined ? '' : value.toString()
+            }
+        },
+        getConferencePin (state) {
+            return (id) => {
+                const groupPreferences = state.preferenceMapById[id]
+                const value = groupPreferences?.conference_pin ?? ''
+                return value === null || value === undefined ? '' : value.toString()
             }
         }
     },
@@ -169,7 +205,7 @@ export default {
             })
             const preferences = _.get(options, 'preferences.items', [])
             preferences.forEach((preference) => {
-                Vue.set(state.preferenceMapById, preference.id, preference)
+                state.preferenceMapById[preference.id] = preference
             })
             state.groupListVisibility = 'visible'
         },
@@ -186,8 +222,9 @@ export default {
                 state.groupListVisibility = 'visible'
             }
         },
-        groupListItemsFailed (state) {
+        groupListItemsFailed (state, err) {
             state.groupListState = RequestState.failed
+            state.groupListError = err
         },
         groupCreationRequesting (state, group) {
             state.groupCreationState = CreationState.creating
@@ -211,15 +248,15 @@ export default {
             const group = _.get(options, 'group', null)
             const preferences = _.get(options, 'preferences', null)
             if (group !== null && preferences !== null) {
-                Vue.delete(state.groupMapById, group.id)
-                Vue.set(state.groupMapById, group.id, group)
+                delete state.groupMapById[group.id]
+                state.groupMapById[group.id] = group
                 for (let i = 0; i < state.groupListItems.length; i++) {
                     if (state.groupListItems[i].id === group.id) {
                         state.groupListItems[i] = group
                     }
                 }
-                Vue.delete(state.preferenceMapById, preferences.id)
-                Vue.set(state.preferenceMapById, preferences.id, preferences)
+                delete state.preferenceMapById[preferences.id]
+                state.preferenceMapById[preferences.id] = preferences
                 if (state.groupSelected !== null && state.groupSelected.id === options.group.id) {
                     state.groupSelected = options.group
                 }
@@ -245,10 +282,10 @@ export default {
             state.groupRemovalState = RequestState.failed
             state.groupRemovalError = err
         },
-        expandGroup (state, groupId) {
+        selectGroup (state, groupId) {
             state.groupSelected = state.groupMapById[groupId]
         },
-        collapseGroup (state) {
+        resetSelectedGroup (state) {
             state.groupSelected = null
         },
         enableGroupAddForm (state) {
@@ -260,33 +297,25 @@ export default {
         }
     },
     actions: {
-        loadGroupListItems (context, options) {
-            return new Promise((resolve, reject) => {
-                const page = _.get(options, 'page', context.state.groupListCurrentPage)
-                const filters = _.get(options, 'filters', {})
-                const clearList = _.get(options, 'clearList', true)
-                context.commit('groupListItemsRequesting', {
-                    clearList: clearList
+        async loadGroupListItems (context, options) {
+            const page = _.get(options, 'page', context.state.groupListCurrentPage)
+            const filters = _.get(options, 'filters', {})
+            const clearList = _.get(options, 'clearList', true)
+            context.commit('groupListItemsRequesting', { clearList })
+            try {
+                const groupList = await getGroupList({ page, filters })
+                context.commit('pbx/pilotSucceeded', groupList.pilot, { root: true })
+                context.commit('pbx/numbersSucceeded', groupList.numbers, { root: true })
+                context.commit('pbx/soundSetsSucceeded', groupList.soundSets, { root: true })
+                context.commit('pbx/seatsSucceeded', groupList.seats, { root: true })
+                context.commit('groupListItemsSucceeded', {
+                    groups: groupList.groups,
+                    preferences: groupList.preferences,
+                    page
                 })
-                getGroupList({
-                    page,
-                    filters
-                }).then((groupList) => {
-                    context.commit('pbx/pilotSucceeded', groupList.pilot, { root: true })
-                    context.commit('pbx/numbersSucceeded', groupList.numbers, { root: true })
-                    context.commit('pbx/soundSetsSucceeded', groupList.soundSets, { root: true })
-                    context.commit('pbx/seatsSucceeded', groupList.seats, { root: true })
-                    context.commit('groupListItemsSucceeded', {
-                        groups: groupList.groups,
-                        preferences: groupList.preferences,
-                        page: page
-                    })
-                    resolve()
-                }).catch((err) => {
-                    context.commit('groupListItemsFailed', err.message)
-                    reject(err)
-                })
-            })
+            } catch (err) {
+                context.commit('groupListItemsFailed', err.message)
+            }
         },
         createGroup (context, groupData) {
             context.commit('groupCreationRequesting', groupData)
@@ -317,7 +346,7 @@ export default {
         setGroupName (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Group Name')
+                groupField: i18n.global.t('Group Name')
             })
             setGroupName({
                 groupId: options.groupId,
@@ -331,7 +360,7 @@ export default {
         setGroupExtension (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Extension')
+                groupField: i18n.global.t('Extension')
             })
             setGroupExtension({
                 groupId: options.groupId,
@@ -345,7 +374,7 @@ export default {
         setGroupHuntPolicy (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Hunt Policy')
+                groupField: i18n.global.t('Hunt Policy')
             })
             setGroupHuntPolicy({
                 groupId: options.groupId,
@@ -359,7 +388,7 @@ export default {
         setGroupHuntTimeout (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Hunt Policy')
+                groupField: i18n.global.t('Hunt Policy')
             })
             setGroupHuntTimeout({
                 groupId: options.groupId,
@@ -370,24 +399,30 @@ export default {
                 context.commit('groupUpdateFailed', err.message)
             })
         },
+        setGroupHuntCancelMode (context, options) {
+            context.commit('groupUpdateRequesting', {
+                groupId: options.groupId,
+                groupField: i18n.global.t('Hunt Cancel Mode')
+            })
+            setGroupHuntCancelMode({
+                groupId: options.groupId,
+                groupHuntCancelMode: options.groupHuntCancelMode
+            }).then((result) => {
+                context.commit('groupUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('groupUpdateFailed', err.message)
+            })
+        },
         setGroupNumbers (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Alias Numbers')
+                groupField: i18n.global.t('Alias Numbers')
             })
             setGroupNumbers({
                 groupId: options.groupId,
                 pilotId: context.rootGetters['pbx/pilot'].id,
                 assignedNumbers: options.assignedNumbers,
                 unassignedNumbers: options.unassignedNumbers
-            }).then((result) => {
-                if (options.assignedNumbers.length > 0) {
-                    return context.dispatch('loadGroupListItems', {
-                        clearList: false
-                    })
-                } else {
-                    return Promise.resolve(result)
-                }
             }).then((result) => {
                 context.commit('groupUpdateSucceeded', result)
             }).catch((err) => {
@@ -397,7 +432,7 @@ export default {
         setGroupSeats (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Seats')
+                groupField: i18n.global.t('Seats')
             })
             setGroupSeats({
                 groupId: options.groupId,
@@ -411,7 +446,7 @@ export default {
         setGroupSoundSet (context, options) {
             context.commit('groupUpdateRequesting', {
                 groupId: options.groupId,
-                groupField: i18n.t('Sound Set')
+                groupField: i18n.global.t('Sound Set')
             })
             setGroupSoundSet({
                 groupId: options.groupId,
@@ -421,6 +456,96 @@ export default {
             }).catch((err) => {
                 context.commit('groupUpdateFailed', err.message)
             })
+        },
+        async setConferenceMaxParticipants (context, options) {
+            context.commit('groupUpdateRequesting', {
+                groupId: options.groupId,
+                groupField: i18n.global.t('Maximum Conference Participants')
+            })
+
+            const groupPreferencesList = Object.keys(context.state.preferenceMapById[options.groupId] || {})
+            const hasConferenceMaxParticipants = groupPreferencesList.includes('conference_max_participants')
+            const group = context.state.groupMapById[options.groupId]
+
+            if (hasConferenceMaxParticipants && options.conferenceMaxParticipants === '') {
+                await removeGroupPreferenceField(options.groupId, 'conference_max_participants')
+                const preferences = { ...context.state.preferenceMapById[options.groupId] }
+                delete preferences.conference_max_participants
+                return context.commit('groupUpdateSucceeded', { group, preferences })
+            }
+
+            if (hasConferenceMaxParticipants) {
+                await setGroupPreferenceField(options.groupId, 'conference_max_participants', options.conferenceMaxParticipants)
+                const preferences = {
+                    ...context.state.preferenceMapById[options.groupId],
+                    conference_max_participants: options.conferenceMaxParticipants
+                }
+                return context.commit('groupUpdateSucceeded', { group, preferences })
+            }
+
+            await addGroupPreferenceField(options.groupId, 'conference_max_participants', options.conferenceMaxParticipants)
+            const preferences = {
+                ...context.state.preferenceMapById[options.groupId],
+                conference_max_participants: options.conferenceMaxParticipants
+            }
+            context.commit('groupUpdateSucceeded', { group, preferences })
+        },
+        async setConferencePin (context, options) {
+            context.commit('groupUpdateRequesting', {
+                groupId: options.groupId,
+                groupField: i18n.global.t('Conference PIN')
+            })
+
+            const groupPreferencesList = Object.keys(context.state.preferenceMapById[options.groupId] || {})
+            const hasConferencePin = groupPreferencesList.includes('conference_pin')
+            const group = context.state.groupMapById[options.groupId]
+
+            if (hasConferencePin && options.conferencePin === '') {
+                await removeGroupPreferenceField(options.groupId, 'conference_pin')
+                const preferences = { ...context.state.preferenceMapById[options.groupId] }
+                delete preferences.conference_pin
+                return context.commit('groupUpdateSucceeded', { group, preferences })
+            }
+
+            if (hasConferencePin) {
+                await setGroupPreferenceField(options.groupId, 'conference_pin', options.conferencePin)
+                const preferences = {
+                    ...context.state.preferenceMapById[options.groupId],
+                    conference_pin: options.conferencePin
+                }
+                return context.commit('groupUpdateSucceeded', { group, preferences })
+            }
+
+            await addGroupPreferenceField(options.groupId, 'conference_pin', options.conferencePin)
+            const preferences = {
+                ...context.state.preferenceMapById[options.groupId],
+                conference_pin: options.conferencePin
+            }
+            context.commit('groupUpdateSucceeded', { group, preferences })
+        },
+        async setAnnouncementCfu (context, options) {
+            context.commit('groupUpdateRequesting', {
+                groupId: options.groupId,
+                groupField: options.message || i18n.global.t('the playback announcement as early media before Call Forward Unconditional or Unavailable')
+            })
+            try {
+                const result = await setGroupAnnouncementCfu(options.groupId, options.announcementCfu)
+                context.commit('groupUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('groupUpdateFailed', err.message)
+            }
+        },
+        async setAnnouncementCallSetup (context, options) {
+            context.commit('groupUpdateRequesting', {
+                groupId: options.groupId,
+                groupField: options.message || i18n.global.t('the playback announcement as early media before send the call to callee')
+            })
+            try {
+                const result = await setGroupAnnouncementCallSetup(options.groupId, options.announcementCallSetup)
+                context.commit('groupUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('groupUpdateFailed', err.message)
+            }
         }
     }
 }

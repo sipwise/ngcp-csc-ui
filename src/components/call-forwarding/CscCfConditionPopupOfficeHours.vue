@@ -8,14 +8,15 @@
             :source-set="sourceSet"
             :time-set="timeSet"
             :delete-button="true"
+            :subscriber-id="subscriberId"
             @close="closePopup"
         />
     </csc-cf-condition-popup>
 </template>
 
 <script>
-import CscCfGroupConditionOfficeHours from 'components/call-forwarding/CscCfGroupConditionOfficeHours'
 import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
+import CscCfGroupConditionOfficeHours from 'components/call-forwarding/CscCfGroupConditionOfficeHours'
 export default {
     name: 'CscCfConditionPopupOfficeHours',
     components: {
@@ -38,6 +39,10 @@ export default {
         timeSet: {
             type: Object,
             default: undefined
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     methods: {

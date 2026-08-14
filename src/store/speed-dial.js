@@ -1,15 +1,12 @@
-
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
-import { RequestState } from './common'
 import {
+    assignSpeedDialSlot,
     getSpeedDialsById,
-    unassignSpeedDialSlot,
     getUnassignedSlots,
-    assignSpeedDialSlot
-} from '../api/speed-dial'
-import {
-    i18n
-} from 'src/boot/i18n'
+    unassignSpeedDialSlot
+} from 'src/api/speed-dial'
+import { RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -42,27 +39,27 @@ export default {
             return state.speedDialLoadingState
         },
         speedDialLoadingError (state) {
-            return state.speedDialLoadingError || i18n.t('An error occured while trying to load the speed dials. Please try again')
+            return state.speedDialLoadingError || i18n.global.t('An error occurred while trying to load the speed dials. Please try again')
         },
         unassignSlotState (state) {
             return state.unassignSlotState
         },
         unassignSlotError (state) {
-            return state.unassignSlotError || i18n.t('An error occured while trying to unassign the speed dial slot. Please try again')
+            return state.unassignSlotError || i18n.global.t('An error occurred while trying to unassign the speed dial slot. Please try again')
         },
         lastUnassignedSlot (state) {
             return state.lastUnassignedSlot
         },
         unassignedSlots (state) {
             const possibleSlots = ['*0', '*1', '*2', '*3', '*4', '*5', '*6', '*7', '*8', '*9']
-            const assignedSlots = state.assignedSlots.map(slot => slot.slot)
+            const assignedSlots = state.assignedSlots.map((slot) => slot.slot)
             return _.difference(possibleSlots, assignedSlots)
         },
         assignSlotState (state) {
             return state.assignSlotState
         },
         assignSlotError (state) {
-            return state.assignSlotError || i18n.t('An error occured while trying to assign the speed dial slot. Please try again')
+            return state.assignSlotError || i18n.global.t('An error occurred while trying to assign the speed dial slot. Please try again')
         },
         lastAssignedSlot (state) {
             return state.lastAssignedSlot

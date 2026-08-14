@@ -27,9 +27,9 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { i18n } from 'boot/i18n'
-import { getLanguageLabels, setLanguage } from 'src/i18n'
+import _ from 'lodash'
+import { setLanguage } from 'src/i18n'
 
 export default {
     // TODO: this component has some duplicated code with "CscSelectionLanguage" component. Please recheck do we still need to have a separate UI for Mobile users
@@ -41,11 +41,32 @@ export default {
     },
     computed: {
         languageLabel () {
-            const lang = _.first(this.options.filter(item => item.value === i18n.locale))
-            return this.$t('Language') + ' (' + lang.label + ')'
+            const lang = _.first(this.options.filter((item) => item.value === i18n.locale))
+            return `${this.$t('Language')} (${lang.label})`
         },
         options () {
-            return getLanguageLabels()
+            return [
+                {
+                    value: 'en-US',
+                    label: i18n.global.t('English', 1, { locale: 'en-US' })
+                },
+                {
+                    value: 'de',
+                    label: i18n.global.t('German', 1, { locale: 'de' })
+                },
+                {
+                    value: 'es',
+                    label: i18n.global.t('Spanish', 1, { locale: 'es' })
+                },
+                {
+                    value: 'fr',
+                    label: i18n.global.t('French', 1, { locale: 'fr' })
+                },
+                {
+                    value: 'it',
+                    label: i18n.global.t('Italian', 1, { locale: 'it' })
+                }
+            ]
         }
     },
     methods: {

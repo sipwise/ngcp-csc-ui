@@ -1,12 +1,11 @@
-
-import {
-    RequestState
-} from '../common'
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { RequestState } from 'src/store/common'
 
 export default {
     page: 1,
-    rows: 10,
+    rows: LIST_DEFAULT_ROWS,
     conversations: [],
+    downloadCsvState: RequestState.button,
     downloadVoiceMailState: RequestState.button,
     downloadVoiceMailError: null,
     downloadFaxState: RequestState.button,
@@ -34,5 +33,7 @@ export default {
     toggleBlockedError: null,
     lastToggledType: null,
     deletionState: RequestState.initiated,
-    deletionError: null
+    deletionError: null,
+    conversationState: RequestState.initiated,
+    conversationError: null
 }

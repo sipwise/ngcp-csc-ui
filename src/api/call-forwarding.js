@@ -1,12 +1,14 @@
 import {
     del,
     get,
-    getList, patchReplace, post, putMinimal
+    getList,
+    patchReplace,
+    patchReplaceFull,
+    post,
+    put,
+    putMinimal
 } from 'src/api/common'
-import {
-    v4
-} from 'uuid'
-import _ from 'lodash'
+import { v4 } from 'uuid'
 
 export async function cfLoadMappings (subscriberId) {
     return get({
@@ -15,47 +17,63 @@ export async function cfLoadMappings (subscriberId) {
     })
 }
 
+export async function cfLoadBNumberSets (subscriberId) {
+    return getList({
+        resource: 'cfbnumbersets',
+        all: true,
+        params: (subscriberId) ? { subscriber_id: subscriberId } : {}
+    })
+}
+
 export async function cfLoadDestinationSets (subscriberId) {
     return getList({
         resource: 'cfdestinationsets',
         all: true,
-        params: {
-            subscriber_id: subscriberId
-        }
+        params: (subscriberId) ? { subscriber_id: subscriberId } : {}
     })
 }
 
 export async function cfLoadSourceSets (subscriberId) {
     return getList({
         resource: 'cfsourcesets',
-        params: {
-            subscriber_id: subscriberId
-        }
+        params: (subscriberId) ? { subscriber_id: subscriberId } : {},
+        all: true
     })
 }
 
 export async function cfLoadTimeSets (subscriberId) {
     return getList({
         resource: 'cftimesets',
-        params: {
-            subscriber_id: subscriberId
-        }
+        params: (subscriberId) ? { subscriber_id: subscriberId } : {},
+        all: true
     })
 }
 
-export async function cfLoadMappingsFull (subscriberId) {
-    return await Promise.all([
-        cfLoadMappings(subscriberId),
-        cfLoadDestinationSets(subscriberId),
-        cfLoadSourceSets(subscriberId),
-        cfLoadTimeSets(subscriberId)
-    ])
+export async function cfLoadMappingsFull (mappingId) {
+    return get({
+        resource: 'cfmappings',
+        params: { expand: 'all' },
+        resourceId: mappingId
+    })
+}
+
+export async function cfLoadAnnouncements () {
+    return await getList({
+        resource: 'soundhandles',
+        all: true,
+        params: {
+            group: 'custom_announcements'
+        }
+    })
 }
 
 export async function cfCreateDestinationSet (payload) {
     return post({
         resource: 'cfdestinationsets',
-        body: payload
+        body: {
+            ...payload,
+            name: `csc-${v4()}`
+        }
     })
 }
 
@@ -66,7 +84,95 @@ export async function cfDeleteDestinationSet (id) {
     })
 }
 
-export async function cfCreateSourceSet (id, payload) {
+export async function cfRewriteDestination (payload) {
+    return post({
+        resource: 'applyrewrites',
+        body: {
+            direction: 'callee_in',
+            subscriber_id: payload.subscriberId,
+            numbers: payload.numbers
+        }
+    })
+}
+
+// Note this doesn't return any data in the response.
+export async function cfUpdateDestinationSets (payload) {
+    return patchReplace({
+        resource: 'cfdestinationsets',
+        resourceId: payload.resourceId,
+        fieldPath: 'destinations',
+        value: payload.value
+    })
+}
+
+export async function cfUpdateFullMapping (payload) {
+    return await put({
+        resource: 'cfmappings',
+        resourceId: payload.subscriberId,
+        body: payload.body
+    })
+}
+
+export async function cfUpdateMappingField (payload) {
+    return await patchReplaceFull({
+        resource: 'cfmappings',
+        resourceId: payload.resourceId,
+        fieldPath: payload.fieldPath,
+        value: payload.value
+    })
+}
+
+export async function cfCreateBNumberSet (subscriberId, payload) {
+    const bNumbers = []
+    payload.numbers.forEach((number) => {
+        bNumbers.push({
+            bnumber: number
+        })
+    })
+    const res = await post({
+        resource: 'cfbnumbersets',
+        body: {
+            name: payload.name,
+            subscriber_id: subscriberId,
+            is_regex: true,
+            bnumbers: bNumbers,
+            mode: payload.mode
+        }
+    })
+    if (!(typeof res === 'string')) {
+        return `${res.id}`
+    }
+    return res
+}
+
+export async function cfDeleteBNumberSet (id) {
+    return del({
+        resource: 'cfbnumbersets',
+        resourceId: id
+    })
+}
+
+export async function cfUpdateBNumberSet (subscriberId, payload) {
+    const bnumbers = []
+    payload.numbers.forEach((number) => {
+        bnumbers.push({
+            bnumber: number
+        })
+    })
+    return putMinimal({
+        resource: 'cfbnumbersets',
+        resourceId: payload.id,
+        body: {
+            name: payload.name,
+            subscriber_id: subscriberId,
+            is_regex: true,
+            bnumbers,
+            mode: payload.mode
+        }
+    })
+}
+
+export async function cfCreateSourceSet (subscriberId, payload) {
     const sources = []
     payload.numbers.forEach((number) => {
         sources.push({
@@ -77,20 +183,19 @@ export async function cfCreateSourceSet (id, payload) {
         resource: 'cfsourcesets',
         body: {
             name: payload.name,
-            subscriber_id: id,
+            subscriber_id: subscriberId,
             is_regex: true,
-            sources: sources,
+            sources,
             mode: payload.mode
         }
     })
-    if (!_.isString(res)) {
-        return res.id + ''
-    } else {
-        return res
+    if (!(typeof res === 'string')) {
+        return `${res.id}`
     }
+    return res
 }
 
-export async function cfUpdateSourceSet (id, payload) {
+export async function cfUpdateSourceSet (subscriberId, payload) {
     const sources = []
     payload.numbers.forEach((number) => {
         sources.push({
@@ -102,9 +207,9 @@ export async function cfUpdateSourceSet (id, payload) {
         resourceId: payload.id,
         body: {
             name: payload.name,
-            subscriber_id: id,
+            subscriber_id: subscriberId,
             is_regex: true,
-            sources: sources,
+            sources,
             mode: payload.mode
         }
     })
@@ -122,7 +227,7 @@ export async function cfCreateTimeSetDate (subscriberId, date) {
         resource: 'cftimesets',
         body: {
             subscriber_id: subscriberId,
-            name: 'csc-date-exact-' + v4(),
+            name: `csc-date-exact-${v4()}`,
             times: [
                 {
                     minute: null,
@@ -167,8 +272,8 @@ export async function cfCreateTimeSetDateRange (subscriberId, times) {
         resource: 'cftimesets',
         body: {
             subscriber_id: subscriberId,
-            name: 'csc-date-range-' + v4(),
-            times: times
+            name: `csc-date-range-${v4()}`,
+            times
         }
     })
 }
@@ -198,8 +303,8 @@ export async function cfCreateTimeSetWeekdays (subscriberId, weekdays) {
         resource: 'cftimesets',
         body: {
             subscriber_id: subscriberId,
-            name: 'csc-weekdays-' + v4(),
-            times: times
+            name: `csc-weekdays-${v4()}`,
+            times
         }
     })
 }
@@ -229,8 +334,8 @@ export async function cfCreateOfficeHours (subscriberId, times) {
         resource: 'cftimesets',
         body: {
             subscriber_id: subscriberId,
-            name: 'csc-office-hours-' + v4(),
-            times: times
+            name: `csc-office-hours-${v4()}`,
+            times
         }
     })
 }
@@ -241,5 +346,12 @@ export async function cfUpdateOfficeHours (timeSetId, times) {
         resourceId: timeSetId,
         fieldPath: 'times',
         value: times
+    })
+}
+
+export async function cfGetAnnouncement (id) {
+    return get({
+        resource: 'soundhandles',
+        resourceId: id
     })
 }

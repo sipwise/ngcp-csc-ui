@@ -19,6 +19,7 @@
             :disable="loading || numberOptionsLoading"
             :readonly="loading"
             :label="$t('Select secretary numbers')"
+            data-cy="csc-manager-secretary-dropdown"
             :options="numberOptions"
         />
         <div
@@ -36,7 +37,7 @@
             <q-btn
                 v-if="!loading"
                 flat
-                :disable="$v.data.$invalid || !secretaryNumbersIsValid"
+                :disable="v$.data.$invalid || !secretaryNumbersIsValid"
                 color="primary"
                 icon="arrow_forward"
                 @click="save()"
@@ -52,11 +53,11 @@
 </template>
 
 <script>
+import useValidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
+import CscObjectSpinner from 'components/CscObjectSpinner'
 import _ from 'lodash'
-import {
-    required
-} from 'vuelidate/lib/validators'
-import CscObjectSpinner from '../../CscObjectSpinner'
+
 export default {
     name: 'CscPbxMsConfigAddForm',
     components: {
@@ -84,6 +85,7 @@ export default {
             default: false
         }
     },
+    emits: ['submit', 'cancel', 'ready'],
     validations: {
         data: {
             subscriberId: {
@@ -93,7 +95,8 @@ export default {
     },
     data () {
         return {
-            data: this.getDefaults()
+            data: this.getDefaults(),
+            v$: useValidate()
         }
     },
     computed: {
@@ -119,7 +122,7 @@ export default {
         },
         reset () {
             this.data = this.getDefaults()
-            this.$v.$reset()
+            this.v$.$reset()
         }
     }
 }

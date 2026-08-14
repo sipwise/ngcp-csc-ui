@@ -4,7 +4,6 @@
         clickable
         :disable="disable"
         v-bind="$attrs"
-        v-on="$listeners"
     >
         <q-item-section
             v-if="icon !== null"

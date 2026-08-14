@@ -1,5 +1,7 @@
 <template>
-    <q-item>
+    <q-item
+        :class="sleekMode ? 'csc-call-item-sleek-mode' : ''"
+    >
         <q-item-section
             side
             top
@@ -15,12 +17,12 @@
             >
                 {{ typeTerm }}
                 {{ direction }}
-                {{ number | destinationFormat }}
+                {{ $filters.destinationFormat(number) }}
             </q-item-label>
             <q-item-label
                 caption
             >
-                {{ call.start_time | smartTime }}
+                {{ $filters.smartTime(call.start_time) }}
             </q-item-label>
             <q-item-label
                 caption
@@ -28,13 +30,14 @@
                 {{ $t('Duration') }}: {{ call.duration }}
             </q-item-label>
             <q-item-label
+                v-if="!sleekMode"
                 caption
             >
                 <span>
-                    {{ $t('Cost') }}
+                    {{ $t('Cost') + ": " }}
                 </span>
                 <span>
-                    {{ totalCustomerCostRounded | wholeCurrency }}
+                    {{ $filters.wholeCurrency(totalCustomerCostRounded) }}
                 </span>
                 <span
                     v-if="call.currency && call.currency.length > 0"
@@ -44,6 +47,7 @@
             </q-item-label>
         </q-item-section>
         <q-item-section
+            v-if="!sleekMode"
             side
         >
             <csc-more-menu>
@@ -69,22 +73,26 @@
                     :label="blockBothLabel"
                     @click="toggleBlockBoth"
                 />
+                <csc-popup-menu-item
+                    icon="fas fa-address-book"
+                    color="primary"
+                    :label="$t('Add to phonebook')"
+                    @click="addToPhonebook"
+                />
             </csc-more-menu>
         </q-item-section>
     </q-item>
 </template>
 
 <script>
-import _ from 'lodash'
-import {
-    Platform
-} from 'quasar'
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
+import _ from 'lodash'
+import { Platform } from 'quasar'
 import {
-    callIconColor,
-    callIcon
+    callIcon,
+    callIconColor
 } from 'src/helpers/call-utils'
 export default {
     name: 'CscCallItem',
@@ -113,18 +121,22 @@ export default {
         blockBothPossible: {
             type: Boolean,
             default: false
+        },
+        sleekMode: {
+            type: Boolean,
+            default: false
         }
     },
+    emits: ['toggle-block-both', 'toggle-block-outgoing', 'toggle-block-incoming', 'start-call', 'add-to-phonebook'],
     data () {
         return {}
     },
     computed: {
         number () {
             if (this.call.direction === 'out') {
-                return this.call.callee
-            } else {
-                return this.call.caller
+                return this.call.callee_phonebook_name || this.call.callee
             }
+            return this.call.caller_phonebook_name || this.call.caller
         },
         totalCustomerCostRounded () {
             const formatter = new Intl.NumberFormat('en-US', {
@@ -139,23 +151,20 @@ export default {
                 return this.call.relatedCall.caller
             } else if (this.call.direction === 'out') {
                 return this.call.callee
-            } else {
-                return this.call.caller
             }
+            return this.call.caller
         },
         direction () {
             if (this.call.direction === 'out') {
                 return this.$t('to')
-            } else {
-                return this.$t('from')
             }
+            return this.$t('from')
         },
         typeTerm () {
             if (this.call.call_type === 'call') {
                 return this.$t('Call')
-            } else {
-                return this.$t('Call forwarded')
             }
+            return this.$t('Call forwarded')
         },
         icon () {
             return callIcon(this.call)
@@ -179,10 +188,15 @@ export default {
         },
         toggleBlockBoth () {
             this.$emit('toggle-block-both')
+        },
+        addToPhonebook () {
+            this.$emit('add-to-phonebook', this.numberDialBack)
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
+    .csc-call-item-sleek-mode
+        padding: 2px !important
 </style>

@@ -53,14 +53,16 @@
                     <q-item-section>
                         <q-item-label
                             class="text-subtitle1"
+                            data-cy="csc-speeddial-whendial"
                         >
                             {{ $t('When I dial {slot} ...', { slot: assigned.slot }) }}
                         </q-item-label>
                         <q-item-label
                             class="text-subtitle2"
+                            data-cy="csc-speeddial-ring"
                         >
                             {{ $t('ring') }}
-                            {{ assigned.destination | destinationFormat }}
+                            {{ $filters.destinationFormat(assigned.destination) }}
                         </q-item-label>
                     </q-item-section>
                     <q-item-section
@@ -71,11 +73,13 @@
                             flat
                             dense
                             color="primary"
+                            data-cy="csc-speeddial-more"
                         >
                             <csc-popup-menu>
                                 <csc-popup-menu-item
                                     icon="delete"
                                     color="negative"
+                                    data-cy="csc-speeddial-remove"
                                     :label="$t('Remove')"
                                     @click="unassignSlot(assigned)"
                                 />
@@ -89,20 +93,20 @@
 </template>
 
 <script>
-import {
-    mapGetters
-} from 'vuex'
-import CscPage from 'components/CscPage'
-import CscSpeedDialAddForm from 'components/pages/SpeedDial/CscSpeedDialAddForm'
-import {
-    showToast,
-    showGlobalError
-} from 'src/helpers/ui'
 import CscListSpinner from 'components/CscListSpinner'
+import CscPage from 'components/CscPage'
 import CscPopupMenu from 'components/CscPopupMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscSpeedDialAddForm from 'components/pages/SpeedDial/CscSpeedDialAddForm'
+import {
+    showGlobalError,
+    showToast
+} from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
+    name: 'CscPageSpeedDial',
     components: {
         CscPopupMenuItem,
         CscPopupMenu,
@@ -128,40 +132,33 @@ export default {
             'assignSlotError',
             'lastAssignedSlot',
             'isAdding'
+        ]),
+        ...mapState('speedDial', [
+            'speedDialLoadingState',
+            'speedDialLoadingError',
+            'unassignSlotState',
+            'unassignSlotError'
         ])
     },
     watch: {
-        // speedDialLoadingState (state) {
-        //     if (state === 'requesting') {
-        //         startLoading()
-        //     } else if (state === 'failed') {
-        //         stopLoading()
-        //         showGlobalError(this.speedDialLoadingError)
-        //     } else if (state === 'succeeded') {
-        //         stopLoading()
-        //     }
-        // },
-        // unassignSlotState (state) {
-        //     if (state === 'requesting') {
-        //         startLoading()
-        //     } else if (state === 'failed') {
-        //         stopLoading()
-        //         showGlobalError(this.unassignSlotError)
-        //     } else if (state === 'succeeded') {
-        //         stopLoading()
-        //         showToast(this.$t('Unassigned slot {slot}', {
-        //             slot: this.lastUnassignedSlot
-        //         }))
-        //     }
-        // },
         assignSlotState (state) {
-            if (state === 'failed') {
+            if (state === RequestState.failed) {
                 showGlobalError(this.assignSlotError)
             } else if (state === 'succeeded') {
                 this.$refs.addForm.cancel()
                 showToast(this.$t('Assigned slot {slot}', {
                     slot: this.lastAssignedSlot
                 }))
+            }
+        },
+        speedDialLoadingState () {
+            if (this.speedDialLoadingState === RequestState.failed) {
+                showGlobalError(this.speedDialLoadingError)
+            }
+        },
+        unassignSlotState () {
+            if (this.unassignSlotState === RequestState.failed) {
+                showGlobalError(this.unassignSlotError)
             }
         }
     },
@@ -181,7 +178,7 @@ export default {
                 color: 'primary',
                 cancel: true,
                 persistent: true
-            }).onOk(data => {
+            }).onOk((data) => {
                 this.$store.dispatch('speedDial/unassignSpeedDialSlot', unassigned)
             })
         }

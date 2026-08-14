@@ -19,21 +19,16 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'CscAlertError',
-    data () {
-        return {}
-    }
-}
+<script setup>
+defineOptions({ name: 'CscAlertError' })
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
     .csc-alert-error
-        background-color $negative
-        padding  $flex-gutter-md
-        margin-bottom $flex-gutter-lg
+        background-color: $negative
+        padding:  $flex-gutter-md
+        margin-bottom: $flex-gutter-lg
         .csc-alert-error-text
-            line-height 1.4em
-            color $white
+            line-height: 1.4em
+            color: $white
 </style>

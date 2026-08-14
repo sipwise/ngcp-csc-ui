@@ -1,4 +1,5 @@
-
+// ----  1. Implementation for Times ranges and day of the week  ----
+// ------------------------------------------
 /*
 humanReadableTimeset = [{
   weekday: 1..7,
@@ -36,7 +37,7 @@ function getAsTrimmedString (data) {
 }
 
 export function getTimeStrElements (timeStr) {
-    const [hours, minutes] = timeStr.split(':').map(t => Number(t))
+    const [hours, minutes] = timeStr.split(':').map((t) => Number(t))
     return { hours, minutes }
 }
 
@@ -58,35 +59,34 @@ export function isTimeStrValid (timeStr) {
 }
 
 export function validateHumanTimesets (hTimeset) {
-    hTimeset.forEach(timesetItem => {
+    hTimeset.forEach((timesetItem) => {
         const { weekday, from, to } = timesetItem
         if (typeof weekday !== 'number' || isNaN(weekday) || weekday < 1 || weekday > 7 ||
             !isTimeStrValid(from) || !isTimeStrValid(to)
         ) {
-            throw Error('A human timeset item has invalid format: ' + JSON.stringify(timesetItem))
+            throw Error(`A human timeset item has invalid format: ${JSON.stringify(timesetItem)}`)
         } else if (timeStrToMinutes(from) > timeStrToMinutes(to)) {
-            throw Error('A human timeset item should have "from" time < or = "to" time: ' + JSON.stringify(timesetItem))
+            throw Error(`A human timeset item should have "from" time < or = "to" time: ${JSON.stringify(timesetItem)}`)
         }
     })
 }
 
 /**
  * Function resort timesets by "weekday" and "from" and combines closest timesets or duplicates
- * Important! Before use this function please validate you timeses for correctness.
+ * Important! Before use this function please validate you timesets for correctness.
  * @param hTimeset {humanReadableTimeset}
  * @returns {humanReadableTimeset}
  */
 export function getHumanTimesetsNormalized (hTimeset = []) {
     // sort timeset by "weekday" and "from" columns
     // clone input data to prevent original data object mutation
-    const hTimesetCloned = hTimeset.map(i => ({ ...i }))
+    const hTimesetCloned = hTimeset.map((i) => ({ ...i }))
     const htSorted = hTimesetCloned.sort((a, b) => {
         const dayDiff = a.weekday - b.weekday
         if (dayDiff) {
             return dayDiff
-        } else {
-            return timeStrToMinutes(a.from) - timeStrToMinutes(b.from)
         }
+        return timeStrToMinutes(a.from) - timeStrToMinutes(b.from)
     })
 
     // combine, merge periods for a day. For example 0:00-2:00 and 1:00-4:00 should be merged into 0:00-4:00
@@ -115,7 +115,9 @@ export function getHumanTimesetsNormalized (hTimeset = []) {
                 prevItem.to = currentItem.to
                 acc.push(prevItem)
             } else {
+                // eslint-disable-next-line no-console
                 console.info('Acc:', acc, 'prevItem:', prevItem, 'currentItem:', currentItem)
+                // eslint-disable-next-line no-console
                 console.info('prevItemMinutes:', prevItemMinutes, 'currentItemMinutes:', currentItemMinutes)
                 throw Error('Internal error in "getHumanTimesetsNormalized"')
             }
@@ -130,7 +132,7 @@ export function humanTimesetToKamailio (hTimeset = []) {
     validateHumanTimesets(hTimeset)
 
     const htNormalized = getHumanTimesetsNormalized(hTimeset)
-    const kamailioTimesetRaw = htNormalized.map(timesetItem => {
+    const kamailioTimesetRaw = htNormalized.map((timesetItem) => {
         const { weekday, from } = timesetItem
         const to = timesetItem.to === '23:59' ? '24:00' : timesetItem.to
 
@@ -157,7 +159,9 @@ export function humanTimesetToKamailio (hTimeset = []) {
             // "Starting" range
             if (fromHM.minutes > 0) {
                 result.push({ wday: weekday, hour: `${fromHM.hours}`, minute: `${fromHM.minutes}-59` })
-            } else fromHM.hours -= 1
+            } else {
+                fromHM.hours -= 1
+            }
 
             // "Middle" range
             if (fromHM.hours + 1 <= toHM.hours - 1) {
@@ -173,16 +177,20 @@ export function humanTimesetToKamailio (hTimeset = []) {
     })
 
     let kamailioTimeset = kamailioTimesetRaw.reduce((acc, item) => {
-        const optimizedItemRanges = item.map(item => {
+        const optimizedItemRanges = item.map((item) => {
             // if minute or hour contains range like "a-a" convert to just "a"
             if (item.hour) {
                 const [hourF, hourT] = item.hour.split('-')
-                if (hourF === hourT) item.hour = hourF
+                if (hourF === hourT) {
+                    item.hour = hourF
+                }
             }
 
             if (item.minute) {
                 const [minuteF, minuteT] = item.minute.split('-')
-                if (minuteF === minuteT) item.minute = minuteF
+                if (minuteF === minuteT) {
+                    item.minute = minuteF
+                }
             }
 
             return item
@@ -195,8 +203,7 @@ export function humanTimesetToKamailio (hTimeset = []) {
         if (acc.length === 0) {
             acc.push(item)
         } else {
-            const mergeCandidate = acc.find(accItem =>
-                accItem.minute === item.minute &&
+            const mergeCandidate = acc.find((accItem) => accItem.minute === item.minute &&
                 accItem.hour === item.hour &&
                 getKamailioRangeElements(accItem.wday)[0].to + 1 === getKamailioRangeElements(item.wday)[0].from
             )
@@ -214,8 +221,7 @@ export function humanTimesetToKamailio (hTimeset = []) {
         if (acc.length === 0) {
             acc.push(item)
         } else {
-            const mergeCandidate = acc.find(accItem =>
-                accItem.minute === item.minute &&
+            const mergeCandidate = acc.find((accItem) => accItem.minute === item.minute &&
                 getKamailioRangeElements(accItem.hour)[0].to + 1 === getKamailioRangeElements(item.hour)[0].from &&
                 accItem.wday === item.wday
             )
@@ -237,28 +243,27 @@ export function humanTimesetToKamailio (hTimeset = []) {
 // TODO: does it used?
 export function getSimpleRangeElements (rangeStr = '') {
     const range = String(rangeStr).trim()
-    const rangeElements = range.split('-').map(r => r.trim()).filter(r => r.length).map(r => Number(r))
+    const rangeElements = range.split('-').map((r) => r.trim()).filter((r) => r.length).map((r) => Number(r))
 
     if (rangeElements.length === 0) {
         return undefined
-    } else {
-        if (rangeElements.length > 2) {
-            throw Error('Invalid range format: "' + rangeStr + '"')
-        }
-        return {
-            from: rangeElements[0],
-            to: rangeElements.length === 2 ? rangeElements[1] : rangeElements[0]
-        }
+    }
+    if (rangeElements.length > 2) {
+        throw Error(`Invalid range format: "${rangeStr}"`)
+    }
+    return {
+        from: rangeElements[0],
+        to: rangeElements.length === 2 ? rangeElements[1] : rangeElements[0]
     }
 }
 
 export function getKamailioRangeElements (kamailioRangeStr = '') {
-    const ranges = String(kamailioRangeStr).trim().split(' ').map(r => r.trim()).filter(r => r.length)
-    return ranges.map(r => {
-        const rangeElements = r.split('-').map(r => r.trim()).map(r => Number(r))
+    const ranges = String(kamailioRangeStr).trim().split(' ').map((r) => r.trim()).filter((r) => r.length)
+    return ranges.map((r) => {
+        const rangeElements = r.split('-').map((r) => r.trim()).map((r) => Number(r))
 
         if (rangeElements.length > 2) {
-            throw Error('Invalid Kamailio range format: "' + kamailioRangeStr + '"')
+            throw Error(`Invalid Kamailio range format: "${kamailioRangeStr}"`)
         }
 
         return {
@@ -268,18 +273,19 @@ export function getKamailioRangeElements (kamailioRangeStr = '') {
     })
 }
 
+// eslint-disable-next-line default-param-last
 export function validateKamailioRange (kamailioRangeStr = '', minValue, maxValue) {
     const rangeElements = getKamailioRangeElements(kamailioRangeStr)
     if (rangeElements.length === 0) {
         throw Error('Kamailio range should not be empty')
     } else if (rangeElements.length > 1) {
-        throw Error('Kamailio multiple ranges are not supported: "' + kamailioRangeStr + '"')
+        throw Error(`Kamailio multiple ranges are not supported: "${kamailioRangeStr}"`)
     } else {
         if (isNaN(rangeElements[0].from) || isNaN(rangeElements[0].to)) {
-            throw Error('Kamailio range has invalid characters or a wrong format: "' + kamailioRangeStr + '"')
+            throw Error(`Kamailio range has invalid characters or a wrong format: "${kamailioRangeStr}"`)
         }
         if (rangeElements[0].from > rangeElements[0].to) {
-            throw Error('Kamailio reversed ranges are not supported: "' + kamailioRangeStr + '"')
+            throw Error(`Kamailio reversed ranges are not supported: "${kamailioRangeStr}"`)
         }
         if (minValue !== undefined && maxValue !== undefined) {
             if (rangeElements[0].from < minValue || maxValue < rangeElements[0].from ||
@@ -289,9 +295,13 @@ export function validateKamailioRange (kamailioRangeStr = '', minValue, maxValue
         }
     }
 }
-
+/**
+ * Validates Kamailio Timesets with day of week to human readable format
+ * @param kTimeset {Array} - Kamailio timeset with day of the week, hour and minute
+ * throws {Error} - if the Kamailio timeset has invalid format
+ */
 export function validateKamailioTimesets (kTimeset) {
-    kTimeset.forEach(timesetItem => {
+    kTimeset.forEach((timesetItem) => {
         let { wday, hour, minute } = timesetItem
         wday = getAsTrimmedString(wday)
         hour = getAsTrimmedString(hour)
@@ -299,7 +309,7 @@ export function validateKamailioTimesets (kTimeset) {
         if (wday !== '') {
             validateKamailioRange(wday, 1, 7)
         } else {
-            throw Error('A Kamailio timeset should have "wday" range: ' + JSON.stringify(timesetItem))
+            throw Error(`A Kamailio timeset should have "wday" range: ${JSON.stringify(timesetItem)}`)
         }
         if (hour !== '') {
             validateKamailioRange(hour, 0, 23)
@@ -318,11 +328,16 @@ export function validateKamailioTimesets (kTimeset) {
     })
 }
 
+/**
+* Converts Kamailio timeset with day of week to human readable format
+* @param kTimeset {Array} - Kamailio timeset with day of the week, hour and minute
+* retuns {Array} - human readable timeset with weekday, from and to
+*/
 export function kamailioTimesetToHuman (kTimeset = []) {
     validateKamailioTimesets(kTimeset)
 
-    // convert Kamailio timeset into Human readable format
-    const hTimesetRaw = kTimeset.map(timesetItem => {
+    // convert Kamailio timeset into human readable format
+    const hTimesetRaw = kTimeset.map((timesetItem) => {
         let { wday, hour, minute } = timesetItem
         hour = getAsTrimmedString(hour)
         minute = getAsTrimmedString(minute)
@@ -346,16 +361,15 @@ export function kamailioTimesetToHuman (kTimeset = []) {
                 newAcc.push({ from: String(range.from), to: String(range.to + 1) })
             } else {
                 for (let i = range.from; i <= range.to; i++) {
-                    acc.forEach(accItem =>
-                        newAcc.push({ from: [i, accItem.from].join('_'), to: [i, accItem.to].join('_') })
+                    acc.forEach((accItem) => newAcc.push({ from: [i, accItem.from].join('_'), to: [i, accItem.to].join('_') })
                     )
                 }
             }
             return newAcc
         }, [])
-        const hTimeset = rulesOutput.map(ruleOutput => {
-            const [fromWday, fromHour, fromMinute] = ruleOutput.from.split('_').map(i => Number(i))
-            const [, toHour, toMinute] = ruleOutput.to.split('_').map(i => Number(i))
+        const hTimeset = rulesOutput.map((ruleOutput) => {
+            const [fromWday, fromHour, fromMinute] = ruleOutput.from.split('_').map((i) => Number(i))
+            const [, toHour, toMinute] = ruleOutput.to.split('_').map((i) => Number(i))
             const from = [fromHour, fromMinute]
                 .map((i, index) => String(i).padStart((index === 1) ? 2 : 1, '0')).join(':')
             const to = [
@@ -378,7 +392,7 @@ export function kamailioTimesetToHuman (kTimeset = []) {
     return res
 }
 
-// ----  implementation for date ranges  ----
+// ---- 2. Implementation for date ranges  ----
 // ------------------------------------------
 
 /*
@@ -413,7 +427,7 @@ kamailioDateset = [{
 */
 
 export function getDateStrElements (dateStr) {
-    const [year, month, date] = dateStr.split('/').map(t => Number(t))
+    const [year, month, date] = dateStr.split('/').map((t) => Number(t))
     return { year, month, date }
 }
 
@@ -442,14 +456,14 @@ export function dateStrToDays (dateStr) {
 }
 
 export function validateHumanDatesets (hDateset) {
-    hDateset.forEach(datesetItem => {
+    hDateset.forEach((datesetItem) => {
         const { from, to } = datesetItem
         if (
             !isDateStrValid(from) || !isDateStrValid(to)
         ) {
-            throw Error('A human dateset item has invalid format: ' + JSON.stringify(datesetItem))
+            throw Error(`A human dateset item has invalid format: ${JSON.stringify(datesetItem)}`)
         } else if (dateStrToDays(from) > dateStrToDays(to)) {
-            throw Error('A human dateset item should have "from" date < or = "to" date: ' + JSON.stringify(datesetItem))
+            throw Error(`A human dateset item should have "from" date < or = "to" date: ${JSON.stringify(datesetItem)}`)
         }
     })
 }
@@ -457,10 +471,8 @@ export function validateHumanDatesets (hDateset) {
 export function getHumanDatesetsNormalized (hDateset = []) {
     // sort dateset by "from" columns
     // clone input data to prevent original data object mutation
-    const hDatesetCloned = hDateset.map(i => ({ ...i }))
-    const hdSorted = hDatesetCloned.sort((a, b) => {
-        return dateStrToDays(a.from) - dateStrToDays(b.from)
-    })
+    const hDatesetCloned = hDateset.map((i) => ({ ...i }))
+    const hdSorted = hDatesetCloned.sort((a, b) => dateStrToDays(a.from) - dateStrToDays(b.from))
 
     // combine, merge periods. For example 2020/01/01-2020/10/10 and 2020/05/05-2020/11/11 should be merged into 2020/01/01-2020/11/11
     // Important: the dateset should be sorted by "from"!
@@ -485,7 +497,9 @@ export function getHumanDatesetsNormalized (hDateset = []) {
                 prevItem.to = currentItem.to
                 acc.push(prevItem)
             } else {
+                // eslint-disable-next-line no-console
                 console.info('Acc:', acc, 'prevItem:', prevItem, 'currentItem:', currentItem)
+                // eslint-disable-next-line no-console
                 console.info('prevItemDays:', prevItemDays, 'currentItemDays:', currentItemDays)
                 throw Error('Internal error in "getHumanDatesetsNormalized"')
             }
@@ -504,7 +518,7 @@ export function humanDatesetToKamailio (hDateset = []) {
     validateHumanDatesets(hDateset)
 
     const hdNormalized = getHumanDatesetsNormalized(hDateset)
-    const kamailioDatesetRaw = hdNormalized.map(datesetItem => {
+    const kamailioDatesetRaw = hdNormalized.map((datesetItem) => {
         const { from, to } = datesetItem
 
         const fromYMD = getDateStrElements(from)
@@ -545,12 +559,16 @@ export function humanDatesetToKamailio (hDateset = []) {
             // "Starting (month day)" range
             if (fromYMD.date > 1) {
                 result.push({ year: fromYMD.year, month: fromYMD.month, mday: `${fromYMD.date}-31` })
-            } else fromYMD.month -= 1
+            } else {
+                fromYMD.month -= 1
+            }
 
             // "Starting (months)" range
             if (fromYMD.month > 0) {
                 result.push({ year: fromYMD.year, month: `${fromYMD.month + 1}-12` })
-            } else fromYMD.year -= 1
+            } else {
+                fromYMD.year -= 1
+            }
 
             // "Middle" range
             if (fromYMD.year + 1 <= toYMD.year - 1) {
@@ -569,21 +587,27 @@ export function humanDatesetToKamailio (hDateset = []) {
     })
 
     let kamailioDateset = kamailioDatesetRaw.reduce((acc, item) => {
-        const optimizedItemRanges = item.map(item => {
+        const optimizedItemRanges = item.map((item) => {
             // if year or month or date contains range like "a-a" convert to just "a"
             if (typeof item.year === 'string') {
                 const [yearF, yearT] = item.year.split('-')
-                if (yearF === yearT) item.year = Number(yearF)
+                if (yearF === yearT) {
+                    item.year = Number(yearF)
+                }
             }
 
             if (typeof item.month === 'string') {
                 const [monthF, monthT] = item.month.split('-')
-                if (monthF === monthT) item.month = Number(monthF)
+                if (monthF === monthT) {
+                    item.month = Number(monthF)
+                }
             }
 
             if (typeof item.mday === 'string') {
                 const [mdayF, mdayT] = item.mday.split('-')
-                if (mdayF === mdayT) item.mday = Number(mdayF)
+                if (mdayF === mdayT) {
+                    item.mday = Number(mdayF)
+                }
             }
 
             return item
@@ -636,8 +660,7 @@ export function humanDatesetToKamailio (hDateset = []) {
         if (acc.length === 0) {
             acc.push(item)
         } else {
-            const mergeCandidate = acc.find(accItem =>
-                getKamailioRangeElements(accItem.year)[0].to + 1 === getKamailioRangeElements(item.year)[0].from &&
+            const mergeCandidate = acc.find((accItem) => getKamailioRangeElements(accItem.year)[0].to + 1 === getKamailioRangeElements(item.year)[0].from &&
                 accItem.month === item.month &&
                 accItem.mday === item.mday
             )
@@ -655,8 +678,7 @@ export function humanDatesetToKamailio (hDateset = []) {
         if (acc.length === 0) {
             acc.push(item)
         } else {
-            const mergeCandidate = acc.find(accItem =>
-                accItem.year === item.year &&
+            const mergeCandidate = acc.find((accItem) => accItem.year === item.year &&
                 getKamailioRangeElements(accItem.month)[0].to + 1 === getKamailioRangeElements(item.month)[0].from &&
                 accItem.mday === item.mday
             )
@@ -672,9 +694,13 @@ export function humanDatesetToKamailio (hDateset = []) {
 
     return kamailioDateset
 }
-
+/**
+ * Validates Kamailio Datesets Ranges (Year, Month, Day)
+ * @param kDateset {Array} - Kamailio Dateset (Year, Month, Day)
+ * throws {Error} - if the Kamailio dateset has invalid format
+ */
 export function validateKamailioDatesets (kDateset) {
-    kDateset.forEach(datesetItem => {
+    kDateset.forEach((datesetItem) => {
         let { year, month, mday } = datesetItem
         year = getAsTrimmedString(year)
         month = getAsTrimmedString(month)
@@ -682,7 +708,7 @@ export function validateKamailioDatesets (kDateset) {
         if (year !== '') {
             validateKamailioRange(year, 1900, 2100)
         } else {
-            throw Error('A Kamailio dateset should have "year" range: ' + JSON.stringify(datesetItem))
+            throw Error(`A Kamailio dateset should have "year" range: ${JSON.stringify(datesetItem)}`)
         }
         if (month !== '') {
             validateKamailioRange(month, 1, 12)
@@ -700,12 +726,16 @@ export function validateKamailioDatesets (kDateset) {
             })
     })
 }
-
+/**
+* Converts Kamailio Dateset to human readable Date Range format
+* @param kDateset {Date} - Kamaillio Dateset with Year, Month and Day
+* retun {Array} - human readable data range with from and to year, month and day.
+*/
 export function kamailioDatesetToHuman (kDateset = []) {
     validateKamailioDatesets(kDateset)
 
-    // convert Kamailio dateset into Human readable format
-    const hDatesetRaw = kDateset.map(datesetItem => {
+    // convert Kamailio dateset into human readable format
+    const hDatesetRaw = kDateset.map((datesetItem) => {
         let { year, month, mday } = datesetItem
         year = getAsTrimmedString(year)
         month = getAsTrimmedString(month)
@@ -730,22 +760,21 @@ export function kamailioDatesetToHuman (kDateset = []) {
                 newAcc.push({ from: String(range.from), to: String(range.to) })
             } else {
                 for (let i = range.from; i <= range.to; i++) {
-                    acc.forEach(accItem =>
-                        newAcc.push({ from: [i, accItem.from].join('_'), to: [i, accItem.to].join('_') })
+                    acc.forEach((accItem) => newAcc.push({ from: [i, accItem.from].join('_'), to: [i, accItem.to].join('_') })
                     )
                 }
             }
             return newAcc
         }, [])
         const hDateset = rulesOutput.reduce((acc, ruleOutput) => {
-            const [fromYear, fromMonth, fromDate] = ruleOutput.from.split('_').map(i => Number(i))
-            const [toYear, toMonth, toDate] = ruleOutput.to.split('_').map(i => Number(i))
+            const [fromYear, fromMonth, fromDate] = ruleOutput.from.split('_').map((i) => Number(i))
+            const [toYear, toMonth, toDate] = ruleOutput.to.split('_').map((i) => Number(i))
 
             // if "from" date of the range is not exist (like "Feb 31")
             // we are considering that entire range is not valid and just SKIPPING it
             if (isDateExist(fromYear, fromMonth, fromDate)) {
                 const from = [fromYear, fromMonth, fromDate]
-                    .map(i => String(i).padStart(2, '0')).join('/')
+                    .map((i) => String(i).padStart(2, '0')).join('/')
 
                 // if "to" date of the range is not exist (like "Feb 31")
                 // we are considering that the range is valid but it was optimized for creating smaller Kamailio rule
@@ -755,7 +784,7 @@ export function kamailioDatesetToHuman (kDateset = []) {
                     toYear,
                     toMonth,
                     (toDate > lastDayOfMonth) ? lastDayOfMonth : toDate
-                ].map(i => String(i).padStart(2, '0')).join('/')
+                ].map((i) => String(i).padStart(2, '0')).join('/')
 
                 acc.push({ from, to })
             }

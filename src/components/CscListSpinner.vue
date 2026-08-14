@@ -8,15 +8,8 @@
     </div>
 </template>
 
-<script>
-import CscSpinner from './CscSpinner'
-export default {
-    name: 'CscListSpinner',
-    components: {
-        CscSpinner
-    },
-    data () {
-        return {}
-    }
-}
+<script setup>
+import CscSpinner from 'components/CscSpinner'
+
+defineOptions({ name: 'CscListSpinner' })
 </script>

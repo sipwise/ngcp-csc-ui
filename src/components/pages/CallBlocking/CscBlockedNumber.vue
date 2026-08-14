@@ -31,17 +31,21 @@
         <q-item-section
             side
         >
-            <csc-more-menu>
+            <csc-more-menu
+                data-cy="csc-blocked-number-menu"
+            >
                 <csc-popup-menu-item
                     icon="edit"
                     color="primary"
                     :label="$t('Edit')"
+                    data-cy="csc-blocked-number-edit"
                     @click="edit"
                 />
                 <csc-popup-menu-item
                     icon="delete"
                     color="negative"
                     :label="$t('Remove')"
+                    data-cy="csc-blocked-number-delete"
                     @click="remove"
                 />
             </csc-more-menu>
@@ -52,8 +56,8 @@
 <script>
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import CscInputSaveable from 'components/form/CscInputSaveable'
 import CscSpinner from 'components/CscSpinner'
+import CscInputSaveable from 'components/form/CscInputSaveable'
 export default {
     name: 'CscBlockedNumber',
     components: {
@@ -84,6 +88,7 @@ export default {
             default: false
         }
     },
+    emits: ['save', 'remove'],
     data () {
         return {
             editing: false,
@@ -145,5 +150,5 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

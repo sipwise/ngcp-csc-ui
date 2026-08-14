@@ -1,7 +1,7 @@
 'use strict'
 
-import PbxConfig from '../../src/store/pbx-config'
 import { assert } from 'chai'
+import PbxConfig from 'src/store/pbx-config'
 
 describe('PBX Configuration Store', () => {
     it('should list all PBX Groups', () => {

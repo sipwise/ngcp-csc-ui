@@ -1,13 +1,14 @@
-
 self.addEventListener('notificationclick', function (event) {
     event.notification.close()
-    var promiseChain = clients.matchAll({
+    // eslint-disable-next-line no-undef
+    const promiseChain = clients.matchAll({
         type: 'window',
         includeUncontrolled: true
     }).then((windowClients) => {
-        var matchingClient = null
-        for (var i = 0; i < windowClients.length; i++) {
-            var windowClient = windowClients[i]
+        // eslint-disable-next-line no-unused-vars
+        const matchingClient = null
+        for (let i = 0; i < windowClients.length; i++) {
+            const windowClient = windowClients[i]
             if (windowClient.url === event.notification.data.url) {
                 return windowClient.focus()
             }

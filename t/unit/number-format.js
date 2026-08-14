@@ -1,7 +1,7 @@
 'use strict'
 
 import { assert } from 'chai'
-import numberFormat, { normalizeDestination } from '../../src/filters/number-format'
+import numberFormat, { normalizeDestination } from 'src/filters/number-format'
 
 const numbers = {
     valid1: '43993004',
@@ -24,13 +24,13 @@ const destinations = {
     number: 'sip:43993004@sipwise.com'
 }
 
-describe('NumberFormatFilter', function () {
-    it('should format a number or sip uri', function () {
+describe('NumberFormatFilter', () => {
+    it('should format a number or sip uri', () => {
         assert.equal(numberFormat(sipUris.valid1), numbers.valid1)
         assert.equal(numberFormat(sipUris.invalid1), numbers.invalid2)
     })
 
-    it('should format a call forward destination', function () {
+    it('should format a call forward destination', () => {
         assert.equal(normalizeDestination(destinations.voiceMail), 'Voicebox')
         assert.equal(normalizeDestination(destinations.fax2Mail), 'Fax2Mail')
         assert.equal(normalizeDestination(destinations.managerSecretary), 'Manager Secretary')

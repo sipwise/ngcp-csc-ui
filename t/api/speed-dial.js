@@ -1,24 +1,18 @@
-
 'use strict'
 
+import { i18n } from 'boot/i18n'
+import { assert } from 'chai'
+import { getSpeedDialsById, getUnassignedSlots } from 'src/api/speed-dial'
+// eslint-disable-next-line import/default
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import {
-    getFieldList
-} from '../../src/api/common'
-import {
-    getSpeedDialsById,
-    getUnassignedSlots
-} from '../../src/api/speed-dial'
-import { assert } from 'chai'
-import { i18n } from '../../src/i18n'
 
 Vue.use(VueResource)
 
-describe('SpeedDial', function () {
+describe('SpeedDial', () => {
     const subscriberId = 123
 
-    it('should get list of subscriber specific speed dials', function (done) {
+    it('should get list of subscriber specific speed dials', (done) => {
         const data = {
             _links: {
                 collection: {
@@ -96,7 +90,7 @@ describe('SpeedDial', function () {
         })
     })
 
-    it('should get list of unassigned speed dial slots', function (done) {
+    it('should get list of unassigned speed dial slots', (done) => {
         const data = {
             _links: {
                 collection: {

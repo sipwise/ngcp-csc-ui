@@ -4,12 +4,11 @@
         inline-actions
         rounded
         v-bind="$attrs"
-        v-on="$listeners"
     >
         <slot />
         <template
             v-if="icon !== null && icon !== undefined"
-            v-slot:avatar
+            #avatar
         >
             <q-icon
                 :name="icon"
@@ -18,7 +17,7 @@
             />
         </template>
         <template
-            v-slot:action
+            #action
         >
             <slot
                 name="action"
@@ -27,23 +26,23 @@
     </q-banner>
 </template>
 
-<script>
-export default {
-    name: 'CscInlineAlert',
-    props: {
-        icon: {
-            type: String,
-            default: null
-        },
-        color: {
-            type: String,
-            default: 'primary'
-        }
+<script setup>
+import { computed } from 'vue'
+
+defineOptions({ name: 'CscInlineAlert' })
+
+const props = defineProps({
+    icon: {
+        type: String,
+        default: null
     },
-    computed: {
-        bannerClasses () {
-            return ['text-weight-bold', 'text-dark', 'bg-' + this.color, 'content-start']
-        }
+    color: {
+        type: String,
+        default: 'primary'
     }
-}
+})
+
+const bannerClasses = computed(() => {
+    return ['text-weight-bold', 'text-dark', `bg-${props.color}`, 'content-start']
+})
 </script>

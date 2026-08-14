@@ -1,5 +1,6 @@
 <template>
     <q-btn
+        :disabled="$wait.is('csc-cf-mappings-full')"
         icon="more_vert"
         color="primary"
         flat
@@ -11,14 +12,14 @@
         >
             <slot />
             <template
-                v-slot:grid-column-1
+                #grid-column-1
             >
                 <slot
                     name="grid-column-1"
                 />
             </template>
             <template
-                v-slot:grid-column-2
+                #grid-column-2
             >
                 <slot
                     name="grid-column-2"

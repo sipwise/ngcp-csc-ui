@@ -30,67 +30,17 @@
             </div>
         </div>
         <div
-            v-show="keyOverlayActive"
+            v-if="keyOverlayActive"
             class="csc-pbx-device-config-key-overlay animate-fade"
         >
-            <div
-                class="csc-device-key-title row justify-center items-center"
-            >
-                <q-icon
-                    class="csc-device-key-title-icon"
-                    name="touch_app"
-                    size="24px"
-                />
-                <div
-                    class="column"
-                >
-                    <div
-                        class="csc-device-key-title-main"
-                    >
-                        {{ selectedKeySetName }}: {{ $t('Lamp/Key') }} {{ selectedKeyNumber }}
-                    </div>
-                </div>
-            </div>
-            <csc-pbx-auto-attendant-selection
-                :value="selectedKeySubscriber"
-                :options="subscriberOptions"
-                @input="keySubscriberChanged"
+            <csc-pbx-device-config-key-form
+                :selected-line="selectedLine"
+                :selected-key="selectedKey"
+                :subscriber-map="subscriberMap"
+                :loading="isDeviceLoading(device.id)"
+                @close-key-overlay="keyOverlayActive = false"
+                @on-save="onSave"
             />
-            <q-select
-                v-show="selectedKeySubscriber !== null && selectedKeySubscriber.value !== null"
-                ref="selectType"
-                v-model="selectedKeyType"
-                emit-value
-                map-options
-                :label="$t('Lamp/Key')"
-                :options="typeOptions"
-                @input="keyTypeChanged"
-            >
-                <template
-                    v-slot:prepend
-                >
-                    <q-icon
-                        name="radio_button_checked"
-                    />
-                </template>
-            </q-select>
-            <div
-                class="row justify-center actions"
-            >
-                <div
-                    class="column"
-                >
-                    <q-btn
-                        flat
-                        icon="clear"
-                        color="white"
-                        :big="isMobile"
-                        @click="closeKeyOverlay()"
-                    >
-                        {{ $t('Close') }}
-                    </q-btn>
-                </div>
-            </div>
         </div>
         <q-resize-observer
             @resize="windowResize"
@@ -99,26 +49,18 @@
 </template>
 
 <script>
+import CscPbxDeviceConfigKeyForm from 'components/pages/PbxConfiguration/CscPbxDeviceConfigKeyForm'
 import _ from 'lodash'
-import CscPbxAutoAttendantSelection from './CscPbxAutoAttendantSelection'
-import {
-    Platform
-} from 'quasar'
-import {
-    BoundingBox2D
-} from 'src/helpers/graphics'
+import { BoundingBox2D } from 'src/helpers/graphics'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscPbxDeviceConfig',
     components: {
-        CscPbxAutoAttendantSelection
+        CscPbxDeviceConfigKeyForm
     },
     props: {
         device: {
-            type: Object,
-            default: null
-        },
-        profile: {
             type: Object,
             default: null
         },
@@ -130,17 +72,12 @@ export default {
             type: Object,
             default: null
         },
-        subscriberOptions: {
-            type: Array,
-            default () {
-                return []
-            }
-        },
         subscriberMap: {
             type: Object,
             default: null
         }
     },
+    emits: ['keysChanged'],
     data () {
         return {
             configWidth: 0,
@@ -151,83 +88,13 @@ export default {
             scaledBoundingBox: null,
             selectedKey: null,
             selectedLine: null,
-            keyOverlayActive: false,
-            selectedKeyTypeData: null,
-            selectedLineIndex: null
+            keyOverlayActive: false
         }
     },
     computed: {
-        selectedKeyIcon () {
-            if (this.selectedLine !== null) {
-                const subscriber = this.subscriberMap[this.selectedLine.subscriber_id]
-                if (subscriber !== null && subscriber.is_pbx_pilot === true) {
-                    return 'person_outline'
-                } else if (subscriber !== null && subscriber.is_pbx_group === true) {
-                    return 'group'
-                } else if (subscriber !== null) {
-                    return 'person'
-                } else {
-                    return ''
-                }
-            }
-            return ''
-        },
-        selectedKeySubscriber () {
-            const unassignedItem = this.subscriberOptions[0]
-            if (this.selectedLine !== null) {
-                const selectedOption = this.subscriberOptions.find(opt => opt.value === this.selectedLine.subscriber_id)
-                return selectedOption || unassignedItem
-            }
-            return unassignedItem
-        },
-        selectedKeyType: {
-            get () {
-                if (this.selectedLine !== null) {
-                    return this.selectedLine.type
-                }
-                return _.get(this.typeOptions, '0.value', '')
-            },
-            set (type) {
-                this.selectedKeyTypeData = type
-            }
-        },
-        selectedKeySetName () {
-            if (this.selectedKey !== null) {
-                return this.selectedKey.keySet.name
-            }
-            return ''
-        },
-        selectedKeyNumber () {
-            if (this.selectedKey !== null) {
-                return (this.selectedKey.index + 1)
-            }
-            return ''
-        },
-        typeOptions () {
-            const options = []
-            if (this.selectedKey !== null && this.selectedKey.keySet.can_blf) {
-                options.push({
-                    label: this.$t('Busy Lamp Field'),
-                    value: 'blf'
-                })
-            }
-            if (this.selectedKey !== null && this.selectedKey.keySet.can_private) {
-                options.push({
-                    label: this.$t('Private'),
-                    value: 'private'
-                })
-            }
-            if (this.selectedKey !== null && this.selectedKey.keySet.can_shared) {
-                options.push({
-                    label: this.$t('Shared'),
-                    value: 'shared'
-                })
-            }
-            return options
-        },
-        isMobile () {
-            return Platform.is.mobile
-        },
+        ...mapGetters('pbxDevices', [
+            'isDeviceLoading'
+        ]),
         imageUrl () {
             return _.get(this.modelImage, 'url', null)
         },
@@ -236,35 +103,35 @@ export default {
         },
         keys () {
             const keys = []
-            this.keySets.forEach(($keySet) => {
+            this.keySets.forEach(($keySet, $keySetIndex) => {
                 const $keys = _.get($keySet, 'keys', [])
                 $keys.forEach(($key, $index) => {
                     const key = _.clone($key)
                     key.keySet = $keySet
-                    key.index = $index
+                    key.index = $index + $keySetIndex
                     keys.push(key)
                 })
             })
             return keys
         },
-        lines () {
-            return _.get(this.device, 'lines', [])
-        },
         canvasStyles () {
             return {
-                width: this.configWidth + 'px'
+                width: `${this.configWidth}px`
             }
         },
         imageWrapperStyles () {
             return {
-                width: this.configWidth + 'px'
+                width: `${this.configWidth}px`
             }
         },
         imageStyles () {
             return {
-                left: this.imageDeltaX + 'px',
-                width: (this.imageWidth * this.imageScaleFactor) + 'px'
+                left: `${this.imageDeltaX}px`,
+                width: `${this.imageWidth * this.imageScaleFactor}px`
             }
+        },
+        lines () {
+            return _.get(this.device, 'lines', [])
         }
     },
     watch: {
@@ -277,7 +144,6 @@ export default {
     mounted () {
         this.boundingBox = BoundingBox2D.createFromPoints(this.keys)
         this.boundingBox.addMargin(40)
-        this.loadGroupsAndSeats()
     },
     methods: {
         getLineByKey (key) {
@@ -299,8 +165,8 @@ export default {
             this.placeImage()
         },
         resize () {
-            this.imageWidth = this.$refs.image.naturalWidth
-            this.configWidth = this.$refs.config.clientWidth
+            this.imageWidth = this.$refs.image?.naturalWidth
+            this.configWidth = this.$refs.config?.clientWidth
             if (this.boundingBox !== null) {
                 if (this.boundingBox.getWidth() > this.configWidth) {
                     this.imageScaleFactor = this.configWidth / this.boundingBox.getWidth()
@@ -348,28 +214,28 @@ export default {
             let x = (key.x * this.imageScaleFactor) + deltaX
             let y = (key.y * this.imageScaleFactor)
             switch (key.labelpos) {
-            case 'left':
-                y = y - height / 2
-                x = x - width
-                break
-            case 'right':
-                y = y - height / 2
-                break
-            case 'top':
-                x = x - width / 2
-                y = y - height
-                break
-            case 'bottom':
-                x = x - width / 2
-                break
+                case 'left':
+                    y = y - height / 2
+                    x = x - width
+                    break
+                case 'right':
+                    y = y - height / 2
+                    break
+                case 'top':
+                    x = x - width / 2
+                    y = y - height
+                    break
+                case 'bottom':
+                    x = x - width / 2
+                    break
             }
             return {
-                top: y + 'px',
-                left: x + 'px',
-                width: width + 'px',
-                height: height + 'px',
+                top: `${y}px`,
+                left: `${x}px`,
+                width: `${width}px`,
+                height: `${height}px`,
                 position: 'absolute',
-                lineHeight: width + 'px',
+                lineHeight: `${width}px`,
                 zIndex: 10
             }
         },
@@ -386,32 +252,19 @@ export default {
             this.keyOverlayActive = true
             this.$scrollTo(this.$parent.$el)
         },
-        closeKeyOverlay () {
-            this.keyOverlayActive = false
-        },
-        loadGroupsAndSeats () {
-            this.$emit('loadGroupsAndSeats')
-        },
-        keySubscriberChanged ({ value: subscriberId }) {
+        onSave (newLine) {
             const newLines = []
-            const lines = _.clone(this.lines)
+            const lines = _.cloneDeep(this.lines)
             const line = this.getLineByKey(this.selectedKey)
-            let changed = false
-            if (line !== null && subscriberId === null) {
+            if (line !== null && newLine.type === null) {
                 delete lines[line.index]
-                changed = true
             } else if (line !== null) {
-                _.set(lines, line.index + '.subscriber_id', subscriberId)
-                changed = true
-            } else if (subscriberId !== null) {
-                newLines.push({
-                    extension_unit: 0,
-                    key_num: this.selectedKey.index,
-                    subscriber_id: subscriberId,
-                    linerange: this.selectedKey.keySet.name,
-                    type: this.$refs.selectType.value
-                })
-                changed = true
+                _.set(lines, `${line.index}.subscriber_id`, newLine.subscriber_id)
+                _.set(lines, `${line.index}.target_number`, newLine.target_number)
+                _.set(lines, `${line.index}.label`, newLine.label)
+                _.set(lines, `${line.index}.type`, newLine.type)
+            } else {
+                newLines.push(newLine)
             }
             lines.forEach((line) => {
                 newLines.push({
@@ -419,127 +272,109 @@ export default {
                     key_num: line.key_num,
                     subscriber_id: line.subscriber_id,
                     linerange: line.linerange,
-                    type: line.type
+                    type: line.type,
+                    target_number: line.target_number,
+                    label: line.label
                 })
             })
-            if (changed === true) {
-                this.$emit('keysChanged', newLines)
-            }
-        },
-        keyTypeChanged (type) {
-            const newLines = []
-            const lines = _.clone(this.lines)
-            const line = this.getLineByKey(this.selectedKey)
-            if (line != null) {
-                _.set(lines, line.index + '.type', type)
-                lines.forEach((line) => {
-                    newLines.push({
-                        extension_unit: line.extension_unit,
-                        key_num: line.key_num,
-                        subscriber_id: line.subscriber_id,
-                        linerange: line.linerange,
-                        type: line.type
-                    })
-                })
-                this.$emit('keysChanged', newLines)
-            }
+            this.$emit('keysChanged', newLines)
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    $spotSize = 25px
+<style lang="sass" rel="stylesheet/sass">
+$spotSize: 25px
 
-    .csc-device-key-title
-        margin-bottom $flex-gutter-md
+.csc-device-key-title
+    margin-bottom: $flex-gutter-md
 
-    .csc-device-key-title-icon
-        margin-right $flex-gutter-xs
+.csc-device-key-title-icon
+    margin-right: $flex-gutter-xs
 
-    .csc-device-key-title-main
-        font-size 1rem
-    .csc-device-key-title-sub
-        font-size 90%
-        margin-top 0.2rem
+.csc-device-key-title-main
+    font-size: 1rem
+.csc-device-key-title-sub
+    font-size: 90%
+    margin-top: 0.2rem
 
-    .csc-pbx-device-config-key-overlay
-        .title
-            .q-icon
-                margin-right 8px
-            font-size 18px
-            font-weight 400
-            letter-spacing normal
-            line-height 1.8rem
-            margin-bottom 32px
-            text-align center
+.csc-pbx-device-config-key-overlay
+    .title
+        .q-icon
+            margin-right: 8px
+        font-size: 18px
+        font-weight: 400
+        letter-spacing: normal
+        line-height: 1.8rem
+        margin-bottom: 32px
+        text-align: center
 
-        position absolute
-        top 0
-        left 0
-        right 0
-        bottom 0
-        background-color alpha($secondary, 0.85)
-        z-index 10
-        padding 48px
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background-color: rgba($secondary, 85%)
+    z-index: 10
+    padding: 48px
 
-    .csc-pbx-device-key-details
-        padding 50px
-        position relative
+.csc-pbx-device-key-details
+    padding: 50px
+    position: relative
 
-    .csc-pbx-device-config
-        margin-top $flex-gutter-lg
-        position relative
-        .spot-modal-content
-            position relative
-        .actions
-            padding 32px
+.csc-pbx-device-config
+    margin-top: $flex-gutter-lg
+    position: relative
+    .spot-modal-content
+        position: relative
+    .actions
+        padding: 32px
 
-    .csc-pbx-device-image
-        position relative
-        overflow hidden
-        img
-            display block
-            position relative
-
-    .csc-pbx-device-canvas
+.csc-pbx-device-image
+    position: relative
+    overflow: hidden
+    img
+        display: block
         position: relative
 
-    .csc-pbx-key-popover-title
-        font-size 18px
-        font-weight 400
-        letter-spacing normal
-        line-height 1.8rem
+.csc-pbx-device-canvas
+    position: relative
 
-    .csc-pbx-device-loader
-        z-index 20
+.csc-pbx-key-popover-title
+    font-size: 18px
+    font-weight: 400
+    letter-spacing: normal
+    line-height: 1.8rem
 
-    .csc-pbx-device-button-spot
-        border-radius: 50%;
-        width $spotSize
-        height $spotSize
-        background-color white
-        line-height $spotSize
-        color $primary
-        text-align center
-        cursor pointer
-        font-weight bold
+.csc-pbx-device-loader
+    z-index: 20
 
-    .csc-pbx-device-button
-        background-color $primary
+.csc-pbx-device-button-spot
+    border-radius: 50%
+    width: $spotSize
+    height: $spotSize
+    background-color: white
+    line-height: $spotSize
+    color: $primary
+    text-align: center
+    cursor: pointer
+    font-weight: bold
 
-    .csc-pbx-device-button-active
-        background-color $primary
-        color white
+.csc-pbx-device-button
+    background-color: $primary
 
-    .csc-pbx-key-popover
-        min-height 40px
-        padding 16px
-        padding-right 40px
+.csc-pbx-device-button-active
+    background-color: $primary
+    color: white
 
-    .csc-close-button.q-btn
-        padding $flex-gutter-xs
-        .q-btn-inner
-            i
-                margin 0
+.csc-pbx-key-popover
+    min-height: 40px
+    padding: 16px
+    padding-right: 40px
+
+.csc-close-button.q-btn
+    padding: $flex-gutter-xs
+    .q-btn-inner
+        i
+            margin: 0
 </style>

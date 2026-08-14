@@ -38,7 +38,7 @@
             >
                 <template
                     v-if="column.componentIcon"
-                    v-slot:prepend
+                    #prepend
                 >
                     <q-icon
                         :name="column.componentIcon"
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { i18n } from 'src/boot/i18n'
+import { i18n } from 'boot/i18n'
 export default {
     name: 'CscDataTableEditSelect',
     props: {
@@ -72,9 +72,10 @@ export default {
         },
         saveLabel: {
             type: String,
-            default: i18n.t('Save')
+            default: i18n.global.t('Save')
         }
     },
+    emits: ['saved'],
     data () {
         return {
             internalValue: this.value
@@ -82,12 +83,11 @@ export default {
     },
     computed: {
         label () {
-            const refOption = this.column.componentOptions.find(option => option.value === this.value)
+            const refOption = this.column.componentOptions.find((option) => option.value === this.value)
             if (refOption) {
                 return refOption.label
-            } else {
-                return this.value
             }
+            return this.value
         }
     },
     methods: {

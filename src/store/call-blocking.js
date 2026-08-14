@@ -1,29 +1,27 @@
 'use strict'
 
 import {
-    RequestState
-} from './common'
-import {
-    enableIncomingCallBlocking,
-    disableIncomingCallBlocking,
-    getIncomingCallBlocking,
     addNumberToIncomingList,
-    editNumberFromIncomingList,
-    removeNumberFromIncomingList,
-    enableOutgoingCallBlocking,
-    disableOutgoingCallBlocking,
-    getOutgoingCallBlocking,
     addNumberToOutgoingList,
+    disableIncomingCallBlocking,
+    disableOutgoingCallBlocking,
+    editNumberFromIncomingList,
     editNumberFromOutgoingList,
-    removeNumberFromOutgoingList,
-    getPrivacyCallBlocking
-} from '../api/call-blocking'
+    enableIncomingCallBlocking,
+    enableOutgoingCallBlocking,
+    getIncomingCallBlocking,
+    getOutgoingCallBlocking,
+    getPrivacyCallBlocking,
+    removeNumberFromIncomingList,
+    removeNumberFromOutgoingList
+} from 'src/api/call-blocking'
 import {
-    setPrivacy,
+    allowAnonymous,
     blockAnonymous,
-    allowAnonymous
-} from '../api/subscriber'
+    setPrivacy
+} from 'src/api/subscriber'
 import { getSubscriberId } from 'src/auth'
+import { RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -98,9 +96,8 @@ export default {
         listMode (state) {
             if (state.enabled) {
                 return 'whitelist'
-            } else {
-                return 'blacklist'
             }
+            return 'blacklist'
         },
         isAnonymousBlocked (state) {
             return state.blockAnonymous === true
@@ -204,9 +201,8 @@ export default {
             Promise.resolve().then(() => {
                 if (enabled) {
                     return enableIncomingCallBlocking(getSubscriberId())
-                } else {
-                    return disableIncomingCallBlocking(getSubscriberId())
                 }
+                return disableIncomingCallBlocking(getSubscriberId())
             }).then(() => {
                 context.commit('toggleSucceeded', enabled)
             }).catch((err) => {
@@ -268,9 +264,8 @@ export default {
             Promise.resolve().then(() => {
                 if (enabled) {
                     return enableOutgoingCallBlocking(getSubscriberId())
-                } else {
-                    return disableOutgoingCallBlocking(getSubscriberId())
                 }
+                return disableOutgoingCallBlocking(getSubscriberId())
             }).then(() => {
                 context.commit('toggleSucceeded', enabled)
             }).catch((err) => {

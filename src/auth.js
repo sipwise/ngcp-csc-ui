@@ -1,8 +1,7 @@
-
 import {
+    deleteLocal,
     getLocal,
-    setLocal,
-    deleteLocal
+    setLocal
 } from 'src/storage'
 
 export function getJwt () {

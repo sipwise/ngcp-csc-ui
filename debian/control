@@ -1,17 +1,17 @@
 Source: ngcp-csc-ui
 Section: web
-Priority: optional
 Maintainer: Sipwise Development Team <support@sipwise.com>
 Homepage: https://www.sipwise.com/
-Standards-Version: 4.5.1
+Standards-Version: 4.7.2
 Build-Depends:
  debhelper-compat (= 13),
- yarnpkg | nodejs (>= 12.19.0~),
- yarnpkg | yarn,
+ nodejs (>= 24),
+ python3,
 
 Package: ngcp-csc-ui
 Architecture: all
 Depends:
+ nodejs (>= 24),
  ${misc:Depends},
  ${shlibs:Depends},
 Description: Customer Self-Care Web UI

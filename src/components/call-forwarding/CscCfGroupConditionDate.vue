@@ -4,7 +4,7 @@
         icon="today"
         :loading="$wait.is('csc-cf-time-set-create')"
         v-bind="$attrs"
-        v-on="$listeners"
+        @close="$emit('close')"
     >
         <q-date
             v-model="selectedDate"
@@ -14,18 +14,20 @@
             minimal
         />
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
+                data-cy="csc-group-date-delete"
                 flat
                 color="negative"
                 icon="delete"
-                @click="deleteSourceSetEvent"
+                @click="deleteTimeSetEvent"
             />
             <q-btn
                 :label="$t('Save')"
+                data-cy="csc-group-date-save"
                 flat
                 color="primary"
                 icon="check"
@@ -37,8 +39,8 @@
 </template>
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
-import { mapActions, mapGetters } from 'vuex'
 import { timeSetDateExact } from 'src/filters/time-set'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupConditionDate',
     components: {
@@ -64,11 +66,16 @@ export default {
         deleteButton: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
+    emits: ['close'],
     data () {
         return {
-            selectedDate: this.formattedDate
+            selectedDate: null
         }
     },
     computed: {
@@ -78,9 +85,8 @@ export default {
         formattedDate () {
             if (this.timeSet) {
                 return timeSetDateExact(this.timeSet.times)
-            } else {
-                return this.getCurrentFormattedDateWithSlash
             }
+            return this.getCurrentFormattedDateWithSlash
         }
     },
     mounted () {
@@ -98,6 +104,7 @@ export default {
                 await this.updateTimeSetDate({
                     mapping: this.mapping,
                     id: this.timeSet.id,
+                    subscriberId: this.subscriberId,
                     date: {
                         date: dateParts[2],
                         month: dateParts[1],
@@ -107,6 +114,7 @@ export default {
             } else {
                 await this.createTimeSetDate({
                     mapping: this.mapping,
+                    subscriberId: this.subscriberId,
                     date: {
                         date: dateParts[2],
                         month: dateParts[1],
@@ -116,11 +124,14 @@ export default {
             }
             this.$emit('close')
         },
-        async deleteSourceSetEvent () {
+        async deleteTimeSetEvent () {
             await this.deleteTimeSet({
                 mapping: this.mapping,
-                id: this.timeSet.id
+                id: this.timeSet.id,
+                subscriberId: this.subscriberId
             })
+
+            this.$emit('close')
         }
     }
 }

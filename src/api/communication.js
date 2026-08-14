@@ -1,5 +1,5 @@
-import { post } from 'src/api/common'
 import _ from 'lodash'
+import { post } from 'src/api/common'
 
 export async function createFax (options) {
     const formData = new FormData()
@@ -12,6 +12,7 @@ export async function createFax (options) {
     }
     return await post({
         resource: 'faxes',
+        headers: { 'Content-Type': 'multipart/form-data' },
         body: formData
     })
 }

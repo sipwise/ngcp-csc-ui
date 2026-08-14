@@ -1,20 +1,17 @@
-
-import Vue from 'vue'
-import numberFilter from '../filters/number'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
-    getAllProfiles, getModel, getModelFrontImage, getModelFrontThumbnailImage
-} from '../api/pbx-config'
-import {
-    getSubscribers
-} from '../api/subscriber'
-import {
-    RequestState
-} from './common'
-import { getNumbers } from '../api/user'
-import {
-    i18n
-} from 'src/boot/i18n'
+    getAllProfiles,
+    getModel,
+    getModelFrontImage,
+    getModelFrontThumbnailImage,
+    getProfile
+} from 'src/api/pbx-config'
+import { getSubscribers } from 'src/api/subscriber'
+import { getNumbers } from 'src/api/user'
+import numberFilter from 'src/filters/number'
+import { showGlobalError } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -23,21 +20,27 @@ export default {
         numberList: [],
         numberMapById: {},
         numberListState: RequestState.initiated,
+        numberListError: null,
         groupList: [],
         groupMapById: {},
         seatList: [],
         seatMapById: {},
         soundSetList: [],
         soundSetMapByName: {},
+        deviceProfileListState: RequestState.initiated,
+        deviceProfileListError: null,
         deviceProfileList: [],
         deviceProfileMap: {},
         deviceModelList: [],
+        deviceModelListState: RequestState.initiated,
         deviceModelMap: {},
         deviceModelImageMap: {},
         deviceModelImageSmallMap: {},
         subscriberList: [],
         subscriberListState: RequestState.initiated,
-        subscriberMap: {}
+        subscriberListError: null,
+        subscriberMap: {},
+        ncosMapByName: {}
     },
     getters: {
         pilot (state) {
@@ -58,6 +61,18 @@ export default {
             })
             return options
         },
+        getPrimaryNumberOptions (state) {
+            const options = []
+            state.numberList.forEach((number) => {
+                if (number.is_primary) {
+                    options.push({
+                        label: numberFilter(number),
+                        value: numberFilter(number)
+                    })
+                }
+            })
+            return options
+        },
         getFullNumberOptions (state) {
             const options = []
             state.numberList.forEach((number) => {
@@ -72,7 +87,7 @@ export default {
             const options = []
             state.seatList.forEach((seat) => {
                 options.push({
-                    label: seat.display_name,
+                    label: (seat.display_name) ? seat.display_name : seat.username,
                     value: seat.id
                 })
             })
@@ -90,22 +105,23 @@ export default {
         },
         getSoundSetOptions (state) {
             const options = []
-            let defaultLabel = i18n.t('Default')
+            const defaultLabel = i18n.global.t('Default')
             state.soundSetList.forEach((soundSet) => {
-                if (soundSet.contract_default) {
-                    defaultLabel = i18n.t('Default') + ' (' + soundSet.name + ')'
-                } else {
-                    options.push({
-                        label: soundSet.name,
-                        value: soundSet.id
-                    })
-                }
+                options.push({
+                    label: soundSet.name,
+                    value: soundSet.id
+                })
             })
             options.unshift({
                 label: defaultLabel,
                 value: null
             })
             return options
+        },
+        getNcosByName (state) {
+            return (level) => {
+                return _.get(state.ncosMapByName, level, null)
+            }
         },
         getSoundSetByName (state) {
             return (name) => {
@@ -115,7 +131,7 @@ export default {
         getSubscriberOptions (state) {
             const options = []
             options.push({
-                label: i18n.t('Unassigned'),
+                label: i18n.global.t('Unassigned'),
                 icon: 'clear',
                 value: null,
                 type: null
@@ -132,12 +148,20 @@ export default {
                 }
                 options.push({
                     label: subscriber.display_name || subscriber.webusername,
-                    icon: icon,
+                    icon,
                     value: subscriber.id,
                     type
                 })
             })
             return options
+        },
+        isDeviceInModelMap (state) {
+            return (deviceId) => {
+                return state.deviceModelMap[deviceId] !== undefined
+            }
+        },
+        isDeviceModelListStateRequesting (state) {
+            return state.deviceModelListState === RequestState.requesting
         },
         isSubscribersRequesting (state) {
             return state.subscriberListState === RequestState.requesting
@@ -147,31 +171,30 @@ export default {
         },
         getMinAllowedExtension (state, getters, rootState, rootGetters) {
             const subscriber = rootGetters['user/getSubscriber']
-            return subscriber.ext_range_min
+            return subscriber.ext_range_min && subscriber.ext_range_min >= 0 ? +subscriber.ext_range_min : -1
         },
         getMaxAllowedExtension (state, getters, rootState, rootGetters) {
             const subscriber = rootGetters['user/getSubscriber']
-            return subscriber.ext_range_max
+            return subscriber.ext_range_max && subscriber.ext_range_max >= 1 ? +subscriber.ext_range_max : null
         },
         getExtensionHint (state, getters, rootState, rootGetters) {
             const min = getters.getMinAllowedExtension
             const max = getters.getMaxAllowedExtension
-            if (min && max == null) {
-                return i18n.t('Minimum allowed extension is {min}', {
-                    min: min
+            if (min >= 0 && max === null) {
+                return i18n.global.t('Minimum allowed extension is {min}', {
+                    min
                 })
-            } else if (min == null && max) {
-                return i18n.t('Maximum allowed extension is {max}', {
-                    max: max
+            } else if (min < 0 && max) {
+                return i18n.global.t('Maximum allowed extension is {max}', {
+                    max
                 })
-            } else if (min && max) {
-                return i18n.t('Allowed extensions are between {min} and {max}', {
-                    min: min,
-                    max: max
+            } else if (min >= 0 && max) {
+                return i18n.global.t('Allowed extensions are between {min} and {max}', {
+                    min,
+                    max
                 })
-            } else {
-                return null
             }
+            return null
         }
     },
     mutations: {
@@ -186,87 +209,169 @@ export default {
             state.numberList = _.get(numberList, 'items', [])
             state.numberMapById = {}
             state.numberList.forEach((number) => {
-                Vue.set(state.numberMapById, number.id, number)
+                state.numberMapById[number.id] = number
             })
+        },
+        numbersFailed (state, err) {
+            state.numberListState = RequestState.failed
+            state.numberListError = err
         },
         seatsSucceeded (state, seatList) {
             state.seatList = _.get(seatList, 'items', [])
             state.seatMapById = {}
             state.seatList.forEach((seat) => {
-                Vue.set(state.seatMapById, seat.id, seat)
+                state.seatMapById[seat.id] = seat
             })
         },
         groupsSucceeded (state, groupList) {
             state.groupList = _.get(groupList, 'items', [])
             state.groupMapById = {}
             state.groupList.forEach((group) => {
-                Vue.set(state.groupMapById, group.id, group)
+                state.groupMapById[group.id] = group
             })
         },
         soundSetsSucceeded (state, soundSetList) {
             state.soundSetList = _.get(soundSetList, 'items', [])
             state.soundSetMapByName = {}
             state.soundSetList.forEach((soundSet) => {
-                Vue.set(state.soundSetMapByName, soundSet.name, soundSet)
+                state.soundSetMapByName[soundSet.name] = soundSet
             })
         },
-        deviceProfilesSucceeded (state, deviceProfileList) {
-            state.deviceProfileList = _.get(deviceProfileList, 'items', [])
+        deviceProfileListStateRequesting (state) {
+            state.deviceProfileListState = RequestState.requesting
+        },
+        deviceProfileListSucceeded (state, deviceProfileList) {
+            const newList = _.get(deviceProfileList, 'items', [])
+
+            // First remove existing items that we're about to replace with newer versions
+            // and keep only items whoseIds are not in the updated list
+            const existingIds = newList.map((item) => item.id)
+            const filteredExistingList = state.deviceProfileList.filter(
+                (existingItem) => !existingIds.includes(existingItem.id)
+            )
+
+            state.deviceProfileList = [...filteredExistingList, ...newList]
+            state.deviceProfileListState = RequestState.succeeded
             state.deviceProfileMap = {}
             state.deviceProfileList.forEach((deviceProfile) => {
-                Vue.set(state.deviceProfileMap, deviceProfile.id, deviceProfile)
+                state.deviceProfileMap[deviceProfile.id] = deviceProfile
             })
         },
-        deviceProfilesFailed (state) {
-            state.deviceProfileList = []
-            state.deviceProfileMap = {}
+        deviceProfileListFailed (state) {
+            state.deviceProfileListState = RequestState.failed
+        },
+        deviceProfileRequesting (state) {
+            state.deviceProfileListState = RequestState.requesting
+        },
+        deviceProfileSucceeded (state, deviceProfile) {
+            state.deviceProfileListState = RequestState.succeeded
+            state.deviceProfileList = [...state.deviceProfileList, deviceProfile]
+            state.deviceProfileMap[deviceProfile.id] = deviceProfile
+        },
+        deviceProfileFailed (state) {
+            state.deviceProfileListState = RequestState.failed
         },
         deviceModelSucceeded (state, deviceModel) {
+            state.deviceModelListState = RequestState.succeeded
             const model = _.get(deviceModel, 'model', null)
             const modelImage = _.get(deviceModel, 'modelImage', null)
             const modelImageThumbnail = _.get(deviceModel, 'modelImageThumbnail', null)
             if (model !== null) {
-                Vue.set(state.deviceModelMap, model.id, model)
+                state.deviceModelMap[model.id] = model
             }
             if (modelImage !== null) {
-                Vue.set(state.deviceModelImageMap, modelImage.id, modelImage)
+                state.deviceModelImageMap[modelImage.id] = modelImage
             }
             if (modelImageThumbnail !== null) {
-                Vue.set(state.deviceModelImageSmallMap, modelImageThumbnail.id, modelImageThumbnail)
+                state.deviceModelImageSmallMap[modelImageThumbnail.id] = modelImageThumbnail
             }
         },
-        deviceModelFailed (state, deviceModelId) {
-            Vue.delete(state.deviceModelMap, deviceModelId)
-            Vue.delete(state.deviceModelImageMap, deviceModelId)
-            Vue.delete(state.deviceModelImageSmallMap, deviceModelId)
+        deviceModelRequesting (state) {
+            state.deviceModelListState = RequestState.requesting
+        },
+        deviceModelFailed (state, options) {
+            state.deviceModelListState = RequestState.failed
+            delete state.deviceModelMap[options.deviceModelId]
+            delete state.deviceModelImageMap[options.deviceModelId]
+            delete state.deviceModelImageSmallMap[options.deviceModelId]
+            state.deviceModelError = options.error
         },
         subscribersRequesting (state) {
-            state.subcriberListState = RequestState.requesting
+            state.subscriberListState = RequestState.requesting
             state.subscriberList = []
         },
         subscribersSucceeded (state, subscribers) {
             state.subscriberList = _.get(subscribers, 'items', [])
+            state.subscriberListState = RequestState.succeeded
             state.subscriberMap = {}
             state.subscriberList.forEach((subscriber) => {
-                Vue.set(state.subscriberMap, subscriber.id, subscriber)
+                state.subscriberMap[subscriber.id] = subscriber
             })
+        },
+        subscribersFailed (state, err) {
+            state.subscriberListState = RequestState.failed
+            state.subscriberListError = err
         }
     },
     actions: {
-        loadProfiles (context) {
-            return new Promise((resolve, reject) => {
-                if (context.state.deviceProfileList.length === 0) {
-                    getAllProfiles().then((profiles) => {
-                        context.commit('deviceProfilesSucceeded', profiles)
-                        resolve(profiles)
-                    }).catch((err) => {
-                        context.commit('deviceProfilesFailed')
-                        reject(err)
-                    })
-                } else {
-                    resolve()
+        async loadProfiles (context) {
+            context.commit('deviceProfileListStateRequesting')
+            try {
+                const profiles = await getAllProfiles()
+                context.commit('deviceProfileListSucceeded', profiles)
+            } catch (err) {
+                context.commit('deviceProfileListFailed', err.message)
+            }
+        },
+        async loadProfileById (context, deviceId) {
+            context.commit('deviceProfileRequesting')
+            try {
+                const profile = await getProfile(deviceId)
+                context.commit('deviceProfileSucceeded', profile)
+            } catch (err) {
+                context.commit('deviceProfileFailed')
+            }
+        },
+        async loadProfileThumbnails (context) {
+            const requests = []
+
+            context.state.deviceProfileList.forEach((deviceProfile) => {
+                const isFrontThumbnailCached = context.state.deviceModelImageSmallMap[deviceProfile.device_id] !== undefined
+                if (!isFrontThumbnailCached) {
+                    requests.push(
+                        getModelFrontThumbnailImage(deviceProfile.device_id)
+                            .then((thumbnail) => ({
+                                deviceId: deviceProfile.device_id,
+                                thumbnail
+                            }))
+                            .catch((error) => ({
+                                deviceId: deviceProfile.device_id,
+                                error
+                            }))
+                    )
                 }
             })
+
+            if (requests.length > 0) {
+                try {
+                    const results = await Promise.all(requests)
+
+                    results.forEach((result) => {
+                        if (result.thumbnail) {
+                            context.commit('deviceModelSucceeded', {
+                                modelImageThumbnail: result.thumbnail
+                            })
+                        } else if (result.error) {
+                            // Silent warning as it's not a critical error
+                            // and we can still use the device profile without the thumbnail
+                            // eslint-disable-next-line no-console
+                            console.warn(`Failed to load thumbnail for device ${result.deviceId}:`, result.error)
+                        }
+                    })
+                } catch (error) {
+                    showGlobalError('Failed to load profile thumbnails:', error)
+                }
+            }
         },
         async loadDeviceModel (context, payload) {
             try {
@@ -280,6 +385,7 @@ export default {
                 }
                 const requests = []
                 let isFrontImageRequested = false
+                context.commit('deviceModelRequesting')
                 if (!isFrontCached && (payload.type === 'front' || payload.type === 'all')) {
                     requests.push(getModelFrontImage(payload.deviceId))
                     isFrontImageRequested = true
@@ -319,17 +425,24 @@ export default {
                 }
                 context.commit('deviceModelSucceeded', deviceModel)
             } catch (err) {
-                context.commit('deviceModelFailed', payload.deviceId)
+                // Note: the way it is implemented at the moment
+                // if any of the promises fails, the whole action fails
+                // and only the first error is reported. This needs refactoring
+                // to handle each request separately and report errors accordingly.
+                context.commit('deviceModelFailed', {
+                    deviceModelId: payload.deviceId,
+                    error: err.message
+                })
             }
         },
         async loadDeviceModels (context, imageType) {
-            const requests = []
-            for (let i = 0; i < context.state.deviceProfileList.length; i++) {
-                requests.push(context.dispatch('loadDeviceModel', {
-                    deviceId: context.state.deviceProfileList[i].device_id,
+            const requests = context.state.deviceProfileList.map((deviceProfile) => {
+                return context.dispatch('loadDeviceModel', {
+                    deviceId: deviceProfile.device_id,
                     type: imageType
-                }))
-            }
+                })
+            })
+
             await Promise.all(requests)
         },
         loadSubscribers (context) {
@@ -340,10 +453,7 @@ export default {
                 }).then((subscribers) => {
                     context.commit('subscribersSucceeded', subscribers)
                 }).catch((err) => {
-                    console.debug(err)
-                    context.commit('subscribersSucceeded', {
-                        items: []
-                    })
+                    context.commit('subscribersFailed', err.message)
                 })
             }
         },
@@ -356,10 +466,7 @@ export default {
                 }).then((numbers) => {
                     context.commit('numbersSucceeded', numbers)
                 }).catch((err) => {
-                    console.debug(err)
-                    context.commit('numbersSucceeded', {
-                        items: []
-                    })
+                    context.commit('numbersFailed', err.message)
                 })
             }
         }

@@ -1,44 +1,70 @@
-
-import Vue from 'vue'
-import NumberFilter from 'src/filters/number'
-import NumberFormatFilter, {
-    normalizeDestination
-} from 'src/filters/number-format'
+import WholeCurrency from 'src/filters/currency'
 import DateFilter, {
     smartTime,
     time,
     weekday
 } from 'src/filters/date'
-import {
-    startCase
-} from 'src/filters/string'
-import WholeCurrency from 'src/filters/currency'
-import {
-    displayName
-} from 'src/filters/subscriber'
+import NumberFilter from 'src/filters/number'
+import NumberFormatFilter, { normalizeDestination } from 'src/filters/number-format'
+import { startCase } from 'src/filters/string'
+import { displayName } from 'src/filters/subscriber'
 import {
     timeSetDateExact,
-    timeSetDateRange, timeSetOfficeHoursSameTime,
+    timeSetDateRange,
+    timeSetOfficeHoursSameTime,
     timeSetTimes,
     timeSetWeekdays
 } from 'src/filters/time-set'
 
-export default () => {
-    Vue.filter('number', NumberFilter)
-    Vue.filter('readableDate', DateFilter)
-    Vue.filter('numberFormat', NumberFormatFilter)
-    Vue.filter('destinationFormat', normalizeDestination)
-    Vue.filter('smartTime', smartTime)
-    Vue.filter('startCase', startCase)
-    Vue.filter('wholeCurrency', WholeCurrency)
-    Vue.filter('seatName', displayName)
-    Vue.filter('groupName', displayName)
-    Vue.filter('displayName', displayName)
-    Vue.filter('time', time)
-    Vue.filter('weekday', weekday)
-    Vue.filter('timeSetDateExact', timeSetDateExact)
-    Vue.filter('timeSetWeekdays', timeSetWeekdays)
-    Vue.filter('timeSetDateRange', timeSetDateRange)
-    Vue.filter('timeSetOfficeHoursSameTime', timeSetOfficeHoursSameTime)
-    Vue.filter('timeSetTimes', timeSetTimes)
+// Filters object
+const filters = {
+    number: NumberFilter,
+    readableDate: DateFilter,
+    numberFormat: NumberFormatFilter,
+    destinationFormat: normalizeDestination,
+    smartTime,
+    startCase,
+    wholeCurrency: WholeCurrency,
+    seatName: displayName,
+    groupName: displayName,
+    displayName,
+    time,
+    weekday,
+    timeSetDateExact,
+    timeSetWeekdays,
+    timeSetDateRange,
+    timeSetOfficeHoursSameTime,
+    timeSetTimes
+}
+
+// Export composable for Composition API
+export function useFilters () {
+    return filters
+}
+
+// Export individual filters for direct import
+export {
+    DateFilter as readableDate,
+    NumberFilter as number,
+    NumberFormatFilter as numberFormat,
+    WholeCurrency as wholeCurrency,
+    displayName,
+    normalizeDestination as destinationFormat,
+    smartTime,
+    startCase,
+    time,
+    timeSetDateExact,
+    timeSetDateRange,
+    timeSetOfficeHoursSameTime,
+    timeSetTimes,
+    timeSetWeekdays,
+    weekday
+}
+
+export default ({ app }) => {
+    // Add to global properties for Options API
+    app.config.globalProperties.$filters = filters
+
+    // Provide for Composition API inject
+    app.provide('filters', filters)
 }

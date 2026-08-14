@@ -31,9 +31,9 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { i18n } from 'boot/i18n'
-import { getLanguageLabels, setLanguage } from 'src/i18n'
+import _ from 'lodash'
+import { setLanguage } from 'src/i18n'
 export default {
     name: 'CscSelectionLanguage',
     props: {
@@ -44,16 +44,37 @@ export default {
     },
     computed: {
         languageLabel () {
-            const lang = _.first(this.options.filter(item => item.value === i18n.locale))
-            return this.$t('Language') + ' (' + lang.label + ')'
+            const lang = _.first(this.options.filter((item) => item.value === i18n.global.locale))
+            return `${this.$t('Language')} (${lang.label})`
         },
         options () {
-            return getLanguageLabels()
+            return [
+                {
+                    value: 'en-US',
+                    label: this.$t('English', {}, { locale: 'en-US' })
+                },
+                {
+                    value: 'de',
+                    label: this.$t('German', {}, { locale: 'de' })
+                },
+                {
+                    value: 'es',
+                    label: this.$t('Spanish', {}, { locale: 'es' })
+                },
+                {
+                    value: 'fr',
+                    label: this.$t('French', {}, { locale: 'fr' })
+                },
+                {
+                    value: 'it',
+                    label: this.$t('Italian', {}, { locale: 'it' })
+                }
+            ]
         }
     },
     methods: {
-        changeLanguage (lang) {
-            setLanguage(lang)
+        async changeLanguage (lang) {
+            await setLanguage(lang)
         }
     }
 }

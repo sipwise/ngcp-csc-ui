@@ -1,31 +1,34 @@
-
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
-import Vue from 'vue'
 import {
     get,
-    post,
     getList,
-    patchReplace
-} from './common'
+    httpApi,
+    patchReplace,
+    post
+} from 'src/api/common'
 import { getFaxServerSettings } from 'src/api/fax'
+import { LICENSES } from 'src/constants'
+import { getHttpErrorMessage } from 'src/helpers/http-error'
 
-export function login (username, password) {
+export function login ({ username, password, otp = null }) {
     return new Promise((resolve, reject) => {
         let jwt = null
         let subscriberId = null
-        Vue.http.post('login_jwt', {
-            username: username,
-            password: password
+        httpApi.post('login_jwt', {
+            username,
+            password,
+            ...(otp && { otp })
         }).then((result) => {
-            jwt = result.body.jwt
-            subscriberId = result.body.subscriber_id + ''
+            jwt = result.data.jwt
+            subscriberId = `${result.data.subscriber_id}`
             resolve({
-                jwt: jwt,
-                subscriberId: subscriberId
+                jwt,
+                subscriberId
             })
         }).catch((err) => {
-            if (err.status && err.status >= 400) {
-                reject(new Error(err.body.message))
+            if (err.response) {
+                reject(new Error(getHttpErrorMessage(err, i18n.global.t('Unexpected error'))))
             } else {
                 reject(err)
             }
@@ -35,48 +38,66 @@ export function login (username, password) {
 
 export async function loginByExchangeToken (token) {
     try {
-        const res = await Vue.http.post('login_jwt', {
-            token: token
+        const res = await httpApi.post('login_jwt', {
+            token
         })
         return {
-            jwt: res.body?.jwt,
-            subscriberId: res.body?.subscriber_id + ''
+            jwt: res.data?.jwt,
+            subscriberId: `${res.data?.subscriber_id}`
         }
     } catch (err) {
-        if (err.status && err.status >= 400) {
-            throw new Error(err.body.message)
+        const status = err?.response?.status
+        if (status && status >= 400) {
+            throw new Error(getHttpErrorMessage(err, i18n.global.t('Unexpected error')))
         } else {
             throw err
         }
     }
 }
 
-export function getUserData (id) {
-    return new Promise((resolve, reject) => {
-        return Promise.all([
-            getSubscriberById(id),
-            getCapabilities(id),
-            getFaxServerSettings(id),
-            getResellerBranding(),
-            getPlatformInfo()
-        ]).then(([subscriber, capabilities, faxServerSettings, resellerBranding, platformInfo]) => {
-            capabilities.faxactive = faxServerSettings.active
-            resolve({
-                subscriber,
-                capabilities,
-                resellerBranding: resellerBranding?.items[0] || null,
-                platformInfo
-            })
-        }).catch((err) => {
-            reject(err)
-        })
-    })
+export async function getPreLoginPasswordInfo () {
+    try {
+        const res = await httpApi.get('api/platforminfo')
+        return res.data.security.password
+    } catch (err) {
+        throw new Error(getHttpErrorMessage(err, i18n.global.t('Unexpected error')))
+    }
+}
+
+export async function getUserData (id) {
+    const allPromise = Promise.all([
+        getSubscriberById(id),
+        getCapabilities(id),
+        getResellerBranding(),
+        getPlatformInfo()
+    ])
+
+    try {
+        let isFaxServerSettingsActive = false
+        const [subscriber, capabilities, resellerBranding, platformInfo] = await allPromise
+        if (capabilities.faxserver && platformInfo.licenses.find((license) => license === LICENSES.fax)) {
+            // Note that isFaxServerSettingsActive determines if the menu has been enabled by admin
+            // or, in other words, if the relevant toggle is on/off.
+            const responseFaxServerSettings = await getFaxServerSettings(id)
+            isFaxServerSettingsActive = responseFaxServerSettings.active
+        }
+
+        return {
+            subscriber,
+            capabilities,
+            resellerBranding: resellerBranding?.items[0] || null,
+            platformInfo,
+            isFaxServerSettingsActive
+        }
+    } catch (error) {
+        throw new Error(getHttpErrorMessage(error, i18n.global.t('Unexpected error')))
+    }
 }
 
 export function getSubscriberById (id) {
     return new Promise((resolve, reject) => {
         get({
-            path: 'api/subscribers/' + id
+            path: `api/subscribers/${id}`
         }).then((body) => {
             resolve(body)
         }).catch((err) => {
@@ -85,6 +106,11 @@ export function getSubscriberById (id) {
     })
 }
 
+/**
+ * Determines if specific users should have access to features based on their roles and profiles.
+ * Retrieves a list of capabilities and their enabled status from the API.
+ * @returns {Promise<Object>} A promise that resolves to an object of capabilities with their enabled status
+ */
 export function getCapabilities () {
     return new Promise((resolve, reject) => {
         getList({
@@ -108,9 +134,10 @@ export function getCapabilities () {
 export function assignNumber (numberId, subscriberId) {
     return new Promise((resolve, reject) => {
         patchReplace({
-            path: 'api/numbers/' + numberId,
+            path: `api/numbers/${numberId}`,
             fieldPath: 'subscriber_id',
-            value: subscriberId
+            value: subscriberId,
+            params: { create_primary_acli: false }
         }).then(() => {
             resolve()
         }).catch((err) => {
@@ -163,6 +190,30 @@ export async function getPlatformInfo () {
     })
 }
 
+export function changeExpiredPassword (payload) {
+    return new Promise((resolve, reject) => {
+        httpApi.post('/api/passwordchange/', {
+            new_password: payload.new_password
+        }, {
+            auth: {
+                username: payload.username,
+                password: payload.old_password
+            }
+        }).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            const status = err?.response?.status
+            if (status === 401) {
+                reject(new Error(`Unauthorized. ${i18n.global.t('Wrong username or password')}`))
+            } else if (status === 422) {
+                reject(_formatPasswordError(err.response.data.message))
+            } else {
+                reject(new Error(getHttpErrorMessage(err, i18n.global.t('Unexpected error'))))
+            }
+        })
+    })
+}
+
 export async function createAuthToken (tokenExpiringTime) {
     const response = await post({
         resource: 'authtokens',
@@ -172,4 +223,8 @@ export async function createAuthToken (tokenExpiringTime) {
         }
     })
     return response.token
+}
+
+function _formatPasswordError (error) {
+    return error.split("'").slice(-2, -1)[0].replaceAll(',', ', ')
 }

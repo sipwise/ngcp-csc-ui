@@ -1,5 +1,9 @@
+import { CreationState } from 'src/store/common'
+
 export default function () {
     return {
+        cfCreating: null,
+        cfCreationState: CreationState.initiated,
         mappings: {
             cfb: [],
             cfna: [],
@@ -10,12 +14,12 @@ export default function () {
             cft_ringtimeout: null,
             cfu: []
         },
-        destinationSets: null,
+        bNumberSetMap: {},
         destinationSetMap: {},
-        sourceSets: null,
         sourceSetMap: {},
-        timeSets: null,
         timeSetMap: {},
+        seats: [],
+        seatMapByPrimaryNumber: {},
         popupCurrent: null,
         announcements: []
     }

@@ -31,6 +31,7 @@
                 />
             </div>
             <div
+                v-if="showMoreMenu"
                 class="csc-list-item-head-menu"
             >
                 <q-btn
@@ -38,10 +39,9 @@
                     color="primary"
                     flat
                     dense
-                    @click.stop="moreMenu=true"
+                    @click.stop="openMoreMenu"
                 />
                 <q-menu
-                    ref="moreMenu"
                     v-model="moreMenu"
                 >
                     <q-list>
@@ -51,6 +51,10 @@
                     </q-list>
                 </q-menu>
             </div>
+            <slot
+                name="actions"
+                class="csc-list-item-head-menu"
+            />
         </div>
         <q-slide-transition>
             <div
@@ -73,121 +77,129 @@
     </div>
 </template>
 
-<script>
-import CscObjectSpinner from './CscObjectSpinner'
-export default {
-    name: 'CscListItem',
-    components: {
-        CscObjectSpinner
+<script setup>
+import CscObjectSpinner from 'components/CscObjectSpinner'
+import { computed, ref } from 'vue'
+
+defineOptions({ name: 'CscListItem' })
+
+const props = defineProps({
+    icon: {
+        type: String,
+        default: ''
     },
-    props: {
-        icon: {
-            type: String,
-            default: ''
-        },
-        image: {
-            type: String,
-            default: ''
-        },
-        expanded: {
-            type: Boolean,
-            default: false
-        },
-        loading: {
-            type: Boolean,
-            default: false
-        },
-        odd: {
-            type: Boolean,
-            default: false
-        }
+    image: {
+        type: String,
+        default: ''
     },
-    data () {
-        return {
-            moreMenu: false
-        }
+    expanded: {
+        type: Boolean,
+        default: false
     },
-    computed: {
-        itemClasses () {
-            const classes = ['csc-list-item', 'transition-generic']
-            if (this.expanded) {
-                classes.push('csc-list-item-expanded')
-            }
-            if (this.odd) {
-                classes.push('csc-list-item-background')
-            }
-            return classes
-        }
+    loading: {
+        type: Boolean,
+        default: false
     },
-    methods: {
-        toggle () {
-            this.$emit('toggle', !this.expanded)
-        },
-        closePopoverMenu () {
-            this.moreMenu = false
-        }
+    odd: {
+        type: Boolean,
+        default: false
+    },
+    showMoreMenu: {
+        type: Boolean,
+        default: true
     }
+})
+
+const emit = defineEmits(['toggle'])
+
+const moreMenu = ref(false)
+
+const itemClasses = computed(() => {
+    const classes = ['csc-list-item', 'transition-generic']
+    if (props.expanded) {
+        classes.push('csc-list-item-expanded')
+    }
+    if (props.odd) {
+        classes.push('csc-list-item-background')
+    }
+    return classes
+})
+
+const toggle = () => {
+    emit('toggle', !props.expanded)
 }
+const openMoreMenu = () => {
+    moreMenu.value = true
+}
+
+const closePopoverMenu = () => {
+    moreMenu.value = false
+}
+
+defineExpose({
+    closePopoverMenu
+})
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
-    .csc-list-item-title-value,
-    .csc-list-item-title-keyword
-        margin-right $flex-gutter-xs
-        font-weight bold
-        vertical-align middle
-    .csc-list-item.csc-list-item-background
-        .csc-list-item-head
-            background-color $item-stripe-color
-    .csc-list-item
-        position relative
-        .csc-list-item-head
-            cursor pointer
-            padding $flex-gutter-sm
-            .csc-list-item-head-icon
-                padding 0
-                padding-right $flex-gutter-xs
-                padding-left $flex-gutter-xs
-            .csc-list-item-head-image
-                width 32px
-                height 32px
-                position relative
-                overflow hidden
-                img
-                    position absolute
-                    width 100%
-            .csc-list-item-head-title
-                padding-left $flex-gutter-sm
-                .csc-list-item-title
-                    font-size 1rem
-                    vertical-align middle
-                .csc-list-item-subtitle
-                    margin-top 0.2 rem
-                    font-size 90%
-                    vertical-align middle
-            .csc-list-item-head-menu
-                .q-btn
-                    padding 0
-                    padding-left $flex-gutter-xs
-                    padding-right $flex-gutter-xs
-                    .q-btn-inner
-                        i
-                            margin 0
-        .csc-list-item-body
-            background-color $item-highlight-color
-            .csc-list-item-body-content
-                padding $flex-gutter-md
-    .csc-list-item.csc-list-item-expanded
-        .csc-list-item-head
-            background-color $item-highlight-color
-            .csc-list-item-head-icon
-                color $primary
-            .csc-list-item-head-title
-                .csc-list-item-title
-                    color $primary
-        .csc-list-item-body
-            background-color $item-highlight-color
-            .csc-list-item-body-content
-                padding $flex-gutter-md
-                padding-top $flex-gutter-sm
+<style lang="sass" rel="stylesheet/sass">
+
+.csc-list-item-title-value,
+.csc-list-item-title-keyword
+    margin-right: $flex-gutter-xs
+    font-weight: bold
+    vertical-align: middle
+.csc-list-item.csc-list-item-background
+    .csc-list-item-head
+        background-color: $item-stripe-color
+.csc-list-item
+    position: relative
+    .csc-list-item-head
+        cursor: pointer
+        padding: $flex-gutter-sm
+        .csc-list-item-head-icon
+            padding: 0
+            padding-right: $flex-gutter-xs
+            padding-left: $flex-gutter-xs
+        .csc-list-item-head-image
+            width: 32px
+            height: 32px
+            position: relative
+            overflow: hidden
+            img
+                position: absolute
+                width: 100%
+        .csc-list-item-head-title
+            padding-left: $flex-gutter-sm
+            .csc-list-item-title
+                font-size: 1rem
+                vertical-align: middle
+            .csc-list-item-subtitle
+                margin-top: 0.2 rem
+                font-size: 90%
+                vertical-align: middle
+        .csc-list-item-head-menu
+            .q-btn
+                padding: 0
+                padding-left: $flex-gutter-xs
+                padding-right: $flex-gutter-xs
+                .q-btn-inner
+                    i
+                        margin: 0
+    .csc-list-item-body
+        background-color: $item-highlight-color
+        .csc-list-item-body-content
+            padding: $flex-gutter-md
+.csc-list-item.csc-list-item-expanded
+    .csc-list-item-head
+        background-color: $item-highlight-color
+        .csc-list-item-head-icon
+            color: $primary
+        .csc-list-item-head-title
+            .csc-list-item-title
+                color: $primary
+    .csc-list-item-body
+        background-color: $item-highlight-color
+        .csc-list-item-body-content
+            padding: $flex-gutter-md
+            padding-top: $flex-gutter-sm
 </style>

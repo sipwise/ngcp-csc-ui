@@ -59,7 +59,7 @@ import {
 export default {
     name: 'CscCfSelectionWeekdays',
     props: {
-        value: {
+        weekdays: {
             type: Array,
             default: () => [DAY_MAP[0]]
         },
@@ -72,15 +72,16 @@ export default {
             default: false
         }
     },
+    emits: ['input'],
     data () {
         return {
-            selectedWeekdays: this.value
+            selectedWeekdays: this.weekdays
         }
     },
     computed: {
         selectedTab: {
             get () {
-                return 'tab-' + this.selectedWeekdays[0]
+                return `tab-${this.selectedWeekdays[0]}`
             },
             set (tab) {
                 this.selectedWeekdays = [Number(tab.replace('tab-', ''))]
@@ -101,28 +102,32 @@ export default {
         selectedWeekdays (weekdays) {
             this.$emit('input', weekdays)
         },
-        value (weekdays) {
+        weekdays (weekdays) {
             this.selectedWeekdays = weekdays
         }
     },
     methods: {
         toggle (day) {
             if (this.isSelected(day)) {
-                this.selectedWeekdays = this.selectedWeekdays.filter(dayValue => day.value !== dayValue)
+                this.selectedWeekdays = this.selectedWeekdays.filter((dayValue) => day.value !== dayValue)
             } else {
                 this.selectedWeekdays.push(day.value)
             }
+            this.$emit('input', this.selectedWeekdays)
         },
         isSelected (day) {
-            return this.selectedWeekdays.find(dayValue => day.value === dayValue)
+            if (this.selectedWeekdays) {
+                return this.selectedWeekdays.find((dayValue) => day.value === dayValue)
+            }
+            return false
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus" scoped>
+<style lang="sass" rel="stylesheet/sass" scoped>
     .weekdays-selection-component
         // Note: the magic number for height is the max component height in buttons mode.
         // It makes the height of our component stable in any mode (tab \ buttons)
-        min-height 42px
+        min-height: 42px
 </style>

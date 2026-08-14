@@ -1,15 +1,12 @@
+import { i18n } from 'boot/i18n'
+import CscSpinner from 'components/CscSpinner'
 import _ from 'lodash'
 import {
     Loading,
     Notify
 } from 'quasar'
-import {
-    Alert
-} from 'src/quasar-legacy'
-import {
-    i18n
-} from 'src/boot/i18n'
-import CscSpinner from 'components/CscSpinner'
+import { getHttpErrorMessage } from 'src/helpers/http-error'
+import { Alert } from 'src/quasar-legacy'
 
 export function startLoading () {
     Loading.show({
@@ -25,11 +22,10 @@ export function stopLoading () {
 export function showGlobalError (messageOrException, timeout = 3000) {
     let errorMessage = messageOrException
     if (typeof messageOrException === 'object') {
-        // trying to get error message from the Axios response otherwise from the error itself
-        errorMessage = messageOrException?.response?.data?.message || messageOrException?.message
+        errorMessage = getHttpErrorMessage(messageOrException, messageOrException?.message)
     }
     if (errorMessage === '' || errorMessage === undefined || errorMessage === null) {
-        errorMessage = i18n.t('Unknown error')
+        errorMessage = i18n.global.t('Unknown error')
     }
     return Notify.create({
         message: errorMessage,
@@ -67,7 +63,7 @@ export function showToast (message) {
     Notify.create({
         textColor: 'dark',
         color: 'primary',
-        message: message,
+        message,
         position: 'top'
     })
 }
@@ -77,36 +73,36 @@ export function askForNotificationPermission () {
         if (_.isObject(Notification)) {
             Notification.requestPermission().then((perms) => {
                 if (perms === 'denied' || perms === 'default') {
-                    showPermanentGlobalWarning(i18n.t('You have blocked incoming call notifications.'))
+                    showPermanentGlobalWarning(i18n.global.t('You have blocked incoming call notifications.'))
                 }
                 resolve()
             }).catch((err) => {
                 reject(err)
             })
         } else {
-            showPermanentGlobalWarning(i18n.t('Incoming call notifications are not supported.'))
+            showPermanentGlobalWarning(i18n.global.t('Incoming call notifications are not supported.'))
             resolve()
         }
     })
 }
 
-var serviceWorkerPath = document.location.pathname + '/statics/service-worker.js'
+const serviceWorkerPath = `${document.location.pathname}/statics/service-worker.js`
 export function enableIncomingCallNotifications () {
     return new Promise((resolve) => {
         Promise.resolve().then(() => {
             if (navigator.serviceWorker) {
                 return navigator.serviceWorker.register(serviceWorkerPath)
-            } else {
-                showPermanentGlobalWarning(i18n.t('Incoming call notifications are not supported.'))
-                resolve()
             }
+            showPermanentGlobalWarning(i18n.global.t('Incoming call notifications are not supported.'))
+            resolve()
         }).then(() => {
             return askForNotificationPermission()
         }).then(() => {
             resolve()
         }).catch((err) => {
+            // eslint-disable-next-line no-console
             console.debug(err)
-            showPermanentGlobalWarning(i18n.t('Could not enable incoming call notifications.'))
+            showPermanentGlobalWarning(i18n.global.t('Could not enable incoming call notifications.'))
         })
     })
 }
@@ -115,8 +111,8 @@ export function showCallNotification (number) {
     if (navigator.serviceWorker) {
         navigator.serviceWorker.getRegistration(serviceWorkerPath).then((registration) => {
             if (registration && registration.showNotification) {
-                registration.showNotification(i18n.t('Incoming call from {number}', {
-                    number: number
+                registration.showNotification(i18n.global.t('Incoming call from {number}', {
+                    number
                 }), {
                     requireInteraction: true,
                     vibrate: [300, 200, 300, 200, 300],

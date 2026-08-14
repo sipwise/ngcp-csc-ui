@@ -15,12 +15,12 @@
             >
                 {{ $t('Fax') }}
                 {{ direction }}
-                {{ number | numberFormat }}
+                {{ $filters.numberFormat(number) }}
             </q-item-label>
             <q-item-label
                 caption
             >
-                {{ fax.start_time | smartTime }}
+                {{ $filters.smartTime(fax.start_time) }}
             </q-item-label>
             <q-item-label
                 v-if="fax.pages === 0"
@@ -55,6 +55,9 @@
                     v-if="callAvailable"
                     @click="startCall"
                 />
+                <csc-popup-menu-item-delete
+                    @click="deleteFax(fax)"
+                />
             </csc-more-menu>
         </q-item-section>
     </q-item>
@@ -63,10 +66,11 @@
 <script>
 import CscMoreMenu from 'components/CscMoreMenu'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
 import CscPopupMenuItemStartCall from 'components/CscPopupMenuItemStartCall'
 export default {
     name: 'CscFaxItem',
-    components: { CscPopupMenuItemStartCall, CscPopupMenuItem, CscMoreMenu },
+    components: { CscPopupMenuItemStartCall, CscPopupMenuItem, CscMoreMenu, CscPopupMenuItemDelete },
     props: {
         fax: {
             type: Object,
@@ -77,6 +81,7 @@ export default {
             default: false
         }
     },
+    emits: ['start-call', 'download-fax', 'delete-fax'],
     data () {
         return {}
     },
@@ -87,16 +92,14 @@ export default {
         direction () {
             if (this.fax.direction === 'out') {
                 return 'to'
-            } else {
-                return 'from'
             }
+            return 'from'
         },
         number () {
             if (this.fax.direction === 'out') {
-                return this.fax.callee
-            } else {
-                return this.fax.caller
+                return this.fax.callee_phonebook_name || this.fax.callee
             }
+            return this.fax.caller_phonebook_name || this.fax.caller
         }
     },
     methods: {
@@ -105,10 +108,13 @@ export default {
         },
         startCall () {
             this.$emit('start-call', this.fax.caller)
+        },
+        deleteFax (fax) {
+            this.$emit('delete-fax', fax)
         }
     }
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

@@ -4,18 +4,20 @@
         icon="calendar_today"
         :loading="$wait.is('csc-cf-time-set-create')"
         v-bind="$attrs"
-        v-on="$listeners"
+        @close="$emit('close')"
     >
         <csc-cf-selection-weekdays
-            v-model="selectedWeekdays"
+            :weekdays="selectedWeekdays"
             class="q-pl-md q-pr-md q-pt-sm q-pb-sm"
+            @input="selectedWeekdays=$event"
         />
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
+                data-cy="csc-weekdays-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -23,6 +25,7 @@
             />
             <q-btn
                 :label="$t('Save')"
+                data-cy="csc-weekdays-save"
                 flat
                 color="primary"
                 icon="check"
@@ -34,8 +37,8 @@
 </template>
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
-import { mapActions } from 'vuex'
 import CscCfSelectionWeekdays from 'components/call-forwarding/CscCfSelectionWeekdays'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfGroupConditionWeekdays',
     components: {
@@ -62,11 +65,16 @@ export default {
         deleteButton: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
+    emits: ['close'],
     data () {
         return {
-            selectedWeekdays: this.weekdays
+            selectedWeekdays: null
         }
     },
     computed: {
@@ -92,7 +100,8 @@ export default {
         async createTimeSetEvent () {
             const payload = {
                 mapping: this.mapping,
-                weekdays: this.selectedWeekdays
+                weekdays: this.selectedWeekdays,
+                subscriberId: this.subscriberId
             }
             if (this.timeSet) {
                 payload.id = this.timeSet.id
@@ -105,8 +114,11 @@ export default {
         async deleteTimeSetEvent () {
             await this.deleteTimeSet({
                 mapping: this.mapping,
-                id: this.timeSet.id
+                id: this.timeSet.id,
+                subscriberId: this.subscriberId
             })
+
+            this.$emit('close')
         }
     }
 }

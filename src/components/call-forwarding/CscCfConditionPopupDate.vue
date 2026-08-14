@@ -7,6 +7,7 @@
             :destination-set="destinationSet"
             :source-set="sourceSet"
             :time-set="timeSet"
+            :subscriber-id="subscriberId"
             :delete-button="true"
             @close="closePopup"
         />
@@ -14,8 +15,8 @@
 </template>
 
 <script>
-import CscCfGroupConditionDate from 'components/call-forwarding/CscCfGroupConditionDate'
 import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
+import CscCfGroupConditionDate from 'components/call-forwarding/CscCfGroupConditionDate'
 export default {
     name: 'CscCfConditionPopupDate',
     components: {
@@ -38,6 +39,10 @@ export default {
         timeSet: {
             type: Object,
             default: undefined
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     methods: {

@@ -14,14 +14,13 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'AppBadgeApple',
-    props: {
-        href: {
-            type: String,
-            required: true
-        }
+<script setup>
+defineOptions({ name: 'AppBadgeApple' })
+
+defineProps({
+    href: {
+        type: String,
+        required: true
     }
-}
+})
 </script>

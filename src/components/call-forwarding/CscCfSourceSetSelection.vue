@@ -1,22 +1,17 @@
 <template>
     <q-select
         :value="value"
-        :options="options"
+        :options="filteredOptions"
         emit-value
         use-input
         map-options
         input-debounce="300"
         v-bind="$attrs"
         @filter="filter"
-        v-on="$listeners"
     />
 </template>
 <script>
-import _ from 'lodash'
-import {
-    mapActions,
-    mapState
-} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfSourceSetSelection',
     props: {
@@ -35,23 +30,24 @@ export default {
         }
     },
     computed: {
-        ...mapState('callForwarding', [
+        ...mapGetters('callForwarding', [
             'sourceSets'
         ]),
         allOptions () {
-            const options = []
-            if (this.sourceSets) {
-                this.sourceSets.forEach((sourceSet) => {
-                    if (sourceSet.mode === this.mode) {
-                        options.push({
-                            value: sourceSet.id,
-                            label: sourceSet.name
-                        })
-                    }
-                })
-            }
-            return options
+            return this.sourceSets
+                .filter((sourceSet) => sourceSet.mode === this.mode)
+                .map((sourceSet) => ({
+                    value: sourceSet.id,
+                    label: sourceSet.name
+                }))
+        },
+        filteredOptions () {
+            return this.options.length ? this.options : this.allOptions
         }
+    },
+    async created () {
+        await this.loadSourceSets()
+        this.options = this.allOptions
     },
     methods: {
         ...mapActions('callForwarding', [
@@ -59,16 +55,16 @@ export default {
         ]),
         async filter (value, update) {
             await this.loadSourceSets()
-            if (value === '' || value === null || value === undefined) {
-                update(() => {
+            update(() => {
+                if (!value) {
                     this.options = this.allOptions
-                })
-            } else {
-                update(() => {
-                    this.options = this.allOptions.filter(sourceSet =>
-                        _.startsWith(_.lowerCase(sourceSet.label), _.lowerCase(value)))
-                })
-            }
+                } else {
+                    const lowerCaseValue = value.toLowerCase()
+                    this.options = this.allOptions.filter((option) =>
+                        option.label.toLowerCase().startsWith(lowerCaseValue)
+                    )
+                }
+            })
         }
     }
 }

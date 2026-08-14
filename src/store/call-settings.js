@@ -1,10 +1,11 @@
-import Vue from 'vue'
 import {
+    CALL_QUEUE_PREFERENCE_FIELDS,
     getPreferences,
     getPreferencesDefs,
-    setPreference,
-    removePreference
-} from '../api/subscriber'
+    removeCallQueueConfig,
+    removePreference,
+    setPreference
+} from 'src/api/subscriber'
 
 export default {
     namespaced: true,
@@ -18,20 +19,24 @@ export default {
             return parseInt(rootGetters['user/getSubscriberId'])
         },
         musicOnHold (state) {
-            return state.subscriberPreferences.music_on_hold
+            return state.subscriberPreferences?.music_on_hold
+        },
+        dnd (state) {
+            return state.subscriberPreferences?.dnd
         },
         language (state) {
             return state.subscriberPreferences.language
         },
         defaultLanguage (state, getters) {
             const languages = getters.languages
-            return languages && languages.find(lang => lang.default_val).label
+            return languages && languages.find((lang) => {
+                return lang.default_val
+            }).label
         },
         languages (state) {
-            return state.preferencesDefs
-                .language?.enum_values?.map((lang) => {
-                    return { value: lang.value, label: lang.label, default_val: lang.default_val }
-                })
+            return state.preferencesDefs.language?.enum_values?.map((lang) => {
+                return { value: lang.value, label: lang.label, default_val: lang.default_val }
+            })
         }
     },
     mutations: {
@@ -40,15 +45,19 @@ export default {
             state.subscriberPreferencesInitialized = true
         },
         subscriberPreferencesUpdate (state, { field, value }) {
-            Vue.set(state.subscriberPreferences, field, value)
+            state.subscriberPreferences[field] = value
+        },
+        subscriberPreferencesRemove (state, field) {
+            delete state.subscriberPreferences[field]
         },
         preferencesDefsSucceeded (state, res) {
             state.preferencesDefs = res
         }
     },
     actions: {
-        async loadSubscriberPreferencesAction (context) {
-            const subscriberPreferences = await getPreferences(context.getters.subscriberId)
+        async loadSubscriberPreferencesAction (context, id) {
+            const subscriberId = id || context.getters.subscriberId
+            const subscriberPreferences = await getPreferences(subscriberId)
             context.commit('subscriberPreferencesSucceeded', subscriberPreferences)
         },
         async fieldUpdateAction (context, options) {
@@ -58,6 +67,12 @@ export default {
                 value: options.value
             })
         },
+        async removeCallQueueAction (context) {
+            await removeCallQueueConfig(context.getters.subscriberId)
+            CALL_QUEUE_PREFERENCE_FIELDS.forEach((field) => {
+                context.commit('subscriberPreferencesRemove', field)
+            })
+        },
         async loadPreferencesDefsAction (context) {
             const preferencesDefs = await getPreferencesDefs()
             context.commit('preferencesDefsSucceeded', preferencesDefs)
@@ -65,13 +80,16 @@ export default {
         async setMusicOnHold (context, value) {
             await context.dispatch('fieldUpdateAction', { field: 'music_on_hold', value })
         },
-        async setLanguage (context, value) {
-            const subscriberId = context.getters.subscriberId
-            if (value) {
-                await setPreference(subscriberId, 'language', value)
+        async setDnd (context, value) {
+            await context.dispatch('fieldUpdateAction', { field: 'dnd', value })
+        },
+        async setLanguage (context, options) {
+            const subscriberId = options.subscriberId || context.getters.subscriberId
+            if (options.language) {
+                await setPreference(subscriberId, 'language', options.language)
                 context.commit('subscriberPreferencesUpdate', {
                     field: 'language',
-                    value: value
+                    value: options.language
                 })
             } else {
                 await removePreference(subscriberId, 'language')

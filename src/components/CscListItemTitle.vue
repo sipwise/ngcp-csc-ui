@@ -12,24 +12,21 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'CscListItemTitle',
-    props: {
-        icon: {
-            type: String,
-            default: ''
-        },
-        iconColor: {
-            type: String,
-            default: ''
-        }
+<script setup>
+
+defineOptions({ name: 'CscListItemTitle' })
+
+defineProps({
+    icon: {
+        type: String,
+        default: ''
     },
-    data () {
-        return {}
+    iconColor: {
+        type: String,
+        default: ''
     }
-}
+})
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="sass" rel="stylesheet/sass">
 </style>

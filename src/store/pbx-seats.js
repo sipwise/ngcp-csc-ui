@@ -1,35 +1,48 @@
 'use strict'
 
-import {
-    i18n
-} from 'src/boot/i18n'
-import {
-    CreationState,
-    RequestState
-} from './common'
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
-import Vue from 'vue'
 import {
-    getSeatList,
+    NcosSet,
+    NcosSets,
+    addSeatPreferenceField,
     createSeat,
+    getSeatList,
+    getSeatPreferences,
     removeSeat,
-    setSeatName,
+    removeSeatPreferenceField,
+    setNcosLevelSets,
+    setNcosSet,
+    setSeatAnnouncementCallSetup,
+    setSeatAnnouncementCfu,
+    setSeatAnnouncementToCallee,
+    setSeatCli,
+    setSeatClir,
+    setSeatCstaClient,
+    setSeatCstaController,
+    setSeatDisplayName,
     setSeatExtension,
     setSeatGroups,
-    setSeatNumbers,
-    setSeatSoundSet,
+    setSeatIgnoreCfWhenHunting,
     setSeatIntraPbx,
     setSeatMusicOnHold,
+    setSeatNumbers,
+    setSeatPreferenceField,
+    setSeatSIPPassword,
+    setSeatSoundSet,
     setSeatWebPassword,
-    getSeatPreferences,
-    setSeatSIPPassword
-} from '../api/pbx-seats'
+    setSeatWebUsername
+} from 'src/api/pbx-seats'
+import { setPreference } from 'src/api/subscriber'
+import { getSubscriberId } from 'src/auth'
+import { CreationState, RequestState } from 'src/store/common'
 
 export default {
     namespaced: true,
     state: {
         seatListState: RequestState.initiated,
         seatListVisibility: 'visible',
+        seatListError: null,
         seatListItems: [],
         seatListCurrentPage: 1,
         seatListLastPage: null,
@@ -51,6 +64,9 @@ export default {
         isSeatListEmpty (state) {
             return state.seatListItems.length && state.seatListItems.length === 0
         },
+        isSeatMapByIdEmpty (state) {
+            return Object.keys(state.seatMapById).length === 0
+        },
         isSeatListRequesting (state) {
             return state.seatListState === RequestState.requesting
         },
@@ -65,11 +81,6 @@ export default {
         },
         isSeatCreating (state) {
             return state.seatCreationState === CreationState.creating
-        },
-        isSeatExpanded (state) {
-            return (id) => {
-                return state.seatSelected !== null && state.seatSelected.id === id
-            }
         },
         isSeatRemoving (state) {
             return state.seatRemovalState === RequestState.requesting
@@ -93,15 +104,101 @@ export default {
                 return null
             }
         },
+        getNcosBySeatId (state, getters, rootState, rootGetters) {
+            return (seatId) => {
+                const prefs = state.preferenceMapById[seatId]
+                const ncosName = _.get(prefs, 'ncos', null)
+                if (ncosName !== null) {
+                    return rootGetters['pbx/getNcosByName'](ncosName)
+                }
+                return null
+            }
+        },
+        getDefaultNcos (state) {
+            return (id) => {
+                return state?.preferenceMapById[id]?.ncos
+            }
+        },
+        getDefaultNcosSet (state) {
+            return (id) => {
+                return state?.preferenceMapById[id]?.ncos_set
+            }
+        },
         getIntraPbx (state) {
             return (id) => {
                 const seatPreferences = state.preferenceMapById[id]
                 return seatPreferences && seatPreferences.clir_intrapbx ? state.preferenceMapById[id].clir_intrapbx : false
             }
         },
+        getClir (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.clir ? state.preferenceMapById[id].clir : false
+            }
+        },
+        getAnnouncementCfu (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.play_announce_before_cf ? state.preferenceMapById[id].play_announce_before_cf : false
+            }
+        },
         getMusicOnHold (state) {
             return (id) => {
                 return state?.preferenceMapById[id]?.music_on_hold || false
+            }
+        },
+        getDnd (state) {
+            return (id) => {
+                return state?.preferenceMapById[id]?.dnd || false
+            }
+        },
+        getAnnouncementCallSetup (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.play_announce_before_call_setup ? state.preferenceMapById[id].play_announce_before_call_setup : false
+            }
+        },
+        getAnnouncementToCallee (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.play_announce_to_callee ? state.preferenceMapById[id].play_announce_to_callee : false
+            }
+        },
+        getIgnoreCfWhenHunting (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.ignore_cf_when_hunting ? state.preferenceMapById[id].ignore_cf_when_hunting : false
+            }
+        },
+        getCstaClient (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.csta_client ? state.preferenceMapById[id].csta_client : false
+            }
+        },
+        getCstaController (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                return seatPreferences && seatPreferences.csta_controller ? state.preferenceMapById[id].csta_controller : false
+            }
+        },
+        getCurrentCli (state) {
+            return (id) => {
+                return state?.preferenceMapById[id]?.cli || false
+            }
+        },
+        getConferenceMaxParticipants (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                const value = seatPreferences?.conference_max_participants ?? ''
+                return value === null || value === undefined ? '' : value.toString()
+            }
+        },
+        getConferencePin (state) {
+            return (id) => {
+                const seatPreferences = state.preferenceMapById[id]
+                const value = seatPreferences?.conference_pin ?? ''
+                return value === null || value === undefined ? '' : value.toString()
             }
         },
         getSeatCreatingName (state) {
@@ -115,24 +212,24 @@ export default {
         },
         getSeatRemoveDialogMessage (state, getters) {
             if (state.seatRemoving !== null) {
-                return i18n.t('You are about to remove seat {seat}', {
+                return i18n.global.t('You are about to remove seat {seat}', {
                     seat: getters.getSeatRemovingName
                 })
             }
             return ''
         },
         getSeatCreationToastMessage (state, getters) {
-            return i18n.t('Added seat {seat}', {
+            return i18n.global.t('Added seat {seat}', {
                 seat: getters.getSeatCreatingName
             })
         },
         getSeatUpdateToastMessage (state, getters) {
-            return i18n.t('Changed {field} successfully', {
+            return i18n.global.t('Changed {field} successfully', {
                 field: getters.getSeatUpdatingField
             })
         },
         getSeatRemovalToastMessage (state, getters) {
-            return i18n.t('Removed seat {seat}', {
+            return i18n.global.t('Removed seat {seat}', {
                 seat: getters.getSeatRemovingName
             })
         },
@@ -148,7 +245,7 @@ export default {
         },
         hasCallQueue (state) {
             return (seatId) => {
-                return _.get(state, 'preferenceMapById.' + seatId + '.cloud_pbx_callqueue', false)
+                return _.get(state, `preferenceMapById.${seatId}.cloud_pbx_callqueue`, false)
             }
         }
     },
@@ -160,11 +257,11 @@ export default {
             state.seatListLastPage = _.get(options, 'seats.lastPage', 1)
             state.seatMapById = {}
             state.seatListItems.forEach((seat) => {
-                Vue.set(state.seatMapById, seat.id, seat)
+                state.seatMapById[seat.id] = seat
             })
             state.preferenceMapById = {}
             _.get(options, 'preferences.items', []).forEach((preference) => {
-                Vue.set(state.preferenceMapById, preference.id, preference)
+                state.preferenceMapById[preference.id] = preference
             })
             state.seatListVisibility = 'visible'
         },
@@ -181,8 +278,9 @@ export default {
                 state.seatListVisibility = 'visible'
             }
         },
-        seatListItemsFailed (state) {
+        seatListItemsFailed (state, err) {
             state.seatListState = RequestState.failed
+            state.seatListError = err
         },
         seatCreationRequesting (state, seat) {
             state.seatCreationState = CreationState.creating
@@ -206,15 +304,15 @@ export default {
             const seat = _.get(options, 'seat', null)
             const preferences = _.get(options, 'preferences', null)
             if (seat !== null && preferences !== null) {
-                Vue.delete(state.seatMapById, seat.id)
-                Vue.set(state.seatMapById, seat.id, seat)
+                delete state.seatMapById[seat.id]
+                state.seatMapById[seat.id] = seat
                 for (let i = 0; i < state.seatListItems.length; i++) {
                     if (state.seatListItems[i].id === seat.id) {
                         state.seatListItems[i] = seat
                     }
                 }
-                Vue.delete(state.preferenceMapById, preferences.id)
-                Vue.set(state.preferenceMapById, preferences.id, preferences)
+                delete state.preferenceMapById[preferences.id]
+                state.preferenceMapById[preferences.id] = preferences
                 if (state.seatSelected !== null && state.seatSelected.id === options.seat.id) {
                     state.seatSelected = options.seat
                 }
@@ -240,10 +338,10 @@ export default {
             state.seatRemovalState = RequestState.failed
             state.seatRemovalError = err
         },
-        expandSeat (state, seatId) {
+        selectSeat (state, seatId) {
             state.seatSelected = state.seatMapById[seatId]
         },
-        collapseSeat (state) {
+        resetSelectedSeat (state) {
             state.seatSelected = null
         },
         enableSeatAddForm (state) {
@@ -258,39 +356,34 @@ export default {
         loadPreferences (context, seatId) {
             return getSeatPreferences(seatId)
         },
-        loadSeatListItems (context, options) {
-            return new Promise((resolve, reject) => {
-                const page = _.get(options, 'page', context.state.seatListCurrentPage)
-                const clearList = _.get(options, 'clearList', true)
-                const displayName = _.get(options, 'display_name', null)
-                const pbxExtension = _.get(options, 'pbx_extension', null)
-                const primaryNumber = _.get(options, 'primary_number', null)
-                const aliasNumber = _.get(options, 'alias_number', null)
-                context.commit('seatListItemsRequesting', {
-                    clearList: clearList
-                })
-                getSeatList({
-                    page: page,
+        async loadSeatListItems (context, options) {
+            const page = _.get(options, 'page', context.state.seatListCurrentPage)
+            const clearList = _.get(options, 'clearList', true)
+            const displayName = _.get(options, 'display_name', null)
+            const pbxExtension = _.get(options, 'pbx_extension', null)
+            const primaryNumber = _.get(options, 'primary_number', null)
+            const aliasNumber = _.get(options, 'alias_number', null)
+            context.commit('seatListItemsRequesting', { clearList })
+            try {
+                const seatList = await getSeatList({
+                    page,
                     display_name: displayName,
                     pbx_extension: pbxExtension,
                     primary_number: primaryNumber,
                     alias_number: aliasNumber
-                }).then((seatList) => {
-                    context.commit('pbx/pilotSucceeded', seatList.pilot, { root: true })
-                    context.commit('pbx/numbersSucceeded', seatList.numbers, { root: true })
-                    context.commit('pbx/soundSetsSucceeded', seatList.soundSets, { root: true })
-                    context.commit('pbx/groupsSucceeded', seatList.groups, { root: true })
-                    context.commit('seatListItemsSucceeded', {
-                        seats: seatList.seats,
-                        preferences: seatList.preferences,
-                        page: page
-                    })
-                    resolve()
-                }).catch((err) => {
-                    context.commit('seatListItemsFailed', err.message)
-                    reject(err)
                 })
-            })
+                context.commit('pbx/pilotSucceeded', seatList.pilot, { root: true })
+                context.commit('pbx/numbersSucceeded', seatList.numbers, { root: true })
+                context.commit('pbx/soundSetsSucceeded', seatList.soundSets, { root: true })
+                context.commit('pbx/groupsSucceeded', seatList.groups, { root: true })
+                context.commit('seatListItemsSucceeded', {
+                    seats: seatList.seats,
+                    preferences: seatList.preferences,
+                    page
+                })
+            } catch (err) {
+                context.commit('seatListItemsFailed', err.message)
+            }
         },
         createSeat (context, seatData) {
             context.commit('seatCreationRequesting', seatData)
@@ -318,14 +411,28 @@ export default {
                 context.commit('seatRemovalFailed', err.message)
             })
         },
-        setSeatName (context, options) {
+        setSeatDisplayName (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Seat name')
+                seatField: i18n.global.t('Seat displayName')
             })
-            setSeatName({
+            setSeatDisplayName({
                 seatId: options.seatId,
-                seatName: options.seatName
+                displayName: options.displayName
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        setSeatWebUsername (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.global.t('Seat Web Username')
+            })
+            setSeatWebUsername({
+                seatId: options.seatId,
+                webUsername: options.webUsername
             }).then((result) => {
                 context.commit('seatUpdateSucceeded', result)
             }).catch((err) => {
@@ -335,7 +442,7 @@ export default {
         setSeatExtension (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Extension')
+                seatField: i18n.global.t('Extension')
             })
             setSeatExtension({
                 seatId: options.seatId,
@@ -349,7 +456,7 @@ export default {
         setSeatWebPassword (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Password')
+                seatField: i18n.global.t('Password')
             })
             setSeatWebPassword({
                 seatId: options.seatId,
@@ -363,7 +470,7 @@ export default {
         setSeatSIPPassword (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('SIP Password')
+                seatField: i18n.global.t('SIP Password')
             })
             setSeatSIPPassword({
                 seatId: options.seatId,
@@ -377,7 +484,7 @@ export default {
         setSeatGroups (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Groups')
+                seatField: i18n.global.t('Groups')
             })
             setSeatGroups({
                 seatId: options.seatId,
@@ -388,34 +495,27 @@ export default {
                 context.commit('seatUpdateFailed', err.message)
             })
         },
-        setSeatNumbers (context, options) {
+        async setSeatNumbers (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Alias Numbers')
+                seatField: i18n.global.t('Alias Numbers')
             })
-            setSeatNumbers({
-                seatId: options.seatId,
-                pilotId: context.rootGetters['pbx/pilot'].id,
-                assignedNumbers: options.assignedNumbers,
-                unassignedNumbers: options.unassignedNumbers
-            }).then((result) => {
-                if (options.assignedNumbers.length > 0) {
-                    return context.dispatch('loadSeatListItems', {
-                        clearList: false
-                    })
-                } else {
-                    return Promise.resolve(result)
-                }
-            }).then((result) => {
+            try {
+                const result = await setSeatNumbers({
+                    seatId: options.seatId,
+                    pilotId: context.rootGetters['pbx/pilot'].id,
+                    assignedNumbers: options.assignedNumbers,
+                    unassignedNumbers: options.unassignedNumbers
+                })
                 context.commit('seatUpdateSucceeded', result)
-            }).catch((err) => {
+            } catch (err) {
                 context.commit('seatUpdateFailed', err.message)
-            })
+            }
         },
         setSeatSoundSet (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: i18n.t('Sound Set')
+                seatField: i18n.global.t('Sound Set')
             })
             setSeatSoundSet({
                 seatId: options.seatId,
@@ -426,10 +526,78 @@ export default {
                 context.commit('seatUpdateFailed', err.message)
             })
         },
+        setNcosSet (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.global.t('Ncos')
+            })
+            setNcosSet({
+                seatId: options.seatId,
+                ncosId: options.ncosId
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        NcosSet (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.global.t('Ncos Set')
+            })
+            NcosSet({
+                seatId: options.seatId,
+                ncosSetId: options.ncosSetId
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        setNcosLevelSet (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: getSubscriberId(),
+                seatField: i18n.global.t('Ncos')
+            })
+            setNcosLevelSets({
+                seatId: getSubscriberId(),
+                ncosId: options.ncosId
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        setNcosSets (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: getSubscriberId(),
+                seatField: i18n.global.t('Ncos Set')
+            })
+            NcosSets({
+                seatId: getSubscriberId(),
+                ncosSetId: options.ncosSetId
+            }).then((result) => {
+                context.commit('seatUpdateSucceeded', result)
+            }).catch((err) => {
+                context.commit('seatUpdateFailed', err.message)
+            })
+        },
+        async setClir (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('The visibility of the number to the callee')
+            })
+            try {
+                const result = await setSeatClir(options.seatId, options.clir)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
         async setIntraPbx (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.t('the visibility of the number within own PBX')
+                seatField: options.message || i18n.global.t('The visibility of the number within own PBX')
             })
             try {
                 const result = await setSeatIntraPbx(options.seatId, options.intraPbx)
@@ -441,7 +609,7 @@ export default {
         async setMusicOnHold (context, options) {
             context.commit('seatUpdateRequesting', {
                 seatId: options.seatId,
-                seatField: options.message || i18n.t('music on hold of the seat')
+                seatField: options.message || i18n.global.t('music on hold of the seat')
             })
             try {
                 const result = await setSeatMusicOnHold(options.seatId, options.musicOnHold)
@@ -449,6 +617,168 @@ export default {
             } catch (err) {
                 context.commit('seatUpdateFailed', err.message)
             }
+        },
+        async setDnd (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('DND')
+            })
+            try {
+                await setPreference(options.seatId, 'dnd', options.dnd)
+                context.commit('seatUpdateSucceeded')
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setCli (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('cli of the seat')
+            })
+            try {
+                const result = await setSeatCli(options.seatId, options.cli)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setAnnouncementCfu (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('the playback announcement as early media before Call Forward Unconditional or Unavailable')
+            })
+            try {
+                const result = await setSeatAnnouncementCfu(options.seatId, options.announcementCfu)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setAnnouncementCallSetup (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('the playback announcement as early media before send the call to callee')
+            })
+            try {
+                const result = await setSeatAnnouncementCallSetup(options.seatId, options.announcementCallSetup)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setAnnouncementToCallee (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('the playback announcement to callee after he answered the call')
+            })
+            try {
+                const result = await setSeatAnnouncementToCallee(options.seatId, options.announcementToCallee)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setIgnoreCfWhenHunting (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('the behavior of the members call forwards from a Cloud PBX subscriber when it is called within a huntgroup')
+            })
+            try {
+                const result = await setSeatIgnoreCfWhenHunting(options.seatId, options.ignoreCfWhenHunting)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setCstaClient (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('the right of this subscriber to be controlled by a CTI subscriber within the same customer using uaCSTA via SIP')
+            })
+            try {
+                const result = await setSeatCstaClient(options.seatId, options.cstaClient)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setCstaController (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.message || i18n.global.t('the right this subscriber to initiate CTI sessions to other subscribers within the same customer using uaCSTA via SIP')
+            })
+            try {
+                const result = await setSeatCstaController(options.seatId, options.cstaController)
+                context.commit('seatUpdateSucceeded', result)
+            } catch (err) {
+                context.commit('seatUpdateFailed', err.message)
+            }
+        },
+        async setConferenceMaxParticipants (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: i18n.global.t('Maximum Conference Participants')
+            })
+
+            const seatPreferencesList = Object.keys(context.state.preferenceMapById[options.seatId] || {})
+            const hasConferenceMaxParticipants = seatPreferencesList.includes('conference_max_participants')
+            const seat = context.state.seatMapById[options.seatId]
+
+            if (hasConferenceMaxParticipants && options.conferenceMaxParticipants === '') {
+                await removeSeatPreferenceField(options.seatId, 'conference_max_participants')
+                const preferences = { ...context.state.preferenceMapById[options.seatId] }
+                delete preferences.conference_max_participants
+                return context.commit('seatUpdateSucceeded', { seat, preferences })
+            }
+
+            if (hasConferenceMaxParticipants) {
+                await setSeatPreferenceField(options.seatId, 'conference_max_participants', options.conferenceMaxParticipants)
+                const preferences = {
+                    ...context.state.preferenceMapById[options.seatId],
+                    conference_max_participants: options.conferenceMaxParticipants
+                }
+                return context.commit('seatUpdateSucceeded', { seat, preferences })
+            }
+
+            await addSeatPreferenceField(options.seatId, 'conference_max_participants', options.conferenceMaxParticipants)
+            const preferences = {
+                ...context.state.preferenceMapById[options.seatId],
+                conference_max_participants: options.conferenceMaxParticipants
+            }
+            context.commit('seatUpdateSucceeded', { seat, preferences })
+        },
+        async setConferencePin (context, options) {
+            context.commit('seatUpdateRequesting', {
+                seatId: options.seatId,
+                seatField: options.conferencePin
+            })
+
+            const seatPreferencesList = Object.keys(context.state.preferenceMapById[options.seatId] || {})
+            const hasConferencePin = seatPreferencesList.includes('conference_pin')
+            const seat = context.state.seatMapById[options.seatId]
+
+            if (hasConferencePin && options.conferencePin === '') {
+                await removeSeatPreferenceField(options.seatId, 'conference_pin')
+                const preferences = { ...context.state.preferenceMapById[options.seatId] }
+                delete preferences.conference_pin
+                return context.commit('seatUpdateSucceeded', { seat, preferences })
+            }
+
+            if (hasConferencePin) {
+                await setSeatPreferenceField(options.seatId, 'conference_pin', options.conferencePin)
+                const preferences = {
+                    ...context.state.preferenceMapById[options.seatId],
+                    conference_pin: options.conferencePin
+                }
+                return context.commit('seatUpdateSucceeded', { seat, preferences })
+            }
+
+            await addSeatPreferenceField(options.seatId, 'conference_pin', options.conferencePin)
+            const preferences = {
+                ...context.state.preferenceMapById[options.seatId],
+                conference_pin: options.conferencePin
+            }
+            return context.commit('seatUpdateSucceeded', { seat, preferences })
         }
     }
 }

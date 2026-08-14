@@ -18,7 +18,8 @@
 </template>
 
 <script>
-import { i18n } from 'src/boot/i18n'
+import useValidate from '@vuelidate/core'
+import { i18n } from 'boot/i18n'
 export default {
     name: 'CscDataTableEditInput',
     props: {
@@ -36,11 +37,13 @@ export default {
         },
         saveLabel: {
             type: String,
-            default: i18n.t('Save')
+            default: i18n.global.t('Save')
         }
     },
+    emits: ['changed'],
     data () {
         return {
+            v$: useValidate(),
             internalValue: this.value
         }
     },
@@ -57,24 +60,20 @@ export default {
     computed: {
         error () {
             if (this.column.componentValidations) {
-                return this.$v.internalValue.$error
-            } else {
-                return false
+                return this.v$.internalValue.$errors.length > 0
             }
+            return false
         },
         errorMessage () {
             if (this.column.componentValidations) {
-                const validation = this.column.componentValidations.find(validation =>
-                    this.$v.internalValue[validation.name] === false
+                const validation = this.column.componentValidations.find((validation) => this.v$.internalValue[validation.name]?.$invalid === true
                 )
                 if (validation) {
                     return validation.error
-                } else {
-                    return undefined
                 }
-            } else {
                 return undefined
             }
+            return undefined
         }
     },
     watch: {
@@ -84,19 +83,18 @@ export default {
     },
     mounted () {
         this.internalValue = this.value
-        this.$v.$reset()
+        this.v$.$reset()
     },
     methods: {
         validate () {
             if (this.column.componentValidations) {
-                this.$v.$touch()
-                return !this.$v.$invalid
-            } else {
-                return true
+                this.v$.$touch()
+                return !this.v$.$invalid
             }
+            return true
         },
         save () {
-            this.$v.$touch()
+            this.v$.$touch()
             this.$emit('changed', {
                 column: this.column,
                 row: this.row,
@@ -104,7 +102,7 @@ export default {
             })
         },
         clear () {
-            this.$v.$reset()
+            this.v$.$reset()
         }
     }
 }

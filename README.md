@@ -57,8 +57,12 @@ To keep translation files consistent and updated please run **i18n:extract** com
 
     yarn run i18n:extract
 
-That CLI command will collect all new translation keys from the JS source code, and will place those keys into all translation files in a proper format.
+That CLI command will collect all new translation keys from the JS source code, and will place those keys into all translation files in a proper format. Note that currently the command is set to use bash. If you prefer using sh change the package.json as below:
 
+````
+"i18n:extract": "sh ./bin/vue-i18n-extract/extract.sh",
+"i18n:extract-report": "sh ./bin/vue-i18n-extract/extract.sh report"
+````
 Example of the JS code with translations:
 
 ```javascript
@@ -274,3 +278,7 @@ const subscriber = await patchReplaceFull({
     value: 'dave'
 })
 console.log(subscriber.webusername)
+
+### Troubleshooting
+
+If you get a CORS error when trying to login, ssh in your machine and amend the flag `www_admin.http_csc.csc_dev` to yes.

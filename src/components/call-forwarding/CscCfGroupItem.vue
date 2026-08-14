@@ -1,7 +1,5 @@
 <template>
-    <q-item
-        :disable="loading || !mapping.enabled"
-    >
+    <q-item>
         <q-item-section
             side
         >
@@ -9,118 +7,103 @@
                 name="subdirectory_arrow_right"
             />
         </q-item-section>
-        <q-item-section>
+        <q-item-section
+            :class="loading ? 'disabled' : '' "
+        >
             <q-item-label>
-                <template
-                    v-if="destinationIndex === 0 && mapping.type !== 'cft'"
-                >
-                    {{ $t('Forwarded to') }}
-                </template>
-                <template
-                    v-else-if="destinationIndex === 0 && mapping.type === 'cft'"
-                >
-                    {{ $t('After') }}
-                    <span
-                        class="q-pl-xs q-pr-xs text-primary text-weight-bold cursor-pointer"
-                        style="white-space: nowrap"
-                    >
-                        <q-icon
-                            name="access_time"
-                        />
-                        {{ ringTimeout }}
-                        {{ $t('seconds') }}
-                        <q-popup-edit
-                            v-model="changedDestinationTimeout"
-                            buttons
-                            @before-show="$store.commit('callForwarding/popupShow', null)"
-                            @save="updateRingTimeoutEvent()"
-                        >
-                            <csc-input
-                                v-model="changedDestinationTimeout"
-                                type="number"
-                                dense
-                            >
-                                <template
-                                    v-slot:prepend
-                                >
-                                    <q-icon
-                                        name="access_time"
-                                    />
-                                </template>
-                            </csc-input>
-                        </q-popup-edit>
-                    </span>
-                    {{ $t('forwarded to') }}
-                </template>
-                <template
-                    v-else
-                >
-                    {{ $t('After') }}
-                    <span
-                        class="q-pl-xs q-pr-xs text-primary text-weight-bold cursor-pointer"
-                        style="white-space: nowrap"
-                    >
-                        <q-icon
-                            name="access_time"
-                        />
-                        {{ destinationPrevious.timeout }}
-                        {{ $t('seconds') }}
-                        <q-popup-edit
-                            v-model="changedDestinationTimeout"
-                            buttons
-                            @before-show="$store.commit('callForwarding/popupShow', null)"
-                            @save="updateDestinationTimeoutEvent({
-                                destinationTimeout: changedDestinationTimeout,
-                                destinationIndex: destinationIndex - 1,
-                                destinationSetId: destinationSet.id
-                            })"
-                        >
-                            <csc-input
-                                v-model="changedDestinationTimeout"
-                                type="number"
-                                dense
-                            >
-                                <template
-                                    v-slot:prepend
-                                >
-                                    <q-icon
-                                        name="access_time"
-                                    />
-                                </template>
-                            </csc-input>
-                        </q-popup-edit>
-                    </span>
-                    {{ $t('forwarded to') }}
-                </template>
+                {{ $t('Forwarded to') + ' ' }}
+                <csc-cf-destination
+                    v-if="!editable"
+                    :model-value="destination"
+                    :label="readOnlyDestinationLabel"
+                />
                 <csc-cf-destination-custom-announcement
-                    v-if="isDestinationTypeCustomAnnouncement(destination.destination) && destination.announcement_id"
-                    v-model="announcement"
+                    v-else-if="isDestinationTypeCustomAnnouncement(destination.destination) && destination.announcement_id"
+                    class="q-pr-xs"
+                    :value="announcement"
                     :destination="destination"
                     :announcements="announcements"
                     @input="updateAnnouncementEvent({
                         destinationIndex: destinationIndex,
                         destinationSetId: destinationSet.id
-                    })"
+                    }, $event)"
                 />
-                <csc-cf-destination-number
+                <csc-cf-destination-number-or-seat
                     v-else-if="isDestinationTypeNumber(destination.destination)"
-                    v-model="changedDestination"
+                    :value="changedDestination"
                     :destination="destination"
                     @input="updateDestinationEvent({
                         destinationIndex: destinationIndex,
                         destinationSetId: destinationSet.id
-                    })"
+                    }, $event)"
                 />
                 <csc-cf-destination
                     v-else
-                    :value="destination"
+                    :model-value="destination"
                 />
+                <template
+                    v-if="hasDestinationDuration"
+                >
+                    {{ ' ' + $t('for') + ' ' }}
+                    <span
+                        :class="{ 'text-primary cursor-pointer': editable }"
+                        class="q-pl-xs q-pr-xs text-weight-bold"
+                        style="white-space: nowrap"
+                    >
+                        <q-icon
+                            name="access_time"
+                        />
+                        {{ currentDestinationTimeout }}
+                        {{ $t('seconds') }}
+                        <q-popup-edit
+                            v-if="editable"
+                            v-slot="scope"
+                            v-model="changedDestinationTimeout"
+                            buttons
+                            @before-show="setPopupShow(null)"
+                            @save="updateDestinationTimeoutEvent({
+                                destinationTimeout: $event,
+                                destinationIndex: destinationIndex,
+                                destinationSetId: destinationSet.id
+                            })"
+                        >
+                            <csc-input
+                                v-model="scope.value"
+                                type="number"
+                                dense
+                            >
+                                <template
+                                    #prepend
+                                >
+                                    <q-icon
+                                        name="access_time"
+                                    />
+                                </template>
+                            </csc-input>
+                        </q-popup-edit>
+                    </span>
+                </template>
             </q-item-label>
         </q-item-section>
         <q-item-section
+            v-if="editable && destinationIndex < destinationSet.destinations.length - 1"
             side
         >
             <csc-more-menu>
+                <csc-popup-menu-item
+                    v-if="canMoveUp"
+                    icon="arrow_upward"
+                    :label="$t('Move up')"
+                    data-cy="csc-cf-destination-move-up"
+                    @click="moveDestinationEvent('up')"
+                />
+                <csc-popup-menu-item
+                    v-if="canMoveDown"
+                    icon="arrow_downward"
+                    :label="$t('Move down')"
+                    data-cy="csc-cf-destination-move-down"
+                    @click="moveDestinationEvent('down')"
+                />
                 <csc-popup-menu-item-delete
                     @click="removeDestinationEvent({
                         destinationIndex: destinationIndex,
@@ -140,38 +123,35 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import {
-    mapActions,
-    mapGetters
-} from 'vuex'
 import CscMoreMenu from 'components/CscMoreMenu'
+import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPopupMenuItemDelete from 'components/CscPopupMenuItemDelete'
-import CscInput from 'components/form/CscInput'
 import CscSpinner from 'components/CscSpinner'
-import {
-    showGlobalError
-} from 'src/helpers/ui'
-import destination from 'src/mixins/destination'
 import CscCfDestination from 'components/call-forwarding/CscCfDestination'
 import CscCfDestinationCustomAnnouncement from 'components/call-forwarding/CscCfDestinationCustomAnnouncement'
-import CscCfDestinationNumber from 'components/call-forwarding/CscCfDestinationNumber'
+import CscCfDestinationNumberOrSeat from 'components/call-forwarding/CscCfDestinationNumberOrSeat'
+import CscInput from 'components/form/CscInput'
+import _ from 'lodash'
+import { canMoveDestination } from 'src/helpers/call-forwarding-destinations'
+import destination from 'src/mixins/destination'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupItem',
-    components: { CscCfDestinationNumber, CscCfDestinationCustomAnnouncement, CscCfDestination, CscSpinner, CscInput, CscPopupMenuItemDelete, CscMoreMenu },
+    components: {
+        CscCfDestinationNumberOrSeat,
+        CscCfDestinationCustomAnnouncement,
+        CscCfDestination,
+        CscSpinner,
+        CscInput,
+        CscPopupMenuItemDelete,
+        CscPopupMenuItem,
+        CscMoreMenu
+    },
     mixins: [destination],
     props: {
-        mapping: {
-            type: Object,
-            required: true
-        },
         destination: {
             type: Object,
             required: true
-        },
-        destinationPrevious: {
-            type: Object,
-            default: null
         },
         destinationIndex: {
             type: Number,
@@ -181,15 +161,11 @@ export default {
             type: Object,
             required: true
         },
-        sourceSet: {
-            type: Object,
-            default: undefined
-        },
-        timeSet: {
-            type: Object,
-            default: undefined
-        },
         loading: {
+            type: Boolean,
+            default: false
+        },
+        editable: {
             type: Boolean,
             default: false
         }
@@ -197,22 +173,54 @@ export default {
     data () {
         return {
             changedDestination: this.destination.simple_destination,
-            changedDestinationTimeout: 0,
+            changedDestinationTimeout: this.destination.timeout,
             announcement: null
         }
     },
     computed: {
         ...mapGetters('callForwarding', [
-            'ringTimeout',
             'announcements'
         ]),
+        hasDestinationDuration () {
+            return this.isDestinationTypeNumber(this.destination.destination)
+        },
+        currentDestinationTimeout () {
+            if (!this.hasDestinationDuration) {
+                return null
+            }
+
+            return this.destination.timeout
+        },
+        readOnlyDestinationLabel () {
+            return this.announcement?.label || this.destination.simple_destination
+        },
+        canMoveUp () {
+            return canMoveDestination(
+                this.destinationSet.destinations,
+                this.destinationIndex,
+                this.destinationIndex - 1
+            )
+        },
+        canMoveDown () {
+            return canMoveDestination(
+                this.destinationSet.destinations,
+                this.destinationIndex,
+                this.destinationIndex + 1
+            )
+        },
         waitIdentifier () {
-            return 'csc-cf-group-item-' + this.destinationSet.id + '-' + this.destinationIndex
+            return `csc-cf-group-item-${this.destinationSet.id}-${this.destinationIndex}`
         }
     },
     watch: {
         destination () {
             this.changedDestination = this.destination.simple_destination
+        },
+        currentDestinationTimeout: {
+            handler (timeout) {
+                this.changedDestinationTimeout = timeout
+            },
+            immediate: true
         }
     },
     beforeMount () {
@@ -220,33 +228,34 @@ export default {
             this.setAnnouncement()
         }
     },
-    async mounted () {
-        if (this.mapping.type === 'cft' && this.destinationIndex === 0) {
-            this.changedDestinationTimeout = this.ringTimeout
-        } else if (this.destinationPrevious) {
-            this.changedDestinationTimeout = this.destinationPrevious.timeout
-        }
-    },
     methods: {
         ...mapActions('callForwarding', [
             'updateDestination',
             'removeDestination',
+            'moveDestination',
             'updateDestinationTimeout',
-            'updateRingTimeout',
             'rewriteDestination',
-            'getAnnouncementById',
-            'updateAnnouncement'
+            'updateAnnouncement',
+            'setPopupShow'
         ]),
-        async updateDestinationEvent (payload) {
-            this.$wait.start(this.waitIdentifier)
-            try {
-                const validatedDest = await this.rewriteDestination(this.changedDestination)
-                await this.updateDestination({ ...payload, destination: validatedDest })
-            } catch (err) {
-                showGlobalError(err.message)
-            } finally {
-                this.$wait.end(this.waitIdentifier)
+        async moveDestinationEvent (direction) {
+            const targetIndex = direction === 'up' ? this.destinationIndex - 1 : this.destinationIndex + 1
+            if (!canMoveDestination(this.destinationSet.destinations, this.destinationIndex, targetIndex)) {
+                return
             }
+            this.$wait.start(this.waitIdentifier)
+            await this.moveDestination({
+                destinationSetId: this.destinationSet.id,
+                destinationFromIndex: this.destinationIndex,
+                destinationToIndex: targetIndex
+            })
+            this.$wait.end(this.waitIdentifier)
+        },
+        async updateDestinationEvent (payload, newDestination) {
+            this.$wait.start(this.waitIdentifier)
+            const validatedDest = await this.rewriteDestination(newDestination)
+            await this.updateDestination({ ...payload, destination: validatedDest })
+            this.$wait.end(this.waitIdentifier)
         },
         async removeDestinationEvent (payload) {
             this.$q.dialog({
@@ -255,14 +264,10 @@ export default {
                 color: 'negative',
                 cancel: true,
                 persistent: true
-            }).onOk(async data => {
+            }).onOk(async () => {
                 this.$wait.start(this.waitIdentifier)
-                if (this.destinationSet.destinations.length > 1) {
-                    await this.removeDestination(payload)
-                    this.setAnnouncement()
-                } else {
-                    this.$emit('delete-last', payload)
-                }
+                await this.removeDestination(payload)
+                this.setAnnouncement()
                 this.$wait.end(this.waitIdentifier)
             })
         },
@@ -271,31 +276,14 @@ export default {
             await this.updateDestinationTimeout(payload)
             this.$wait.end(this.waitIdentifier)
         },
-        async updateRingTimeoutEvent () {
-            this.$wait.start('csc-cf-mappings-full')
-            await this.updateRingTimeout(this.changedDestinationTimeout)
-            this.$wait.end('csc-cf-mappings-full')
-        },
         setAnnouncement () {
-            this.announcement = _.first(this.announcements.filter(announcement => announcement.value === this.destination.announcement_id))
+            this.announcement = _.first(this.announcements.filter((announcement) => announcement.value === this.destination.announcement_id))
         },
-        async updateAnnouncementEvent (payload) {
+        async updateAnnouncementEvent (payload, newAnnouncement) {
             this.$wait.start(this.waitIdentifier)
-            try {
-                await this.updateAnnouncement({ ...payload, announcementId: this.announcement.value })
-                this.setAnnouncement()
-            } catch (err) {
-                showGlobalError(err.message)
-            } finally {
-                this.$wait.end(this.waitIdentifier)
-            }
-        },
-        checkAnnouncement () {
-            const fieldFilled = this.announcement > 0
-            if (!fieldFilled) {
-                showGlobalError(this.$t('Please select an option'))
-            }
-            return fieldFilled
+            await this.updateAnnouncement({ ...payload, announcementId: newAnnouncement.value })
+            this.setAnnouncement()
+            this.$wait.end(this.waitIdentifier)
         }
     }
 }

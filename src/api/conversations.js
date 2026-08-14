@@ -1,30 +1,37 @@
-
+import { saveAs } from 'file-saver'
 import _ from 'lodash'
-import {
-    saveAs
-} from 'file-saver'
-import Vue from 'vue'
 import {
     getIncomingCallBlocking,
     getOutgoingCallBlocking
-} from './call-blocking'
+} from 'src/api/call-blocking'
 import {
-    getList
-} from './common'
+    LIST_DEFAULT_ROWS,
+    apiDownloadFile,
+    get,
+    getList,
+    httpApi
+} from 'src/api/common'
 
 export function getConversations (options) {
     return new Promise((resolve, reject) => {
         const type = _.get(options, 'type', null)
         const from = _.get(options, 'from', '')
         const to = _.get(options, 'to', '')
+        const direction = _.get(options, 'direction', '')
+        const subscriberId = _.get(options, 'subscriberId')
+        const noCount = _.get(options, 'no_count')
         const params = {
-            subscriber_id: _.get(options, 'subscriberId'),
             order_by: _.get(options, 'order_by', 'timestamp'),
             order_by_direction: 'desc',
-            no_count: true,
             tz: 'UTC',
             page: _.get(options, 'page', 1),
-            rows: _.get(options, 'rows', 25)
+            rows: _.get(options, 'rows', LIST_DEFAULT_ROWS)
+        }
+        if (noCount !== null) {
+            params.no_count = noCount
+        }
+        if (subscriberId !== null) {
+            params.subscriber_id = subscriberId
         }
         if (type !== null) {
             params.type = type
@@ -35,10 +42,13 @@ export function getConversations (options) {
         if (to !== '') {
             params.to = to
         }
+        if (direction !== '') {
+            params.direction = direction
+        }
         getList({
             path: 'api/conversations/',
             root: '_embedded.ngcp:conversations',
-            params: params,
+            params,
             all: false
         }).then((list) => {
             resolve(list)
@@ -48,13 +58,36 @@ export function getConversations (options) {
     })
 }
 
+export function downloadCsv (options) {
+    const apiGetOptions = {
+        resource: 'conversations',
+        config: {
+            headers: {
+                Accept: 'text/csv',
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
+            },
+            params: {
+                ...options
+            }
+        }
+    }
+
+    const defaultFileName = apiGetOptions.config.params.type ? `conversations-${apiGetOptions.config.params.type}.csv` : 'conversations.csv'
+
+    return apiDownloadFile({
+        apiGetOptions,
+        defaultFileName,
+        defaultContentType: 'text/csv'
+    })
+}
+
 export function downloadVoiceMail (id) {
     return new Promise((resolve, reject) => {
-        Vue.http.get('api/voicemailrecordings/' + id, { responseType: 'blob' })
+        httpApi.get(`api/voicemailrecordings/${id}`, { responseType: 'blob' })
             .then((res) => {
-                return res.blob()
-            }).then(voicemail => {
-                saveAs((voicemail), 'voicemail-' + id + '.wav')
+                return res.data
+            }).then((voicemail) => {
+                saveAs((voicemail), `voicemail-${id}.wav`)
                 resolve()
             }).catch((err) => {
                 reject(err)
@@ -64,11 +97,11 @@ export function downloadVoiceMail (id) {
 
 export function downloadFax (id) {
     return new Promise((resolve, reject) => {
-        Vue.http.get('api/faxrecordings/' + id, { responseType: 'blob' })
+        httpApi.get(`api/faxrecordings/${id}`, { responseType: 'blob' })
             .then((res) => {
-                return res.blob()
-            }).then(fax => {
-                saveAs((fax), 'fax-' + id + '.tif')
+                return res.data
+            }).then((fax) => {
+                saveAs((fax), `fax-${id}.tif`)
                 resolve()
             }).catch((err) => {
                 reject(err)
@@ -79,9 +112,9 @@ export function downloadFax (id) {
 export function playVoiceMail (options) {
     return new Promise((resolve, reject) => {
         const params = { format: options.format }
-        Vue.http.get(`api/voicemailrecordings/${options.id}`, { params: params, responseType: 'blob' })
+        httpApi.get(`api/voicemailrecordings/${options.id}`, { params, responseType: 'blob' })
             .then((res) => {
-                resolve(URL.createObjectURL(res.body))
+                resolve(URL.createObjectURL(res.data))
             }).catch((err) => {
                 reject(err)
             })
@@ -108,8 +141,15 @@ export function getOutgoingBlocked (id) {
     })
 }
 
+export async function getVoicemail (voicemailId) {
+    return await get({
+        resource: 'voicemails',
+        resourceId: voicemailId
+    })
+}
+
 export async function deleteVoicemail (id) {
-    const res = await Vue.http.delete('api/voicemails/' + id)
+    const res = await httpApi.delete(`api/voicemails/${id}`)
     return res.status >= 200
 }
 
@@ -118,4 +158,9 @@ export async function getAllCallsOrVoicemails (options) {
         resource: 'conversations',
         params: options
     })
+}
+
+export async function deleteFax (id) {
+    const res = await httpApi.delete(`api/faxes/${id}`)
+    return res.status >= 200
 }

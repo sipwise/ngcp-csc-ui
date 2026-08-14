@@ -1,8 +1,4 @@
-
-import {
-    Notify
-} from 'quasar'
-
+import { Notify } from 'quasar'
 export class Alert {
     static create (options) {
         if (options.position === 'top-center') {

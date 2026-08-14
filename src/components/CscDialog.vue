@@ -1,8 +1,7 @@
 <template>
     <q-dialog
-        ref="dialog"
+        ref="dialogRef"
         v-bind="$attrs"
-        v-on="$listeners"
     >
         <q-card
             class="bg-dark q-dialog-plugin"
@@ -42,11 +41,11 @@
                 align="right"
             >
                 <q-btn
+                    v-close-popup
                     icon="clear"
                     color="white"
                     flat
                     :label="$t('Cancel')"
-                    @click="cancel"
                 />
                 <slot
                     name="actions"
@@ -56,62 +55,38 @@
     </q-dialog>
 </template>
 
-<script>
-export default {
-    name: 'CscDialog',
-    props: {
-        title: {
-            type: String,
-            default: undefined,
-            required: true
-        },
-        titleIcon: {
-            type: String,
-            default: undefined
-        },
-        titleIconColor: {
-            type: String,
-            default: 'primary'
-        },
-        opened: {
-            type: Boolean,
-            default: false
-        }
+<script setup>
+import { ref } from 'vue'
+
+defineOptions({ name: 'CscDialog' })
+
+defineProps({
+    title: {
+        type: String,
+        required: true
     },
-    watch: {
-        opened (opened) {
-            if (opened === true) {
-                this.open()
-            } else {
-                this.close()
-            }
-        }
+    titleIcon: {
+        type: String,
+        default: undefined
     },
-    mounted () {
-        if (this.opened) {
-            this.open()
-        }
-    },
-    methods: {
-        open () {
-            this.show()
-        },
-        show () {
-            this.$refs.dialog.show()
-            this.$emit('show')
-        },
-        close () {
-            this.hide()
-            this.$emit('close')
-        },
-        hide () {
-            this.$refs.dialog.hide()
-            this.$emit('hide')
-        },
-        cancel () {
-            this.close()
-            this.$emit('cancel')
-        }
+    titleIconColor: {
+        type: String,
+        default: 'primary'
     }
+})
+
+const dialogRef = ref(null)
+
+const show = () => {
+    dialogRef.value?.show()
 }
+
+const hide = () => {
+    dialogRef.value?.hide()
+}
+
+defineExpose({
+    show,
+    hide
+})
 </script>

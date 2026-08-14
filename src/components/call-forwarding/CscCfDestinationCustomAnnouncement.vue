@@ -1,18 +1,19 @@
 <template>
     <csc-cf-destination
-        :value="destination"
+        :model-value="destination"
         :label="announcement ? announcement.label : ''"
         :clickable="true"
     >
         <q-popup-edit
+            v-slot="scope"
             v-model="announcement"
             buttons
             anchor="top left"
-            @before-show="$store.commit('callForwarding/popupShow', null)"
-            @save="$emit('input', announcement)"
+            @before-show="setPopupShow(null)"
+            @save="$emit('input', $event)"
         >
             <q-select
-                v-model="announcement"
+                v-model="scope.value"
                 map-options
                 :rules="[ checkAnnouncement ]"
                 :options="announcements"
@@ -25,6 +26,7 @@
 <script>
 import CscCfDestination from 'components/call-forwarding/CscCfDestination'
 import { showGlobalError } from 'src/helpers/ui'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfDestinationCustomAnnouncement',
     components: { CscCfDestination },
@@ -38,6 +40,7 @@ export default {
             default: undefined
         }
     },
+    emits: ['input'],
     data () {
         return {
             announcement: this.$attrs.value
@@ -49,6 +52,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions('callForwarding', ['setPopupShow']),
         checkAnnouncement () {
             const fieldFilled = this.announcement
             if (!fieldFilled) {

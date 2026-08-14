@@ -4,13 +4,14 @@
         class="q-pa-lg"
     >
         <template
-            v-slot:header 
+            #header
         >
             <q-btn-dropdown
                 size="md"
                 color="primary"
                 :label="$t('Add slot')"
-                :disabled="getAvailableSlots().length === 0" 
+                data-cy="csc-pbx-auto-attendant-add-slot"
+                :disabled="getAvailableSlots().length === 0"
                 icon="add"
                 dropdown-icon=" "
                 flat
@@ -44,7 +45,7 @@
                 <csc-pbx-settings-auto-attendant
                     :add-new-slot="true"
                     :personal-slot="newSlot"
-                    @save="saveSlot" 
+                    @save="saveSlot"
                     @remove="removeSlot"
                     @edit="editNewSlotDestination"
                 />
@@ -60,7 +61,7 @@
                 <csc-pbx-settings-auto-attendant
                     v-model="personalSlots[index].destination"
                     :personal-slot="personalSlot"
-                    @save="saveSlot" 
+                    @save="saveSlot"
                     @remove="removeSlot"
                     @edit="editNewSlotDestination"
                     @reset="resetPersonalSlot"
@@ -70,17 +71,17 @@
     </csc-page-sticky>
 </template>
 <script>
-import _ from 'lodash'
-import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import CscPageSticky from 'components/CscPageSticky'
-import CscPbxSettingsAutoAttendant from 'components/pages/PbxSettings/CscPbxSettingsAutoAttendant'
 import CscList from 'components/CscList'
-import CscFade from 'components/transitions/CscFade'
+import CscPageSticky from 'components/CscPageSticky'
+import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscSpinner from 'components/CscSpinner'
-import { mapGetters } from 'vuex'
-import { mapWaitingActions } from 'vue-wait'
+import CscPbxSettingsAutoAttendant from 'components/pages/PbxSettings/CscPbxSettingsAutoAttendant'
+import CscFade from 'components/transitions/CscFade'
+import _ from 'lodash'
 import { getSubscriberId } from 'src/auth'
 import { showGlobalError, showToast } from 'src/helpers/ui'
+import { mapWaitingActions } from 'vue-wait-vue3'
+import { mapGetters } from 'vuex'
 export default {
     name: 'CscPagePbxSettingsAutoAttendant',
     components: {
@@ -91,6 +92,7 @@ export default {
         CscFade,
         CscSpinner
     },
+    emits: ['all-slots-saved'],
     data () {
         return {
             data: [],
@@ -108,8 +110,8 @@ export default {
     },
     async mounted () {
         await this.fetchAutoAttendants()
-        this.personalSlots = _.cloneDeep(this.slots.filter(slot => slot.subscriber_id === this.subscriberId)[0]?.slots)
-        this.newPersonalSlots = _.cloneDeep(this.newSlots.filter(slot => slot.subscriber_id === this.subscriberId)[0].slots)
+        this.personalSlots = _.cloneDeep(this.slots.filter((slot) => slot.subscriber_id === this.subscriberId)[0]?.slots)
+        this.newPersonalSlots = _.cloneDeep(this.newSlots.filter((slot) => slot.subscriber_id === this.subscriberId)[0].slots)
         this.sortArrays()
     },
     methods: {
@@ -121,13 +123,13 @@ export default {
             deleteNewSlot: 'csc-pbx-autoattendant-slots-table'
         }),
         getAvailableSlots () {
-            let subscriberSlots = this.slots.filter(slot => slot.subscriber_id === this.subscriberId)[0]?.slots
-            const subscriberSavedSlots = subscriberSlots?.map(item => item.slot)
-            const subscriberNewSlots = this.newSlots.filter(item => item.subscriber_id === this.subscriberId)
+            let subscriberSlots = this.slots.filter((slot) => slot.subscriber_id === this.subscriberId)[0]?.slots
+            const subscriberSavedSlots = subscriberSlots?.map((item) => item.slot)
+            const subscriberNewSlots = this.newSlots.filter((item) => item.subscriber_id === this.subscriberId)
             subscriberSlots = subscriberNewSlots.length > 0
-                ? [...subscriberSavedSlots, ...subscriberNewSlots[0].slots.map(item => item.slot)]
+                ? [...subscriberSavedSlots, ...subscriberNewSlots[0].slots.map((item) => item.slot)]
                 : subscriberSavedSlots
-            const availableSlots = this.slotsNumbers.filter(slot => !subscriberSlots?.includes(slot))
+            const availableSlots = this.slotsNumbers.filter((slot) => !subscriberSlots?.includes(slot))
             return availableSlots
         },
         async saveSlot (isARemoval = false) {
@@ -140,21 +142,21 @@ export default {
             if (!isARemoval) {
                 for (const newSlot of this.newPersonalSlots) {
                     this.updateLocalDestination(newSlot.slot, newSlot.destination)
-                }  
+                }
             }
             await this.updateSubscriberSlots({
                 subscriberId: this.subscriberId,
                 slots: [...this.newPersonalSlots, ...this.personalSlots]
             })
             this.resetAllNewSlots(this.subscriberId)
-            this.personalSlots = _.cloneDeep(this.slots.filter(slot => slot.subscriber_id === this.subscriberId)[0]?.slots)
-            this.newPersonalSlots = _.cloneDeep(this.newSlots.filter(slot => slot.subscriber_id === this.subscriberId)[0].slots)
+            this.personalSlots = _.cloneDeep(this.slots.filter((slot) => slot.subscriber_id === this.subscriberId)[0]?.slots)
+            this.newPersonalSlots = _.cloneDeep(this.newSlots.filter((slot) => slot.subscriber_id === this.subscriberId)[0].slots)
             this.sortArrays()
             showToast(this.$t('Slots saved successfully'))
-            this.$root.$emit('all-slots-saved')
+            this.emitter.$emit('all-slots-saved')
         },
         removeSlot (slotToRemove) {
-            const foundIndex = this.newPersonalSlots.findIndex(item => item.slot === slotToRemove)
+            const foundIndex = this.newPersonalSlots.findIndex((item) => item.slot === slotToRemove)
             if (foundIndex === -1) {
                 this.personalSlots = this.personalSlots.filter((item) => item.slot !== slotToRemove)
                 this.saveSlot(true)
@@ -171,7 +173,7 @@ export default {
                 subscriberId: this.subscriberId,
                 slot: availableSlot
             })
-            this.newPersonalSlots = _.cloneDeep(this.newSlots.filter(slot => slot.subscriber_id === this.subscriberId)[0].slots)
+            this.newPersonalSlots = _.cloneDeep(this.newSlots.filter((slot) => slot.subscriber_id === this.subscriberId)[0].slots)
             this.sortArrays()
         },
         updateLocalDestination (newPersonalSlot, newDestination) {
@@ -190,11 +192,11 @@ export default {
             }
         },
         editNewSlotDestination (newDestination, newPersonalSlot) {
-            const foundIndexNewSlots = this.newPersonalSlots.findIndex(item => item.slot === newPersonalSlot)
+            const foundIndexNewSlots = this.newPersonalSlots.findIndex((item) => item.slot === newPersonalSlot)
             if (foundIndexNewSlots !== -1) {
                 this.newPersonalSlots[foundIndexNewSlots].destination = newDestination
             } else {
-                const foundIndexExistingSlots = this.personalSlots.findIndex(item => item.slot === newPersonalSlot)
+                const foundIndexExistingSlots = this.personalSlots.findIndex((item) => item.slot === newPersonalSlot)
                 this.personalSlots[foundIndexExistingSlots].destination = newDestination
                 if (foundIndexNewSlots !== -1) {
                     this.personalSlots[foundIndexExistingSlots].destination = newDestination
@@ -202,14 +204,25 @@ export default {
             }
         },
         resetPersonalSlot (personalSlot) {
-            const slotsFiltered = this.slots.filter(slot => slot.subscriber_id === this.subscriberId)[0]?.slots
-            const foundIndex = slotsFiltered.findIndex(item => item.slot === personalSlot)
+            const slotsFiltered = this.slots.filter((slot) => slot.subscriber_id === this.subscriberId)[0]?.slots
+            const foundIndex = slotsFiltered.findIndex((item) => item.slot === personalSlot)
             this.personalSlots[foundIndex].destination = slotsFiltered[foundIndex].destination
         },
         sortArrays () {
-            this.personalSlots.sort((a, b) => (a.slot > b.slot) ? 1 : ((b.slot > a.slot) ? -1 : 0))
-            this.newPersonalSlots.sort((a, b) => (a.slot > b.slot) ? 1 : ((b.slot > a.slot) ? -1 : 0))
+            const compareSlots = (a, b) => {
+                if (a.slot > b.slot) {
+                    return 1
+                }
+                if (a.slot < b.slot) {
+                    return -1
+                }
+                return 0
+            }
+
+            this.personalSlots.sort(compareSlots)
+            this.newPersonalSlots.sort(compareSlots)
         }
+
     }
 }
 </script>

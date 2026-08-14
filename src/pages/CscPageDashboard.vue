@@ -4,63 +4,78 @@
         class="row justify-center"
     >
         <csc-card-dashboard
+            v-if="showVoicemailCard"
             :title="$t('Voicebox Messages')"
             :count="voicemailsCount"
             :count-title="$t('Messages')"
             :button-title="$t('View Voicebox Messages')"
             :items-list="voicemailItems"
-            :route-to="{ name: 'CscConversations', params: { initialTab: 'voicemail' } }"
+            :route-to="{ name: 'CscConversations', state: { initialTab: 'voicemail' } }"
             :loading="$wait.is('getVoicemailsData')"
             :no-items-message="$t('No messages')"
             :error="voicemailsError"
+            data-cy="dashboard-view-voicebox"
             @action="downloadVoicemail"
         />
         <csc-card-dashboard
+            v-if="showConversationsCard"
             :title="$t('Call List')"
             :count="callsCount"
             :count-title="$t('Calls')"
             :button-title="$t('View Call List')"
             :items-list="callItems"
-            :route-to="{ name: 'CscConversations', params: { initialTab: 'call' } }"
+            :route-to="{ name: 'CscConversations', state: { initialTab: 'call' } }"
             :no-items-message="$t('No calls')"
             :loading="$wait.is('getCallsData')"
             :error="callsError"
-        />
+            data-cy="dashboard-view-calllist"
+            :use-slot="true"
+        >
+            <template
+                #listItems="{call}"
+            >
+                <csc-call-item
+                    :call="call"
+                    :sleek-mode="true"
+                />
+            </template>
+        </csc-card-dashboard>
         <csc-card-dashboard
+            v-if="showRegDevices"
             :title="$t('Registered Devices')"
             :count="registeredDevicesCount"
             :count-title="$t('Registered Devices')"
             :button-title="$t('View All Registered Devices')"
             :items-list="registeredDevicesItems"
-            :route-to="{ name: 'RegisteredDevices', params: { initialTab: 'null' } }"
+            :route-to="{ name: 'RegisteredDevices', state: { initialTab: 'null' } }"
             :no-items-message="$t('No devices registered')"
             :loading="$wait.is('getRegisteredDevicesData')"
             :error="registeredDevicesError"
+            data-cy="dashboard-view-registered-devices"
         />
     </csc-page>
 </template>
 
 <script>
-import CscCardDashboard from 'components/pages/Dashboard/CscCardDashboard'
 import CscPage from 'components/CscPage'
-import { mapWaitingActions } from 'vue-wait'
+import CscCallItem from 'components/pages/Conversations/CscCallItem'
+import CscCardDashboard from 'components/pages/Dashboard/CscCardDashboard'
+import { date } from 'quasar'
+import { INTERNAL_DATE_FORMAT_DASH_HOUR, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import {
-    showGlobalError
-} from 'src/helpers/ui'
-import {
-    date
-} from 'quasar'
-import { INTERNAL_DATE_FORMAT_DASH_HOUR } from 'src/constants'
-import {
-    callIconColor,
-    callIcon
+    callIcon,
+    callIconColor
 } from 'src/helpers/call-utils'
-import { mapState } from 'vuex'
+import { showGlobalError } from 'src/helpers/ui'
+import { RequestState } from 'src/store/common'
+import { mapWaitingActions } from 'vue-wait-vue3'
+import { mapGetters, mapState } from 'vuex'
 export default {
     name: 'CscPageDashboard',
     components: {
         CscCardDashboard,
-        CscPage
+        CscPage,
+        CscCallItem
     },
     data () {
         return {
@@ -78,7 +93,24 @@ export default {
     computed: {
         ...mapState('call', [
             'callEnabled'
-        ])
+        ]),
+        ...mapState('conversations', [
+            'downloadVoiceMailState',
+            'downloadVoiceMailError'
+        ]),
+        ...mapGetters('user', [
+            'hasSubscriberProfileAttribute'
+        ]),
+        showConversationsCard () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
+        },
+        showVoicemailCard () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations) &&
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail)
+        },
+        showRegDevices () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.registeredDevices)
+        }
     },
     watch: {
         async callEnabled () {
@@ -88,6 +120,11 @@ export default {
             } catch (err) {
                 this.registeredDevicesError = true
                 showGlobalError(err.message)
+            }
+        },
+        downloadVoiceMailState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.downloadVoiceMailError)
             }
         }
     },
@@ -113,17 +150,18 @@ export default {
         manageCallsData (calls) {
             if (calls.status === 'rejected') {
                 this.callsError = true
-                showGlobalError(calls?.reason?.data?.message)
+                showGlobalError(calls?.reason?.message)
             } else {
                 this.callsCount = calls.value.totalCount
-                this.callItems = calls.value.items.map((item) => {
+                this.callItems = calls.value.items.slice(0, 5).map((item) => {
                     return {
                         id: item.id,
                         icon: { name: callIcon(item), color: callIconColor(item) },
                         clickable_icon: false,
                         title: this.checkTitleToShow(item),
                         sub_title: date.formatDate(item.start_time, INTERNAL_DATE_FORMAT_DASH_HOUR),
-                        extra_text: item.duration.split('.')[0]
+                        extra_text: item.duration.split('.')[0],
+                        call: item
                     }
                 })
             }
@@ -131,7 +169,7 @@ export default {
         manageVoicemailsData (voicemails) {
             if (voicemails.status === 'rejected') {
                 this.voicemailsError = true
-                showGlobalError(voicemails?.reason?.data?.message)
+                showGlobalError(voicemails?.reason?.message)
             } else {
                 this.voicemailsCount = voicemails.value.totalCount
                 this.voicemailItems = voicemails.value.items.map((item) => {
@@ -139,7 +177,7 @@ export default {
                         id: item.id,
                         icon: { name: 'download', color: 'primary' },
                         clickable_icon: true,
-                        title: item.caller,
+                        title: item.caller_phonebook_name || item.caller,
                         sub_title: date.formatDate(item.start_time, INTERNAL_DATE_FORMAT_DASH_HOUR),
                         extra_text: new Date(item.duration * 1000).toISOString().substr(11, 8)
                     }
@@ -149,7 +187,7 @@ export default {
         manageDevicesData (devices) {
             if (devices?.status === 'rejected') {
                 this.registeredDevicesError = true
-                showGlobalError(devices?.reason?.data?.message)
+                showGlobalError(devices?.reason?.message)
             } else {
                 const registeredDevices = devices?.value || devices
                 this.registeredDevicesCount = registeredDevices.totalCount
@@ -168,14 +206,13 @@ export default {
         checkTitleToShow (call) {
             if (call.call_type === 'cfu' || call.call_type === 'cfna' ||
                 call.call_type === 'cfb' || call.call_type === 'cft') {
-                return 'vmu' + call.caller
+                return `vmu${call.caller}`
             } else if (call.direction === 'out') {
-                return call.callee
+                return call.callee_phonebook_name || call.callee
             } else if (call.direction === 'in') {
-                return call.caller
-            } else {
-                return call.caller
+                return call.caller_phonebook_name || call.caller
             }
+            return call.caller
         },
         downloadVoicemail (id) {
             this.$store.dispatch('conversations/downloadVoiceMail', id)

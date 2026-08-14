@@ -1,6 +1,7 @@
 <template>
     <q-list
         v-if="appUrlAndroid || appUrlApple"
+        class="absolute-bottom"
         dense
     >
         <q-item-label
@@ -50,32 +51,19 @@
     </q-list>
 </template>
 
-<script>
-import AppBadgeGoogle from 'components/AppBadgeGoogle'
+<script setup>
 import AppBadgeApple from 'components/AppBadgeApple'
-import { mapState } from 'vuex'
-export default {
-    name: 'AuiMobileAppBadges',
-    components: { AppBadgeApple, AppBadgeGoogle },
-    computed: {
-        ...mapState('user', [
-            'platformInfo'
-        ]),
-        appNameAndroid () {
-            return this.platformInfo?.app?.android?.name
-        },
-        appNameApple () {
-            return this.platformInfo?.app?.apple?.name
-        },
-        appUrlAndroid () {
-            return this.platformInfo?.app?.android?.url
-        },
-        appUrlApple () {
-            return this.platformInfo?.app?.apple?.url
-        },
-        appName () {
-            return this.appNameAndroid || this.appNameApple
-        }
-    }
-}
+import AppBadgeGoogle from 'components/AppBadgeGoogle'
+import { useState } from 'src/composables/useStore'
+import { computed } from 'vue'
+
+defineOptions({ name: 'AuiMobileAppBadges' })
+
+const { platformInfo } = useState('user', ['platformInfo'])
+
+const appNameAndroid = computed(() => platformInfo.value?.app?.android?.name)
+const appNameApple = computed(() => platformInfo.value?.app?.apple?.name)
+const appUrlAndroid = computed(() => platformInfo.value?.app?.android?.url)
+const appUrlApple = computed(() => platformInfo.value?.app?.apple?.url)
+const appName = computed(() => appNameAndroid.value || appNameApple.value)
 </script>

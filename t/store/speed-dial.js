@@ -1,11 +1,10 @@
-
 'use strict'
 
-import SpeedDialModule from '../../src/store/speed-dial'
 import { assert } from 'chai'
+import SpeedDialModule from 'src/store/speed-dial'
 
-describe('SpeedDial', function () {
-    it('should load all assigned speed dial slots', function () {
+describe('SpeedDial', () => {
+    it('should load all assigned speed dial slots', () => {
         const state = {
             assignedSlots: []
         }

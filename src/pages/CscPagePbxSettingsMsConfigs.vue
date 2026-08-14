@@ -9,14 +9,15 @@
             <q-toggle
                 v-model="manager_secretary"
                 :label="$t('Manager Secretary feature')"
+                data-cy="csc-manager-secretary-toggle"
                 :disable="isNumbersRequesting || isLoading"
-                @input="addOrRemoveMs()"
+                @update:model-value="addOrRemoveMs()"
             />
             <csc-spinner
                 v-if="isLoading || !msConfig || !changes"
                 class="q-ml-xl"
             />
-            <q-item v-if="msConfig && changes">
+            <q-item v-if="msConfig && changes && showSecretaryNumbers">
                 <q-item-section>
                     <q-select
                         v-model="changes.secretaryNumbers"
@@ -26,11 +27,12 @@
                         chips
                         :disable="isNumbersRequesting || isLoading || !manager_secretary"
                         :label="$t('Select secretary numbers')"
+                        data-cy="csc-manager-secretary-dropdown"
                         :options="getFullNumberOptions"
                     >
                         <template
                             v-if="hasSecretaryNumbersChanged"
-                            v-slot:append
+                            #append
                         >
                             <csc-input-button-save
                                 @click.stop="save"
@@ -47,20 +49,19 @@
 </template>
 
 <script>
+import CscPage from 'components/CscPage'
+import CscSpinner from 'components/CscSpinner'
+import CscInputButtonReset from 'components/form/CscInputButtonReset'
+import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import _ from 'lodash'
+import { getSubscriberId } from 'src/auth'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { showToast } from 'src/helpers/ui'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import {
     mapGetters,
     mapState
 } from 'vuex'
-import { mapWaitingActions } from 'vue-wait'
-import CscPage from 'components/CscPage'
-import CscInputButtonSave from 'components/form/CscInputButtonSave'
-import CscInputButtonReset from 'components/form/CscInputButtonReset'
-import CscSpinner from 'components/CscSpinner'
-import { getSubscriberId } from 'src/auth'
-import {
-    showToast
-} from 'src/helpers/ui'
 export default {
     name: 'CscPagePbxSettingsMsConfigs',
     components: {
@@ -85,7 +86,8 @@ export default {
             'subscriberPreferences'
         ]),
         ...mapGetters('user', [
-            'getUsername'
+            'getUsername',
+            'hasSubscriberProfileAttribute'
         ]),
         hasSecretaryNumbersChanged () {
             const changedSecretaryNumbers = _.clone(_.get(this.changes, 'secretaryNumbers', []))
@@ -95,6 +97,9 @@ export default {
         isLoading () {
             return this.$wait.is('csc-pbx-manager-secretary-numbers') || this.$wait.is('csc-pbx-call-settings-load-preferences') ||
                 this.$wait.is('csc-pbx-call-settings-update-preferences')
+        },
+        showSecretaryNumbers () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.secretaryNumbers)
         }
     },
     async mounted () {

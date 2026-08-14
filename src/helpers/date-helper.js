@@ -1,4 +1,3 @@
-
 export function addSecond (date) {
     const newDate = new Date()
     newDate.setTime(date.getTime() + 1000)
@@ -73,5 +72,6 @@ export function isWithinLastWeek (date, $today) {
 
 export function getBrowserTimezone () {
     return Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone
-        ? Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone : 'UTC'
+        ? Intl?.DateTimeFormat()?.resolvedOptions()?.timeZone
+        : 'UTC'
 }

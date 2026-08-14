@@ -26,9 +26,8 @@ export function callIcon (call) {
         return 'call_received'
     } else if (call.call_type === 'call' && call.direction === 'out') {
         return 'call_made'
-    } else {
-        return 'phone'
     }
+    return 'phone'
 }
 
 export function callIconColor (call) {
@@ -38,7 +37,6 @@ export function callIconColor (call) {
     } else if (call.call_type === 'call' && (call.direction === 'in' ||
         call.direction === 'out')) {
         return 'primary'
-    } else {
-        return 'white'
     }
+    return 'white'
 }

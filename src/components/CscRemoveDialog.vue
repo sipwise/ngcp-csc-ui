@@ -3,76 +3,70 @@
         ref="dialogComp"
         :title="title"
         :title-icon="titleIcon"
-        :opened="opened"
-        @cancel="cancel"
+        v-bind="$attrs"
     >
-        <div
-            slot="content"
+        <template
+            #content
         >
             {{ message }}
-        </div>
-        <q-btn
-            slot="actions"
-            icon="delete"
-            color="negative"
-            flat
-            @click="remove"
+        </template>
+        <template
+            #actions
         >
-            {{ $t('Remove') }}
-        </q-btn>
+            <q-btn
+                v-close-popup
+                icon="delete"
+                data-cy="csc-dialog-delete"
+                color="negative"
+                flat
+                @click="remove"
+            >
+                {{ $t('Remove') }}
+            </q-btn>
+        </template>
     </csc-dialog>
 </template>
 
-<script>
-import CscDialog from './CscDialog'
-export default {
-    name: 'CscRemoveDialog',
-    components: {
-        CscDialog
-    },
-    props: {
-        title: {
-            type: String,
-            default: ''
-        },
-        titleIcon: {
-            type: String,
-            default: ''
-        },
-        message: {
-            type: String,
-            default: ''
-        },
-        opened: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data () {
-        return {
-        }
-    },
-    methods: {
-        show () {
-            this.open()
-        },
-        open () {
-            this.$refs.dialogComp.open()
-        },
-        close () {
-            this.$refs.dialogComp.close()
-        },
-        remove () {
-            this.close()
-            this.$emit('remove')
-            this.$emit('ok')
-        },
-        cancel () {
-            this.$emit('cancel')
-        }
-    }
-}
-</script>
+<script setup>
+import CscDialog from 'components/CscDialog'
+import { ref } from 'vue'
 
-<style lang="stylus" rel="stylesheet/stylus">
-</style>
+defineOptions({ name: 'CscRemoveDialog' })
+
+defineProps({
+    title: {
+        type: String,
+        default: ''
+    },
+    titleIcon: {
+        type: String,
+        default: ''
+    },
+    message: {
+        type: String,
+        default: ''
+    }
+})
+
+const emit = defineEmits(['ok', 'remove'])
+
+const dialogComp = ref(null)
+
+const show = () => {
+    dialogComp.value?.show()
+}
+
+const hide = () => {
+    dialogComp.value?.hide()
+}
+
+const remove = () => {
+    emit('remove')
+    emit('ok')
+}
+
+defineExpose({
+    show,
+    hide
+})
+</script>

@@ -1,10 +1,10 @@
 'use strict'
 
 import { assert } from 'chai'
-import { isYesterday, isToday, isWithinLastWeek } from '../../src/helpers/date-helper'
+import { isToday, isWithinLastWeek, isYesterday } from 'src/helpers/date-helper'
 
-describe('Date helper', function () {
-    it('should check whether a given date is yesterday or not', function () {
+describe('Date helper', () => {
+    it('should check whether a given date is yesterday or not', () => {
         const today = new Date('2000-01-01 00:00:00')
         const beforeYesterday = new Date('1999-12-30 00:00:00')
         const tomorrow = new Date('2000-01-02 00:00:00')
@@ -22,7 +22,7 @@ describe('Date helper', function () {
         assert.isFalse(isYesterday(tomorrow, today))
     })
 
-    it('should check whether a given date is today or not', function () {
+    it('should check whether a given date is today or not', () => {
         const today = new Date('2000-01-01 00:00:00')
         const yesterday = new Date('1999-12-31 00:00:00')
         const beforeYesterday = new Date('1999-12-30 00:00:00')
@@ -44,7 +44,7 @@ describe('Date helper', function () {
         assert.isFalse(isToday(afterTomorrow, today))
     })
 
-    it('should check whether a given date is within last week or not', function () {
+    it('should check whether a given date is within last week or not', () => {
         const today = new Date('2000-01-01 00:00:00')
         const validDay1 = new Date('1999-12-31 00:00:00')
         const validDay2 = new Date('1999-12-30 00:00:00')

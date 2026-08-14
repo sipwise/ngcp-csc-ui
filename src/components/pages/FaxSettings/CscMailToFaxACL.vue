@@ -47,7 +47,7 @@
                         :is-add-new-mode="false"
                         :initial-data="acl"
                         :loading="loading"
-                        @update-property="updateProperty"
+                        @update-property="updateProperty($event)"
                     />
                 </div>
             </q-slide-transition>
@@ -77,6 +77,7 @@ export default {
             default: false
         }
     },
+    emits: ['remove', 'update-property', 'expand', 'collapse'],
     computed: {
         isChanged () {
             return false
@@ -90,8 +91,8 @@ export default {
                 this.$emit('expand')
             }
         },
-        updateProperty () {
-            this.$emit('update-property', ...arguments)
+        updateProperty (data) {
+            this.$emit('update-property', data)
         },
         remove () {
             this.$q.dialog({

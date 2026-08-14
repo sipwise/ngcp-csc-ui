@@ -9,8 +9,9 @@
             <q-toggle
                 v-model="cloud_pbx_callqueue"
                 :label="$t('Call Queue feature')"
+                data-cy="csc-call-queue-feature-switch"
                 :disable="isLoading"
-                @input="addOrRemoveCallQueue()"
+                @update:model-value="addOrRemoveCallQueue()"
             />
             <csc-spinner
                 v-if="isLoading || !callQueue || !changes"
@@ -22,13 +23,14 @@
                         <csc-input-saveable
                             v-model="changes.max_queue_length"
                             :label="$t('Queue Length')"
+                            data-cy="csc-call-queue-length"
                             :value-changed="hasMaxQueueLengthChanged"
-                            :error="$v.changes.max_queue_length.$error"
+                            :error="v$.changes.max_queue_length.$errors.length > 0"
                             :error-message="queueMaxLengthErrorMessage"
-                            :disable="isLoading || !cloud_pbx_callqueue"
+                            :disable="disableMaxQueueLength || isLoading"
                             @undo="resetMaxQueueLength"
                             @save="save"
-                            @input="$v.changes.max_queue_length.$touch"
+                            @update:model-value="v$.changes.max_queue_length.$touch()"
                             @keypress.space.prevent
                             @keydown.space.prevent
                             @keyup.space.prevent
@@ -40,13 +42,14 @@
                         <csc-input-saveable
                             v-model="changes.queue_wrap_up_time"
                             :label="$t('Wrap up time')"
+                            data-cy="csc-call-queue-wrapup-time"
                             :value-changed="hasQueueWrapUpTimeChanged"
-                            :error="$v.changes.queue_wrap_up_time.$error"
+                            :error="v$.changes.queue_wrap_up_time.$errors.length > 0"
                             :error-message="queueWrapUpTimeErrorMessage"
-                            :disable="isLoading || !cloud_pbx_callqueue"
+                            :disable="disableQueueWrapUpTime || isLoading"
                             @undo="resetQueueWrapUpTime"
                             @save="save"
-                            @input="$v.changes.queue_wrap_up_time.$touch"
+                            @update:model-value="v$.changes.queue_wrap_up_time.$touch()"
                             @keypress.space.prevent
                             @keydown.space.prevent
                             @keyup.space.prevent
@@ -59,23 +62,23 @@
 </template>
 
 <script>
-import {
-    mapGetters,
-    mapState
-} from 'vuex'
-import { mapWaitingActions } from 'vue-wait'
-import CscPage from 'components/CscPage'
-import CscInputSaveable from 'components/form/CscInputSaveable'
-import CscSpinner from 'components/CscSpinner'
+import useValidate from '@vuelidate/core'
 import {
     maxValue,
     minValue,
     numeric
-} from 'vuelidate/lib/validators'
+} from '@vuelidate/validators'
+import CscPage from 'components/CscPage'
+import CscSpinner from 'components/CscSpinner'
+import CscInputSaveable from 'components/form/CscInputSaveable'
 import { getSubscriberId } from 'src/auth'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { showToast } from 'src/helpers/ui'
+import { mapWaitingActions } from 'vue-wait-vue3'
 import {
-    showToast
-} from 'src/helpers/ui'
+    mapGetters,
+    mapState
+} from 'vuex'
 export default {
     name: 'CscPagePbxSettingsCallQueues',
     components: {
@@ -87,7 +90,8 @@ export default {
         return {
             callQueue: null,
             changes: null,
-            cloud_pbx_callqueue: false
+            cloud_pbx_callqueue: false,
+            v$: useValidate()
         }
     },
     validations: {
@@ -113,8 +117,15 @@ export default {
             'subscriberPreferences'
         ]),
         ...mapGetters('user', [
-            'getUsername'
+            'getUsername',
+            'hasSubscriberProfileAttribute'
         ]),
+        disableMaxQueueLength () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.maxQueueLength)
+        },
+        disableQueueWrapUpTime () {
+            return !this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.queueWrapUpTime)
+        },
         hasMaxQueueLengthChanged () {
             return this.callQueue.max_queue_length !== this.changes.max_queue_length
         },
@@ -122,42 +133,42 @@ export default {
             return this.callQueue.queue_wrap_up_time !== this.changes.queue_wrap_up_time
         },
         queueMaxLengthErrorMessage () {
-            if (!this.$v.changes.max_queue_length.numeric) {
+            const errorsTab = this.v$.changes.max_queue_length.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
                     field: this.$t('Queue Length')
                 })
-            } else if (!this.$v.changes.max_queue_length.minValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
                     field: this.$t('Queue Length'),
-                    minValue: this.$v.changes.max_queue_length.$params.minValue.min
+                    minValue: this.v$.changes.max_queue_length.minValue.$params.min
                 })
-            } else if (!this.$v.changes.max_queue_length.maxValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
                     field: this.$t('Queue Length'),
-                    maxValue: this.$v.changes.max_queue_length.$params.maxValue.max
+                    maxValue: this.v$.changes.max_queue_length.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         queueWrapUpTimeErrorMessage () {
-            if (!this.$v.changes.queue_wrap_up_time.numeric) {
+            const errorsTab = this.v$.changes.queue_wrap_up_time.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'numeric') {
                 return this.$t('{field} must consist of numeric characters only', {
-                    field: this.$t('Wrap Up Time')
+                    field: this.$t('Wrap up time')
                 })
-            } else if (!this.$v.changes.queue_wrap_up_time.minValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'minValue') {
                 return this.$t('{field} must be at least {minValue} second', {
-                    field: this.$t('Wrap Up Time'),
-                    minValue: this.$v.changes.queue_wrap_up_time.$params.minValue.min
+                    field: this.$t('Wrap up time'),
+                    minValue: this.v$.changes.queue_wrap_up_time.minValue.$params.min
                 })
-            } else if (!this.$v.changes.queue_wrap_up_time.maxValue) {
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxValue') {
                 return this.$t('{field} must be maximum of {maxValue} seconds', {
-                    field: this.$t('Wrap Up Time'),
-                    maxValue: this.$v.changes.queue_wrap_up_time.$params.maxValue.max
+                    field: this.$t('Wrap up time'),
+                    maxValue: this.v$.changes.queue_wrap_up_time.maxValue.$params.max
                 })
-            } else {
-                return ''
             }
+            return ''
         },
         isLoading () {
             return this.$wait.is('csc-pbx-call-settings-load-preferences') ||
@@ -172,7 +183,8 @@ export default {
     methods: {
         ...mapWaitingActions('callSettings', {
             loadSubscriberPreferencesAction: 'csc-pbx-call-settings-load-preferences',
-            fieldUpdateAction: 'csc-pbx-call-settings-update-preferences'
+            fieldUpdateAction: 'csc-pbx-call-settings-update-preferences',
+            removeCallQueueAction: 'csc-pbx-call-settings-update-preferences'
         }),
         resetMaxQueueLength () {
             this.changes.max_queue_length = this.getDefaultData().max_queue_length
@@ -187,14 +199,14 @@ export default {
             }
         },
         async save () {
-            if (this.hasMaxQueueLengthChanged && !this.$v.changes.max_queue_length.$error) {
+            if (this.hasMaxQueueLengthChanged && this.v$.changes.max_queue_length.$errors.length <= 0) {
                 await this.fieldUpdateAction({ field: 'max_queue_length', value: this.changes.max_queue_length || this.defaultMaxQueueLength })
                 showToast(this.$t('Updated {field} for call queue {callQueue} successfully', {
                     callQueue: this.getUsername,
                     field: this.$t('Queue Length')
                 }))
             }
-            if (this.hasQueueWrapUpTimeChanged && !this.$v.changes.queue_wrap_up_time.$error) {
+            if (this.hasQueueWrapUpTimeChanged && this.v$.changes.queue_wrap_up_time.$errors.length <= 0) {
                 await this.fieldUpdateAction({ field: 'queue_wrap_up_time', value: this.changes.queue_wrap_up_time || this.defaultQueueWrapUpTime })
                 showToast(this.$t('Updated {field} for call queue {callQueue} successfully', {
                     callQueue: this.getUsername,
@@ -211,10 +223,16 @@ export default {
                 queue_wrap_up_time: this.subscriberPreferences.queue_wrap_up_time || this.defaultQueueWrapUpTime.toString(),
                 subscriber_id: getSubscriberId()
             }
-            this.cloud_pbx_callqueue = this.subscriberPreferences.cloud_pbx_callqueue ? this.subscriberPreferences.cloud_pbx_callqueue : this.cloud_pbx_callqueue
+            this.cloud_pbx_callqueue = this.subscriberPreferences.cloud_pbx_callqueue === true
         },
-        addOrRemoveCallQueue () {
-            this.fieldUpdateAction({ field: 'cloud_pbx_callqueue', value: this.cloud_pbx_callqueue })
+        async addOrRemoveCallQueue () {
+            if (this.cloud_pbx_callqueue) {
+                await this.fieldUpdateAction({ field: 'cloud_pbx_callqueue', value: true })
+            } else {
+                await this.removeCallQueueAction()
+                this.getCallQueue()
+                this.changes = this.getDefaultData()
+            }
         }
     }
 }

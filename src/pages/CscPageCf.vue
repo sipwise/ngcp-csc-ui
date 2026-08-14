@@ -4,43 +4,41 @@
         class="q-pa-lg"
     >
         <template
-            v-if="hasSubscriberProfileAttributes(['cfu', 'cfna', 'cfb'])"
-            v-slot:header
+            v-if="hasSomeSubscriberProfileAttributes(['cfu', 'cfna', 'cfb', 'cft'])"
+            #header
         >
             <q-btn
                 flat
                 icon="add"
                 color="primary"
                 :label="$t('Add forwarding')"
+                data-cy="csc-add-forwarding"
                 :disable="$wait.is('csc-cf-mappings-full')"
                 :loading="$wait.is('csc-cf-mappings-full')"
+                @click=" this.enableCfAddForm()"
             >
-                <csc-popup-menu>
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cfu')"
-                        color="primary"
-                        :label="$t('If available')"
-                        @click="createMapping({ type: 'cfu'})"
-                    />
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cfna')"
-                        color="primary"
-                        :label="$t('If not available')"
-                        @click="createMapping({ type: 'cfna'})"
-                    />
-                    <csc-popup-menu-item
-                        v-if="hasSubscriberProfileAttribute('cfb')"
-                        color="primary"
-                        :label="$t('If busy')"
-                        @click="createMapping({ type: 'cfb'})"
-                    />
-                </csc-popup-menu>
                 <template
-                    v-slot:loading
+                    #loading
                 >
                     <csc-spinner />
                 </template>
             </q-btn>
+        </template>
+        <template #toolbar>
+            <q-slide-transition>
+                <div
+                    v-if="!isCfAddFormDisabled"
+                    class="q-mb-md"
+                >
+                    <csc-cf-add-form
+                        ref="addCfForm"
+                        class="q-pa-md"
+                        :loading="$wait.is('csc-cf-mappings-full')"
+                        @save="createCf($event)"
+                        @cancel="disableCfAddForm"
+                    />
+                </div>
+            </q-slide-transition>
         </template>
         <div
             class="row justify-center q-pt-lg"
@@ -49,6 +47,7 @@
                 id="csc-wrapper-call-forwarding"
                 class="col-xs-12 col-lg-8"
             >
+
                 <q-list
                     v-if="groups.length === 0 && !$wait.is('csc-cf-mappings-full')"
                     dense
@@ -65,37 +64,49 @@
                             </q-item-label>
                         </q-item-section>
                     </q-item>
-                    <csc-cf-group-item-primary-number />
+                    <csc-cf-group-item-primary-number
+                        :show-timeout-info="false"
+                    />
                 </q-list>
-                <template
+                <csc-popup-menu-ring-timeout
+                    v-if="isRingTimeoutVisible"
+                    :ring-timeout="ringTimeout"
+                    :subscriber-id="getSubscriberId"
+                />
+                <div
                     v-for="group in groups"
+                    :key="group.cfm_id"
                 >
                     <csc-cf-group
-                        :key="group.cfm_id"
                         class="q-mb-lg"
+                        :class="{ 'cf-group-disabled': !group.enabled }"
                         :loading="$wait.is('csc-cf-mappings-full')"
                         :mapping="group"
+                        :b-number-set="bNumberSetMap[group.bnumberset_id]"
                         :destination-set="destinationSetMap[group.destinationset_id]"
                         :source-set="sourceSetMap[group.sourceset_id]"
                         :time-set="timeSetMap[group.timeset_id]"
                     />
-                </template>
+                </div>
             </div>
         </div>
     </csc-page-sticky>
 </template>
 <script>
+import CscPageSticky from 'components/CscPageSticky'
+import CscPopupMenu from 'components/CscPopupMenu'
+import CscPopupMenuItem from 'components/CscPopupMenuItem'
+import CscPopupMenuRingTimeout from 'components/CscPopupMenuRingTimeout'
+import CscSpinner from 'components/CscSpinner'
+import CscCfAddForm from 'components/call-forwarding/CscCfAddForm'
 import CscCfGroup from 'components/call-forwarding/CscCfGroup'
+import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
 import {
     mapActions,
-    mapState,
-    mapGetters
+    mapGetters,
+    mapMutations,
+    mapState
 } from 'vuex'
-import CscPopupMenuItem from 'components/CscPopupMenuItem'
-import CscPopupMenu from 'components/CscPopupMenu'
-import CscSpinner from 'components/CscSpinner'
-import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
-import CscPageSticky from 'components/CscPageSticky'
 export default {
     name: 'CscPageCf',
     components: {
@@ -104,33 +115,64 @@ export default {
         CscSpinner,
         CscPopupMenu,
         CscPopupMenuItem,
-        CscCfGroup
+        CscPopupMenuRingTimeout,
+        CscCfGroup,
+        CscCfAddForm
     },
     computed: {
         ...mapState('callForwarding', [
             'mappings',
+            'bNumberSetMap',
             'destinationSetMap',
             'sourceSetMap',
             'timeSetMap'
         ]),
         ...mapGetters('callForwarding', [
-            'groups'
+            'groups',
+            'ringTimeout',
+            'isCfAddFormDisabled'
         ]),
         ...mapGetters('user', [
             'hasSubscriberProfileAttribute',
-            'hasSubscriberProfileAttributes'
-        ])
+            'hasSomeSubscriberProfileAttributes',
+            'getSubscriberId'
+        ]),
+        isRingTimeoutVisible () {
+            return this.ringTimeout && this.groups.some((group) => group.type === 'cft')
+        }
     },
-    async mounted () {
+    async created () {
         await this.loadAnnouncements()
-        this.loadMappingsFull()
+        await this.loadMappingsFull(this.getSubscriberId)
+    },
+    beforeUnmount () {
+        this.disableCfAddForm()
+        this.resetCallForwardingState()
     },
     methods: {
         ...mapActions('callForwarding', [
             'loadMappingsFull',
             'createMapping',
-            'loadAnnouncements'
-        ])
+            'loadAnnouncements',
+            'resetCallForwardingState'
+        ]),
+        ...mapMutations('callForwarding', [
+            'enableCfAddForm',
+            'disableCfAddForm'
+        ]),
+        async createCf (data) {
+            await this.createMapping(data)
+            this.disableCfAddForm()
+        }
     }
 }
 </script>
+<style lang="sass" scoped>
+.cf-group-disabled
+    opacity: 0.6
+    filter: grayscale(30%)
+
+    :deep(*)
+        pointer-events: auto !important
+        cursor: pointer !important
+</style>

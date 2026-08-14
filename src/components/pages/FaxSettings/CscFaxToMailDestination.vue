@@ -6,7 +6,7 @@
         @toggle="toggle"
     >
         <template
-            slot="title"
+            #title
         >
             <csc-list-item-title>
                 {{ $t('&lt;{destination}&gt; as {filetype}', {destination: destination.destination, filetype: destination.filetype}) }}
@@ -18,36 +18,40 @@
                     <q-icon
                         size="16px"
                         :name="destination.incoming ? 'call_received' : ' '"
+                        data-cy="destination-icon-deliver-incoming"
                     />
                     <q-icon
                         size="16px"
                         :name="destination.outgoing ? 'call_made' : ' '"
+                        data-cy="destination-icon-deliver-outgoing"
                     />
                     <q-icon
                         size="16px"
                         :name="destination.status ? 'fas fa-file-alt' : ' '"
+                        data-cy="destination-icon-receive-reports"
                     />
                 </csc-list-item-subtitle>
             </q-slide-transition>
         </template>
         <template
-            slot="menu"
+            #menu
         >
             <csc-list-menu-item
                 :disable="loading"
                 icon="delete"
+                data-cy="destination-delete"
                 icon-color="negative"
                 @click="deleteDestination"
             >
                 {{ $t('Remove') }}
             </csc-list-menu-item>
         </template>
-        <template slot="body">
+        <template #body>
             <csc-fax-to-mail-destination-form
                 :is-add-new-mode="false"
                 :initial-data="destination"
                 :loading="loading"
-                @update-property="updateProperty"
+                @update-property="updateProperty($event)"
             />
         </template>
     </csc-list-item>
@@ -55,9 +59,9 @@
 
 <script>
 import CscListItem from 'components/CscListItem'
+import CscListItemSubtitle from 'components/CscListItemSubtitle'
 import CscListItemTitle from 'components/CscListItemTitle'
 import CscListMenuItem from 'components/CscListMenuItem'
-import CscListItemSubtitle from 'components/CscListItemSubtitle'
 import CscFaxToMailDestinationForm from 'components/pages/FaxSettings/CscFaxToMailDestinationForm'
 
 export default {
@@ -87,6 +91,7 @@ export default {
             default: false
         }
     },
+    emits: ['update-property', 'expand', 'collapse', 'remove'],
     methods: {
         deleteDestination () {
             if (this.$refs.listItem) {
@@ -101,8 +106,8 @@ export default {
                 this.$emit('expand')
             }
         },
-        updateProperty () {
-            this.$emit('update-property', ...arguments)
+        updateProperty (data) {
+            this.$emit('update-property', data)
         }
 
     }

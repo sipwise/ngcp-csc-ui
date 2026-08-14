@@ -3,7 +3,7 @@
         :title="title"
         :loading="$wait.is('csc-cf-source-set-create')"
         v-bind="$attrs"
-        v-on="$listeners"
+        @close="$emit('close')"
     >
         <q-list
             class="no-margin q-pa-md"
@@ -16,8 +16,10 @@
                     <csc-input
                         v-model="sourceSetNameInternal"
                         dense
-                        clearable
+                        :clearable="editable"
+                        :readonly="!editable"
                         :label="$t('Number list name')"
+                        data-cy="csc-call-select-number-list"
                     />
                 </q-item-section>
             </q-item>
@@ -30,17 +32,20 @@
                     <csc-input
                         v-model="sourceSetNumbersInternal[index]"
                         dense
-                        clearable
+                        :clearable="editable"
+                        :readonly="!editable"
                         :label="$t('Number')"
+                        data-cy="csc-call-select-number"
                     >
                         <template
-                            v-if="index > 0"
+                            v-if="editable && index > 0"
                         >
                             <q-btn
                                 flat
                                 dense
                                 color="negative"
                                 icon="delete"
+                                data-cy="csc-call-select-number-delete"
                                 @click="deleteNumber(index)"
                             />
                         </template>
@@ -48,11 +53,13 @@
                 </q-item-section>
             </q-item>
             <q-item
+                v-if="editable"
                 class="no-margin no-padding"
             >
                 <q-item-section>
                     <q-btn
                         :label="$t('Add number')"
+                        data-cy="csc-call-select-number-add"
                         flat
                         color="primary"
                         icon="add"
@@ -62,11 +69,12 @@
             </q-item>
         </q-list>
         <template
-            v-slot:actions
+            #actions
         >
             <q-btn
-                v-if="deleteButton"
+                v-if="deleteButton && editable"
                 :label="$t('Delete')"
+                data-cy="csc-call-select-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -75,6 +83,7 @@
             <q-btn
                 v-if="unassignButton"
                 :label="$t('Unassign')"
+                data-cy="csc-call-select-unassign"
                 flat
                 color="primary"
                 icon="undo"
@@ -82,13 +91,16 @@
             />
             <q-btn
                 :label="$t('Select')"
+                data-cy="csc-call-select-select"
                 flat
                 color="primary"
                 icon="source"
                 @click="$emit('select')"
             />
             <q-btn
+                v-if="editable"
                 :label="$t('Save')"
+                data-cy="csc-call-select-save"
                 flat
                 color="primary"
                 icon="check"
@@ -99,11 +111,9 @@
 </template>
 
 <script>
-import CscInput from 'components/form/CscInput'
-import {
-    mapActions
-} from 'vuex'
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
+import CscInput from 'components/form/CscInput'
+import { mapActions } from 'vuex'
 export default {
     name: 'CscCfGroupConditionSourceSetCreate',
     components: {
@@ -145,15 +155,23 @@ export default {
         unassignButton: {
             type: Boolean,
             default: false
+        },
+        subscriberId: {
+            type: String,
+            default: null
         }
     },
+    emits: ['close', 'select'],
     data () {
         return {
-            sourceSetNameInternal: this.sourceSetName,
-            sourceSetNumbersInternal: this.sourceSetNumbers
+            sourceSetNameInternal: null,
+            sourceSetNumbersInternal: null
         }
     },
     computed: {
+        editable () {
+            return !this.sourceSet || this.sourceSet.own
+        },
         sourceSetNumbers () {
             const numbers = []
             if (this.sourceSet && this.sourceSet.sources) {
@@ -196,14 +214,16 @@ export default {
                     id: this.sourceSet.id,
                     name: this.sourceSetNameInternal,
                     numbers: this.sourceSetNumbersInternal,
-                    mode: this.mode
+                    mode: this.mode,
+                    subscriberId: this.subscriberId
                 })
             } else {
                 await this.createSourceSet({
                     mapping: this.mapping,
                     name: this.sourceSetNameInternal,
                     numbers: this.sourceSetNumbersInternal,
-                    mode: this.mode
+                    mode: this.mode,
+                    subscriberId: this.subscriberId
                 })
             }
             this.$emit('close')
@@ -212,7 +232,8 @@ export default {
             if (this.sourceSet) {
                 await this.deleteSourceSet({
                     mapping: this.mapping,
-                    id: this.sourceSet.id
+                    id: this.sourceSet.id,
+                    subscriberId: this.subscriberId
                 })
             }
         },
@@ -220,7 +241,8 @@ export default {
             if (this.sourceSet) {
                 await this.unassignSourceSet({
                     mapping: this.mapping,
-                    id: this.sourceSet.id
+                    id: this.sourceSet.id,
+                    subscriberId: this.subscriberId
                 })
             }
         }

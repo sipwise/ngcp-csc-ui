@@ -8,14 +8,15 @@
             :source-set="sourceSet"
             :time-set="timeSet"
             :delete-button="true"
+            :subscriber-id="subscriberId"
             @close="closePopup"
         />
     </csc-cf-condition-popup>
 </template>
 
 <script>
-import CscCfGroupConditionWeekdays from 'components/call-forwarding/CscCfGroupConditionWeekdays'
 import CscCfConditionPopup from 'components/call-forwarding/CscCfConditionPopup'
+import CscCfGroupConditionWeekdays from 'components/call-forwarding/CscCfGroupConditionWeekdays'
 export default {
     name: 'CscCfConditionPopupWeekdays',
     components: {
@@ -38,6 +39,10 @@ export default {
         timeSet: {
             type: Object,
             default: undefined
+        },
+        subscriberId: {
+            type: String,
+            default: ''
         }
     },
     methods: {

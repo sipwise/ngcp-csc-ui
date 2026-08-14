@@ -6,34 +6,39 @@
         <csc-list-actions
             class="row justify-center q-mb-xs"
         >
-            <csc-list-action-button
+            <template
                 v-if="isGroupAddFormDisabled"
-                slot="slot1"
-                icon="add"
-                color="primary"
-                :label="$t('Add Group')"
-                :disable="isGroupListRequesting"
-                data-cy="groups-add-new"
-                @click="enableAddForm"
-            />
-            <csc-list-action-button
-                v-if="!filtersEnabled"
-                slot="slot2"
-                icon="filter_alt"
-                color="primary"
-                :label="$t('Filter groups')"
-                data-cy="groups-filter-open"
-                @click="enableFilters"
-            />
-            <csc-list-action-button
-                v-if="filtersEnabled"
-                slot="slot2"
-                icon="clear"
-                color="negative"
-                :label="$t('Close filters')"
-                data-cy="groups-filter-close"
-                @click="closeFilters"
-            />
+                #slot1
+            >
+                <csc-list-action-button
+                    icon="add"
+                    color="primary"
+                    :label="$t('Add Group')"
+                    :disable="isGroupListRequesting"
+                    data-cy="groups-add-new"
+                    @click="enableAddForm"
+                />
+            </template>
+            <template
+                #slot2
+            >
+                <csc-list-action-button
+                    v-if="!filtersEnabled"
+                    icon="filter_alt"
+                    color="primary"
+                    :label="$t('Filter groups')"
+                    data-cy="groups-filter-open"
+                    @click="enableFilters"
+                />
+                <csc-list-action-button
+                    v-if="filtersEnabled"
+                    icon="clear"
+                    color="negative"
+                    :label="$t('Close filters')"
+                    data-cy="groups-filter-close"
+                    @click="closeFilters"
+                />
+            </template>
         </csc-list-actions>
         <q-separator class="q-mb-xs" />
         <q-slide-transition>
@@ -49,6 +54,7 @@
                     :alias-number-options="getNumberOptions"
                     :sound-set-options="getSoundSetOptions"
                     :hunt-policy-options="getHuntPolicyOptions"
+                    :hunt-cancel-mode-options="getHuntCancelModeOptions"
                     @save="createGroup"
                     @cancel="disableGroupAddForm"
                 />
@@ -67,16 +73,17 @@
             class="row justify-center"
         >
             <q-pagination
-                :value="groupListCurrentPage"
+                :model-value="groupListCurrentPage"
                 :max="groupListLastPage"
-                @input="loadGroupListItemsPaginated"
+                @update:model-value="loadGroupListItemsPaginated"
             />
         </div>
         <csc-list-spinner
             v-if="isGroupListRequesting && !(isGroupCreating || isGroupRemoving || isGroupUpdating)"
         />
-        <csc-list
+        <q-list
             v-if="!isGroupListEmpty && groupListVisibility === 'visible'"
+            class="row justify-start items-start"
         >
             <csc-fade
                 v-for="(group, index) in groupListItems"
@@ -84,32 +91,18 @@
             >
                 <csc-pbx-group
                     :key="group.id"
+                    :class="'col-xs-12 col-md-6 col-lg-4 csc-item-' + ((index % 2 === 0)?'odd':'even')"
                     :odd="(index % 2) === 0"
                     :group="group"
                     :seats="seatMapById"
-                    :expanded="isGroupExpanded(group.id)"
                     :loading="isGroupLoading(group.id)"
-                    :alias-number-options="getNumberOptions"
-                    :seat-options="getSeatOptions"
-                    :sound-set-options="getSoundSetOptions"
                     :hunt-policy-options="getHuntPolicyOptions"
-                    :sound-set="getSoundSetByGroupId(group.id)"
+                    :hunt-cancel-mode-options="getHuntCancelModeOptions"
                     :label-width="4"
-                    :has-call-queue="hasCallQueue(group.id)"
-                    @expand="expandGroup(group.id)"
-                    @collapse="collapseGroup(group.id)"
                     @remove="openGroupRemovalDialog(group.id)"
-                    @save-name="setGroupName"
-                    @save-extension="setGroupExtension"
-                    @save-hunt-policy="setGroupHuntPolicy"
-                    @save-hunt-timeout="setGroupHuntTimeout"
-                    @save-alias-numbers="setGroupNumbers"
-                    @save-seats="setGroupSeats"
-                    @save-sound-set="setGroupSoundSet"
-                    @jump-to-call-queue="jumpToCallQueue"
                 />
             </csc-fade>
-        </csc-list>
+        </q-list>
         <div
             v-if="isGroupListEmpty && !isGroupListRequesting && hasFilters"
             class="row justify-center csc-no-entities"
@@ -133,33 +126,33 @@
 </template>
 
 <script>
-import CscPage from 'components/CscPage'
-import CscPbxGroupFilters from 'components/pages/PbxConfiguration/CscPbxGroupFilters'
-import CscPbxGroupAddForm from 'components/pages/PbxConfiguration/CscPbxGroupAddForm'
-import CscPbxGroup from 'components/pages/PbxConfiguration/CscPbxGroup'
-import CscRemoveDialog from 'components/CscRemoveDialog'
-import CscListActions from 'components/CscListActions'
 import CscListActionButton from 'components/CscListActionButton'
-import {
-    mapState,
-    mapGetters,
-    mapActions,
-    mapMutations
-} from 'vuex'
+import CscListActions from 'components/CscListActions'
+import CscListSpinner from 'components/CscListSpinner'
+import CscPage from 'components/CscPage'
+import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscPbxGroup from 'components/pages/PbxConfiguration/CscPbxGroup'
+import CscPbxGroupAddForm from 'components/pages/PbxConfiguration/CscPbxGroupAddForm'
+import CscPbxGroupFilters from 'components/pages/PbxConfiguration/CscPbxGroupFilters'
+import CscFade from 'components/transitions/CscFade'
 import {
     showGlobalError,
     showToast
 } from 'src/helpers/ui'
+import platform from 'src/mixins/platform'
 import {
     CreationState,
     RequestState
 } from 'src/store/common'
-import platform from 'src/mixins/platform'
-import CscFade from 'components/transitions/CscFade'
-import CscList from 'components/CscList'
-import CscListSpinner from 'components/CscListSpinner'
+import {
+    mapActions,
+    mapGetters,
+    mapMutations,
+    mapState
+} from 'vuex'
 
 export default {
+    name: 'CscPagePbxGroups',
     components: {
         CscListSpinner,
         CscFade,
@@ -168,7 +161,6 @@ export default {
         CscPbxGroupFilters,
         CscPbxGroupAddForm,
         CscRemoveDialog,
-        CscList,
         CscListActions,
         CscListActionButton
     },
@@ -189,17 +181,15 @@ export default {
             'groupListItems',
             'groupListCurrentPage',
             'groupListLastPage',
-            'groupSelected',
             'groupCreating',
             'groupCreationState',
             'groupCreationError',
-            'groupUpdating',
-            'groupUpdateState',
-            'groupUpdateError',
             'groupRemoving',
             'groupRemovalState',
             'groupRemovalError',
-            'groupListVisibility'
+            'groupListVisibility',
+            'groupListState',
+            'groupListError'
         ]),
         ...mapGetters('pbx', [
             'getNumberOptions',
@@ -214,18 +204,12 @@ export default {
             'isGroupCreating',
             'isGroupUpdating',
             'isGroupRemoving',
-            'isGroupExpanded',
             'isGroupLoading',
-            'getSoundSetByGroupId',
-            'getGroupCreatingName',
-            'getGroupUpdatingField',
-            'getGroupRemovingName',
             'getGroupRemoveDialogMessage',
             'getGroupCreationToastMessage',
-            'getGroupUpdateToastMessage',
             'getGroupRemovalToastMessage',
             'getHuntPolicyOptions',
-            'hasCallQueue'
+            'getHuntCancelModeOptions'
         ]),
         hasFilters () {
             return Object.keys(this.filters).length > 0
@@ -242,19 +226,17 @@ export default {
                 showGlobalError(this.groupCreationError)
             }
         },
-        groupUpdateState (state) {
-            if (state === RequestState.succeeded) {
-                showToast(this.getGroupUpdateToastMessage)
-            } else if (state === RequestState.failed) {
-                showGlobalError(this.groupUpdateError)
-            }
-        },
         groupRemovalState (state) {
             if (state === RequestState.succeeded) {
                 this.$scrollTo(this.$parent.$el)
                 showToast(this.getGroupRemovalToastMessage)
             } else if (state === RequestState.failed) {
                 showGlobalError(this.groupRemovalError)
+            }
+        },
+        groupListState (state) {
+            if (state === RequestState.failed) {
+                showGlobalError(this.groupListError)
             }
         }
     },
@@ -267,29 +249,17 @@ export default {
         ...mapActions('pbxGroups', [
             'loadGroupListItems',
             'createGroup',
-            'removeGroup',
-            'setGroupName',
-            'setGroupExtension',
-            'setGroupHuntPolicy',
-            'setGroupHuntTimeout',
-            'setGroupSeats',
-            'setGroupNumbers',
-            'setGroupSoundSet'
+            'removeGroup'
         ]),
         ...mapMutations('pbxGroups', [
             'enableGroupAddForm',
             'disableGroupAddForm',
-            'expandGroup',
-            'collapseGroup',
             'groupRemovalRequesting',
             'groupRemovalCanceled'
         ]),
-        ...mapActions('pbxCallQueues', [
-            'jumpToCallQueue'
-        ]),
         loadGroups (page) {
             this.loadGroupListItems({
-                page: page,
+                page,
                 filters: this.filters
             })
         },
@@ -324,7 +294,7 @@ export default {
         openGroupRemovalDialog (groupId) {
             if (this.$refs.removeDialog) {
                 this.groupRemovalRequesting(groupId)
-                this.$refs.removeDialog.open()
+                this.$refs.removeDialog.show()
             }
         },
         closeGroupRemovalDialog () {

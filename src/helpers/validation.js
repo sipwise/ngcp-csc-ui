@@ -1,3 +1,4 @@
+/* eslint-disable prefer-regex-literals */
 
 const userInfoRegExp = new RegExp(/^[-_.!~*'&=+$,;?/%a-zA-Z0-9]+$/)
 const macAddressRegExp = new RegExp(/^(?:[0-9A-Fa-f]{2}(?=([-:]|))(?:\1[0-9A-Fa-f]{2}){5})$/)
@@ -22,15 +23,14 @@ export function isPhone (value) {
     return phoneNumberRegExp.test(value)
 }
 
-export function inRange (value, min, max, between) {
-    value = Number(value)
-    if (min && max == null) {
-        return min <= value
-    } else if (min == null && max) {
-        return max >= value
-    } else if (min && max) {
-        return between(min, max)(value)
-    } else {
-        return true
+export function inRange (value, min, max) {
+    const numericValue = Number(value)
+    if (min >= 0 && max === null) {
+        return min <= numericValue
+    } else if (min < 0 && max) {
+        return max >= numericValue
+    } else if (min >= 0 && max) {
+        return min <= numericValue && max >= numericValue
     }
+    return true
 }

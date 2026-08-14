@@ -4,10 +4,10 @@
         :value="$attrs.value"
         :type="inputType"
         v-bind="$attrs"
-        v-on="$listeners"
+        @input="$emit('update:modelValue', $event)"
     >
         <template
-            slot="prepend"
+            #prepend
         >
             <slot
                 name="prepend"
@@ -17,7 +17,7 @@
             />
         </template>
         <template
-            v-slot:append
+            #append
         >
             <q-btn
                 v-if="$attrs.value !== ''"
@@ -45,9 +45,10 @@
         </template>
     </csc-input>
 </template>
+
 <script>
 import CscInput from 'components/form/CscInput'
-import PasswordGenerator from 'generate-password'
+import { mapWaitingActions } from 'vue-wait-vue3'
 export default {
     name: 'CscInputPassword',
     components: { CscInput },
@@ -55,40 +56,9 @@ export default {
         generate: {
             type: Boolean,
             default: false
-        },
-        generateLength: {
-            type: Number,
-            default: 10
-        },
-        generateNumbers: {
-            type: Boolean,
-            default: true
-        },
-        generateLowercase: {
-            type: Boolean,
-            default: true
-        },
-        generateUppercase: {
-            type: Boolean,
-            default: true
-        },
-        generateSymbols: {
-            type: Boolean,
-            default: false
-        },
-        generateExcludeSimilarCharacters: {
-            type: Boolean,
-            default: false
-        },
-        generateExclude: {
-            type: String,
-            default: ''
-        },
-        generateStrict: {
-            type: Boolean,
-            default: true
         }
     },
+    emits: ['generated', 'update:modelValue'],
     data () {
         return {
             visible: false
@@ -96,34 +66,20 @@ export default {
     },
     computed: {
         inputType () {
-            if (this.visible) {
-                return 'text'
-            } else {
-                return 'password'
-            }
+            return this.visible ? 'text' : 'password'
         },
         visibilityIcon () {
-            if (!this.visible) {
-                return 'visibility_off'
-            } else {
-                return 'visibility'
-            }
+            return this.visible ? 'visibility' : 'visibility_off'
         }
     },
     methods: {
-        generatePassword () {
-            const pass = PasswordGenerator.generate({
-                length: this.generateLength,
-                numbers: this.generateNumbers,
-                lowercase: this.generateLowercase,
-                uppercase: this.generateUppercase,
-                symbols: this.generateSymbols,
-                excludeSimilarCharacters: this.generateExcludeSimilarCharacters,
-                exclude: this.generateExclude,
-                strict: this.generateStrict
-            })
-            this.$emit('input', pass)
-            this.$emit('generated', pass)
+        ...mapWaitingActions('user', {
+            generatePasswordUser: 'generatePasswordUser'
+        }),
+        async generatePassword () {
+            const password = await this.generatePasswordUser()
+            this.$emit('update:modelValue', password)
+            this.$emit('generated', password)
         },
         toggleVisibility () {
             this.visible = !this.visible

@@ -1,4 +1,3 @@
-
 <template>
     <csc-page
         id="csc-page-pbx-settings"
@@ -18,7 +17,7 @@
                         :label="clirIntrapbx ? $t('Your number is hidden to the callee within own PBX') : $t('Your number is visible to the callee within own PBX')"
                         checked-icon="visibility_off"
                         unchecked-icon="visibility"
-                        @input="changeIntraPbx"
+                        @update:model-value="changeIntraPbx"
                     />
                 </q-item-section>
                 <q-item-section
@@ -34,18 +33,17 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex'
 import CscPage from 'components/CscPage'
+import CscSpinner from 'components/CscSpinner'
+import { getSubscriberId } from 'src/auth'
 import {
     showGlobalError,
     showToast
 } from 'src/helpers/ui'
-import {
-    RequestState
-} from 'src/store/common'
-import CscSpinner from 'components/CscSpinner'
-import { getSubscriberId } from 'src/auth'
+import { RequestState } from 'src/store/common'
+import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
+    name: 'CscPagePbxSettings',
     components: {
         CscSpinner,
         CscPage
@@ -71,17 +69,17 @@ export default {
     watch: {
         seatUpdateState (state) {
             switch (state) {
-            case RequestState.requesting:
-                this.requestInProgress(true)
-                break
-            case RequestState.succeeded :
-                showToast(this.clirIntrapbx ? this.$t('Your number is hidden to the callee within own PBX') : this.$t('Your number is visible to the callee within own PBX'))
-                this.requestInProgress(false)
-                break
-            case RequestState.failed :
-                showGlobalError(this.seatUpdateError, 5000)
-                this.requestInProgress(false)
-                break
+                case RequestState.requesting:
+                    this.requestInProgress(true)
+                    break
+                case RequestState.succeeded :
+                    showToast(this.clirIntrapbx ? this.$t('Your number is hidden to the callee within own PBX') : this.$t('Your number is visible to the callee within own PBX'))
+                    this.requestInProgress(false)
+                    break
+                case RequestState.failed :
+                    showGlobalError(this.seatUpdateError, 5000)
+                    this.requestInProgress(false)
+                    break
             }
         }
     },

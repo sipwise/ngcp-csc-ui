@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-model-argument -->
 
 <template>
     <csc-page
@@ -5,15 +6,15 @@
         class="q-pa-lg"
     >
         <q-table
+            v-model:pagination="pagination"
             class="no-shadow"
             :columns="columns"
-            :data="subscriberRegistrations"
+            :rows="subscriberRegistrations"
             :loading="$wait.is('loadSubscriberRegistrations')"
             row-key="id"
-            :pagination.sync="pagination"
             @request="fetchPaginatedRegistrations"
         >
-            <template v-slot:loading>
+            <template #loading>
                 <q-inner-loading
                     showing
                     color="primary"
@@ -22,7 +23,7 @@
                 </q-inner-loading>
             </template>
 
-            <template v-slot:top-left>
+            <template #top-left>
                 <q-btn
                     icon="refresh"
                     size="sm"
@@ -32,15 +33,27 @@
                     {{ $t('Refresh') }}
                 </q-btn>
             </template>
+            <template #body-cell-menu="{ row }">
+                <td>
+                    <q-icon
+                        name="delete"
+                        color="negative"
+                        size="25px"
+                        style="cursor: pointer;"
+                        @click="deleteRow(row)"
+                    />
+                </td>
+            </template>
         </q-table>
     </csc-page>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import CscPage from 'components/CscPage'
-import { mapWaitingActions } from 'vue-wait'
 import CscSpinner from 'components/CscSpinner'
+import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { mapWaitingActions } from 'vue-wait-vue3'
+import { mapState } from 'vuex'
 export default {
     name: 'CscPageRegisteredDevices',
     components: {
@@ -54,7 +67,7 @@ export default {
                 sortBy: 'id',
                 descending: false,
                 page: 1,
-                rowsPerPage: 5,
+                rowsPerPage: LIST_DEFAULT_ROWS,
                 rowsNumber: 0
             }
         }
@@ -70,7 +83,7 @@ export default {
                     required: true,
                     label: this.$t('Id'),
                     align: 'left',
-                    field: row => row.id,
+                    field: (row) => row.id,
                     sortable: true
                 },
                 {
@@ -78,7 +91,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('User Agent'),
-                    field: row => row.user_agent,
+                    field: (row) => row.user_agent,
                     sortable: true
                 },
                 {
@@ -86,7 +99,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Contact'),
-                    field: row => row.contact,
+                    field: (row) => row.contact,
                     sortable: true
                 },
                 {
@@ -94,7 +107,7 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Expires'),
-                    field: row => row.expires,
+                    field: (row) => row.expires,
                     sortable: true
                 },
                 {
@@ -102,15 +115,15 @@ export default {
                     required: true,
                     align: 'left',
                     label: this.$t('Q-Value'),
-                    field: row => row.q,
+                    field: (row) => row.q,
                     sortable: true
                 },
                 {
                     name: 'menu',
                     required: true,
-                    align: 'right',
+                    align: 'left',
                     label: '',
-                    sortable: false
+                    sortable: true
                 }
             ]
         }
@@ -120,7 +133,8 @@ export default {
     },
     methods: {
         ...mapWaitingActions('user', {
-            loadSubscriberRegistrations: 'loadSubscriberRegistrations'
+            loadSubscriberRegistrations: 'loadSubscriberRegistrations',
+            removeSubscriberRegistration: 'removeSubscriberRegistration'
         }),
         async refresh () {
             await this.fetchPaginatedRegistrations({
@@ -137,6 +151,18 @@ export default {
             })
             this.pagination = { ...props.pagination }
             this.pagination.rowsNumber = count
+        },
+        async deleteRow (row) {
+            this.$q.dialog({
+                title: this.$t('Delete registered device'),
+                message: this.$t('You are about to delete this registered device'),
+                color: 'negative',
+                cancel: true,
+                persistent: true
+            }).onOk(async (data) => {
+                await this.removeSubscriberRegistration(row)
+                await this.refresh()
+            })
         }
     }
 }
