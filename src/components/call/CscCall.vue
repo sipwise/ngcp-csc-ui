@@ -658,10 +658,14 @@ export default {
             this.fetchLocalMediaWrapperWidth()
             this.fetchRemoteMediaWrapperWidth()
         }
+        const startCall = (media) => {
+            this.startCall(media)
+        }
         fetchMediaWrapperWidth()
         this.emitter.$on('window-resized', fetchMediaWrapperWidth)
         this.emitter.$on('content-resized', fetchMediaWrapperWidth)
         this.emitter.$on('orientation-changed', fetchMediaWrapperWidth)
+        this.emitter.$on('start-call', startCall)
         if (!navigator.userAgent.includes('Firefox')) {
             const permission = await navigator.permissions.query({ name: 'microphone' })
             this.permissionState = permission.state

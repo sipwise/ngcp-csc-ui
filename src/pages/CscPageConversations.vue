@@ -364,6 +364,7 @@ export default {
         },
         startCall (number) {
             this.$store.commit('call/numberInputChanged', number)
+            this.emitter.$emit('start-call', 'audioOnly')
             this.$router.push('home')
         },
         downloadFax (fax) {
