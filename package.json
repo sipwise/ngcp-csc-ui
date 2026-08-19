@@ -65,7 +65,6 @@
     "@babel/plugin-transform-private-methods": "8.0.1",
     "@quasar/app-webpack": "4.4.5",
     "@quasar/cli": "5.0.2",
-    "@quasar/quasar-app-extension-testing": "2.2.0",
     "@quasar/quasar-app-extension-testing-unit-jest": "3.0.3",
     "@vue/compiler-dom": "3.5.39",
     "@vue/test-utils": "2.4.11",
