@@ -65,6 +65,7 @@
                 <template #body-cell-menu="{ row }">
                     <td>
                         <q-btn
+                            v-if="isCallEnabled"
                             icon="fas fa-phone-alt"
                             color="primary"
                             size="sm"
@@ -124,6 +125,9 @@ export default {
         ]),
         ...mapGetters('user', [
             'isPbxEnabled'
+        ]),
+        ...mapGetters('call', [
+            'isCallEnabled'
         ]),
         filteredSubscriberSeats () {
             return this.subscriberSeats.filter((seat) => seat.pbx_extension !== null)

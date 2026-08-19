@@ -75,6 +75,7 @@ export default {
     ],
     data () {
         return {
+            pendingCallbackNumber: null
         }
     },
     computed: {
@@ -109,12 +110,42 @@ export default {
             return title
         }
     },
-    mounted () {
-        if (this.$route.query.number) {
-            this.numberInputChanged(this.$route.query.number)
+    watch: {
+        '$route.query.number': {
+            immediate: true,
+            handler (number) {
+                this.pendingCallbackNumber = null
+                if (typeof number === 'string' && number.trim() !== '') {
+                    this.numberInputChanged(number)
+                    if (this.callNumberNormalized.trim() !== '') {
+                        this.pendingCallbackNumber = number
+                        this.startPendingCall()
+                    }
+                }
+            }
+        },
+        isCallEnabled () {
+            this.startPendingCall()
         }
     },
     methods: {
+        startPendingCall () {
+            const number = this.pendingCallbackNumber
+            if (number === null ||
+                this.$route.query.number !== number ||
+                !this.isCallEnabled) {
+                return
+            }
+            this.pendingCallbackNumber = null
+            this.emitter.$emit('start-call', 'audioOnly')
+            const query = { ...this.$route.query }
+            delete query.number
+            this.$router.replace({
+                path: this.$route.path,
+                query,
+                hash: this.$route.hash
+            })
+        },
         numberInputChanged (number) {
             this.$store.commit('call/numberInputChanged', number)
         },

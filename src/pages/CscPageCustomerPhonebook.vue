@@ -96,6 +96,7 @@
                     <td>
                         <div class="row items-center justify-between no-wrap full-width">
                             <q-btn
+                                v-if="isCallEnabled"
                                 icon="fas fa-phone-alt"
                                 color="primary"
                                 size="sm"
@@ -170,6 +171,9 @@ export default {
         ]),
         ...mapGetters('user', [
             'getCustomerId'
+        ]),
+        ...mapGetters('call', [
+            'isCallEnabled'
         ]),
         columns () {
             return [
