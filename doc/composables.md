@@ -5,6 +5,7 @@ Detailed usage examples for composables using `<script setup>`.
 ## Table of Contents
 
 - [useStore](#usestore)
+- [useWait](#usewait)
 - [useGlobals](#useglobals)
 
 ---
@@ -168,34 +169,84 @@ const handleLogin = async () => {
 
 ---
 
+## useWait
+
+Reactive wrapper around the `wait` Vuex module that `vue-wait-vue3` registers (see `src/boot/vue-wait.js`, `useVuex: true, vuexModuleName: 'wait'`). Built on top of [useStore](#usestore) rather than the raw `$wait` instance, so loading state is exposed the same reactive way as any other store-backed value in this app.
+
+*Problem it solves*:
+Options API components read loading state via `this.$wait.is(...)`/`mapWaitingActions`. In Composition API you want the same waiter-keyed loading state, but as a `computed` ref you can use directly in a template or another `computed`, plus a convenience wrapper for the common start/await/end pattern.
+
+### Functions
+
+#### `is(waiter)`
+
+Returns a `computed` ref that's `true` while the given waiter key is active.
+
+```vue
+<script setup>
+import { useWait } from 'src/composables/useWait'
+
+const { is } = useWait()
+const isLoading = is('csc-pbx-call-settings-load-preferences')
+</script>
+```
+
+#### `start(waiter)` / `end(waiter)`
+
+Dispatch `wait/start` / `wait/end` directly for the given waiter key. Prefer `waitFor()` below unless you need start/end at points that don't fit a single async block.
+
+#### `waitFor(waiter, action)`
+
+Starts the waiter, awaits `action()`, and ends the waiter whether `action` resolves or throws.
+
+```vue
+<script setup>
+import { useWait } from 'src/composables/useWait'
+import { useActions } from 'src/composables/useStore'
+
+const { waitFor } = useWait()
+const { login } = useActions('user', ['login'])
+
+async function handleLogin (credentials) {
+  await waitFor('login', () => login(credentials))
+}
+</script>
+```
+
+#### `waitAction(moduleName, action, waiter = action)`
+
+Returns a function that dispatches `${moduleName}/${action}` wrapped in `waitFor`, defaulting the waiter key to the action name.
+
+```vue
+<script setup>
+import { useWait } from 'src/composables/useWait'
+
+const { waitAction, is } = useWait()
+const login = waitAction('user', 'login')
+const isLoggingIn = is('login')
+</script>
+```
+
+---
+
 ## useGlobals
 
 Access global application properties.
 
-### Available Functions
+> ⚠️ `useGlobals.js` is a planned composable, not yet implemented — this section documents the intended shape. Today, `useFilters()` lives in `src/boot/filters.js` and `useValidationErrors()` lives in `src/boot/vuelidate.js`; `useAppConfig()`/`useConstants()` don't exist yet. Import from those real locations until `useGlobals.js` is built.
+
+### Available Functions (once built)
 
 - `useAppConfig()` - Application configuration
 - `useConstants()` - Global constants
-- `useFilters()` - Formatting functions
-- `useValidationErrors()` - Validation helpers
+- `useFilters()` - Formatting functions (currently `src/boot/filters.js`)
+- `useValidationErrors()` - Validation helpers (currently `src/boot/vuelidate.js`)
 
-### Example: useAppConfig()
-
-```vue
-<script setup>
-import { useAppConfig } from 'src/composables/useGlobals'
-
-const config = useAppConfig()
-
-const apiEndpoint = `${config.baseHttpUrl}/api/users`
-</script>
-```
-
-### Example: useFilters()
+### Example: useFilters() (current, real import path)
 
 ```vue
 <script setup>
-import { useFilters } from 'src/composables/useGlobals'
+import { useFilters } from 'src/boot/filters'
 
 const filters = useFilters()
 

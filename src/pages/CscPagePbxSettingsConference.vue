@@ -85,7 +85,7 @@ const { loadSubscriberPreferencesAction, fieldUpdateAction } = useActions('callS
     'loadSubscriberPreferencesAction',
     'fieldUpdateAction'
 ])
-const wait = useWait()
+const { is, waitFor } = useWait()
 const { t } = useI18n()
 
 const isInitialized = ref(false)
@@ -117,9 +117,9 @@ const currentConferenceMaxParticipants = computed(() => normalizePreference(subs
 const currentConferencePin = computed(() => normalizePreference(subscriberPreferences.value.conference_pin))
 const hasConferenceMaxParticipantsChanged = computed(() => isInitialized.value && changes.conferenceMaxParticipants !== currentConferenceMaxParticipants.value)
 const hasConferencePinChanged = computed(() => isInitialized.value && changes.conferencePin !== currentConferencePin.value)
-const isLoading = computed(() => wait.is(WAITERS.loadPreferences))
-const isConferenceMaxParticipantsUpdating = computed(() => wait.is(WAITERS.updateConferenceMaxParticipants))
-const isConferencePinUpdating = computed(() => wait.is(WAITERS.updateConferencePin))
+const isLoading = is(WAITERS.loadPreferences)
+const isConferenceMaxParticipantsUpdating = is(WAITERS.updateConferenceMaxParticipants)
+const isConferencePinUpdating = is(WAITERS.updateConferencePin)
 const isConferenceMaxParticipantsLoading = computed(() => isLoading.value || isConferenceMaxParticipantsUpdating.value)
 const isConferencePinLoading = computed(() => isLoading.value || isConferencePinUpdating.value)
 
@@ -138,8 +138,7 @@ function resetConferencePin () {
 
 async function saveConferenceMaxParticipants () {
     if (hasConferenceMaxParticipantsChanged.value && v$.value.conferenceMaxParticipants.$errors.length <= 0) {
-        wait.start(WAITERS.updateConferenceMaxParticipants)
-        try {
+        await waitFor(WAITERS.updateConferenceMaxParticipants, async () => {
             await fieldUpdateAction({
                 field: 'conference_max_participants',
                 value: changes.conferenceMaxParticipants
@@ -148,16 +147,13 @@ async function saveConferenceMaxParticipants () {
             showToast(t('Updated {field} successfully', {
                 field: t('Maximum Conference Participants')
             }))
-        } finally {
-            wait.end(WAITERS.updateConferenceMaxParticipants)
-        }
+        })
     }
 }
 
 async function saveConferencePin () {
     if (hasConferencePinChanged.value && v$.value.conferencePin.$errors.length <= 0) {
-        wait.start(WAITERS.updateConferencePin)
-        try {
+        await waitFor(WAITERS.updateConferencePin, async () => {
             await fieldUpdateAction({
                 field: 'conference_pin',
                 value: changes.conferencePin
@@ -166,20 +162,15 @@ async function saveConferencePin () {
             showToast(t('Updated {field} successfully', {
                 field: t('Conference PIN')
             }))
-        } finally {
-            wait.end(WAITERS.updateConferencePin)
-        }
+        })
     }
 }
 
 onMounted(async () => {
-    wait.start(WAITERS.loadPreferences)
-    try {
+    await waitFor(WAITERS.loadPreferences, async () => {
         await loadSubscriberPreferencesAction()
         applyDefaultData()
         isInitialized.value = true
-    } finally {
-        wait.end(WAITERS.loadPreferences)
-    }
+    })
 })
 </script>

@@ -122,17 +122,22 @@ export default {
 }
 ```
 
-- **Vue 3 support**: New Composition API components can use the `useWait()` composable from `src/composables/useWait.js` to access the same functionality
+- **Vue 3 support**: New Composition API components use the `useWait()` composable from `src/composables/useWait.js`, which exposes the same `wait` Vuex module reactively instead of the raw `$wait` instance
 
 ```js
 import { useWait } from 'src/composables/useWait'
 
-const wait = useWait()
-wait.start('loading')
+const { is, waitFor } = useWait()
+const isLoading = is('loading') // computed ref, usable directly in a template
+
+async function load () {
+  await waitFor('loading', () => fetchSomething())
+}
 ```
 
-- **Usage pattern**: Call `this.$wait.start('action-name')` before async operations, `this.$wait.end('action-name')` after completion, and check state with `this.$wait.is('action-name')` or `$wait.is('action-name')` in templates
-- **Migration note**: Both patterns work simultaneously, allowing gradual migration from Vue 2 to Vue 3 syntax without breaking existing functionality
+- **Usage pattern (Options API)**: Call `this.$wait.start('action-name')` before async operations, `this.$wait.end('action-name')` after completion, and check state with `this.$wait.is('action-name')` or `$wait.is('action-name')` in templates
+- **Usage pattern (Composition API)**: Prefer `waitFor(waiter, action)` to wrap an async block (starts/ends the waiter even if it throws); use `is(waiter)` for a reactive computed ref instead of manually wrapping a getter; use `waitAction(moduleName, action, waiter)` to wrap a store action dispatch directly. See `composables.md` for the full API reference.
+- **Migration note**: Both patterns work simultaneously (they read/write the same `wait` Vuex module), allowing gradual migration from Vue 2 to Vue 3 syntax without breaking existing functionality
 
 ## Store Infrastructure
 
