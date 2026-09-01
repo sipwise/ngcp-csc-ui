@@ -14,6 +14,7 @@
                     icon="add"
                     color="primary"
                     :label="$t('Add Sound Set')"
+                    data-cy="csc-sound-set-add"
                     @click="enableSoundSetAddForm"
                 />
             </template>
@@ -61,6 +62,7 @@
                     :sound-set="soundSet"
                     @save-as-default="setAsDefaultSoundSet"
                     @remove="openSoundSetRemovalDialog(soundSet.id)"
+                    data-cy="csc-sound-set"
                 />
             </csc-fade>
         </q-list>
@@ -76,6 +78,7 @@
             :message="getSoundSetRemoveDialogMessage"
             @remove="removeSoundSet"
             @cancel="closeSoundSetRemovalDialog"
+            data-cy="csc-sound-set-remove-dialog"
         />
     </csc-page>
 </template>

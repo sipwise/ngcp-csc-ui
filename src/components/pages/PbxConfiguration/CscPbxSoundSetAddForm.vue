@@ -7,6 +7,7 @@
             :disable="loading"
             :readonly="loading"
             :label="$t('Name')"
+            data-cy="csc-sound-set-name"
             hide-bottom-space
             @update:model-value="v$.data.name.$touch()"
         />
@@ -17,6 +18,7 @@
             :disable="loading"
             :readonly="loading"
             :label="$t('Description')"
+            data-cy="csc-sound-set-description"
             hide-bottom-space
             @update:model-value="v$.data.description.$touch()"
         />
@@ -28,6 +30,7 @@
             :readonly="loading"
             :options="getParentOptions"
             :label="$t('Parent')"
+            data-cy="csc-sound-set-parent"
         />
         <div
             class="q-mb-sm q-mt-sm"
@@ -36,6 +39,7 @@
                 v-model="data.contract_default"
                 :disable="loading"
                 :label="$t('Use as default for all seats and groups')"
+                data-cy="csc-sound-set-default"
             />
         </div>
         <div>
@@ -43,6 +47,7 @@
                 v-model="data.copy_from_default"
                 :disable="loading"
                 :label="$t('Use language specific preset')"
+                data-cy="csc-sound-set-language-enable"
                 @update:model-value="toggleLoadFiles"
             />
         </div>
@@ -55,6 +60,7 @@
             :disable="loading || !data.copy_from_default"
             :readonly="loading"
             :label="$t('Language')"
+            data-cy="csc-sound-set-language-dropdown"
             :options="languageOptions"
         />
         <div
@@ -66,6 +72,7 @@
                 class="col-auto"
                 :disable="loading || !data.copy_from_default"
                 :label="$t('Play all files in loop')"
+                data-cy="csc-sound-set-play-loop"
             />
         </div>
         <div
@@ -77,6 +84,7 @@
                 color="default"
                 icon="clear"
                 @click="cancel()"
+                data-cy="csc-sound-set-play-cancel"
             >
                 {{ $t('Cancel') }}
             </q-btn>
@@ -87,6 +95,7 @@
                 icon="queue_music"
                 :disable="v$.data.$invalid || !data.language"
                 @click="save()"
+                data-cy="csc-sound-set-play-create"
             >
                 {{ $t('Create sound set') }}
             </q-btn>
