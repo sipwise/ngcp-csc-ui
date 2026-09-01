@@ -39,6 +39,7 @@
                     v-model="changes.name"
                     :error="v$.changes.name.$errors.length > 0"
                     :label="$t('Name')"
+                    data-cy="csc-sound-set-edit-name"
                     :disable="!soundSetSelected.customer_id || isSoundSetUpdating"
                     @update:model-value="v$.changes.name.$touch()"
                     @keyup.enter="save"
@@ -50,9 +51,11 @@
                         <csc-input-button-save
                             v-if="v$.changes.name.$errors.length <= 0"
                             @click.stop="save"
+                            data-cy="csc-sound-set-edit-name-save"
                         />
                         <csc-input-button-reset
                             @click.stop="resetName"
+                            data-cy="csc-sound-set-edit-name-reset"
                         />
                     </template>
                 </q-input>
@@ -60,6 +63,7 @@
                     v-model="changes.description"
                     :error="v$.changes.description.$errors.length > 0"
                     :label="$t('Description')"
+                    data-cy="csc-sound-set-edit-description"
                     :disable="!soundSetSelected.customer_id || isSoundSetUpdating"
                     @update:model-value="v$.changes.description.$touch()"
                     @keyup.enter="save"
@@ -71,9 +75,11 @@
                         <csc-input-button-save
                             v-if="v$.changes.description.$errors.length <= 0"
                             @click.stop="save"
+                            data-cy="csc-sound-set-edit-description-save"
                         />
                         <csc-input-button-reset
                             @click.stop="resetDescription"
+                            data-cy="csc-sound-set-edit-description-reset"
                         />
                     </template>
                 </q-input>
@@ -86,6 +92,7 @@
                     :disable="!soundSetSelected.customer_id || isSoundSetUpdating"
                     :options="getParentOptions"
                     :label="$t('Parent')"
+                    data-cy="csc-sound-set-edit-parent"
                 >
                     <template
                         v-if="hasParentChanged"
@@ -93,14 +100,18 @@
                     >
                         <csc-input-button-save
                             @click.stop="save"
+                            data-cy="csc-sound-set-edit-name-save"
+
                         />
                         <csc-input-button-reset
                             @click.stop="resetParent"
+                            data-cy="csc-sound-set-edit-name-reset"
                         />
                     </template>
                 </q-select>
                 <q-checkbox
                     :label="$t('Default sound set for all seats and groups')"
+                    data-cy="csc-sound-set-edit-default"
                     :model-value="soundSetSelected.contract_default"
                     :disable="!soundSetSelected.customer_id || isSoundSetUpdating"
                     @update:model-value="saveAsDefault"
@@ -149,6 +160,7 @@
                                 @toggle-loop-play="setLoopPlay"
                                 @toggle-use-parent="setUseParent"
                                 @remove-uploaded-file="removeUploadedFile"
+                                data-cy="csc-sound-set-edit-upload"
                             />
                         </template>
                         <template
