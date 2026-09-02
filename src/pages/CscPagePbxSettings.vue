@@ -69,17 +69,17 @@ export default {
     watch: {
         seatUpdateState (state) {
             switch (state) {
-            case RequestState.requesting:
-                this.requestInProgress(true)
-                break
-            case RequestState.succeeded :
-                showToast(this.clirIntrapbx ? this.$t('Your number is hidden to the callee within own PBX') : this.$t('Your number is visible to the callee within own PBX'))
-                this.requestInProgress(false)
-                break
-            case RequestState.failed :
-                showGlobalError(this.seatUpdateError, 5000)
-                this.requestInProgress(false)
-                break
+                case RequestState.requesting:
+                    this.requestInProgress(true)
+                    break
+                case RequestState.succeeded :
+                    showToast(this.clirIntrapbx ? this.$t('Your number is hidden to the callee within own PBX') : this.$t('Your number is visible to the callee within own PBX'))
+                    this.requestInProgress(false)
+                    break
+                case RequestState.failed :
+                    showGlobalError(this.seatUpdateError, 5000)
+                    this.requestInProgress(false)
+                    break
             }
         }
     },

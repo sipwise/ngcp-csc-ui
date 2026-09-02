@@ -244,25 +244,25 @@ export default {
             const guidelines = []
             for (const rule in validationRulesObject) {
                 switch (rule) {
-                case 'min_length':
-                    guidelines.push(`Minimum ${validationRulesObject[rule]} characters long.`)
-                    break
-                case 'max_length':
-                    guidelines.push(`Maximum ${validationRulesObject[rule]} characters long.`)
-                    break
-                case 'musthave_digit':
-                    guidelines.push(`Contains a minimum of ${validationRulesObject[rule]} digits.`)
-                    break
-                case 'musthave_lowercase':
-                    guidelines.push(`Contains a minimum of ${validationRulesObject[rule]} lowercases.`)
-                    break
-                case 'musthave_specialchar':
-                    guidelines.push(`Contains a minimum of ${validationRulesObject[rule]} special characters.`)
-                    break
-                case 'musthave_uppercase':
-                    guidelines.push(`Contains a minimum of ${validationRulesObject[rule]} uppercases.`)
-                    break
-                default:
+                    case 'min_length':
+                        guidelines.push(`Minimum ${validationRulesObject[rule]} characters long.`)
+                        break
+                    case 'max_length':
+                        guidelines.push(`Maximum ${validationRulesObject[rule]} characters long.`)
+                        break
+                    case 'musthave_digit':
+                        guidelines.push(`Contains a minimum of ${validationRulesObject[rule]} digits.`)
+                        break
+                    case 'musthave_lowercase':
+                        guidelines.push(`Contains a minimum of ${validationRulesObject[rule]} lowercases.`)
+                        break
+                    case 'musthave_specialchar':
+                        guidelines.push(`Contains a minimum of ${validationRulesObject[rule]} special characters.`)
+                        break
+                    case 'musthave_uppercase':
+                        guidelines.push(`Contains a minimum of ${validationRulesObject[rule]} uppercases.`)
+                        break
+                    default:
                 }
             }
 

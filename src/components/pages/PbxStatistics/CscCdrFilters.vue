@@ -239,14 +239,14 @@ export default {
                 const filterDisplayValue = filterItem.value
                 let filterName
                 switch (filterItem.name) {
-                case 'startTime':
-                    filterName = this.$t('Start time')
-                    break
-                case 'endTime' :
-                    filterName = this.$t('End time')
-                    break
-                default:
-                    filterName = this.filterTypeOptions.find((option) => option.value === filterItem.name).label
+                    case 'startTime':
+                        filterName = this.$t('Start time')
+                        break
+                    case 'endTime' :
+                        filterName = this.$t('End time')
+                        break
+                    default:
+                        filterName = this.filterTypeOptions.find((option) => option.value === filterItem.name).label
                 }
                 return {
                     id: filterItem.name,
