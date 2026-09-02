@@ -199,12 +199,12 @@ export default {
         },
         mapRecurrence (recurrence) {
             switch (recurrence) {
-            case 'never':
-                return this.$t('Only once')
-            case 'weekdays':
-                return this.$t('On weekdays')
-            case 'always':
-                return this.$t('Always')
+                case 'never':
+                    return this.$t('Only once')
+                case 'weekdays':
+                    return this.$t('On weekdays')
+                case 'always':
+                    return this.$t('Always')
             }
         },
         dateFormat (dateTime, format) {

@@ -546,7 +546,7 @@ export default {
         layoutResized () {
             if (this.$refs.call) {
                 this.$nextTick(() => {
-                        this.$refs.call.fitMedia()
+                    this.$refs.call.fitMedia()
                 })
             }
         },

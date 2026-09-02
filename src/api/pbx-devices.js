@@ -54,13 +54,13 @@ export function getDeviceList (options) {
                 delete filters[key]
             } else {
                 switch (key) {
-                case 'profile_id':
-                    value = String(value)
-                    break
-                case 'identifier':
-                case 'station_name':
-                    value = `*${value}*`
-                    break
+                    case 'profile_id':
+                        value = String(value)
+                        break
+                    case 'identifier':
+                    case 'station_name':
+                        value = `*${value}*`
+                        break
                 }
                 filters[key] = value
             }

@@ -77,6 +77,7 @@ export default [
             'stylistic/arrow-parens': 'error',
             'stylistic/arrow-spacing': 'error',
             'stylistic/brace-style': 'error',
+            'stylistic/indent': ['error', 4],
             'stylistic/newline-per-chained-call': 'off',
             'stylistic/nonblock-statement-body-position': ['error', 'below'],
             'stylistic/object-curly-newline': [

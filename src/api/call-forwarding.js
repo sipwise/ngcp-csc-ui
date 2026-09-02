@@ -104,11 +104,11 @@ export async function cfRewriteDestination (payload) {
 
 export async function cfUpdateDestinationSets (payload) {
     return patchReplace({
-            resource: 'cfdestinationsets',
-            resourceId: payload.resourceId,
-            fieldPath: 'destinations',
-            value: payload.value
-        })
+        resource: 'cfdestinationsets',
+        resourceId: payload.resourceId,
+        fieldPath: 'destinations',
+        value: payload.value
+    })
 }
 
 export async function cfUpdateFullMapping (payload) {
