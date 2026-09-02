@@ -268,26 +268,26 @@ export default {
         getTranslation (key, params) {
             let translationsMap
             switch (this.suffix) {
-            case 'Incoming':
-                translationsMap = {
-                    toggleEnableLabel: this.$t('Only incoming calls from listed numbers are allowed'),
-                    toggleDisableLabel: this.$t('All incoming calls from listed numbers are blocked'),
-                    toggleEnabledToast: this.$t('All listed numbers are allowed'),
-                    toggleDisabledToast: this.$t('All listed numbers are blocked'),
-                    removeDialogTitle: this.$t('Remove number'),
-                    removeDialogText: this.$t('You are about to remove the number {number}', params)
-                }
-                break
-            case 'Outgoing':
-                translationsMap = {
-                    toggleEnableLabel: this.$t('Only outgoing calls to listed numbers are allowed'),
-                    toggleDisableLabel: this.$t('All outgoing calls to listed numbers are blocked'),
-                    toggleEnabledToast: this.$t('All listed numbers are allowed'),
-                    toggleDisabledToast: this.$t('All listed numbers are blocked'),
-                    removeDialogTitle: this.$t('Remove number'),
-                    removeDialogText: this.$t('You are about to remove the number {number}', params)
-                }
-                break
+                case 'Incoming':
+                    translationsMap = {
+                        toggleEnableLabel: this.$t('Only incoming calls from listed numbers are allowed'),
+                        toggleDisableLabel: this.$t('All incoming calls from listed numbers are blocked'),
+                        toggleEnabledToast: this.$t('All listed numbers are allowed'),
+                        toggleDisabledToast: this.$t('All listed numbers are blocked'),
+                        removeDialogTitle: this.$t('Remove number'),
+                        removeDialogText: this.$t('You are about to remove the number {number}', params)
+                    }
+                    break
+                case 'Outgoing':
+                    translationsMap = {
+                        toggleEnableLabel: this.$t('Only outgoing calls to listed numbers are allowed'),
+                        toggleDisableLabel: this.$t('All outgoing calls to listed numbers are blocked'),
+                        toggleEnabledToast: this.$t('All listed numbers are allowed'),
+                        toggleDisabledToast: this.$t('All listed numbers are blocked'),
+                        removeDialogTitle: this.$t('Remove number'),
+                        removeDialogText: this.$t('You are about to remove the number {number}', params)
+                    }
+                    break
             }
             return translationsMap[key]
         }

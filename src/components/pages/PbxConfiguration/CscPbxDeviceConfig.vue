@@ -214,20 +214,20 @@ export default {
             let x = (key.x * this.imageScaleFactor) + deltaX
             let y = (key.y * this.imageScaleFactor)
             switch (key.labelpos) {
-            case 'left':
-                y = y - height / 2
-                x = x - width
-                break
-            case 'right':
-                y = y - height / 2
-                break
-            case 'top':
-                x = x - width / 2
-                y = y - height
-                break
-            case 'bottom':
-                x = x - width / 2
-                break
+                case 'left':
+                    y = y - height / 2
+                    x = x - width
+                    break
+                case 'right':
+                    y = y - height / 2
+                    break
+                case 'top':
+                    x = x - width / 2
+                    y = y - height
+                    break
+                case 'bottom':
+                    x = x - width / 2
+                    break
             }
             return {
                 top: `${y}px`,

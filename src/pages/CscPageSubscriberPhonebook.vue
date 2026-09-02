@@ -216,7 +216,7 @@ export default {
         await this.refresh()
     },
     methods: {
-            ...mapWaitingActions('subscriber-phonebook', {
+        ...mapWaitingActions('subscriber-phonebook', {
             loadPhonebook: 'loadPhonebook',
             removeEntry: 'removeEntry',
             updateSharedValue: 'updateSharedValue'
