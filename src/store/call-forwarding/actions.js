@@ -249,8 +249,8 @@ export async function addDestination ({ dispatch, commit, state }, payload) {
         ))
 
         await cfUpdateDestinationSets({
-        resourceId: payload.destinationSetId,
-        value: normalizedDestinations
+            resourceId: payload.destinationSetId,
+            value: normalizedDestinations
         })
 
         const destinationSets = await cfLoadDestinationSets()
@@ -267,8 +267,8 @@ export async function addDestination ({ dispatch, commit, state }, payload) {
 export async function rewriteDestination ({ rootGetters }, destination) {
     try {
         const req = await cfRewriteDestination({
-                subscriberId: rootGetters['user/getSubscriberId'],
-                numbers: [destination?.trim()]
+            subscriberId: rootGetters['user/getSubscriberId'],
+            numbers: [destination?.trim()]
         })
         return req.result
     } catch (err) {
@@ -976,7 +976,7 @@ export async function updateAnnouncement ({ dispatch, commit, state }, payload) 
 }
 
 export function resetCallForwardingState ({ commit }) {
-        commit('resetState')
+    commit('resetState')
 }
 
 export function setPopupShow ({ commit }, popupId) {
