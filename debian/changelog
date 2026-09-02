@@ -1,3 +1,13 @@
+ngcp-csc-ui (26.0.1.21+0~mr26.0.1.21) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [9285bf2] MT#65072 Surface real server errors instead of generic/blank messages
+
+  [ Debora Crescenzo ]
+  * [5976e2d] MT#65720 Pin jest and eslint-plugin-jest to the peerDepe range, fix indent linting
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 02 Sep 2026 10:43:08 +0200
+
 ngcp-csc-ui (26.0.1.20+0~mr26.0.1.20) unstable; urgency=medium
 
   [ Debora Crescenzo ]
