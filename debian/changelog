@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.5.1.40+0~mr13.5.1.40) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [6d03b2b] MT#65720 Pin jest and eslint-plugin-jest to the peerDependencies range
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 02 Sep 2026 11:58:21 +0200
+
 ngcp-csc-ui (13.5.1.39+0~mr13.5.1.39) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
