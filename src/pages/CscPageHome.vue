@@ -162,7 +162,7 @@ export default {
         },
         startCall () {
             if (this.callNumberNormalized && this.callNumberNormalized !== '') {
-                this.$store.dispatch('call/start', 'audioOnly')
+                this.emitter.$emit('start-call', 'audioOnly')
             }
         }
     }
