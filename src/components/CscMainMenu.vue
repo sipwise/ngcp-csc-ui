@@ -11,6 +11,7 @@
                 :content-inset-level="0.5"
                 group="cscMainMenu"
                 class="text-weight-bold"
+                @click="$emit('expand-menu')"
             >
                 <q-list>
                     <template
@@ -82,6 +83,7 @@
 <script>
 export default {
     name: 'CscMainMenu',
+    emits: ['expand-menu'],
     props: {
         items: {
             type: Array,

@@ -1,6 +1,7 @@
 <template>
     <csc-main-menu
         :items="items"
+        @expand-menu="$emit('expand-menu')"
     />
 </template>
 
@@ -11,6 +12,7 @@ import { mapGetters } from 'vuex'
 
 export default {
     name: 'CscMainMenuTop',
+    emits: ['expand-menu'],
     components: {
         CscMainMenu
     },

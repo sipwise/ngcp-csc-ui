@@ -14,12 +14,18 @@
                 id="csc-header-toolbar-main"
             >
                 <q-btn
-                    v-if="isMobile"
+                    v-if="!menuOpen"
                     flat
-                    icon="menu"
+                    :icon="mobileMenu ? 'menu' : 'chevron_right'"
+                    :aria-label="$t('Expand menu')"
+                    aria-expanded="false"
+                    aria-controls="csc-drawer-left"
+                    data-cy="open-main-menu"
                     color="primary"
-                    @click="$refs.mainMenu.show()"
-                />
+                    @click="menuOpen = true"
+                >
+                    <csc-tooltip>{{ $t('Expand menu') }}</csc-tooltip>
+                </q-btn>
                 <q-btn
                     v-if="isFaxFeatureEnabled && isFaxServerSettingsActive"
                     class="q-mr-sm"
@@ -40,7 +46,7 @@
                     </csc-popup-menu>
                 </q-btn>
                 <csc-selection-language
-                    v-if="!isMobile"
+                    v-if="!mobileMenu"
                 />
                 <q-btn
                     icon="person"
@@ -80,7 +86,7 @@
                 />
             </q-toolbar>
             <q-toolbar
-                v-show="!menuPinned"
+                v-show="menuMinimized"
                 inset
             >
                 <q-item
@@ -104,44 +110,45 @@
         </q-header>
         <q-drawer
             id="csc-drawer-left"
-            ref="mainMenu"
-            v-model="menuClosed"
+            v-model="menuOpen"
             :mini="menuMinimized"
             class="bg-main-menu"
             :behavior="drawerBehavior"
             show-if-above
             :width="316"
-            @mouseleave="minimizeMenu"
-            @mouseenter="maximizeMenu"
             @on-layout="layoutResized"
         >
             <div
-                v-if="$q.platform.is.desktop"
-                :class="pinMenuButtonClasses"
+                :class="menuToggleButtonClasses"
             >
                 <div
                     class="col col-auto"
                 >
                     <q-btn
-                        v-if="!menuMinimized"
-                        :icon="pinMenuButtonIcon"
+                        :icon="menuToggleIcon"
+                        :aria-label="menuToggleLabel"
+                        :aria-expanded="!menuMinimized"
+                        aria-controls="csc-drawer-left"
+                        data-cy="toggle-main-menu"
                         color="white"
                         flat
                         dense
                         round
-                        @click="pinMenu"
-                    />
+                        @click="toggleMenu"
+                    >
+                        <csc-tooltip>{{ menuToggleLabel }}</csc-tooltip>
+                    </q-btn>
                 </div>
             </div>
-            <csc-selection-language-mobile
-                v-if="$q.platform.is.mobile"
-                id="csc-language-menu-main-mobile"
-                class="csc-language-menu"
-            />
             <q-scroll-area
                 class="absolute-top main-menu-container"
                 :style="{ bottom: mainMenuBottom }"
             >
+                <csc-selection-language-mobile
+                    v-if="mobileMenu"
+                    id="csc-language-menu-main-mobile"
+                    class="csc-language-menu"
+                />
                 <csc-main-menu-top
                     id="csc-main-menu-top"
                     class="csc-main-menu no-margin"
@@ -151,6 +158,7 @@
                     :is-call-blocking="isCallBlocking"
                     :is-pbx-admin="isPbxAdmin"
                     :is-pbx-configuration="isPbxConfiguration"
+                    @expand-menu="expandMenu"
                 />
             </q-scroll-area>
             <aui-mobile-app-badges
@@ -242,6 +250,7 @@ import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscSelectionLanguage from 'components/CscSelectionLanguage'
 import CscSelectionLanguageMobile from 'components/CscSelectionLanguageMobile'
 import CscSendFax from 'components/CscSendFax'
+import CscTooltip from 'components/CscTooltip'
 import CscUserMenu from 'components/CscUserMenu'
 import CscCall from 'components/call/CscCall'
 import _ from 'lodash'
@@ -282,6 +291,7 @@ export default {
         CscMainMenuTop,
         CscCall,
         CscSendFax,
+        CscTooltip,
         CscLogo,
         CscCustomLogo,
         CscUserMenu
@@ -293,16 +303,10 @@ export default {
     data () {
         return {
             header: true,
-            menuClosed: false,
-            menuPinned: true,
-            menuMinimized: false,
-            sideStates: {
-                left: true,
-                right: false
-            },
-            mobileMenu: null,
-            customLogo: null,
-            menuPinnedBeforeCall: true
+            menuOpen: false,
+            menuCollapsed: false,
+            menuStateBeforeCall: null,
+            customLogo: null
         }
     },
     computed: {
@@ -350,20 +354,29 @@ export default {
         showQrBtn () {
             return this.platformInfo?.app?.show_qr
         },
-        isMenuClosed () {
-            return !this.sideStates.left
+        mobileMenu () {
+            return this.$q.screen.lt.md
+        },
+        menuMinimized () {
+            return !this.mobileMenu && this.menuCollapsed
         },
         isFullView () {
-            return this.isMenuClosed || this.isMobile || this.mobileMenu
+            return !this.menuOpen || this.isMobile || this.mobileMenu
         },
-        pinMenuButtonIcon () {
-            if (!this.menuPinned) {
-                return 'push_pin'
+        menuToggleIcon () {
+            if (this.mobileMenu) {
+                return 'close'
             }
-            return 'arrow_left'
+            return this.menuMinimized ? 'chevron_right' : 'chevron_left'
         },
-        pinMenuButtonClasses () {
-            const classes = ['pin-menu-button row items-center']
+        menuToggleLabel () {
+            if (this.mobileMenu) {
+                return this.$t('Close menu')
+            }
+            return this.menuMinimized ? this.$t('Expand menu') : this.$t('Collapse menu')
+        },
+        menuToggleButtonClasses () {
+            const classes = ['menu-toggle-button row items-center']
             if (!this.menuMinimized) {
                 classes.push('justify-end')
                 classes.push('q-pl-sm q-pr-sm')
@@ -373,10 +386,7 @@ export default {
             return classes
         },
         drawerBehavior () {
-            if (this.$q.platform.is.mobile) {
-                return 'mobile'
-            }
-            return 'desktop'
+            return this.mobileMenu ? 'mobile' : 'desktop'
         },
         isHome () {
             return this.route?.path === '/user/home'
@@ -469,12 +479,24 @@ export default {
     },
     watch: {
         callState (state) {
-            if (state === 'established') {
-                this.menuPinnedBeforeCall = this.menuPinned
-                this.menuMinimized = true
-            } else if (state === 'ended') {
-                this.menuMinimized = !this.menuPinnedBeforeCall
+            if (state === CallState.established && !this.menuStateBeforeCall) {
+                this.menuStateBeforeCall = {
+                    open: this.menuOpen,
+                    collapsed: this.menuCollapsed
+                }
+                if (this.mobileMenu) {
+                    this.menuOpen = false
+                } else {
+                    this.menuCollapsed = true
+                }
+            } else if ((state === CallState.ended || state === CallState.input) && this.menuStateBeforeCall) {
+                this.menuOpen = this.menuStateBeforeCall.open
+                this.menuCollapsed = this.menuStateBeforeCall.collapsed
+                this.menuStateBeforeCall = null
+            } else {
+                return
             }
+            this.layoutResized()
         },
         route: {
             handler (val, oldVal) {
@@ -546,27 +568,9 @@ export default {
         layoutResized () {
             if (this.$refs.call) {
                 this.$nextTick(() => {
-                    this.$refs.call.fitMedia()
+                    this.$refs.call?.fitMedia()
                 })
             }
-        },
-        pinMenu () {
-            this.menuPinned = !this.menuPinned
-            if (this.menuPinned === false) {
-                this.menuMinimized = true
-            }
-        },
-        minimizeMenu () {
-            if (!this.menuPinned) {
-                this.menuMinimized = true
-            }
-            this.layoutResized()
-        },
-        maximizeMenu () {
-            if (!this.menuPinned) {
-                this.menuMinimized = false
-            }
-            this.layoutResized()
         },
         showSendFax () {
             this.$refs.faxDialog.show()
@@ -587,7 +591,6 @@ export default {
         },
         endCall () {
             this.$store.dispatch('call/end')
-            this.menuMinimized = !this.menuPinnedBeforeCall
         },
         clickDialpad (value) {
             this.$store.dispatch('call/sendDTMF', value)
@@ -605,14 +608,18 @@ export default {
         minimizeCall () {
             this.$store.commit('call/minimize')
         },
-        leftBreakpoint (enabled) {
-            this.mobileMenu = !enabled
-        },
         toggleMenu () {
-            this.menuMinimized = !this.menuMinimized
+            if (this.mobileMenu) {
+                this.menuOpen = false
+            } else {
+                this.menuCollapsed = !this.menuCollapsed
+            }
+            this.layoutResized()
         },
-        sideStateLeft () {
-            return this.sideStates.left
+        expandMenu () {
+            if (this.menuMinimized) {
+                this.toggleMenu()
+            }
         },
         updateBrandings () {
             const primaryColor = this.resellerBranding?.csc_color_primary || this.defaultBranding?.primaryColor
@@ -647,7 +654,7 @@ $copyright-height: 45px
 .app-badge
     width: 60% !important
 
-.pin-menu-button
+.menu-toggle-button
     height: $header-height
 #csc-header-toolbar
     background-color: $secondary
@@ -805,6 +812,14 @@ $copyright-height: 45px
 
 .main-menu-container
     top: $toolbar-min-height
+
+// Keep header measurements from resizing the observed layout on long pages.
+#csc-layout-main
+    height: 100vh
+
+// Match the page's immediate height update when the header title row changes.
+.q-body--layout-animate #csc-page-main
+    transition-property: padding-left, padding-right !important
 
 .app-mobile-badge-height
     height: 160px
