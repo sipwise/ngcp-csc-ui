@@ -547,7 +547,7 @@ export default {
                 const list = await getCustomerPhonebook({
                     ...options
                 })
-                commit('setCustomerPhonebook', list.data)
+                commit('setCustomerPhonebook', list.items)
                 return list.totalCount
             } catch (err) {
                 commit('setCustomerPhonebook', [])
