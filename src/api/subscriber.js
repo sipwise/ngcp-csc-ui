@@ -756,8 +756,15 @@ export async function getSubscriberRegistrations (options) {
 }
 
 export async function getCustomerPhonebook (options) {
-    const list = await get({
+    let all = false
+    if (options.rows === 0) {
+        delete options.rows
+        delete options.page
+        all = true
+    }
+    const list = await getList({
         path: `api/v2/customers/${options.customer_id}/phonebook`,
+        all,
         params: options
     })
     return list
