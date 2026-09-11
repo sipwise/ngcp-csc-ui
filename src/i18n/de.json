@@ -675,6 +675,8 @@
     "default option": "Standardoption",
     "description": "Beschreibung",
     "empty": "leer",
+    "ext. {extension}": "Nst. {extension}",
+    "for": "für",
     "forwarded to": "weitergeleitet an",
     "from": "von",
     "greet": "Begrüßung",

@@ -672,6 +672,8 @@
     "default option": "option par défaut",
     "description": "description",
     "empty": "vide",
+    "ext. {extension}": "p. {extension}",
+    "for": "pendant",
     "forwarded to": "transmis à",
     "from": "de",
     "greet": "saluer",
