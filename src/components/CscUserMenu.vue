@@ -20,7 +20,7 @@
                 <q-item-label
                     caption
                 >
-                    {{ primaryNumberFormatted }}
+                    {{ ownNumberOrExtension }}
                 </q-item-label>
                 <template
                     v-if="aliasNumbersFormatted.length > 0"
@@ -92,6 +92,15 @@ export default {
     computed: {
         hasNumbers () {
             return this.subscriber && (this.subscriber.primary_number || this.subscriber.alias_numbers)
+        },
+        ownNumberOrExtension () {
+            if (!this.subscriber) {
+                return ''
+            }
+
+            return (this.subscriber.is_pbx_pilot || !this.subscriber.pbx_extension)
+                ? this.primaryNumberFormatted
+                : this.$t('ext. {extension}', { extension: this.subscriber.pbx_extension })
         },
         primaryNumberFormatted () {
             if (this.subscriber && this.subscriber.primary_number) {

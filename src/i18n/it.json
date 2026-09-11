@@ -661,6 +661,8 @@
     "default option": "opzione predefinita",
     "description": "descrizione",
     "empty": "vuoto",
+    "ext. {extension}": "int. {extension}",
+    "for": "per",
     "forwarded to": "inoltrato a",
     "from": "da",
     "greet": "saluto",

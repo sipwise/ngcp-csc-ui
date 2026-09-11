@@ -653,6 +653,8 @@
     "default option": "default option",
     "description": "description",
     "empty": "empty",
+    "ext. {extension}": "ext. {extension}",
+    "for": "for",
     "forwarded to": "forwarded to",
     "from": "from",
     "greet": "greet",
