@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.0.1.24+0~mr26.0.1.24) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [c6dd9c5] MT#65951 Fix customer phonebook pagination
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Sep 2026 11:40:46 +0200
+
 ngcp-csc-ui (26.0.1.23+0~mr26.0.1.23) unstable; urgency=medium
 
   [ Debora Crescenzo ]
