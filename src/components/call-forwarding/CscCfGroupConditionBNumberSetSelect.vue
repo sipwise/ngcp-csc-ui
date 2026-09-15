@@ -20,7 +20,7 @@
             #actions
         >
             <q-btn
-                v-if="!bNumberSet || bNumberSet.own"
+                v-if="editable"
                 :label="createLabel"
                 flat
                 color="primary"
@@ -44,7 +44,7 @@
 <script>
 import CscCfBNumberSetSelection from 'components/call-forwarding/CscCfBNumberSetSelection'
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupConditionBNumberSetSelect',
     components: {
@@ -84,6 +84,14 @@ export default {
     data () {
         return {
             selectedBNumberSet: null
+        }
+    },
+    computed: {
+        ...mapGetters('user', [
+            'isPbxAdmin'
+        ]),
+        editable () {
+            return !this.bNumberSet || this.bNumberSet.own || this.isPbxAdmin
         }
     },
     methods: {
