@@ -26,7 +26,7 @@
                 v-for="(destination, destinationIndex) in destinationSet.destinations"
                 :key="destinationIndex"
                 :loading="loading"
-                :editable="destinationSet.own"
+                :editable="isDestinationSetEditable"
                 :destination="destination"
                 :destination-index="destinationIndex"
                 :destination-set="destinationSet"
@@ -49,7 +49,7 @@ import CscSpinner from 'components/CscSpinner'
 import CscCfGroupItem from 'components/call-forwarding/CscCfGroupItem'
 import CscCfGroupItemPrimaryNumber from 'components/call-forwarding/CscCfGroupItemPrimaryNumber'
 import CscCfGroupTitle from 'components/call-forwarding/CscCfGroupTitle'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
     name: 'CscCfGroup',
@@ -96,6 +96,9 @@ export default {
         ...mapState('pbxSeats', [
             'seatSelected'
         ]),
+        ...mapGetters('user', [
+            'isPbxAdmin'
+        ]),
         waitIdentifier () {
             return `csc-cf-group-${this.destinationSet.id}`
         },
@@ -106,6 +109,9 @@ export default {
                 return this.seatSelected
             }
             return null
+        },
+        isDestinationSetEditable () {
+            return this.destinationSet.own || this.isPbxAdmin
         }
     }
 }

@@ -113,7 +113,7 @@
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
 import CscInput from 'components/form/CscInput'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupConditionSourceSetCreate',
     components: {
@@ -169,8 +169,11 @@ export default {
         }
     },
     computed: {
+        ...mapGetters('user', [
+            'isPbxAdmin'
+        ]),
         editable () {
-            return !this.sourceSet || this.sourceSet.own
+            return !this.sourceSet || this.sourceSet.own || this.isPbxAdmin
         },
         sourceSetNumbers () {
             const numbers = []
