@@ -20,7 +20,7 @@
             #actions
         >
             <q-btn
-                v-if="!sourceSet || sourceSet.own"
+                v-if="editable"
                 :label="createLabel"
                 flat
                 color="primary"
@@ -44,7 +44,7 @@
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
 import CscCfSourceSetSelection from 'components/call-forwarding/CscCfSourceSetSelection'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupConditionSourceSetSelect',
     components: {
@@ -92,6 +92,14 @@ export default {
     data () {
         return {
             selectedSourceSet: null
+        }
+    },
+    computed: {
+        ...mapGetters('user', [
+            'isPbxAdmin'
+        ]),
+        editable () {
+            return !this.sourceSet || this.sourceSet.own || this.isPbxAdmin
         }
     },
     methods: {
