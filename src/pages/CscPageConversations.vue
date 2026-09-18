@@ -21,23 +21,48 @@
         <template
             #toolbar
         >
-            <csc-conversations-filter
-                id="csc-conversations-filter"
-                :value="filter"
-                class="q-pb-sm"
-                :loading="listLoading"
-                :disable="listLoading"
-                @input="filterTab($event, selectedTab)"
-            />
-            <csc-conversations-calls-filter
-                v-if="selectedTab === 'call'"
-                id="csc-conversations-calls-filter"
-                class="q-pb-sm"
-                :loading="listLoading"
-                @filter="filterCallDirectionEvent"
-            />
+            <div v-show="selectedTab === 'recording'">
+                <div class="row justify-center">
+                    <q-btn
+                        :icon="showRecordingFilters ? 'clear' : 'filter_alt'"
+                        :color="showRecordingFilters ? 'negative' : 'primary'"
+                        flat
+                        :label="showRecordingFilters ? $t('Close filters') : $t('Filter')"
+                        @click="toggleRecordingFilters"
+                    />
+                </div>
+                <csc-call-recording-filters
+                    v-if="showRecordingFilters"
+                    ref="recordingFilters"
+                    class="q-mb-md q-pa-md"
+                    :loading="$wait.is('csc-call-recordings')"
+                    @filter="filterRecordings"
+                />
+            </div>
+            <template v-if="selectedTab !== 'recording'">
+                <csc-conversations-filter
+                    id="csc-conversations-filter"
+                    :value="filter"
+                    class="q-pb-sm"
+                    :loading="listLoading"
+                    :disable="listLoading"
+                    @input="filterTab($event, selectedTab)"
+                />
+                <csc-conversations-calls-filter
+                    v-if="selectedTab === 'call'"
+                    id="csc-conversations-calls-filter"
+                    class="q-pb-sm"
+                    :loading="listLoading"
+                    @filter="filterCallDirectionEvent"
+                />
+            </template>
         </template>
+        <csc-call-recordings
+            v-if="selectedTab === 'recording'"
+            :filter="recordingFilter"
+        />
         <q-infinite-scroll
+            v-else
             ref="infiniteScroll"
             :offset="500"
             @load="loadNextPage"
@@ -116,6 +141,8 @@
 import CscListSpinner from 'components/CscListSpinner'
 import CscPageStickyTabs from 'components/CscPageStickyTabs'
 import CscRemoveDialog from 'components/CscRemoveDialog'
+import CscCallRecordingFilters from 'components/pages/Conversations/CscCallRecordingFilters'
+import CscCallRecordings from 'components/pages/Conversations/CscCallRecordings'
 import CscConversationItem from 'components/pages/Conversations/CscConversationItem'
 import CscConversationsCallsFilter from 'components/pages/Conversations/CscConversationsCallsFilter'
 import CscConversationsFilter from 'components/pages/Conversations/CscConversationsFilter'
@@ -131,6 +158,8 @@ import {
 export default {
     name: 'CscPageConversations',
     components: {
+        CscCallRecordingFilters,
+        CscCallRecordings,
         CscRemoveDialog,
         CscConversationsFilter,
         CscConversationsCallsFilter,
@@ -144,16 +173,19 @@ export default {
     data () {
         return {
             filter: undefined,
+            recordingFilter: {},
             filterDirection: undefined,
             topMargin: 0,
             deletionId: null,
-            selectedTab: window.history.state.initialTab || 'call-fax-voicemail'
+            showRecordingFilters: false,
+            selectedTab: window.history.state.initialTab
         }
     },
     computed: {
         ...mapGetters('user', [
             'isFaxFeatureEnabled',
-            'hasSubscriberProfileAttribute'
+            'hasSubscriberProfileAttribute',
+            'hasCallRecordingAccess'
         ]),
         ...mapState('conversations', [
             'reachedLastPage',
@@ -178,8 +210,14 @@ export default {
         ...mapGetters('call', [
             'isCallEnabled'
         ]),
+        hasConversations () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
+        },
+        hasRecordings () {
+            return this.hasCallRecordingAccess
+        },
         tabs () {
-            const tabs = [
+            let tabs = this.hasConversations ? [
                 {
                     label: this.$t('All'),
                     value: 'call-fax-voicemail',
@@ -200,10 +238,18 @@ export default {
                     value: 'fax',
                     icon: 'description'
                 }] : [])
-            ]
+            ] : []
 
             if (tabs.length === 2) {
-                return tabs.filter((tab) => tab.value !== 'call-fax-voicemail')
+                tabs = tabs.filter((tab) => tab.value !== 'call-fax-voicemail')
+            }
+
+            if (this.hasRecordings) {
+                tabs.push({
+                    label: this.$t('Recordings'),
+                    value: 'recording',
+                    icon: 'play_circle'
+                })
             }
 
             return tabs
@@ -288,11 +334,20 @@ export default {
             }
         }
     },
+    created () {
+        if (!this.tabs.some((tab) => tab.value === this.selectedTab)) {
+            this.selectedTab = this.tabs[0]?.value
+        }
+    },
     async mounted () {
         this.topMargin = this.$refs.pageSticky.$el.offsetHeight
         this.resetList()
-        await this.$store.dispatch('conversations/getBlockedNumbers')
-        this.$refs.infiniteScroll.poll()
+        if (this.hasConversations) {
+            await this.$store.dispatch('conversations/getBlockedNumbers')
+        }
+        if (this.selectedTab !== 'recording') {
+            this.$refs.infiniteScroll.poll()
+        }
     },
     methods: {
         ...mapWaitingActions('conversations', {
@@ -335,11 +390,17 @@ export default {
         selectTab (tabName) {
             if (this.selectedTab !== tabName) {
                 this.filterDirection = undefined
-                this.forceTabReload(tabName)
+                this.selectedTab = tabName
+                if (tabName !== 'recording') {
+                    this.$nextTick(() => this.forceTabReload(tabName))
+                }
             }
         },
         forceTabReload (tabName) {
             this.selectedTab = tabName
+            if (tabName === 'recording') {
+                return
+            }
             // Note: we have to set loading mark manually as a workaround that we cannot force infinitScroll to load data immediately
             this.$wait.start('csc-conversations')
 
@@ -435,6 +496,14 @@ export default {
             this.$scrollTo(this.$parent.$el)
             this.filterDirection = filter
             this.forceReload()
+        },
+        toggleRecordingFilters () {
+            this.$refs.recordingFilters?.removeFilters()
+            this.showRecordingFilters = !this.showRecordingFilters
+        },
+        filterRecordings (filter) {
+            this.$scrollTo(this.$parent.$el)
+            this.recordingFilter = filter
         },
         async getVoicemailTranscription (voicemailId) {
             await this.getVoicemailTranscript(voicemailId)

@@ -9,13 +9,18 @@ import {
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import {
     deleteFax,
+    deleteRecording,
     deleteVoicemail,
     downloadCsv,
     downloadFax,
+    downloadRecordingStream,
     downloadVoiceMail,
     getConversations,
     getIncomingBlocked,
     getOutgoingBlocked,
+    getRecordingStream,
+    getRecordingStreams,
+    getRecordings,
     playVoiceMail
 } from 'src/api/conversations'
 
@@ -27,6 +32,36 @@ const ReloadConfig = {
 }
 
 export default {
+    async fetchRecordings (context, options) {
+        const result = await getRecordings({
+            ...options,
+            subscriber_id: Number(context.getters.getSubscriberId),
+            wildcards: true
+        })
+        context.commit('callRecordings', result.recordings)
+        return result.total_count
+    },
+    async fetchStreams (context, recordingId) {
+        const streams = await getRecordingStreams(recordingId)
+        context.commit('callRecordingStreams', {
+            recordingId,
+            streams
+        })
+    },
+    async fetchFile (context, { recordingId, streamId }) {
+        const url = await getRecordingStream(streamId)
+        context.commit('callRecordingStream', {
+            recordingId,
+            streamId,
+            url
+        })
+    },
+    async deleteRecording (context, recordingId) {
+        await deleteRecording(Number(context.getters.getSubscriberId), recordingId)
+    },
+    async downloadRecording (context, fileId) {
+        return await downloadRecordingStream(fileId)
+    },
     async loadConversations ({ commit, dispatch, state, rootGetters }, options) {
         try {
             commit('loadConversationsRequesting')

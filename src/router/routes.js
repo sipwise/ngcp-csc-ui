@@ -5,7 +5,6 @@ import CscPageChangePassword from 'pages/CscChangeExpiredPassword'
 import CscPageCallBlockingIncoming from 'pages/CscPageCallBlockingIncoming'
 import CscPageCallBlockingOutgoing from 'pages/CscPageCallBlockingOutgoing'
 import CscPageCallBlockingPrivacy from 'pages/CscPageCallBlockingPrivacy'
-import CscPageCallRecording from 'pages/CscPageCallRecording'
 import CscPageCallSettings from 'pages/CscPageCallSettings'
 import CscPageCf from 'pages/CscPageCf'
 import CscPageConversations from 'pages/CscPageConversations'
@@ -89,15 +88,11 @@ const routes = [
                 path: 'conversations',
                 name: 'CscConversations',
                 component: CscPageConversations,
-                props: true,
                 meta: {
                     get title () {
                         return i18n.global.t('Conversations')
                     },
-                    get subtitle () {
-                        return i18n.global.t('Calls, Faxes, VoiceMails')
-                    },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.conversations
+                    profileAttributes: [PROFILE_ATTRIBUTE_MAP.conversations, PROFILE_ATTRIBUTE_MAP.recordings]
                 }
             },
             {
@@ -195,18 +190,11 @@ const routes = [
                 }
             },
             {
+                // legacy bookmark support: recordings used to be its own page, now it's a tab on Conversations
                 path: 'recordings',
-                component: CscPageCallRecording,
-                meta: {
-                    get title () {
-                        return i18n.global.t('Recordings')
-                    },
-                    get subtitle () {
-                        return i18n.global.t('Call recordings')
-                    },
-                    profileAttribute: PROFILE_ATTRIBUTE_MAP.recordings,
-                    licenses: [LICENSES.call_recording],
-                    allowCE: true
+                redirect: {
+                    path: '/user/conversations',
+                    state: { initialTab: 'recording' }
                 }
             },
             {

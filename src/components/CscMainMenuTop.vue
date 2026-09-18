@@ -51,19 +51,21 @@ export default {
             'hasSubscriberProfileAttribute',
             'hasSomeSubscriberProfileAttributes',
             'hasLicenses',
+            'hasCallRecordingAccess',
+            'conversationsSubtitle',
             'isPbxEnabled',
             'isSpCe'
         ]),
         items () {
+            const hasConversations = this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
+            const hasRecordings = this.hasCallRecordingAccess
             const hasCallSettingsSubmenus = this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callSettings) ||
                 this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail) ||
                 this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callForwarding) ||
                 this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingIncoming) ||
                 this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingOutgoing) ||
                 this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.callBlockingPrivacy) ||
-                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.speedDial) ||
-                (this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings) &&
-                (this.isSpCe || this.hasLicenses([LICENSES.call_recording])))
+                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.speedDial)
 
             const hasCustomerPreferenceSubmenus = this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockInClir) ||
                 this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.blockInList) ||
@@ -95,8 +97,8 @@ export default {
                     to: '/user/conversations',
                     icon: 'question_answer',
                     label: this.$t('Conversations'),
-                    sublabel: this.isFaxFeatureEnabled ? this.$t('Calls, Faxes, VoiceMails') : this.$t('Calls, VoiceMails'),
-                    visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
+                    sublabel: this.conversationsSubtitle,
+                    visible: hasConversations || hasRecordings
                 },
                 {
                     to: '/user/subscriber-phonebook',
@@ -156,13 +158,6 @@ export default {
                             icon: 'notification_important',
                             label: this.$t('Reminder'),
                             visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.reminder)
-                        },
-                        {
-                            to: '/user/recordings',
-                            icon: 'play_circle',
-                            label: this.$t('Recordings'),
-                            visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings) &&
-                                (this.isSpCe || this.hasLicenses([LICENSES.call_recording]))
                         }
                     ]
                 },

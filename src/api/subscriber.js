@@ -2,7 +2,6 @@ import _ from 'lodash'
 import {
     apiUploadCsv,
     get,
-    getAsBlob,
     getList,
     httpApi,
     patchAdd,
@@ -697,45 +696,6 @@ export async function getBrandingLogo (subscriberId) {
     }
 }
 
-export async function getRecordings (options) {
-    const data = { recordings: [], total_count: 0 }
-    const res = await httpApi.get('api/callrecordings/', {
-        params: options
-    })
-    if (res.data.total_count > 0) {
-        const recordings = getJsonBody(res.data)._embedded['ngcp:callrecordings']
-        data.recordings = recordings.map((recording) => {
-            return {
-                id: recording.id,
-                time: recording.start_time,
-                caller: recording.caller,
-                callee: recording.callee,
-                files: []
-            }
-        })
-        data.total_count = res.data.total_count
-    }
-    return data
-}
-
-export async function getRecordingStreams (recId) {
-    let streams = []
-    const res = await httpApi.get('api/callrecordingstreams/', {
-        params: {
-            recording_id: recId
-        }
-    })
-    if (res.data.total_count > 0) {
-        streams = getJsonBody(res.data)._embedded['ngcp:callrecordingstreams']
-    }
-    return streams
-}
-
-export async function downloadRecordingStream (fileId) {
-    const res = await httpApi.get(`api/callrecordingfiles/${fileId}`, { responseType: 'blob' })
-    return res.data
-}
-
 export async function getSubscriberRegistrations (options) {
     if (!options.order_by) {
         delete options.order_by
@@ -790,12 +750,6 @@ export function setValueNameCustomer (customerId, phonebookId, value) {
 export function setValueNumberCustomer (customerId, phonebookId, value) {
     return setPreferencePhonebookCustomer(customerId, phonebookId, 'number', value)
 }
-export async function getRecordingStream (fileId) {
-    return await getAsBlob({
-        path: `api/callrecordingfiles/${fileId}`
-    })
-}
-
 export async function getSubscriberProfile (id) {
     const profile = await get({
         path: `api/subscriberprofiles/${id}`

@@ -8,9 +8,11 @@ import {
     LIST_DEFAULT_ROWS,
     apiDownloadFile,
     get,
+    getAsBlob,
     getList,
     httpApi
 } from 'src/api/common'
+import { getJsonBody } from 'src/api/utils'
 
 export function getConversations (options) {
     return new Promise((resolve, reject) => {
@@ -56,6 +58,53 @@ export function getConversations (options) {
             reject(err)
         })
     })
+}
+
+export async function getRecordings (options) {
+    const data = { recordings: [], total_count: 0 }
+    const res = await httpApi.get('api/callrecordings/', {
+        params: options
+    })
+    if (res.data.total_count > 0) {
+        const recordings = getJsonBody(res.data)._embedded['ngcp:callrecordings']
+        data.recordings = recordings.map((recording) => {
+            return {
+                id: recording.id,
+                time: recording.start_time,
+                caller: recording.caller,
+                callee: recording.callee,
+                files: []
+            }
+        })
+        data.total_count = res.data.total_count
+    }
+    return data
+}
+
+export async function getRecordingStreams (recordingId) {
+    const res = await httpApi.get('api/callrecordingstreams/', {
+        params: {
+            recording_id: recordingId
+        }
+    })
+    return res.data.total_count > 0
+        ? getJsonBody(res.data)._embedded['ngcp:callrecordingstreams']
+        : []
+}
+
+export async function getRecordingStream (fileId) {
+    return await getAsBlob({
+        path: `api/callrecordingfiles/${fileId}`
+    })
+}
+
+export async function downloadRecordingStream (fileId) {
+    const res = await httpApi.get(`api/callrecordingfiles/${fileId}`, { responseType: 'blob' })
+    return res.data
+}
+
+export async function deleteRecording (subscriberId, recordingId) {
+    await httpApi.delete(`api/callrecordings/${recordingId}?subscriber_id=${subscriberId}&force_delete=1`)
 }
 
 export function downloadCsv (options) {

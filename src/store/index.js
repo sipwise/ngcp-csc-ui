@@ -4,7 +4,6 @@ import { INTERNAL_DATE_FORMAT_DASH, INTERNAL_DATE_FORMAT_DASH_HOUR, INTERNAL_DAT
 import CallModule from 'src/store/call'
 import CallBlockingModule from 'src/store/call-blocking'
 import CallForwardingModule from 'src/store/call-forwarding'
-import CallRecordingsModule from 'src/store/call-recordings'
 import CallSettingsModule from 'src/store/call-settings'
 import ConversationsModule from 'src/store/conversations'
 import Customer from 'src/store/customer'
@@ -39,7 +38,6 @@ export default function (/* { ssrContext } */) {
     const Store = createStore({
         modules: {
             callBlocking: CallBlockingModule,
-            callRecordings: CallRecordingsModule,
             call: CallModule,
             callSettings: CallSettingsModule,
             conversations: ConversationsModule,

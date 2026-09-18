@@ -19,6 +19,29 @@ function linkCallsWithSameId (state) {
 }
 
 export default {
+    callRecordings (state, recordings) {
+        state.recordings.forEach((recording) => {
+            recording.files.forEach((stream) => {
+                if (stream.url) {
+                    URL.revokeObjectURL(stream.url)
+                }
+            })
+        })
+        state.recordings = recordings
+    },
+    callRecordingStreams (state, { recordingId, streams }) {
+        const recording = state.recordings.find((recording) => recording.id === recordingId)
+        if (recording) {
+            recording.files = streams
+        }
+    },
+    callRecordingStream (state, { recordingId, streamId, url }) {
+        const recording = state.recordings.find((recording) => recording.id === recordingId)
+        const stream = recording?.files.find((stream) => stream.id === streamId)
+        if (stream) {
+            stream.url = url
+        }
+    },
     downloadCsvRequesting (state) {
         state.downloadCsvState = RequestState.requesting
         state.downloadCsvError = null

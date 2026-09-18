@@ -233,6 +233,25 @@ export default {
         },
         isSpCe (state) {
             return state?.platformInfo?.type === 'spce'
+        },
+        hasCallRecordingAccess (state, getters) {
+            return getters.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.recordings) &&
+                (getters.isSpCe || getters.hasLicenses([LICENSES.call_recording]))
+        },
+        conversationsSubtitle (state, getters) {
+            const hasConversations = getters.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
+            const hasRecordings = getters.hasCallRecordingAccess
+            if (hasRecordings && hasConversations) {
+                return getters.isFaxFeatureEnabled
+                    ? i18n.global.t('Calls, Faxes, VoiceMails, Recordings')
+                    : i18n.global.t('Calls, VoiceMails, Recordings')
+            }
+            if (hasRecordings) {
+                return i18n.global.t('Recordings')
+            }
+            return getters.isFaxFeatureEnabled
+                ? i18n.global.t('Calls, Faxes, VoiceMails')
+                : i18n.global.t('Calls, VoiceMails')
         }
     },
     mutations: {

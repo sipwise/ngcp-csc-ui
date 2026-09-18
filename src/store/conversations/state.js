@@ -5,6 +5,7 @@ export default {
     page: 1,
     rows: LIST_DEFAULT_ROWS,
     conversations: [],
+    recordings: [],
     downloadCsvState: RequestState.button,
     downloadVoiceMailState: RequestState.button,
     downloadVoiceMailError: null,

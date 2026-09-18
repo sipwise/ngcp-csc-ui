@@ -99,10 +99,10 @@
                             {{ route.meta.title }}
                         </q-item-label>
                         <q-item-label
-                            v-if="route.meta.subtitle"
+                            v-if="pageSubtitle"
                             class="text-subtitle2"
                         >
-                            {{ route.meta.subtitle }}
+                            {{ pageSubtitle }}
                         </q-item-label>
                     </q-item-section>
                 </q-item>
@@ -340,8 +340,14 @@ export default {
             'isFaxServerSettingsActive',
             'userDataSucceeded',
             'isLogoRequested',
-            'hasSubscriberProfileAttribute'
+            'hasSubscriberProfileAttribute',
+            'conversationsSubtitle'
         ]),
+        pageSubtitle () {
+            return this.route.name === 'CscConversations'
+                ? this.conversationsSubtitle
+                : this.route.meta.subtitle
+        },
         ...mapState('user', [
             'resellerBranding',
             'defaultBranding',

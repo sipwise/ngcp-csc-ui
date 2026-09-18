@@ -5,6 +5,9 @@ export default {
     getSubscriberId (state, getters, rootState, rootGetters) {
         return rootGetters['user/getSubscriberId']
     },
+    recordings (state) {
+        return state.recordings
+    },
     reloadItemsState (state) {
         return state.reloadItemsState
     },
