@@ -50,7 +50,7 @@ export default ({ app, router }) => {
                     }
 
                     // 4. License check
-                    if (to.meta?.license) {
+                    if (to.meta?.licenses) {
                         const isSpCe = store.getters['user/isSpCe']
 
                         // CE-specific check
@@ -59,7 +59,7 @@ export default ({ app, router }) => {
                         }
 
                         // License check for non-CE users
-                        if (!isSpCe && !store.getters['user/hasLicenses']([to.meta.licenses])) {
+                        if (!isSpCe && !store.getters['user/hasLicenses'](to.meta.licenses)) {
                             return next('/')
                         }
                     }
