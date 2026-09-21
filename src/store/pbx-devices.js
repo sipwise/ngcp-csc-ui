@@ -4,7 +4,7 @@ import {
     createDevice,
     getDevice,
     getDeviceList,
-    getDevicesPreferences,
+    getDevicePreferences,
     removeDevice,
     setDeviceIdentifier,
     setDeviceKeys,
@@ -12,7 +12,7 @@ import {
     setDeviceStationName,
     setPreferenceDevice
 } from 'src/api/pbx-devices'
-import { CreationState, RequestState } from 'src/store/common'
+import { CreationState, RequestState, upsertById } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -112,16 +112,6 @@ export default {
         isDeviceListEmpty (state) {
             return Array.isArray(state.deviceList) && state.deviceList.length === 0
         },
-        isDeviceInMapBy (state) {
-            return (deviceId) => {
-                return state.deviceMapById[deviceId] !== undefined
-            }
-        },
-        isDeviceInPreferencesMap (state) {
-            return (deviceId) => {
-                return state.devicePreferencesMap[deviceId] !== undefined
-            }
-        },
         isDeviceListPaginationActive (state, getters) {
             const requesting = !getters.isDeviceListRequesting || getters.isDeviceCreating ||
                 getters.isDeviceRemoving || getters.isDeviceUpdating
@@ -132,14 +122,14 @@ export default {
         },
         isDeviceLoading (state, getters) {
             return (deviceId) => {
-                return (getters.isDeviceUpdating && state.deviceUpdating.id === deviceId) ||
-                    (getters.isDeviceRemoving && state.deviceRemoving.id === deviceId)
+                return (getters.isDeviceUpdating && state.deviceUpdating?.id === deviceId) ||
+                    (getters.isDeviceRemoving && state.deviceRemoving?.id === deviceId)
             }
         },
         isDevicePreferencesLoading (state, getters) {
             return (devicePreferencesId) => {
-                return (getters.isDevicePreferencesUpdating && state.devicePreferencesUpdating.id === devicePreferencesId) ||
-                    (getters.isDevicePreferencesRemoving && state.devicePreferencesRemoving.id === devicePreferencesId)
+                return (getters.isDevicePreferencesUpdating && state.devicePreferencesUpdating?.id === devicePreferencesId) ||
+                    (getters.isDevicePreferencesRemoving && state.devicePreferencesRemoving?.id === devicePreferencesId)
             }
         },
         isDevicePreferencesRemoving (state) {
@@ -181,19 +171,19 @@ export default {
         },
         deviceSucceeded (state, device) {
             state.deviceListState = RequestState.succeeded
-            state.deviceList = [...state.deviceList, device]
+            state.deviceList = upsertById(state.deviceList, device)
             state.deviceMapById[device.id] = device
         },
         devicePreferencesListRequesting (state) {
             state.devicePreferencesListState = RequestState.requesting
         },
-        devicePreferencesListSucceeded (state, options) {
+        devicePreferencesSucceeded (state, devicePreferences) {
             state.devicePreferencesListState = RequestState.succeeded
-            state.devicePreferencesList = _.get(options, 'devicesPreferences', [])
-            state.devicePreferencesMap = {}
-            state.devicePreferencesList.forEach((devicePreferences) => {
-                state.devicePreferencesMap[devicePreferences.id] = devicePreferences
-            })
+            if (!devicePreferences) {
+                return
+            }
+            state.devicePreferencesList = upsertById(state.devicePreferencesList, devicePreferences)
+            state.devicePreferencesMap[devicePreferences.id] = devicePreferences
         },
         deviceListFailed (state) {
             state.deviceListState = RequestState.failed
@@ -277,10 +267,11 @@ export default {
             state.deviceSelected = state.deviceMapById[deviceId]
         },
         expandDevicePreferences (state, devicePreferencesId) {
-            state.devicePreferencesSelected = state.devicePreferencesMap[devicePreferencesId]
+            state.devicePreferencesSelected = state.devicePreferencesMap[devicePreferencesId] || null
         },
         collapseDevice (state) {
             state.deviceSelected = null
+            state.devicePreferencesSelected = null
         },
         enableDeviceAddForm (state) {
             state.deviceCreationState = CreationState.input
@@ -317,13 +308,11 @@ export default {
                 throw err
             }
         },
-        async loadDevicePreferencesList (context) {
+        async loadDevicePreferences (context, deviceId) {
             context.commit('devicePreferencesListRequesting')
             try {
-                const devicesPreferences = await getDevicesPreferences()
-                context.commit('devicePreferencesListSucceeded', {
-                    devicesPreferences: devicesPreferences.items
-                })
+                const devicePreferences = await getDevicePreferences(deviceId)
+                context.commit('devicePreferencesSucceeded', devicePreferences)
             } catch (err) {
                 context.commit('devicePreferencesListFailed', err.message)
             }
@@ -335,7 +324,6 @@ export default {
                     page: 1,
                     clearList: false
                 })
-                context.dispatch('loadDevicePreferencesList')
             }).then(() => {
                 context.commit('deviceCreationSucceeded')
             }).catch((err) => {
