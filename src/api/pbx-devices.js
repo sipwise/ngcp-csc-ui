@@ -32,18 +32,14 @@ export function getDevice (id) {
         path: `api/pbxdevices/${id}`
     })
 }
-export function getDevicesPreferences (options) {
-    return new Promise((resolve, reject) => {
-        let requestOptions = options || {}
-        requestOptions = _.merge(requestOptions, {
-            path: 'api/pbxfielddevicepreferences/',
-            root: '_embedded.ngcp:pbxfielddevicepreferences'
-        })
-        getList(requestOptions).then((list) => {
-            resolve(list)
-        }).catch((err) => {
-            reject(err)
-        })
+export async function getDevicePreferences (id) {
+    return get({
+        path: `api/pbxfielddevicepreferences/${id}`
+    }).catch((err) => {
+        if (`${err.status}` === '404') {
+            return null
+        }
+        throw err
     })
 }
 
