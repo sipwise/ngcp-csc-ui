@@ -44,7 +44,7 @@ default: {
     }
 
     // 4. License check
-    if (to.meta?.license) {
+    if (to.meta?.licenses) {
         const isSpCe = store.getters['user/isSpCe']
 
         // CE-specific check
@@ -53,7 +53,7 @@ default: {
         }
 
         // License check for non-CE users
-        if (!isSpCe && !store.getters['user/hasLicenses']([to.meta.license])) {
+        if (!isSpCe && !store.getters['user/hasLicenses'](to.meta.licenses)) {
             return next('/')
         }
     }
