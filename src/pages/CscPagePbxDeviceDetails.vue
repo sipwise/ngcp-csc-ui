@@ -272,9 +272,7 @@ export default {
             'getDeviceUpdateToastMessage',
             'getDevicePreferencesUpdateToastMessage',
             'isDeviceLoading',
-            'isDevicePreferencesLoading',
-            'isDeviceInMapBy',
-            'isDeviceInPreferencesMap'
+            'isDevicePreferencesLoading'
         ]),
         deviceModel () {
             if (!this.deviceSelected?.profile_id) {
@@ -438,7 +436,7 @@ export default {
             'setGui',
             'setUserConfig',
             'setFW',
-            'loadDevicePreferencesList',
+            'loadDevicePreferences',
             'loadDevice'
         ]),
         ...mapActions('pbx', [
@@ -449,10 +447,10 @@ export default {
 
         ]),
         async getData (deviceId) {
-            if (!this.isDeviceInMapBy(deviceId)) {
-                await this.loadDevice(deviceId)
-            }
-
+            await Promise.all([
+                this.loadDevice(deviceId),
+                this.loadDevicePreferences(deviceId)
+            ])
             const device = this.deviceMapById[deviceId]
             if (!device) {
                 return
@@ -466,10 +464,6 @@ export default {
                     type: 'all',
                     deviceId: deviceProfile.device_id
                 })
-            }
-
-            if (!this.isDeviceInPreferencesMap(deviceId)) {
-                await this.loadDevicePreferencesList()
             }
 
             this.expandDevice(deviceId)
@@ -553,32 +547,32 @@ export default {
             }
             if (this.hasAdminNameChanged) {
                 this.setAdminName({
-                    deviceId: this.devicePreferencesSelected?.id,
+                    deviceId: this.deviceSelected?.id,
                     adminName: this.changes.admin_name
                 })
             }
             if (this.hasAdminPasswordChanged) {
                 this.setAdminPassword({
-                    deviceId: this.devicePreferencesSelected?.id,
+                    deviceId: this.deviceSelected?.id,
                     adminPassword: this.changes.admin_pass
                 })
             }
         },
         changeGui () {
             this.setGui({
-                deviceId: this.devicePreferencesSelected?.id,
+                deviceId: this.deviceSelected?.id,
                 webGui: this.changes.web_gui_dis
             })
         },
         changeUserConfig () {
             this.setUserConfig({
-                deviceId: this.devicePreferencesSelected?.id,
+                deviceId: this.deviceSelected?.id,
                 userConf: this.changes.user_conf_priority
             })
         },
         changeFW () {
             this.setFW({
-                deviceId: this.devicePreferencesSelected?.id,
+                deviceId: this.deviceSelected?.id,
                 FWupg: this.changes.FW_upg_dis
             })
         }

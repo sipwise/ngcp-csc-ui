@@ -11,7 +11,7 @@ import { getSubscribers } from 'src/api/subscriber'
 import { getNumbers } from 'src/api/user'
 import numberFilter from 'src/filters/number'
 import { showGlobalError } from 'src/helpers/ui'
-import { RequestState } from 'src/store/common'
+import { RequestState, upsertById } from 'src/store/common'
 
 export default {
     namespaced: true,
@@ -265,7 +265,7 @@ export default {
         },
         deviceProfileSucceeded (state, deviceProfile) {
             state.deviceProfileListState = RequestState.succeeded
-            state.deviceProfileList = [...state.deviceProfileList, deviceProfile]
+            state.deviceProfileList = upsertById(state.deviceProfileList, deviceProfile)
             state.deviceProfileMap[deviceProfile.id] = deviceProfile
         },
         deviceProfileFailed (state) {
