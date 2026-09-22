@@ -658,6 +658,7 @@ export default {
                     ...options
                 })
                 commit('setSubscriberSeats', list.items)
+                return list.totalCount
             } catch (err) {
                 commit('setSubscriberSeats', [])
                 throw err

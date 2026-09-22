@@ -61,6 +61,7 @@
             />
 
             <q-table
+                :rows-per-page-options="ROWS_PER_PAGE_OPTIONS"
                 v-model:pagination="pagination"
                 class="no-shadow"
                 :columns="columns"
@@ -145,6 +146,7 @@ import CscPageSticky from 'components/CscPageSticky'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscSpinner from 'components/CscSpinner'
 import CscSubscriberFilters from 'components/pages/SubscriberPhonebook/CscSubscriberFilters'
+import { ROWS_PER_PAGE_OPTIONS } from 'src/api/common'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters, mapState } from 'vuex'
 export default {
@@ -161,14 +163,22 @@ export default {
     },
     data () {
         return {
+            ROWS_PER_PAGE_OPTIONS,
             filters: {},
             showFilters: false
         }
     },
     computed: {
+        pagination: {
+            get () {
+                return this.$store.state['subscriber-phonebook'].pagination
+            },
+            set (pagination) {
+                this.$store.commit('subscriber-phonebook/setPagination', pagination)
+            }
+        },
         ...mapState('subscriber-phonebook', {
-            phonebookRows: 'phonebookRows',
-            pagination: 'pagination'
+            phonebookRows: 'phonebookRows'
         }),
         ...mapGetters('user', [
             'isPbxEnabled',
