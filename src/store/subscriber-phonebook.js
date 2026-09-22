@@ -1,4 +1,4 @@
-import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { TABLE_ROWS_PER_PAGE_DEFAULT } from 'src/api/common'
 import {
     createPhonebook,
     deleteEntry,
@@ -16,7 +16,7 @@ export default {
             sortBy: 'id',
             descending: false,
             page: 1,
-            rowsPerPage: LIST_DEFAULT_ROWS,
+            rowsPerPage: TABLE_ROWS_PER_PAGE_DEFAULT,
             rowsNumber: 0
         },
         numberInput: null
