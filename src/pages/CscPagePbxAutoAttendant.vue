@@ -5,6 +5,7 @@
     >
         <div class="q-pa-md">
             <q-table
+                :rows-per-page-options="ROWS_PER_PAGE_OPTIONS"
                 v-model:pagination="pagination"
                 class="no-shadow"
                 :rows="data"
@@ -96,7 +97,7 @@ import CscPage from 'components/CscPage'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscPbxAutoAttendantSlotsTable from 'components/pages/PbxConfiguration/CscPbxAutoAttendantSlotsTable'
 import _ from 'lodash'
-import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { ROWS_PER_PAGE_OPTIONS, TABLE_ROWS_PER_PAGE_DEFAULT } from 'src/api/common'
 import { displayName } from 'src/filters/subscriber'
 import { mapWaitingActions } from 'vue-wait'
 import { mapGetters } from 'vuex'
@@ -109,6 +110,7 @@ export default {
     },
     data () {
         return {
+            ROWS_PER_PAGE_OPTIONS,
             data: [],
             rowStatus: [],
             columns: [
@@ -130,7 +132,7 @@ export default {
             ],
             pagination: {
                 page: 1,
-                rowsPerPage: LIST_DEFAULT_ROWS,
+                rowsPerPage: TABLE_ROWS_PER_PAGE_DEFAULT,
                 rowsNumber: 0
             }
         }
