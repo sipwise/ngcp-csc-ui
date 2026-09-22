@@ -44,6 +44,7 @@
         <div>
             <div class="q-pa-md">
                 <q-table
+                    :rows-per-page-options="ROWS_PER_PAGE_OPTIONS"
                     v-model:pagination="pagination"
                     class="no-shadow"
                     :rows="data"
@@ -194,7 +195,7 @@ import CscRemoveDialog from 'components/CscRemoveDialog'
 import CscCallRecordingFilters from 'components/pages/CallRecording/CscCallRecordingFilters'
 import { saveAs } from 'file-saver'
 import moment from 'moment'
-import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { ROWS_PER_PAGE_OPTIONS, TABLE_ROWS_PER_PAGE_DEFAULT } from 'src/api/common'
 import { showGlobalError, showToast } from 'src/helpers/ui'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapActions, mapGetters, mapState } from 'vuex'
@@ -208,6 +209,7 @@ export default {
     },
     data () {
         return {
+            ROWS_PER_PAGE_OPTIONS,
             columns: [
                 {
                     name: 'id',
@@ -276,7 +278,7 @@ export default {
                 sortBy: 'id',
                 descending: false,
                 page: 1,
-                rowsPerPage: LIST_DEFAULT_ROWS,
+                rowsPerPage: TABLE_ROWS_PER_PAGE_DEFAULT,
                 rowsNumber: 0
             },
             rowStatus: [],

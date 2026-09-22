@@ -65,6 +65,7 @@
                 @filter="applyFilter"
             />
             <q-table
+                :rows-per-page-options="ROWS_PER_PAGE_OPTIONS"
                 v-model:pagination="pagination"
                 class="no-shadow"
                 :columns="columns"
@@ -135,7 +136,7 @@ import CscPageSticky from 'components/CscPageSticky'
 import CscPopupMenuItem from 'components/CscPopupMenuItem'
 import CscSearchFilters from 'components/CscSearchFilters'
 import CscSpinner from 'components/CscSpinner'
-import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { ROWS_PER_PAGE_OPTIONS, TABLE_ROWS_PER_PAGE_DEFAULT } from 'src/api/common'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters, mapState } from 'vuex'
 export default {
@@ -152,12 +153,13 @@ export default {
     },
     data () {
         return {
+            ROWS_PER_PAGE_OPTIONS,
             data: [],
             pagination: {
                 sortBy: 'id',
                 descending: false,
                 page: 1,
-                rowsPerPage: LIST_DEFAULT_ROWS,
+                rowsPerPage: TABLE_ROWS_PER_PAGE_DEFAULT,
                 rowsNumber: 0
             },
             filters: {},

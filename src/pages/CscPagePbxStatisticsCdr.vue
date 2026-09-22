@@ -38,6 +38,7 @@
         <div>
             <div class="q-pa-md">
                 <q-table
+                    :rows-per-page-options="ROWS_PER_PAGE_OPTIONS"
                     v-model:pagination="pagination"
                     class="no-shadow"
                     :columns="columns"
@@ -84,7 +85,7 @@ import CscPageSticky from 'components/CscPageSticky'
 import CscSpinner from 'components/CscSpinner'
 import CscCdrFilters from 'components/pages/PbxStatistics/CscCdrFilters'
 import _ from 'lodash'
-import { LIST_DEFAULT_ROWS } from 'src/api/common'
+import { ROWS_PER_PAGE_OPTIONS, TABLE_ROWS_PER_PAGE_DEFAULT } from 'src/api/common'
 import { showGlobalError } from 'src/helpers/ui'
 import { RequestState } from 'src/store/common'
 import { mapWaitingActions } from 'vue-wait-vue3'
@@ -98,12 +99,13 @@ export default {
     },
     data () {
         return {
+            ROWS_PER_PAGE_OPTIONS,
             data: [],
             pagination: {
                 sortBy: 'timestamp',
                 descending: true,
                 page: 1,
-                rowsPerPage: LIST_DEFAULT_ROWS,
+                rowsPerPage: TABLE_ROWS_PER_PAGE_DEFAULT,
                 rowsNumber: 0
             },
             showFilters: false,

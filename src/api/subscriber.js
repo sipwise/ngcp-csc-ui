@@ -737,34 +737,20 @@ export async function downloadRecordingStream (fileId) {
 }
 
 export async function getSubscriberRegistrations (options) {
-    let all = false
-    if (options.rows === 0) {
-        delete options.rows
-        delete options.page
-        all = true
-    }
     if (!options.order_by) {
         delete options.order_by
         delete options.order_by_direction
     }
     const list = await getList({
         resource: 'subscriberregistrations',
-        all,
         params: options
     })
     return list
 }
 
 export async function getCustomerPhonebook (options) {
-    let all = false
-    if (options.rows === 0) {
-        delete options.rows
-        delete options.page
-        all = true
-    }
     const list = await getList({
         path: `api/v2/customers/${options.customer_id}/phonebook`,
-        all,
         params: options
     })
     return list
