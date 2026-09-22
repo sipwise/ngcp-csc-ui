@@ -8,6 +8,8 @@ import { getHttpErrorMessage } from 'src/helpers/http-error'
 import { PATH_CHANGE_PASSWORD } from 'src/router/routes'
 export const LIST_DEFAULT_PAGE = 1
 export const LIST_DEFAULT_ROWS = 20
+export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100]
+export const TABLE_ROWS_PER_PAGE_DEFAULT = 10
 export const LIST_ALL_ROWS = 1000
 export const API_REQUEST_DEFAULT_TIMEOUT = 30000
 
