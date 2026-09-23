@@ -4,6 +4,7 @@
         icon="today"
         :loading="$wait.is('csc-cf-time-set-create')"
         v-bind="$attrs"
+        data-cy="csc-cf-date-close"
         @close="$emit('close')"
     >
         <q-date
@@ -19,7 +20,7 @@
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
-                data-cy="csc-group-date-delete"
+                data-cy="csc-cf-date-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -27,7 +28,7 @@
             />
             <q-btn
                 :label="$t('Save')"
-                data-cy="csc-group-date-save"
+                data-cy="csc-cf-date-save"
                 flat
                 color="primary"
                 icon="check"
