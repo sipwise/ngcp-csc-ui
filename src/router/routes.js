@@ -205,7 +205,7 @@ const routes = [
                         return i18n.global.t('Call recordings')
                     },
                     profileAttribute: PROFILE_ATTRIBUTE_MAP.recordings,
-                    licenses: [LICENSES.recordings],
+                    licenses: [LICENSES.call_recording],
                     allowCE: true
                 }
             },
