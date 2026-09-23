@@ -4,6 +4,7 @@
         icon="book_online"
         :loading="$wait.is('csc-cf-time-set-create')"
         v-bind="$attrs"
+        data-cy="csc-cf-daterange-close"
         @close="$emit('close')"
     >
         <template
@@ -38,7 +39,7 @@
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
-                data-cy="csc-group-date-range-delete"
+                data-cy="csc-cf-daterange-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -47,7 +48,7 @@
             <q-btn
                 v-if="!invalidDateset"
                 :label="$t('Save')"
-                data-cy="csc-group-date-range-save"
+                data-cy="csc-cf-daterange-save"
                 flat
                 color="primary"
                 icon="check"
