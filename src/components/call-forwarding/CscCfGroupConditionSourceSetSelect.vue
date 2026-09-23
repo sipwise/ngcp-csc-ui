@@ -3,6 +3,7 @@
         :title="title"
         :loading="$wait.is('csc-cf-source-set-create')"
         v-bind="$attrs"
+        data-cy="csc-cf-sourceset-select-close"
         @close="$emit('close')"
     >
         <div
@@ -13,7 +14,7 @@
                 :mode="mode"
                 dense
                 :label="$t('Number list')"
-                data-cy="csc-call-select-number-list"
+                data-cy="csc-cf-sourceset-select-numberlist"
             />
         </div>
         <template
@@ -25,12 +26,12 @@
                 flat
                 color="primary"
                 icon="source"
-                data-cy="csc-call-select-edit-list"
+                data-cy="csc-cf-sourceset-select-create"
                 @click="$emit('create')"
             />
             <q-btn
                 :label="$t('Save')"
-                data-cy="csc-call-selection-save"
+                data-cy="csc-cf-sourceset-select-save"
                 flat
                 color="primary"
                 icon="check"

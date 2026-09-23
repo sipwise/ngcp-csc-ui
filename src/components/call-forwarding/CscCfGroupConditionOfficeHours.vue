@@ -5,6 +5,7 @@
         :loading="$wait.is('csc-cf-time-set-create')"
         v-bind="$attrs"
         @back="back"
+        data-cy="csc-cf-officehours-close"
         @close="$emit('close')"
     >
         <template
@@ -30,7 +31,7 @@
                 <q-checkbox
                     v-model="sameTimes"
                     :label="$t('Same time for selected days')"
-                    data-cy="csc-office-hours-sametime"
+                    data-cy="csc-cf-officehours-sametime"
                     :disable="v$.$invalid"
                 />
             </div>
@@ -59,7 +60,7 @@
                             v-model="currentDayTimeRange.from"
                             dense
                             :label="$t('Start time')"
-                            data-cy="csc-office-hours-starttime"
+                            data-cy="csc-cf-officehours-starttime"
                             mask="##:##"
                             fill-mask
                             :disable="disabled"
@@ -98,7 +99,7 @@
                             v-model="currentDayTimeRange.to"
                             dense
                             :label="$t('End time')"
-                            data-cy="csc-office-hours-endtime"
+                            data-cy="csc-cf-officehours-endtime"
                             mask="##:##"
                             fill-mask
                             :disable="disabled"
@@ -140,7 +141,7 @@
                             dense
                             color="negative"
                             icon="delete"
-                            data-cy="csc-office-hours-delete-timerange"
+                            data-cy="csc-cf-officehours-delete-timerange"
                             :disable="currentDayTimeRanges.length < 2 || disabled"
                             @click="removeTimeRangeDialog(index)"
                         />
@@ -153,7 +154,7 @@
                     icon="add"
                     flat
                     :label="$t('Add time range')"
-                    data-cy="csc-office-hours-add-timerange"
+                    data-cy="csc-cf-officehours-add-timerange"
                     :disable="disabled"
                     @click="addTimeRange"
                 />
@@ -165,7 +166,7 @@
             <q-btn
                 v-if="deleteButton"
                 :label="$t('Delete')"
-                data-cy="csc-office-hours-delete"
+                data-cy="csc-cf-officehours-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -175,7 +176,7 @@
             <q-btn
                 v-if="!invalidTimeset"
                 :label="$t('Save')"
-                data-cy="csc-office-hours-save"
+                data-cy="csc-cf-officehours-save"
                 flat
                 color="primary"
                 icon="check"

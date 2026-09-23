@@ -3,6 +3,7 @@
         :title="title"
         :loading="$wait.is('csc-cf-source-set-create')"
         v-bind="$attrs"
+        data-cy="csc-cf-sourceset-close"
         @close="$emit('close')"
     >
         <q-list
@@ -19,7 +20,7 @@
                         :clearable="editable"
                         :readonly="!editable"
                         :label="$t('Number list name')"
-                        data-cy="csc-call-select-number-list"
+                        data-cy="csc-cf-sourceset-numberlist"
                     />
                 </q-item-section>
             </q-item>
@@ -37,7 +38,7 @@
                         :label="$t('Number')"
                         :error="!isValidNumber(sourceSetNumbersInternal[index])"
                         :error-message="$t('Spaces are not allowed')"
-                        data-cy="csc-call-select-number"
+                        data-cy="csc-cf-sourceset-number"
                     >
                         <template
                             v-if="editable && index > 0"
@@ -47,7 +48,7 @@
                                 dense
                                 color="negative"
                                 icon="delete"
-                                data-cy="csc-call-select-number-delete"
+                                data-cy="csc-cf-sourceset-number-delete"
                                 @click="deleteNumber(index)"
                             />
                         </template>
@@ -61,7 +62,7 @@
                 <q-item-section>
                     <q-btn
                         :label="$t('Add number')"
-                        data-cy="csc-call-select-number-add"
+                        data-cy="csc-cf-sourceset-number-add"
                         flat
                         color="primary"
                         icon="add"
@@ -76,7 +77,7 @@
             <q-btn
                 v-if="deleteButton && editable"
                 :label="$t('Delete')"
-                data-cy="csc-call-select-delete"
+                data-cy="csc-cf-sourceset-delete"
                 flat
                 color="negative"
                 icon="delete"
@@ -85,7 +86,7 @@
             <q-btn
                 v-if="unassignButton"
                 :label="$t('Unassign')"
-                data-cy="csc-call-select-unassign"
+                data-cy="csc-cf-sourceset-unassign"
                 flat
                 color="primary"
                 icon="undo"
@@ -93,7 +94,7 @@
             />
             <q-btn
                 :label="$t('Select')"
-                data-cy="csc-call-select-select"
+                data-cy="csc-cf-sourceset-select"
                 flat
                 color="primary"
                 icon="source"
@@ -102,7 +103,7 @@
             <q-btn
                 v-if="editable"
                 :label="$t('Save')"
-                data-cy="csc-call-select-save"
+                data-cy="csc-cf-sourceset-save"
                 flat
                 color="primary"
                 icon="check"
