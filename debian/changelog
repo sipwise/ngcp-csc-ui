@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.89+0~mr12.5.1.89) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [50784d3] MT#66047 Fix device preferences save/refresh bugs and reduce duplication
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 23 Sep 2026 15:14:01 +0200
+
 ngcp-csc-ui (12.5.1.88+0~mr12.5.1.88) unstable; urgency=medium
 
   [ Debora Crescenzo ]
