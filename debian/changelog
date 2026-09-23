@@ -1,3 +1,11 @@
+ngcp-csc-ui (12.5.1.88+0~mr12.5.1.88) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [64bffd0] MT#66066 Fix Call Recordings license typo
+  * [869c588] MT#66045 Fix license route guard checking wrong meta field
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 23 Sep 2026 12:36:01 +0200
+
 ngcp-csc-ui (12.5.1.87+0~mr12.5.1.87) unstable; urgency=medium
 
   [ Debora Crescenzo ]
