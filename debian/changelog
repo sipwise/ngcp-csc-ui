@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.2.1.7+0~mr26.2.1.7) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [e01b70e] MT#65990 Standardize table pagination options
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 28 Sep 2026 11:53:19 +0200
+
 ngcp-csc-ui (26.2.1.6+0~mr26.2.1.6) unstable; urgency=medium
 
   [ Debora Crescenzo ]
