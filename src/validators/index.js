@@ -9,6 +9,15 @@ export const errorMessages = {
     required () {
         return i18n.global.t('Input is required')
     },
+    noWhitespace () {
+        return i18n.global.t('Spaces are not allowed')
+    },
+    customMacAddress () {
+        return i18n.global.t('Input a valid mac address')
+    },
+    userInfo () {
+        return i18n.global.t('Input contains invalid characters')
+    },
     passwordDigits () {
         return i18n.global.t('Password is not strong enough, add more digits')
     },

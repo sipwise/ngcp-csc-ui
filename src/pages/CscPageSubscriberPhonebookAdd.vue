@@ -79,6 +79,8 @@
 import useValidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import CscPageSticky from 'components/CscPageSticky'
+import { noWhitespace } from 'src/helpers/validation'
+import { errorMessages } from 'src/validators'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 export default {
@@ -92,7 +94,8 @@ export default {
                 required
             },
             number: {
-                required
+                required,
+                noWhitespace
             }
         }
     },
@@ -149,6 +152,9 @@ export default {
                 this.numberErrorMessage = this.$t('{field} is required', {
                     field: this.$t('Number')
                 })
+                this.numberError = true
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'noWhitespace') {
+                this.numberErrorMessage = errorMessages.noWhitespace()
                 this.numberError = true
             } else {
                 this.numberErrorMessage = ''

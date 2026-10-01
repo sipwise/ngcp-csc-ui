@@ -71,6 +71,8 @@ import CscListMenuItem from 'components/CscListMenuItem'
 import CscRemoveDialog from 'components/CscRemoveDialog'
 import CscInputButtonReset from 'components/form/CscInputButtonReset'
 import CscInputButtonSave from 'components/form/CscInputButtonSave'
+import { noWhitespace } from 'src/helpers/validation'
+import { errorMessages } from 'src/validators'
 export default {
     name: 'CscPbxSettingsAutoAttendant',
     components: {
@@ -103,14 +105,20 @@ export default {
     },
     validations: {
         newDestination: {
-            required
+            required,
+            noWhitespace
         }
     },
     computed: {
         errorMessage () {
             const errorsTab = this.v$.newDestination.$errors
-            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'required') {
-                return this.$t('Destination must not be empty')
+            if (errorsTab && errorsTab.length > 0) {
+                if (errorsTab.some((error) => error.$validator === 'noWhitespace')) {
+                    return errorMessages.noWhitespace()
+                }
+                if (errorsTab[0].$validator === 'required') {
+                    return this.$t('Destination must not be empty')
+                }
             }
             return ''
         }
@@ -145,7 +153,7 @@ export default {
             this.$emit('remove', this.personalSlot.slot)
         },
         save () {
-            if (this.personalSlot.destination !== '') {
+            if (this.personalSlot.destination !== '' && noWhitespace(this.newDestination)) {
                 this.$emit('save')
             }
         },

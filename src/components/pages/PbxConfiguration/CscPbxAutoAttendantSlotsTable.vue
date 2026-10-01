@@ -38,7 +38,7 @@
                 </q-td>
                 <q-td>
                     <csc-data-table-edit-input
-                        :column="{name:'destination', label: $t('Destination'), componentValidations: [getDestinationValidation()]}"
+                        :column="{name:'destination', label: $t('Destination'), componentValidations: getDestinationValidations()}"
                         :row="{slot: row.slot, destination: row.destination}"
                         data-cy="csc-pbx-auto-attendant-input"
                         :value="row.destination"
@@ -119,6 +119,7 @@ import CscDataTableEditInput from 'components/CscDataTableEditInput'
 import CscRemoveDialog from 'components/CscRemoveDialog'
 import _ from 'lodash'
 import { showGlobalError, showToast } from 'src/helpers/ui'
+import { noWhitespace } from 'src/helpers/validation'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 
@@ -155,7 +156,7 @@ export default {
                     align: 'left',
                     label: this.$t('Destination'),
                     field: (row) => row.destination,
-                    componentValidations: [this.getDestinationValidation()]
+                    componentValidations: this.getDestinationValidations()
                 }
             ],
             pagination: {
@@ -235,6 +236,10 @@ export default {
                     return
                 }
             }
+            if (![...this.unsavedSlots, ...this.slots].every((slot) => noWhitespace(slot.destination))) {
+                showGlobalError(this.$t('Spaces are not allowed'))
+                return
+            }
             await this.updateSubscriberSlots({
                 subscriberId: this.subscriberId,
                 slots: [...this.unsavedSlots, ...this.slots]
@@ -245,12 +250,19 @@ export default {
         hasExistingSlotValue (index, fieldName) {
             return this.slots[index] ? this.slots[index][fieldName] : false
         },
-        getDestinationValidation () {
-            return {
-                name: 'required',
-                validator: required,
-                error: this.$t('Destination must not be empty')
-            }
+        getDestinationValidations () {
+            return [
+                {
+                    name: 'required',
+                    validator: required,
+                    error: this.$t('Destination must not be empty')
+                },
+                {
+                    name: 'noWhitespace',
+                    validator: noWhitespace,
+                    error: this.$t('Spaces are not allowed')
+                }
+            ]
         }
         // This can be applied as format function in case we want
         // the prevent the user to edit prefix/suffix (sip: and @domain)

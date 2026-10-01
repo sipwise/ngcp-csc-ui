@@ -40,9 +40,9 @@
                 <q-input
                     v-model="formData.number"
                     :label="$t('Number')"
-                    :error="numberError"
-                    :error-message="numberErrorMessage"
-                    @update:model-value="v$.formData.number.$touch()"
+                    :error="numberError || v$.formData.number.$errors.length > 0"
+                    :error-message="numberErrorMessage || numberValidationMessage"
+                    @update:model-value="numberUpdated"
                 />
             </q-list>
         </q-item>
@@ -59,6 +59,7 @@
                 :label="$t('Confirm')"
                 unelevated
                 text-color="primary"
+                :disable="v$.formData.$invalid"
                 @click="confirm"
             />
         </div>
@@ -69,6 +70,8 @@
 import useValidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import CscPageSticky from 'components/CscPageSticky'
+import { noWhitespace } from 'src/helpers/validation'
+import { errorMessages } from 'src/validators'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 export default {
@@ -82,7 +85,8 @@ export default {
                 required
             },
             number: {
-                required
+                required,
+                noWhitespace
             }
         }
     },
@@ -102,7 +106,14 @@ export default {
     computed: {
         ...mapGetters('user', [
             'getCustomerId'
-        ])
+        ]),
+        numberValidationMessage () {
+            const errorsTab = this.v$.formData.number.$errors
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'noWhitespace') {
+                return errorMessages.noWhitespace()
+            }
+            return ''
+        }
     },
     methods: {
         ...mapWaitingActions('user', {
@@ -139,7 +150,15 @@ export default {
                 number: this.formData.number
             })
         },
+        numberUpdated () {
+            this.v$.formData.number.$touch()
+            this.numberError = false
+            this.numberErrorMessage = ''
+        },
         async confirm () {
+            if (this.v$.formData.$invalid) {
+                return
+            }
             try {
                 await this.changeValueNumber()
                 await this.changeValueName()

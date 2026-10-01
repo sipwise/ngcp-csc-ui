@@ -34,3 +34,10 @@ export function inRange (value, min, max) {
     }
     return true
 }
+
+export function noWhitespace (value) {
+    if (value !== null && typeof value === 'object') {
+        return Object.values(value).every(noWhitespace)
+    }
+    return typeof value !== 'string' || !/\s/.test(value)
+}

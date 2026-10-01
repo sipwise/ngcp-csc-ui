@@ -46,6 +46,9 @@
                     class="col-xs-12 col-md-3">
                     <csc-input
                         :value="destinationNumber"
+                        :error="hasDestinationNumberError"
+                        :error-message="destinationNumberErrorMessage"
+                        hide-bottom-space
                         @input="destinationNumber = $event"
                         data-cy="csc-cf-destination-number"
                     />
@@ -109,6 +112,8 @@ import CscCfSeatSelect from 'components/call-forwarding/CscCfSeatSelect'
 import CscInput from 'src/components/form/CscInput'
 import { useGetters, useState } from 'src/composables/useStore'
 import { DestinationType, getDestinationIcon } from 'src/helpers/destination'
+import { noWhitespace, userInfo } from 'src/helpers/validation'
+import { errorMessages } from 'src/validators'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -137,6 +142,15 @@ const { isSpCe, isPbxEnabled } = useGetters('user', ['isSpCe', 'isPbxEnabled'])
 const isDestinationNumber = computed(() => destinationType.value === 'number')
 const isDestinationCustomAnnouncement = computed(() => destinationType.value === 'customhours')
 const isDestinationSeat = computed(() => destinationType.value === 'seat')
+const hasDestinationNumberWhitespace = computed(() => !noWhitespace(destinationNumber.value))
+const hasDestinationNumberInvalidChars = computed(() => !!destinationNumber.value && !userInfo(destinationNumber.value))
+const hasDestinationNumberError = computed(() => hasDestinationNumberWhitespace.value || hasDestinationNumberInvalidChars.value)
+const destinationNumberErrorMessage = computed(() => {
+    if (hasDestinationNumberWhitespace.value) {
+        return errorMessages.noWhitespace()
+    }
+    return hasDestinationNumberInvalidChars.value ? errorMessages.userInfo() : ''
+})
 
 // Rules and Validations
 
@@ -144,7 +158,9 @@ const rules = computed(() => ({
     destinationType: { required },
     cfType: { required },
     destinationNumber: {
-        required: requiredIf(isDestinationNumber)
+        required: requiredIf(isDestinationNumber),
+        noWhitespace: (value) => !isDestinationNumber.value || noWhitespace(value),
+        userInfo: (value) => !isDestinationNumber.value || !value || userInfo(value)
     },
     customAnnouncement: {
         required: requiredIf(isDestinationCustomAnnouncement)

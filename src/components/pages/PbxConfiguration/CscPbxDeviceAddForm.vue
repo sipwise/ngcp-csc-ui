@@ -67,7 +67,8 @@ import {
 } from '@vuelidate/validators'
 import CscObjectSpinner from 'components/CscObjectSpinner'
 import CscPbxModelSelect from 'components/pages/PbxConfiguration/CscPbxModelSelect'
-import { customMacAddress } from 'src/helpers/validation'
+import { customMacAddress, noWhitespace } from 'src/helpers/validation'
+import { errorMessages } from 'src/validators'
 
 export default {
     name: 'CscPbxDeviceAddForm',
@@ -102,6 +103,7 @@ export default {
             },
             identifier: {
                 required,
+                noWhitespace,
                 customMacAddress
             }
         }
@@ -133,8 +135,10 @@ export default {
                 return this.$t('{field} is required', {
                     field: this.$t('MAC address')
                 })
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'noWhitespace') {
+                return errorMessages.noWhitespace()
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'customMacAddress') {
-                return this.$t('Input a valid mac address')
+                return errorMessages.customMacAddress()
             }
             return ''
         }

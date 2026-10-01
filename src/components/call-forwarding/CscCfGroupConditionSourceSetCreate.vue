@@ -35,6 +35,8 @@
                         :clearable="editable"
                         :readonly="!editable"
                         :label="$t('Number')"
+                        :error="!isValidNumber(sourceSetNumbersInternal[index])"
+                        :error-message="$t('Spaces are not allowed')"
                         data-cy="csc-call-select-number"
                     >
                         <template
@@ -104,6 +106,7 @@
                 flat
                 color="primary"
                 icon="check"
+                :disable="hasInvalidNumbers"
                 @click="createSourceSetEvent"
             />
         </template>
@@ -113,6 +116,7 @@
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
 import CscInput from 'components/form/CscInput'
+import { noWhitespace } from 'src/helpers/validation'
 import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupConditionSourceSetCreate',
@@ -172,6 +176,9 @@ export default {
         ...mapGetters('user', [
             'isPbxAdmin'
         ]),
+        hasInvalidNumbers () {
+            return !noWhitespace(this.sourceSetNumbersInternal)
+        },
         editable () {
             return !this.sourceSet || this.sourceSet.own || this.isPbxAdmin
         },
@@ -205,12 +212,18 @@ export default {
             'deleteSourceSet',
             'unassignSourceSet'
         ]),
+        isValidNumber (number) {
+            return noWhitespace(number)
+        },
         deleteNumber (index) {
             this.sourceSetNumbersInternal = this.sourceSetNumbersInternal.filter((number, numberIndex) => {
                 return numberIndex !== index
             })
         },
         async createSourceSetEvent () {
+            if (this.hasInvalidNumbers) {
+                return
+            }
             if (this.sourceSet) {
                 await this.updateSourceSet({
                     mapping: this.mapping,

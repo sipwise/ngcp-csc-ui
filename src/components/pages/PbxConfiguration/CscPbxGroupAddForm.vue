@@ -157,7 +157,8 @@ import {
     required
 } from '@vuelidate/validators'
 import CscObjectSpinner from 'components/CscObjectSpinner'
-import { inRange } from 'src/helpers/validation'
+import { inRange, noWhitespace } from 'src/helpers/validation'
+import { errorMessages } from 'src/validators'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -200,6 +201,7 @@ export default {
             },
             extension: {
                 required,
+                noWhitespace,
                 maxLength: maxLength(64),
                 numeric,
                 isInRange: function (value) {
@@ -246,6 +248,8 @@ export default {
                 return this.$t('{field} is required', {
                     field: this.$t('Extension')
                 })
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'noWhitespace') {
+                return errorMessages.noWhitespace()
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Extension'),

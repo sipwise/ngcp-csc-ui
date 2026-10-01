@@ -119,7 +119,7 @@
                         #append
                     >
                         <csc-input-button-save
-                            v-if="v$.changes.webUsername.$errors.length <= 0"
+                            v-if="v$.changes.extension.$errors.length <= 0"
                             @click.stop="save"
                         />
                         <csc-input-button-reset
@@ -463,8 +463,9 @@ import CscPageVoicebox from 'pages/CscPageVoicebox'
 import { PROFILE_ATTRIBUTES_MAP, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import numberFilter from 'src/filters/number'
 import { showGlobalError, showToast } from 'src/helpers/ui'
-import { inRange } from 'src/helpers/validation'
+import { inRange, noWhitespace } from 'src/helpers/validation'
 import { RequestState } from 'src/store/common'
+import { errorMessages } from 'src/validators'
 import {
     mapActions,
     mapGetters,
@@ -615,7 +616,9 @@ export default {
         },
         extensionErrorMessage () {
             const errorsTab = this.v$.changes.extension.$errors
-            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
+            if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'noWhitespace') {
+                return errorMessages.noWhitespace()
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'isInRange') {
                 return this.getExtensionHint
             }
             return ''
@@ -640,6 +643,8 @@ export default {
                 return this.$t('{field} is required', {
                     field: this.$t('Seat Web Username')
                 })
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'noWhitespace') {
+                return errorMessages.noWhitespace()
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Seat Web Username'),
@@ -779,6 +784,7 @@ export default {
     validations: {
         changes: {
             extension: {
+                noWhitespace,
                 isInRange: function (value) {
                     return inRange(value, this.getMinAllowedExtension, this.getMaxAllowedExtension)
                 }
@@ -789,6 +795,7 @@ export default {
             },
             webUsername: {
                 required,
+                noWhitespace,
                 maxLength: maxLength(64)
             },
             conferenceMaxParticipants: {
@@ -950,13 +957,13 @@ export default {
                     displayName: this.changes.displayName
                 })
             }
-            if (this.hasWebUsernameChanged) {
+            if (this.hasWebUsernameChanged && noWhitespace(this.changes.webUsername)) {
                 this.setSeatWebUsername({
                     seatId: this.seatSelected.id,
                     webUsername: this.changes.webUsername
                 })
             }
-            if (this.hasExtensionChanged) {
+            if (this.hasExtensionChanged && noWhitespace(this.changes.extension)) {
                 this.setSeatExtension({
                     seatId: this.seatSelected.id,
                     seatExtension: this.changes.extension

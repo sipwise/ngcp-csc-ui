@@ -35,6 +35,8 @@
                         :clearable="editable"
                         :readonly="!editable"
                         :label="$t('Number')"
+                        :error="!isValidNumber(bNumberSetNumbersInternal[index])"
+                        :error-message="$t('Spaces are not allowed')"
                         data-cy="csc-call-select-number"
                     >
                         <template
@@ -104,6 +106,7 @@
                 flat
                 color="primary"
                 icon="check"
+                :disable="hasInvalidNumbers"
                 @click="createBNumberSetEvent"
             />
         </template>
@@ -113,6 +116,7 @@
 <script>
 import CscCfGroupCondition from 'components/call-forwarding/CscCfGroupCondition'
 import CscInput from 'components/form/CscInput'
+import { noWhitespace } from 'src/helpers/validation'
 import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CscCfGroupConditionBNumberSetCreate',
@@ -164,6 +168,9 @@ export default {
         ...mapGetters('user', [
             'isPbxAdmin'
         ]),
+        hasInvalidNumbers () {
+            return !noWhitespace(this.bNumberSetNumbersInternal)
+        },
         editable () {
             return !this.bNumberSet || this.bNumberSet.own || this.isPbxAdmin
         },
@@ -197,12 +204,18 @@ export default {
             'deleteBNumberSet',
             'unassignBNumberSet'
         ]),
+        isValidNumber (number) {
+            return noWhitespace(number)
+        },
         deleteNumber (index) {
             this.bNumberSetNumbersInternal = this.bNumberSetNumbersInternal.filter((number, numberIndex) => {
                 return numberIndex !== index
             })
         },
         async createBNumberSetEvent () {
+            if (this.hasInvalidNumbers) {
+                return
+            }
             if (this.bNumberSet) {
                 await this.updateBNumberSet({
                     mapping: this.mapping,

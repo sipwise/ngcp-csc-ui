@@ -36,6 +36,8 @@
                             :label="$t('Slot {number}', {
                                 number: slotNumber
                             })"
+                            :error="!isValidSlot(index)"
+                            :error-message="$t('Spaces are not allowed')"
                             dense
                             class="col-6 q-pa-xs"
                         />
@@ -45,6 +47,8 @@
                             :label="$t('Slot {number}', {
                                 number: slotsNumbers[index +1]
                             })"
+                            :error="!isValidSlot(index + 1)"
+                            :error-message="$t('Spaces are not allowed')"
                             dense
                             class="col-6 q-pa-xs"
                         />
@@ -80,6 +84,7 @@
 import { required } from '@vuelidate/validators'
 import CscSelectLazy from 'components/form/CscSelectLazy'
 import { showToast } from 'src/helpers/ui'
+import { noWhitespace } from 'src/helpers/validation'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 export default {
@@ -109,7 +114,7 @@ export default {
             'slotsNumbers'
         ]),
         disableSave () {
-            return this.data.subscriberId === null || this.data.slots.length < 1
+            return this.data.subscriberId === null || this.data.slots.length < 1 || !noWhitespace(this.data.slots)
         }
     },
     methods: {
@@ -120,7 +125,13 @@ export default {
             this.data.subscriberId = subscriberId
             this.data.slots = []
         },
+        isValidSlot (index) {
+            return noWhitespace(this.data.slots[index])
+        },
         async save () {
+            if (this.disableSave) {
+                return
+            }
             await this.updateSubscriberSlots({
                 subscriberId: this.data.subscriberId,
                 slots: this.data.slots.filter((slot, index) => {

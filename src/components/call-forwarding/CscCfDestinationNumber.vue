@@ -9,13 +9,16 @@
             v-model="number"
             :validate="isValidNumber"
             @before-show="setPopupShow(null)"
-            @save="$emit('input', $event)"
+            @save="save"
         >
             <csc-input
                 v-model="scope.value"
                 color="primary"
                 dense
                 maxlength="64"
+                hide-bottom-space
+                :error="!isValidNumber(scope.value)"
+                :error-message="numberErrorMessage(scope.value)"
             >
                 <template
                     #prepend
@@ -46,7 +49,8 @@
 <script>
 import CscCfDestination from 'components/call-forwarding/CscCfDestination'
 import CscInput from 'components/form/CscInput'
-import { userInfo } from 'src/helpers/validation'
+import { noWhitespace, userInfo } from 'src/helpers/validation'
+import { errorMessages } from 'src/validators'
 import { mapActions } from 'vuex'
 export default {
     name: 'CscCfDestinationNumber',
@@ -66,7 +70,18 @@ export default {
     methods: {
         ...mapActions('callForwarding', ['setPopupShow']),
         isValidNumber (value) {
-            return userInfo(value?.trim())
+            const trimmed = value?.trim()
+            return noWhitespace(trimmed) && userInfo(trimmed)
+        },
+        numberErrorMessage (value) {
+            const trimmed = value?.trim()
+            if (!noWhitespace(trimmed)) {
+                return errorMessages.noWhitespace()
+            }
+            return userInfo(trimmed) ? '' : errorMessages.userInfo()
+        },
+        save (value) {
+            this.$emit('input', value?.trim())
         }
     },
     watch: {

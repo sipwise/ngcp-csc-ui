@@ -4,6 +4,8 @@
             ref="input"
             v-model.trim="input"
             v-bind="$attrs"
+            :error="hasWhitespace"
+            :error-message="$t('Spaces are not allowed')"
             clearable
             hide-bottom-space
             @keyup.enter="add(input)"
@@ -54,6 +56,7 @@
 
 <script>
 import useValidate from '@vuelidate/core'
+import { noWhitespace } from 'src/helpers/validation'
 export default {
     name: 'CscInputChips',
     props: {
@@ -71,6 +74,9 @@ export default {
         }
     },
     computed: {
+        hasWhitespace () {
+            return !noWhitespace(this.input)
+        },
         itemsAsArray () {
             const items = []
             if (this.items) {
@@ -99,6 +105,9 @@ export default {
             this.$emit('input', newItems.map((item) => item.value))
         },
         add (value) {
+            if (!noWhitespace(value)) {
+                return
+            }
             let isValid = true
             if (this.v$.input) {
                 this.v$.input.$touch()

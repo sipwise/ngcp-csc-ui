@@ -208,7 +208,8 @@ import useValidate from '@vuelidate/core'
 import { maxLength, numeric, required } from '@vuelidate/validators'
 import CscInput from 'components/form/CscInput'
 import CscInputPasswordRetype from 'components/form/CscInputPasswordRetype'
-import { inRange } from 'src/helpers/validation'
+import { inRange, noWhitespace } from 'src/helpers/validation'
+import { errorMessages } from 'src/validators'
 import { mapGetters } from 'vuex'
 export default {
     name: 'CscPbxSeatAddForm',
@@ -250,6 +251,7 @@ export default {
             },
             webUsername: {
                 required,
+                noWhitespace,
                 maxLength: maxLength(64)
             },
             extension: {
@@ -296,6 +298,8 @@ export default {
                 return this.$t('{field} is required', {
                     field: this.$t('Seat Web Username')
                 })
+            } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'noWhitespace') {
+                return errorMessages.noWhitespace()
             } else if (errorsTab && errorsTab.length > 0 && errorsTab[0].$validator === 'maxLength') {
                 return this.$t('{field} must have at most {maxLength} letters', {
                     field: this.$t('Seat Web Username'),

@@ -41,6 +41,8 @@
                     v-model="number"
                     :required="true"
                     :label="$t('Number')"
+                    :error="!isNumberValid"
+                    :error-message="$t('Spaces are not allowed')"
                     data-cy="csc-phonebook-details-number"
                 />
 
@@ -66,6 +68,7 @@
                 data-cy="csc-phonebook-details-confirm"
                 unelevated
                 text-color="primary"
+                :disable="!isNumberValid"
                 @click="confirm"
             />
         </div>
@@ -74,6 +77,7 @@
 
 <script>
 import CscPageSticky from 'components/CscPageSticky'
+import { noWhitespace } from 'src/helpers/validation'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 export default {
@@ -102,7 +106,10 @@ export default {
     computed: {
         ...mapGetters('user', [
             'getSubscriberId'
-        ])
+        ]),
+        isNumberValid () {
+            return noWhitespace(this.number)
+        }
     },
     methods: {
         ...mapWaitingActions('subscriber-phonebook', {
@@ -114,6 +121,9 @@ export default {
             this.$emit('cancel')
         },
         async confirm () {
+            if (!this.isNumberValid) {
+                return
+            }
             await this.updateEntry({
                 subscriberId: this.getSubscriberId,
                 id: this.id,

@@ -73,6 +73,8 @@
                         v-model="changes.identifier"
                         :disable="isLoading"
                         :label="$t('MAC address')"
+                        :error="!isIdentifierValid"
+                        :error-message="identifierErrorMessage"
                         @keyup.enter="save"
                     >
                         <template
@@ -80,6 +82,7 @@
                             #append
                         >
                             <csc-input-button-save
+                                v-if="isIdentifierValid"
                                 @click.stop="save"
                             />
                             <csc-input-button-reset
@@ -204,7 +207,9 @@ import CscInputButtonSave from 'components/form/CscInputButtonSave'
 import CscPbxDeviceConfig from 'components/pages/PbxConfiguration/CscPbxDeviceConfig'
 import CscPbxModelSelect from 'components/pages/PbxConfiguration/CscPbxModelSelect'
 import { showGlobalError, showToast } from 'src/helpers/ui'
+import { customMacAddress, noWhitespace } from 'src/helpers/validation'
 import { RequestState } from 'src/store/common'
+import { errorMessages } from 'src/validators'
 import {
     mapActions,
     mapGetters,
@@ -242,6 +247,15 @@ export default {
         }
     },
     computed: {
+        isIdentifierValid () {
+            return noWhitespace(this.changes?.identifier) && customMacAddress(this.changes?.identifier)
+        },
+        identifierErrorMessage () {
+            if (!noWhitespace(this.changes?.identifier)) {
+                return errorMessages.noWhitespace()
+            }
+            return customMacAddress(this.changes?.identifier) ? '' : errorMessages.customMacAddress()
+        },
         ...mapState('pbxDevices', [
             'deviceSelected',
             'deviceUpdateError',
@@ -525,7 +539,7 @@ export default {
                     stationName: this.changes.station_name
                 })
             }
-            if (this.hasIdentifierChanged) {
+            if (this.hasIdentifierChanged && this.isIdentifierValid) {
                 this.setDeviceIdentifier({
                     deviceId: this.deviceSelected?.id,
                     identifier: this.changes.identifier
