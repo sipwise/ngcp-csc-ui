@@ -1,3 +1,46 @@
+ngcp-csc-ui (26.3.1.0+0~mr26.3.1.0) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [f66533a] MT#65563 Hide actions for final CF destination
+  * [9f45498] MT#65562 Require number when adding CF destinations
+  * [432c2c3] MT#65737 Auto-dial Phonebook and Seats callbacks
+  * [3d3a322] MT#65919 Route Home dial input through guarded call flow
+  * [3a5b0b4] MT#65641 Make sidebar expansion explicit across screen sizes
+  * [431a957] MT#65990 Standardize table pagination options
+  * [1c67e58] MT#63279 Move call recordings into Conversations
+
+  [ Debora Crescenzo ]
+  * [0accdc0] MT#65720 Migrate ESLint config to neostandard and fix Jest
+  * [cdd6f0f] MT#65720 Bump packages to address security issues
+  * [5ace652] MT#65738 Auto-dial callback numbers from Conversations.
+    Thanks to HauptmannBoosted <87317335+HauptmannBoosted@users.noreply.github.com>
+  * [8dad317] MT#65720 Bump dependencies via dependabot
+  * [c26af94] MT#65720 Bump dependencies via dependabot
+  * [ced4127] MT#65720 Bump dependencies via dependabot
+  * [c297ff9] MT#65720 Bump dependencies and address security advisories
+  * [2a5da6a] MT#65720 Bump @tootallnate/once and fix esbuild vulnerability
+  * [80f08a7] MT#65768 Remove deprecated @quasar/quasar-app-extension-testing
+  * [9961d3e] MT#65774 Improve Composition API composables scaffolding (useWait, docs, deps)
+  * [0566611] MT#65929 Bump dependencies via dependabot
+  * [42b842b] MT#65951 Fix customer phonebook pagination
+  * [42f0759] MT#65992 Bump dependencies via dependabot
+  * [9daf9ce] MT#65998 Allow PBX admin to edit non-owned call forwarding resources
+  * [3bb91d4] MT#65978 Display extension instead of primary number in user menu
+  * [f5b60cb] MT#66045 Fix license route guard checking wrong meta field
+  * [4de545e] MT#66047 Fix device preferences save/refresh bugs and reduce duplication
+  * [b1207bd] MT#66066 Fix Call Recordings license typo
+  * [d5df8db] MT#66178 Bump dependabot packages
+  * [1953631] MT#66178 Resolve js-yaml vulnerabilities
+
+  [ Michael Prokop ]
+  * [090dc26] MT#65720 Bump packages to address security issues
+  * [72ad058] MT#66104 Update yarn to v4.18.1
+
+  [ Nico Schedel ]
+  * [d1ae9d6] MT#64395 add data-cy for csc sound set page
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 05 Oct 2026 12:34:54 +0200
+
 ngcp-csc-ui (26.3.0.0+0~mr26.3.0.0) unstable; urgency=medium
 
   [ Debora Crescenzo ]
