@@ -7,13 +7,13 @@ Standards-Version: 4.6.2
 Rules-Requires-Root: no
 Build-Depends:
  debhelper-compat (= 13),
- nodejs (>= 18),
+ nodejs (>= 26),
  python3,
 
 Package: ngcp-csc-ui
 Architecture: all
 Depends:
- nodejs (>= 18),
+ nodejs (>= 26),
  ${misc:Depends},
  ${shlibs:Depends},
 Description: Customer Self-Care Web UI
