@@ -123,7 +123,7 @@ module.exports = function (ctx) {
             // extractCSS: false,
 
             // https://quasar.dev/quasar-cli/handling-webpack
-            extendWebpack(cfg) {
+            extendWebpack (cfg) {
                 cfg.resolve.fallback = {
                     stream: 'stream-browserify',
                     vm: false

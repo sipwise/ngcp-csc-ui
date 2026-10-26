@@ -30,7 +30,7 @@ export default [
         ]
     },
     ...compat.extends(
-        'standard',
+        'standard'
     ),
     ...vue.configs['flat/recommended'],
     {
