@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.90+0~mr12.5.1.90) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [e2488f0] MT#66422 switch to node v26 and security upgrades
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 26 Oct 2026 15:33:13 +0100
+
 ngcp-csc-ui (12.5.1.89+0~mr12.5.1.89) unstable; urgency=medium
 
   [ Debora Crescenzo ]
