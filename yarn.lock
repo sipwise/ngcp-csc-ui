@@ -244,6 +244,11 @@
   resolved "https://npm-registry.sipwise.com/@babel/helper-string-parser/-/helper-string-parser-7.27.1.tgz#54da796097ab19ce67ed9f88b47bb2ec49367687"
   integrity sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==
 
+"@babel/helper-string-parser@^7.29.11":
+  version "7.29.11"
+  resolved "https://npm-registry.sipwise.com/@babel/helper-string-parser/-/helper-string-parser-7.29.11.tgz#59d76b6193f61e0303b40991cabbedfadcbd5b63"
+  integrity sha512-snZbO7MEDOof+hvNa97EjEY7qD7h2kwvQr5AJC3ZhQudKW5dnej6k3kP9NQV88hJwaS8vDqRLFo9rivLEhle2g==
+
 "@babel/helper-string-parser@^7.29.7":
   version "7.29.7"
   resolved "https://npm-registry.sipwise.com/@babel/helper-string-parser/-/helper-string-parser-7.29.7.tgz#7f0871d99824d23137d60f86fcf6130fd5a1b51f"
@@ -299,6 +304,13 @@
   integrity sha512-E8lTAYNB1KW+FH+VGJuZM1ioAx2E6oVlvQFRrf5P8ZZmsiJXYAD9vTFV7yyEURNzgh1dFqMZuO6tUwcARbqFCA==
   dependencies:
     "@babel/types" "^7.29.8"
+
+"@babel/parser@^7.29.9":
+  version "7.29.11"
+  resolved "https://npm-registry.sipwise.com/@babel/parser/-/parser-7.29.11.tgz#afa959e9d16c40d4d95012553cab363fc86cbcb7"
+  integrity sha512-OZ6+oaK7GMyg3IfCpj8JOmn8n+w2rJbDT0LLfVDTLb1ZFeKDh3AiNELgCMUw175IJHSkLl74hG0M0VLsvx+gag==
+  dependencies:
+    "@babel/types" "^7.29.11"
 
 "@babel/plugin-bugfix-firefox-class-in-computed-class-key@^7.28.5":
   version "7.28.5"
@@ -1138,6 +1150,14 @@
     "@babel/helper-string-parser" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.28.5"
 
+"@babel/types@^7.29.11":
+  version "7.29.11"
+  resolved "https://npm-registry.sipwise.com/@babel/types/-/types-7.29.11.tgz#774cffe8cac2ca494f1334e4052002c96bf628fc"
+  integrity sha512-WCsemW40Cpc6gouC1SrY6PBaZ+oLRlEVY9XBvZBI7il/HyUrb2nJ505wE1MHEFyDZNnrWDEuy4jL50WVHfTTSQ==
+  dependencies:
+    "@babel/helper-string-parser" "^7.29.11"
+    "@babel/helper-validator-identifier" "^7.29.7"
+
 "@babel/types@^7.29.7", "@babel/types@^7.29.8":
   version "7.29.8"
   resolved "https://npm-registry.sipwise.com/@babel/types/-/types-7.29.8.tgz#1229eef31d85156d70fa3f4cd859376d0eaf6863"
@@ -1155,6 +1175,24 @@
   version "2.11.0"
   resolved "https://npm-registry.sipwise.com/@bufbuild/protobuf/-/protobuf-2.11.0.tgz#3ec3985c9074b23aea337957225fe15a0e845f8e"
   integrity sha512-sBXGT13cpmPR5BMgHE6UEEfEaShh5Ror6rfN3yEK5si7QVrtZg8LEPQb0VVhiLRUslD2yLnXtnRzG035J/mZXQ==
+
+"@clack/core@1.5.1":
+  version "1.5.1"
+  resolved "https://npm-registry.sipwise.com/@clack/core/-/core-1.5.1.tgz#2a071e7f47c2875814da8069ebb8100ac042d7aa"
+  integrity sha512-iHTrHA8MtVuLl2TfZySmcKv1qO2PoyC9Z7pfSDozEuV5vtY3/wcOPKJXlqJ5Oq2Cx5DDGQGAMVx6HZfRRoVEbQ==
+  dependencies:
+    fast-wrap-ansi "^0.2.0"
+    sisteransi "^1.0.5"
+
+"@clack/prompts@^1.7.0":
+  version "1.8.1"
+  resolved "https://npm-registry.sipwise.com/@clack/prompts/-/prompts-1.8.1.tgz#39a134cae495843904b57cc1e8300ead81ae7830"
+  integrity sha512-dlT1m5e/0yUL0kRNcQn7yGLVThkgbB0Ga/1AmfDDC/8ik6AIiSf2QLQO2zPYvefsHP0aFgxO93cVLCCfDp7kzQ==
+  dependencies:
+    "@clack/core" "1.5.1"
+    fast-string-width "^3.0.2"
+    fast-wrap-ansi "^0.2.0"
+    sisteransi "^1.0.5"
 
 "@colordx/core@^5.0.0":
   version "5.0.3"
@@ -1364,7 +1402,7 @@
     "@eslint/core" "^0.17.0"
     levn "^0.4.1"
 
-"@hono/node-server@^1.19.12", "@hono/node-server@^1.19.15":
+"@hono/node-server@^1.19.15", "@hono/node-server@^2.0.12":
   version "1.19.17"
   resolved "https://npm-registry.sipwise.com/@hono/node-server/-/node-server-1.19.17.tgz#99bd8625cdbae82652a135c71363cd6322fae483"
   integrity sha512-dSneS5qhiauZWGDCeK4o695Xd9nUNjviSZCMQrj10eetr8Uln1ucn6bbphOM6UynAMMtNIzZNSpL9vnASJwrPQ==
@@ -2500,6 +2538,11 @@
     webpack-merge "^6.0.1"
     webpack-node-externals "^3.0.0"
 
+"@quasar/art@^1.0.0":
+  version "1.0.0"
+  resolved "https://npm-registry.sipwise.com/@quasar/art/-/art-1.0.0.tgz#29c23715d730b55a40d42e69672129634862e603"
+  integrity sha512-IAV8Qg2QM3U2alywUcCELyOlHCUNbJYmiVDRTLgcgmyBlQwo3Wk33eHAyT9cpnV5CqlmuYXe6UZt0Ybi1m0lMA==
+
 "@quasar/babel-preset-app@^2.0.4":
   version "2.0.4"
   resolved "https://npm-registry.sipwise.com/@quasar/babel-preset-app/-/babel-preset-app-2.0.4.tgz#0219766df98c7b3033e3708854bedbfa56524788"
@@ -2526,20 +2569,20 @@
     core-js "^3.49.0"
     core-js-compat "^3.49.0"
 
-"@quasar/cli@4.0.0":
-  version "4.0.0"
-  resolved "https://npm-registry.sipwise.com/@quasar/cli/-/cli-4.0.0.tgz#3bbff52868a774805d2b3fcd9eb6ee5c88db3eda"
-  integrity sha512-BclRf3aD45Vh4cOgcdrzFdXJoBLyI3z48zLRNLEJmOc+rm4l2fHGc68/djclsXZhqQf5A6Q4og8xzBHByD1DNQ==
+"@quasar/cli@5.0.4":
+  version "5.0.4"
+  resolved "https://npm-registry.sipwise.com/@quasar/cli/-/cli-5.0.4.tgz#d387e1a9736fa91f9a01749798d91d3b67254479"
+  integrity sha512-V76sbeM7cnBzCihOUX1tgMSCK78vSONFOXPBbcl4ZoPBKr9LT5EQnOyCUMYQqPotGh7+m9du9DEyG3btOcV1dw==
   dependencies:
-    "@hono/node-server" "^1.19.12"
-    "@quasar/ssl-certificate" "^2.0.0"
+    "@clack/prompts" "^1.7.0"
+    "@hono/node-server" "^2.0.12"
+    "@quasar/art" "^1.0.0"
+    "@quasar/ssl-certificate" "^2.1.0"
     ci-info "^4.4.0"
     cross-spawn "^7.0.6"
-    fs-extra "^11.3.4"
-    hono "^4.12.11"
-    http-proxy-middleware "^3.0.5"
+    fs-extra "^11.4.0"
+    hono "^4.12.32"
     kolorist "^1.8.0"
-    minimist "^1.2.8"
     open "^11.0.0"
     update-notifier "^7.3.1"
 
@@ -2572,19 +2615,19 @@
     execa "^5.1.1"
     strip-ansi "^6.0.0"
 
-"@quasar/render-ssr-error@^1.0.4":
-  version "1.0.4"
-  resolved "https://npm-registry.sipwise.com/@quasar/render-ssr-error/-/render-ssr-error-1.0.4.tgz#df684857f1e8ced235a425b9308fa953ba8b450d"
-  integrity sha512-pkP0uvhLHu2LWk9NbMwBjs37j1pdImXDz5hS9SX14QSqKZKepsfbre7Z28/GTwL6CrHcr+k9UTYorbpQGTI7EA==
+"@quasar/render-ssr-error@^1.0.4", "@quasar/render-ssr-error@^2.2.6":
+  version "2.2.6"
+  resolved "https://npm-registry.sipwise.com/@quasar/render-ssr-error/-/render-ssr-error-2.2.6.tgz#0b73cb5b04ecab5949f2ba498476a1dd8aecc8f4"
+  integrity sha512-v8Q/uxmPwlBbN6lC/fObFk564A7CGFTVnObmdchhDMj817t17P6RsIyFVA8BUwuW0MdG2AWrrjpbhnXIgzuzvA==
   dependencies:
-    stack-trace "^1.0.0-pre2"
+    stack-trace "^1.0.0"
 
-"@quasar/ssl-certificate@^2.0.0":
-  version "2.0.0"
-  resolved "https://npm-registry.sipwise.com/@quasar/ssl-certificate/-/ssl-certificate-2.0.0.tgz#56da1e5dabb2379d8f951fae61f9492885bbe1ee"
-  integrity sha512-serxn3NXqolzYLqHeBy9s8hAF0IRmRew361U2jddLFUAlatDEW2XRkINg9ZFtCTFz/SVr9/ZSFpG6ItAk6Cd6w==
+"@quasar/ssl-certificate@^2.0.0", "@quasar/ssl-certificate@^2.1.0":
+  version "2.1.0"
+  resolved "https://npm-registry.sipwise.com/@quasar/ssl-certificate/-/ssl-certificate-2.1.0.tgz#dbb18d59688716d186e39feeb39a0f7ad956d134"
+  integrity sha512-QFg1sxmQW3o7WyHG+gMkdQYperKAfSdDKt/kuOgrjOvWFC0TRsub65rYO47SVnjdnSZUVBgQSzB0F3NB88uYyw==
   dependencies:
-    fs-extra "^11.2.0"
+    fs-extra "^11.4.0"
     selfsigned "^5.5.0"
 
 "@quasar/ssr-helpers@3.0.3":
@@ -3151,6 +3194,17 @@
     estree-walker "^2.0.2"
     source-map-js "^1.2.1"
 
+"@vue/compiler-core@3.5.44":
+  version "3.5.44"
+  resolved "https://npm-registry.sipwise.com/@vue/compiler-core/-/compiler-core-3.5.44.tgz#6e5b3b56ec7747390dd8d20ee31717fc58106bb4"
+  integrity sha512-k34nCytbK8PQ1gR2mGROYOw6Pnv/mumqIdrZ3x2tbyXZDWm7ViKGLTfdB+DRrWqEQsLgGJvn0WN9jBif5zCTLQ==
+  dependencies:
+    "@babel/parser" "^7.29.9"
+    "@vue/shared" "3.5.44"
+    entities "^7.0.1"
+    estree-walker "^2.0.2"
+    source-map-js "^1.2.2"
+
 "@vue/compiler-dom@3.5.32":
   version "3.5.32"
   resolved "https://npm-registry.sipwise.com/@vue/compiler-dom/-/compiler-dom-3.5.32.tgz#6069eae2f0d1a38263e9445f3c1da1a06e5f6534"
@@ -3159,7 +3213,30 @@
     "@vue/compiler-core" "3.5.32"
     "@vue/shared" "3.5.32"
 
-"@vue/compiler-sfc@3.5.32", "@vue/compiler-sfc@^3.5.22":
+"@vue/compiler-dom@3.5.44":
+  version "3.5.44"
+  resolved "https://npm-registry.sipwise.com/@vue/compiler-dom/-/compiler-dom-3.5.44.tgz#43794b48fa3acee2600709e56c75a18e6bb2fe3c"
+  integrity sha512-W5AoBFWdw1lQAKiHowkfgFKFab82oSRT6sGsPfw/q1GRjsy/ZJFLHGhJyBRIFN9APLTUduDH9U2JAiPOIyKuYg==
+  dependencies:
+    "@vue/compiler-core" "3.5.44"
+    "@vue/shared" "3.5.44"
+
+"@vue/compiler-sfc@3.5.44":
+  version "3.5.44"
+  resolved "https://npm-registry.sipwise.com/@vue/compiler-sfc/-/compiler-sfc-3.5.44.tgz#73b85b01825d429adda0ea2d5821c2e55eb381eb"
+  integrity sha512-dzHmQ4jXTpdr5FjIQUeykVakN/uzqFbUo9/C5ikBFg3a3PeM6uRxeczx1ZbXBML0/zJstEh3ygYipzR5Z7b2Pw==
+  dependencies:
+    "@babel/parser" "^7.29.9"
+    "@vue/compiler-core" "3.5.44"
+    "@vue/compiler-dom" "3.5.44"
+    "@vue/compiler-ssr" "3.5.44"
+    "@vue/shared" "3.5.44"
+    estree-walker "^2.0.2"
+    magic-string "^0.30.21"
+    postcss "^8.5.29"
+    source-map-js "^1.2.2"
+
+"@vue/compiler-sfc@^3.5.22":
   version "3.5.32"
   resolved "https://npm-registry.sipwise.com/@vue/compiler-sfc/-/compiler-sfc-3.5.32.tgz#1f4bef6d4fbfc0cb8278a08d08c05a3afddbd2c8"
   integrity sha512-8UYUYo71cP/0YHMO814TRZlPuUUw3oifHuMR7Wp9SNoRSrxRQnhMLNlCeaODNn6kNTJsjFoQ/kqIj4qGvya4Xg==
@@ -3181,6 +3258,14 @@
   dependencies:
     "@vue/compiler-dom" "3.5.32"
     "@vue/shared" "3.5.32"
+
+"@vue/compiler-ssr@3.5.44":
+  version "3.5.44"
+  resolved "https://npm-registry.sipwise.com/@vue/compiler-ssr/-/compiler-ssr-3.5.44.tgz#8036f76c6f45eebbbc6d0d1cf2fd4d76e44a3138"
+  integrity sha512-xr5gb1JVHlfXJwSlRz1FeP6uxoazdzHuMTVLE7up+4Vrqxk219CvxLPxD9NXBt47yvZW7+p4DXfyp4O1fkByIA==
+  dependencies:
+    "@vue/compiler-dom" "3.5.44"
+    "@vue/shared" "3.5.44"
 
 "@vue/devtools-api@^6.0.0-beta.11", "@vue/devtools-api@^6.5.0":
   version "6.6.4"
@@ -3209,43 +3294,49 @@
   resolved "https://npm-registry.sipwise.com/@vue/devtools-shared/-/devtools-shared-8.1.1.tgz#daaa16243d2f5eaa50f7e34902d2bb9e98235b52"
   integrity sha512-+h4ttmJYl/txpxHKaoZcaKpC+pvckgLzIDiSQlaQ7kKthKh8KuwoLW2D8hPJEnqKzXOvu15UHEoGyngAXCz0EQ==
 
-"@vue/reactivity@3.5.32":
-  version "3.5.32"
-  resolved "https://npm-registry.sipwise.com/@vue/reactivity/-/reactivity-3.5.32.tgz#a4cb973095eade1ae6d899ae60ba9019d2bd21f5"
-  integrity sha512-/ORasxSGvZ6MN5gc+uE364SxFdJ0+WqVG0CENXaGW58TOCdrAW76WWaplDtECeS1qphvtBZtR+3/o1g1zL4xPQ==
+"@vue/reactivity@3.5.44":
+  version "3.5.44"
+  resolved "https://npm-registry.sipwise.com/@vue/reactivity/-/reactivity-3.5.44.tgz#6721374ab041003d16f2a90304f720c3b35d568c"
+  integrity sha512-u+QJdKeBBEADkPdevsL+6E12QlYVfBD8Zcw5qjDQKtamI6l14KyqazJMobhCKelhWN5zpyKUiEDoTyHE93cqWw==
   dependencies:
-    "@vue/shared" "3.5.32"
+    "@vue/shared" "3.5.44"
 
-"@vue/runtime-core@3.5.32":
-  version "3.5.32"
-  resolved "https://npm-registry.sipwise.com/@vue/runtime-core/-/runtime-core-3.5.32.tgz#7ab8bc83210886aa4db69e5d72f31188628fe9d4"
-  integrity sha512-pDrXCejn4UpFDFmMd27AcJEbHaLemaE5o4pbb7sLk79SRIhc6/t34BQA7SGNgYtbMnvbF/HHOftYBgFJtUoJUQ==
+"@vue/runtime-core@3.5.44":
+  version "3.5.44"
+  resolved "https://npm-registry.sipwise.com/@vue/runtime-core/-/runtime-core-3.5.44.tgz#e3e4a2cd13aee28c2a447df583614138b86dbabd"
+  integrity sha512-uEa/ndwjhrrhnOfb2p+sZy6zeoamJOISqaLSJGk/8R6nABT1ZldpzcJoPzKj+zHVomVBPcmQYyC2r4LtvDV6CQ==
   dependencies:
-    "@vue/reactivity" "3.5.32"
-    "@vue/shared" "3.5.32"
+    "@vue/reactivity" "3.5.44"
+    "@vue/shared" "3.5.44"
 
-"@vue/runtime-dom@3.5.32":
-  version "3.5.32"
-  resolved "https://npm-registry.sipwise.com/@vue/runtime-dom/-/runtime-dom-3.5.32.tgz#fe7815b25e55df34c6ae82a0d06be79d1342d7cf"
-  integrity sha512-1CDVv7tv/IV13V8Nip1k/aaObVbWqRlVCVezTwx3K07p7Vxossp5JU1dcPNhJk3w347gonIUT9jQOGutyJrSVQ==
+"@vue/runtime-dom@3.5.44":
+  version "3.5.44"
+  resolved "https://npm-registry.sipwise.com/@vue/runtime-dom/-/runtime-dom-3.5.44.tgz#7406fd4a63580b7a532b41f7cf4fc1dfedbdeddb"
+  integrity sha512-3fc4ARcXVhVBaJ3ujWiNZJARD6pkyRcwG+ZYhMzjKtKUp7MAY0HLwr7r3Smep3Li6ZaWT6ewdmx8XqdaD5oNZg==
   dependencies:
-    "@vue/reactivity" "3.5.32"
-    "@vue/runtime-core" "3.5.32"
-    "@vue/shared" "3.5.32"
+    "@vue/reactivity" "3.5.44"
+    "@vue/runtime-core" "3.5.44"
+    "@vue/shared" "3.5.44"
     csstype "^3.2.3"
 
-"@vue/server-renderer@3.5.32":
-  version "3.5.32"
-  resolved "https://npm-registry.sipwise.com/@vue/server-renderer/-/server-renderer-3.5.32.tgz#74579f65d271e217bdef0df62474b3c8a8dba55b"
-  integrity sha512-IOjm2+JQwRFS7W28HNuJeXQle9KdZbODFY7hFGVtnnghF51ta20EWAZJHX+zLGtsHhaU6uC9BGPV52KVpYryMQ==
+"@vue/server-renderer@3.5.44", "@vue/server-renderer@^3.5.44":
+  version "3.5.44"
+  resolved "https://npm-registry.sipwise.com/@vue/server-renderer/-/server-renderer-3.5.44.tgz#42617f6efc6b58fc94f181a79ef23e71db4b8d51"
+  integrity sha512-R4S1UoH4h5Frrauv8Z5XE5TxV9oBiUSgWIC4TyVK1FK+RocRnOLwFA5Xcmo2011RlgJp+AbZCnw6afrhlgRuUQ==
   dependencies:
-    "@vue/compiler-ssr" "3.5.32"
-    "@vue/shared" "3.5.32"
+    "@vue/compiler-ssr" "3.5.44"
+    "@vue/runtime-dom" "3.5.44"
+    "@vue/shared" "3.5.44"
 
 "@vue/shared@3.5.32":
   version "3.5.32"
   resolved "https://npm-registry.sipwise.com/@vue/shared/-/shared-3.5.32.tgz#dd8ba0d709bf3f758c324a81c8897bad5e1540cf"
   integrity sha512-ksNyrmRQzWJJ8n3cRDuSF7zNNontuJg1YHnmWRJd2AMu8Ij2bqwiiri2lH5rHtYPZjj4STkNcgcmiQqlOjiYGg==
+
+"@vue/shared@3.5.44":
+  version "3.5.44"
+  resolved "https://npm-registry.sipwise.com/@vue/shared/-/shared-3.5.44.tgz#eefe91aa2e17c617260c4ae4c21246be5d85642e"
+  integrity sha512-H82XLH0DjmSOdbEwO15x3QTo1f5PWEtv237eLpYKc0mqLu+B8hnq16lFWmuBmNurkeiG3wr+oM1FhOll/YVFRg==
 
 "@vue/test-utils@2.4.6":
   version "2.4.6"
@@ -3786,13 +3877,13 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-axios@1.18.1:
-  version "1.18.1"
-  resolved "https://npm-registry.sipwise.com/axios/-/axios-1.18.1.tgz#d63f9863bcd8938815c86f9e2abd380189d96dfe"
-  integrity sha512-3nTvFlvpn9Zu/RkHUqtc7/+al4UpRW5az71ap5zccp6e8RAYEzhMTecX8Dz1wWDYrPpUoB1HAQEGEAEvUr7S9g==
+axios@1.20.0:
+  version "1.20.0"
+  resolved "https://npm-registry.sipwise.com/axios/-/axios-1.20.0.tgz#515513445aa60e71d04b6521ca6210829ccb4786"
+  integrity sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==
   dependencies:
     follow-redirects "^1.16.0"
-    form-data "^4.0.5"
+    form-data "^4.0.6"
     https-proxy-agent "^5.0.1"
     proxy-from-env "^2.1.0"
 
@@ -4004,10 +4095,10 @@ birpc@^2.6.1:
   resolved "https://npm-registry.sipwise.com/birpc/-/birpc-2.9.0.tgz#b59550897e4cd96a223e2a6c1475b572236ed145"
   integrity sha512-KrayHS5pBi69Xi9JmvoqrIgYGDkD6mcSe/i6YKi3w5kekCLzrX4+nawcXqrj2tIp50Kw/mT/s3p+GVK0A0sKxw==
 
-body-parser@1.20.6, body-parser@~1.20.3:
-  version "1.20.6"
-  resolved "https://npm-registry.sipwise.com/body-parser/-/body-parser-1.20.6.tgz#60c789c78e0992d906da0a29d71ae01d15c1ed76"
-  integrity sha512-p5tAzS57i5MV9fZFDj9LeIiTZEufbSe2eDozP+ElheSUq1m74CRq1jI4mYNDdVs9vQztXFLuk/Gd6BWTdwRJ5g==
+body-parser@^1.20.9, body-parser@~1.20.3:
+  version "1.20.9"
+  resolved "https://npm-registry.sipwise.com/body-parser/-/body-parser-1.20.9.tgz#b64358a113b4d200d7484752cd154b66933e2009"
+  integrity sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==
   dependencies:
     bytes "~3.1.2"
     content-type "~1.0.5"
@@ -4017,7 +4108,7 @@ body-parser@1.20.6, body-parser@~1.20.3:
     http-errors "~2.0.1"
     iconv-lite "~0.4.24"
     on-finished "~2.4.1"
-    qs "~6.15.1"
+    qs "~6.16.0"
     raw-body "~2.5.3"
     type-is "~1.6.18"
     unpipe "~1.0.0"
@@ -4049,10 +4140,10 @@ boxen@^8.0.1:
     widest-line "^5.0.0"
     wrap-ansi "^9.0.0"
 
-brace-expansion@^1.1.7, brace-expansion@^2.0.1, brace-expansion@^2.0.2, brace-expansion@^5.0.5, brace-expansion@^5.0.9:
-  version "5.0.9"
-  resolved "https://npm-registry.sipwise.com/brace-expansion/-/brace-expansion-5.0.9.tgz#7c72438809b5fa5babf54199a1f1c281a6984fcf"
-  integrity sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==
+brace-expansion@^1.1.7, brace-expansion@^2.0.1, brace-expansion@^2.0.2, brace-expansion@^5.0.11, brace-expansion@^5.0.5:
+  version "5.0.12"
+  resolved "https://npm-registry.sipwise.com/brace-expansion/-/brace-expansion-5.0.12.tgz#995fbb4750a77c4d16a7dc942ff2ca6ef8e675ec"
+  integrity sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==
   dependencies:
     balanced-match "^4.0.2"
 
@@ -4501,14 +4592,15 @@ compression-webpack-plugin@^12.0.0:
     schema-utils "^4.2.0"
     serialize-javascript "^7.0.3"
 
-compression@^1.8.1:
-  version "1.8.1"
-  resolved "https://npm-registry.sipwise.com/compression/-/compression-1.8.1.tgz#4a45d909ac16509195a9a28bd91094889c180d79"
-  integrity sha512-9mAqGPHLakhCLeNyxPkK4xVo746zQ/czLH1Ky+vkitMnWfWZps8r0qXuwhwizagCRttsL4lfG4pIOvaWLpAP0w==
+compression@^1.8.1, compression@^1.8.2:
+  version "1.8.2"
+  resolved "https://npm-registry.sipwise.com/compression/-/compression-1.8.2.tgz#781397127ae2da00c0c5f7c76bda5b2a9b32a49f"
+  integrity sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ==
   dependencies:
     bytes "3.1.2"
     compressible "~2.0.18"
     debug "2.6.9"
+    destroy "1.2.0"
     negotiator "~0.6.4"
     on-headers "~1.1.0"
     safe-buffer "5.2.1"
@@ -5952,10 +6044,10 @@ fast-string-width@^3.0.2:
   dependencies:
     fast-string-truncated-width "^3.0.2"
 
-fast-uri@^3.0.1, fast-uri@^3.1.7:
-  version "3.1.7"
-  resolved "https://npm-registry.sipwise.com/fast-uri/-/fast-uri-3.1.7.tgz#743157d957f3cbb4c65310e033dc2ad4ad7dc60a"
-  integrity sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==
+fast-uri@^3.0.1, fast-uri@^3.1.9:
+  version "3.1.9"
+  resolved "https://npm-registry.sipwise.com/fast-uri/-/fast-uri-3.1.9.tgz#f1deba822b1d6ac79da2f860e872a63470cff203"
+  integrity sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==
 
 fast-wrap-ansi@^0.2.0:
   version "0.2.0"
@@ -6085,10 +6177,10 @@ flow-parser@0.*:
   resolved "https://npm-registry.sipwise.com/flow-parser/-/flow-parser-0.309.0.tgz#ca2eae0b1a604cafbba99863785a92f7164671ee"
   integrity sha512-poYRskeIXiHsE19Fb9sRE/CV7PYOq21j3lS5vKr27ujFBvSAhmCbbilAonJ0/u0Uai+Xgyq30/twHQeQc2Ngiw==
 
-follow-redirects@1.16.0, follow-redirects@^1.0.0, follow-redirects@^1.16.0:
-  version "1.16.0"
-  resolved "https://npm-registry.sipwise.com/follow-redirects/-/follow-redirects-1.16.0.tgz#28474a159d3b9d11ef62050a14ed60e4df6d61bc"
-  integrity sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==
+follow-redirects@^1.0.0, follow-redirects@^1.16.0, follow-redirects@^1.16.1:
+  version "1.16.2"
+  resolved "https://npm-registry.sipwise.com/follow-redirects/-/follow-redirects-1.16.2.tgz#a233160dd1bc9b16cbbab43709e6adc7cc941c8c"
+  integrity sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==
 
 for-each@^0.3.3, for-each@^0.3.5:
   version "0.3.5"
@@ -6105,7 +6197,7 @@ foreground-child@^3.1.0:
     cross-spawn "^7.0.6"
     signal-exit "^4.0.1"
 
-form-data@^4.0.0, form-data@^4.0.5, form-data@^4.0.6:
+form-data@^4.0.0, form-data@^4.0.6:
   version "4.0.6"
   resolved "https://npm-registry.sipwise.com/form-data/-/form-data-4.0.6.tgz#28e864e1b786dbebb68db1f452f9635278665827"
   integrity sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==
@@ -6131,10 +6223,19 @@ fresh@~0.5.2:
   resolved "https://npm-registry.sipwise.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==
 
-fs-extra@^11.2.0, fs-extra@^11.3.4:
+fs-extra@^11.3.4:
   version "11.3.4"
   resolved "https://npm-registry.sipwise.com/fs-extra/-/fs-extra-11.3.4.tgz#ab6934eca8bcf6f7f6b82742e33591f86301d6fc"
   integrity sha512-CTXd6rk/M3/ULNQj8FBqBWHYBVYybQ3VPBw0xGKFe3tuH7ytT6ACnvzpIQ3UZtB8yvUKC2cXn1a+x+5EVQLovA==
+  dependencies:
+    graceful-fs "^4.2.0"
+    jsonfile "^6.0.1"
+    universalify "^2.0.0"
+
+fs-extra@^11.4.0:
+  version "11.4.1"
+  resolved "https://npm-registry.sipwise.com/fs-extra/-/fs-extra-11.4.1.tgz#6a01ca80008eacf3ca1ffde5ef79088f68203a5a"
+  integrity sha512-KYAb4c9BJQI6QqGKthV68OHe0badztdXJWKo0WtBA9IuCFPTKvE5ZdUBglP833aMjhaSPNO4A5j/EkzZtGlKjA==
   dependencies:
     graceful-fs "^4.2.0"
     jsonfile "^6.0.1"
@@ -6400,12 +6501,12 @@ handle-thing@^2.0.0:
   resolved "https://npm-registry.sipwise.com/handle-thing/-/handle-thing-2.0.1.tgz#857f79ce359580c340d43081cc648970d0bb234e"
   integrity sha512-9Qn4yBxelxoh2Ow62nP+Ka/kMnOXRi8BXnRaUwezLNhqelnN49xKz4F/dPP8OYLxLxq6JDtZb2i9XznUQbNPTg==
 
-handlebars@^4.7.9:
-  version "4.7.9"
-  resolved "https://npm-registry.sipwise.com/handlebars/-/handlebars-4.7.9.tgz#6f139082ab58dc4e5a0e51efe7db5ae890d56a0f"
-  integrity sha512-4E71E0rpOaQuJR2A3xDZ+GM1HyWYv1clR58tC8emQNeQe3RH7MAzSbat+V0wG78LQBo6m6bzSG/L4pBuCsgnUQ==
+handlebars@^4.7.10, handlebars@^4.7.9:
+  version "4.7.10"
+  resolved "https://npm-registry.sipwise.com/handlebars/-/handlebars-4.7.10.tgz#12419ea1b41391b3ffcf003f2164dcbce090c417"
+  integrity sha512-P5VJMVM7qgBn6vjXMw8WG9uVI+ncf2pi72j4de4yz5ZULLj2RGqLYaKOYGsgyrViQ0tePOVlN1tDCCXXtFqXKg==
   dependencies:
-    minimist "^1.2.5"
+    minimist "^1.2.8"
     neo-async "^2.6.2"
     source-map "^0.6.1"
     wordwrap "^1.0.0"
@@ -6482,10 +6583,10 @@ he@^1.2.0:
   resolved "https://npm-registry.sipwise.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
-hono@^4.12.11, hono@^4.12.34:
-  version "4.13.5"
-  resolved "https://npm-registry.sipwise.com/hono/-/hono-4.13.5.tgz#3df9463c4668a0321c39515309f5891e388e9709"
-  integrity sha512-O6+/eCYRkzzzy0rPWwKLiGBR1nFuUPZynnwjxN1MBA62NNqbT0wQEzQyK2gSO5yDIDB336sXQleAhOHrzlYyKw==
+hono@^4.12.32, hono@^4.13.11:
+  version "4.13.14"
+  resolved "https://npm-registry.sipwise.com/hono/-/hono-4.13.14.tgz#234489b07bd7bb7b069c9e362f4d39ca85376638"
+  integrity sha512-yhRLQ21U6qa9Hsu2N7Qcbh8tE+WKEcoErjIo56LeSGiGXGp9sA7UpE86Ui9uexb61KakiGwuHMn2QdV7w6i6kQ==
 
 hookable@^5.5.3:
   version "5.5.3"
@@ -6623,7 +6724,7 @@ http-proxy-middleware@^2.0.10, http-proxy-middleware@^2.0.9:
     is-plain-obj "^3.0.0"
     micromatch "^4.0.2"
 
-http-proxy-middleware@^3.0.5, http-proxy-middleware@^3.0.7:
+http-proxy-middleware@^3.0.7:
   version "3.0.7"
   resolved "https://npm-registry.sipwise.com/http-proxy-middleware/-/http-proxy-middleware-3.0.7.tgz#53d3a1fe175bcacc507711cc52a0b32baf2c3442"
   integrity sha512-iwbQltVlx8bCrqePUM8C+hllHvdawVhQJaLrj1X7qllkvFQdXFsr16pW/mo9+JDVjN+QO2XUx9jd8SmoFkE5qw==
@@ -7863,13 +7964,13 @@ launch-editor-middleware@^2.13.1:
   dependencies:
     launch-editor "^2.13.2"
 
-launch-editor@2.14.1, launch-editor@^2.13.2, launch-editor@^2.14.1:
-  version "2.14.1"
-  resolved "https://npm-registry.sipwise.com/launch-editor/-/launch-editor-2.14.1.tgz#f7e0da3f58aaea03fea01074d840b5f739ed7ddc"
-  integrity sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==
+launch-editor@^2.13.2, launch-editor@^2.14.1, launch-editor@^2.14.2:
+  version "2.14.2"
+  resolved "https://npm-registry.sipwise.com/launch-editor/-/launch-editor-2.14.2.tgz#d476a1cb09159d9aee6ca225a8c7c6c1d94d6331"
+  integrity sha512-NHJEb30MGBCkmZXLZwz25t37QR4aY03ZzPYUJXOJaOa92uWwExI9SBQUuIznBYc1xkD7cJNGX7oc3Nl3sq2kQQ==
   dependencies:
     picocolors "^1.1.1"
-    shell-quote "^1.8.4"
+    shell-quote "^1.10.0"
 
 lazystream@^1.0.0:
   version "1.0.1"
@@ -8248,7 +8349,7 @@ minimatch@^9.0.1, minimatch@^9.0.4:
   dependencies:
     brace-expansion "^2.0.2"
 
-minimist@^1.2.0, minimist@^1.2.5, minimist@^1.2.6, minimist@^1.2.8:
+minimist@^1.2.0, minimist@^1.2.6, minimist@^1.2.8:
   version "1.2.8"
   resolved "https://npm-registry.sipwise.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
@@ -8290,10 +8391,10 @@ module-alias@^2.2.3:
   resolved "https://npm-registry.sipwise.com/module-alias/-/module-alias-2.3.4.tgz#7c2b0442ba1114744e97288963db637859db4094"
   integrity sha512-bOclZt8hkpuGgSSoG07PKmvzTizROilUTvLNyrMqvlC9snhs7y7GzjNWAVbISIOlhCP1T14rH1PDAV9iNyBq/w==
 
-moment@^2.29.4:
-  version "2.30.1"
-  resolved "https://npm-registry.sipwise.com/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
-  integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
+moment@^2.31.0:
+  version "2.31.0"
+  resolved "https://npm-registry.sipwise.com/moment/-/moment-2.31.0.tgz#6e19184e8005a9dfc61c9351263d4d6ea2ace7aa"
+  integrity sha512-0acOTfMiWOheYS4eoWb80yYMb/JLvVv9SHbs2PehaDzfUG0Bw855SKyk0IKTnPGa5+U2bmi3W68l1+sGLX/pvw==
 
 mrmime@^2.0.0:
   version "2.0.1"
@@ -9136,7 +9237,7 @@ postcss-value-parser@^4.1.0, postcss-value-parser@^4.2.0:
   resolved "https://npm-registry.sipwise.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^8.4.21, postcss@^8.4.40, postcss@^8.5.23, postcss@^8.5.8:
+postcss@^8.4.21, postcss@^8.4.40, postcss@^8.5.23, postcss@^8.5.29, postcss@^8.5.8:
   version "8.5.26"
   resolved "https://npm-registry.sipwise.com/postcss/-/postcss-8.5.26.tgz#6e75135780c7e10df3433bf2266c552d35c8c620"
   integrity sha512-u82N74LFzG8ca+dD8puPnplTXoGH4fTPpVGuIbt36G3qvNlkvfD0lEAZSxaly3KX8TS/L1A1gsCEmvKmBcVbkQ==
@@ -9204,10 +9305,10 @@ proto-list@~1.2.1:
   resolved "https://npm-registry.sipwise.com/proto-list/-/proto-list-1.2.4.tgz#212d5bfe1318306a420f6402b8e26ff39647a849"
   integrity sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==
 
-proxy-addr@~2.0.7:
-  version "2.0.7"
-  resolved "https://npm-registry.sipwise.com/proxy-addr/-/proxy-addr-2.0.7.tgz#f19fe69ceab311eeb94b42e70e8c2070f9ba1025"
-  integrity sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==
+proxy-addr@^2.0.8, proxy-addr@~2.0.7:
+  version "2.0.8"
+  resolved "https://npm-registry.sipwise.com/proxy-addr/-/proxy-addr-2.0.8.tgz#624e760fd8ab06b1b8320c2f8506d4422cf8e932"
+  integrity sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==
   dependencies:
     forwarded "0.2.0"
     ipaddr.js "1.9.1"
@@ -9270,7 +9371,7 @@ qrcode@1.5.4:
     pngjs "^5.0.0"
     yargs "^15.3.1"
 
-qs@6.16.0, qs@~6.14.0, qs@~6.15.1:
+qs@6.16.0, qs@~6.14.0, qs@~6.16.0:
   version "6.16.0"
   resolved "https://npm-registry.sipwise.com/qs/-/qs-6.16.0.tgz#c22c723a28a920f3aacdce8289fabd43eccb79fd"
   integrity sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==
@@ -9283,10 +9384,10 @@ quansync@^0.2.11:
   resolved "https://npm-registry.sipwise.com/quansync/-/quansync-0.2.11.tgz#f9c3adda2e1272e4f8cf3f1457b04cbdb4ee692a"
   integrity sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==
 
-quasar@2.22.0:
-  version "2.22.0"
-  resolved "https://npm-registry.sipwise.com/quasar/-/quasar-2.22.0.tgz#490c821d2148c1dc9900c8bc6dae485b7e7a3334"
-  integrity sha512-0WAJ0ZnNMWK7QNFnpOVLyUDeEZ6cexkO+f7GjOEEIITIynH2xkfuryWO97Pa/G/+eQJc0ZwX9GohEXXwYTIBew==
+quasar@2.23.3:
+  version "2.23.3"
+  resolved "https://npm-registry.sipwise.com/quasar/-/quasar-2.23.3.tgz#75a5d04e62cc3356f864521c52b8aa7678626c72"
+  integrity sha512-C1t4V6KlLVAYUrm59cDqLvtylg0HDoxvItfgxG1AZm9esAOfgJqGqPN/zY1gmpjtMVVN+ANrEz+uaLqqGDp7lg==
 
 querystringify@^2.1.1:
   version "2.2.0"
@@ -10023,10 +10124,10 @@ shebang-regex@^3.0.0:
   resolved "https://npm-registry.sipwise.com/shebang-regex/-/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
-shell-quote@^1.8.4, shell-quote@^1.9.0:
-  version "1.10.0"
-  resolved "https://npm-registry.sipwise.com/shell-quote/-/shell-quote-1.10.0.tgz#482033e192e4f5c07151521ffa03400ec71b1b0f"
-  integrity sha512-w1aiOKwKuRgtwAReIIj89puqg+I7GvX4IbLrvmhXbzQsj1+Zwi4VO3+fa6ZF91TWSjIxoEkKnMeHcLEODK5ZXA==
+shell-quote@^1.10.0, shell-quote@^1.11.0:
+  version "1.12.0"
+  resolved "https://npm-registry.sipwise.com/shell-quote/-/shell-quote-1.12.0.tgz#e98fdfd2e921d8a58ae2820f4fc0f75c39f09675"
+  integrity sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==
 
 side-channel-list@^1.0.0, side-channel-list@^1.0.1:
   version "1.0.1"
@@ -10125,10 +10226,10 @@ sockjs@^0.3.24:
     uuid "^8.3.2"
     websocket-driver "^0.7.4"
 
-"source-map-js@>=0.6.2 <2.0.0", source-map-js@^1.0.1, source-map-js@^1.0.2, source-map-js@^1.2.1:
-  version "1.2.1"
-  resolved "https://npm-registry.sipwise.com/source-map-js/-/source-map-js-1.2.1.tgz#1ce5650fddd87abc099eda37dcff024c2667ae46"
-  integrity sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==
+"source-map-js@>=0.6.2 <2.0.0", source-map-js@^1.0.1, source-map-js@^1.0.2, source-map-js@^1.2.1, source-map-js@^1.2.2:
+  version "1.2.2"
+  resolved "https://npm-registry.sipwise.com/source-map-js/-/source-map-js-1.2.2.tgz#79fb88d97535a21cb27162cb05d211b67acea4ab"
+  integrity sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==
 
 source-map-support@0.5.13:
   version "0.5.13"
@@ -10189,10 +10290,10 @@ sprintf-js@~1.0.2:
   resolved "https://npm-registry.sipwise.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-stack-trace@^1.0.0-pre2:
-  version "1.0.0-pre2"
-  resolved "https://npm-registry.sipwise.com/stack-trace/-/stack-trace-1.0.0-pre2.tgz#46a83a79f1b287807e9aaafc6a5dd8bcde626f9c"
-  integrity sha512-2ztBJRek8IVofG9DBJqdy2N5kulaacX30Nz7xmkYF6ale9WBVmIy6mFBchvGX7Vx/MyjBhx+Rcxqrj+dbOnQ6A==
+stack-trace@^1.0.0:
+  version "1.0.0"
+  resolved "https://npm-registry.sipwise.com/stack-trace/-/stack-trace-1.0.0.tgz#bcdf4c2b89382ee1fdd881345a2d3f3613c3f370"
+  integrity sha512-H6D7134xi6qONvh7ZHKgviXf+rd3vhGBSvebPZCaUkd8zvQ+7PtDw6CljPTe4cXWNf2IKZGNqw6VJXSb9IgBpA==
 
 stack-utils@^2.0.3:
   version "2.0.6"
@@ -11060,16 +11161,16 @@ vue-wait-vue3@1.5.3:
   resolved "https://npm-registry.sipwise.com/vue-wait-vue3/-/vue-wait-vue3-1.5.3.tgz#9ceb4281bc52f478062281dbe28bc0b558a2ba65"
   integrity sha512-OaOT4BLoehhD4WCwfarc9z/8HSi+kJh7MeatQpClCLJsHjpfKx4fALlv5PdlaNAZ52P3MUw1RziKKlbmo3k+Vw==
 
-vue@3.5.32:
-  version "3.5.32"
-  resolved "https://npm-registry.sipwise.com/vue/-/vue-3.5.32.tgz#9a7cbeb181aa4b2a71c3ebac4995542cf0353de3"
-  integrity sha512-vM4z4Q9tTafVfMAK7IVzmxg34rSzTFMyIe0UUEijUCkn9+23lj0WRfA83dg7eQZIUlgOSGrkViIaCfqSAUXsMw==
+vue@3.5.44:
+  version "3.5.44"
+  resolved "https://npm-registry.sipwise.com/vue/-/vue-3.5.44.tgz#de7828ab2cf53757ecb920564b7b6c36bf187aca"
+  integrity sha512-dvvmaOCG7lAMkJTPqPwWeGMsPS6DIsFsfZDUgBp9V6mHf9b3+/wyVwYR4Es+WV6uJC0FKRxp81Obcq0ZwUcGFQ==
   dependencies:
-    "@vue/compiler-dom" "3.5.32"
-    "@vue/compiler-sfc" "3.5.32"
-    "@vue/runtime-dom" "3.5.32"
-    "@vue/server-renderer" "3.5.32"
-    "@vue/shared" "3.5.32"
+    "@vue/compiler-dom" "3.5.44"
+    "@vue/compiler-sfc" "3.5.44"
+    "@vue/runtime-dom" "3.5.44"
+    "@vue/server-renderer" "3.5.44"
+    "@vue/shared" "3.5.44"
 
 vuex@4.1.0:
   version "4.1.0"
