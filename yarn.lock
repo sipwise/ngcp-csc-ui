@@ -12055,7 +12055,7 @@ __metadata:
     neostandard: "npm:^0.13.0"
     path: "npm:0.12.7"
     qrcode: "npm:1.5.4"
-    quasar: "npm:2.23.3"
+    quasar: "npm:2.32.2"
     stream-browserify: "npm:^3.0.0"
     terser: "npm:^5.49.0"
     tiny-emitter: "npm:2.1.0"
@@ -13451,10 +13451,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:2.23.3":
-  version: 2.23.3
-  resolution: "quasar@npm:2.23.3"
-  checksum: 10c0/22c33436005987fe091cd4f66727321c9332b716748f0a3223be36e9314ab8e0cf414af0688ec3bc3b60e500e6ab3a7428cabb60def0cad36085d24e799f075d
+"quasar@npm:2.32.2":
+  version: 2.32.2
+  resolution: "quasar@npm:2.32.2"
+  checksum: 10c0/312e0e37e9ebd6f6e6c6cd909eb4f04d06915ca58d1e7a29f7cace24092a08c218857ac24067479cb15aff2be03ebc1adede28f6fd27e5f65c57439ae15c5cc3
   languageName: node
   linkType: hard
 
