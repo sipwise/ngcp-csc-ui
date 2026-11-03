@@ -68,6 +68,7 @@ const routes = [
                 path: 'dashboard',
                 component: CscPageDashboard,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('Dashboard')
                     }
@@ -103,6 +104,7 @@ const routes = [
                     get title () {
                         return i18n.global.t('Subscriber Phonebook')
                     },
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.phonebook,
                     licenses: [LICENSES.phonebook],
                     allowCE: false
                 }
@@ -114,6 +116,7 @@ const routes = [
                     get title () {
                         return i18n.global.t('Add Phonebook')
                     },
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.phonebook,
                     licenses: [LICENSES.phonebook]
                 }
             },
@@ -124,6 +127,7 @@ const routes = [
                     get title () {
                         return i18n.global.t('Subscriber Phonebook')
                     },
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.phonebook,
                     licenses: [LICENSES.phonebook],
                     allowCE: false
                 }
@@ -227,6 +231,7 @@ const routes = [
                 path: 'pbx-statistics/cdr',
                 component: CscPagePbxStatisticsCdr,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Statistics')
                     },
@@ -236,6 +241,7 @@ const routes = [
                     adminOnly: true,
                     platformFeature: FEATURES.cloudPbx,
                     capability: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.cdr,
                     licenses: [LICENSES.pbx]
                 }
             },
@@ -243,6 +249,7 @@ const routes = [
                 path: 'pbx-configuration/groups',
                 component: CscPagePbxGroups,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -260,6 +267,7 @@ const routes = [
                 path: 'pbx-configuration/group/:id',
                 component: CscPagePbxGroupDetails,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -277,6 +285,7 @@ const routes = [
                 path: 'pbx-configuration/seats',
                 component: CscPagePbxSeats,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -293,6 +302,7 @@ const routes = [
                 path: 'pbx-configuration/customer-phonebook',
                 component: CscPageCustomerPhonebook,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -302,6 +312,7 @@ const routes = [
                     adminOnly: true,
                     platformFeature: FEATURES.cloudPbx,
                     capability: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.phonebook,
                     licenses: [LICENSES.pbx, LICENSES.phonebook]
                 }
             },
@@ -309,12 +320,14 @@ const routes = [
                 path: 'pbx-configuration/customer-phonebook/create',
                 component: CscPageCustomerPhonebookAdd,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('Add Phonebook')
                     },
                     adminOnly: true,
                     platformFeature: FEATURES.cloudPbx,
                     capability: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.phonebook,
                     licenses: [LICENSES.pbx, LICENSES.phonebook]
                 }
             },
@@ -322,12 +335,14 @@ const routes = [
                 path: 'pbx-configuration/customer-phonebook/upload',
                 component: CscPageCustomerPhonebookUpload,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('Upload CSV')
                     },
                     adminOnly: true,
                     platformFeature: FEATURES.cloudPbx,
                     capability: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.phonebook,
                     licenses: [LICENSES.pbx, LICENSES.phonebook]
                 }
             },
@@ -335,12 +350,14 @@ const routes = [
                 path: 'pbx-configuration/customer-phonebook/:id',
                 component: CscPageCustomerPhonebookDetails,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('Customer Phonebook')
                     },
                     adminOnly: true,
                     platformFeature: FEATURES.cloudPbx,
                     capability: FEATURES.cloudPbx,
+                    profileAttribute: PROFILE_ATTRIBUTE_MAP.phonebook,
                     licenses: [LICENSES.pbx, LICENSES.phonebook]
                 }
             },
@@ -348,6 +365,7 @@ const routes = [
                 path: 'pbx-configuration/device/:id',
                 component: CscPagePbxDeviceDetails,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -365,6 +383,7 @@ const routes = [
                 path: 'pbx-configuration/seat/:id',
                 component: CscPagePbxSeatDetails,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -381,6 +400,7 @@ const routes = [
                 path: 'pbx-configuration/devices',
                 component: CscPagePbxDevices,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -398,6 +418,7 @@ const routes = [
                 path: 'pbx-configuration/call-queues',
                 component: CscPagePbxCallQueues,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -415,6 +436,7 @@ const routes = [
                 path: 'pbx-configuration/sound-sets',
                 component: CscPagePbxSoundSets,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -432,6 +454,7 @@ const routes = [
                 path: 'pbx-configuration/sound-sets/:id',
                 component: CscPagePbxSoundSetDetails,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -449,6 +472,7 @@ const routes = [
                 path: 'pbx-configuration/ms-configs',
                 component: CscPagePbxMsConfigs,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -466,6 +490,7 @@ const routes = [
                 path: 'pbx-configuration/auto-attendant',
                 component: CscPagePbxAutoAttendant,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -483,6 +508,7 @@ const routes = [
                 path: 'pbx-configuration/customer-preferences',
                 component: CscPageCustomerPreferences,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('PBX Configuration')
                     },
@@ -529,6 +555,7 @@ const routes = [
                 path: 'settings',
                 component: CscPageUserSettings,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('User settings')
                     },
@@ -619,6 +646,7 @@ const routes = [
                 name: 'RegisteredDevices',
                 component: CscPageRegisteredDevices,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('Registered Devices')
                     },
@@ -632,6 +660,7 @@ const routes = [
                 path: '*',
                 component: CscPageError404,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('Page not found')
                     }
@@ -684,6 +713,7 @@ const routes = [
                 path: '',
                 component: CscPageError404,
                 meta: {
+                    adminManageOnly: true,
                     get title () {
                         return i18n.global.t('Page not found')
                     }

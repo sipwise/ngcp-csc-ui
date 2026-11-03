@@ -40,6 +40,7 @@ import {
     setSubscriberId
 } from 'src/auth'
 import { LICENSES, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
+import { setAdminManageOnly } from 'src/helpers/admin-manage-only'
 import { getSipInstanceId } from 'src/helpers/call-utils'
 import { getHttpErrorMessage } from 'src/helpers/http-error'
 import { parseErrorPayload, resolveBlobPayload } from 'src/helpers/parse-error-payload'
@@ -197,15 +198,25 @@ export default {
         isLogoRequested (state) {
             return state.logoRequested
         },
-        hasSubscriberProfileAttribute: (state) => {
+        isAdminManageOnly: (state) => {
+            return !!state?.profile?.attributes?.includes(PROFILE_ATTRIBUTE_MAP.adminManageOnly)
+        },
+        // Note, currently the backend does not enforce admin_manage_only, so the stored profile
+        // can contradict it: that is why we apply its effects here.
+        profileAttributes: (state, getters) => {
+            return getters.isAdminManageOnly
+                ? setAdminManageOnly(state.profile.attributes, true)
+                : state?.profile?.attributes
+        },
+        hasSubscriberProfileAttribute: (state, getters) => {
             return (attribute) => {
-                return state?.profile ? state.profile?.attributes?.includes(attribute) : true
+                return state?.profile ? getters.profileAttributes?.includes(attribute) : true
             }
         },
-        hasSomeSubscriberProfileAttributes: (state) => {
+        hasSomeSubscriberProfileAttributes: (state, getters) => {
             return (attributes) => {
                 return state?.profile
-                    ? state.profile?.attributes?.some((item) => {
+                    ? getters.profileAttributes?.some((item) => {
                         return attributes?.includes(item)
                     })
                     : true
@@ -239,19 +250,20 @@ export default {
                 (getters.isSpCe || getters.hasLicenses([LICENSES.call_recording]))
         },
         conversationsSubtitle (state, getters) {
-            const hasConversations = getters.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
-            const hasRecordings = getters.hasCallRecordingAccess
-            if (hasRecordings && hasConversations) {
-                return getters.isFaxFeatureEnabled
-                    ? i18n.global.t('Calls, Faxes, VoiceMails, Recordings')
-                    : i18n.global.t('Calls, VoiceMails, Recordings')
+            const labels = []
+            if (getters.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)) {
+                labels.push(i18n.global.t('Calls'))
+                if (getters.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail)) {
+                    labels.push(i18n.global.t('Voicemails'))
+                }
+                if (getters.isFaxFeatureEnabled) {
+                    labels.push(i18n.global.t('Faxes'))
+                }
             }
-            if (hasRecordings) {
-                return i18n.global.t('Recordings')
+            if (getters.hasCallRecordingAccess) {
+                labels.push(i18n.global.t('Recordings'))
             }
-            return getters.isFaxFeatureEnabled
-                ? i18n.global.t('Calls, Faxes, VoiceMails')
-                : i18n.global.t('Calls, VoiceMails')
+            return labels.join(', ')
         }
     },
     mutations: {

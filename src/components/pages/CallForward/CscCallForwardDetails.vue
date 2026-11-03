@@ -135,10 +135,6 @@ export default {
         ...mapState('pbxSeats', [
             'seatSelected'
         ]),
-        ...mapGetters('user', [
-            'hasSubscriberProfileAttribute',
-            'hasSomeSubscriberProfileAttributes'
-        ]),
         ...mapGetters('callForwarding', [
             'groups',
             'ringTimeout',

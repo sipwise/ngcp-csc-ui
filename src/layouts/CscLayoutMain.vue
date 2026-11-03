@@ -27,7 +27,7 @@
                     <csc-tooltip>{{ $t('Expand menu') }}</csc-tooltip>
                 </q-btn>
                 <q-btn
-                    v-if="isFaxFeatureEnabled && isFaxServerSettingsActive"
+                    v-if="isFaxFeatureEnabled && isFaxServerSettingsActive && !isAdminManageOnly"
                     class="q-mr-sm"
                     flat
                     dense
@@ -162,6 +162,7 @@
                 />
             </q-scroll-area>
             <aui-mobile-app-badges
+                v-if="showAppBadges"
                 class="app-mobile-badge-height"
                 :style="{ bottom: appBadgeBottom }"
             />
@@ -260,6 +261,7 @@ import {
     callGetRemoteMediaStream,
     callHasRemoteVideo
 } from 'src/api/ngcp-call'
+import { PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import { normalizeDestination } from 'src/filters/number-format'
 import { startCase } from 'src/filters/string'
 import {
@@ -341,6 +343,7 @@ export default {
             'userDataSucceeded',
             'isLogoRequested',
             'hasSubscriberProfileAttribute',
+            'isAdminManageOnly',
             'conversationsSubtitle'
         ]),
         pageSubtitle () {
@@ -358,7 +361,10 @@ export default {
             'createFaxError'
         ]),
         showQrBtn () {
-            return this.platformInfo?.app?.show_qr
+            return !!this.platformInfo?.app?.show_qr && this.showAppBadges
+        },
+        showAppBadges () {
+            return !!this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.appInfo)
         },
         mobileMenu () {
             return this.$q.screen.lt.md
@@ -465,10 +471,11 @@ export default {
         mainMenuBottom () {
             const appUrlApple = this.platformInfo?.app?.apple?.url
             const appUrlAndroid = this.platformInfo?.app?.android?.url
+            const hasAppBadges = this.showAppBadges && (appUrlApple || appUrlAndroid)
             const copyrightIsDisplayed = !this.menuMinimized && this.platformInfo?.type === 'spce'
-            if ((appUrlApple || appUrlAndroid) && copyrightIsDisplayed) {
+            if (hasAppBadges && copyrightIsDisplayed) {
                 return '205px'
-            } else if (appUrlApple || appUrlAndroid) {
+            } else if (hasAppBadges) {
                 return '160px'
             } else if (copyrightIsDisplayed) {
                 return '45px'

@@ -44,7 +44,11 @@ export const PROFILE_ATTRIBUTE_MAP = {
     playAnnounceBeforeCallSetup: 'play_announce_before_call_setup',
     playAnnounceBeforeCF: 'play_announce_before_cf',
     playAnnounceBeforeRecording: 'play_announce_before_recording',
-    playAnnounceToCallee: 'play_announce_to_callee'
+    playAnnounceToCallee: 'play_announce_to_callee',
+    phonebook: 'phonebook',
+    cdr: 'cdr',
+    appInfo: 'csc_app_info',
+    adminManageOnly: 'admin_manage_only'
 }
 
 export const PROFILE_ATTRIBUTES_MAP = {

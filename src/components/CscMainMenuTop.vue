@@ -49,6 +49,7 @@ export default {
         ...mapGetters('user', [
             'isFaxFeatureEnabled',
             'hasSubscriberProfileAttribute',
+            'isAdminManageOnly',
             'hasSomeSubscriberProfileAttributes',
             'hasLicenses',
             'hasCallRecordingAccess',
@@ -76,9 +77,10 @@ export default {
                 this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.huntGroups) ||
                 this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCallSetup) ||
                 this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceToCallee)
+            const hasCdr = this.isPbxAdmin && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.cdr)
             const hasExtensionSettingsSubmenus = this.isPbxEnabled &&
                 this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.pbxExtensionSettings)
-            return [
+            const menuItems = [
                 {
                     to: '/user/dashboard',
                     icon: 'fas fa-tachometer-alt',
@@ -104,7 +106,9 @@ export default {
                     to: '/user/subscriber-phonebook',
                     icon: 'fas fa-user',
                     label: this.$t('Subscriber Phonebook'),
-                    visible: !this.isSpCe && this.hasLicenses([LICENSES.phonebook])
+                    visible: !this.isSpCe &&
+                        this.hasLicenses([LICENSES.phonebook]) &&
+                        this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.phonebook)
                 },
                 {
                     icon: 'settings_phone',
@@ -171,14 +175,14 @@ export default {
                 {
                     icon: 'fas fa-chart-line',
                     label: this.$t('PBX Statistics'),
-                    visible: this.isPbxAdmin,
+                    visible: hasCdr,
                     opened: this.isPbxConfiguration,
                     children: [
                         {
                             to: '/user/pbx-statistics/cdr',
                             icon: 'fas fa-table',
                             label: this.$t('Cdr'),
-                            visible: this.isPbxAdmin
+                            visible: hasCdr
                         }
                     ]
                 },
@@ -236,7 +240,9 @@ export default {
                             to: '/user/pbx-configuration/customer-phonebook',
                             icon: 'person',
                             label: this.$t('Customer Phonebook'),
-                            visible: this.isPbxAdmin && this.hasLicenses([LICENSES.phonebook])
+                            visible: this.isPbxAdmin &&
+                                this.hasLicenses([LICENSES.phonebook]) &&
+                                this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.phonebook)
                         },
                         {
                             to: '/user/pbx-configuration/customer-preferences',
@@ -285,6 +291,26 @@ export default {
                     visible: this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.registeredDevices)
                 }
             ]
+            if (!this.isAdminManageOnly) {
+                return menuItems
+            }
+            // admin_manage_only: only links to routes with meta.adminManageOnly stay visible,
+            // and a group only while at least one of its children does
+            return menuItems.map((item) => {
+                if (!item.children) {
+                    return { ...item, visible: item.visible && this.isAllowedWhenAdminManageOnly(item.to) }
+                }
+                const children = item.children.map((child) => ({
+                    ...child,
+                    visible: child.visible && this.isAllowedWhenAdminManageOnly(child.to)
+                }))
+                return { ...item, children, visible: item.visible && children.some((child) => child.visible) }
+            })
+        }
+    },
+    methods: {
+        isAllowedWhenAdminManageOnly (to) {
+            return !!to && !!this.$router.resolve(to).meta?.adminManageOnly
         }
     }
 }

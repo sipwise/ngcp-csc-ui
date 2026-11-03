@@ -32,7 +32,13 @@ export default ({ app, router }) => {
                     })
                     break
                 default: {
-                // 1. Admin check
+                    const isAdminManageOnly = store.getters['user/isAdminManageOnly']
+
+                    if (isAdminManageOnly && !to.meta?.adminManageOnly) {
+                        return next('/')
+                    }
+
+                    // 1. Admin check
                     if (to.meta?.adminOnly && !store.getters['user/isAdmin']) {
                         return next('/')
                     }

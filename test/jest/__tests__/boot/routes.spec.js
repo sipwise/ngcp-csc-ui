@@ -15,8 +15,22 @@ jest.mock('src/boot/store', () => ({
     }
 }))
 
+jest.mock('boot/i18n', () => ({ i18n: { global: { t: (key) => key } } }), { virtual: true })
+jest.mock('qrcode', () => ({}))
+jest.mock('src/api/common', () => ({}))
+jest.mock('src/api/ngcp-call', () => ({}))
+jest.mock('src/api/subscriber', () => ({}))
+jest.mock('src/api/user', () => ({}))
+jest.mock('src/helpers/call-utils', () => ({}))
+jest.mock('src/helpers/ui', () => ({}))
+jest.mock('src/router/routes', () => ({}))
+jest.mock('src/storage', () => ({}))
+
 import routesBoot from 'src/boot/routes'
 import { store } from 'src/boot/store'
+import userModule from 'src/store/user'
+
+const userGetters = userModule.getters
 
 function createRouter () {
     return {
@@ -126,6 +140,93 @@ describe('router guard (src/boot/routes.js)', () => {
 
             expect(store.getters['user/hasLicenses']).toHaveBeenCalledWith(['pbx'])
             expect(store.getters['user/hasCapability']).toHaveBeenCalledWith('callRecording')
+            expect(next).toHaveBeenCalledWith('/')
+        })
+    })
+
+    describe('admin_manage_only', () => {
+        function useProfile (attributes) {
+            const state = { profile: { attributes } }
+            const isAdminManageOnly = userGetters.isAdminManageOnly(state)
+            const computed = {
+                isAdminManageOnly,
+                profileAttributes: userGetters.profileAttributes(state, { isAdminManageOnly })
+            }
+            store.getters['user/isAdminManageOnly'] = isAdminManageOnly
+            store.getters['user/hasSubscriberProfileAttribute'] = userGetters.hasSubscriberProfileAttribute(state, computed)
+            store.getters['user/hasSomeSubscriberProfileAttributes'] = userGetters.hasSomeSubscriberProfileAttributes(state, computed)
+        }
+
+        beforeEach(() => {
+            store.getters['user/isAdmin'] = true
+        })
+
+        it('allows a route marked adminManageOnly', () => {
+            useProfile(['admin_manage_only'])
+            const guard = installGuard()
+            guard({ path: '/user/dashboard', meta: { adminManageOnly: true } }, {}, next)
+
+            expect(next).toHaveBeenCalledWith()
+        })
+
+        it('allows a route marked adminManageOnly whose profile attribute is missing from the stored profile', () => {
+            useProfile(['admin_manage_only'])
+            const guard = installGuard()
+            guard({
+                path: '/user/pbx-configuration/call-queues',
+                meta: { adminManageOnly: true, adminOnly: true, profileAttribute: 'cloud_pbx_callqueue' }
+            }, {}, next)
+
+            expect(next).toHaveBeenCalledWith()
+        })
+
+        it('allows a route marked adminManageOnly whose profile attributes are missing from the stored profile', () => {
+            useProfile(['admin_manage_only'])
+            const guard = installGuard()
+            guard({
+                path: '/user/pbx-configuration/seats',
+                meta: { adminManageOnly: true, adminOnly: true, profileAttributes: ['cfu'] }
+            }, {}, next)
+
+            expect(next).toHaveBeenCalledWith()
+        })
+
+        it('redirects a route not marked adminManageOnly even though its own checks would pass', () => {
+            useProfile(['admin_manage_only', 'voice_mail'])
+            const guard = installGuard()
+            guard({ path: '/user/voicebox', meta: { profileAttribute: 'voice_mail' } }, {}, next)
+
+            expect(next).toHaveBeenCalledWith('/')
+        })
+
+        it('still requires admin rights on a route marked adminManageOnly', () => {
+            useProfile(['admin_manage_only'])
+            store.getters['user/isAdmin'] = false
+            const guard = installGuard()
+            guard({
+                path: '/user/pbx-configuration/groups',
+                meta: { adminManageOnly: true, adminOnly: true, profileAttribute: 'csc_hunt_groups' }
+            }, {}, next)
+
+            expect(next).toHaveBeenCalledWith('/')
+        })
+
+        it('does not restrict other routes when the flag is not set', () => {
+            useProfile([])
+            const guard = installGuard()
+            guard({ path: '/user/voicebox', meta: {} }, {}, next)
+
+            expect(next).toHaveBeenCalledWith()
+        })
+
+        it('checks the stored profile attribute when the flag is not set', () => {
+            useProfile([])
+            const guard = installGuard()
+            guard({
+                path: '/user/pbx-configuration/call-queues',
+                meta: { adminManageOnly: true, adminOnly: true, profileAttribute: 'cloud_pbx_callqueue' }
+            }, {}, next)
+
             expect(next).toHaveBeenCalledWith('/')
         })
     })

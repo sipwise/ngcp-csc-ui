@@ -105,7 +105,7 @@ export default {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
         },
         showVoicemailCard () {
-            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations) &&
+            return this.showConversationsCard &&
                 this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.voiceMail)
         },
         showRegDevices () {
@@ -114,6 +114,9 @@ export default {
     },
     watch: {
         async callEnabled () {
+            if (!this.showRegDevices) {
+                return
+            }
             try {
                 const registeredDevices = await this.getRegisteredDevicesData()
                 this.manageDevicesData(registeredDevices)
@@ -138,14 +141,21 @@ export default {
             getRegisteredDevicesData: 'getRegisteredDevicesData'
         }),
         async loadDatas () {
+            // only fetch the data of the visible cards
             const values = await Promise.allSettled([
-                this.getCallsData(),
-                this.getVoicemailsData(),
-                this.getRegisteredDevicesData()
+                this.showConversationsCard ? this.getCallsData() : null,
+                this.showVoicemailCard ? this.getVoicemailsData() : null,
+                this.showRegDevices ? this.getRegisteredDevicesData() : null
             ])
-            this.manageCallsData(values[0])
-            this.manageVoicemailsData(values[1])
-            this.manageDevicesData(values[2])
+            if (this.showConversationsCard) {
+                this.manageCallsData(values[0])
+            }
+            if (this.showVoicemailCard) {
+                this.manageVoicemailsData(values[1])
+            }
+            if (this.showRegDevices) {
+                this.manageDevicesData(values[2])
+            }
         },
         manageCallsData (calls) {
             if (calls.status === 'rejected') {

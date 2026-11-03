@@ -541,7 +541,7 @@ export default {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceBeforeCF)
         },
         showSoundSet () {
-            return this.hasSomeSubscriberProfileAttributes(PROFILE_ATTRIBUTES_MAP.soundSet)
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.soundSet)
         }
     },
     watch: {

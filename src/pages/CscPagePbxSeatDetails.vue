@@ -201,6 +201,7 @@
                     </template>
                 </q-select>
                 <q-select
+                    v-if="showSoundSet"
                     v-model="changes.soundSet"
                     radio
                     emit-value
@@ -687,7 +688,7 @@ export default {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.huntGroups)
         },
         showMusicOnHold () {
-            return this.hasSomeSubscriberProfileAttributes([PROFILE_ATTRIBUTES_MAP.callSettings])
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.musicOnHold)
         },
         showDnd () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.dnd)
@@ -706,6 +707,9 @@ export default {
         },
         showPlayAnnounceToCallee () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.playAnnounceToCallee)
+        },
+        showSoundSet () {
+            return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.soundSet)
         },
         internalSoundSetOptions () {
             const items = []

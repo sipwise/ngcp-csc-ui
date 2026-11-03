@@ -90,6 +90,21 @@ default: {
 - Checks if the user has at least one of the required profile attributes in the array
 - Redirects to home page (/) if no matching attributes are found
 
+**`admin_manage_only` mode:** when the subscriber profile has the `admin_manage_only` attribute
+(`user/isAdminManageOnly`), the guard runs before all other checks and only lets through routes
+with `meta.adminManageOnly: true` (currently `/user/pbx-configuration/*`, `/user/dashboard`,
+`/user/settings`, `/user/pbx-statistics/cdr`, `/user/registered-devices` and the "Page not found"
+routes, so unknown URLs still show the 404 page). Every other route
+(including `/user/extension-settings/*`) redirects to `/`. The main menu (`CscMainMenuTop.vue`) reads
+the same meta to decide which links stay visible, so adding the key to a route is enough to allow it.
+All other checks still apply. Checks 2 and 3, and every component, read the profile attributes
+through `user/profileAttributes`, which applies the `admin_manage_only` effects of
+`src/helpers/admin-manage-only.js`: the PBX flags are forced on and the personal ones (calls,
+conversations, recordings, app info...) are forced off, whatever the stored profile says. The flags
+of the allowed routes are all forced on. ngcp-admin-ui stores the same effects when the profile is
+saved (`AuiNewSubscriberProfiles.vue`, table in its `src/helpers/admin-manage-only.js`), keep both
+tables in sync when changing them.
+
 ### 4. License Check
 
 - Two-part check based on user type:
