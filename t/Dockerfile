@@ -32,7 +32,7 @@ COPY README.md /tmp/
 
 WORKDIR /tmp
 
-RUN .yarn/releases/yarn-4.18.1.cjs install
+RUN node .yarn/releases/yarn-*.cjs install
 
 WORKDIR /code
 

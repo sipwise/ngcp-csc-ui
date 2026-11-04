@@ -15,7 +15,7 @@ cd /tmp/
 echo "################################################################################"
 echo "Finished main setup, now running tests ..."
 
-.yarn/releases/yarn-4.18.1.cjs test:unit
+node .yarn/releases/yarn-*.cjs test:unit
 
 echo "### Moving JUnit XML files to /results"
 cp /tmp/junit.xml /results/
