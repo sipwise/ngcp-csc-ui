@@ -1,6 +1,7 @@
 const esModules = ['quasar/lang', 'lodash-es', 'quasar'].join('|')
 
-module.exports = {
+const project = {
+    rootDir: __dirname,
     testEnvironment: 'jsdom',
     globals: {
         __DEV__: true
@@ -8,28 +9,6 @@ module.exports = {
     setupFilesAfterEnv: [
         '<rootDir>/test/jest/jest.setup.js'
     ],
-    // noStackTrace: true,
-    // bail: true,
-    // cache: false,
-    // verbose: true,
-    // watch: true,
-    collectCoverage: true,
-    coverageDirectory: '<rootDir>/test/jest/coverage',
-    collectCoverageFrom: [
-        '<rootDir>/src/**/*.vue',
-        '<rootDir>/src/**/*.js',
-        '<rootDir>/src/**/*.ts',
-        '<rootDir>/src/**/*.jsx'
-    ],
-    coveragePathIgnorePatterns: ['/node_modules/', '.d.ts$'],
-    coverageThreshold: {
-        global: {
-            //  branches: 50,
-            //  functions: 50,
-            //  lines: 50,
-            //  statements: 50
-        }
-    },
     testMatch: [
         '<rootDir>/test/jest/__tests__/**/*.spec.js',
         '<rootDir>/test/jest/__tests__/**/*.test.js',
@@ -61,6 +40,52 @@ module.exports = {
     transformIgnorePatterns: [`node_modules/(?!(${esModules}))`],
     snapshotSerializers: [
         '<rootDir>/node_modules/jest-serializer-vue'
+    ]
+}
+
+module.exports = {
+    // noStackTrace: true,
+    // bail: true,
+    // cache: false,
+    // verbose: true,
+    // watch: true,
+    collectCoverage: true,
+    coverageDirectory: '<rootDir>/test/jest/coverage',
+    collectCoverageFrom: [
+        '<rootDir>/src/**/*.vue',
+        '<rootDir>/src/**/*.js',
+        '<rootDir>/src/**/*.ts',
+        '<rootDir>/src/**/*.jsx'
     ],
-    reporters: ['default', 'jest-junit']
+    coveragePathIgnorePatterns: ['/node_modules/', '.d.ts$'],
+    coverageThreshold: {
+        global: {
+            //  branches: 50,
+            //  functions: 50,
+            //  lines: 50,
+            //  statements: 50
+        }
+    },
+    reporters: ['default', 'jest-junit'],
+    projects: [
+        {
+            ...project,
+            displayName: 'unit',
+            testPathIgnorePatterns: ['/node_modules/', '<rootDir>/test/jest/__tests__/route-table/']
+        },
+        {
+            // loads the real src/router/routes.js with every page, layout and component
+            // replaced by an empty stub, so tests can check the route meta used by the
+            // navigation guard and the main menu
+            ...project,
+            displayName: 'route-table',
+            testMatch: ['<rootDir>/test/jest/__tests__/route-table/**/*.spec.js'],
+            moduleNameMapper: {
+                '^(pages|layouts|components)/.*$': '<rootDir>/test/jest/utils/stub-component.js',
+                // only used when the router is installed into an app, and its dependencies are ES modules only
+                '^@vue/devtools-api$': '<rootDir>/test/jest/utils/stub-component.js',
+                ...project.moduleNameMapper
+            }
+        }
+    ]
 }
