@@ -208,6 +208,7 @@ export default {
                     mapping: this.mapping,
                     id: this.bNumberSet.id,
                     name: this.bNumberSetNameInternal,
+                    isRegex: this.bNumberSet.is_regex,
                     numbers: this.bNumberSetNumbersInternal,
                     mode: this.mode,
                     subscriberId: this.subscriberId
