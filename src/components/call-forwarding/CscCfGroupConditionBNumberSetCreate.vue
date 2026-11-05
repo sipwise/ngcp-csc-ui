@@ -25,6 +25,18 @@
                 </q-item-section>
             </q-item>
             <q-item
+                class="no-margin no-padding"
+            >
+                <q-item-section>
+                    <q-toggle
+                        v-model="bNumberSetIsRegexInternal"
+                        :label="$t('Use RegExp')"
+                        :disable="!editable"
+                        data-cy="csc-cf-bnumberset-isregex"
+                    />
+                </q-item-section>
+            </q-item>
+            <q-item
                 v-for="(number, index) in bNumberSetNumbersInternal"
                 :key="index"
                 class="no-margin no-padding"
@@ -162,7 +174,8 @@ export default {
     data () {
         return {
             bNumberSetNameInternal: null,
-            bNumberSetNumbersInternal: null
+            bNumberSetNumbersInternal: null,
+            bNumberSetIsRegexInternal: false
         }
     },
     computed: {
@@ -197,6 +210,7 @@ export default {
     mounted () {
         this.bNumberSetNameInternal = this.bNumberSetName
         this.bNumberSetNumbersInternal = this.bNumberSetNumbers
+        this.bNumberSetIsRegexInternal = Boolean(this.bNumberSet?.is_regex)
     },
     methods: {
         ...mapActions('callForwarding', [
@@ -222,7 +236,7 @@ export default {
                     mapping: this.mapping,
                     id: this.bNumberSet.id,
                     name: this.bNumberSetNameInternal,
-                    isRegex: this.bNumberSet.is_regex,
+                    isRegex: this.bNumberSetIsRegexInternal,
                     numbers: this.bNumberSetNumbersInternal,
                     mode: this.mode,
                     subscriberId: this.subscriberId
@@ -231,6 +245,7 @@ export default {
                 await this.createBNumberSet({
                     mapping: this.mapping,
                     name: this.bNumberSetNameInternal,
+                    isRegex: this.bNumberSetIsRegexInternal,
                     numbers: this.bNumberSetNumbersInternal,
                     mode: this.mode,
                     subscriberId: this.subscriberId

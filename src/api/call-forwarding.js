@@ -134,7 +134,7 @@ export async function cfCreateBNumberSet (subscriberId, payload) {
         body: {
             name: payload.name,
             subscriber_id: subscriberId,
-            is_regex: false,
+            is_regex: payload.isRegex ?? false,
             bnumbers: bNumbers,
             mode: payload.mode
         }
@@ -184,7 +184,7 @@ export async function cfCreateSourceSet (subscriberId, payload) {
         body: {
             name: payload.name,
             subscriber_id: subscriberId,
-            is_regex: false,
+            is_regex: payload.isRegex ?? false,
             sources,
             mode: payload.mode
         }

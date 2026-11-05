@@ -25,6 +25,18 @@
                 </q-item-section>
             </q-item>
             <q-item
+                class="no-margin no-padding"
+            >
+                <q-item-section>
+                    <q-toggle
+                        v-model="sourceSetIsRegexInternal"
+                        :label="$t('Use RegExp')"
+                        :disable="!editable"
+                        data-cy="csc-cf-sourceset-isregex"
+                    />
+                </q-item-section>
+            </q-item>
+            <q-item
                 v-for="(number, index) in sourceSetNumbersInternal"
                 :key="index"
                 class="no-margin no-padding"
@@ -170,7 +182,8 @@ export default {
     data () {
         return {
             sourceSetNameInternal: null,
-            sourceSetNumbersInternal: null
+            sourceSetNumbersInternal: null,
+            sourceSetIsRegexInternal: false
         }
     },
     computed: {
@@ -205,6 +218,7 @@ export default {
     mounted () {
         this.sourceSetNameInternal = this.sourceSetName
         this.sourceSetNumbersInternal = this.sourceSetNumbers
+        this.sourceSetIsRegexInternal = Boolean(this.sourceSet?.is_regex)
     },
     methods: {
         ...mapActions('callForwarding', [
@@ -230,7 +244,7 @@ export default {
                     mapping: this.mapping,
                     id: this.sourceSet.id,
                     name: this.sourceSetNameInternal,
-                    isRegex: this.sourceSet.is_regex,
+                    isRegex: this.sourceSetIsRegexInternal,
                     numbers: this.sourceSetNumbersInternal,
                     mode: this.mode,
                     subscriberId: this.subscriberId
@@ -239,6 +253,7 @@ export default {
                 await this.createSourceSet({
                     mapping: this.mapping,
                     name: this.sourceSetNameInternal,
+                    isRegex: this.sourceSetIsRegexInternal,
                     numbers: this.sourceSetNumbersInternal,
                     mode: this.mode,
                     subscriberId: this.subscriberId
