@@ -216,6 +216,7 @@ export default {
                     mapping: this.mapping,
                     id: this.sourceSet.id,
                     name: this.sourceSetNameInternal,
+                    isRegex: this.sourceSet.is_regex,
                     numbers: this.sourceSetNumbersInternal,
                     mode: this.mode,
                     subscriberId: this.subscriberId
