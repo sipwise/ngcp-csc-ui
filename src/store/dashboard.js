@@ -1,5 +1,7 @@
 import { LIST_DEFAULT_ROWS } from 'src/api/common'
 import { getAllCallsOrVoicemails } from 'src/api/conversations'
+import { getGroupsOnly } from 'src/api/pbx-groups'
+import { getSeatsOnly } from 'src/api/pbx-seats'
 import { getSubscriberRegistrations } from 'src/api/subscriber'
 import { getBrowserTimezone } from 'src/helpers/date-helper'
 
@@ -40,6 +42,18 @@ export default {
                 order_by: 'timestamp',
                 order_by_direction: 'desc',
                 tz: getBrowserTimezone()
+            })
+            return res
+        },
+        async getSeatsData () {
+            const res = await getSeatsOnly({
+                rows: 1
+            })
+            return res
+        },
+        async getGroupsData () {
+            const res = await getGroupsOnly({
+                rows: 1
             })
             return res
         }

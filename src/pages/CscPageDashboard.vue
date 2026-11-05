@@ -1,8 +1,14 @@
 <template>
     <csc-page
         id="csc-page-dashboard"
-        class="row justify-center"
+        class="row justify-center content-start"
     >
+        <csc-card-dashboard-counters
+            v-if="showPbxCard"
+            :title="$t('PBX Configuration')"
+            :counters="pbxCounters"
+            data-cy="dashboard-view-pbx-configuration"
+        />
         <csc-card-dashboard
             v-if="showVoicemailCard"
             :title="$t('Voicebox Messages')"
@@ -60,6 +66,7 @@
 import CscPage from 'components/CscPage'
 import CscCallItem from 'components/pages/Conversations/CscCallItem'
 import CscCardDashboard from 'components/pages/Dashboard/CscCardDashboard'
+import CscCardDashboardCounters from 'components/pages/Dashboard/CscCardDashboardCounters'
 import { date } from 'quasar'
 import { INTERNAL_DATE_FORMAT_DASH_HOUR, PROFILE_ATTRIBUTE_MAP } from 'src/constants'
 import {
@@ -74,6 +81,7 @@ export default {
     name: 'CscPageDashboard',
     components: {
         CscCardDashboard,
+        CscCardDashboardCounters,
         CscPage,
         CscCallItem
     },
@@ -85,9 +93,13 @@ export default {
             callsCount: 0,
             voicemailsCount: 0,
             registeredDevicesCount: 0,
+            seatsCount: 0,
+            groupsCount: 0,
             voicemailsError: false,
             callsError: false,
-            registeredDevicesError: false
+            registeredDevicesError: false,
+            seatsError: false,
+            groupsError: false
         }
     },
     computed: {
@@ -99,7 +111,8 @@ export default {
             'downloadVoiceMailError'
         ]),
         ...mapGetters('user', [
-            'hasSubscriberProfileAttribute'
+            'hasSubscriberProfileAttribute',
+            'isPbxAdmin'
         ]),
         showConversationsCard () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.conversations)
@@ -110,6 +123,35 @@ export default {
         },
         showRegDevices () {
             return this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.registeredDevices)
+        },
+        // same gates as the Seats and Groups entries of the PBX Configuration menu
+        showPbxCard () {
+            return this.isPbxAdmin
+        },
+        showGroupsCounter () {
+            return this.isPbxAdmin && this.hasSubscriberProfileAttribute(PROFILE_ATTRIBUTE_MAP.huntGroups)
+        },
+        pbxCounters () {
+            return [
+                {
+                    label: this.$t('Seats'),
+                    count: this.seatsCount,
+                    loading: this.$wait.is('getSeatsData'),
+                    error: this.seatsError,
+                    buttonTitle: this.$t('View Seats'),
+                    routeTo: '/user/pbx-configuration/seats',
+                    dataCy: 'dashboard-view-seats'
+                },
+                ...(this.showGroupsCounter ? [{
+                    label: this.$t('Groups'),
+                    count: this.groupsCount,
+                    loading: this.$wait.is('getGroupsData'),
+                    error: this.groupsError,
+                    buttonTitle: this.$t('View Groups'),
+                    routeTo: '/user/pbx-configuration/groups',
+                    dataCy: 'dashboard-view-groups'
+                }] : [])
+            ]
         }
     },
     watch: {
@@ -132,20 +174,23 @@ export default {
         }
     },
     mounted () {
-        this.loadDatas()
+        this.loadData()
     },
     methods: {
         ...mapWaitingActions('dashboard', {
             getCallsData: 'getCallsData',
             getVoicemailsData: 'getVoicemailsData',
-            getRegisteredDevicesData: 'getRegisteredDevicesData'
+            getRegisteredDevicesData: 'getRegisteredDevicesData',
+            getSeatsData: 'getSeatsData',
+            getGroupsData: 'getGroupsData'
         }),
-        async loadDatas () {
-            // only fetch the data of the visible cards
+        async loadData () {
             const values = await Promise.allSettled([
                 this.showConversationsCard ? this.getCallsData() : null,
                 this.showVoicemailCard ? this.getVoicemailsData() : null,
-                this.showRegDevices ? this.getRegisteredDevicesData() : null
+                this.showRegDevices ? this.getRegisteredDevicesData() : null,
+                this.showPbxCard ? this.getSeatsData() : null,
+                this.showGroupsCounter ? this.getGroupsData() : null
             ])
             if (this.showConversationsCard) {
                 this.manageCallsData(values[0])
@@ -155,6 +200,12 @@ export default {
             }
             if (this.showRegDevices) {
                 this.manageDevicesData(values[2])
+            }
+            if (this.showPbxCard) {
+                this.manageSeatsData(values[3])
+            }
+            if (this.showGroupsCounter) {
+                this.manageGroupsData(values[4])
             }
         },
         manageCallsData (calls) {
@@ -211,6 +262,22 @@ export default {
                         extra_text: ''
                     }
                 })
+            }
+        },
+        manageSeatsData (seats) {
+            if (seats.status === 'rejected') {
+                this.seatsError = true
+                showGlobalError(seats?.reason?.message)
+            } else {
+                this.seatsCount = seats.value.totalCount
+            }
+        },
+        manageGroupsData (groups) {
+            if (groups.status === 'rejected') {
+                this.groupsError = true
+                showGlobalError(groups?.reason?.message)
+            } else {
+                this.groupsCount = groups.value.totalCount
             }
         },
         checkTitleToShow (call) {

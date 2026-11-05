@@ -206,7 +206,7 @@ export default {
     padding-bottom: 22px
 
 .csc-card-list
-    height:  450px
+    height:  400px
 
 .csc-card-footer
     height: 80px
