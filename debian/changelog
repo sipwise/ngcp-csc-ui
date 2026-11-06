@@ -1,3 +1,10 @@
+ngcp-csc-ui (13.5.1.48+0~mr13.5.1.48) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [e5ffce2] MT#66491 Stop enabling regex on CF source and B-number sets
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 06 Nov 2026 14:38:11 +0100
+
 ngcp-csc-ui (13.5.1.47+0~mr13.5.1.47) unstable; urgency=medium
 
   [ Debora Crescenzo ]
