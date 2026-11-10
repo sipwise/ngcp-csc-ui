@@ -1,7 +1,6 @@
 <template>
     <q-select
-        :value="value"
-        :options="filteredOptions"
+        :options="options"
         emit-value
         use-input
         map-options
@@ -15,10 +14,6 @@ import { mapActions, mapState } from 'vuex'
 export default {
     name: 'CscCfBNumberSetSelection',
     props: {
-        value: {
-            type: [String, Number],
-            default: undefined
-        },
         mode: {
             type: String,
             required: true
@@ -40,9 +35,6 @@ export default {
                     value: bNumberSet.id,
                     label: bNumberSet.name
                 }))
-        },
-        filteredOptions () {
-            return this.options.length ? this.options : this.allOptions
         }
     },
     async created () {
