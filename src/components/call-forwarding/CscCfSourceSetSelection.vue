@@ -1,6 +1,5 @@
 <template>
     <q-select
-        :value="value"
         :options="options"
         emit-value
         use-input
@@ -19,10 +18,6 @@ import {
 export default {
     name: 'CscCfSourceSetSelection',
     props: {
-        value: {
-            type: [String, Number],
-            default: undefined
-        },
         mode: {
             type: String,
             required: true
