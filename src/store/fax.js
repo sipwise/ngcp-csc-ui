@@ -42,7 +42,7 @@ export default {
                 faxServerSettings
             })
 
-            if (toString(subscriberId) === toString(getSubscriberId())) {
+            if (String(subscriberId) === String(getSubscriberId())) {
                 context.commit('user/updateIsFaxServerSettingsActive', faxServerSettings.active, { root: true })
             }
         },
@@ -57,7 +57,7 @@ export default {
                 faxServerSettings
             })
 
-            if (toString(subscriberId) === toString(getSubscriberId())) {
+            if (String(subscriberId) === String(getSubscriberId())) {
                 context.commit('user/updateIsFaxServerSettingsActive', faxServerSettings.active, { root: true })
             }
         },
