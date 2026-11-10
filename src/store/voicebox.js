@@ -14,6 +14,15 @@ import {
 } from 'src/api/voicebox'
 import { RequestState } from 'src/store/common'
 
+const GREETING_TYPES = ['busy', 'unavailable', 'temp', 'greet']
+
+const SETTINGS_DEFAULTS = {
+    pin: '',
+    email: '',
+    attach: false,
+    delete: false
+}
+
 const setVoiceboxSettings = {
     pin: setVoiceboxPin,
     email: setVoiceboxEmail,
@@ -21,10 +30,15 @@ const setVoiceboxSettings = {
     delete: setVoiceboxDelete
 }
 
+function subscriberChanged (context, subscriberId) {
+    return context.state.currentSubscriberId !== subscriberId
+}
+
 export default {
     namespaced: true,
     state: {
         settingsLoadState: RequestState.initial,
+        currentSubscriberId: null,
 
         pinValue: '',
         pinUpdateState: RequestState.initiated,
@@ -189,8 +203,29 @@ export default {
         }
     },
     mutations: {
-        settingsRequesting (state) {
+        settingsRequesting (state, subscriberId) {
             state.settingsLoadState = RequestState.requesting
+            if (state.currentSubscriberId === subscriberId) {
+                return
+            }
+            state.currentSubscriberId = subscriberId
+
+            Object.entries(SETTINGS_DEFAULTS).forEach(([property, value]) => {
+                state[`${property}Value`] = value
+                state[`${property}UpdateState`] = RequestState.initiated
+                state[`${property}UpdateError`] = null
+            })
+            GREETING_TYPES.forEach((type) => {
+                state[`${type}GreetingId`] = null
+                state[`${type}GreetingUrl`] = null
+                state[`${type}GreetingLoadState`] = RequestState.initiated
+                state[`${type}GreetingLoadError`] = null
+                state[`${type}GreetingUploadState`] = RequestState.initiated
+                state[`${type}GreetingUploadError`] = null
+                state[`${type}GreetingUploadProgress`] = 0
+                state[`${type}GreetingDeletionState`] = RequestState.initiated
+                state[`${type}GreetingDeletionError`] = null
+            })
         },
         settingsSucceeded (state, res) {
             state.settingsLoadState = RequestState.succeeded
@@ -200,16 +235,16 @@ export default {
                 state.attachValue = res.settings.attach
                 state.deleteValue = res.settings.delete
             }
-            if (_.has(res, 'busyGreetingId') && res.busyGreetingId !== null) {
+            if (_.has(res, 'busyGreetingId')) {
                 state.busyGreetingId = res.busyGreetingId
             }
-            if (_.has(res, 'unavailableGreetingId') && res.unavailableGreetingId !== null) {
+            if (_.has(res, 'unavailableGreetingId')) {
                 state.unavailableGreetingId = res.unavailableGreetingId
             }
-            if (_.has(res, 'tempGreetingId') && res.tempGreetingId !== null) {
+            if (_.has(res, 'tempGreetingId')) {
                 state.tempGreetingId = res.tempGreetingId
             }
-            if (_.has(res, 'greetGreetingId') && res.greetGreetingId !== null) {
+            if (_.has(res, 'greetGreetingId')) {
                 state.greetGreetingId = res.greetGreetingId
             }
         },
@@ -466,7 +501,7 @@ export default {
     actions: {
         async settingsLoadAction (context, id) {
             const subscriberId = id || context.getters.subscriberId
-            context.commit('settingsRequesting')
+            context.commit('settingsRequesting', subscriberId)
             const res = await Promise.all([
                 getVoiceboxSettings(subscriberId),
                 getVoiceboxGreetingByType({
@@ -486,6 +521,9 @@ export default {
                     type: 'greet'
                 })
             ])
+            if (subscriberChanged(context, subscriberId)) {
+                return
+            }
             context.commit('settingsSucceeded', {
                 settings: res[0],
                 busyGreetingId: _.get(res, '1.items.0.id', null),
@@ -501,18 +539,25 @@ export default {
             } else {
                 subscriberId = context.getters.subscriberId
             }
+            const currentSubscriberId = context.state.currentSubscriberId
             try {
                 context.commit(`${options.property}UpdateRequesting`)
                 await setVoiceboxSettings[options.property]({
                     subscriberId,
                     value: options.value
                 })
+                const settings = await getVoiceboxSettings(subscriberId)
+                if (subscriberChanged(context, currentSubscriberId)) {
+                    return
+                }
                 context.commit('settingsSucceeded', {
-                    settings: await getVoiceboxSettings(subscriberId)
+                    settings
                 })
                 context.commit(`${options.property}UpdateSucceeded`)
             } catch (err) {
-                context.commit(`${options.property}UpdateFailed`, err.message)
+                if (!subscriberChanged(context, currentSubscriberId)) {
+                    context.commit(`${options.property}UpdateFailed`, err.message)
+                }
             }
         },
         async pinUpdateAction (context, options) {
@@ -545,6 +590,7 @@ export default {
         },
         async greetingUpload (context, options) {
             const subscriberId = options.subscriberId || context.getters.subscriberId
+            const currentSubscriberId = context.state.currentSubscriberId
             try {
                 context.commit(`${options.type}GreetingUploadRequesting`)
                 const cancelToken = apiCreateCancelObject()
@@ -556,7 +602,9 @@ export default {
                         file: options.file
                     },
                     onProgress: (progress) => {
-                        context.commit(`${options.type}GreetingUploadProgress`, progress)
+                        if (!subscriberChanged(context, currentSubscriberId)) {
+                            context.commit(`${options.type}GreetingUploadProgress`, progress)
+                        }
                     },
                     cancelToken: cancelToken.token
                 })
@@ -564,9 +612,12 @@ export default {
                     id: subscriberId,
                     type: options.greeting
                 })
+                if (subscriberChanged(context, currentSubscriberId)) {
+                    return
+                }
                 context.commit(`${options.type}GreetingUploadSucceeded`, greetings.items[0].id)
             } catch (err) {
-                if (!apiIsCanceledRequest(err)) {
+                if (!apiIsCanceledRequest(err) && !subscriberChanged(context, currentSubscriberId)) {
                     context.commit(`${options.type}GreetingUploadFailed`, err.message)
                 }
             } finally {
@@ -580,24 +631,34 @@ export default {
             }
         },
         async greetingPlay (context, options) {
+            const currentSubscriberId = context.state.currentSubscriberId
             try {
                 context.commit(`${options.type}GreetingPlayRequesting`)
                 const greetingUrl = await playGreeting({
                     id: options.id,
                     format: options.format
                 })
-                context.commit(`${options.type}GreetingPlaySucceeded`, greetingUrl)
+                if (!subscriberChanged(context, currentSubscriberId)) {
+                    context.commit(`${options.type}GreetingPlaySucceeded`, greetingUrl)
+                }
             } catch (err) {
-                context.commit(`${options.type}GreetingPlayFailed`, err.message)
+                if (!subscriberChanged(context, currentSubscriberId)) {
+                    context.commit(`${options.type}GreetingPlayFailed`, err.message)
+                }
             }
         },
         async greetingDelete (context, options) {
+            const currentSubscriberId = context.state.currentSubscriberId
             try {
                 context.commit(`${options.type}GreetingDeletionRequesting`)
                 await deleteVoiceboxGreetingById(options.id)
-                context.commit(`${options.type}GreetingDeletionSucceeded`)
+                if (!subscriberChanged(context, currentSubscriberId)) {
+                    context.commit(`${options.type}GreetingDeletionSucceeded`)
+                }
             } catch (err) {
-                context.commit(`${options.type}GreetingDeletionFailed`, err.message)
+                if (!subscriberChanged(context, currentSubscriberId)) {
+                    context.commit(`${options.type}GreetingDeletionFailed`, err.message)
+                }
             }
         },
         async busyGreetingUpload (context, options) {
