@@ -746,20 +746,26 @@ export default {
                 this.selectSeat(this.id)
             }
         },
-        seatSelected () {
-            this.soundSet = this.getSoundSetBySeatId(this.seatSelected.id)
-            this.loadPreferences(this.seatSelected.id).then((preferences) => {
-                const clis = [...this.seatSelected.alias_numbers]
+        seatSelected (seat) {
+            if (!seat) {
+                return
+            }
+            this.soundSet = this.getSoundSetBySeatId(seat.id)
+            this.loadPreferences(seat.id).then((preferences) => {
+                if (this.seatSelected?.id !== seat.id) {
+                    return
+                }
+                const clis = [...seat.alias_numbers]
                 this.numbers().forEach((cli) => {
                     clis.push({ ac: cli.ac, cc: cli.cc, sn: cli.sn, number_id: cli.id })
                 })
                 const cliFound = clis.find((cli) => cli.cc + cli.ac + cli.sn === preferences.cli)
-                if (cliFound) {
-                    this.currentCli = {
+                this.currentCli = cliFound
+                    ? {
                         label: cliFound.cc + cliFound.ac + cliFound.sn,
                         value: cliFound.cc + cliFound.ac + cliFound.sn
                     }
-                }
+                    : {}
                 this.changes = this.getSeatData()
             })
         },
