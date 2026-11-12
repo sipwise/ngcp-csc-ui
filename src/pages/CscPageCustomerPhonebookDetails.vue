@@ -70,6 +70,7 @@
 import useValidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import CscPageSticky from 'components/CscPageSticky'
+import { showGlobalError } from 'src/helpers/ui'
 import { noWhitespace } from 'src/helpers/validation'
 import { errorMessages } from 'src/validators'
 import { mapWaitingActions } from 'vue-wait-vue3'
@@ -159,13 +160,19 @@ export default {
             if (this.v$.formData.$invalid) {
                 return
             }
+            this.numberError = false
+            this.numberErrorMessage = ''
             try {
                 await this.changeValueNumber()
                 await this.changeValueName()
                 await this.$router.push('/user/pbx-configuration/customer-phonebook/')
             } catch (error) {
-                this.numberError = true
-                this.numberErrorMessage = this.$t('This number is already in use.')
+                if (error.response?.data?.errorCode === 'DUPLICATE_ENTRY') {
+                    this.numberError = true
+                    this.numberErrorMessage = this.$t('This number is already in use.')
+                } else {
+                    showGlobalError(error.message)
+                }
             }
         }
     }

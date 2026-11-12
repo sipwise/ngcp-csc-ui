@@ -1,5 +1,7 @@
+import { i18n } from 'boot/i18n'
 import _ from 'lodash'
 import {
+    apiPost,
     apiUploadCsv,
     get,
     getList,
@@ -13,6 +15,7 @@ import {
 } from 'src/api/common'
 import { assignNumbers } from 'src/api/user'
 import { getJsonBody } from 'src/api/utils'
+import { capitalizeFirstLetter, getApiErrorSummary } from 'src/helpers/http-error'
 
 const minValue = 3
 const generateSymbols = '!@#$%^*()_+~`|}{[]:;?><,./-='
@@ -722,7 +725,10 @@ export async function createCustomerPhonebook (data) {
         number: data.number,
         customer_id: Number(data.customer_id)
     }
-    return await httpApi.post(`api/v2/customers/${data.customer_id}/phonebook`, payLoad)
+    return await apiPost({
+        path: `api/v2/customers/${data.customer_id}/phonebook`,
+        data: payLoad
+    })
 }
 function createFormDataFromFile (payload) {
     const formData = new FormData()
@@ -737,11 +743,41 @@ export async function uploadCsv (context, formData) {
         }
     }
     const purgeExistingValue = formData?.purge_existing ? 'true' : 'false'
-    await apiUploadCsv({
-        path: `api/v2/customers/${formData?.customerId}/phonebook/?purge_existing=${purgeExistingValue}`,
-        data: payload,
-        config
-    })
+    try {
+        await apiUploadCsv({
+            path: `api/v2/customers/${formData?.customerId}/phonebook/?purge_existing=${purgeExistingValue}`,
+            data: payload,
+            config
+        })
+    } catch (err) {
+        const data = err.response?.data
+        if (data?.errors?.length > 0) {
+            throw createCsvUploadError(data)
+        }
+        throw err
+    }
+}
+
+function getCsvErrorLine ({ pointer, message }) {
+    const row = pointer?.match(/^\/(\d+)(\/|$)/)
+    return {
+        label: row ? i18n.global.t('Line {line}:', { line: Number(row[1]) + 2 }) : null,
+        text: capitalizeFirstLetter(message)
+    }
+}
+
+/**
+ * One line per failure, labelled with the file line. err.lines is shown by showGlobalErrorLines
+ */
+function createCsvUploadError (data) {
+    const summary = getApiErrorSummary(data)
+    const lines = [
+        ...(summary ? [{ label: null, text: `${summary}:` }] : []),
+        ...data.errors.map(getCsvErrorLine)
+    ]
+    const err = new Error(lines.map(({ label, text }) => (label ? `${label} ${text}` : text)).join('\n'))
+    err.lines = lines
+    return err
 }
 export function setValueNameCustomer (customerId, phonebookId, value) {
     return setPreferencePhonebookCustomer(customerId, phonebookId, 'name', value)

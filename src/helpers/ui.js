@@ -39,6 +39,35 @@ export function showGlobalError (messageOrException, timeout = 3000) {
     })
 }
 
+export function escapeHtml (str) {
+    return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll('\'', '&#39;')
+}
+
+/**
+ * Like showGlobalError, for a list of { label, text }: one line each, with the label in bold
+ */
+export function showGlobalErrorLines (lines, timeout = 10000) {
+    const message = lines
+        .map(({ label, text }) => (label ? `<b>${escapeHtml(label)}</b> ${escapeHtml(text)}` : escapeHtml(text)))
+        .join('<br>')
+    return Notify.create({
+        message,
+        html: true,
+        position: 'top',
+        type: 'negative',
+        icon: 'error',
+        textColor: 'dark',
+        enter: 'bounceIn',
+        leave: 'fadeOut',
+        timeout
+    })
+}
+
 export function showGlobalWarning (message, timeout) {
     Alert.create({
         html: message,

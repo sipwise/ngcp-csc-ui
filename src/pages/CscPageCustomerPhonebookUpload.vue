@@ -107,6 +107,7 @@ import useValidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import CscPageSticky from 'components/CscPageSticky'
 import CscInputFile from 'components/form/CscInputFile'
+import { showGlobalErrorLines } from 'src/helpers/ui'
 import { mapWaitingActions } from 'vue-wait-vue3'
 import { mapGetters } from 'vuex'
 export default {
@@ -170,7 +171,15 @@ export default {
             this.$emit('cancel')
         },
         async confirm () {
-            await this.uploadPhonebookCustomer(this.formData)
+            try {
+                await this.uploadPhonebookCustomer(this.formData)
+            } catch (err) {
+                if (!err.lines) {
+                    throw err
+                }
+                showGlobalErrorLines(err.lines)
+                return
+            }
             await this.$router.push('/user/pbx-configuration/customer-phonebook/')
         },
         toggleFileSelected (value) {

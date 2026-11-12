@@ -153,11 +153,11 @@ export default {
                 await this.createPhonebookCustomer(this.formData)
                 this.$router.push('/user/pbx-configuration/customer-phonebook/')
             } catch (error) {
-                if (error.response && error.response.status === 422) {
+                if (error.response?.data?.errorCode === 'DUPLICATE_ENTRY') {
                     this.numberError = true
                     this.numberErrorMessage = this.$t('This number is already in use.')
                 } else {
-                    showGlobalError(this.$t('An error occurred:', error.response.data.message))
+                    showGlobalError(error.message)
                 }
             }
         }

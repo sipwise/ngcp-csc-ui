@@ -158,27 +158,8 @@ export async function getList (options) {
     }
 }
 
-function extractMessages (messageArray) {
-    const messages = []
-    if (Array.isArray(messageArray)) {
-        messageArray.forEach((item) => {
-            Object.keys(item).forEach((fieldName) => {
-                const fieldErrors = item[fieldName]
-                if (Array.isArray(fieldErrors)) {
-                    fieldErrors.forEach((errorObject) => {
-                        Object.values(errorObject).forEach((errorMsg) => {
-                            messages.push(errorMsg)
-                        })
-                    })
-                }
-            })
-        })
-    }
-    return messages.join(', ')
-}
-
 function handleResponseError (err) {
-    let code = _.get(err, 'response.data.code', null)
+    const code = _.get(err, 'response.data.code', null)
     let message = _.get(err, 'response.data.message', null)
 
     if (code === 403 && message === 'Invalid license') {
@@ -191,13 +172,6 @@ function handleResponseError (err) {
             routerInstance.push({ path: PATH_CHANGE_PASSWORD })
         }
         return
-    }
-
-    // API V2 returns an array of messages rather than a string
-    // and the code is available in the response status
-    if (Array.isArray(message)) {
-        message = extractMessages(message)
-        code = _.get(err, 'response.status', null)
     }
 
     if (code !== null && message !== null) {

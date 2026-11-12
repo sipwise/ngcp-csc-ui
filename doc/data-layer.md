@@ -40,7 +40,7 @@ domain wrappers: `src/api/*.js` (e.g., `src/api/communication.js::createFax`) �
 
    **1. A structured error body is present** (`err.response.data` has `code`/`message`) — two messages get translated first (`code === 403 && message === 'Invalid license'` → a friendlier i18n string; `code === 403 && message === 'Password expired'` → sets an i18n message and does `this.$router?.push({ path: PATH_CHANGE_PASSWORD })`, then returns *without throwing*, since there's nothing further to do). Everything else becomes `throw new ApiResponseError(code, message)` (the class carries `code`, `status`, `message`).
 
-   **2. A response exists but there's no structured `{ code, message }`** — this is the nginx-rendered case: a 502/503/504 comes back as an HTML error page instead of JSON, or the body is a plain string or empty. There's no `code`/`message` to build an `ApiResponseError` from here, so instead `err.message` is rewritten in place via `getHttpErrorMessage(err, fallbackMessage)`, and the *same* `err` object is rethrown — not wrapped in a new error type. Rethrowing the original object (rather than constructing a fresh error) matters because some callers read other fields off it directly, e.g. `src/store/user.js`'s `getOTPSecret` reads `err.response.data` (a Blob) directly via `parseErrorPayload`/`resolveBlobPayload` (`src/helpers/parse-error-payload.js`), and a replacement error without `.response` would break that.
+   **2. A response exists but there's no structured `{ code, message }`** — this is the API v2 case (its body has `statusCode`, not `code`, see "API v2 error body" below) and the nginx-rendered case: a 502/503/504 comes back as an HTML error page instead of JSON, or the body is a plain string or empty. There's no `code`/`message` to build an `ApiResponseError` from here, so instead `err.message` is rewritten in place via `getHttpErrorMessage(err, fallbackMessage)`, and the *same* `err` object is rethrown — not wrapped in a new error type. Rethrowing the original object (rather than constructing a fresh error) matters because some callers read other fields off it directly, e.g. `src/store/user.js`'s `getOTPSecret` reads `err.response.data` (a Blob) directly via `parseErrorPayload`/`resolveBlobPayload` (`src/helpers/parse-error-payload.js`), and a replacement error without `.response` would break that.
 
    **3. No response at all** (network failure, request never reached the server) — rethrow the original `err` untouched; there's nothing to transform.
 
@@ -49,7 +49,7 @@ domain wrappers: `src/api/*.js` (e.g., `src/api/communication.js::createFax`) �
    #### `getHttpErrorMessage(err, fallbackMessage)` (`src/helpers/http-error.js`)
 
    This is the single place that turns an axios error into a user-facing string, in priority order:
-   1. `err.response.data.message` — a structured JSON error body's own message, if present (checked unconditionally, even when `response.status` is missing — some mocked/edge-case responses carry a message with no status).
+   1. `err.response.data.message` — a structured JSON error body's own message, followed by the failures of an API v2 `errors[]` (via `getApiErrorMessage`), if present (checked unconditionally, even when `response.status` is missing — some mocked/edge-case responses carry a message with no status).
    2. If there's no `response.status` at all, return `fallbackMessage`.
    3. The `<title>` of an HTML error page in `err.response.data`, but only if that title starts with the actual status code — this stops an unrelated HTML page (e.g. the SPA's own fallback page) from being mistaken for the real reason phrase.
    4. `err.response.statusText`, or failing that `err.message`, or failing that a small built-in fallback for the common 5xx statuses (`STATUS_TEXT_FALLBACK`: `500`/`502`/`503`/`504`), formatted as `"<status> <text>"`.
@@ -63,6 +63,25 @@ domain wrappers: `src/api/*.js` (e.g., `src/api/communication.js::createFax`) �
    - `src/store/user.js` — `getOTPSecret` only, as the final fallback once its own 400-specific handling (below) doesn't apply or the body fails to parse. `getOTPSecretAsText` goes through `get()`/`handleResponseError` instead, so `err.message` is already set by the time it reaches the action's `catch`.
 
    **Why those `user.js` functions bypass `handleResponseError`:** they call `httpApi` directly instead of `common.js`'s `get`/`post`, and build their own message with `getHttpErrorMessage` rather than funneling through `handleResponseError`. This isn't incidental — going through `handleResponseError` would break them. `store/user.js`'s `login` action branches on the *exact, untranslated* backend message (`'Invalid OTP'` opens the two-factor flow, `'Password expired'` redirects to the change-password page, `'Banned'` shows a dedicated notice). `handleResponseError` rewrites `'Password expired'` into a translated string and redirects *and returns without throwing at all* — so if `login()` went through it, a password-expired response wouldn't surface as an error at all; the promise would resolve with `undefined` and the login action would never see the case it needs to react to. `changeExpiredPassword` has a similar reason: it needs to tell a `401` (wrong current password) apart from a `422` (new password fails policy) and show a distinct message for each, which it can only do by inspecting the raw status itself. `loginByExchangeToken` and `getPreLoginPasswordInfo` run before there's a session to speak of, for the same category of reason. `getUserData` is simpler — it just fans out several already-`common.js`-backed calls via `Promise.all` and wraps whatever throws in one consistent plain `Error`, so the login action always gets the same shape back regardless of which sub-call failed.
+
+#### API v2 error body
+
+Every API v2 (NestJS, `/api/v2/...`) error has the same body; API v1 keeps `{ code, message }`:
+
+```json
+{ "tx": "...", "statusCode": 422, "path": "/api/v2/customers/1/phonebook", "method": "POST",
+  "error": "Unprocessable Entity", "errorCode": "VALIDATION_FAILED", "message": "Validation failed",
+  "errors": [ { "pointer": "/number", "code": "isNotEmpty", "message": "number should not be empty" } ] }
+```
+
+- `message` is always a string: a summary (`"Validation failed"`) for validation errors, the text of the first failure for the other errors. At most 100 failures are listed, then the message says `"(100 of N errors shown)"`.
+- `errorCode` is the machine-readable reason (`VALIDATION_FAILED`, `INVALID_PARAMETER`, `DUPLICATE_ENTRY`, `NOT_FOUND`, ...). Branch on it, not on the status: every validation failure is a 422 too, so `status === 422` does not mean "duplicate".
+- `errors[]` has one entry per failure, `{ pointer | parameter, code, message }`, with lowercase messages. `pointer` is an RFC 6901 path into the request body, 0-based: `/number` for a single item, `/<row>/number` for a CSV upload (row 0 is the line after the header).
+
+What is automatic and what is up to the caller:
+- `getHttpErrorMessage` (and so `handleResponseError` and `showGlobalError(err)`) builds the text with `getApiErrorMessage(data)` (`src/helpers/http-error.js`): `"Validation failed: Number should not be empty"`, without the summary when it repeats the first failure. The body itself is left untouched, so a caller can still read `errorCode` and `errors[]`.
+- The customer phonebook CSV upload (`uploadCsv` in `src/api/subscriber.js`) formats the failures itself: it throws an error whose `lines` hold the summary and one entry per failure, labelled with the file line (`"Line 4:"`, i.e. pointer row + 2). The upload page shows them with `showGlobalErrorLines` (`src/helpers/ui.js`), one per line with the label in bold; the texts are escaped with `escapeHtml`.
+- The phonebook "Add" pages show "This number is already in use." for `errorCode === 'DUPLICATE_ENTRY'`.
 
 #### OTP / 2FA login flow (`src/store/user.js`)
 
