@@ -1722,35 +1722,35 @@
   resolved "https://npm-registry.sipwise.com/@inquirer/type/-/type-4.0.5.tgz#a02d90e5da8a36dce27ac8e7237a50c99a9003a3"
   integrity sha512-aetVUNeKNc/VriqXlw1NRSW0zhMBB0W4bNbWRJgzRl/3d0QNDQFfk0GO5SDdtjMZVg6o8ZKEiadd7SCCzoOn5Q==
 
-"@intlify/core-base@11.3.2":
-  version "11.3.2"
-  resolved "https://npm-registry.sipwise.com/@intlify/core-base/-/core-base-11.3.2.tgz#185d0e3259be5afc1888c2d2e1a636be09ad2dae"
-  integrity sha512-cgsUaV/dyD6aS49UPgerIblrWeXAZHNaDWqm4LujOGC7IafSyhghGXEiSVvuDYaDPiQTP+tSFSTM1HIu7Yp1nA==
+"@intlify/core-base@11.4.14":
+  version "11.4.14"
+  resolved "https://npm-registry.sipwise.com/@intlify/core-base/-/core-base-11.4.14.tgz#cc0d78768846336c0f9611640fc35c2854622617"
+  integrity sha512-Lox+qRGBLnEYfNz4iajqKpw1zuvSAWl4PtzEk654bEM+0NT1GBy9AbOecxzSh7krsyqn9mGKhgmvtuyBsqS6oQ==
   dependencies:
-    "@intlify/devtools-types" "11.3.2"
-    "@intlify/message-compiler" "11.3.2"
-    "@intlify/shared" "11.3.2"
+    "@intlify/devtools-types" "11.4.14"
+    "@intlify/message-compiler" "11.4.14"
+    "@intlify/shared" "11.4.14"
 
-"@intlify/devtools-types@11.3.2":
-  version "11.3.2"
-  resolved "https://npm-registry.sipwise.com/@intlify/devtools-types/-/devtools-types-11.3.2.tgz#983e3c12340b36a41648fda451aeebc4f3ade812"
-  integrity sha512-q96G2ZZw0FNoXzejbjIf9dbfgz1xyYBZu6ZT4b5TE/55j8d1O9X5jv0k+U+L3fVe7uebPcqRQFD0ffm30i5mJA==
+"@intlify/devtools-types@11.4.14":
+  version "11.4.14"
+  resolved "https://npm-registry.sipwise.com/@intlify/devtools-types/-/devtools-types-11.4.14.tgz#15ef2fc0b1ae1b3971e47530cbe53f0ac976072e"
+  integrity sha512-EQHRYveQg6yHQ51kePfsFyaW2WW+0hk3FdVxSpLDyuKtqFtsRFoyQR2QzASZPmY767ujs9ipuxc2DiGJARkuiQ==
   dependencies:
-    "@intlify/core-base" "11.3.2"
-    "@intlify/shared" "11.3.2"
+    "@intlify/core-base" "11.4.14"
+    "@intlify/shared" "11.4.14"
 
-"@intlify/message-compiler@11.3.2":
-  version "11.3.2"
-  resolved "https://npm-registry.sipwise.com/@intlify/message-compiler/-/message-compiler-11.3.2.tgz#3e53e5f71995a2ef7d385554185852f5139d4eb3"
-  integrity sha512-d/awyHUkNSaGPxBxT/qlUpfRizxHX9dt55CnW03xx5p1KmMyfYHKupCnvzINX+Na8JR8LAR7y32lPKjoeQGmzA==
+"@intlify/message-compiler@11.4.14":
+  version "11.4.14"
+  resolved "https://npm-registry.sipwise.com/@intlify/message-compiler/-/message-compiler-11.4.14.tgz#b3bb748739c4401b45cd706927affed6f6b96eff"
+  integrity sha512-y79GatHfMhN672Vooxw0v6mgX/vclFHggO1ENL6aH/QubLXiV529WXu/+FhVUbYF+HLTeDDkQpmnpfvSJddBCg==
   dependencies:
-    "@intlify/shared" "11.3.2"
+    "@intlify/shared" "11.4.14"
     source-map-js "^1.0.2"
 
-"@intlify/shared@11.3.2":
-  version "11.3.2"
-  resolved "https://npm-registry.sipwise.com/@intlify/shared/-/shared-11.3.2.tgz#589d0a7d5448fb042b9553be28aca4467898368d"
-  integrity sha512-x66fjdH6i+lNYPae5URSQGTjBL68Av6hi09jvC5Ci96iTkwfqrPhCj46aylQZmgMaG89rOZCIKqS7ApC8ZDVjg==
+"@intlify/shared@11.4.14":
+  version "11.4.14"
+  resolved "https://npm-registry.sipwise.com/@intlify/shared/-/shared-11.4.14.tgz#3383bf240c6a1cb7c885bd837867455163a2c689"
+  integrity sha512-f8zSlPs4+Yd9za3CPQfW9OHxAJBOeRQzB/hhOhkbGA7hlqWk0W0bUtSV/LmyrGNwdl8JriBnFtJqZyF140bjGg==
 
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
@@ -5005,10 +5005,10 @@ decimal.js@^10.4.2:
   resolved "https://npm-registry.sipwise.com/decimal.js/-/decimal.js-10.6.0.tgz#e649a43e3ab953a72192ff5983865e509f37ed9a"
   integrity sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==
 
-decode-uri-component@^0.5.0:
-  version "0.5.0"
-  resolved "https://npm-registry.sipwise.com/decode-uri-component/-/decode-uri-component-0.5.0.tgz#4592fa1e1d640ec5e2760e2e168ad2ab5f2c9da1"
-  integrity sha512-1BiQVoK8C9gUbQU6NzAtO/tkz2qOFpEObMWpcFvhx4fYnj4Oc5yzaJN/LD36ihkVUdXyh5ZekzX+yM+ty/SrPg==
+decode-uri-component@^0.5.1:
+  version "0.5.1"
+  resolved "https://npm-registry.sipwise.com/decode-uri-component/-/decode-uri-component-0.5.1.tgz#7f66b25bf435df723f9af55713dcf860a1c297d2"
+  integrity sha512-vWHQkXgg2cE3BB4rR0c+PYw9BCQzLoNIRMI7AunIkZst74tw/vpPp7VLoYtsR/cy1f55g3XDWUslfeCZjiZJyA==
 
 decomment@0.9.5:
   version "0.9.5"
@@ -9384,10 +9384,10 @@ quansync@^0.2.11:
   resolved "https://npm-registry.sipwise.com/quansync/-/quansync-0.2.11.tgz#f9c3adda2e1272e4f8cf3f1457b04cbdb4ee692a"
   integrity sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==
 
-quasar@2.23.3:
-  version "2.23.3"
-  resolved "https://npm-registry.sipwise.com/quasar/-/quasar-2.23.3.tgz#75a5d04e62cc3356f864521c52b8aa7678626c72"
-  integrity sha512-C1t4V6KlLVAYUrm59cDqLvtylg0HDoxvItfgxG1AZm9esAOfgJqGqPN/zY1gmpjtMVVN+ANrEz+uaLqqGDp7lg==
+quasar@2.32.2:
+  version "2.32.2"
+  resolved "https://npm-registry.sipwise.com/quasar/-/quasar-2.32.2.tgz#4db7a74bca5143c83c493a93b0bd184867fbc12d"
+  integrity sha512-IqQHHYoYL8bfFDAwy5E5X1xv7VpMAdhFHjSaLycueRdLOkXMbntUUphAIof8Q/wgvKQcskYflGV9/OyIPvbkLA==
 
 querystringify@^2.1.1:
   version "2.2.0"
@@ -11064,14 +11064,14 @@ vue-eslint-parser@10.4.0:
     esquery "^1.6.0"
     semver "^7.6.3"
 
-vue-i18n@11.3.2:
-  version "11.3.2"
-  resolved "https://npm-registry.sipwise.com/vue-i18n/-/vue-i18n-11.3.2.tgz#8f774a4e680be7e0c7a939ff04663cf26886fb85"
-  integrity sha512-gmFrvM+iuf2AH4ygligw/pC7PRJ63AdRNE68E0GPlQ83Mzfyck6g6cRQC3KzkYXr+ZidR91wq+5YBmAMpkgE1A==
+vue-i18n@11.4.14:
+  version "11.4.14"
+  resolved "https://npm-registry.sipwise.com/vue-i18n/-/vue-i18n-11.4.14.tgz#2a878a16ab54a0c1a6d0a90c2efec6c87796b036"
+  integrity sha512-oRFZtQjRDRQtfxu7tFlsZlnCa5gPkg/KX89kJDKdC9bz4GIYgo3cAMaD0XFeUx/WHuKoVbDMRTIo9Hvg67HnPw==
   dependencies:
-    "@intlify/core-base" "11.3.2"
-    "@intlify/devtools-types" "11.3.2"
-    "@intlify/shared" "11.3.2"
+    "@intlify/core-base" "11.4.14"
+    "@intlify/devtools-types" "11.4.14"
+    "@intlify/shared" "11.4.14"
     "@vue/devtools-api" "^6.5.0"
 
 vue-jscodeshift-adapter@^2.2.1:
