@@ -16,7 +16,7 @@
             <csc-popup-menu-item
                 icon="person_add_disabled"
                 :label="$t('call not to ...')"
-                data-cy="csc-condition-call-to"
+                data-cy="csc-condition-call-not-to"
                 :close-popup="false"
                 :disable="!!bNumberSet"
                 @click="$emit('step', 'call-not-to')"
