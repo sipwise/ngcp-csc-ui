@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.0.1.30+0~mr26.0.1.30) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [775120a] MT#66607 Keep PBX seat voicemail, fax and CLI state from leaking
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 12 Nov 2026 11:24:02 +0100
+
 ngcp-csc-ui (26.0.1.29+0~mr26.0.1.29) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
