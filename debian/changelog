@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.93+0~mr12.5.1.93) unstable; urgency=medium
+
+  [ Giancarlo Errigo Mattos ]
+  * [6c2709d] MT#66069 Fix filtering in CF source and B-number set selects
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 16 Nov 2026 08:08:56 +0100
+
 ngcp-csc-ui (12.5.1.92+0~mr12.5.1.92) unstable; urgency=medium
 
   [ Debora Crescenzo ]
