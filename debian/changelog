@@ -1,3 +1,10 @@
+ngcp-csc-ui (26.3.1.7+0~mr26.3.1.7) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [51ecfb6] MT#65598 add missing data-cy for cw "own" property tests
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 17 Nov 2026 09:48:03 +0100
+
 ngcp-csc-ui (26.3.1.6+0~mr26.3.1.6) unstable; urgency=medium
 
   [ Giancarlo Errigo Mattos ]
