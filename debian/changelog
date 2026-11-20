@@ -1,3 +1,12 @@
+ngcp-csc-ui (26.0.1.33+0~mr26.0.1.33) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [f6c14f5] MT#65155 add missing data-cy to auto attendant page
+  * [a2f7c2c] MT#64395 add data-cy for csc sound set page
+  * [343cb6f] MT#64394 add missing data-cy for pbx groups details && mail2fax
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Nov 2026 14:02:42 +0100
+
 ngcp-csc-ui (26.0.1.32+0~mr26.0.1.32) unstable; urgency=medium
 
   [ Debora Crescenzo ]
