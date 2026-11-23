@@ -86,7 +86,7 @@
             </q-item-label>
         </q-item-section>
         <q-item-section
-            v-if="editable && destinationIndex < destinationSet.destinations.length - 1"
+            v-if="editable && (canMoveUp || canMoveDown || canRemove)"
             side
         >
             <csc-more-menu>
@@ -105,6 +105,7 @@
                     @click="moveDestinationEvent('down')"
                 />
                 <csc-popup-menu-item-delete
+                    v-if="canRemove"
                     @click="removeDestinationEvent({
                         destinationIndex: destinationIndex,
                         destinationSetId: destinationSet.id
@@ -200,6 +201,12 @@ export default {
                 this.destinationIndex,
                 this.destinationIndex - 1
             )
+        },
+        isLastDestination () {
+            return this.destinationIndex === this.destinationSet.destinations.length - 1
+        },
+        canRemove () {
+            return !this.isLastDestination
         },
         canMoveDown () {
             return canMoveDestination(
