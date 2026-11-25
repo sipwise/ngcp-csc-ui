@@ -1,3 +1,10 @@
+ngcp-csc-ui (12.5.1.95+0~mr12.5.1.95) unstable; urgency=medium
+
+  [ Debora Crescenzo ]
+  * [aab162b] MT#66603 Bump dependabot packages on mr12.5
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 Nov 2026 19:46:20 +0100
+
 ngcp-csc-ui (12.5.1.94+0~mr12.5.1.94) unstable; urgency=medium
 
   [ Debora Crescenzo ]
