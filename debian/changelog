@@ -1,3 +1,13 @@
+ngcp-csc-ui (13.5.1.52+0~mr13.5.1.52) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [8aeaa92] MT#64394 add missing data-cy for pbx groups details && mail2fax
+
+  [ Debora Crescenzo ]
+  * [ddde688] MT#66603 Bump dependabot packages on mr13.5
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 Nov 2026 19:45:57 +0100
+
 ngcp-csc-ui (13.5.1.51+0~mr13.5.1.51) unstable; urgency=medium
 
   [ Debora Crescenzo ]
