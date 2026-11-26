@@ -1,3 +1,12 @@
+ngcp-csc-ui (13.5.1.54+0~mr13.5.1.54) unstable; urgency=medium
+
+  [ Nico Schedel ]
+  * [d1eb1e1] MT#64395 add data-cy for csc sound set page
+  * [047cdbc] MT#64596 add missing data-cy for manager secretary dropdown
+  * [d97b6ab] MT#64596 add missing data-cy for auto attendant and manager secretary
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 26 Nov 2026 14:50:46 +0100
+
 ngcp-csc-ui (13.5.1.53+0~mr13.5.1.53) unstable; urgency=medium
 
   [ Nico Schedel ]
